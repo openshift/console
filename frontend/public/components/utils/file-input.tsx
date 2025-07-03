@@ -57,17 +57,32 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
           </label>
           <div className="modal-body__field">
             <div className="pf-v6-c-input-group">
-              <span className="pf-v6-c-form-control pf-m-readonly">
+              <span
+                id={id}
+                data-testid={`${id}-text`}
+                className="pf-v6-c-form-control pf-m-readonly"
+              >
                 <input
                   type="text"
-                  aria-label={t('public~Filename')}
+                  id={id}
+                  aria-label={t('public~{{label}} filename', { label: this.props.label })} // Make the 'aria-label' unique since 'input' and 'textarea' fields share the same 'id'.
                   value={this.props.inputFileName}
                   aria-describedby={this.props.inputFieldHelpText ? `${id}-help` : undefined}
                   readOnly
                 />
               </span>
-              <span className="pf-v6-c-button pf-m-control co-btn-file">
-                <input id={id} type="file" onChange={this.onFileUpload} data-test="file-input" />
+              <span
+                id={id}
+                data-testid={`${id}-file`}
+                className="pf-v6-c-button pf-m-control co-btn-file"
+              >
+                <input
+                  id={id}
+                  type="file"
+                  aria-label={t('public~Browse...')}
+                  onChange={this.onFileUpload}
+                  data-test="file-input"
+                />
                 {t('public~Browse...')}
               </span>
             </div>
@@ -77,15 +92,19 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
               </p>
             ) : null}
             {!hideContents && (
-              <span className="pf-v6-c-form-control pf-m-resize-vertical pf-v6-u-mt-sm">
+              <span
+                data-testid={`${id}-textarea`}
+                className="pf-v6-c-form-control pf-m-resize-vertical pf-v6-u-mt-sm"
+              >
                 <textarea
+                  id={id}
                   data-test-id={
                     this.props['data-test-id'] ? this.props['data-test-id'] : 'file-input-textarea'
                   }
                   className="co-file-dropzone__textarea"
                   onChange={this.onDataChange}
                   value={this.props.inputFileData}
-                  aria-label={this.props.label}
+                  aria-label={t('public~{{label}}', { label: this.props.label })}
                   aria-describedby={
                     this.props.textareaFieldHelpText ? `${id}-textarea-help` : undefined
                   }

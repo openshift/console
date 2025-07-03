@@ -314,6 +314,27 @@
     "properties": {
       "model": {
         "version": "v1",
+        "kind": "PersistentVolumeClaim"
+      },
+      "provider": { "$codeRef": "persistentVolumeClaimsProvider.usePVCActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "VolumeSnapshot",
+        "group": "snapshot.storage.k8s.io"
+      },
+      "provider": { "$codeRef": "volumeSnapshotProvider.useVolumeSnapshotActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
         "kind": "StorageClass",
         "group": "storage.k8s.io"
       },
@@ -636,6 +657,16 @@
       "id": "home",
       "name": "%console-app~Home%",
       "dataAttributes": { "data-quickstart-id": "qs-nav-home", "data-tour-id": "tour-home-nav" }
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "ecosystem",
+      "perspective": "admin",
+      "section": "ecosystem",
+      "name": "%console-app~Ecosystem%",
+      "insertBefore": "operators"
     }
   },
   {

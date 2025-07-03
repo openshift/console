@@ -52,15 +52,15 @@ const externalRow = (metric, current, key) => {
   return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
 };
 
-const getResourceUtilization = (currentMetric) => {
-  const currentUtilization = currentMetric?.resource?.current?.averageUtilization;
+const getResourceUtilization = (currentMetric, type) => {
+  const currentUtilization = currentMetric?.[type]?.current?.averageUtilization;
 
   // Use _.isFinite so that 0 evaluates to true, but null / undefined / NaN don't
   if (!_.isFinite(currentUtilization)) {
     return null;
   }
 
-  const currentAverageValue = currentMetric?.resource?.current?.averageValue;
+  const currentAverageValue = currentMetric?.[type]?.current?.averageValue;
   // Only show currentAverageValue in parens if set and non-zero to avoid things like "0% (0)"
   return currentAverageValue && currentAverageValue !== '0'
     ? `${currentUtilization}% (${currentAverageValue})`
@@ -69,10 +69,14 @@ const getResourceUtilization = (currentMetric) => {
 
 const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
   const { t } = useTranslation();
-  const resourceRow = (metric, current, key) => {
-    const { resource } = metric;
-    const targetUtilization = resource.target.averageUtilization;
-    const resourceLabel = t('public~resource {{name}}', { name: resource.name });
+
+  const resourceRowFn = (metric, current, key, metricType) => {
+    const metricObj = metric[metricType];
+    const targetUtilization = metricObj.target.averageUtilization;
+    const resourceLabel = t('public~{{type}} {{name}}', {
+      type: metric.type,
+      name: metricObj.name,
+    });
     const type = targetUtilization ? (
       <>
         {resourceLabel}&nbsp;
@@ -84,11 +88,19 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
       resourceLabel
     );
     const currentValue = targetUtilization
-      ? getResourceUtilization(current)
-      : current?.resource?.current?.averageValue;
-    const targetValue = targetUtilization ? `${targetUtilization}%` : resource.target.averageValue;
+      ? getResourceUtilization(current, metricType)
+      : current?.[metricType]?.current?.averageValue;
+    const targetValue = targetUtilization ? `${targetUtilization}%` : metricObj.target.averageValue;
 
     return <MetricsRow key={key} type={type} current={currentValue} target={targetValue} />;
+  };
+
+  const resourceRow = (metric, current, key) => {
+    return resourceRowFn(metric, current, key, 'resource');
+  };
+
+  const containerResourceRow = (metric, current, key) => {
+    return resourceRowFn(metric, current, key, 'containerResource');
   };
 
   const podRow = (metric, current, key) => {
@@ -150,6 +162,8 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
                 return podRow(metric, current, i);
               case 'Resource':
                 return resourceRow(metric, current, i);
+              case 'ContainerResource':
+                return containerResourceRow(metric, current, i);
               default:
                 return (
                   <Tr key={i}>

@@ -392,9 +392,14 @@ type DescribedObject = {
   name: string;
 };
 export type HPAMetric = {
-  type: 'Object' | 'Pods' | 'Resource' | 'External';
+  type: 'Object' | 'Pods' | 'Resource' | 'External' | 'ContainerResource';
   resource?: {
     name: string;
+    target: TargetObjcet;
+  };
+  containerResource?: {
+    name: string;
+    container: string;
     target: TargetObjcet;
   };
   external?: {
@@ -1094,46 +1099,22 @@ export type PersistentVolumeClaimKind = K8sResourceCommon & {
     };
     storageClassName: string;
     volumeMode?: string;
+    volumeName?: string;
     /* Parameters in a cloned PVC */
     dataSource?: {
       name: string;
       kind: string;
       apiGroup: string;
     };
+    selector?: Selector;
     /**/
   };
   status?: {
+    accessModes?: string[];
+    capacity?: { storage: string };
     phase: string;
+    conditions?: K8sResourceCondition[];
   };
-};
-
-export type NetworkPolicyKind = K8sResourceCommon & {
-  spec: {
-    podSelector?: Selector;
-    ingress?: {
-      from?: NetworkPolicyPeer[];
-      ports?: NetworkPolicyPort[];
-    }[];
-    egress?: {
-      to?: NetworkPolicyPeer[];
-      ports?: NetworkPolicyPort[];
-    }[];
-    policyTypes?: string[];
-  };
-};
-
-export type NetworkPolicyPeer = {
-  podSelector?: Selector;
-  namespaceSelector?: Selector;
-  ipBlock?: {
-    cidr: string;
-    except?: string[];
-  };
-};
-
-export type NetworkPolicyPort = {
-  port?: string | number;
-  protocol?: string;
 };
 
 export type ConsolePluginKind = K8sResourceCommon & {

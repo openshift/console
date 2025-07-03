@@ -52,6 +52,14 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     messageVariablesSafe.resourceKinds = t(labelKey, titleVariables);
   }
 
+  const onValueChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const eventValue = (event.target as HTMLInputElement).value;
+    const numericValue = Number(eventValue);
+    if (!isNaN(numericValue)) {
+      setValue(numericValue);
+    }
+  };
+
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>{titleKey ? t(titleKey, titleVariables) : title}</ModalTitle>
@@ -61,7 +69,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
         </p>
         <NumberSpinner
           value={value}
-          onChange={(e: any) => setValue(e.target.value)}
+          onChange={onValueChange}
           changeValueBy={(operation) => setValue(_.toInteger(value) + operation)}
           autoFocus
           required

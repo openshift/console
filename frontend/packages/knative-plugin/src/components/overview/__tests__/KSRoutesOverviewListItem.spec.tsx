@@ -28,7 +28,7 @@ describe('KSRoutesOverviewListItem', () => {
 
   it('should have route ExternalLink with proper href', () => {
     expect(wrapper.find(ExternalLinkWithCopy)).toHaveLength(1);
-    expect(wrapper.find(ExternalLinkWithCopy).at(0).props().link).toEqual(
+    expect(wrapper.find(ExternalLinkWithCopy).at(0).props().href).toEqual(
       'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     );
     expect(wrapper.find(ExternalLinkWithCopy).at(0).props().text).toEqual(

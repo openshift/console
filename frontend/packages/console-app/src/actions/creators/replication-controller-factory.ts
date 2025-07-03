@@ -5,7 +5,7 @@ import { asAccessReview } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { ReplicationControllerKind, K8sKind, k8sPatch } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src';
-import { ResourceActionFactory } from './common-factory';
+import { ResourceActionFactory } from './types';
 
 const INACTIVE_STATUSES = ['New', 'Pending', 'Running'];
 

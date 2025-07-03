@@ -11,7 +11,13 @@ import { ExtensionDetailsItem } from '@console/shared/src/components/details-pag
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData, TableProps, RowFunctionArgs } from './factory';
-import { referenceFor, K8sResourceKind, modelFor } from '../module/k8s';
+import {
+  referenceFor,
+  K8sResourceKind,
+  modelFor,
+  referenceForExtensionModel,
+  ExtensionK8sGroupModel,
+} from '../module/k8s';
 import {
   Kebab,
   kindObj,
@@ -23,6 +29,12 @@ import {
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList } from '@patternfly/react-core';
+import {
+  isResourceActionProvider,
+  ResourceActionProvider,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const { common } = Kebab.factory;
 
@@ -88,7 +100,23 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
 const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, customData }) => {
   const kind = referenceFor(obj) || customData.kind;
   const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(kind)), ...common!];
+  const model = kindObj(kind);
   const { t } = useTranslation();
+
+  const resourceProviderGuard = React.useCallback(
+    (e): e is ResourceActionProvider =>
+      isResourceActionProvider(e) &&
+      referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === kind,
+    [kind],
+  );
+
+  const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
+    ResourceActionProvider
+  >(resourceProviderGuard);
+
+  const hasExtensionActions =
+    resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
+
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -109,7 +137,11 @@ const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, cust
         <Timestamp timestamp={obj.metadata?.creationTimestamp ?? ''} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+        {hasExtensionActions ? (
+          <LazyActionMenu context={{ [kind]: obj }} />
+        ) : (
+          <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+        )}
       </TableData>
     </>
   );

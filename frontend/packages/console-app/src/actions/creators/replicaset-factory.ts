@@ -4,7 +4,7 @@ import { rollbackModal } from '@console/internal/components/modals';
 import { DeploymentModel } from '@console/internal/models';
 import { ReplicaSetKind, K8sKind } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src';
-import { ResourceActionFactory } from './common-factory';
+import { ResourceActionFactory } from './types';
 
 export const ReplicaSetFactory: ResourceActionFactory = {
   RollbackDeploymentAction: (kind: K8sKind, obj: ReplicaSetKind): Action => ({

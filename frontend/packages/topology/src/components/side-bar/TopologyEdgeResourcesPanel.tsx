@@ -55,7 +55,7 @@ const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({
               ) : (
                 <ExternalLink
                   href={sinkUri}
-                  additionalClassName="co-external-link--block"
+                  displayBlock
                   text={sinkUri}
                   dataTestID={`sink-uri-${sinkUri}`}
                 />

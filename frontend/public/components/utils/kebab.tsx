@@ -28,9 +28,6 @@ import {
   labelsModalLauncher,
   podSelectorModal,
   deleteModal,
-  expandPVCModal,
-  clonePVCModal,
-  restorePVCModal,
 } from '../modals';
 import { asAccessReview, checkAccess, useAccessReview } from './rbac';
 import { resourceObjPath } from './resource-link';
@@ -41,7 +38,6 @@ import {
   K8sResourceKindReference,
   referenceFor,
   referenceForModel,
-  VolumeSnapshotKind,
 } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
 import {
@@ -50,7 +46,6 @@ import {
   DeploymentConfigModel,
   DeploymentModel,
   RouteModel,
-  VolumeSnapshotModel,
 } from '../../models';
 import { ContextSubMenuItem } from '@patternfly/react-topology';
 
@@ -445,6 +440,7 @@ const kebabFactory: KebabFactory = {
       }),
     accessReview: asAccessReview(kind, obj, 'create'),
   }),
+
 };
 
 // The common menu actions that most resource share

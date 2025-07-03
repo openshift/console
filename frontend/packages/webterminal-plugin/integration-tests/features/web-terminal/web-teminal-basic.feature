@@ -4,14 +4,14 @@ Feature: Web Terminal
 
         Background:
             Given user has logged in as basic user
-              And user has installed webTerminal in namespace "aut-terminal-basic"
+              # And user has installed webTerminal in namespace "aut-terminal-basic"
               And user has created or selected namespace "aut-terminal-basic"
 
         @regression
         Scenario: Open existing Web Terminal instance: WT-01-TC01
              When user clicks on the Web Terminal icon on the Masthead
               And user clicks advanced option for Timeout
-              And user sets timeout to 1 Minute
+              And user sets timeout to "1" Minute
               And user clicks on Start button
              Then user will see the terminal window
               And user close current Web Terminal session

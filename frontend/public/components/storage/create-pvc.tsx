@@ -273,7 +273,7 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
       />
       <PaneBody>
         <div className="co-m-pane__form">
-          <form onSubmit={save}>
+          <form onSubmit={save} className="pf-v6-c-form pf-v6-c-form--no-gap">
             <CreatePVCForm onChange={setPvcObj} namespace={namespace} />
             <ButtonBar errorMessage={error} inProgress={inProgress}>
               <ActionGroup className="pf-v6-c-form">

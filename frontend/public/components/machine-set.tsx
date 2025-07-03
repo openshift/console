@@ -438,6 +438,10 @@ export const MachineSetPage: React.FC<MachineSetPageProps> = ({
     selector,
     namespace,
   });
+  const createAccessReview = {
+    groupVersionKind: referenceForModel(MachineSetModel),
+    namespace: namespace || 'default',
+  };
 
   const [data, filteredData, onFilterChange] = useListPageFilter(machineSets);
 

@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Checkbox } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 
@@ -105,28 +105,22 @@ export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePr
             </Trans>
           )}
           {_.has(kind, 'propagationPolicy') && (
-            <div className="checkbox">
-              <label>
-                <input
-                  type="checkbox"
-                  onChange={() => setIsChecked(!isChecked)}
-                  checked={!!isChecked}
-                />
-                {t('public~Delete dependent objects of this resource')}
-              </label>
-            </div>
+            <Checkbox
+              label={t('public~Delete dependent objects of this resource')}
+              onChange={(_event, checked) => setIsChecked(checked)}
+              isChecked={isChecked}
+              name="deleteDependentObjects"
+              id="deleteDependentObjects"
+            />
           )}
           {props.deleteAllResources && (
-            <div className="checkbox">
-              <label>
-                <input
-                  type="checkbox"
-                  onChange={() => setIsDeleteOtherResourcesChecked(!isDeleteOtherResourcesChecked)}
-                  checked={!!isDeleteOtherResourcesChecked}
-                />
-                {t('public~Delete other resources created by console')}
-              </label>
-            </div>
+            <Checkbox
+              label={t('public~Delete other resources created by console')}
+              onChange={(_event, checked) => setIsDeleteOtherResourcesChecked(checked)}
+              isChecked={isDeleteOtherResourcesChecked}
+              name="deleteOtherResources"
+              id="deleteOtherResources"
+            />
           )}
           {owner && (
             <Alert

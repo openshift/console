@@ -10,6 +10,13 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
 in [Console dynamic plugins README](./README.md).
 
+## 4.19.0 - 2025-06-27
+
+> Release for OCP Console 4.19.
+
+- Improve `useModal` hook to support multiple modals and prop pass-through ([OCPBUGS-57755], [#15189])
+- Add `noCheckForEmptyGroupAndResource` parameter to `useAccessReview` hook ([OCPBUGS-56413], [#15067])
+
 ## 4.19.0-prerelease.2 - 2025-05-20
 
 > [!IMPORTANT]
@@ -107,6 +114,8 @@ in [Console dynamic plugins README](./README.md).
 [OCPBUGS-45319]: https://issues.redhat.com/browse/OCPBUGS-45319
 [OCPBUGS-52589]: https://issues.redhat.com/browse/OCPBUGS-52589
 [OCPBUGS-52948]: https://issues.redhat.com/browse/OCPBUGS-52948
+[OCPBUGS-56413]: https://issues.redhat.com/browse/OCPBUGS-56413
+[OCPBUGS-57755]: https://issues.redhat.com/browse/OCPBUGS-57755
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -136,3 +145,5 @@ in [Console dynamic plugins README](./README.md).
 [#14863]: https://github.com/openshift/console/pull/14863
 [#14864]: https://github.com/openshift/console/pull/14864
 [#14876]: https://github.com/openshift/console/pull/14876
+[#15067]: https://github.com/openshift/console/pull/15067
+[#15189]: https://github.com/openshift/console/pull/15189

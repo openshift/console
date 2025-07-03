@@ -173,6 +173,10 @@ $masthead-logo-max-height: 60px;
   position: relative;
 }
 
+.pf-v6-c-form--no-gap {
+  gap: 0;
+}
+
 .pf-v6-c-masthead {
   --pf-v6-c-masthead__logo--MaxHeight: $masthead-logo-max-height; // so that logos with three lines of text fit
 }

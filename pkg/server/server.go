@@ -171,7 +171,6 @@ type Server struct {
 	DevCatalogCategories                string
 	DevCatalogTypes                     string
 	DocumentationBaseURL                *url.URL
-	EnabledConsolePlugins               serverconfig.MultiKeyValue
 	GitOpsProxyConfig                   *proxy.Config
 	GOARCH                              string
 	GOOS                                string
@@ -207,8 +206,10 @@ type Server struct {
 	ThanosPublicURL                     *url.URL
 	ThanosTenancyProxyConfig            *proxy.Config
 	ThanosTenancyProxyForRulesConfig    *proxy.Config
+	TokenReviewer                       *auth.TokenReviewer
 	UserSettingsLocation                string
-	PluginsOrder                        []string
+	EnabledPlugins                      serverconfig.MultiKeyValue
+	EnabledPluginsOrder                 []string
 }
 
 func disableDirectoryListing(handler http.Handler) http.Handler {
@@ -298,18 +299,15 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
 	}
 
-	tokenReviewHandler := func(h http.HandlerFunc) http.HandlerFunc {
-		return s.CSRFVerifier.WithCSRFVerification(withTokenReview(authenticator, h))
-	}
-
+	// For requests where Authorization header with valid Bearer token is expected
 	bearerTokenReviewHandler := func(h http.HandlerFunc) http.HandlerFunc {
-		return withBearerTokenReview(authenticator, h)
+		return withBearerTokenReview(s.TokenReviewer, h)
 	}
 
 	handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
 	handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
 	handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
-	handle(copyLoginEndpoint, tokenReviewHandler(s.handleCopyLogin))
+	handle(copyLoginEndpoint, authHandler(s.handleCopyLogin))
 
 	handleFunc("/api/", notFoundHandler)
 
@@ -479,7 +477,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		}),
 	))
 
-	handle("/api/console/monitoring-dashboard-config", tokenReviewHandler(s.handleMonitoringDashboardConfigmaps))
+	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	// Knative
 	trimURLPrefix := proxy.SingleJoiningSlash(s.BaseURL.Path, knativeProxyEndpoint)
 	knativeHandler := knative.NewKnativeHandler(
@@ -490,8 +488,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(knativeProxyEndpoint, authHandlerWithUser(knativeHandler.Handle))
 	// TODO: move the knative-event-sources and knative-channels handler into the knative module.
-	handle("/api/console/knative-event-sources", tokenReviewHandler(s.handleKnativeEventSourceCRDs))
-	handle("/api/console/knative-channels", tokenReviewHandler(s.handleKnativeChannelCRDs))
+	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
+	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
 
 	// Dev-Console Endpoints
 	handle(devConsoleEndpoint, http.StripPrefix(
@@ -527,7 +525,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			Timeout:   120 * time.Second,
 			Transport: &http.Transport{TLSClientConfig: s.PluginsProxyTLSConfig},
 		},
-		s.EnabledConsolePlugins,
+		s.EnabledPlugins,
 		s.PublicDir,
 	)
 
@@ -537,7 +535,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(pluginAssetsEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, pluginAssetsEndpoint),
-		tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
+		authHandler(func(w http.ResponseWriter, r *http.Request) {
 			pluginsHandler.HandlePluginAssets(w, r)
 		}),
 	))
@@ -573,7 +571,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		}
 	}
 
-	handle(updatesEndpoint, tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
+	handle(updatesEndpoint, authHandler(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
 			w.Header().Set("Allow", "GET")
 			serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
@@ -594,7 +592,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	// Metrics
 	config := &serverconfig.Config{
-		Plugins: s.EnabledConsolePlugins,
+		Plugins: s.EnabledPlugins,
 		Customization: serverconfig.Customization{
 			Perspectives: []serverconfig.Perspective{},
 		},
@@ -617,8 +615,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle("/metrics", bearerTokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 		promhttp.Handler().ServeHTTP(w, r)
 	}))
-
-	handleFunc("/metrics/usage", tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
+	handleFunc("/metrics/usage", authHandler(func(w http.ResponseWriter, r *http.Request) {
 		usage.Handle(usageMetrics, w, r)
 	}))
 
@@ -665,11 +662,11 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)
 		handle(gitopsEndpoint, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, gitopsEndpoint),
-			tokenReviewHandler(gitopsProxy.ServeHTTP)),
+			authHandler(gitopsProxy.ServeHTTP)),
 		)
 	}
 
-	handle("/api/console/version", tokenReviewHandler(s.versionHandler))
+	handle("/api/console/version", authHandler(s.versionHandler))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
@@ -719,7 +716,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		BasePath:                  s.BaseURL.Path,
 		Branding:                  s.Branding,
 		Capabilities:              s.Capabilities,
-		ConsolePlugins:            s.PluginsOrder,
+		ConsolePlugins:            s.EnabledPluginsOrder,
 		ConsoleVersion:            version.Version,
 		ControlPlaneTopology:      s.ControlPlaneTopology,
 		CopiedCSVsDisabled:        s.CopiedCSVsDisabled,

@@ -147,6 +147,7 @@ export const AddRequestHeaderPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
+                aria-label={t('public~Challenge URL')}
                 onChange={(e) => setChallengeURL(e.currentTarget.value)}
                 value={challengeURL}
                 id="challenge-url"
@@ -164,6 +165,7 @@ export const AddRequestHeaderPage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="url"
+                aria-label={t('public~Login URL')}
                 onChange={(e) => setLoginURL(e.currentTarget.value)}
                 value={loginURL}
                 id="login-url"
@@ -181,6 +183,7 @@ export const AddRequestHeaderPage = () => {
             {t('public~More options')}
           </Title>
           <IDPCAFileInput
+            id="ca-file-input"
             value={caFileContent}
             onChange={(c: string) => setCaFileContent(c)}
             isRequired
@@ -188,27 +191,34 @@ export const AddRequestHeaderPage = () => {
           <ListInput
             label={t('public~Client common names')}
             onChange={(c: string[]) => setClientCommonNames(c as any)}
+            id="request-header-client-common-names"
             helpText={t('public~The set of common names to require a match from.')}
           />
           <ListInput
             label={t('public~Headers')}
             onChange={(c: string[]) => setHeaders(c as any)}
+            id="request-header-headers"
+
             helpText={t('public~The set of headers to check for identity information.')}
             required
           />
           <ListInput
             label={t('public~Preferred username headers')}
             onChange={(c: string[]) => setPreferredUsernameHeaders(c as any)}
+            id="request-header-preferred-username-headers"
             helpText={t('public~The set of headers to check for the preferred username.')}
           />
           <ListInput
             label={t('public~Name headers')}
             onChange={(c: string[]) => setNameHeaders(c as any)}
+            id="request-header-name-headers"
+
             helpText={t('public~The set of headers to check for the display name.')}
           />
           <ListInput
             label={t('public~Email headers')}
             onChange={(c: string[]) => setEmailHeaders(c as any)}
+            id="request-header-email-headers"
             helpText={t('public~The set of headers to check for the email address.')}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
