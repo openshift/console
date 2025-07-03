@@ -43,27 +43,7 @@ func authMiddlewareWithUser(authenticator auth.Authenticator, csrfVerifier *csrf
 	)
 }
 
-func withTokenReview(authenticator auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		user, err := authenticator.Authenticate(w, r)
-		if err != nil {
-			klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, unable to authenticate, %v", r.Method, r.URL.Path, err)
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		err = authenticator.ReviewToken(r.Context(), user.Token)
-		if err != nil {
-			klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, invalid user token, %v", r.Method, r.URL.Path, err)
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		klog.V(4).Infof("TOKEN_REVIEW: '%s %s' user token successfully validated", r.Method, r.URL.Path)
-		h(w, r)
-	}
-}
-
-func withBearerTokenReview(authenticator auth.Authenticator, h http.HandlerFunc) http.HandlerFunc {
+func withBearerTokenReview(tokenReviewer *auth.TokenReviewer, h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			authorizationHeader := r.Header.Get("Authorization")
@@ -86,7 +66,7 @@ func withBearerTokenReview(authenticator auth.Authenticator, h http.HandlerFunc)
 				return
 			}
 
-			err := authenticator.ReviewToken(r.Context(), bearerToken)
+			err := tokenReviewer.ReviewToken(r.Context(), bearerToken)
 			if err != nil {
 				klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, invalid user token, %v", r.Method, r.URL.Path, err)
 				w.WriteHeader(http.StatusUnauthorized)
