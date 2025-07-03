@@ -77,26 +77,22 @@ const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
             </Trans>
           </>
         }
-        helpText={
+        helpText={Object.keys(storageProvidersMap).length > 1 && (
           <>
-            {Object.keys(storageProvidersMap).length > 1 && (
-              <>
-                <label className="co-required">{t('public~Storage type')}</label>
-                {Object.entries(storageProvidersMap).map(([k, v]) => (
-                  <Radio
-                    key={k}
-                    isChecked={activeProvider === k}
-                    onChange={handleChange}
-                    label={v.name}
-                    id={k}
-                    value={v.name}
-                    name={v.name}
-                  />
-                ))}
-              </>
-            )}
+            <label className="co-required">{t('public~Storage type')}</label>
+            {Object.entries(storageProvidersMap).map(([k, v]) => (
+              <Radio
+                key={k}
+                isChecked={activeProvider === k}
+                onChange={handleChange}
+                label={v.name}
+                id={k}
+                value={v.name}
+                name={v.name}
+              />
+            ))}
           </>
-        }
+        )}
       />
       <PaneBody>
         <ErrorBoundaryPage>
