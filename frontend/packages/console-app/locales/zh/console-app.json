@@ -529,7 +529,7 @@
   "Create {{label}}": "创建{{label}}",
   "Edit {{label}}": "编辑 {{label}}",
   "{helpText}": "{helpText}",
-  "Create PodDiscruptionBudget": "创建 PodDiscruptionBudget",
+  "Create PodDisruptionBudget": "创建 PodDisruptionBudget",
   "Disruption not allowed": "不允许中断",
   "PodDisruptionBudget": "PodDisruptionBudget",
   "No PodDisruptionBudget": "没有 PodDisruptionBudget",
