@@ -27,22 +27,24 @@ import { Table } from './factory';
 import { sortable } from '@patternfly/react-table';
 import { removeVolumeModal } from './modals';
 import { connectToModel } from '../kinds';
+import { K8sModel } from '@console/internal/module/k8s';
 
-const removeVolume = (kind: K8sKind, obj: K8sResourceKind, volume: RowVolumeData): KebabOption => {
-  return {
-    // t('public~Remove volume')
-    labelKey: 'public~Remove volume',
-    callback: () =>
-      removeVolumeModal({
-        kind,
-        resource: obj,
-        volume,
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  };
+const useVolumeActions = (kind: K8sModel, resource: K8sResourceKind, volume: RowVolumeData) => {
+  const removeVolumeAction = React.useMemo((): KebabOption => {
+    return {
+      labelKey: 'public~Remove volume',
+      callback: () =>
+        removeVolumeModal({
+          kind,
+          resource,
+          volume,
+        }),
+      accessReview: asAccessReview(kind, resource, 'patch'),
+    };
+  }, [kind, resource, volume]);
+
+  return React.useMemo(() => [removeVolumeAction], [removeVolumeAction]);
 };
-
-const menuActions = [removeVolume];
 
 const getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
   return resource.kind === 'Pod' ? (resource as PodKind) : resource.spec.template;
@@ -158,14 +160,7 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
         },
       },
       {
-        title: (
-          <VolumeKebab
-            actions={menuActions}
-            kind={resource.kind}
-            resource={resource}
-            rowVolumeData={volume}
-          />
-        ),
+        title: <VolumeKebab kind={resource.kind} resource={resource} rowVolumeData={volume} />,
         props: {
           className: volumeRowColumnClasses[6],
         },
@@ -244,14 +239,16 @@ export const VolumesTable = (props) => {
 VolumesTable.displayName = 'VolumesTable';
 
 const VolumeKebab = connectToModel((props: VolumeKebabProps) => {
-  const { actions, kindObj, resource, isDisabled, rowVolumeData } = props;
+  const { kindObj, resource, isDisabled, rowVolumeData } = props;
+  const actions = useVolumeActions(kindObj, resource, rowVolumeData);
+
   if (!kindObj || kindObj.kind === 'Pod') {
     return null;
   }
-  const options = actions.map((b) => b(kindObj, resource, rowVolumeData));
+
   return (
     <Kebab
-      options={options}
+      options={actions}
       isDisabled={
         isDisabled !== undefined ? isDisabled : resource?.metadata?.deletionTimestamp?.length > 0
       }
@@ -259,14 +256,8 @@ const VolumeKebab = connectToModel((props: VolumeKebabProps) => {
   );
 });
 
-type VolumeKebabAction = (
-  kind: K8sKind,
-  obj: K8sResourceKind,
-  rowVolumeData: RowVolumeData,
-) => KebabOption;
 type VolumeKebabProps = {
   kindObj: K8sKind;
-  actions: VolumeKebabAction[];
   kind: K8sResourceKindReference;
   resource: K8sResourceKind;
   isDisabled?: boolean;
