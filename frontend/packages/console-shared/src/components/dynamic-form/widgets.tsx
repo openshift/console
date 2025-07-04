@@ -178,8 +178,9 @@ export const ImagePullPolicyWidget: React.FC<WidgetProps> = ({ id, value, onChan
       id={id}
       currentValue={value}
       items={_.values(ImagePullPolicy).map((policy) => ({
+        name: id,
         value: policy,
-        title: policy,
+        label: policy,
       }))}
       onChange={({ currentTarget }) => onChange(currentTarget.value)}
     />

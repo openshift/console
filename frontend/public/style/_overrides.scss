@@ -177,6 +177,13 @@ $masthead-logo-max-height: 60px;
   gap: 0;
 }
 
+.pf-v6-c-form__group-control--no-row-gap {
+  &,
+  & > .pf-v6-c-form__group-control.pf-m-inline {
+    row-gap: 0;
+  }
+}
+
 .pf-v6-c-masthead {
   --pf-v6-c-masthead__logo--MaxHeight: $masthead-logo-max-height; // so that logos with three lines of text fit
 }

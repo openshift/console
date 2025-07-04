@@ -2,9 +2,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Checkbox, Grid, GridItem, TextArea } from '@patternfly/react-core';
+import { Checkbox, FormGroup, Grid, GridItem, Radio, TextArea } from '@patternfly/react-core';
 
-import { RadioInput } from '../../radio';
 import { ExpandCollapse } from '../../utils';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
@@ -103,90 +102,97 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 dispatchFormChange={dispatchFormChange}
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="slack-icon-type">
-                {t('public~Icon')} &nbsp;
-                <RadioInput
-                  title={t('public~URL')}
-                  name="slackIconType"
+            <div className="form-group pf-v6-c-form">
+              <FormGroup
+                role="radiogroup"
+                fieldId="slack-icon-type-group"
+                label={t('public~Icon')}
+                isInline
+                className="pf-v6-c-form__group-control--no-row-gap"
+              >
+                <Radio
                   id="slack-icon-type"
+                  name="slackIconType"
+                  label={t('public~URL')}
                   value="url"
                   onChange={(e) =>
                     dispatchFormChange({
                       type: 'setFormValues',
-                      payload: { slackIconType: e.target.value },
+                      payload: { slackIconType: (e.target as HTMLInputElement).value },
                     })
                   }
-                  checked={formValues.slackIconType === 'url'}
-                  inline
+                  isChecked={formValues.slackIconType === 'url'}
+                  data-checked-state={formValues.slackIconType === 'url'}
+                  data-test="URL-radio-input"
                 />
-                <RadioInput
-                  title={t('public~Emoji')}
+                <Radio
+                  id="slack-icon-type-emoji"
                   name="slackIconType"
+                  label={t('public~Emoji')}
                   value="emoji"
-                  data-test-id="slack-icon-type-emoji"
                   onChange={(e) =>
                     dispatchFormChange({
                       type: 'setFormValues',
-                      payload: { slackIconType: e.target.value },
+                      payload: { slackIconType: (e.target as HTMLInputElement).value },
                     })
                   }
-                  checked={formValues.slackIconType === 'emoji'}
-                  inline
+                  isChecked={formValues.slackIconType === 'emoji'}
+                  data-checked-state={formValues.slackIconType === 'emoji'}
+                  data-test="Emoji-radio-input"
                 />
-              </label>
-              {formValues.slackIconType === 'url' && (
-                <>
-                  <span className="pf-v6-c-form-control">
-                    <input
-                      type="text"
-                      aria-describedby="slack-icon-url-help"
-                      aria-label={t('public~The URL of the icon.')}
-                      data-test-id="slack-icon-url"
-                      value={formValues.slack_icon_url}
-                      onChange={(e) =>
-                        dispatchFormChange({
-                          type: 'setFormValues',
-                          payload: { slack_icon_url: e.target.value },
-                        })
-                      }
-                    />
-                  </span>
-                  <div className="help-block" id="slack-icon-url-help">
-                    {t('public~The URL of the icon.')}
-                  </div>
-                </>
-              )}
-              {formValues.slackIconType === 'emoji' && (
-                <>
-                  <span className="pf-v6-c-form-control">
-                    <input
-                      type="text"
-                      aria-describedby="slack-icon-emoji-help"
-                      aria-label={t('public~An emoji code to use in place of the default icon.')}
-                      name="slackIconEmoji"
-                      data-test-id="slack-icon-emoji"
-                      value={formValues.slack_icon_emoji}
-                      onChange={(e) =>
-                        dispatchFormChange({
-                          type: 'setFormValues',
-                          payload: { slack_icon_emoji: e.target.value },
-                        })
-                      }
-                    />
-                  </span>
-                  <div className="help-block" id="slack-icon-emoji-help">
-                    <Trans ns="public">
-                      An{' '}
-                      <ExternalLink
-                        href="https://www.webfx.com/tools/emoji-cheat-sheet/"
-                        text={t('public~emoji code')}
-                      />{' '}
-                      to use in place of the default icon.
-                    </Trans>
-                  </div>
-                </>
-              )}
+                {formValues.slackIconType === 'url' && (
+                  <>
+                    <span className="pf-v6-c-form-control">
+                      <input
+                        type="text"
+                        aria-describedby="slack-icon-url-help"
+                        aria-label={t('public~The URL of the icon.')}
+                        data-test-id="slack-icon-url"
+                        value={formValues.slack_icon_url}
+                        onChange={(e) =>
+                          dispatchFormChange({
+                            type: 'setFormValues',
+                            payload: { slack_icon_url: e.target.value },
+                          })
+                        }
+                      />
+                    </span>
+                    <div className="help-block" id="slack-icon-url-help">
+                      {t('public~The URL of the icon.')}
+                    </div>
+                  </>
+                )}
+                {formValues.slackIconType === 'emoji' && (
+                  <>
+                    <span className="pf-v6-c-form-control">
+                      <input
+                        type="text"
+                        aria-describedby="slack-icon-emoji-help"
+                        aria-label={t('public~An emoji code to use in place of the default icon.')}
+                        name="slackIconEmoji"
+                        data-test-id="slack-icon-emoji"
+                        value={formValues.slack_icon_emoji}
+                        onChange={(e) =>
+                          dispatchFormChange({
+                            type: 'setFormValues',
+                            payload: { slack_icon_emoji: e.target.value },
+                          })
+                        }
+                      />
+                    </span>
+                    <div className="help-block" id="slack-icon-emoji-help">
+                      <Trans ns="public">
+                        An{' '}
+                        <ExternalLink
+                          href="https://www.webfx.com/tools/emoji-cheat-sheet/"
+                          text={t('public~emoji code')}
+                        />{' '}
+                        to use in place of the default icon.
+                      </Trans>
+                    </div>
+                  </>
+                )}
+              </FormGroup>
             </div>
             <div className="form-group">
               <label htmlFor="slack-username">{t('public~Username')}</label>

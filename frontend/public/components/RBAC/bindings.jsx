@@ -609,28 +609,30 @@ const BaseEditRoleBinding = (props) => {
 
   const bindingKinds = [
     {
+      name: 'binding-type',
       value: 'RoleBinding',
-      title: t('public~Namespace role binding (RoleBinding)'),
-      desc: t(
+      label: t('public~Namespace role binding (RoleBinding)'),
+      description: t(
         'public~Grant the permissions to a user or set of users within the selected namespace.',
       ),
     },
     {
+      name: 'binding-type',
       value: 'ClusterRoleBinding',
-      title: t('public~Cluster-wide role binding (ClusterRoleBinding)'),
-      desc: t(
+      label: t('public~Cluster-wide role binding (ClusterRoleBinding)'),
+      description: t(
         'public~Grant the permissions to a user or set of users at the cluster level and in all namespaces.',
       ),
     },
   ];
 
   const subjectKinds = [
-    { value: 'User', title: t('public~User'), disabled: false },
-    { value: 'Group', title: t('public~Group'), disabled: false },
+    { name: 'subject-kind', value: 'User', label: t('public~User') },
+    { name: 'subject-kind', value: 'Group', label: t('public~Group') },
     {
+      name: 'subject-kind',
       value: 'ServiceAccount',
-      title: t('public~ServiceAccount'),
-      disabled: false,
+      label: t('public~ServiceAccount'),
     },
   ];
 

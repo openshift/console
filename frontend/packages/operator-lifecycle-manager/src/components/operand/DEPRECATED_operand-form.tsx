@@ -845,8 +845,9 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           id={id}
           currentValue={currentValue}
           items={_.values(ImagePullPolicy).map((policy) => ({
+            name: id,
             value: policy,
-            title: policy,
+            label: policy,
           }))}
           onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
         />
