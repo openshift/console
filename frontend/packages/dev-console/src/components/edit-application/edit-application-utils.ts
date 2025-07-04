@@ -30,6 +30,7 @@ import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { getLimitsDataFromResource } from '@console/shared/src';
 import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
+import { RUNTIME_LABEL, CUSTOM_ICON_ANNOTATION } from '../../const';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
 import { deployValidationSchema } from '../import/deployImage-validation-utils';
@@ -475,10 +476,13 @@ export const getCommonInitialValues = (
 };
 
 export const getIconInitialValues = (editAppResource: K8sResourceKind) => {
-  const runtimeLabel = editAppResource?.metadata?.labels?.['app.openshift.io/runtime'];
+  const runtimeLabel = editAppResource?.metadata?.labels?.[RUNTIME_LABEL];
   const runtimeIcon = runtimeLabel && hasIcon(runtimeLabel) ? runtimeLabel : null;
+  const customIcon = editAppResource?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null;
+
   return {
     runtimeIcon,
+    customIcon,
   };
 };
 
