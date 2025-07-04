@@ -23,7 +23,7 @@ import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { LoadingInline } from '@console/shared/src/components/loading/LoadingInline';
-import { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
+import type { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
 const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
   closeModal,
