@@ -25,22 +25,26 @@ const nameWithIcon = (name) => (
   </span>
 );
 
-// pod exec WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
+// pod connect WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
 
 // Channel 0 is STDIN, 1 is STDOUT, 2 is STDERR (if TTY is not requested), and 3 is a special error channel - 4 is C&C
 // The server only reads from STDIN, writes to the other three.
 // see also: https://github.com/kubernetes/kubernetes/pull/13885
 
+const EXEC_COMMAND = 'exec';
+const ATTACH_COMMAND = 'attach';
+
 const NO_SH =
   'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
 
-const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
-  class PodExec extends React.PureComponent {
+const PodConnect_ = connectToFlags(FLAGS.OPENSHIFT)(
+  class PodConnect extends React.PureComponent {
     constructor(props) {
       super(props);
       this.state = {
         open: false,
-        containers: [],
+        containers: {},
+        attach: props.attach,
         activeContainer:
           props.initialContainer ||
           props.obj.metadata?.annotations?.['kubectl.kubernetes.io/default-container'] ||
@@ -55,20 +59,22 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
       const {
         metadata: { name, namespace },
       } = this.props.obj;
-      const { activeContainer } = this.state;
+      const { activeContainer, attach } = this.state;
       const usedClient = this.props.flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
       const command = isWindowsPod(this.props.obj) ? ['cmd'] : ['sh', '-i', '-c', 'TERM=xterm sh'];
       const params = {
         ns: namespace,
         name,
-        path: 'exec',
+        path: attach ? ATTACH_COMMAND : EXEC_COMMAND,
         queryParams: {
           stdout: 1,
           stdin: 1,
           stderr: 1,
           tty: 1,
           container: activeContainer,
-          command: command.map((c) => encodeURIComponent(c)).join('&command='),
+          ...(!attach && {
+            command: command.map((c) => encodeURIComponent(c)).join('&command='),
+          }),
         },
       };
 
@@ -237,4 +243,4 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
   },
 );
 
-export const PodExec = withTranslation()(PodExec_);
+export const PodConnect = withTranslation()(PodConnect_);

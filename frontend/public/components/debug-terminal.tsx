@@ -6,7 +6,7 @@ import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { ObjectMetadata, PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
-import { PodExecLoader } from '@console/internal/components/pod';
+import { PodConnectLoader } from '@console/internal/components/pod';
 import { PodModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
@@ -91,7 +91,7 @@ const DebugTerminalInner: React.FC<DebugTerminalInnerProps> = ({ debugPod, initi
       );
     case 'Running':
       return (
-        <PodExecLoader
+        <PodConnectLoader
           obj={debugPod}
           initialContainer={initialContainer}
           infoMessage={infoMessage}
