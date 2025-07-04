@@ -1,7 +1,7 @@
 export const operatorsPO = {
   search: '[data-test="search-operatorhub"] input[aria-label="Filter by keyword..."]',
   nav: {
-    operators: '[data-quickstart-id="qs-nav-operators"]',
+    ecosystem: '[data-quickstart-id="qs-nav-ecosystem"]',
     operatorHub: 'a[data-test="nav"][href="/operatorhub"]',
     installedOperators:
       'a[data-test="nav"][href$="/operators.coreos.com~v1alpha1~ClusterServiceVersion"]',
@@ -43,6 +43,7 @@ export const operatorsPO = {
       '[data-test="container-security-operator-redhat-operators-openshift-marketplace"]',
     shipwrightOperator:
       '[data-test="shipwright-operator-community-operators-openshift-marketplace"]',
+    serviceBinding: '[data-test="service-binding-operator-redhat-operators-openshift-marketplace"]',
     redisOperatorCard: '[data-test="redis-operator-community-operators-openshift-marketplace"]',
     amqStreams: '[data-test="amq-streams-redhat-operators-openshift-marketplace"]',
     rhoas: '[data-test="rhoas-operator-community-operators-openshift-marketplace"]',
