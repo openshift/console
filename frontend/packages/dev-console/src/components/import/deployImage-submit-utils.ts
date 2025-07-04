@@ -164,6 +164,7 @@ export const createOrUpdateDeployment = (
     limits: { cpu, memory },
     imageStream: { image: imgName, namespace: imgNamespace },
     healthChecks,
+    customIcon,
   } = formData;
 
   const defaultAnnotations = {
@@ -177,6 +178,7 @@ export const createOrUpdateDeployment = (
       imageChange,
       imageStreamTag,
     ),
+    'app.openshift.io/custom-icon': customIcon,
   };
   const templateAnnotations = getCommonAnnotations();
 
@@ -248,6 +250,7 @@ export const createOrUpdateDeploymentConfig = (
     limits: { cpu, memory },
     imageStream: { image: imgName, namespace: imgNamespace },
     healthChecks,
+    customIcon,
   } = formData;
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(Resources.OpenShift, formData);
@@ -255,6 +258,7 @@ export const createOrUpdateDeploymentConfig = (
   const defaultAnnotations = {
     ...getCommonAnnotations(),
     ...getRouteAnnotations(),
+    'app.openshift.io/custom-icon': customIcon,
   };
   const templateAnnotations = getCommonAnnotations();
 

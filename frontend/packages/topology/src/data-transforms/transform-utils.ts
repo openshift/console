@@ -28,6 +28,7 @@ import {
   TYPE_KNATIVE_REVISION,
 } from '@console/knative-plugin/src/topology/const';
 import { isKnativeServing, OverviewItem } from '@console/shared';
+import { returnIfValidURL } from '@console/shared/src/utils/utils';
 import {
   TYPE_APPLICATION_GROUP,
   TYPE_CONNECTS_TO,
@@ -112,7 +113,8 @@ export const createTopologyNodeData = (
   const deploymentsName = _.get(resource, 'metadata.name', '');
   const contextDir = getContextDirByName(resources, deploymentsName);
   const builderImageIcon =
-    getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
+    returnIfValidURL(deploymentsAnnotations['app.openshift.io/custom-icon']) ??
+    getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ??
     getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`);
   return {
     id: dcUID,
@@ -127,7 +129,7 @@ export const createTopologyNodeData = (
       vcsURI: deploymentsAnnotations['app.openshift.io/vcs-uri'],
       vcsRef: deploymentsAnnotations['app.openshift.io/vcs-ref'],
       contextDir,
-      builderImage: builderImageIcon || defaultIcon,
+      builderImage: builderImageIcon ?? defaultIcon,
       isKnativeResource:
         type &&
         (type === TYPE_EVENT_SOURCE ||

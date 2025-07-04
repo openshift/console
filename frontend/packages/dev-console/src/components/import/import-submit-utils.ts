@@ -434,6 +434,7 @@ export const createOrUpdateDeployment = (
     limits: { cpu, memory },
     git: { url: repository, ref },
     healthChecks,
+    customIcon,
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
@@ -452,6 +453,7 @@ export const createOrUpdateDeployment = (
     ...getRouteAnnotations(),
     'alpha.image.policy.openshift.io/resolve-names': '*',
     ...getTriggerAnnotation(name, imageName, namespace, imageChange),
+    'app.openshift.io/custom-icon': customIcon,
   };
   const podLabels = getPodLabels(Resources.Kubernetes, name);
   const templateLabels = getTemplateLabels(originalDeployment);
@@ -515,6 +517,7 @@ export const createOrUpdateDeploymentConfig = (
     limits: { cpu, memory },
     git: { url: repository, ref },
     healthChecks,
+    customIcon,
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
@@ -534,7 +537,10 @@ export const createOrUpdateDeploymentConfig = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
-      annotations: defaultAnnotations,
+      annotations: {
+        'app.openshift.io/custom-icon': customIcon,
+        ...defaultAnnotations,
+      },
     },
     spec: {
       selector: podLabels,
