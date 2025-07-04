@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { CUSTOM_ICON_ANNOTATION } from '@console/dev-console/src/const';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -164,6 +165,7 @@ export const createOrUpdateDeployment = (
     limits: { cpu, memory },
     imageStream: { image: imgName, namespace: imgNamespace },
     healthChecks,
+    customIcon,
   } = formData;
 
   const defaultAnnotations = {
@@ -177,6 +179,7 @@ export const createOrUpdateDeployment = (
       imageChange,
       imageStreamTag,
     ),
+    [CUSTOM_ICON_ANNOTATION]: customIcon,
   };
   const templateAnnotations = getCommonAnnotations();
 
@@ -248,6 +251,7 @@ export const createOrUpdateDeploymentConfig = (
     limits: { cpu, memory },
     imageStream: { image: imgName, namespace: imgNamespace },
     healthChecks,
+    customIcon,
   } = formData;
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(Resources.OpenShift, formData);
@@ -255,6 +259,7 @@ export const createOrUpdateDeploymentConfig = (
   const defaultAnnotations = {
     ...getCommonAnnotations(),
     ...getRouteAnnotations(),
+    [CUSTOM_ICON_ANNOTATION]: customIcon,
   };
   const templateAnnotations = getCommonAnnotations();
 
