@@ -1,28 +1,31 @@
 import * as React from 'react';
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
+import { screen, render, configure } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import * as Router from 'react-router-dom-v5-compat';
-import { ErrorPage404 } from '@console/internal/components/error';
-import { DetailsPage } from '@console/internal/components/factory';
-import { LoadingBox, StatusBox } from '@console/internal/components/utils';
-import store from '@console/internal/redux';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { mockHelmReleases } from '../../__tests__/helm-release-mock-data';
 import HelmReleaseDetails, { LoadedHelmReleaseDetails } from '../HelmReleaseDetails';
 
 let helmReleaseDetailsProps: React.ComponentProps<typeof HelmReleaseDetails>;
 let loadedHelmReleaseDetailsProps: React.ComponentProps<typeof LoadedHelmReleaseDetails>;
 
+configure({ testIdAttribute: 'data-test' });
+
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
-  useLocation: jest.fn(),
+  useLocation: jest.fn(() => ({ pathname: '', location: '' })),
   useNavigate: jest.fn(),
 }));
 
 // jest mock useClusterVersion
 jest.mock('@console/shared/src/hooks/version', () => ({
   useClusterVersion: jest.fn(),
+}));
+
+jest.mock('@console/internal/components/utils/firehose', () => ({
+  ...jest.requireActual('@console/internal/components/utils/firehose'),
+  Firehose: ({ children }) => children,
 }));
 
 describe('HelmReleaseDetails', () => {
@@ -61,68 +64,69 @@ describe('HelmReleaseDetails', () => {
     });
     jest.spyOn(Router, 'useLocation').mockReturnValue({
       pathname: '/helm-releases/ns/xyz/release/helm-mysql',
+      location: '',
+      search: '',
     });
   });
 
   it('should show the loading box if helm release data is not loaded', () => {
     loadedHelmReleaseDetailsProps.helmRelease.loaded = false;
-    const helmReleaseDetails = mount(
+    render(
       <BrowserRouter>
         <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
       </BrowserRouter>,
     );
-    expect(helmReleaseDetails.find(LoadingBox).exists()).toBe(true);
+    expect(screen.getByTestId('loading-box')).toBeTruthy();
   });
 
   it('should show an error if helm release data could not be loaded', () => {
     loadedHelmReleaseDetailsProps.helmRelease.loadError = new Error('An error!');
-    const helmReleaseDetails = mount(
+    render(
       <BrowserRouter>
         <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
       </BrowserRouter>,
     );
-    expect(helmReleaseDetails.find(StatusBox).exists()).toBe(true);
+    expect(screen.getByTestId('console-empty-state')).toBeTruthy();
   });
 
   it('should show the loading box if secret is not loaded', () => {
     loadedHelmReleaseDetailsProps.secrets.loaded = false;
     loadedHelmReleaseDetailsProps.secrets.loadError = undefined;
-    const helmReleaseDetails = mount(
+    render(
       <BrowserRouter>
         <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
       </BrowserRouter>,
     );
-    expect(helmReleaseDetails.find(LoadingBox).exists()).toBe(true);
+    expect(screen.getByTestId('loading-box')).toBeTruthy();
   });
 
   it('should show the status box if there is an error loading the secret', () => {
     loadedHelmReleaseDetailsProps.secrets.loadError = 'error 404';
-    const helmReleaseDetails = mount(
+    render(
       <BrowserRouter>
         <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
       </BrowserRouter>,
     );
-    expect(helmReleaseDetails.find(StatusBox).exists()).toBe(true);
+    expect(screen.getByTestId('console-empty-state')).toBeTruthy();
   });
 
   it('should render the DetailsPage component when secret gets loaded', () => {
-    const helmReleaseDetails = mount(
-      <BrowserRouter>
-        <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
-      </BrowserRouter>,
-    );
-    expect(helmReleaseDetails.find(DetailsPage).exists()).toBe(true);
+    renderWithProviders(<LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />);
+    expect(screen.getByText(loadedHelmReleaseDetailsProps.helmRelease.data.name)).toBeTruthy();
+    expect(screen.getByText('Details')).toBeTruthy();
+    expect(screen.getByText('Resources')).toBeTruthy();
+    expect(screen.getByText('Release notes')).toBeTruthy();
+    expect(screen.getByText('Revision history')).toBeTruthy();
   });
 
   it('should show the ErrorPage404 for an incorrect release name in the url', () => {
     loadedHelmReleaseDetailsProps.secrets.data = [];
-    const helmReleaseDetails = mount(
-      <Provider store={store}>
-        <BrowserRouter>
-          <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
-        </BrowserRouter>
-      </Provider>,
+    renderWithProviders(
+      <BrowserRouter>
+        <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
+      </BrowserRouter>,
     );
-    expect(helmReleaseDetails.find(ErrorPage404).exists()).toBe(true);
+    expect(screen.getByText('404: Page Not Found')).toBeTruthy();
+    expect(screen.getByText('Page Not Found (404)')).toBeTruthy();
   });
 });

@@ -1,9 +1,10 @@
-import { shallow } from 'enzyme';
-import { Link } from 'react-router-dom-v5-compat';
-import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
+import { screen, configure } from '@testing-library/react';
+import { RowFunctionArgs } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import HelmReleaseResourcesRow, { HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';
+
+configure({ testIdAttribute: 'data-test' });
 
 let rowArgs: RowFunctionArgs<K8sResourceKind>;
 
@@ -22,23 +23,22 @@ describe('helmReleaseResourcesRow', () => {
   });
 
   it('should render the TableData component', () => {
-    const helmReleaseResourcesRow = shallow(<HelmReleaseResourcesRow {...rowArgs} />);
-    expect(helmReleaseResourcesRow.find(TableData).exists()).toBe(true);
+    renderWithProviders(<HelmReleaseResourcesRow {...rowArgs} />);
+    // Check for table row content - Secret name should be displayed
+    expect(screen.getByText('sh.helm.release.v1.helm-mysql.v1')).toBeTruthy();
   });
 
   it('should render the number of pods deployed for resources that support it', () => {
-    const helmReleaseResourceStatus = shallow(<HelmReleaseResourceStatus resource={rowArgs.obj} />);
-    expect(helmReleaseResourceStatus.find(Status).exists()).toBe(true);
-    expect(helmReleaseResourceStatus.find(Status).props().status).toEqual('Created');
+    renderWithProviders(<HelmReleaseResourceStatus resource={rowArgs.obj} />);
+    // Check for status display
+    expect(screen.getByText('Created')).toBeTruthy();
 
     rowArgs.obj.kind = 'Deployment';
     rowArgs.obj.spec = { replicas: 1 };
     rowArgs.obj.status = { replicas: 1 };
 
-    const helmReleaseResourceStatus1 = shallow(
-      <HelmReleaseResourceStatus resource={rowArgs.obj} />,
-    );
-    expect(helmReleaseResourceStatus1.find(Link).exists()).toBe(true);
-    expect(helmReleaseResourceStatus1.find<any>(Link).props().title).toEqual('Pods');
+    renderWithProviders(<HelmReleaseResourceStatus resource={rowArgs.obj} />);
+    // Check for deployment-specific content like replica count
+    expect(screen.getByText('1 of 1 pods')).toBeTruthy();
   });
 });
