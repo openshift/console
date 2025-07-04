@@ -606,6 +606,12 @@ func main() {
 		caCertFilePath = k8sInClusterCA
 	}
 
+	tokenReviewer, err := auth.NewTokenReviewer(srv.InternalProxiedK8SClientConfig)
+	if err != nil {
+		klog.Fatalf("failed to create token reviewer: %v", err)
+	}
+	srv.TokenReviewer = tokenReviewer
+
 	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)
 		os.Exit(1)
