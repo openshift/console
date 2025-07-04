@@ -31,6 +31,8 @@ export const OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID = 'OperatorBackedService';
 export const SAMPLE_CATALOG_TYPE_ID = 'Sample';
 export const ADD_TO_PROJECT = 'add-to-project';
 
+export const CUSTOM_ICON_ANNOTATION = 'app.openshift.io/custom-icon';
+
 export const FLAG_JAVA_IMAGE_STREAM_ENABLED = 'JAVA_IMAGE_STREAM_ENABLED';
 export const IMAGESTREAM_NAMESPACE = 'openshift';
 export const JAVA_IMAGESTREAM_NAME = 'java';

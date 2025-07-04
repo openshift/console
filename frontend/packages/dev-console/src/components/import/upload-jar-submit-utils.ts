@@ -14,6 +14,7 @@ import {
   getKnativeServiceDepResource,
 } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { getRandomChars, NameValuePair, getResourceLimitsData } from '@console/shared';
+import { CUSTOM_ICON_ANNOTATION } from '../../const';
 import {
   getAppLabels,
   getCommonAnnotations,
@@ -55,6 +56,7 @@ export const createOrUpdateDeployment = (
     limits: { cpu, memory },
     healthChecks,
     runtimeIcon,
+    customIcon,
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
@@ -72,6 +74,7 @@ export const createOrUpdateDeployment = (
     'alpha.image.policy.openshift.io/resolve-names': '*',
     ...getTriggerAnnotation(name, imageName, namespace, imageChange),
     jarFileName: fileName,
+    [CUSTOM_ICON_ANNOTATION]: customIcon,
   };
   const podLabels = getPodLabels(Resources.Kubernetes, name);
   const templateLabels = getTemplateLabels(originalDeployment);
@@ -171,7 +174,10 @@ const createOrUpdateDeploymentConfig = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
-      annotations: { ...getCommonAnnotations() },
+      annotations: {
+        [CUSTOM_ICON_ANNOTATION]: formData.customIcon,
+        ...getCommonAnnotations(),
+      },
     },
     spec: {
       selector: podLabels,
