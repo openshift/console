@@ -47,7 +47,10 @@
     "properties": {
       "id": "admin-demo-section",
       "perspective": "admin",
-      "name": "%plugin__console-demo-plugin~Demo Plugin%"
+      "name": "%plugin__console-demo-plugin~Demo Plugin%",
+      "dataAttributes": {
+        "data-test": "admin-demo-section"
+      }
     }
   },
   {

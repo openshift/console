@@ -72,8 +72,14 @@ describe('Cluster dashboard', () => {
       const inventoryItems = [
         { title: 'Node', link: '/k8s/cluster/nodes' },
         { title: 'Pod', link: '/k8s/all-namespaces/pods' },
-        { title: 'StorageClass', link: '/k8s/cluster/storageclasses' },
-        { title: 'PersistentVolumeClaim', link: '/k8s/all-namespaces/persistentvolumeclaims' },
+        {
+          title: 'StorageClass',
+          link: '/k8s/cluster/storageclasses',
+        },
+        {
+          title: 'PersistentVolumeClaim',
+          link: '/k8s/all-namespaces/persistentvolumeclaims',
+        },
       ];
       inventoryItems.forEach((item, i) => {
         cy.byTestID('resource-inventory-item').eq(i).invoke('text').should('include', item.title);
