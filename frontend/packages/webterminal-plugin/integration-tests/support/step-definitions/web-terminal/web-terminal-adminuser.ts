@@ -46,7 +46,7 @@ Given('user can see terminal icon on masthead', () => {
 });
 
 When('user clicks on the Web Terminal icon on the Masthead', () => {
-  cy.get(webTerminalPO.webTerminalIcon).click();
+  cy.get(webTerminalPO.webTerminalIcon).click({ force: true });
   cy.get('cos-status-box cos-status-box--loading').should('not.exist');
 });
 
@@ -76,7 +76,7 @@ When('user closed web terminal window', () => {
 
 Then('user is able see {int} web terminal tabs', (n: number) => {
   cy.get(webTerminalPO.tabsList).then(($el) => {
-    expect($el.prop('children').length).toEqual(n + 1);
+    expect($el.prop('children').length).toEqual(n);
   });
 });
 

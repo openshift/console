@@ -31,6 +31,7 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import CloudShellMastheadButton from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
@@ -104,15 +105,13 @@ const FeedbackModalLocalized = ({ isOpen, onClose, reportBugLink }) => {
 const SystemStatusButton = ({ statuspageData }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
-    <a
-      className="pf-v6-c-button pf-m-plain co-masthead-button"
+    <ExternalLinkButton
+      variant="plain"
+      className="co-masthead-button"
       aria-label={t('public~System status')}
+      icon={<YellowExclamationTriangleIcon />}
       href={statuspageData.page.url}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <YellowExclamationTriangleIcon />
-    </a>
+    />
   ) : null;
 };
 
