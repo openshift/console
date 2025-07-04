@@ -50,10 +50,10 @@ export const Conditions: React.FC<ConditionsProps> = ({
           </>
         )}
         <Td data-test={`condition[${i}].lastTransitionTime`} visibility={['hidden', 'visibleOnLg']}>
-          <Timestamp timestamp={condition.lastTransitionTime} />
+          <Timestamp timestamp={condition.lastTransitionTime || ''} />
         </Td>
         <Td data-test={`condition[${i}].reason`}>
-          <CamelCaseWrap value={condition.reason} />
+          <CamelCaseWrap value={condition.reason || ''} />
         </Td>
         {/* remove initial newline which appears in route messages */}
         <Td

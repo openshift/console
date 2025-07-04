@@ -64,10 +64,10 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   const textInputRef = React.useRef<HTMLInputElement>();
 
   const resources = allModels
-    .filter(({ apiGroup, apiVersion, kind, verbs }) => {
+    .filter(({ apiGroup, apiVersion, kind, verbs }: K8sKind) => {
       // Remove blacklisted items.
       if (
-        blacklistGroups.has(apiGroup) ||
+        blacklistGroups.has(apiGroup || '') ||
         blacklistResources.has(`${apiGroup}/${apiVersion}.${kind}`)
       ) {
         return false;
@@ -80,15 +80,15 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
 
       // Only show preferred version for resources in the same API group.
       const preferred = (m: K8sKind) =>
-        groupToVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
+        groupToVersionMap?.[m.apiGroup || '']?.preferredVersion === m.apiVersion;
 
       const sameGroupKind = (m: K8sKind) =>
         m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
 
-      return !allModels.find((m) => sameGroupKind(m) && preferred(m));
+      return !allModels.find((m) => sameGroupKind(m!) && preferred(m!));
     })
     .toOrderedMap()
-    .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`);
+    .sortBy((m) => `${m?.kind || ''} ${m?.apiGroup || ''}`);
 
   React.useEffect(() => {
     const resourcesToOption: SelectOptionProps[] = resources.toArray().map((resource) => {
@@ -163,8 +163,8 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
 
   const createItemId = (value: any) => `resource-dropdown-${value.replace(' ', '-')}`;
   // Track duplicate names so we know when to show the group.
-  const kinds = resources.groupBy((m) => m.kind);
-  const isDup = (kind) => kinds.get(kind).size > 1;
+  const kinds = resources.groupBy((m) => m?.kind || '');
+  const isDup = (kind: string) => kinds.get(kind)?.size > 1;
 
   const items = selectOptions.map((option: SelectOptionProps, index) => {
     const model = resources.toArray().find((resource: K8sKind) => {
@@ -173,29 +173,29 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
 
     return (
       <SelectOption
-        key={referenceForModel(model)}
-        value={referenceForModel(model)}
+        key={referenceForModel(model!)}
+        value={referenceForModel(model!)}
         hasCheckbox
-        isSelected={selected.includes(referenceForModel(model))}
+        isSelected={selected.includes(referenceForModel(model!))}
         isFocused={focusedItemIndex === index}
-        id={createItemId(referenceForModel(model))}
+        id={createItemId(referenceForModel(model!))}
       >
         <span className="co-resource-item">
           <span className="co-resource-icon--fixed-width">
-            <ResourceIcon kind={referenceForModel(model)} />
+            <ResourceIcon kind={referenceForModel(model!) || ''} />
           </span>
           <span className="co-resource-item__resource-name">
             <span>
-              {model.labelKey ? t(model.labelKey) : model.kind}
-              {model.badge && model.badge === 'Tech Preview' && (
+              {model?.labelKey ? t(model.labelKey) : model?.kind}
+              {model?.badge && model?.badge === 'Tech Preview' && (
                 <span className="co-resource-item__tech-dev-preview">
                   {t('public~Tech Preview')}
                 </span>
               )}
             </span>
-            {isDup(model.kind) && (
-              <div className="co-resource-item__resource-api pf-v6-u-text-color-subtle co-truncate co-nowrap small">
-                {model.apiGroup || 'core'}/{model.apiVersion}
+            {isDup(model?.kind || '') && (
+              <div className="co-resource-item__resource-api text-muted co-truncate co-nowrap small">
+                {model?.apiGroup || 'core'}/{model?.apiVersion}
               </div>
             )}
           </span>

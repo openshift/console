@@ -33,7 +33,6 @@ const DynamicPlugins: React.FC = () => {
   const { t } = useTranslation();
   const [pluginInfoEntries] = useDynamicPluginInfo();
   const [items, setItems] = React.useState([]);
-
   React.useEffect(() => {
     const loadedPlugins = pluginInfoEntries.filter(isLoadedDynamicPluginInfo);
     const sortedLoadedPlugins = loadedPlugins.sort((a, b) =>
@@ -171,10 +170,10 @@ export const AboutModal: React.FC<AboutModalProps> = (props) => {
     <PfAboutModal
       isOpen={isOpen}
       onClose={closeAboutModal}
-      productName={productName}
-      brandImageSrc={customLogoUrl || (openShiftBranding && redHatFedoraImg)}
-      brandImageAlt={(openShiftBranding || customLogoUrl) && productName}
-      backgroundImageSrc={openShiftBranding && `/${redHatFedoraWatermarkImg}`}
+      productName={details.productName}
+      brandImageSrc={openShiftBranding ? redHatFedoraImg : ''}
+      brandImageAlt={openShiftBranding && details.productName}
+      backgroundImageSrc={openShiftBranding ? `/${redHatFedoraWatermarkImg}` : undefined}
       hasNoContentContainer
       aria-label="About modal"
     >

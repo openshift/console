@@ -111,7 +111,7 @@ export const AddRequestHeaderPage = () => {
         .then(() => {
           return createCAConfigMap()
             .then((configMap: K8sResourceKind) =>
-              addRequestHeaderIDP(oauth, configMap.metadata.name),
+              addRequestHeaderIDP(oauth, configMap.metadata?.name || ''),
             )
             .then(() => {
               redirectToOAuthPage(navigate);
@@ -190,33 +190,35 @@ export const AddRequestHeaderPage = () => {
           />
           <ListInput
             label={t('public~Client common names')}
+            onChange={(c: string[]) => setClientCommonNames(c as any)}
             id="request-header-client-common-names"
-            onChange={(c: string[]) => setClientCommonNames(c)}
             helpText={t('public~The set of common names to require a match from.')}
           />
           <ListInput
             label={t('public~Headers')}
+            onChange={(c: string[]) => setHeaders(c as any)}
             id="request-header-headers"
-            onChange={(c: string[]) => setHeaders(c)}
+
             helpText={t('public~The set of headers to check for identity information.')}
             required
           />
           <ListInput
             label={t('public~Preferred username headers')}
+            onChange={(c: string[]) => setPreferredUsernameHeaders(c as any)}
             id="request-header-preferred-username-headers"
-            onChange={(c: string[]) => setPreferredUsernameHeaders(c)}
             helpText={t('public~The set of headers to check for the preferred username.')}
           />
           <ListInput
             label={t('public~Name headers')}
+            onChange={(c: string[]) => setNameHeaders(c as any)}
             id="request-header-name-headers"
-            onChange={(c: string[]) => setNameHeaders(c)}
+
             helpText={t('public~The set of headers to check for the display name.')}
           />
           <ListInput
             label={t('public~Email headers')}
+            onChange={(c: string[]) => setEmailHeaders(c as any)}
             id="request-header-email-headers"
-            onChange={(c: string[]) => setEmailHeaders(c)}
             helpText={t('public~The set of headers to check for the email address.')}
           />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>

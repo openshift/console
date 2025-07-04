@@ -2,7 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import detector from 'i18next-browser-languagedetector';
 import httpBackend from 'i18next-http-backend';
-import Pseudo from 'i18next-pseudo';
+import Pseudo from 'i18next-pseudo/es';
 import { transformNamespace } from 'i18next-v4-format-converter';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 

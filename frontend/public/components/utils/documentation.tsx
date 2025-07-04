@@ -118,5 +118,5 @@ export const getDocumentationURL = (docURLs: docURLs) =>
 export const getNetworkPolicyDocURL = (openshiftFlag: boolean): string => {
   const networkLink = getDocumentationURL(documentationURLs.networkPolicy);
 
-  return openshiftFlag ? networkLink : documentationURLs.networkPolicy.kube;
+  return openshiftFlag ? networkLink : documentationURLs.networkPolicy.kube || '';
 };

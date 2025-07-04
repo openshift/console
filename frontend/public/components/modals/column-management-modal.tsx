@@ -93,7 +93,7 @@ export const ColumnManagementModal: React.FC<
     setTableColumns((prevState) => {
       return { ...prevState, [columnLayout.id]: [...orderedCheckedColumns] };
     });
-    close();
+    close?.();
   };
 
   const areMaxColumnsDisplayed = checkedColumns.size >= MAX_VIEW_COLS;
@@ -167,7 +167,11 @@ export const ColumnManagementModal: React.FC<
       </ModalBody>
       <ModalSubmitFooter
         inProgress={false}
-        cancel={cancel}
+        cancel={() => {
+          if (cancel) {
+            cancel();
+          }
+        }}
         submitText={t('public~Save')}
         resetText={t('public~Restore default columns')}
         reset={resetColumns}

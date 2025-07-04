@@ -39,7 +39,7 @@ export const menuActions: KebabAction[] = [
   AddStorage,
   ...Kebab.getExtensionsActionsForKind(StatefulSetModel),
   EditHealthChecks,
-  ...common,
+  ...common!,
 ];
 
 const kind = 'StatefulSet';
@@ -62,9 +62,9 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
     <>
       <PaneBody>
         <SectionHeading text={t('public~StatefulSet details')} />
-        <PodRingSet key={ss.metadata.uid} obj={ss} path="/spec/replicas" />
-        <Grid hasGutter>
-          <GridItem md={6}>
+        <PodRingSet key={ss.metadata?.uid} obj={ss} path="/spec/replicas" />
+        <div className="row">
+          <div className="col-md-6">
             <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations>
               <RuntimeClass obj={ss} />
             </ResourceSummary>
@@ -98,7 +98,7 @@ const envPath = ['spec', 'template', 'spec', 'containers'];
 const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
   <EnvironmentPage
     obj={props.obj}
-    rawEnvData={props.obj.spec.template.spec}
+    rawEnvData={props.obj.spec?.template.spec}
     envPath={envPath}
     readOnly={false}
   />

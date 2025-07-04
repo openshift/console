@@ -15,7 +15,7 @@ enum AsyncComponentError {
 }
 
 export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncComponentState> {
-  state: AsyncComponentState = { Component: null, loader: null };
+  state: AsyncComponentState = { Component: null as any, loader: null as any };
   props: AsyncComponentProps;
 
   private retryCount: number = 0;

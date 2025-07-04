@@ -13,10 +13,10 @@ export const useK8sGet = <R extends K8sResourceCommon = K8sResourceCommon>(
   React.useEffect(() => {
     const fetch = async () => {
       try {
-        setLoadError(null);
+        setLoadError(undefined);
         setLoaded(false);
-        setData(null);
-        const resource = await k8sGet(kind, name, namespace, opts);
+        setData(undefined);
+        const resource = await k8sGet(kind, name || '', namespace || '', opts);
         setData(resource);
       } catch (error) {
         setLoadError(error);
@@ -27,5 +27,5 @@ export const useK8sGet = <R extends K8sResourceCommon = K8sResourceCommon>(
     fetch();
   }, [kind, name, namespace, opts]);
 
-  return [data, loaded, loadError];
+  return [data!, loaded, loadError];
 };

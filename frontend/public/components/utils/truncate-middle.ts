@@ -23,20 +23,20 @@ export const truncateMiddle = (text: string, options: TruncateOptions = {}): str
   }
 
   // Do not truncate less than the minimum truncate characters
-  if (text.length <= length + minTruncateChars) {
+  if (text.length <= (length || 0) + (minTruncateChars || 0)) {
     return text;
   }
 
-  if (length <= omission.length) {
-    return omission;
+  if (length && length <= (omission?.length || 0)) {
+    return omission || '';
   }
 
   if (truncateEnd) {
-    return `${text.substr(0, length - 1)}${omission}`;
+    return `${text.substr(0, (length || 0) - 1)}${omission || ''}`;
   }
 
-  const startLength = Math.ceil((length - omission.length) / 2);
-  const endLength = length - startLength - omission.length;
+  const startLength = Math.ceil(((length || 0) - (omission?.length || 0)) / 2);
+  const endLength = (length || 0) - startLength - (omission?.length || 0);
   const startFragment = text.substr(0, startLength);
   const endFragment = text.substr(text.length - endLength);
   return `${startFragment}${omission}${endFragment}`;
@@ -45,5 +45,5 @@ export const truncateMiddle = (text: string, options: TruncateOptions = {}): str
 export const shouldTruncate = (text, options: TruncateOptions = {}): boolean => {
   const { length, minTruncateChars } = { ...DEFAULT_OPTIONS, ...options };
 
-  return text.length > length + minTruncateChars;
+  return text.length > (length || 0) + (minTruncateChars || 0);
 };

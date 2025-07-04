@@ -17,7 +17,12 @@ export const TableHeader: React.FCC<TableHeaderProps> = ({
   return (
     <Thead>
       <Tr>
-        {onSelect && <Th aria-label={t('public~Row select')} {...select} />}
+        {onSelect && (
+          <Th
+            aria-label={t('public~Row select')}
+            {...{ select: { ...select, isSelected: select?.select?.isSelected ?? false } }}
+          />
+        )}
         {columns.map(({ id, title, sort, sortField, sortFunc, props }, columnIndex) => {
           const sortable = sortField || sortFunc || sort;
           return (

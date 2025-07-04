@@ -45,7 +45,7 @@ const RecentEvent = withDashboardResources(
     }, [watchK8sResource, stopWatchK8sResource]);
     return (
       <RecentEventsBody
-        events={resources.events as FirehoseResult<EventKind[]>}
+        events={resources?.events as FirehoseResult<EventKind[]>}
         moreLink={viewEvents}
       />
     );
@@ -124,10 +124,15 @@ const OngoingActivity = connect(mapStateToProps)(
                 [],
               ) as FirehoseResult['data'];
               return k8sResources
-                .filter((r) => (a.properties.isActivity ? a.properties.isActivity(r) : true))
+                .filter((r) =>
+                  typeof a.properties.isActivity === 'function' ? a.properties.isActivity(r) : true,
+                )
                 .map((r) => ({
                   resource: r,
-                  timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
+                  timestamp:
+                    typeof a.properties.getTimestamp === 'function'
+                      ? a.properties.getTimestamp(r)
+                      : null,
                   loader: (a as DashboardsOverviewResourceActivity)?.properties?.loader,
                   component: (a as ResolvedExtension<DynamicDashboardsOverviewResourceActivity>)
                     ?.properties?.component,
@@ -164,7 +169,7 @@ const OngoingActivity = connect(mapStateToProps)(
         () =>
           resourceActivities.every((a, index) => {
             const uniqueProp = uniqueResource(a.properties.k8sResource, index).prop;
-            return resources[uniqueProp]?.loaded || resources[uniqueProp]?.loadError;
+            return resources && (resources[uniqueProp]?.loaded || resources[uniqueProp]?.loadError);
           }),
         [resourceActivities, resources],
       );

@@ -32,25 +32,21 @@ const Details: React.SFC<DetailsProps> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <PaneBody>
-      <SectionHeading text={t('public~Alertmanager details')} />
-      <Grid hasGutter>
-        <GridItem sm={6}>
-          <DescriptionList>
-            <DescriptionListGroup>
-              <DescriptionListTerm>Name</DescriptionListTerm>
-              <DescriptionListDescription>{metadata.name}</DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>Labels</DescriptionListTerm>
-              <DescriptionListDescription>
-                <LabelList kind="Alertmanager" labels={metadata.labels} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            {spec.nodeSelector && (
-              <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Alertmanager node selector')}</DescriptionListTerm>{' '}
-                <DescriptionListDescription>
+    <div>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('public~Alertmanager details')} />
+        <div className="row">
+          <div className="col-sm-6 col-xs-12">
+            <dl className="co-m-pane__details">
+              <dt>Name</dt>
+              <dd>{metadata?.name}</dd>
+              <dt>Labels</dt>
+              <dd>
+                <LabelList kind="Alertmanager" labels={metadata?.labels || {} } />
+              </dd>
+              {spec?.nodeSelector && <dt>{t('public~Alertmanager node selector')}</dt>}
+              {spec?.nodeSelector && (
+                <dd>
                   <Selector selector={spec.nodeSelector} kind="Node" />
                 </DescriptionListDescription>
               </DescriptionListGroup>
@@ -61,7 +57,7 @@ const Details: React.SFC<DetailsProps> = (props) => {
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>Version</DescriptionListTerm>
-              <DescriptionListDescription>{spec.version}</DescriptionListDescription>
+              <DescriptionListDescription>{spec?.version}</DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
               <DescriptionListTerm>Replicas</DescriptionListTerm>
@@ -74,7 +70,7 @@ const Details: React.SFC<DetailsProps> = (props) => {
                   isInline
                   onClick={openReplicaCountModal}
                 >
-                  {pluralize(spec.replicas, 'pod')}
+                  {pluralize(spec?.replicas, 'pod')}
                 </Button>
               </DescriptionListDescription>
             </DescriptionListGroup>
@@ -108,20 +104,20 @@ const AlertManagerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(AlertmanagerModel)}
-          name={metadata.name}
-          namespace={metadata.namespace}
-          title={metadata.uid}
+          name={metadata?.name}
+          namespace={metadata?.namespace}
+          title={metadata?.uid}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
+        <ResourceLink kind="Namespace" name={metadata?.namespace} title={metadata?.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={AlertmanagerModel.kind} labels={metadata.labels} />
+        <LabelList kind={AlertmanagerModel.kind} labels={metadata?.labels || {}} />
       </TableData>
-      <TableData className={tableColumnClasses[3]}>{spec.version}</TableData>
+      <TableData className={tableColumnClasses[3]}>{spec?.version}</TableData>
       <TableData className={tableColumnClasses[4]}>
-        <Selector selector={spec.nodeSelector} kind="Node" />
+        <Selector selector={spec?.nodeSelector} kind="Node" />
       </TableData>
     </>
   );

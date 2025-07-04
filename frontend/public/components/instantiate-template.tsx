@@ -69,9 +69,9 @@ TemplateResourceDetails.displayName = 'TemplateResourceDetails';
 
 const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
   const { t } = useTranslation();
-  const annotations = template.metadata.annotations || {};
+  const annotations = template.metadata!.annotations || {};
   const { description } = annotations;
-  const displayName = annotations[ANNOTATIONS.displayName] || template.metadata.name;
+  const displayName = annotations[ANNOTATIONS.displayName] || template.metadata!.name;
   const iconClass = getTemplateIcon(template);
   const imgURL = iconClass ? getImageForIconClass(iconClass) : catalogImg;
   const tags = (annotations.tags || '').split(/\s*,\s*/);
@@ -259,7 +259,7 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
       spec: {
         template: obj.data as TemplateKind,
         secret: {
-          name: secret.metadata.name,
+          name: secret.metadata?.name || '',
         },
       },
     };
@@ -276,10 +276,10 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
         ...secret.metadata,
         ownerReferences: [
           {
-            apiVersion: templateInstance.apiVersion,
-            kind: templateInstance.kind,
-            name: templateInstance.metadata.name,
-            uid: templateInstance.metadata.uid,
+            apiVersion: templateInstance.apiVersion ?? '',
+            kind: templateInstance.kind ?? '',
+            name: templateInstance.metadata?.name ?? '',
+            uid: templateInstance.metadata?.uid ?? '',
           },
         ],
       },
@@ -287,8 +287,8 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
     return k8sUpdateResource({
       model: SecretModel,
       data: updatedSecret,
-      name: secret.metadata.name,
-      ns: secret.metadata.namespace,
+      name: secret.metadata?.name,
+      ns: secret.metadata?.namespace,
     });
   };
 
@@ -310,6 +310,9 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
           const activeExtension = perspectiveExtensions.find(
             (p) => p.properties.id === activePerspective,
           );
+          if (!activeExtension) {
+            throw new Error('Active extension not found');
+          }
           const url = (await activeExtension.properties.importRedirectURL())(namespace);
           navigate(url);
         });
@@ -362,9 +365,9 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
                   key={name}
                   name={name}
                   value={value}
-                  displayName={displayName}
-                  description={description}
-                  required={requiredInput}
+                  displayName={displayName ?? ''}
+                  description={description ?? ''}
+                  required={requiredInput ?? false}
                   onChange={onParameterChanged}
                   placeholder={placeholder}
                   helpID={helpID}

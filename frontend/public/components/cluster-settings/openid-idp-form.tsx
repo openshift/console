@@ -119,7 +119,7 @@ export const AddOpenIDIDPPage = () => {
     };
 
     if (caName) {
-      idp.openID.ca = {
+      idp.openID!.ca = {
         name: caName,
       };
     }
@@ -255,22 +255,15 @@ export const AddOpenIDIDPPage = () => {
             />
           </div>
           <div className="co-form-section__separator" />
-          <div data-testid="openid-more-options-list-input">
-            <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-              {t('public~More options')}
-            </Title>
-            <IDPCAFileInput
-              id="ca-file-input"
-              value={caFileContent}
-              onChange={(c: string) => setCaFileContent(c)}
-            />
-            <ListInput
-              label={t('public~Extra scopes')}
-              id="openid-more-options-extra-scopes"
-              onChange={(c: string[]) => setExtraScopes(c)}
-              helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
-            />
-          </div>
+          <Title headingLevel="h3" className="pf-v6-u-mb-sm">
+            {t('public~More options')}
+          </Title>
+          <IDPCAFileInput value={caFileContent} onChange={(c: string) => setCaFileContent(c)} />
+          <ListInput
+            label={t('public~Extra scopes')}
+            onChange={(c: string[]) => setExtraScopes(c as any)}
+            helpText={t('public~Any scopes to request in addition to the standard openid scope.')}
+          />
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
               <Button type="submit" variant="primary" data-test-id="add-idp">

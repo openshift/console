@@ -41,6 +41,7 @@ const RowMemo = React.memo<
     if (nextProps.isScrolling) {
       return true;
     }
+    return false;
   },
 );
 
@@ -72,7 +73,7 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
     const rowArgs: RowProps<D, R> = {
       obj: data[index],
       activeColumnIDs,
-      rowData,
+      rowData: rowData || ({} as R),
       index,
       onSelect,
     };

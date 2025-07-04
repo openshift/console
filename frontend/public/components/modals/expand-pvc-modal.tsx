@@ -46,7 +46,7 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
       .then((resource) => {
         setInProgress(false);
         props.close();
-        navigate(resourceObjPath(resource, referenceFor(resource)));
+        navigate(resourceObjPath(resource, referenceFor(resource))!);
       })
       .catch((err) => {
         setErrorMessage(err.message);
@@ -69,7 +69,7 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
         <p>
           <Trans t={t} ns="public">
             Increase the capacity of PVC{' '}
-            <strong className="co-break-word">{{ resourceName: resource.metadata.name }}.</strong>{' '}
+            <strong className="co-break-word">{{ resourceName: resource.metadata!.name }}.</strong>{' '}
             Note that capacity can't be less than the current PVC size. This can be a time-consuming
             process.
           </Trans>
@@ -90,7 +90,11 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitText={t('public~Expand')}
-        cancel={props.cancel}
+        cancel={() => {
+          if (props.cancel) {
+            props.cancel();
+          }
+        }}
       />
     </form>
   );

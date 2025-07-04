@@ -20,11 +20,11 @@ export const useURLPoll: UseURLPoll = <R>(
       safeFetch(url)
         .then((data) => {
           setResponse(data);
-          setError(null);
+          setError(null as any);
         })
         .catch((err) => {
           if (err.name !== 'AbortError') {
-            setResponse(null);
+            setResponse(null as any);
             setError(err);
             // eslint-disable-next-line no-console
             console.error(`Error polling URL: ${err}`);

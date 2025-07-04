@@ -61,7 +61,9 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
   };
 
   const cancel = () => {
-    props.close();
+    if (props.close) {
+      props.close();
+    }
   };
 
   const change = (e, i: number, field: string) => {

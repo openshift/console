@@ -37,7 +37,11 @@ export const AddUsersModal = withHandlePromise((props: AddUsersModalProps) => {
         errorMessage={props.errorMessage}
         inProgress={props.inProgress}
         submitText={t('public~Save')}
-        cancel={props.cancel}
+        cancel={() => {
+          if (props.cancel) {
+            props.cancel();
+          }
+        }}
       />
     </form>
   );

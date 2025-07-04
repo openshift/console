@@ -48,7 +48,7 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
     event.preventDefault();
     handlePromise(k8sKill(kind, resource))
       .then(() => {
-        if (resource.metadata.name === activeNamespace) {
+        if (resource.metadata!.name === activeNamespace) {
           if (ALL_NAMESPACES_KEY !== activeNamespace) {
             const oldPath = window.location.pathname;
             const newPath = formatNamespaceRoute(ALL_NAMESPACES_KEY, oldPath, window.location);
@@ -68,27 +68,27 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
   };
 
   const onKeyUp = (e) => {
-    setConfirmed(e.currentTarget.value === resource.metadata.name);
+    setConfirmed(e.currentTarget.value === resource.metadata!.name);
   };
 
   return (
     <form onSubmit={onSubmit} name="form" className="modal-content">
       <ModalTitle className="modal-header">
         <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-        {t('public~Delete {{label}}?', { label: t(kind.labelKey) })}
+        {t('public~Delete {{label}}?', { label: t(kind.labelKey!) })}
       </ModalTitle>
       <ModalBody>
         <p>
           <Trans t={t} ns="public">
             This action cannot be undone. It will destroy all pods, services and other objects in
             the namespace{' '}
-            <strong className="co-break-word">{{ name: resource.metadata.name }}</strong>.
+            <strong className="co-break-word">{{ name: resource.metadata!.name }}</strong>.
           </Trans>
         </p>
         <p>
           <Trans t={t} ns="public">
             Confirm deletion by typing{' '}
-            <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
+            <strong className="co-break-word">{{ name: resource.metadata!.name }}</strong> below:
           </Trans>
         </p>
         <span className="pf-v6-c-form-control">
@@ -98,7 +98,7 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
             onKeyUp={onKeyUp}
             placeholder={t('public~Enter name')}
             aria-label={t('public~Enter the name of the {{label}} to delete', {
-              label: t(kind.labelKey),
+              label: t(kind.labelKey!),
             })}
             autoFocus={true}
           />

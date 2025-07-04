@@ -42,12 +42,12 @@ const TemplateInstanceTableRow: React.FC<RowFunctionArgs<TemplateInstanceKind>> 
       <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink
           kind="TemplateInstance"
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata!.name}
+          namespace={obj.metadata!.namespace}
         />
       </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={obj.metadata!.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <Status status={getTemplateInstanceStatus(obj)} />
@@ -150,29 +150,27 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
                 <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
                 <DescriptionListDescription>
                   <Status status={status} />
-                </DescriptionListDescription>
-              </DescriptionListGroup>
-              {secretName && (
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~Parameters')}</DescriptionListTerm>
-                  <DescriptionListDescription>
-                    <ResourceLink
-                      kind="Secret"
-                      name={secretName}
-                      namespace={obj.metadata.namespace}
-                    />
-                  </DescriptionListDescription>
-                </DescriptionListGroup>
-              )}
-              <DescriptionListGroup>
-                <DescriptionListTerm>{t('public~Requester')}</DescriptionListTerm>
-                <DescriptionListDescription>{requester || '-'}</DescriptionListDescription>
-              </DescriptionListGroup>
-            </DescriptionList>
-          </GridItem>
-        </Grid>
-      </PaneBody>
-      <PaneBody>
+                </dd>
+                {secretName && (
+                  <>
+                    <dt>{t('public~Parameters')}</dt>
+                    <dd>
+                      <ResourceLink
+                        kind="Secret"
+                        name={secretName}
+                        namespace={obj.metadata!.namespace}
+                      />
+                    </dd>
+                  </>
+                )}
+                <dt>{t('public~Requester')}</dt>
+                <dd>{requester || '-'}</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="co-m-pane__body">
         <SectionHeading text={t('public~Objects')} />
         {_.isEmpty(objects) ? (
           <EmptyBox label={t('public~Objects')} />

@@ -8,22 +8,48 @@ import { SecretFormType } from './types';
 import { toSecretFormType } from './utils';
 import { SecretFormWrapper } from './SecretFormWrapper';
 
-export const EditSecret: React.FC<EditSecretProps> = ({ kind }) => {
-  const { name, ns } = useParams();
+export const SecretLoadingWrapper = withTranslation()(
+  class SecretLoadingWrapper extends React.Component<
+    SecretLoadingWrapperProps & WithT,
+    SecretLoadingWrapperState
+  > {
+    readonly state: SecretLoadingWrapperState = {
+      secretTypeAbstraction: SecretTypeAbstraction.generic,
+    };
+    componentDidUpdate() {
+      if (!_.isEmpty(this.props.obj?.data)) {
+        const secretTypeAbstraction = toTypeAbstraction(this.props.obj?.data);
+        if (this.state.secretTypeAbstraction !== secretTypeAbstraction) {
+          this.setState({
+            secretTypeAbstraction,
+          });
+        }
+      }
+    }
+    render() {
+      const { obj, fixedKeys } = this.props;
+      const { secretTypeAbstraction } = this.state;
+      if (!secretTypeAbstraction) {
+        return <LoadingBox />;
+      }
+      const fixed = fixedKeys?.reduce((acc, k) => ({ ...acc, [k]: obj?.data?.[k] || '' }), {});
 
-  const [secret, secretLoaded, secretError] = useK8sWatchResource<K8sResourceKind>({
-    kind,
-    isList: false,
-    namespace: ns,
-    name,
-  });
+      return (
+        <StatusBox {...obj}>
+          <SecretFormWrapper
+            {...this.props}
+            secretTypeAbstraction={secretTypeAbstraction}
+            obj={obj?.data}
+            fixed={fixed}
+          />
+        </StatusBox>
+      );
+    }
+  },
+);
 
-  const fixedData = secretLoaded
-    ? ['kind', 'metadata'].reduce((acc, k) => ({ ...acc, [k]: secret[k] || '' }), {})
-    : null;
-
-  const formType = secretLoaded ? toSecretFormType(secret) : SecretFormType.generic;
-
+export const EditSecret = ({ kind }: EditSecretProps) => {
+  const params = useParams();
   const { t } = useTranslation();
 
   return (

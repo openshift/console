@@ -112,7 +112,7 @@ export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEdito
       </FormBody>
       <FormFooter
         handleSubmit={handleSubmit}
-        handleReset={isCreateFlow ? null : onReload}
+        handleReset={values.isCreateFlow ? undefined : onReload}
         errorMessage={status?.submitError || (immutableCfg && immutableCfgError)}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
@@ -122,7 +122,9 @@ export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEdito
         submitLabel={isCreateFlow ? t('public~Create') : t('public~Save')}
         disableSubmit={disableSubmit}
         handleCancel={handleCancel}
-        handleDownload={editorType === EditorType.YAML && (() => downloadYaml(yamlData))}
+        handleDownload={
+          values.editorType === EditorType.YAML ? () => downloadYaml(values.yamlData) : undefined
+        }
         sticky
       />
     </FlexForm>

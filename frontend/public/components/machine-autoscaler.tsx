@@ -30,7 +30,7 @@ import {
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(MachineAutoscalerModel), ...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(MachineAutoscalerModel), ...common!];
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
 const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = ({ obj }) => {
@@ -45,7 +45,7 @@ const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = 
   const reference = referenceForGroupVersionKind(groupVersion.group)(groupVersion.version)(
     targetKind,
   );
-  return <ResourceLink kind={reference} name={targetName} namespace={obj.metadata.namespace} />;
+  return <ResourceLink kind={reference} name={targetName} namespace={obj.metadata!.namespace} />;
 };
 
 const tableColumnClasses = [
@@ -63,12 +63,15 @@ const MachineAutoscalerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={machineAutoscalerReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata!.name}
+          namespace={obj.metadata!.namespace}
         />
       </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={obj.metadata!.namespace} />
       </TableData>
       <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         <MachineAutoscalerTargetLink obj={obj} />

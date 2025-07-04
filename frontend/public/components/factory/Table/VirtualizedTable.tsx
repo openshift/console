@@ -60,12 +60,18 @@ const isColumnVisible = <D extends any>(
   return true;
 };
 
-export const TableData: React.FC<TableDataProps> = ({ className, id, activeColumnIDs, children }) =>
-  (activeColumnIDs.has(id) || id === '') && (
+export const TableData: React.FC<TableDataProps> = ({
+  className,
+  id,
+  activeColumnIDs,
+  children,
+}) => {
+  return activeColumnIDs.has(id) || id === '' ? (
     <Td data-label={id} className={className} role="gridcell">
       {children}
     </Td>
-  );
+  ) : null;
+};
 TableData.displayName = 'TableData';
 
 const VirtualizedTable: VirtualizedTableFC = ({
@@ -173,7 +179,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
   const downloadCsv = () => {
     // csvData should be formatted as comma-seperated values
     // (e.g. `"a","b","c", \n"d","e","f", \n"h","i","j"`)
-    const blobCsvData = new Blob([csvData], { type: 'text/csv' });
+    const blobCsvData = new Blob([csvData!], { type: 'text/csv' });
     const csvURL = URL.createObjectURL(blobCsvData);
     const link = document.createElement('a');
     link.href = csvURL;
@@ -218,7 +224,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
                   {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
                     <AutoSizer disableHeight>
                       {({ width }) => (
-                        <div ref={registerChild}>
+                        <div ref={registerChild as any}>
                           <VirtualizedTableBody
                             columns={columns}
                             data={sortedData}

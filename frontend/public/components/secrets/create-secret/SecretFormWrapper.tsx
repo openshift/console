@@ -29,7 +29,9 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   const params = useParams();
 
   const existingSecret = _.pick(props.obj, ['metadata', 'type']);
-  const defaultSecretType = toDefaultSecretType(formType);
+  const defaultSecretType = toDefaultSecretType(
+    secretTypeAbstraction || SecretTypeAbstraction.generic,
+  );
   const initialSecret = _.defaultsDeep({}, props.fixed, existingSecret, {
     apiVersion: 'v1',
     data: {},
@@ -54,8 +56,11 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   );
   const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
   const [disableForm, setDisableForm] = React.useState(false);
-  const title = useSecretTitle(isCreate, formType);
-  const helptext = useSecretDescription(formType);
+  const title = useSecretTitle(
+    isCreate || false,
+    secretTypeAbstraction || SecretTypeAbstraction.generic,
+  );
+  const helptext = useSecretDescription(secretTypeAbstraction || SecretTypeAbstraction.generic);
   const cancel = () => navigate(`/k8s/ns/${params.ns}/core~v1~Secret`);
 
   const onDataChanged = (secretsData) => {
@@ -81,7 +86,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     setInProgress(true);
     const data = {
       ..._.mapValues(stringData, (value) => {
-        return Base64.encode(value);
+        return Base64.encode(value || '');
       }),
       ...base64StringData,
     };
@@ -105,7 +110,10 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
           props.onSave(s.metadata.name);
         }
         if (!props.modal) {
-          navigate(resourceObjPath(s, referenceFor(s)));
+          const path = resourceObjPath(s, referenceFor(s));
+          if (path) {
+            navigate(path);
+          }
         }
       },
       (err) => {
@@ -144,11 +152,11 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
           </div>
         </fieldset>
         <SecretSubForm
-          formType={formType}
+          typeAbstraction={props.secretTypeAbstraction || SecretTypeAbstraction.generic}
           onChange={onDataChanged}
           onError={onError}
           onFormDisable={(disable) => setDisableForm(disable)}
-          stringData={stringData}
+          stringData={stringData as any}
           secretType={secret.type}
           isCreate={isCreate}
           base64StringData={base64StringData}

@@ -27,7 +27,7 @@ const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(ImageStreamTagModel), ...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(ImageStreamTagModel), ...common!];
 
 // Splits a name/value pair separated by an `=`
 const splitEnv = (nameValue: string) => {
@@ -314,8 +314,8 @@ const ImageStreamTagHistory: React.FC<ImageStreamTagHistoryProps> = ({
   return (
     <ImageStreamTimeline
       imageStreamTags={imageStreamStatusTags}
-      imageStreamName={imageStream.metadata.name}
-      imageStreamNamespace={imageStream.metadata.namespace}
+      imageStreamName={imageStream.metadata?.name || ''}
+      imageStreamNamespace={imageStream.metadata?.namespace || ''}
     />
   );
 };

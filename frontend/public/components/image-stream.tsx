@@ -25,7 +25,6 @@ import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Kebab, ResourceKebab } from './utils/kebab';
-import { SectionHeading } from './utils/headings';
 import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
@@ -53,7 +52,7 @@ const getStatusTags = (imageStream: K8sResourceKind): any => {
 
 export const getBuilderTags = (imageStream: K8sResourceKind): any[] => {
   const statusTags = getStatusTags(imageStream);
-  return _.filter(imageStream.spec.tags, (tag) => isBuilderTag(tag) && statusTags[tag.name]);
+  return _.filter(imageStream.spec?.tags, (tag) => isBuilderTag(tag) && statusTags[tag.name]);
 };
 
 // Sort tags in reverse order by semver, falling back to a string comparison if not a valid version.
@@ -85,7 +84,7 @@ export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
 export const isBuilder = (imageStream: K8sResourceKind) => !_.isEmpty(getBuilderTags(imageStream));
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(ImageStreamModel), ...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(ImageStreamModel), ...common!];
 
 const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
   imageStream,
@@ -109,8 +108,8 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
       <Td modifier="breakWord">
         <ResourceLink
           kind={ImageStreamTagsReference}
-          name={getImageStreamTagName(imageStream.metadata.name, statusTag.tag)}
-          namespace={imageStream.metadata.namespace}
+          name={getImageStreamTagName(imageStream.metadata?.name ?? '', statusTag.tag)}
+          namespace={imageStream.metadata?.namespace}
           title={statusTag.tag}
           linkTo={!!image}
         />
@@ -120,7 +119,7 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({
           <ResourceLink
             kind={ImageStreamTagsReference}
             name={from.name}
-            namespace={imageStream.metadata.namespace}
+            namespace={imageStream.metadata?.namespace}
             title={from.name}
           />
         )}
@@ -214,7 +213,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
   const { t } = useTranslation();
 
   const getImportErrors = (): string[] => {
-    return _.transform(imageStream.status.tags, (acc, tag: any) => {
+    return _.transform(imageStream.status!.tags, (acc, tag: any) => {
       const importErrorCondition = _.find(
         tag.conditions,
         (condition) => condition.type === 'ImportSuccess' && condition.status === 'False',
@@ -222,7 +221,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
       importErrorCondition &&
         acc.push(
           t('public~Unable to sync image for tag {{tag}}. {{message}}', {
-            tag: `${imageStream.metadata.name}:${tag.tag}`,
+            tag: `${imageStream.metadata!.name}:${tag.tag}`,
             message: importErrorCondition.message,
           }),
         );
@@ -232,7 +231,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
   const imageRepository = _.get(imageStream, 'status.dockerImageRepository');
   const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
   const imageCount = _.get(imageStream, 'status.tags.length');
-  const specTagByName = _.keyBy(imageStream.spec.tags, 'name');
+  const specTagByName = _.keyBy(imageStream.spec!.tags, 'name');
   const importErrors = getImportErrors();
 
   return (
@@ -275,8 +274,8 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Tags')} />
-        {_.isEmpty(imageStream.status.tags) ? (
-          <span className="pf-v6-u-text-color-subtle">{t('public~No tags')}</span>
+        {_.isEmpty(imageStream.status!.tags) ? (
+          <span className="text-muted">{t('public~No tags')}</span>
         ) : (
           <PfTable gridBreakPoint="">
             <Thead>
@@ -288,7 +287,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
               </Tr>
             </Thead>
             <Tbody>
-              {_.map(imageStream.status.tags, (statusTag) => (
+              {_.map(imageStream.status!.tags, (statusTag) => (
                 <ImageStreamTagsRow
                   key={statusTag.tag}
                   imageStream={imageStream}
@@ -309,8 +308,8 @@ const ImageStreamHistory: React.FC<ImageStreamHistoryProps> = ({ obj: imageStrea
   return (
     <ImageStreamTimeline
       imageStreamTags={imageStreamStatusTags}
-      imageStreamName={imageStream.metadata.name}
-      imageStreamNamespace={imageStream.metadata.namespace}
+      imageStreamName={imageStream.metadata?.name ?? ' '}
+      imageStreamNamespace={imageStream.metadata?.namespace ?? ''}
     />
   );
 };
@@ -340,18 +339,21 @@ const ImageStreamsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj 
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={ImageStreamsReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata!.name}
+          namespace={obj.metadata!.namespace}
         />
       </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      <TableData
+        className={css(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={obj.metadata?.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={ImageStreamsReference} labels={obj.metadata.labels} />
+        <LabelList kind={ImageStreamsReference} labels={obj.metadata?.labels || {}} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata?.creationTimestamp || ''} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={ImageStreamsReference} resource={obj} />

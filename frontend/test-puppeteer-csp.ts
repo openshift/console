@@ -21,7 +21,7 @@ const baseDir = path.resolve(__dirname, '.puppeteer');
 const cacheDir = path.resolve(baseDir, 'cache');
 const userDataDir = path.resolve(baseDir, 'user-data');
 
-const parseNumValue = (value: string, defaultValue: number) => {
+const parseNumValue = (value: string | undefined, defaultValue: number) => {
   if (!value) {
     return defaultValue;
   }
@@ -60,9 +60,13 @@ const initBrowserInstance = async () => {
   if (!browser) {
     console.info(`Browser ${testBrowser} not found, installing...`);
 
+    const platform = detectBrowserPlatform();
+    if (!platform) {
+      throw new Error('Could not detect browser platform');
+    }
     browser = await install({
       browser: testBrowser,
-      buildId: await resolveBuildId(testBrowser, detectBrowserPlatform(), testBrowserTag),
+      buildId: await resolveBuildId(testBrowser, platform, testBrowserTag),
       cacheDir,
     });
   }
@@ -117,7 +121,7 @@ const testPage = async (
     // the network and therefore avoiding the need to implement that reporting endpoint.
     else if (resourceType === 'CSPViolationReport' && request.url === cspReportURL.href) {
       try {
-        console.error('CSP violation detected:', JSON.parse(request.postData));
+        console.error('CSP violation detected:', JSON.parse(request.postData || 'null'));
       } catch (e) {
         console.error('CSP violation detected, but request POST data failed to parse as JSON');
       }
@@ -134,11 +138,12 @@ const testPage = async (
 
   console.info(`Loading page ${pageURL}`);
 
-  let response: HTTPResponse;
+  let response: HTTPResponse | undefined = undefined;
 
   try {
     console.time('page-load');
-    response = await page.goto(pageURL.href, { timeout: envParameters.pageLoadTimeout });
+    response =
+      (await page.goto(pageURL.href, { timeout: envParameters.pageLoadTimeout })) ?? undefined;
   } catch (e) {
     console.warn('Page was not fully loaded within the timeout');
   } finally {

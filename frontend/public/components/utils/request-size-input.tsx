@@ -21,7 +21,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
   const parsedRequestSizeValue = parseInt(defaultRequestSizeValue, 10) || 0;
   const defaultValue = Number.isFinite(parsedRequestSizeValue) ? parsedRequestSizeValue : null;
   const [unit, setUnit] = React.useState<string>(defaultRequestSizeUnit);
-  const [value, setValue] = React.useState<number>(defaultValue);
+  const [value, setValue] = React.useState<number>(defaultValue || 0);
 
   const onValueChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
     setValue(parseInt(event.currentTarget.value, 10));
@@ -42,7 +42,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
 
   React.useEffect(() => {
     setUnit(defaultRequestSizeUnit);
-    setValue(defaultValue);
+    setValue(defaultValue || 0);
   }, [defaultRequestSizeUnit, defaultValue]);
 
   const { t } = useTranslation();

@@ -27,7 +27,7 @@ export const VolumeType: React.FC<VolumeTypeProps> = ({ volume, namespace }) => 
   }
 
   const type = getVolumeType(volume);
-  const loc = _.trim(getVolumeLocation(volume));
+  const loc = _.trim(getVolumeLocation(volume) || '');
   return type ? (
     <>
       {type.label}
