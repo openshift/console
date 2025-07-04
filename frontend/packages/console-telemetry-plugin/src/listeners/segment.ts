@@ -1,5 +1,5 @@
-import { TelemetryEventListener, UserInfo } from '@console/dynamic-plugin-sdk/src';
-import type { ClusterProperties } from '@console/shared/src/hooks/useTelemetry';
+import { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src';
+import type { TelemetryEventProperties } from '@console/shared/src/hooks/useTelemetry';
 import { TELEMETRY_DISABLED, TELEMETRY_DEBUG } from './const';
 
 // Sample 20% of sessions
@@ -123,8 +123,6 @@ const anonymizeId = async (anonymousIdInput: string) => {
   return anonymousIdArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 };
 
-type EventProperties = { user?: UserInfo } & ClusterProperties & any;
-
 export const eventListener: TelemetryEventListener = async (
   eventType: string,
   properties?: any,
@@ -154,7 +152,7 @@ export const eventListener: TelemetryEventListener = async (
   switch (eventType) {
     case 'identify':
       {
-        const { user, ...otherProperties }: EventProperties = properties;
+        const { user, userResource, ...otherProperties }: TelemetryEventProperties = properties;
         const clusterId = otherProperties?.clusterId;
         const organizationId = otherProperties?.organizationId;
         const username = user?.username;
@@ -174,7 +172,8 @@ export const eventListener: TelemetryEventListener = async (
 
           // anonymize user ID if cluster is not a DEVSANDBOX cluster
           if (window.SERVER_FLAGS?.telemetry?.DEVSANDBOX === 'true') {
-            processedUserId = user?.uid ?? userId;
+            processedUserId =
+              userResource?.metadata?.annotations?.['toolchain.dev.openshift.com/sso-user-id'];
           } else {
             processedUserId = await anonymizeId(userId);
           }
