@@ -13,6 +13,7 @@ import {
 } from '@console/dev-console/integration-tests/support/pages';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import { eventingPO } from '../../pageObjects';
+import { topologyAdminPerspective } from '../common/functions/topology-admin-perspective';
 
 When('user selects on {string} from {string} card', (eventName: string, addFlowCard: string) => {
   cy.get(eventingPO.broker.eventingCard).contains(addFlowCard);
@@ -21,7 +22,8 @@ When('user selects on {string} from {string} card', (eventName: string, addFlowC
 
 When('user selects {string} from Actions drop down', (actionName: string) => {
   cy.get(eventingPO.broker.actionMenu).click();
-  cy.byTestActionID(actionName).click();
+  cy.byTestActionID(actionName).should('be.visible');
+  cy.get(`[data-test-action="${actionName}"] button`).click();
 });
 
 When('user selects Form view', () => {
@@ -36,6 +38,10 @@ When(
     cy.get(eventingPO.broker.applicationGrouping.nameField).clear().type(brokerName);
   },
 );
+
+When('user enters broker name as {string}', (brokerName: string) => {
+  cy.get(eventingPO.broker.applicationGrouping.nameField).clear().type(brokerName);
+});
 
 When('user clicks on Create button to create broker', () => {
   cy.get(eventingPO.broker.create).click();
@@ -143,7 +149,7 @@ When('user selects {string} from Subscriber drop down', (subscriberName: string)
 
 When('user clicks on Add button', () => {
   cy.get(eventingPO.broker.confirm).click();
-  cy.get('[aria-label="Modal"]').should('not.exist');
+  cy.get('[class*="modal-dialog"]').should('not.exist');
 });
 
 Then('user will see {string} created', (triggerName) => {
@@ -199,6 +205,13 @@ Then('user will not see {string} broker', (brokerName: string) => {
   app.waitForLoad();
   perspective.switchTo(switchPerspective.Developer);
   navigateTo(devNavigationMenu.Topology);
+  topologyHelper.verifyWorkloadDeleted(brokerName);
+});
+
+Then('user will not see {string} broker in admin view topology', (brokerName: string) => {
+  cy.reload();
+  app.waitForLoad();
+  topologyAdminPerspective();
   topologyHelper.verifyWorkloadDeleted(brokerName);
 });
 

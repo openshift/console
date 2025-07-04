@@ -28,6 +28,7 @@ import {
 import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { eventingPO } from '@console/knative-plugin/integration-tests/support/pageObjects/global-po';
 import { userLoginPage } from '../../pages/dev-perspective/common';
+import { topologyAdminPerspective } from './functions/topology-admin-perspective';
 
 Given('user has logged in as a basic user', () => {
   app.waitForDocumentLoad();
@@ -59,9 +60,7 @@ Given('user is at Topology page', () => {
 });
 
 Given('user is at Topology page in the admin view', () => {
-  cy.get('[data-quickstart-id="qs-nav-workloads"]').should('be.visible').click({ force: true });
-  cy.byLegacyTestID('topology-header').should('be.visible').click({ force: true });
-  topologyPage.verifyTopologyPage();
+  topologyAdminPerspective();
 });
 
 Given('user is at Monitoring page', () => {
