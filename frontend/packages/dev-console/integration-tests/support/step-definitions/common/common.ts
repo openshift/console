@@ -28,6 +28,21 @@ Given('user is at developer perspective', () => {
   // cy.testA11y('Developer perspective');
 });
 
+Given('user has only admin perspective enabled', () => {
+  cy.exec(
+    `oc patch console.operator.openshift.io/cluster --type='merge' -p '{"spec":{"customization":{"perspectives":[{"id":"dev","visibility":{"state":"Disabled"}}]}}}'`,
+    { failOnNonZeroExit: true },
+  ).then((result) => {
+    cy.log(result.stdout);
+    cy.log(result.stderr);
+  });
+  cy.exec(`  oc rollout status -w deploy/console -n openshift-console`, {
+    failOnNonZeroExit: true,
+  }).then((result) => {
+    cy.log(result.stderr);
+  });
+});
+
 Given('user has created namespace starts with {string}', (projectName: string) => {
   const d = new Date();
   const timestamp = d.getTime();
