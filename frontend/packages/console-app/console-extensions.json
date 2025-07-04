@@ -1178,19 +1178,7 @@
     "properties": {
       "perspective": "admin",
       "section": "compute",
-      "id": "machinesets",
-      "insertAfter": "machines",
-      "name": "%console-app~MachineSets%",
-      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet"
-    },
-    "flags": { "required": ["CLUSTER_API"] }
-  },
-  {
-    "type": "console.navigation/href",
-    "properties": {
-      "perspective": "admin",
-      "section": "compute",
-      "id": "machzineautoscaler",
+      "id": "machineautoscaler",
       "insertAfter": "machinesets",
       "name": "%console-app~MachineAutoscalers%",
       "href": "/k8s/ns/openshift-machine-api/autoscaling.openshift.io~v1beta1~MachineAutoscaler"
@@ -1203,7 +1191,7 @@
       "perspective": "admin",
       "section": "compute",
       "id": "machinehealthchecks",
-      "insertAfter": "machzineautoscaler",
+      "insertAfter": "machineautoscaler",
       "name": "%console-app~MachineHealthChecks%",
       "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineHealthCheck"
     },
@@ -1218,6 +1206,41 @@
       "insertAfter": "machinehealthchecks",
       "testID": "ComputeSeparator"
     },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "controlplanemachinesets",
+      "insertAfter": "computeseparator",
+      "name": "%console-app~ControlPlaneMachineSets%",
+      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1~ControlPlaneMachineSet"
+    },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machinesets",
+      "insertAfter": "controlplanemachinesets",
+      "name": "%console-app~MachineSets%",
+      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet"
+    },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/separator",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "computeseparator2",
+      "insertAfter": "machinesets",
+      "testID": "ComputeSeparator2"
+    },
     "flags": { "required": ["MACHINE_CONFIG"] }
   },
   {
@@ -1226,7 +1249,7 @@
       "perspective": "admin",
       "section": "compute",
       "id": "machineconfigs",
-      "insertAfter": "computeseparator",
+      "insertAfter": "computeseparator2",
       "name": "%console-app~MachineConfigs%",
       "model": {
         "group": "machineconfiguration.openshift.io",
