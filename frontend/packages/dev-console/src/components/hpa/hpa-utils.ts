@@ -100,7 +100,7 @@ export const getMetricByType = (
   type: SupportedMetricTypes,
 ): { metric: HPAMetric; index: number } => {
   const hpaMetrics = hpa.spec.metrics || [];
-  const metricIndex = hpaMetrics.findIndex((m) => m.resource.name?.toLowerCase() === type);
+  const metricIndex = hpaMetrics.findIndex((m) => m.resource?.name?.toLowerCase() === type);
   const metric: HPAMetric = hpaMetrics[metricIndex] || getDefaultMetric(type);
 
   return { metric, index: metricIndex === -1 ? hpaMetrics.length : metricIndex };
