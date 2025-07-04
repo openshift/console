@@ -28,7 +28,7 @@ const isMonitoredCondition = (condition: Condition): boolean =>
   [Condition.DISK_PRESSURE, Condition.MEM_PRESSURE, Condition.PID_PRESSURE].includes(condition);
 
 const getDegradedStates = (node: NodeKind): Condition[] => {
-  return node.status.conditions
+  return (node.status?.conditions ?? [])
     .filter(({ status, type }) => status === 'True' && isMonitoredCondition(type as Condition))
     .map(({ type }) => type as Condition);
 };
