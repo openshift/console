@@ -1,12 +1,18 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
-import { ResourceSummary, SectionHeading } from '@console/internal/components/utils';
+import { screen, configure } from '@testing-library/react';
+import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { mockHelmReleases } from '../../../__tests__/helm-release-mock-data';
-import HelmChartSummary from '../HelmChartSummary';
 import HelmReleaseOverview from '../HelmReleaseOverview';
+
+const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
+
+configure({ testIdAttribute: 'data-test' });
 
 const helmReleaseOverviewProps: React.ComponentProps<typeof HelmReleaseOverview> = {
   obj: {
+    kind: 'Secret',
+    apiVersion: 'v1',
     metadata: {
       name: 'secret-name',
       namespace: 'xyz',
@@ -23,18 +29,22 @@ const helmReleaseOverviewProps: React.ComponentProps<typeof HelmReleaseOverview>
 
 describe('HelmReleaseOverview', () => {
   it('should render the Section Heading for the Overview page', () => {
-    const helmReleaseOverview = shallow(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
-    expect(helmReleaseOverview.find(SectionHeading).at(0).props().text).toEqual(
-      'Helm Release details',
-    );
+    spyUseAccessReview.mockReturnValue([true]);
+    renderWithProviders(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
+    expect(screen.getByText('Helm Release details')).toBeTruthy();
   });
+
   it('should render the ResourceSummary component', () => {
-    const helmReleaseOverview = shallow(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
-    expect(helmReleaseOverview.find(ResourceSummary).exists()).toBe(true);
+    spyUseAccessReview.mockReturnValue([true]);
+    renderWithProviders(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
+    expect(document.querySelector('[data-test-id="resource-summary"]')).toBeTruthy();
   });
 
   it('should render the HelmChartSummary component', () => {
-    const helmReleaseOverview = shallow(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
-    expect(helmReleaseOverview.find(HelmChartSummary).exists()).toBe(true);
+    spyUseAccessReview.mockReturnValue([true]);
+    renderWithProviders(<HelmReleaseOverview {...helmReleaseOverviewProps} />);
+    // HelmChartSummary typically renders chart information
+    expect(screen.getByText('Chart version')).toBeTruthy();
+    expect(screen.getByText('App version')).toBeTruthy();
   });
 });

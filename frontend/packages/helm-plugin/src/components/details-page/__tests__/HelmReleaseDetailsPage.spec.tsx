@@ -1,19 +1,22 @@
-import { shallow, ShallowWrapper } from 'enzyme';
-import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
-import HelmReleaseDetails from '../HelmReleaseDetails';
+import { screen, configure } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import HelmReleaseDetailsPage from '../HelmReleaseDetailsPage';
 
-let helmReleaseDetailsPage: ShallowWrapper;
+configure({ testIdAttribute: 'data-test' });
 
 describe('HelmReleaseDetailsPage', () => {
   beforeEach(() => {
-    helmReleaseDetailsPage = shallow(<HelmReleaseDetailsPage />);
+    renderWithProviders(<HelmReleaseDetailsPage />);
   });
 
   it('should render the NamespaceBar component', () => {
-    expect(helmReleaseDetailsPage.find(NamespacedPage).exists()).toBe(true);
+    // NamespacedPage renders a namespace bar with co-namespace-bar class
+    expect(document.querySelector('.co-namespace-bar')).toBeTruthy();
   });
-  it('should render the HelmReleaseDetails component', () => {
-    expect(helmReleaseDetailsPage.find(HelmReleaseDetails).exists()).toBe(true);
+
+  it('should render the loading state initially', () => {
+    // Component shows loading state initially before HelmReleaseDetails loads
+    expect(screen.getByTestId('loading-box')).toBeTruthy();
+    expect(screen.getByTestId('loading-indicator')).toBeTruthy();
   });
 });
