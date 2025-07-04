@@ -143,6 +143,7 @@
     "@patternfly/react-component-groups": "6.2.0-prerelease.10",
     "@patternfly/react-console": "^6.0.0",
     "@patternfly/react-core": "^6.2.2",
+    "@patternfly/react-data-view": "^6.2.0",
     "@patternfly/react-icons": "^6.2.2",
     "@patternfly/react-log-viewer": "^6.1.0",
     "@patternfly/react-styles": "^6.2.2",
@@ -327,6 +328,8 @@
     "ua-parser-js": "^0.7.24",
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.13",
+    "@patternfly/react-component-groups": "6.2.0-prerelease.10",
+    "@patternfly/react-data-view": "^6.2.0",
     "async": "^3.2.5"
   },
   "lint-staged": {
