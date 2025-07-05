@@ -7,7 +7,8 @@ import FormSection from './FormSection';
 
 const IconSection: React.FC = () => {
   const { t } = useTranslation();
-  const [field] = useField<string>('runtimeIcon');
+  const [runtimeIconField] = useField<string>('runtimeIcon');
+  const [customIconField] = useField<string>('customIcon');
   const formik = useFormikContext<{ runtimeIcon: string }>();
 
   const onChanged = (value: string) => {
@@ -15,20 +16,26 @@ const IconSection: React.FC = () => {
     formik.setFieldTouched('runtimeIcon');
   };
 
+  const onCustomIconChanged = (url: string) => {
+    formik.setFieldValue('customIcon', url);
+    formik.setFieldTouched('customIcon');
+  };
+
   return (
     <FormSection>
       <FormGroup fieldId="runtimeIcon" label={t('devconsole~Runtime icon')}>
         <IconDropdown
-          placeholder={t('devconsole~Select an icon')}
-          value={field.value}
-          onChanged={onChanged}
+          runtimeIcon={runtimeIconField.value}
+          onRuntimeIconChanged={onChanged}
+          customIcon={customIconField.value}
+          onCustomIconChanged={onCustomIconChanged}
         />
 
         <FormHelperText>
           <HelperText>
             <HelperTextItem>
               {t(
-                'devconsole~The icon represents your Image in Topology view. A label will also be added to the resource defining the icon.',
+                'devconsole~The icon represents your Image in Topology view. A label or annotation will also be added to the resource defining the icon.',
               )}
             </HelperTextItem>
           </HelperText>
