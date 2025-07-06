@@ -11,7 +11,7 @@ export const usePVCActionsProvider = (
 ): [Action[], boolean, boolean] => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const actionsPVC = usePVCActions(resource);
-  const commonActions = useCommonActions(kindObj, resource, [
+  const [commonActions] = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyLabels,
     CommonActionCreator.ModifyAnnotations,
     CommonActionCreator.Edit,

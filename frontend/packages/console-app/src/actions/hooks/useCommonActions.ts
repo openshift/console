@@ -22,33 +22,45 @@ type ActionObject<T extends readonly CommonActionCreator[]> = {
 /**
  * A React hook for retrieving common actions related to Kubernetes resources.
  *
- * @param {K8sModel} kind - The K8s model for the resource.
- * @param {K8sResourceKind} resource - The specific resource instance for which to generate actions.
- * @param {CommonActionCreator[]} [filterActions] - Optional. If provided, the returned object will contain
- * only the specified actions. If omitted, it will contain all common actions.
+ * @param {K8sModel | undefined} kind - The K8s model for the resource.
+ * @param {K8sResourceKind | undefined} resource - The specific resource instance for which to generate actions.
+ * @param [filterActions] - Optional. If provided, the returned object will contain only the specified actions.
+ * Specify which actions to include using CommonActionCreator enum values.
+ * If omitted, it will contain all common actions.
  * @param {JSX.Element} [message] - Optional message to display in the delete modal.
  *
  * This hook is robust to inline arrays/objects for the `filterActions` argument, so you do not need to memoize or define
  * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
  *
- * @returns {ActionObject<T>} An object containing the generated actions, accessible by action creator name (e.g., actions.Delete).
- * Use Object.values(actions) to convert to an array for spreading: [...Object.values(actions)]
+ * @returns {[ActionObject<T>, boolean]} A tuple containing the actions object and a boolean indicating if actions are ready to use.
+ * When isReady is false, do not access properties on the actions object.
+ * When isReady is true, all requested actions are guaranteed to exist on the actions object.
  *
  * @example
  * // Getting Delete and Edit actions for a resource
  * const MyResourceComponent = ({ kind, resource }) => {
- *   const actions = useCommonActions(kind, resource, [CommonActionCreator.Delete, CommonActionCreator.Edit]);
- *   const deleteAction = actions.Delete;
- *   const editAction = actions.Edit;
- *   return <Kebab actions={Object.values(actions)} />;
+ *   const [actions] = useCommonActions(kind, resource, [CommonActionCreator.Delete, CommonActionCreator.Edit]);
+ *   return <Kebab actions={ Object.values(actions) } />;
+ * };
+ *
+ * @example
+ * // Getting actions in specific order
+ * const MyResourceComponent = ({ kind, resource }) => {
+ *   const [commonActions, isReady] = useCommonActions(kind, resource, [CommonActionCreator.ModifyCount, CommonActionCreator.AddStorage]);
+ *   const actions = [
+ *     ...(isReady ? [commonActions.ModifyCount] : []),
+ *     ...otherActions,
+ *     ...(isReady ? [commonActions.AddStorage] : []),
+ *   ];
+ *   return <Kebab actions={actions} />;
  * };
  */
 export const useCommonActions = <T extends readonly CommonActionCreator[]>(
-  kind: K8sModel,
-  resource: K8sResourceKind,
+  kind: K8sModel | undefined,
+  resource: K8sResourceKind | undefined,
   filterActions?: T,
   message?: JSX.Element,
-): ActionObject<T> => {
+): [ActionObject<T>, boolean] => {
   const { t } = useTranslation();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
@@ -144,17 +156,24 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
     [kind, resource, t, message],
   );
 
-  return React.useMemo(() => {
-    const result = {} as ActionObject<T>;
+  const result = React.useMemo((): [ActionObject<T>, boolean] => {
+    const actions = {} as ActionObject<T>;
+
+    if (!kind || !resource) {
+      return [actions, false];
+    }
+
     // filter and initialize requested actions or construct list of all CommonActions
     const actionsToInclude = memoizedFilterActions || Object.values(CommonActionCreator);
 
     actionsToInclude.forEach((actionType) => {
       if (factory[actionType]) {
-        (result as any)[actionType] = factory[actionType]();
+        actions[actionType] = factory[actionType]();
       }
     });
 
-    return result;
-  }, [factory, memoizedFilterActions]);
+    return [actions, true];
+  }, [factory, memoizedFilterActions, kind, resource]);
+
+  return result;
 };

@@ -15,26 +15,38 @@ export const useReplicationControllerActionsProvider = (resource: ReplicationCon
   const [pdbActions] = usePDBActions(kindObj, resource);
   const deploymentPhase = resource?.metadata?.annotations?.['openshift.io/deployment.phase'];
   const dcName = getOwnerNameByKind(resource, DeploymentConfigModel);
-  const commonActions = useCommonActions(kindObj, resource, [
+  const [commonActions, isReady] = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyCount,
     CommonActionCreator.AddStorage,
   ] as const);
   const commonResourceActions = useCommonResourceActions(kindObj, resource);
 
   const actions = React.useMemo(
-    () => [
-      commonActions.ModifyCount,
-      ...(!_.isNil(deploymentPhase) && ['New', 'Pending', 'Running'].includes(deploymentPhase)
-        ? [ReplicationControllerFactory.CancelRollout(kindObj, resource)]
-        : []),
-      ...pdbActions,
-      commonActions.AddStorage,
-      ...(!deploymentPhase || resource?.status?.replicas > 0 || !dcName
+    () =>
+      !isReady
         ? []
-        : [ReplicationControllerFactory.RollbackDeploymentConfigAction(kindObj, resource)]),
-      ...commonResourceActions,
+        : [
+            commonActions.ModifyCount,
+            ...(!_.isNil(deploymentPhase) && ['New', 'Pending', 'Running'].includes(deploymentPhase)
+              ? [ReplicationControllerFactory.CancelRollout(kindObj, resource)]
+              : []),
+            ...pdbActions,
+            commonActions.AddStorage,
+            ...(!deploymentPhase || resource?.status?.replicas > 0 || !dcName
+              ? []
+              : [ReplicationControllerFactory.RollbackDeploymentConfigAction(kindObj, resource)]),
+            ...commonResourceActions,
+          ],
+    [
+      kindObj,
+      resource,
+      pdbActions,
+      deploymentPhase,
+      dcName,
+      commonActions,
+      commonResourceActions,
+      isReady,
     ],
-    [kindObj, resource, pdbActions, deploymentPhase, dcName, commonActions, commonResourceActions],
   );
 
   return [actions, !inFlight, undefined];

@@ -91,13 +91,13 @@ export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
 export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const serviceTypeValue = React.useContext(KnativeServiceTypeContext);
-  const commonActions = useCommonActions(kindObj, resource, [
+  const [commonActions] = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyLabels,
     CommonActionCreator.ModifyAnnotations,
   ] as const);
 
-  const actions = React.useMemo(() => {
-    return [
+  const actions = React.useMemo(
+    () => [
       setTrafficDistribution(kindObj, resource),
       getHealthChecksAction(kindObj, resource),
       editKnativeService(kindObj, resource),
@@ -110,8 +110,9 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
       ...(resource?.metadata?.labels?.['function.knative.dev'] === 'true'
         ? [testServerlessFunction(kindObj, resource)]
         : []),
-    ];
-  }, [kindObj, resource, serviceTypeValue, commonActions]);
+    ],
+    [kindObj, resource, serviceTypeValue, commonActions],
+  );
 
   return [actions, !inFlight, undefined];
 };
@@ -291,13 +292,14 @@ export const useTopologyActionsProvider = ({
 };
 
 export const useEventSourcesActionsProvider = (resource: K8sResourceKind) => {
-  const kindObj = modelFor(referenceFor(resource));
+  const kindObj = resource ? modelFor(referenceFor(resource)) : null;
+
   const commonActions = useCommonResourceActions(kindObj, resource);
-  const result = React.useMemo(() => {
+  return React.useMemo(() => {
     if (!resource || resource.kind === 'URI') return [[], true, undefined];
+
     return [[moveSinkSource(kindObj, resource), ...commonActions], true, undefined];
   }, [kindObj, resource, commonActions]);
-  return result;
 };
 
 export const useEventSourcesActionsProviderForTopology = (element: GraphElement) => {

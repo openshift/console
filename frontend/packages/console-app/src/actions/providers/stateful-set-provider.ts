@@ -10,21 +10,24 @@ import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 export const useStatefulSetActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const [pdbActions] = usePDBActions(kindObj, resource);
-  const commonActions = useCommonActions(kindObj, resource, [
+  const [commonActions, isReady] = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyCount,
     CommonActionCreator.AddStorage,
   ] as const);
   const commonResourceActions = useCommonResourceActions(kindObj, resource);
 
   const actions = React.useMemo(
-    () => [
-      commonActions.ModifyCount,
-      ...pdbActions,
-      getHealthChecksAction(kindObj, resource),
-      commonActions.AddStorage,
-      ...commonResourceActions,
-    ],
-    [kindObj, resource, pdbActions, commonActions, commonResourceActions],
+    () =>
+      !isReady
+        ? []
+        : [
+            commonActions.ModifyCount,
+            ...pdbActions,
+            getHealthChecksAction(kindObj, resource),
+            commonActions.AddStorage,
+            ...commonResourceActions,
+          ],
+    [kindObj, resource, pdbActions, commonActions, commonResourceActions, isReady],
   );
 
   return [actions, !inFlight, undefined];

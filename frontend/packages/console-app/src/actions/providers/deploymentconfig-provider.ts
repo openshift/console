@@ -75,7 +75,7 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
   const [pdbActions] = usePDBActions(kindObj, resource);
   const retryRolloutAction = useRetryRolloutAction(resource);
 
-  const commonActions = useCommonActions(kindObj, resource, [
+  const [commonActions, isReady] = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyCount,
     CommonActionCreator.Delete,
     CommonActionCreator.ModifyLabels,
@@ -83,26 +83,39 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
     CommonActionCreator.AddStorage,
   ] as const);
 
-  const deploymentConfigActions = React.useMemo(() => {
-    const actions = [
-      ...(relatedHPAs?.length === 0 ? [commonActions.ModifyCount] : []),
-      ...hpaActions,
-      ...pdbActions,
-      getHealthChecksAction(kindObj, resource),
-      DeploymentActionFactory.StartDCRollout(kindObj, resource),
+  const deploymentConfigActions = React.useMemo(
+    () =>
+      isReady
+        ? [
+            ...(relatedHPAs?.length === 0 ? [commonActions.ModifyCount] : []),
+            ...hpaActions,
+            ...pdbActions,
+            getHealthChecksAction(kindObj, resource),
+            DeploymentActionFactory.StartDCRollout(kindObj, resource),
+            retryRolloutAction,
+            DeploymentActionFactory.PauseRollout(kindObj, resource),
+            commonActions.AddStorage,
+            DeploymentActionFactory.EditResourceLimits(kindObj, resource),
+            commonActions.ModifyLabels,
+            commonActions.ModifyAnnotations,
+            DeploymentActionFactory.EditDeployment(kindObj, resource),
+            ...(resource.metadata.annotations?.['openshift.io/generated-by'] ===
+            'OpenShiftWebConsole'
+              ? [DeleteResourceAction(kindObj, resource)]
+              : [commonActions.Delete]),
+          ]
+        : [],
+    [
+      resource,
+      kindObj,
+      hpaActions,
+      pdbActions,
+      relatedHPAs,
       retryRolloutAction,
-      DeploymentActionFactory.PauseRollout(kindObj, resource),
-      commonActions.AddStorage,
-      DeploymentActionFactory.EditResourceLimits(kindObj, resource),
-      commonActions.ModifyLabels,
-      commonActions.ModifyAnnotations,
-      DeploymentActionFactory.EditDeployment(kindObj, resource),
-      ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
-        ? [DeleteResourceAction(kindObj, resource)]
-        : [commonActions.Delete]),
-    ];
-    return actions;
-  }, [resource, kindObj, hpaActions, pdbActions, relatedHPAs, retryRolloutAction, commonActions]);
+      commonActions,
+      isReady,
+    ],
+  );
 
   return [deploymentConfigActions, !inFlight, undefined];
 };

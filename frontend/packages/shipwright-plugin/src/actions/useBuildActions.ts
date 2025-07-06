@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
-import { useCommonAction } from '@console/app/src/actions/hooks/useCommonAction';
 import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
 import { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
 import { errorModal } from '@console/internal/components/modals';
@@ -17,13 +16,16 @@ const useBuildActions = (build: Build) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [kindObj, inFlight] = useK8sModel(referenceFor(build));
-  const commonActions = useCommonActions(kindObj, build, [
+  const [commonActions, isReady] = useCommonActions(kindObj, build, [
     CommonActionCreator.ModifyLabels,
     CommonActionCreator.ModifyAnnotations,
+    CommonActionCreator.Delete,
   ] as const);
-  const deleteAction = useCommonAction(kindObj, build, CommonActionCreator.Delete);
 
   const actionsMenu = React.useMemo<Action[]>(() => {
+    if (!isReady) {
+      return [];
+    }
     const actions: Action[] = [];
     actions.push({
       id: 'shipwright-build-start',
@@ -82,9 +84,9 @@ const useBuildActions = (build: Build) => {
         namespace: build.metadata?.namespace,
       },
     });
-    actions.push(deleteAction);
+    actions.push(commonActions.Delete);
     return actions;
-  }, [t, build, navigate, commonActions, deleteAction]);
+  }, [t, build, navigate, commonActions, isReady]);
 
   return [actionsMenu, !inFlight, undefined];
 };
