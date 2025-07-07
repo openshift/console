@@ -142,11 +142,19 @@ export type CatalogItem<T extends any = any> = {
   attributes?: {
     [key: string]: any;
   };
+  /** Single call to action - for backward compatibility */
   cta?: {
     label: string;
     href?: string;
     callback?: (props?: any) => void;
   };
+  /** Multiple calls to action - takes precedence over single cta if provided */
+  ctas?: {
+    label: string;
+    href?: string;
+    callback?: (props?: any) => void;
+    variant?: 'primary' | 'secondary' | 'link';
+  }[];
   icon?: {
     url?: string;
     class?: string;
