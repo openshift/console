@@ -46,7 +46,7 @@ Given('user can see terminal icon on masthead', () => {
 });
 
 When('user clicks on the Web Terminal icon on the Masthead', () => {
-  cy.get(webTerminalPO.webTerminalIcon).click();
+  cy.get(webTerminalPO.webTerminalIcon).click({ force: true });
   cy.get('cos-status-box cos-status-box--loading').should('not.exist');
 });
 
