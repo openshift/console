@@ -1,6 +1,7 @@
 import { Content, ContentVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { TourDataType } from '@console/app/src/components/tour';
+import AdminGuidedTourBanner from '../tour/AdminGuidedTourBanner';
 import { finishTourText, helpTourText, userPreferencesTourText } from './GuidedTourText';
 
 const getSelector = (id: string): string => `[data-tour-id="${id}"]`;
@@ -26,6 +27,7 @@ export const getGuidedTour = (): TourDataType => ({
     // t('console-app~Welcome to the new OpenShift experience!')
     heading: '%console-app~Welcome to the new OpenShift experience!%',
     content: <IntroductionText />,
+    introBanner: <AdminGuidedTourBanner />,
   },
   steps: [
     {

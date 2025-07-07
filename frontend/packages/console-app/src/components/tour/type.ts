@@ -12,6 +12,7 @@ export type Step = {
   showStepBadge?: boolean;
   showClose?: boolean;
   expandableSelector?: string;
+  introBanner?: ReactNode;
 };
 
 export type TourDataType = {
