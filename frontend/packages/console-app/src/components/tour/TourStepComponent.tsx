@@ -8,7 +8,6 @@ import StepContent from './steps/StepContent';
 import StepFooter from './steps/StepFooter';
 import StepHeader from './steps/StepHeader';
 import './TourStepComponent.scss';
-import TourVisual from './TourVisual';
 
 type TourStepComponentProps = {
   expandableSelector?: string;
@@ -16,6 +15,7 @@ type TourStepComponentProps = {
   placement?: string;
   heading: string;
   content: React.ReactNode;
+  introBanner?: React.ReactNode;
   step?: number;
   totalSteps?: number;
   showStepBadge?: boolean;
@@ -35,6 +35,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   showStepBadge,
   step,
   totalSteps,
+  introBanner,
   nextButtonText,
   backButtonText,
   onNext,
@@ -95,9 +96,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
     >
       <ModalBody>
         <Grid hasGutter>
-          <GridItem span={4}>
-            <TourVisual />
-          </GridItem>
+          <GridItem span={4}>{introBanner}</GridItem>
           <GridItem span={8}>
             <ModalHeader>{header}</ModalHeader>
             <ModalBody>{stepContent}</ModalBody>

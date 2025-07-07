@@ -1,6 +1,6 @@
 import { SVGProps } from 'react';
 
-const TourVisual = (props: SVGProps<SVGSVGElement>) => (
+const AdminGuidedTourBanner = (props: SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" {...props} width="100%">
     <defs>
       <clipPath id="uuid-49d3e43f-8036-401b-85bf-f70c7eb4e67b">
@@ -806,4 +806,4 @@ const TourVisual = (props: SVGProps<SVGSVGElement>) => (
     </g>
   </svg>
 );
-export default TourVisual;
+export default AdminGuidedTourBanner;
