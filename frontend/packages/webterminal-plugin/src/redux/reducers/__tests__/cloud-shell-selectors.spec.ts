@@ -9,7 +9,7 @@ describe('Cloud shell selectors', () => {
     expect(isCloudShellExpanded({} as any)).toBe(false);
     expect(
       isCloudShellExpanded({
-        plugins: { console: { [cloudShellReducerName]: { isExpanded: true } } },
+        plugins: { webterminal: { [cloudShellReducerName]: { isExpanded: true } } },
       } as any),
     ).toBe(true);
   });
@@ -18,7 +18,7 @@ describe('Cloud shell selectors', () => {
     expect(isCloudShellActive({} as any)).toBe(false);
     expect(
       isCloudShellActive({
-        plugins: { console: { [cloudShellReducerName]: { isActive: true } } },
+        plugins: { webterminal: { [cloudShellReducerName]: { isActive: true } } },
       } as any),
     ).toBe(true);
   });
