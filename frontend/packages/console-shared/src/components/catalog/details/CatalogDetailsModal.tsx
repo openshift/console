@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
-import { Split, SplitItem } from '@patternfly/react-core';
+import { Split, SplitItem, Button, ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { Modal } from '../../modal';
 import CatalogBadges from '../CatalogBadges';
-import useCtaLink from '../hooks/useCtaLink';
+import { useCtaLinks } from '../hooks/useCtaLink';
 import { getIconProps } from '../utils/catalog-utils';
 import CatalogDetailsPanel from './CatalogDetailsPanel';
 
@@ -19,7 +19,8 @@ type CatalogDetailsModalProps = {
 
 const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose }) => {
   const { t } = useTranslation();
-  const [to, label] = useCtaLink(item?.cta);
+  // Support for both single and multiple CTAs
+  const ctaLinks = useCtaLinks(item?.cta, item?.ctas);
 
   if (!item) {
     return null;
@@ -33,6 +34,63 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
 
   const vendor = <div>{provider}</div>;
 
+  const getButtonVariant = (variant?: string): ButtonVariant => {
+    switch (variant) {
+      case 'secondary':
+        return ButtonVariant.secondary;
+      case 'link':
+        return ButtonVariant.link;
+      default:
+        return ButtonVariant.primary;
+    }
+  };
+
+  const renderAction = (ctaLink, index: number) => {
+    const { to, label, callback, variant } = ctaLink;
+
+    if (!to && !callback) {
+      return null;
+    }
+
+    const handleClick = () => {
+      if (callback) {
+        callback();
+      }
+      onClose();
+    };
+
+    // If there's a callback and no href, render as a button
+    if (callback && !to) {
+      return (
+        <Button
+          key={index}
+          variant={getButtonVariant(variant)}
+          className="co-catalog-page__overlay-action"
+          onClick={handleClick}
+        >
+          {label}
+        </Button>
+      );
+    }
+
+    // If there's an href, render as a link
+    if (to) {
+      return (
+        <Link
+          key={index}
+          className={`pf-v6-c-button pf-m-${variant || 'primary'} co-catalog-page__overlay-action`}
+          to={to}
+          role="button"
+          onClick={onClose}
+        >
+          {label}
+        </Link>
+      );
+    }
+
+    return null;
+  };
+
   const modalHeader = (
     <>
       <CatalogItemHeader
@@ -43,16 +101,9 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
       />
       <Split className="odc-catalog-details-modal__header">
         <SplitItem>
-          {to && (
+          {ctaLinks.length > 0 && (
             <div className="co-catalog-page__overlay-actions">
-              <Link
-                className="pf-v6-c-button pf-m-primary co-catalog-page__overlay-action"
-                to={to}
-                role="button"
-                onClick={onClose}
-              >
-                {label}
-              </Link>
+              {ctaLinks.map((ctaLink, index) => renderAction(ctaLink, index))}
             </div>
           )}
         </SplitItem>
