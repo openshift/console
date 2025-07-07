@@ -1,4 +1,3 @@
-/* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
@@ -22,12 +21,12 @@ import {
   useUserSettingsCompatibility,
 } from '@console/shared';
 import PageBody from '@console/shared/src/components/layout/PageBody';
-
+import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
 import CodeEditorSidebar from '@console/shared/src/components/editor/CodeEditorSidebar';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
-import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
+import { isYAMLTemplate, getImpersonate, YAMLTemplate } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
@@ -48,6 +47,8 @@ import {
   k8sList,
   referenceFor,
   groupVersionFor,
+  AccessReviewResourceAttributes,
+  CodeEditorRef,
 } from '../module/k8s';
 import { ConsoleYAMLSampleModel } from '../models';
 import { getYAMLTemplates } from '../models/yaml-templates';
@@ -73,8 +74,11 @@ const stateToProps = (state) => ({
 const WithYamlTemplates = (Component) =>
   function Comp(props) {
     const kind = props?.obj?.kind;
-    const [templateExtensions, resolvedTemplates] = useResolvedExtensions(
-      React.useCallback((e) => isYAMLTemplate(e) && e.properties.model.kind === kind, [kind]),
+    const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
+      React.useCallback(
+        (e): e is YAMLTemplate => isYAMLTemplate(e) && e.properties.model.kind === kind,
+        [kind],
+      ),
     );
     const [showTooltips, setShowTooltips] = useUserSettingsCompatibility(
       SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
@@ -121,14 +125,14 @@ const EditYAMLInner = (props) => {
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const [errors, setErrors] = React.useState(null);
-  const [success, setSuccess] = React.useState(null);
+  const [success, setSuccess] = React.useState<string>(null);
   const [initialized, setInitialized] = React.useState(false);
   const [stale, setStale] = React.useState(false);
   const [sampleObj, setSampleObj] = React.useState(props.sampleObj);
   const [showSidebar, setShowSidebar] = React.useState(!!create);
   const [owner, setOwner] = React.useState(null);
-  const [notAllowed, setNotAllowed] = React.useState();
-  const [displayResults, setDisplayResults] = React.useState();
+  const [notAllowed, setNotAllowed] = React.useState<boolean>();
+  const [displayResults, setDisplayResults] = React.useState<boolean>();
   const [resourceObjects, setResourceObjects] = React.useState();
   const [editorMounted, setEditorMounted] = React.useState(false);
 
@@ -140,16 +144,16 @@ const EditYAMLInner = (props) => {
   const closeOLS = () => action(ActionType.CloseOLS);
   const dispatch = useDispatch();
 
-  const monacoRef = React.useRef();
+  const monacoRef = React.useRef<CodeEditorRef>();
   const editor = React.useRef();
   const buttons = React.useRef();
 
   const { t } = useTranslation();
 
-  /** @return {import('monaco-editor').editor.IStandaloneCodeEditor | null} */
-  const getEditor = () => {
-    return monacoRef.current?.editor;
-  };
+  const getEditor = (): editor.IStandaloneCodeEditor | undefined =>
+    monacoRef?.current && 'editor' in monacoRef.current
+      ? (monacoRef.current as any).editor
+      : undefined;
 
   const getModel = React.useCallback(
     (obj) => {
@@ -215,7 +219,7 @@ const EditYAMLInner = (props) => {
       }
 
       const { name, namespace } = obj.metadata;
-      const resourceAttributes = {
+      const resourceAttributes: AccessReviewResourceAttributes = {
         group: model.apiGroup,
         resource: model.plural,
         verb: 'update',
@@ -744,7 +748,6 @@ const EditYAMLInner = (props) => {
         createResources={createResources}
         displayResults={setDisplayResults}
         importResources={resourceObjects}
-        models={models}
         retryFailed={onRetry}
       />
     );

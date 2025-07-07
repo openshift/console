@@ -382,7 +382,7 @@ export const getResourceSidebarSamples = (
     ? yamlSamplesData.map((sample: K8sResourceKind) => {
         return {
           id: sample.metadata.uid,
-          ...sample.spec,
+          ...(sample.spec as Exclude<Sample, 'id'>),
         };
       })
     : [];
