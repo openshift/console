@@ -6,12 +6,12 @@ export const checkDeveloperPerspective = () => {
     cy.byLegacyTestID('perspective-switcher-toggle').then(($switcher) => {
       // switcher is present
       if ($switcher.attr('aria-hidden') !== 'true') {
-        cy.byLegacyTestID('perspective-switcher-toggle').click();
+        cy.byLegacyTestID('perspective-switcher-toggle').click({ force: true });
 
         if ($body.find('[data-test-id="perspective-switcher-menu-option"]').length !== 0) {
           cy.log('perspective switcher menu enabled');
           cy.byLegacyTestID('perspective-switcher-menu-option').contains('Developer');
-          cy.byLegacyTestID('perspective-switcher-toggle').click();
+          cy.byLegacyTestID('perspective-switcher-toggle').click({ force: true });
           return;
         }
       }
