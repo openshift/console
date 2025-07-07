@@ -15,11 +15,15 @@ import {
   getBadgeFromType,
   withPostFormSubmissionCallback,
   getResourceSidebarSamples,
-  SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
-  SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
   useTelemetry,
   useUserSettingsCompatibility,
 } from '@console/shared';
+import {
+  SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
+  SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
+  SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
+  SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
+} from '@console/shared/src/constants/common';
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
@@ -56,6 +60,7 @@ import { findOwner } from '../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { definitionFor } from '../module/k8s/swagger';
 import { ImportYAMLResults } from './import-yaml-results';
+import { EditYamlSettingsModal } from './modals/edit-yaml-settings-modal';
 
 const generateObjToLoad = (templateExtensions, kind, id, yaml, namespace = 'default') => {
   const sampleObj = safeLoad(yaml ? yaml : getYAMLTemplates(templateExtensions).getIn([kind, id]));
@@ -80,22 +85,11 @@ const WithYamlTemplates = (Component) =>
         [kind],
       ),
     );
-    const [showTooltips, setShowTooltips] = useUserSettingsCompatibility(
-      SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
-      SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
-      true,
-      true,
-    );
 
     return !resolvedTemplates ? (
       <LoadingBox />
     ) : (
-      <Component
-        templateExtensions={templateExtensions}
-        showTooltips={showTooltips}
-        setShowTooltips={setShowTooltips}
-        {...props}
-      />
+      <Component templateExtensions={templateExtensions} {...props} />
     );
   };
 
@@ -110,7 +104,6 @@ const EditYAMLInner = (props) => {
     customClass,
     onChange = () => null,
     models,
-    showTooltips,
     download: canDownload = true,
     header,
     genericYAML = false,
@@ -135,6 +128,20 @@ const EditYAMLInner = (props) => {
   const [displayResults, setDisplayResults] = React.useState<boolean>();
   const [resourceObjects, setResourceObjects] = React.useState();
   const [editorMounted, setEditorMounted] = React.useState(false);
+
+  const [showTooltips] = useUserSettingsCompatibility(
+    SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
+    SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
+    true,
+    true,
+  );
+
+  const [stickyScrollEnabled] = useUserSettingsCompatibility(
+    SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
+    SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
+    true,
+    true,
+  );
 
   const [callbackCommand, setCallbackCommand] = React.useState('');
   const [showReplaceCodeModal, setShowReplaceCodeModal] = React.useState(false);
@@ -719,10 +726,6 @@ const EditYAMLInner = (props) => {
     window.dispatchEvent(new Event('sidebar_toggle'));
   };
 
-  const toggleShowTooltips = (event, checked) => {
-    props.setShowTooltips(checked);
-  };
-
   const sanitizeYamlContent = (id, yaml, kind) => {
     const contentObj = getYamlContent_(id, yaml, kind);
     const sanitizedYaml = convertObjToYAMLString(contentObj);
@@ -732,15 +735,12 @@ const EditYAMLInner = (props) => {
 
   React.useEffect(() => {
     editorMounted && getEditor()?.updateOptions({ hover: { enabled: showTooltips } });
-  }, [showTooltips, editorMounted]);
+    editorMounted && getEditor()?.updateOptions({ stickyScroll: { enabled: stickyScrollEnabled } });
+  }, [showTooltips, stickyScrollEnabled, editorMounted]);
 
   if (!create && !props.obj) {
     return <Loading />;
   }
-
-  const klass = css('co-file-dropzone-container', {
-    'co-file-dropzone--drop-over': isOver,
-  });
 
   if (displayResults) {
     return (
@@ -763,31 +763,29 @@ const EditYAMLInner = (props) => {
   const showSchema = definition && !_.isEmpty(definition.properties);
   const hasSidebarContent = showSchema || (create && !_.isEmpty(samples)) || !_.isEmpty(snippets);
   const sidebarSwitch = hasSidebarContent && (
-    <Switch
-      label={t('public~Sidebar')}
-      id="showSidebar"
-      isChecked={showSidebar}
-      data-checked-state={showSidebar}
-      onChange={toggleSidebar}
-      hasCheckIcon
-    />
+    <>
+      <div style={{ flexGrow: 1 }}></div>
+      <Switch
+        label={t('public~Sidebar')}
+        id="showSidebar"
+        isChecked={showSidebar}
+        data-checked-state={showSidebar}
+        onChange={toggleSidebar}
+        hasCheckIcon
+      />
+    </>
   );
 
-  const tooltipSwitch = (
-    <Switch
-      label={t('public~Tooltips')}
-      id="showTooltips"
-      isChecked={showTooltips}
-      data-checked-state={showTooltips}
-      onChange={toggleShowTooltips}
-      hasCheckIcon
-    />
-  );
+  const settingsModal = <EditYamlSettingsModal />;
 
   const editYamlComponent = (
     <div className="co-file-dropzone co-file-dropzone__flex">
       {canDrop && (
-        <div className={klass}>
+        <div
+          className={css('co-file-dropzone-container', {
+            'co-file-dropzone--drop-over': isOver,
+          })}
+        >
           <p className="co-file-dropzone__drop-text">{t('public~Drop file here')}</p>
         </div>
       )}
@@ -826,7 +824,7 @@ const EditYAMLInner = (props) => {
                 ref={monacoRef}
                 options={options}
                 showShortcuts={!genericYAML}
-                toolbarLinks={sidebarSwitch ? [tooltipSwitch, sidebarSwitch] : [tooltipSwitch]}
+                toolbarLinks={sidebarSwitch ? [settingsModal, sidebarSwitch] : [settingsModal]}
                 onChange={onChange}
                 onSave={() => (allowMultiple ? saveAll() : save())}
                 onEditorDidMount={() => setEditorMounted(true)}
