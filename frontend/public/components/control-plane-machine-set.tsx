@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -16,11 +17,17 @@ import { css } from '@patternfly/react-styles';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { DASH } from '@console/shared/src/constants';
+import {
+  RowProps,
+  useActiveColumns,
+  VirtualizedTable,
+} from '@console/dynamic-plugin-sdk/src/lib-core';
+import { TableColumn } from '@console/dynamic-plugin-sdk';
 
 import { Conditions } from './conditions';
 import { ControlPlaneMachineSetModel } from '../models';
 import { ControlPlaneMachineSetKind, referenceForModel } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage, TableData } from './factory';
 import {
   Kebab,
   navFactory,
@@ -208,39 +215,43 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ControlPlaneMachineSetList: React.FC = (props) => {
+const getColumns = (t: TFunction): TableColumn<ControlPlaneMachineSetKind>[] => [
+  {
+    title: t('public~Name'),
+    props: { className: tableColumnClasses[0] },
+    id: 'name',
+  },
+  {
+    title: t('public~Namespace'),
+    props: { className: tableColumnClasses[1] },
+    id: 'namespace',
+  },
+  {
+    title: t('public~Machines'),
+    props: { className: tableColumnClasses[2] },
+    id: 'machines',
+  },
+  {
+    title: t('public~Strategy'),
+    props: { className: tableColumnClasses[3] },
+    id: 'strategy',
+  },
+  {
+    title: t('public~State'),
+    props: { className: tableColumnClasses[4] },
+    id: 'state',
+  },
+  {
+    title: '',
+    props: { className: tableColumnClasses[5] },
+    id: '',
+  },
+];
+
+const ControlPlaneMachineSetList: React.FC<ControlPlaneMachineSetListProps> = (props) => {
   const { t } = useTranslation();
 
-  const ControlPlaneMachineSetTableHeader = () => {
-    return [
-      {
-        title: t('public~Name'),
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('public~Namespace'),
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('public~Machines'),
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: t('public~Strategy'),
-        props: { className: tableColumnClasses[3] },
-      },
-      {
-        title: t('public~State'),
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[5] },
-      },
-    ];
-  };
-
-  const ControlPlaneMachineSetTableRow: React.FC<RowFunctionArgs<ControlPlaneMachineSetKind>> = ({
+  const ControlPlaneMachineSetTableRow: React.FC<RowProps<ControlPlaneMachineSetKind>> = ({
     obj,
   }) => {
     const desiredReplicas = getDesiredReplicas(obj);
@@ -254,7 +265,7 @@ const ControlPlaneMachineSetList: React.FC = (props) => {
             namespace={obj.metadata.namespace}
           />
         </TableData>
-        <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
+        <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
           <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
         </TableData>
         <TableData className={css(tableColumnClasses[2])}>
@@ -286,13 +297,19 @@ const ControlPlaneMachineSetList: React.FC = (props) => {
     );
   };
 
+  const [columns] = useActiveColumns({
+    columns: React.useMemo(() => getColumns(t), [t]),
+    showNamespaceOverride: false,
+    columnManagementID: controlPlaneMachineSetReference,
+  });
+
   return (
     <>
-      <Table
+      <VirtualizedTable<ControlPlaneMachineSetKind>
         {...props}
         aria-label={t('public~ControlPlaneMachineSets')}
         label={t('public~ControlPlaneMachineSets')}
-        Header={ControlPlaneMachineSetTableHeader}
+        columns={columns}
         Row={ControlPlaneMachineSetTableRow}
       />
     </>
@@ -307,6 +324,13 @@ export const ControlPlaneMachineSetListPage: React.FC<any> = (props) => (
     canCreate
   />
 );
+
+type ControlPlaneMachineSetListProps = {
+  data: ControlPlaneMachineSetKind[];
+  unfilteredData: ControlPlaneMachineSetKind[];
+  loaded: boolean;
+  loadError: any;
+};
 
 type ControlPlaneMachineSetCountsProps = {
   resource: ControlPlaneMachineSetKind;
