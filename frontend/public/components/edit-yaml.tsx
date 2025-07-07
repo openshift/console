@@ -822,6 +822,7 @@ const EditYAMLInner = (props) => {
             <div className={css('yaml-editor', customClass)} ref={editor}>
               {showReplaceCodeModal && <ReplaceCodeModal handleCodeReplace={handleCodeReplace} />}
               <CodeEditor
+                isCopyEnabled={canDownload}
                 ref={monacoRef}
                 options={options}
                 showShortcuts={!genericYAML}
