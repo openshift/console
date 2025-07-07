@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
   ActionGroup,
   Alert,
-  AlertActionCloseButton,
+  AlertVariant,
   Button,
   Checkbox,
   FormGroup,
@@ -52,6 +52,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
+import { DismissableAlert } from '@console/shared/src/components/alerts';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -87,24 +88,6 @@ import {
   getInitializationResource,
   getClusterServiceVersionPlugins,
 } from './operator-hub-utils';
-
-export const CloudServiceTokenWarningAlert = ({
-  title,
-  message,
-  onClose,
-}: CloudServiceTokenWarningAlertProps) => {
-  return (
-    <Alert
-      isInline
-      variant="warning"
-      title={title}
-      actionClose={<AlertActionCloseButton onClose={() => onClose(false)} />}
-      className="pf-v6-u-mb-lg"
-    >
-      <p>{message}</p>
-    </Alert>
-  );
-};
 
 const InputField: React.FC<InputFieldProps> = ({
   label,
@@ -161,8 +144,6 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const { installModes = [], version: currentLatestVersion } = currentCSVDesc ?? {};
 
   const [updateVersion, setUpdateVersion] = React.useState(version || currentLatestVersion);
-
-  const [showCSTokenWarn, setShowCSTokenWarn] = React.useState(true);
 
   const [approval, setApproval] = React.useState(
     updateVersion !== currentLatestVersion
@@ -879,32 +860,32 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         )}
       />
       <PaneBody>
-        {tokenizedAuth === 'AWS' && showCSTokenWarn && (
-          <CloudServiceTokenWarningAlert
-            title={t('olm~Cluster in STS Mode')}
-            message={t(
+        {tokenizedAuth === 'AWS' && (
+          <DismissableAlert title={t('olm~Cluster in STS Mode')} variant={AlertVariant.warning}>
+            {t(
               'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Manual subscriptions are highly recommended as steps should be taken prior to upgrade to ensure that the permissions required by the next version are properly accounted for in the role. Please see the operator description for more details.',
             )}
-            onClose={() => setShowCSTokenWarn(false)}
-          />
+          </DismissableAlert>
         )}
-        {tokenizedAuth === 'Azure' && showCSTokenWarn && (
-          <CloudServiceTokenWarningAlert
+        {tokenizedAuth === 'Azure' && (
+          <DismissableAlert
             title={t('olm~Cluster in Azure Workload Identity / Federated Identity Mode')}
-            message={t(
+            variant={AlertVariant.warning}
+          >
+            {t(
               'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
             )}
-            onClose={() => setShowCSTokenWarn(false)}
-          />
+          </DismissableAlert>
         )}{' '}
-        {tokenizedAuth === 'GCP' && showCSTokenWarn && (
-          <CloudServiceTokenWarningAlert
+        {tokenizedAuth === 'GCP' && (
+          <DismissableAlert
             title={t('olm~Cluster in GCP Workload Identity / Federated Identity Mode')}
-            message={t(
+            variant={AlertVariant.warning}
+          >
+            {t(
               'olm~This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
             )}
-            onClose={() => setShowCSTokenWarn(false)}
-          />
+          </DismissableAlert>
         )}
         <Grid hasGutter>
           <GridItem span={6}>
@@ -1288,12 +1269,6 @@ type InputFieldProps = {
   ariaLabel: string;
   value: string;
   setValue: (value: string) => void;
-};
-
-type CloudServiceTokenWarningAlertProps = {
-  title: string;
-  message: string;
-  onClose: (value: boolean) => void;
 };
 
 OperatorHubSubscribe.displayName = 'OperatorHubSubscribe';

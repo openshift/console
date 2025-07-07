@@ -46,4 +46,32 @@ export const eventSourceCatalogItems: CatalogItem[] = [
     },
     supportUrl: 'example',
   },
+  // Example with multiple actions
+  {
+    uid: 'b0abb994-5057-4f7e-a4f3-d2f9b3295b99',
+    type: 'EventSource',
+    name: 'Multi-Action Source',
+    provider: 'Example',
+    description:
+      'This is an example catalog item demonstrating multiple calls to action in the details pane header.',
+    ctas: [
+      {
+        label: 'Create',
+        href: '/catalog/ns/default/eventsource?sourceKind=MultiAction&action=create',
+        variant: 'primary',
+      },
+      {
+        label: 'View Documentation',
+        href: '/docs/multi-action-source',
+        variant: 'secondary',
+      },
+      {
+        label: 'Quick Start',
+        callback: () => {
+          // Example callback for quick start action
+        },
+        variant: 'link',
+      },
+    ],
+  },
 ];
