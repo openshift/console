@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Flex, FlexItem } from '@patternfly/react-core';
+import { Button, Flex } from '@patternfly/react-core';
 import { MagicIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -37,13 +37,14 @@ export const CodeEditorToolbar: React.FC<CodeEditorToolbarProps> = ({
     <>
       <AskOpenShiftLightspeedButton />
 
-      <Flex className="pf-v6-u-ml-xs" alignItems={{ default: 'alignItemsCenter' }}>
-        {toolbarLinks &&
-          toolbarLinks.map((link, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <FlexItem key={`${index}`}>{link}</FlexItem>
-          ))}
-      </Flex>
+      {toolbarLinks && (
+        <Flex
+          className="pf-v6-u-ml-xs pf-v6-u-flex-grow-1"
+          alignItems={{ default: 'alignItemsCenter' }}
+        >
+          {toolbarLinks}
+        </Flex>
+      )}
     </>
   );
 };
