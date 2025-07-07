@@ -20,6 +20,7 @@ import {
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { useTranslation } from 'react-i18next';
 
+import { useActiveColumns } from '@console/dynamic-plugin-sdk/src/lib-core';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { MachineAutoscalerModel, MachineModel, MachineSetModel, NodeModel } from '../models';
@@ -386,6 +387,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
         <TableData
           {...tableColumnInfo[1]}
           className={css(tableColumnInfo[1].className, 'co-break-word')}
+          columnID="namespace"
         >
           <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
         </TableData>
@@ -413,12 +415,18 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
     );
   };
 
+  const [columns] = useActiveColumns({
+    columns: machineSetTableColumn,
+    showNamespaceOverride: false,
+    columnManagementID: machineSetReference,
+  });
+
   return (
     <VirtualizedTable<MachineSetKind>
       {...props}
       aria-label={t('public~MachineSets')}
       label={t('public~MachineSets')}
-      columns={machineSetTableColumn}
+      columns={columns}
       Row={MachineSetTableRow}
     />
   );
