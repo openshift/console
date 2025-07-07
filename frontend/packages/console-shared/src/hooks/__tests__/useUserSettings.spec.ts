@@ -1,5 +1,6 @@
 import { act } from 'react-dom/test-utils';
 import { useSelector } from 'react-redux';
+import { useFavoritesOptions } from '@console/internal/components/useFavoritesOptions';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapKind } from '@console/internal/module/k8s';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
@@ -14,6 +15,11 @@ const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const createConfigMapMock = createConfigMap as jest.Mock;
 const updateConfigMapMock = updateConfigMap as jest.Mock;
 const useSelectorMock = useSelector as jest.Mock;
+const useFavoritesOptionsMock = useFavoritesOptions as jest.Mock;
+
+jest.mock('@console/internal/components/useFavoritesOptions', () => ({
+  useFavoritesOptions: jest.fn(),
+}));
 
 // need to mock StorageEvent because it doesn't exist
 (global as any).StorageEvent = Event;
@@ -62,6 +68,7 @@ const savedDataConfigMap: ConfigMapKind = {
 beforeEach(() => {
   jest.resetAllMocks();
   useSelectorMock.mockImplementation((selector) => selector({ sdkCore: { user: { uid: 'foo' } } }));
+  useFavoritesOptionsMock.mockReturnValue([[], jest.fn(), true]);
 
   // eslint-disable-next-line no-console
   ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = consoleMock));
