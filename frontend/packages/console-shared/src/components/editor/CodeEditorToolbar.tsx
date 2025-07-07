@@ -40,6 +40,7 @@ export const CodeEditorToolbar: React.FC<CodeEditorToolbarProps> = ({
       {toolbarLinks && (
         <Flex
           className="pf-v6-u-ml-xs pf-v6-u-flex-grow-1"
+          gap={{ default: 'gapXs' }}
           alignItems={{ default: 'alignItemsCenter' }}
         >
           {toolbarLinks}
