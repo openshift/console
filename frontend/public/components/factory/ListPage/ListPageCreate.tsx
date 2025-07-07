@@ -28,7 +28,7 @@ const CreateWithPermissions: React.FC<CreateWithPermissionsProps> = ({
 }) => {
   const [k8sModel] = useK8sModel(createAccessReview?.groupVersionKind);
   return !_.isEmpty(createAccessReview) ? (
-    <RequireCreatePermission model={k8sModel} namespace={createAccessReview.namespace}>
+    <RequireCreatePermission model={k8sModel} namespace={createAccessReview!.namespace}>
       {children}
     </RequireCreatePermission>
   ) : (
@@ -113,7 +113,7 @@ const ListPageCreate: React.FC<ListPageCreateProps> = ({
 
   const [k8sModel] = useK8sModel(groupVersionKind);
   const [namespace] = useActiveNamespace();
-  let to: string;
+  let to: string = '';
   if (k8sModel) {
     const usedNamespace = k8sModel.namespaced
       ? namespace === ALL_NAMESPACES_KEY
@@ -130,13 +130,11 @@ const ListPageCreate: React.FC<ListPageCreateProps> = ({
     }
   }
 
-  return (
-    !!to && (
-      <ListPageCreateLink createAccessReview={createAccessReview} to={to}>
-        {children}
-      </ListPageCreateLink>
-    )
-  );
+  return to ? (
+    <ListPageCreateLink createAccessReview={createAccessReview} to={to}>
+      {children}
+    </ListPageCreateLink>
+  ) : null;
 };
 
 export default ListPageCreate;

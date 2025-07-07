@@ -44,8 +44,8 @@ import {
   resourcePath,
   ResourceLink,
   ScrollToTopOnMount,
-  SectionHeading,
   LoadingBox,
+  SectionHeading,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
@@ -201,13 +201,13 @@ const Env: React.FC<EnvProps> = ({ env }) => {
 
   const value = (e: EnvVar) => {
     const v = e.valueFrom;
-    if (_.has(v, 'fieldRef')) {
+    if (v && _.has(v, 'fieldRef')) {
       return t('public~field: {{fieldPath}}', v.fieldRef);
-    } else if (_.has(v, 'resourceFieldRef')) {
+    } else if (v && _.has(v, 'resourceFieldRef')) {
       return t('public~resource: {{resource}}', v.resourceFieldRef);
-    } else if (_.has(v, 'configMapKeyRef')) {
+    } else if (v && _.has(v, 'configMapKeyRef')) {
       return t('public~config-map: {{name}}/{{key}}', v.configMapKeyRef);
-    } else if (_.has(v, 'secretKeyRef')) {
+    } else if (v && _.has(v, 'secretKeyRef')) {
       return t('public~secret: {{name}}/{{key}}', v.secretKeyRef);
     }
     return e.value;
@@ -248,12 +248,12 @@ const getImageNameAndTag = (image: string) => {
   return { imageName, imageTag };
 };
 
-const getContainer = (pod: PodKind, name: String): ContainerSpec => {
+const getContainer = (pod: PodKind, name: String): ContainerSpec | null => {
   if (!pod.spec) {
     return null;
   }
 
-  return _.find(pod.spec.containers, { name }) || _.find(pod.spec.initContainers, { name });
+  return _.find(pod.spec.containers, { name }) || _.find(pod.spec.initContainers, { name }) || null;
 };
 
 const getContainerStateValue = (state: any) => {
@@ -270,7 +270,7 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
   const { t } = useTranslation();
   const params = useParams();
   const pod = props.obj;
-  const container = getContainer(pod, params.name);
+  const container = getContainer(pod, params.name!);
 
   if (!container) {
     return <ErrorPage404 />;
@@ -288,84 +288,54 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
       <Grid hasGutter>
         <GridItem lg={4}>
           <SectionHeading text={t('public~Container details')} />
-          <DescriptionList>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~State')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                <Status status={stateValue} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Last State')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                <ContainerLastState containerLastState={status?.lastState} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~ID')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                {status?.containerID ? (
-                  <div className="co-break-all co-select-to-copy">{status.containerID}</div>
-                ) : (
-                  '-'
-                )}
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Restarts')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                {getContainerRestartCount(status)}
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Resource requests')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                {getResourceRequestsValue(container) || '-'}
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Resource limits')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                {getResourceLimitsValue(container) || '-'}
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Lifecycle hooks')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                <Lifecycle lifecycle={container.lifecycle} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Readiness probe')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                <Probe probe={container.readinessProbe} podIP={pod.status.podIP || '-'} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Liveness probe')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                <Probe probe={container.livenessProbe} podIP={pod.status.podIP || '-'} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Started')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                <Timestamp timestamp={state.startedAt} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Finished')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                <Timestamp timestamp={state.finishedAt} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Pod')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                <ResourceLink kind="Pod" name={params.podName} namespace={params.ns} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-          </DescriptionList>
+          <dl className="co-m-pane__details">
+            <dt>{t('public~State')}</dt>
+            <dd>
+              <Status status={stateValue} />
+            </dd>
+            <dt>{t('public~Last State')}</dt>
+            <dd>
+              <ContainerLastState containerLastState={status?.lastState} />
+            </dd>
+            <dt>{t('public~ID')}</dt>
+            <dd>
+              {status?.containerID ? (
+                <div className="co-break-all co-select-to-copy">{status.containerID}</div>
+              ) : (
+                '-'
+              )}
+            </dd>
+            <dt>{t('public~Restarts')}</dt>
+            <dd>{getContainerRestartCount(status)}</dd>
+            <dt>{t('public~Resource requests')}</dt>
+            <dd>{getResourceRequestsValue(container) || '-'}</dd>
+            <dt>{t('public~Resource limits')}</dt>
+            <dd>{getResourceLimitsValue(container) || '-'}</dd>
+            <dt>{t('public~Lifecycle hooks')}</dt>
+            <dd>
+              <Lifecycle lifecycle={container.lifecycle} />
+            </dd>
+            <dt>{t('public~Readiness probe')}</dt>
+            <dd>
+              <Probe probe={container.readinessProbe} podIP={pod.status?.podIP || '-'} />
+            </dd>
+            <dt>{t('public~Liveness probe')}</dt>
+            <dd>
+              <Probe probe={container.livenessProbe} podIP={pod.status?.podIP || '-'} />
+            </dd>
+            <dt>{t('public~Started')}</dt>
+            <dd>
+              <Timestamp timestamp={state.startedAt} />
+            </dd>
+            <dt>{t('public~Finished')}</dt>
+            <dd>
+              <Timestamp timestamp={state.finishedAt} />
+            </dd>
+            <dt>{t('public~Pod')}</dt>
+            <dd>
+              <ResourceLink kind="Pod" name={params.podName} namespace={params.ns} />
+            </dd>
+          </dl>
         </GridItem>
 
         <GridItem lg={4}>
@@ -420,18 +390,14 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
 
         <GridItem lg={4}>
           <SectionHeading text={t('public~Network')} />
-          <DescriptionList>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Node')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                <NodeLink name={pod.spec.nodeName} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('public~Pod IP')}</DescriptionListTerm>
-              <DescriptionListDescription>{pod.status.podIP || '-'}</DescriptionListDescription>
-            </DescriptionListGroup>
-          </DescriptionList>
+          <dl className="co-m-pane__details">
+            <dt>{t('public~Node')}</dt>
+            <dd>
+              <NodeLink name={pod.spec?.nodeName || ''} />
+            </dd>
+            <dt>{t('public~Pod IP')}</dt>
+            <dd>{pod.status?.podIP || '-'}</dd>
+          </dl>
         </GridItem>
 
         <GridItem>
@@ -441,21 +407,21 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
         <GridItem lg={4}>
           <SectionHeading text={t('public~Ports')} />
           <div className="co-table-container">
-            <Ports ports={container.ports} />
+            <Ports ports={container.ports || []} />
           </div>
         </GridItem>
 
         <GridItem lg={4}>
           <SectionHeading text={t('public~Mounted volumes')} />
           <div className="co-table-container">
-            <VolumeMounts volumeMounts={container.volumeMounts} />
+            <VolumeMounts volumeMounts={container.volumeMounts || []} />
           </div>
         </GridItem>
 
         <GridItem lg={4}>
           <SectionHeading text={t('public~Environment variables')} />
           <div className="co-table-container">
-            <Env env={container.env} />
+            <Env env={container.env || []} />
           </div>
         </GridItem>
       </Grid>
@@ -501,7 +467,7 @@ export const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
   }
 
   const pod = props.obj.data;
-  const container = getContainer(pod, params.name);
+  const container = getContainer(pod, params.name!);
 
   if (!container) {
     return <ErrorPage404 />;
@@ -536,11 +502,11 @@ export const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
 ContainerDetails.displayName = 'ContainerDetails';
 
 type LifecycleProps = {
-  lifecycle: ContainerLifecycle;
+  lifecycle?: ContainerLifecycle;
 };
 
 type ProbeProps = {
-  probe: ContainerProbe;
+  probe?: ContainerProbe;
   podIP: string;
 };
 

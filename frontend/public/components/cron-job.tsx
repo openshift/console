@@ -47,7 +47,7 @@ import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDis
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-export const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
+export const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common!];
 
 const kind = 'CronJob';
 
@@ -126,7 +126,7 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
                 obj={cronjob}
                 path="status.lastScheduleTime"
               >
-                <Timestamp timestamp={cronjob.status.lastScheduleTime} />
+                <Timestamp timestamp={cronjob.status.lastScheduleTime || ''} />
               </DetailsItem>
             </ResourceSummary>
           </GridItem>
@@ -196,8 +196,8 @@ export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj 
   const { t } = useTranslation();
   const podFilters = React.useMemo(() => getPodFilters(t), [t]);
   return (
-    <PaneBody>
-      <Firehose resources={getPodsWatcher(obj.metadata.namespace)}>
+    <div className="co-m-pane__body">
+      <Firehose resources={getPodsWatcher(obj.metadata?.namespace || '')}>
         <ListPageWrapper
           flatten={(
             _resources: FirehoseResourcesResult<{
@@ -209,7 +209,7 @@ export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj 
               return [];
             }
             const jobs = _resources.jobs.data.filter((job) =>
-              job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata.uid),
+              job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata?.uid),
             );
             return (
               jobs &&
@@ -224,7 +224,7 @@ export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj 
           rowFilters={podFilters}
         />
       </Firehose>
-    </PaneBody>
+    </div>
   );
 };
 
@@ -233,22 +233,22 @@ export type CronJobJobsComponentProps = {
 };
 
 export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj }) => (
-  <PaneBody>
-    <Firehose resources={getJobsWatcher(obj.metadata.namespace)}>
+  <div className="co-m-pane__body">
+    <Firehose resources={getJobsWatcher(obj.metadata?.namespace || '')}>
       <ListPageWrapper
         flatten={(_resources: FirehoseResourcesResult<{ jobs: K8sResourceCommon[] }>) => {
           if (!_resources.jobs.loaded) {
             return [];
           }
           return _resources.jobs.data.filter((job) =>
-            job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata.uid),
+            job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata?.uid),
           );
         }}
         kinds={['Jobs']}
         ListComponent={JobsList}
       />
     </Firehose>
-  </PaneBody>
+  </div>
 );
 
 export const CronJobsList: React.FC = (props) => {

@@ -65,7 +65,7 @@ export const StackChart: React.FC<AreaChartProps> = ({
     (prop, includeDate = true) => {
       const { x, y } = prop.datum as DataPoint<Date>;
       const value = humanize(y, unit, unit).string;
-      const date = formatDate(x);
+      const date = formatDate(x ?? new Date());
       return includeDate ? `${value} at ${date}` : `${value} -`;
     },
     [humanize, unit, formatDate],
@@ -90,11 +90,11 @@ export const StackChart: React.FC<AreaChartProps> = ({
               legendData={legendData}
               stack
               formatDate={(d) => {
-                const y = d.reduce((acc, curr) => acc + curr.y, 0);
+                const y = d.reduce((acc, curr) => acc + (curr.y ?? 0), 0);
                 const value = humanize(y, unit, unit).string;
-                return `${value} total at ${formatDate(d[0].x)}`;
+                return `${value} total at ${formatDate(d[0].x ?? new Date())}`;
               }}
-              mainDataName={mainDataName}
+              mainDataName={mainDataName || ''}
             />
           }
           voronoiDimension="x"

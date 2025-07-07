@@ -98,7 +98,7 @@ export const AddHTPasswdPage = () => {
       addHTPasswdIDP(oauth, mockNames.secret, true)
         .then(() => {
           return createHTPasswdSecret()
-            .then((secret: K8sResourceKind) => addHTPasswdIDP(oauth, secret.metadata.name))
+            .then((secret: K8sResourceKind) => addHTPasswdIDP(oauth, secret.metadata?.name || ''))
             .then(() => {
               redirectToOAuthPage(navigate);
             });

@@ -43,7 +43,7 @@ export const menuActions: KebabAction[] = [
   Kebab.factory.AddStorage,
   ...Kebab.getExtensionsActionsForKind(DaemonSetModel),
   EditHealthChecks,
-  ...Kebab.factory.common,
+  ...Kebab.factory.common!,
 ];
 
 const kind = 'DaemonSet';
@@ -85,7 +85,7 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
         <SectionHeading text={t('public~DaemonSet details')} />
         {loaded ? (
           <PodRing
-            key={daemonset.metadata.uid}
+            key={daemonset.metadata?.uid}
             pods={podData?.pods || []}
             obj={daemonset}
             resourceKind={DaemonSetModel}
@@ -130,7 +130,7 @@ const envPath = ['spec', 'template', 'spec', 'containers'];
 const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
   <EnvironmentPage
     obj={props.obj}
-    rawEnvData={props.obj.spec.template.spec}
+    rawEnvData={props.obj.spec?.template.spec}
     envPath={envPath}
     readOnly={false}
   />
@@ -145,29 +145,32 @@ const DaemonSetTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj: da
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={kind}
-          name={daemonset.metadata.name}
-          namespace={daemonset.metadata.namespace}
+          name={daemonset.metadata?.name}
+          namespace={daemonset.metadata?.namespace}
         />
       </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={daemonset.metadata.namespace} />
+      <TableData
+        className={css(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={daemonset?.metadata?.namespace || ''} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <Link
-          to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`}
+          to={`/k8s/ns/${daemonset.metadata?.namespace}/daemonsets/${daemonset.metadata?.name}/pods`}
           title="pods"
         >
           {t('public~{{currentNumber}} of {{desiredNumber}} pods', {
-            currentNumber: daemonset.status.currentNumberScheduled,
-            desiredNumber: daemonset.status.desiredNumberScheduled,
+            currentNumber: daemonset.status?.currentNumberScheduled,
+            desiredNumber: daemonset.status?.desiredNumberScheduled,
           })}
         </Link>
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <LabelList kind={kind} labels={daemonset.metadata.labels} />
+        <LabelList kind={kind} labels={daemonset.metadata?.labels || {}} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
+        <Selector selector={daemonset.spec?.selector} namespace={daemonset.metadata?.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <LazyActionMenu context={context} />

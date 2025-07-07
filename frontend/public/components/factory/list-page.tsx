@@ -136,12 +136,12 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
   const memoizedIds = useDeepCompareMemoize(reduxIDs);
 
   React.useEffect(() => {
-    if (!_.isNil(nameFilter)) {
+    if (!_.isNil(nameFilter) && memoizedIds) {
       memoizedIds.forEach((id) => dispatch(filterList(id, 'name', { selected: [nameFilter] })));
     }
   }, [dispatch, nameFilter, memoizedIds]);
 
-  const data = flatten ? flatten(resources) : [];
+  const data = flatten ? flatten(resources || {}) : [];
   const Filter = (
     <FilterToolbar
       rowFilters={rowFilters}
@@ -175,10 +175,13 @@ ListPageWrapper.displayName = 'ListPageWrapper_';
 export type FireManProps = {
   canCreate?: boolean;
   textFilter?: string;
-  createAccessReview?: {
-    model: K8sKind;
-    namespace?: string;
-  };
+  createAccessReview?:
+    | {
+        model: K8sKind;
+        namespace?: string;
+      }
+    | null
+    | undefined;
   createButtonText?: string;
   createProps?: CreateProps;
   fieldSelector?: string;
@@ -206,7 +209,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
   } = props;
   const navigate = useNavigate();
 
-  const [reduxIDs, setReduxIDs] = React.useState([]);
+  const [reduxIDs, setReduxIDs] = React.useState<string[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expand] = React.useState();
 
@@ -215,7 +218,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     params.forEach((v, k) => applyFilter(k, v));
 
     const reduxId = resources.map((r) =>
-      makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
+      makeReduxID(kindObj(r.kind), makeQuery(r.namespace!, r.selector, r.fieldSelector, r.name)),
     );
     setReduxIDs(reduxId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -223,7 +226,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
 
   React.useEffect(() => {
     const reduxId = resources.map((r) =>
-      makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
+      makeReduxID(kindObj(r.kind), makeQuery(r.namespace!, r.selector, r.fieldSelector, r.name)),
     );
 
     if (_.isEqual(reduxId, reduxIDs)) {
@@ -258,7 +261,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     if (filterName.indexOf(storagePrefix) === 0) {
       return;
     }
-    reduxIDs.forEach((id) => props.filterList(id, filterName, options));
+    reduxIDs.forEach((id) => props.filterList?.(id, filterName, options));
     updateURL(filterName, options);
   };
 
@@ -308,8 +311,8 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     if (!_.isEmpty(createAccessReview)) {
       createLink = (
         <RequireCreatePermission
-          model={createAccessReview.model}
-          namespace={createAccessReview.namespace}
+          model={createAccessReview!.model}
+          namespace={createAccessReview!.namespace}
         >
           {createLink}
         </RequireCreatePermission>
@@ -434,7 +437,7 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     <MultiListPage
       autoFocus={autoFocus}
       canCreate={canCreate}
-      createAccessReview={createAccessReview}
+      createAccessReview={createAccessReview!}
       createButtonText={
         createButtonText || t('public~Create {{label}}', { label: t(labelKey) || label })
       }

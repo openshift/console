@@ -57,7 +57,7 @@ export const startAPIDiscovery = () => (dispatch) => {
     verb: 'list',
   })
     .then((res) => {
-      if (res.status.allowed) {
+      if (res.status?.allowed) {
         // eslint-disable-next-line no-console
         console.log('API discovery method: Watching');
         // Always dispatch an initial call

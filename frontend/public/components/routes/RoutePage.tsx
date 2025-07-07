@@ -69,7 +69,7 @@ export const RoutePage: React.FC = () => {
   const handleSubmit = async (values: RouteFormValues, helpers: FormikHelpers<RouteFormValues>) => {
     const data: RouteKind =
       values.editorType === EditorType.Form
-        ? convertEditFormToRoute(values.formData, isEditForm && route)
+        ? convertEditFormToRoute(values.formData, (isEditForm && route) || undefined)
         : safeYAMLToJS(values.yamlData);
 
     if (data?.metadata && !data.metadata.namespace) {
@@ -91,7 +91,9 @@ export const RoutePage: React.FC = () => {
       } else {
         resource = await k8sCreateResource({ model: RouteModel, data });
       }
-      navigate(`/k8s/ns/${resource.metadata.namespace}/routes/${resource.metadata.name}`);
+      navigate(
+        `/k8s/ns/${resource.metadata?.namespace || ''}/routes/${resource.metadata?.name || ''}`,
+      );
     } catch (e) {
       helpers.setStatus({
         submitSuccess: '',
@@ -129,7 +131,7 @@ export const RoutePage: React.FC = () => {
               handleCancel={handleCancel}
               submitLabel={submitLabel}
               services={services}
-              existingRoute={name && route}
+              existingRoute={(name && route) || undefined}
             />
           )}
         </Formik>

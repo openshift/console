@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
 import {
   isNotLoadedDynamicPluginInfo,
@@ -11,7 +11,7 @@ import {
 } from '@console/plugin-sdk';
 import * as UIActions from '@console/internal/actions/ui';
 import { resourcePath } from '@console/internal/components/utils';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+// import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 import { getClusterID } from '@console/internal/module/k8s/cluster-settings';
 
@@ -39,11 +39,7 @@ import {
   EmptyStateBody,
   EmptyStateFooter,
   EmptyStateVariant,
-  NotificationDrawer as PfNotificationDrawer,
-  NotificationDrawerBody,
   NotificationDrawerGroup,
-  NotificationDrawerGroupList,
-  NotificationDrawerHeader,
   NotificationDrawerList,
   NotificationDrawerListItem,
   NotificationDrawerListItemBody,
@@ -159,7 +155,7 @@ const getUpdateNotificationEntries = (
   const similarChannels = getSimilarClusterVersionChannels(cv, currentPrefix);
   const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
   const newerChannelVersion = splitClusterVersionChannel(newerChannel)?.version;
-  const entries = [];
+  const entries: React.ReactNode[] = [];
 
   const failedPlugins = pluginInfoEntries
     .filter(isNotLoadedDynamicPluginInfo)
@@ -245,7 +241,81 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const [pluginInfoEntries] = useDynamicPluginInfo();
-  const dispatch = useDispatch();
+  const toggleNotificationDrawer = () => dispatch(UIActions.notificationDrawerToggleExpanded());
+
+  React.useEffect(() => {
+    const poll: NotificationPoll = (url, key: 'notificationAlerts' | 'silences', dataHandler) => {
+      dispatch(alertingLoading(key));
+      const notificationPoller = (): void => {
+        coFetchJSON(url)
+          .then((response) => dataHandler(response))
+          .then((data) => {
+            dispatch(alertingLoaded(key, data));
+            pollerTimeouts[key] = setTimeout(notificationPoller, 15 * 1000);
+          })
+          .catch((e) => {
+            dispatch(alertingErrored(key, e));
+
+            // If the API returned an error, poll less frequently to avoid excessive calls. For
+            // example, if the user doesn't have permission to access the API, polling will probably
+            // continue to fail, but it is possible that permissions will be granted so we don't
+            // stop completely.
+            pollerTimeouts[key] = setTimeout(notificationPoller, 60 * 1000);
+          });
+      };
+      pollers[key] = notificationPoller;
+      notificationPoller();
+    };
+
+    const { alertManagerBaseURL, prometheusBaseURL } = window.SERVER_FLAGS;
+
+    if (prometheusBaseURL) {
+      poll(
+        `${prometheusBaseURL}/${PrometheusEndpoint.RULES}`,
+        'notificationAlerts',
+        (alertsResults: PrometheusRulesResponse): Alert[] =>
+          alertsResults
+            ? getAlertsAndRules(alertsResults.data)
+                .alerts.filter(
+                  (a) =>
+                    a.state === 'firing' &&
+                    getAlertName(a) !== 'Watchdog' &&
+                    getAlertName(a) !== 'UpdateAvailable',
+                )
+                .sort((a, b) => +new Date(getAlertTime(b)!) - +new Date(getAlertTime(a)!))
+            : [],
+      );
+    } else {
+      dispatch(
+        alertingErrored('notificationAlerts', new Error(t('public~prometheusBaseURL not set'))),
+      );
+    }
+
+    if (alertManagerBaseURL) {
+      poll(`${alertManagerBaseURL}/api/v2/silences`, 'silences', (silences) => {
+        // Set a name field on the Silence to make things easier
+        _.each(silences, (s) => {
+          s.name = _.get(_.find(s.matchers, { name: 'alertname' }), 'value');
+          if (!s.name) {
+            // No alertname, so fall back to displaying the other matchers
+            s.name = s.matchers
+              .map(
+                (m) => `${m.name}${silenceMatcherEqualitySymbol(m.isEqual, m.isRegex)}${m.value}`,
+              )
+              .join(', ');
+          }
+        });
+        return silences;
+      });
+    } else {
+      dispatch(alertingErrored('silences', new Error(t('public~alertManagerBaseURL not set'))));
+    }
+
+    return () => {
+      _.each(pollerTimeouts, clearTimeout);
+    };
+  }, [dispatch, t]);
+
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
   const launchModal = useModal();
@@ -341,90 +411,62 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
       isExpanded={isAlertExpanded}
       title={t('public~Critical Alerts')}
       count={criticalAlerts.length}
-      onExpand={() => {
-        toggleAlertExpanded(!isAlertExpanded);
-      }}
+      onExpandContents={toggleAlertExpanded}
     >
-      <NotificationDrawerList
-        isHidden={!isAlertExpanded}
-        aria-label={t('public~Notifications in the critical alerts group')}
-      >
-        {criticalAlerts.length > 0
-          ? criticalAlerts.map((alert, i) => {
-              const alertVariant = NotificationTypes[getAlertSeverity(alert)];
-              const alertTime = getAlertTime(alert);
-              return (
-                <NotificationDrawerListItem
-                  variant={alertVariant}
-                  key={`${i}_${alert.activeAt}`}
-                  onClick={() => {
-                    itemOnClick(alertURL(alert, alert.rule.id));
-                  }}
-                >
-                  <NotificationDrawerListItemHeader
-                    variant={alertVariant}
-                    title={getAlertName(alert)}
-                  >
-                    <ItemActionButton alert={alert} />
-                  </NotificationDrawerListItemHeader>
-                  <NotificationDrawerListItemBody
-                    timestamp={alertTime && <Timestamp simple timestamp={alertTime} />}
-                  >
-                    <LinkifyExternal>
-                      {getAlertDescription(alert) || getAlertMessage(alert)}
-                    </LinkifyExternal>
-                  </NotificationDrawerListItemBody>
-                </NotificationDrawerListItem>
-              );
-            })
-          : emptyState}
-      </NotificationDrawerList>
-    </NotificationDrawerGroup>
+      {criticalAlerts.length > 0
+        ? criticalAlerts.map((alert, i) => {
+            const action = alertActionExtensionsMap.get(alert.rule.name);
+            return (
+              <NotificationEntry
+                key={`${i}_${alert.activeAt}`}
+                description={
+                  <LinkifyExternal>
+                    {getAlertDescription(alert) || getAlertMessage(alert)}
+                  </LinkifyExternal>
+                }
+                timestamp={getAlertTime(alert) || ''}
+                type={NotificationTypes[getAlertSeverity(alert) || '']}
+                title={getAlertName(alert) || ''}
+                toggleNotificationDrawer={toggleNotificationDrawer}
+                targetPath={alertURL(alert, alert.rule.id)}
+                actionText={action?.text}
+                alertAction={() => action?.action?.(alert, launchModal)}
+              />
+            );
+          })
+        : emptyState}
+    </NotificationCategory>
   );
-  const nonCriticalAlertCategory: React.ReactElement =
+  const nonCriticalAlertCategory: React.ReactElement | null =
     nonCriticalAlerts.length > 0 ? (
       <NotificationDrawerGroup
         key="other-alerts"
         isExpanded={isNonCriticalAlertExpanded}
         title={t('public~Other Alerts')}
         count={nonCriticalAlerts.length}
-        onExpand={() => {
-          toggleNonCriticalAlertExpanded(!isNonCriticalAlertExpanded);
-        }}
+        onExpandContents={toggleNonCriticalAlertExpanded}
       >
-        <NotificationDrawerList
-          isHidden={!isNonCriticalAlertExpanded}
-          aria-label={t('public~Notifications in the other alerts group')}
-        >
-          {nonCriticalAlerts.map((alert, i) => {
-            const alertVariant = NotificationTypes[getAlertSeverity(alert)];
-            const alertTime = getAlertTime(alert);
-            return (
-              <NotificationDrawerListItem
-                variant={alertVariant}
-                key={`${i}_${alert.activeAt}`}
-                onClick={() => {
-                  itemOnClick(alertURL(alert, alert.rule.id));
-                }}
-              >
-                <NotificationDrawerListItemHeader
-                  variant={alertVariant}
-                  title={getAlertName(alert)}
-                >
-                  <ItemActionButton alert={alert} />
-                </NotificationDrawerListItemHeader>
-                <NotificationDrawerListItemBody
-                  timestamp={alertTime && <Timestamp simple timestamp={alertTime} />}
-                >
-                  <LinkifyExternal>
-                    {getAlertDescription(alert) || getAlertMessage(alert)}
-                  </LinkifyExternal>
-                </NotificationDrawerListItemBody>
-              </NotificationDrawerListItem>
-            );
-          })}
-        </NotificationDrawerList>
-      </NotificationDrawerGroup>
+        {nonCriticalAlerts.map((alert, i) => {
+          const action = alertActionExtensionsMap.get(alert.rule.name);
+          return (
+            <NotificationEntry
+              key={`${i}_${alert.activeAt}`}
+              description={
+                <LinkifyExternal>
+                  {getAlertDescription(alert) || getAlertMessage(alert)}
+                </LinkifyExternal>
+              }
+              timestamp={getAlertTime(alert) || ''}
+              type={NotificationTypes[getAlertSeverity(alert) || '']}
+              title={getAlertName(alert) || ''}
+              toggleNotificationDrawer={toggleNotificationDrawer}
+              targetPath={alertURL(alert, alert.rule.id)}
+              actionText={action?.text}
+              alertAction={() => action?.action?.(alert, launchModal)}
+            />
+          );
+        })}
+      </NotificationCategory>
     ) : null;
 
   if (showServiceLevelNotification) {
@@ -432,8 +474,8 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
       <ServiceLevelNotification key="service-level-notification" clusterID={clusterID} />,
     );
   }
-  const recommendationsCategory: React.ReactElement = !_.isEmpty(updateList) ? (
-    <NotificationDrawerGroup
+  const recommendationsCategory: React.ReactElement | null = !_.isEmpty(updateList) ? (
+    <NotificationCategory
       key="recommendations"
       isExpanded={isClusterUpdateExpanded}
       title={t('public~Recommendations')}
@@ -452,15 +494,32 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   ) : null;
 
   return (
-    <PfNotificationDrawer ref={drawerRef}>
-      <NotificationDrawerHeader onClose={toggleNotificationDrawer} />
-      <NotificationDrawerBody>
-        <NotificationDrawerGroupList>
-          {[criticalAlertCategory, nonCriticalAlertCategory, recommendationsCategory]}
-        </NotificationDrawerGroupList>
-      </NotificationDrawerBody>
-    </PfNotificationDrawer>
+    <PFNotificationDrawer
+      className="co-notification-drawer"
+      isInline={isDesktop}
+      isExpanded={isDrawerExpanded}
+      notificationEntries={[
+        criticalAlertCategory,
+        nonCriticalAlertCategory!,
+        recommendationsCategory!,
+      ]}
+      onClose={toggleNotificationDrawer}
+    >
+      {children}
+    </PFNotificationDrawer>
   );
+};
+
+type NotificationPoll = (
+  url: string,
+  key: 'notificationAlerts' | 'silences',
+  dataHandler: (data) => any,
+) => void;
+
+export type WithNotificationsProps = {
+  isDrawerExpanded: boolean;
+  alerts?: NotificationAlerts;
+  silences?: any;
 };
 
 export type NotificationDrawerProps = {

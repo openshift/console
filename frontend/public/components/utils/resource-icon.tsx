@@ -19,7 +19,7 @@ export const ResourceIcon: React.SFC<ResourceIconProps> = ({
   if (!kind && !groupVersionKind) {
     return null;
   }
-  const kindReference = kind || getReference(groupVersionKind);
+  const kindReference = kind || getReference(groupVersionKind!);
   const memoKey = className ? `${kindReference}/${className}` : kindReference;
   if (MEMO[memoKey]) {
     return MEMO[memoKey];

@@ -188,14 +188,14 @@ export const ConfigureUpdateStrategyModal = withHandlePromise(
             onChangeStrategyType={setStrategyType}
             onChangeMaxUnavailable={setMaxUnavailable}
             onChangeMaxSurge={setMaxSurge}
-            replicas={props.deployment.spec.replicas}
+            replicas={props.deployment.spec?.replicas}
           />
         </ModalBody>
         <ModalSubmitFooter
           errorMessage={props.errorMessage}
           inProgress={props.inProgress}
           submitText={t('public~Save')}
-          cancel={props.cancel}
+          cancel={() => props.cancel && props.cancel()}
         />
       </form>
     );

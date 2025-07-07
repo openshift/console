@@ -33,9 +33,9 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
     );
 
     handlePromise(Promise.all([promise, ...extensionPromises]), () => {
-      close();
+      close?.();
       // Redirect to resourcce list page if the resouce is deleted.
-      navigate(resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata.namespace));
+      navigate(resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata!.namespace));
     });
   };
 
@@ -70,7 +70,12 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
         inProgress={inProgress}
         submitText={t('public~Delete')}
         submitDanger
-        cancel={cancel}
+        cancel={(e) => {
+          e.preventDefault();
+          if (cancel) {
+            cancel();
+          }
+        }}
       />
     </form>
   );

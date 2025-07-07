@@ -91,7 +91,7 @@ export const AddGooglePage = () => {
       addGoogleIDP(oauth, mockNames.secret, true)
         .then(() => {
           return createClientSecret()
-            .then((secret: K8sResourceKind) => addGoogleIDP(oauth, secret.metadata.name))
+            .then((secret: K8sResourceKind) => addGoogleIDP(oauth, secret.metadata?.name || ''))
             .then(() => {
               redirectToOAuthPage(navigate);
             });

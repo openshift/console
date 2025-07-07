@@ -6,6 +6,7 @@ import {
   WindowScroller,
   CellMeasurer,
   CellMeasurerCache,
+  List,
 } from 'react-virtualized';
 import { CSSTransition } from 'react-transition-group';
 import { css } from '@patternfly/react-styles';
@@ -35,14 +36,14 @@ class SysEvent extends React.Component<SysEventProps> {
 
   componentWillUnmount() {
     // TODO (kans): this is not correct, but don't memory leak :-/
-    seen.delete(this.props.event.metadata.uid);
+    seen.delete(this.props.event.metadata?.uid || '');
   }
 
   render() {
     const { EventComponent, index, style, event, className, list } = this.props;
 
-    let shouldAnimate: boolean;
-    const key = event.metadata.uid;
+    let shouldAnimate: boolean = false;
+    const key = event.metadata?.uid || '';
     // Only animate events if they're at the start of the list (first 6) and we haven't seen them before.
     if (!seen.has(key) && index < 6) {
       seen.add(key);
@@ -53,7 +54,7 @@ class SysEvent extends React.Component<SysEventProps> {
       <div className={css('co-sysevent--transition', className)} style={style} role="row">
         <CSSTransition
           mountOnEnter={true}
-          appear={shouldAnimate}
+          appear={shouldAnimate || false}
           in
           exit={false}
           timeout={timeout}
@@ -75,7 +76,7 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
   className,
   EventComponent,
 }) => {
-  const [list, setList] = React.useState(null);
+  const [list, setList] = React.useState<List | null>(null);
   const onResize = React.useCallback(() => measurementCache.clearAll(), []);
   React.useEffect(() => {
     onResize();
@@ -94,7 +95,7 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
           <SysEvent
             className={className}
             event={events[index]}
-            list={list}
+            list={list as List}
             EventComponent={EventComponent}
             onLoad={measure}
             onEntered={print}
@@ -113,7 +114,7 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
       {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
         <AutoSizer disableHeight onResize={onResize}>
           {({ width }) => (
-            <div ref={registerChild}>
+            <div ref={registerChild as React.LegacyRef<HTMLDivElement>}>
               <VirtualList
                 autoHeight
                 data={events}
@@ -121,7 +122,7 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
                 height={height || 0}
                 isScrolling={isScrolling}
                 onScroll={onChildScroll}
-                ref={setList}
+                ref={setList as React.LegacyRef<List>}
                 rowCount={events.length}
                 rowHeight={measurementCache.rowHeight}
                 rowRenderer={rowRenderer}

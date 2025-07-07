@@ -14,7 +14,11 @@ export const TelemetryNotifier = () => {
   const [
     currentUserPreferenceTelemetryValue,
     setCurrentUserPreferenceTelemetryValue,
-  ] = useUserSettings<USER_TELEMETRY_ANALYTICS>(PREFERRED_TELEMETRY_USER_SETTING_KEY, null, true);
+  ] = useUserSettings<USER_TELEMETRY_ANALYTICS>(
+    PREFERRED_TELEMETRY_USER_SETTING_KEY,
+    undefined,
+    true,
+  );
 
   const userResponse = (value: USER_TELEMETRY_ANALYTICS) => {
     setCurrentUserPreferenceTelemetryValue(value);

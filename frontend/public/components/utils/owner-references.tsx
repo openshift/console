@@ -11,7 +11,7 @@ export const OwnerReferences: React.FC<OwnerReferencesProps> = ({ resource }) =>
       key={o.uid}
       kind={referenceForOwnerRef(o)}
       name={o.name}
-      namespace={resource.metadata.namespace}
+      namespace={resource.metadata?.namespace || ''}
     />
   ));
   return owners.length ? (

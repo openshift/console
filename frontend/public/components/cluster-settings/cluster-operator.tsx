@@ -91,8 +91,8 @@ const ClusterOperatorTableRow: React.FC<RowFunctionArgs<ClusterOperator>> = ({ o
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={clusterOperatorReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata?.name || ''}
+          namespace={obj.metadata?.namespace || ''}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
@@ -300,7 +300,7 @@ export const ClusterOperatorDetailsPage: React.FC = (props) => {
       ]}
       breadcrumbsFor={() => [
         {
-          name: t(ClusterOperatorModel.labelPluralKey),
+          name: t(ClusterOperatorModel.labelPluralKey || ''),
           path: '/settings/cluster/clusteroperators',
         },
         {

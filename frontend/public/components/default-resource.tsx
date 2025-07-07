@@ -28,7 +28,7 @@ import {
   SectionHeading,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { DescriptionList } from '@patternfly/react-core';
 import {
   isResourceActionProvider,
   ResourceActionProvider,
@@ -42,14 +42,14 @@ const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.colu
 
 export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ obj }) => {
   const { t } = useTranslation();
-  const groupVersionKind = getGroupVersionKindForResource(obj);
+  const groupVersionKind = getGroupVersionKindForResource(obj!);
   const [model] = useK8sModel(groupVersionKind);
-  const leftDetailsItemExtensions = useDetailsItemExtensionsForResource(obj, 'left');
-  const rightDetailsItemExtensions = useDetailsItemExtensionsForResource(obj, 'right');
+  const leftDetailsItemExtensions = useDetailsItemExtensionsForResource(obj!, 'left');
+  const rightDetailsItemExtensions = useDetailsItemExtensionsForResource(obj!, 'right');
   const leftDetailsItems = React.useMemo(
     () =>
       leftDetailsItemExtensions.map((extension) => (
-        <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj} />
+        <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj!} />
       )),
     [leftDetailsItemExtensions, obj],
   );
@@ -57,7 +57,7 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
   const rightDetailsItems = React.useMemo(
     () =>
       rightDetailsItemExtensions.map((extension) => (
-        <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj} />
+        <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj!} />
       )),
     [rightDetailsItemExtensions, obj],
   );
@@ -70,18 +70,22 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
             kind: model?.labelKey ? t(model.labelKey) : model?.label,
           })}
         />
-        <Grid hasGutter>
-          <GridItem md={6}>
-            <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false}>
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary
+              resource={obj!}
+              podSelector="spec.podSelector"
+              showNodeSelector={false}
+            >
               {leftDetailsItems}
             </ResourceSummary>
-          </GridItem>
+          </div>
           {rightDetailsItems.length > 0 && (
-            <GridItem md={6}>
+            <div className="col-md-6">
               <DescriptionList>{rightDetailsItems}</DescriptionList>
-            </GridItem>
+            </div>
           )}
-        </Grid>
+        </div>
       </PaneBody>
       {_.isArray(obj?.status?.conditions) && (
         <PaneBody>
@@ -95,9 +99,8 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
 
 const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, customData }) => {
   const kind = referenceFor(obj) || customData.kind;
-
+  const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(kind)), ...common!];
   const model = kindObj(kind);
-  const menuActions = [...Kebab.getExtensionsActionsForKind(model), ...common];
   const { t } = useTranslation();
 
   const resourceProviderGuard = React.useCallback(
@@ -119,19 +122,19 @@ const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, cust
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={customData.kind}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata?.name}
+          namespace={obj.metadata?.namespace}
         />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
-        {obj.metadata.namespace ? (
-          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        {obj.metadata?.namespace ? (
+          <ResourceLink kind="Namespace" name={obj.metadata?.namespace} />
         ) : (
           t('public~None')
         )}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata?.creationTimestamp ?? ''} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         {hasExtensionActions ? (
@@ -218,7 +221,7 @@ DefaultPage.displayName = 'DefaultPage';
 
 export const DefaultDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
-  const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(props.kind)), ...common];
+  const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(props.kind)), ...common!];
 
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
 };

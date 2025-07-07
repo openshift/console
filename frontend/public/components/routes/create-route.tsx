@@ -54,7 +54,7 @@ class CreateRouteWithTranslation extends React.Component<
     name: '',
     hostname: '',
     path: '',
-    service: null,
+    service: undefined as any,
     weight: 100,
     targetPort: '',
     termination: '',
@@ -72,7 +72,7 @@ class CreateRouteWithTranslation extends React.Component<
 
   componentDidMount() {
     const { formik } = this.props;
-    const portOptions = getPortOptions(formik.values.formData?.service);
+    const portOptions = getPortOptions(formik.values.formData?.service || undefined);
     this.setState((state) => ({ ...state, ...formik.values.formData, portOptions }));
   }
 
@@ -94,7 +94,7 @@ class CreateRouteWithTranslation extends React.Component<
 
   changeService = (serviceName: string) => {
     const service = _.find(this.props.services, { metadata: { name: serviceName } });
-    const portOptions = getPortOptions(service);
+    const portOptions = getPortOptions(service || (undefined as any));
     this.setState({
       service,
       portOptions,
@@ -185,7 +185,7 @@ class CreateRouteWithTranslation extends React.Component<
     this.setState(({ alternateBackends }) => {
       const services = [
         ...alternateBackends,
-        { name: null, weight: 100, key: _.uniqueId('alternate-backend-') },
+        { name: '', weight: 100, key: _.uniqueId('alternate-backend-') },
       ];
       this.props.formik.setFieldValue('formData.alternateBackends', services);
       return {
@@ -245,12 +245,12 @@ class CreateRouteWithTranslation extends React.Component<
     const serviceOptions = {};
     _.each(
       _.sortBy(services, 'metadata.name'),
-      ({ metadata: { name } }) =>
-        (serviceOptions[name] = <ResourceName kind="Service" name={name} />),
+      ({ metadata: { name } = {} }) =>
+        (serviceOptions[name || ''] = <ResourceName kind="Service" name={name || ''} />),
     );
     const configuredServices = new Set<string>();
     if (service) {
-      configuredServices.add(service.metadata.name);
+      configuredServices.add(service.metadata?.name || '');
     }
     _.each(alternateBackends, ({ name }) => configuredServices.add(name));
     const availableServiceOptions = _.pickBy(
@@ -273,7 +273,7 @@ class CreateRouteWithTranslation extends React.Component<
     };
     const alternateBackendsList = _.map(alternateBackends, (entryData, index) => {
       return (
-        <div className="co-add-remove-form__entry" key={entryData.key}>
+        <div className="co-add-remove-form__entry" key={entryData?.key || ''}>
           {!_.isEmpty(alternateBackends) && (
             <div className="co-add-remove-form__link--remove-entry">
               <Button
@@ -289,8 +289,8 @@ class CreateRouteWithTranslation extends React.Component<
           )}
           <AlternateServicesGroup
             index={index}
-            name={entryData.name}
-            weight={entryData.weight}
+            name={entryData?.name || ''}
+            weight={entryData?.weight || 0}
             onChange={this.onDataChanged}
             serviceOptions={serviceOptions}
             availableServiceOptions={availableServiceOptions}
@@ -378,7 +378,11 @@ class CreateRouteWithTranslation extends React.Component<
             <Dropdown
               autocompleteFilter={this.autocompleteFilter}
               items={availableServiceOptions}
-              title={service ? serviceOptions[service.metadata.name] : t('public~Select a service')}
+              title={
+                service
+                  ? serviceOptions[service.metadata?.name || '']
+                  : t('public~Select a service')
+              }
               dropDownClassName="dropdown--full-width"
               id="service"
               onChange={this.changeService}

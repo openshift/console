@@ -42,7 +42,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   const status = loading ? t('Loading') : error;
   const usedLabelText = usedLabel || t('public~used');
   const secondaryTitleText = secondaryTitle || usedLabelText;
-  const labelText = label || (data ? humanize(data.y).string : undefined) || t('No data');
+  const labelText = label || (data?.y != null ? humanize(data.y).string : '') || t('No data');
 
   const labels = ({ datum: { x, y } }) =>
     x ? `${x} ${usedLabelText}` : `${y} ${remainderLabel || t('available')}`;
@@ -98,12 +98,12 @@ export const Gauge: React.FC<GaugeProps> = ({
   });
 
   const [data] = response
-    ? getInstantVectorStats(response, null, humanize).map(({ label, y }) => ({ x: label, y }))
+    ? getInstantVectorStats(response, undefined, humanize).map(({ label, y }) => ({ x: label, y }))
     : [{ x: humanize(percent).string, y: percent }];
   return (
     <GaugeChart
       data={data}
-      error={!!error && t('No data')}
+      error={error ? t('No data') : undefined}
       invert={invert}
       label={data.x}
       loading={loading}

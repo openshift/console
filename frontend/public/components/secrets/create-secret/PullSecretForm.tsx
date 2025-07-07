@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Dropdown } from '../../utils/dropdown';
 import { PullSecretCredentialsForm } from './PullSecretCredentialsForm';
 import { PullSecretUploadForm } from './PullSecretUploadForm';
-import { SecretSubFormProps } from './types';
+import { SecretSubFormProps, SecretType } from './types';
 
 export const PullSecretForm: React.FC<SecretSubFormProps> = ({
   onChange,
@@ -39,16 +39,16 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
       {authType === 'credentials' ? (
         <PullSecretCredentialsForm
           onChange={onChange}
-          onError={onError}
+          onError={onError || (() => {})}
           onFormDisable={onFormDisable}
-          secretType={secretType}
+          secretType={secretType || SecretType.basicAuth}
           stringData={stringData}
         />
       ) : (
         <PullSecretUploadForm
           onChange={onChange}
           stringData={stringData}
-          secretType={secretType}
+          secretType={secretType || SecretType.basicAuth}
           onFormDisable={onFormDisable}
         />
       )}

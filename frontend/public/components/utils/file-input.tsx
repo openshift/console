@@ -43,7 +43,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
     const klass = css('co-file-dropzone-container', {
       'co-file-dropzone--drop-over': isOver,
     });
-    return connectDropTarget(
+    return connectDropTarget?.(
       <div className="co-file-dropzone">
         {canDrop && (
           <div className={klass}>

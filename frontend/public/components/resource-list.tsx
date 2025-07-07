@@ -105,7 +105,9 @@ const ResourceDetailsPage_ = connectToPlural((props: ResourceDetailsPageProps) =
       ? referenceForModel(kindObj)
       : null;
   const componentLoader =
-    getResourceDetailsPages(detailsPageExtensions, dynamicResourceDetailsPageExtensions).get(ref) ||
+    getResourceDetailsPages(detailsPageExtensions, dynamicResourceDetailsPageExtensions).get(
+      ref || '',
+    ) ||
     getResourceDetailsPages(detailsPageExtensions, dynamicResourceDetailsPageExtensions).get(
       referenceForExtensionModel({
         group: kindObj.apiGroup,

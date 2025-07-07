@@ -29,7 +29,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
     o[val] = val;
     return o;
   }, {});
-  const version = semver.parse(getLastCompletedUpdate(cv));
+  const version = semver.parse(getLastCompletedUpdate(cv)) || { major: 0, minor: 0 };
   const channelsExist = cv.status?.desired?.channels?.length;
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -97,7 +97,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
         inProgress={inProgress}
         submitText={t('public~Save')}
         cancelText={t('public~Cancel')}
-        cancel={cancel}
+        cancel={() => cancel && cancel()}
       />
     </form>
   );

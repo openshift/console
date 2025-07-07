@@ -38,7 +38,13 @@ import {
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
-export const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
+const { common } = Kebab.factory;
+const menuActions = [
+  ...(Kebab.getExtensionsActionsForKind(StorageClassModel) || []),
+  ...(common || []),
+];
+
+const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
 const betaDefaultStorageClassAnnotation = 'storageclass.beta.kubernetes.io/is-default-class';
 export const isDefaultClass = (storageClass: K8sResourceKind) => {
   const annotations = _.get(storageClass, 'metadata.annotations') || {};
@@ -93,8 +99,8 @@ const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> 
   const context = { [resourceKind]: obj };
   return (
     <>
-      <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
-        <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
+      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+        <ResourceLink kind={StorageClassReference} name={obj.metadata!.name}>
           {isDefaultClass(obj) && (
             <span className="small pf-v6-u-text-color-subtle co-resource-item__help-text">
               &ndash; {t('public~Default')}

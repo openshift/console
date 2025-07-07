@@ -11,7 +11,7 @@ import { getAllTableFilters, FilterMap } from '../table-filters';
 const filterData = <D>(
   data: D[],
   filter: { [key: string]: FilterValue } = {},
-  rowFilters?: FilterMap,
+  rowFilters: FilterMap = {},
 ) => {
   const filterTypes = Object.keys(filter);
   return data?.filter((d) =>
@@ -21,7 +21,7 @@ const filterData = <D>(
   );
 };
 
-export const useListPageFilter: UseListPageFilter = (data, rowFilters, staticFilters) => {
+export const useListPageFilter: UseListPageFilter = (data, rowFilters = [], staticFilters) => {
   const [filter, setFilter] = React.useState<{ [key: string]: FilterValue }>();
   const [isExactSearch] = useExactSearch();
   const location = useLocation();

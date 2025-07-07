@@ -45,8 +45,8 @@ export const useMultipleAccessReviews = (
       .then((values) => {
         setLoading(false);
         const updatedAllowedArr = values.map<AccessReviewsResult>((result) => ({
-          resourceAttributes: result.spec.resourceAttributes,
-          allowed: result.status.allowed,
+          resourceAttributes: result.spec?.resourceAttributes || {},
+          allowed: result.status?.allowed || false,
         }));
         setAllowedArr(updatedAllowedArr);
       })
@@ -100,7 +100,7 @@ export const asAccessReview = (
 ): AccessReviewResourceAttributes => {
   if (!obj) {
     console.warn('review obj should not be null'); // eslint-disable-line no-console
-    return null;
+    return {} as AccessReviewResourceAttributes;
   }
   return {
     group: kindObj.apiGroup,

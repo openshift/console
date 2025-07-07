@@ -105,27 +105,27 @@ export const getNamespacedResources = () => {
   return namespacedResources;
 };
 
-export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
-export const getActiveUserName = (): string => getUser(store.getState())?.username;
+export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace') || '';
+export const getActiveUserName = (): string => getUser(store.getState())?.username || '';
 
 export const getNamespaceMetric = (ns: K8sResourceKind, metric: string): number => {
   const metrics = store.getState().UI.getIn(['metrics', 'namespace']);
-  return _.get(metrics, [metric, ns.metadata.name], 0);
+  return _.get(metrics, [metric, ns.metadata?.name || ''], 0);
 };
 
 export const getPodMetric = (pod: PodKind, metric: string): number => {
   const metrics = store.getState().UI.getIn(['metrics', 'pod']);
-  return metrics?.[metric]?.[pod.metadata.namespace]?.[pod.metadata.name] ?? 0;
+  return metrics?.[metric]?.[pod.metadata?.namespace || '']?.[pod.metadata?.name || ''] ?? 0;
 };
 
 export const getNodeMetric = (node: NodeKind, metric: string): number => {
   const metrics = store.getState().UI.getIn(['metrics', 'node']);
-  return metrics?.[metric]?.[node.metadata.name] ?? 0;
+  return metrics?.[metric]?.[node.metadata?.name || ''] ?? 0;
 };
 
 export const getPVCMetric = (pvc: K8sResourceKind, metric: string): number => {
   const metrics = store.getState().UI.getIn(['metrics', 'pvc']);
-  return metrics?.[metric]?.[pvc.metadata.namespace]?.[pvc.metadata.name] ?? 0;
+  return metrics?.[metric]?.[pvc.metadata?.namespace || '']?.[pvc.metadata?.name || ''] ?? 0;
 };
 
 export const formatNamespaceRoute = (
@@ -182,10 +182,10 @@ export const setCurrentLocation = (location: string) =>
 
 export const setServiceLevel = (
   serviceLevel: string,
-  daysRemaining: number = null,
-  clusterID: string = '',
-  trialDateEnd: string = null,
-  hasSecretAccess: boolean = false,
+  daysRemaining: number | null = null,
+  clusterID: string | null = null,
+  trialDateEnd: string | null = null,
+  hasSecretAccess: boolean | null = null,
 ) =>
   action(ActionType.SetServiceLevel, {
     serviceLevel,

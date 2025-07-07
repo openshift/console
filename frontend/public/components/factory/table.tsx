@@ -317,11 +317,11 @@ const getActiveColumns = (
   if (columnManagementID) {
     columns = columns?.filter(
       (col) =>
-        isColumnVisible(windowWidth, col.id, activeColumns, showNamespaceOverride) ||
+        isColumnVisible(windowWidth, col.id!, activeColumns, showNamespaceOverride) ||
         col.title === '',
     );
   } else {
-    columns = columns?.filter((col) => activeColumns.has(col.id) || col.title === '');
+    columns = columns?.filter((col) => activeColumns.has(col.id!) || col.title === '');
   }
 
   const showNamespace =

@@ -32,14 +32,18 @@ export const RemoveUserModal = withHandlePromise((props: RemoveUserModalProps) =
       <ModalBody>
         {t('public~Remove User {{ user }} from Group {{ name }}?', {
           user: props.user,
-          name: props.group.metadata.name,
+          name: props.group.metadata!.name,
         })}
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={props.errorMessage}
         inProgress={props.inProgress}
         submitText={t('public~Remove')}
-        cancel={props.cancel}
+        cancel={() => {
+          if (props.cancel) {
+            props.cancel();
+          }
+        }}
         submitDanger
       />
     </form>

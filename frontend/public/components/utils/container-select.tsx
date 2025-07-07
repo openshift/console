@@ -82,7 +82,7 @@ export const ContainerSelect: React.FC<ContainerSelectProps> = ({
           <Divider />
           <SelectGroup label={t('public~Init containers')}>
             <SelectList>
-              <ContainerSelectOptions containers={initContainers} />
+              <ContainerSelectOptions containers={initContainers || {}} />
             </SelectList>
           </SelectGroup>
         </>

@@ -78,7 +78,7 @@ const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
       hideTextFilter
       autoFocus={false}
       mock={mock}
-      badge={getBadgeFromType(kindObj.badge)}
+      badge={getBadgeFromType(kindObj.badge!)}
       hideNameLabelFilters
       hideColumnManagement
     />
@@ -89,7 +89,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   const [perspective] = useActivePerspective();
   const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
   const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
-  const [labelFilter, setLabelFilter] = React.useState([]);
+  const [labelFilter, setLabelFilter] = React.useState<string[]>([]);
   const [labelFilterInput, setLabelFilterInput] = React.useState('');
   const [typeaheadNameFilter, setTypeaheadNameFilter] = React.useState('');
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
@@ -102,12 +102,11 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 
     if (window.location.search) {
       const sp = new URLSearchParams(window.location.search);
-      kind = sp.get('kind');
-      q = sp.get('q');
-      name = sp.get('name');
+      kind = sp.get('kind') || '';
+      q = sp.get('q') || '';
+      name = sp.get('name') || '';
     }
     // Ensure that the "kind" route parameter is a valid resource kind ID
-    kind = kind || '';
     if (kind !== '') {
       setSelectedItems(new Set(kind.split(',')));
     }
@@ -177,7 +176,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   const updateLabelFilter = (value: string, endOfString: boolean) => {
     setLabelFilterInput(value);
     if (requirementFromString(value) !== undefined && endOfString) {
-      const updatedLabels = _.uniq([...labelFilter, value]);
+      const updatedLabels = _.uniq([...labelFilter, value] as any) as string[];
       setLabelFilter(updatedLabels);
       setQueryArgument('q', updatedLabels.join(','));
       setLabelFilterInput('');
@@ -191,7 +190,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   };
 
   const removeLabelFilter = (_filter: string, value: string) => {
-    const newLabels = labelFilter.filter((keepItem: string) => keepItem !== value);
+    const newLabels = labelFilter.filter((keepItem: string) => keepItem !== value) as any;
     setLabelFilter(newLabels);
     setQueryArgument('q', newLabels.join(','));
   };
@@ -263,7 +262,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
             <ToolbarItem className="co-search-group__filter">
               <ToolbarFilter
                 deleteLabelGroup={clearLabelFilter}
-                labels={[...labelFilter]}
+                labels={[...labelFilter] as any}
                 deleteLabel={removeLabelFilter}
                 categoryName={t('public~Label')}
               >

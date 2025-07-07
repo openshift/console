@@ -16,7 +16,7 @@ import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumb
 import { isWindowsPod } from '../module/k8s/pods';
 
 const pickWorkloadAnnotations = (
-  annotations: ObjectMetadata['annotations'],
+  annotations: ObjectMetadata['annotations'] = {},
 ): ObjectMetadata['annotations'] =>
   Object.keys(annotations)
     .filter((k) =>
@@ -34,7 +34,7 @@ const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: s
   delete debugPod.metadata.name;
   delete debugPod.metadata.ownerReferences;
   delete debugPod.metadata.labels;
-  debugPod.metadata.annotations = pickWorkloadAnnotations(debugPod.metadata.annotations);
+  debugPod.metadata.annotations = pickWorkloadAnnotations(debugPod.metadata.annotations) || {};
   debugPod.metadata.annotations['debug.openshift.io/source-container'] = containerName;
   debugPod.metadata.annotations[
     'debug.openshift.io/source-resource'
@@ -211,7 +211,7 @@ export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = () => {
           { name: t('public~Debug container'), path: url },
         ]}
       />
-      {loaded && !err && <DebugTerminal podData={podData} containerName={name} />}
+      {loaded && !err && <DebugTerminal podData={podData} containerName={name || ''} />}
       {err && <LoadingBox>{err}</LoadingBox>}
       {!loaded && <LoadingBox />}
     </div>

@@ -51,7 +51,7 @@ const DownloadBinaryButton: React.FC<DownloadBinaryButtonProps> = ({ label, valu
 DownloadBinaryButton.displayName = 'DownloadBinaryButton';
 
 export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
-  const dl = [];
+  const dl: React.ReactNode[] = [];
   const { t } = useTranslation();
   Object.keys(data || {})
     .sort()

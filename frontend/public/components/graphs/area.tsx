@@ -102,7 +102,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
     (prop: { datum: DataPoint<Date> }, includeDate = true) => {
       const { x, y } = prop.datum;
       const value = humanize(y, unit, unit).string;
-      const date = formatDate(x);
+      const date = formatDate(x ?? new Date());
       return includeDate ? i18n.t('public~{{value}} at {{date}}', { value, date }) : value;
     },
     [humanize, unit, formatDate],
@@ -128,8 +128,8 @@ export const AreaChart: React.FC<AreaChartProps> = ({
               stack={showAllTooltip}
               legendData={legendData}
               getLabel={getLabel}
-              formatDate={(d) => formatDate(d[0].x)}
-              mainDataName={mainDataName}
+              formatDate={(d) => (d[0].x instanceof Date ? formatDate(d[0].x) : '')}
+              mainDataName={mainDataName || ''}
             />
           }
           voronoiDimension="x"
@@ -216,7 +216,7 @@ export const Area: React.FC<AreaProps> = ({
       chartStyle={chartStyle}
       data={data}
       loading={loading}
-      query={[query, limitQuery, requestedQuery]}
+      query={[query, limitQuery, requestedQuery].filter(Boolean) as string[]}
       mainDataName="usage"
       {...rest}
     />

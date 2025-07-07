@@ -24,17 +24,17 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
   );
   const showCopyLoginCommand = requestTokenURL || externalLoginCommand;
   const data = _.sortBy(_.get(obj, 'data'), 'spec.displayName');
-  const cliData = _.remove(data, (item) => item.metadata.name === 'oc-cli-downloads');
+  const cliData = _.remove(data, (item) => item.metadata?.name === 'oc-cli-downloads');
 
   const additionalCommandLineTools = _.map(cliData.concat(data), (tool, index) => {
-    const displayName = tool.spec.displayName;
+    const displayName = tool.spec?.displayName;
     const defaultLinkText = t('Download {{displayName}}', { displayName });
-    const sortedLinks = _.sortBy(tool.spec.links, 'text');
+    const sortedLinks = _.sortBy(tool.spec?.links, 'text');
     return (
-      <React.Fragment key={tool.metadata.uid}>
-        {index > 0 && <Divider className="co-divider" />}
+      <React.Fragment key={tool.metadata?.uid}>
+        <Divider className="co-divider" />
         <SecondaryHeading data-test-id={displayName}>{displayName}</SecondaryHeading>
-        <SyncMarkdownView content={tool.spec.description} exactHeight />
+        <SyncMarkdownView content={tool.spec?.description} exactHeight />
         {sortedLinks.length === 1 && (
           <p>
             <ExternalLink

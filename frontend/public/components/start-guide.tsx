@@ -79,11 +79,27 @@ export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = 
         <p className="co-pre-line">
           <LinkifyExternal>{createProjectMessage}</LinkifyExternal>
         </p>
-      )}
-    </ConsoleEmptyState>
-  );
-};
-
+        {canCreate ? (
+          <Button
+            variant="link"
+            onClick={() =>
+              createNamespaceOrProjectModal({
+                onSubmit:
+                  perspective !== 'admin'
+                    ? (project: K8sResourceKind) => {
+                        setActiveNamespace(project.metadata?.name!);
+                      }
+                    : undefined,
+              })
+            }
+          >
+            {t('public~Create a new project')}
+          </Button>
+        ) : null}
+      </>
+    );
+  },
+);
 type WithStartGuide = <P>(
   WrappedComponent: React.ComponentType<P & WithStartGuideProps>,
   disable?: boolean,

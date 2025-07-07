@@ -135,24 +135,24 @@ const getMCPByName = (
   machineConfigPools: MachineConfigPoolKind[],
   name: string,
 ): MachineConfigPoolKind => {
-  return machineConfigPools?.find((mcp) => mcp.metadata.name === name);
+  return machineConfigPools?.find((mcp) => mcp.metadata?.name === name) as MachineConfigPoolKind;
 };
 
 const getStartedTimeForCVDesiredVersion = (
   cv: ClusterVersionKind,
   desiredVersion: string,
 ): string => {
-  const desiredHistory: UpdateHistory = cv?.status?.history?.find(
+  const desiredHistory: UpdateHistory | undefined = cv?.status?.history?.find(
     (update) => update.version === desiredVersion,
   );
-  return desiredHistory?.startedTime;
+  return desiredHistory?.startedTime || '';
 };
 
 const getUpdatingTimeForMCP = (machineConfigPool: MachineConfigPoolKind): string => {
-  const updatingCondition = machineConfigPool?.status?.conditions.find(
+  const updatingCondition = machineConfigPool?.status?.conditions?.find(
     (condition) => condition.type === MachineConfigPoolConditionType.Updating,
   );
-  return updatingCondition?.lastTransitionTime;
+  return updatingCondition?.lastTransitionTime || '';
 };
 
 const getUpdatedOperatorsCount = (
@@ -167,7 +167,9 @@ const getUpdatedOperatorsCount = (
 };
 
 const getReleaseImageVersion = (obj: K8sResourceKind): string => {
-  return obj?.metadata?.annotations?.['machineconfiguration.openshift.io/release-image-version'];
+  return (
+    obj?.metadata?.annotations?.['machineconfiguration.openshift.io/release-image-version'] || ''
+  );
 };
 
 const calculatePercentage = (numerator: number, denominator: number): number =>
@@ -175,7 +177,7 @@ const calculatePercentage = (numerator: number, denominator: number): number =>
 
 export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   const { t } = useTranslation();
-  const label = cv.spec.channel || t('public~Not configured');
+  const label = cv.spec?.channel || t('public~Not configured');
   return canUpgrade ? (
     <Button
       icon={<PencilAltIcon />}
@@ -503,7 +505,7 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
     updatedMachineCountReady || (MCPUpdatingTime > updateStartedTime && renderedConfigIsUpdated)
       ? machineConfigPool?.status?.updatedMachineCount
       : 0;
-  const percentMCPNodes = calculatePercentage(updatedMCPNodes, totalMCPNodes);
+  const percentMCPNodes = calculatePercentage(updatedMCPNodes || 0, totalMCPNodes || 0);
   const isUpdated = percentMCPNodes === 100;
   const nodeRoleFilterValue = isMaster ? 'control-plane' : mcpName;
   const { t } = useTranslation();
@@ -535,9 +537,9 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
                 updatedMCPNodes,
                 totalMCPNodes,
               })}
-              value={!_.isNaN(percentMCPNodes) ? percentMCPNodes : null}
+              value={!_.isNaN(percentMCPNodes) ? percentMCPNodes : undefined}
               size={ProgressSize.sm}
-              variant={percentMCPNodes === 100 ? ProgressVariant.success : null}
+              variant={percentMCPNodes === 100 ? ProgressVariant.success : undefined}
             />
           </UpdatesBar>
           {!isMaster && !isUpdated && machineConfigPoolIsEditable && (
@@ -575,8 +577,8 @@ const OtherNodes: React.FC<OtherNodesProps> = ({
             desiredVersion={desiredVersion}
             divided
             hideIfComplete={hideIfComplete}
-            key={mcp.metadata.uid}
-            name={mcp.metadata.name}
+            key={mcp.metadata?.uid || ''}
+            name={mcp.metadata?.name || ''}
             machineConfigPool={mcp}
             updateStartedTime={updateStartedTime}
           />
@@ -614,7 +616,7 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
             {availableUpdates.length === 2 && (
               <>
                 <ChannelVersion>{secondNewestVersion}</ChannelVersion>
-                <ChannelVersionDot channel={currentChannel} version={secondNewestVersion} />
+                <ChannelVersionDot channel={currentChannel} version={secondNewestVersion || ''} />
               </>
             )}
             {availableUpdates.length > 2 && (
@@ -707,7 +709,9 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
     <UpdatesProgress>
       <UpdatesGroup>
         <UpdatesType>
-          <ClusterOperatorsLink>{t(ClusterOperatorModel.labelPluralKey)}</ClusterOperatorsLink>
+          <ClusterOperatorsLink>
+            {t(ClusterOperatorModel.labelPluralKey || '')}
+          </ClusterOperatorsLink>
         </UpdatesType>
         <UpdatesBar>
           <Progress
@@ -715,9 +719,9 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
               updatedOperatorsCount,
               totalOperatorsCount,
             })}
-            value={!_.isNaN(percentOperators) ? percentOperators : null}
+            value={!_.isNaN(percentOperators) ? percentOperators : undefined}
             size={ProgressSize.sm}
-            variant={percentOperators === 100 ? ProgressVariant.success : null}
+            variant={percentOperators === 100 ? ProgressVariant.success : undefined}
           />
         </UpdatesBar>
       </UpdatesGroup>
@@ -1071,42 +1075,41 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
               ) : (
                 desiredImage || '-'
               )}
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('public~Cluster version configuration')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              <ResourceLink kind={referenceForModel(ClusterVersionModel)} name={cv.metadata.name} />
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-          <UpstreamConfigDetailsItem resource={cv} />
-          {autoscalers && canUpgrade && (
-            <DescriptionListGroup>
-              <DescriptionListTerm data-test="cv-autoscaler">
-                {t('public~Cluster autoscaler')}
-              </DescriptionListTerm>
-              <DescriptionListDescription>
-                {_.isEmpty(autoscalers) ? (
-                  <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
-                    <AddCircleOIcon className="co-icon-space-r" />
-                    {t('public~Create autoscaler')}
-                  </Link>
-                ) : (
-                  autoscalers.map((autoscaler) => (
-                    <div key={autoscaler.metadata.uid}>
-                      <ResourceLink
-                        kind={clusterAutoscalerReference}
-                        name={autoscaler.metadata.name}
-                      />
-                    </div>
-                  ))
-                )}
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-          )}
-        </DescriptionList>
-      </PaneBody>
-      <PaneBody>
+            </dd>
+            <dt>{t('public~Cluster version configuration')}</dt>
+            <dd>
+              <ResourceLink
+                kind={referenceForModel(ClusterVersionModel)}
+                name={cv.metadata?.name || ''}
+              />
+            </dd>
+            <UpstreamConfigDetailsItem resource={cv} />
+            {autoscalers && canUpgrade && (
+              <>
+                <dt data-test="cv-autoscaler">{t('public~Cluster autoscaler')}</dt>
+                <dd>
+                  {_.isEmpty(autoscalers) ? (
+                    <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
+                      <AddCircleOIcon className="co-icon-space-r" />
+                      {t('public~Create autoscaler')}
+                    </Link>
+                  ) : (
+                    autoscalers.map((autoscaler) => (
+                      <div key={autoscaler.metadata?.uid || ''}>
+                        <ResourceLink
+                          kind={clusterAutoscalerReference}
+                          name={autoscaler.metadata?.name || ''}
+                        />
+                      </div>
+                    ))
+                  )}
+                </dd>
+              </>
+            )}
+          </dl>
+        </div>
+      </div>
+      <div className="co-m-pane__body">
         <SectionHeading text={t('public~Update history')} />
         {_.isEmpty(history) ? (
           <EmptyBox label={t('public~History')} />

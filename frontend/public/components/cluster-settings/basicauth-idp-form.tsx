@@ -115,16 +115,16 @@ export const AddBasicAuthPage: React.FC = () => {
     };
 
     if (caName) {
-      idp.basicAuth.ca = {
+      idp.basicAuth!.ca = {
         name: caName,
       };
     }
 
     if (secretName) {
-      idp.basicAuth.tlsClientCert = {
+      idp.basicAuth!.tlsClientCert = {
         name: secretName,
       };
-      idp.basicAuth.tlsClientKey = {
+      idp.basicAuth!.tlsClientKey = {
         name: secretName,
       };
     }

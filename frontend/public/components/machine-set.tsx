@@ -94,8 +94,8 @@ export const editCountAction: KebabAction = (
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
-    name: resource.metadata.name,
-    namespace: resource.metadata.namespace,
+    name: resource.metadata!.name,
+    namespace: resource.metadata!.namespace,
     verb: 'patch',
   },
 });
@@ -107,7 +107,7 @@ const configureMachineAutoscaler: KebabAction = (kind: K8sKind, machineSet: Mach
   accessReview: {
     group: MachineAutoscalerModel.apiGroup,
     resource: MachineAutoscalerModel.plural,
-    namespace: machineSet.metadata.namespace,
+    namespace: machineSet.metadata!.namespace,
     verb: 'create',
   },
 });
@@ -116,7 +116,7 @@ const menuActions = [
   editCountAction,
   configureMachineAutoscaler,
   ...Kebab.getExtensionsActionsForKind(MachineSetModel),
-  ...Kebab.factory.common,
+  ...Kebab.factory!.common!,
 ];
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
@@ -156,8 +156,8 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, reso
     group: resourceKind.apiGroup,
     resource: resourceKind.plural,
     verb: 'patch',
-    name: resource.metadata.name,
-    namespace: resource.metadata.namespace,
+    name: resource.metadata!.name,
+    namespace: resource.metadata!.namespace,
   });
   const { t } = useTranslation();
   const desiredReplicasText = `${desiredReplicas}  ${t('public~machine', {
@@ -234,7 +234,7 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, reso
 };
 
 export const MachineTabPage: React.FC<MachineTabPageProps> = ({ obj }) => (
-  <MachinePage namespace={obj.metadata.namespace} showTitle={false} selector={obj.spec.selector} />
+  <MachinePage namespace={obj.metadata!.namespace} showTitle={false} selector={obj.spec.selector} />
 );
 
 const MachineSetDetails: React.FC<MachineSetDetailsProps> = ({ obj }) => {
@@ -255,7 +255,7 @@ const MachineSetDetails: React.FC<MachineSetDetailsProps> = ({ obj }) => {
                 <Selector
                   kind={machineReference}
                   selector={obj.spec?.selector}
-                  namespace={obj.metadata.namespace}
+                  namespace={obj.metadata!.namespace}
                 />
               </DescriptionListDescription>
             </DescriptionListGroup>
@@ -301,7 +301,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
         return new LabelSelector(obj.spec.selector).matches(m);
       });
       const node = (nodes ?? []).find(
-        (n) => machine && machine.status?.nodeRef?.uid === n.metadata.uid,
+        (n) => machine && machine.status?.nodeRef?.uid === n.metadata!.uid,
       );
       const { cpu, memory } = node?.status?.capacity ?? {};
       return {
@@ -380,8 +380,8 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
         <TableData {...tableColumnInfo[0]}>
           <ResourceLink
             kind={machineSetReference}
-            name={obj.metadata.name}
-            namespace={obj.metadata.namespace}
+            name={obj.metadata!.name}
+            namespace={obj.metadata!.namespace}
           />
         </TableData>
         <TableData
@@ -389,14 +389,14 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
           className={css(tableColumnInfo[1].className, 'co-break-word')}
           columnID="namespace"
         >
-          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+          <ResourceLink kind="Namespace" name={obj.metadata!.namespace} />
         </TableData>
         <TableData {...tableColumnInfo[2]}>
           <Link
             to={`${resourcePath(
               machineSetReference,
-              obj.metadata.name,
-              obj.metadata.namespace,
+              obj.metadata!.name,
+              obj.metadata!.namespace,
             )}/machines`}
           >
             {t('public~{{readyReplicas}} of {{count}} machine', {
@@ -456,11 +456,8 @@ export const MachineSetPage: React.FC<MachineSetPageProps> = ({
   const { t } = useTranslation();
   return (
     <>
-      <ListPageHeader title={showTitle ? t('public~MachineSets') : undefined}>
-        <ListPageCreate
-          createAccessReview={createAccessReview}
-          groupVersionKind={referenceForModel(MachineSetModel)}
-        >
+      <ListPageHeader title={showTitle ? t('public~MachineSets') : ''}>
+        <ListPageCreate groupVersionKind={referenceForModel(MachineSetModel)}>
           {t('public~Create MachineSet')}
         </ListPageCreate>
       </ListPageHeader>
