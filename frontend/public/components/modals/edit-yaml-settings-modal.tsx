@@ -136,7 +136,11 @@ const StickyScrollConfigItem = () => {
 
 const EDIT_YAML_SETTINGS_MODAL_ID = 'edit-yaml-settings-modal';
 
-export const EditYamlSettingsModal: React.FCC = () => {
+interface EditYamlSettingsModalProps {
+  appendTo?: React.ComponentProps<typeof Modal>['appendTo'];
+}
+
+export const EditYamlSettingsModal: React.FCC<EditYamlSettingsModalProps> = ({ appendTo }) => {
   const { t } = useTranslation('public');
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -147,6 +151,7 @@ export const EditYamlSettingsModal: React.FCC = () => {
         onClose={() => setIsModalOpen(!isModalOpen)}
         ouiaId={EDIT_YAML_SETTINGS_MODAL_ID}
         variant="small"
+        appendTo={appendTo}
         aria-labelledby={`${EDIT_YAML_SETTINGS_MODAL_ID}-title`}
         aria-describedby={`${EDIT_YAML_SETTINGS_MODAL_ID}-body`}
       >

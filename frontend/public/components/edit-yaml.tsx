@@ -30,6 +30,7 @@ import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
 import CodeEditorSidebar from '@console/shared/src/components/editor/CodeEditorSidebar';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
+import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
 import { isYAMLTemplate, getImpersonate, YAMLTemplate } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags } from '../reducers/connectToFlags';
@@ -61,6 +62,9 @@ import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/
 import { definitionFor } from '../module/k8s/swagger';
 import { ImportYAMLResults } from './import-yaml-results';
 import { EditYamlSettingsModal } from './modals/edit-yaml-settings-modal';
+import { CodeEditorControl } from '@patternfly/react-code-editor';
+import { CompressIcon } from '@patternfly/react-icons/dist/js/icons/compress-icon';
+import { ExpandIcon } from '@patternfly/react-icons/dist/js/icons/expand-icon';
 
 const generateObjToLoad = (templateExtensions, kind, id, yaml, namespace = 'default') => {
   const sampleObj = safeLoad(yaml ? yaml : getYAMLTemplates(templateExtensions).getIn([kind, id]));
@@ -128,6 +132,7 @@ const EditYAMLInner = (props) => {
   const [displayResults, setDisplayResults] = React.useState<boolean>();
   const [resourceObjects, setResourceObjects] = React.useState();
   const [editorMounted, setEditorMounted] = React.useState(false);
+  const [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
 
   const [showTooltips] = useUserSettingsCompatibility(
     SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
@@ -776,7 +781,23 @@ const EditYAMLInner = (props) => {
     </>
   );
 
-  const settingsModal = <EditYamlSettingsModal />;
+  const settingsModal = (
+    <EditYamlSettingsModal
+      appendTo={() => {
+        return isFullscreen ? fullscreenRef.current : document.body;
+      }}
+    />
+  );
+
+  const fullscreenButton = (
+    <CodeEditorControl
+      onClick={toggleFullscreen}
+      isDisabled={!canUseFullScreen}
+      aria-label={t('public~Toggle fullscreen mode')}
+      tooltipProps={{ content: t('public~Toggle fullscreen mode') }}
+      icon={isFullscreen ? <CompressIcon /> : <ExpandIcon />}
+    />
+  );
 
   const editYamlComponent = (
     <div className="co-file-dropzone co-file-dropzone__flex">
@@ -811,7 +832,10 @@ const EditYAMLInner = (props) => {
       )}
 
       <PageBody className="pf-v6-c-form">
-        <div className="co-p-has-sidebar">
+        <div
+          className={css('co-p-has-sidebar', { 'yaml-editor__fullscreen': isFullscreen })}
+          ref={fullscreenRef}
+        >
           <div
             className={css('co-p-has-sidebar__body', {
               'co-p-has-sidebar__body--sidebar-open': showSidebar && hasSidebarContent,
@@ -823,8 +847,12 @@ const EditYAMLInner = (props) => {
                 isCopyEnabled={canDownload}
                 ref={monacoRef}
                 options={options}
-                showShortcuts={!genericYAML}
-                toolbarLinks={sidebarSwitch ? [settingsModal, sidebarSwitch] : [settingsModal]}
+                showShortcuts={!genericYAML && !isFullscreen}
+                toolbarLinks={
+                  sidebarSwitch
+                    ? [settingsModal, fullscreenButton, sidebarSwitch]
+                    : [settingsModal, fullscreenButton]
+                }
                 onChange={onChange}
                 onSave={() => (allowMultiple ? saveAll() : save())}
                 onEditorDidMount={() => setEditorMounted(true)}
