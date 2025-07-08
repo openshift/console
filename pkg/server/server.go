@@ -25,6 +25,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/auth/sessions"
+	"github.com/openshift/console/pkg/crdschema"
 	devconsole "github.com/openshift/console/pkg/devconsole"
 	"github.com/openshift/console/pkg/devfile"
 	gql "github.com/openshift/console/pkg/graphql"
@@ -83,6 +84,7 @@ const (
 	sha256Prefix                          = "sha256~"
 	tokenizerPageTemplateName             = "tokener.html"
 	updatesEndpoint                       = "/api/check-updates"
+	crdSchemaEndpoint                     = "/api/console/crd-schema"
 )
 
 type CustomFaviconPath struct {
@@ -667,6 +669,10 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	}
 
 	handle("/api/console/version", authHandler(s.versionHandler))
+
+	// CRD Schema
+	crdSchemaHandler := crdschema.NewCRDSchemaHandler(k8sProxyURL, s.AnonymousInternalProxiedK8SRT)
+	handle("/api/console/crd-schema", authHandler(crdSchemaHandler.HandleCRDSchema))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
