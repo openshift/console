@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { GraphElement, Graph, Node, Edge, isEdge, isGraph } from '@patternfly/react-topology';
-import {
-  CommonActionFactory,
-  getCommonResourceActions,
-} from '@console/app/src/actions/creators/common-factory';
 import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
+import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
+import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import { disabledActionsFilter } from '@console/dev-console/src/actions/add-resources';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { Action } from '@console/dynamic-plugin-sdk';
@@ -81,9 +80,10 @@ export const useMakeServerlessActionProvider = (resource: K8sResourceKind) => {
 
 export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
+  const commonActions = useCommonResourceActions(kindObj, resource);
   const actions = React.useMemo(() => {
-    return [moveSinkPubsub(kindObj, resource), ...getCommonResourceActions(kindObj, resource)];
-  }, [kindObj, resource]);
+    return [moveSinkPubsub(kindObj, resource), ...commonActions];
+  }, [kindObj, resource, commonActions]);
 
   return [actions, !inFlight, undefined];
 };
@@ -91,14 +91,18 @@ export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
 export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const serviceTypeValue = React.useContext(KnativeServiceTypeContext);
-  const actions = React.useMemo(() => {
-    return [
+  const [commonActions] = useCommonActions(kindObj, resource, [
+    CommonActionCreator.ModifyLabels,
+    CommonActionCreator.ModifyAnnotations,
+  ] as const);
+
+  const actions = React.useMemo(
+    () => [
       setTrafficDistribution(kindObj, resource),
       getHealthChecksAction(kindObj, resource),
       editKnativeService(kindObj, resource),
       DeploymentActionFactory.EditResourceLimits(kindObj, resource),
-      CommonActionFactory.ModifyLabels(kindObj, resource),
-      CommonActionFactory.ModifyAnnotations(kindObj, resource),
+      ...Object.values(commonActions),
       editKnativeServiceResource(kindObj, resource, serviceTypeValue),
       ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
         ? [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, true)]
@@ -106,8 +110,9 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
       ...(resource?.metadata?.labels?.['function.knative.dev'] === 'true'
         ? [testServerlessFunction(kindObj, resource)]
         : []),
-    ];
-  }, [kindObj, resource, serviceTypeValue]);
+    ],
+    [kindObj, resource, serviceTypeValue, commonActions],
+  );
 
   return [actions, !inFlight, undefined];
 };
@@ -115,6 +120,7 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
 export const useBrokerActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
+  const commonActions = useCommonResourceActions(kindObj, resource);
   const actions = React.useMemo(() => {
     const addActions: Action[] = [];
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
@@ -124,26 +130,29 @@ export const useBrokerActionProvider = (resource: K8sResourceKind) => {
         AddEventSinkMenuAction(resource.metadata.namespace, undefined, connectorSource),
       );
     }
-    addActions.push(...getCommonResourceActions(kindObj, resource));
+    addActions.push(...commonActions);
     return addActions;
-  }, [isEventSinkTypeEnabled, kindObj, resource]);
+  }, [isEventSinkTypeEnabled, kindObj, resource, commonActions]);
 
   return [actions, !inFlight, undefined];
 };
 
 export const useCommonActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
+  const commonActions = useCommonResourceActions(kindObj, resource);
   const actions = React.useMemo(() => {
-    let commonActions = getCommonResourceActions(kindObj, resource);
     if (
       resource.kind === RevisionModel.kind &&
       commonActions.findIndex((action: Action) => action.id === 'delete-resource')
     ) {
-      commonActions = commonActions.filter((action: Action) => action.id !== 'delete-resource');
-      commonActions.push(deleteRevision(kindObj, resource));
+      const modifiedActions = commonActions.filter(
+        (action: Action) => action.id !== 'delete-resource',
+      );
+      modifiedActions.push(deleteRevision(kindObj, resource));
+      return modifiedActions;
     }
     return commonActions;
-  }, [kindObj, resource]);
+  }, [kindObj, resource, commonActions]);
 
   return [actions, !inFlight, undefined];
 };
@@ -151,6 +160,8 @@ export const useCommonActionsProvider = (resource: K8sResourceKind) => {
 export const useChannelActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
+  const commonActions = useCommonResourceActions(kindObj, resource);
+
   const actions = React.useMemo(() => {
     const addActions: Action[] = [];
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
@@ -160,9 +171,9 @@ export const useChannelActionProvider = (resource: K8sResourceKind) => {
         AddEventSinkMenuAction(resource.metadata.namespace, undefined, connectorSource),
       );
     }
-    addActions.push(...getCommonResourceActions(kindObj, resource));
+    addActions.push(...commonActions);
     return addActions;
-  }, [isEventSinkTypeEnabled, kindObj, resource]);
+  }, [isEventSinkTypeEnabled, kindObj, resource, commonActions]);
 
   return [actions, !inFlight, undefined];
 };
@@ -281,16 +292,14 @@ export const useTopologyActionsProvider = ({
 };
 
 export const useEventSourcesActionsProvider = (resource: K8sResourceKind) => {
-  const result = React.useMemo(() => {
+  const kindObj = resource ? modelFor(referenceFor(resource)) : null;
+
+  const commonActions = useCommonResourceActions(kindObj, resource);
+  return React.useMemo(() => {
     if (!resource || resource.kind === 'URI') return [[], true, undefined];
-    const kindObj = modelFor(referenceFor(resource));
-    return [
-      [moveSinkSource(kindObj, resource), ...getCommonResourceActions(kindObj, resource)],
-      true,
-      undefined,
-    ];
-  }, [resource]);
-  return result;
+
+    return [[moveSinkSource(kindObj, resource), ...commonActions], true, undefined];
+  }, [kindObj, resource, commonActions]);
 };
 
 export const useEventSourcesActionsProviderForTopology = (element: GraphElement) => {
@@ -395,16 +404,14 @@ export const topologyServerlessActionsFilter = (
 export const useKnativeEventSinkActionProvider = (element: Node) => {
   const resource = React.useMemo(() => element.getData()?.resources?.obj || {}, [element]);
   const [k8sModel] = useK8sModel(referenceFor(resource));
+  const commonActions = useCommonResourceActions(k8sModel, resource);
   const actions = React.useMemo(() => {
     const type = element.getType();
     if ((type !== TYPE_EVENT_SINK && type !== TYPE_KAFKA_SINK) || !k8sModel) return undefined;
     return k8sModel && resource
-      ? [
-          getModifyApplicationAction(k8sModel, resource),
-          ...getCommonResourceActions(k8sModel, resource),
-        ]
+      ? [getModifyApplicationAction(k8sModel, resource), ...commonActions]
       : undefined;
-  }, [element, k8sModel, resource]);
+  }, [element, k8sModel, resource, commonActions]);
 
   return React.useMemo(() => {
     if (!actions) {
