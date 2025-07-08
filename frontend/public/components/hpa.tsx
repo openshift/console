@@ -77,7 +77,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
     const type = targetUtilization ? (
       <>
         {resourceLabel}&nbsp;
-        <span className="small pf-v6-u-text-color-subtle">
+        <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
           {t('public~(as a percentage of request)')}
         </span>
       </>
@@ -166,7 +166,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
                   <Tr key={i}>
                     <Td width={50}>
                       {metric.type}{' '}
-                      <span className="small pf-v6-u-text-color-subtle">
+                      <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
                         {t('public~(unrecognized type)')}
                       </span>
                     </Td>

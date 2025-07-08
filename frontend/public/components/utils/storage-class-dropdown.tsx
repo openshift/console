@@ -230,7 +230,10 @@ const StorageClassDropdownEntry = (props) => {
       <ResourceIcon kind={props.kindLabel} />
       <span className="co-resource-item__resource-name">
         {props.name}
-        <div className="pf-v6-u-text-color-subtle small"> {storageClassDescriptionLine}</div>
+        <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
+          {' '}
+          {storageClassDescriptionLine}
+        </div>
       </span>
     </span>
   );

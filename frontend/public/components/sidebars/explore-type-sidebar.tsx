@@ -1,6 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Breadcrumb, BreadcrumbItem, Button, Content, Title } from '@patternfly/react-core';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  Content,
+  ContentVariants,
+  Title,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
 import {
@@ -154,10 +161,10 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                   >
                     <CamelCaseWrap value={name} />
                     &nbsp;
-                    <small>
+                    <Content component={ContentVariants.small}>
                       <span className="co-break-word">{definitionTypeStr}</span>
                       {required.has(name) && <> &ndash; required</>}
-                    </small>
+                    </Content>
                   </Title>
                   {definition.description && (
                     <p className="co-break-word co-pre-wrap">
