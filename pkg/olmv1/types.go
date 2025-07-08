@@ -80,3 +80,22 @@ func (ci *CatalogIndex) GetBundles(packageName, channelName string) []*model.Bun
 	}
 	return bundles
 }
+
+// SearchFilter represents query parameters for searching catalog content
+type SearchFilter struct {
+	PackageName string `json:"packageName,omitempty"`
+	Channel     string `json:"channel,omitempty"`
+	Keywords    string `json:"keywords,omitempty"`
+	Category    string `json:"category,omitempty"`
+	Limit       int    `json:"limit,omitempty"`
+	Offset      int    `json:"offset,omitempty"`
+}
+
+// SearchResult represents search results from catalog queries
+type SearchResult struct {
+	Packages    []*model.Package `json:"packages,omitempty"`
+	TotalCount  int              `json:"totalCount"`
+	Limit       int              `json:"limit"`
+	Offset      int              `json:"offset"`
+	CatalogName string           `json:"catalogName"`
+}

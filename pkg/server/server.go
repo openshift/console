@@ -621,6 +621,15 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		olmv1Controller = olmv1.NewController(internalProxiedDynamic)
 		go olmv1Controller.Start(context.Background())
 		klog.Info("Started OLMv1 ClusterCatalog controller")
+
+		// Register OLMv1 API handlers
+		olmv1Handlers := olmv1.NewHandlers(olmv1Controller)
+		handle("/api/olmv1/catalogs", authHandlerWithUser(olmv1Handlers.HandleCatalogs))
+		handle("/api/olmv1/packages", authHandlerWithUser(olmv1Handlers.HandlePackages))
+		handle("/api/olmv1/channels", authHandlerWithUser(olmv1Handlers.HandleChannels))
+		handle("/api/olmv1/bundles", authHandlerWithUser(olmv1Handlers.HandleBundles))
+		handle("/api/olmv1/status", authHandlerWithUser(olmv1Handlers.HandleStatus))
+		klog.Info("Registered OLMv1 API handlers")
 	} else {
 		klog.Warning("CatalogdProxyConfig not available, OLMv1 controller disabled")
 	}
