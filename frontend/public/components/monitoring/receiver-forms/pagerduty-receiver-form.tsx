@@ -2,9 +2,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, GridItem, Title } from '@patternfly/react-core';
+import { FormGroup, Grid, GridItem, Radio, Title } from '@patternfly/react-core';
 
-import { RadioInput } from '../../radio';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
 import { FormProps } from './receiver-form-props';
@@ -23,39 +22,45 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
   const { t } = useTranslation();
   return (
     <div data-test-id="pagerduty-receiver-form">
-      <div className="form-group">
-        <label htmlFor="integration-type-events">{t('public~Integration type')}</label>
-        <div>
-          <RadioInput
-            title={t('public~Events API v2')}
+      <div className="form-group pf-v6-c-form">
+        <FormGroup
+          role="radiogroup"
+          fieldId="integration-type"
+          label={t('public~Integration type')}
+          isInline
+          className="pf-v6-c-form__group-control--no-row-gap"
+        >
+          <Radio
             id="integration-type-events"
+            name="pagerdutyIntegrationKeyType"
+            label={t('public~Events API v2')}
             value="events"
             onChange={(e) =>
               dispatchFormChange({
                 type: 'setFormValues',
-                payload: { pagerdutyIntegrationKeyType: e.target.value },
+                payload: { pagerdutyIntegrationKeyType: (e.target as HTMLInputElement).value },
               })
             }
-            checked={formValues.pagerdutyIntegrationKeyType === 'events'}
-            aria-checked={formValues.pagerdutyIntegrationKeyType === 'events'}
-            inline
+            isChecked={formValues.pagerdutyIntegrationKeyType === 'events'}
+            data-checked-state={formValues.pagerdutyIntegrationKeyType === 'events'}
+            data-test-id="integration-type-events"
           />
-          <RadioInput
-            title={t('public~Prometheus')}
+          <Radio
+            id="integration-type-prometheus"
             name="pagerdutyIntegrationKeyType"
-            data-test-id="integration-type-prometheus"
+            label={t('public~Prometheus')}
             value="prometheus"
             onChange={(e) =>
               dispatchFormChange({
                 type: 'setFormValues',
-                payload: { pagerdutyIntegrationKeyType: e.target.value },
+                payload: { pagerdutyIntegrationKeyType: (e.target as HTMLInputElement).value },
               })
             }
-            checked={formValues.pagerdutyIntegrationKeyType === 'prometheus'}
-            aria-checked={formValues.pagerdutyIntegrationKeyType === 'prometheus'}
-            inline
+            isChecked={formValues.pagerdutyIntegrationKeyType === 'prometheus'}
+            data-checked-state={formValues.pagerdutyIntegrationKeyType === 'prometheus'}
+            data-test-id="integration-type-prometheus"
           />
-        </div>
+        </FormGroup>
       </div>
       <div className="form-group">
         <label data-test-id="pagerduty-key-label" className="co-required" htmlFor="integration-key">
