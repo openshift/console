@@ -334,17 +334,17 @@ each entry in the `exposedModules` object. Exposed modules are resolved relative
 
 ### Dependencies
 
-Dynamic plugins can declare dependency on specific Console versions and/or other plugins. This metadata
+Dynamic plugins might declare dependency on specific Console versions and other plugins. This metadata
 field is similar to `dependencies` in the `package.json` file with values represented as semver ranges.
 
 The `@console/pluginAPI` dependency is optional and refers to Console versions this dynamic plugin is
 meant to be compatible with. It is matched against the actual Console release version, as provided by
 the Console operator.
 
-The `dependencies` object may also refer to other dynamic plugins that are required for this plugin to
-work correctly. Such other plugins will be loaded prior to loading this plugin.
+The `dependencies` object might also refer to other dynamic plugins that are required for this plugin to
+work correctly. Such other plugins will be loaded before loading this plugin.
 
-Plugins may also use the `optionalDependencies` object to support use cases like plugin A integrating
+Plugins might also use the `optionalDependencies` object to support use cases, such as plugin A integrating
 with plugin B while still allowing plugin A to be loaded when plugin B is not enabled on the cluster.
 This object has the same structure as `dependencies` object.
 
@@ -367,9 +367,9 @@ This object has the same structure as `dependencies` object.
 }
 ```
 
-For dependencies where the version string may include a [semver pre-release](https://semver.org/#spec-item-9)
+For dependencies where the version string might include a [semver pre-release](https://semver.org/#spec-item-9)
 identifier, adapt your semver range constraint (dependency value) to include the relevant pre-release
-prefix, e.g. use `~4.11.0-0.ci` when targeting pre-release versions like `4.11.0-0.ci-1234`.
+prefix, e.g. use `~4.11.0-0.ci` when targeting pre-release versions such as `4.11.0-0.ci-1234`.
 
 ## Extensions contributed by the plugin
 
