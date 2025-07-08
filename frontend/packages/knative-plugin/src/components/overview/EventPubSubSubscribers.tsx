@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
@@ -25,9 +25,9 @@ const EventPubSubSubscribers: React.FC<EventPubSubSubscribersProps> = ({
     <>
       <SidebarSectionHeading text={title} />
       {subscribers.length > 0 ? (
-        <ul className="list-group kn-event-subscriber-list">
+        <List isPlain isBordered className="kn-event-subscriber-list">
           {subscribers.map((sub) => (
-            <li className="list-group-item list-group kn-event-subscriber-list-item" key={sub.name}>
+            <ListItem className="kn-event-subscriber-list-item" key={sub.name}>
               <ResourceLink kind={referenceFor(sub)} name={sub.name} namespace={sub.namespace} />
               {sub.data.length > 0 &&
                 sub.data.map((r) => {
@@ -70,9 +70,9 @@ const EventPubSubSubscribers: React.FC<EventPubSubSubscribersProps> = ({
                     </React.Fragment>
                   );
                 })}
-            </li>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       ) : (
         <span className="pf-v6-u-text-color-subtle">
           {t('knative-plugin~No Subscribers found for this resource.')}

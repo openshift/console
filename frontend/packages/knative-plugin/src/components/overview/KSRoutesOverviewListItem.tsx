@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
@@ -22,7 +22,7 @@ const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksr
     ksroute?.metadata?.labels?.[PRIVATE_KNATIVE_SERVING_LABEL] === 'cluster-local';
 
   return (
-    <li className="list-group-item">
+    <ListItem>
       <Grid hasGutter>
         <GridItem>
           <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
@@ -40,7 +40,7 @@ const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksr
           )}
         </GridItem>
       </Grid>
-    </li>
+    </ListItem>
   );
 };
 

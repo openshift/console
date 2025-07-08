@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   ExternalLinkWithCopy,
@@ -21,14 +22,14 @@ const DomainMappingOverviewList: React.FC<DomainMappingOverviewListProps> = ({
   return (
     <>
       <SidebarSectionHeading text={title} />
-      <ul className="list-group">
+      <List isPlain isBordered>
         {domainMappings?.map((domainMapping) => {
           const {
             metadata: { name, namespace, uid },
             status,
           } = domainMapping;
           return (
-            <li key={uid} className="list-group-item">
+            <ListItem key={uid}>
               <ResourceLink
                 kind={referenceForModel(DomainMappingModel)}
                 name={name}
@@ -40,10 +41,10 @@ const DomainMappingOverviewList: React.FC<DomainMappingOverviewListProps> = ({
                   <ExternalLinkWithCopy href={status.url} text={status.url} displayBlock />
                 </>
               )}
-            </li>
+            </ListItem>
           );
         })}
-      </ul>
+      </List>
     </>
   );
 };
