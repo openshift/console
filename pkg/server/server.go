@@ -32,6 +32,7 @@ import (
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/olm"
+	"github.com/openshift/console/pkg/olmv1"
 	"github.com/openshift/console/pkg/plugins"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverconfig"
@@ -614,6 +615,15 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
 	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...)
 
+	// Initialize OLMv1 controller for ClusterCatalog management
+	var olmv1Controller *olmv1.Controller
+	if s.CatalogdProxyConfig != nil {
+		olmv1Controller = olmv1.NewController(internalProxiedDynamic)
+		go olmv1Controller.Start(context.Background())
+		klog.Info("Started OLMv1 ClusterCatalog controller")
+	} else {
+		klog.Warning("CatalogdProxyConfig not available, OLMv1 controller disabled")
+	}
 	handle("/metrics", bearerTokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 		promhttp.Handler().ServeHTTP(w, r)
 	}))
