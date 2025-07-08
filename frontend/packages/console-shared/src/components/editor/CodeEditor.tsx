@@ -15,7 +15,7 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
   const [monacoRef, setMonacoRef] = React.useState<CodeEditorRef['monaco'] | null>(null);
   const [usesValue] = React.useState<boolean>(value !== undefined);
 
-  const shortcutPopover = useShortcutPopover();
+  const shortcutPopover = useShortcutPopover(props?.shortcutsPopoverProps);
 
   const editorDidMount: EditorDidMount = React.useCallback(
     (editor, monaco) => {
@@ -55,7 +55,7 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
   // do not render toolbar if the component is null
   const ToolbarLinks = React.useMemo(() => {
     return showShortcuts || toolbarLinks?.length ? (
-      <CodeEditorToolbar toolbarLinks={toolbarLinks} showShortcuts={showShortcuts} />
+      <CodeEditorToolbar toolbarLinks={toolbarLinks} />
     ) : undefined;
   }, [toolbarLinks, showShortcuts]);
 

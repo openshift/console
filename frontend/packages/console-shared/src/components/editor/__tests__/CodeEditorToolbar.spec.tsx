@@ -1,10 +1,10 @@
-import { Button } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { ActionType } from '@console/internal/reducers/ols';
 import { useOLSConfig } from '../../../hooks/ols-hook';
 import { AskOpenShiftLightspeedButton, CodeEditorToolbar } from '../CodeEditorToolbar';
+import '@testing-library/jest-dom';
 
 jest.mock('react-i18next', () => ({
   useTranslation: jest.fn(),
@@ -19,7 +19,6 @@ jest.mock('../../../hooks/ols-hook', () => ({
 }));
 
 describe('CodeEditorToolbar', () => {
-  let wrapper: ShallowWrapper;
   const mockDispatch = jest.fn();
 
   beforeEach(() => {
@@ -29,32 +28,32 @@ describe('CodeEditorToolbar', () => {
   });
 
   it('should render null when showShortcuts is false and toolbarLinks is empty', () => {
-    wrapper = shallow(<CodeEditorToolbar />);
-    expect(wrapper.isEmptyRender()).toBe(true);
+    const { container } = render(<CodeEditorToolbar />);
+    expect(container.firstChild).toBeNull();
   });
 
   it('should render toolbar with custom links when toolbarLinks are provided', () => {
-    const toolbarLinks = [<div key="custom">Custom Link</div>];
-    wrapper = shallow(<CodeEditorToolbar toolbarLinks={toolbarLinks} />);
-    expect(wrapper.contains(<div>Custom Link</div>)).toBe(true);
+    render(<CodeEditorToolbar toolbarLinks={[<div key="custom">Custom Link</div>]} />);
+    expect(screen.getByText('Custom Link')).toBeInTheDocument();
   });
 
   it('should render "Ask OpenShift Lightspeed" button when showLightspeedButton is true', () => {
     (useOLSConfig as jest.Mock).mockReturnValue(true);
-    wrapper = shallow(<AskOpenShiftLightspeedButton />);
-    expect(wrapper.find(Button).prop('children')).toBe('console-shared~Ask OpenShift Lightspeed');
+    render(<AskOpenShiftLightspeedButton />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
   });
 
   it('should not render "Ask OpenShift Lightspeed" button when showLightspeedButton is false', () => {
     (useOLSConfig as jest.Mock).mockReturnValue(false);
-    wrapper = shallow(<AskOpenShiftLightspeedButton />);
-    expect(wrapper.find(Button).exists()).toBe(false);
+    render(<AskOpenShiftLightspeedButton />);
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('should dispatch OpenOLS action when "Ask OpenShift Lightspeed" button is clicked', () => {
     (useOLSConfig as jest.Mock).mockReturnValue(true);
-    wrapper = shallow(<AskOpenShiftLightspeedButton />);
-    wrapper.find(Button).simulate('click');
+    render(<AskOpenShiftLightspeedButton />);
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
     expect(mockDispatch).toHaveBeenCalledWith({ type: ActionType.OpenOLS });
   });
 });
