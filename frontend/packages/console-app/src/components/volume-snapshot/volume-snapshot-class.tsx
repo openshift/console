@@ -48,7 +48,7 @@ const Row: React.FC<RowProps<VolumeSnapshotClassKind>> = ({ obj }) => {
       <TableData {...tableColumnInfo[0]}>
         <ResourceLink name={name} kind={referenceForModel(VolumeSnapshotClassModel)}>
           {isDefaultSnapshotClass(obj) && (
-            <span className="small pf-v6-u-text-color-subtle co-resource-item__help-text">
+            <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
               &ndash; Default
             </span>
           )}
