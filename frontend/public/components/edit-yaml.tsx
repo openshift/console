@@ -5,7 +5,7 @@ import { useDispatch, useSelector, connect } from 'react-redux';
 import { action } from 'typesafe-actions';
 import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
-import { ActionGroup, Alert, Button, Switch } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -65,6 +65,7 @@ import { EditYamlSettingsModal } from './modals/edit-yaml-settings-modal';
 import { CodeEditorControl } from '@patternfly/react-code-editor';
 import { CompressIcon } from '@patternfly/react-icons/dist/js/icons/compress-icon';
 import { ExpandIcon } from '@patternfly/react-icons/dist/js/icons/expand-icon';
+import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
 
 const generateObjToLoad = (templateExtensions, kind, id, yaml, namespace = 'default') => {
   const sampleObj = safeLoad(yaml ? yaml : getYAMLTemplates(templateExtensions).getIn([kind, id]));
@@ -768,21 +769,18 @@ const EditYAMLInner = (props) => {
   const showSchema = definition && !_.isEmpty(definition.properties);
   const hasSidebarContent = showSchema || (create && !_.isEmpty(samples)) || !_.isEmpty(snippets);
   const sidebarSwitch = hasSidebarContent && (
-    <>
-      <div style={{ flexGrow: 1 }}></div>
-      <Switch
-        label={t('public~Sidebar')}
-        id="showSidebar"
-        isChecked={showSidebar}
-        data-checked-state={showSidebar}
-        onChange={toggleSidebar}
-        hasCheckIcon
-      />
-    </>
+    <ToggleSidebarButton
+      key="edit-yaml-sidebar-toggle"
+      isSidebarOpen={showSidebar}
+      toggleSidebar={toggleSidebar}
+      alignToEnd
+      className="pf-v6-u-mr-xs"
+    />
   );
 
   const settingsModal = (
     <EditYamlSettingsModal
+      key="edit-yaml-settings-modal"
       appendTo={() => {
         return isFullscreen ? fullscreenRef.current : document.body;
       }}
@@ -791,6 +789,7 @@ const EditYAMLInner = (props) => {
 
   const fullscreenButton = (
     <CodeEditorControl
+      key="edit-yaml-fullscreen-button"
       onClick={toggleFullscreen}
       isDisabled={!canUseFullScreen}
       aria-label={t('public~Toggle fullscreen mode')}

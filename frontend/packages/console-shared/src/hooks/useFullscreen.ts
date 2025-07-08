@@ -1,6 +1,25 @@
 import { useRef, useState, useEffect, useCallback, RefObject } from 'react';
 
 /**
+ * Hook to determine if the browser is currently in fullscreen mode.
+ */
+export const useIsFullscreen = () => {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  return isFullscreen;
+};
+
+/**
  * Returns a tuple containing a ref to the element that will be toggled to fullscreen,
  * a function to toggle fullscreen mode, a boolean indicating if the element is currently in fullscreen,
  * and a boolean indicating if the browser supports fullscreen mode.
@@ -12,8 +31,8 @@ export const useFullscreen = () => {
   const fullscreenRef = useRef<HTMLDivElement>(null);
   /** Whether the browser supports fullscreen mode */
   const canUseFullScreen = document.fullscreenEnabled;
-
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  /** Whether the currently displayed content is in fullscreen mode */
+  const isFullscreen = useIsFullscreen();
 
   /** Toggle currently displayed content to/from fullscreen */
   const toggleFullscreen = useCallback(() => {
@@ -24,16 +43,6 @@ export const useFullscreen = () => {
         document.exitFullscreen();
       }
     }
-  }, []);
-
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(Boolean(document.fullscreenElement));
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
   }, []);
 
   return [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] as [
