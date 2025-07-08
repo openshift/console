@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ChartLabel } from '@patternfly/react-charts/victory';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, OwnerReference, referenceForModel } from '@console/internal/module/k8s';
 import { PodStatus } from '@console/shared';
@@ -29,7 +29,7 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
   const availableReplicas = current?.obj?.status?.availableReplicas || '0';
   const { urls = [], percent: trafficPercent } = getTrafficByRevision(name, service);
   return (
-    <li className="list-group-item">
+    <ListItem>
       <Grid hasGutter>
         <GridItem span={9} sm={8}>
           <ResourceLink kind={referenceForModel(RevisionModel)} name={name} namespace={namespace} />
@@ -79,7 +79,7 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
           )}
         </div>
       )}
-    </li>
+    </ListItem>
   );
 };
 

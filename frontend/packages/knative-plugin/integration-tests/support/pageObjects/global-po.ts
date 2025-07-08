@@ -228,7 +228,7 @@ export const eventingPO = {
     appName: '[data-test-id="application-form-app-name"]',
     eventSourceLink: '[data-type="event-source-link"]',
     headingTitle: '.resource-overview [data-test="page-heading"] h1',
-    listItem: '.list-group-item',
+    listItem: '.pf-v6-c-list > li',
   },
   eventSource: {
     camelK: '[data-test-operator-row="Red Hat Integration - Camel K"]',
