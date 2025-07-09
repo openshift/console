@@ -163,12 +163,18 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                     &nbsp;
                     <Content component={ContentVariants.small}>
                       <span className="co-break-word">{definitionTypeStr}</span>
-                      {required.has(name) && <> &ndash; required</>}
+                      {required.has(name) && <> &ndash; {t('public~required')}</>}
                     </Content>
                   </Title>
                   {definition.description && (
                     <p className="co-break-word co-pre-wrap">
                       <LinkifyExternal>{definition.description}</LinkifyExternal>
+                    </p>
+                  )}
+                  {definition.enum && (
+                    <p className="co-break-word co-pre-wrap">
+                      <strong>{t('public~Allowed values: ')}</strong>
+                      <span className="co-break-word">{definition.enum.join(', ')}</span>
                     </p>
                   )}
                   {path && (

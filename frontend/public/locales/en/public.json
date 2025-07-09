@@ -1392,6 +1392,8 @@
   "Value of the secret will be supplied when invoking the webhook.": "Value of the secret will be supplied when invoking the webhook.",
   "ServiceAccount details": "ServiceAccount details",
   "ServiceAccounts": "ServiceAccounts",
+  "required": "required",
+  "Allowed values: ": "Allowed values: ",
   "View details": "View details",
   "Try it": "Try it",
   "Download YAML": "Download YAML",
