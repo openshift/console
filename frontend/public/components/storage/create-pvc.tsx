@@ -171,7 +171,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           {t('public~A unique name for the storage claim within the project')}
         </p>
       </div>
-      <div className="form-group">
+      <div className="form-group pf-v6-c-form">
         <AccessModeSelector
           onChange={setAccessMode}
           provisioner={storageProvisioner}
