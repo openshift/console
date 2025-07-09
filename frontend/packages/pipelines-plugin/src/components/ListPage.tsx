@@ -49,27 +49,19 @@ type CreateProps = {
 
 type TextFilterProps = Omit<TextInputProps, 'type' | 'tabIndex'> & {
   label?: string;
-  parentClassName?: string;
 };
 
 export const TextFilter: React.FC<TextFilterProps> = (props) => {
-  const {
-    label,
-    className,
-    placeholder,
-    autoFocus = false,
-    parentClassName,
-    ...otherInputProps
-  } = props;
+  const { label, placeholder, autoFocus = false, ...otherInputProps } = props;
   const { ref } = useDocumentListener<HTMLInputElement>();
   const { t } = useTranslation();
   const placeholderText = placeholder ?? t('public~Filter {{label}}...', { label });
 
   return (
-    <div className={css('has-feedback', parentClassName)}>
+    <div className="co-text-filter">
       <TextInput
         {...otherInputProps}
-        className={css('co-text-filter', className)}
+        className="co-text-filter__text-input"
         data-test-id="item-filter"
         aria-label={placeholderText}
         placeholder={placeholderText}
@@ -78,7 +70,7 @@ export const TextFilter: React.FC<TextFilterProps> = (props) => {
         tabIndex={0}
         type="text"
       />
-      <span className="co-text-filter-feedback">
+      <span className="co-text-filter__feedback">
         <kbd className="co-kbd co-kbd__filter-input">{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd>
       </span>
     </div>
