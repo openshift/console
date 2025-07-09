@@ -160,7 +160,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
             />
             {obj.namespace && (
               <ResourceLink
-                className="co-sysevent__resourcelink hidden-xs"
+                className="co-sysevent__resourcelink pf-v6-u-display-none pf-v6-u-display-block-on-sm"
                 kind="Namespace"
                 name={obj.namespace}
               />
