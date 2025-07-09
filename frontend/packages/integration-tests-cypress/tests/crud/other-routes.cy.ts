@@ -49,7 +49,7 @@ describe('Visiting other routes', () => {
     },
     {
       path: '/api-resource/ns/default/core~v1~Pod/schema',
-      waitFor: () => cy.get('li.co-resource-sidebar-item').should('be.visible'),
+      waitFor: () => cy.byTestID('resource-sidebar-item').should('be.visible'),
     },
     {
       path: '/api-resource/ns/default/core~v1~Pod/instances',
