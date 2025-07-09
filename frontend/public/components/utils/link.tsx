@@ -107,7 +107,7 @@ export const ExternalLinkWithCopy = ({
       )}
     >
       <span className="pf-v6-c-clipboard-copy__text">
-        <ExternalLink href={href} {...props}>
+        <ExternalLink href={href} isInline {...props}>
           {displayText}
         </ExternalLink>
       </span>
