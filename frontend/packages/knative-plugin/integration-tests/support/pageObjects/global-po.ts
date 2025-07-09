@@ -133,6 +133,7 @@ export const eventingPO = {
   broker: {
     actionDropDown: '.pf-v6-c-menu__list-item',
     actionMenu: '[data-test-id="actions-menu-button"]',
+    createBroker: '[data-test-dropdown-menu="brokers"]',
     formView: '[id="form-radiobutton-editorType-form-field"]',
     eventingCard: '[data-test="card eventing"]',
     createEvent: '[data-test="item knative-eventing-broker"]',
