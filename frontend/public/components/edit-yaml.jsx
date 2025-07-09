@@ -906,7 +906,7 @@ const EditYAMLInner = (props) => {
                       icon={<DownloadIcon />}
                       type="submit"
                       variant="secondary"
-                      className="pf-v6-c-button--align-right hidden-sm hidden-xs"
+                      className="pf-v6-c-button--align-right pf-v6-u-display-none pf-v6-u-display-flex-on-sm"
                       onClick={() => download()}
                     >
                       {t('public~Download')}
