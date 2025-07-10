@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { defaultCatalogCategories } from '../../../utils/default-categories';
 import { CatalogCategory } from '../utils/types';
 
-const useCatalogCategories = (): CatalogCategory[] => {
+const useDeveloperCatalogCategories = (): CatalogCategory[] => {
   const categories = useMemo<CatalogCategory[]>(() => {
     try {
       const categoriesString = window.SERVER_FLAGS.developerCatalogCategories;
@@ -32,4 +32,4 @@ const useCatalogCategories = (): CatalogCategory[] => {
   return categories;
 };
 
-export default useCatalogCategories;
+export default useDeveloperCatalogCategories;
