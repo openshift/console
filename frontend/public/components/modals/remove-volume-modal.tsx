@@ -1,8 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalTitle, ModalBody, ModalSubmitFooter, ModalWrapper } from '../factory';
 import {
   ContainerSpec,
   getVolumeType,
@@ -14,6 +15,7 @@ import {
 } from '../../module/k8s/';
 import { RowVolumeData } from '../volumes-table';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { ModalCallback } from './types';
 
 export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
   const [inProgress, setInProgress] = React.useState(false);
@@ -109,7 +111,28 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
   );
 };
 
-export const removeVolumeModal = createModalLauncher(RemoveVolumeModal);
+export const RemoveVolumeModalProvider: OverlayComponent<RemoveVolumeModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <RemoveVolumeModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
+    </ModalWrapper>
+  );
+};
+
+export const useRemoveModalLauncher = (props: RemoveVolumeModalProps): ModalCallback => {
+  const launcher = useOverlay();
+  const { kind, resource, volume } = props;
+
+  return React.useCallback(
+    () =>
+      kind &&
+      resource &&
+      volume &&
+      launcher<RemoveVolumeModalProps>(RemoveVolumeModalProvider, props),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [launcher, kind, resource, volume],
+  );
+};
 
 export type RemoveVolumeModalProps = {
   cancel?: () => void;
