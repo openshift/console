@@ -12,6 +12,8 @@ import {
   isCatalogItemType,
   isCatalogItemTypeMetadata,
   isCatalogItemMetadataProvider,
+  isCatalogCategoriesProvider,
+  CatalogCategoriesProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 
 const useCatalogExtensions = (
@@ -22,6 +24,7 @@ const useCatalogExtensions = (
   ResolvedExtension<CatalogItemProvider>[],
   ResolvedExtension<CatalogItemFilter>[],
   ResolvedExtension<CatalogItemMetadataProvider>[],
+  ResolvedExtension<CatalogCategoriesProvider>[],
   boolean,
 ] => {
   const [itemTypeExtensions, itemTypesResolved] = useResolvedExtensions<CatalogItemType>(
@@ -58,6 +61,20 @@ const useCatalogExtensions = (
         isCatalogItemFilter(e) &&
         _.castArray(e.properties.catalogId).includes(catalogId) &&
         (!catalogType || e.properties.type === catalogType),
+      [catalogId, catalogType],
+    ),
+  );
+
+  const [categoryProviderExtensions, categoryProvidersResolved] = useResolvedExtensions<
+    CatalogCategoriesProvider
+  >(
+    React.useCallback(
+      (e): e is CatalogCategoriesProvider =>
+        isCatalogCategoriesProvider(e) &&
+        (!e.properties.catalogId ||
+          e.properties.catalogId === catalogId ||
+          !e.properties.type ||
+          e.properties.type === catalogType),
       [catalogId, catalogType],
     ),
   );
@@ -122,11 +139,13 @@ const useCatalogExtensions = (
     catalogProviderExtensions,
     catalogFilterExtensions,
     catalogMetadataProviderExtensions,
+    categoryProviderExtensions,
     providersResolved &&
       filtersResolved &&
       itemTypesResolved &&
       itemTypeMetadataResolved &&
-      metadataProvidersResolved,
+      metadataProvidersResolved &&
+      categoryProvidersResolved,
   ];
 };
 
