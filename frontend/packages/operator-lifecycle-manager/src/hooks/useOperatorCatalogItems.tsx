@@ -162,7 +162,6 @@ export const useOperatorCatalogItems = () => {
           },
         );
         const {
-          categories,
           capabilities,
           certifiedLevel,
           healthIndex,
@@ -171,6 +170,7 @@ export const useOperatorCatalogItems = () => {
           createdAt,
           support,
           capabilities: capabilityLevel,
+          [OLMAnnotation.Categories]: categories,
           [OLMAnnotation.ActionText]: marketplaceActionText,
           [OLMAnnotation.RemoteWorkflow]: marketplaceRemoteWorkflow,
           [OLMAnnotation.SupportWorkflow]: marketplaceSupportWorkflow,
@@ -194,7 +194,11 @@ export const useOperatorCatalogItems = () => {
           pkg.metadata.labels?.provider;
         const uid = `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`;
         const latestVersion = currentCSVDesc?.version;
-        const tags = (categories ?? '').split(',').map((category) => category.trim());
+        const tags = (categories ?? '')
+          .toLowerCase()
+          .split(',')
+          .map((c) => c.trim())
+          .filter(Boolean);
         const imgUrl = iconFor(pkg);
         const type = 'operator';
 
@@ -234,16 +238,13 @@ export const useOperatorCatalogItems = () => {
         return {
           uid,
           type,
-          // typeLabel: '',
           name,
           title: name,
-          // secondaryLabel: '',
           provider,
           description,
           tags,
           creationTimestamp: createdAt,
           supportUrl: support,
-          // documentationUrl,
           attributes: {
             keywords,
             source,

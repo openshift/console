@@ -154,5 +154,12 @@
         }
       ]
     }
+  },
+  {
+    "type": "console.catalog/categories-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "provider": { "$codeRef": "useOperatorCatalogCategories" }
+    }
   }
 ]

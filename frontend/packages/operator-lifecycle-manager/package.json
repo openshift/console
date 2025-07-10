@@ -20,6 +20,7 @@
       "useOperatorActions": "src/actions/useOperatorActions.ts",
       "useDefaultOperandActions": "src/actions/useDefaultOperandActions.ts",
       "useOperatorCatalogItems": "src/hooks/useOperatorCatalogItems.tsx",
+      "useOperatorCatalogCategories": "src/hooks/useOperatorCatalogCategories.ts",
       "filters": "src/utils/filters.ts"
     }
   }
