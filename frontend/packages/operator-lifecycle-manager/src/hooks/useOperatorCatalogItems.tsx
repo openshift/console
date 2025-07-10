@@ -9,8 +9,8 @@ import { iconFor } from '../components';
 import { subscriptionFor } from '../components/operator-group';
 import { InstalledState, OLMAnnotation, CSVAnnotations } from '../components/operator-hub/index';
 import {
-  OperatorChannelSelect,
   OperatorVersionSelect,
+  OperatorChannelSelect,
 } from '../components/operator-hub/operator-channel-version-select';
 import {
   CapabilityLevel,
@@ -82,6 +82,9 @@ export const useOperatorCatalogItems = () => {
     authenticationLoadError,
   ] = useClusterAuthenticationConfig();
 
+  const [updateChannel, setUpdateChannel] = React.useState('');
+  const [updateVersion, setUpdateVersion] = React.useState('');
+
   const loaded = React.useMemo(
     () =>
       operatorGroupsLoaded &&
@@ -142,8 +145,9 @@ export const useOperatorCatalogItems = () => {
         const clusterServiceVersion = clusterServiceVersionFor(clusterServiceVersions)(
           subscription,
         );
+        const channel = updateChannel || pkg.status.defaultChannel || pkg.status.channels[0]?.name;
         const currentCSVDesc = getCurrentCSVDescription(pkg);
-        const { displayName } = currentCSVDesc;
+        const { displayName } = currentCSVDesc ?? {};
         const currentCSVAnnotations: CSVAnnotations = currentCSVDesc?.annotations ?? {};
         const infrastructureFeatures = getInfrastructureFeatures(currentCSVAnnotations, {
           clusterIsAWSSTS,
@@ -180,8 +184,8 @@ export const useOperatorCatalogItems = () => {
           !_.isNil(clusterServiceVersion?.status?.phase) &&
           clusterServiceVersion?.status?.phase !== 'Succeeded';
         const installState = installed ? InstalledState.Installed : InstalledState.NotInstalled;
-        const description = currentCSVAnnotations.description || currentCSVDesc.description;
-        const longDescription = currentCSVDesc.description || currentCSVAnnotations.description;
+        const description = currentCSVAnnotations?.description || currentCSVDesc?.description;
+        const longDescription = currentCSVDesc?.description || currentCSVAnnotations?.description;
         const name = displayName ?? pkg.metadata.name;
         const obj = pkg;
         const provider =
@@ -189,11 +193,10 @@ export const useOperatorCatalogItems = () => {
           pkg.status.provider?.name ||
           pkg.metadata.labels?.provider;
         const uid = `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`;
-        const version = currentCSVDesc?.version;
+        const latestVersion = currentCSVDesc?.version;
         const tags = (categories ?? '').split(',').map((category) => category.trim());
         const imgUrl = iconFor(pkg);
         const type = 'operator';
-        const title = 'OperatorHub';
 
         // Build install parameters URL
         const installParamsURL = new URLSearchParams({
@@ -233,7 +236,7 @@ export const useOperatorCatalogItems = () => {
           type,
           // typeLabel: '',
           name,
-          title,
+          title: name,
           // secondaryLabel: '',
           provider,
           description,
@@ -260,9 +263,9 @@ export const useOperatorCatalogItems = () => {
                 value: (
                   <OperatorChannelSelect
                     packageManifest={pkg}
-                    selectedUpdateChannel=""
-                    setUpdateChannel={() => {}}
-                    setUpdateVersion={() => {}}
+                    selectedUpdateChannel={channel}
+                    setUpdateChannel={setUpdateChannel}
+                    setUpdateVersion={setUpdateVersion}
                   />
                 ),
               },
@@ -271,9 +274,9 @@ export const useOperatorCatalogItems = () => {
                 value: (
                   <OperatorVersionSelect
                     packageManifest={pkg}
-                    selectedUpdateChannel=""
-                    updateVersion=""
-                    setUpdateVersion={() => {}}
+                    selectedUpdateChannel={channel}
+                    updateVersion={updateVersion}
+                    setUpdateVersion={setUpdateVersion}
                   />
                 ),
               },
@@ -323,7 +326,7 @@ export const useOperatorCatalogItems = () => {
                     installed={installed}
                     isInstalling={isInstalling}
                     subscription={subscription}
-                    version={version}
+                    version={latestVersion}
                     clusterIsAWSSTS={clusterIsAWSSTS}
                     clusterIsAzureWIF={clusterIsAzureWIF}
                     clusterIsGCPWIF={clusterIsGCPWIF}
@@ -369,7 +372,7 @@ export const useOperatorCatalogItems = () => {
             uid,
             validSubscription,
             validSubscriptionFilters,
-            version,
+            version: latestVersion,
           },
         };
       },
@@ -382,20 +385,22 @@ export const useOperatorCatalogItems = () => {
     }
     return uniqueItems;
   }, [
-    t,
-    loaded,
-    loadError,
-    operatorHubPackageManifests,
-    subscriptions,
-    operatorGroups,
-    namespace,
-    clusterServiceVersions,
+    authentication,
+    cloudCredentials,
     clusterIsAWSSTS,
     clusterIsAzureWIF,
     clusterIsGCPWIF,
-    authentication,
-    cloudCredentials,
+    clusterServiceVersions,
     infrastructure,
+    loadError,
+    loaded,
+    namespace,
+    operatorGroups,
+    operatorHubPackageManifests,
+    subscriptions,
+    t,
+    updateChannel,
+    updateVersion,
   ]);
   return [items, loaded, loadError];
 };
