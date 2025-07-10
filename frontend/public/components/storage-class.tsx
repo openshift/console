@@ -96,7 +96,7 @@ const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> 
       <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
           {isDefaultClass(obj) && (
-            <span className="small pf-v6-u-text-color-subtle co-resource-item__help-text">
+            <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
               &ndash; {t('public~Default')}
             </span>
           )}

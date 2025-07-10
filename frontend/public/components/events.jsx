@@ -168,7 +168,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
             {lastTime && <Timestamp className="co-sysevent__timestamp" timestamp={lastTime} />}
           </div>
           <div className="co-sysevent__details">
-            <small className="co-sysevent__source">
+            <span className="pf-v6-u-font-size-xs co-sysevent__source">
               {component !== 'kubelet' &&
                 t('public~Generated from {{ sourceComponent }}', {
                   sourceComponent: component,
@@ -187,21 +187,21 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
                   sourceComponent: component,
                   sourceHost: source.host,
                 })}
-            </small>
+            </span>
             <div className="co-sysevent__count-and-actions">
               {count > 1 && firstTime && (
                 <Trans ns="public">
-                  <small className="co-sysevent__count pf-v6-u-text-color-subtle">
+                  <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-sysevent__count">
                     {{ eventCount: count }} times in the last{' '}
                     <Timestamp timestamp={firstTime} simple={true} omitSuffix={true} />
-                  </small>
+                  </span>
                 </Trans>
               )}
               {count > 1 && !firstTime && (
                 <Trans ns="public">
-                  <small className="co-sysevent__count pf-v6-u-text-color-subtle">
+                  <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-sysevent__count">
                     {{ eventCount: count }} times
-                  </small>
+                  </span>
                 </Trans>
               )}
               <ActionServiceProvider context={{ [referenceFor(event)]: event }}>
