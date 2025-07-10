@@ -84,12 +84,26 @@ export type CatalogItemMetadataProvider = ExtensionDeclaration<
   }
 >;
 
+/** This extension allows plugins to contribute a set of categories for a specific catalog item type. */
+export type CatalogCategoriesProvider = ExtensionDeclaration<
+  'console.catalog/categories-provider',
+  {
+    /** The catalog ID the categories are for. If not specified, the categories will be available for all catalogs. */
+    catalogId?: string;
+    /** The catalog item type these categories are for. If not specified, the categories will be available for all types. */
+    type?: string;
+    /** A hook that returns categories. */
+    provider: CodeRef<ExtensionHook<CatalogCategory[]>>;
+  }
+>;
+
 export type SupportedCatalogExtensions =
   | CatalogItemType
   | CatalogItemTypeMetadata
   | CatalogItemProvider
   | CatalogItemFilter
-  | CatalogItemMetadataProvider;
+  | CatalogItemMetadataProvider
+  | CatalogCategoriesProvider;
 
 // Type guards
 
@@ -111,6 +125,10 @@ export const isCatalogItemFilter = (e: Extension): e is CatalogItemFilter => {
 
 export const isCatalogItemMetadataProvider = (e: Extension): e is CatalogItemMetadataProvider => {
   return e.type === 'console.catalog/item-metadata';
+};
+
+export const isCatalogCategoriesProvider = (e: Extension): e is CatalogCategoriesProvider => {
+  return e.type === 'console.catalog/categories-provider';
 };
 
 // Support types
@@ -167,6 +185,19 @@ export type CatalogItem<T extends any = any> = {
   // May be consumed by filters.
   // `data` for each `type` of CatalogItem should implement the same interface.
   data?: T;
+};
+
+export type CatalogCategory = {
+  id: string;
+  label: string;
+  tags?: string[];
+  subcategories?: CatalogSubcategory[];
+};
+
+export type CatalogSubcategory = {
+  id: string;
+  label: string;
+  tags?: string[];
 };
 
 export type CatalogItemDetails = {

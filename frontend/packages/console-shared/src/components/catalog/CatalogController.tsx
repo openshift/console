@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom-v5-compat';
-import { ResolvedExtension, CatalogItemType } from '@console/dynamic-plugin-sdk';
+import { ResolvedExtension, CatalogItemType, CatalogCategory } from '@console/dynamic-plugin-sdk';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
   skeletonCatalog,
@@ -20,7 +20,6 @@ import CatalogDetailsModal from './details/CatalogDetailsModal';
 import { getURLWithParams, useGetAllDisabledSubCatalogs } from './utils/catalog-utils';
 import { determineAvailableFilters } from './utils/filter-utils';
 import {
-  CatalogCategory,
   CatalogFilters,
   CatalogQueryParams,
   CatalogService,

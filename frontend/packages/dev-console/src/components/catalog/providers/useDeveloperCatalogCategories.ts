@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { CatalogCategory } from '@console/shared/src/components/catalog/utils/types';
+import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import { defaultCatalogCategories } from '@console/shared/src/utils/default-categories';
 
-export const useDeveloperCatalogCategories = (): CatalogCategory[] => {
-  const categories = React.useMemo<CatalogCategory[]>(() => {
+export const useDeveloperCatalogCategories = (): CatalogCategory[] =>
+  React.useMemo<CatalogCategory[]>(() => {
     try {
       const categoriesString = window.SERVER_FLAGS.developerCatalogCategories;
       if (!categoriesString) {
@@ -29,5 +29,4 @@ export const useDeveloperCatalogCategories = (): CatalogCategory[] => {
     }
   }, []);
 
-  return categories;
-};
+export default useDeveloperCatalogCategories;
