@@ -7,10 +7,10 @@ import {
   useQueryParams,
   CatalogQueryParams,
   CatalogServiceProvider,
-  useCatalogCategories,
   CatalogController,
   isCatalogTypeEnabled,
 } from '@console/shared';
+import { useDeveloperCatalogCategories } from '../../hooks';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
@@ -19,7 +19,7 @@ const PageContents: React.FC = () => {
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
   const { ns: namespace } = useParams();
-  const categories = useCatalogCategories();
+  const categories = useDeveloperCatalogCategories();
 
   return namespace ? (
     <CatalogServiceProvider namespace={namespace} catalogId="dev-catalog" catalogType={catalogType}>
