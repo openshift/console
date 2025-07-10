@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import {
+  CatalogCategory,
   CatalogExtensionHookOptions,
   CatalogItem,
   CatalogItemMetadataProviderFunction,
@@ -13,6 +14,7 @@ import {
   applyCatalogItemMetadata,
   useGetAllDisabledSubCatalogs,
 } from '../utils/catalog-utils';
+import CatalogCategoryProviderResolver from './CatalogCategoryProviderResolver';
 import CatalogExtensionHookResolver from './CatalogExtensionHookResolver';
 
 type CatalogServiceProviderProps = {
@@ -49,11 +51,15 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     catalogProviderExtensions,
     catalogFilterExtensions,
     catalogBadgeProviderExtensions,
+    categoryProviderExtensions,
     extensionsResolved,
   ] = useCatalogExtensions(catalogId, catalogType);
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
   const [extItemsMap, setExtItemsMap] = React.useState<{ [uid: string]: CatalogItem[] }>({});
   const [extItemsErrorMap, setItemsErrorMap] = React.useState<{ [uid: string]: Error }>({});
+  const [categoryProviderMap, setCategoryProviderMap] = React.useState<{
+    [id: string]: CatalogCategory[];
+  }>({});
   const [metadataProviderMap, setMetadataProviderMap] = React.useState<{
     [type: string]: { [id: string]: CatalogItemMetadataProviderFunction };
   }>({});
@@ -96,6 +102,10 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     }
     return applyCatalogItemMetadata(preCatalogItems, metadataProviderMap);
   }, [loaded, preCatalogItems, metadataProviderMap]);
+
+  const onCategoryValueResolved = React.useCallback((categories, id) => {
+    setCategoryProviderMap((prev) => ({ ...prev, [id]: categories }));
+  }, []);
 
   const onValueResolved = React.useCallback((items, uid) => {
     setExtItemsMap((prev) => ({ ...prev, [uid]: items }));
@@ -147,6 +157,10 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
       ? new Error('failed loading catalog data')
       : new IncompleteDataError(failedExtensions);
 
+  const categories = React.useMemo(() => _.flatten(Object.values(categoryProviderMap)), [
+    categoryProviderMap,
+  ]);
+
   const catalogService: CatalogService = {
     type: catalogType,
     items: catalogItems,
@@ -155,10 +169,20 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     loadError,
     searchCatalog,
     catalogExtensions: catalogTypeExtensions,
+    categories,
   };
 
   return (
     <>
+      {extensionsResolved &&
+        categoryProviderExtensions.map((extension) => (
+          <CatalogCategoryProviderResolver
+            key={extension.uid}
+            id={extension.uid}
+            useValue={extension.properties.provider}
+            onValueResolved={onCategoryValueResolved}
+          />
+        ))}
       {extensionsResolved &&
         catalogProviderExtensions.map((extension) => (
           <CatalogExtensionHookResolver<CatalogItem[]>
