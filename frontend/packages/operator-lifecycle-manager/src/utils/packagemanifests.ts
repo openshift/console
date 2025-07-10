@@ -32,11 +32,15 @@ const isArchitectureSupported = (pkg: PackageManifestKind) =>
   ArchitectureLabelSelectors.length === 0 ||
   ArchitectureLabelSelectors.some((selector) => selector.matches(pkg));
 
-export const getCurrentCSVDescription = (pkg: PackageManifestKind): CSVDescription =>
-  (pkg?.status?.channels || []).find(
-    ({ name }) => pkg?.status?.defaultChannel && name && pkg?.status?.defaultChannel === name,
+export const getCurrentCSVDescription = (
+  pkg: PackageManifestKind,
+  channel?: string,
+): CSVDescription => {
+  const desiredChannel = channel || pkg?.status?.defaultChannel;
+  return (pkg?.status?.channels || []).find(
+    ({ name }) => desiredChannel && name && desiredChannel === name,
   )?.currentCSVDesc;
-
+};
 const isStandaloneOperator = (pkg: PackageManifestKind) => {
   const { channels, defaultChannel } = pkg.status ?? {};
   // if a package does not have status.defaultChannel, exclude it so the app doesn't fail
