@@ -671,7 +671,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle("/api/console/version", authHandler(s.versionHandler))
 
 	// CRD Schema
-	crdSchemaHandler := crdschema.NewCRDSchemaHandler(k8sProxyURL, internalProxiedK8SRT)
+	crdSchemaHandler := crdschema.NewCRDSchemaHandler(k8sProxy)
 	handle("/api/console/crd-schema", authHandler(crdSchemaHandler.HandleCRDSchema))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
