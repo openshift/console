@@ -2,6 +2,7 @@ import {
   CatalogItem,
   CatalogItemAttribute,
   CatalogItemType,
+  CatalogCategory,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
   ResolvedCodeRefProperties,
@@ -48,19 +49,6 @@ export type CatalogType = {
   description: string;
 };
 
-export type CatalogCategory = {
-  id: string;
-  label: string;
-  tags?: string[];
-  subcategories?: CatalogSubcategory[];
-};
-
-export type CatalogSubcategory = {
-  id: string;
-  label: string;
-  tags?: string[];
-};
-
 export type CatalogService = {
   type: string;
   items: CatalogItem[];
@@ -69,4 +57,5 @@ export type CatalogService = {
   loadError: any;
   searchCatalog: (query: string) => CatalogItem[];
   catalogExtensions: ResolvedExtension<CatalogItemType>[];
+  categories?: CatalogCategory[];
 };
