@@ -10,6 +10,7 @@
       "useExtensionCatalogDatabaseContextValues": "src/contexts/useExtensionCatalogDatabaseContextValues.ts",
       "ExtensionCatalogDatabaseContextProvider": "src/contexts/ExtensionCatalogDatabaseContext.ts",
       "useExtensionCatalogItems": "src/hooks/useExtensionCatalogItems.ts",
+      "useExtensionCatalogCategories": "src/hooks/useExtensionCatalogCategories.ts",
       "filters": "src/utils/filters.ts"
     }
   }

@@ -1,13 +1,10 @@
 import { Trans, useTranslation } from 'react-i18next';
 import { CatalogController, CatalogServiceProvider } from '@console/shared/src/components/catalog';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { useExtensionCatalogCategories } from '../hooks/useExtensionCatalogCategories';
 
 const ExtensionCatalog = () => {
   const { t } = useTranslation('olm-v1');
   const [namespace] = useActiveNamespace();
-  const [categories, loading, error] = useExtensionCatalogCategories();
-
   return (
     <CatalogServiceProvider
       catalogType="ExtensionCatalogItem"
@@ -18,11 +15,8 @@ const ExtensionCatalog = () => {
         <CatalogController
           {...service}
           enableDetailsPanel
-          categories={categories}
           title={t('Extension Catalog')}
           type="ExtensionCatalogItem"
-          loaded={!loading}
-          loadError={error}
           description={
             <Trans ns="olm-v1">
               Discover Operators from the Kubernetes community and Red Hat partners, curated by Red
