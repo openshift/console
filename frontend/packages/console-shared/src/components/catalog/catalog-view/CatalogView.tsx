@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { isModalOpen } from '@console/internal/components/modals';
 import { useQueryParams } from '../../../hooks/useQueryParams';
@@ -22,7 +23,6 @@ import {
   getFilterSearchParam,
 } from '../utils/filter-utils';
 import {
-  CatalogCategory,
   CatalogFilterCounts,
   CatalogFilterGroupMap,
   CatalogFilters as FiltersType,
