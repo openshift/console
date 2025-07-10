@@ -18,6 +18,7 @@
       "csvActionsProvider": "src/actions/csv-actions-provider.ts",
       "install": "src/components/operator-install-page.tsx",
       "useOperatorCatalogItems": "src/hooks/useOperatorCatalogItems.tsx",
+      "useOperatorCatalogCategories": "src/hooks/useOperatorCatalogCategories.ts",
       "filters": "src/utils/filters.ts"
     }
   }
