@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useLocation, Link } from 'react-router-dom-v5-compat';
+import { useLocation, Link, useNavigate } from 'react-router-dom-v5-compat';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
   documentationURLs,
@@ -121,6 +121,7 @@ const InputField: React.FC<InputFieldProps> = ({
 
 export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
   const packageManifest = props.packageManifest?.data?.[0];
+  const navigate = useNavigate();
   const { name: pkgName } = packageManifest?.metadata ?? {};
   const { provider, channels = [], packageName, catalogSource, catalogSourceNamespace } =
     packageManifest?.status ?? {};
@@ -1168,7 +1169,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               >
                 {t('olm~Install')}
               </Button>
-              <Button variant="secondary" onClick={() => history.push('/operatorhub')}>
+              <Button variant="secondary" onClick={() => navigate(-1)}>
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>
