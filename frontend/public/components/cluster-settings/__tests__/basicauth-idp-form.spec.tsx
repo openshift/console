@@ -1,8 +1,10 @@
 import '@testing-library/jest-dom';
 import { AddBasicAuthPage } from '../../cluster-settings/basicauth-idp-form';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
+  renderWithProviders,
   verifyInputField,
+} from '@console/shared/src/test-utils/unit-test-utils';
+import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
   verifyIDPFileFields,
