@@ -772,12 +772,13 @@ const EditYAMLInner = (props) => {
         </div>
       )}
 
-      {create && !props.hideHeader && (
+      {(header || create) && !props.hideHeader && (
         <PageHeading
           title={header}
           badge={getBadgeFromType(model && model.badge)}
           helpText={
-            allowMultiple ? (
+            create &&
+            (allowMultiple ? (
               <Trans ns="public">
                 Drag and drop YAML or JSON files into the editor, or manually enter files and use{' '}
                 <kbd className="co-kbd">---</kbd> to separate each definition.
@@ -786,7 +787,7 @@ const EditYAMLInner = (props) => {
               t(
                 'public~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
               )
-            )
+            ))
           }
         />
       )}
