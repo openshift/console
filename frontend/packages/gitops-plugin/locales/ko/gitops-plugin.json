@@ -18,7 +18,7 @@
   "OutOfSync": "동기화되지 않음",
   "Unknown": "알 수 없음",
   "{{x}} of {{total}} Unhealthy": "{{x}} / {{total}} 비정상적인 상태",
-  "{{x}} of {{total}} OutOfSync": "{{x}} of {{total}} 비동기화 상태",
+  "{{x}} of {{total}} OutOfSync": "{{x}} / {{total}} 비동기화 상태",
   "Resources": "리소스",
   "Deployments": "배포",
   "Secrets": "시크릿",

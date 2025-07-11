@@ -12,7 +12,7 @@
   "View all {{size}}": "すべての {{size}} を表示",
   "Select an application": "アプリケーションの選択",
   "Create application": "アプリケーションの作成",
-  "No application group": "アプリケーショングループなし",
+  "No application group": "アプリケーショングループがありません",
   "Application": "アプリケーション",
   "Warning: the application grouping already exists.": "警告: アプリケーションのグループはすでに存在します。",
   "A unique name given to the application grouping to label your resources.": "リソースにラベルを付けるためにアプリケーションのグループに付けられる一意の名前。",
