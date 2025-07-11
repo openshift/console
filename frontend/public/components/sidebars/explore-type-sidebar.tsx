@@ -6,6 +6,8 @@ import {
   Button,
   Content,
   ContentVariants,
+  List,
+  ListItem,
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -145,7 +147,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
         {_.isEmpty(currentProperties) ? (
           <EmptyBox label={t('public~Properties')} />
         ) : (
-          <ul className="co-resource-sidebar-list pf-v6-c-list">
+          <List isPlain isBordered>
             {_.map(currentProperties, (definition: SwaggerDefinition, name: string) => {
               const path = getDrilldownPath(name);
               const definitionType = definition.type || getTypeForRef(getRef(definition));
@@ -154,21 +156,24 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                 : definitionType;
 
               return (
-                <li key={name} className="co-resource-sidebar-item">
-                  <Title
-                    headingLevel="h5"
-                    className="pf-v6-u-mb-sm co-resource-sidebar-item__header co-break-word"
-                  >
+                <ListItem key={name} data-test="resource-sidebar-item">
+                  <Title headingLevel="h5" className="pf-v6-u-mb-sm co-break-word">
                     <CamelCaseWrap value={name} />
                     &nbsp;
                     <Content component={ContentVariants.small}>
                       <span className="co-break-word">{definitionTypeStr}</span>
-                      {required.has(name) && <> &ndash; required</>}
+                      {required.has(name) && <> &ndash; {t('public~required')}</>}
                     </Content>
                   </Title>
                   {definition.description && (
                     <p className="co-break-word co-pre-wrap">
                       <LinkifyExternal>{definition.description}</LinkifyExternal>
+                    </p>
+                  )}
+                  {definition.enum && (
+                    <p className="co-break-word co-pre-wrap">
+                      <strong>{t('public~Allowed values: ')}</strong>
+                      <span className="co-break-word">{definition.enum.join(', ')}</span>
                     </p>
                   )}
                   {path && (
@@ -181,10 +186,10 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                       {t('public~View details')}
                     </Button>
                   )}
-                </li>
+                </ListItem>
               );
             })}
-          </ul>
+          </List>
         )}
       </Content>
     </>
