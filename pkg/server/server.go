@@ -604,8 +604,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle("/metrics", bearerTokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 		promhttp.Handler().ServeHTTP(w, r)
 	}))
-
-	handleFunc("/metrics/usage", tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
+	handleFunc("/api/metrics/usage", tokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 		usage.Handle(usageMetrics, w, r)
 	}))
 
