@@ -6,6 +6,8 @@ export const openshiftHelpBase = window.SERVER_FLAGS.documentationBaseURL || UPS
 export const DOC_URL_OPENSHIFT_WHATS_NEW = 'https://www.openshift.com/learn/whats-new';
 export const DOC_URL_OPERATORFRAMEWORK_SDK = 'https://sdk.operatorframework.io/';
 export const DOC_URL_PODMAN = 'https://podman.io/';
+export const DOC_URL_PROMETHEUS_MATCHERS =
+  'https://prometheus.io/docs/alerting/latest/configuration/#matcher';
 
 // documentationBaseUrl points to OCP and not Serverless so we cannot use it
 const OPENSHIFT_SERVERLESS_DOCS =

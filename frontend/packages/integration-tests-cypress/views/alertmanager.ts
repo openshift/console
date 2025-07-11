@@ -59,16 +59,16 @@ export const getGlobalsAndReceiverConfig = (name: string, configName: string, co
 export const alertmanager = {
   createReceiver: (receiverName: string, configs: string) => {
     alertmanager.visitAlertmanagerPage();
-    cy.byLegacyTestID('create-receiver').click();
-    cy.byLegacyTestID('receiver-name').type(receiverName);
-    cy.byLegacyTestID('dropdown-button').click();
-    cy.get(`[data-test-dropdown-menu=${configs}]`).click();
+    cy.byTestID('create-receiver').click();
+    cy.byTestID('receiver-name').type(receiverName);
+    cy.byTestID('receiver-type').click();
+    cy.get(`[data-test=receiver-type-${configs}]`).click();
   },
   reset: () =>
     cy.exec(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${defaultAlertmanagerYaml}}]'`,
     ),
-  save: () => cy.byLegacyTestID('save-changes').should('be.enabled').click(),
+  save: () => cy.byTestID('save-changes').should('be.enabled').click(),
   showAdvancedConfiguration: () => cy.byTestID('advanced-configuration').find('button').click(),
   validateCreation: (receiverName: string, type: string, label: string) => {
     cy.byLegacyTestID('item-filter').clear();
