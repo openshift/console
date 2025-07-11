@@ -645,17 +645,11 @@
       "perspective": "admin",
       "section": "ecosystem",
       "name": "%console-app~Ecosystem%",
-      "insertBefore": "operators"
-    }
-  },
-  {
-    "type": "console.navigation/section",
-    "properties": {
-      "perspective": "admin",
-      "id": "operators",
-      "name": "%console-app~Operators%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-operators" },
-      "insertAfter": "home"
+      "insertAfter": "operators",
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-ecosystem",
+        "data-tour-id": "tour-ecosystem-nav"
+      }
     }
   },
   {
@@ -668,7 +662,7 @@
         "data-quickstart-id": "qs-nav-workloads",
         "data-tour-id": "tour-workloads-nav"
       },
-      "insertAfter": "operators"
+      "insertAfter": "helm"
     }
   },
   {
@@ -803,6 +797,34 @@
       "name": "%console-app~Events%",
       "href": "/events",
       "prefixNamespaced": true
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "operatorhub",
+      "section": "ecosystem",
+      "name": "%console-app~OperatorHub%",
+      "href": "/operatorhub",
+      "insertAfter": "developer-catalog"
+    },
+    "flags": {
+      "required": ["CAN_LIST_PACKAGE_MANIFEST", "CAN_LIST_OPERATOR_GROUP"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "operators",
+      "section": "ecosystem",
+      "name": "%console-app~Installed Operators%",
+      "insertAfter":"operatorhub",
+      "model": {
+        "kind": "ClusterServiceVersion",
+        "version": "v1alpha1",
+        "group": "operators.coreos.com"
+      },
+      "startsWith": ["operators.coreos.com", "clusterserviceversions"]
     }
   },
   {
