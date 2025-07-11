@@ -15,7 +15,7 @@ export const operator = {
     useOperatorRecommendedNamespace: boolean = false,
   ) => {
     cy.log(`install operator "${operatorName}" in ${installToNamespace}`);
-    nav.sidenav.clickNavLink(['Operators', 'OperatorHub']);
+    nav.sidenav.clickNavLink(['Ecosystem', 'OperatorHub']);
     cy.byTestID('search-operatorhub').type(operatorName);
     cy.log('go to operator overview panel');
     cy.byTestID(operatorHubCardTestID).click();
@@ -73,7 +73,7 @@ export const operator = {
     installToNamespace: string = GlobalInstalledNamespace,
   ) => {
     cy.log(`operator "${operatorName}" should exist in ${installToNamespace}`);
-    nav.sidenav.clickNavLink(['Operators', 'Installed Operators']);
+    nav.sidenav.clickNavLink(['Ecosystem', 'Installed Operators']);
     listPage.titleShouldHaveText('Installed Operators');
     operator.filterByName(operatorName);
     cy.byTestOperatorRow(operatorName, { timeout: 300000 }).should('exist'); // 5 minutes
@@ -85,7 +85,7 @@ export const operator = {
     installedNamespace: string = GlobalInstalledNamespace,
   ) => {
     cy.log(`navigate to details page of operator "${operatorName}"`);
-    nav.sidenav.clickNavLink(['Operators', 'Installed Operators']);
+    nav.sidenav.clickNavLink(['Ecosystem', 'Installed Operators']);
     listPage.titleShouldHaveText('Installed Operators');
     projectDropdown.selectProject(installedNamespace);
     projectDropdown.shouldContain(installedNamespace);
@@ -201,7 +201,7 @@ export const operator = {
   },
   shouldNotExist: (operatorName: string, installToNamespace: string = GlobalInstalledNamespace) => {
     cy.log(`operator "${operatorName}" should not exist in ${installToNamespace}`);
-    nav.sidenav.clickNavLink(['Operators', 'Installed Operators']);
+    nav.sidenav.clickNavLink(['Ecosystem', 'Installed Operators']);
     cy.byTestOperatorRow(operatorName).should('not.exist');
   },
   filterByName: (name: string) => {
