@@ -323,7 +323,7 @@ func main() {
 	}
 
 	// Blacklisted headers
-	srv.ProxyHeaderDenyList = []string{"Cookie", "X-CSRFToken", "X-CSRF-Token"}
+	srv.ProxyHeaderDenyList = []string{"Cookie", "X-CSRFToken"}
 
 	if *fLogLevel != "" {
 		klog.Warningf("DEPRECATED: --log-level is now deprecated, use verbosity flag --v=Level instead")
