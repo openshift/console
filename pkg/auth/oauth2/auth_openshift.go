@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"golang.org/x/oauth2"
@@ -23,6 +24,7 @@ import (
 	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils/asynccache"
+	"github.com/openshift/console/pkg/utils"
 )
 
 // openShiftAuth implements OpenShift Authentication as defined in:
@@ -33,6 +35,8 @@ type openShiftAuth struct {
 	k8sClient *http.Client
 
 	oauthEndpointCache *asynccache.AsyncCache[*oidcDiscovery]
+	sessions           *sessions.CombinedSessionStore
+	refreshLock        sync.Map
 }
 
 type oidcDiscovery struct {
@@ -67,6 +71,23 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 		return nil, fmt.Errorf("failed to construct OAuth endpoint cache: %w", err)
 	}
 	o.oauthEndpointCache.Run(ctx)
+
+	authnKey, err := utils.RandomString(64)
+	if err != nil {
+		return nil, err
+	}
+
+	encryptionKey, err := utils.RandomString(32)
+	if err != nil {
+		return nil, err
+	}
+
+	o.sessions = sessions.NewSessionStore(
+		[]byte(authnKey),
+		[]byte(encryptionKey),
+		c.secureCookies,
+		c.cookiePath,
+	)
 
 	return o, nil
 }
@@ -130,51 +151,21 @@ func (o *openShiftAuth) getOIDCDiscoveryInternal(ctx context.Context) (*oidcDisc
 	return metadata, nil
 }
 
-func (o *openShiftAuth) login(w http.ResponseWriter, _ *http.Request, token *oauth2.Token) (*sessions.LoginState, error) {
+func (o *openShiftAuth) login(w http.ResponseWriter, r *http.Request, token *oauth2.Token) (*sessions.LoginState, error) {
 	if token.AccessToken == "" {
 		return nil, fmt.Errorf("token response did not contain an access token %#v", token)
 	}
-	ls := sessions.NewRawLoginState(token.AccessToken)
 
-	expiresIn := (time.Hour * 24).Seconds()
-	if !token.Expiry.IsZero() {
-		expiresIn = token.Expiry.Sub(time.Now()).Seconds()
+	ls, err := o.sessions.AddSession(w, r, nil, token)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create session: %w", err)
 	}
 
-	// NOTE: In Tectonic, we previously had issues with tokens being bigger than
-	// cookies can handle. Since OpenShift doesn't store groups in the token, the
-	// token can't grow arbitrarily big, so we assume it will always fit in a cookie
-	// value.
-	//
-	// NOTE: in the future we'll have to avoid the use of cookies. This should likely switch to frontend
-	// only logic using the OAuth2 implicit flow.
-	// https://tools.ietf.org/html/rfc6749#section-4.2
-	cookie := http.Cookie{
-		Name:     sessions.OpenshiftAccessTokenCookieName,
-		Value:    ls.AccessToken(),
-		MaxAge:   int(expiresIn),
-		HttpOnly: true,
-		Path:     o.cookiePath,
-		Secure:   o.secureCookies,
-		SameSite: http.SameSiteLaxMode,
-	}
-
-	http.SetCookie(w, &cookie)
 	return ls, nil
 }
 
-// NOTE: cookies are going away, this should be removed in the future
-func (o *openShiftAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
-	// Delete session cookie
-	cookie := http.Cookie{
-		Name:     sessions.OpenshiftAccessTokenCookieName,
-		Value:    "",
-		MaxAge:   -1,
-		HttpOnly: true,
-		Path:     o.cookiePath,
-		Secure:   o.secureCookies,
-	}
-	http.SetCookie(w, &cookie)
+func (o *openShiftAuth) DeleteSession(w http.ResponseWriter, r *http.Request) {
+	o.sessions.DeleteSession(w, r)
 }
 
 func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
@@ -187,12 +178,14 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := sessions.GetSessionTokenFromCookie(r)
+	ls, err := o.getLoginState(w, r)
 	if err != nil {
-		klog.V(4).Infof("the session cookie is not present: %v", err)
-		w.WriteHeader(http.StatusNoContent)
+		klog.Errorf("error logging out: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	token := ls.AccessToken()
 
 	configWithBearerToken := &rest.Config{
 		Host:        "https://" + k8sURL.Host,
@@ -213,21 +206,77 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	o.DeleteCookie(w, r)
+	//  Delete the session
+	o.sessions.DeleteSession(w, r)
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (o *openShiftAuth) refreshSession(ctx context.Context, w http.ResponseWriter, r *http.Request, oauthConfig *oauth2.Config, cookieRefreshToken string) (*sessions.LoginState, error) {
+	actual, _ := o.refreshLock.LoadOrStore(cookieRefreshToken, &sync.Mutex{})
+	actual.(*sync.Mutex).Lock()
+	defer actual.(*sync.Mutex).Unlock()
+
+	session, err := o.sessions.GetSession(w, r)
+	if err != nil {
+		return nil, err
+	}
+
+	// if the refresh token got changed by someone else in the meantime (guarded by the refreshLock),
+	//  use the most current session instead of doing the full token refresh
+	if session != nil && session.RefreshToken() != cookieRefreshToken {
+		o.sessions.UpdateCookieRefreshToken(w, r, session.RefreshToken()) // we must update our own client session, too!
+		return session, nil
+	}
+
+	newTokens, err := oauthConfig.TokenSource(
+		context.WithValue(ctx, oauth2.HTTPClient, o.getClient()), // supply our client with custom trust
+		&oauth2.Token{RefreshToken: cookieRefreshToken},
+	).Token()
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to refresh a token %s: %w", cookieRefreshToken, err)
+	}
+
+	ls, err := o.sessions.UpdateTokens(w, r, nil, newTokens)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update session tokens: %w", err)
+	}
+
+	return ls, nil
+}
+
+func (o *openShiftAuth) getLoginState(w http.ResponseWriter, r *http.Request) (*sessions.LoginState, error) {
+	ls, err := o.sessions.GetSession(w, r)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve login state: %v", err)
+	}
+
+	if ls == nil || ls.ShouldRotate() {
+		if refreshToken := o.sessions.GetCookieRefreshToken(r); refreshToken != "" {
+			return o.refreshSession(r.Context(), w, r, o.oauth2Config(), refreshToken)
+		}
+
+		return nil, fmt.Errorf("a session was not found on server or is expired")
+	}
+	return ls, nil
 }
 
 func (o *openShiftAuth) LogoutRedirectURL() string {
 	return o.logoutRedirectOverride
 }
-func (o *openShiftAuth) Authenticate(_ http.ResponseWriter, r *http.Request) (*auth.User, error) {
-	token, err := sessions.GetSessionTokenFromCookie(r)
+
+func (o *openShiftAuth) Authenticate(w http.ResponseWriter, r *http.Request) (*auth.User, error) {
+	ls, err := o.getLoginState(w, r)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get session token: %v", err)
+		return nil, fmt.Errorf("authentication error: %w", err)
+	}
+
+	if ls == nil {
+		return nil, fmt.Errorf("user not authenticated")
 	}
 
 	return &auth.User{
-		Token: token,
+		Token: ls.AccessToken(),
 	}, nil
 }
 

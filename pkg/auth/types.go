@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/openshift/console/pkg/auth/sessions"
@@ -9,7 +8,6 @@ import (
 
 type Authenticator interface {
 	Authenticate(w http.ResponseWriter, req *http.Request) (*User, error)
-	ReviewToken(context context.Context, token string) error
 
 	LoginFunc(w http.ResponseWriter, req *http.Request)
 	LogoutFunc(w http.ResponseWriter, req *http.Request)

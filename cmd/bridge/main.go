@@ -15,6 +15,7 @@ import (
 
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
+	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
@@ -560,6 +561,12 @@ func main() {
 	if *fK8sMode == "in-cluster" {
 		caCertFilePath = k8sInClusterCA
 	}
+
+	tokenReviewer, err := auth.NewTokenReviewer(srv.InternalProxiedK8SClientConfig)
+	if err != nil {
+		klog.Fatalf("failed to create token reviewer: %v", err)
+	}
+	srv.TokenReviewer = tokenReviewer
 
 	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)
