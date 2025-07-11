@@ -24,8 +24,8 @@ describe('ConfigureUpdateStrategy', () => {
         onChangeMaxSurge={onChangeMaxSurge}
         onChangeMaxUnavailable={onChangeMaxUnavailable}
         strategyType="Recreate"
-        maxSurge={null}
-        maxUnavailable={null}
+        maxSurge=""
+        maxUnavailable=""
       />,
     );
 
@@ -45,8 +45,8 @@ describe('ConfigureUpdateStrategy', () => {
         onChangeMaxSurge={onChangeMaxSurge}
         onChangeMaxUnavailable={onChangeMaxUnavailable}
         strategyType="Recreate"
-        maxSurge={null}
-        maxUnavailable={null}
+        maxSurge=""
+        maxUnavailable=""
       />,
     );
 
