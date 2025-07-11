@@ -1,16 +1,12 @@
 import * as React from 'react';
 import { NavExpandable, Button, FlexItem, Flex, Truncate } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { useUserSettingsCompatibility } from '@console/shared';
-import {
-  FAVORITES_CONFIG_MAP_KEY,
-  FAVORITES_LOCAL_STORAGE_KEY,
-  FavoritesType,
-} from './FavoriteButton';
+import { FAVORITES_CONFIG_MAP_KEY, FAVORITES_LOCAL_STORAGE_KEY } from '../../consts';
+import { FavoritesType } from '../../types';
 import { FavoriteNavItem } from './FavoriteNavItem';
-
 import './FavoriteNavItems.scss';
 
 export const FavoriteNavItems: React.FC = () => {
@@ -61,8 +57,8 @@ export const FavoriteNavItems: React.FC = () => {
         dataAttributes={{
           'data-test': 'favorite-resource-item',
         }}
-        className={classNames('co-favorite-resource')}
-        to={favorite.url}
+        className={css('co-favorite-resource')}
+        to={`${favorite.url}?from=favorites`}
         isActive={activeItem === `favorites-item-${favorite.url}`}
       >
         <Flex
