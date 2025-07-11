@@ -67,7 +67,7 @@ export const ConfigureClusterUpstreamModal = withHandlePromise(
     return (
       <>
         <ModalTitle>{t('public~Edit upstream configuration')}</ModalTitle>
-        <Form onSubmit={submit} name="form" className="co-form--within-modal">
+        <Form onSubmit={submit} name="form" className="pf-v6-c-form--no-gap">
           <ModalBody>
             <p>
               {t(
