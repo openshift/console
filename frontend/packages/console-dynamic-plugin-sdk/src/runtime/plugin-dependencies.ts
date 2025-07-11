@@ -7,7 +7,7 @@ import { getPluginID } from './plugin-utils';
 
 class UnmetPluginDependenciesError extends CustomError {
   constructor(message: string, unmetDependencies: string[]) {
-    super(`${message}:\n${unmetDependencies.join('\n')}`);
+    super(`${message}: ${unmetDependencies.join('; ')}`);
   }
 }
 
@@ -38,11 +38,21 @@ export const resolvePluginDependencies = (
   allowedPluginNames: string[],
 ) => {
   const pluginID = getPluginID(manifest);
-  const dependencies = manifest.dependencies || {};
 
   if (unsubListenerMap.has(pluginID)) {
     throw new Error(`Dependency resolution for plugin ${pluginID} is already in progress`);
   }
+
+  const requiredDependencies = manifest.dependencies ?? {};
+  const optionalDependencies = manifest.optionalDependencies ?? {};
+
+  const isRequiredDependency = (name: string) => Object.keys(requiredDependencies).includes(name);
+  const isOptionalDependency = (name: string) => Object.keys(optionalDependencies).includes(name);
+
+  // The `@console/pluginAPI` dependency refers to Console web application.
+  // Any other dependencies are assumed to refer to Console dynamic plugins.
+  const pluginAPIDepName = '@console/pluginAPI';
+  const isPluginDependency = (name: string) => name !== pluginAPIDepName;
 
   // eslint-disable-next-line no-console
   console.info(`Resolving dependencies for plugin ${pluginID}`);
@@ -51,35 +61,43 @@ export const resolvePluginDependencies = (
   // https://github.com/npm/node-semver#prerelease-tags
   const semverOptions: semver.Options = { includePrerelease: true };
 
-  // Ensure compatibility with current Console plugin API
-  const pluginAPIDepName = '@console/pluginAPI';
-
+  // Ensure compatibility with Console application
   if (
     consolePluginAPIVersion &&
-    dependencies[pluginAPIDepName] &&
-    !semver.satisfies(consolePluginAPIVersion, dependencies[pluginAPIDepName], semverOptions)
+    isRequiredDependency(pluginAPIDepName) &&
+    !semver.satisfies(
+      consolePluginAPIVersion,
+      requiredDependencies[pluginAPIDepName],
+      semverOptions,
+    )
   ) {
     throw new UnmetPluginDependenciesError('Unmet dependency on Console plugin API', [
       formatUnmetDependency(
         pluginAPIDepName,
-        dependencies[pluginAPIDepName],
+        requiredDependencies[pluginAPIDepName],
         consolePluginAPIVersion,
       ),
     ]);
   }
 
   // Ensure compatibility with other dynamic plugins
-  const requiredPluginNames = _.difference(Object.keys(dependencies), [pluginAPIDepName]);
-  const unavailablePluginNames = _.difference(requiredPluginNames, allowedPluginNames);
+  const requiredButUnavailablePluginNames = _.difference(
+    Object.keys(requiredDependencies).filter(isPluginDependency),
+    allowedPluginNames,
+  );
 
-  if (requiredPluginNames.length === 0) {
-    return Promise.resolve();
+  if (requiredButUnavailablePluginNames.length > 0) {
+    throw new Error(
+      `Required plugins are not available: ${formatPluginNames(requiredButUnavailablePluginNames)}`,
+    );
   }
 
-  if (unavailablePluginNames.length > 0) {
-    throw new Error(
-      `Dependent plugins are not available: ${formatPluginNames(unavailablePluginNames)}`,
-    );
+  const preloadPluginNames = allowedPluginNames.filter(
+    (name) => isRequiredDependency(name) || isOptionalDependency(name),
+  );
+
+  if (preloadPluginNames.length === 0) {
+    return Promise.resolve();
   }
 
   // Wait for all dependent plugins to be loaded before resolving the Promise.
@@ -101,14 +119,14 @@ export const resolvePluginDependencies = (
 
     const unsubListener = subscribeToDynamicPlugins((entries) => {
       const loadedPlugins = entries.reduce<Record<string, string>>((acc, e) => {
-        if (e.status === 'Loaded' && requiredPluginNames.includes(e.metadata.name)) {
+        if (e.status === 'Loaded' && preloadPluginNames.includes(e.metadata.name)) {
           acc[e.metadata.name] = e.metadata.version;
         }
         return acc;
       }, {});
 
       const failedPluginNames = entries.reduce<string[]>((acc, e) => {
-        if (e.status === 'Failed' && requiredPluginNames.includes(e.pluginName)) {
+        if (e.status === 'Failed' && preloadPluginNames.includes(e.pluginName)) {
           acc.push(e.pluginName);
         }
         return acc;
@@ -118,17 +136,20 @@ export const resolvePluginDependencies = (
         rejectPromise(
           new Error(`Dependent plugins failed to load: ${formatPluginNames(failedPluginNames)}`),
         );
-      } else if (_.isEqual(_.sortBy(requiredPluginNames), _.sortBy(Object.keys(loadedPlugins)))) {
+      } else if (_.isEqual(_.sortBy(preloadPluginNames), _.sortBy(Object.keys(loadedPlugins)))) {
         const unmetDependencies: string[] = [];
 
-        requiredPluginNames.forEach((pluginName) => {
+        preloadPluginNames.forEach((pluginName) => {
+          const preloadPluginVersionRange =
+            requiredDependencies[pluginName] || optionalDependencies[pluginName];
+
           if (
-            !semver.satisfies(loadedPlugins[pluginName], dependencies[pluginName], semverOptions)
+            !semver.satisfies(loadedPlugins[pluginName], preloadPluginVersionRange, semverOptions)
           ) {
             unmetDependencies.push(
               formatUnmetDependency(
                 pluginName,
-                dependencies[pluginName],
+                preloadPluginVersionRange,
                 loadedPlugins[pluginName],
               ),
             );

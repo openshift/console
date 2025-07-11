@@ -302,7 +302,7 @@ Older versions of webpack `ConsoleRemotePlugin` assumed that the plugin metadata
       "barUtils": "./utils/bar"
     },
     "dependencies": {
-      "@console/pluginAPI": "~4.11.0"
+      "@console/pluginAPI": "~4.19.0"
     }
   }
 }
@@ -325,17 +325,51 @@ of the corresponding `ConsolePlugin` resource on the cluster. Therefore, it must
 
 `version` must be [semver](https://semver.org/) compliant version string.
 
+### Exposed modules
+
 Dynamic plugins can expose modules representing plugin code that can be referenced, loaded and executed
 at runtime. A separate [webpack chunk](https://webpack.js.org/guides/code-splitting/) is generated for
 each entry in the `exposedModules` object. Exposed modules are resolved relative to the plugin's webpack
 `context` option.
 
+### Dependencies
+
+Dynamic plugins might declare dependency on specific Console versions and other plugins. This metadata
+field is similar to `dependencies` in the `package.json` file with values represented as semver ranges.
+
 The `@console/pluginAPI` dependency is optional and refers to Console versions this dynamic plugin is
-compatible with. The `dependencies` object may also refer to other dynamic plugins that are required for
-this plugin to work correctly. For dependencies where the version string may include a
-[semver pre-release](https://semver.org/#spec-item-9) identifier, adapt your semver range constraint
-(dependency value) to include the relevant pre-release prefix, e.g. use `~4.11.0-0.ci` when targeting
-pre-release versions like `4.11.0-0.ci-1234`.
+meant to be compatible with. It is matched against the actual Console release version, as provided by
+the Console operator.
+
+The `dependencies` object might also refer to other dynamic plugins that are required for this plugin to
+work correctly. Such other plugins will be loaded before loading this plugin.
+
+Plugins might also use the `optionalDependencies` object to support use cases, such as plugin A integrating
+with plugin B while still allowing plugin A to be loaded when plugin B is not enabled on the cluster.
+This object has the same structure as `dependencies` object.
+
+```jsonc
+{
+  // ...
+  "consolePlugin": {
+    // ...
+    "dependencies": {
+      // If foo-plugin is available, load it before loading this plugin.
+      // If foo-plugin is NOT available, this plugin will fail to load.
+      "foo-plugin": "~1.1.0",
+    },
+    "optionalDependencies": {
+      // If bar-plugin is available, load it before loading this plugin.
+      // If bar-plugin is NOT available, load this plugin regardless.
+      "bar-plugin": "^2.3.4"
+    },
+  }
+}
+```
+
+For dependencies where the version string might include a [semver pre-release](https://semver.org/#spec-item-9)
+identifier, adapt your semver range constraint (dependency value) to include the relevant pre-release
+prefix, e.g. use `~4.11.0-0.ci` when targeting pre-release versions such as `4.11.0-0.ci-1234`.
 
 ## Extensions contributed by the plugin
 
