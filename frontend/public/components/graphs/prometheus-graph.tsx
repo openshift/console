@@ -24,7 +24,7 @@ const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   namespace,
   ariaChartLinkLabel,
 }) => {
-  const [perspective] = useActivePerspective();
+  const [activePerspective, setActivePerspective] = useActivePerspective();
   const queries = _.compact(_.castArray(query));
   if (!queries.length) {
     return <>{children}</>;
@@ -34,7 +34,7 @@ const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   queries.forEach((q, index) => params.set(`query${index}`, q));
 
   const url =
-    canAccessMonitoring && perspective === 'admin'
+    canAccessMonitoring && activePerspective === 'admin'
       ? `/monitoring/query-browser?${params.toString()}`
       : `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`;
 
@@ -43,6 +43,11 @@ const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
       to={url}
       aria-label={ariaChartLinkLabel}
       style={{ color: 'inherit', textDecoration: 'none' }}
+      onClick={() => {
+        if (url.startsWith('/dev-monitoring/') && activePerspective !== 'dev') {
+          setActivePerspective('dev');
+        }
+      }}
     >
       {children}
     </Link>
