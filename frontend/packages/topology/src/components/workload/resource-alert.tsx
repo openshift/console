@@ -2,9 +2,9 @@ import { AlertActionLink } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
-import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
+import { DeploymentActionCreator, CommonActionCreator } from '@console/app/src/actions/hooks/types';
 import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
+import { useDeploymentActions } from '@console/app/src/actions/hooks/useDeploymentActions';
 import { Action, DetailsResourceAlertContent, useAccessReview } from '@console/dynamic-plugin-sdk';
 import {
   DaemonSetModel,
@@ -90,9 +90,14 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const resource = getResource(element);
+  const [deploymentActions, deploymentActionsReady] = useDeploymentActions(
+    DeploymentModel,
+    resource,
+    [DeploymentActionCreator.EditResourceLimits] as const,
+  );
   const name = resource?.metadata?.name;
   const namespace = resource?.metadata?.namespace;
-  const [commonActions, isReady] = useCommonActions(DeploymentModel, resource, [
+  const [commonActions, commonActionsReady] = useCommonActions(DeploymentModel, resource, [
     CommonActionCreator.ModifyCount,
   ] as const);
 
@@ -112,9 +117,9 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
   const resourceQuotaRequested = replicaFailureMsg.split(':')?.[3] ?? '';
 
   let alertAction: Action;
-  if (resourceQuotaRequested.includes('limits')) {
-    alertAction = DeploymentActionFactory.EditResourceLimits(DeploymentModel, resource);
-  } else if (resourceQuotaRequested.includes('pods') && isReady) {
+  if (resourceQuotaRequested.includes('limits') && deploymentActionsReady) {
+    alertAction = deploymentActions.EditResourceLimits;
+  } else if (resourceQuotaRequested.includes('pods') && commonActionsReady) {
     alertAction = commonActions.ModifyCount;
   }
 

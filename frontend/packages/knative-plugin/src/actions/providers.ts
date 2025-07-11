@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { GraphElement, Graph, Node, Edge, isEdge, isGraph } from '@patternfly/react-topology';
-import { DeploymentActionFactory } from '@console/app/src/actions/creators/deployment-factory';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
-import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
+import { DeploymentActionCreator, CommonActionCreator } from '@console/app/src/actions/hooks/types';
 import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
 import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { useDeploymentActions } from '@console/app/src/actions/hooks/useDeploymentActions';
 import { disabledActionsFilter } from '@console/dev-console/src/actions/add-resources';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 import { Action } from '@console/dynamic-plugin-sdk';
@@ -91,30 +91,40 @@ export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
 export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const serviceTypeValue = React.useContext(KnativeServiceTypeContext);
-  const [commonActions] = useCommonActions(kindObj, resource, [
+  const [deploymentActions, deploymentActionsReady] = useDeploymentActions(kindObj, resource, [
+    DeploymentActionCreator.EditResourceLimits,
+  ] as const);
+
+  const [commonActions, commonActionsReady] = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyLabels,
     CommonActionCreator.ModifyAnnotations,
   ] as const);
 
-  const actions = React.useMemo(
-    () => [
-      setTrafficDistribution(kindObj, resource),
-      getHealthChecksAction(kindObj, resource),
-      editKnativeService(kindObj, resource),
-      DeploymentActionFactory.EditResourceLimits(kindObj, resource),
-      ...Object.values(commonActions),
-      editKnativeServiceResource(kindObj, resource, serviceTypeValue),
-      ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
-        ? [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, true)]
-        : [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, false)]),
-      ...(resource?.metadata?.labels?.['function.knative.dev'] === 'true'
-        ? [testServerlessFunction(kindObj, resource)]
-        : []),
-    ],
-    [kindObj, resource, serviceTypeValue, commonActions],
+  const isReady = commonActionsReady || deploymentActionsReady;
+
+  const knativeServiceActions = React.useMemo(
+    () =>
+      !isReady
+        ? []
+        : [
+            setTrafficDistribution(kindObj, resource),
+            getHealthChecksAction(kindObj, resource),
+            editKnativeService(kindObj, resource),
+            deploymentActions.EditResourceLimits,
+            ...Object.values(commonActions),
+            editKnativeServiceResource(kindObj, resource, serviceTypeValue),
+            ...(resource.metadata.annotations?.['openshift.io/generated-by'] ===
+            'OpenShiftWebConsole'
+              ? [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, true)]
+              : [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, false)]),
+            ...(resource?.metadata?.labels?.['function.knative.dev'] === 'true'
+              ? [testServerlessFunction(kindObj, resource)]
+              : []),
+          ],
+    [kindObj, resource, deploymentActions, commonActions, serviceTypeValue, isReady],
   );
 
-  return [actions, !inFlight, undefined];
+  return [knativeServiceActions, !inFlight, undefined];
 };
 
 export const useBrokerActionProvider = (resource: K8sResourceKind) => {
