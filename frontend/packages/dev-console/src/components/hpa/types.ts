@@ -7,8 +7,6 @@ export type HPAFormValues = {
   showCanUseYAMLMessage: boolean;
   disabledFields: {
     name: boolean;
-    cpuUtilization: boolean;
-    memoryUtilization: boolean;
   };
   editorType: EditorType;
   formData: HorizontalPodAutoscalerKind;
