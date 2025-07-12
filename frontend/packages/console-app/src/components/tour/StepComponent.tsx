@@ -13,6 +13,7 @@ type StepComponentProps = {
   nextButtonText: string;
   backButtonText: string;
   expandableSelector?: string;
+  introBanner?: React.ReactNode;
 };
 
 const StepComponent: React.FC<StepComponentProps> = ({
@@ -24,6 +25,7 @@ const StepComponent: React.FC<StepComponentProps> = ({
   nextButtonText,
   backButtonText,
   showStepBadge = true,
+  introBanner,
 }) => {
   const {
     tourDispatch,
@@ -34,6 +36,7 @@ const StepComponent: React.FC<StepComponentProps> = ({
     <TourStepComponent
       key={step}
       step={step}
+      introBanner={introBanner}
       content={content}
       heading={heading}
       selector={selector}

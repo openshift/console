@@ -4,6 +4,7 @@ import {
   userPreferencesTourText,
 } from '@console/app/src/components/guided-tour/GuidedTourText';
 import { TourDataType } from '@console/app/src/components/tour';
+import GuidedTourIntroBanner from './GuidedTourIntroBanner';
 import {
   perspectiveSwitcherTourText,
   searchTourText,
@@ -18,6 +19,7 @@ export const getGuidedTour = (): TourDataType => ({
     // t('devconsole~Welcome to the Developer Perspective!')
     heading: '%devconsole~Welcome to the Developer Perspective!%',
     content: devPerspectiveTourText,
+    introBanner: <GuidedTourIntroBanner />,
   },
   steps: [
     {
