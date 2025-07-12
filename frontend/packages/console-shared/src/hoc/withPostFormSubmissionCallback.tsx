@@ -2,7 +2,7 @@ import * as React from 'react';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { usePostFormSubmitAction } from '../hooks/post-form-submit-action';
 
-type WithPostFormSubmissionCallbackProps<R> = {
+export type WithPostFormSubmissionCallbackProps<R> = {
   postFormSubmissionCallback: (arg: R) => Promise<R>;
 };
 
