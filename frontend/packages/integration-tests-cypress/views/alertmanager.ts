@@ -61,8 +61,8 @@ export const alertmanager = {
     alertmanager.visitAlertmanagerPage();
     cy.byLegacyTestID('create-receiver').click();
     cy.byLegacyTestID('receiver-name').type(receiverName);
-    cy.byLegacyTestID('dropdown-button').click();
-    cy.get(`[data-test-dropdown-menu=${configs}]`).click();
+    cy.byTestID('receiver-type').click();
+    cy.get(`[data-test=receiver-type-${configs}]`).click();
   },
   reset: () =>
     cy.exec(
