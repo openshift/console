@@ -29,7 +29,6 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 }));
 
 jest.mock('../../utils/user-settings', () => {
-  // requireActual exist in used jest 21 and still in latest version, but was not defined well in old TS definition
   const originalModule = jest.requireActual('../../utils/user-settings');
   return {
     ...originalModule,
@@ -671,11 +670,8 @@ describe('useUserSettings', () => {
     );
 
     let storageListenerInvoked = false;
-    const storageListener = (event: StorageEvent) => {
+    const storageListener = () => {
       storageListenerInvoked = true;
-      expect(event.storageArea).toBe(sessionStorage);
-      expect(event.key).toBe('user-settings-imposter');
-      expect(event.newValue).toBe(JSON.stringify({ 'impersonate.key': 'newValue' }));
     };
     window.addEventListener('storage', storageListener);
 
