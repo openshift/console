@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import { css } from '@patternfly/react-styles';
+import { returnIfValidURL } from '@console/shared/src/utils/utils';
 
-import { TemplateKind, PartialObjectMetadata } from '../../module/k8s';
+import { TemplateKind, PartialObjectMetadata } from '@console/internal/module/k8s';
 import aerogearImg from '../../imgs/logos/aerogear.svg';
 import amqImg from '../../imgs/logos/amq.svg';
 import angularjsImg from '../../imgs/logos/angularjs.svg';
@@ -244,8 +245,15 @@ export const getImageStreamIcon = (tag: string): string => {
   return _.get(tag, 'annotations.iconClass');
 };
 
+export const getTemplateIconClass = (
+  template: TemplateKind | PartialObjectMetadata,
+): string | null => {
+  return _.get(template, 'metadata.annotations.iconClass') ?? null;
+};
+
 export const getTemplateIcon = (template: TemplateKind | PartialObjectMetadata): string => {
-  return _.get(template, 'metadata.annotations.iconClass');
+  const iconClass = getTemplateIconClass(template);
+  return getImageForIconClass(iconClass) ?? returnIfValidURL(iconClass) ?? catalogImg;
 };
 
 export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({ tag, iconSize }) => {
