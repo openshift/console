@@ -19,7 +19,9 @@ export type HorizontalNavTab = ExtensionDeclaration<
   {
     /** The model for which this provider show tab. */
     model: ExtensionK8sKindVersionModel;
-    /** The page to be show in horizontal tab. It takes tab name as name and href of the tab */
+    /** The page to be show in horizontal tab. It takes tab name as name and href of the tab.
+     * Note: any special characters in href are encoded, and href is treated as a single
+     * path element. */
     page: {
       name: string;
       href: string;
