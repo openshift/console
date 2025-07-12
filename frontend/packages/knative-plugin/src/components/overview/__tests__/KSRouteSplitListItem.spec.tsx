@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ListItem } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
@@ -18,8 +19,7 @@ describe('KSRouteSplitListItem', () => {
   });
 
   it('should list the Route', () => {
-    expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('li').at(0).props().className).toEqual('list-group-item');
+    expect(wrapper.find(ListItem)).toHaveLength(1);
   });
 
   it('should have route ExternalLink with proper href', () => {

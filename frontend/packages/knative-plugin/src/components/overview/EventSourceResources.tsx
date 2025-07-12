@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
@@ -39,8 +40,8 @@ export const EventSourceTarget: React.FC<EventSourceTargetProps> = ({ obj }) => 
     <>
       <SidebarSectionHeading text={t('knative-plugin~Target')} />
       {isSinkReference || sinkUri ? (
-        <ul className="list-group">
-          <li className="list-group-item">
+        <List isPlain isBordered>
+          <ListItem>
             {isSinkReference && (
               <ResourceLink
                 kind={referenceForGroupVersionKind(group)(version)(sinkKind)}
@@ -56,8 +57,8 @@ export const EventSourceTarget: React.FC<EventSourceTargetProps> = ({ obj }) => 
                 <ExternalLink href={sinkUri} displayBlock text={sinkUri} />
               </>
             )}
-          </li>
-        </ul>
+          </ListItem>
+        </List>
       ) : (
         <span className="pf-v6-u-text-color-subtle">
           {t('knative-plugin~No sink found for this resource.')}
@@ -76,15 +77,15 @@ export const EventSourceDeployments: React.FC<EventSourceDeploymentsProps> = ({
       {!_.isEmpty(deploymentObj) ? (
         <>
           <SidebarSectionHeading text={t('knative-plugin~Deployment')} />
-          <ul className="list-group">
-            <li className="list-group-item">
+          <List isPlain isBordered>
+            <ListItem>
               <ResourceLink
                 kind={deploymentObj.kind}
                 name={deploymentObj.metadata.name}
                 namespace={deploymentObj.metadata.namespace}
               />
-            </li>
-          </ul>
+            </ListItem>
+          </List>
         </>
       ) : null}
     </>

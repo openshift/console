@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List, ListItem } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
@@ -25,8 +26,8 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
           {t('knative-plugin~No Source found for this resource.')}
         </span>
       ) : (
-        <ul className="list-group">
-          <li className="list-group-item">
+        <List isPlain isBordered>
+          <ListItem>
             {reference ? (
               <ResourceLink
                 kind={reference}
@@ -42,8 +43,8 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
                 <ExternalLink href={sinkUri} displayBlock text={sinkUri} />
               </>
             )}
-          </li>
-        </ul>
+          </ListItem>
+        </List>
       )}
     </>
   );

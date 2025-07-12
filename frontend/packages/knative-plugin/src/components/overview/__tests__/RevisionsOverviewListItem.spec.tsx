@@ -1,3 +1,4 @@
+import { ListItem } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { ResourceLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -40,8 +41,7 @@ describe('RevisionsOverviewListItem', () => {
   });
 
   it('should list the Revision', () => {
-    expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('li').at(0).props().className).toEqual('list-group-item');
+    expect(wrapper.find(ListItem)).toHaveLength(1);
   });
 
   it('should have ResourceLink with proper kind', () => {

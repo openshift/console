@@ -20,31 +20,3 @@
     font-weight: var(--pf-t--global--font--weight--body--bold);
   }
 }
-
-//
-// List groups
-// --------------------------------------------------
-
-// Base class
-//
-// Easily usable on <ul>, <ol>, or <div>.
-
-.list-group {
-  // No need to set list-style: none; since .list-group-item is block level
-  margin-bottom: var(--pf-t--global--spacer--lg);
-  padding-left: 0; // reset padding because ul and ol
-}
-
-// Individual list items
-//
-// Use on `li`s or `div`s within the `.list-group` parent.
-
-.list-group-item {
-  position: relative;
-  display: block;
-  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
-  // Place the border on the list items and negative margin up for better styling
-  margin-bottom: -1px;
-  background-color: var(--pf-t--global--background--color--primary--default);
-  border: 1px solid var(--pf-t--global--border--color--default);
-}

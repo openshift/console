@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
@@ -21,14 +22,14 @@ const ConfigurationsOverviewList: React.FC<ConfigurationsOverviewListProps> = ({
           {t('knative-plugin~No configurations found for this resource.')}
         </span>
       ) : (
-        <ul className="list-group">
+        <List isPlain isBordered>
           {_.map(configurations, (configuration) => (
             <ConfigurationsOverviewListItem
               key={configuration.metadata.uid}
               configuration={configuration}
             />
           ))}
-        </ul>
+        </List>
       )}
     </>
   );
