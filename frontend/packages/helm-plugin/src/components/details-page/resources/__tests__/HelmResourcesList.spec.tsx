@@ -1,40 +1,39 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { Table, ComponentProps } from '@console/internal/components/factory';
+import { screen, configure } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { t } from '../../../../../../../__mocks__/i18next';
 import HelmReleaseResourcesHeader from '../HelmReleaseResourcesHeader';
 import HelmResourcesList from '../HelmReleaseResourcesList';
 import HelmReleaseResourcesRow from '../HelmReleaseResourcesRow';
+import { helmReleaseResourceData } from './helm-release-resource.data';
 
-type Component = typeof HelmResourcesList;
-type Props = React.ComponentProps<Component>;
-let helmResourcesList: ShallowWrapper<Props>;
+configure({ testIdAttribute: 'data-test' });
 
 describe('HelmResourcesList', () => {
   beforeEach(() => {
-    helmResourcesList = shallow(
+    renderWithProviders(
       <HelmResourcesList
         Header={HelmReleaseResourcesHeader(t)}
         Row={HelmReleaseResourcesRow}
         aria-label="Resources"
+        loaded
+        data={helmReleaseResourceData}
+        data-test="helm-resources-list"
       />,
     );
   });
 
   it('should render the Table component', () => {
-    expect(helmResourcesList.find(Table).exists()).toBe(true);
+    // Check that the table is rendered with proper aria-label
+    expect(screen.getByTestId('helm-resources-list')).toBeTruthy();
+    expect(screen.getByRole('grid', { name: /Resources/i })).toBeTruthy();
   });
 
   it('should render the proper Headers in the Resources tab', () => {
     const expectedHelmResourcesHeader: string[] = ['Name', 'Type', 'Status', 'Created'];
 
-    const headers = helmResourcesList
-      .find(Table)
-      .props()
-      .Header({} as ComponentProps);
-
-    expectedHelmResourcesHeader.forEach((header, i) => {
-      expect(headers[i].title).toBe(header);
+    // Check that all expected headers are rendered
+    expectedHelmResourcesHeader.forEach((header) => {
+      expect(screen.getByText(header)).toBeTruthy();
     });
   });
 });
