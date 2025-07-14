@@ -671,8 +671,12 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle("/api/console/version", authHandler(s.versionHandler))
 
 	// CRD Schema
-	crdSchemaHandler := crdschema.NewCRDSchemaHandler(k8sProxy)
-	handle("/api/console/crd-schema", authHandler(crdSchemaHandler.HandleCRDSchema))
+	consoleServiceProxy := proxy.NewProxyWithTransport(s.K8sProxyConfig, internalProxiedK8SRT)
+	crdSchemaHandler := crdschema.NewCRDSchemaHandler(consoleServiceProxy)
+	handle("/api/console/crd-schema/", http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/console/crd-schema/"),
+		authHandler(crdSchemaHandler.HandleCRDSchema),
+	))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 

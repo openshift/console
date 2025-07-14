@@ -3,6 +3,7 @@ package crdschema
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"k8s.io/klog/v2"
 
@@ -27,8 +28,8 @@ func (h *CRDSchemaHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// Get the CRD name from the query parameter
-	crdName := r.URL.Query().Get("name")
+	// Get the CRD name from the URL path
+	crdName := strings.TrimPrefix(r.URL.Path, "/")
 	if crdName == "" {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "CRD name parameter is required"})
 		return
@@ -36,9 +37,8 @@ func (h *CRDSchemaHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Reques
 
 	// Transform the request path to Kubernetes API format
 	r.URL.Path = fmt.Sprintf("/apis/apiextensions.k8s.io/v1/customresourcedefinitions/%s", crdName)
-	r.URL.RawQuery = "" // Remove the query parameters
 
-	// Use the existing k8sProxy to handle the request
+	// Use the proxy to handle the request
 	h.k8sProxy.ServeHTTP(w, r)
 
 	klog.V(4).Infof("Successfully proxied CRD request for %s", crdName)

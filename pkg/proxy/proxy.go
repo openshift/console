@@ -78,6 +78,20 @@ func NewProxy(cfg *Config) *Proxy {
 	return proxy
 }
 
+func NewProxyWithTransport(cfg *Config, transport http.RoundTripper) *Proxy {
+	reverseProxy := httputil.NewSingleHostReverseProxy(cfg.Endpoint)
+	reverseProxy.FlushInterval = time.Millisecond * 100
+	reverseProxy.Transport = transport
+	reverseProxy.ModifyResponse = FilterHeaders
+
+	proxy := &Proxy{
+		reverseProxy: reverseProxy,
+		config:       cfg,
+	}
+
+	return proxy
+}
+
 func SingleJoiningSlash(a, b string) string {
 	aslash := strings.HasSuffix(a, "/")
 	bslash := strings.HasPrefix(b, "/")
