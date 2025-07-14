@@ -26,11 +26,26 @@ describe('ui-actions', () => {
   });
 
   describe('setActiveNamespace', () => {
+    // Store original location to restore later
+    const originalLocation = window.location;
+
+    beforeAll(() => {
+      // Mock window.location with a configurable object
+      delete window.location;
+      window.location = {
+        ...originalLocation,
+        pathname: '*UNSET*',
+      } as Location;
+    });
+
+    afterAll(() => {
+      // Restore original location
+      window.location = originalLocation;
+    });
+
     beforeEach(() => {
-      Object.defineProperty(window.location, 'pathname', {
-        writable: true,
-        value: '*UNSET*',
-      });
+      // Reset pathname for each test
+      window.location.pathname = '*UNSET*';
     });
 
     it('should set active namespace in memory', () => {

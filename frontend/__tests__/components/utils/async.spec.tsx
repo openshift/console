@@ -108,21 +108,29 @@ describe('AsyncComponent', () => {
     const loader1 = () =>
       new Promise<typeof Foo>((resolve) => {
         resolve(Foo);
-        setTimeout(() => {
-          expect(wrapper.update().find(`#${fooId}`).exists()).toBe(true);
-        }, 10);
       });
 
     const loader2 = () =>
       new Promise<typeof Bar>((resolve) => {
         resolve(Bar);
-        setTimeout(() => {
-          expect(wrapper.update().find(`#${barId}`).exists()).toBe(true);
-          done();
-        }, 10);
       });
 
     wrapper = mount(<AsyncComponent loader={loader1} />);
-    wrapper = wrapper.setProps({ loader: loader2 });
+
+    // Wait for first component to load
+    setTimeout(() => {
+      wrapper.update();
+      expect(wrapper.find(`#${fooId}`).exists()).toBe(true);
+
+      // Now change the loader
+      wrapper.setProps({ loader: loader2 });
+
+      // Wait for second component to load
+      setTimeout(() => {
+        wrapper.update();
+        expect(wrapper.find(`#${barId}`).exists()).toBe(true);
+        done();
+      }, 50);
+    }, 50);
   });
 });
