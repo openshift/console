@@ -194,7 +194,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
               )}
             </span>
             {isDup(model.kind) && (
-              <div className="co-resource-item__resource-api pf-v6-u-text-color-subtle co-truncate co-nowrap small">
+              <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-truncate co-nowrap">
                 {model.apiGroup || 'core'}/{model.apiVersion}
               </div>
             )}
@@ -232,7 +232,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
                     )}
                   </span>
                   {isDup(model.kind) && (
-                    <div className="co-resource-item__resource-api pf-v6-u-text-color-subtle co-truncate co-nowrap small">
+                    <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-truncate co-nowrap">
                       {model.apiGroup || 'core'}/{model.apiVersion}
                     </div>
                   )}

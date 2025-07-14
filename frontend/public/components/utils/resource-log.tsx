@@ -43,7 +43,7 @@ import { LoadingInline, TogglePlay } from './';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
-import * as screenfull from 'screenfull';
+import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
 import { RootState } from '@console/internal/redux';
 import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
@@ -179,6 +179,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
   showLogTypeSelect,
   isShowFullLog,
   toggleShowFullLog,
+  canUseFullScreen,
 }) => {
   const { t } = useTranslation();
   const [isLogTypeOpen, setIsLogTypeOpen] = React.useState(false);
@@ -465,7 +466,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
                 >
                   {download}
                 </DropdownItem>
-                {screenfull.enabled && (
+                {canUseFullScreen && (
                   <DropdownItem onClick={toggleFullscreen}>{fullscreen}</DropdownItem>
                 )}
               </DropdownList>
@@ -486,9 +487,9 @@ export const LogControls: React.FC<LogControlsProps> = ({
                 default: 'vertical',
               }}
             />
-            <a href={currentLogURL} target="_blank" rel="noopener noreferrer">
+            <ExternalLink href={currentLogURL} icon={undefined}>
               {raw}
-            </a>
+            </ExternalLink>
             <Divider
               orientation={{
                 default: 'vertical',
@@ -497,7 +498,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
             <a href={currentLogURL} download={`${resource.metadata.name}-${containerName}.log`}>
               {download}
             </a>
-            {screenfull.enabled && (
+            {canUseFullScreen && (
               <>
                 <Divider
                   orientation={{
@@ -534,7 +535,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   const [showFullLogCheckbox, setShowFullLogCheckbox] = React.useState(showFullLog);
   const buffer = useToggleLineBuffer(showFullLogCheckbox ? null : bufferSize);
   const ws = React.useRef<any>(); // TODO Make this a hook
-  const resourceLogRef = React.useRef();
+  const [resourceLogRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
   const logViewerRef = React.useRef(null);
   const externalLogLinkFlag = useFlag(FLAGS.CONSOLE_EXTERNAL_LOG_LINK);
   const [error, setError] = React.useState(false);
@@ -544,7 +545,6 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   const [totalLineCount, setTotalLineCount] = React.useState(0);
   const [stale, setStale] = React.useState(false);
   const [status, setStatus] = React.useState(STREAM_LOADING);
-  const [isFullscreen, setIsFullscreen] = React.useState(false);
   const [namespaceUID, setNamespaceUID] = React.useState('');
   const [podLogLinks, setPodLogLinks] = React.useState();
   const [content, setContent] = React.useState('');
@@ -692,11 +692,6 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     return () => ws.current?.destroy();
   }, [error, resourceStatus, stale, startWebSocket, showFullLogCheckbox]);
 
-  // Toggle currently displayed log content to/from fullscreen
-  const toggleFullscreen = () => {
-    resourceLogRef.current && screenfull.enabled && screenfull.toggle(resourceLogRef.current);
-  };
-
   // Toggle streaming/paused status
   const toggleStreaming = () => {
     setStatus((currentStatus) => (currentStatus === STREAM_ACTIVE ? STREAM_PAUSED : STREAM_ACTIVE));
@@ -717,25 +712,6 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
         .catch((e) => setError(e));
     }
   }, [externalLogLinkFlag, resource.kind, resource.metadata.namespace]);
-
-  // Only run once, initialize screenfull
-  React.useEffect(() => {
-    if (screenfull.enabled) {
-      screenfull.on('change', () => {
-        setIsFullscreen(screenfull.isFullscreen);
-      });
-      screenfull.on('error', () => {
-        setIsFullscreen(false);
-      });
-    }
-
-    return () => {
-      if (screenfull.enabled) {
-        screenfull.off('change');
-        screenfull.off('error');
-      }
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // If container comes out of restarting state, currently displayed logs might be stale
   React.useEffect(() => {
@@ -764,6 +740,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
       isFullscreen={isFullscreen}
       status={status}
       toggleFullscreen={toggleFullscreen}
+      canUseFullScreen={canUseFullScreen}
       toggleStreaming={toggleStreaming}
       resource={resource}
       containerName={containerName}
@@ -867,6 +844,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
 type LogControlsProps = {
   currentLogURL: string;
   isFullscreen: boolean;
+  canUseFullScreen?: boolean;
   dropdown?: React.ReactNode;
   status?: string;
   resource?: any;

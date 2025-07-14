@@ -294,7 +294,7 @@
         "data-quickstart-id": "qs-admin-nav-helm",
         "data-tour-id": "tour-admin-helm-nav"
       },
-      "insertAfter": "operators"
+      "insertAfter": "ecosystem"
     }
   },
   {

@@ -666,17 +666,11 @@
       "perspective": "admin",
       "section": "ecosystem",
       "name": "%console-app~Ecosystem%",
-      "insertBefore": "operators"
-    }
-  },
-  {
-    "type": "console.navigation/section",
-    "properties": {
-      "perspective": "admin",
-      "id": "operators",
-      "name": "%console-app~Operators%",
-      "dataAttributes": { "data-quickstart-id": "qs-nav-operators" },
-      "insertAfter": "home"
+      "insertAfter": "operators",
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-ecosystem",
+        "data-tour-id": "tour-ecosystem-nav"
+      }
     }
   },
   {
@@ -689,7 +683,7 @@
         "data-quickstart-id": "qs-nav-workloads",
         "data-tour-id": "tour-workloads-nav"
       },
-      "insertAfter": "operators"
+      "insertAfter": "helm"
     }
   },
   {
@@ -824,6 +818,34 @@
       "name": "%console-app~Events%",
       "href": "/events",
       "prefixNamespaced": true
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "operatorhub",
+      "section": "ecosystem",
+      "name": "%console-app~OperatorHub%",
+      "href": "/operatorhub",
+      "insertAfter": "developer-catalog"
+    },
+    "flags": {
+      "required": ["CAN_LIST_PACKAGE_MANIFEST", "CAN_LIST_OPERATOR_GROUP"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "operators",
+      "section": "ecosystem",
+      "name": "%console-app~Installed Operators%",
+      "insertAfter":"operatorhub",
+      "model": {
+        "kind": "ClusterServiceVersion",
+        "version": "v1alpha1",
+        "group": "operators.coreos.com"
+      },
+      "startsWith": ["operators.coreos.com", "clusterserviceversions"]
     }
   },
   {
@@ -1178,19 +1200,7 @@
     "properties": {
       "perspective": "admin",
       "section": "compute",
-      "id": "machinesets",
-      "insertAfter": "machines",
-      "name": "%console-app~MachineSets%",
-      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet"
-    },
-    "flags": { "required": ["CLUSTER_API"] }
-  },
-  {
-    "type": "console.navigation/href",
-    "properties": {
-      "perspective": "admin",
-      "section": "compute",
-      "id": "machzineautoscaler",
+      "id": "machineautoscaler",
       "insertAfter": "machinesets",
       "name": "%console-app~MachineAutoscalers%",
       "href": "/k8s/ns/openshift-machine-api/autoscaling.openshift.io~v1beta1~MachineAutoscaler"
@@ -1203,7 +1213,7 @@
       "perspective": "admin",
       "section": "compute",
       "id": "machinehealthchecks",
-      "insertAfter": "machzineautoscaler",
+      "insertAfter": "machineautoscaler",
       "name": "%console-app~MachineHealthChecks%",
       "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineHealthCheck"
     },
@@ -1218,6 +1228,41 @@
       "insertAfter": "machinehealthchecks",
       "testID": "ComputeSeparator"
     },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "controlplanemachinesets",
+      "insertAfter": "computeseparator",
+      "name": "%console-app~ControlPlaneMachineSets%",
+      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1~ControlPlaneMachineSet"
+    },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "machinesets",
+      "insertAfter": "controlplanemachinesets",
+      "name": "%console-app~MachineSets%",
+      "href": "/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet"
+    },
+    "flags": { "required": ["CLUSTER_API"] }
+  },
+  {
+    "type": "console.navigation/separator",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "id": "computeseparator2",
+      "insertAfter": "machinesets",
+      "testID": "ComputeSeparator2"
+    },
     "flags": { "required": ["MACHINE_CONFIG"] }
   },
   {
@@ -1226,7 +1271,7 @@
       "perspective": "admin",
       "section": "compute",
       "id": "machineconfigs",
-      "insertAfter": "computeseparator",
+      "insertAfter": "computeseparator2",
       "name": "%console-app~MachineConfigs%",
       "model": {
         "group": "machineconfiguration.openshift.io",

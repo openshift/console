@@ -284,7 +284,8 @@ export const topologyPage = {
   verifyDecorators: (nodeName: string, numOfDecorators: number) =>
     topologyPage.componentNode(nodeName).siblings('a').should('have.length', numOfDecorators),
   selectContextMenuAction: (action: nodeActions | string) => {
-    cy.byTestActionID(action).should('be.visible').click();
+    cy.byTestActionID(action).should('be.visible');
+    cy.get(`[data-test-action="${action}"] button`).click();
   },
   getNode: (nodeName: string) => {
     return cy.get(topologyPO.graph.nodeLabel).should('be.visible').contains(nodeName);
@@ -352,8 +353,10 @@ export const topologyPage = {
     cy.log(id);
     cy.get('[data-test-id="base-node-handler"] image').should('be.visible');
     cy.get('body').then(($el) => {
-      if ($el.find(topologyPO.sidePane.applicationGroupingsTitle).length === 0) {
+      if (!$el.find(topologyPO.sidePane.applicationGroupingsTitle).text().includes(appName)) {
         cy.get(id).next('text').click({ force: true });
+      } else {
+        cy.log('sidebar is already open');
       }
     });
     // cy.get(id).next('text').click({ force: true });

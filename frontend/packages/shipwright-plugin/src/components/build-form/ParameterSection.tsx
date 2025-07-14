@@ -86,11 +86,11 @@ const ParameterSection: React.FC<ParametersSectionProps> = () => {
         {requiredParams.length > 0 ? (
           <ParameterFields params={requiredParams} />
         ) : (
-          <small className="pf-v6-u-text-color-subtle">
+          <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
             {t(
               'shipwright-plugin~No required parameters are associated with the selected build strategy.',
             )}
-          </small>
+          </span>
         )}
         {optionalParams.length > 0 && (
           <ExpandCollapse
