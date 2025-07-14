@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { FLAG_OPENSHIFT_BUILDCONFIG } from '@console/dev-console/src/const';
 import { useShipwrightBuilds } from '@console/dev-console/src/utils/shipwright-build-hook';
 import { FLAG_OPENSHIFT_PIPELINE } from '@console/pipelines-plugin/src/const';
 import { useFlag } from '@console/shared';
+import { FLAG_OPENSHIFT_BUILDCONFIG } from '../../../const';
 import { BuildOptions } from '../import-types';
 
 export const useDefaultBuildOption = (): BuildOptions => {
