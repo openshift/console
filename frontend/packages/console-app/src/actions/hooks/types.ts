@@ -1,5 +1,9 @@
 import { Action } from '@console/dynamic-plugin-sdk';
 
+export type ActionObject<T extends readonly PropertyKey[]> = {
+  [K in T[number]]: Action;
+};
+
 export enum CommonActionCreator {
   Delete = 'Delete',
   Edit = 'Edit',
@@ -20,9 +24,6 @@ export enum DeploymentActionCreator {
   EditResourceLimits = 'EditResourceLimits',
 }
 
-export type ActionObject<T extends readonly PropertyKey[]> = {
-  [K in T[number]]: Action;
-};
 export enum PVCActionCreator {
   ExpandPVC = 'ExpandPVC',
   PVCSnapshot = 'PVCSnapshot',
@@ -36,4 +37,9 @@ export enum VolumeSnapshotActionCreator {
 
 export enum JobActionCreator {
   ModifyJobParallelism = 'ModifyJobParallelism',
+}
+
+export enum ReplicationControllerActionCreator {
+  RollbackDeploymentConfig = 'RollbackDeploymentConfig',
+  CancelRollout = 'CancelRollout',
 }
