@@ -1,6 +1,7 @@
-import { Content, ContentVariants } from '@patternfly/react-core';
+import { Content, ContentVariants, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { TourDataType } from '@console/app/src/components/tour';
+import AdminGuidedTourBannerDark from '../tour/AdminGidedTorBannerDark';
 import AdminGuidedTourBanner from '../tour/AdminGuidedTourBanner';
 import { finishTourText, helpTourText, userPreferencesTourText } from './GuidedTourText';
 
@@ -10,11 +11,11 @@ const IntroductionText: React.FC = () => {
   const { t } = useTranslation();
   return (
     <>
-      <p>
+      <Content component={ContentVariants.p}>
         {t(
-          'console-app~Introducing a fresh modern look to the console with OpenShift 4.19. With this update we have made changes to the user interface to enhance usability and streamline your workflow. This includes an improved navigation and visual refinement aimed at making it easier to manage your applications and infrastructure.',
+          'console-app~Introducing a fresh modern look to the console with OpenShift 4.19. With this update, we have made changes to the user interface to enhance usability and streamline your workflow. This includes improved navigation and visual refinement aimed at making it easier to manage your applications and infrastructure.',
         )}
-      </p>
+      </Content>
       <Content component={ContentVariants.h6}>
         {t('console-app~What do you want to do next?')}
       </Content>
@@ -27,7 +28,9 @@ export const getGuidedTour = (): TourDataType => ({
     // t('console-app~Welcome to the new OpenShift experience!')
     heading: '%console-app~Welcome to the new OpenShift experience!%',
     content: <IntroductionText />,
-    introBanner: <AdminGuidedTourBanner />,
+    introBannerLight: <AdminGuidedTourBanner />,
+    introBannerDark: <AdminGuidedTourBannerDark />,
+    modalVariant: ModalVariant.large,
   },
   steps: [
     {
@@ -77,5 +80,8 @@ export const getGuidedTour = (): TourDataType => ({
     // t('console-app~You’re ready to go!')
     heading: '%console-app~You’re ready to go!%',
     content: finishTourText,
+    introBannerLight: <AdminGuidedTourBanner />,
+    introBannerDark: <AdminGuidedTourBannerDark />,
+    modalVariant: ModalVariant.medium,
   },
 });

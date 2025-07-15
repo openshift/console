@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ModalVariant } from '@patternfly/react-core';
 import { TourActions } from './const';
 import { TourContext } from './tour-context';
 import TourStepComponent from './TourStepComponent';
@@ -13,7 +14,9 @@ type StepComponentProps = {
   nextButtonText: string;
   backButtonText: string;
   expandableSelector?: string;
-  introBanner?: React.ReactNode;
+  introBannerLight?: React.ReactNode;
+  introBannerDark?: React.ReactNode;
+  modalVariant?: ModalVariant;
 };
 
 const StepComponent: React.FC<StepComponentProps> = ({
@@ -25,7 +28,9 @@ const StepComponent: React.FC<StepComponentProps> = ({
   nextButtonText,
   backButtonText,
   showStepBadge = true,
-  introBanner,
+  introBannerLight,
+  introBannerDark,
+  modalVariant,
 }) => {
   const {
     tourDispatch,
@@ -36,9 +41,11 @@ const StepComponent: React.FC<StepComponentProps> = ({
     <TourStepComponent
       key={step}
       step={step}
-      introBanner={introBanner}
+      introBannerLight={introBannerLight}
+      introBannerDark={introBannerDark}
       content={content}
       heading={heading}
+      modalVariant={modalVariant}
       selector={selector}
       expandableSelector={expandableSelector}
       placement={placement}
