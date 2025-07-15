@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import {
   ActionServiceProvider,
   ActionMenu,
@@ -18,8 +17,6 @@ import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 
 import {
   AsyncComponent,
-  Kebab,
-  KebabAction,
   ContainerTable,
   ResourceSummary,
   SectionHeading,
@@ -28,19 +25,8 @@ import {
   RuntimeClass,
 } from './utils';
 import { VolumesTable } from './volumes-table';
-import { StatefulSetModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-
-const { AddStorage, common, ModifyCount } = Kebab.factory;
-export const menuActions: KebabAction[] = [
-  AddHealthChecks,
-  ModifyCount,
-  AddStorage,
-  ...Kebab.getExtensionsActionsForKind(StatefulSetModel),
-  EditHealthChecks,
-  ...common,
-];
 
 const kind = 'StatefulSet';
 
