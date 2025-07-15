@@ -217,7 +217,7 @@ const WebTerminalConfiguration: React.FCC<{ readonly: boolean }> = ({ readonly }
           <Dropdown
             title={TimeoutUnits[unit]}
             selectedKey={unit}
-            name="timeout-unit"
+            id="timeout-unit"
             className="request-size-input__unit"
             items={TimeoutUnits}
             onChange={onUnitChange}

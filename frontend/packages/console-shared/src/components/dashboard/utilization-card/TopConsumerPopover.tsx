@@ -266,7 +266,6 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
             <Dropdown
               className="co-utilization-card-popover__dropdown"
               id="consumer-select"
-              name="selectConsumerType"
               aria-label={t('console-shared~Select consumer type')}
               items={dropdownItems}
               onChange={onDropdownChange}
