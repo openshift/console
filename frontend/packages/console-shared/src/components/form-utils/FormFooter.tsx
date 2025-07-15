@@ -98,7 +98,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               type="button"
               data-test-id="download-button"
               variant={ButtonVariant.secondary}
-              className="pf-v6-c-button--align-right hidden-sm hidden-xs"
+              className="pf-v6-c-button--align-right pf-v6-u-display-none pf-v6-u-display-flex-on-sm"
               onClick={handleDownload}
               icon={<DownloadIcon />}
             >
