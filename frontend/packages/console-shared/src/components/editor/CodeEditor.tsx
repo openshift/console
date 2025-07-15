@@ -15,7 +15,7 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
   const [monacoRef, setMonacoRef] = React.useState<CodeEditorRef['monaco'] | null>(null);
   const [usesValue] = React.useState<boolean>(value !== undefined);
 
-  const shortcutPopover = useShortcutPopover(props?.shortcutsPopoverProps);
+  const shortcutPopover = useShortcutPopover(props.shortcutsPopoverProps);
 
   const editorDidMount: EditorDidMount = React.useCallback(
     (editor, monaco) => {
@@ -80,11 +80,11 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
     <div style={{ minHeight }} className="ocs-yaml-editor">
       <BasicCodeEditor
         {...props}
-        language={props?.language ?? Language.yaml}
+        language={props.language ?? Language.yaml}
         code={value}
-        options={{ ...defaultEditorOptions, ...props?.options }}
+        options={{ ...defaultEditorOptions, ...props.options }}
         onEditorDidMount={editorDidMount}
-        isFullHeight={props?.isFullHeight ?? true}
+        isFullHeight={props.isFullHeight ?? true}
         customControls={ToolbarLinks ?? undefined}
         shortcutsPopoverProps={showShortcuts ? shortcutPopover : undefined}
       />
