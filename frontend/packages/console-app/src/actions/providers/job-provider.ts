@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { JobKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { usePDBActions } from '../creators/pdb-factory';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 import { useJobActions } from '../hooks/useJobActions';
+import { usePDBActions } from '../hooks/usePDBActions';
 
 export const useJobActionsProvider = (resource: JobKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));

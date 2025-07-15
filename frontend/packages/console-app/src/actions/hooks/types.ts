@@ -54,3 +54,9 @@ export enum BindingActionCreator {
   DeleteBindingSubject = 'DeleteBindingSubject',
   ImpersonateBindingSubject = 'ImpersonateBindingSubject',
 }
+
+export enum PDBActionCreator {
+  AddPDB = 'AddPDB',
+  EditPDB = 'EditPDB',
+  DeletePDB = 'DeletePDB',
+}
