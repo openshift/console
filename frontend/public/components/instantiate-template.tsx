@@ -29,10 +29,9 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { withExtensions } from '@console/plugin-sdk';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
-import catalogImg from '../imgs/logos/catalog-icon.svg';
 import {
-  getImageForIconClass,
   getTemplateIcon,
+  getTemplateIconClass,
   normalizeIconClass,
 } from './catalog/catalog-item-icon';
 import { ButtonBar, Firehose, LoadError, LoadingBox, NsDropdown } from './utils';
@@ -72,8 +71,8 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
   const annotations = template.metadata.annotations || {};
   const { description } = annotations;
   const displayName = annotations[ANNOTATIONS.displayName] || template.metadata.name;
-  const iconClass = getTemplateIcon(template);
-  const imgURL = iconClass ? getImageForIconClass(iconClass) : catalogImg;
+  const iconClass = getTemplateIconClass(template);
+  const imgURL = getTemplateIcon(template);
   const tags = (annotations.tags || '').split(/\s*,\s*/);
   const documentationURL = annotations[ANNOTATIONS.documentationURL];
   const supportURL = annotations[ANNOTATIONS.supportURL];

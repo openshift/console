@@ -4,8 +4,8 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
-  getImageForIconClass,
   getTemplateIcon,
+  getTemplateIconClass,
 } from '@console/internal/components/catalog/catalog-item-icon';
 import { TemplateModel } from '@console/internal/models';
 import { k8sListPartialMetadata, PartialObjectMetadata } from '@console/internal/module/k8s';
@@ -29,9 +29,8 @@ const normalizeTemplates = (
 
       const displayName = annotations[ANNOTATIONS.displayName] || name;
       const provider = annotations[ANNOTATIONS.providerDisplayName];
-      const icon = getTemplateIcon(template);
-      const imgUrl = getImageForIconClass(icon);
-      const iconClass = imgUrl ? null : icon;
+      const imgURL = getTemplateIcon(template);
+      const iconClass = getTemplateIconClass(template);
       const documentationUrl = annotations[ANNOTATIONS.documentationURL];
       const supportUrl = annotations[ANNOTATIONS.supportURL];
 
@@ -47,7 +46,7 @@ const normalizeTemplates = (
         documentationUrl,
         icon: {
           class: iconClass,
-          url: imgUrl,
+          url: imgURL,
         },
         cta: {
           label: t('devconsole~Instantiate Template'),
