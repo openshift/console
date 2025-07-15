@@ -28,7 +28,7 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
           <div className="co-create-secret__dropdown">
             <Dropdown
               items={authTypes}
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               id="dropdown-selectbox"
               selectedKey={authType}
               onChange={setAuthType}

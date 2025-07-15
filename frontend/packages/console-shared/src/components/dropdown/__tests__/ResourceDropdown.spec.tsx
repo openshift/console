@@ -1,6 +1,6 @@
 import { shallow, mount, ShallowWrapper } from 'enzyme';
 import { mockDropdownData } from '../__mocks__/dropdown-data-mock';
-import ResourceDropdown, { ResourceDropdownProps } from '../ResourceDropdown';
+import { ResourceDropdown, ResourceDropdownProps } from '../ResourceDropdown';
 
 jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => {
   return {

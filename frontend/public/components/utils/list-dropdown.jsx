@@ -148,7 +148,7 @@ class ListDropdownWithTranslation extends React.Component {
         title={this.state.title}
         onChange={this.onChange}
         id={id}
-        dropDownClassName="dropdown--full-width"
+        isFullWidth
         menuClassName="dropdown-menu--text-wrap"
         disabled={disabled}
         dataTest={this.props.dataTest}

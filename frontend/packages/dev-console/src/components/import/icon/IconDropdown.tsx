@@ -48,11 +48,10 @@ const IconDropdown: React.FC<IconDropdownProps> = ({ placeholder, value, onChang
     <Dropdown
       title={title}
       items={items}
-      autoSelect
       autocompletePlaceholder={placeholder}
       autocompleteFilter={iconLabelAutocompleteFilter}
-      dropDownClassName="dropdown--full-width odc-icon-dropdown"
-      menuClassName="odc-icon-dropdown__menu"
+      isFullWidth
+      className="odc-icon-dropdown"
       onChange={onChanged}
       selectedKey={value || 'openshift'}
     />

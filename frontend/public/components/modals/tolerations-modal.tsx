@@ -151,7 +151,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     <Td dataLabel={t('public~Operator')}>
                       {isEditable(toleration) ? (
                         <Dropdown
-                          dropDownClassName="dropdown--full-width"
+                          isFullWidth
                           items={operators}
                           onChange={(op: TolerationOperator) => opChange(op, i)}
                           selectedKey={operator}
@@ -180,7 +180,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     <Td dataLabel={t('public~Effect')}>
                       {isEditable(toleration) ? (
                         <Dropdown
-                          dropDownClassName="dropdown--full-width"
+                          isFullWidth
                           items={effects}
                           onChange={(e: string) => change(e, i, 'effect')}
                           selectedKey={effect}
