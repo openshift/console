@@ -1,6 +1,12 @@
 import * as React from 'react';
-import { Grid, GridItem, ModalBody, ModalFooter, ModalHeader } from '@patternfly/react-core';
-import { ModalVariant } from '@patternfly/react-core/deprecated';
+import {
+  Grid,
+  GridItem,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Popover, PopoverPlacement, Modal, Spotlight } from '@console/shared';
 import StepBadge from './steps/StepBadge';
@@ -16,6 +22,7 @@ type TourStepComponentProps = {
   heading: string;
   content: React.ReactNode;
   introBanner?: React.ReactNode;
+  modalVariant?: ModalVariant;
   step?: number;
   totalSteps?: number;
   showStepBadge?: boolean;
@@ -36,6 +43,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   step,
   totalSteps,
   introBanner,
+  modalVariant,
   nextButtonText,
   backButtonText,
   onNext,
@@ -86,7 +94,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   ) : (
     <Modal
       className="co-tour-step-component"
-      variant={ModalVariant.large}
+      variant={modalVariant || ModalVariant.small}
       isOpen
       onClose={handleClose}
       id="guided-tour-modal"
@@ -96,8 +104,8 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
     >
       <ModalBody>
         <Grid hasGutter>
-          <GridItem span={4}>{introBanner}</GridItem>
-          <GridItem span={8}>
+          {introBanner && <GridItem span={4}>{introBanner}</GridItem>}
+          <GridItem span={introBanner ? 8 : 12}>
             <ModalHeader>{header}</ModalHeader>
             <ModalBody>{stepContent}</ModalBody>
             <ModalFooter>{footer}</ModalFooter>

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ModalVariant } from '@patternfly/react-core';
 
 export type StepContentType = ReactNode | string;
 
@@ -13,6 +14,7 @@ export type Step = {
   showClose?: boolean;
   expandableSelector?: string;
   introBanner?: ReactNode;
+  modalVariant?: ModalVariant;
 };
 
 export type TourDataType = {

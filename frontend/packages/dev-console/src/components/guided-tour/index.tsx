@@ -1,3 +1,4 @@
+import { ModalVariant } from '@patternfly/react-core';
 import {
   finishTourText,
   helpTourText,
@@ -20,6 +21,7 @@ export const getGuidedTour = (): TourDataType => ({
     heading: '%devconsole~Welcome to the Developer Perspective!%',
     content: devPerspectiveTourText,
     introBanner: <GuidedTourIntroBanner />,
+    modalVariant: ModalVariant.medium,
   },
   steps: [
     {
@@ -72,5 +74,7 @@ export const getGuidedTour = (): TourDataType => ({
     // t('devconsole~You’re ready to go!')
     heading: '%devconsole~You’re ready to go!%',
     content: finishTourText,
+    introBanner: <GuidedTourIntroBanner />,
+    modalVariant: ModalVariant.medium,
   },
 });
