@@ -35,8 +35,8 @@ import {
   SelectorInput,
   ListDropdown,
   useScrollToTopOnMount,
-  Dropdown,
 } from '@console/internal/components/utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
 import {
   GroupVersionKind,
@@ -933,7 +933,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     if (capabilities.some((c) => c.startsWith(SpecCapability.select))) {
       return (
         <div>
-          <Dropdown
+          <ConsoleSelect
             id={id}
             title={t('olm~Select {{item}}', { item: displayName })}
             selectedKey={currentValue}

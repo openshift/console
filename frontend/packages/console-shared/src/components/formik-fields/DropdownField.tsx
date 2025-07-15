@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
-import { Dropdown } from '@console/internal/components/utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useFormikValidationFix } from '../../hooks';
 import { RedExclamationCircleIcon } from '../status';
 import { DropdownFieldProps } from './field-types';
@@ -18,7 +18,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
 
   return (
     <FormGroup fieldId={fieldId} label={label} isRequired={required}>
-      <Dropdown
+      <ConsoleSelect
         {...props}
         items={props.items}
         id={fieldId}
