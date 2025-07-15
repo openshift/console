@@ -2,7 +2,8 @@ import * as React from 'react';
 import { ActionListItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
-import { history, HorizontalNav, Page, Dropdown } from '@console/internal/components/utils';
+import { history, HorizontalNav, Page } from '@console/internal/components/utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '../pagetitle/PageTitleContext';
@@ -84,7 +85,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
             )}
             {items && (
               <ActionListItem>
-                <Dropdown
+                <ConsoleSelect
                   buttonClassName="pf-m-primary"
                   menuClassName="prevent-overflow"
                   title={t('console-shared~Create')}

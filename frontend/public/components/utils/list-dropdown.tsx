@@ -4,7 +4,7 @@ import * as fuzzy from 'fuzzysearch';
 import { Alert } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
-import { ActionItem, ConsoleSelect } from './dropdown';
+import { ActionItem, ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';
 import { ResourceName } from './resource-icon';

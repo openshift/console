@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { useUserSettingsCompatibility } from '@console/shared';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import {
   Divider,
   Menu,
@@ -21,7 +21,7 @@ export type ActionItem = {
   actionTitle: string;
 };
 
-export type DropdownProps = {
+export type ConsoleSelectProps = {
   /** Action items to be displayed at the top of the dropdown */
   actionItems?: ActionItem[];
   /** Whether the dropdown is open by default */
@@ -74,7 +74,7 @@ export type DropdownProps = {
   userSettingsPrefix?: string;
 };
 
-const DropdownRow: React.FCC<{
+const ConsoleSelectItem: React.FCC<{
   itemKey: string;
   content: React.ReactNode;
   onclick: (key: string, e: React.MouseEvent) => void;
@@ -97,7 +97,12 @@ const DropdownRow: React.FCC<{
   </MenuItem>
 );
 
-export const Dropdown: React.FCC<DropdownProps> = ({
+/**
+ * A Select is a dropdown that indicates state.
+ *
+ * @deprecated Due to this components complexity, prefer `@patternfly/react-templates` components when possible.
+ */
+export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   actionItems,
   active,
   ariaLabel,
@@ -124,9 +129,6 @@ export const Dropdown: React.FCC<DropdownProps> = ({
   /* Dropdown state */
   const [expanded, setExpanded] = React.useState(active ?? false);
   const [selectedKey, setSelectedKey] = React.useState<string>(props.selectedKey ?? '');
-  const [title, setTitle] = React.useState<React.ReactNode>(
-    noSelection ? props.title : props.items[selectedKey] ?? props.title,
-  );
   const [autocompleteText, setAutocompleteText] = React.useState<string>('');
   const [items, setItems] = React.useState<Record<string, React.ReactNode>>(props.items);
 
@@ -170,16 +172,13 @@ export const Dropdown: React.FCC<DropdownProps> = ({
 
       onChange && onChange(clickedKey, e);
 
-      const newTitle = props.items[clickedKey];
-
       if (!actionItems || !_.some(actionItems, { actionKey: clickedKey })) {
         setSelectedKey(clickedKey);
-        setTitle(noSelection ? props.title : newTitle);
       }
 
       setExpanded(false);
     },
-    [onChange, props.items, actionItems, noSelection, props.title],
+    [onChange, props.items, actionItems, noSelection],
   );
 
   const applyTextFilter = React.useCallback(
@@ -196,12 +195,10 @@ export const Dropdown: React.FCC<DropdownProps> = ({
 
   // Update state when props change
   React.useEffect(() => {
-    props.title && setTitle(props.title);
     if (props.selectedKey !== selectedKey) {
-      setTitle(props.items[props.selectedKey] ?? props.title);
       setSelectedKey(props.selectedKey);
     }
-  }, [props.selectedKey, props.items, props.title, selectedKey]);
+  }, [props.selectedKey, selectedKey]);
 
   React.useEffect(() => {
     applyTextFilter(autocompleteText, props.items);
@@ -232,7 +229,7 @@ export const Dropdown: React.FCC<DropdownProps> = ({
       ref={dropdownToggleRef}
     >
       {titlePrefix && `${titlePrefix}: `}
-      {title}
+      {noSelection ? props.title : props.title ?? props.items[selectedKey]}
     </MenuToggle>
   );
 
@@ -245,7 +242,7 @@ export const Dropdown: React.FCC<DropdownProps> = ({
     return (
       <>
         {actionItems.map((ai) => (
-          <DropdownRow
+          <ConsoleSelectItem
             key={`${ai.actionKey}-${ai.actionTitle}`}
             itemKey={ai.actionKey}
             content={ai.actionTitle}
@@ -262,12 +259,12 @@ export const Dropdown: React.FCC<DropdownProps> = ({
     const accRows: React.ReactNode[] = [];
     const accBookmarkRows: React.ReactNode[] = [];
 
-    Object.entries(items).forEach(([key, content]: [string, React.ReactNode]) => {
+    Object.entries(items).forEach(([key, content]) => {
       const selected = key === selectedKey && !noSelection;
 
       if (enableBookmarks && bookmarks[key]) {
         accBookmarkRows.push(
-          <DropdownRow
+          <ConsoleSelectItem
             key={key}
             itemKey={key}
             content={content}
@@ -292,13 +289,13 @@ export const Dropdown: React.FCC<DropdownProps> = ({
       }
 
       accRows.push(
-        <DropdownRow
+        <ConsoleSelectItem
           key={key}
           itemKey={key}
           content={content}
           onclick={onClick}
           selected={selected}
-          isBookmarked={enableBookmarks ? bookmarks[key] ?? false : undefined}
+          isBookmarked={enableBookmarks && bookmarks ? bookmarks[key] ?? false : undefined}
         />,
       );
     });
@@ -351,7 +348,10 @@ export const Dropdown: React.FCC<DropdownProps> = ({
           </>
         )}
 
-        <MenuList className={css(menuClassName, { 'pf-v6-u-pt-0': autocompleteFilter })}>
+        <MenuList
+          className={css(menuClassName, { 'pf-v6-u-pt-0': autocompleteFilter })}
+          role="listbox"
+        >
           {bookmarkRows.length ? (
             <>
               <MenuGroup label="Favorites" labelHeadingLevel="h3">
@@ -393,4 +393,4 @@ export const Dropdown: React.FCC<DropdownProps> = ({
   );
 };
 
-Dropdown.displayName = 'Dropdown';
+ConsoleSelect.displayName = 'ConsoleSelect';

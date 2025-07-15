@@ -5,7 +5,8 @@ import * as fuzzy from 'fuzzysearch';
 /* eslint-disable import/named */
 import { WithTranslation, withTranslation } from 'react-i18next';
 
-import { Firehose, LoadingInline, Dropdown, ResourceName, ResourceIcon } from '.';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { Firehose, LoadingInline, ResourceName, ResourceIcon } from '.';
 import { isDefaultClass } from '../storage-class';
 import { css } from '@patternfly/react-styles';
 
@@ -177,7 +178,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
             >
               {t('public~StorageClass')}
             </label>
-            <Dropdown
+            <ConsoleSelect
               className="co-storage-class-dropdown"
               isFullWidth
               autocompleteFilter={this.autocompleteFilter}

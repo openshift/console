@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { history, Dropdown } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { MenuAction, MenuActions } from '@console/shared/src';
 
 type CreateActionDropdownProps = {
@@ -46,7 +47,7 @@ export const CreateActionDropdown: React.FC<CreateActionDropdownProps> = ({ name
   };
 
   return (
-    <Dropdown
+    <ConsoleSelect
       buttonClassName="pf-m-primary"
       menuClassName="prevent-overflow"
       title={t('knative-plugin~Create function')}
