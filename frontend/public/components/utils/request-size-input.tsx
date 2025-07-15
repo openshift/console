@@ -67,7 +67,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
         <Dropdown
           title={dropdownUnits[defaultRequestSizeUnit]}
           selectedKey={defaultRequestSizeUnit}
-          name={dropdownName}
+          id={dropdownName}
           className="request-size-input__unit"
           items={dropdownUnits}
           onChange={onUnitChange}

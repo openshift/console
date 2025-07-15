@@ -334,7 +334,7 @@ const APIResourcesList = compose(
                 selectedKey={groupFilter}
                 spacerBefore={groupSpacer}
                 title={groupOptions[groupFilter]}
-                dropDownClassName="dropdown--full-width"
+                isFullWidth
               />
             </ToolbarItem>
             <ToolbarItem>
@@ -344,7 +344,7 @@ const APIResourcesList = compose(
                 selectedKey={versionFilter}
                 spacerBefore={versionSpacer}
                 title={versionOptions[versionFilter]}
-                dropDownClassName="dropdown--full-width"
+                isFullWidth
               />
             </ToolbarItem>
             <ToolbarItem>
@@ -354,7 +354,7 @@ const APIResourcesList = compose(
                 selectedKey={scopeFilter}
                 spacerBefore={scopeSpacer}
                 title={scopeOptions[scopeFilter]}
-                dropDownClassName="dropdown--full-width"
+                isFullWidth
               />
             </ToolbarItem>
           </ToolbarToggleGroup>

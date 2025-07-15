@@ -17,13 +17,4 @@
     display: flex;
     align-items: center;
   }
-
-  &__menu {
-    max-height: 300px;
-
-    li > a {
-      display: flex;
-      align-items: center;
-    }
-  }
 }

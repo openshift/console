@@ -179,7 +179,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
             </label>
             <Dropdown
               className="co-storage-class-dropdown"
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               autocompleteFilter={this.autocompleteFilter}
               autocompletePlaceholder={t('public~Select StorageClass')}
               items={items}
