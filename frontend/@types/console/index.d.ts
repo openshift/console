@@ -52,7 +52,21 @@ declare interface Window {
     quickStarts: string;
     projectAccessClusterRoles: string;
     controlPlaneTopology: string;
-    telemetry: Record<string, string>;
+    telemetry?: Partial<{
+      // All of the following should be always available on prod env.
+      SEGMENT_API_HOST: string;
+      SEGMENT_JS_HOST: string;
+      // One of the following should be always available on prod env.
+      SEGMENT_API_KEY: string;
+      SEGMENT_PUBLIC_API_KEY: string;
+      DEVSANDBOX_SEGMENT_API_KEY: string;
+      // Optional override for analytics.min.js script URL
+      SEGMENT_JS_URL: string;
+      // Additional telemetry options passed to Console frontend
+      DEBUG: 'true' | 'false';
+      DISABLED: 'true' | 'false';
+      [name: string]: string;
+    }>;
     nodeArchitectures: string[];
     nodeOperatingSystems: string[];
     hubConsoleURL: string;
