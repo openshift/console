@@ -4,10 +4,10 @@ import { DeploymentConfigKind, referenceFor } from '@console/internal/module/k8s
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { getHealthChecksAction } from '../creators/health-checks-factory';
 import { useHPAActions } from '../creators/hpa-factory';
-import { usePDBActions } from '../creators/pdb-factory';
 import { CommonActionCreator, DeploymentActionCreator } from '../hooks/types';
 import { useCommonActions } from '../hooks/useCommonActions';
 import { useDeploymentActions } from '../hooks/useDeploymentActions';
+import { usePDBActions } from '../hooks/usePDBActions';
 import { useRetryRolloutAction } from '../hooks/useRetryRolloutAction';
 
 export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKind) => {

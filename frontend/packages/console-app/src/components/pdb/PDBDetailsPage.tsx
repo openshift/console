@@ -4,18 +4,15 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage } from '@console/internal/components/factory';
 import {
-  Kebab,
   ResourceSummary,
   SectionHeading,
   navFactory,
   DetailsItem,
 } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ActionServiceProvider, ActionMenu, ActionMenuVariant } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { PodDisruptionBudgetModel } from '../../models';
 import { PodDisruptionBudgetKind } from './types';
-
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(PodDisruptionBudgetModel), ...common];
 
 const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
@@ -55,18 +52,34 @@ const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({
 
 export const PodDisruptionBudgetDetailsPage: React.FC<PodDisruptionBudgetDetailsPageProps> = (
   props,
-) => (
-  <DetailsPage
-    {...props}
-    kind={props.kind}
-    menuActions={menuActions}
-    pages={[
-      navFactory.details(PodDisruptionBudgetDetails),
-      navFactory.editYaml(),
-      navFactory.pods(),
-    ]}
-  />
-);
+) => {
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+
+  return (
+    <DetailsPage
+      {...props}
+      kind={props.kind}
+      customActionMenu={customActionMenu}
+      pages={[
+        navFactory.details(PodDisruptionBudgetDetails),
+        navFactory.editYaml(),
+        navFactory.pods(),
+      ]}
+    />
+  );
+};
 
 export type PodDisruptionBudgetDetailsPageProps = {
   match: any;
