@@ -218,7 +218,7 @@ export const topologyPage = {
   },
   verifyPipelineRunStatus: (status: string) =>
     cy
-      .get('li.list-group-item.pipeline-overview')
+      .get('li.pipeline-overview')
       .next('li')
       .find('span.co-icon-and-text span')
       .should('have.text', status),

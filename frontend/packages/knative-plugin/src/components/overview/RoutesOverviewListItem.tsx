@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -20,7 +20,7 @@ const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <li className="list-group-item">
+    <ListItem>
       <Grid hasGutter>
         <GridItem span={10}>
           <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
@@ -35,7 +35,7 @@ const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({
       {uniqueRoutes?.length > 0 && (
         <RoutesUrlLink urls={uniqueRoutes} title={t('knative-plugin~Unique Route')} />
       )}
-    </li>
+    </ListItem>
   );
 };
 
