@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dropdown } from '../../utils/dropdown';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { PullSecretCredentialsForm } from './PullSecretCredentialsForm';
 import { PullSecretUploadForm } from './PullSecretUploadForm';
 import { SecretSubFormProps } from './types';
@@ -26,7 +26,7 @@ export const PullSecretForm: React.FC<SecretSubFormProps> = ({
         <div className="form-group">
           <label htmlFor="secret-type">{t('public~Authentication type')}</label>
           <div className="co-create-secret__dropdown">
-            <Dropdown
+            <ConsoleSelect
               items={authTypes}
               isFullWidth
               id="dropdown-selectbox"

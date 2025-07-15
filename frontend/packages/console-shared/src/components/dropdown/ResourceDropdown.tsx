@@ -3,13 +3,11 @@ import * as fuzzy from 'fuzzysearch';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
+import { FirehoseResult, LoadingInline, ResourceIcon } from '@console/internal/components/utils';
 import {
-  Dropdown,
-  DropdownProps,
-  FirehoseResult,
-  LoadingInline,
-  ResourceIcon,
-} from '@console/internal/components/utils';
+  ConsoleSelect,
+  ConsoleSelectProps,
+} from '@console/internal/components/utils/console-select';
 import {
   K8sResourceKind,
   referenceForModel,
@@ -34,32 +32,30 @@ const DropdownItem: React.FC<DropdownItemProps> = ({ model, name }) => (
   </span>
 );
 
+export type ResourceDropdownItems = ConsoleSelectProps['items'];
+
 interface State {
   resources: {};
-  items: {};
-  title: React.ReactNode;
-}
-
-export interface ResourceDropdownItems {
-  [key: string]: string | React.ReactElement;
+  items: ResourceDropdownItems;
+  title: ConsoleSelectProps['title'];
 }
 
 export interface ResourceDropdownProps {
-  actionItems?: DropdownProps['actionItems'];
-  ariaLabel?: DropdownProps['ariaLabel'];
-  autocompleteFilter?: DropdownProps['autocompleteFilter'];
-  buttonClassName?: DropdownProps['buttonClassName'];
-  className?: DropdownProps['className'];
-  disabled?: DropdownProps['disabled'];
-  id?: DropdownProps['id'];
-  isFullWidth?: DropdownProps['isFullWidth'];
-  menuClassName?: DropdownProps['menuClassName'];
-  placeholder?: DropdownProps['autocompletePlaceholder'];
-  selectedKey: DropdownProps['selectedKey'];
-  storageKey?: DropdownProps['storageKey'];
-  title?: DropdownProps['title'];
-  titlePrefix?: DropdownProps['titlePrefix'];
-  userSettingsPrefix?: DropdownProps['userSettingsPrefix'];
+  actionItems?: ConsoleSelectProps['actionItems'];
+  ariaLabel?: ConsoleSelectProps['ariaLabel'];
+  autocompleteFilter?: ConsoleSelectProps['autocompleteFilter'];
+  buttonClassName?: ConsoleSelectProps['buttonClassName'];
+  className?: ConsoleSelectProps['className'];
+  disabled?: ConsoleSelectProps['disabled'];
+  id?: ConsoleSelectProps['id'];
+  isFullWidth?: ConsoleSelectProps['isFullWidth'];
+  menuClassName?: ConsoleSelectProps['menuClassName'];
+  placeholder?: ConsoleSelectProps['autocompletePlaceholder'];
+  selectedKey: ConsoleSelectProps['selectedKey'];
+  storageKey?: ConsoleSelectProps['storageKey'];
+  title?: ConsoleSelectProps['title'];
+  titlePrefix?: ConsoleSelectProps['titlePrefix'];
+  userSettingsPrefix?: ConsoleSelectProps['userSettingsPrefix'];
 
   allSelectorItem?: {
     allSelectorKey?: string;
@@ -188,7 +184,10 @@ class ResourceDropdownInternal extends React.Component<
     return resourceList;
   };
 
-  private getDropdownList = (props: ResourceDropdownProps, updateSelection: boolean) => {
+  private getDropdownList = (
+    props: ResourceDropdownProps,
+    updateSelection: boolean,
+  ): ResourceDropdownItems => {
     const {
       loaded,
       actionItems,
@@ -279,7 +278,7 @@ class ResourceDropdownInternal extends React.Component<
 
   render() {
     return (
-      <Dropdown
+      <ConsoleSelect
         id={this.props.id}
         ariaLabel={this.props.ariaLabel}
         className={this.props.className}
