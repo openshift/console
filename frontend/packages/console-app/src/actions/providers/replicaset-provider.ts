@@ -4,10 +4,10 @@ import { ReplicaSetKind, referenceFor } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { usePDBActions } from '../creators/pdb-factory';
-import { ReplicaSetFactory } from '../creators/replicaset-factory';
 import { CommonActionCreator } from '../hooks/types';
 import { useCommonActions } from '../hooks/useCommonActions';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
+import { useReplicaSetActions } from '../hooks/useReplicaSetActions';
 
 export const useReplicaSetActionsProvider = (resource: ReplicaSetKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
@@ -18,6 +18,7 @@ export const useReplicaSetActionsProvider = (resource: ReplicaSetKind) => {
     CommonActionCreator.AddStorage,
   ] as const);
   const commonResourceActions = useCommonResourceActions(kindObj, resource);
+  const replicaSetActions = useReplicaSetActions(kindObj, resource);
 
   const actions = React.useMemo(
     () =>
@@ -28,11 +29,17 @@ export const useReplicaSetActionsProvider = (resource: ReplicaSetKind) => {
             ...pdbActions,
             commonActions.AddStorage,
             ...commonResourceActions,
-            ...(resource?.status?.replicas > 0 || !deploymentName
-              ? []
-              : [ReplicaSetFactory.RollbackDeploymentAction(kindObj, resource)]),
+            ...(resource?.status?.replicas > 0 || !deploymentName ? [] : replicaSetActions),
           ],
-    [kindObj, resource, pdbActions, deploymentName, commonResourceActions, commonActions, isReady],
+    [
+      resource,
+      pdbActions,
+      deploymentName,
+      commonResourceActions,
+      commonActions,
+      isReady,
+      replicaSetActions,
+    ],
   );
 
   return [actions, !inFlight, undefined];
