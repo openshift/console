@@ -55,9 +55,9 @@ func ParsePluginProxyConfig(proxyConfig string) (*serverconfig.Proxy, error) {
 	pluginProxy := &serverconfig.Proxy{}
 	err := json.Unmarshal([]byte(proxyConfig), pluginProxy)
 	if err != nil {
-		errMsg := fmt.Sprintf("Error unmarshaling ConsoleConfig proxy field: %v", err)
-		klog.Error(errMsg)
-		return nil, fmt.Errorf(errMsg)
+		err := fmt.Errorf("error unmarshaling ConsoleConfig proxy field: %w", err)
+		klog.Error(err.Error())
+		return nil, err
 	}
 	return pluginProxy, nil
 }
@@ -73,16 +73,16 @@ func GetPluginProxyServiceHandlers(proxyConfig *serverconfig.Proxy, defaultTLSCo
 				RootCAs: customCA,
 			})
 			if !pluginProxyTLS.RootCAs.AppendCertsFromPEM([]byte(service.CACertificate)) {
-				errMsg := fmt.Sprintf("Error parsing CA cert for %s service", service.Endpoint)
-				klog.Error(errMsg)
-				return nil, fmt.Errorf(errMsg)
+				err := fmt.Errorf("failed to parse CA cert for %q service", service.Endpoint)
+				klog.Error(err.Error())
+				return nil, err
 			}
 		}
 		serviceEndpoint, err := url.Parse(service.Endpoint)
 		if err != nil {
-			errMsg := fmt.Sprintf("Error parsing %q service endpoint", service.Endpoint)
-			klog.Error(errMsg)
-			return nil, fmt.Errorf(errMsg)
+			err := fmt.Errorf("failed to parse service endpoint %q: %w", service.Endpoint, err)
+			klog.Error(err.Error())
+			return nil, err
 		}
 		proxyServiceHandlers = append(proxyServiceHandlers, NewPluginsProxyServiceHandler(service.ConsoleAPIPath, serviceEndpoint, pluginProxyTLS, service.Authorize))
 	}
