@@ -4,16 +4,14 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { RowProps, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { TableData } from '@console/internal/components/factory/Table/VirtualizedTable';
-import { Kebab, ResourceLink, ResourceKebab, Selector } from '@console/internal/components/utils';
+import { ResourceLink, Selector } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { LazyActionMenu } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PodDisruptionBudgetModel } from '../../models';
 import { tableColumnInfo } from './pdb-table-columns';
 import { PodDisruptionBudgetKind } from './types';
 import { isDisruptionViolated } from './utils/get-pdb-resources';
-
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(PodDisruptionBudgetModel), ...common];
 
 const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> = ({
   obj,
@@ -21,6 +19,8 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
 }) => {
   const { t } = useTranslation();
   const isPDBViolated = isDisruptionViolated(obj);
+  const resourceKind = referenceForModel(PodDisruptionBudgetModel);
+  const context = { [resourceKind]: obj };
   return (
     <>
       <TableData {...tableColumnInfo[0]} activeColumnIDs={activeColumnIDs}>
@@ -57,7 +57,7 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData {...tableColumnInfo[6]} activeColumnIDs={activeColumnIDs}>
-        <ResourceKebab actions={menuActions} kind={obj.kind} resource={obj} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
