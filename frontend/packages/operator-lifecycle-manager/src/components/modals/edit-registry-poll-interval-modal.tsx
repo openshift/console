@@ -68,7 +68,7 @@ const EditRegistryPollIntervalModal: React.FC<EditRegistryPollIntervalModalProps
         <ModalBody>
           <FormGroup label={t('olm~Registry poll interval')} fieldId="pollInterval_dropdown">
             <Dropdown
-              className="dropdown--full-width"
+              isFullWidth
               id="pollInterval_dropdown"
               items={items}
               onChange={(selectedInterval: string) => setPollInterval(selectedInterval)}

@@ -379,7 +379,7 @@ class CreateRouteWithTranslation extends React.Component<
               autocompleteFilter={this.autocompleteFilter}
               items={availableServiceOptions}
               title={service ? serviceOptions[service.metadata.name] : t('public~Select a service')}
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               id="service"
               onChange={this.changeService}
               describedBy="service-help"
@@ -438,7 +438,7 @@ class CreateRouteWithTranslation extends React.Component<
               items={portOptions}
               title={t('public~Select target port')}
               selectedKey={_.isNumber(targetPort) ? UNNAMED_PORT_KEY : targetPort} // if targetPort is a number, it's an unnamed port
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               id="target-port"
               onChange={this.changeTargetPort}
               describedBy="target-port-help"
@@ -474,7 +474,7 @@ class CreateRouteWithTranslation extends React.Component<
                 <Dropdown
                   items={terminationTypes}
                   title={t('public~Select termination type')}
-                  dropDownClassName="dropdown--full-width"
+                  isFullWidth
                   id="tls-termination"
                   onChange={this.changeTermination}
                   selectedKey={termination}
@@ -489,7 +489,7 @@ class CreateRouteWithTranslation extends React.Component<
                       : insecureTrafficTypes
                   }
                   title={t('public~Select insecure traffic type')}
-                  dropDownClassName="dropdown--full-width"
+                  isFullWidth
                   id="insecure-traffic"
                   onChange={this.changeInsecureTraffic}
                   describedBy="insecure-traffic-help"
@@ -594,7 +594,7 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
         <Dropdown
           items={availableServiceOptions}
           title={name ? serviceOptions[name] : t('public~Select a service')}
-          dropDownClassName="dropdown--full-width"
+          isFullWidth
           id={`${index}-alt-service`}
           onChange={onServiceChange}
           describedBy={`${index}-alt-service-help`}

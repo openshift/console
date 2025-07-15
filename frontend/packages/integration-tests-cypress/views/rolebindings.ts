@@ -7,7 +7,7 @@ export const roleBindings = {
       .click()
       .byLegacyTestID('dropdown-text-filter')
       .type(namespace)
-      .parents('.co-namespace-dropdown__menu')
+      .parents('[data-test="namespace-dropdown"]')
       .within(() => {
         cy.get('.co-resource-item__resource-name').click();
       }),

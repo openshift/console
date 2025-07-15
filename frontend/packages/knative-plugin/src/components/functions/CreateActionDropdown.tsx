@@ -53,7 +53,6 @@ export const CreateActionDropdown: React.FC<CreateActionDropdownProps> = ({ name
       noSelection
       items={items}
       onChange={onSelectCreateAction}
-      className=""
     />
   );
 };
