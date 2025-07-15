@@ -375,6 +375,20 @@
     }
   },
   {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "policy",
+        "version": "v1",
+        "kind": "PodDisruptionBudget"
+      },
+      "provider": {
+        "$codeRef": "podDisruptionBudgetProvider.usePodDisruptionBudgetActionsProvider"
+      }
+    }
+  },
+
+  {
     "type": "console.page/route",
     "properties": {
       "exact": true,
