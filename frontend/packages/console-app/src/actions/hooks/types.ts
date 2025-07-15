@@ -33,3 +33,7 @@ export enum PVCActionCreator {
 export enum VolumeSnapshotActionCreator {
   RestorePVC = 'RestorePVC',
 }
+
+export enum JobActionCreator {
+  ModifyJobParallelism = 'ModifyJobParallelism',
+}
