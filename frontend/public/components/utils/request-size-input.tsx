@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dropdown } from './dropdown';
+import { ConsoleSelect } from './dropdown';
 import { useTranslation } from 'react-i18next';
 import { NumberSpinner } from './number-spinner';
 
@@ -64,7 +64,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
           min={minValue}
           disabled={isInputDisabled}
         />
-        <Dropdown
+        <ConsoleSelect
           title={dropdownUnits[defaultRequestSizeUnit]}
           selectedKey={defaultRequestSizeUnit}
           id={dropdownName}

@@ -6,7 +6,7 @@ import * as PropTypes from 'prop-types';
 import { Alert } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
-import { Dropdown } from './dropdown';
+import { ConsoleSelect } from './dropdown';
 import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';
 import { ResourceName } from './resource-icon';
@@ -139,7 +139,7 @@ class ListDropdownWithTranslation extends React.Component {
     const Component = fixed ? (
       items[selectedKey]
     ) : (
-      <Dropdown
+      <ConsoleSelect
         actionItems={this.props.actionItems}
         autocompleteFilter={this.autocompleteFilter}
         autocompletePlaceholder={placeholder}

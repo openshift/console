@@ -20,7 +20,8 @@ export type ActionItem = {
   actionTitle: string;
 };
 
-export type DropdownProps = {
+/** @deprecated The corresponding component, `ConsoleSelect`, is deprecated and should not be used in new code. */
+export type ConsoleSelectProps = {
   /** Action items to be displayed at the top of the dropdown */
   actionItems?: ActionItem[];
   /** Whether the dropdown is open by default */
@@ -73,7 +74,7 @@ export type DropdownProps = {
   userSettingsPrefix?: string;
 };
 
-const DropdownRow: React.FCC<{
+const ConsoleSelectItem: React.FCC<{
   itemKey: string;
   content: React.ReactNode;
   onclick: (key: string, e: React.MouseEvent) => void;
@@ -96,7 +97,12 @@ const DropdownRow: React.FCC<{
   </MenuItem>
 );
 
-export const Dropdown: React.FCC<DropdownProps> = ({
+/**
+ * A Select is a dropdown that indicates state.
+ *
+ * @deprecated Due to the complexity of this component, new code should directly use PatternFly when possible.
+ */
+export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   actionItems,
   active,
   ariaLabel,
@@ -243,7 +249,7 @@ export const Dropdown: React.FCC<DropdownProps> = ({
     return (
       <>
         {actionItems.map((ai) => (
-          <DropdownRow
+          <ConsoleSelectItem
             key={`${ai.actionKey}-${ai.actionTitle}`}
             itemKey={ai.actionKey}
             content={ai.actionTitle}
@@ -260,12 +266,12 @@ export const Dropdown: React.FCC<DropdownProps> = ({
     const accRows: React.ReactNode[] = [];
     const accBookmarkRows: React.ReactNode[] = [];
 
-    Object.entries(items).forEach(([key, content]: [string, React.ReactNode]) => {
+    Object.entries(items).forEach(([key, content]) => {
       const selected = key === selectedKey && !noSelection;
 
       if (storageKey && bookmarks && bookmarks[key]) {
         accBookmarkRows.push(
-          <DropdownRow
+          <ConsoleSelectItem
             key={key}
             itemKey={key}
             content={content}
@@ -290,13 +296,13 @@ export const Dropdown: React.FCC<DropdownProps> = ({
       }
 
       accRows.push(
-        <DropdownRow
+        <ConsoleSelectItem
           key={key}
           itemKey={key}
           content={content}
           onclick={onClick}
           selected={selected}
-          isBookmarked={enableBookmarks ? bookmarks[key] ?? false : undefined}
+          isBookmarked={enableBookmarks && bookmarks ? bookmarks[key] ?? false : undefined}
         />,
       );
     });
@@ -391,4 +397,4 @@ export const Dropdown: React.FCC<DropdownProps> = ({
   );
 };
 
-Dropdown.displayName = 'Dropdown';
+ConsoleSelect.displayName = 'ConsoleSelect';

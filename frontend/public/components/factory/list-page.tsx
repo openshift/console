@@ -23,7 +23,7 @@ import { ErrorPage404 } from '../error';
 import { K8sKind } from '../../module/k8s/types';
 import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { Dropdown } from '../utils/dropdown';
+import { ConsoleSelect } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import {
   FirehoseResource,
@@ -279,7 +279,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       );
     } else if (createProps.items) {
       createLink = (
-        <Dropdown
+        <ConsoleSelect
           buttonClassName="pf-m-primary"
           id="item-create"
           dataTest="item-create"

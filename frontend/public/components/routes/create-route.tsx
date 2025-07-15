@@ -10,7 +10,7 @@ import { connect, FormikContextType, FormikValues } from 'formik';
 import { TFunction } from 'i18next';
 /* eslint-disable-next-line */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
-import { Dropdown, ResourceName } from '../utils';
+import { ConsoleSelect, ResourceName } from '../utils';
 import { K8sResourceKind, RouteKind } from '../../module/k8s';
 import { getActiveNamespace } from '../../actions/ui';
 import { AsyncComponent } from '../utils/async';
@@ -375,7 +375,7 @@ class CreateRouteWithTranslation extends React.Component<
             </Alert>
           )}
           {!_.isEmpty(serviceOptions) && (
-            <Dropdown
+            <ConsoleSelect
               autocompleteFilter={this.autocompleteFilter}
               items={availableServiceOptions}
               title={service ? serviceOptions[service.metadata.name] : t('public~Select a service')}
@@ -434,7 +434,7 @@ class CreateRouteWithTranslation extends React.Component<
           </label>
           {_.isEmpty(portOptions) && <p>{t('public~Select a Service above')}</p>}
           {!_.isEmpty(portOptions) && (
-            <Dropdown
+            <ConsoleSelect
               items={portOptions}
               title={t('public~Select target port')}
               selectedKey={_.isNumber(targetPort) ? UNNAMED_PORT_KEY : targetPort} // if targetPort is a number, it's an unnamed port
@@ -471,7 +471,7 @@ class CreateRouteWithTranslation extends React.Component<
                 <label className="co-required" htmlFor="tls-termination">
                   {t('public~TLS termination')}
                 </label>
-                <Dropdown
+                <ConsoleSelect
                   items={terminationTypes}
                   title={t('public~Select termination type')}
                   isFullWidth
@@ -482,7 +482,7 @@ class CreateRouteWithTranslation extends React.Component<
               </div>
               <div className="form-group co-create-route__insecure-traffic">
                 <label htmlFor="insecure-traffic">{t('public~Insecure traffic')}</label>
-                <Dropdown
+                <ConsoleSelect
                   items={
                     termination === 'passthrough'
                       ? passthroughInsecureTrafficTypes
@@ -591,7 +591,7 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
     <>
       <div className="form-group">
         <label htmlFor={`${index}-alt-service`}>{t('public~Alternate Service target')}</label>
-        <Dropdown
+        <ConsoleSelect
           items={availableServiceOptions}
           title={name ? serviceOptions[name] : t('public~Select a service')}
           isFullWidth

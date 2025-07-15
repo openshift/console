@@ -11,7 +11,7 @@ import {
 import {
   withHandlePromise,
   HandlePromiseProps,
-  Dropdown,
+  ConsoleSelect,
 } from '@console/internal/components/utils';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { CatalogSourceModel } from '../../models';
@@ -67,7 +67,7 @@ const EditRegistryPollIntervalModal: React.FC<EditRegistryPollIntervalModalProps
         <ModalTitle>{t('olm~Edit registry poll interval')}</ModalTitle>
         <ModalBody>
           <FormGroup label={t('olm~Registry poll interval')} fieldId="pollInterval_dropdown">
-            <Dropdown
+            <ConsoleSelect
               isFullWidth
               id="pollInterval_dropdown"
               items={items}

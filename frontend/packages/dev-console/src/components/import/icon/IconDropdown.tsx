@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { getIcon, getIcons } from '@console/internal/components/catalog/catalog-item-icon';
-import { Dropdown } from '@console/internal/components/utils/dropdown';
+import { ConsoleSelect } from '@console/internal/components/utils/dropdown';
 
 import './IconDropdown.scss';
 
@@ -45,7 +45,7 @@ const IconDropdown: React.FC<IconDropdownProps> = ({ placeholder, value, onChang
   }, []);
 
   return (
-    <Dropdown
+    <ConsoleSelect
       title={title}
       items={items}
       autocompletePlaceholder={placeholder}

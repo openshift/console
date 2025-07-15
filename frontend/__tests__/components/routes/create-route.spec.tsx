@@ -2,7 +2,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { Formik } from 'formik';
 import { Button } from '@patternfly/react-core';
 
-import { Dropdown } from '../../../public/components/utils';
+import { ConsoleSelect } from '../../../public/components/utils';
 import {
   CreateRoute,
   CreateRouteState,
@@ -41,7 +41,7 @@ describe('Create Route', () => {
     expect(wrapper.find('input[id="name"]').exists()).toBe(true);
     expect(wrapper.find('input[id="hostname"]').exists()).toBe(true);
     expect(wrapper.find('input[id="path"]').exists()).toBe(true);
-    expect(wrapper.find(Dropdown).exists()).toBe(true);
+    expect(wrapper.find(ConsoleSelect).exists()).toBe(true);
   });
 
   it('should display the Add alternate Service link when a service is selected', () => {

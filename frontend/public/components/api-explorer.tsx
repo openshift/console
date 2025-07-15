@@ -54,7 +54,7 @@ import { getResourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import {
   AsyncComponent,
-  Dropdown,
+  ConsoleSelect,
   EmptyBox,
   HorizontalNav,
   LinkifyExternal,
@@ -327,7 +327,7 @@ const APIResourcesList = compose(
         <ToolbarContent>
           <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
             <ToolbarItem>
-              <Dropdown
+              <ConsoleSelect
                 autocompleteFilter={autocompleteGroups}
                 items={groupOptions}
                 onChange={onGroupSelected}
@@ -338,7 +338,7 @@ const APIResourcesList = compose(
               />
             </ToolbarItem>
             <ToolbarItem>
-              <Dropdown
+              <ConsoleSelect
                 items={versionOptions}
                 onChange={onVersionSelected}
                 selectedKey={versionFilter}
@@ -348,7 +348,7 @@ const APIResourcesList = compose(
               />
             </ToolbarItem>
             <ToolbarItem>
-              <Dropdown
+              <ConsoleSelect
                 items={scopeOptions}
                 onChange={onScopeSelected}
                 selectedKey={scopeFilter}
@@ -628,7 +628,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
       <PaneBody>
         <Flex className="pf-v6-u-mb-lg">
           <FlexItem>
-            <Dropdown
+            <ConsoleSelect
               items={verbOptions}
               onChange={(v: K8sVerb) => setVerb(v)}
               selectedKey={verb}

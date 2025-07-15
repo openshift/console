@@ -6,7 +6,7 @@ import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-ci
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
 
-import { Dropdown, EmptyBox, withHandlePromise, HandlePromiseProps } from '../utils';
+import { ConsoleSelect, EmptyBox, withHandlePromise, HandlePromiseProps } from '../utils';
 import { K8sKind, k8sPatch, NodeKind, Taint } from '../../module/k8s';
 import {
   createModalLauncher,
@@ -106,7 +106,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                     </span>
                   </Td>
                   <Td dataLabel={t('Effect')}>
-                    <Dropdown
+                    <ConsoleSelect
                       isFullWidth
                       items={effects}
                       onChange={(e) => change(e, i, 'effect')}

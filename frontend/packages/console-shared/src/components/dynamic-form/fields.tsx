@@ -19,8 +19,8 @@ import { ConfigureUpdateStrategy } from '@console/internal/components/modals/con
 import {
   LinkifyExternal,
   SelectorInput,
-  Dropdown,
-  DropdownProps,
+  ConsoleSelect,
+  ConsoleSelectProps,
 } from '@console/internal/components/utils';
 import {
   NodeAffinity,
@@ -321,11 +321,11 @@ export const DropdownField: React.FC<FieldProps> = ({
 }) => {
   const { t } = useTranslation();
   const { items, title } = getUiOptions(uiSchema) as {
-    items?: DropdownProps['items'];
+    items?: ConsoleSelectProps['items'];
     title?: string;
   };
   return (
-    <Dropdown
+    <ConsoleSelect
       id={idSchema.$id}
       key={idSchema.$id}
       title={t('console-shared~Select {{title}}', { title: title || schema?.title || name })}

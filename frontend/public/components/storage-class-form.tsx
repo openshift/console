@@ -23,7 +23,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import {
   AsyncComponent,
   ButtonBar,
-  Dropdown,
+  ConsoleSelect,
   Firehose,
   FirehoseResult,
   NameValueEditorPair,
@@ -462,7 +462,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           <label className={css({ 'co-required': paramIsRequired(key) })} htmlFor={paramId}>
             {_.get(parameter, 'name', key)}
           </label>
-          <Dropdown
+          <ConsoleSelect
             title={parameter.hintText}
             items={parameter.values}
             isFullWidth
@@ -613,7 +613,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             <label className="co-required" htmlFor="storage-class-reclaim-policy">
               {t('public~Reclaim policy')}
             </label>
-            <Dropdown
+            <ConsoleSelect
               title={t('public~Select reclaim policy')}
               items={reclaimPolicies}
               isFullWidth
@@ -632,7 +632,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             <label className="co-required" htmlFor="storage-class-volume-binding-mode">
               {t('public~Volume binding mode')}
             </label>
-            <Dropdown
+            <ConsoleSelect
               title={t('public~Select volume binding mode')}
               items={volumeBindingModes}
               isFullWidth
@@ -652,7 +652,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             <label className="co-required" htmlFor="storage-class-provisioner">
               {t('public~Provisioner')}
             </label>
-            <Dropdown
+            <ConsoleSelect
               title={t('public~Select Provisioner')}
               autocompleteFilter={autocompleteFilter}
               autocompletePlaceholder={t('public~Select Provisioner')}
