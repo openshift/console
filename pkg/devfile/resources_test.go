@@ -565,7 +565,7 @@ spec:
 			mockKubernetesComponents := mockDevfileData.EXPECT().GetComponents(kubernetesComponentFilter)
 			mockKubernetesComponents.Return(tt.kubeComponents, nil).AnyTimes()
 			if tt.wantMockErr1 != nil {
-				mockKubernetesComponents.Return(nil, fmt.Errorf(*tt.wantMockErr1))
+				mockKubernetesComponents.Return(nil, fmt.Errorf("%s", *tt.wantMockErr1))
 			}
 
 			containerComponentFilter := common.DevfileOptions{
@@ -577,10 +577,10 @@ spec:
 			mockContainerComponents := mockDevfileData.EXPECT().GetComponents(containerComponentFilter)
 			mockContainerComponents.Return(tt.containerComponents, nil).AnyTimes()
 			if tt.wantMockErr2 != nil {
-				mockContainerComponents.Return(nil, fmt.Errorf(*tt.wantMockErr2)).MaxTimes(1)
+				mockContainerComponents.Return(nil, fmt.Errorf("%s", *tt.wantMockErr2)).MaxTimes(1)
 			} else if tt.wantMockErr2_1 != nil {
 				mockContainerComponents2 := mockDevfileData.EXPECT().GetComponents(containerComponentFilter)
-				mockContainerComponents2.Return(nil, fmt.Errorf(*tt.wantMockErr2_1)).After(mockContainerComponents.Times(2))
+				mockContainerComponents2.Return(nil, fmt.Errorf("%s", *tt.wantMockErr2_1)).After(mockContainerComponents.Times(2))
 			}
 
 			// required for call in GetResourceFromDevfile().GetDeployResource().GetContainers()
