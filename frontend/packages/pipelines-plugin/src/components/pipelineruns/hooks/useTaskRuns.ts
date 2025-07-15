@@ -10,8 +10,17 @@ export const useTaskRuns = (
   pipelineRunName?: string,
   taskName?: string,
   cacheKey?: string,
+  pipelineRunUid?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] => {
   const selector: Selector = React.useMemo(() => {
+    if (pipelineRunName && pipelineRunUid) {
+      return {
+        matchLabels: {
+          [TektonResourceLabel.pipelinerun]: pipelineRunName,
+          [TektonResourceLabel.pipelineRunUid]: pipelineRunUid,
+        },
+      };
+    }
     if (pipelineRunName) {
       return { matchLabels: { [TektonResourceLabel.pipelinerun]: pipelineRunName } };
     }
@@ -19,7 +28,7 @@ export const useTaskRuns = (
       return { matchLabels: { [TektonResourceLabel.pipelineTask]: taskName } };
     }
     return undefined;
-  }, [taskName, pipelineRunName]);
+  }, [taskName, pipelineRunName, pipelineRunUid]);
   const [taskRuns, loaded, error, getNextPage] = useTaskRuns2(
     namespace,
     selector && {
