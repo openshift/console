@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem, List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
 import { TriggerTemplateModel } from '../../../models';
@@ -21,8 +21,8 @@ const TriggersOverview: React.FC<TriggersOverviewProps> = ({ pipeline }) => {
   return templateNames.length > 0 ? (
     <>
       <SidebarSectionHeading data-test="triggers-heading" text={t('pipelines-plugin~Triggers')} />
-      <ul className="list-group" data-test="triggers-list">
-        <li className="list-group-item pipeline-overview" data-test="triggers-list-item">
+      <List isPlain isBordered data-test="triggers-list">
+        <ListItem className="pipeline-overview" data-test="triggers-list-item">
           <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
             <FlexItem>
               <TriggerResourceLinks
@@ -32,8 +32,8 @@ const TriggersOverview: React.FC<TriggersOverviewProps> = ({ pipeline }) => {
               />
             </FlexItem>
           </Flex>
-        </li>
-      </ul>
+        </ListItem>
+      </List>
     </>
   ) : null;
 };

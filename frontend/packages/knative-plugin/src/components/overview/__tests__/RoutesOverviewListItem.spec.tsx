@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ListItem } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -25,8 +26,7 @@ describe('RoutesOverviewListItem', () => {
   });
 
   it('should list the Route', () => {
-    expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('li').at(0).props().className).toEqual('list-group-item');
+    expect(wrapper.find(ListItem)).toHaveLength(1);
   });
 
   it('should have ResourceLink with proper kind', () => {

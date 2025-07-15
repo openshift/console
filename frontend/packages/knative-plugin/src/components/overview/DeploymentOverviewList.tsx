@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -18,15 +19,15 @@ const DeploymentOverviewList: React.FC<DeploymentOverviewListProps> = ({ resourc
     <>
       <SidebarSectionHeading text={t('knative-plugin~Deployment')} />
       {deploymentData && deploymentData.name ? (
-        <ul className="list-group">
-          <li className="list-group-item">
+        <List isPlain isBordered>
+          <ListItem>
             <ResourceLink
               kind={deploymentData.kind}
               name={deploymentData.name}
               namespace={namespace}
             />
-          </li>
-        </ul>
+          </ListItem>
+        </List>
       ) : (
         <span className="pf-v6-u-text-color-subtle">
           {t('knative-plugin~No Deployment found for this resource.')}

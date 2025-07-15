@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List, ListItem } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk';
@@ -20,17 +21,17 @@ const VPATabSection: React.FC<VPATabSectionProps> = ({ vpas }) => {
   return (
     <>
       <SidebarSectionHeading text={t('topology~VerticalPodAutoscalers')} />
-      <ul className="list-group">
+      <List isPlain isBordered>
         {vpas.map((vpa: K8sResourceCommon) => (
-          <li key={vpa.metadata.name} className="list-group-item">
+          <ListItem key={vpa.metadata.name}>
             <ResourceLink
               groupVersionKind={getGroupVersionKindForResource(vpa)}
               name={vpa.metadata.name}
               namespace={vpa.metadata.namespace}
             />
-          </li>
+          </ListItem>
         ))}
-      </ul>
+      </List>
     </>
   );
 };

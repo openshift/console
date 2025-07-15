@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List, ListItem } from '@patternfly/react-core';
 import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 
@@ -11,15 +12,15 @@ const EventSourceOwnedList: React.FC<EventSourceOwnedListProps> = ({ source }) =
   return (
     <>
       <SidebarSectionHeading text={sourceModel?.label ?? source.kind} />
-      <ul className="list-group">
-        <li className="list-group-item">
+      <List isPlain isBordered>
+        <ListItem>
           <ResourceLink
             kind={referenceFor(source)}
             name={source.metadata?.name}
             namespace={source.metadata?.namespace}
           />
-        </li>
-      </ul>
+        </ListItem>
+      </List>
     </>
   );
 };
