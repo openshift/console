@@ -33,3 +33,9 @@ export enum PVCActionCreator {
 export enum VolumeSnapshotActionCreator {
   RestorePVC = 'RestorePVC',
 }
+
+export enum PDBActionCreator {
+  AddPDB = 'AddPDB',
+  EditPDB = 'EditPDB',
+  DeletePDB = 'DeletePDB',
+}
