@@ -465,7 +465,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           <Dropdown
             title={parameter.hintText}
             items={parameter.values}
-            dropDownClassName="dropdown--full-width"
+            isFullWidth
             selectedKey={_.get(newStorageClass, selectedKey)}
             onChange={(event) => setParameterHandler(key, event, false)}
             id={paramId}
@@ -616,7 +616,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             <Dropdown
               title={t('public~Select reclaim policy')}
               items={reclaimPolicies}
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               selectedKey={reclaimPolicyKey}
               onChange={(event) => setStorageHandler('reclaim', event)}
               id="storage-class-reclaim-policy"
@@ -635,7 +635,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             <Dropdown
               title={t('public~Select volume binding mode')}
               items={volumeBindingModes}
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               selectedKey={volumeBindingModeKey}
               onChange={(event) => setStorageHandler('volumeBindingMode', event)}
               id="storage-class-volume-binding-mode"
@@ -657,7 +657,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
               autocompleteFilter={autocompleteFilter}
               autocompletePlaceholder={t('public~Select Provisioner')}
               items={_.mapValues(storageTypes.current, 'provisioner')}
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               menuClassName="dropdown-menu--text-wrap"
               selectedKey={newStorageClass.type}
               onChange={(event) => setStorageHandler('type', event)}

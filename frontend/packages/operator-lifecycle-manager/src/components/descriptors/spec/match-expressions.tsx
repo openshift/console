@@ -40,7 +40,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
       </Td>
       <Td dataLabel={t('olm~Operator')}>
         <Dropdown
-          dropDownClassName="dropdown--full-width"
+          isFullWidth
           items={allowedOperators.reduce((acc, o) => ({ ...acc, [o]: o }), {})}
           onChange={(newOperator: Operator) => onChange({ key, operator: newOperator, values: [] })}
           selectedKey={expression.operator}

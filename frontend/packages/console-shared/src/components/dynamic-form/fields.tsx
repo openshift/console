@@ -16,7 +16,12 @@ import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
-import { LinkifyExternal, SelectorInput, Dropdown } from '@console/internal/components/utils';
+import {
+  LinkifyExternal,
+  SelectorInput,
+  Dropdown,
+  DropdownProps,
+} from '@console/internal/components/utils';
 import {
   NodeAffinity,
   PodAffinity,
@@ -315,7 +320,10 @@ export const DropdownField: React.FC<FieldProps> = ({
   uiSchema = {},
 }) => {
   const { t } = useTranslation();
-  const { items, title } = getUiOptions(uiSchema) as { items?: object; title?: string };
+  const { items, title } = getUiOptions(uiSchema) as {
+    items?: DropdownProps['items'];
+    title?: string;
+  };
   return (
     <Dropdown
       id={idSchema.$id}

@@ -107,7 +107,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                   </Td>
                   <Td dataLabel={t('Effect')}>
                     <Dropdown
-                      dropDownClassName="dropdown--full-width"
+                      isFullWidth
                       items={effects}
                       onChange={(e) => change(e, i, 'effect')}
                       selectedKey={c.effect}

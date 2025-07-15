@@ -3,17 +3,17 @@ import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { Firehose } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
-import { ResourceDropdown } from '@console/shared/src';
+import {
+  ResourceDropdown,
+  ResourceDropdownProps,
+} from '@console/shared/src/components/dropdown/ResourceDropdown';
 
-interface PushSecretDropdownProps {
-  dropDownClassName?: string;
-  menuClassName?: string;
+interface PushSecretDropdownProps
+  extends Omit<
+    ResourceDropdownProps,
+    'dataSelector' | 'placeholder' | 'autocompleteFilter' | 'resourceFilter' | 'showBadge'
+  > {
   namespace?: string;
-  actionItems?: {
-    actionTitle: string;
-    actionKey: string;
-  }[];
-  selectedKey: string;
   onChange?: (key: string) => void;
   title?: React.ReactNode;
   name: string;
