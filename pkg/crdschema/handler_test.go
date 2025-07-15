@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"testing"
 
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -48,31 +49,16 @@ func (m *mockRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) 
 	return response, nil
 }
 
-// createMockProxy creates a mock proxy for testing
-func createMockProxy(mockRT *mockRoundTripper) (*proxy.Proxy, func()) {
-	// Create a test server that uses our mock round tripper
-	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Record the request for assertions
-		mockRT.requestURL = r.URL.String()
-		mockRT.requestMethod = r.Method
-		mockRT.requestPath = r.URL.Path
-
-		if mockRT.shouldError {
-			http.Error(w, mockRT.errorMessage, http.StatusBadGateway)
-			return
-		}
-
-		w.WriteHeader(mockRT.responseStatus)
-		w.Write([]byte(mockRT.responseBody))
-	}))
-
-	targetURL, _ := url.Parse(testServer.URL)
+// createMockProxy creates a mock proxy for testing with a custom transport
+func createMockProxy(mockRT *mockRoundTripper) *proxy.Proxy {
+	// Create a mock endpoint URL
+	targetURL, _ := url.Parse("https://mock-k8s-api.example.com")
 	config := &proxy.Config{
 		Endpoint:        targetURL,
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 
-	return proxy.NewProxy(config), testServer.Close
+	return proxy.NewProxyWithTransport(config, mockRT)
 }
 
 // createMockCRD creates a mock CRD for testing
@@ -126,13 +112,17 @@ func parseErrorResponse(body []byte) (*serverutils.ApiError, error) {
 	return &apiError, nil
 }
 
+// Helper function to extract CRD name from request path (same logic as handler)
+func extractCRDName(requestPath string) string {
+	return strings.TrimPrefix(requestPath, "/")
+}
+
 func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 	tests := []struct {
 		name            string
 		method          string
-		crdName         string
+		requestPath     string
 		mockStatus      int
-		mockCRD         *apiextensionsv1.CustomResourceDefinition
 		mockError       bool
 		mockErrorMsg    string
 		expectedStatus  int
@@ -142,15 +132,14 @@ func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 		{
 			name:           "successful request",
 			method:         "GET",
-			crdName:        "examples.example.com",
+			requestPath:    "/examples.example.com",
 			mockStatus:     200,
-			mockCRD:        createMockCRD("examples.example.com"),
 			expectedStatus: 200,
 		},
 		{
 			name:            "invalid method POST",
 			method:          "POST",
-			crdName:         "examples.example.com",
+			requestPath:     "/examples.example.com",
 			expectedStatus:  405,
 			expectedError:   "Invalid method: only GET is allowed",
 			shouldHaveError: true,
@@ -158,15 +147,15 @@ func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 		{
 			name:            "invalid method PUT",
 			method:          "PUT",
-			crdName:         "examples.example.com",
+			requestPath:     "/examples.example.com",
 			expectedStatus:  405,
 			expectedError:   "Invalid method: only GET is allowed",
 			shouldHaveError: true,
 		},
 		{
-			name:            "missing CRD name",
+			name:            "missing CRD name - empty path",
 			method:          "GET",
-			crdName:         "",
+			requestPath:     "/",
 			expectedStatus:  400,
 			expectedError:   "CRD name parameter is required",
 			shouldHaveError: true,
@@ -174,44 +163,47 @@ func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 		{
 			name:            "CRD not found",
 			method:          "GET",
-			crdName:         "nonexistent.example.com",
+			requestPath:     "/nonexistent.example.com",
 			mockStatus:      404,
 			expectedStatus:  404,
-			shouldHaveError: false, // Proxy passes through 404s
+			shouldHaveError: false,
 		},
 		{
 			name:            "forbidden access",
 			method:          "GET",
-			crdName:         "examples.example.com",
+			requestPath:     "/examples.example.com",
 			mockStatus:      403,
 			expectedStatus:  403,
-			shouldHaveError: false, // Proxy passes through 403s
+			shouldHaveError: false,
 		},
 		{
 			name:            "internal server error",
 			method:          "GET",
-			crdName:         "examples.example.com",
+			requestPath:     "/examples.example.com",
 			mockStatus:      500,
 			expectedStatus:  500,
-			shouldHaveError: false, // Proxy passes through 500s
+			shouldHaveError: false,
 		},
 		{
 			name:            "round trip error",
 			method:          "GET",
-			crdName:         "examples.example.com",
+			requestPath:     "/examples.example.com",
 			mockError:       true,
 			mockErrorMsg:    "network error",
 			expectedStatus:  502,
-			shouldHaveError: false, // Proxy handles transport errors
+			shouldHaveError: false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			crdName := extractCRDName(tt.requestPath)
+
 			// Create mock response body
 			var mockResponseBody string
-			if tt.mockCRD != nil {
-				crdBytes, _ := json.Marshal(tt.mockCRD)
+			if tt.mockStatus == 200 && !tt.mockError {
+				mockCRD := createMockCRD(crdName)
+				crdBytes, _ := json.Marshal(mockCRD)
 				mockResponseBody = string(crdBytes)
 			}
 
@@ -224,14 +216,13 @@ func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 			}
 
 			// Create mock proxy
-			mockProxy, cleanup := createMockProxy(mockRT)
-			defer cleanup()
+			mockProxy := createMockProxy(mockRT)
 
 			// Create handler
 			handler := NewCRDSchemaHandler(mockProxy)
 
-			// Create request
-			req := httptest.NewRequest(tt.method, fmt.Sprintf("/api/console/crd-schema?name=%s", tt.crdName), nil)
+			// Create request with path parameter
+			req := httptest.NewRequest(tt.method, tt.requestPath, nil)
 			req = req.WithContext(context.Background())
 			w := httptest.NewRecorder()
 
@@ -246,7 +237,7 @@ func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 			// For error responses that should have custom error handling, check the error message
 			if tt.shouldHaveError {
 				// Only check custom error messages for method validation and missing name
-				if tt.method != "GET" || tt.crdName == "" {
+				if tt.method != "GET" || crdName == "" {
 					contentType := w.Header().Get("Content-Type")
 					if contentType != "application/json" {
 						t.Errorf("Expected Content-Type 'application/json', got '%s'", contentType)
@@ -270,13 +261,13 @@ func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 				}
 
 				// Verify that the response contains the expected CRD
-				if responseCRD.ObjectMeta.Name != tt.crdName {
-					t.Errorf("Expected CRD name %s, got %s", tt.crdName, responseCRD.ObjectMeta.Name)
+				if responseCRD.ObjectMeta.Name != crdName {
+					t.Errorf("Expected CRD name %s, got %s", crdName, responseCRD.ObjectMeta.Name)
 				}
 
 				// Check that the correct API path was used
 				if !tt.mockError && mockRT.requestPath != "" {
-					expectedPath := fmt.Sprintf("/apis/apiextensions.k8s.io/v1/customresourcedefinitions/%s", tt.crdName)
+					expectedPath := fmt.Sprintf("/apis/apiextensions.k8s.io/v1/customresourcedefinitions/%s", crdName)
 					if mockRT.requestPath != expectedPath {
 						t.Errorf("Expected request path %s, got %s", expectedPath, mockRT.requestPath)
 					}
@@ -296,47 +287,54 @@ func contains(s, substr string) bool {
 	return len(substr) == 0 || (len(s) >= len(substr) && s[:len(substr)] == substr)
 }
 
+// Helper function to generate expected K8s API path
+func expectedK8sAPIPath(crdName string) string {
+	return fmt.Sprintf("/apis/apiextensions.k8s.io/v1/customresourcedefinitions/%s", crdName)
+}
+
 func TestCRDSchemaHandler_PathTransformation(t *testing.T) {
 	tests := []struct {
-		name         string
-		crdName      string
-		expectedPath string
+		name        string
+		requestPath string
 	}{
 		{
-			name:         "basic CRD name",
-			crdName:      "test.example.com",
-			expectedPath: "/apis/apiextensions.k8s.io/v1/customresourcedefinitions/test.example.com",
+			name:        "basic CRD name",
+			requestPath: "/test.example.com",
 		},
 		{
-			name:         "complex CRD name",
-			crdName:      "deployments.apps.openshift.io",
-			expectedPath: "/apis/apiextensions.k8s.io/v1/customresourcedefinitions/deployments.apps.openshift.io",
+			name:        "complex CRD name",
+			requestPath: "/deployments.apps.openshift.io",
 		},
 		{
-			name:         "hyphenated CRD name",
-			crdName:      "my-resource.example.com",
-			expectedPath: "/apis/apiextensions.k8s.io/v1/customresourcedefinitions/my-resource.example.com",
+			name:        "hyphenated CRD name",
+			requestPath: "/my-resource.example.com",
+		},
+		{
+			name:        "CRD with numbers",
+			requestPath: "/v1beta1-resources.example.com",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			crdName := extractCRDName(tt.requestPath)
+			expectedPath := expectedK8sAPIPath(crdName)
+
 			mockRT := &mockRoundTripper{
 				responseStatus: 200,
 				responseBody:   "{}",
 			}
 
-			mockProxy, cleanup := createMockProxy(mockRT)
-			defer cleanup()
+			mockProxy := createMockProxy(mockRT)
 			handler := NewCRDSchemaHandler(mockProxy)
 
-			req := httptest.NewRequest("GET", fmt.Sprintf("/api/console/crd-schema?name=%s", tt.crdName), nil)
+			req := httptest.NewRequest("GET", tt.requestPath, nil)
 			w := httptest.NewRecorder()
 
 			handler.HandleCRDSchema(w, req)
 
-			if mockRT.requestPath != tt.expectedPath {
-				t.Errorf("Expected request path %s, got %s", tt.expectedPath, mockRT.requestPath)
+			if mockRT.requestPath != expectedPath {
+				t.Errorf("Expected request path %s, got %s", expectedPath, mockRT.requestPath)
 			}
 		})
 	}
@@ -359,11 +357,10 @@ func TestCRDSchemaHandler_ReturnsCompleteCRD(t *testing.T) {
 		responseBody:   string(crdBytes),
 	}
 
-	mockProxy, cleanup := createMockProxy(mockRT)
-	defer cleanup()
+	mockProxy := createMockProxy(mockRT)
 	handler := NewCRDSchemaHandler(mockProxy)
 
-	req := httptest.NewRequest("GET", "/api/console/crd-schema?name=examples.example.com", nil)
+	req := httptest.NewRequest("GET", "/examples.example.com", nil)
 	w := httptest.NewRecorder()
 
 	handler.HandleCRDSchema(w, req)
@@ -445,11 +442,10 @@ func TestCRDSchemaHandler_EdgeCases(t *testing.T) {
 				responseBody:   tt.mockResponseBody,
 			}
 
-			mockProxy, cleanup := createMockProxy(mockRT)
-			defer cleanup()
+			mockProxy := createMockProxy(mockRT)
 			handler := NewCRDSchemaHandler(mockProxy)
 
-			req := httptest.NewRequest("GET", "/api/console/crd-schema?name=test.example.com", nil)
+			req := httptest.NewRequest("GET", "/test.example.com", nil)
 			w := httptest.NewRecorder()
 
 			handler.HandleCRDSchema(w, req)
@@ -461,6 +457,78 @@ func TestCRDSchemaHandler_EdgeCases(t *testing.T) {
 			// Verify response body matches what was returned by the mock
 			if w.Body.String() != tt.mockResponseBody {
 				t.Errorf("Expected response body '%s', got '%s'", tt.mockResponseBody, w.Body.String())
+			}
+		})
+	}
+}
+
+func TestCRDSchemaHandler_PathParsing(t *testing.T) {
+	tests := []struct {
+		name        string
+		requestPath string
+		shouldWork  bool
+		expectedErr string
+	}{
+		{
+			name:        "valid path with slash prefix",
+			requestPath: "/myresource.example.com",
+			shouldWork:  true,
+		},
+		{
+			name:        "valid path with multiple dots",
+			requestPath: "/my.resource.example.com",
+			shouldWork:  true,
+		},
+		{
+			name:        "empty path",
+			requestPath: "/",
+			shouldWork:  false,
+			expectedErr: "CRD name parameter is required",
+		},
+		{
+			name:        "just slash",
+			requestPath: "/",
+			shouldWork:  false,
+			expectedErr: "CRD name parameter is required",
+		},
+		{
+			name:        "complex path with multiple components",
+			requestPath: "/very.complex.crd.name.example.com",
+			shouldWork:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockRT := &mockRoundTripper{
+				responseStatus: 200,
+				responseBody:   `{"kind": "CustomResourceDefinition"}`,
+			}
+
+			mockProxy := createMockProxy(mockRT)
+			handler := NewCRDSchemaHandler(mockProxy)
+
+			req := httptest.NewRequest("GET", tt.requestPath, nil)
+			w := httptest.NewRecorder()
+
+			handler.HandleCRDSchema(w, req)
+
+			if tt.shouldWork {
+				if w.Code != 200 {
+					t.Errorf("Expected status 200, got %d", w.Code)
+				}
+			} else {
+				if w.Code != 400 {
+					t.Errorf("Expected status 400, got %d", w.Code)
+				}
+
+				apiError, err := parseErrorResponse(w.Body.Bytes())
+				if err != nil {
+					t.Errorf("Failed to parse error response: %v", err)
+				}
+				if !contains(apiError.Err, tt.expectedErr) {
+					t.Errorf("Expected error to contain '%s', got '%s'", tt.expectedErr, apiError.Err)
+				}
 			}
 		})
 	}
