@@ -43,6 +43,23 @@ func authMiddlewareWithUser(authenticator auth.Authenticator, csrfVerifier *csrf
 	)
 }
 
+// authMiddlewareWithoutToken authenticates the user but doesn't set the Authorization header.
+// This allows handlers to use internalProxiedK8SRT transport with console service account token.
+func authMiddlewareWithoutToken(authenticator auth.Authenticator, csrfVerifier *csrfverifier.CSRFVerifier, h http.HandlerFunc) http.HandlerFunc {
+	return csrfVerifier.WithCSRFVerification(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, err := authenticator.Authenticate(w, r)
+			if err != nil {
+				klog.V(4).Infof("authentication failed: %v", err)
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			// we are not setting the auth header here - let the transport handle it
+			h.ServeHTTP(w, r)
+		}),
+	)
+}
+
 func withBearerTokenReview(tokenReviewer *auth.TokenReviewer, h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
