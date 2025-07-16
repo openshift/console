@@ -1,5 +1,8 @@
 import * as _ from 'lodash-es';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { ModelFeatureFlag } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
 import { receivedResources } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import { K8sModel } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { ActionType as Action, action } from 'typesafe-actions';
 import { fetchURL } from '../graphql/client';
@@ -8,6 +11,7 @@ import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
 export enum ActionType {
   SetFlag = 'setFlag',
   ClearSSARFlags = 'clearSSARFlags',
+  UpdateModelFlags = 'updateModelFlags',
 }
 
 const projectListPath = '/apis/project.openshift.io/v1/projects?limit=1';
@@ -139,7 +143,13 @@ export const clearSSARFlags = () =>
     flags: ssarChecks.map((check) => check.flag),
   });
 
-const featureActions = { setFlag };
+export const updateModelFlags = (
+  added: LoadedExtension<ModelFeatureFlag>[],
+  removed: LoadedExtension<ModelFeatureFlag>[],
+  models: K8sModel[],
+) => action(ActionType.UpdateModelFlags, { added, removed, models });
+
+const featureActions = { setFlag, updateModelFlags };
 const clearFlags = { clearSSARFlags };
 
 export type FeatureAction = Action<
