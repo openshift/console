@@ -5,19 +5,17 @@ import {
   K8sModel,
   k8sPatch,
 } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import { QueryParams } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { NodeKind } from '@console/internal/module/k8s';
 import {
-  FAILURE_DOMAIN_NAME,
   KUBE_CONTROLLER_MANAGER_NAME,
-  VSPHERE_CONFIGMAP_NAME,
-  VSPHERE_CONFIGMAP_NAMESPACE,
   VSPHERE_CREDS_SECRET_NAME,
   VSPHERE_CREDS_SECRET_NAMESPACE,
 } from '../constants';
 import { ConfigMap, Infrastructure, KubeControllerManager, Secret } from '../resources';
-import { ConnectionFormFormikValues } from './types';
-import { encodeBase64, getErrorMessage, mergeCloudProviderConfig } from './utils';
+import { ConnectionFormFormikValues, PersistOp } from './types';
+import { encodeBase64, getErrorMessage } from './utils';
 
 export class PersistError extends Error {
   detail: string;
@@ -29,11 +27,11 @@ export class PersistError extends Error {
   }
 }
 
-const persistSecret = async (
-  t: TFunction<'vsphere-plugin'>,
+const getPersistSecretOp = async (
   secretModel: K8sModel,
   values: ConnectionFormFormikValues,
-): Promise<void> => {
+  initValues: ConnectionFormFormikValues,
+): Promise<PersistOp> => {
   const { vcenter, username, password } = values;
 
   const usernameB64 = encodeBase64(username);
@@ -51,27 +49,26 @@ const persistSecret = async (
       ns: VSPHERE_CREDS_SECRET_NAMESPACE,
     });
 
+    delete secret.data[`${initValues.vcenter || 'vcenterplaceholder'}.username`];
+    delete secret.data[`${initValues.vcenter || 'vcenterplaceholder'}.password`];
+
     // Found - do PATCH
-    try {
-      await k8sPatch({
+    return (queryParams) =>
+      k8sPatch({
         model: secretModel,
         resource: secret,
         data: [
           {
             op: 'replace',
             path: '/data',
-            value: secretData,
+            value: {
+              ...secret.data,
+              ...secretData,
+            },
           },
         ],
+        queryParams,
       });
-    } catch (e) {
-      throw new PersistError(
-        t('Failed to patch {{secret}}', {
-          secret: VSPHERE_CREDS_SECRET_NAME,
-        }),
-        getErrorMessage(t, e),
-      );
-    }
   } catch (e) {
     // Not found, create one
     const data: Secret = {
@@ -84,42 +81,35 @@ const persistSecret = async (
       data: secretData,
     };
 
-    try {
-      await k8sCreate({
+    return (queryParams) =>
+      k8sCreate({
         model: secretModel,
         data,
+        queryParams,
       });
-    } catch (e2) {
-      throw new PersistError(
-        t('Failed to create {{secret}} secret', {
-          secret: VSPHERE_CREDS_SECRET_NAME,
-        }),
-        getErrorMessage(t, e2),
-      );
-    }
   }
 };
 
-/** oc patch kubecontrollermanager cluster -p='{"spec": {"forceRedeploymentReason": "recovery-'"$( date --rfc-3339=ns )"'"}}' --type=merge */
-const patchKubeControllerManager = async (
+const getPatchKubeControllerManagerOp = async (
   t: TFunction<'vsphere-plugin'>,
   kubeControllerManagerModel: K8sModel,
-): Promise<void> => {
+): Promise<PersistOp> => {
+  let cm: KubeControllerManager;
   try {
-    const cm = await k8sGet<KubeControllerManager>({
+    cm = await k8sGet<KubeControllerManager>({
       model: kubeControllerManagerModel,
       name: KUBE_CONTROLLER_MANAGER_NAME,
     });
+  } catch (e) {
+    throw new PersistError(t('Failed to load kubecontrollermanager'), getErrorMessage(t, e));
+  }
 
-    if (!cm) {
-      throw new PersistError(t('Failed to load kubecontrollermanager'), t('Not found.'));
-    }
+  cm.spec = cm.spec || {};
+  const date = new Date().toISOString();
+  cm.spec.forceRedeploymentReason = `recovery-${date}`;
 
-    cm.spec = cm.spec || {};
-    const date = new Date().toISOString();
-    cm.spec.forceRedeploymentReason = `recovery-${date}`;
-
-    await k8sPatch({
+  return (queryParams) =>
+    k8sPatch({
       model: kubeControllerManagerModel,
       resource: {
         metadata: {
@@ -133,95 +123,99 @@ const patchKubeControllerManager = async (
           value: cm.spec,
         },
       ],
+      queryParams,
     });
-  } catch (e) {
-    throw new PersistError(t('Failed to patch kubecontrollermanager'), getErrorMessage(t, e));
-  }
 };
 
-const persistProviderConfigMap = async (
+const findAndReplace = (str: string, init: string, replacement: string): string | undefined => {
+  if (!str || !str.includes(init)) {
+    return undefined;
+  }
+
+  return str.replace(init, replacement);
+};
+
+const updateIniFormat = (
+  t: TFunction<'vsphere-plugin'>,
+  values: ConnectionFormFormikValues,
+  initValues: ConnectionFormFormikValues,
+  cloudProviderConfig: ConfigMap,
+): string => {
+  let cfg = cloudProviderConfig.data.config;
+
+  const initVCenter = initValues.vcenter || 'vcenterplaceholder';
+  const initVCenterCluster = initValues.vCenterCluster || 'clusterplaceholder';
+  const initDatacenter = initValues.datacenter || 'datacenterplaceholder';
+  const initDatastore =
+    initValues.defaultDatastore || '/datacenterplaceholder/datastore/defaultdatastoreplaceholder';
+  const initFolder = initValues.folder || '/datacenterplaceholder/vm/folderplaceholder';
+
+  cfg = findAndReplace(
+    cfg,
+    `[VirtualCenter "${initVCenter}"]`,
+    `[VirtualCenter "${values.vcenter}"]`,
+  );
+
+  cfg = findAndReplace(cfg, `server = "${initVCenter}"`, `server = "${values.vcenter}"`);
+  cfg = findAndReplace(
+    cfg,
+    `datacenters = "${initDatacenter}"`,
+    `datacenters = "${values.datacenter}"`,
+  );
+  cfg = findAndReplace(
+    cfg,
+    `datacenter = "${initDatacenter}"`,
+    `datacenter = "${values.datacenter}"`,
+  );
+  cfg = findAndReplace(
+    cfg,
+    `default-datastore = "${initDatastore}"`,
+    `default-datastore = "${values.defaultDatastore}"`,
+  );
+  cfg = findAndReplace(cfg, `folder = "${initFolder}"`, `folder = "${values.folder}"`);
+  cfg = findAndReplace(
+    cfg,
+    `resourcepool-path = "/${initDatacenter}/host/${initVCenterCluster}/Resources"`,
+    `resourcepool-path = "/${values.datacenter}/host/${values.vCenterCluster}/Resources"`,
+  );
+
+  if (!cfg) {
+    throw new PersistError(
+      t('Failed to parse cloud provider config {{cm}}', { cm: cloudProviderConfig.metadata.name }),
+      t('Unknown format'),
+    );
+  }
+
+  return cfg;
+};
+
+const getPersistProviderConfigMapOp = async (
   t: TFunction<'vsphere-plugin'>,
   configMapModel: K8sModel,
   values: ConnectionFormFormikValues,
-  cloudProviderConfig?: ConfigMap,
-): Promise<void> => {
-  const { vcenter, datacenter, defaultDatastore, folder, vCenterCluster } = values;
+  initValues: ConnectionFormFormikValues,
+  cloudProviderConfig: ConfigMap,
+): Promise<PersistOp> => {
+  const cfg = updateIniFormat(t, values, initValues, cloudProviderConfig);
 
-  if (cloudProviderConfig) {
-    const configIniString = mergeCloudProviderConfig(
-      cloudProviderConfig.data?.config || '',
-      values,
-    );
-
-    try {
-      await k8sPatch({
-        model: configMapModel,
-        resource: {
-          metadata: {
-            name: VSPHERE_CONFIGMAP_NAME,
-            namespace: VSPHERE_CONFIGMAP_NAMESPACE,
-          },
+  return (queryParams) =>
+    k8sPatch({
+      model: configMapModel,
+      resource: {
+        metadata: {
+          name: cloudProviderConfig.metadata.name,
+          namespace: cloudProviderConfig.metadata.namespace,
         },
-        data: [
-          {
-            op: cloudProviderConfig.data ? 'replace' : 'add',
-            path: '/data',
-            value: { config: configIniString },
-          },
-        ],
-      });
-    } catch (e) {
-      throw new PersistError(
-        t('Failed to patch {{cm}}', { cm: VSPHERE_CONFIGMAP_NAME }),
-        getErrorMessage(t, e),
-      );
-    }
-  } else {
-    // Not found - create new one
-
-    // Keep following allignment
-    const configIni = `[Global]
-secret-name = "${VSPHERE_CREDS_SECRET_NAME}"
-secret-namespace = "${VSPHERE_CREDS_SECRET_NAMESPACE}"
-insecure-flag = "1"
-
-[Workspace]
-server = "${vcenter}"
-datacenter = "${datacenter}"
-default-datastore = "${defaultDatastore}"
-folder = "${folder}"
-resourcepool-path = "/${datacenter}/host/${vCenterCluster}/Resources"
-
-[VirtualCenter "${vcenter}"]
-datacenters = "${datacenter}"
-`;
-
-    const data: ConfigMap = {
-      apiVersion: configMapModel.apiVersion,
-      kind: configMapModel.kind,
-      metadata: {
-        name: VSPHERE_CONFIGMAP_NAME,
-        namespace: VSPHERE_CONFIGMAP_NAMESPACE,
       },
-      data: {
-        config: configIni,
-      },
-    };
-
-    try {
-      await k8sCreate({
-        model: configMapModel,
-        data,
-      });
-    } catch (e) {
-      throw new PersistError(
-        t('Failed to create {{cm}} ConfigMap', {
-          cm: VSPHERE_CONFIGMAP_NAME,
-        }),
-        getErrorMessage(t, e),
-      );
-    }
-  }
+      data: [
+        {
+          op: 'replace',
+          path: '/data',
+          value: { config: cfg },
+        },
+      ],
+      queryParams,
+    });
 };
 
 const taintValue = {
@@ -230,12 +224,12 @@ const taintValue = {
   effect: 'NoSchedule',
 };
 
-const addTaints = async (t: TFunction<'vsphere-plugin'>, nodesModel: K8sModel) => {
+const getAddTaintsOps = async (nodesModel: K8sModel): Promise<PersistOp[]> => {
   const nodes = await k8sListResourceItems<NodeKind>({ model: nodesModel, queryParams: {} });
   const patchRequests = [];
   for (const node of nodes) {
     if (!node.spec.taints) {
-      patchRequests.push(
+      patchRequests.push((queryParams) =>
         k8sPatch({
           model: nodesModel,
           resource: node,
@@ -246,6 +240,7 @@ const addTaints = async (t: TFunction<'vsphere-plugin'>, nodesModel: K8sModel) =
               value: [taintValue],
             },
           ],
+          queryParams,
         }),
       );
     } else {
@@ -253,7 +248,7 @@ const addTaints = async (t: TFunction<'vsphere-plugin'>, nodesModel: K8sModel) =
         (taint) => taint.key === 'node.cloudprovider.kubernetes.io/uninitialized',
       );
       if (taintIndex === -1) {
-        patchRequests.push(
+        patchRequests.push((queryParams) =>
           k8sPatch({
             model: nodesModel,
             resource: node,
@@ -264,12 +259,13 @@ const addTaints = async (t: TFunction<'vsphere-plugin'>, nodesModel: K8sModel) =
                 value: taintValue,
               },
             ],
+            queryParams,
           }),
         );
       } else {
         const taint = node.spec.taints[taintIndex];
         if (!(taint.effect === taintValue.value && taint.key === taintValue.key)) {
-          patchRequests.push(
+          patchRequests.push((queryParams) =>
             k8sPatch({
               model: nodesModel,
               resource: node,
@@ -280,68 +276,56 @@ const addTaints = async (t: TFunction<'vsphere-plugin'>, nodesModel: K8sModel) =
                   value: taintValue,
                 },
               ],
+              queryParams,
             }),
           );
         }
       }
     }
   }
-  const results = await Promise.allSettled(patchRequests);
-  const rejectedPromise = results.findIndex((r) => r.status === 'rejected');
-  if (rejectedPromise !== -1) {
-    throw new PersistError(
-      t('Failed to add taint to node {{node}}', {
-        node: nodes[rejectedPromise].metadata?.name,
-      }),
-      getErrorMessage(t, (results[rejectedPromise] as PromiseRejectedResult).reason),
-    );
-  }
+  return patchRequests;
 };
 
-const persistInfrastructure = async (
-  t: TFunction<'vsphere-plugin'>,
+const getInfraFailureDomain = (infrastructure: Infrastructure, vcenter: string) => {
+  if (!infrastructure.spec?.platformSpec?.vsphere?.failureDomains?.length) {
+    return undefined;
+  }
+  return vcenter
+    ? infrastructure.spec.platformSpec.vsphere.failureDomains.find((f) => f.server === vcenter)
+    : infrastructure.spec.platformSpec.vsphere.failureDomains[0];
+};
+
+const getPersistInfrastructureOp = async (
   infrastructureModel: K8sModel,
   values: ConnectionFormFormikValues,
-) => {
-  const spec: Infrastructure['spec'] = {
-    cloudConfig: {
-      key: 'config',
-      name: VSPHERE_CONFIGMAP_NAME,
-    },
-    platformSpec: {
-      type: 'VSphere',
-      vsphere: {
-        failureDomains: [
-          {
-            name: FAILURE_DOMAIN_NAME,
-            region: 'generated-region',
-            server: values.vcenter,
-            topology: {
-              computeCluster: `/${values.datacenter}/host/${values.vCenterCluster}`,
-              datacenter: values.datacenter,
-              datastore: values.defaultDatastore,
-              networks: [values.vCenterCluster],
-              resourcePool: `/${values.datacenter}/host/${values.vCenterCluster}/Resources`,
-            },
-            zone: 'generated-zone',
-          },
-        ],
-        nodeNetworking: {
-          external: {},
-          internal: {},
-        },
-        vcenters: [
-          {
-            datacenters: [values.datacenter],
-            port: 443,
-            server: values.vcenter,
-          },
-        ],
-      },
-    },
-  };
-  try {
-    await k8sPatch({
+  initValues: ConnectionFormFormikValues,
+): Promise<PersistOp> => {
+  const infrastructure = await k8sGet<Infrastructure>({
+    model: infrastructureModel,
+    name: 'cluster',
+  });
+
+  const vCenterDomainCfg = getInfraFailureDomain(infrastructure, initValues.vcenter);
+  if (!vCenterDomainCfg) {
+    return Promise.resolve(() => Promise.resolve());
+  }
+
+  vCenterDomainCfg.server = values.vcenter;
+  vCenterDomainCfg.topology.computeCluster = `/${values.datacenter}/host/${values.vCenterCluster}`;
+  vCenterDomainCfg.topology.datacenter = values.datacenter;
+  vCenterDomainCfg.topology.datastore = values.defaultDatastore;
+  vCenterDomainCfg.topology.networks = [values.vCenterCluster];
+  vCenterDomainCfg.topology.folder = values.folder;
+  vCenterDomainCfg.topology.resourcePool = `/${values.datacenter}/host/${values.vCenterCluster}/Resources`;
+
+  const vCenterCfg = initValues.vcenter
+    ? infrastructure.spec.platformSpec.vsphere.vcenters.find((c) => c.server === initValues.vcenter)
+    : infrastructure.spec.platformSpec.vsphere.vcenters[0];
+  vCenterCfg.server = values.vcenter;
+  vCenterCfg.datacenters = [values.datacenter];
+
+  return (queryParams) =>
+    k8sPatch({
       model: infrastructureModel,
       resource: {
         metadata: {
@@ -352,10 +336,64 @@ const persistInfrastructure = async (
         {
           op: 'replace',
           path: `/spec`,
-          value: spec,
+          value: infrastructure.spec,
         },
       ],
+      queryParams,
     });
+};
+
+const runPatches = async ({
+  t,
+  persistSecret,
+  persistKubeControllerManager,
+  persistProviderCM,
+  persistInfrastructure,
+  addTaints,
+  queryParams,
+}: {
+  t: TFunction<'vsphere-plugin'>;
+  persistSecret: PersistOp;
+  persistKubeControllerManager: PersistOp;
+  persistProviderCM: PersistOp;
+  persistInfrastructure: PersistOp;
+  addTaints: PersistOp[];
+  queryParams?: QueryParams;
+}) => {
+  try {
+    await persistSecret(queryParams);
+  } catch (e) {
+    throw new PersistError(
+      t('Failed to persist {{secret}}', {
+        secret: VSPHERE_CREDS_SECRET_NAME,
+      }),
+      getErrorMessage(t, e),
+    );
+  }
+
+  try {
+    await persistKubeControllerManager(queryParams);
+  } catch (e) {
+    throw new PersistError(t('Failed to patch kubecontrollermanager'), getErrorMessage(t, e));
+  }
+
+  try {
+    await persistProviderCM(queryParams);
+  } catch (e) {
+    throw new PersistError(t('Failed to patch cloud provider config'), getErrorMessage(t, e));
+  }
+
+  const results = await Promise.allSettled(addTaints.map((op) => op(queryParams)));
+  const rejectedPromise = results.find((r) => r.status === 'rejected');
+  if (rejectedPromise) {
+    throw new PersistError(
+      t('Failed to add taint to nodes'),
+      getErrorMessage(t, (rejectedPromise as PromiseRejectedResult).reason),
+    );
+  }
+
+  try {
+    await persistInfrastructure(queryParams);
   } catch (e) {
     throw new PersistError(t('Failed to patch infrastructure spec'), getErrorMessage(t, e));
   }
@@ -377,11 +415,44 @@ export const persist = async (
     infrastructureModel: K8sModel;
   },
   values: ConnectionFormFormikValues,
+  initValues: ConnectionFormFormikValues,
   cloudProviderConfig?: ConfigMap,
 ): Promise<void> => {
-  await persistSecret(t, secretModel, values);
-  await patchKubeControllerManager(t, kubeControllerManagerModel);
-  await persistProviderConfigMap(t, configMapModel, values, cloudProviderConfig);
-  await addTaints(t, nodeModel);
-  await persistInfrastructure(t, infrastructureModel, values);
+  const persistSecret = await getPersistSecretOp(secretModel, values, initValues);
+  const persistKubeControllerManager = await getPatchKubeControllerManagerOp(
+    t,
+    kubeControllerManagerModel,
+  );
+  const persistProviderCM = await getPersistProviderConfigMapOp(
+    t,
+    configMapModel,
+    values,
+    initValues,
+    cloudProviderConfig,
+  );
+  const addTaints = await getAddTaintsOps(nodeModel);
+  const persistInfrastructure = await getPersistInfrastructureOp(
+    infrastructureModel,
+    values,
+    initValues,
+  );
+
+  await runPatches({
+    t,
+    persistSecret,
+    persistKubeControllerManager,
+    persistProviderCM,
+    persistInfrastructure,
+    addTaints,
+    queryParams: { dryRun: 'All' },
+  });
+
+  await runPatches({
+    t,
+    persistSecret,
+    persistKubeControllerManager,
+    persistProviderCM,
+    persistInfrastructure,
+    addTaints,
+  });
 };
