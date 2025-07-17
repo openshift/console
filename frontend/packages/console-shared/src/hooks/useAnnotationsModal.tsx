@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
+import type { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
 import { UseAnnotationsModal } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
