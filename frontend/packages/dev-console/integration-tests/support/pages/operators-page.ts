@@ -144,11 +144,6 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.gitopsPrimer).click();
         break;
       }
-      case 'Service Binding':
-      case operators.ServiceBinding: {
-        cy.get(operatorsPO.operatorHub.serviceBinding).click();
-        break;
-      }
       case 'Crunchy Postgres for Kubernetes':
       case operators.CrunchyPostgresforKubernetes: {
         cy.get(operatorsPO.operatorHub.CrunchyPostgresforKubernetes).click();
