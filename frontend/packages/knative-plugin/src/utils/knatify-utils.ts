@@ -16,6 +16,7 @@ import {
   DeployImageFormData,
   Resources,
 } from '@console/dev-console/src/components/import/import-types';
+import { CUSTOM_ICON_ANNOTATION } from '@console/dev-console/src/const';
 import { RegistryType } from '@console/dev-console/src/utils/imagestream-utils';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { getLimitsDataFromResource } from '@console/shared/src';
@@ -209,7 +210,13 @@ export const getInitialValuesKnatify = (
   imageStreams: K8sResourceKind[],
 ): DeployImageFormData => {
   const commonValues = getCommonInitialValues(ksvcResourceData, namespace);
-  const iconValues = getIconInitialValues(ksvcResourceData);
+  // force getIconInitialValues to treat this knative service as a Deployment
+  // as the initial values come from one
+  const iconValues = getIconInitialValues(ksvcResourceData, false);
+  // we are going to move this annotation to spec.template.annotations later
+  if (commonValues.annotations?.[CUSTOM_ICON_ANNOTATION]) {
+    delete commonValues.annotations[CUSTOM_ICON_ANNOTATION];
+  }
   const internalImageValues = getInternalImageInitialValues(
     ksvcResourceData,
     namespace,

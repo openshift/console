@@ -5,6 +5,7 @@ import {
   GitImportFormData,
   UploadJarFormData,
 } from '@console/dev-console/src/components/import/import-types';
+import { CUSTOM_ICON_ANNOTATION } from '@console/dev-console/src/const';
 import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource-label-utils';
 import { ImportStrategy } from '@console/git-service/src';
 import {
@@ -15,7 +16,7 @@ import {
   k8sUpdate,
   k8sKill,
 } from '@console/internal/module/k8s';
-import { NameValuePair } from 'packages/console-shared/src';
+import type { NameValuePair } from '@console/shared/src/components/formik-fields/field-types';
 import { ServiceModel, DomainMappingModel } from '../models';
 import { DomainMappingResponse, DomainMappingResponseAction } from '../types';
 
@@ -47,6 +48,7 @@ export const getKnativeServiceDepResource = (
     healthChecks,
     resources,
     formType,
+    customIcon,
   } = formData;
   const { fileUpload } = formData as UploadJarFormData;
   const selectedStrategy = formData?.import?.selectedStrategy;
@@ -138,6 +140,9 @@ export const getKnativeServiceDepResource = (
             }),
             ...(concurrencyutilization && {
               'autoscaling.knative.dev/target-utilization-percentage': `${concurrencyutilization}`,
+            }),
+            ...(customIcon && {
+              [CUSTOM_ICON_ANNOTATION]: customIcon,
             }),
           },
         },
