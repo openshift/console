@@ -158,7 +158,7 @@ describe('SourceSection', () => {
     await waitFor(() => {
       expect(renderResult.queryByText('Git Repo URL')).toBeFalsy();
       expect(renderResult.queryByText('Show advanced Git options')).toBeFalsy();
-      expect(renderResult.queryAllByText('Dockerfile')).toHaveLength(2);
+      expect(renderResult.queryAllByText('Dockerfile')).toHaveLength(1);
     });
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
