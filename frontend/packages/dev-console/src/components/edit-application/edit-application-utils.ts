@@ -478,7 +478,10 @@ export const getCommonInitialValues = (
 export const getIconInitialValues = (editAppResource: K8sResourceKind) => {
   const runtimeLabel = editAppResource?.metadata?.labels?.[RUNTIME_LABEL];
   const runtimeIcon = runtimeLabel && hasIcon(runtimeLabel) ? runtimeLabel : null;
-  const customIcon = editAppResource?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null;
+  const customIcon =
+    getResourcesType(editAppResource) === Resources.KnativeService
+      ? editAppResource?.spec?.template?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null
+      : editAppResource?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null;
 
   return {
     runtimeIcon,
