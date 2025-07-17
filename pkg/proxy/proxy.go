@@ -99,17 +99,6 @@ func decodeSubprotocol(encodedProtocol string) (string, error) {
 	return string(decodedProtocol), err
 }
 
-var HeaderBlacklist = []string{"Cookie", "X-CSRFToken"}
-
-// pass through headers that are needed for browser caching and content negotiation,
-// except "Cookie" and "X-CSRFToken" headers.
-func CopyRequestHeaders(originalRequest, newRequest *http.Request) {
-	newRequest.Header = originalRequest.Header.Clone()
-	for _, h := range HeaderBlacklist {
-		newRequest.Header.Del(h)
-	}
-}
-
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if klog.V(4).Enabled() {
 		klog.Infof("PROXY: %#q\n", SingleJoiningSlash(p.config.Endpoint.String(), r.URL.Path))
@@ -130,7 +119,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	for _, h := range HeaderBlacklist {
+	for _, h := range p.config.HeaderBlacklist {
 		r.Header.Del(h)
 	}
 
