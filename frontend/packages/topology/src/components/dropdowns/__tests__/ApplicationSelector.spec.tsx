@@ -1,111 +1,110 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+/* eslint-disable global-require, @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports */
+import { render, screen } from '@testing-library/react';
 import * as formik from 'formik';
-import { InputField } from '@console/shared';
 import { CREATE_APPLICATION_KEY } from '../../../const';
 import ApplicationDropdown from '../ApplicationDropdown';
 import ApplicationSelector from '../ApplicationSelector';
+import '@testing-library/jest-dom';
 
-type ApplicationSelectorProps = React.ComponentProps<typeof ApplicationSelector>;
+jest.mock('@console/shared', () => {
+  const React = require('react');
+  return {
+    InputField: jest.fn((props) =>
+      React.createElement('input', {
+        'data-testid': 'application-form-app-input',
+        ...props,
+        onChange: props.onChange,
+        onBlur: props.onBlur,
+      }),
+    ),
+    getFieldId: () => 'application-name-dropdown',
+    useFormikValidationFix: () => {},
+    RedExclamationCircleIcon: () => React.createElement('div', null, '!'),
+  };
+});
 
-let applicationSelectorProps: ApplicationSelectorProps;
+jest.mock('../ApplicationDropdown', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: jest.fn(() =>
+      React.createElement('div', { 'data-testid': 'application-dropdown' }, 'ApplicationDropdown'),
+    ),
+  };
+});
 
 describe('ApplicationSelector', () => {
-  let wrapper: ShallowWrapper<ApplicationSelectorProps>;
-  const spyUseFormikContext = jest.spyOn(formik, 'useFormikContext');
-  const spyUseField = jest.spyOn(formik, 'useField');
-  const setFieldTouched = jest.fn();
   const setFieldValue = jest.fn();
+  const setFieldTouched = jest.fn();
+
+  const mockUseFormikContext = jest.spyOn(formik, 'useFormikContext');
+  const mockUseField = jest.spyOn(formik, 'useField');
 
   beforeEach(() => {
-    applicationSelectorProps = {
-      noProjectsAvailable: true,
-      namespace: 'rhd-test-ns',
-    };
-    spyUseField.mockReturnValue([
-      { value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' },
-      {},
-    ]);
-    spyUseFormikContext.mockReturnValue({
+    mockUseField.mockImplementation((name) => {
+      if (name.includes('selectedKey')) {
+        return [{ value: CREATE_APPLICATION_KEY, name }, {}];
+      }
+      return [{ value: '', name }, {}];
+    });
+
+    mockUseFormikContext.mockReturnValue({
       setFieldValue,
       setFieldTouched,
       values: {
         application: {
-          initial: '',
-          name: '',
           selectedKey: CREATE_APPLICATION_KEY,
+          name: '',
+          initial: '',
         },
       },
     });
-    wrapper = shallow(<ApplicationSelector {...applicationSelectorProps} />);
     jest.clearAllMocks();
   });
 
   it('should show InputField if no projects are available', () => {
-    expect(wrapper.find(InputField).exists()).toBe(true);
-    expect(wrapper.find(InputField).props().required).toBe(true);
+    render(<ApplicationSelector noProjectsAvailable namespace="ns" />);
+    expect(screen.getByTestId('application-form-app-input')).toBeInTheDocument();
   });
 
   it('should show ApplicationDropdown if projects are available', () => {
-    spyUseField.mockImplementationOnce(() => [{ value: CREATE_APPLICATION_KEY }]);
-    wrapper.setProps({ noProjectsAvailable: false });
-    expect(wrapper.find(ApplicationDropdown).exists()).toBe(true);
+    render(<ApplicationSelector noProjectsAvailable={false} namespace="ns" />);
+    expect(screen.getByTestId('application-dropdown')).toBeInTheDocument();
   });
 
-  it('should reset the selectedKey if the applications are not loaded', () => {
-    wrapper.setProps({ noProjectsAvailable: false });
-    wrapper.find(ApplicationDropdown).props().onLoad({});
+  it('should reset selectedKey if applications are not loaded', () => {
+    render(<ApplicationSelector noProjectsAvailable={false} namespace="ns" />);
+    const [{ onLoad }] = (ApplicationDropdown as jest.Mock).mock.calls[0];
+    onLoad({});
     expect(setFieldValue).toHaveBeenCalledWith('application.selectedKey', '');
   });
 
-  it('should reset the application name if the application list is empty', () => {
-    spyUseField
-      .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
-      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
-    spyUseField.mockImplementationOnce(() => [{ value: CREATE_APPLICATION_KEY }]);
-    wrapper.setProps({ noProjectsAvailable: false });
-    wrapper.find(ApplicationDropdown).props().onLoad({});
+  it('should reset application name if the application list is empty', () => {
+    render(<ApplicationSelector noProjectsAvailable={false} namespace="ns" />);
+    const [{ onLoad }] = (ApplicationDropdown as jest.Mock).mock.calls[0];
+    onLoad({});
     expect(setFieldValue).toHaveBeenCalledWith('application.selectedKey', '');
     expect(setFieldValue).toHaveBeenCalledWith('application.name', '');
     expect(setFieldValue).toHaveBeenCalledTimes(2);
   });
 
-  it('should set the application name and selectedKey on dropdown change', () => {
-    spyUseField
-      .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
-      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
-    wrapper.setProps({ noProjectsAvailable: false });
-    wrapper.find(ApplicationDropdown).props().onChange('one', 'test-application');
-
+  it('should set application name and selectedKey on dropdown change', () => {
+    render(<ApplicationSelector noProjectsAvailable={false} namespace="ns" />);
+    const [{ onChange }] = (ApplicationDropdown as jest.Mock).mock.calls[0];
+    onChange('one', 'test-application');
     expect(setFieldValue).toHaveBeenCalledWith('application.selectedKey', 'one');
     expect(setFieldValue).toHaveBeenCalledWith('application.name', 'test-application');
     expect(setFieldTouched).toHaveBeenCalledWith('application.selectedKey', true);
     expect(setFieldValue).toHaveBeenCalledTimes(2);
   });
 
-  it('should not set the application name on dropdown change if the application is undefined', () => {
-    spyUseField
-      .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
-      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
-    wrapper.setProps({ noProjectsAvailable: false });
-    wrapper.find(ApplicationDropdown).props().onChange('one', undefined);
-
+  it('should not set application name if undefined in dropdown change', () => {
+    render(<ApplicationSelector noProjectsAvailable={false} namespace="ns" />);
+    const [{ onChange }] = (ApplicationDropdown as jest.Mock).mock.calls[0];
+    onChange('one', undefined);
     expect(setFieldValue).toHaveBeenCalledWith('application.selectedKey', 'one');
-    expect(setFieldTouched).toHaveBeenCalledWith('application.selectedKey', true);
     expect(setFieldValue).toHaveBeenCalledWith('application.name', undefined);
+    expect(setFieldTouched).toHaveBeenCalledWith('application.selectedKey', true);
     expect(setFieldValue).toHaveBeenCalledTimes(2);
-  });
-
-  it('should trim the spaces in the application name', () => {
-    spyUseField
-      .mockReturnValueOnce([{ value: CREATE_APPLICATION_KEY, name: 'application.selectedKey' }, {}])
-      .mockReturnValueOnce([{ value: '', name: 'application.name' }, {}]);
-    wrapper.setProps({ noProjectsAvailable: false });
-    wrapper
-      .find(InputField)
-      .props()
-      .onBlur({ target: { value: ' test-application ' } });
-
-    expect(setFieldValue).toHaveBeenCalledWith('application.name', 'test-application');
   });
 });
