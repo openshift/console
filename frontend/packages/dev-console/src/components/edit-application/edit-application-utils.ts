@@ -475,10 +475,23 @@ export const getCommonInitialValues = (
   return commonInitialValues;
 };
 
-export const getIconInitialValues = (editAppResource: K8sResourceKind) => {
+/**
+ * Read the icon values from the resource and return the initial values for the icon.
+ * @param editAppResource The resource to read the icon values from.
+ * @param overrideKnative If true, it will only read from spec.template.metadata.annotation instead of metadata.annotations, and vice versa.
+ */
+export const getIconInitialValues = (
+  editAppResource: K8sResourceKind,
+  overrideKnative?: boolean,
+) => {
   const runtimeLabel = editAppResource?.metadata?.labels?.[RUNTIME_LABEL];
   const runtimeIcon = runtimeLabel && hasIcon(runtimeLabel) ? runtimeLabel : null;
-  const customIcon = editAppResource?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null;
+
+  const isKnative =
+    overrideKnative ?? getResourcesType(editAppResource) === Resources.KnativeService;
+  const customIcon = isKnative
+    ? editAppResource?.spec?.template?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null
+    : editAppResource?.metadata?.annotations?.[CUSTOM_ICON_ANNOTATION] ?? null;
 
   return {
     runtimeIcon,
