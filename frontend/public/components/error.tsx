@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useLocation } from 'react-router';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ButtonLink } from '@console/shared/src/components/links/ButtonLink';
 import {
@@ -8,11 +9,20 @@ import {
 } from '@patternfly/react-component-groups';
 import { Trans, useTranslation } from 'react-i18next';
 import { CodeBlock, CodeBlockCode, Stack, StackItem } from '@patternfly/react-core';
-
-import { useLocation } from 'react-router';
+import { useFavoritesOptions } from './useFavoritesOptions';
 
 export const ErrorPage404: React.FC<PfErrorStateProps> = (props) => {
   const { t } = useTranslation();
+  const location = useLocation();
+
+  const [favorites, , loaded] = useFavoritesOptions();
+
+  const currentPath = location.pathname;
+  const queryParams = new URLSearchParams(location.search);
+  const fromFavorites = queryParams.get('from') === 'favorites';
+
+  const isDeletedFavorite =
+    fromFavorites && loaded && favorites?.some((fav) => fav.url === currentPath);
 
   return (
     <>
@@ -22,7 +32,18 @@ export const ErrorPage404: React.FC<PfErrorStateProps> = (props) => {
         icon={NotFoundIcon}
         headingLevel="h1"
         titleText={t('public~404: Page Not Found')}
-        defaultBodyText={t("public~We couldn't find that page.")}
+        defaultBodyText={
+          <>
+            {t("public~We couldn't find that page.")}
+            {isDeletedFavorite && (
+              <p>
+                {t(
+                  'public~If you would like to remove it from your favorites list, unfavorite it.',
+                )}
+              </p>
+            )}
+          </>
+        }
         customFooter={
           <ButtonLink variant="link" href="/">
             {t('public~Return to homepage')}
