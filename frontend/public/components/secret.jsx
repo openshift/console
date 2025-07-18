@@ -1,8 +1,8 @@
 import * as _ from 'lodash-es';
+import * as React from 'react';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import { SecretData } from './configmap-and-secret-data';
@@ -17,21 +17,19 @@ import {
   resourceObjPath,
 } from './utils';
 import { SecretType } from './secrets/create-secret/types';
-import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
+import { useSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
-export const addSecretToWorkload = (kindObj, secret) => {
-  const { name: secretName, namespace } = secret.metadata;
-
-  return {
-    callback: () => configureAddSecretToWorkloadModal({ secretName, namespace, blocking: true }),
-    label: i18next.t('public~Add Secret to workload'),
+export const addSecretToWorkload = (t, addSecretToWorkloadLauncher) => {
+  return () => {
+    return {
+      callback: () => addSecretToWorkloadLauncher(),
+      label: t('public~Add Secret to workload'),
+    };
   };
 };
-
-const actionButtons = [addSecretToWorkload];
 
 const menuActions = [
   Kebab.factory.ModifyLabels,
@@ -258,13 +256,24 @@ const SecretsPage = (props) => {
   );
 };
 
-const SecretsDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    buttonActions={actionButtons}
-    menuActions={menuActions}
-    pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
-  />
-);
+const SecretsDetailsPage = (props) => {
+  const { t } = useTranslation();
+  const { name: secretName, namespace } = props;
+  const addSecretToWorkloadLauncher = useSecretToWorkloadModalLauncher({ secretName, namespace });
+
+  const actionButtons = React.useMemo(() => [addSecretToWorkload(t, addSecretToWorkloadLauncher)], [
+    t,
+    addSecretToWorkloadLauncher,
+  ]);
+
+  return (
+    <DetailsPage
+      {...props}
+      buttonActions={actionButtons}
+      menuActions={menuActions}
+      pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
+    />
+  );
+};
 
 export { SecretsList, SecretsPage, SecretsDetailsPage };
