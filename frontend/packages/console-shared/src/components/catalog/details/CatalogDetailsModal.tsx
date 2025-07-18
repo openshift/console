@@ -1,6 +1,14 @@
 import * as React from 'react';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
-import { Split, SplitItem, Button, ButtonVariant } from '@patternfly/react-core';
+import {
+  Split,
+  SplitItem,
+  Button,
+  ButtonVariant,
+  Divider,
+  Stack,
+  StackItem,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
@@ -9,8 +17,6 @@ import CatalogBadges from '../CatalogBadges';
 import { useCtaLinks } from '../hooks/useCtaLink';
 import { getIconProps } from '../utils/catalog-utils';
 import CatalogDetailsPanel from './CatalogDetailsPanel';
-
-import './CatalogDetailsModal.scss';
 
 type CatalogDetailsModalProps = {
   item: CatalogItem;
@@ -66,7 +72,9 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
           key={index}
           variant={getButtonVariant(variant)}
           className="co-catalog-page__overlay-action"
+          // TODO: remove className once no longer needed by existing tests
           onClick={handleClick}
+          data-test={`${name}-cta-${index}`}
         >
           {label}
         </Button>
@@ -77,7 +85,9 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
     if (to) {
       return (
         <Link
+          data-test={`${name}-cta-${index}`}
           key={index}
+          // TODO: remove className once no longer needed by existing tests
           className={`pf-v6-c-button pf-m-${variant || 'primary'} co-catalog-page__overlay-action`}
           to={to}
           role="button"
@@ -92,35 +102,49 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
   };
 
   const modalHeader = (
-    <>
-      <CatalogItemHeader
-        className="co-catalog-page__overlay-header"
-        title={title || name}
-        vendor={vendor}
-        {...getIconProps(item)}
-      />
-      <Split className="odc-catalog-details-modal__header">
-        <SplitItem>
-          {ctaLinks.length > 0 && (
-            <div className="co-catalog-page__overlay-actions">
-              {ctaLinks.map((ctaLink, index) => renderAction(ctaLink, index))}
-            </div>
-          )}
-        </SplitItem>
-        <SplitItem>{badges?.length > 0 ? <CatalogBadges badges={badges} /> : undefined}</SplitItem>
-      </Split>
-    </>
+    <CatalogItemHeader
+      // TODO: remove className once no longer needed by existing tests
+      className="co-catalog-page__overlay-header"
+      title={title || name}
+      vendor={vendor}
+      {...getIconProps(item)}
+    />
   );
 
   return (
     <Modal
+      // TODO: remove className once no longer needed by existing tests
       className="co-catalog-page__overlay co-catalog-page__overlay--right"
       isOpen={!!item}
       onClose={onClose}
       aria-label={item.name}
       header={modalHeader}
     >
-      <CatalogDetailsPanel item={item} />
+      <Stack hasGutter>
+        <StackItem>
+          {/* TODO: remove className once no longer needed by existing tests */}
+          <Split className="odc-catalog-details-modal__header">
+            <SplitItem>
+              {ctaLinks.length > 0 && (
+                // TODO: remove className once no longer needed by existing tests
+                <div className="co-catalog-page__overlay-actions">
+                  {ctaLinks.map((ctaLink, index) => renderAction(ctaLink, index))}
+                </div>
+              )}
+            </SplitItem>
+            <SplitItem isFilled />
+            <SplitItem>
+              {badges?.length > 0 ? <CatalogBadges badges={badges} /> : undefined}
+            </SplitItem>
+          </Split>
+        </StackItem>
+        <StackItem>
+          <Divider />
+        </StackItem>
+        <StackItem>
+          <CatalogDetailsPanel item={item} />
+        </StackItem>
+      </Stack>
     </Modal>
   );
 };

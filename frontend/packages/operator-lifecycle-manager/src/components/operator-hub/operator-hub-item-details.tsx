@@ -173,35 +173,43 @@ const OperatorHubItemDetailsHint: React.FC<OperatorHubItemDetailsHintProps> = (p
     installedChannel,
   } = props;
   if (isInstalling) {
-    return <InstallingHint subscription={subscription} />;
+    return (
+      <StackItem>
+        <InstallingHint subscription={subscription} />
+      </StackItem>
+    );
   }
 
   if (installed) {
     return (
-      <InstalledHint
-        latestVersion={latestVersion}
-        subscription={subscription}
-        installedChannel={installedChannel}
-      />
+      <StackItem>
+        <InstalledHint
+          latestVersion={latestVersion}
+          subscription={subscription}
+          installedChannel={installedChannel}
+        />
+      </StackItem>
     );
   }
 
   if (catalogSource === DefaultCatalogSource.CommunityOperators) {
     return (
-      <Hint>
-        <HintTitle>{t('olm~Community Operator')}</HintTitle>
-        <HintBody>
-          {t(
-            'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
-          )}
-        </HintBody>
-        <HintFooter>
-          <ExternalLink
-            href={RH_OPERATOR_SUPPORT_POLICY_LINK}
-            text={t('olm~Learn more about Red Hat’s third party software support policy')}
-          />
-        </HintFooter>
-      </Hint>
+      <StackItem>
+        <Hint>
+          <HintTitle>{t('olm~Community Operator')}</HintTitle>
+          <HintBody>
+            {t(
+              'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
+            )}
+          </HintBody>
+          <HintFooter>
+            <ExternalLink
+              href={RH_OPERATOR_SUPPORT_POLICY_LINK}
+              text={t('olm~Learn more about Red Hat’s third party software support policy')}
+            />
+          </HintFooter>
+        </Hint>
+      </StackItem>
     );
   }
   return null;
@@ -291,16 +299,14 @@ export const OperatorDescription: React.FC<OperatorDescriptionProps> = ({
           />
         </StackItem>
       )}
-      <StackItem>
-        <OperatorHubItemDetailsHint
-          installed={installed}
-          isInstalling={isInstalling}
-          latestVersion={version}
-          catalogSource={catalogSource}
-          subscription={subscription}
-          installedChannel={installedChannel}
-        />
-      </StackItem>
+      <OperatorHubItemDetailsHint
+        installed={installed}
+        isInstalling={isInstalling}
+        latestVersion={version}
+        catalogSource={catalogSource}
+        subscription={subscription}
+        installedChannel={installedChannel}
+      />
       <StackItem>
         {selectedChannelDescription ? (
           <MarkdownView content={selectedChannelDescription} />
