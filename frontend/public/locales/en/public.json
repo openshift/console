@@ -1279,7 +1279,6 @@
   "No resources selected": "No resources selected",
   "Select one or more resources from the dropdown.": "Select one or more resources from the dropdown.",
   "Add Secret to workload": "Add Secret to workload",
-  "Edit Secret": "Edit Secret",
   "Secret details": "Secret details",
   "Secrets": "Secrets",
   "Key/value secret": "Key/value secret",
