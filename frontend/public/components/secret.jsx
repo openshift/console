@@ -5,22 +5,27 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
+import { referenceFor } from '../module/k8s';
 import { SecretData } from './configmap-and-secret-data';
 import {
   Kebab,
   SectionHeading,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   detailsPage,
   navFactory,
-  resourceObjPath,
 } from './utils';
 import { SecretType } from './secrets/create-secret/types';
 import { useSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import {
+  ActionServiceProvider,
+  ActionMenu,
+  ActionMenuVariant,
+  LazyActionMenu,
+} from '@console/shared';
 
 export const addSecretToWorkload = (t, addSecretToWorkloadLauncher) => {
   return () => {
@@ -30,28 +35,6 @@ export const addSecretToWorkload = (t, addSecretToWorkloadLauncher) => {
     };
   };
 };
-
-const menuActions = [
-  Kebab.factory.ModifyLabels,
-  Kebab.factory.ModifyAnnotations,
-  (kind, obj) => {
-    return {
-      // t('public~Edit Secret')
-      labelKey: 'public~Edit Secret',
-      href: `${resourceObjPath(obj, kind.kind)}/edit`,
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        name: obj.metadata.name,
-        namespace: obj.metadata.namespace,
-        verb: 'update',
-      },
-    };
-  },
-  Kebab.factory.Delete,
-];
-
-const kind = 'Secret';
 
 const tableColumnClasses = [
   '',
@@ -64,6 +47,9 @@ const tableColumnClasses = [
 
 const SecretTableRow = ({ obj: secret }) => {
   const data = _.size(secret.data);
+  const resourceKind = referenceFor(secret);
+
+  const context = { [resourceKind]: secret };
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -82,7 +68,7 @@ const SecretTableRow = ({ obj: secret }) => {
         <Timestamp timestamp={secret.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={secret} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
@@ -266,11 +252,25 @@ const SecretsDetailsPage = (props) => {
     addSecretToWorkloadLauncher,
   ]);
 
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceFor(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+
   return (
     <DetailsPage
       {...props}
       buttonActions={actionButtons}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
     />
   );

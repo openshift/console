@@ -11,7 +11,8 @@ import {
   tolerationsModal,
 } from '@console/internal/components/modals';
 import { resourceObjPath, asAccessReview } from '@console/internal/components/utils';
-import { referenceForModel, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { SecretModel } from '@console/internal/models';
+import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { CommonActionCreator, ActionObject } from './types';
 
 /**
@@ -73,18 +74,24 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
           }),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'delete'),
       }),
-      [CommonActionCreator.Edit]: (): Action => ({
-        id: `edit-resource`,
-        label: t('console-app~Edit {{kind}}', { kind: kind?.kind }),
-        cta: {
-          href: `${resourceObjPath(
-            resource as K8sResourceKind,
-            kind?.crd ? referenceForModel(kind as K8sModel) : (kind?.kind as string),
-          )}/yaml`,
-        },
-        // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
-        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'update'),
-      }),
+      [CommonActionCreator.Edit]: (): Action => {
+        let href: string;
+        switch (kind.kind) {
+          case SecretModel.kind:
+            href = `${resourceObjPath(resource, kind.kind)}/edit`;
+            break;
+          default:
+            href = `${resourceObjPath(resource, kind.crd ? referenceFor(kind) : kind.kind)}/yaml`;
+        }
+        return {
+          id: `edit-resource`,
+          label: t('console-app~Edit {{kind}}', { kind: kind.kind }),
+          cta: {
+            href,
+          },
+          accessReview: asAccessReview(kind, resource, 'update'),
+        };
+      },
       [CommonActionCreator.ModifyLabels]: (): Action => ({
         id: 'edit-labels',
         label: t('console-app~Edit labels'),
@@ -149,8 +156,8 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         label: t('console-app~Add storage'),
         cta: {
           href: `${resourceObjPath(
-            resource as K8sResourceKind,
-            kind?.crd ? referenceForModel(kind as K8sModel) : (kind?.kind as string),
+            resource,
+            kind.crd ? referenceFor(kind) : kind.kind,
           )}/attach-storage`,
         },
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
