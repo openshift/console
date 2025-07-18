@@ -14,6 +14,7 @@ import (
 type SessionOptions struct {
 	CookieEncryptionKeyPath     string
 	CookieAuthenticationKeyPath string
+	SessionDir                  string
 }
 
 type CompletedOptions struct {
@@ -23,23 +24,27 @@ type CompletedOptions struct {
 type completedOptions struct {
 	CookieEncryptionKey     []byte
 	CookieAuthenticationKey []byte
+	SessionDir              string
 }
 
 func NewSessionOptions() *SessionOptions {
 	return &SessionOptions{
 		CookieEncryptionKeyPath:     "",
 		CookieAuthenticationKeyPath: "",
+		SessionDir:                  "",
 	}
 }
 
 func (opts *SessionOptions) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&opts.CookieEncryptionKeyPath, "cookie-encryption-key-file", "", "Encryption key used to encrypt cookies. Must be set when --user-auth is 'oidc'.")
 	fs.StringVar(&opts.CookieAuthenticationKeyPath, "cookie-authentication-key-file", "", "Authentication key used to sign cookies. Must be set when --user-auth is 'oidc'.")
+	fs.StringVar(&opts.SessionDir, "session-dir", "", "Directory to store session data. If unspecified, a temporary directory will be used. An emptyDir volume can persist session across container restarts in-cluster.")
 }
 
 func (opts *SessionOptions) ApplyConfig(config *serverconfig.Session) {
 	serverconfig.SetIfUnset(&opts.CookieEncryptionKeyPath, config.CookieEncryptionKeyFile)
 	serverconfig.SetIfUnset(&opts.CookieAuthenticationKeyPath, config.CookieAuthenticationKeyFile)
+	serverconfig.SetIfUnset(&opts.SessionDir, config.SessionDir)
 }
 
 func (opts *SessionOptions) Validate(userAuthType flagvalues.AuthType) []error {
@@ -80,6 +85,10 @@ func (opts *SessionOptions) Complete(userAuthType flagvalues.AuthType) (*Complet
 			return nil, fmt.Errorf("failed to open cookie authentication key file %q: %w", opts.CookieAuthenticationKeyPath, err)
 		}
 		completed.CookieAuthenticationKey = authnKey
+	}
+
+	if len(opts.SessionDir) > 0 {
+		completed.SessionDir = opts.SessionDir
 	}
 
 	return &CompletedOptions{

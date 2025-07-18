@@ -13,7 +13,7 @@ import (
 
 type CombinedSessionStore struct {
 	serverStore *SessionStore
-	clientStore *gorilla.CookieStore // FIXME: we need to determine what the default session expiration should be, possibly make it configurable
+	clientStore *gorilla.FilesystemStore // FIXME: we need to determine what the default session expiration should be, possibly make it configurable
 
 	sessionLock sync.Mutex
 }
@@ -28,8 +28,10 @@ func SessionCookieName() string {
 	return OpenshiftAccessTokenCookieName + "-" + podName
 }
 
-func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath string) *CombinedSessionStore {
-	clientStore := gorilla.NewCookieStore(authnKey, encryptKey)
+func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath string, sessionDir string) *CombinedSessionStore {
+	// Use FilesystemStore to persist sessions across container restarts in-cluster.
+	// This allows us to handle config file changes without forcing a rollout.
+	clientStore := gorilla.NewFilesystemStore(sessionDir, authnKey, encryptKey)
 	clientStore.Options.Secure = secureCookies
 	clientStore.Options.HttpOnly = true
 	clientStore.Options.SameSite = http.SameSiteStrictMode

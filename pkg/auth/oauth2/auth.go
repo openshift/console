@@ -122,6 +122,7 @@ type Config struct {
 	SecureCookies           bool
 	CookieEncryptionKey     []byte
 	CookieAuthenticationKey []byte
+	SessionDir              string
 
 	K8sConfig *rest.Config
 	Metrics   *auth.Metrics
@@ -202,6 +203,7 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 		clientID:               c.ClientID,
 		cookiePath:             c.CookiePath,
 		secureCookies:          c.SecureCookies,
+		sessionDir:             c.SessionDir,
 		constructOAuth2Config:  a.oauth2ConfigConstructor,
 	}
 
@@ -228,6 +230,7 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 			c.CookieEncryptionKey,
 			c.SecureCookies,
 			c.CookiePath,
+			c.SessionDir,
 		)
 		tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig, a.metrics)
 		if err != nil {

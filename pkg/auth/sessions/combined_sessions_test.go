@@ -100,7 +100,7 @@ func TestCombinedSessionStore_AddSession(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			cs := NewSessionStore(authnKey, encryptionKey, true, "/")
+			cs := NewSessionStore(authnKey, encryptionKey, true, "/", "/tmp")
 
 			testWriter := httptest.NewRecorder()
 
@@ -234,7 +234,7 @@ func TestCombinedSessionStore_GetSession(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cs := NewSessionStore(authnKey, encryptionKey, true, "/")
+			cs := NewSessionStore(authnKey, encryptionKey, true, "/", "/tmp")
 			cs.serverStore = testServerSessions
 
 			testCookies := &testCookieFactory{
@@ -361,7 +361,7 @@ func TestCombinedSessionStore_UpdateTokens(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cs := NewSessionStore(authnKey, encryptionKey, true, "/")
+			cs := NewSessionStore(authnKey, encryptionKey, true, "/", "/tmp")
 			cs.serverStore = tt.serverStore
 
 			req, err := http.NewRequest(http.MethodGet, "/", nil)
@@ -549,7 +549,7 @@ func TestCombinedSessionStore_DeleteSession(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cs := NewSessionStore(authnKey, encryptionKey, true, "/")
+			cs := NewSessionStore(authnKey, encryptionKey, true, "/", "/tmp")
 			cs.serverStore = setupServerStore()
 
 			req, err := http.NewRequest(http.MethodGet, "/", nil)

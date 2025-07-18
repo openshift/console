@@ -87,6 +87,7 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 		[]byte(encryptionKey),
 		c.secureCookies,
 		c.cookiePath,
+		c.sessionDir,
 	)
 
 	return o, nil
