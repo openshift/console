@@ -17,8 +17,8 @@ export const ErrorPage404: React.FC<PfErrorStateProps> = (props) => {
 
   const [favorites, , loaded] = useFavoritesOptions();
 
-  const currentPath = location.pathname;
-  const queryParams = new URLSearchParams(location.search);
+  const currentPath = location?.pathname;
+  const queryParams = new URLSearchParams(location?.search);
   const fromFavorites = queryParams.get('from') === 'favorites';
 
   const isDeletedFavorite =

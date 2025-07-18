@@ -21,7 +21,13 @@ const menuActions = [...Kebab.getExtensionsActionsForKind(ConfigMapModel), ...Ke
 
 const kind = 'ConfigMap';
 
-const tableColumnClasses = ['', '', 'hidden-xs', 'hidden-xs', Kebab.columnClass];
+const tableColumnClasses = [
+  '',
+  'pf-v6-u-display-none pf-v6-u-display-table-cell-on-sm',
+  'pf-v6-u-display-none pf-v6-u-display-table-cell-on-sm',
+  'pf-v6-u-display-none pf-v6-u-display-table-cell-on-md',
+  Kebab.columnClass,
+];
 
 const ConfigMapTableRow = ({ obj: configMap }) => {
   return (

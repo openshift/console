@@ -5,21 +5,26 @@ import { ReplicationControllerKind, referenceFor } from '@console/internal/modul
 import { getOwnerNameByKind } from '@console/shared/src';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { usePDBActions } from '../creators/pdb-factory';
-import { ReplicationControllerFactory } from '../creators/replication-controller-factory';
-import { CommonActionCreator } from '../hooks/types';
+import { CommonActionCreator, ReplicationControllerActionCreator } from '../hooks/types';
 import { useCommonActions } from '../hooks/useCommonActions';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
+import { useReplicationControllerActions } from '../hooks/useReplicationControllerActions';
 
 export const useReplicationControllerActionsProvider = (resource: ReplicationControllerKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const [pdbActions] = usePDBActions(kindObj, resource);
   const deploymentPhase = resource?.metadata?.annotations?.['openshift.io/deployment.phase'];
   const dcName = getOwnerNameByKind(resource, DeploymentConfigModel);
-  const [commonActions, isReady] = useCommonActions(kindObj, resource, [
+  const [commonActions, commonActionsReady] = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyCount,
     CommonActionCreator.AddStorage,
   ] as const);
   const commonResourceActions = useCommonResourceActions(kindObj, resource);
+  const [rcActions, rcActionsReady] = useReplicationControllerActions(kindObj, resource, [
+    ReplicationControllerActionCreator.CancelRollout,
+    ReplicationControllerActionCreator.RollbackDeploymentConfig,
+  ]);
+  const isReady = commonActionsReady && rcActionsReady;
 
   const actions = React.useMemo(
     () =>
@@ -28,23 +33,23 @@ export const useReplicationControllerActionsProvider = (resource: ReplicationCon
         : [
             commonActions.ModifyCount,
             ...(!_.isNil(deploymentPhase) && ['New', 'Pending', 'Running'].includes(deploymentPhase)
-              ? [ReplicationControllerFactory.CancelRollout(kindObj, resource)]
+              ? [rcActions.CancelRollout]
               : []),
             ...pdbActions,
             commonActions.AddStorage,
             ...(!deploymentPhase || resource?.status?.replicas > 0 || !dcName
               ? []
-              : [ReplicationControllerFactory.RollbackDeploymentConfigAction(kindObj, resource)]),
+              : [rcActions.RollbackDeploymentConfig]),
             ...commonResourceActions,
           ],
     [
-      kindObj,
       resource,
       pdbActions,
       deploymentPhase,
       dcName,
       commonActions,
       commonResourceActions,
+      rcActions,
       isReady,
     ],
   );

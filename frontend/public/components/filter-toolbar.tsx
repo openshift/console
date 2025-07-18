@@ -421,7 +421,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
               </ToolbarItem>
             )}
             {showSearchFilters && (
-              <ToolbarItem className="co-filter-search--full-width">
+              <ToolbarItem>
                 {searchRowFilters}
                 <ToolbarFilter
                   deleteLabelGroup={() => {

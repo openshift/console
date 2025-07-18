@@ -124,6 +124,8 @@
   "View document outline": "View document outline",
   "View property descriptions": "View property descriptions",
   "Save": "Save",
+  "Hide sidebar": "Hide sidebar",
+  "Show sidebar": "Show sidebar",
   "Restricted access": "Restricted access",
   "You don't have access to this section due to cluster policy": "You don't have access to this section due to cluster policy",
   "Error details": "Error details",

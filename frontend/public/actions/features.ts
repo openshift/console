@@ -2,6 +2,7 @@ import { Dispatch } from 'redux';
 import * as _ from 'lodash-es';
 
 import { FLAGS } from '@console/shared/src/constants/common';
+import { K8sModel, UserInfo } from '@console/internal/module/k8s';
 import { isCustomFeatureFlag, CustomFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,
@@ -10,6 +11,8 @@ import {
 import {
   FeatureFlag as DynamicFeatureFlag,
   isFeatureFlag as isDynamicFeatureFlag,
+  isModelFeatureFlag as isDynamicModelFeatureFlag,
+  ModelFeatureFlag as DynamicModelFeatureFlag,
   SetFeatureFlag,
 } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
 import { setUser } from '@console/dynamic-plugin-sdk/src/app/core/actions/core';
@@ -24,8 +27,8 @@ import {
   SSARQueryVariables,
   SSRQueryType,
 } from '../../@types/console/generated/graphql-schema';
-import { UserInfo } from '@console/internal/module/k8s';
-import { handleError, retryFlagDetection, setFlag, ssarChecks } from './flags';
+
+import { handleError, retryFlagDetection, setFlag, ssarChecks, updateModelFlags } from './flags';
 
 export const defaults = _.mapValues(FLAGS, (flag) =>
   flag === FLAGS.AUTH_ENABLED ? !window.SERVER_FLAGS.authDisabled : undefined,
@@ -159,4 +162,14 @@ subscribeToExtensions<DynamicFeatureFlag>(
     });
   }),
   isDynamicFeatureFlag,
+);
+
+subscribeToExtensions<DynamicModelFeatureFlag>(
+  extensionDiffListener((added, removed) => {
+    // The feature reducer can't access state from the k8s reducer, so get the
+    // models here and include them in the action payload.
+    const models: K8sModel[] = store.getState().k8s.getIn(['RESOURCES', 'models']);
+    store.dispatch(updateModelFlags(added, removed, models));
+  }),
+  isDynamicModelFeatureFlag,
 );

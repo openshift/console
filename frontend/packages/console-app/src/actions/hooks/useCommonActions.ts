@@ -12,12 +12,7 @@ import {
 } from '@console/internal/components/modals';
 import { resourceObjPath, asAccessReview } from '@console/internal/components/utils';
 import { referenceForModel, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { CommonActionCreator } from './types';
-
-// Type to create an object with action creators as keys and Actions as values
-type ActionObject<T extends readonly CommonActionCreator[]> = {
-  [K in T[number]]: Action;
-};
+import { CommonActionCreator, ActionObject } from './types';
 
 /**
  * A React hook for retrieving common actions related to Kubernetes resources.
