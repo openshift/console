@@ -14,6 +14,7 @@ import {
   MenuToggle,
   SearchInput,
 } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 
 export type ActionItem = {
   actionKey: string;
@@ -141,7 +142,7 @@ export const Dropdown: React.FCC<DropdownProps> = ({
   const [bookmarks, setBookmarks] = useUserSettingsCompatibility(
     bookmarkUserSettingsKey,
     bookmarkStorageKey,
-    undefined,
+    {},
     true,
   );
 
@@ -195,6 +196,7 @@ export const Dropdown: React.FCC<DropdownProps> = ({
 
   // Update state when props change
   React.useEffect(() => {
+    props.title && setTitle(props.title);
     if (props.selectedKey !== selectedKey) {
       setTitle(props.items[props.selectedKey] ?? props.title);
       setSelectedKey(props.selectedKey);
@@ -235,7 +237,7 @@ export const Dropdown: React.FCC<DropdownProps> = ({
   );
 
   /* Menu content */
-  const renderedActionItems = React.useCallback(() => {
+  const renderedActionItems = React.useMemo(() => {
     if (!actionItems) {
       return null;
     }
@@ -263,7 +265,7 @@ export const Dropdown: React.FCC<DropdownProps> = ({
     Object.entries(items).forEach(([key, content]: [string, React.ReactNode]) => {
       const selected = key === selectedKey && !noSelection;
 
-      if (storageKey && bookmarks && bookmarks[key]) {
+      if (enableBookmarks && bookmarks[key]) {
         accBookmarkRows.push(
           <DropdownRow
             key={key}
@@ -349,7 +351,7 @@ export const Dropdown: React.FCC<DropdownProps> = ({
           </>
         )}
 
-        <MenuList className={menuClassName}>
+        <MenuList className={css(menuClassName, { 'pf-v6-u-pt-0': autocompleteFilter })}>
           {bookmarkRows.length ? (
             <>
               <MenuGroup label="Favorites" labelHeadingLevel="h3">
