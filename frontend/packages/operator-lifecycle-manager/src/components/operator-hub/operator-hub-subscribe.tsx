@@ -15,6 +15,7 @@ import {
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation, Link, useNavigate } from 'react-router-dom-v5-compat';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
   documentationURLs,
@@ -122,6 +123,7 @@ const InputField: React.FC<InputFieldProps> = ({
 export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
   const packageManifest = props.packageManifest?.data?.[0];
   const navigate = useNavigate();
+  const [activeNamespace] = useActiveNamespace();
   const { name: pkgName } = packageManifest?.metadata ?? {};
   const { provider, channels = [], packageName, catalogSource, catalogSourceNamespace } =
     packageManifest?.status ?? {};
@@ -853,7 +855,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       <PageHeading
         title={t('olm~Install Operator')}
         breadcrumbs={[
-          { name: t('olm~OperatorHub'), path: `/operatorhub?${search.toString()}` },
+          {
+            name: t('olm~Software Catalog'),
+            path: `/catalog/ns/${activeNamespace}?catalogType=operator&${search.toString()}`,
+          },
           { name: t('olm~Operator Installation'), path: url },
         ]}
         helpText={t(
