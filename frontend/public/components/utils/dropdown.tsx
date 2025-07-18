@@ -14,6 +14,7 @@ import {
   MenuToggle,
   SearchInput,
 } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 
 export type ActionItem = {
   actionKey: string;
@@ -147,7 +148,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   const [bookmarks, setBookmarks] = useUserSettingsCompatibility(
     bookmarkUserSettingsKey,
     bookmarkStorageKey,
-    undefined,
+    {},
     true,
   );
 
@@ -201,6 +202,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
 
   // Update state when props change
   React.useEffect(() => {
+    props.title && setTitle(props.title);
     if (props.selectedKey !== selectedKey) {
       setTitle(props.items[props.selectedKey] ?? props.title);
       setSelectedKey(props.selectedKey);
@@ -241,7 +243,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   );
 
   /* Menu content */
-  const renderedActionItems = React.useCallback(() => {
+  const renderedActionItems = React.useMemo(() => {
     if (!actionItems) {
       return null;
     }
@@ -269,7 +271,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
     Object.entries(items).forEach(([key, content]) => {
       const selected = key === selectedKey && !noSelection;
 
-      if (storageKey && bookmarks && bookmarks[key]) {
+      if (enableBookmarks && bookmarks[key]) {
         accBookmarkRows.push(
           <ConsoleSelectItem
             key={key}
@@ -355,7 +357,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
           </>
         )}
 
-        <MenuList className={menuClassName}>
+        <MenuList className={css(menuClassName, { 'pf-v6-u-pt-0': autocompleteFilter })}>
           {bookmarkRows.length ? (
             <>
               <MenuGroup label="Favorites" labelHeadingLevel="h3">
