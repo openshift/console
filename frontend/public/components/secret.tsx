@@ -2,10 +2,11 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
-import { referenceFor } from '../module/k8s';
+import { referenceFor, SecretKind, K8sModel, K8sResourceKind } from '../module/k8s';
 import { SecretData } from './configmap-and-secret-data';
 import {
   Kebab,
@@ -26,8 +27,9 @@ import {
   ActionMenuVariant,
   LazyActionMenu,
 } from '@console/shared';
+import { ModalCallback } from './modals/types';
 
-export const addSecretToWorkload = (t, addSecretToWorkloadLauncher) => {
+export const addSecretToWorkload = (t: TFunction, addSecretToWorkloadLauncher: ModalCallback) => {
   return () => {
     return {
       callback: () => addSecretToWorkloadLauncher(),
@@ -45,27 +47,23 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const SecretTableRow = ({ obj: secret }) => {
-  const data = _.size(secret.data);
-  const resourceKind = referenceFor(secret);
+const SecretTableRow: React.FCC<{ obj: SecretKind }> = ({ obj }) => {
+  const data = _.size(obj.data);
+  const resourceKind = referenceFor(obj);
 
-  const context = { [resourceKind]: secret };
+  const context = { [resourceKind]: obj };
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind="Secret"
-          name={secret.metadata.name}
-          namespace={secret.metadata.namespace}
-        />
+        <ResourceLink kind="Secret" name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={secret.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>{secret.type}</TableData>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>{obj.type}</TableData>
       <TableData className={tableColumnClasses[3]}>{data}</TableData>
       <TableData className={tableColumnClasses[4]}>
-        <Timestamp timestamp={secret.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <LazyActionMenu context={context} />
@@ -74,34 +72,34 @@ const SecretTableRow = ({ obj: secret }) => {
   );
 };
 
-const SecretDetails = ({ obj: secret }) => {
+const SecretDetails: React.FCC<{ obj: SecretKind }> = ({ obj }) => {
   const { t } = useTranslation();
-  const { data, type } = secret;
+  const { data, type } = obj;
   return (
     <>
       <PaneBody>
         <SectionHeading text={t('public~Secret details')} />
         <Grid hasGutter>
           <GridItem md={6}>
-            <ResourceSummary resource={secret} />
+            <ResourceSummary resource={obj} />
           </GridItem>
           {type && (
             <GridItem md={6}>
               <DescriptionList data-test-id="resource-type">
-                <DetailsItem label={t('public~Type')} obj={secret} path="type" />
+                <DetailsItem label={t('public~Type')} obj={obj} path="type" />
               </DescriptionList>
             </GridItem>
           )}
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SecretData data={data} type={type} />
+        <SecretData data={data} />
       </PaneBody>
     </>
   );
 };
 
-const SecretsList = (props) => {
+const SecretsList: React.FCC = (props) => {
   const { t } = useTranslation();
   const SecretTableHeader = () => [
     {
@@ -159,7 +157,7 @@ const TLS_FILTER_VALUE = 'TLS';
 const SA_TOKEN_FILTER_VALUE = 'Service Account Token';
 const OPAQUE_FILTER_VALUE = 'Opaque';
 
-export const secretTypeFilterReducer = (secret) => {
+export const secretTypeFilterReducer = (secret): string => {
   switch (secret.type) {
     case SecretType.dockercfg:
     case SecretType.dockerconfigjson:
@@ -242,9 +240,10 @@ const SecretsPage = (props) => {
   );
 };
 
-const SecretsDetailsPage = (props) => {
+const SecretsDetailsPage: React.FCC<SecretDetailsPageProps> = (props) => {
   const { t } = useTranslation();
-  const { name: secretName, namespace } = props;
+  const { name: secretName, namespace, kindObj: kind } = props;
+
   const addSecretToWorkloadLauncher = useSecretToWorkloadModalLauncher({ secretName, namespace });
 
   const actionButtons = React.useMemo(() => [addSecretToWorkload(t, addSecretToWorkloadLauncher)], [
@@ -252,7 +251,7 @@ const SecretsDetailsPage = (props) => {
     addSecretToWorkloadLauncher,
   ]);
 
-  const customActionMenu = (kindObj, obj) => {
+  const customActionMenu = (kindObj: K8sResourceKind, obj: K8sModel) => {
     const resourceKind = referenceFor(kindObj);
     const context = { [resourceKind]: obj };
     return (
@@ -269,11 +268,21 @@ const SecretsDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
+      kind={kind.kind}
       buttonActions={actionButtons}
       customActionMenu={customActionMenu}
       pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
     />
   );
+};
+
+SecretsDetailsPage.displayName = 'SecretsDetailsPage';
+
+type SecretDetailsPageProps = {
+  name: string;
+  namespace: string;
+  badge?: React.ReactNode;
+  kindObj: K8sModel;
 };
 
 export { SecretsList, SecretsPage, SecretsDetailsPage };
