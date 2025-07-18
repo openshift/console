@@ -37,6 +37,7 @@ type oidcConfig struct {
 	clientID               string
 	cookiePath             string
 	secureCookies          bool
+	sessionDir             string
 	constructOAuth2Config  oauth2ConfigConstructor
 }
 
