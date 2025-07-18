@@ -153,32 +153,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: '/operatorhub/all-namespaces',
-      loader: async () =>
-        (
-          await import(
-            './components/operator-hub/operator-hub-page' /* webpackChunkName: "operator-hub" */
-          )
-        ).OperatorHubPage,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: '/operatorhub/ns/:ns',
-      loader: async () =>
-        (
-          await import(
-            './components/operator-hub/operator-hub-page' /* webpackChunkName: "operator-hub" */
-          )
-        ).OperatorHubPage,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
       path: '/operatorhub/subscribe',
       loader: async () =>
         (
