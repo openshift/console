@@ -548,7 +548,6 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   const [namespaceUID, setNamespaceUID] = React.useState('');
   const [podLogLinks, setPodLogLinks] = React.useState();
   const [content, setContent] = React.useState('');
-
   const [logType, setLogType] = React.useState<LogTypeStatus>(LOG_TYPE_CURRENT);
   const [hasPreviousLogs, setPreviousLogs] = React.useState(false);
 
@@ -629,6 +628,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   }, [containerName, resource.kind, resource.status]);
 
   const startWebSocket = React.useCallback(() => {
+    let initialShellPrompt = true;
     // Handler for websocket onopen event
     const onOpen = () => {
       buffer.current.clear();
@@ -645,6 +645,11 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     // Handler for websocket onmessage event
     const onMessage = (msg) => {
       if (msg) {
+        // Workaround for Websocket sending the shell prompt twice on the first log line
+        if (initialShellPrompt) {
+          initialShellPrompt = false;
+          return;
+        }
         clearTimeout(timeoutIdRef.current);
         const text = Base64.decode(msg);
         countRef.current += buffer.current.ingest(text);
@@ -654,7 +659,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
           countRef.current = 0;
           setLines(
             buffer.current.getTail() === ''
-              ? [...buffer.current.getLines()]
+              ? [...[buffer.current.getLines()]]
               : [...buffer.current.getLines(), buffer.current.getTail()],
           );
           setHasTruncated(buffer.current.getHasTruncated());
