@@ -225,6 +225,7 @@ export type CatalogItemAttribute = {
 
 export type CatalogItemBadge = {
   text: string;
+  tooltip?: string;
   color?: 'blue' | 'teal' | 'green' | 'orange' | 'purple' | 'red' | 'grey';
   icon?: React.ReactNode;
   variant?: 'outline' | 'filled';

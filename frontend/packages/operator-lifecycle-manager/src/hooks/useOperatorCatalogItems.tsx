@@ -1,7 +1,13 @@
 import * as React from 'react';
+import { Spinner } from '@patternfly/react-core';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useActiveNamespace, CatalogItem } from '@console/dynamic-plugin-sdk/src/lib-core';
+import {
+  useActiveNamespace,
+  CatalogItem,
+  CatalogItemBadge,
+} from '@console/dynamic-plugin-sdk/src/lib-core';
 import { parseList, PlainList, strConcat } from '@console/shared/src';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
@@ -217,23 +223,52 @@ export const useOperatorCatalogItems = () => {
 
         const supportWorkflowUrl = getSupportWorkflowUrl(marketplaceSupportWorkflow);
 
-        // Build calls to action based on install state
-        const ctas = [];
-        if (!installed) {
-          // Add install action for non-installed operators
-          ctas.push({
-            label: t('Install'),
-            href: installLink,
-            variant: 'primary' as const,
-          });
-        } else if (installed && uninstallLink) {
-          // Add uninstall action for installed operators
-          ctas.push({
-            label: t('Uninstall'),
-            href: uninstallLink,
-            variant: 'secondary' as const,
-          });
-        }
+        const cta =
+          installed && uninstallLink
+            ? {
+                label: t('Uninstall'),
+                href: uninstallLink,
+                variant: 'secondary',
+              }
+            : {
+                label: t('Install'),
+                href: installLink,
+                variant: 'primary',
+              };
+
+        const badges = [
+          ...(installed && !isInstalling
+            ? [
+                {
+                  text: t('Installed'),
+                  color: 'green',
+                  variant: 'outline',
+                  icon: <CheckCircleIcon />,
+                } as CatalogItemBadge,
+              ]
+            : []),
+          ...(isInstalling
+            ? [
+                {
+                  text: t('Installing'),
+                  color: 'blue',
+                  variant: 'outline',
+                  icon: <Spinner size="sm" />,
+                } as CatalogItemBadge,
+              ]
+            : []),
+          ...(pkg?.status?.deprecation
+            ? [
+                {
+                  text: t('Deprecated'),
+                  color: 'orange',
+                  tooltip: pkg.status.deprecation.message,
+                  variant: 'outline',
+                  icon: <ExclamationCircleIcon />,
+                } as CatalogItemBadge,
+              ]
+            : []),
+        ];
 
         return {
           uid,
@@ -245,6 +280,7 @@ export const useOperatorCatalogItems = () => {
           tags,
           creationTimestamp: createdAt,
           supportUrl: support,
+          badges,
           attributes: {
             keywords,
             source,
@@ -253,7 +289,7 @@ export const useOperatorCatalogItems = () => {
             capabilities,
             validSubscription: validSubscriptionFilters,
           },
-          ctas,
+          cta,
           icon: {
             url: imgUrl,
           },
