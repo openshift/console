@@ -1,3 +1,4 @@
+import { testName } from '@console/cypress-integration-tests/support';
 import { projectDropdown } from '@console/cypress-integration-tests/views/common';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { submitButton } from '@console/cypress-integration-tests/views/form';
@@ -15,16 +16,18 @@ export const operator = {
     useOperatorRecommendedNamespace: boolean = false,
   ) => {
     cy.log(`install operator "${operatorName}" in ${installToNamespace}`);
-    nav.sidenav.clickNavLink(['Ecosystem', 'OperatorHub']);
-    cy.byTestID('search-operatorhub').type(operatorName);
+    cy.visit(`/catalog/ns/${testName}`);
+    cy.byTestID('tab operator').click();
+    cy.byTestID('search-catalog').type(operatorName);
     cy.log('go to operator overview panel');
     cy.byTestID(operatorHubCardTestID).click();
+    cy.byTestID(`${operatorName}-cta-0`).click({ force: true });
     cy.log('go to the install form');
     cy.log('verify the channel selection is displayed');
-    cy.get('.co-operator-channel__select').should('exist');
+    cy.byTestID('operator-channel-select-toggle').should('exist');
     cy.log('verify the version selection is displayed');
-    cy.get('.co-operator-version__select').should('exist');
-    cy.byLegacyTestID('operator-install-btn').click({ force: true });
+    cy.byTestID('operator-version-select-toggle').should('exist');
+    cy.byTestID('install-operator').click({ force: true });
     /*  Installation mode
      *    () All namespaces        // default: 'openshift-operators'
      *    () A specific namespace  // Operator recommended or test namespace
