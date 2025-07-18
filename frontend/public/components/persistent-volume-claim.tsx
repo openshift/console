@@ -174,7 +174,12 @@ const Details: React.FC<PVCDetailsProps> = ({ obj: pvc }) => {
   const totalCapacityMetric = convertToBaseValue(storage);
   const totalRequestMetric = convertToBaseValue(requestedStorage);
   const usedMetrics = response?.data?.result?.[0]?.value?.[1];
-  const availableMetrics = usedMetrics ? totalCapacityMetric - Number(usedMetrics) : null;
+
+  // PREVENTION: Use Math.max(0, ...) to prevent negative available space display
+  const availableMetrics = usedMetrics
+    ? Math.max(0, totalCapacityMetric - Number(usedMetrics))
+    : null;
+
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
   const availableCapacity = humanizeBinaryBytes(availableMetrics, undefined, totalCapacity.unit);
   const usedCapacity = humanizeBinaryBytes(usedMetrics, undefined, totalCapacity.unit);
@@ -187,7 +192,7 @@ const Details: React.FC<PVCDetailsProps> = ({ obj: pvc }) => {
   const donutData = usedMetrics
     ? [
         { x: i18next.t('public~Used'), y: usedCapacity.value },
-        { x: i18next.t('public~Available'), y: availableCapacity.value },
+        { x: i18next.t('public~Available'), y: Math.max(0, availableCapacity.value) },
       ]
     : [{ x: i18next.t('public~Total'), y: totalCapacity.value }];
 
