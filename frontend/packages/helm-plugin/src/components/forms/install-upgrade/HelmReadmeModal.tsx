@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
   ModalTitle,
   ModalBody,
-  createModalLauncher,
   ModalComponentProps,
+  ModalWrapper,
 } from '@console/internal/components/factory';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 
@@ -26,5 +28,18 @@ const HelmReadmeModal: React.FunctionComponent<Props> = ({ readme, theme, close 
   );
 };
 
-export const helmReadmeModalLauncher = createModalLauncher<Props>(HelmReadmeModal);
-export default HelmReadmeModal;
+const HelmReadmeModalProvider: OverlayComponent<Props> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay} className="modal-lg">
+      <HelmReadmeModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
+    </ModalWrapper>
+  );
+};
+
+export const useHelmReadmeModalLauncher = (props: Props) => {
+  const launcher = useOverlay();
+  return React.useCallback(() => launcher<Props>(HelmReadmeModalProvider, props), [
+    launcher,
+    props,
+  ]);
+};
