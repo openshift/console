@@ -35,6 +35,7 @@
       "quickStartConfiguration": "src/components/quick-starts/QuickStartConfiguration.tsx",
       "fileUploadContext": "src/components/file-upload/file-upload-context.ts",
       "deploymentProvider": "src/actions/providers/deployment-provider.ts",
+      "commonProvider": "src/actions/providers/common-provider.ts",
       "deploymentConfigProvider": "src/actions/providers/deploymentconfig-provider.ts",
       "daemonSetActionsProvider": "src/actions/providers/daemon-set-provider.ts",
       "statefulSetProvider": "src/actions/providers/stateful-set-provider.ts",
