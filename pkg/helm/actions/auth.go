@@ -100,7 +100,7 @@ func setupTlsCertFile(secretName string, namespace string, coreClient corev1clie
 	}
 	certificateVerifyErr := certificateVerifier(tlsCertBytes)
 	if certificateVerifyErr != nil {
-		return nil, nil, fmt.Errorf("failed to verify custom certificate PEM: " + certificateVerifyErr.Error())
+		return nil, nil, fmt.Errorf("failed to verify custom certificate PEM: %w", certificateVerifyErr)
 	}
 	tlsCertFile, err := writeTempFile((tlsCertBytes), tlsSecretPattern)
 	if err != nil {
@@ -112,7 +112,7 @@ func setupTlsCertFile(secretName string, namespace string, coreClient corev1clie
 	}
 	privateKeyVerifyErr := privateKeyVerifier(tlsKeyBytes)
 	if privateKeyVerifyErr != nil {
-		return nil, nil, fmt.Errorf("failed to verify custom key PEM: " + privateKeyVerifyErr.Error())
+		return nil, nil, fmt.Errorf("failed to verify custom key PEM: %w", privateKeyVerifyErr)
 	}
 	tlsKeyFile, err := writeTempFile(tlsKeyBytes, tlsKeyPattern)
 	if err != nil {
