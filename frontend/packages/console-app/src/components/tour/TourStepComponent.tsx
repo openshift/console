@@ -1,6 +1,12 @@
 import * as React from 'react';
-import { ModalBody, ModalFooter, ModalHeader } from '@patternfly/react-core';
-import { ModalVariant } from '@patternfly/react-core/deprecated';
+import {
+  Grid,
+  GridItem,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Popover, PopoverPlacement, Modal, Spotlight } from '@console/shared';
 import StepBadge from './steps/StepBadge';
@@ -15,6 +21,8 @@ type TourStepComponentProps = {
   placement?: string;
   heading: string;
   content: React.ReactNode;
+  introBanner?: React.ReactNode;
+  modalVariant?: ModalVariant;
   step?: number;
   totalSteps?: number;
   showStepBadge?: boolean;
@@ -34,6 +42,8 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   showStepBadge,
   step,
   totalSteps,
+  introBanner,
+  modalVariant,
   nextButtonText,
   backButtonText,
   onNext,
@@ -56,6 +66,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
           onBack && onBack();
         },
       }}
+      step={step}
     >
       {showStepBadge ? <StepBadge stepNumber={step} totalSteps={totalSteps} /> : null}
     </StepFooter>
@@ -83,7 +94,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   ) : (
     <Modal
       className="co-tour-step-component"
-      variant={ModalVariant.small}
+      variant={modalVariant || ModalVariant.small}
       isOpen
       onClose={handleClose}
       id="guided-tour-modal"
@@ -91,9 +102,16 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
       aria-label={t('console-app~guided tour {{step, number}}', { step })}
       isFullScreen
     >
-      <ModalHeader data-test="close-guided-tour">{header}</ModalHeader>
-      <ModalBody>{stepContent}</ModalBody>
-      <ModalFooter>{footer}</ModalFooter>
+      <ModalBody>
+        <Grid hasGutter>
+          {introBanner && <GridItem span={4}>{introBanner}</GridItem>}
+          <GridItem span={introBanner ? 8 : 12}>
+            <ModalHeader>{header}</ModalHeader>
+            <ModalBody>{stepContent}</ModalBody>
+            <ModalFooter>{footer}</ModalFooter>
+          </GridItem>
+        </Grid>
+      </ModalBody>
     </Modal>
   );
 };
