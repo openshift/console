@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 
-import { Dropdown, ResourceName } from './';
+import { ConsoleSelect, ResourceName } from './';
 
 // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#envvarsource-v1-core
 //   valueFrom:
@@ -116,7 +116,7 @@ export const NameKeyDropdownPair = ({
   const items = _.assign({}, cmItems, secretItems, saItems);
   return (
     <>
-      <Dropdown
+      <ConsoleSelect
         menuClassName="value-from__menu dropdown-menu--text-wrap"
         className="value-from"
         autocompleteFilter={nameAutocompleteFilter}
@@ -136,7 +136,7 @@ export const NameKeyDropdownPair = ({
         }}
       />
       {isKeyRef && (
-        <Dropdown
+        <ConsoleSelect
           menuClassName="value-from__menu dropdown-menu--text-wrap"
           className="value-from value-from--key"
           autocompleteFilter={keyAutocompleteFilter}

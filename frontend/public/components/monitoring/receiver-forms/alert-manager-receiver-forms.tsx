@@ -11,7 +11,7 @@ import { css } from '@patternfly/react-styles';
 import { APIError } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ButtonBar } from '../../utils/button-bar';
-import { Dropdown } from '../../utils/dropdown';
+import { ConsoleSelect } from '../../utils/dropdown';
 import { Firehose } from '../../utils/firehose';
 import { StatusBox } from '../../utils/status-box';
 import {
@@ -414,11 +414,11 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
           </div>
           <div className="form-group">
             <label className="co-required">{t('public~Receiver type')}</label>
-            <Dropdown
+            <ConsoleSelect
               title="Select receiver type..."
-              name="receiverType"
+              id="receiverType"
               items={receiverTypes}
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               data-test-id="receiver-type"
               selectedKey={formValues.receiverType}
               onChange={(receiverType) =>

@@ -6,7 +6,7 @@ import * as semver from 'semver';
 
 import { ChannelDocLink } from '../cluster-settings/cluster-settings';
 import { ClusterVersionModel } from '../../models';
-import { Dropdown, HandlePromiseProps, isManaged, withHandlePromise } from '../utils';
+import { ConsoleSelect, HandlePromiseProps, isManaged, withHandlePromise } from '../utils';
 import {
   createModalLauncher,
   ModalBody,
@@ -62,7 +62,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
         <div className="form-group">
           <label htmlFor="channel">{t('public~Channel')}</label>
           {channelsExist ? (
-            <Dropdown
+            <ConsoleSelect
               className="cluster-channel-modal__dropdown"
               id="channel"
               items={availableChannels}

@@ -48,7 +48,7 @@ export const GetVolumeTypeFields = (volumeType, namePrefix: string, namespace: s
         <ConfigMapDropdown
           name={`${namePrefix}.resource`}
           namespace={namespace}
-          dropDownClassName="dropdown--full-width"
+          isFullWidth
           onChange={handleConfigMapChange}
           selectedKey={configMap}
         />

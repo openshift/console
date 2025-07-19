@@ -29,10 +29,7 @@ import {
   FilterValue,
   RowSearchFilter,
 } from '@console/dynamic-plugin-sdk';
-import {
-  Dropdown as DropdownInternal,
-  setOrRemoveQueryArgument,
-} from '@console/internal/components/utils';
+import { ConsoleSelect, setOrRemoveQueryArgument } from '@console/internal/components/utils';
 import { useTranslation } from 'react-i18next';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
@@ -445,7 +442,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   >
                     <div className="pf-v6-c-input-group co-filter-group">
                       {showSearchFiltersDropdown && (
-                        <DropdownInternal
+                        <ConsoleSelect
                           items={filterDropdownItems}
                           onChange={(type) => setFilterType(FilterType[type] || type)}
                           selectedKey={filterType}

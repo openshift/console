@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { getIcon, getIcons } from '@console/internal/components/catalog/catalog-item-icon';
-import { Dropdown } from '@console/internal/components/utils/dropdown';
+import { ConsoleSelect } from '@console/internal/components/utils/dropdown';
 
 import './IconDropdown.scss';
 
@@ -45,14 +45,13 @@ const IconDropdown: React.FC<IconDropdownProps> = ({ placeholder, value, onChang
   }, []);
 
   return (
-    <Dropdown
+    <ConsoleSelect
       title={title}
       items={items}
-      autoSelect
       autocompletePlaceholder={placeholder}
       autocompleteFilter={iconLabelAutocompleteFilter}
-      dropDownClassName="dropdown--full-width odc-icon-dropdown"
-      menuClassName="odc-icon-dropdown__menu"
+      isFullWidth
+      className="odc-icon-dropdown"
       onChange={onChanged}
       selectedKey={value || 'openshift'}
     />

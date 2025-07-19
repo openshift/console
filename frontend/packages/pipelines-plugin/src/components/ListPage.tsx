@@ -14,7 +14,7 @@ import { ErrorPage404 } from '@console/internal/components/error';
 import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
 import { storagePrefix } from '@console/internal/components/row-filter';
 import {
-  Dropdown,
+  ConsoleSelect,
   FirehoseResource,
   FirehoseResourcesResult,
   FirehoseResultObject,
@@ -272,7 +272,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     } else if (createProps.items) {
       createLink = (
         <div>
-          <Dropdown
+          <ConsoleSelect
             buttonClassName="pf-m-primary"
             id="item-create"
             dataTest="item-create"

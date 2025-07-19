@@ -34,7 +34,7 @@ import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared/src/constants';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
-  Dropdown,
+  ConsoleSelect,
   Loading,
   ConsoleEmptyState,
   ResourceIcon,
@@ -269,7 +269,7 @@ export const EventsList = (props) => {
             selected={Array.from(selected)}
             clearSelection={clearSelection}
           />
-          <Dropdown
+          <ConsoleSelect
             items={eventTypes}
             onChange={(v) => setType(v)}
             selectedKey={type}
