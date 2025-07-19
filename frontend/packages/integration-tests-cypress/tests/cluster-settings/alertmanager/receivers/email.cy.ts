@@ -35,19 +35,17 @@ describe('Alertmanager: Email Receiver Form', () => {
     cy.log('create Email Receiver');
     alertmanager.createReceiver(receiverName, configName);
     // prior to smtp change, save as default is disabled
-    cy.byLegacyTestID('save-as-default').should('be.disabled');
-    cy.byLegacyTestID('email-hello').invoke('val').should('eq', localhost);
-    cy.byLegacyTestID('email-require-tls').should('be.checked');
+    cy.byTestID('save-as-default').should('be.disabled');
+    cy.byTestID('email-hello').invoke('val').should('eq', localhost);
+    cy.byTestID('email-require-tls').should('be.checked');
     alertmanager.showAdvancedConfiguration();
-    cy.byLegacyTestID('send-resolved-alerts').should('not.be.checked');
-    cy.byLegacyTestID('email-html')
-      .invoke('val')
-      .should('eq', '{{ template "email.default.html" . }}');
-    cy.byLegacyTestID('email-to').type(emailTo);
-    cy.byLegacyTestID('email-from').type(emailFrom);
-    cy.byLegacyTestID('save-as-default').should('be.enabled');
-    cy.byLegacyTestID('email-smarthost').type(emailSmarthost);
-    cy.byLegacyTestID('label-0').type(label);
+    cy.byTestID('send-resolved-alerts').should('not.be.checked');
+    cy.byTestID('email-html').invoke('val').should('eq', '{{ template "email.default.html" . }}');
+    cy.byTestID('email-to').type(emailTo);
+    cy.byTestID('email-from').type(emailFrom);
+    cy.byTestID('save-as-default').should('be.enabled');
+    cy.byTestID('email-smarthost').type(emailSmarthost);
+    cy.byTestID('label-0').type(label);
     alertmanager.save();
 
     cy.log('verify Email Receiver was created correctly');
@@ -67,20 +65,20 @@ describe('Alertmanager: Email Receiver Form', () => {
 
     cy.log('save globals and advanced fields correctly');
     alertmanager.visitEditPage(receiverName);
-    cy.byLegacyTestID('email-to').invoke('val').should('eq', emailTo);
-    cy.byLegacyTestID('save-as-default').should('be.enabled'); // smtp_from different from global
-    cy.byLegacyTestID('save-as-default').should('not.be.checked');
-    cy.byLegacyTestID('email-from').invoke('val').should('eq', emailFrom);
-    cy.byLegacyTestID('email-hello').invoke('val').should('eq', localhost);
-    cy.byLegacyTestID('email-auth-username').type(username);
-    cy.byLegacyTestID('email-auth-password').type(password);
-    cy.byLegacyTestID('email-auth-identity').type(identity);
-    cy.byLegacyTestID('email-auth-secret').type(secret);
-    cy.byLegacyTestID('email-require-tls').click();
+    cy.byTestID('email-to').invoke('val').should('eq', emailTo);
+    cy.byTestID('save-as-default').should('be.enabled'); // smtp_from different from global
+    cy.byTestID('save-as-default').should('not.be.checked');
+    cy.byTestID('email-from').invoke('val').should('eq', emailFrom);
+    cy.byTestID('email-hello').invoke('val').should('eq', localhost);
+    cy.byTestID('email-auth-username').type(username);
+    cy.byTestID('email-auth-password').type(password);
+    cy.byTestID('email-auth-identity').type(identity);
+    cy.byTestID('email-auth-secret').type(secret);
+    cy.byTestID('email-require-tls').click();
     alertmanager.showAdvancedConfiguration();
-    cy.byLegacyTestID('send-resolved-alerts').click();
-    cy.byLegacyTestID('email-html').clear();
-    cy.byLegacyTestID('email-html').type(html);
+    cy.byTestID('send-resolved-alerts').click();
+    cy.byTestID('email-html').clear();
+    cy.byTestID('email-html').type(html);
     alertmanager.save();
 
     cy.log('verify globals and advanced fields were saved correctly');
@@ -99,8 +97,8 @@ describe('Alertmanager: Email Receiver Form', () => {
 
     cy.log('save as default');
     alertmanager.visitEditPage(receiverName);
-    cy.byLegacyTestID('save-as-default').should('not.be.checked');
-    cy.byLegacyTestID('save-as-default').click();
+    cy.byTestID('save-as-default').should('not.be.checked');
+    cy.byTestID('save-as-default').click();
     alertmanager.save();
     alertmanager.visitYAMLPage();
     yamlEditor.getEditorContent().then((content) => {

@@ -29,26 +29,26 @@ describe('Alertmanager: Slack Receiver Form', () => {
   it('creates and edits Slack Receiver correctly', () => {
     cy.log('create Slack Receiver');
     alertmanager.createReceiver(receiverName, configName);
-    cy.byLegacyTestID('save-as-default').should('be.disabled');
+    cy.byTestID('save-as-default').should('be.disabled');
     alertmanager.showAdvancedConfiguration();
-    cy.byLegacyTestID('send-resolved-alerts').should('not.be.checked');
-    cy.byLegacyTestID('slack-icon-url')
+    cy.byTestID('send-resolved-alerts').should('not.be.checked');
+    cy.byTestID('slack-icon-url')
       .invoke('val')
       .should('eq', '{{ template "slack.default.iconurl" .}}');
-    cy.byLegacyTestID('slack-icon-emoji').should('not.exist');
+    cy.byTestID('slack-icon-emoji').should('not.exist');
     cy.byTestID('Emoji-radio-input').click();
-    cy.byLegacyTestID('slack-icon-url').should('not.exist');
-    cy.byLegacyTestID('slack-icon-emoji')
+    cy.byTestID('slack-icon-url').should('not.exist');
+    cy.byTestID('slack-icon-emoji')
       .invoke('val')
       .should('eq', '{{ template "slack.default.iconemoji" .}}');
-    cy.byLegacyTestID('slack-username')
+    cy.byTestID('slack-username')
       .invoke('val')
       .should('eq', '{{ template "slack.default.username" . }}');
-    cy.byLegacyTestID('slack-link-names').should('not.be.checked');
-    cy.byLegacyTestID('slack-api-url').type(slackAPIURL);
-    cy.byLegacyTestID('save-as-default').should('be.enabled');
-    cy.byLegacyTestID('slack-channel').type(slackChannel);
-    cy.byLegacyTestID('label-0').type(label);
+    cy.byTestID('slack-link-names').should('not.be.checked');
+    cy.byTestID('slack-api-url').type(slackAPIURL);
+    cy.byTestID('save-as-default').should('be.enabled');
+    cy.byTestID('slack-channel').type(slackChannel);
+    cy.byTestID('label-0').type(label);
     alertmanager.save();
 
     cy.log('verify Slack Receiver was created correctly');
@@ -66,27 +66,27 @@ describe('Alertmanager: Slack Receiver Form', () => {
 
     cy.log('save globals and advanced fields correctly');
     alertmanager.visitEditPage(receiverName);
-    cy.byLegacyTestID('slack-channel').invoke('val').should('eq', slackChannel);
-    cy.byLegacyTestID('save-as-default').should('be.enabled');
-    cy.byLegacyTestID('slack-api-url').invoke('val').should('eq', slackAPIURL);
+    cy.byTestID('slack-channel').invoke('val').should('eq', slackChannel);
+    cy.byTestID('save-as-default').should('be.enabled');
+    cy.byTestID('slack-api-url').invoke('val').should('eq', slackAPIURL);
     alertmanager.showAdvancedConfiguration();
-    cy.byLegacyTestID('send-resolved-alerts').click();
-    cy.byLegacyTestID('slack-icon-url').clear();
-    cy.byLegacyTestID('slack-icon-url').type(slackIconURL);
-    cy.byLegacyTestID('slack-username').clear();
-    cy.byLegacyTestID('slack-username').type(slackUsername);
-    cy.byLegacyTestID('slack-link-names').click();
-    cy.byLegacyTestID('save-as-default').click();
+    cy.byTestID('send-resolved-alerts').click();
+    cy.byTestID('slack-icon-url').clear();
+    cy.byTestID('slack-icon-url').type(slackIconURL);
+    cy.byTestID('slack-username').clear();
+    cy.byTestID('slack-username').type(slackUsername);
+    cy.byTestID('slack-link-names').click();
+    cy.byTestID('save-as-default').click();
     alertmanager.save();
 
     cy.log('verify advanced fields were saved correctly');
     alertmanager.visitEditPage(receiverName);
     alertmanager.showAdvancedConfiguration();
-    cy.byLegacyTestID('send-resolved-alerts').should('be.checked');
-    cy.byLegacyTestID('slack-icon-url').invoke('val').should('eq', slackIconURL);
-    cy.byLegacyTestID('slack-icon-emoji').should('not.exist');
-    cy.byLegacyTestID('slack-username').invoke('val').should('eq', slackUsername);
-    cy.byLegacyTestID('slack-link-names').should('be.checked');
+    cy.byTestID('send-resolved-alerts').should('be.checked');
+    cy.byTestID('slack-icon-url').invoke('val').should('eq', slackIconURL);
+    cy.byTestID('slack-icon-emoji').should('not.exist');
+    cy.byTestID('slack-username').invoke('val').should('eq', slackUsername);
+    cy.byTestID('slack-link-names').should('be.checked');
     alertmanager.visitAlertmanagerPage();
     alertmanager.visitYAMLPage();
     yamlEditor.getEditorContent().then((content) => {
