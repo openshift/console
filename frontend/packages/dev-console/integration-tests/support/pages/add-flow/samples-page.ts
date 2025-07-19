@@ -7,7 +7,7 @@ export const samplesPage = {
   },
   selectCardInSamples: (card: string) => {
     cy.get('.skeleton-catalog--grid').should('not.exist');
-    cy.byLegacyTestID('perspective-switcher-toggle').click();
+    cy.byLegacyTestID('perspective-switcher-toggle').click({ force: true });
     switch (card) {
       case 'Httpd': {
         cy.get(samplesPO.cards.httpdTemplate).first().click();

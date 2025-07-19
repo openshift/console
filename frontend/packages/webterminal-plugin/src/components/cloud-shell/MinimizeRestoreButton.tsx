@@ -1,20 +1,21 @@
 import * as React from 'react';
-import { Tooltip, Button } from '@patternfly/react-core';
+import { Tooltip, Button, ButtonProps } from '@patternfly/react-core';
 import { OutlinedWindowMinimizeIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-window-minimize-icon';
 import { OutlinedWindowRestoreIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-window-restore-icon';
 
-type MinimizeRestoreButtonProps = {
+type MinimizeRestoreButtonProps = Omit<ButtonProps, 'onClick'> & {
   minimizeText: string;
   restoreText: string;
   minimize?: boolean;
   onClick: (minimized: boolean) => void;
 };
 
-const MinimizeRestoreButton: React.FC<MinimizeRestoreButtonProps> = ({
+export const MinimizeRestoreButton: React.FC<MinimizeRestoreButtonProps> = ({
   minimizeText,
   restoreText,
   minimize = true,
   onClick,
+  ...props
 }) => {
   const onMinimize = () => {
     onClick(true);
@@ -34,9 +35,8 @@ const MinimizeRestoreButton: React.FC<MinimizeRestoreButtonProps> = ({
         onClick={minimize ? onMinimize : onRestore}
         aria-label={minimize ? minimizeText : restoreText}
         isInline
+        {...props}
       />
     </Tooltip>
   );
 };
-
-export default MinimizeRestoreButton;
