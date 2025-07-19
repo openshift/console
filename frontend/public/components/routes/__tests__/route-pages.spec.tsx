@@ -1,8 +1,8 @@
-import { shallow, mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 
-import { RouteLinkAndCopy, RouteLocation, RouteStatus } from '../../public/components/routes';
-import { ExternalLinkWithCopy } from '../../public/components/utils';
-import { RouteKind } from '../../public/module/k8s';
+import { RouteLocation, RouteStatus } from '@console/internal/components/routes';
+import { RouteKind } from '@console/internal/module/k8s';
 
 describe(RouteLocation.displayName, () => {
   it('renders a https link when TLS Settings', () => {
@@ -40,10 +40,10 @@ describe(RouteLocation.displayName, () => {
       },
     };
 
-    const wrapper = shallow(<RouteLocation obj={route} />);
-    const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().href).toContain('https:');
+    render(<RouteLocation obj={route} />);
+    const link = screen.getByRole('link');
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', expect.stringContaining('https:'));
   });
 
   it('renders a http link when no TLS Settings', () => {
@@ -78,10 +78,10 @@ describe(RouteLocation.displayName, () => {
       },
     };
 
-    const wrapper = shallow(<RouteLocation obj={route} />);
-    const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().href).toContain('http:');
+    render(<RouteLocation obj={route} />);
+    const link = screen.getByRole('link');
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', expect.stringContaining('http:'));
   });
 
   it('renders oldest admitted ingress', () => {
@@ -127,12 +127,10 @@ describe(RouteLocation.displayName, () => {
       },
     };
 
-    const wrapper = shallow(<RouteLocation obj={route} />);
-    const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().href).toContain(
-      'http://www.example.com',
-    );
+    render(<RouteLocation obj={route} />);
+    const link = screen.getByRole('link');
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', expect.stringContaining('http://www.example.com'));
   });
 
   it('renders additional path in url', () => {
@@ -168,10 +166,10 @@ describe(RouteLocation.displayName, () => {
       },
     };
 
-    const wrapper = shallow(<RouteLocation obj={route} />);
-    const externalLinkWrapper = wrapper.find(RouteLinkAndCopy).shallow();
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).exists()).toBe(true);
-    expect(externalLinkWrapper.find(ExternalLinkWithCopy).props().href).toContain('\\mypath');
+    render(<RouteLocation obj={route} />);
+    const link = screen.getByRole('link');
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', expect.stringContaining('\\mypath'));
   });
 
   it('renders Subdomain', () => {
@@ -206,9 +204,9 @@ describe(RouteLocation.displayName, () => {
       },
     };
 
-    const wrapper = shallow(<RouteLocation obj={route} />);
-    expect(wrapper.find(RouteLinkAndCopy).exists()).toBe(false);
-    expect(wrapper.find('div').text()).toEqual('*.example.com');
+    render(<RouteLocation obj={route} />);
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.getByText('*.example.com')).toBeInTheDocument();
   });
 
   it('renders non-admitted label', () => {
@@ -243,9 +241,9 @@ describe(RouteLocation.displayName, () => {
       },
     };
 
-    const wrapper = shallow(<RouteLocation obj={route} />);
-    expect(wrapper.find('a').exists()).toBe(false);
-    expect(wrapper.find('div').text()).toEqual('www.example.com');
+    render(<RouteLocation obj={route} />);
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.getByText('www.example.com')).toBeInTheDocument();
   });
 });
 
@@ -279,10 +277,8 @@ describe(RouteStatus.displayName, () => {
       },
     };
 
-    const wrapper = mount(<RouteStatus obj={route} />);
-    const statusComponent = wrapper.find('SuccessStatus');
-    expect(statusComponent.exists()).toBeTruthy();
-    expect(statusComponent.prop('title')).toEqual('Accepted');
+    render(<RouteStatus obj={route} />);
+    expect(screen.getByText('Accepted')).toBeInTheDocument();
   });
 
   it('renders Rejected status', () => {
@@ -314,10 +310,8 @@ describe(RouteStatus.displayName, () => {
       },
     };
 
-    const wrapper = mount(<RouteStatus obj={route} />);
-    const statusComponent = wrapper.find('ErrorStatus');
-    expect(statusComponent.exists()).toBeTruthy();
-    expect(statusComponent.prop('title')).toEqual('Rejected');
+    render(<RouteStatus obj={route} />);
+    expect(screen.getByText('Rejected')).toBeInTheDocument();
   });
 
   it('renders Pending status', () => {
@@ -336,10 +330,7 @@ describe(RouteStatus.displayName, () => {
       },
     };
 
-    const wrapper = mount(<RouteStatus obj={route} />);
-    const statusComponent = wrapper.find('StatusIconAndText');
-    const icon = wrapper.find('HourglassHalfIcon');
-    expect(icon.exists()).toBeTruthy();
-    expect(statusComponent.prop('title')).toEqual('Pending');
+    render(<RouteStatus obj={route} />);
+    expect(screen.getByText('Pending')).toBeInTheDocument();
   });
 });
