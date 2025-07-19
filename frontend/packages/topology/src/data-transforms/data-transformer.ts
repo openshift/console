@@ -1,15 +1,11 @@
 import { EdgeModel, Model } from '@patternfly/react-topology';
+import { BaseDataModelGetter } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { Alerts } from '@console/internal/components/monitoring/types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createOverviewItemForType } from '@console/shared';
 import { TYPE_APPLICATION_GROUP, TYPE_TRAFFIC_CONNECTOR, TYPE_WORKLOAD } from '../const';
-import {
-  TopologyDataResources,
-  TrafficData,
-  KialiNode,
-  TopologyDataModelDepicted,
-} from '../topology-types';
+import { TopologyDataResources, TrafficData, KialiNode } from '../topology-types';
 import { WORKLOAD_TYPES } from '../utils/topology-utils';
 import {
   addToTopologyDataModel,
@@ -129,15 +125,14 @@ const createTrafficConnectors = (
   }
 };
 
-export const baseDataModelGetter = (
-  model: Model,
-  namespace: string,
-  resources: TopologyDataResources,
-  workloadResources: K8sResourceKind[],
-  dataModelDepicters?: TopologyDataModelDepicted[],
-  trafficData?: TrafficData,
-  monitoringAlerts?: Alerts,
-): Model => {
+export const baseDataModelGetter: BaseDataModelGetter = (
+  model,
+  resources,
+  workloadResources,
+  dataModelDepicters,
+  trafficData,
+  monitoringAlerts,
+) => {
   const res = { ...resources, monitoringAlerts };
   const baseModel = getBaseTopologyDataModel(res);
   addToTopologyDataModel(baseModel, model, dataModelDepicters);
