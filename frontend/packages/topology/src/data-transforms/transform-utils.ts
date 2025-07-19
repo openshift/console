@@ -1,6 +1,7 @@
 import { Model, NodeModel } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import * as _ from 'lodash';
+import { CUSTOM_ICON_ANNOTATION, RUNTIME_LABEL, NAME_LABEL } from '@console/dev-console/src/const';
 import {
   WatchK8sResources,
   WatchK8sResults,
@@ -28,6 +29,7 @@ import {
   TYPE_KNATIVE_REVISION,
 } from '@console/knative-plugin/src/topology/const';
 import { isKnativeServing, OverviewItem } from '@console/shared';
+import { returnIfValidURL } from '@console/shared/src/utils/utils';
 import {
   TYPE_APPLICATION_GROUP,
   TYPE_CONNECTS_TO,
@@ -112,8 +114,9 @@ export const createTopologyNodeData = (
   const deploymentsName = _.get(resource, 'metadata.name', '');
   const contextDir = getContextDirByName(resources, deploymentsName);
   const builderImageIcon =
-    getImageForIconClass(`icon-${deploymentsLabels['app.openshift.io/runtime']}`) ||
-    getImageForIconClass(`icon-${deploymentsLabels['app.kubernetes.io/name']}`);
+    returnIfValidURL(deploymentsAnnotations[CUSTOM_ICON_ANNOTATION]) ??
+    getImageForIconClass(`icon-${deploymentsLabels[RUNTIME_LABEL]}`) ??
+    getImageForIconClass(`icon-${deploymentsLabels[NAME_LABEL]}`);
   return {
     id: dcUID,
     name: resource?.metadata.name || deploymentsLabels['app.kubernetes.io/instance'],
@@ -127,7 +130,7 @@ export const createTopologyNodeData = (
       vcsURI: deploymentsAnnotations['app.openshift.io/vcs-uri'],
       vcsRef: deploymentsAnnotations['app.openshift.io/vcs-ref'],
       contextDir,
-      builderImage: builderImageIcon || defaultIcon,
+      builderImage: builderImageIcon ?? defaultIcon,
       isKnativeResource:
         type &&
         (type === TYPE_EVENT_SOURCE ||
