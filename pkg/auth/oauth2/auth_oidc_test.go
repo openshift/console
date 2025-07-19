@@ -280,7 +280,7 @@ func Test_oidcAuth_login(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			o, err := newOIDCAuth(
 				context.Background(),
-				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
+				sessions.NewSessionStore(authnKey, encryptionKey, true, "/", "/tmp"),
 				&oidcConfig{
 					getClient: func() *http.Client {
 						return http.DefaultClient
@@ -391,7 +391,7 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			o, err := newOIDCAuth(
 				context.Background(),
-				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
+				sessions.NewSessionStore(authnKey, encryptionKey, true, "/", "/tmp"),
 				&oidcConfig{
 					getClient: func() *http.Client {
 						return http.DefaultClient
@@ -515,7 +515,7 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			o, err := newOIDCAuth(
 				context.Background(),
-				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
+				sessions.NewSessionStore(authnKey, encryptionKey, true, "/", "/tmp"),
 				&oidcConfig{
 					getClient: func() *http.Client {
 						return http.DefaultClient
@@ -581,7 +581,7 @@ func BenchmarkRefreshSession(b *testing.B) {
 			authMetrics := auth.NewMetrics(defaultRestClientConfig)
 			o, err := newOIDCAuth(
 				context.Background(),
-				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
+				sessions.NewSessionStore(authnKey, encryptionKey, true, "/", "/tmp"),
 				&oidcConfig{
 					getClient: func() *http.Client {
 						return http.DefaultClient
