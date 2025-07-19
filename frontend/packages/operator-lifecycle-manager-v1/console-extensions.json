@@ -31,7 +31,7 @@
       "href": "/ecosystem/catalog"
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+      "required": ["CLUSTER_CATALOG_API", "FALSE"]
     }
   },
   {
@@ -43,7 +43,7 @@
       }
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+      "required": ["CLUSTER_CATALOG_API", "FALSE"]
     }
   },
   {
@@ -60,17 +60,17 @@
       "startsWith": ["olm.operatorframework.io"]
     },
     "flags": {
-      "required": ["CLUSTER_EXTENSION_API", "FALSE"] // TODO re-enable
+      "required": ["CLUSTER_EXTENSION_API", "FALSE"]
     }
   },
   {
     "type": "console.context-provider",
     "properties": {
-      "provider": { "$codeRef": "ExtensionCatalogDatabaseContextProvider" },
-      "useValueHook": { "$codeRef": "useExtensionCatalogDatabaseContextValues" }
+      "provider": { "$codeRef": "OLMv1BackendProvider" },
+      "useValueHook": { "$codeRef": "useOLMv1Backend" }
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+      "required": ["CLUSTER_CATALOG_API", "FALSE"]
     }
   },
   {
@@ -81,7 +81,7 @@
       "provider": { "$codeRef": "useExtensionCatalogItems" }
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+      "required": ["CLUSTER_CATALOG_API", "FALSE"]
     }
   },
   {
@@ -128,7 +128,7 @@
       ]
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+      "required": ["CLUSTER_CATALOG_API", "FALSE"]
     }
   }
 ]

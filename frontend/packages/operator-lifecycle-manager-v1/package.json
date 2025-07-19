@@ -7,9 +7,10 @@
     "entry": "src/plugin.tsx",
     "exposedModules": {
       "ExtensionCatalog": "src/components/ExtensionCatalog.tsx",
-      "useExtensionCatalogDatabaseContextValues": "src/contexts/useExtensionCatalogDatabaseContextValues.ts",
-      "ExtensionCatalogDatabaseContextProvider": "src/contexts/ExtensionCatalogDatabaseContext.ts",
+      "OLMv1BackendProvider": "src/contexts/OLMv1Context.tsx",
+      "useOLMv1Backend": "src/contexts/OLMv1Context.tsx",
       "useExtensionCatalogItems": "src/hooks/useExtensionCatalogItems.ts",
+      "useExtensionCatalogCategories": "src/hooks/useExtensionCatalogCategories.ts",
       "filters": "src/utils/filters.ts"
     }
   }
