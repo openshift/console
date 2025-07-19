@@ -4,7 +4,7 @@ import { operator, GlobalInstalledNamespace, TestOperandProps } from '../views/o
 
 const testOperator = {
   name: 'Data Grid',
-  operatorHubCardTestID: 'datagrid-redhat-operators-openshift-marketplace',
+  operatorHubCardTestID: 'operator-Data Grid',
 };
 
 const testOperand: TestOperandProps = {
