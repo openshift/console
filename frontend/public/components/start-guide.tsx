@@ -86,12 +86,9 @@ export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = 
 
 type WithStartGuide = <P>(
   WrappedComponent: React.ComponentType<P & WithStartGuideProps>,
-  disable?: boolean,
 ) => React.ComponentType<P>;
 
-export const withStartGuide: WithStartGuide = (WrappedComponent, disable = true) => (
-  props: any,
-) => {
+export const withStartGuide: WithStartGuide = (WrappedComponent) => (props: any) => {
   const showOpenshiftStartGuide = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
   const { kindObj } = props;
   const kind = _.get(kindObj, 'kind', props.kind);
@@ -105,11 +102,7 @@ export const withStartGuide: WithStartGuide = (WrappedComponent, disable = true)
     <>
       <OpenShiftGettingStarted />
       <Divider />
-      {!disable || (props.kindObj && !props.kindObj.namespaced) ? (
-        <WrappedComponent {...props} noProjectsAvailable />
-      ) : (
-        <WrappedComponent {...props} noProjectsAvailable />
-      )}
+      <WrappedComponent {...props} noProjectsAvailable />
     </>
   );
 };
