@@ -9,6 +9,11 @@
     // is exactly the height of the buttons
     --co-cloud-shell-header-height: #{vars.$co-button-height};
 
+    &[hidden] {
+      // fixes issues with scrolling on e2e
+      display: none !important;
+    }
+
     &-collapsed .pf-v6-c-drawer__panel-main {
       overflow-y: hidden;
     }
