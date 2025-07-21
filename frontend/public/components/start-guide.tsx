@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { FLAGS } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { Disabled, openshiftHelpBase, LinkifyExternal, ConsoleEmptyState } from './utils';
+import { openshiftHelpBase, LinkifyExternal, ConsoleEmptyState } from './utils';
 import { ProjectModel } from '../models';
 import { K8sResourceKind } from '../module/k8s/types';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
@@ -58,7 +58,7 @@ export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = 
   ];
   return (
     <ConsoleEmptyState
-      variant={EmptyStateVariant.xl}
+      variant={EmptyStateVariant.sm}
       icon={ClusterIcon}
       title={t('public~Hello, world')}
       primaryActions={primaryActions}
@@ -108,9 +108,7 @@ export const withStartGuide: WithStartGuide = (WrappedComponent, disable = true)
       {!disable || (props.kindObj && !props.kindObj.namespaced) ? (
         <WrappedComponent {...props} noProjectsAvailable />
       ) : (
-        <Disabled>
-          <WrappedComponent {...props} noProjectsAvailable />
-        </Disabled>
+        <WrappedComponent {...props} noProjectsAvailable />
       )}
     </>
   );
