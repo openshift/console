@@ -107,7 +107,7 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({
   );
 
   return (
-    <Drawer isInline isExpanded={open} position="bottom">
+    <Drawer isInline isExpanded={open} position="bottom" id="co-cloud-shell-drawer">
       <DrawerContent panelContent={panelContent}>
         <DrawerContentBody>{children}</DrawerContentBody>
       </DrawerContent>

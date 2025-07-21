@@ -4,8 +4,8 @@ Feature: Web Terminal for Admin user
 
 
         Background:
-            Given user has logged in as admin user
-              And user is at administrator perspective
+            Given user has logged in
+            #   And user is at administrator perspective
             #   And user has created or selected namespace "aut-terminal"
 
 
@@ -21,7 +21,7 @@ Feature: Web Terminal for Admin user
         Examples:
                   | number_of_terminals | closed_terminal | open_terminals |
                   | 3                   | 2nd             | 3              |
-                  
+
 
         @smoke @odc-6745
         Scenario: Create new project with timeout and use Web Terminal: WT-02-TC02
@@ -44,4 +44,3 @@ Feature: Web Terminal for Admin user
               And user will see the terminal instance for namespace "openshift-terminal"
               And user ID obtained by API should match with user id in yaml editor for "openshift-terminal" namespace
               And user has closed existing terminal workspace
-
