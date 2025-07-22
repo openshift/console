@@ -77,11 +77,6 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
       {(details?.descriptions?.length || description) && (
         <CatalogPageOverlayDescription>
           <Stack hasGutter>
-            {!details?.descriptions?.[0]?.label && (
-              <StackItem data-test="description-heading">
-                <SectionHeading text={t('console-shared~Description')} />
-              </StackItem>
-            )}
             {!details?.descriptions?.length && description && (
               <StackItem data-test="description">{description}</StackItem>
             )}
