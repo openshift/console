@@ -8,9 +8,9 @@ import {
   createModalLauncher,
   ModalComponentProps,
 } from '@console/internal/components/factory';
-import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { startNodeMaintenance } from '../../k8s/requests/node-maintenance';
 import { CephClusterModel } from '../../models';
@@ -21,14 +21,14 @@ const cephClusterResource = {
   isList: true,
 };
 
-export type StartNodeMaintenanceModalProps = HandlePromiseProps &
-  ModalComponentProps & {
-    nodeName: string;
-  };
+export type StartNodeMaintenanceModalProps = ModalComponentProps & {
+  nodeName: string;
+};
 
-const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalProps>((props) => {
+const StartNodeMaintenanceModal: React.FC<StartNodeMaintenanceModalProps> = (props) => {
   const { t } = useTranslation();
-  const { nodeName, inProgress, errorMessage, handlePromise, close, cancel } = props;
+  const { nodeName, close, cancel } = props;
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [model] = useMaintenanceCapability();
 
   const [reason, setReason] = React.useState('');
@@ -36,7 +36,9 @@ const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalPro
   const submit = (event) => {
     event.preventDefault();
     const promise = startNodeMaintenance(nodeName, reason, model);
-    return handlePromise(promise, close);
+    return handlePromise(promise).then(() => {
+      close();
+    });
   };
 
   const [cephClusters, loaded] = useK8sWatchResource<K8sResourceKind[]>(cephClusterResource);
@@ -94,6 +96,6 @@ const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalPro
       />
     </form>
   );
-});
+};
 
 export const startNodeMaintenanceModal = createModalLauncher(StartNodeMaintenanceModal);

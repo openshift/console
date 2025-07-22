@@ -6,35 +6,31 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory';
-import { withHandlePromise } from '@console/internal/components/utils';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { restartHost } from '../../k8s/requests/bare-metal-host';
 import { BareMetalHostKind } from '../../types';
 import { PowerOffWarning } from './PowerOffHostModal';
 
 export type RestartHostModalProps = {
   host: BareMetalHostKind;
-  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
-  inProgress: boolean;
-  errorMessage: string;
   cancel?: () => void;
   close?: () => void;
 };
 
-const RestartHostModal = ({
+const RestartHostModal: React.FC<RestartHostModalProps> = ({
   host,
-  inProgress,
-  errorMessage,
-  handlePromise,
   close = undefined,
   cancel = undefined,
-}: RestartHostModalProps) => {
+}) => {
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { t } = useTranslation();
   const onSubmit = React.useCallback(
-    async (event) => {
+    (event) => {
       event.preventDefault();
       const promise = restartHost(host);
-      await handlePromise(promise);
-      return close();
+      return handlePromise(promise).then(() => {
+        close();
+      });
     },
     [host, close, handlePromise],
   );
@@ -57,4 +53,4 @@ const RestartHostModal = ({
   );
 };
 
-export const restartHostModal = createModalLauncher(withHandlePromise(RestartHostModal));
+export const restartHostModal = createModalLauncher(RestartHostModal);

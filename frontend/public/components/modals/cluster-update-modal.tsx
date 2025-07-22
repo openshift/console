@@ -6,7 +6,8 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
 
 import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
-import { FieldLevelHelp, HandlePromiseProps, LinkifyExternal, withHandlePromise } from '../utils';
+import { FieldLevelHelp, LinkifyExternal } from '../utils';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import {
   ClusterVersionKind,
   getConditionUpgradeableFalse,
@@ -42,8 +43,9 @@ enum upgradeTypes {
   Partial = 'Partial',
 }
 
-const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) => {
-  const { cancel, close, cv, errorMessage, handlePromise, inProgress } = props;
+const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
+  const { cancel, close, cv } = props;
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
   const availableSortedUpdates = getSortedAvailableUpdates(cv);
   const notRecommendedSortedUpdates = getSortedNotRecommendedUpdates(cv);
@@ -141,8 +143,7 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
         ...MCPsToResumePromises,
         ...MCPsToPausePromises,
       ]),
-      close,
-    );
+    ).then(() => close());
   };
   const dropdownItem = (version) => {
     const isDisabled = clusterUpgradeableFalse && isMinorVersionNewer(currentVersion, version);
@@ -318,11 +319,10 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
       />
     </form>
   );
-});
+};
 
 export const clusterUpdateModal = createModalLauncher(ClusterUpdateModal);
 
 type ClusterUpdateModalProps = {
   cv: ClusterVersionKind;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;

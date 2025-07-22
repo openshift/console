@@ -8,7 +8,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circ
 import { useTranslation } from 'react-i18next';
 
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { EmptyBox, withHandlePromise, HandlePromiseProps } from '../utils';
+import { EmptyBox } from '../utils';
 import { K8sKind, k8sPatch, Toleration, TolerationOperator } from '../../module/k8s';
 import {
   createModalLauncher,
@@ -17,8 +17,9 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '../factory';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
+const TolerationsModal = (props: TolerationsModalProps) => {
   const getTolerationsFromResource = (): Toleration[] => {
     const { resource } = props;
     return props.resourceKind.kind === 'Pod'
@@ -29,6 +30,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
   const [tolerations, setTolerations] = React.useState<Toleration[]>(
     getTolerationsFromResource() || [],
   );
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const { t } = useTranslation();
 
@@ -58,7 +60,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
 
     const patch = [{ path, op, value: submittedTolerations }];
 
-    props.handlePromise(k8sPatch(props.resourceKind, props.resource, patch), props.close);
+    handlePromise(k8sPatch(props.resourceKind, props.resource, patch)).then(() => props.close());
   };
 
   const cancel = () => {
@@ -103,8 +105,6 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
   const isEditable = (toleration: TolerationModalItem) => {
     return props.resourceKind.kind !== 'Pod' || toleration.isNew;
   };
-
-  const { errorMessage } = props;
 
   return (
     <form onSubmit={submit} name="form" className="modal-content">
@@ -229,13 +229,13 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
-        inProgress={false}
+        inProgress={inProgress}
         submitText={t('public~Save')}
         cancel={cancel}
       />
     </form>
   );
-});
+};
 
 export const tolerationsModal = createModalLauncher(TolerationsModal);
 
@@ -250,6 +250,4 @@ export type TolerationsModalProps = {
   resource: any;
   existingReadOnly?: boolean;
   close?: () => void;
-  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;

@@ -27,8 +27,6 @@ import {
   history,
   ResourceIcon,
   resourceObjPath,
-  HandlePromiseProps,
-  withHandlePromise,
   convertToBaseValue,
   humanizeBinaryBytes,
   getURLSearchParams,
@@ -59,6 +57,7 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (
@@ -158,8 +157,9 @@ const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
     defaultSnapshotClassAnnotation
   ] === 'true';
 
-const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
-  const { namespace, pvcName, handlePromise, inProgress, errorMessage } = props;
+const CreateSnapshotForm: React.FC<SnapshotResourceProps> = (props) => {
+  const { namespace, pvcName } = props;
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler<VolumeSnapshotKind>();
 
   const { t } = useTranslation();
   const [selectedPVCName, setSelectedPVCName] = React.useState(pvcName);
@@ -240,7 +240,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
       },
     };
 
-    handlePromise(k8sCreate(VolumeSnapshotModel, snapshotTemplate), (resource) => {
+    return handlePromise(k8sCreate(VolumeSnapshotModel, snapshotTemplate)).then((resource) => {
       history.push(resourceObjPath(resource, referenceFor(resource)));
     });
   };
@@ -350,7 +350,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
       </PaneBody>
     </div>
   );
-});
+};
 
 export const VolumeSnapshot: React.FC = () => {
   const params = useParams();
@@ -366,7 +366,7 @@ type SnapshotClassDropdownProps = {
   dataTest?: string;
 };
 
-type SnapshotResourceProps = HandlePromiseProps & {
+type SnapshotResourceProps = {
   namespace: string;
   pvcName?: string;
 };
