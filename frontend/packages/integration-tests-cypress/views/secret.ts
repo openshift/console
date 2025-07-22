@@ -9,8 +9,8 @@ export const secrets = {
     modal.shouldBeOpened();
     modal.modalTitleShouldContain('Add secret to workload');
     cy.get('#co-add-secret-to-workload__workload').click();
-    cy.byLegacyTestID('dropdown-text-filter').type(resourceName);
-    cy.byTestID('dropdown-menu-item-link').click();
+    cy.byTestID('console-select-search-input').type(resourceName);
+    cy.byTestID('console-select-item').click();
   },
   checkSecret: (keyValuesToCheck: object, jsonOutput: boolean = false) => {
     secrets.clickRevealValues();

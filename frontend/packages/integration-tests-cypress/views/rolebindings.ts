@@ -5,7 +5,7 @@ export const roleBindings = {
     cy
       .byTestID('namespace-dropdown')
       .click()
-      .byLegacyTestID('dropdown-text-filter')
+      .byTestID('console-select-search-input')
       .type(namespace)
       .byTestID('console-select-menu-list')
       .within(() => {
@@ -15,7 +15,7 @@ export const roleBindings = {
     cy
       .byTestID('role-dropdown')
       .click()
-      .byLegacyTestID('dropdown-text-filter')
+      .byTestID('console-select-search-input')
       .type(role)
       .get('#cluster-admin-ClusterRole-link')
       .click(),

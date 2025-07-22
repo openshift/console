@@ -47,7 +47,7 @@ Cypress.Commands.add(
   'selectByAutoCompleteDropDownText',
   (selector: string, dropdownText: string) => {
     cy.get(selector).click();
-    cy.byLegacyTestID('dropdown-text-filter').type(dropdownText);
+    cy.byTestID('console-select-search-input').type(dropdownText);
     cy.get(`[id*="${dropdownText}-link"]`, { timeout: 60000 }).click({ force: true });
   },
 );
@@ -65,8 +65,8 @@ Cypress.Commands.add(
   'selectValueFromAutoCompleteDropDown',
   (selector: string, dropdownText: string) => {
     cy.get(selector).click();
-    cy.byLegacyTestID('dropdown-text-filter').type(dropdownText);
-    cy.get('ul[role="listbox"]').find('li').contains(dropdownText).click();
+    cy.byTestID('console-select-search-input').type(dropdownText);
+    cy.byTestID('console-select-menu-list').find('li').contains(dropdownText).click();
   },
 );
 
@@ -77,18 +77,18 @@ Cypress.Commands.add('selectActionsMenuOption', (actionsMenuOption: string) => {
 });
 
 Cypress.Commands.add('dropdownSwitchTo', (dropdownMenuOption: string) => {
-  cy.byLegacyTestID('dropdown-button')
+  cy.byTestID('console-select-menu-toggle')
     .click()
-    .find('data-test-id="dropdown-menu"')
+    .find('data-test="console-select-item"')
     .contains(dropdownMenuOption)
     .click();
 });
 
 Cypress.Commands.add('isDropdownVisible', () => {
-  cy.byLegacyTestID('dropdown-button')
+  cy.byTestID('console-select-menu-toggle')
     .should('be.visible')
     .click()
-    .find('data-test-id="dropdown-menu"')
+    .find('data-test="console-select-item"')
     .should('be.visible');
 });
 

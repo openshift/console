@@ -22,7 +22,7 @@ export const gitPO = {
   builderImageCard: '.odc-selector-card',
   nodeName: '[data-test-id="application-form-app-name"]',
   appName: '[id$=application-name-field]',
-  createNewApp: '[data-test-id="dropdown-menu"]',
+  createNewApp: '[data-test="console-select-item"]',
   newAppName: '[data-test-id="application-form-app-input"]',
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
@@ -142,7 +142,7 @@ export const catalogPO = {
   templateTitle: '.catalog-tile-pf-title',
   card: '[class$="catalog-tile"]',
   cardBadge: '.catalog-tile-pf-badge-container',
-  groupBy: '[data-test-id="dropdown-button"]',
+  groupBy: '[data-test="console-select-menu-toggle"]',
   aToz: '[data-test-dropdown-menu="desc"]',
   zToA: '[data-test-dropdown-menu="asc"]',
   cardType: '.catalog-tile-pf-badge-container',
@@ -340,15 +340,15 @@ export const eventSourcePO = {
     name: '#form-input-formData-name-field',
     resourceToggleButton: '[id="form-radiobutton-formData-sinkType-resource-field"]',
     resourceDropDownField: '[id="form-ns-dropdown-formData-sink-key-field"]',
-    resourceDropDownItem: '[data-test="dropdown-menu-item-link"]',
-    resourceFilter: '[data-test-id="dropdown-text-filter"]',
+    resourceDropDownItem: '[data-test="console-select-item"]',
+    resourceFilter: '[data-test="console-select-search-input"]',
     resourceSearch: '[placeholder="Select resource"]',
   },
   createSinkBinding: {
     resourceToggleButton: '[data-test="resource-view-input"]',
     resourceDropDownField: '[id="form-ns-dropdown-formData-sink-key-field"]',
-    resourceDropDownItem: '[data-test="dropdown-menu-item-link"]',
-    resourceSearchField: '[data-test-id="dropdown-text-filter"]',
+    resourceDropDownItem: '[data-test="console-select-item"]',
+    resourceSearchField: '[data-test="console-select-search-input"]',
     createButton: '[data-test=confirm-action]',
     moveSinkButton: '[data-test-action="Move sink"]',
     eventSourceNode: 'g.odc-event-source',
@@ -384,7 +384,7 @@ export const devFilePO = {
 };
 
 export const channelPO = {
-  channelType: '[data-test-id="dropdown-button"]',
+  channelType: '[data-test="console-select-menu-toggle"]',
   channelName: '[data-test-id="channel-name"]',
   appName: '[data-test-id="application-form-app-input"]',
 };
