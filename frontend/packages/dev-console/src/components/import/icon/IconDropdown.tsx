@@ -22,8 +22,8 @@ type IconProps = {
 };
 
 const Icon: React.FC<IconProps> = ({ label, url }) => (
-  <div className="odc-icon-dropdown__item">
-    <img src={url} width="24" height="24" alt="" className="icon" />
+  <div className="pf-v6-u-display-flex pf-v6-u-align-items-center">
+    <img src={url} width="28" height="28" alt="" className="odc-icon-bg pf-v6-u-mr-sm" />
     {label}
   </div>
 );
