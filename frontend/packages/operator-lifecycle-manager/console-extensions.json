@@ -113,9 +113,10 @@
     "type": "console.catalog/item-type",
     "properties": {
       "type": "operator",
-      "title": "%olm~OperatorHub%",
+      "title": "%olm~Operators%",
       "catalogDescription": "%olm~Browse for Operators provided by Operator Lifecycle Manager.%",
       "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
+      "sortFilterGroups": false,
       "filters": [
         {
           "label": "%olm~Source%",
@@ -123,6 +124,10 @@
           "comparator": {
             "$codeRef": "filters.sourceComparator"
           }
+        },
+        {
+          "label": "%olm~Installed%",
+          "attribute": "installState"
         },
         {
           "label": "%olm~Provider%",

@@ -20,5 +20,3 @@ type DismissableAlertProps = {
   children: React.ReactNode;
   variant?: AlertVariant;
 };
-
-export default DismissableAlert;

@@ -60,6 +60,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   );
 
   const title = typeExtension?.properties?.title ?? defaultTitle;
+  const sortFilterGroups = typeExtension?.properties?.sortFilterGroups ?? true;
   const getCatalogTypeDescription = () => {
     if (typeof typeExtension?.properties?.catalogDescription === 'string') {
       return typeExtension?.properties?.catalogDescription;
@@ -203,6 +204,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
             groupings={groupings}
             renderTile={renderTile}
             hideSidebar={hideSidebar}
+            sortFilterGroups={sortFilterGroups}
           />
           <CatalogDetailsModal item={selectedItem} onClose={closeDetailsPanel} />
         </StatusBox>

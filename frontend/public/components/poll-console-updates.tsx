@@ -172,7 +172,7 @@ export const PollConsoleUpdates = memo(function PollConsoleUpdates() {
         label: t('public~Refresh web console'),
         callback: () => {
           if (window.location.pathname.includes('/operatorhub/subscribe')) {
-            window.location.href = '/operatorhub';
+            window.location.href = '/catalog?catalogType=operator';
           } else {
             window.location.reload();
           }

@@ -29,7 +29,7 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
         title: t('public~OpenShift AI'),
         description: t('public~Build, deploy, and manage AI-enabled applications.'),
         href:
-          '/operatorhub/all-namespaces?keyword=openshift+ai&details-item=rhods-operator-redhat-operators-openshift-marketplace',
+          '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
       },
       ...(showLightSpeedLink
         ? [
