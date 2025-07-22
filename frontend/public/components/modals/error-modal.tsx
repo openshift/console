@@ -1,7 +1,6 @@
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-import { HandlePromiseProps, withHandlePromise } from '../utils/promise-component';
 import {
   createModalLauncher,
   ModalTitle,
@@ -11,7 +10,7 @@ import {
 } from '../factory/modal';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 
-export const ModalErrorContent = withHandlePromise<ErrorModalProps>((props) => {
+export const ModalErrorContent = (props: ErrorModalProps) => {
   const { t } = useTranslation();
   const { error, title, cancel } = props;
   const titleText = title || t('public~Error');
@@ -30,12 +29,11 @@ export const ModalErrorContent = withHandlePromise<ErrorModalProps>((props) => {
       </ModalFooter>
     </div>
   );
-});
+};
 
 export const errorModal = createModalLauncher(ModalErrorContent);
 
 export type ErrorModalProps = {
   error: string;
   title?: string;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;
