@@ -6,27 +6,26 @@ import {
   ModalSubmitFooter,
   createModalLauncher,
 } from '@console/internal/components/factory/modal';
-import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { makeNodeUnschedulable } from '../../../k8s/requests/nodes';
 
-type ConfigureUnschedulableModalProps = HandlePromiseProps & {
+type ConfigureUnschedulableModalProps = {
   resource: NodeKind;
   cancel?: () => void;
   close?: () => void;
 };
 
 const ConfigureUnschedulableModal: React.FC<ConfigureUnschedulableModalProps> = ({
-  handlePromise,
   resource,
   close,
   cancel,
-  errorMessage,
-  inProgress,
 }) => {
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    handlePromise(makeNodeUnschedulable(resource), close);
+    return handlePromise(makeNodeUnschedulable(resource)).then(() => close());
   };
   const { t } = useTranslation();
   return (
@@ -47,4 +46,4 @@ const ConfigureUnschedulableModal: React.FC<ConfigureUnschedulableModalProps> = 
   );
 };
 
-export default createModalLauncher(withHandlePromise(ConfigureUnschedulableModal));
+export default createModalLauncher(ConfigureUnschedulableModal);
