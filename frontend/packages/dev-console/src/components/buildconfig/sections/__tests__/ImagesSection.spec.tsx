@@ -156,9 +156,9 @@ describe('ImagesSection', () => {
     await userEvent.click(renderResult.getByText('Please select'));
 
     // Assert options
-    const options = renderResult.container
-      .querySelector('[data-test="build-from type"]')
-      .parentElement.querySelectorAll('li button');
+    const menuList = document.querySelector('[data-test="console-select-menu-list"]');
+    expect(menuList).not.toBeNull();
+    const options = menuList.querySelectorAll('li button');
     expect(Object.values(options).map((option) => option.textContent)).toEqual([
       'Image Stream Tag',
       'Image Stream Image',
@@ -186,9 +186,9 @@ describe('ImagesSection', () => {
     userEvent.click(renderResult.getAllByText('None')[0]);
 
     // Assert options
-    const options = renderResult.container
-      .querySelector('[data-test="build-from type"]')
-      .parentElement.querySelectorAll('li button');
+    const menuList = document.querySelector('[data-test="console-select-menu-list"]');
+    expect(menuList).not.toBeNull();
+    const options = menuList.querySelectorAll('li button');
     expect(Object.values(options).map((option) => option.textContent)).toEqual([
       'None',
       'Image Stream Tag',
@@ -216,9 +216,9 @@ describe('ImagesSection', () => {
     userEvent.click(renderResult.getByText('None'));
 
     // Assert options
-    const options = renderResult.container
-      .querySelector('[data-test="push-to type"]')
-      .parentElement.querySelectorAll('li button');
+    const menuList = document.querySelector('[data-test="console-select-menu-list"]');
+    expect(menuList).not.toBeNull();
+    const options = menuList.querySelectorAll('li button');
     expect(Object.values(options).map((option) => option.textContent)).toEqual([
       'None',
       'Image Stream Tag',

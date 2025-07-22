@@ -46,8 +46,8 @@ When('user switches to Developer tab', () => {
 
 When('user increase the timeout value and set unit as {string}', (unit: string) => {
   cy.get('[data-test-id="Increment"]').should('be.visible').click();
-  cy.byLegacyTestID('dropdown-button').click();
-  cy.byLegacyTestID('dropdown-menu').contains(unit).click();
+  cy.byTestID('console-select-menu-toggle').click();
+  cy.byTestID('console-select-item').contains(unit).click();
 });
 
 When('user enters image value as {string}', (image: string) => {
@@ -124,5 +124,5 @@ Then('user should see new image value as {string}', (imageValue: string) => {
 });
 
 Then('user should see new timeout unit as {string}', (unitValue: string) => {
-  cy.byLegacyTestID('dropdown-button').should('include.text', unitValue);
+  cy.byTestID('console-select-menu-toggle').should('include.text', unitValue);
 });

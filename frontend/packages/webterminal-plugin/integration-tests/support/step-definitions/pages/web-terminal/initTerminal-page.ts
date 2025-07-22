@@ -51,7 +51,7 @@ export const initTerminalPage = {
     cy.byTestID(webTerminalPO.createProjectMenu.inputField)
       .type(projectName)
       .should('have.value', projectName);
-    cy.byTestID('dropdown-menu-item-link').contains(projectName).click();
+    cy.byTestID('console-select-item').contains(projectName).click();
   },
 
   createAndStartTerminalInNewProject: (projectName: string) => {
