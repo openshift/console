@@ -176,7 +176,7 @@ export const ConnectedPageHeading = connectToModel(
                   )}
                 </span>
                 {resourceStatus && (
-                  <ResourceStatus additionalClassNames="hidden-xs">
+                  <ResourceStatus additionalClassNames="pf-v6-u-display-none pf-v6-u-display-block-on-sm">
                     <Status status={resourceStatus} />
                   </ResourceStatus>
                 )}

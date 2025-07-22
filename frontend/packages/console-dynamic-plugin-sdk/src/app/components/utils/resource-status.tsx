@@ -17,7 +17,7 @@ type ResourceStatusProps = {
  * @example
  * ```ts
  * return (
- *  <ResourceStatus additionalClassNames="hidden-xs">
+ *  <ResourceStatus>
  *    <Status status={resourceStatus} />
  *  </ResourceStatus>
  * )

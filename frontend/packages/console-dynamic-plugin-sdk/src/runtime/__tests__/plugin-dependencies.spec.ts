@@ -57,7 +57,7 @@ describe('resolvePluginDependencies', () => {
       await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test']);
     } catch (e) {
       expect(e.message).toEqual(
-        'Unmet dependency on Console plugin API:\n' +
+        'Unmet dependency on Console plugin API: ' +
           '@console/pluginAPI: required ~4.12, current 4.11.1-test.2',
       );
       expect(subscribeToDynamicPlugins).not.toHaveBeenCalled();
@@ -93,7 +93,23 @@ describe('resolvePluginDependencies', () => {
     try {
       await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test']);
     } catch (e) {
-      expect(e.message).toEqual('Dependent plugins are not available: Bar, Foo');
+      expect(e.message).toEqual('Required plugins are not available: Bar, Foo');
+      expect(subscribeToDynamicPlugins).not.toHaveBeenCalled();
+      expect(getStateForTestPurposes().unsubListenerMap.size).toBe(0);
+    }
+
+    expect.assertions(3);
+  });
+
+  it('skips required but not available plugins when listed in optionalDependencies', async () => {
+    const manifest = getPluginManifest('Test', '1.2.3');
+    manifest.dependencies = { Foo: '*' };
+    manifest.optionalDependencies = { Bar: '*' };
+
+    try {
+      await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test']);
+    } catch (e) {
+      expect(e.message).toEqual('Required plugins are not available: Foo');
       expect(subscribeToDynamicPlugins).not.toHaveBeenCalled();
       expect(getStateForTestPurposes().unsubListenerMap.size).toBe(0);
     }
@@ -195,8 +211,8 @@ describe('resolvePluginDependencies', () => {
       await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test', 'Foo', 'Bar', 'Baz']);
     } catch (e) {
       expect(e.message).toEqual(
-        'Unmet dependencies on plugins:\n' +
-          'Bar: required ~1.1.1, current 1.1.0\n' +
+        'Unmet dependencies on plugins: ' +
+          'Bar: required ~1.1.1, current 1.1.0; ' +
           'Baz: required =1.1.1, current 1.1.2',
       );
       expect(subscribeToDynamicPlugins).toHaveBeenCalledTimes(1);

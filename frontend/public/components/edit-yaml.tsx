@@ -1,4 +1,3 @@
-/* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
@@ -6,7 +5,7 @@ import { useDispatch, useSelector, connect } from 'react-redux';
 import { action } from 'typesafe-actions';
 import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
-import { ActionGroup, Alert, Button, Switch } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -16,29 +15,40 @@ import {
   getBadgeFromType,
   withPostFormSubmissionCallback,
   getResourceSidebarSamples,
-  SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
-  SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
   useTelemetry,
   useUserSettingsCompatibility,
+  WithPostFormSubmissionCallbackProps,
 } from '@console/shared';
+import {
+  SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
+  SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
+  SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
+  SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
+} from '@console/shared/src/constants/common';
 import PageBody from '@console/shared/src/components/layout/PageBody';
-
+import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
 import CodeEditorSidebar from '@console/shared/src/components/editor/CodeEditorSidebar';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
-import { isYAMLTemplate, getImpersonate } from '@console/dynamic-plugin-sdk';
+import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
+import {
+  isYAMLTemplate,
+  getImpersonate,
+  YAMLTemplate,
+  K8sResourceKind,
+} from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { connectToFlags } from '../reducers/connectToFlags';
+import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
 import ReplaceCodeModal from './modals/replace-code-modal';
 import {
   checkAccess,
   Firehose,
   Loading,
-  LoadingBox,
   resourceObjPath,
   resourceListPathFromModel,
+  FirehoseResult,
 } from './utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
@@ -48,54 +58,105 @@ import {
   k8sList,
   referenceFor,
   groupVersionFor,
+  AccessReviewResourceAttributes,
+  CodeEditorRef,
+  K8sModel,
 } from '../module/k8s';
 import { ConsoleYAMLSampleModel } from '../models';
 import { getYAMLTemplates } from '../models/yaml-templates';
+import { ConnectDropTarget } from 'react-dnd';
 import { findOwner } from '../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { definitionFor } from '../module/k8s/swagger';
 import { ImportYAMLResults } from './import-yaml-results';
+import { EditYamlSettingsModal } from './modals/edit-yaml-settings-modal';
+import { CodeEditorControl } from '@patternfly/react-code-editor';
+import { CompressIcon } from '@patternfly/react-icons/dist/js/icons/compress-icon';
+import { ExpandIcon } from '@patternfly/react-icons/dist/js/icons/expand-icon';
+import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
+import { RootState } from '@console/internal/redux';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
 
-const generateObjToLoad = (templateExtensions, kind, id, yaml, namespace = 'default') => {
-  const sampleObj = safeLoad(yaml ? yaml : getYAMLTemplates(templateExtensions).getIn([kind, id]));
+const generateObjToLoad = (
+  templateExtensions: Parameters<typeof getYAMLTemplates>[0],
+  kind: string,
+  id: string,
+  yaml: string,
+  namespace = 'default',
+) => {
+  const sampleObj: K8sResourceKind = safeLoad(
+    yaml ? yaml : getYAMLTemplates(templateExtensions).getIn([kind, id]),
+  );
   if (_.has(sampleObj.metadata, 'namespace')) {
     sampleObj.metadata.namespace = namespace;
   }
   return sampleObj;
 };
 
-const stateToProps = (state) => ({
-  activeNamespace: state.UI.get('activeNamespace'),
+const stateToProps = (state: RootState) => ({
+  activeNamespace: getActiveNamespace(state),
   impersonate: getImpersonate(state),
-  models: state.k8s.getIn(['RESOURCES', 'models']),
+  models: state.k8s.getIn(['RESOURCES', 'models']) as Map<string, K8sModel>,
 });
 
-const WithYamlTemplates = (Component) =>
-  function Comp(props) {
-    const kind = props?.obj?.kind;
-    const [templateExtensions, resolvedTemplates] = useResolvedExtensions(
-      React.useCallback((e) => isYAMLTemplate(e) && e.properties.model.kind === kind, [kind]),
-    );
-    const [showTooltips, setShowTooltips] = useUserSettingsCompatibility(
-      SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
-      SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
-      true,
-      true,
-    );
+type EditYAMLInnerProps = WithPostFormSubmissionCallbackProps<any> &
+  ReturnType<typeof stateToProps> & {
+    /** The sample object to load into the editor */
+    sampleObj?: ReturnType<typeof generateObjToLoad>;
 
-    return !resolvedTemplates ? (
-      <LoadingBox />
-    ) : (
-      <Component
-        templateExtensions={templateExtensions}
-        showTooltips={showTooltips}
-        setShowTooltips={setShowTooltips}
-        {...props}
-      />
-    );
+    /** Whether to allow multiple YAML documents in the editor */
+    allowMultiple?: boolean;
+    /** Function to connect the drop target for drag-and-drop */
+    connectDropTarget?: ConnectDropTarget;
+    /** Whether the drop target is currently being hovered over */
+    isOver?: boolean;
+    /** Whether the drop target can accept a file */
+    canDrop?: boolean;
+    /** Whether this is a create operation */
+    create: boolean;
+    /** List of YAML samples to display */
+    yamlSamplesList?: FirehoseResult;
+    /** Custom CSS class for the editor */
+    customClass?: string;
+    /** Callback function to handle changes in the YAML content */
+    onChange?: (yaml: string) => void;
+    /** Model to use for the editor */
+    model?: K8sModel;
+    /** Whether to show tooltips in the editor */
+    showTooltips?: boolean;
+    /** Whether to add a button to download the YAML */
+    download?: boolean;
+    /** Header text or component to display above the editor */
+    header: React.ComponentProps<typeof PageHeading>['title'];
+    /** Whether the YAML is generic (not tied to a specific resource) */
+    genericYAML?: boolean;
+    /** Custom alerts to display in the editor */
+    children?: React.ReactNode;
+    /** URL to redirect to after saving */
+    redirectURL?: string;
+    /** Function to clear the file upload state */
+    clearFileUpload: () => void;
+    /** Callback function to save the YAML content */
+    onSave?: (yaml: string) => void;
+    /** Whether this is a redirect from code import */
+    isCodeImportRedirect?: boolean;
+    /** The object being edited */
+    obj?: K8sResourceKind;
+    /** Error message to display */
+    error?: string;
+    /** Whether the editor is in read-only mode */
+    readOnly?: boolean;
+    /** Whether to hide the header */
+    hideHeader?: boolean;
+    /** Function to get the resource object path */
+    resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string;
+    /** Callback function to be called on cancel */
+    onCancel?: () => void;
+    /** The file upload content */
+    fileUpload?: string;
   };
 
-const EditYAMLInner = (props) => {
+const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   const {
     allowMultiple,
     connectDropTarget,
@@ -106,7 +167,6 @@ const EditYAMLInner = (props) => {
     customClass,
     onChange = () => null,
     models,
-    showTooltips,
     download: canDownload = true,
     header,
     genericYAML = false,
@@ -121,16 +181,38 @@ const EditYAMLInner = (props) => {
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const [errors, setErrors] = React.useState(null);
-  const [success, setSuccess] = React.useState(null);
+  const [success, setSuccess] = React.useState<string>(null);
   const [initialized, setInitialized] = React.useState(false);
   const [stale, setStale] = React.useState(false);
   const [sampleObj, setSampleObj] = React.useState(props.sampleObj);
   const [showSidebar, setShowSidebar] = React.useState(!!create);
   const [owner, setOwner] = React.useState(null);
-  const [notAllowed, setNotAllowed] = React.useState();
-  const [displayResults, setDisplayResults] = React.useState();
+  const [notAllowed, setNotAllowed] = React.useState<boolean>();
+  const [displayResults, setDisplayResults] = React.useState<boolean>();
   const [resourceObjects, setResourceObjects] = React.useState();
   const [editorMounted, setEditorMounted] = React.useState(false);
+  const [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
+
+  const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
+    React.useCallback(
+      (e): e is YAMLTemplate => isYAMLTemplate(e) && e.properties.model.kind === props?.obj?.kind,
+      [props?.obj?.kind],
+    ),
+  );
+
+  const [showTooltips] = useUserSettingsCompatibility(
+    SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
+    SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
+    true,
+    true,
+  );
+
+  const [stickyScrollEnabled] = useUserSettingsCompatibility(
+    SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
+    SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
+    true,
+    true,
+  );
 
   const [callbackCommand, setCallbackCommand] = React.useState('');
   const [showReplaceCodeModal, setShowReplaceCodeModal] = React.useState(false);
@@ -140,16 +222,14 @@ const EditYAMLInner = (props) => {
   const closeOLS = () => action(ActionType.CloseOLS);
   const dispatch = useDispatch();
 
-  const monacoRef = React.useRef();
+  const monacoRef = React.useRef<CodeEditorRef>();
   const editor = React.useRef();
   const buttons = React.useRef();
 
   const { t } = useTranslation();
 
-  /** @return {import('monaco-editor').editor.IStandaloneCodeEditor | null} */
-  const getEditor = () => {
-    return monacoRef.current?.editor;
-  };
+  const getEditor = (): editor.IStandaloneCodeEditor | undefined =>
+    'editor' in monacoRef?.current ? monacoRef.current.editor : undefined;
 
   const getModel = React.useCallback(
     (obj) => {
@@ -215,7 +295,7 @@ const EditYAMLInner = (props) => {
       }
 
       const { name, namespace } = obj.metadata;
-      const resourceAttributes = {
+      const resourceAttributes: AccessReviewResourceAttributes = {
         group: model.apiGroup,
         resource: model.plural,
         verb: 'update',
@@ -689,13 +769,7 @@ const EditYAMLInner = (props) => {
 
   const getYamlContent_ = (id = 'default', yaml = '', kind = referenceForModel(props.model)) => {
     try {
-      const s = generateObjToLoad(
-        props.templateExtensions,
-        kind,
-        id,
-        yaml,
-        props.obj.metadata.namespace,
-      );
+      const s = generateObjToLoad(templateExtensions, kind, id, yaml, props.obj.metadata.namespace);
       setSampleObj(s);
       return s;
     } catch (error) {
@@ -715,10 +789,6 @@ const EditYAMLInner = (props) => {
     window.dispatchEvent(new Event('sidebar_toggle'));
   };
 
-  const toggleShowTooltips = (event, checked) => {
-    props.setShowTooltips(checked);
-  };
-
   const sanitizeYamlContent = (id, yaml, kind) => {
     const contentObj = getYamlContent_(id, yaml, kind);
     const sanitizedYaml = convertObjToYAMLString(contentObj);
@@ -728,15 +798,12 @@ const EditYAMLInner = (props) => {
 
   React.useEffect(() => {
     editorMounted && getEditor()?.updateOptions({ hover: { enabled: showTooltips } });
-  }, [showTooltips, editorMounted]);
+    editorMounted && getEditor()?.updateOptions({ stickyScroll: { enabled: stickyScrollEnabled } });
+  }, [showTooltips, stickyScrollEnabled, editorMounted]);
 
-  if (!create && !props.obj) {
+  if ((!create && !props.obj) || !resolvedTemplates) {
     return <Loading />;
   }
-
-  const klass = css('co-file-dropzone-container', {
-    'co-file-dropzone--drop-over': isOver,
-  });
 
   if (displayResults) {
     return (
@@ -744,7 +811,6 @@ const EditYAMLInner = (props) => {
         createResources={createResources}
         displayResults={setDisplayResults}
         importResources={resourceObjects}
-        models={models}
         retryFailed={onRetry}
       />
     );
@@ -760,31 +826,43 @@ const EditYAMLInner = (props) => {
   const showSchema = definition && !_.isEmpty(definition.properties);
   const hasSidebarContent = showSchema || (create && !_.isEmpty(samples)) || !_.isEmpty(snippets);
   const sidebarSwitch = hasSidebarContent && (
-    <Switch
-      label={t('public~Sidebar')}
-      id="showSidebar"
-      isChecked={showSidebar}
-      data-checked-state={showSidebar}
-      onChange={toggleSidebar}
-      hasCheckIcon
+    <ToggleSidebarButton
+      key="edit-yaml-sidebar-toggle"
+      isSidebarOpen={showSidebar}
+      toggleSidebar={toggleSidebar}
+      alignToEnd
+      className="pf-v6-u-mr-xs"
     />
   );
 
-  const tooltipSwitch = (
-    <Switch
-      label={t('public~Tooltips')}
-      id="showTooltips"
-      isChecked={showTooltips}
-      data-checked-state={showTooltips}
-      onChange={toggleShowTooltips}
-      hasCheckIcon
+  const settingsModal = (
+    <EditYamlSettingsModal
+      key="edit-yaml-settings-modal"
+      appendTo={() => {
+        return isFullscreen ? fullscreenRef.current : document.body;
+      }}
+    />
+  );
+
+  const fullscreenButton = (
+    <CodeEditorControl
+      key="edit-yaml-fullscreen-button"
+      onClick={toggleFullscreen}
+      isDisabled={!canUseFullScreen}
+      aria-label={t('public~Toggle fullscreen mode')}
+      tooltipProps={{ content: t('public~Toggle fullscreen mode') }}
+      icon={isFullscreen ? <CompressIcon /> : <ExpandIcon />}
     />
   );
 
   const editYamlComponent = (
     <div className="co-file-dropzone co-file-dropzone__flex">
       {canDrop && (
-        <div className={klass}>
+        <div
+          className={css('co-file-dropzone-container', {
+            'co-file-dropzone--drop-over': isOver,
+          })}
+        >
           <p className="co-file-dropzone__drop-text">{t('public~Drop file here')}</p>
         </div>
       )}
@@ -810,7 +888,10 @@ const EditYAMLInner = (props) => {
       )}
 
       <PageBody className="pf-v6-c-form">
-        <div className="co-p-has-sidebar">
+        <div
+          className={css('co-p-has-sidebar', { 'yaml-editor__fullscreen': isFullscreen })}
+          ref={fullscreenRef}
+        >
           <div
             className={css('co-p-has-sidebar__body', {
               'co-p-has-sidebar__body--sidebar-open': showSidebar && hasSidebarContent,
@@ -819,10 +900,15 @@ const EditYAMLInner = (props) => {
             <div className={css('yaml-editor', customClass)} ref={editor}>
               {showReplaceCodeModal && <ReplaceCodeModal handleCodeReplace={handleCodeReplace} />}
               <CodeEditor
+                isCopyEnabled={canDownload}
                 ref={monacoRef}
                 options={options}
-                showShortcuts={!genericYAML}
-                toolbarLinks={sidebarSwitch ? [tooltipSwitch, sidebarSwitch] : [tooltipSwitch]}
+                showShortcuts={!genericYAML && !isFullscreen}
+                toolbarLinks={
+                  sidebarSwitch
+                    ? [settingsModal, fullscreenButton, sidebarSwitch]
+                    : [settingsModal, fullscreenButton]
+                }
                 onChange={onChange}
                 onSave={() => (allowMultiple ? saveAll() : save())}
                 onEditorDidMount={() => setEditorMounted(true)}
@@ -906,7 +992,7 @@ const EditYAMLInner = (props) => {
                       icon={<DownloadIcon />}
                       type="submit"
                       variant="secondary"
-                      className="pf-v6-c-button--align-right hidden-sm hidden-xs"
+                      className="pf-v6-c-button--align-right pf-v6-u-display-none pf-v6-u-display-flex-on-sm"
                       onClick={() => download()}
                     >
                       {t('public~Download')}
@@ -938,25 +1024,24 @@ const EditYAMLInner = (props) => {
  * This component loads the entire Monaco editor library with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
-/** @augments {React.Component<{allowMultiple?: boolean, obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string}, onChange?: (yaml: string) => void, clearFileUpload?: () => void>} */
-export const EditYAML_ = connect(stateToProps)(
-  WithYamlTemplates(withPostFormSubmissionCallback(EditYAMLInner)),
+export const EditYAML_ = connect(stateToProps)(withPostFormSubmissionCallback(EditYAMLInner));
+
+export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(
+  ({ flags, ...props }: WithFlagsProps & EditYAMLInnerProps) => {
+    const resources = flags[FLAGS.CONSOLE_YAML_SAMPLE]
+      ? [
+          {
+            kind: referenceForModel(ConsoleYAMLSampleModel),
+            isList: true,
+            prop: 'yamlSamplesList',
+          },
+        ]
+      : [];
+
+    return (
+      <Firehose resources={resources}>
+        <EditYAML_ {...props} />
+      </Firehose>
+    );
+  },
 );
-
-export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(({ flags, ...props }) => {
-  const resources = flags[FLAGS.CONSOLE_YAML_SAMPLE]
-    ? [
-        {
-          kind: referenceForModel(ConsoleYAMLSampleModel),
-          isList: true,
-          prop: 'yamlSamplesList',
-        },
-      ]
-    : [];
-
-  return (
-    <Firehose resources={resources}>
-      <EditYAML_ {...props} />
-    </Firehose>
-  );
-});

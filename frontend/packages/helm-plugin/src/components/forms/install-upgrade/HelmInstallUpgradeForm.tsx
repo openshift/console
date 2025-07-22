@@ -155,6 +155,7 @@ const HelmInstallUpgradeForm: React.FC<
                 helpText={t('helm-plugin~A unique name for the Helm Release.')}
                 required
                 isDisabled={!!chartError || helmAction === HelmActionType.Upgrade}
+                data-test="release-name"
               />
             </GridItem>
             <GridItem xl={5} lg={4} md={12}>
