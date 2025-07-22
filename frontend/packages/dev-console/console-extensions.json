@@ -691,6 +691,7 @@
       "name": "%devconsole~Software Catalog%",
       "href": "/catalog",
       "namespaced": true,
+      "startsWith": ["catalog", "operatorhub"],
       "dataAttributes": {
         "data-test-id": "developer-catalog-header",
         "data-tour-id": "tour-software-catalog-nav"

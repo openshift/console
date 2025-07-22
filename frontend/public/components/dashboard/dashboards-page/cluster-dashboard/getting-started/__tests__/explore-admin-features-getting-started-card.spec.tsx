@@ -43,7 +43,7 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
       title: 'OpenShift AI',
       description: 'Build, deploy, and manage AI-enabled applications.',
       href:
-        '/operatorhub/all-namespaces?keyword=openshift+ai&details-item=rhods-operator-redhat-operators-openshift-marketplace',
+        '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
     });
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
       id: 'whats-new',
