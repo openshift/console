@@ -83,15 +83,13 @@ const ConsoleSelectItem: React.FCC<{
 }> = ({ itemKey, content, onclick, selected, isBookmarked }) => (
   <MenuItem
     data-test-dropdown-menu={itemKey}
-    data-test-id="dropdown-menu"
-    data-test="dropdown-menu-item-link"
+    data-test="console-select-item"
     id={`${itemKey}-link`}
     isFavorited={isBookmarked}
     isSelected={selected}
     itemId={itemKey}
     key={itemKey}
     onClick={(e) => onclick(itemKey, e)}
-    role="option"
   >
     {content}
   </MenuItem>
@@ -121,7 +119,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   autocompletePlaceholder,
   buttonClassName,
   className,
-  dataTest,
+  dataTest = 'console-select-menu-toggle',
   describedBy,
   disabled,
   headerBefore = {},
@@ -231,7 +229,6 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
       aria-describedby={describedBy}
       aria-label={ariaLabel}
       className={buttonClassName}
-      data-test-id="dropdown-button"
       data-test={dataTest}
       id={id}
       isDisabled={disabled}
@@ -344,7 +341,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
             <MenuSearch>
               <MenuSearchInput>
                 <SearchInput
-                  data-test-id="dropdown-text-filter"
+                  data-test="console-select-search-input"
                   inputProps={{
                     autoCapitalize: 'none',
                     autoFocus: true,
@@ -363,7 +360,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
 
         <MenuList
           className={css(menuClassName, { 'pf-v6-u-pt-0': autocompleteFilter })}
-          role="listbox"
+          data-test="console-select-menu-list"
         >
           {bookmarkRows.length ? (
             <>
