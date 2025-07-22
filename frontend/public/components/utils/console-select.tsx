@@ -97,6 +97,17 @@ const ConsoleSelectItem: React.FCC<{
   </MenuItem>
 );
 
+const useInsideLegacyModal = (ref: React.RefObject<HTMLElement>) => {
+  const [insideLegacyModal, setInsideLegacyModal] = React.useState(false);
+
+  React.useEffect(() => {
+    const modal = ref.current?.closest('#modal-container');
+    setInsideLegacyModal(!!modal);
+  }, [ref]);
+
+  return insideLegacyModal;
+};
+
 /**
  * A Select is a dropdown that indicates state.
  *
@@ -159,9 +170,12 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   );
 
   /* Component refs */
+  const dropdownWrapperRef = React.useRef<HTMLDivElement>(null);
   const dropdownMenuRef = React.useRef<HTMLDivElement>(null);
   const dropdownToggleRef = React.useRef<HTMLButtonElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+
+  const insideLegacyModal = useInsideLegacyModal(dropdownWrapperRef);
 
   /* Event handlers */
   const onClick = React.useCallback(
@@ -372,7 +386,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   );
 
   return (
-    <div className={className}>
+    <div className={className} ref={dropdownWrapperRef}>
       <MenuContainer
         isOpen={expanded}
         menu={menu}
@@ -385,7 +399,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
         popperProps={{
           preventOverflow: menuClassName === 'prevent-overflow',
           // @ts-expect-error This is a popper prop which PatternFly doesn't type
-          appendTo: 'inline',
+          appendTo: insideLegacyModal ? 'inline' : undefined,
         }}
       />
     </div>
