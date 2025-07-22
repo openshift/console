@@ -29,10 +29,10 @@ export const sharedPluginModules = [
   '@patternfly/quickstarts',
   'react',
   'react-i18next',
+  'react-redux',
   'react-router',
   'react-router-dom',
   'react-router-dom-v5-compat',
-  'react-redux',
   'redux',
   'redux-thunk',
 ] as const;
@@ -50,10 +50,10 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
   '@patternfly/quickstarts': {},
   react: { singleton: true, allowFallback: false },
   'react-i18next': { singleton: true, allowFallback: false },
+  'react-redux': { singleton: true, allowFallback: false },
   'react-router': { singleton: true, allowFallback: false },
   'react-router-dom': { singleton: true, allowFallback: false },
   'react-router-dom-v5-compat': { singleton: true, allowFallback: false },
-  'react-redux': { singleton: true, allowFallback: false },
   redux: { singleton: true, allowFallback: false },
   'redux-thunk': { singleton: true, allowFallback: false },
 };

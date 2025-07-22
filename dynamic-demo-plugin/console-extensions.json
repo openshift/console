@@ -388,7 +388,7 @@
       "href": "/test-modal"
     }
   },
-    {
+  {
     "type": "console.create-project-modal",
     "properties": {
       "component": { "$codeRef": "createProjectModal" }
