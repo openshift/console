@@ -53,6 +53,7 @@ type CatalogViewProps = {
   groupings: CatalogStringMap;
   renderTile: (item: CatalogItem) => React.ReactNode;
   hideSidebar?: boolean;
+  sortFilterGroups: boolean;
 };
 
 const CatalogView: React.FC<CatalogViewProps> = ({
@@ -66,6 +67,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   groupings,
   renderTile,
   hideSidebar,
+  sortFilterGroups,
 }) => {
   const { t } = useTranslation();
   const queryParams = useQueryParams();
@@ -251,6 +253,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
                 filterGroupsShowAll={filterGroupsShowAll}
                 onShowAllToggle={handleShowAllToggle}
                 onFilterChange={handleFilterChange}
+                sortFilterGroups={sortFilterGroups}
               />
             )}
           </CatalogPageTabs>
