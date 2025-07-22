@@ -1,6 +1,6 @@
 import { K8sResourceKind } from 'public/module/k8s';
 import {
-  imageStremsData,
+  imageStreamsData,
   knatifyFormCommonInitialValues,
   ksvcData,
 } from '../__mocks__/knatify-mock';
@@ -45,6 +45,7 @@ describe('knatify-utils', () => {
   it('getInitialValuesKnatify should return valid formik initial values with external regstry and searchTerm if image is not in imageStreams', () => {
     const knatifyFormInitialVal = {
       ...knatifyFormCommonInitialValues,
+      customIcon: null,
       runtimeIcon: null,
       searchTerm: 'quay.io/openshift-knative/showcase',
       registry: 'external',
@@ -81,6 +82,7 @@ describe('knatify-utils', () => {
     };
     const knatifyFormInitialVal = {
       ...knatifyFormCommonInitialValues,
+      customIcon: null,
       runtimeIcon: null,
       searchTerm: '',
       registry: 'internal',
@@ -91,7 +93,7 @@ describe('knatify-utils', () => {
       build: { env: [], triggers: {}, strategy: '' },
       isSearchingForImage: false,
     };
-    expect(getInitialValuesKnatify(mockKsvcData, 'testproject3', imageStremsData)).toEqual(
+    expect(getInitialValuesKnatify(mockKsvcData, 'testproject3', imageStreamsData)).toEqual(
       knatifyFormInitialVal,
     );
   });
