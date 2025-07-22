@@ -10,7 +10,6 @@ export * from './resource-log';
 export * from './horizontal-nav';
 export * from './details-page';
 export * from './inject';
-export * from './disabled';
 export * from './firehose';
 export * from './dropdown';
 export * from './status-box';
