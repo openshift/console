@@ -21,13 +21,12 @@ export const operator = {
     cy.byTestID('search-catalog').type(operatorName);
     cy.log('go to operator overview panel');
     cy.byTestID(operatorHubCardTestID).click();
-    cy.byTestID(`${operatorName}-cta-0`).click({ force: true });
+    cy.byTestID('catalog-details-modal-cta').click({ force: true });
     cy.log('go to the install form');
     cy.log('verify the channel selection is displayed');
     cy.byTestID('operator-channel-select-toggle').should('exist');
     cy.log('verify the version selection is displayed');
     cy.byTestID('operator-version-select-toggle').should('exist');
-    cy.byTestID('install-operator').click({ force: true });
     /*  Installation mode
      *    () All namespaces        // default: 'openshift-operators'
      *    () A specific namespace  // Operator recommended or test namespace

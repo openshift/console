@@ -28,7 +28,7 @@ describe('Create namespace from install operators', () => {
     cy.byTestID('search-catalog').type(operatorName);
     cy.url().should('include', 'keyword');
     cy.byTestID(operatorSelector).click();
-    cy.byTestID(`${operatorName}-cta-0`).click({ force: true });
+    cy.byTestID('catalog-details-modal-cta').click({ force: true });
 
     // 3scale 2.11 supports only installation mode 'A specific namespace',
     // so it was automatically selected.
