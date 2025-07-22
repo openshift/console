@@ -428,8 +428,8 @@ export const topologyPage = {
         },
         selectStorageClass: (storageClass: string = 'standard') => {
           cy.get(topologyPO.addStorage.pvc.createNewClaim.storageClass).click();
-          cy.byLegacyTestID('dropdown-text-filter').type(storageClass);
-          cy.get('ul[role="listbox"]').find('li').contains(storageClass).click();
+          cy.byTestID('console-select-search-input').type(storageClass);
+          cy.byTestID('console-select-menu-list').find('li').contains(storageClass).click();
         },
         enterPVCName: (name: string) => {
           cy.get(topologyPO.addStorage.pvc.createNewClaim.pvcName).type(name);

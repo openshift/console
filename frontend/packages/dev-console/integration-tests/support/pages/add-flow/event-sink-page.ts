@@ -19,6 +19,10 @@ export const createEventSinkPage = {
       .scrollIntoView()
       .should('be.visible')
       .click();
-    cy.get("[role='listbox']").find('li').contains(outputTargetName).should('be.visible').click();
+    cy.byTestID('console-select-menu-list')
+      .find('li')
+      .contains(outputTargetName)
+      .should('be.visible')
+      .click();
   },
 };
