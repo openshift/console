@@ -153,7 +153,7 @@ const AppContents: React.FC<{}> = () => {
   const location = useLocation();
   const [pluginPageRoutes, inactivePluginPageRoutes] = usePluginRoutes();
 
-  const contentRouter = (
+  const contentRouter = allPluginsProcessed ? (
     <Routes>
       {pluginPageRoutes}
 
@@ -751,21 +751,19 @@ const AppContents: React.FC<{}> = () => {
       {inactivePluginPageRoutes}
       <Route path="/" element={<DefaultPage />} />
 
-      {allPluginsProcessed ? (
-        <Route
-          path="*"
-          element={
-            <AsyncComponent
-              loader={() =>
-                import('./error' /* webpackChunkName: "error" */).then((m) => m.ErrorPage404)
-              }
-            />
-          }
-        />
-      ) : (
-        <Route element={<LoadingBox />} />
-      )}
+      <Route
+        path="*"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import('./error' /* webpackChunkName: "error" */).then((m) => m.ErrorPage404)
+            }
+          />
+        }
+      />
     </Routes>
+  ) : (
+    <LoadingBox />
   );
 
   const matches = matchRoutes(namespacedRoutes, location);
