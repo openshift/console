@@ -7,7 +7,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circ
 import { useTranslation } from 'react-i18next';
 
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { EmptyBox, withHandlePromise, HandlePromiseProps } from '../utils';
+import { EmptyBox } from '../utils';
 import { K8sKind, k8sPatch, NodeKind, Taint } from '../../module/k8s';
 import {
   createModalLauncher,
@@ -16,20 +16,24 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '../factory';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
+const TaintsModal = (props: TaintsModalProps) => {
   const [taints, setTaints] = React.useState(props.resource.spec.taints || []);
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const { t } = useTranslation('public');
 
-  const submit = (e: React.FormEvent<EventTarget>) => {
+  const submit = (e: React.FormEvent<EventTarget>): void => {
     e.preventDefault();
 
     // Make sure to 'add' if the path does not already exist, otherwise the patch request will fail
     const op = props.resource.spec.taints ? 'replace' : 'add';
     const patch = [{ path: '/spec/taints', op, value: taints }];
 
-    props.handlePromise(k8sPatch(props.resourceKind, props.resource, patch), props.close);
+    handlePromise(k8sPatch(props.resourceKind, props.resource, patch))
+      .then(() => props.close())
+      .catch(() => {});
   };
 
   const cancel = () => {
@@ -64,8 +68,6 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
     PreferNoSchedule: 'PreferNoSchedule',
     NoExecute: 'NoExecute',
   };
-
-  const { errorMessage } = props;
 
   return (
     <form onSubmit={submit} name="form" className="modal-content">
@@ -148,13 +150,13 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
-        inProgress={false}
+        inProgress={inProgress}
         submitText={t('Save')}
         cancel={cancel}
       />
     </form>
   );
-});
+};
 
 export const taintsModal = createModalLauncher(TaintsModal);
 
@@ -162,6 +164,4 @@ export type TaintsModalProps = {
   resourceKind: K8sKind;
   resource: NodeKind;
   close: () => void;
-  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;

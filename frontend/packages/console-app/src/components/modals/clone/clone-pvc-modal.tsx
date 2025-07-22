@@ -24,7 +24,6 @@ import {
   ResourceIcon,
   humanizeBinaryBytes,
   history,
-  withHandlePromise,
   RequestSizeInput,
   validate,
   resourceObjPath,
@@ -32,7 +31,6 @@ import {
   humanizeBinaryBytesWithoutB,
 } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { HandlePromiseProps } from '@console/internal/components/utils/promise-component';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import {
   NamespaceModel,
@@ -46,14 +44,16 @@ import {
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
 import { isCephProvisioner } from '@console/shared';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { getName, getRequestedPVCSize, onlyPvcSCs } from '@console/shared/src/selectors';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
 
 import './_clone-pvc-modal.scss';
 
-const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
+const ClonePVCModal = (props: ClonePVCModalProps) => {
   const { t } = useTranslation();
-  const { close, cancel, resource, handlePromise, errorMessage, inProgress } = props;
+  const { close, cancel, resource } = props;
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler<PersistentVolumeClaimKind>();
   const { name: pvcName, namespace } = resource?.metadata;
   const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
   const defaultSize: string[] = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
@@ -125,10 +125,12 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
       },
     };
 
-    return handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj), (cloneResource) => {
-      close();
-      history.push(resourceObjPath(cloneResource, referenceFor(cloneResource)));
-    });
+    handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj))
+      .then((cloneResource) => {
+        close();
+        history.push(resourceObjPath(cloneResource, referenceFor(cloneResource)));
+      })
+      .catch(() => {});
   };
 
   return (
@@ -266,11 +268,10 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
       />
     </form>
   );
-});
+};
 
 export type ClonePVCModalProps = {
   resource?: PersistentVolumeClaimKind;
-} & HandlePromiseProps &
-  ModalComponentProps;
+} & ModalComponentProps;
 
 export default createModalLauncher(ClonePVCModal);

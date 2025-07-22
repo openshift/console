@@ -1,46 +1,5 @@
 import * as React from 'react';
 import i18next from 'i18next';
-import { useTranslation } from 'react-i18next';
-
-/** @deprecated Use the `usePromiseHandler` instead */
-export const withHandlePromise: WithHandlePromise = (Component) => (props) => {
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-
-  const { t } = useTranslation();
-
-  const handlePromise = (promise, onFulfill, onError) => {
-    setInProgress(true);
-    promise.then(
-      (res) => {
-        setInProgress(false);
-        setErrorMessage('');
-        onFulfill && onFulfill(res);
-      },
-      (error) => {
-        const errorMsg = error.message || t('public~An error occurred. Please try again.');
-        setInProgress(false);
-        setErrorMessage(errorMsg);
-        onError
-          ? onError(errorMsg)
-          : // eslint-disable-next-line no-console
-            console.error(
-              `handlePromise failed in component ${Component.displayName || Component.name}:`,
-              error,
-            );
-      },
-    );
-  };
-
-  return (
-    <Component
-      {...(props as any)}
-      handlePromise={handlePromise}
-      inProgress={inProgress}
-      errorMessage={errorMessage}
-    />
-  );
-};
 
 export class PromiseComponent<P, S extends PromiseComponentState> extends React.Component<P, S> {
   constructor(props) {
@@ -78,20 +37,6 @@ export class PromiseComponent<P, S extends PromiseComponentState> extends React.
     return Promise.reject(errorMessage);
   }
 }
-
-export type HandlePromiseProps = {
-  handlePromise: <T>(
-    promise: Promise<T>,
-    onFulfill?: (res) => void,
-    onError?: (errorMsg: string) => void,
-  ) => void;
-  inProgress: boolean;
-  errorMessage: string;
-};
-
-export type WithHandlePromise = <P extends HandlePromiseProps>(
-  C: React.ComponentType<P>,
-) => React.FC<Diff<P, HandlePromiseProps>>;
 
 export type PromiseComponentState = {
   inProgress: boolean;

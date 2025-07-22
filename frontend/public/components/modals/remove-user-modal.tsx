@@ -11,15 +11,19 @@ import {
   ModalTitle,
   createModalLauncher,
 } from '../factory/modal';
-import { HandlePromiseProps, withHandlePromise } from '../utils';
 import { useTranslation } from 'react-i18next';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-export const RemoveUserModal = withHandlePromise((props: RemoveUserModalProps) => {
-  const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
+export const RemoveUserModal = (props: RemoveUserModalProps) => {
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
+
+  const submit: React.FormEventHandler<HTMLFormElement> = (e): void => {
     e.preventDefault();
     const value = _.filter(props.group.users, (user: string) => user !== props.user);
     const patch = [{ op: 'replace', path: '/users', value }];
-    return props.handlePromise(k8sPatch(GroupModel, props.group, patch), props.close);
+    handlePromise(k8sPatch(GroupModel, props.group, patch))
+      .then(() => props.close())
+      .catch(() => {});
   };
 
   const { t } = useTranslation();
@@ -36,20 +40,19 @@ export const RemoveUserModal = withHandlePromise((props: RemoveUserModalProps) =
         })}
       </ModalBody>
       <ModalSubmitFooter
-        errorMessage={props.errorMessage}
-        inProgress={props.inProgress}
+        errorMessage={errorMessage}
+        inProgress={inProgress}
         submitText={t('public~Remove')}
         cancel={props.cancel}
         submitDanger
       />
     </form>
   );
-});
+};
 
 export const removeUserModal = createModalLauncher(RemoveUserModal);
 
 export type RemoveUserModalProps = {
   group: GroupKind;
   user: string;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;

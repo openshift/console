@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next';
 
 import { k8sPatch, K8sResourceKind, K8sKind } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { NumberSpinner, withHandlePromise, HandlePromiseProps } from '../utils';
+import { NumberSpinner } from '../utils';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModalProps) => {
+export const ConfigureCountModal = (props: ConfigureCountModalProps) => {
   const {
     buttonText,
     buttonTextKey,
@@ -17,7 +18,6 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     resource,
     resourceKind,
     opts,
-    handlePromise,
     title,
     titleKey,
     titleVariables,
@@ -29,23 +29,24 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
   const getPath = path.substring(1).replace('/', '.');
   const [value, setValue] = React.useState<number>(_.get(resource, getPath) || defaultValue);
   const { t } = useTranslation();
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const submit = (e) => {
-    e.preventDefault();
+  const submit = React.useCallback(
+    (e) => {
+      e.preventDefault();
 
-    const patch = [{ op: 'replace', path, value: _.toInteger(value) }];
-    const invalidateState = props.invalidateState || _.noop;
+      const patch = [{ op: 'replace', path, value: _.toInteger(value) }];
+      const invalidateState = props.invalidateState || _.noop;
 
-    invalidateState(true, _.toInteger(value));
-    handlePromise(
-      k8sPatch(resourceKind, resource, patch, opts),
-      () => close(),
-      (error) => {
-        invalidateState(false);
-        throw error;
-      },
-    );
-  };
+      invalidateState(true, _.toInteger(value));
+      handlePromise(k8sPatch(resourceKind, resource, patch, opts))
+        .then(() => close())
+        .catch(() => {
+          invalidateState(false);
+        });
+    },
+    [value, path, props.invalidateState, handlePromise, resourceKind, resource, opts, close],
+  );
 
   const messageVariablesSafe = { ...messageVariables };
   if (labelKey) {
@@ -77,14 +78,14 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
         />
       </ModalBody>
       <ModalSubmitFooter
-        errorMessage={props.errorMessage}
-        inProgress={props.inProgress}
+        errorMessage={errorMessage}
+        inProgress={inProgress}
         submitText={buttonTextKey ? t(buttonTextKey, buttonTextVariables) : buttonText}
         cancel={props.cancel}
       />
     </form>
   );
-});
+};
 
 export const configureCountModal = createModalLauncher(ConfigureCountModal);
 
@@ -148,8 +149,6 @@ export type ConfigureCountModalProps = {
   titleKey?: string;
   titleVariables?: { [key: string]: any };
   invalidateState?: (isInvalid: boolean, count?: number) => void;
-  inProgress: boolean;
-  errorMessage: string;
   cancel?: () => void;
   close?: () => void;
-} & HandlePromiseProps;
+};

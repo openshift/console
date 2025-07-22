@@ -8,9 +8,9 @@ import {
   ModalSubmitFooter,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
-import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import { k8sPatch, K8sKind } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { OperatorHubKind } from '../operator-hub';
 
 const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
@@ -19,10 +19,8 @@ const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
   sourceName,
   close,
   cancel,
-  inProgress,
-  errorMessage,
-  handlePromise,
 }) => {
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { t } = useTranslation();
   const submit = React.useCallback(
     (event: React.FormEvent<EventTarget>): void => {
@@ -41,7 +39,11 @@ const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
           ],
         },
       ];
-      return handlePromise(k8sPatch(kind, operatorHub, patch), close);
+      handlePromise(k8sPatch(kind, operatorHub, patch))
+        .then(() => {
+          close();
+        })
+        .catch(() => {});
     },
     [close, handlePromise, kind, operatorHub, sourceName],
   );
@@ -72,9 +74,6 @@ type DisableSourceModalProps = {
   kind: K8sKind;
   operatorHub: OperatorHubKind;
   sourceName: string;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;
 
-export const disableDefaultSourceModal = createModalLauncher(
-  withHandlePromise(DisableDefaultSourceModal),
-);
+export const disableDefaultSourceModal = createModalLauncher(DisableDefaultSourceModal);

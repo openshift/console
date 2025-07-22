@@ -6,7 +6,8 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
 
 import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
-import { FieldLevelHelp, HandlePromiseProps, LinkifyExternal, withHandlePromise } from '../utils';
+import { FieldLevelHelp, LinkifyExternal } from '../utils';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import {
   ClusterVersionKind,
   getConditionUpgradeableFalse,
@@ -42,8 +43,9 @@ enum upgradeTypes {
   Partial = 'Partial',
 }
 
-const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) => {
-  const { cancel, close, cv, errorMessage, handlePromise, inProgress } = props;
+const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
+  const { cancel, close, cv } = props;
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
   const availableSortedUpdates = getSortedAvailableUpdates(cv);
   const notRecommendedSortedUpdates = getSortedNotRecommendedUpdates(cv);
@@ -99,51 +101,65 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
   const desiredNotRecommendedUpdateConditions = getNotRecommendedUpdateCondition(
     desiredNotRecommendedUpdate?.conditions,
   );
-  const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    if (!desiredRecommendedUpdate && !desiredNotRecommendedUpdate) {
-      setError(
-        t(
-          'public~Version {{desiredVersion}} not found among the supported updates. Select another version.',
-          { desiredVersion },
-        ),
-      );
-      return;
-    }
+  const submit: React.FormEventHandler<HTMLFormElement> = React.useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!desiredRecommendedUpdate && !desiredNotRecommendedUpdate) {
+        setError(
+          t(
+            'public~Version {{desiredVersion}} not found among the supported updates. Select another version.',
+            { desiredVersion },
+          ),
+        );
+        return;
+      }
 
-    // Clear any previous error message.
-    setError('');
-    let MCPsToPausePromises;
-    let MCPsToResumePromises;
-    if (upgradeType === upgradeTypes.Full) {
-      MCPsToPausePromises = [];
-      MCPsToResumePromises = getMCPsToPausePromises(pausedMCPs, false);
-    } else {
-      const MCPsToPause = pauseableMCPs.filter((mcp) =>
-        machineConfigPoolsToPause.find((m) => m === mcp.metadata.name),
-      );
-      const MCPsToResume = pauseableMCPs.filter((mcp) => !MCPsToPause.includes(mcp));
-      MCPsToPausePromises = getMCPsToPausePromises(MCPsToPause, true);
-      MCPsToResumePromises = getMCPsToPausePromises(MCPsToResume, false);
-    }
-    const patch = [
-      {
-        op: 'add',
-        path: '/spec/desiredUpdate',
-        value: desiredNotRecommendedUpdate
-          ? desiredNotRecommendedUpdate.release
-          : desiredRecommendedUpdate,
-      },
-    ];
-    return handlePromise(
-      Promise.all([
-        k8sPatch(ClusterVersionModel, cv, patch),
-        ...MCPsToResumePromises,
-        ...MCPsToPausePromises,
-      ]),
+      // Clear any previous error message.
+      setError('');
+      let MCPsToPausePromises;
+      let MCPsToResumePromises;
+      if (upgradeType === upgradeTypes.Full) {
+        MCPsToPausePromises = [];
+        MCPsToResumePromises = getMCPsToPausePromises(pausedMCPs, false);
+      } else {
+        const MCPsToPause = pauseableMCPs.filter((mcp) =>
+          machineConfigPoolsToPause.find((m) => m === mcp.metadata.name),
+        );
+        const MCPsToResume = pauseableMCPs.filter((mcp) => !MCPsToPause.includes(mcp));
+        MCPsToPausePromises = getMCPsToPausePromises(MCPsToPause, true);
+        MCPsToResumePromises = getMCPsToPausePromises(MCPsToResume, false);
+      }
+      const patch = [
+        {
+          op: 'add',
+          path: '/spec/desiredUpdate',
+          value: desiredNotRecommendedUpdate
+            ? desiredNotRecommendedUpdate.release
+            : desiredRecommendedUpdate,
+        },
+      ];
+      handlePromise(
+        Promise.all([
+          k8sPatch(ClusterVersionModel, cv, patch),
+          ...MCPsToResumePromises,
+          ...MCPsToPausePromises,
+        ]),
+      ).then(() => close());
+    },
+    [
+      desiredRecommendedUpdate,
+      desiredNotRecommendedUpdate,
+      t,
+      desiredVersion,
+      upgradeType,
+      pausedMCPs,
+      pauseableMCPs,
+      machineConfigPoolsToPause,
+      handlePromise,
+      cv,
       close,
-    );
-  };
+    ],
+  );
   const dropdownItem = (version) => {
     const isDisabled = clusterUpgradeableFalse && isMinorVersionNewer(currentVersion, version);
     return {
@@ -318,11 +334,10 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
       />
     </form>
   );
-});
+};
 
 export const clusterUpdateModal = createModalLauncher(ClusterUpdateModal);
 
 type ClusterUpdateModalProps = {
   cv: ClusterVersionKind;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;

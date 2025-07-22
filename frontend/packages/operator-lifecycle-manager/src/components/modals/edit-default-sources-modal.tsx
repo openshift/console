@@ -9,8 +9,8 @@ import {
   ModalComponentProps,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import { k8sPatch } from '@console/internal/module/k8s';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { OperatorHubModel } from '../../models';
 import { OperatorHubKind } from '../operator-hub';
 
@@ -18,9 +18,8 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
   cancel,
   close,
   operatorHub,
-  handlePromise,
-  errorMessage,
 }) => {
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { t } = useTranslation();
   // state to maintain user selection of toggle, maintained as an [] of {defaultCatalogSourceName: <booleanFlagForToggle>}
   const [
@@ -49,7 +48,11 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
           })),
         },
       ];
-      return handlePromise(k8sPatch(OperatorHubModel, operatorHub, patch), close);
+      handlePromise(k8sPatch(OperatorHubModel, operatorHub, patch))
+        .then(() => {
+          close();
+        })
+        .catch(() => {});
     },
     [close, handlePromise, operatorHub, userSelectedDefaultSourceToggleState],
   );
@@ -99,7 +102,7 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
         </ModalBody>
         <ModalSubmitFooter
           errorMessage={errorMessage}
-          inProgress={false}
+          inProgress={inProgress}
           submitText={t('public~Save')}
           cancel={cancel}
         />
@@ -108,11 +111,8 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
   );
 };
 
-export const editDefaultSourcesModal = createModalLauncher(
-  withHandlePromise(EditDefaultSourcesModal),
-);
+export const editDefaultSourcesModal = createModalLauncher(EditDefaultSourcesModal);
 
 type EditDefaultSourcesModalProps = {
   operatorHub: OperatorHubKind;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;

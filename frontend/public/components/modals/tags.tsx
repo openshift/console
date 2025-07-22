@@ -13,9 +13,9 @@ import {
   ModalComponentProps,
 } from '../factory/modal';
 import { NameValueEditorPair } from '../utils/types';
-import { withHandlePromise, HandlePromiseProps } from '../utils/promise-component';
 import { AsyncComponent } from '../utils/async';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 /**
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
@@ -28,13 +28,14 @@ const NameValueEditorComponent = (props) => (
   />
 );
 
-export const TagsModal = withHandlePromise<TagsModalProps & HandlePromiseProps>((props) => {
+export const TagsModal = (props: TagsModalProps) => {
   // Track tags as an array instead of an object / Map so we can preserve the order during editing and so we can have
   // duplicate keys during editing. However, the ordering and any duplicate keys are lost when the form is submitted.
   const [tags, setTags] = React.useState(
     _.isEmpty(props.tags) ? [['', '']] : _.toPairs(props.tags),
   );
-  const [errorMessage, setErrorMessage] = React.useState(props.errorMessage);
+  const [localErrorMessage, setLocalErrorMessage] = React.useState('');
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [watchedResource, watchedResourceLoaded] = useK8sWatchResource<K8sResourceCommon>({
     kind: props.resource?.kind,
     name: props.resource?.metadata?.name,
@@ -49,7 +50,7 @@ export const TagsModal = withHandlePromise<TagsModalProps & HandlePromiseProps>(
     }
   }, [props.tags, watchedResource, watchedResourceLoaded]);
 
-  const submit = (e) => {
+  const submit = (e): void => {
     e.preventDefault();
 
     // We just throw away any rows where the key is blank
@@ -57,14 +58,17 @@ export const TagsModal = withHandlePromise<TagsModalProps & HandlePromiseProps>(
 
     const keys = usedTags.map((tag) => tag[NameValueEditorPair.Name]);
     if (_.uniq(keys).length !== keys.length) {
-      setErrorMessage(t('public~Duplicate keys found.'));
+      setLocalErrorMessage(t('public~Duplicate keys found.'));
       return;
     }
     // Make sure to 'add' if the path does not already exist, otherwise the patch request will fail
     const op = props.tags ? 'replace' : 'add';
     const patch = [{ path: props.path, op, value: _.fromPairs(usedTags) }];
-    const promise = k8sPatch(props.kind, props.resource, patch);
-    props.handlePromise(promise, props.close);
+
+    setLocalErrorMessage('');
+    handlePromise(k8sPatch(props.kind, props.resource, patch))
+      .then(() => props.close())
+      .catch(() => {});
   };
 
   return (
@@ -81,17 +85,17 @@ export const TagsModal = withHandlePromise<TagsModalProps & HandlePromiseProps>(
         submitText={t('public~Save')}
         submitDisabled={stale}
         cancel={props.cancel}
-        errorMessage={props.errorMessage || errorMessage}
+        errorMessage={errorMessage || localErrorMessage}
         message={
           stale
             ? t('public~Annotations have been updated. Click Cancel and reapply your changes.')
             : undefined
         }
-        inProgress={props.inProgress}
+        inProgress={inProgress}
       />
     </form>
   );
-});
+};
 
 export const AnnotationsModal: React.FC<AnnotationsModalProps> = (props) => (
   <TagsModal
