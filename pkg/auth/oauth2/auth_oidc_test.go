@@ -331,7 +331,7 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 		name               string
 		cookieRefreshToken string
 		wantRefreshToken   string
-		initSessions       func(*sessions.CombinedSessionStore) string
+		initSessions       func(*sessions.FilesystemSessionStore) string
 		wantErr            bool
 	}{
 		{
@@ -350,7 +350,7 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 		},
 		{
 			name: "session exists, no refresh token",
-			initSessions: func(s *sessions.CombinedSessionStore) string {
+			initSessions: func(s *sessions.FilesystemSessionStore) string {
 				s.AddSession(httptest.NewRecorder(), httptest.NewRequest(http.MethodGet, "/", nil), oidcProvider.verifyIDToken, addIDToken(&oauth2.Token{}, oidcProvider.signPayload(`{"sub":"testuser","exp":`+strconv.FormatInt(time.Now().Add(5*time.Minute).Unix(), 10)+`}`)))
 				return ""
 			},
@@ -358,7 +358,7 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 		},
 		{
 			name: "session exists with different refresh token - session tokens match short-circuit to prevent multiple refreshes",
-			initSessions: func(s *sessions.CombinedSessionStore) (initSessionToken string) {
+			initSessions: func(s *sessions.FilesystemSessionStore) (initSessionToken string) {
 				testCookieFactory := &testCookieFactory{
 					cookieCodecs: securecookie.CodecsFromPairs(authnKey, encryptionKey),
 				}
@@ -377,7 +377,7 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 		},
 		{
 			name: "session exists with the same refresh token - legit refresh request",
-			initSessions: func(s *sessions.CombinedSessionStore) string {
+			initSessions: func(s *sessions.FilesystemSessionStore) string {
 				session, err := s.AddSession(httptest.NewRecorder(), httptest.NewRequest(http.MethodGet, "/", nil), oidcProvider.verifyIDToken, addIDToken(&oauth2.Token{RefreshToken: testValidRefreshToken}, oidcProvider.signPayload(`{"sub":"testuser","exp":`+strconv.FormatInt(time.Now().Add(5*time.Minute).Unix(), 10)+`}`)))
 				require.NoError(t, err)
 
@@ -464,7 +464,7 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 	tests := []struct {
 		name               string
 		cookieRefreshToken string
-		initSessions       func(*sessions.CombinedSessionStore) string
+		initSessions       func(*sessions.FilesystemSessionStore) string
 		wantUserUID        string
 		wantErr            bool
 	}{
@@ -474,7 +474,7 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 		},
 		{
 			name: "valid session",
-			initSessions: func(s *sessions.CombinedSessionStore) string {
+			initSessions: func(s *sessions.FilesystemSessionStore) string {
 				session, err := s.AddSession(httptest.NewRecorder(), httptest.NewRequest(http.MethodGet, "/", nil), oidcProvider.verifyIDToken, addIDToken(&oauth2.Token{}, oidcProvider.signPayload(`{"sub":"testuser","exp":`+strconv.FormatInt(time.Now().Add(5*time.Minute).Unix(), 10)+`}`)))
 				require.NoError(t, err)
 				return session.SessionToken()
@@ -483,7 +483,7 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 		},
 		{
 			name: "expired session, no refresh tokens",
-			initSessions: func(s *sessions.CombinedSessionStore) string {
+			initSessions: func(s *sessions.FilesystemSessionStore) string {
 				session, err := s.AddSession(httptest.NewRecorder(), httptest.NewRequest(http.MethodGet, "/", nil), oidcProvider.verifyIDToken, addIDToken(&oauth2.Token{}, oidcProvider.signPayload(`{"sub":"testuser","exp":`+strconv.FormatInt(time.Now().Add(-5*time.Minute).Unix(), 10)+`}`)))
 				require.NoError(t, err)
 				return session.SessionToken()
@@ -492,7 +492,7 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 		},
 		{
 			name: "expired session, invalid refresh token",
-			initSessions: func(s *sessions.CombinedSessionStore) string {
+			initSessions: func(s *sessions.FilesystemSessionStore) string {
 				session, err := s.AddSession(httptest.NewRecorder(), httptest.NewRequest(http.MethodGet, "/", nil), oidcProvider.verifyIDToken, addIDToken(&oauth2.Token{RefreshToken: "invalid-refresh-token"}, oidcProvider.signPayload(`{"sub":"testuser","exp":`+strconv.FormatInt(time.Now().Add(-5*time.Minute).Unix(), 10)+`}`)))
 				require.NoError(t, err)
 				return session.SessionToken()
@@ -502,7 +502,7 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 		},
 		{
 			name: "expired session, valid refresh token",
-			initSessions: func(s *sessions.CombinedSessionStore) string {
+			initSessions: func(s *sessions.FilesystemSessionStore) string {
 				session, err := s.AddSession(httptest.NewRecorder(), httptest.NewRequest(http.MethodGet, "/", nil), oidcProvider.verifyIDToken, addIDToken(&oauth2.Token{RefreshToken: testValidRefreshToken}, oidcProvider.signPayload(`{"sub":"testuser","exp":`+strconv.FormatInt(time.Now().Add(-5*time.Minute).Unix(), 10)+`}`)))
 				require.NoError(t, err)
 				return session.SessionToken()
