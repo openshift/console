@@ -157,6 +157,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                           onChange={(op: TolerationOperator) => opChange(op, i)}
                           selectedKey={operator}
                           title={operators[operator]}
+                          alwaysShowTitle
                         />
                       ) : (
                         <span className="pf-v6-c-form-control pf-m-readonly">
@@ -186,6 +187,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                           onChange={(e: string) => change(e, i, 'effect')}
                           selectedKey={effect}
                           title={effects[effect]}
+                          alwaysShowTitle
                         />
                       ) : (
                         <span className="pf-v6-c-form-control pf-m-readonly">

@@ -71,6 +71,7 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
           <ConsoleSelect
             title={title}
             items={items}
+            alwaysShowTitle
             autocompletePlaceholder={t('Select an icon')}
             autocompleteFilter={iconLabelAutocompleteFilter}
             isFullWidth

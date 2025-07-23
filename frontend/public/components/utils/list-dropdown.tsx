@@ -175,6 +175,7 @@ const ListDropdown_: React.FCC<ListDropdownProps> = ({
           items={renderedItems}
           selectedKey={selectedKey}
           title={loaded ? title : <LoadingInline />}
+          alwaysShowTitle
           onChange={handleOnChange}
           id={id}
           isFullWidth

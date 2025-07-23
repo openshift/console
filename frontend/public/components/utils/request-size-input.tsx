@@ -66,6 +66,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
         />
         <ConsoleSelect
           title={dropdownUnits[defaultRequestSizeUnit]}
+          alwaysShowTitle
           selectedKey={defaultRequestSizeUnit}
           id={dropdownName}
           className="request-size-input__unit"

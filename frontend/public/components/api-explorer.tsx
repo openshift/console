@@ -334,6 +334,7 @@ const APIResourcesList = compose(
                 selectedKey={groupFilter}
                 spacerBefore={groupSpacer}
                 title={groupOptions[groupFilter]}
+                alwaysShowTitle
                 isFullWidth
               />
             </ToolbarItem>
@@ -344,6 +345,7 @@ const APIResourcesList = compose(
                 selectedKey={versionFilter}
                 spacerBefore={versionSpacer}
                 title={versionOptions[versionFilter]}
+                alwaysShowTitle
                 isFullWidth
               />
             </ToolbarItem>
@@ -354,6 +356,7 @@ const APIResourcesList = compose(
                 selectedKey={scopeFilter}
                 spacerBefore={scopeSpacer}
                 title={scopeOptions[scopeFilter]}
+                alwaysShowTitle
                 isFullWidth
               />
             </ToolbarItem>

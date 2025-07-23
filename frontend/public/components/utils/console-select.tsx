@@ -52,8 +52,6 @@ export type ConsoleSelectProps = {
   items: Record<string, React.ReactNode>;
   /** Class name for the dropdown menu */
   menuClassName?: string;
-  /** Whether to allow no selection */
-  noSelection?: boolean;
   /** Callback when an item is selected */
   onChange?: (key: string, e: React.MouseEvent) => void;
   /** Wether the dropdown is a required field */
@@ -66,12 +64,14 @@ export type ConsoleSelectProps = {
   storageKey?: string;
   /** Style for the dropdown */
   style?: React.CSSProperties;
-  /** Title displayed in the dropdown toggle */
+  /** Title displayed in the dropdown toggle. Will always be shown regardless of state */
   title?: React.ReactNode;
   /** Prefix for the title in the dropdown toggle */
   titlePrefix?: string;
   /** User settings id prefix for bookmarks */
   userSettingsPrefix?: string;
+  /** By default, the title prop is shown as the placeholder for when no item is selected. This prop forces the title to always be shown */
+  alwaysShowTitle?: boolean;
 };
 
 const ConsoleSelectItem: React.FCC<{
@@ -126,11 +126,12 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   id,
   isFullWidth,
   menuClassName,
-  noSelection,
   onChange,
   spacerBefore = new Set(),
   storageKey,
   style,
+  title,
+  alwaysShowTitle = false,
   titlePrefix,
   userSettingsPrefix,
   ...props
@@ -140,7 +141,6 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   const [selectedKey, setSelectedKey] = React.useState<string>(props.selectedKey ?? '');
   const [autocompleteText, setAutocompleteText] = React.useState<string>('');
   const [items, setItems] = React.useState<Record<string, React.ReactNode>>(props.items);
-
   /* Dropdown bookmark state and helpers */
   // Should be undefined so that we don't save undefined-xxx.
   const bookmarkUserSettingsKey = userSettingsPrefix
@@ -190,7 +190,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
 
       setExpanded(false);
     },
-    [onChange, props.items, actionItems, noSelection],
+    [onChange, props.items, actionItems],
   );
 
   const applyTextFilter = React.useCallback(
@@ -207,7 +207,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
 
   // Update state when props change
   React.useEffect(() => {
-    if (props.selectedKey !== selectedKey) {
+    if (props.selectedKey && props.selectedKey !== selectedKey) {
       setSelectedKey(props.selectedKey);
     }
   }, [props.selectedKey, selectedKey]);
@@ -240,7 +240,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
       ref={dropdownToggleRef}
     >
       {titlePrefix && `${titlePrefix}: `}
-      {noSelection ? props.title : props.title ?? props.items[selectedKey]}
+      {alwaysShowTitle ? title : selectedKey ? items[selectedKey] ?? title : title}
     </MenuToggle>
   );
 
@@ -258,20 +258,20 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
             itemKey={ai.actionKey}
             content={ai.actionTitle}
             onclick={onClick}
-            selected={ai.actionKey === selectedKey && !noSelection}
+            selected={ai.actionKey === selectedKey}
           />
         ))}
         <Divider component="li" />
       </>
     );
-  }, [actionItems, noSelection, onClick, selectedKey]);
+  }, [actionItems, onClick, selectedKey]);
 
   const { rows, bookmarkRows } = React.useMemo(() => {
     const accRows: React.ReactNode[] = [];
     const accBookmarkRows: React.ReactNode[] = [];
 
     Object.entries(items).forEach(([key, content]) => {
-      const selected = key === selectedKey && !noSelection;
+      const selected = key === selectedKey;
 
       if (enableBookmarks && bookmarks[key]) {
         accBookmarkRows.push(
@@ -317,7 +317,6 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
     enableBookmarks,
     headerBefore,
     items,
-    noSelection,
     onClick,
     selectedKey,
     spacerBefore,

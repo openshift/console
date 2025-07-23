@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { SimpleDropdown } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
 import { history } from '@console/internal/components/utils';
-import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { MenuAction, MenuActions } from '@console/shared/src';
 
 type CreateActionDropdownProps = {
@@ -47,13 +47,17 @@ export const CreateActionDropdown: React.FC<CreateActionDropdownProps> = ({ name
   };
 
   return (
-    <ConsoleSelect
-      buttonClassName="pf-m-primary"
-      menuClassName="prevent-overflow"
-      title={t('knative-plugin~Create function')}
-      noSelection
-      items={items}
-      onChange={onSelectCreateAction}
+    <SimpleDropdown
+      toggleProps={{
+        variant: 'primary',
+      }}
+      toggleContent={t('knative-plugin~Create function')}
+      initialItems={Object.keys(items).map((item) => ({
+        value: item,
+        content: items[item],
+        'data-test-dropdown-menu': item,
+      }))}
+      onSelect={(_e, value: string) => onSelectCreateAction(value)}
     />
   );
 };

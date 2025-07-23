@@ -124,6 +124,7 @@ export const NameKeyDropdownPair = ({
         autocompletePlaceholder={placeholderString}
         items={items}
         selectedKey={name}
+        alwaysShowTitle
         title={nameTitle}
         headerBefore={headerBefore}
         spacerBefore={spacerBefore}
@@ -144,6 +145,7 @@ export const NameKeyDropdownPair = ({
           autocompletePlaceholder={t('public~Key')}
           items={itemKeys}
           selectedKey={pairKey}
+          alwaysShowTitle
           title={keyTitle}
           onChange={(val) => onChange({ [refProperty]: { name, key: val } })}
         />

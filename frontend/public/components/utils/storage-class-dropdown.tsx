@@ -150,7 +150,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
   };
 
   render() {
-    const { id, loaded, describedBy, noSelection, t } = this.props;
+    const { id, loaded, describedBy, t } = this.props;
     const items = {};
     _.each(
       this.state.items,
@@ -186,10 +186,10 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
               items={items}
               selectedKey={selectedKey}
               title={this.state.title}
+              alwaysShowTitle
               onChange={this.onChange}
               id={id}
               dataTest={this.props?.['data-test']}
-              noSelection={noSelection}
               menuClassName="dropdown-menu--text-wrap"
             />
             {describedBy && (
@@ -267,6 +267,5 @@ export type StorageClassDropdownInnerProps = WithTranslation & {
   required?: boolean;
   hideClassName?: string;
   filter?: (param) => boolean;
-  noSelection?: boolean;
   selectedKey?: string;
 };

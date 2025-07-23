@@ -444,6 +444,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                     <div className="pf-v6-c-input-group co-filter-group">
                       {showSearchFiltersDropdown && (
                         <ConsoleSelect
+                          alwaysShowTitle
                           items={filterDropdownItems}
                           onChange={(type) => setFilterType(FilterType[type] || type)}
                           selectedKey={filterType}

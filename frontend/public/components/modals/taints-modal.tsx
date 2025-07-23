@@ -113,6 +113,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                       onChange={(e) => change(e, i, 'effect')}
                       selectedKey={c.effect}
                       title={effects[c.effect]}
+                      alwaysShowTitle
                     />
                   </Td>
                   <Td isActionCell>

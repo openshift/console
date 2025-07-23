@@ -216,6 +216,7 @@ const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
           />
           <ConsoleSelect
             title={TimeoutUnits[unit]}
+            alwaysShowTitle
             selectedKey={unit}
             id="timeout-unit"
             className="request-size-input__unit"

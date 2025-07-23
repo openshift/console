@@ -76,6 +76,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
                 className="co-catalog-page__sort"
                 items={catalogSortItems}
                 title={catalogSortItems[sortOrder]}
+                alwaysShowTitle
                 onChange={onSortOrderChange}
               />
             </FlexItem>
@@ -87,6 +88,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
                   onChange={onGroupingChange}
                   titlePrefix={t('console-shared~Group by')}
                   title={catalogGroupItems[activeGrouping]}
+                  alwaysShowTitle
                 />
               </FlexItem>
             )}

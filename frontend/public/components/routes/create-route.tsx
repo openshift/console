@@ -380,6 +380,7 @@ class CreateRouteWithTranslation extends React.Component<
               autocompleteFilter={this.autocompleteFilter}
               items={availableServiceOptions}
               title={service ? serviceOptions[service.metadata.name] : t('public~Select a service')}
+              alwaysShowTitle
               isFullWidth
               id="service"
               onChange={this.changeService}
@@ -595,6 +596,7 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
         <ConsoleSelect
           items={availableServiceOptions}
           title={name ? serviceOptions[name] : t('public~Select a service')}
+          alwaysShowTitle
           isFullWidth
           id={`${index}-alt-service`}
           onChange={onServiceChange}

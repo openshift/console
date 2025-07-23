@@ -7,7 +7,7 @@ export const roleBindings = {
       .click()
       .byTestID('console-select-search-input')
       .type(namespace)
-      .parents('[data-test="namespace-dropdown"]')
+      .byTestID('console-select-menu-list')
       .within(() => {
         cy.get('.co-resource-item__resource-name').click();
       }),
