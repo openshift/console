@@ -158,7 +158,7 @@ const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
 const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
   const [resources, setResources] = React.useState<FirehoseResource[]>([]);
   const [errorMessage, setErrorMessage] = React.useState('');
-  const nodeName = node.metadata.name;
+  const nodeName = node.metadata?.name;
   const isWindows = node.status?.nodeInfo?.operatingSystem === 'windows';
 
   React.useEffect(() => {
@@ -193,7 +193,7 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
             },
           },
         });
-        const podToCreate = await getDebugPod(name, namespace.metadata.name, nodeName, isWindows);
+        const podToCreate = await getDebugPod(name, namespace.metadata.name, nodeName || '', isWindows);
         // wait for the namespace to be ready
         await new Promise((resolve) => setTimeout(resolve, 1000));
         const debugPod = await k8sCreate(PodModel, podToCreate);

@@ -29,16 +29,16 @@ export const PDBFormPage: React.FC<{}> = () => {
   };
   const searchParams = new URLSearchParams(location.search);
   const name = searchParams.get('name');
-  const groupVersionKind = getGroupVersionKind(params.resourceRef) || [];
+  const groupVersionKind = getGroupVersionKind(params.resourceRef || '') || [];
   const [group, version, kind] = groupVersionKind;
 
   const [resource, loadedResource] = useK8sWatchResource<K8sPodControllerKind>({
     groupVersionKind: {
       group,
-      kind,
-      version,
+      kind: kind || '',
+      version: version || '',
     },
-    name,
+    name: name || '',
     namespaced: true,
     namespace: params.ns,
   });
