@@ -24,7 +24,7 @@ type oidcAuth struct {
 
 	// This preserves the old logic of associating users with session keys
 	// and requires smart routing when running multiple backend instances.
-	sessions *sessions.CombinedSessionStore
+	sessions *sessions.FilesystemSessionStore
 	metrics  *auth.Metrics
 
 	refreshLock sync.Map // map [refreshToken -> sync.Mutex]
@@ -41,9 +41,9 @@ type oidcConfig struct {
 	constructOAuth2Config  oauth2ConfigConstructor
 }
 
-func newOIDCAuth(ctx context.Context, sessionStore *sessions.CombinedSessionStore, c *oidcConfig, metrics *auth.Metrics) (*oidcAuth, error) {
+func newOIDCAuth(ctx context.Context, sessionStore *sessions.FilesystemSessionStore, c *oidcConfig, metrics *auth.Metrics) (*oidcAuth, error) {
 	// NewProvider attempts to do OIDC Discovery
-	providerCache, err := asynccache.NewAsyncCache[*oidc.Provider](
+	providerCache, err := asynccache.NewAsyncCache(
 		ctx, 5*time.Minute,
 		func(cacheCtx context.Context) (*oidc.Provider, error) {
 			oidcCtx := oidc.ClientContext(cacheCtx, c.getClient())

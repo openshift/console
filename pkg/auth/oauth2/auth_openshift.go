@@ -24,7 +24,6 @@ import (
 	"github.com/openshift/console/pkg/auth/sessions"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils/asynccache"
-	"github.com/openshift/console/pkg/utils"
 )
 
 // openShiftAuth implements OpenShift Authentication as defined in:
@@ -35,7 +34,7 @@ type openShiftAuth struct {
 	k8sClient *http.Client
 
 	oauthEndpointCache *asynccache.AsyncCache[*oidcDiscovery]
-	sessions           *sessions.CombinedSessionStore
+	sessions           *sessions.FilesystemSessionStore
 	refreshLock        sync.Map
 }
 
@@ -66,25 +65,31 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 
 	var err error
 	// TODO: repeat the discovery several times as in the auth.go logic
-	o.oauthEndpointCache, err = asynccache.NewAsyncCache[*oidcDiscovery](ctx, 5*time.Minute, o.getOIDCDiscoveryInternal)
+	o.oauthEndpointCache, err = asynccache.NewAsyncCache(ctx, 5*time.Minute, o.getOIDCDiscoveryInternal)
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct OAuth endpoint cache: %w", err)
 	}
 	o.oauthEndpointCache.Run(ctx)
 
-	authnKey, err := utils.RandomString(64)
-	if err != nil {
-		return nil, err
-	}
+	// Temporarily use hardcoded keys for testing.
+	/*
+		authnKey, err := utils.RandomString(64)
+		if err != nil {
+			return nil, err
+		}
 
-	encryptionKey, err := utils.RandomString(32)
-	if err != nil {
-		return nil, err
-	}
+		encryptionKey, err := utils.RandomString(32)
+		if err != nil {
+			return nil, err
+		}
+	*/
 
 	o.sessions = sessions.NewSessionStore(
-		[]byte(authnKey),
-		[]byte(encryptionKey),
+		// FIXME: TESTING ONLY! DO NOT MERGE!
+		// Authentication key (32 bytes for HMAC-SHA256)
+		[]byte("console-test-auth-key-32-bytes!"),
+		// Encryption key (32 bytes for AES-256)
+		[]byte("console-test-encrypt-key-32-byte"),
 		c.secureCookies,
 		c.cookiePath,
 		c.sessionDir,
