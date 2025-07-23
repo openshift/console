@@ -1,15 +1,34 @@
+import { Content, ContentVariants, ModalVariant } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { TourDataType } from '@console/app/src/components/tour';
+import AdminGuidedTourBanner from '../tour/AdminGuidedTourBanner';
 import { finishTourText, helpTourText, userPreferencesTourText } from './GuidedTourText';
 
 const getSelector = (id: string): string => `[data-tour-id="${id}"]`;
+
+const IntroductionText: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Content component={ContentVariants.p}>
+        {t(
+          'console-app~Introducing a fresh modern look to the console with OpenShift 4.19. With this update we have made changes to the user interface to enhance usability and streamline your workflow. This includes an improved navigation and visual refinement aimed at making it easier to manage your applications and infrastructure.',
+        )}
+      </Content>
+      <Content component={ContentVariants.h6}>
+        {t('console-app~What do you want to do next?')}
+      </Content>
+    </>
+  );
+};
 
 export const getGuidedTour = (): TourDataType => ({
   intro: {
     // t('console-app~Welcome to the new OpenShift experience!')
     heading: '%console-app~Welcome to the new OpenShift experience!%',
-    // t('console-app~Our new update with OpenShift 4.19 gives a more modern look to help enhance your experience and streamline your workflow, such as improved navigation and infrastructure. Want us to show you around?')
-    content:
-      '%console-app~Our new update with OpenShift 4.19 gives a more modern look to help enhance your experience and streamline your workflow, such as improved navigation and infrastructure. Want us to show you around?%',
+    content: <IntroductionText />,
+    introBanner: <AdminGuidedTourBanner />,
+    modalVariant: ModalVariant.large,
   },
   steps: [
     {
@@ -59,5 +78,7 @@ export const getGuidedTour = (): TourDataType => ({
     // t('console-app~You’re ready to go!')
     heading: '%console-app~You’re ready to go!%',
     content: finishTourText,
+    introBanner: <AdminGuidedTourBanner />,
+    modalVariant: ModalVariant.medium,
   },
 });
