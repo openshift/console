@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"runtime"
+	"time"
 
 	"io/ioutil"
 	"net/http"
@@ -34,10 +35,6 @@ import (
 )
 
 const (
-	// There are no standard exit codes. Let's pick a custom value for debugging so we know from pod status why the container exited.
-	// sysexits.h defines 78 as EX_CONFIG (configuration error), which seems as good a choice as any.
-	configFileChangedExitCode = 78
-
 	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
@@ -180,12 +177,6 @@ func main() {
 	if err := serverconfig.Validate(fs); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
-	}
-
-	// Set up config file watcher if a config file was specified
-	configFile := fs.Lookup("config").Value.String()
-	if configFile != "" {
-		go watchConfigFile(configFile)
 	}
 
 	authOptions.ApplyConfig(&cfg.Auth)
@@ -675,16 +666,27 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// Set up config file watcher if a config file was specified
+	configFile := fs.Lookup("config").Value.String()
+	if configFile != "" {
+		go watchConfigFile(configFile, cancel)
+	}
+
 	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile)
 	if err != nil {
 		klog.Fatalf("error getting listener, %v", err)
 	}
 	defer listener.Close()
 
+	// Handle graceful shutdown
 	go func() {
 		<-ctx.Done()
 		klog.Infof("Shutting down server...")
-		if err = httpsrv.Shutdown(ctx); err != nil {
+
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer shutdownCancel()
+
+		if err = httpsrv.Shutdown(shutdownCtx); err != nil {
 			klog.Fatalf("Error shutting down server: %v", err)
 		}
 	}()
@@ -713,7 +715,7 @@ func main() {
 
 // watchConfigFile sets up a file watcher for the config file and exits the app when it changes.
 // When running in-cluster, this allows the container to restart with the new config without a full rollout.
-func watchConfigFile(configFile string) {
+func watchConfigFile(configFile string, cancel context.CancelFunc) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		klog.Errorf("Failed to create file watcher: %v", err)
@@ -736,8 +738,9 @@ func watchConfigFile(configFile string) {
 				return
 			}
 			if event.Has(fsnotify.Write) || event.Has(fsnotify.Create) || event.Has(fsnotify.Remove) {
-				klog.Infof("Config file %q changed, exiting application", configFile)
-				os.Exit(configFileChangedExitCode)
+				klog.Infof("Config file %q changed, signaling graceful shutdown", configFile)
+				cancel()
+				return
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
