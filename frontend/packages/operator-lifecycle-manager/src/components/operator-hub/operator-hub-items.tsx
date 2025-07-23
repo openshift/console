@@ -283,6 +283,22 @@ const setURLParams = (params) => {
   history.replace(`${url.pathname}${searchParams}`);
 };
 
+export const orderAndSortByRelevance = (items) => {
+  if (!items || !Array.isArray(items)) {
+    return [];
+  }
+
+  const redHatItems = items
+    .filter((item) => item.provider && item.provider.includes('Red Hat'))
+    .sort((a, b) => (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase()));
+
+  const nonRedHatItems = items
+    .filter((item) => !(item.provider && item.provider.includes('Red Hat')))
+    .sort((a, b) => (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase()));
+
+  return [...redHatItems, ...nonRedHatItems];
+};
+
 const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
   const { t } = useTranslation();
   if (!item) {
@@ -505,7 +521,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     <>
       <TileViewPage
         items={filteredItems}
-        itemsSorter={(itemsToSort) => _.sortBy(itemsToSort, ({ name }) => name.toLowerCase())}
+        itemsSorter={orderAndSortByRelevance}
         getAvailableCategories={determineCategories}
         getAvailableFilters={determineAvailableFilters}
         filterGroups={operatorHubFilterGroups}
