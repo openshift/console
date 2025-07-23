@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ListItem } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
@@ -17,8 +18,7 @@ describe('KSRoutesOverviewListItem', () => {
   });
 
   it('should list the Route', () => {
-    expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('li').at(0).props().className).toEqual('list-group-item');
+    expect(wrapper.find(ListItem)).toHaveLength(1);
   });
 
   it('should have ResourceLink with proper kind', () => {
@@ -28,7 +28,7 @@ describe('KSRoutesOverviewListItem', () => {
 
   it('should have route ExternalLink with proper href', () => {
     expect(wrapper.find(ExternalLinkWithCopy)).toHaveLength(1);
-    expect(wrapper.find(ExternalLinkWithCopy).at(0).props().link).toEqual(
+    expect(wrapper.find(ExternalLinkWithCopy).at(0).props().href).toEqual(
       'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     );
     expect(wrapper.find(ExternalLinkWithCopy).at(0).props().text).toEqual(

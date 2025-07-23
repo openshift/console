@@ -592,6 +592,7 @@ export const externalImageValues: DeployImageFormData = {
   name: 'nationalparks-py',
   application: { name: '', selectedKey: UNASSIGNED_KEY },
   project: { name: 'div' },
+  customIcon: null,
   runtimeIcon: 'python',
   route: {
     disable: true,
@@ -678,6 +679,7 @@ export const internalImageValues: DeployImageFormData = {
   name: 'nationalparks-py',
   application: { name: '', selectedKey: UNASSIGNED_KEY },
   project: { name: 'div' },
+  customIcon: null,
   runtimeIcon: 'python',
   route: {
     disable: true,
@@ -819,6 +821,7 @@ export const knExternalImageValues: DeployImageFormData = {
     },
   },
   project: { name: 'div' },
+  customIcon: null,
   runtimeIcon: null,
   registry: 'external',
   resources: Resources.KnativeService,

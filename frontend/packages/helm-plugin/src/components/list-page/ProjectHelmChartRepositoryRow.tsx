@@ -51,7 +51,7 @@ const ProjectHelmChartRepositoryRow: React.FC<RowFunctionArgs> = ({ obj }) => {
           <ExternalLink
             href={obj.spec.connectionConfig.url}
             text={obj.spec.connectionConfig.url}
-            additionalClassName="co-external-link--block"
+            displayBlock
           />
         ) : (
           '-'

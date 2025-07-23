@@ -16,26 +16,19 @@ import {
   modelFor,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { getNamespace } from '../../selectors';
 
 type DropdownItemProps = {
   model: K8sKind;
   name: string;
-  namespace?: string;
 };
 
-const DropdownItem: React.FC<DropdownItemProps> = ({ model, name, namespace }) => (
+const DropdownItem: React.FC<DropdownItemProps> = ({ model, name }) => (
   <span className="co-resource-item">
     <span className="co-resource-icon--fixed-width">
       <ResourceIcon kind={referenceForModel(model)} />
     </span>
     <span className="co-resource-item__resource-name">
       <span>{name}</span>
-      {namespace && (
-        <div className="pf-v6-u-text-color-subtle co-truncate co-nowrap small co-resource-item__resource-namespace">
-          {namespace}
-        </div>
-      )}
     </span>
   </span>
 );
@@ -210,8 +203,6 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     } = props;
 
     const unsortedList = { ...appendItems };
-    const namespaces = new Set(_.flatten(_.map(resources, ({ data }) => data?.map(getNamespace))));
-    const containsMultipleNs = namespaces.size > 1;
     _.each(resources, ({ data, kind }) => {
       _.reduce(
         data,
@@ -221,14 +212,8 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
           if (dataValue) {
             if (showBadge) {
               const model = modelFor(referenceFor(resource)) || (kind && modelFor(kind));
-              const namespace = containsMultipleNs ? getNamespace(resource) : null;
               acc[dataValue] = model ? (
-                <DropdownItem
-                  key={resource.metadata.uid}
-                  model={model}
-                  name={name}
-                  namespace={namespace}
-                />
+                <DropdownItem key={resource.metadata.uid} model={model} name={name} />
               ) : (
                 name
               );

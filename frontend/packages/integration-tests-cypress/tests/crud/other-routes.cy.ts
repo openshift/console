@@ -49,7 +49,7 @@ describe('Visiting other routes', () => {
     },
     {
       path: '/api-resource/ns/default/core~v1~Pod/schema',
-      waitFor: () => cy.get('li.co-resource-sidebar-item').should('be.visible'),
+      waitFor: () => cy.byTestID('resource-sidebar-item').should('be.visible'),
     },
     {
       path: '/api-resource/ns/default/core~v1~Pod/instances',
@@ -67,6 +67,10 @@ describe('Visiting other routes', () => {
           },
           {
             path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~Machine',
+            waitFor: () => listPage.rows.shouldBeLoaded(),
+          },
+          {
+            path: '/k8s/cluster/machine.openshift.io~v1~ControlPlaneMachineSet',
             waitFor: () => listPage.rows.shouldBeLoaded(),
           },
           {

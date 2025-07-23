@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { Content, Title, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { DOC_URL_PODDISRUPTIONBUDGET_POLICY } from '@console/internal/components/utils';
+import {
+  documentationURLs,
+  getDocumentationURL,
+} from '@console/internal/components/utils/documentation';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
@@ -38,8 +41,7 @@ const AvailabilityRequirementPopover: React.FC = () => {
         </StackItem>
         <StackItem>
           <ExternalLink
-            // no downstream URL
-            href={DOC_URL_PODDISRUPTIONBUDGET_POLICY}
+            href={getDocumentationURL(documentationURLs.podDisruptionBudgetPolicyV1)}
             text={t('console-app~PodDisruptionBudget documentation')}
           />
         </StackItem>

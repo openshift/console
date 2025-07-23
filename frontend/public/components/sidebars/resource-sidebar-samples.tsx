@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Button, Level, LevelItem, Title } from '@patternfly/react-core';
+import { Button, Level, LevelItem, List, ListItem, Title } from '@patternfly/react-core';
 import { Language } from '@patternfly/react-code-editor';
 import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
 import { ChevronDownIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-down-icon';
@@ -22,11 +22,11 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
   const reference = referenceFor(targetResource);
   const { t } = useTranslation();
   return (
-    <li className="co-resource-sidebar-item">
+    <ListItem data-test="resource-sidebar-item">
       <Title headingLevel="h3" className="pf-v6-u-mb-sm">
         <span>{highlightText}</span> {title}
       </Title>
-      {img && <img src={img} className="co-resource-sidebar-item__img img-responsive" />}
+      {img && <img src={img} alt="" className="pf-v6-u-my-md" />}
       <p>{description}</p>
       <Level>
         <LevelItem>
@@ -54,7 +54,7 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
           </Button>
         </LevelItem>
       </Level>
-    </li>
+    </ListItem>
   );
 };
 
@@ -120,7 +120,7 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
   const { t } = useTranslation();
 
   return (
-    <li className="co-resource-sidebar-item">
+    <ListItem data-test="resource-sidebar-item">
       <Title headingLevel="h3" className="pf-v6-u-mb-sm">
         <span>{highlightText}</span> {title}
       </Title>
@@ -154,7 +154,7 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
         </LevelItem>
       </Level>
       {yamlPreviewOpen && yamlPreview && <PreviewYAML yaml={yamlPreview} />}
-    </li>
+    </ListItem>
   );
 };
 
@@ -168,7 +168,7 @@ export const ResourceSidebarSnippets: React.FC<ResourceSidebarSnippetsProps> = (
   insertSnippetYaml,
 }) => {
   return (
-    <ul className="co-resource-sidebar-list" style={{ listStyle: 'none', paddingLeft: 0 }}>
+    <List isPlain isBordered>
       {_.map(_.sortBy(snippets, 'title'), (snippet) => (
         <ResourceSidebarSnippet
           key={snippet.id}
@@ -176,7 +176,7 @@ export const ResourceSidebarSnippets: React.FC<ResourceSidebarSnippetsProps> = (
           insertSnippetYaml={insertSnippetYaml}
         />
       ))}
-    </ul>
+    </List>
   );
 };
 
@@ -186,7 +186,7 @@ export const ResourceSidebarSamples: React.FC<ResourceSidebarSamplesProps> = ({
   downloadSampleYaml,
 }) => {
   return (
-    <ol className="co-resource-sidebar-list" data-test="resource-samples-list">
+    <List isPlain isBordered data-test="resource-samples-list">
       {_.map(_.sortBy(samples, 'title'), (sample) => (
         <ResourceSidebarSample
           key={sample.id}
@@ -195,7 +195,7 @@ export const ResourceSidebarSamples: React.FC<ResourceSidebarSamplesProps> = ({
           downloadSampleYaml={downloadSampleYaml}
         />
       ))}
-    </ol>
+    </List>
   );
 };
 

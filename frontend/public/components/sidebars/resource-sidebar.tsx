@@ -29,7 +29,7 @@ const ResourceSidebarWrapper: React.FC<{
 
   return (
     <div
-      className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm hidden-xs"
+      className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered pf-v6-u-display-none pf-v6-u-display-block-on-sm"
       data-test="resource-sidebar"
     >
       <PaneBody className="co-p-has-sidebar__sidebar-body">

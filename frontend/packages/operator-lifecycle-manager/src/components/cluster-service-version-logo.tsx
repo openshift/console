@@ -61,12 +61,12 @@ export const ClusterServiceVersionHeaderTitle: React.FCC<ClusterServiceVersionHe
         )}
       </Title>
       {provider && (
-        <small className="co-clusterserviceversion-logo__name__provider pf-v6-u-text-color-subtle">
+        <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
           {t('olm~{{version}} provided by {{provider}}', {
             version: version || '',
             provider: _.get(provider, 'name', provider),
           })}
-        </small>
+        </span>
       )}
     </div>
   );

@@ -19,9 +19,9 @@ export const hpaPO = {
   memory: '[id="memory"]',
   submitBtn: '[data-test-id="submit-button"]',
   sectionHeading: '.sidebar__section-heading',
-  sidebarClose: '[data-test-id="sidebar-close-button"]',
+  sidebarClose: '[data-test="sidebar-close-button]',
   switchToggler: '[data-test-id="topology-switcher-view"]',
   hpaFormName: '[id="form-input-formData-metadata-name-field"]',
   podRing: '[class="odc-pod-ring"]',
-  nodeList: '[class="list-group-item"]',
+  nodeList: '.pf-v6-c-list > li',
 };

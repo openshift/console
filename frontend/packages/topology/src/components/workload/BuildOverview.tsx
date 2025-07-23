@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, List, ListItem } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -90,7 +90,7 @@ const BuildOverviewItem: React.FC<BuildOverviewListItemProps> = ({ build }) => {
   } = build;
   const lastUpdated = completionTimestamp || startTimestamp || creationTimestamp;
   return (
-    <li className="list-group-item build-overview__item">
+    <ListItem className="build-overview__item">
       <div className="build-overview__item-title">
         <div className="build-overview__status co-icon-and-text">
           <div className="co-icon-and-text__icon co-icon-flex-child">
@@ -117,7 +117,7 @@ const BuildOverviewItem: React.FC<BuildOverviewListItemProps> = ({ build }) => {
         </div>
       </div>
       <BuildStatus build={build} />
-    </li>
+    </ListItem>
   );
 };
 
@@ -143,8 +143,8 @@ const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) =>
     });
   };
   return (
-    <ul className="list-group">
-      <li className="list-group-item build-overview__item">
+    <List isPlain isBordered>
+      <ListItem className="build-overview__item">
         <div className="build-overview__item-title">
           <div>
             <ResourceLink inline kind="BuildConfig" name={name} namespace={namespace} />
@@ -169,19 +169,19 @@ const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) =>
             </div>
           )}
         </div>
-      </li>
+      </ListItem>
       {!(builds?.length > 0) ? (
-        <li className="list-group-item">
+        <ListItem>
           <span className="pf-v6-u-text-color-subtle">
             {t('topology~No Builds found for this Build Config.')}
           </span>
-        </li>
+        </ListItem>
       ) : (
         builds
           .slice(0, MAX_VISIBLE)
           .map((build) => <BuildOverviewItem key={build.metadata.uid} build={build} />)
       )}
-    </ul>
+    </List>
   );
 };
 export const BuildOverview: React.FC<BuildConfigsOverviewProps> = ({ buildConfigs }) => {

@@ -1,7 +1,5 @@
 import { Trans, useTranslation } from 'react-i18next';
-import { DOC_URL_RED_HAT_MARKETPLACE } from '@console/internal/components/utils';
 import { CatalogController, CatalogServiceProvider } from '@console/shared/src/components/catalog';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useExtensionCatalogCategories } from '../hooks/useExtensionCatalogCategories';
 
@@ -28,9 +26,7 @@ const ExtensionCatalog = () => {
           description={
             <Trans ns="olm-v1">
               Discover Operators from the Kubernetes community and Red Hat partners, curated by Red
-              Hat. You can purchase commercial software through{' '}
-              <ExternalLink href={DOC_URL_RED_HAT_MARKETPLACE}>Red Hat Marketplace</ExternalLink>.
-              You can install Operators on your clusters to provide optional add-ons and shared
+              Hat. You can install Operators on your clusters to provide optional add-ons and shared
               services to your developers.
             </Trans>
           }

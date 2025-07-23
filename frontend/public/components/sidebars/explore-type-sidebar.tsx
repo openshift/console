@@ -1,6 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Breadcrumb, BreadcrumbItem, Button, Content, Title } from '@patternfly/react-core';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  Content,
+  ContentVariants,
+  List,
+  ListItem,
+  Title,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
 import {
@@ -110,7 +119,6 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // Get the type to display for a property reference.
   const getTypeForRef = (ref: string): string =>
     _.get(allDefinitions, [ref, 'format']) || _.get(allDefinitions, [ref, 'type']);
-
   return (
     <>
       {!_.isEmpty(breadcrumbs) && (
@@ -118,7 +126,12 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
           {breadcrumbs.map((crumb, i) => {
             const isLast = i === breadcrumbs.length - 1;
             return (
-              <BreadcrumbItem key={i} isActive={isLast} onClick={(e) => breadcrumbClicked(e, i)}>
+              <BreadcrumbItem
+                key={i}
+                isActive={isLast}
+                onClick={!isLast ? (e) => breadcrumbClicked(e, i) : undefined}
+                to={!isLast ? `/explore/${kindObj?.kind || 'schema'}/${i}` : undefined}
+              >
                 {crumb}
               </BreadcrumbItem>
             );
@@ -134,7 +147,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
         {_.isEmpty(currentProperties) ? (
           <EmptyBox label={t('public~Properties')} />
         ) : (
-          <ul className="co-resource-sidebar-list pf-v6-c-list">
+          <List isPlain isBordered>
             {_.map(currentProperties, (definition: SwaggerDefinition, name: string) => {
               const path = getDrilldownPath(name);
               const definitionType = definition.type || getTypeForRef(getRef(definition));
@@ -143,21 +156,24 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                 : definitionType;
 
               return (
-                <li key={name} className="co-resource-sidebar-item">
-                  <Title
-                    headingLevel="h5"
-                    className="pf-v6-u-mb-sm co-resource-sidebar-item__header co-break-word"
-                  >
+                <ListItem key={name} data-test="resource-sidebar-item">
+                  <Title headingLevel="h5" className="pf-v6-u-mb-sm co-break-word">
                     <CamelCaseWrap value={name} />
                     &nbsp;
-                    <small>
+                    <Content component={ContentVariants.small}>
                       <span className="co-break-word">{definitionTypeStr}</span>
-                      {required.has(name) && <> &ndash; required</>}
-                    </small>
+                      {required.has(name) && <> &ndash; {t('public~required')}</>}
+                    </Content>
                   </Title>
                   {definition.description && (
                     <p className="co-break-word co-pre-wrap">
                       <LinkifyExternal>{definition.description}</LinkifyExternal>
+                    </p>
+                  )}
+                  {definition.enum && (
+                    <p className="co-break-word co-pre-wrap">
+                      <strong>{t('public~Allowed values: ')}</strong>
+                      <span className="co-break-word">{definition.enum.join(', ')}</span>
                     </p>
                   )}
                   {path && (
@@ -170,10 +186,10 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                       {t('public~View details')}
                     </Button>
                   )}
-                </li>
+                </ListItem>
               );
             })}
-          </ul>
+          </List>
         )}
       </Content>
     </>

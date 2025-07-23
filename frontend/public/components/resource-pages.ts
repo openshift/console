@@ -55,6 +55,7 @@ import {
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,
   ClusterRoleBindingModel,
+  ControlPlaneMachineSetModel,
 } from '../models';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
 
@@ -162,6 +163,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(MachineSetModel), () =>
     import('./machine-set' /* webpackChunkName: "machine-set" */).then(
       (m) => m.MachineSetDetailsPage,
+    ),
+  )
+  .set(referenceForModel(ControlPlaneMachineSetModel), () =>
+    import('./control-plane-machine-set' /* webpackChunkName: "control-plane-machine-set" */).then(
+      (m) => m.ControlPlaneMachineSetDetailsPage,
     ),
   )
   .set(referenceForModel(MachineHealthCheckModel), () =>
@@ -374,6 +380,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(MachineSetModel), () =>
     import('./machine-set' /* webpackChunkName: "machine-set" */).then((m) => m.MachineSetPage),
+  )
+  .set(referenceForModel(ControlPlaneMachineSetModel), () =>
+    import('./control-plane-machine-set' /* webpackChunkName: "control-plane-machine-set" */).then(
+      (m) => m.ControlPlaneMachineSetListPage,
+    ),
   )
   .set(referenceForModel(PodModel), () =>
     import('./pod' /* webpackChunkName: "pod" */).then((m) => m.PodsPage),

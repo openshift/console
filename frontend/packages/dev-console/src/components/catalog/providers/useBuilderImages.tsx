@@ -47,9 +47,7 @@ const normalizeBuilderImages = (
     if (sampleRepo) {
       detailsProperties.push({
         label: t('devconsole~Sample repository'),
-        value: (
-          <ExternalLink href={sampleRepo} additionalClassName="co-break-all" text={sampleRepo} />
-        ),
+        value: <ExternalLink href={sampleRepo} className="co-break-all" text={sampleRepo} />,
       });
     }
 

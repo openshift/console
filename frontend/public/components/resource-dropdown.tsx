@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 import { css } from '@patternfly/react-styles';
+import { CloseButton } from '@patternfly/react-component-groups';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from './utils';
 import { K8sKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';
@@ -24,7 +25,6 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
-import CloseButton from '@console/shared/src/components/close-button';
 
 const RECENT_SEARCH_ITEMS = 5;
 
@@ -194,7 +194,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
               )}
             </span>
             {isDup(model.kind) && (
-              <div className="co-resource-item__resource-api pf-v6-u-text-color-subtle co-truncate co-nowrap small">
+              <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-truncate co-nowrap">
                 {model.apiGroup || 'core'}/{model.apiVersion}
               </div>
             )}
@@ -232,7 +232,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
                     )}
                   </span>
                   {isDup(model.kind) && (
-                    <div className="co-resource-item__resource-api pf-v6-u-text-color-subtle co-truncate co-nowrap small">
+                    <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-truncate co-nowrap">
                       {model.apiGroup || 'core'}/{model.apiVersion}
                     </div>
                   )}
@@ -257,7 +257,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       options.push(
         <Tooltip position="right" content={t('public~Clear history')} key="clear-history">
           <CloseButton
-            additionalClassName="co-select-group-close-button"
+            className="co-select-group-close-button"
             dataTestID="close-icon"
             onClick={onClear}
           />

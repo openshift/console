@@ -7,6 +7,7 @@ import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getGitService, GitProvider } from '@console/git-service/src';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
+import { DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED } from '@console/internal/components/utils/documentation';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
@@ -40,9 +41,6 @@ enum SupportedRuntime {
   typescript = 'nodejs',
   quarkus = 'java',
 }
-
-export const SERVERLESS_FUNCTION_DOCS_URL =
-  'https://docs.openshift.com/serverless/latest/functions/serverless-functions-getting-started.html';
 
 const AddServerlessFunctionForm: React.FC<
   FormikProps<FormikValues> & AddServerlessFunctionFormProps
@@ -187,8 +185,8 @@ const AddServerlessFunctionForm: React.FC<
                     </Trans>
                   </p>
                   <ExternalLink
-                    additionalClassName="odc-func-form-link"
-                    href={SERVERLESS_FUNCTION_DOCS_URL}
+                    className="odc-func-form-link"
+                    href={DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED}
                     text={t('devconsole~Learn more')}
                   />
                 </Alert>

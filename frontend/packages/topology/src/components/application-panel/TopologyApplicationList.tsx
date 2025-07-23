@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
@@ -11,18 +12,18 @@ const TopologyApplicationResourceList: React.FC<TopologyApplicationResourceListP
   resources,
 }) => {
   return (
-    <ul className="list-group">
+    <List isPlain isBordered>
       {_.map(resources, (resource) => {
         const {
           metadata: { name, namespace, uid },
         } = resource;
         return (
-          <li className="list-group-item" key={uid}>
+          <ListItem key={uid}>
             <ResourceLink kind={referenceFor(resource)} name={name} namespace={namespace} />
-          </li>
+          </ListItem>
         );
       })}
-    </ul>
+    </List>
   );
 };
 

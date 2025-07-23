@@ -1,7 +1,15 @@
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { Base64 } from 'js-base64';
-import { Alert, CodeBlock, CodeBlockCode, Grid, GridItem } from '@patternfly/react-core';
+import {
+  Alert,
+  CodeBlock,
+  CodeBlockCode,
+  FormGroup,
+  Grid,
+  GridItem,
+  Radio,
+} from '@patternfly/react-core';
 import { withTranslation } from 'react-i18next';
 
 import { CONST } from '@console/shared';
@@ -172,29 +180,27 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               <label>{t('public~Method')}</label>
             </GridItem>
             <GridItem span={9}>
-              <div className="radio">
-                <label>
-                  <input
-                    type="radio"
+              <div className="pf-v6-c-form">
+                <FormGroup role="radiogroup" fieldId="namespace-pull-secret-method" isStack>
+                  <Radio
                     id="namespace-pull-secret-method--form"
-                    checked={this.state.method === 'form'}
-                    onChange={this._onMethodChange}
+                    name="namespace-pull-secret-method"
+                    label={t('public~Enter username/password')}
                     value="form"
-                  />
-                  {t('public~Enter username/password')}
-                </label>
-              </div>
-              <div className="radio">
-                <label>
-                  <input
-                    type="radio"
-                    checked={this.state.method === 'upload'}
                     onChange={this._onMethodChange}
-                    id="namespace-pull-secret-method--upload"
-                    value="upload"
+                    isChecked={this.state.method === 'form'}
+                    data-checked-state={this.state.method === 'form'}
                   />
-                  {t('public~Upload Docker config.json')}
-                </label>
+                  <Radio
+                    id="namespace-pull-secret-method--upload"
+                    name="namespace-pull-secret-method"
+                    label={t('public~Upload Docker config.json')}
+                    value="upload"
+                    onChange={this._onMethodChange}
+                    isChecked={this.state.method === 'upload'}
+                    data-checked-state={this.state.method === 'upload'}
+                  />
+                </FormGroup>
               </div>
             </GridItem>
 

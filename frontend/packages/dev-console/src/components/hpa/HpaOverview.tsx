@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List, ListItem } from '@patternfly/react-core';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
@@ -15,17 +16,17 @@ export const HPAOverview: React.FC<HPAOverviewProps> = ({ hpas }) => {
   return (
     <>
       <SidebarSectionHeading text={HorizontalPodAutoscalerModel.labelPlural} />
-      <ul className="list-group">
+      <List isPlain isBordered>
         {hpas.map((hpa: HorizontalPodAutoscalerKind) => (
-          <li key={hpa.metadata.name} className="list-group-item">
+          <ListItem key={hpa.metadata.name}>
             <ResourceLink
               kind={HorizontalPodAutoscalerModel.kind}
               name={hpa.metadata.name}
               namespace={hpa.metadata.namespace}
             />
-          </li>
+          </ListItem>
         ))}
-      </ul>
+      </List>
     </>
   );
 };

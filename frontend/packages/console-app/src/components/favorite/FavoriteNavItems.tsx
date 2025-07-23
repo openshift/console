@@ -4,11 +4,8 @@ import { StarIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { useUserSettingsCompatibility } from '@console/shared';
-import {
-  FAVORITES_CONFIG_MAP_KEY,
-  FAVORITES_LOCAL_STORAGE_KEY,
-  FavoritesType,
-} from './FavoriteButton';
+import { FAVORITES_CONFIG_MAP_KEY, FAVORITES_LOCAL_STORAGE_KEY } from '../../consts';
+import { FavoritesType } from '../../types';
 import { FavoriteNavItem } from './FavoriteNavItem';
 
 import './FavoriteNavItems.scss';
@@ -62,7 +59,7 @@ export const FavoriteNavItems: React.FC = () => {
           'data-test': 'favorite-resource-item',
         }}
         className={css('co-favorite-resource')}
-        to={favorite.url}
+        to={`${favorite.url}?from=favorites`}
         isActive={activeItem === `favorites-item-${favorite.url}`}
       >
         <Flex

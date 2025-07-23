@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Form, FormGroup, Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { RadioGroup } from '@console/internal/components/radio';
 import { useShowOperandsInAllNamespaces } from './useShowOperandsInAllNamespaces';
 
 export const ShowOperandsInAllNamespacesRadioGroup: React.FC = () => {
@@ -10,23 +10,33 @@ export const ShowOperandsInAllNamespacesRadioGroup: React.FC = () => {
     setShowOperandsInAllNamespaces,
   ] = useShowOperandsInAllNamespaces();
   return (
-    <RadioGroup
-      label={t('olm~Show operands in:')}
-      currentValue={showOperandsInAllNamespaces ? 'true' : 'false'}
-      inline
-      items={[
-        {
-          value: 'true',
-          title: t('olm~All namespaces'),
-        },
-        {
-          value: 'false',
-          title: t('olm~Current namespace only'),
-        },
-      ]}
-      onChange={({ currentTarget }) =>
-        setShowOperandsInAllNamespaces(currentTarget.value === 'true')
-      }
-    />
+    <Form isHorizontal>
+      <FormGroup
+        role="radiogroup"
+        fieldId="show-operands"
+        label={t('olm~Show operands in:')}
+        isInline
+        hasNoPaddingTop
+      >
+        <Radio
+          id="all-namespaces"
+          name="show-operands"
+          value="true"
+          label={t('olm~All namespaces')}
+          onChange={() => setShowOperandsInAllNamespaces(true)}
+          isChecked={showOperandsInAllNamespaces}
+          data-checked-state={showOperandsInAllNamespaces}
+        />
+        <Radio
+          id="current-namespace-only"
+          name="show-operands"
+          value="false"
+          label={t('olm~Current namespace only')}
+          onChange={() => setShowOperandsInAllNamespaces(false)}
+          isChecked={!showOperandsInAllNamespaces}
+          data-checked-state={!showOperandsInAllNamespaces}
+        />
+      </FormGroup>
+    </Form>
   );
 };

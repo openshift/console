@@ -1,5 +1,3 @@
-$co-external-link-padding-right: 15px;
-
 .co-divider {
   margin-bottom: var(--pf-t--global--spacer--lg);
   margin-top: var(--pf-t--global--spacer--lg);
@@ -115,64 +113,6 @@ $co-external-link-padding-right: 15px;
 // unbroken identifiers.
 .co-break-all {
   word-break: break-all;
-}
-
-// append external-link icon to <a> so that it doesn't wrap without text
-// there must be no white space between the text and the closing </a> tag holding the pseudo element
-.co-external-link::after {
-  content: '';
-  display: inline-block;
-  vertical-align: baseline;
-  // mask an SVG with the text icon
-  background-color: currentColor;
-  color: inherit;
-  mask-position: center bottom;
-  mask-repeat: no-repeat;
-  mask-size: contain;
-  height: 16px;
-  margin-left: 3px;
-  margin-right: -15px; // width + margin-left
-  position: relative;
-  top: 0;
-  width: 12px;
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M432 320H400a16 16 0 0 0 -16 16V448H64V128H208a16 16 0 0 0 16-16V80a16 16 0 0 0 -16-16H48A48 48 0 0 0 0 112V464a48 48 0 0 0 48 48H400a48 48 0 0 0 48-48V336A16 16 0 0 0 432 320zM488 0h-128c-21.4 0-32.1 25.9-17 41l35.7 35.7L135 320.4a24 24 0 0 0 0 34L157.7 377a24 24 0 0 0 34 0L435.3 133.3 471 169c15 15 41 4.5 41-17V24A24 24 0 0 0 488 0z'/%3E%3C/svg%3E ");
-
-  .pf-v6-c-dropdown__menu-item & {
-    color: var(--pf-t--global--text--color--subtle);
-    margin-left: 5px;
-  }
-  .pf-v6-c-nav__link & {
-    color: var(--pf-t--global--text--color--subtle);
-    margin-left: 4px;
-  }
-}
-.co-external-link {
-  display: inline-block;
-  padding-right: $co-external-link-padding-right;
-
-  &.co-catalog-page__overlay-action--external {
-    padding-right: $co-external-link-padding-right * 2; // extra padding for external link icon
-  }
-}
-.co-external-link--block {
-  display: block;
-}
-
-.co-external-link-with-copy {
-  &__icon {
-    color: var(--pf-t--global--text--color--link--default) !important;
-    cursor: pointer;
-    &:hover {
-      color: var(--pf-t--global--text--color--link--hover);
-    }
-  }
-  &__externallinkicon {
-    padding-left: var(--pf-t--global--spacer--xs);
-  }
-  &__copyicon {
-    margin-left: var(--pf-t--global--spacer--md);
-    padding: 0 !important;
-  }
 }
 
 // Prevent inline appended icons from wrapping separately without its associated text

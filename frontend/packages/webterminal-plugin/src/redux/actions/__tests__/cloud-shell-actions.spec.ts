@@ -62,7 +62,7 @@ describe('Cloud shell actions', () => {
   it('should thunk dispatch toggle expand true action', () => {
     const dispatch = jest.fn<Dispatch>();
     // initial isExpanded state is false
-    const state = { plugins: { console: { cloudShell: { isExpanded: false } } } } as any;
+    const state = { plugins: { webterminal: { cloudShell: { isExpanded: false } } } } as any;
     toggleCloudShellExpanded()(dispatch, () => state);
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -78,7 +78,7 @@ describe('Cloud shell actions', () => {
     const dispatch = jest.fn<Dispatch>();
     // initial isExpanded state is true but isActive is false
     const state = {
-      plugins: { console: { cloudShell: { isExpanded: true, isActive: false } } },
+      plugins: { webterminal: { cloudShell: { isExpanded: true, isActive: false } } },
     } as any;
     toggleCloudShellExpanded()(dispatch, () => state);
     expect(dispatch).toHaveBeenCalledWith(
@@ -97,7 +97,7 @@ describe('Cloud shell actions', () => {
     const dispatch = jest.fn<Dispatch>();
     // initial isExpanded state is true and isActive is true
     const state = {
-      plugins: { console: { cloudShell: { isExpanded: true, isActive: true } } },
+      plugins: { webterminal: { cloudShell: { isExpanded: true, isActive: true } } },
     } as any;
     await toggleCloudShellExpanded()(dispatch, () => state);
     expect(dispatch).toHaveBeenCalledWith(
@@ -115,7 +115,7 @@ describe('Cloud shell actions', () => {
   it('should thunk dispatch toggle expand true action', () => {
     const dispatch = jest.fn<Dispatch>();
     // initial isExpanded state is false
-    const state = { plugins: { console: { cloudShell: { isExpanded: false } } } } as any;
+    const state = { plugins: { webterminal: { cloudShell: { isExpanded: false } } } } as any;
     toggleCloudShellExpanded()(dispatch, () => state);
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({

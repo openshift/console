@@ -216,23 +216,6 @@ const OperatorHubItemDetailsHint: React.FC<OperatorHubItemDetailsHintProps> = (p
     );
   }
 
-  if (catalogSource === DefaultCatalogSource.RedHatMarketPlace) {
-    return (
-      <OperatorHubItemCustomizedHint
-        title={t('olm~Marketplace Operator')}
-        body={t(
-          'olm~This Operator is purchased through Red Hat Marketplace. After completing the purchase process, you can install the Operator on this or other OpenShift clusters. Visit Red Hat Marketplace for more details and to track your usage of this application.',
-        )}
-        footer={
-          <ExternalLink
-            href="https://marketplace.redhat.com/en-us?utm_source=openshift_console"
-            text={t('olm~Learn more about the Red Hat Marketplace')}
-          />
-        }
-      />
-    );
-  }
-
   return null;
 };
 

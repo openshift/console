@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { css } from '@patternfly/react-styles';
-import { Alert, Button, Title } from '@patternfly/react-core';
+import { Alert, Button, Checkbox, Title } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { connect, FormikContextType, FormikValues } from 'formik';
@@ -450,25 +450,20 @@ class CreateRouteWithTranslation extends React.Component<
         </div>
         <div className="form-group co-create-route__security">
           <label>{t('public~Security')}</label>
-          <div className="checkbox">
-            <label>
-              <input
-                type="checkbox"
-                onChange={this.toggleSection}
-                checked={this.state.secure}
-                id="secure"
-                name="secure"
-                aria-describedby="secure-help"
-              />
-              {t('public~Secure Route')}
-            </label>
-            <div className="help-block" id="secure-help">
-              <p>
-                {t(
-                  'public~Routes can be secured using several TLS termination types for serving certificates.',
-                )}
-              </p>
-            </div>
+          <Checkbox
+            label={t('public~Secure Route')}
+            onChange={this.toggleSection}
+            isChecked={this.state.secure}
+            id="secure"
+            name="secure"
+            aria-describedby="secure-help"
+          />
+          <div className="help-block" id="secure-help">
+            <p>
+              {t(
+                'public~Routes can be secured using several TLS termination types for serving certificates.',
+              )}
+            </p>
           </div>
           {this.state.secure && (
             <div className="co-create-route__security">

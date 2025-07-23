@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { CloseButton } from '@patternfly/react-component-groups';
 import { ActionGroup, Button, ButtonVariant } from '@patternfly/react-core';
 import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
-import CloseButton from '../close-button/CloseButton';
 import { ActionGroupWithIconsProps } from './form-utils-types';
 
 const ActionGroupWithIcons: React.FC<ActionGroupWithIconsProps> = ({
@@ -22,11 +22,7 @@ const ActionGroupWithIcons: React.FC<ActionGroupWithIconsProps> = ({
           isDisabled={isDisabled}
         />
       )}
-      <CloseButton
-        additionalClassName="co-close-button--no-padding"
-        dataTestID="close-icon"
-        onClick={onClose}
-      />
+      <CloseButton className="pf-v6-u-p-0" dataTestID="close-icon" onClick={onClose} />
     </ActionGroup>
   );
 };

@@ -200,7 +200,7 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
     >
       <Button
         icon={<QuestionCircleIcon className="co-icon-space-r" />}
-        className="hidden-sm hidden-xs"
+        className="pf-v6-u-display-none pf-v6-u-display-inline-flex-on-sm"
         type="button"
         variant="link"
       >

@@ -7,7 +7,7 @@ import { SectionHeading, ExpandCollapse } from '../../utils';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
 import { FormProps } from './receiver-form-props';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Checkbox, Grid, GridItem } from '@patternfly/react-core';
 
 const SMTP_GLOBAL_FIELDS = [
   'smtp_from',
@@ -231,26 +231,15 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               </div>
             </GridItem>
           </Grid>
-          <div className="checkbox">
-            <label htmlFor="email-require-tls">
-              <input
-                type="checkbox"
-                id="email-require-tls"
-                data-test-id="email-require-tls"
-                onChange={(e) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: {
-                      smtp_require_tls: e.target.checked,
-                    },
-                  })
-                }
-                checked={formValues.smtp_require_tls}
-                aria-checked={formValues.smtp_require_tls}
-              />
-              {t('public~Require TLS')}
-            </label>
-          </div>
+          <Checkbox
+            label={t('public~Require TLS')}
+            onChange={(_event, checked) =>
+              dispatchFormChange({ type: 'setFormValues', payload: { smtp_require_tls: checked } })
+            }
+            isChecked={formValues.smtp_require_tls}
+            id="email-require-tls"
+            data-test-id="email-require-tls"
+          />
         </div>
       </div>
       <div className="form-group">

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
@@ -39,17 +40,17 @@ export const PubSubResourceOverviewList: React.FC<PubSubResourceOverviewListProp
     <>
       <SidebarSectionHeading text={title} />
       {items?.length > 0 ? (
-        <ul className="list-group">
+        <List isPlain isBordered>
           {_.map(items, (itemData) => (
-            <li className="list-group-item" key={itemData.metadata.uid}>
+            <ListItem key={itemData.metadata.uid}>
               <ResourceLink
                 kind={referenceFor(itemData)}
                 name={itemData.metadata?.name}
                 namespace={itemData.metadata?.namespace}
               />
-            </li>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       ) : (
         <span className="pf-v6-u-text-color-subtle">
           {t('knative-plugin~No {{title}} found for this resource.', { title })}

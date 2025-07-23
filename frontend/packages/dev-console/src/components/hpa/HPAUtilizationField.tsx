@@ -51,13 +51,12 @@ const HPAUtilizationField: React.FC<HPAUtilizationFieldProps> = ({
             isDisabled={disabled}
             onChange={onUpdate}
             value={Number.isNaN(value) ? '' : value}
+            aria-describedby={`${type}-utilization-unit`}
           />
         </InputGroupItem>
-        <InputGroupItem isBox>
-          <InputGroupText id="percent" aria-label="%">
-            <PercentIcon />
-          </InputGroupText>
-        </InputGroupItem>
+        <InputGroupText id={`${type}-utilization-unit`}>
+          <PercentIcon />
+        </InputGroupText>
       </InputGroup>
 
       <FormHelperText>

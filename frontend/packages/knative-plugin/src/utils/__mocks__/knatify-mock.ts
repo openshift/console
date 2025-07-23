@@ -119,7 +119,7 @@ export const knatifyFormCommonInitialValues = {
   },
 };
 
-export const imageStremsData: K8sResourceKind[] = [
+export const imageStreamsData: K8sResourceKind[] = [
   {
     kind: 'ImageStream',
     apiVersion: 'image.openshift.io/v1',

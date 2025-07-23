@@ -63,6 +63,11 @@ export const topologyActions = {
         cy.byTestActionID(action).should('be.visible').click();
         break;
       }
+      case 'Delete PingSource':
+      case nodeActions.DeletePingSource: {
+        cy.byTestActionID(action).should('be.visible').click();
+        break;
+      }
       case 'Delete SinkBinding':
       case nodeActions.DeleteSinkBinding: {
         cy.byTestActionID(action).should('be.visible').click();

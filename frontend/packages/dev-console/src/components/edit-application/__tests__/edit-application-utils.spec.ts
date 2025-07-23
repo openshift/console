@@ -127,6 +127,7 @@ describe('getFileUploadValues', () => {
     const { buildConfig, editAppResource } = appResources;
     expect(getFileUploadValues(editAppResource.data, buildConfig.data)).toEqual({
       fileUpload: { name: 'demo-app.jar', value: '', javaArgs: '' },
+      customIcon: null,
       runtimeIcon: 'python',
     });
   });

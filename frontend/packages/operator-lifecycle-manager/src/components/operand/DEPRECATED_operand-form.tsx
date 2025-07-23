@@ -845,8 +845,9 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           id={id}
           currentValue={currentValue}
           items={_.values(ImagePullPolicy).map((policy) => ({
+            name: id,
             value: policy,
-            title: policy,
+            label: policy,
           }))}
           onChange={({ currentTarget: { value } }) => handleFormDataUpdate(path, value)}
         />
@@ -1019,7 +1020,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
             <React.Fragment key={`${groupName}-${index}`}>
               {index > 0 && <hr />}
               {fieldLists.length > 1 && (
-                <div className="row co-array-field-group__remove">
+                <div className="co-array-field-group__remove">
                   <Button
                     icon={<MinusCircleIcon className="co-icon-space-r" />}
                     type="button"
@@ -1036,7 +1037,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
               ))}
             </React.Fragment>
           ))}
-          <div className="row">
+          <div>
             <Button
               icon={<PlusCircleIcon className="co-icon-space-r" />}
               type="button"

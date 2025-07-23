@@ -3,6 +3,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 const HelpTourText: React.FC = () => {
   const { t } = useTranslation();
@@ -38,23 +39,13 @@ export const FinishTourText: React.FC = () => {
   return (
     <Trans t={t} ns="console-app">
       Stay up-to-date with everything OpenShift on our{' '}
-      <a
-        href={openshiftBlogLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-test="openshift-blog-link"
-      >
+      <ExternalLink href={openshiftBlogLink} data-test="openshift-blog-link">
         blog
-      </a>{' '}
+      </ExternalLink>{' '}
       or continue to learn more in our{' '}
-      <a
-        href={openshiftHelpBase}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-test="openshift-docs-link"
-      >
+      <ExternalLink href={openshiftHelpBase} data-test="openshift-help-link">
         documentation
-      </a>
+      </ExternalLink>
       .
     </Trans>
   );

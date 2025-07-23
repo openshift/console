@@ -1,3 +1,4 @@
+import { ListItem } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -10,7 +11,7 @@ describe('ConfigurationsOverviewListItem', () => {
     const wrapper = shallow(
       <ConfigurationsOverviewListItem configuration={sampleKnativeConfigurations.data[0]} />,
     );
-    expect(wrapper.type()).toBe('li');
+    expect(wrapper.type()).toBe(ListItem);
   });
 
   it('should have ResourceLink with proper kind', () => {
@@ -28,10 +29,18 @@ describe('ConfigurationsOverviewListItem', () => {
       <ConfigurationsOverviewListItem configuration={sampleKnativeConfigurations.data[0]} />,
     );
     expect(
-      wrapper.text().includes(sampleKnativeConfigurations.data[0].status.latestCreatedRevisionName),
+      wrapper
+        .find('span')
+        .at(1)
+        .text()
+        .includes(sampleKnativeConfigurations.data[0].status.latestCreatedRevisionName),
     ).toBe(true);
     expect(
-      wrapper.text().includes(sampleKnativeConfigurations.data[0].status.latestReadyRevisionName),
+      wrapper
+        .find('span')
+        .at(3)
+        .text()
+        .includes(sampleKnativeConfigurations.data[0].status.latestReadyRevisionName),
     ).toBe(true);
   });
 });

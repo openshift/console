@@ -14,27 +14,35 @@ const mockNow = jest.spyOn(Date, 'now').mockReturnValue(now);
 // Mock localStorage so that we can spy on calls and override return values.
 const mockGetItem = jest.fn();
 const mockSetItem = jest.fn();
-class LocalStorageMock {
-  store = {};
+const mockRemoveItem = jest.fn();
+const mockClear = jest.fn();
 
-  length = 0;
-
-  clear = jest.fn();
-
-  getItem = mockGetItem;
-
-  setItem = mockSetItem;
-
-  removeItem = jest.fn();
-
-  key = jest.fn();
-}
-window.localStorage = new LocalStorageMock();
+// Direct assignment instead of class to ensure mocks work
+Object.defineProperty(window, 'localStorage', {
+  value: {
+    getItem: mockGetItem,
+    setItem: mockSetItem,
+    removeItem: mockRemoveItem,
+    clear: mockClear,
+    length: 0,
+    key: jest.fn(),
+  },
+  writable: true,
+});
 
 // Mock fireTelemetry so that we can spy on calls
 const mockFireTelemetry = jest.fn();
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => mockFireTelemetry,
+}));
+
+// Mock usePluginStore to avoid undefined pluginStore errors
+const mockPluginStore = {
+  findDynamicPluginInfo: jest.fn(),
+  setCustomDynamicPluginInfo: jest.fn(),
+};
+jest.mock('@console/plugin-sdk/src/api/usePluginStore', () => ({
+  usePluginStore: () => mockPluginStore,
 }));
 
 // Mock class that extends SecurityPolicyViolationEvent to work around "SecurityPolicyViolationEvent
@@ -102,18 +110,21 @@ describe('useCSPViolationDetector', () => {
     mockSetItem.mockClear();
     mockFireTelemetry.mockClear();
     mockNow.mockClear();
+    mockPluginStore.findDynamicPluginInfo.mockClear();
+    mockPluginStore.setCustomDynamicPluginInfo.mockClear();
   });
 
   it('records a new CSP violation', () => {
+    mockGetItem.mockReturnValueOnce('[]');
     render(
       <Provider store={store}>
         <TestComponent />
       </Provider>,
     );
-    mockGetItem.mockReturnValueOnce('[]');
     act(() => {
       fireEvent(document, testEvent);
     });
+
     expect(mockSetItem).toHaveBeenCalledWith(
       'console/csp_violations',
       JSON.stringify([testRecord]),
@@ -122,13 +133,13 @@ describe('useCSPViolationDetector', () => {
   });
 
   it('updates existing events with new timestamp', () => {
+    mockGetItem.mockReturnValueOnce(JSON.stringify([existingRecord]));
+
     render(
       <Provider store={store}>
         <TestComponent />
       </Provider>,
     );
-
-    mockGetItem.mockReturnValueOnce(JSON.stringify([existingRecord]));
 
     act(() => {
       fireEvent(document, testEvent);
@@ -138,13 +149,13 @@ describe('useCSPViolationDetector', () => {
     expect(mockFireTelemetry).not.toBeCalled();
   });
   it('fires a telemetry event when a matching CSP expires', () => {
+    mockGetItem.mockReturnValueOnce(JSON.stringify([expiredRecord]));
+
     render(
       <Provider store={store}>
         <TestComponent />
       </Provider>,
     );
-
-    mockGetItem.mockReturnValueOnce(JSON.stringify([expiredRecord]));
 
     const origNodeEnv = process.env.NODE_ENV;
     act(() => {
@@ -166,13 +177,13 @@ describe('useCSPViolationDetector', () => {
       ...report,
       timestamp: 999,
     };
+    mockNow.mockReturnValueOnce(999);
+    mockGetItem.mockReturnValueOnce('');
     render(
       <Provider store={store}>
         <TestComponent />
       </Provider>,
     );
-    mockNow.mockReturnValueOnce(999);
-    mockGetItem.mockReturnValueOnce('');
     act(() => {
       fireEvent(document, testEventWithPlugin);
     });
@@ -189,13 +200,13 @@ describe('useCSPViolationDetector', () => {
       ...report,
       timestamp: 999,
     };
+    mockNow.mockReturnValue(999);
+    mockGetItem.mockReturnValue('');
     render(
       <Provider store={store}>
         <TestComponent />
       </Provider>,
     );
-    mockNow.mockReturnValue(999);
-    mockGetItem.mockReturnValue('');
     act(() => {
       fireEvent(document, testEventWithPlugin);
     });

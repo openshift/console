@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List } from '@patternfly/react-core';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import TopologyGroupResourceItem from './TopologyGroupResourceItem';
 
@@ -14,7 +15,7 @@ const TopologyGroupResourceList: React.FC<TopologyGroupResourceListProps> = ({
   linkForResource,
 }) => {
   return (
-    <ul className="list-group">
+    <List isPlain isBordered>
       {resources
         .sort((r1, r2) => r1.metadata.name.localeCompare(r2.metadata.name))
         .map((resource) => (
@@ -25,7 +26,7 @@ const TopologyGroupResourceList: React.FC<TopologyGroupResourceListProps> = ({
             linkForResource={linkForResource}
           />
         ))}
-    </ul>
+    </List>
   );
 };
 

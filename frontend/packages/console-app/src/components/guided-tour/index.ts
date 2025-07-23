@@ -29,7 +29,7 @@ export const getGuidedTour = (): TourDataType => ({
       content:
         '%console-app~Add shared applications, services, event sources, or source-to-image builders to your project. Cluster administrators can customize the content made available in the catalog.%',
       selector: getSelector('tour-software-catalog-nav'),
-      expandableSelector: getSelector('tour-home-nav'),
+      expandableSelector: getSelector('tour-ecosystem-nav'),
     },
     {
       placement: 'bottom',

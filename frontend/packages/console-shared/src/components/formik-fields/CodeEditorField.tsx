@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Switch } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
@@ -15,6 +14,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ConsoleYAMLSampleModel } from '@console/internal/models';
 import { getYAMLTemplates } from '@console/internal/models/yaml-templates';
 import { definitionFor, K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';
+import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
 import { getResourceSidebarSamples } from '../../utils';
 import { CodeEditorFieldProps } from './field-types';
 
@@ -99,13 +99,13 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
             language={language}
             toolbarLinks={[
               hasSidebarContent && (
-                <Switch
-                  label={t('public~Sidebar')}
+                <ToggleSidebarButton
+                  key="toggle-sidebar"
                   id="showSidebar"
-                  isChecked={sidebarOpen}
-                  data-checked-state={sidebarOpen}
-                  onChange={() => setSidebarOpen(!sidebarOpen)}
-                  hasCheckIcon
+                  isSidebarOpen={sidebarOpen}
+                  toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+                  alignToEnd
+                  className="pf-v6-u-mr-xs"
                 />
               ),
             ]}

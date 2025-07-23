@@ -447,12 +447,11 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 
   return inFlight ? null : (
     <>
-      <ListPageHeader title={showTitle ? t('olm~All Instances') : undefined} hideFavoriteButton>
-        {managesAllNamespaces && (
-          <div className="co-operator-details__toggle-value pf-v6-u-ml-xl-on-md">
-            <ShowOperandsInAllNamespacesRadioGroup />
-          </div>
-        )}
+      <ListPageHeader
+        title={showTitle ? t('olm~All Instances') : undefined}
+        hideFavoriteButton
+        helpText={managesAllNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
+      >
         <ListPageCreateDropdown onClick={createNavigate} items={createItems}>
           {t('olm~Create new')}
         </ListPageCreateDropdown>
@@ -515,12 +514,11 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
 
   return (
     <>
-      <ListPageHeader title={showTitle ? `${labelPlural}` : undefined} hideFavoriteButton>
-        {managesAllNamespaces && (
-          <div className="co-operator-details__toggle-value pf-v6-u-ml-xl-on-md">
-            <ShowOperandsInAllNamespacesRadioGroup />
-          </div>
-        )}
+      <ListPageHeader
+        title={showTitle ? `${labelPlural}` : undefined}
+        hideFavoriteButton
+        helpText={managesAllNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
+      >
         <ListPageCreateLink to={createPath}>
           {t('public~Create {{label}}', { label })}
         </ListPageCreateLink>

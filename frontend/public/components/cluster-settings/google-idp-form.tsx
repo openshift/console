@@ -123,6 +123,7 @@ export const AddGooglePage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
+                aria-label={t('public~Client ID')}
                 onChange={(e) => setClientID(e.currentTarget.value)}
                 value={clientID}
                 id="client-id"
@@ -137,6 +138,7 @@ export const AddGooglePage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="password"
+                aria-label={t('public~Client secret')}
                 onChange={(e) => setClientSecret(e.currentTarget.value)}
                 value={clientSecret}
                 id="client-secret"
@@ -151,6 +153,7 @@ export const AddGooglePage = () => {
             <span className="pf-v6-c-form-control">
               <input
                 type="text"
+                aria-label={t('public~Hosted domain')}
                 onChange={(e) => setHostedDomain(e.currentTarget.value)}
                 value={hostedDomain}
                 id="hosted-domain"

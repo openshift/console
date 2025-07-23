@@ -25,10 +25,10 @@ type SpotlightProps = {
 const Spotlight: React.FC<SpotlightProps> = ({ expandableSelector, selector, interactive }) => {
   React.useEffect(() => {
     if (expandableSelector) {
-      const expandableElemet = document.querySelector(expandableSelector);
-      const ariaExpanded = expandableElemet.getAttribute('aria-expanded');
+      const expandableElement = document.querySelector(expandableSelector);
+      const ariaExpanded = expandableElement?.getAttribute('aria-expanded');
       if (ariaExpanded === 'false') {
-        simulateMouseClick(expandableElemet);
+        simulateMouseClick(expandableElement);
       }
     }
   }, [expandableSelector]);

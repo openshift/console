@@ -188,7 +188,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                     {quayURLFor(v) ? (
                       <ExternalLink href={quayURLFor(v)} text={getVulnerabilityCountText(v)} />
                     ) : (
-                      <span className="small pf-v6-u-text-color-subtle">-</span>
+                      <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">-</span>
                     )}
                   </div>
                 </div>

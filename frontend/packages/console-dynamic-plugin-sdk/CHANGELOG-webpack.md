@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
 in [Console dynamic plugins README](./README.md).
 
+## 4.19.0 - 2025-06-27
+
+> Release for OCP Console 4.19.
+
 ## 4.19.0-prerelease.2 - 2025-05-20
 
 > [!IMPORTANT]
@@ -20,7 +24,6 @@ in [Console dynamic plugins README](./README.md).
 - Add `@patternfly/react-topology` to Console provided shared modules ([OCPBUGS-55323], [#14993])
 - Skip processing type-only dynamic module imports ([OCPBUGS-53030], [#14861])
 - Update `typescript` peer dependency to match Console TS build version ([#14861])
-- Generated JS code now uses new JSX transform `react-jsx` ([OCPBUGS-52589], [#14864])
 
 ## 4.19.0-prerelease.1 - 2025-02-17
 
@@ -73,7 +76,6 @@ in [Console dynamic plugins README](./README.md).
 [OCPBUGS-35928]: https://issues.redhat.com/browse/OCPBUGS-35928
 [OCPBUGS-38734]: https://issues.redhat.com/browse/OCPBUGS-38734
 [OCPBUGS-42985]: https://issues.redhat.com/browse/OCPBUGS-42985
-[OCPBUGS-52589]: https://issues.redhat.com/browse/OCPBUGS-52589
 [OCPBUGS-53030]: https://issues.redhat.com/browse/OCPBUGS-53030
 [OCPBUGS-55323]: https://issues.redhat.com/browse/OCPBUGS-55323
 [#13188]: https://github.com/openshift/console/pull/13188
@@ -90,5 +92,4 @@ in [Console dynamic plugins README](./README.md).
 [#14615]: https://github.com/openshift/console/pull/14615
 [#14620]: https://github.com/openshift/console/pull/14620
 [#14861]: https://github.com/openshift/console/pull/14861
-[#14864]: https://github.com/openshift/console/pull/14864
 [#14993]: https://github.com/openshift/console/pull/14993

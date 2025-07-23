@@ -39,7 +39,9 @@ const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ ale
           >
             {message}
             <div className="odc-monitoring-overview-alerts__timestamp">
-              <small className="pf-v6-u-text-color-subtle">{fromNow(activeAt)}</small>
+              <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
+                {fromNow(activeAt)}
+              </span>
             </div>
           </Alert>
         );

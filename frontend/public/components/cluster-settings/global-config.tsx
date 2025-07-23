@@ -55,7 +55,9 @@ const ItemRow = ({ item, showAPIGroup }) => {
         <Link to={item.path} data-test-id={item.label}>
           {item.label}
         </Link>
-        {showAPIGroup && <div className="pf-v6-u-text-color-subtle small">{item.apiGroup}</div>}
+        {showAPIGroup && (
+          <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">{item.apiGroup}</div>
+        )}
       </Td>
       <Td visibility={['hidden', 'visibleOnSm']}>
         <div className="co-line-clamp">{item.description || '-'}</div>

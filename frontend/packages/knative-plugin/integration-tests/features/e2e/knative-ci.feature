@@ -39,12 +39,16 @@ Feature: Perform actions on knative service and revision
                   | quay.io/openshift-knative/showcase | kn-service    |
 
 
+        # Marking the following test as manual to reduce load on ci from new tests based on relavance
+        @manual
         Scenario: knative service menu options: KN-02-TC01
             Given user has created or selected namespace "knative-ci"
              When user right clicks on the knative service "kn-service" to open the context menu
              Then user is able to see the options like Edit Application Grouping, Set Traffic Distribution, Edit Health Checks, Edit Labels, Edit Annotations, Edit Service, Delete Service, Edit "kn-service"
 
 
+        # Marking the following test as manual to reduce load on ci from new tests based on relavance
+        @manual
         Scenario: side bar details of knative Service: KN-06-TC01
             Given user has created or selected namespace "knative-ci"
              When user clicks on the knative service "kn-service"
@@ -71,6 +75,59 @@ Feature: Perform actions on knative service and revision
               And save, cancel buttons are displayed
 
 
+
+        @regression
+        Scenario: Create new Event Source: KA-01-TC01
+            Given user has created knative service "kn-service" in admin
+              And user is at administrator perspective
+              And user is at eventing page
+             When user clicks on Create dropdown button
+              And user selects Event Source
+              And user clicks on Ping Source
+              And user enters "Message" in Data field
+              And user enters "* * * * *" in Schedule field
+              And user selects resource "kn-service"
+              And user clicks on Create button to submit
+             Then user will be redirected to Topology page
+              And ApiServerSource event source "ping-source" is created and linked to selected knative service "kn-service"
+
+
+        @regression
+        Scenario: Create new Channel: KA-01-TC02
+            Given user is at eventing page
+             When user clicks on Create dropdown button
+              And user selects Channel
+              And user selects Default channels
+              And user clicks on Create button to create channel
+             Then user will be redirected to Topology page
+              And user will see the channel "channel" created
+
+
+        @smoke
+        Scenario: Create Broker using Form view: KE-05-TC01
+            Given user is at eventing page
+             When user clicks on Create dropdown button
+              And user selects Broker
+              And user selects Form view
+              And user enters broker name as "default-broker"
+              And user clicks on Create button to create broker
+             Then user will be redirected to Topology page
+              And user will see the "default-broker" broker created
+
+
+        @smoke
+        Scenario: Add Subscription to channel: KE-05-TC01
+            # Given user has created knative service "knative-ci-2" in admin
+            #   And user has created channel "channel"
+            #   And user is at Topology page
+             When user right clicks on the Channel "channel" to open the context menu
+              And user selects "Add Subscription" from Context Menu
+              And user enters Name as "channel-subscrip" on Add Subscription modal
+              And user selects Subscriber "kn-service" on Add Subscription modal
+              And user clicks on Add button
+             Then user will see connection between Channel "channel" and Subscriber "kn-service"
+
+
         Scenario: Update the service to new application group: KN-02-TC08
             Given user has created or selected namespace "knative-ci"
              When user right clicks on the knative service "kn-service" to open the context menu
@@ -83,6 +140,8 @@ Feature: Perform actions on knative service and revision
              Then updated service "kn-service" is present in side bar of application "openshift-app"
 
 
+        # Marking the following test as manual to reduce load on ci from new tests based on relavance
+        @manual
         Scenario: Context menu for knative Revision: KN-01-TC01
             Given user has created or selected namespace "knative-ci"
               And Knative Revision is available in topology page
@@ -146,6 +205,34 @@ Feature: Perform actions on knative service and revision
               And user clicks save button on the "Set traffic distribution" modal
               And user clicks on the knative service name "kn-service"
              Then number of revisions should get increased in side bar - resources tab - routes section
+
+
+        @regression
+        Scenario: Delete Broker action on Broker: KE-05-TC11
+             When user clicks on the "default-broker" broker to open the sidebar
+              And user selects "Delete Broker" from Actions drop down
+              And user clicks on the Delete button on the modal
+             Then user will not see "default-broker" broker in admin view topology
+
+
+        @regression
+        Scenario: Delete Channel action on Channel: KE-06-TC16
+            Given user has already created the channel "channel"
+             When user right clicks on the channel "channel"
+              And user clicks on the "Delete Channel"
+              And user clicks on the Delete button on the modal
+             Then user will not see channel "channel"
+
+
+        @regression
+        Scenario: Delete event source: KE-01-TC03
+            # Given user has created knative service "kn-service"
+            #   And user has created Sink Binding event source "ping-source" with knative resource "kn-service"
+             When user clicks on event source "ping-source" to open side bar
+              And user selects "Delete PingSource" from side bar Action menu
+              And user selects the Delete option on "Delete PingSource" modal
+             Then event source "ping-source" will not be displayed in topology page
+
 
         @broken-test
         Scenario: Delete revision modal details for service with multiple revisions: KN-01-TC10

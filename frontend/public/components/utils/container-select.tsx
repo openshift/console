@@ -71,6 +71,7 @@ export const ContainerSelect: React.FC<ContainerSelectProps> = ({
         </MenuToggle>
       )}
       shouldFocusToggleOnSelect
+      popperProps={{ appendTo: 'inline' }}
     >
       {!_.isEmpty(initContainers) ? (
         <>

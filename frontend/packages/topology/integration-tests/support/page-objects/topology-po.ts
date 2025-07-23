@@ -81,7 +81,7 @@ export const topologyPO = {
     knativeServiceIcon: '[title="Service"]',
     tabs: '[role="dialog"] li button',
     sectionTitle: 'h2',
-    close: '[data-test-id="sidebar-close-button"]',
+    close: '[data-test="sidebar-close-button]',
     labelsList: '[data-test="label-list"]',
     editAnnotations: '[data-test="edit-annotations"]',
     tabName: '[role="dialog"] li button',
@@ -103,7 +103,7 @@ export const topologyPO = {
       labelsEdit: '[data-test="Labels-details-item__edit-button"]',
     },
     resourcesTab: {
-      startLastRun: '[role="dialog"] li.list-group-item.pipeline-overview div button',
+      startLastRun: '[role="dialog"] li.pipeline-overview div button',
       pipelineRuns: 'li.odc-pipeline-run-item',
       routeLink: '[data-test-id="route-link"]',
       waitingPods: 'button[data-test="waiting-pods"]',

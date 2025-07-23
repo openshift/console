@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom-v5-compat';
 import { css } from '@patternfly/react-styles';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { ActionGroup, Button, Checkbox } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { getName } from '@console/shared';
 import {
@@ -476,21 +476,14 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
       ) : (
         <>
           {isCheckbox ? (
-            <>
-              <div className="checkbox">
-                <label>
-                  <input
-                    type="checkbox"
-                    className="create-storage-class-form__checkbox"
-                    onChange={(event) => setParameterHandler(key, event, isCheckbox)}
-                    checked={_.get(newStorageClass, selectedKey, false)}
-                    id={`provisioner-settings-${key}-checkbox`}
-                    data-test={paramId}
-                  />
-                  {_.get(parameter, 'name', key)}
-                </label>
-              </div>
-            </>
+            <Checkbox
+              label={_.get(parameter, 'name', key)}
+              onChange={(event) => setParameterHandler(key, event, isCheckbox)}
+              isChecked={_.get(newStorageClass, selectedKey, false)}
+              name={`provisioner-settings-${key}-checkbox`}
+              id={`provisioner-settings-${key}-checkbox`}
+              data-test={paramId}
+            />
           ) : (
             <>
               <label
@@ -683,17 +676,13 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           </div>
 
           {expansionFlag && (
-            <div className="checkbox">
-              <label>
-                <input
-                  type="checkbox"
-                  className="create-storage-class-form__checkbox"
-                  onChange={(event) => setStorageHandler('expansion', event.target.checked)}
-                  checked={allowExpansion}
-                />
-                {t('public~Allow PersistentVolumeClaims to be expanded')}
-              </label>
-            </div>
+            <Checkbox
+              label={t('public~Allow PersistentVolumeClaims to be expanded')}
+              onChange={(_event, checked) => setStorageHandler('expansion', checked)}
+              isChecked={allowExpansion}
+              name="expansion"
+              id="expansion"
+            />
           )}
 
           <ButtonBar errorMessage={error ? error.message : ''} inProgress={loading}>

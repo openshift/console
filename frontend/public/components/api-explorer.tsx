@@ -101,7 +101,7 @@ const APIResourceLink_: React.FC<APIResourceLinkStateProps & APIResourceLinkOwnP
   const to = getAPIResourceLink(activeNamespace, model);
   return (
     <span className="co-resource-item">
-      <span className="co-resource-icon--fixed-width hidden-xs">
+      <span className="co-resource-icon--fixed-width pf-v6-u-display-none pf-v6-u-display-flex-on-sm">
         <ResourceIcon kind={referenceForModel(model)} />
       </span>
       <Link to={to} className="co-resource-item__resource-name">

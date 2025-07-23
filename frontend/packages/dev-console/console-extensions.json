@@ -687,11 +687,10 @@
     "properties": {
       "id": "developer-catalog",
       "perspective": "admin",
-      "section": "home",
+      "section": "ecosystem",
       "name": "%devconsole~Software Catalog%",
       "href": "/catalog",
       "namespaced": true,
-      "insertAfter": "search",
       "dataAttributes": {
         "data-test-id": "developer-catalog-header",
         "data-tour-id": "tour-software-catalog-nav"
