@@ -439,7 +439,8 @@ export const useOperatorCatalogItems = () => {
     updateChannel,
     updateVersion,
   ]);
-  return [items, loaded, loadError];
+
+  return [items, loaded];
 };
 
 export default useOperatorCatalogItems;
