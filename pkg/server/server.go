@@ -30,7 +30,6 @@ import (
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
-	"github.com/openshift/console/pkg/metrics"
 	"github.com/openshift/console/pkg/plugins"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverconfig"
@@ -187,6 +186,7 @@ type Server struct {
 	ThanosPublicURL                     *url.URL
 	ThanosTenancyProxyConfig            *proxy.Config
 	ThanosTenancyProxyForRulesConfig    *proxy.Config
+	TokenReviewer                       *auth.TokenReviewer
 	UserSettingsLocation                string
 }
 
@@ -282,6 +282,12 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	authHandlerWithUser := func(h HandlerWithUser) http.HandlerFunc {
 		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
 	}
+
+	// For requests where Authorization header with valid Bearer token is expected
+	bearerTokenReviewHandler := func(h http.HandlerFunc) http.HandlerFunc {
+		return withBearerTokenReview(s.TokenReviewer, h)
+	}
+
 	handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
 	handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
 	handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
@@ -578,14 +584,13 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	usageMetrics.MonitorUsers(internalProxiedK8SClient)
 	prometheus.MustRegister(serverconfigMetrics.GetCollectors()...)
 	prometheus.MustRegister(usageMetrics.GetCollectors()...)
-	handle("/metrics", metrics.AddHeaderAsCookieMiddleware(
-		authHandler(func(w http.ResponseWriter, r *http.Request) {
-			promhttp.Handler().ServeHTTP(w, r)
-		}),
-	))
-	handleFunc("/metrics/usage", func(w http.ResponseWriter, r *http.Request) {
+
+	handle("/metrics", bearerTokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
+		promhttp.Handler().ServeHTTP(w, r)
+	}))
+	handleFunc("/metrics/usage", authHandler(func(w http.ResponseWriter, r *http.Request) {
 		usage.Handle(usageMetrics, w, r)
-	})
+	}))
 
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
@@ -630,8 +635,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		gitopsProxy := proxy.NewProxy(s.GitOpsProxyConfig)
 		handle(gitopsEndpoint, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, gitopsEndpoint),
-			authHandler(gitopsProxy.ServeHTTP),
-		))
+			authHandler(gitopsProxy.ServeHTTP)),
+		)
 	}
 
 	handle("/api/console/version", authHandler(s.versionHandler))

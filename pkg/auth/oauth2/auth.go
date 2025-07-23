@@ -77,7 +77,7 @@ type loginMethod interface {
 	// cookie with the user.
 	login(http.ResponseWriter, *http.Request, *oauth2.Token) (*sessions.LoginState, error)
 	// Removes user token cookie, but does not write a response.
-	DeleteCookie(http.ResponseWriter, *http.Request)
+	DeleteSession(http.ResponseWriter, *http.Request)
 	// logout deletes any cookies associated with the user, and writes a no-content response.
 	logout(http.ResponseWriter, *http.Request)
 	// LogoutRedirectURL returns the URL to redirect to after a logout.

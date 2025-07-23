@@ -15,6 +15,7 @@ import (
 
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
+	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
@@ -85,6 +86,7 @@ func main() {
 	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
 	fK8sModeOffClusterThanos := fs.String("k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Thanos server.")
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
+	fK8sModeOffClusterServiceAccountBearerTokenFile := fs.String("k8s-mode-off-cluster-service-account-bearer-token-file", "", "DEV ONLY. bearer token file for the service account used for internal K8s API server calls.")
 
 	fK8sAuth := fs.String("k8s-auth", "", "this option is deprecated, setting it has no effect")
 
@@ -420,6 +422,10 @@ func main() {
 			Transport: &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
 		}
 
+		if *fK8sModeOffClusterServiceAccountBearerTokenFile != "" {
+			srv.InternalProxiedK8SClientConfig.BearerTokenFile = *fK8sModeOffClusterServiceAccountBearerTokenFile
+		}
+
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig:         serviceProxyTLSConfig,
 			HeaderBlacklist:         srv.ProxyHeaderDenyList,
@@ -555,6 +561,12 @@ func main() {
 	if *fK8sMode == "in-cluster" {
 		caCertFilePath = k8sInClusterCA
 	}
+
+	tokenReviewer, err := auth.NewTokenReviewer(srv.InternalProxiedK8SClientConfig)
+	if err != nil {
+		klog.Fatalf("failed to create token reviewer: %v", err)
+	}
+	srv.TokenReviewer = tokenReviewer
 
 	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)

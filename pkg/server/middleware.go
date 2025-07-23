@@ -43,6 +43,40 @@ func authMiddlewareWithUser(authenticator auth.Authenticator, csrfVerifier *csrf
 	)
 }
 
+func withBearerTokenReview(tokenReviewer *auth.TokenReviewer, h http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			authorizationHeader := r.Header.Get("Authorization")
+			if authorizationHeader == "" {
+				klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, missing Authorization header", r.Method, r.URL.Path)
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+
+			if !strings.HasPrefix(authorizationHeader, "Bearer ") {
+				klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, 'Bearer' type Authorization header required", r.Method, r.URL.Path)
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+
+			bearerToken := strings.TrimPrefix(authorizationHeader, "Bearer ")
+			if bearerToken == "" {
+				klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, empty or missing Bearer token", r.Method, r.URL.Path)
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+
+			err := tokenReviewer.ReviewToken(r.Context(), bearerToken)
+			if err != nil {
+				klog.V(4).Infof("TOKEN_REVIEW: '%s %s' unauthorized, invalid user token, %v", r.Method, r.URL.Path, err)
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			klog.V(4).Infof("TOKEN_REVIEW: '%s %s' user token successfully validated", r.Method, r.URL.Path)
+			h(w, r)
+		})
+}
+
 func allowMethods(methods []string, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		for _, method := range methods {

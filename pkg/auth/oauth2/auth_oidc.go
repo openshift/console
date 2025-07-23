@@ -118,12 +118,12 @@ func (o *oidcAuth) verify(ctx context.Context, rawIDToken string) (*oidc.IDToken
 	return provider.Verifier(&oidc.Config{ClientID: o.clientID}).Verify(ctx, rawIDToken)
 }
 
-func (o *oidcAuth) DeleteCookie(w http.ResponseWriter, r *http.Request) {
+func (o *oidcAuth) DeleteSession(w http.ResponseWriter, r *http.Request) {
 	o.sessions.DeleteSession(w, r)
 }
 
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
-	o.DeleteCookie(w, r)
+	o.DeleteSession(w, r)
 	w.WriteHeader(http.StatusNoContent)
 }
 
