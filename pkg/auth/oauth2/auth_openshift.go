@@ -57,10 +57,11 @@ func validateAbsURL(value string) error {
 	return nil
 }
 
-func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig) (loginMethod, error) {
+func newOpenShiftAuth(ctx context.Context, sessionStore *sessions.FilesystemSessionStore, k8sClient *http.Client, c *oidcConfig) (loginMethod, error) {
 	o := &openShiftAuth{
 		oidcConfig: c,
 		k8sClient:  k8sClient,
+		sessions:   sessionStore,
 	}
 
 	var err error
@@ -70,30 +71,6 @@ func newOpenShiftAuth(ctx context.Context, k8sClient *http.Client, c *oidcConfig
 		return nil, fmt.Errorf("failed to construct OAuth endpoint cache: %w", err)
 	}
 	o.oauthEndpointCache.Run(ctx)
-
-	// Temporarily use hardcoded keys for testing.
-	/*
-		authnKey, err := utils.RandomString(64)
-		if err != nil {
-			return nil, err
-		}
-
-		encryptionKey, err := utils.RandomString(32)
-		if err != nil {
-			return nil, err
-		}
-	*/
-
-	o.sessions = sessions.NewSessionStore(
-		// FIXME: TESTING ONLY! DO NOT MERGE!
-		// Authentication key (32 bytes for HMAC-SHA256)
-		[]byte("console-test-auth-key-32-bytes!"),
-		// Encryption key (32 bytes for AES-256)
-		[]byte("console-test-encrypt-key-32-byte"),
-		c.secureCookies,
-		c.cookiePath,
-		c.sessionDir,
-	)
 
 	return o, nil
 }
