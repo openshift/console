@@ -1353,8 +1353,8 @@
       "startsWith": [
         "settings/idp",
         "config.openshift.io",
-        "monitoring/alertmanagerconfig",
-        "monitoring/alertmanageryaml"
+        "settings/cluster/alertmanagerconfig",
+        "settings/cluster/alertmanageryaml"
       ]
     },
     "flags": { "required": ["CLUSTER_VERSION"] }

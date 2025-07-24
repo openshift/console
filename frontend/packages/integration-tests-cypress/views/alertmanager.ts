@@ -78,10 +78,10 @@ export const alertmanager = {
     listPage.rows.shouldExist(label);
   },
   visitAlertmanagerPage: () => {
-    cy.visit('/monitoring/alertmanagerconfig');
+    cy.visit('/settings/cluster/alertmanagerconfig');
   },
   visitEditPage: (receiverName: string) => {
-    cy.visit(`/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`);
+    cy.visit(`/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`);
   },
   visitYAMLPage: () => {
     detailsPage.selectTab('YAML');
