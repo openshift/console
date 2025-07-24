@@ -252,7 +252,7 @@ const deleteReceiver = (
     return receivers;
   });
   return patchAlertmanagerConfig(secret, config).then(() => {
-    navigate('/monitoring/alertmanagerconfig');
+    navigate('/settings/cluster/alertmanagerconfig');
   });
 };
 
@@ -293,8 +293,8 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
       label: t('public~Edit Receiver'),
       callback: () => {
         const targetUrl = canUseEditForm
-          ? `/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`
-          : `/monitoring/alertmanageryaml`;
+          ? `/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`
+          : `/settings/cluster/alertmanageryaml`;
         return navigate(targetUrl);
       },
     },
@@ -323,7 +323,7 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
         {(receiver.name === InitialReceivers.Critical ||
           receiver.name === InitialReceivers.Default) &&
         !integrationTypesLabel ? (
-          <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
+          <Link to={`/settings/cluster/alertmanagerconfig/receivers/${receiver.name}/edit`}>
             {t('public~Configure')}
             <PencilAltIcon className="co-icon-space-l" />
           </Link>
@@ -463,7 +463,7 @@ const Receivers = ({ secret, config }: ReceiversProps) => {
             />
           </ToolbarItem>
           <ToolbarItem align={{ default: 'alignEnd' }}>
-            <Link to="/monitoring/alertmanagerconfig/receivers/~new">
+            <Link to="/settings/cluster/alertmanagerconfig/receivers/~new">
               <Button variant="primary" data-test-id="create-receiver">
                 {t('public~Create Receiver')}
               </Button>

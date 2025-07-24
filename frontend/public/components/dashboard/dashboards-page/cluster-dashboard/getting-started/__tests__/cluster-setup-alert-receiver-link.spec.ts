@@ -19,7 +19,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 const useAccessReviewMock = useAccessReview as jest.Mock;
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 
-// Copied from a cluster-bot cluster from /monitoring/alertmanager which shows
+// Copied from a cluster-bot cluster from /settings/cluster/alertmanager which shows
 // a "Incomplete alert receivers" alert message on the Details tab.
 const defaultClusterAlertManagerConfigYAML = `
 "global":
@@ -59,7 +59,7 @@ const defaultClusterAlertManagerConfigYAML = `
     "receiver": "Critical"
 `;
 
-// Copied from a cluster-bot cluster from /monitoring/alertmanager with added
+// Copied from a cluster-bot cluster from /settings/cluster/alertmanager with added
 // webhooks configuration to solve the "Incomplete alert receivers" alert message.
 const configuredClusterAlertManagerConfigYAML = `
 global:
@@ -169,7 +169,7 @@ describe('useAlertReceiverLink', () => {
     expect(result.current).toEqual({
       id: 'alert-receivers',
       title: 'Configure alert receivers',
-      href: '/monitoring/alertmanagerconfig',
+      href: '/settings/cluster/alertmanagerconfig',
     });
   });
 

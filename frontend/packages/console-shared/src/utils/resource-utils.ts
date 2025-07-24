@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { Alert } from '@console/dynamic-plugin-sdk';
-import { alertMessageResources } from '@console/internal/components/monitoring/alerting';
 import { Alerts } from '@console/internal/components/monitoring/types';
 import {
   ReplicationControllerModel,
@@ -8,6 +7,12 @@ import {
   StatefulSetModel,
   JobModel,
   DeploymentConfigModel,
+  ContainerModel,
+  DaemonSetModel,
+  DeploymentModel,
+  NamespaceModel,
+  NodeModel,
+  PodModel,
 } from '@console/internal/models';
 import {
   K8sResourceKind,
@@ -624,6 +629,19 @@ export const getServicesForResource = (
     const selector = new LabelSelector(_.get(service, 'spec.selector', {}));
     return selector.matches(template);
   });
+};
+
+export const alertMessageResources: {
+  [labelName: string]: { kind: string; namespaced?: boolean };
+} = {
+  container: ContainerModel,
+  daemonset: DaemonSetModel,
+  deployment: DeploymentModel,
+  job: JobModel,
+  namespace: NamespaceModel,
+  node: NodeModel,
+  pod: PodModel,
+  statefulset: StatefulSetModel,
 };
 
 export const getWorkloadMonitoringAlerts = (
