@@ -234,11 +234,11 @@ describe('ResourceDropdown', () => {
 
     // Wait for dropdown to open and find the menu item
     await waitFor(() => {
-      expect(screen.getByRole('menu')).toBeInTheDocument();
+      expect(screen.getByRole('listbox')).toBeInTheDocument();
     });
 
     // Find and click the third item (app-group-3)
-    const menuItem = screen.getByRole('menuitem', { name: /app-group-3/ });
+    const menuItem = screen.getByRole('option', { name: /app-group-3/ });
     await userEvent.click(menuItem);
 
     // Verify the dropdown button text has changed
