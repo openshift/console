@@ -57,6 +57,7 @@ export * from './utils';
  * ```
  * @param typeGuards A list of callbacks that each accept a dynamic plugin extension as an argument and return a boolean flag indicating whether or not the extension meets desired type constraints
  * @returns Tuple containing a list of adapted extension instances with resolved code references, a boolean flag indicating whether the resolution is complete, and a list of errors detected during the resolution.
+ * @consolePluginAPI react-hook
  */
 export const useResolvedExtensions: UseResolvedExtensions = require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
   .useResolvedExtensions;

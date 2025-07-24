@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as tsdoc from '@microsoft/tsdoc';
+import * as tsdocConfig from '@microsoft/tsdoc-config';
 import chalk from 'chalk';
 import * as ejs from 'ejs';
 import * as _ from 'lodash';
@@ -75,9 +76,16 @@ const renderDocNode = (docNode?: tsdoc.DocNode): string => {
   return result;
 };
 
+const getDocText = (docNode?: tsdoc.DocNode) => renderDocNode(docNode).trim();
+
+const validConsolePluginAPITagValues = ['react-component', 'react-hook'] as const;
+const validConsolePluginAPITypes = [...validConsolePluginAPITagValues, 'not-documented'] as const;
+
+type PluginAPIType = typeof validConsolePluginAPITypes[number];
+
 type PluginAPIInfo = {
   name: string;
-  kind: 'Variable' | 'TypeAlias' | 'Interface' | 'Enum';
+  type: PluginAPIType;
   srcFilePath: string;
   isDeprecated: boolean;
   doc: {
@@ -89,29 +97,29 @@ type PluginAPIInfo = {
   };
 };
 
-console.log('Generating Console plugin API docs');
+const getTSDocParser = () => {
+  const configFile: tsdocConfig.TSDocConfigFile = tsdocConfig.TSDocConfigFile.loadForFolder(
+    resolvePath('../..'),
+  );
 
-const getPluginAPIKind = (declaration: ts.Declaration): PluginAPIInfo['kind'] => {
-  if (ts.isVariableDeclaration(declaration)) {
-    return 'Variable';
+  if (configFile.hasErrors) {
+    throw new Error(configFile.getErrorSummary());
   }
-  if (ts.isTypeAliasDeclaration(declaration)) {
-    return 'TypeAlias';
-  }
-  if (ts.isInterfaceDeclaration(declaration)) {
-    return 'Interface';
-  }
-  if (ts.isEnumDeclaration(declaration)) {
-    return 'Enum';
-  }
-  throw new Error(`Unexpected declaration kind: ${declaration.kind}`);
+
+  const config = new tsdoc.TSDocConfiguration();
+  configFile.configureParser(config);
+
+  // Ignore warnings about TSDoc tags "not supported by this tool"
+  config.validation.reportUnsupportedTags = false;
+
+  return new tsdoc.TSDocParser(config);
 };
 
 const getConsolePluginAPIs = () => {
   const srcPath = resolvePath('src/api/core-api.ts');
   const program = getProgramFromFile(srcPath);
   const typeChecker = program.getTypeChecker();
-  const tsDocParser = new tsdoc.TSDocParser();
+  const tsDocParser = getTSDocParser();
 
   return typeChecker
     .getExportsOfModule(typeChecker.getSymbolAtLocation(program.getSourceFile(srcPath)))
@@ -125,16 +133,14 @@ const getConsolePluginAPIs = () => {
         );
       }
 
-      const kind = getPluginAPIKind(declaration);
       const jsDocs = ts.getJSDocCommentsAndTags(declaration).filter(ts.isJSDoc);
-
       const pkgFilePath = relativePath(declaration.getSourceFile().fileName);
       const srcFilePath = `frontend/packages/console-dynamic-plugin-sdk/${pkgFilePath}`;
 
       if (jsDocs.length === 0) {
         acc.push({
           name,
-          kind,
+          type: 'not-documented',
           srcFilePath,
           isDeprecated: false,
           doc: {
@@ -148,7 +154,22 @@ const getConsolePluginAPIs = () => {
       // Console APIs should be documented using a single JSDoc comment block
       const jsDocText = jsDocs[0].getFullText();
       const { docComment } = tsDocParser.parseString(jsDocText);
-      const getDocText = (docNode?: tsdoc.DocNode) => renderDocNode(docNode).trim();
+
+      const consolePluginAPIBlock = docComment.customBlocks.find(
+        (block) => block.blockTag.tagName === '@consolePluginAPI',
+      );
+
+      const declaredType = consolePluginAPIBlock
+        ? getDocText(consolePluginAPIBlock.content)
+        : 'not-documented';
+
+      if (consolePluginAPIBlock && !validConsolePluginAPITagValues.includes(declaredType as any)) {
+        throw new Error(
+          `TSDoc tag @consolePluginAPI on symbol ${name} must be followed by one of: ${validConsolePluginAPITagValues.join(
+            ', ',
+          )}`,
+        );
+      }
 
       const doc = {
         summary: getDocText(docComment.summarySection),
@@ -165,7 +186,7 @@ const getConsolePluginAPIs = () => {
 
       acc.push({
         name,
-        kind,
+        type: declaredType as PluginAPIType,
         srcFilePath,
         isDeprecated: !!doc.deprecated,
         doc,
@@ -174,6 +195,8 @@ const getConsolePluginAPIs = () => {
       return acc;
     }, []);
 };
+
+console.log('Generating Console plugin API docs');
 
 renderTemplate('scripts/templates/api.md.ejs', {
   apis: getConsolePluginAPIs()
@@ -184,7 +207,7 @@ renderTemplate('scripts/templates/api.md.ejs', {
       }
       return a.name.localeCompare(b.name);
     }),
-  declarationKinds: ['Variable', 'TypeAlias', 'Interface', 'Enum'],
+  apiTypes: validConsolePluginAPITypes,
   gitBranch: parseJSONC('console-meta.jsonc')['git-branch'],
   printComments,
   removeNewLines: (text: string) => text.replace('\n', ''),
