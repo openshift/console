@@ -7,6 +7,7 @@ import { mount, ReactWrapper, shallow } from 'enzyme';
 import store from '@console/internal/redux';
 import { Provider } from 'react-redux';
 import * as ReactRouter from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import {
   Firehose,
   HorizontalNav,
@@ -14,16 +15,27 @@ import {
   ConnectedPageHeading,
   ConnectedPageHeadingProps,
 } from '@console/internal/components/utils';
+import { useFavoritesOptions } from '@console/internal/components/useFavoritesOptions';
 import { testPodInstance } from '../../__mocks__/k8sResourcesMocks';
 import { Status } from '@console/shared';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { StatusProps } from '@console/metal3-plugin/src/components/types';
 import { act } from 'react-dom/test-utils';
 
+jest.mock('react-router', () => ({
+  useLocation: jest.fn(),
+}));
+
+const useFavoritesOptionsMock = useFavoritesOptions as jest.Mock;
+const useLocationMock = useLocation as jest.Mock;
+
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
+}));
+jest.mock('@console/internal/components/useFavoritesOptions', () => ({
+  useFavoritesOptions: jest.fn(),
 }));
 
 describe(ContainersDetailsPage.displayName, () => {
@@ -32,6 +44,8 @@ describe(ContainersDetailsPage.displayName, () => {
   beforeEach(() => {
     jest.spyOn(ReactRouter, 'useParams').mockReturnValue({ podName: 'test-name', ns: 'default' });
     jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({ pathname: '' });
+    useLocationMock.mockReturnValue({ pathname: '' });
+    useFavoritesOptionsMock.mockReturnValue([[], jest.fn(), true]);
 
     containerDetailsPage = mount(<ContainersDetailsPage />, {
       wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
