@@ -264,8 +264,10 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
           </div>
           {consumers.length > 1 && (
             <ConsoleSelect
-              className="co-utilization-card-popover__dropdown"
               id="consumer-select"
+              renderInline // needed for popover to not close on selection
+              isFullWidth
+              buttonClassName="pf-v6-u-my-sm"
               aria-label={t('console-shared~Select consumer type')}
               items={dropdownItems}
               onChange={onDropdownChange}
