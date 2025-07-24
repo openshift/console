@@ -3,16 +3,15 @@ import * as React from 'react';
 import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import {
   Divider,
-  Menu,
-  MenuContainer,
-  MenuContent,
-  MenuGroup,
-  MenuItem,
-  MenuList,
+  SelectGroup,
+  SelectOption,
+  SelectList,
   MenuSearch,
   MenuSearchInput,
   MenuToggle,
+  MenuToggleElement,
   SearchInput,
+  Select,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 
@@ -77,11 +76,10 @@ export type ConsoleSelectProps = {
 const ConsoleSelectItem: React.FCC<{
   itemKey: string;
   content: React.ReactNode;
-  onclick: (key: string, e: React.MouseEvent) => void;
   selected: boolean;
   isBookmarked?: boolean;
-}> = ({ itemKey, content, onclick, selected, isBookmarked }) => (
-  <MenuItem
+}> = ({ itemKey, content, selected, isBookmarked }) => (
+  <SelectOption
     data-test-dropdown-menu={itemKey}
     data-test="console-select-item"
     id={`${itemKey}-link`}
@@ -89,10 +87,9 @@ const ConsoleSelectItem: React.FCC<{
     isSelected={selected}
     itemId={itemKey}
     key={itemKey}
-    onClick={(e) => onclick(itemKey, e)}
   >
     {content}
-  </MenuItem>
+  </SelectOption>
 );
 
 const useInsideLegacyModal = (ref: React.RefObject<HTMLElement>) => {
@@ -136,11 +133,11 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   userSettingsPrefix,
   ...props
 }) => {
-  /* Dropdown state */
   const [expanded, setExpanded] = React.useState(active ?? false);
   const [selectedKey, setSelectedKey] = React.useState<string>(props.selectedKey ?? '');
   const [autocompleteText, setAutocompleteText] = React.useState<string>('');
   const [items, setItems] = React.useState<Record<string, React.ReactNode>>(props.items);
+
   /* Dropdown bookmark state and helpers */
   // Should be undefined so that we don't save undefined-xxx.
   const bookmarkUserSettingsKey = userSettingsPrefix
@@ -169,19 +166,12 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
 
   /* Component refs */
   const dropdownWrapperRef = React.useRef<HTMLDivElement>(null);
-  const dropdownMenuRef = React.useRef<HTMLDivElement>(null);
-  const dropdownToggleRef = React.useRef<HTMLButtonElement>(null);
-  const inputRef = React.useRef<HTMLInputElement>(null);
 
   const insideLegacyModal = useInsideLegacyModal(dropdownWrapperRef);
 
   /* Event handlers */
   const onClick = React.useCallback(
-    (clickedKey: string, e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      e.nativeEvent?.stopImmediatePropagation?.();
-
+    (e: React.MouseEvent, clickedKey: string) => {
       onChange && onChange(clickedKey, e);
 
       if (!actionItems || !_.some(actionItems, { actionKey: clickedKey })) {
@@ -218,31 +208,10 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
 
   // Clear filter when opening dropdown
   React.useEffect(() => {
-    if (expanded && inputRef.current) {
+    if (expanded) {
       applyTextFilter('', props.items);
     }
   }, [expanded, applyTextFilter]);
-
-  /* Menu toggle button */
-  const toggleButton = (
-    <MenuToggle
-      aria-describedby={describedBy}
-      aria-label={ariaLabel}
-      className={buttonClassName}
-      data-test={dataTest}
-      id={id}
-      isDisabled={disabled}
-      isExpanded={expanded}
-      isFullWidth={isFullWidth}
-      onClick={() => {
-        setExpanded((prev) => !prev);
-      }}
-      ref={dropdownToggleRef}
-    >
-      {titlePrefix && `${titlePrefix}: `}
-      {alwaysShowTitle ? title : selectedKey ? items[selectedKey] ?? title : title}
-    </MenuToggle>
-  );
 
   /* Menu content */
   const renderedActionItems = React.useMemo(() => {
@@ -257,7 +226,6 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
             key={`${ai.actionKey}-${ai.actionTitle}`}
             itemKey={ai.actionKey}
             content={ai.actionTitle}
-            onclick={onClick}
             selected={ai.actionKey === selectedKey}
           />
         ))}
@@ -279,7 +247,6 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
             key={key}
             itemKey={key}
             content={content}
-            onclick={onClick}
             selected={selected}
             isBookmarked
           />,
@@ -304,7 +271,6 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
           key={key}
           itemKey={key}
           content={content}
-          onclick={onClick}
           selected={selected}
           isBookmarked={enableBookmarks && bookmarks ? bookmarks[key] ?? false : undefined}
         />,
@@ -323,19 +289,49 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
     storageKey,
   ]);
 
-  const menu = (
-    <Menu
-      isScrollable
-      ref={dropdownMenuRef}
-      style={style}
-      // Bookmarking is the only action, so we do not need to check the action
-      onActionClick={(e, itemId: string) => {
-        e.stopPropagation();
-        e.preventDefault();
-        onBookmark?.(itemId, !bookmarks[itemId]);
-      }}
-    >
-      <MenuContent style={{ maxHeight: '60vh' }}>
+  return (
+    <div className={className} ref={dropdownWrapperRef}>
+      <Select
+        isOpen={expanded}
+        onOpenChange={setExpanded}
+        onOpenChangeKeys={['Escape']}
+        onSelect={onClick}
+        selected={selectedKey}
+        maxMenuHeight="60vh"
+        shouldFocusToggleOnSelect
+        toggle={(toggleRef: React.RefObject<MenuToggleElement>) => (
+          <MenuToggle
+            aria-describedby={describedBy}
+            aria-label={ariaLabel}
+            className={buttonClassName}
+            data-test={dataTest}
+            id={id}
+            isDisabled={disabled}
+            isExpanded={expanded}
+            isFullWidth={isFullWidth}
+            onClick={() => {
+              setExpanded((prev) => !prev);
+            }}
+            ref={toggleRef}
+          >
+            {titlePrefix && `${titlePrefix}: `}
+            {alwaysShowTitle ? title : selectedKey ? items[selectedKey] ?? title : title}
+          </MenuToggle>
+        )}
+        zIndex={9999}
+        popperProps={{
+          preventOverflow: menuClassName === 'prevent-overflow',
+          appendTo: insideLegacyModal ? 'inline' : undefined,
+        }}
+        isScrollable
+        style={style}
+        // Bookmarking is the only action, so we do not need to check the action
+        onActionClick={(e, itemId: string) => {
+          e.stopPropagation();
+          e.preventDefault();
+          onBookmark?.(itemId, !bookmarks[itemId]);
+        }}
+      >
         {autocompleteFilter && (
           <>
             <MenuSearch>
@@ -349,7 +345,6 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
                   onChange={(_e, value) => applyTextFilter(value, props.items)}
                   onClick={(e) => e.stopPropagation()}
                   placeholder={autocompletePlaceholder}
-                  ref={inputRef}
                   value={autocompleteText ?? ''}
                 />
               </MenuSearchInput>
@@ -358,15 +353,15 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
           </>
         )}
 
-        <MenuList
+        <SelectList
           className={css(menuClassName, { 'pf-v6-u-pt-0': autocompleteFilter })}
           data-test="console-select-menu-list"
         >
           {bookmarkRows.length ? (
             <>
-              <MenuGroup label="Favorites" labelHeadingLevel="h3">
+              <SelectGroup label="Favorites" labelHeadingLevel="h3">
                 {bookmarkRows}
-              </MenuGroup>
+              </SelectGroup>
               {renderedActionItems || rows.length ? <Divider component="li" /> : null}
             </>
           ) : null}
@@ -377,28 +372,8 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
               {rows}
             </>
           ) : null}
-        </MenuList>
-      </MenuContent>
-    </Menu>
-  );
-
-  return (
-    <div className={className} ref={dropdownWrapperRef}>
-      <MenuContainer
-        isOpen={expanded}
-        menu={menu}
-        menuRef={dropdownMenuRef}
-        onOpenChange={setExpanded}
-        onOpenChangeKeys={['Escape']}
-        toggle={toggleButton}
-        toggleRef={dropdownToggleRef}
-        zIndex={9999}
-        popperProps={{
-          preventOverflow: menuClassName === 'prevent-overflow',
-          // @ts-expect-error This is a popper prop which PatternFly doesn't type
-          appendTo: insideLegacyModal ? 'inline' : undefined,
-        }}
-      />
+        </SelectList>
+      </Select>
     </div>
   );
 };
