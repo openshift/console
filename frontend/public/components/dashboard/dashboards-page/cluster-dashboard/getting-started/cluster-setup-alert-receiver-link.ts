@@ -46,7 +46,7 @@ export const useAlertReceiverLink = (): GettingStartedLink | null => {
     return {
       id: 'alert-receivers',
       title: t('public~Configure alert receivers'),
-      href: '/monitoring/alertmanagerconfig',
+      href: '/settings/cluster/alertmanagerconfig',
     };
   }
 
