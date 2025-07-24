@@ -347,7 +347,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
       () => {
         setSaveErrorMsg('');
         setInProgress(false);
-        navigate('/monitoring/alertmanagerconfig');
+        navigate('/settings/cluster/alertmanagerconfig');
       },
       (err) => {
         setSaveErrorMsg(err.message);
