@@ -43,7 +43,7 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
 
     fireEvent.click(strategyDropdown);
 
-    const recreateButton = screen.getByRole('menuitem', { name: /recreate/i });
+    const recreateButton = screen.getByRole('option', { name: /recreate/i });
 
     fireEvent.click(recreateButton);
 
@@ -53,7 +53,7 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
 
     fireEvent.click(strategyDropdown);
 
-    const customButton = screen.getByRole('menuitem', { name: /custom/i });
+    const customButton = screen.getByRole('option', { name: /custom/i });
 
     fireEvent.click(customButton);
 
@@ -89,7 +89,7 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
 
     fireEvent.click(strategyDropdown);
 
-    const recreateButton = screen.getByRole('menuitem', { name: /recreate/i });
+    const recreateButton = screen.getByRole('option', { name: /recreate/i });
 
     fireEvent.click(recreateButton);
 
@@ -173,7 +173,7 @@ describe('DeploymentStrategySection(Deployment)', () => {
 
     fireEvent.click(strategyDropdown);
 
-    const recreateButton = screen.getByRole('menuitem', { name: /recreate/i });
+    const recreateButton = screen.getByRole('option', { name: /recreate/i });
 
     fireEvent.click(recreateButton);
 
@@ -184,7 +184,7 @@ describe('DeploymentStrategySection(Deployment)', () => {
     fireEvent.click(strategyDropdown);
 
     await waitFor(() => {
-      expect(screen.queryByRole('menuitem', { name: /custom/i })).toBeNull();
+      expect(screen.queryByRole('option', { name: /custom/i })).toBeNull();
     });
   });
 });
