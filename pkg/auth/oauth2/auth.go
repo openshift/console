@@ -210,6 +210,14 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 	var tokenHandler loginMethod
 	switch c.AuthSource {
 	case AuthSourceOpenShift:
+		sessionStore := sessions.NewSessionStore(
+			c.CookieAuthenticationKey,
+			c.CookieEncryptionKey,
+			c.SecureCookies,
+			c.CookiePath,
+			c.SessionDir,
+		)
+
 		// TODO: once https://github.com/kubernetes/kubernetes/issues/11948 is fixed,
 		// copy the transport config from c.k8sConfig with rest.CopyConfig,
 		// add the c.K8SCA to it and use the roundtripper created from that config
@@ -220,7 +228,7 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 			return nil, errK8Client
 		}
 
-		tokenHandler, err = newOpenShiftAuth(ctx, k8sClient, authConfig)
+		tokenHandler, err = newOpenShiftAuth(ctx, sessionStore, k8sClient, authConfig)
 		if err != nil {
 			return nil, err
 		}
