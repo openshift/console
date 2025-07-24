@@ -39,7 +39,7 @@ declare global {
 Cypress.Commands.add(
   'byTestID',
   (selector: string, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>) => {
-    cy.get(`[data-test="${selector}"]`, options);
+    cy.byTestID(`[data-test="${selector}"]`, options);
   },
 );
 
@@ -51,22 +51,22 @@ Cypress.Commands.add('byTestActionID', (selector: string) =>
 Cypress.Commands.add(
   'byLegacyTestID',
   (selector: string, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>) => {
-    cy.get(`[data-test-id="${selector}"]`, options);
+    cy.byTestID(`[data-test-id="${selector}"]`, options);
   },
 );
 
 Cypress.Commands.add('byButtonText', (selector: string) => {
-  cy.get('button[type="button"]').contains(`${selector}`);
+  cy.byTestID('button[type="button"]').contains(`${selector}`);
 });
 
 Cypress.Commands.add('byDataID', (selector: string) => {
-  cy.get(`[data-id="${selector}"]`);
+  cy.byTestID(`[data-id="${selector}"]`);
 });
 
 Cypress.Commands.add(
   'byTestSelector',
   (selector: string, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>) => {
-    cy.get(`[data-test-selector="${selector}"]`, options);
+    cy.byTestID(`[data-test-selector="${selector}"]`, options);
   },
 );
 
@@ -75,13 +75,13 @@ Cypress.Commands.add('byTestDropDownMenu', (selector: string) => {
 });
 
 Cypress.Commands.add('byTestOperatorRow', (selector: string, options?: object) => {
-  cy.get(`[data-test-operator-row="${selector}"]`, options);
+  cy.byTestID(`[data-test-operator-row="${selector}"]`, options);
 });
 
 Cypress.Commands.add('byTestSectionHeading', (selector: string) => {
-  cy.get(`[data-test-section-heading="${selector}"]`);
+  cy.byTestID(`[data-test-section-heading="${selector}"]`);
 });
 
 Cypress.Commands.add('byTestOperandLink', (selector: string) => {
-  cy.get(`[data-test-operand-link="${selector}"]`);
+  cy.byTestID(`[data-test-operand-link="${selector}"]`);
 });

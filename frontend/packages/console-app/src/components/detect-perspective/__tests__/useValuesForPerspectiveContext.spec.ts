@@ -73,7 +73,7 @@ describe('useValuesForPerspectiveContext', () => {
     usePerspectiveExtensionMock.mockReturnValue(acmPerspectiveExtension);
     useStateMock.mockReturnValue(['', jest.fn()]);
     [perspective, , loaded] = useValuesForPerspectiveContext();
-    expect(perspective).toBeUndefined();
+    expect(perspective).toBe('');
     expect(loaded).toBeFalsy();
   });
 
