@@ -16,7 +16,8 @@
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'"
   },
   "devDependencies": {
-    "@microsoft/tsdoc": "0.14.2",
+    "@microsoft/tsdoc": "0.15.1",
+    "@microsoft/tsdoc-config": "0.17.1",
     "@openshift/dynamic-plugin-sdk-webpack": "^4.0.2",
     "@types/ejs": "3.x",
     "@types/fs-extra": "9.x",

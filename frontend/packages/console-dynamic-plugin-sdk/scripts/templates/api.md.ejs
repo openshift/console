@@ -1,10 +1,10 @@
 # OpenShift Console API
 
 <%# Table of contents _%>
-| API kind | Exposed APIs |
+| API type | Exposed APIs |
 | -------- | ------------ |
-<% declarationKinds.forEach((kind) => { _%>
-| <%- `${kind} (${apis.filter((api) => api.kind === kind).length})` %> | <%- apis.filter((api) => api.kind === kind).map((api) => `[${api.name}](#${api.name.toLocaleLowerCase()})`).join(', ') %> |
+<% apiTypes.forEach((type) => { _%>
+| `<%- type %>` (<%- apis.filter((api) => api.type === type).length %>) | <%- apis.filter((api) => api.type === type).map((api) => `[${api.name}](#${api.name.toLocaleLowerCase()})`).join(', ') %> |
 <% }); _%>
 
 <%# Generate one section per API item _%>
