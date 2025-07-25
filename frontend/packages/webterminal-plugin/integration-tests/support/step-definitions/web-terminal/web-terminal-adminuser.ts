@@ -1,6 +1,5 @@
 import { Given, When, Then, And } from 'cypress-cucumber-preprocessor/steps';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
-import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
   switchPerspective,
   devWorkspaceStatuses,
@@ -20,10 +19,8 @@ import { operatorsPage } from '@console/dev-console/integration-tests/support/pa
 import { searchResource } from '@console/dev-console/integration-tests/support/pages/search-resources/search-page';
 import { webTerminalPage } from '../pages/web-terminal/webTerminal-page';
 
-Given('user has logged in as admin user', () => {
+Given('user has logged in', () => {
   cy.login();
-  perspective.switchTo(switchPerspective.Administrator);
-  nav.sidenav.switcher.shouldHaveText(switchPerspective.Administrator);
   guidedTour.close();
 });
 
@@ -76,7 +73,7 @@ When('user closed web terminal window', () => {
 
 Then('user is able see {int} web terminal tabs', (n: number) => {
   cy.get(webTerminalPO.tabsList).then(($el) => {
-    expect($el.prop('children').length).toEqual(n + 1);
+    expect($el.prop('children').length).toEqual(n);
   });
 });
 

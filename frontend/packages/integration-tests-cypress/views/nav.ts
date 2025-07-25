@@ -15,7 +15,7 @@ export const nav = {
               return;
             }
           }
-          cy.byLegacyTestID('perspective-switcher-toggle').scrollIntoView().contains(text);
+          cy.byLegacyTestID('perspective-switcher-toggle').contains(text);
         });
       },
       changePerspectiveTo: (newPerspective: string) => {
