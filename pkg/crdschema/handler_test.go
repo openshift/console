@@ -103,6 +103,44 @@ func createMockCRD(name string) *apiextensionsv1.CustomResourceDefinition {
 	}
 }
 
+// createMockCRDWithPrinterColumns creates a mock CRD with additional printer columns for testing
+func createMockCRDWithPrinterColumns(name string) *apiextensionsv1.CustomResourceDefinition {
+	crd := createMockCRD(name)
+
+	// Add printer columns to v1 version
+	crd.Spec.Versions[0].AdditionalPrinterColumns = []apiextensionsv1.CustomResourceColumnDefinition{
+		{
+			Name:        "Status",
+			Type:        "string",
+			Description: "The status of the resource",
+			JSONPath:    ".status.phase",
+		},
+		{
+			Name:        "Age",
+			Type:        "date",
+			Description: "The age of the resource",
+			JSONPath:    ".metadata.creationTimestamp",
+		},
+	}
+
+	// Add another version with different printer columns
+	crd.Spec.Versions = append(crd.Spec.Versions, apiextensionsv1.CustomResourceDefinitionVersion{
+		Name:    "v1beta1",
+		Served:  true,
+		Storage: false,
+		AdditionalPrinterColumns: []apiextensionsv1.CustomResourceColumnDefinition{
+			{
+				Name:        "Ready",
+				Type:        "boolean",
+				Description: "Whether the resource is ready",
+				JSONPath:    ".status.ready",
+			},
+		},
+	})
+
+	return crd
+}
+
 // parseErrorResponse parses the JSON error response
 func parseErrorResponse(body []byte) (*serverutils.ApiError, error) {
 	var apiError serverutils.ApiError
@@ -202,7 +240,7 @@ func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 			// Create mock response body
 			var mockResponseBody string
 			if tt.mockStatus == 200 && !tt.mockError {
-				mockCRD := createMockCRD(crdName)
+				mockCRD := createMockCRDWithPrinterColumns(crdName)
 				crdBytes, _ := json.Marshal(mockCRD)
 				mockResponseBody = string(crdBytes)
 			}
@@ -253,16 +291,11 @@ func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 				}
 			}
 
-			// For successful requests, check that the response contains the full CRD
+			// For successful requests, check that the response contains printer columns
 			if !tt.shouldHaveError && w.Code == 200 {
-				var responseCRD apiextensionsv1.CustomResourceDefinition
-				if err := json.Unmarshal(w.Body.Bytes(), &responseCRD); err != nil {
-					t.Errorf("Failed to unmarshal CRD response: %v", err)
-				}
-
-				// Verify that the response contains the expected CRD
-				if responseCRD.ObjectMeta.Name != crdName {
-					t.Errorf("Expected CRD name %s, got %s", crdName, responseCRD.ObjectMeta.Name)
+				var response CRDPrinterColumnsResponse
+				if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
+					t.Errorf("Failed to unmarshal printer columns response: %v", err)
 				}
 
 				// Check that the correct API path was used
@@ -320,9 +353,12 @@ func TestCRDSchemaHandler_PathTransformation(t *testing.T) {
 			crdName := extractCRDName(tt.requestPath)
 			expectedPath := expectedK8sAPIPath(crdName)
 
+			mockCRD := createMockCRD(crdName)
+			crdBytes, _ := json.Marshal(mockCRD)
+
 			mockRT := &mockRoundTripper{
 				responseStatus: 200,
-				responseBody:   "{}",
+				responseBody:   string(crdBytes),
 			}
 
 			mockProxy := createMockProxy(mockRT)
@@ -340,16 +376,9 @@ func TestCRDSchemaHandler_PathTransformation(t *testing.T) {
 	}
 }
 
-func TestCRDSchemaHandler_ReturnsCompleteCRD(t *testing.T) {
-	// Create CRD with full metadata and status
-	crd := createMockCRD("examples.example.com")
-
-	// Add multiple versions to test complete structure
-	crd.Spec.Versions = append(crd.Spec.Versions, apiextensionsv1.CustomResourceDefinitionVersion{
-		Name:    "v1beta1",
-		Served:  false,
-		Storage: false,
-	})
+func TestCRDSchemaHandler_ReturnsPrinterColumns(t *testing.T) {
+	// Create CRD with printer columns
+	crd := createMockCRDWithPrinterColumns("examples.example.com")
 
 	crdBytes, _ := json.Marshal(crd)
 	mockRT := &mockRoundTripper{
@@ -369,46 +398,79 @@ func TestCRDSchemaHandler_ReturnsCompleteCRD(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", w.Code)
 	}
 
-	// Verify that we get the complete CRD back
-	var responseCRD apiextensionsv1.CustomResourceDefinition
-	if err := json.Unmarshal(w.Body.Bytes(), &responseCRD); err != nil {
-		t.Errorf("Failed to unmarshal CRD response: %v", err)
+	// Verify that we get printer columns back
+	var response CRDPrinterColumnsResponse
+	if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
+		t.Errorf("Failed to unmarshal printer columns response: %v", err)
 	}
 
-	// Verify all versions are present
-	if len(responseCRD.Spec.Versions) != 2 {
-		t.Errorf("Expected 2 versions, got %d", len(responseCRD.Spec.Versions))
+	// Verify per-version columns
+	if response.PerVersion == nil {
+		t.Error("Expected PerVersion to be populated")
 	}
 
-	// Verify the CRD spec details
-	if responseCRD.Spec.Group != "example.com" {
-		t.Errorf("Expected group 'example.com', got '%s'", responseCRD.Spec.Group)
+	// Check v1 columns
+	v1Columns, exists := response.PerVersion["v1"]
+	if !exists {
+		t.Error("Expected v1 version to have printer columns")
+	}
+	if len(v1Columns) != 2 {
+		t.Errorf("Expected 2 printer columns for v1, got %d", len(v1Columns))
 	}
 
-	if responseCRD.Spec.Names.Kind != "Example" {
-		t.Errorf("Expected kind 'Example', got '%s'", responseCRD.Spec.Names.Kind)
+	// Verify column details
+	if v1Columns[0].Name != "Status" {
+		t.Errorf("Expected first column name 'Status', got '%s'", v1Columns[0].Name)
+	}
+	if v1Columns[0].JSONPath != ".status.phase" {
+		t.Errorf("Expected first column JSONPath '.status.phase', got '%s'", v1Columns[0].JSONPath)
 	}
 
-	// Verify metadata is preserved
-	if responseCRD.ObjectMeta.Name != "examples.example.com" {
-		t.Errorf("Expected name 'examples.example.com', got '%s'", responseCRD.ObjectMeta.Name)
+	// Check v1beta1 columns
+	v1beta1Columns, exists := response.PerVersion["v1beta1"]
+	if !exists {
+		t.Error("Expected v1beta1 version to have printer columns")
+	}
+	if len(v1beta1Columns) != 1 {
+		t.Errorf("Expected 1 printer column for v1beta1, got %d", len(v1beta1Columns))
 	}
 
-	if responseCRD.ObjectMeta.UID == "" {
-		t.Error("Expected UID to be preserved")
+	if v1beta1Columns[0].Name != "Ready" {
+		t.Errorf("Expected v1beta1 column name 'Ready', got '%s'", v1beta1Columns[0].Name)
+	}
+}
+
+func TestCRDSchemaHandler_NoPrinterColumns(t *testing.T) {
+	// Create CRD without printer columns
+	crd := createMockCRD("examples.example.com")
+
+	crdBytes, _ := json.Marshal(crd)
+	mockRT := &mockRoundTripper{
+		responseStatus: 200,
+		responseBody:   string(crdBytes),
 	}
 
-	if responseCRD.ObjectMeta.ResourceVersion == "" {
-		t.Error("Expected ResourceVersion to be preserved")
+	mockProxy := createMockProxy(mockRT)
+	handler := NewCRDSchemaHandler(mockProxy)
+
+	req := httptest.NewRequest("GET", "/examples.example.com", nil)
+	w := httptest.NewRecorder()
+
+	handler.HandleCRDSchema(w, req)
+
+	if w.Code != 200 {
+		t.Errorf("Expected status 200, got %d", w.Code)
 	}
 
-	// Verify status is preserved
-	if len(responseCRD.Status.StoredVersions) != 1 {
-		t.Errorf("Expected 1 stored version, got %d", len(responseCRD.Status.StoredVersions))
+	// Verify response structure
+	var response CRDPrinterColumnsResponse
+	if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
+		t.Errorf("Failed to unmarshal printer columns response: %v", err)
 	}
 
-	if responseCRD.Status.AcceptedNames.Kind != "Example" {
-		t.Errorf("Expected accepted names kind 'Example', got '%s'", responseCRD.Status.AcceptedNames.Kind)
+	// Should have nil PerVersion when no columns exist
+	if response.PerVersion != nil {
+		t.Error("Expected PerVersion to be nil when no printer columns exist")
 	}
 }
 
@@ -417,21 +479,19 @@ func TestCRDSchemaHandler_EdgeCases(t *testing.T) {
 		name             string
 		mockResponseBody string
 		expectedStatus   int
+		shouldParseJSON  bool
 	}{
-		{
-			name:             "empty response body",
-			mockResponseBody: "",
-			expectedStatus:   200,
-		},
 		{
 			name:             "invalid JSON response",
 			mockResponseBody: "invalid json",
-			expectedStatus:   200,
+			expectedStatus:   500, // Should return internal server error due to JSON parse failure
+			shouldParseJSON:  false,
 		},
 		{
-			name:             "minimal valid JSON",
-			mockResponseBody: `{"kind": "CustomResourceDefinition"}`,
-			expectedStatus:   200,
+			name:             "empty response body",
+			mockResponseBody: "",
+			expectedStatus:   500, // Should return internal server error due to JSON parse failure
+			shouldParseJSON:  false,
 		},
 	}
 
@@ -454,9 +514,11 @@ func TestCRDSchemaHandler_EdgeCases(t *testing.T) {
 				t.Errorf("Expected status %d, got %d", tt.expectedStatus, w.Code)
 			}
 
-			// Verify response body matches what was returned by the mock
-			if w.Body.String() != tt.mockResponseBody {
-				t.Errorf("Expected response body '%s', got '%s'", tt.mockResponseBody, w.Body.String())
+			if tt.shouldParseJSON {
+				var response CRDPrinterColumnsResponse
+				if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
+					t.Errorf("Failed to unmarshal response: %v", err)
+				}
 			}
 		})
 	}
@@ -500,9 +562,21 @@ func TestCRDSchemaHandler_PathParsing(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockRT := &mockRoundTripper{
-				responseStatus: 200,
-				responseBody:   `{"kind": "CustomResourceDefinition"}`,
+			crdName := extractCRDName(tt.requestPath)
+
+			var mockRT *mockRoundTripper
+			if tt.shouldWork {
+				mockCRD := createMockCRD(crdName)
+				crdBytes, _ := json.Marshal(mockCRD)
+				mockRT = &mockRoundTripper{
+					responseStatus: 200,
+					responseBody:   string(crdBytes),
+				}
+			} else {
+				mockRT = &mockRoundTripper{
+					responseStatus: 200,
+					responseBody:   `{"kind": "CustomResourceDefinition"}`,
+				}
 			}
 
 			mockProxy := createMockProxy(mockRT)
@@ -532,4 +606,82 @@ func TestCRDSchemaHandler_PathParsing(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestExtractPrinterColumns(t *testing.T) {
+	handler := &CRDSchemaHandler{}
+
+	t.Run("CRD with printer columns in multiple versions", func(t *testing.T) {
+		crd := createMockCRDWithPrinterColumns("test.example.com")
+		response := handler.extractPrinterColumns(crd)
+
+		if response.PerVersion == nil {
+			t.Error("Expected PerVersion to be populated")
+		}
+
+		if len(response.PerVersion) != 2 {
+			t.Errorf("Expected 2 versions with printer columns, got %d", len(response.PerVersion))
+		}
+
+		// Check v1 version
+		v1Columns := response.PerVersion["v1"]
+		if len(v1Columns) != 2 {
+			t.Errorf("Expected 2 columns for v1, got %d", len(v1Columns))
+		}
+
+		// Check v1beta1 version
+		v1beta1Columns := response.PerVersion["v1beta1"]
+		if len(v1beta1Columns) != 1 {
+			t.Errorf("Expected 1 column for v1beta1, got %d", len(v1beta1Columns))
+		}
+	})
+
+	t.Run("CRD with no printer columns", func(t *testing.T) {
+		crd := createMockCRD("test.example.com")
+		response := handler.extractPrinterColumns(crd)
+
+		if response.PerVersion != nil {
+			t.Error("Expected PerVersion to be nil when no printer columns exist")
+		}
+	})
+
+	t.Run("CRD with some versions having printer columns", func(t *testing.T) {
+		crd := createMockCRD("test.example.com")
+
+		// Add a version with printer columns
+		crd.Spec.Versions[0].AdditionalPrinterColumns = []apiextensionsv1.CustomResourceColumnDefinition{
+			{
+				Name:     "Status",
+				Type:     "string",
+				JSONPath: ".status.phase",
+			},
+		}
+
+		// Add a version without printer columns
+		crd.Spec.Versions = append(crd.Spec.Versions, apiextensionsv1.CustomResourceDefinitionVersion{
+			Name:    "v2",
+			Served:  true,
+			Storage: false,
+			// No AdditionalPrinterColumns
+		})
+
+		response := handler.extractPrinterColumns(crd)
+
+		if response.PerVersion == nil {
+			t.Error("Expected PerVersion to be populated")
+		}
+
+		if len(response.PerVersion) != 1 {
+			t.Errorf("Expected 1 version with printer columns, got %d", len(response.PerVersion))
+		}
+
+		// Only v1 should have columns
+		if _, exists := response.PerVersion["v1"]; !exists {
+			t.Error("Expected v1 to have printer columns")
+		}
+
+		if _, exists := response.PerVersion["v2"]; exists {
+			t.Error("Expected v2 to not have printer columns")
+		}
+	})
 }
