@@ -25,6 +25,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/auth/sessions"
+	"github.com/openshift/console/pkg/crdschema"
 	devconsole "github.com/openshift/console/pkg/devconsole"
 	"github.com/openshift/console/pkg/devfile"
 	gql "github.com/openshift/console/pkg/graphql"
@@ -83,6 +84,7 @@ const (
 	sha256Prefix                          = "sha256~"
 	tokenizerPageTemplateName             = "tokener.html"
 	updatesEndpoint                       = "/api/check-updates"
+	crdSchemaEndpoint                     = "/api/console/crd-schema"
 )
 
 type CustomFaviconPath struct {
@@ -297,6 +299,12 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	authHandlerWithUser := func(h HandlerWithUser) http.HandlerFunc {
 		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
+	}
+
+	// authHandlerWithoutToken authenticates the user but doesn't set the Authorization header
+	// This allows handlers to use internalProxiedK8SRT transport with console service account token
+	authHandlerWithoutToken := func(h http.HandlerFunc) http.HandlerFunc {
+		return authMiddlewareWithoutToken(authenticator, s.CSRFVerifier, h)
 	}
 
 	// For requests where Authorization header with valid Bearer token is expected
@@ -667,6 +675,14 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	}
 
 	handle("/api/console/version", authHandler(s.versionHandler))
+
+	// CRD Schema
+	consoleServiceProxy := proxy.NewProxyWithTransport(s.K8sProxyConfig, internalProxiedK8SRT)
+	crdSchemaHandler := crdschema.NewCRDSchemaHandler(consoleServiceProxy)
+	handle("/api/console/crd-schema/", http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/console/crd-schema/"),
+		authHandlerWithoutToken(crdSchemaHandler.HandleCRDSchema),
+	))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
