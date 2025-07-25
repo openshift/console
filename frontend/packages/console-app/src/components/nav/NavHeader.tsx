@@ -7,14 +7,8 @@ import {
   SelectOption,
   Title,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 import { Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
-import acmIcon from '@console/internal/imgs/ACM-icon.svg';
-import { ConsoleLinkModel } from '@console/internal/models';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { ACM_LINK_ID, usePerspectiveExtension, usePerspectives } from '@console/shared';
-import { ACM_PERSPECTIVE_ID } from '../../consts';
+import { usePerspectives } from '@console/shared/src/hooks/perspective-utils';
 
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
@@ -55,29 +49,13 @@ const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
 };
 
 const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
-  const { t } = useTranslation();
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
   const perspectiveExtensions = usePerspectives();
-  const acmPerspectiveExtension = usePerspectiveExtension(ACM_PERSPECTIVE_ID);
-  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
-    isList: true,
-    kind: referenceForModel(ConsoleLinkModel),
-    optional: true,
-  });
 
   const togglePerspectiveOpen = React.useCallback(() => {
     setPerspectiveDropdownOpen((isOpen) => !isOpen);
   }, []);
-
-  const acmLink = React.useMemo(
-    () =>
-      consoleLinks.find(
-        (link: K8sResourceKind) =>
-          link.spec.location === 'ApplicationMenu' && link.metadata.name === ACM_LINK_ID,
-      ),
-    [consoleLinks],
-  );
 
   const onPerspectiveSelect = React.useCallback(
     (perspective: string): void => {
@@ -88,21 +66,14 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     [onPerspectiveSelected, setActivePerspective],
   );
 
-  const perspectiveItems = perspectiveExtensions.reduce(
-    (acc, perspective) =>
-      perspective.uid === acmPerspectiveExtension?.uid
-        ? acc
-        : [
-            ...acc,
-            <PerspectiveDropdownItem
-              key={perspective.uid}
-              perspective={perspective}
-              activePerspective={activePerspective}
-              onClick={onPerspectiveSelect}
-            />,
-          ],
-    [],
-  );
+  const perspectiveDropdownItems = perspectiveExtensions.map((perspective) => (
+    <PerspectiveDropdownItem
+      key={perspective.uid}
+      perspective={perspective}
+      activePerspective={activePerspective}
+      onClick={onPerspectiveSelect}
+    />
+  ));
 
   const { icon, name } = React.useMemo(
     () =>
@@ -112,28 +83,8 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   );
 
   const LazyIcon = React.useMemo(() => icon && React.lazy(icon), [icon]);
-  const perspectiveDropdownItems = [
-    ...perspectiveItems,
-    ...(!acmPerspectiveExtension && acmLink
-      ? [
-          <SelectOption
-            key={ACM_LINK_ID}
-            onClick={() => {
-              window.location.href = acmLink.spec.href;
-            }}
-          >
-            <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
-              <span className="oc-nav-header__icon">
-                <img src={acmIcon} height="12em" width="12em" alt="" />
-              </span>
-              {t('console-app~Advanced Cluster Management')}
-            </Title>
-          </SelectOption>,
-        ]
-      : []),
-  ];
 
-  return activePerspective !== ACM_PERSPECTIVE_ID && perspectiveDropdownItems.length > 1 ? (
+  return perspectiveDropdownItems.length > 1 ? (
     <div
       className="oc-nav-header"
       data-tour-id="tour-perspective-dropdown"
