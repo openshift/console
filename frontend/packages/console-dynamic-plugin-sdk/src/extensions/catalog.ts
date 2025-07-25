@@ -15,6 +15,8 @@ export type CatalogItemType = ExtensionDeclaration<
     catalogDescription?: string | CodeRef<React.ReactNode>;
     /** Description for the catalog item type. */
     typeDescription?: string;
+    /** Determine if filter groups should be sorted alphabetically. Defaults to true. */
+    sortFilterGroups?: boolean;
     /** Custom filters specific to the catalog item.  */
     filters?: CatalogItemAttribute[];
     /** Custom groupings specific to the catalog item. */

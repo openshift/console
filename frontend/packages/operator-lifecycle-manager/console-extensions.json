@@ -98,6 +98,7 @@
       "title": "%olm~OperatorHub%",
       "catalogDescription": "%olm~Browse for Operators provided by Operator Lifecycle Manager.%",
       "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
+      "sortFilterGroups": false,
       "filters": [
         {
           "label": "%olm~Source%",

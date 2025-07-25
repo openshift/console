@@ -275,6 +275,7 @@ export const useOperatorCatalogItems = () => {
           type,
           name,
           title: name,
+          typeLabel: source,
           provider,
           description,
           tags,
