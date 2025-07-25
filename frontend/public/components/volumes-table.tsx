@@ -25,24 +25,22 @@ import {
 } from './utils';
 import { Table } from './factory';
 import { sortable } from '@patternfly/react-table';
-import { removeVolumeModal } from './modals';
 import { connectToModel } from '../kinds';
+import { useRemoveModalLauncher } from './modals/remove-volume-modal';
+import { ModalCallback } from './modals/types';
 
-const removeVolume = (kind: K8sKind, obj: K8sResourceKind, volume: RowVolumeData): KebabOption => {
+const removeVolume = (
+  removeVolumeModal: ModalCallback,
+  kind: K8sKind,
+  obj: K8sResourceKind,
+): KebabOption => {
   return {
     // t('public~Remove volume')
     labelKey: 'public~Remove volume',
-    callback: () =>
-      removeVolumeModal({
-        kind,
-        resource: obj,
-        volume,
-      }),
+    callback: () => removeVolumeModal(),
     accessReview: asAccessReview(kind, obj, 'patch'),
   };
 };
-
-const menuActions = [removeVolume];
 
 const getPodTemplate = (resource: K8sResourceKind): PodTemplate => {
   return resource.kind === 'Pod' ? (resource as PodKind) : resource.spec.template;
@@ -158,14 +156,7 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
         },
       },
       {
-        title: (
-          <VolumeKebab
-            actions={menuActions}
-            kind={resource.kind}
-            resource={resource}
-            rowVolumeData={volume}
-          />
-        ),
+        title: <VolumeKebab kind={resource.kind} resource={resource} rowVolumeData={volume} />,
         props: {
           className: volumeRowColumnClasses[6],
         },
@@ -244,11 +235,20 @@ export const VolumesTable = (props) => {
 VolumesTable.displayName = 'VolumesTable';
 
 const VolumeKebab = connectToModel((props: VolumeKebabProps) => {
-  const { actions, kindObj, resource, isDisabled, rowVolumeData } = props;
+  const { kindObj, resource, isDisabled, rowVolumeData } = props;
+  const removeVolumeModalLauncher: ModalCallback = useRemoveModalLauncher({
+    kind: kindObj,
+    resource,
+    volume: rowVolumeData,
+  });
+
+  const actions = [removeVolume];
+
   if (!kindObj || kindObj.kind === 'Pod') {
     return null;
   }
-  const options = actions.map((b) => b(kindObj, resource, rowVolumeData));
+
+  const options = actions.map((b) => b(removeVolumeModalLauncher, kindObj, resource));
   return (
     <Kebab
       options={options}
@@ -259,14 +259,8 @@ const VolumeKebab = connectToModel((props: VolumeKebabProps) => {
   );
 });
 
-type VolumeKebabAction = (
-  kind: K8sKind,
-  obj: K8sResourceKind,
-  rowVolumeData: RowVolumeData,
-) => KebabOption;
 type VolumeKebabProps = {
   kindObj: K8sKind;
-  actions: VolumeKebabAction[];
   kind: K8sResourceKindReference;
   resource: K8sResourceKind;
   isDisabled?: boolean;
