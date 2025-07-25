@@ -112,7 +112,7 @@ func getChartInfoFromChartUrl(
 	for _, repository := range repositories {
 		idx, err := repository.IndexFile()
 		if err != nil {
-			return nil, fmt.Errorf("error producing the index file of repository %q in namespace %q is %q", repository.Name, repository.Namespace, err.Error())
+			return nil, fmt.Errorf("error producing the index file of repository %q in namespace %q: %w", repository.Name, repository.Namespace, err)
 		}
 		for chartIndex, chartVersions := range idx.Entries {
 			for _, chartVersion := range chartVersions {
@@ -183,7 +183,7 @@ func getSecret(ns string, name string, version int, coreclient corev1client.Core
 			secretList.Stop()
 			//Delete secret created to track errors on installation
 			coreclient.Secrets(ns).Delete(context.TODO(), name, v1.DeleteOptions{})
-			return kv1.Secret{}, fmt.Errorf(string(actionError))
+			return kv1.Secret{}, fmt.Errorf("action error: %s", string(actionError))
 		} else {
 			secretList.Stop()
 			return *obj, nil

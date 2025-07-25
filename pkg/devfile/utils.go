@@ -21,8 +21,8 @@ func GetImageBuildComponent(devfileObj parser.DevfileObj, deployAssociatedCompon
 
 	imageComponents, err := devfileObj.Data.GetComponents(imageComponentFilter)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to get the image component from devfile: %v", err)
-		klog.Error(errMsg)
+		err := fmt.Errorf("failed to get the image component from devfile: %w", err)
+		klog.Error(err.Error())
 		return devfilev1.Component{}, err
 	}
 
@@ -32,18 +32,18 @@ func GetImageBuildComponent(devfileObj parser.DevfileObj, deployAssociatedCompon
 			if reflect.DeepEqual(imageBuildComponent, devfilev1.Component{}) {
 				imageBuildComponent = component
 			} else {
-				errMsg := "expected to find one devfile image component with a deploy command for build. Currently there is more than one image component"
-				klog.Error(errMsg)
-				return devfilev1.Component{}, fmt.Errorf(errMsg)
+				err := fmt.Errorf("expected to find one devfile image component with a deploy command for build. Currently there is more than one image component")
+				klog.Error(err.Error())
+				return devfilev1.Component{}, err
 			}
 		}
 	}
 
 	// If there is not one image component defined in the deploy command, err out
 	if reflect.DeepEqual(imageBuildComponent, devfilev1.Component{}) {
-		errMsg := "expected to find one devfile image component with a deploy command for build. Currently there is no image component"
-		klog.Error(errMsg)
-		return devfilev1.Component{}, fmt.Errorf(errMsg)
+		err := fmt.Errorf("expected to find one devfile image component with a deploy command for build. Currently there is no image component")
+		klog.Error(err.Error())
+		return devfilev1.Component{}, err
 	}
 
 	return imageBuildComponent, nil
@@ -58,8 +58,8 @@ func GetDeployComponents(devfileObj parser.DevfileObj) (map[string]string, error
 	}
 	deployCommands, err := devfileObj.Data.GetCommands(deployCommandFilter)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to get the deploy commands from devfile: %v", err)
-		klog.Error(errMsg)
+		err := fmt.Errorf("failed to get the deploy commands from devfile: %w", err)
+		klog.Error(err.Error())
 		return nil, err
 	}
 
@@ -87,8 +87,8 @@ func GetDeployComponents(devfileObj parser.DevfileObj) (map[string]string, error
 	}
 	applyCommands, err := devfileObj.Data.GetCommands(applyCommandFilter)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to get the apply commands from devfile: %v", err)
-		klog.Error(errMsg)
+		err := fmt.Errorf("failed to get the apply commands from devfile: %w", err)
+		klog.Error(err.Error())
 		return nil, err
 	}
 
