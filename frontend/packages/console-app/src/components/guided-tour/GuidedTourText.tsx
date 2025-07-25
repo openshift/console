@@ -7,8 +7,12 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 
 const HelpTourText: React.FC = () => {
   const { t } = useTranslation();
-  return t(
-    'console-app~Access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console. You can also restart this tour anytime here.',
+  return (
+    <>
+      {t(
+        'console-app~Access our new quick starts where you can learn more about creating or deploying an application using OpenShift Developer Console. You can also restart this tour anytime here.',
+      )}
+    </>
   );
 };
 
@@ -16,8 +20,12 @@ export const helpTourText = <HelpTourText />;
 
 const UserPrefrencesTourText: React.FC = () => {
   const { t } = useTranslation();
-  return t(
-    'console-app~Set your individual console preferences including default views, language, import settings, and more.',
+  return (
+    <>
+      {t(
+        'console-app~Set your individual console preferences including default views, language, import settings, and more.',
+      )}
+    </>
   );
 };
 
