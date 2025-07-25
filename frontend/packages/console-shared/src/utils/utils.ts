@@ -112,3 +112,11 @@ export const getTitleForNodeKind = (kindString: string) => {
   }
   return startCase(kindString);
 };
+
+export const parseList = (list: string): string[] =>
+  list
+    .split(',')
+    .map((k) => k.trim())
+    .filter((k) => k);
+
+export const strConcat = (...strs: string[]): string => strs.filter((e) => !!e).join(', ');
