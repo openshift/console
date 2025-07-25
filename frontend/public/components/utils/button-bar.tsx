@@ -1,11 +1,7 @@
-/* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { css } from '@patternfly/react-styles';
-import * as PropTypes from 'prop-types';
 import { Alert, AlertGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import { LoadingInline } from './status-box';
 
 const injectDisabled = (children, disabled) => {
@@ -45,11 +41,18 @@ const SuccessMessage = ({ message }) => (
   <Alert isInline className="co-alert" variant="success" title={message} />
 );
 
+export interface ButtonBarProps extends Required<React.PropsWithChildren<{}>> {
+  className?: string;
+  errorMessage?: React.ReactNode;
+  infoMessage?: string;
+  successMessage?: string;
+  inProgress?: boolean;
+}
+
 // NOTE: DO NOT use <a> elements within a ButtonBar.
 // They don't support the disabled attribute, and therefore
 // can't be disabled during a pending promise/request.
-/** @type {React.SFC<{children: any, className?: string, errorMessage?: React.ReactNode, infoMessage?: string, successMessage?: string, inProgress?: boolean}}>} */
-export const ButtonBar = ({
+export const ButtonBar: React.FCC<ButtonBarProps> = ({
   children,
   className,
   errorMessage,
@@ -58,7 +61,7 @@ export const ButtonBar = ({
   inProgress,
 }) => {
   return (
-    <div className={css(className, 'co-m-btn-bar')}>
+    <div className={className}>
       <AlertGroup
         isLiveRegion
         aria-live="polite"
@@ -73,13 +76,4 @@ export const ButtonBar = ({
       </AlertGroup>
     </div>
   );
-};
-
-ButtonBar.propTypes = {
-  children: PropTypes.node.isRequired,
-  successMessage: PropTypes.string,
-  errorMessage: PropTypes.node,
-  infoMessage: PropTypes.string,
-  inProgress: PropTypes.bool,
-  className: PropTypes.string,
 };

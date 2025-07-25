@@ -180,6 +180,14 @@ const AppContents: React.FC<{}> = () => {
       <Route path="/overview/all-namespaces" element={<Navigate to="/dashboards" replace />} />
       <Route path="/overview/ns/:ns" element={<OverviewProjectsRedirect />} />
       <Route path="/overview" element={<NamespaceRedirect />} />
+      <Route
+        path="/monitoring/alertmanagerconfig"
+        element={<Navigate to="/settings/cluster/alertmanagerconfig" replace />}
+      />
+      <Route
+        path="/monitoring/alertmanageryaml"
+        element={<Navigate to="/settings/cluster/alertmanageryaml" replace />}
+      />
 
       <Route
         path="/api-explorer"
@@ -524,43 +532,6 @@ const AppContents: React.FC<{}> = () => {
       />
 
       <Route
-        path="/monitoring/alertmanagerconfig/receivers/~new"
-        element={
-          <AsyncComponent
-            loader={() =>
-              import(
-                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
-              ).then((m) => m.CreateReceiver)
-            }
-          />
-        }
-      />
-      <Route
-        path="/monitoring/alertmanagerconfig/receivers/:name/edit"
-        element={
-          <AsyncComponent
-            loader={() =>
-              import(
-                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
-              ).then((m) => m.EditReceiver)
-            }
-          />
-        }
-      />
-      <Route
-        path="/monitoring/*"
-        element={
-          <AsyncComponent
-            loader={() =>
-              import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
-                (m) => m.MonitoringUI,
-              )
-            }
-          />
-        }
-      />
-
-      <Route
         path="/settings/idp/github"
         element={
           <AsyncComponent
@@ -688,6 +659,54 @@ const AppContents: React.FC<{}> = () => {
               import(
                 './cluster-settings/cluster-settings' /* webpackChunkName: "cluster-settings" */
               ).then((m) => m.ClusterSettingsPage)
+            }
+          />
+        }
+      />
+      <Route
+        path="/settings/cluster/alertmanagerconfig"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './monitoring/alertmanager/alertmanager-config' /* webpackChunkName: "alertmanager-config" */
+              ).then((m) => m.AlertmanagerConfig)
+            }
+          />
+        }
+      />
+      <Route
+        path="/settings/cluster/alertmanagerconfig/receivers/~new"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
+              ).then((m) => m.CreateReceiver)
+            }
+          />
+        }
+      />
+      <Route
+        path="/settings/cluster/alertmanagerconfig/receivers/:name/edit"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
+              ).then((m) => m.EditReceiver)
+            }
+          />
+        }
+      />
+      <Route
+        path="/settings/cluster/alertmanageryaml"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './monitoring/alertmanager/alertmanager-yaml-editor' /* webpackChunkName: "alertmanager-yaml-editor" */
+              ).then((m) => m.default)
             }
           />
         }

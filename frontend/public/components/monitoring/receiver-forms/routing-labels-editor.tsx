@@ -2,9 +2,24 @@ import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { Button, Grid, GridItem, Tooltip } from '@patternfly/react-core';
+import {
+  Button,
+  Content,
+  ContentVariants,
+  FormGroup,
+  FormHelperText,
+  FormSection,
+  HelperText,
+  HelperTextItem,
+  InputGroup,
+  InputGroupItem,
+  Stack,
+  TextInput,
+  Tooltip,
+} from '@patternfly/react-core';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { SectionHeading } from '../../utils';
+import { DOC_URL_PROMETHEUS_MATCHERS } from '../../utils';
+import { ExclamationCircleIcon } from '@patternfly/react-icons';
 
 const DEFAULT_RECEIVER_LABEL = 'All (default receiver)';
 
@@ -48,89 +63,92 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
   const { t } = useTranslation();
 
   return (
-    <div data-test-id="receiver-routing-labels-editor" className="form-group">
-      <SectionHeading text={t('public~Routing labels')} required={!isDefaultReceiver} />
-      <p className="pf-v6-u-mb-md">
+    <FormSection
+      title={
+        <>
+          {t('public~Routing labels')}{' '}
+          {!isDefaultReceiver && (
+            <span className="pf-v6-c-form__label-required" aria-hidden="true">
+              {' '}
+              *
+            </span>
+          )}
+        </>
+      }
+    >
+      <Content component={ContentVariants.p} className="pf-v6-u-mb-0">
         <Trans ns="public">
           Firing alerts with labels that match all of these{' '}
-          <ExternalLink
-            href="https://prometheus.io/docs/alerting/latest/configuration/#matcher"
-            text={t('public~matchers')}
-          />{' '}
-          will be sent to this receiver.
+          <ExternalLink href={DOC_URL_PROMETHEUS_MATCHERS} text={t('public~matchers')} /> will be
+          sent to this receiver.
         </Trans>
-      </p>
-      {isDefaultReceiver && (
-        <Grid hasGutter className="form-group" key="default">
-          <GridItem span={10}>
-            <div className="form-group">
-              <span className="pf-v6-c-form-control pf-m-disabled">
-                <input
-                  type="text"
-                  data-test-id="label-default"
-                  value={DEFAULT_RECEIVER_LABEL}
-                  disabled
-                  required
-                />
-              </span>
-            </div>
-          </GridItem>
-        </Grid>
-      )}
-      {_.map(formValues.routeLabels, (routeLabel, i: number) => {
-        return (
-          <Grid hasGutter className="form-group" key={i}>
-            <GridItem span={10}>
-              <div className="form-group">
-                <span className="pf-v6-c-form-control">
-                  <input
+      </Content>
+      <FormGroup>
+        <Stack hasGutter>
+          {isDefaultReceiver && (
+            <InputGroup>
+              <InputGroupItem isFill>
+                <TextInput type="text" value={DEFAULT_RECEIVER_LABEL} isDisabled isRequired />
+              </InputGroupItem>
+            </InputGroup>
+          )}
+          {_.map(formValues.routeLabels, (routeLabel, i: number) => {
+            return (
+              <InputGroup key={i}>
+                <InputGroupItem isFill>
+                  <TextInput
+                    id={`routing-label-${i}`}
                     type="text"
-                    data-test-id={`label-${i}`}
+                    data-test={`label-${i}`}
                     onChange={onRoutingLabelChange(i)}
                     placeholder={t('public~Matcher')}
                     value={routeLabel}
-                    required
+                    aria-describedby="routing-labels-help"
                   />
-                </span>
-              </div>
-            </GridItem>
-            <GridItem span={2}>
-              <Tooltip content={t('public~Remove')}>
-                <Button
-                  icon={<MinusCircleIcon />}
-                  type="button"
-                  onClick={() => removeRoutingLabel(i)}
-                  aria-label={t('public~Remove')}
-                  isDisabled={!isDefaultReceiver && formValues.routeLabels.length <= 1}
-                  variant="plain"
-                  data-test-id="remove-routing-label"
-                />
-              </Tooltip>
-            </GridItem>
-          </Grid>
-        );
-      })}
+                </InputGroupItem>
+                <InputGroupItem>
+                  <Tooltip content={t('public~Remove')}>
+                    <Button
+                      icon={<MinusCircleIcon />}
+                      type="button"
+                      onClick={() => removeRoutingLabel(i)}
+                      aria-label={t('public~Remove')}
+                      isDisabled={!isDefaultReceiver && formValues.routeLabels.length <= 1}
+                      variant="plain"
+                    />
+                  </Tooltip>
+                </InputGroupItem>
+              </InputGroup>
+            );
+          })}
+        </Stack>
+      </FormGroup>
       {formValues.routeLabelDuplicateNamesError && (
-        <div className="form-group co-routing-label-editor__error-message">
-          <span className="help-block">
-            <span data-test-id="duplicate-label-error" className="co-error">
+        <FormHelperText className="pf-v6-u-mb-0">
+          <HelperText>
+            <HelperTextItem
+              icon={<ExclamationCircleIcon />}
+              variant="error"
+              id="routing-labels-help"
+              aria-live="polite"
+              aria-invalid={formValues.routeLabelDuplicateNamesError}
+            >
               {t('public~Routing label names must be unique.')}
-            </span>
-          </span>
-        </div>
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       )}
       {!isDefaultReceiver && (
         <Button
-          icon={<PlusCircleIcon className="co-icon-space-r" />}
-          className="pf-m-link--align-left"
+          icon={<PlusCircleIcon />}
           onClick={addRoutingLabel}
           type="button"
           variant="link"
-          data-test-id="add-routing-label"
+          isInline
         >
           {t('public~Add label')}
         </Button>
       )}
-    </div>
+    </FormSection>
   );
 };

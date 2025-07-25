@@ -61,7 +61,6 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
     <PaneBody>
       <SectionHeading text={t('public~Alert routing')}>
         <Button
-          className="co-alert-manager-config__edit-alert-routing-btn"
           onClick={() => createAlertRoutingModal({ config, secret })}
           variant="secondary"
           data-test="edit-alert-routing-btn"
@@ -74,13 +73,13 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Group by')}</DescriptionListTerm>
-              <DescriptionListDescription data-test-id="group_by_value">
+              <DescriptionListDescription data-test="group_by_value">
                 {_.isEmpty(groupBy) ? '-' : _.join(groupBy, ', ')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Group wait')}</DescriptionListTerm>
-              <DescriptionListDescription data-test-id="group_wait_value">
+              <DescriptionListDescription data-test="group_wait_value">
                 {_.get(config, ['route', 'group_wait'], '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
@@ -90,13 +89,13 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Group interval')}</DescriptionListTerm>
-              <DescriptionListDescription data-test-id="group_interval_value">
+              <DescriptionListDescription data-test="group_interval_value">
                 {_.get(config, ['route', 'group_interval'], '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Repeat interval')}</DescriptionListTerm>
-              <DescriptionListDescription data-test-id="repeat_interval_value">
+              <DescriptionListDescription data-test="repeat_interval_value">
                 {_.get(config, ['route', 'repeat_interval'], '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
@@ -252,7 +251,7 @@ const deleteReceiver = (
     return receivers;
   });
   return patchAlertmanagerConfig(secret, config).then(() => {
-    navigate('/monitoring/alertmanagerconfig');
+    navigate('/settings/cluster/alertmanagerconfig');
   });
 };
 
@@ -293,8 +292,8 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
       label: t('public~Edit Receiver'),
       callback: () => {
         const targetUrl = canUseEditForm
-          ? `/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`
-          : `/monitoring/alertmanageryaml`;
+          ? `/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`
+          : `/settings/cluster/alertmanageryaml`;
         return navigate(targetUrl);
       },
     },
@@ -323,7 +322,7 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
         {(receiver.name === InitialReceivers.Critical ||
           receiver.name === InitialReceivers.Default) &&
         !integrationTypesLabel ? (
-          <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
+          <Link to={`/settings/cluster/alertmanagerconfig/receivers/${receiver.name}/edit`}>
             {t('public~Configure')}
             <PencilAltIcon className="co-icon-space-l" />
           </Link>
@@ -463,8 +462,8 @@ const Receivers = ({ secret, config }: ReceiversProps) => {
             />
           </ToolbarItem>
           <ToolbarItem align={{ default: 'alignEnd' }}>
-            <Link to="/monitoring/alertmanagerconfig/receivers/~new">
-              <Button variant="primary" data-test-id="create-receiver">
+            <Link to="/settings/cluster/alertmanagerconfig/receivers/~new">
+              <Button variant="primary" data-test="create-receiver">
                 {t('public~Create Receiver')}
               </Button>
             </Link>
