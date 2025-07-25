@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { deseralizeData } from '../utils/user-settings';
+import { deserializeData } from '../utils/user-settings';
 import { useUserSettings } from './useUserSettings';
 
 export const useUserSettingsCompatibility = <T>(
@@ -11,7 +11,7 @@ export const useUserSettingsCompatibility = <T>(
   const [settings, setSettings, loaded] = useUserSettings<T>(
     key,
     localStorage.getItem(storageKey) !== null
-      ? deseralizeData(localStorage.getItem(storageKey))
+      ? deserializeData(localStorage.getItem(storageKey))
       : defaultValue,
     sync,
   );

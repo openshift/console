@@ -1,4 +1,7 @@
-.odc-icon-dropdown {
+.odc-icon-dropdown__item {
+  align-items: center;
+  display: flex;
+
   img.icon {
     background-color: var(--pf-t--color--white);
     border-radius: var(--pf-t--global--border--radius--small);
@@ -6,24 +9,5 @@
     margin-right: var(--pf-t--global--spacer--sm);
     padding: var(--pf-t--global--spacer--xs);
     width: var(--pf-t--global--font--size--3xl);
-  }
-
-  &__item {
-    display: flex;
-    align-items: center;
-  }
-
-  .pf-v6-c-dropdown__toggle-text {
-    display: flex;
-    align-items: center;
-  }
-
-  &__menu {
-    max-height: 300px;
-
-    li > a {
-      display: flex;
-      align-items: center;
-    }
   }
 }

@@ -39,7 +39,7 @@ export const monitoringPO = {
   eventsTab: {
     resources: '',
     selectedResource: '.form-group ul li span',
-    types: '[data-test-id="dropdown-button"]',
+    types: '[data-test="console-select-menu-toggle"]',
   },
   alertsTab: {
     filter: '[data-test-id="filter-dropdown-toggle"] button',

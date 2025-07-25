@@ -8,7 +8,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import {
   createConfigMap,
-  deseralizeData,
+  deserializeData,
   seralizeData,
   updateConfigMap,
   USER_SETTING_CONFIGMAP_NAMESPACE,
@@ -152,7 +152,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
       cfData.data?.hasOwnProperty(keyRef.current) &&
       seralizeData(settings) !== cfData.data[keyRef.current]
     ) {
-      setSettings(deseralizeData(cfData.data[keyRef.current]));
+      setSettings(deserializeData(cfData.data[keyRef.current]));
       setLoaded(true);
     } else if (
       /**
@@ -214,7 +214,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
         return defaultValueRef.current;
       }
       if (seralizeData(settingsRef.current) !== cfData?.data?.[keyRef.current]) {
-        return deseralizeData(cfData?.data?.[keyRef.current]);
+        return deserializeData(cfData?.data?.[keyRef.current]);
       }
     }
     return settings;

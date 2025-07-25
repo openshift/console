@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
-import { css } from '@patternfly/react-styles';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
@@ -23,7 +22,6 @@ import { ErrorPage404 } from '../error';
 import { K8sKind } from '../../module/k8s/types';
 import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { Dropdown } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import {
   FirehoseResource,
@@ -39,6 +37,7 @@ import {
 import { RequireCreatePermission } from '../utils/rbac';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
 import ListPageHeader from './ListPage/ListPageHeader';
+import { SimpleDropdown } from '@patternfly/react-templates';
 
 type CreateProps = {
   action?: string;
@@ -279,15 +278,20 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       );
     } else if (createProps.items) {
       createLink = (
-        <Dropdown
-          buttonClassName="pf-m-primary"
-          id="item-create"
-          dataTest="item-create"
-          menuClassName={css({ 'prevent-overflow': title })}
-          title={createButtonText}
-          noSelection
-          items={createProps.items}
-          onChange={runOrNavigate}
+        <SimpleDropdown
+          toggleProps={{
+            variant: 'primary',
+            id: 'item-create',
+            // @ts-expect-error non-prop attribute is used for cypress
+            'data-test': 'item-create',
+          }}
+          toggleContent={createButtonText}
+          initialItems={Object.keys(createProps.items).map((item) => ({
+            value: item,
+            content: createProps.items[item],
+            'data-test-dropdown-menu': item,
+          }))}
+          onSelect={(_e, value: string) => runOrNavigate(value)}
         />
       );
     } else {

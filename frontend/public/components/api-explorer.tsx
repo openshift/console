@@ -52,9 +52,9 @@ import { Table, TextFilter } from './factory';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
 import { getResourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import {
   AsyncComponent,
-  Dropdown,
   EmptyBox,
   HorizontalNav,
   LinkifyExternal,
@@ -327,34 +327,37 @@ const APIResourcesList = compose(
         <ToolbarContent>
           <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
             <ToolbarItem>
-              <Dropdown
+              <ConsoleSelect
                 autocompleteFilter={autocompleteGroups}
                 items={groupOptions}
                 onChange={onGroupSelected}
                 selectedKey={groupFilter}
                 spacerBefore={groupSpacer}
                 title={groupOptions[groupFilter]}
-                dropDownClassName="dropdown--full-width"
+                alwaysShowTitle
+                isFullWidth
               />
             </ToolbarItem>
             <ToolbarItem>
-              <Dropdown
+              <ConsoleSelect
                 items={versionOptions}
                 onChange={onVersionSelected}
                 selectedKey={versionFilter}
                 spacerBefore={versionSpacer}
                 title={versionOptions[versionFilter]}
-                dropDownClassName="dropdown--full-width"
+                alwaysShowTitle
+                isFullWidth
               />
             </ToolbarItem>
             <ToolbarItem>
-              <Dropdown
+              <ConsoleSelect
                 items={scopeOptions}
                 onChange={onScopeSelected}
                 selectedKey={scopeFilter}
                 spacerBefore={scopeSpacer}
                 title={scopeOptions[scopeFilter]}
-                dropDownClassName="dropdown--full-width"
+                alwaysShowTitle
+                isFullWidth
               />
             </ToolbarItem>
           </ToolbarToggleGroup>
@@ -628,7 +631,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
       <PaneBody>
         <Flex className="pf-v6-u-mb-lg">
           <FlexItem>
-            <Dropdown
+            <ConsoleSelect
               items={verbOptions}
               onChange={(v: K8sVerb) => setVerb(v)}
               selectedKey={verb}

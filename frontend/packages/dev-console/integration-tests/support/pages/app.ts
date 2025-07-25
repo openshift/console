@@ -292,7 +292,7 @@ export const projectNameSpace = {
     cy.get('body').then(($body) => {
       if ($body.find(userPreferencePO.userMenu).text().includes('kube:admin')) {
         cy.byTestID('showSystemSwitch').check(); // Ensure that all projects are showing
-        cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);
+        cy.byTestID('console-select-item').should('have.length.gt', 5);
       }
     });
     // Bug: ODC-6164 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
@@ -312,7 +312,7 @@ export const projectNameSpace = {
     cy.get('[data-test="namespace-dropdown-menu"]')
       .first()
       .then(($el) => {
-        if ($el.find('[data-test="dropdown-menu-item-link"]').length === 0) {
+        if ($el.find('[data-test="console-select-item"]').length === 0) {
           cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
           projectNameSpace.enterProjectName(projectName);
           cy.byTestID('confirm-action').click();
@@ -324,7 +324,7 @@ export const projectNameSpace = {
           app.waitForLoad();
         } else {
           cy.get('[data-test="namespace-dropdown-menu"]')
-            .find('[data-test="dropdown-menu-item-link"]')
+            .find('[data-test="console-select-item"]')
             .contains(projectName)
             .click();
           cy.get('@projectNameSpaceDropdown').then(($el1) => {
@@ -350,12 +350,12 @@ export const projectNameSpace = {
   selectProjectOrDoNothing: (projectName: string) => {
     projectNameSpace.clickProjectDropdown();
     cy.byTestID('showSystemSwitch').check();
-    cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);
+    cy.byTestID('console-select-item').should('have.length.gt', 5);
     cy.byTestID('dropdown-text-filter').type(projectName);
     cy.get('[data-test="namespace-dropdown-menu"]').then(($el) => {
-      if ($el.find('[data-test="dropdown-menu-item-link"]').length !== 0) {
+      if ($el.find('[data-test="console-select-item"]').length !== 0) {
         cy.byTestID('namespace-dropdown-menu')
-          .find('[data-test="dropdown-menu-item-link"]')
+          .find('[data-test="console-select-item"]')
           .contains(projectName)
           .click();
       } else {
@@ -367,10 +367,10 @@ export const projectNameSpace = {
   selectProject: (projectName: string) => {
     projectNameSpace.clickProjectDropdown();
     cy.byTestID('showSystemSwitch').check(); // Ensure that all projects are showing
-    cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);
+    cy.byTestID('console-select-item').should('have.length.gt', 5);
     cy.byTestID('dropdown-text-filter').type(projectName);
     cy.byTestID('namespace-dropdown-menu')
-      .find('[data-test="dropdown-menu-item-link"]')
+      .find('[data-test="console-select-item"]')
       .contains(projectName)
       .click();
     cy.log(`User has selected namespace ${projectName}`);

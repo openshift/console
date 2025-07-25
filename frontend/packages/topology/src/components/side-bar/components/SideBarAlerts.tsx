@@ -10,7 +10,7 @@ import {
 import { USERSETTINGS_PREFIX } from '@console/shared';
 import { useGetUserSettingConfigMap } from '@console/shared/src/hooks/useGetUserSettingConfigMap';
 import { useUserSettingsLocalStorage } from '@console/shared/src/hooks/useUserSettingsLocalStorage';
-import { deseralizeData } from '@console/shared/src/utils/user-settings';
+import { deserializeData } from '@console/shared/src/utils/user-settings';
 
 const SIDEBAR_ALERTS = 'sideBarAlerts';
 
@@ -23,14 +23,14 @@ const ResolveResourceAlerts: React.FC<{
   const [showAlert, setShowAlert] = useUserSettingsLocalStorage(
     `${USERSETTINGS_PREFIX}/${SIDEBAR_ALERTS}/${id}`,
     `${element.getId()}`,
-    deseralizeData(
+    deserializeData(
       cfData?.data?.[`${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
     ) || true,
   );
 
   React.useEffect(() => {
     if (cfData && cfLoaded && !cfLoadError) {
-      const alertSetting = deseralizeData(
+      const alertSetting = deserializeData(
         cfData?.data?.[`${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
       );
       setShowAlert(alertSetting);

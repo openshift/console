@@ -4,8 +4,9 @@ import { UploadIcon } from '@patternfly/react-icons';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { getIcon, getIcons } from '@console/internal/components/catalog/catalog-item-icon';
-import { Dropdown } from '@console/internal/components/utils/dropdown';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { CustomIconModal } from './CustomIconModal';
+
 import './IconDropdown.scss';
 
 export type IconDropdownProps = {
@@ -67,14 +68,14 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
     <>
       <Split hasGutter>
         <SplitItem isFilled>
-          <Dropdown
+          <ConsoleSelect
             title={title}
             items={items}
-            autoSelect
+            alwaysShowTitle
             autocompletePlaceholder={t('Select an icon')}
             autocompleteFilter={iconLabelAutocompleteFilter}
-            dropDownClassName="dropdown--full-width odc-icon-dropdown"
-            menuClassName="odc-icon-dropdown__menu"
+            isFullWidth
+            className="odc-icon-dropdown"
             onChange={(value: string) => {
               // runtime icon and custom icon are mutually exclusive
               onRuntimeIconChanged(value);

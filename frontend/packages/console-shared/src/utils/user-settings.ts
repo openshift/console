@@ -50,7 +50,7 @@ export const updateConfigMap = async (
   }
 };
 
-export const deseralizeData = (data: string | null) => {
+export const deserializeData = (data: string | null) => {
   if (typeof data !== 'string') {
     return data;
   }
