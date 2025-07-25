@@ -1,4 +1,4 @@
-import { determineCategories } from './operator-hub-items';
+import { determineCategories, orderAndSortByRelevance } from './operator-hub-items';
 import { OperatorHubItem } from './index';
 
 describe('determineCategories', () => {
@@ -104,5 +104,35 @@ describe('determineCategories', () => {
       },
     };
     expect(actualCategories).toEqual(expectedCategories);
+  });
+});
+
+describe('orderAndSortByRelevance', () => {
+  it('sorts Red Hat items before non-Red Hat items', () => {
+    const items = [
+      { name: 'B Operator', provider: 'Other' },
+      { name: 'A Operator', provider: 'Red Hat' },
+      { name: 'C Operator', provider: 'Red Hat, Inc.' },
+      { name: 'D Operator', provider: 'Another' },
+    ];
+    const sortedItems = orderAndSortByRelevance(items);
+    expect(sortedItems[0].provider).toBe('Red Hat');
+    expect(sortedItems[1].provider).toBe('Red Hat, Inc.');
+    expect(sortedItems[2].provider).not.toBe('Red Hat');
+    expect(sortedItems[3].provider).not.toBe('Red Hat');
+  });
+
+  it('sorts items alphabetically within each provider group', () => {
+    const items = [
+      { name: 'Z Operator', provider: 'Other' },
+      { name: 'B Operator', provider: 'Red Hat' },
+      { name: 'A Operator', provider: 'Red Hat, Inc.' },
+      { name: 'Y Operator', provider: 'Another' },
+    ];
+    const sortedItems = orderAndSortByRelevance(items);
+    expect(sortedItems[0].name).toBe('A Operator');
+    expect(sortedItems[1].name).toBe('B Operator');
+    expect(sortedItems[2].name).toBe('Y Operator');
+    expect(sortedItems[3].name).toBe('Z Operator');
   });
 });
