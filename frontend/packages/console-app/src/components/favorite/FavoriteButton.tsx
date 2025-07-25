@@ -41,7 +41,7 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
     null,
     true,
   );
-  const alphanumericRegex = /^[a-zA-Z0-9- ]*$/;
+  const alphanumericRegex = /^[\p{L}\p{N}\s-]*$/u;
 
   const currentUrlPath = window.location.pathname;
 
@@ -66,7 +66,7 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
         : currentUrlPath.split('/');
       const sanitizedDefaultName = (
         defaultName ?? currentUrlSplit.slice(-1)[0].split('?')[0]
-      ).replace(/[^a-zA-Z0-9- ]/g, '-');
+      ).replace(/[^\p{L}\p{N}\s-]/gu, '-');
       setName(sanitizedDefaultName);
       setIsModalOpen(true);
     }
