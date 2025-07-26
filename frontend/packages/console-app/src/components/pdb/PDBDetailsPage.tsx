@@ -15,7 +15,7 @@ import { PodDisruptionBudgetModel } from '../../models';
 import { PodDisruptionBudgetKind } from './types';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(PodDisruptionBudgetModel), ...common];
+const menuActions = [...Kebab.getExtensionsActionsForKind(PodDisruptionBudgetModel), ...common!];
 
 const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
@@ -44,7 +44,7 @@ const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({
               obj={obj}
               path="status.disruptionsAllowed"
             >
-              {obj.status.disruptionsAllowed}
+              {obj.status?.disruptionsAllowed}
             </DetailsItem>
           </DescriptionList>
         </GridItem>

@@ -10,12 +10,13 @@ import NodeIPList from '../NodeIPList';
 import NodeRoles from '../NodeRoles';
 import { NodeDashboardContext } from './NodeDashboardContext';
 import NodeUptime from './NodeUptime';
+import { NodeKind } from '@console/internal/module/k8s';
 
 const DetailsCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
-  const detailsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/details`;
-  const instanceType = obj.metadata.labels?.['beta.kubernetes.io/instance-type'];
-  const zone = obj.metadata.labels?.['topology.kubernetes.io/zone'];
+  const detailsLink = `${resourcePathFromModel(NodeModel, obj?.metadata?.name || '')}/details`;
+  const instanceType = obj?.metadata?.labels?.['beta.kubernetes.io/instance-type'];
+  const zone = obj?.metadata?.labels?.['topology.kubernetes.io/zone'];
   const { t } = useTranslation();
   return (
     <Card data-test-id="details-card">
@@ -35,7 +36,7 @@ const DetailsCard: React.FC = () => {
       <CardBody>
         <DescriptionList>
           <OverviewDetailItem isLoading={!obj} title={t('console-app~Node name')}>
-            {obj.metadata.name}
+            {obj?.metadata?.name}
           </OverviewDetailItem>
           <OverviewDetailItem isLoading={!obj} title={t('console-app~Roles')}>
             <NodeRoles node={obj} />
@@ -55,10 +56,10 @@ const DetailsCard: React.FC = () => {
             {zone}
           </OverviewDetailItem>
           <OverviewDetailItem isLoading={!obj} title={t('console-app~Node addresses')}>
-            <NodeIPList ips={getNodeAddresses(obj)} expand />
+            <NodeIPList ips={getNodeAddresses(obj || ({} as NodeKind))} expand />
           </OverviewDetailItem>
           <OverviewDetailItem isLoading={!obj} title={t('console-app~Uptime')}>
-            <NodeUptime obj={obj} />
+            <NodeUptime obj={obj || ({} as NodeKind)} />
           </OverviewDetailItem>
         </DescriptionList>
       </CardBody>

@@ -78,7 +78,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   const [requirement, setRequirement] = React.useState('');
   const [isDisabled, setDisabled] = React.useState(true);
   const [labels, setLabels] = React.useState([]);
-  const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind>(null);
+  const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind | null>(null);
   const [isOpen, setIsOpen] = React.useState(false);
   const items: RequirementItems = React.useMemo(
     () => ({
@@ -87,7 +87,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
     }),
     [t],
   );
-  const selectedRequirement = getSelectedRequirement(formValues.requirement, items);
+  const selectedRequirement = getSelectedRequirement(formValues.requirement || '', items);
 
   const onFormValuesChange = React.useCallback(
     (values) => {
@@ -98,7 +98,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   );
 
   React.useEffect(() => {
-    setRequirement(formValues.requirement);
+    setRequirement(formValues.requirement || '');
 
     if (formValues.requirement !== i18next.t('console-app~Requirement')) {
       setDisabled(false);
@@ -198,8 +198,8 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
               <SelectorInput
                 onChange={(l) => handleSelectorChange(l)}
                 tags={[
-                  ...SelectorInput.arrayify(formValues.selector.matchLabels),
-                  ...SelectorInput.arrayObjectsToArrayStrings(formValues.selector.matchExpressions),
+                  ...SelectorInput.arrayify(formValues.selector?.matchLabels || []),
+                  ...SelectorInput.arrayObjectsToArrayStrings(formValues.selector?.matchExpressions || []),
                 ]}
                 labelClassName="labelClassName"
               />
