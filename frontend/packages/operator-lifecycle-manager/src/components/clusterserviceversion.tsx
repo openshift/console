@@ -20,7 +20,7 @@ import { css } from '@patternfly/react-styles';
 import { sortable, wrappable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, useLocation, Link } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, Link, useNavigate } from 'react-router-dom-v5-compat';
 import {
   WatchK8sResource,
   ResourceStatus,
@@ -355,6 +355,7 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
   };
   const [consoleOperatorConfig] = useK8sWatchResource<K8sResourceKind>(console);
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [canPatchConsoleOperatorConfig] = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
     resource: ConsoleOperatorConfigModel.plural,
@@ -375,9 +376,9 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
                 'olm~To let this operator provide a custom interface and run its own code in your console, enable its console plugin in the operator details.',
               )}
             </p>
-            <Link to={resourceObjPath(csv, referenceFor(csv))}>
+            <Button variant="link" isInline onClick={() => navigate(resourceObjPath(csv, referenceFor(csv)))}>
               {t('olm~View operator details')}
-            </Link>
+            </Button>
           </div>
         }
       >
