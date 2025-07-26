@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
+import { groupVersionFor } from '@console/internal/module/k8s';
 import { PipelineModel, PipelineResourceModel } from '../../../models';
 import {
   PipelineKind,
@@ -44,6 +45,7 @@ type PipelineTaskLinks = {
 export const getPipelineTaskLinks = (pipeline: PipelineKind): PipelineTaskLinks => {
   const toResourceLinkData = (tasks: PipelineTask[]): ResourceModelLink[] => {
     if (!tasks) return [];
+    const { version } = groupVersionFor(pipeline.apiVersion);
     return tasks?.map((task) =>
       task.taskRef
         ? task.taskRef.kind === 'ClusterTask' || task.taskRef.kind === 'Task'
@@ -51,6 +53,7 @@ export const getPipelineTaskLinks = (pipeline: PipelineKind): PipelineTaskLinks 
               resourceKind: getSafeTaskResourceKind(task.taskRef.kind),
               name: task.taskRef.name,
               qualifier: task.name,
+              resourceApiVersion: version,
             }
           : {
               resourceKind: task.taskRef?.kind,
@@ -105,10 +108,12 @@ export const convertBackingPipelineToPipelineResourceRefProps = (
   pipelineRun: PipelineRunKind,
 ): React.ComponentProps<typeof PipelineResourceRef> => {
   if (pipelineRun.spec.pipelineRef) {
+    const { version } = groupVersionFor(pipelineRun.apiVersion);
     return {
       resourceKind: PipelineModel.kind,
       resourceName: pipelineRun.spec.pipelineRef.name,
       namespace: pipelineRun.metadata.namespace,
+      resourceApiVersion: version,
     };
   }
 
