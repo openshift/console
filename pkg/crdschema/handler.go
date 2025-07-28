@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -42,7 +43,9 @@ func (h *CRDSchemaHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Reques
 	}
 
 	// Create a new request to fetch the full CRD
-	crdURL := fmt.Sprintf("/apis/apiextensions.k8s.io/v1/customresourcedefinitions/%s", crdName)
+	// URL-encode the crdName to prevent path traversal and injection attacks
+	encodedCRDName := url.PathEscape(crdName)
+	crdURL := fmt.Sprintf("/apis/apiextensions.k8s.io/v1/customresourcedefinitions/%s", encodedCRDName)
 
 	// Create a new request for the CRD
 	crdReq := httptest.NewRequest(http.MethodGet, crdURL, nil)
