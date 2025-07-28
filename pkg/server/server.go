@@ -84,7 +84,7 @@ const (
 	sha256Prefix                          = "sha256~"
 	tokenizerPageTemplateName             = "tokener.html"
 	updatesEndpoint                       = "/api/check-updates"
-	crdSchemaEndpoint                     = "/api/console/crd-schema"
+	crdSchemaEndpoint                     = "/api/console/crd-columns"
 )
 
 type CustomFaviconPath struct {
@@ -679,8 +679,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	// CRD Schema
 	consoleServiceProxy := proxy.NewProxyWithTransport(s.K8sProxyConfig, internalProxiedK8SRT)
 	crdSchemaHandler := crdschema.NewCRDSchemaHandler(consoleServiceProxy)
-	handle("/api/console/crd-schema/", http.StripPrefix(
-		proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/console/crd-schema/"),
+	handle(crdSchemaEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, crdSchemaEndpoint),
 		authHandlerWithoutToken(crdSchemaHandler.HandleCRDSchema),
 	))
 
