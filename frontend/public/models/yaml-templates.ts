@@ -1108,7 +1108,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: hello-openShift
+      app: hello-openshift
 `,
   )
   .setIn(
@@ -1123,7 +1123,7 @@ spec:
  maxUnavailable: 0
  selector:
     matchLabels:
-      app: hello-openShift
+      app: hello-openshift
 `,
   )
   .setIn(
@@ -1138,7 +1138,7 @@ spec:
  minAvailable: "25%"
  selector:
     matchLabels:
-      app: hello-openShift
+      app: hello-openshift
 `,
   );
 
