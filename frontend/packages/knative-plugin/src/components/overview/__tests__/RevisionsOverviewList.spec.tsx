@@ -11,7 +11,7 @@ import {
   mockRevisions,
   mockTrafficData,
 } from '../../../utils/__mocks__/traffic-splitting-utils-mock';
-import * as modal from '../../modals';
+import * as TrafficSplittingController from '../../traffic-splitting/TrafficSplittingController';
 import RevisionsOverviewList, { RevisionsOverviewListProps } from '../RevisionsOverviewList';
 import RevisionsOverviewListItem from '../RevisionsOverviewListItem';
 
@@ -78,7 +78,10 @@ describe('RevisionsOverviewList', () => {
   });
 
   it('should call setTrafficDistributionModal on click', () => {
-    const spySetTrafficDistributionModal = jest.spyOn(modal, 'setTrafficDistributionModal');
+    const spySetTrafficDistributionModal = jest.spyOn(
+      TrafficSplittingController,
+      'useTrafficSplittingModalLauncher',
+    );
     expect(wrapper.find(Button)).toHaveLength(1);
     wrapper.find(Button).simulate('click');
     expect(spySetTrafficDistributionModal).toHaveBeenCalled();
