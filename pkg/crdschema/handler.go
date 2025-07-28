@@ -49,12 +49,7 @@ func (h *CRDSchemaHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Reques
 
 	// Create a new request for the CRD
 	crdReq := httptest.NewRequest(http.MethodGet, crdURL, nil)
-	// Copy headers from original request
-	for name, values := range r.Header {
-		for _, value := range values {
-			crdReq.Header.Add(name, value)
-		}
-	}
+	crdReq.Header.Set("Accept", "application/json")
 
 	// Create a response recorder to capture the proxy response
 	recorder := httptest.NewRecorder()
