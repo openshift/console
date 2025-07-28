@@ -179,6 +179,7 @@
     "js-base64": "^3.7.7",
     "js-yaml": "^3.13.1",
     "json-schema": "^0.3.0",
+    "jsonpath-plus": "^10.3.0",
     "lodash-es": "^4.17.21",
     "marked": "^15.0.6",
     "monaco-yaml": "^5.3.1",
