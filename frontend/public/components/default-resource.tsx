@@ -1,8 +1,10 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { JSONPath } from 'jsonpath-plus';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
@@ -19,6 +21,7 @@ import {
   ExtensionK8sGroupModel,
 } from '../module/k8s';
 import {
+  DetailsItem,
   Kebab,
   kindObj,
   navFactory,
@@ -28,13 +31,14 @@ import {
   SectionHeading,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import {
   isResourceActionProvider,
   ResourceActionProvider,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { useCRDAdditionalPrinterColumns } from '@console/shared/src/hooks/useCRDAdditionalPrinterColumns';
+import { AdditionalPrinterColumnValue } from '@console/shared/src/components/additional-printer-column/AdditionalPrinterColumnValue';
 
 const { common } = Kebab.factory;
 
@@ -61,6 +65,10 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
       )),
     [rightDetailsItemExtensions, obj],
   );
+  const hasRightDetailsItems = rightDetailsItems.length > 0;
+
+  const additionalPrinterColumns = useCRDAdditionalPrinterColumns(model);
+  const hasAdditionalPrinterColumns = additionalPrinterColumns.length > 0;
 
   return (
     <>
@@ -76,9 +84,36 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
               {leftDetailsItems}
             </ResourceSummary>
           </GridItem>
-          {rightDetailsItems.length > 0 && (
+          {(hasAdditionalPrinterColumns || hasRightDetailsItems) && (
             <GridItem md={6}>
-              <DescriptionList>{rightDetailsItems}</DescriptionList>
+              <DescriptionList
+                data-test={hasAdditionalPrinterColumns ? 'additional-printer-columns' : undefined}
+              >
+                <>
+                  {hasAdditionalPrinterColumns && (
+                    <>
+                      {additionalPrinterColumns.map((col) => {
+                        const pathArray = JSONPath.toPathArray(col.jsonPath.replace(/^\./, ''));
+                        const pathArrayHasSpecialCharacter = pathArray.some((segment) =>
+                          /[^a-zA-Z0-9]/.test(segment),
+                        );
+
+                        return (
+                          <DetailsItem
+                            key={col.name}
+                            obj={obj}
+                            label={col.name}
+                            path={!pathArrayHasSpecialCharacter && pathArray}
+                          >
+                            <AdditionalPrinterColumnValue col={col} obj={obj} />
+                          </DetailsItem>
+                        );
+                      })}
+                    </>
+                  )}
+                  {hasRightDetailsItems && rightDetailsItems}
+                </>
+              </DescriptionList>
             </GridItem>
           )}
         </Grid>

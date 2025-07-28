@@ -541,6 +541,17 @@ export type CronJobKind = {
   };
 };
 
+export type CRDAdditionalPrinterColumn = {
+  name: string;
+  type: string;
+  jsonPath: string;
+  description?: string;
+};
+
+export type CRDAdditionalPrinterColumns = {
+  [key: string]: CRDAdditionalPrinterColumn[];
+};
+
 export type CRDVersion = {
   name: string;
   served: boolean;

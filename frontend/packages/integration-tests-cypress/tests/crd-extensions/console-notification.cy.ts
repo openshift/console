@@ -50,7 +50,16 @@ describe(`${crd} CRD`, () => {
     });
 
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}/${name}`);
+    detailsPage.isLoaded();
     detailsPage.titleShouldContain(name);
+    cy.log('Additional printer columns should exist.');
+    cy.byTestID('additional-printer-columns').should('exist');
+    cy.byTestSelector('details-item-label__Text').should('have.text', 'Text');
+    cy.byTestSelector('details-item-value__Text').should('have.text', text);
+    cy.byTestSelector('details-item-label__Location').should('have.text', 'Location');
+    cy.byTestSelector('details-item-value__Location').should('have.text', location);
+    cy.byTestSelector('details-item-label__Age').should('have.text', 'Age');
+    cy.byTestSelector('details-item-value__Age').should('exist');
 
     cy.get(notification).contains(text).should('exist').and('be.visible');
 
