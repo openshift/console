@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom-v5-compat';
 import { useFlag } from '@console/shared';
 import { FLAG_DEVWORKSPACE } from '../../const';
-import MultiTabTerminal from './MultiTabbedTerminal';
+import { MultiTabbedTerminal } from './MultiTabbedTerminal';
 
 import './CloudShellTab.scss';
 
 const CloudShellTab: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
   const devWorkspaceFlag = useFlag(FLAG_DEVWORKSPACE);
 
   if (devWorkspaceFlag === false) return <Navigate to="/" replace />;
@@ -16,12 +16,10 @@ const CloudShellTab: React.FC = () => {
   return (
     <>
       <div className="co-cloud-shell-tab__header">
-        <div className="co-cloud-shell-tab__header-text">
-          {t('webterminal-plugin~OpenShift command line terminal')}
-        </div>
+        <div className="pf-v6-u-px-sm">{t('OpenShift command line terminal')}</div>
       </div>
       <div className="co-cloud-shell-tab__body">
-        <MultiTabTerminal />
+        <MultiTabbedTerminal />
       </div>
     </>
   );
