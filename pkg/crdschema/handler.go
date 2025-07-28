@@ -19,10 +19,7 @@ type CRDSchemaHandler struct {
 }
 
 // CRDPrinterColumnsResponse represents the response structure for printer columns
-type CRDPrinterColumnsResponse struct {
-	// PerVersion contains additional printer columns specific to each version
-	PerVersion map[string][]apiextensionsv1.CustomResourceColumnDefinition `json:"perVersion,omitempty"`
-}
+type CRDPrinterColumnsResponse map[string][]apiextensionsv1.CustomResourceColumnDefinition
 
 func NewCRDSchemaHandler(k8sProxy *proxy.Proxy) *CRDSchemaHandler {
 	return &CRDSchemaHandler{
@@ -98,21 +95,19 @@ func (h *CRDSchemaHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Reques
 
 // extractPrinterColumns extracts additional printer columns from the CRD
 func (h *CRDSchemaHandler) extractPrinterColumns(crd *apiextensionsv1.CustomResourceDefinition) *CRDPrinterColumnsResponse {
-	response := &CRDPrinterColumnsResponse{
-		PerVersion: make(map[string][]apiextensionsv1.CustomResourceColumnDefinition),
-	}
+	response := make(CRDPrinterColumnsResponse)
 
 	// Extract per-version printer columns
 	for _, version := range crd.Spec.Versions {
 		if len(version.AdditionalPrinterColumns) > 0 {
-			response.PerVersion[version.Name] = version.AdditionalPrinterColumns
+			response[version.Name] = version.AdditionalPrinterColumns
 		}
 	}
 
-	// If no per-version columns exist, don't include the empty map
-	if len(response.PerVersion) == 0 {
-		response.PerVersion = nil
+	// If no columns exist, return nil instead of empty map
+	if len(response) == 0 {
+		return nil
 	}
 
-	return response
+	return &response
 }
