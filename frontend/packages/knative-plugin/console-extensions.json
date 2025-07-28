@@ -1014,7 +1014,7 @@
   {
     "type": "console.topology/create/connector",
     "properties": {
-      "getCreateConnector": { "$codeRef": "createConnectorUtils.getCreateConnector" }
+      "getCreateConnector": { "$codeRef": "createConnectorUtils.useCreateConnector" }
     },
     "flags": {
       "required": ["KNATIVE_EVENTING"]

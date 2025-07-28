@@ -11,7 +11,7 @@ import {
   mockRevisions,
   mockTrafficData,
 } from '../../../utils/__mocks__/traffic-splitting-utils-mock';
-import * as modal from '../../modals';
+import * as TrafficSplittingController from '../../traffic-splitting/TrafficSplittingController';
 import RevisionsOverviewList, { RevisionsOverviewListProps } from '../RevisionsOverviewList';
 import RevisionsOverviewListItem from '../RevisionsOverviewListItem';
 
@@ -78,10 +78,22 @@ describe('RevisionsOverviewList', () => {
   });
 
   it('should call setTrafficDistributionModal on click', () => {
-    const spySetTrafficDistributionModal = jest.spyOn(modal, 'setTrafficDistributionModal');
-    expect(wrapper.find(Button)).toHaveLength(1);
-    wrapper.find(Button).simulate('click');
-    expect(spySetTrafficDistributionModal).toHaveBeenCalled();
+    const trafficSplitModalLauncherMock = jest.fn();
+    jest
+      .spyOn(TrafficSplittingController, 'useTrafficSplittingModalLauncher')
+      .mockImplementation(() => trafficSplitModalLauncherMock);
+
+    // Create new wrapper after setting up the mock
+    const testWrapper = shallow(
+      <RevisionsOverviewList
+        revisions={MockKnativeResources.revisions.data}
+        service={MockKnativeResources.ksservices.data[0]}
+      />,
+    );
+
+    expect(testWrapper.find(Button)).toHaveLength(1);
+    testWrapper.find(Button).simulate('click');
+    expect(trafficSplitModalLauncherMock).toHaveBeenCalled();
   });
 
   it('should not show button for traffic distribution if access is not there', () => {
