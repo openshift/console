@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { configure, screen } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import AddCardSection from '../AddCardSection';
-import AddCardSectionEmptyState from '../AddCardSectionEmptyState';
-import { MasonryLayout } from '../layout/MasonryLayout';
 import { addActionExtensions, addActionGroupExtensions } from './add-page-test-data';
+import '@testing-library/jest-dom';
+
+configure({ testIdAttribute: 'data-test' });
 
 describe('AddCardSection', () => {
   type AddCardSectionProps = React.ComponentProps<typeof AddCardSection>;
-  let wrapper: ShallowWrapper<AddCardSectionProps>;
   const props: AddCardSectionProps = {
     namespace: 'ns',
     addActionExtensions,
@@ -15,21 +16,23 @@ describe('AddCardSection', () => {
   };
 
   it('should render Empty state if extensionsLoaded is true but loadingError is also true', () => {
-    wrapper = shallow(
+    renderWithProviders(
       <AddCardSection {...props} addActionExtensions={[]} extensionsLoaded loadingFailed />,
     );
-    expect(wrapper.find(AddCardSectionEmptyState).exists()).toBe(true);
+    expect(screen.getByRole('heading', { level: 2, name: /unable to load/i })).toBeInTheDocument();
   });
 
   it('should render Empty state if extensionsLoaded is true but accessCheckError is also true', () => {
-    wrapper = shallow(
+    renderWithProviders(
       <AddCardSection {...props} addActionExtensions={[]} extensionsLoaded accessCheckFailed />,
     );
-    expect(wrapper.find(AddCardSectionEmptyState).exists()).toBe(true);
+    expect(
+      screen.getByRole('heading', { level: 2, name: /access permissions needed/i }),
+    ).toBeInTheDocument();
   });
 
   it('should render MasonryLayout if extensionsLoaded is true and addActionExtensions array is not empty', () => {
-    wrapper = shallow(<AddCardSection {...props} extensionsLoaded />);
-    expect(wrapper.find(MasonryLayout).exists()).toBe(true);
+    renderWithProviders(<AddCardSection {...props} extensionsLoaded />);
+    expect(screen.getByTestId('add-cards')).toBeInTheDocument();
   });
 });
