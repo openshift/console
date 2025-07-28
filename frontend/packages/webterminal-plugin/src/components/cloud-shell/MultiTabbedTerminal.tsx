@@ -1,12 +1,9 @@
 import * as React from 'react';
-import { Button, Tab, TabTitleText, TabTitleIcon } from '@patternfly/react-core';
-import { CloseIcon } from '@patternfly/react-icons/dist/esm/icons/close-icon';
-import { PlusIcon } from '@patternfly/react-icons/dist/esm/icons/plus-icon';
+import { Tabs, Tab } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Tabs } from '@console/app/src/components/tabs';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { sendActivityTick } from './cloud-shell-utils';
-import CloudShellTerminal from './CloudShellTerminal';
+import CloudShellTerminal, { CloudShellTerminalProps } from './CloudShellTerminal';
 import { TICK_INTERVAL } from './useActivityTick';
 import './MultiTabbedTerminal.scss';
 
@@ -14,14 +11,18 @@ const MAX_TERMINAL_TABS = 8;
 
 interface MultiTabbedTerminalProps {
   onClose?: () => void;
+  TerminalComponent?: React.ComponentType<CloudShellTerminalProps>;
 }
 
-export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClose }) => {
+export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({
+  onClose,
+  TerminalComponent = CloudShellTerminal,
+}) => {
   const [terminalTabs, setTerminalTabs] = React.useState<number[]>([1]);
   const [activeTabKey, setActiveTabKey] = React.useState<number>(1);
   const [tickNamespace, setTickNamespace] = React.useState<string>(null);
   const [tickWorkspace, setTickWorkspace] = React.useState<string>(null);
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
   const fireTelemetryEvent = useTelemetry();
 
   const tick = React.useCallback(() => {
@@ -57,8 +58,8 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
     }
   };
 
-  const removeCurrentTerminal = (event, tabIndex: number) => {
-    event.stopPropagation();
+  const removeCurrentTerminal = (_, eventKey: number) => {
+    const tabIndex = terminalTabs.indexOf(eventKey);
     const tabs = [...terminalTabs];
     if (tabs[tabIndex] === activeTabKey) {
       setActiveTabKey(tabIndex > 0 ? tabs[tabIndex - 1] : tabs[tabs.length - 1]);
@@ -75,69 +76,44 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({ onClos
     terminal === activeTabKey && name !== tickWorkspace && setTickWorkspace(name);
   };
 
+  const removeTabFunction = terminalTabs.length > 1 ? removeCurrentTerminal : onClose;
+
   return (
-    <Tabs activeKey={activeTabKey} isBox data-test="multi-tab-terminal">
-      {terminalTabs.map((terminalNumber, tabIndex) => (
+    <Tabs
+      activeKey={activeTabKey}
+      isBox
+      data-test="multi-tab-terminal"
+      className="co-cloud-shell-drawer__header"
+      onClose={removeTabFunction}
+      onAdd={terminalTabs.length < MAX_TERMINAL_TABS ? addNewTerminal : undefined}
+      addButtonAriaLabel={t('Add new tab')}
+    >
+      {terminalTabs.map((terminalNumber) => (
         <Tab
           className="co-multi-tabbed-terminal__tab"
+          closeButtonAriaLabel={t('Close terminal tab')}
           data-test="multi-tab-terminal-tab"
           eventKey={terminalNumber}
           key={terminalNumber}
-          title={
-            <div>
-              <TabTitleText onClick={() => setActiveTabKey(terminalNumber)}>
-                {t('webterminal-plugin~Terminal {{number}}', { number: terminalNumber })}
-              </TabTitleText>
-              <TabTitleIcon>
-                {terminalTabs.length > 1 ? (
-                  <Button
-                    icon={<CloseIcon />}
-                    variant="plain"
-                    style={{ padding: '0' }}
-                    aria-label={t('webterminal-plugin~Close terminal tab')}
-                    data-test="close-terminal-icon"
-                    onClick={(event) => removeCurrentTerminal(event, tabIndex)}
-                  />
-                ) : (
-                  <Button
-                    icon={<CloseIcon />}
-                    variant="plain"
-                    style={{ padding: '0' }}
-                    aria-label={t('webterminal-plugin~Close terminal')}
-                    data-test="close-terminal-icon"
-                    onClick={onClose}
-                  />
-                )}
-              </TabTitleIcon>
-            </div>
-          }
+          onClick={() => setActiveTabKey(terminalNumber)}
+          onMouseDown={(event) => {
+            // middle click to close
+            if (event.button === 1) {
+              event.preventDefault();
+              if (typeof removeTabFunction === 'function') {
+                removeTabFunction(event, terminalNumber);
+              }
+            }
+          }}
+          title={t('Terminal {{number}}', { number: terminalNumber })}
         >
-          <CloudShellTerminal
+          <TerminalComponent
             terminalNumber={terminalNumber}
             setWorkspaceName={getWorkspaceName}
             setWorkspaceNamespace={getWorkspaceNamespace}
           />
         </Tab>
       ))}
-      {terminalTabs.length < MAX_TERMINAL_TABS && (
-        <Tab
-          eventKey="add-tab"
-          onClick={addNewTerminal}
-          title={
-            <TabTitleIcon>
-              <Button
-                icon={<PlusIcon />}
-                variant="plain"
-                style={{ padding: '0' }}
-                aria-label={t('webterminal-plugin~Add new tab')}
-                data-test="add-terminal-icon"
-              />
-            </TabTitleIcon>
-          }
-        />
-      )}
     </Tabs>
   );
 };
-
-export default MultiTabbedTerminal;

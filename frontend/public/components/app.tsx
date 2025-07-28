@@ -24,7 +24,7 @@ import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, startAPIDiscovery } from '../actions/k8s';
 import { pluginStore } from '../plugins';
 // cloud shell imports must come later than features
-import CloudShell from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
+import CloudShellDrawer from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
@@ -227,54 +227,55 @@ const App = (props) => {
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
-        <Flex
-          id="app-content"
-          direction={{ default: 'column' }}
-          style={{ flex: '1 0 auto', height: '100%' }}
-        >
-          <Page
-            isContentFilled
-            id="content"
-            // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
-            mainTabIndex={null}
-            masthead={
-              <Masthead
-                isNavOpen={isNavOpen}
-                onNavToggle={onNavToggle}
-                isMastheadStacked={isMastheadStacked}
-              />
-            }
-            sidebar={
-              <Navigation
-                isNavOpen={isNavOpen}
-                onNavSelect={onNavSelect}
-                onPerspectiveSelected={onNavSelect}
-              />
-            }
-            skipToContent={
-              <SkipToContent href={`${location.pathname}${location.search}#content-scrollable`}>
-                {t('public~Skip to content')}
-              </SkipToContent>
-            }
-            notificationDrawer={
-              <NotificationDrawer
-                onDrawerChange={onNotificationDrawerToggle}
-                isDrawerExpanded={isNotificationDrawerExpanded}
-                drawerRef={drawerRef}
-              />
-            }
-            onNotificationDrawerExpand={() => focusDrawer()}
-            isNotificationDrawerExpanded={isNotificationDrawerExpanded}
-            style={{ flex: '1', height: '0' }}
+        <CloudShellDrawer>
+          <Flex
+            id="app-content"
+            direction={{ default: 'column' }}
+            style={{ flex: '1 0 auto', height: '100%' }}
           >
-            <AppContents />
-          </Page>
-          <CloudShell />
-          <GuidedTour />
-        </Flex>
-        {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
-          <Lightspeed />
-        )}
+            <Page
+              isContentFilled
+              id="content"
+              // Need to pass mainTabIndex=null to enable keyboard scrolling as default tabIndex is set to -1 by patternfly
+              mainTabIndex={null}
+              masthead={
+                <Masthead
+                  isNavOpen={isNavOpen}
+                  onNavToggle={onNavToggle}
+                  isMastheadStacked={isMastheadStacked}
+                />
+              }
+              sidebar={
+                <Navigation
+                  isNavOpen={isNavOpen}
+                  onNavSelect={onNavSelect}
+                  onPerspectiveSelected={onNavSelect}
+                />
+              }
+              skipToContent={
+                <SkipToContent href={`${location.pathname}${location.search}#content-scrollable`}>
+                  {t('public~Skip to content')}
+                </SkipToContent>
+              }
+              notificationDrawer={
+                <NotificationDrawer
+                  onDrawerChange={onNotificationDrawerToggle}
+                  isDrawerExpanded={isNotificationDrawerExpanded}
+                  drawerRef={drawerRef}
+                />
+              }
+              onNotificationDrawerExpand={() => focusDrawer()}
+              isNotificationDrawerExpanded={isNotificationDrawerExpanded}
+              style={{ flex: '1', height: '0' }}
+            >
+              <AppContents />
+            </Page>
+            <GuidedTour />
+          </Flex>
+          {consoleCapabilityLightspeedButtonIsEnabled && lightspeedIsAvailableToInstall && (
+            <Lightspeed />
+          )}
+        </CloudShellDrawer>
         <div id="modal-container" role="dialog" aria-modal="true" aria-label={t('public~Modal')} />
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />

@@ -1,34 +1,31 @@
-import { shallow } from 'enzyme';
-import { Drawer } from '@console/shared';
-import CloseButton from '@console/shared/src/components/close-button';
+import { configure, render } from '@testing-library/react';
 import CloudShellDrawer from '../CloudShellDrawer';
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
 }));
 
+const MockMultiTabbedTerminal = () => <p data-test="terminal-content">Terminal content</p>;
+
 describe('CloudShellDrawerComponent', () => {
+  beforeEach(() => {
+    configure({ testIdAttribute: 'data-test' });
+  });
   it('should render children as Drawer children when present', () => {
-    const wrapper = shallow(
-      <CloudShellDrawer onClose={() => null}>
-        <p data-test="terminal-content">Terminal content</p>
+    const wrapper = render(
+      <CloudShellDrawer onClose={() => null} TerminalBody={MockMultiTabbedTerminal}>
+        <p>Console webapp</p>
       </CloudShellDrawer>,
     );
-    expect(wrapper.find(Drawer).children().find('[data-test="terminal-content"]').text()).toEqual(
-      'Terminal content',
-    );
+    expect(wrapper.getByTestId('terminal-content').innerHTML).toEqual('Terminal content');
   });
 
-  it('should call onClose when clicked on close button', () => {
-    const onClose = jest.fn();
-    const wrapper = shallow(
-      <CloudShellDrawer onClose={onClose}>
-        <p>Terminal content</p>
+  it('should still render children when the Drawer is closed', () => {
+    const wrapper = render(
+      <CloudShellDrawer onClose={() => null} open={false} TerminalBody={MockMultiTabbedTerminal}>
+        <p data-test="body">Console webapp</p>
       </CloudShellDrawer>,
     );
-    const closeButton = wrapper.find(Drawer).shallow().find(CloseButton);
-    expect(closeButton.props().ariaLabel).toEqual('Close terminal');
-    closeButton.simulate('click');
-    expect(onClose).toHaveBeenCalled();
+    expect(wrapper.getByTestId('body').innerHTML).toEqual('Console webapp');
   });
 });
