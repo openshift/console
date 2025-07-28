@@ -389,34 +389,6 @@ const AppContents: React.FC<{}> = () => {
       />
 
       <Route
-        path="/k8s/ns/:ns/routes/~new/form"
-        element={
-          <AsyncComponent
-            kind="Route"
-            loader={() =>
-              import('./routes/RoutePage' /* webpackChunkName: "create-route" */).then(
-                (m) => m.RoutePage,
-              )
-            }
-          />
-        }
-      />
-
-      <Route
-        path="/k8s/ns/:ns/routes/:name/form"
-        element={
-          <AsyncComponent
-            kind="Route"
-            loader={() =>
-              import('./routes/RoutePage' /* webpackChunkName: "edit-route" */).then(
-                (m) => m.RoutePage,
-              )
-            }
-          />
-        }
-      />
-
-      <Route
         path="/k8s/cluster/rolebindings/~new"
         element={
           <AsyncComponent

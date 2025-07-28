@@ -6,7 +6,6 @@ import {
   GetTopologyResourceObject,
   GetResource,
 } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
-import { getRouteWebURL } from '@console/internal/components/routes';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -14,6 +13,7 @@ import {
   referenceFor,
   RouteKind,
 } from '@console/internal/module/k8s';
+import { getRouteWebURL } from '@console/shared/src/components/utils/routes';
 import OdcBaseNode from '../elements/OdcBaseNode';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../operators/components/const';
 import { updateResourceApplication } from './application-utils';
