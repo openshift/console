@@ -2,8 +2,8 @@ export const pipelineBuilderPO = {
   title: '[data-test="page-heading"] h1',
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
-  pipeline: '#pipeline-link',
-  repository: '#repository-link',
+  pipeline: '[data-test-dropdown-menu="pipeline"]',
+  repository: '[data-test-dropdown-menu="repository"]',
   configureVia: {
     pipelineBuilder: '#form-radiobutton-editorType-form-field',
     yamlView: '#form-radiobutton-editorType-yaml-field',

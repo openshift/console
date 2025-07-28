@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Button, Grid, GridItem, TextInput, TextInputProps } from '@patternfly/react-core';
-import { css } from '@patternfly/react-styles';
+import { SimpleDropdown } from '@patternfly/react-templates';
 // eslint-disable-next-line no-restricted-imports
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,6 @@ import { ErrorPage404 } from '@console/internal/components/error';
 import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
 import { storagePrefix } from '@console/internal/components/row-filter';
 import {
-  Dropdown,
   FirehoseResource,
   FirehoseResourcesResult,
   FirehoseResultObject,
@@ -272,15 +271,20 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     } else if (createProps.items) {
       createLink = (
         <div>
-          <Dropdown
-            buttonClassName="pf-m-primary"
-            id="item-create"
-            dataTest="item-create"
-            menuClassName={css({ 'prevent-overflow': title })}
-            title={createButtonText}
-            noSelection
-            items={createProps.items}
-            onChange={runOrNavigate}
+          <SimpleDropdown
+            toggleProps={{
+              variant: 'primary',
+              id: 'item-create',
+              // @ts-expect-error non-prop attribute is used for cypress
+              'data-test': 'item-create',
+            }}
+            toggleContent={createButtonText}
+            initialItems={Object.keys(createProps.items).map((item) => ({
+              value: item,
+              content: createProps.items[item],
+              'data-test-dropdown-menu': item,
+            }))}
+            onSelect={(_e, value: string) => runOrNavigate(value)}
           />
         </div>
       );
