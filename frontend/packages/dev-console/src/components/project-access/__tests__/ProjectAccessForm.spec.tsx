@@ -1,16 +1,146 @@
-import * as React from 'react';
-import { shallow } from 'enzyme';
-import { MultiColumnField, InputField, DropdownField, FormFooter } from '@console/shared';
+/* eslint-disable global-require, @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports */
+import { configure, render, screen } from '@testing-library/react';
 import { defaultAccessRoles } from '../project-access-form-utils';
-import ProjectAccessForm, { SubjectNamespaceDropdown } from '../ProjectAccessForm';
+import ProjectAccessForm from '../ProjectAccessForm';
+import '@testing-library/jest-dom';
+
+configure({ testIdAttribute: 'data-test' });
+
+jest.mock('@console/shared', () => ({
+  MultiColumnField: function MockMultiColumnField(props) {
+    const React = require('react');
+    return React.createElement(
+      'div',
+      {
+        'data-test': 'multi-column-field',
+        'data-name': props.name,
+        'data-add-label': props.addLabel,
+        'data-headers': JSON.stringify(props.headers),
+        'data-empty-values': JSON.stringify(props.emptyValues),
+      },
+      props.children,
+    );
+  },
+  InputField: function MockInputField(props) {
+    const React = require('react');
+    return React.createElement(
+      'div',
+      {
+        'data-test': 'input-field',
+        'data-name': props.name,
+        'data-type': props.type,
+        'data-placeholder': props.placeholder,
+      },
+      'Input Field',
+    );
+  },
+  DropdownField: function MockDropdownField(props) {
+    const React = require('react');
+    return React.createElement(
+      'div',
+      {
+        'data-test': 'dropdown-field',
+        'data-name': props.name,
+        'data-title': props.title,
+        'data-items': JSON.stringify(props.items),
+        'data-full-width': props.fullWidth,
+        'data-test-id': props.dataTest,
+      },
+      'Dropdown Field',
+    );
+  },
+  FormFooter: function MockFormFooter(props) {
+    const React = require('react');
+    return React.createElement(
+      'div',
+      {
+        'data-test': 'form-footer',
+        'data-is-submitting': props.isSubmitting,
+        'data-error-message': props.errorMessage,
+        'data-success-message': props.successMessage,
+      },
+      'Form Footer',
+    );
+  },
+  NSDropdownField: function MockNSDropdownField(props) {
+    const React = require('react');
+    return React.createElement(
+      'div',
+      {
+        'data-test': 'ns-dropdown-field',
+        'data-name': props.name,
+        'data-full-width': props.fullWidth,
+      },
+      'NS Dropdown Field',
+    );
+  },
+}));
+
+jest.mock('@console/shared/src/components/layout/PaneBody', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: function MockPaneBody(props) {
+      return React.createElement(
+        'div',
+        {
+          'data-test': 'pane-body',
+          className: props.className,
+        },
+        props.children,
+      );
+    },
+  };
+});
+
+jest.mock('@patternfly/react-core', () => ({
+  Form: function MockForm(props) {
+    const React = require('react');
+    return React.createElement(
+      'form',
+      {
+        'data-test': 'form',
+        onSubmit: props.onSubmit,
+      },
+      props.children,
+    );
+  },
+  TextInputTypes: { text: 'text' },
+}));
+
+jest.mock('react-i18next', () => ({
+  __esModule: true,
+  useTranslation: () => ({
+    t: (key: string) => {
+      if (key === 'devconsole~Add access') return 'Add access';
+      if (key === 'devconsole~Subject') return 'Subject';
+      if (key === 'devconsole~Name') return 'Name';
+      if (key === 'devconsole~Role') return 'Role';
+      if (key === 'devconsole~Select a type') return 'Select a type';
+      if (key === 'devconsole~Select a role') return 'Select a role';
+      return key;
+    },
+  }),
+}));
+
+jest.mock('lodash', () => ({
+  isEmpty: jest.fn((obj) => obj === undefined || obj === null || Object.keys(obj).length === 0),
+  isEqual: jest.fn(() => true),
+}));
+
+jest.mock('../project-access-form-utils', () => ({
+  ignoreRoleBindingName: jest.fn((data) => data),
+  defaultAccessRoles: {
+    admin: 'Admin',
+    view: 'View',
+    edit: 'Edit',
+  },
+}));
 
 type ProjectAccessFormProps = React.ComponentProps<typeof ProjectAccessForm>;
 let formProps: ProjectAccessFormProps;
 
 describe('Project Access Form', () => {
-  const projectAccessForm = shallow(
-    <ProjectAccessForm {...formProps} roles={defaultAccessRoles} />,
-  );
   beforeEach(() => {
     formProps = {
       values: {
@@ -103,26 +233,34 @@ describe('Project Access Form', () => {
       roles: {},
     };
   });
+
   it('should load the correct Project Access Form structure', () => {
-    expect(projectAccessForm.find(MultiColumnField).exists()).toBe(true);
-    const formWrapper = projectAccessForm.find(MultiColumnField);
-    expect(formWrapper.getElements()[0].props.name).toBe('projectAccess');
-    expect(formWrapper.getElements()[0].props.headers).toEqual(['Subject', 'Name', 'Role']);
-    expect(formWrapper.getElements()[0].props.addLabel).toEqual('Add access');
-    expect(formWrapper.children()).toHaveLength(3);
-    expect(formWrapper.children().at(0).is(SubjectNamespaceDropdown)).toBe(true);
-    expect(formWrapper.children().at(1).is(InputField)).toBe(true);
-    expect(formWrapper.children().at(2).is(DropdownField)).toBe(true);
-    expect(projectAccessForm.find(FormFooter).exists()).toBe(true);
+    render(<ProjectAccessForm {...formProps} roles={defaultAccessRoles} />);
+
+    const multiColumnField = screen.getByTestId('multi-column-field');
+    expect(multiColumnField).toBeInTheDocument();
+    expect(multiColumnField).toHaveAttribute('data-name', 'projectAccess');
+    expect(multiColumnField).toHaveAttribute('data-add-label', 'Add access');
+    expect(multiColumnField).toHaveAttribute('data-headers', '["Subject","Name","Role"]');
+
+    expect(screen.getAllByTestId('dropdown-field')).toHaveLength(2);
+    expect(screen.getByTestId('input-field')).toBeInTheDocument();
+    expect(screen.getByTestId('form-footer')).toBeInTheDocument();
   });
 
   it('should load the dropdown with access roles', () => {
-    const formWrapper = projectAccessForm.find(MultiColumnField);
-    expect(formWrapper.children().at(2).props().name).toBe('role');
-    expect(formWrapper.children().at(2).props().items).toEqual({
-      admin: 'Admin',
-      view: 'View',
-      edit: 'Edit',
-    });
+    render(<ProjectAccessForm {...formProps} roles={defaultAccessRoles} />);
+
+    const dropdowns = screen.getAllByTestId('dropdown-field');
+    const roleDropdown = dropdowns.find(
+      (dropdown) => dropdown.getAttribute('data-name') === 'role',
+    );
+
+    expect(roleDropdown).toBeInTheDocument();
+    expect(roleDropdown).toHaveAttribute('data-name', 'role');
+    expect(roleDropdown).toHaveAttribute(
+      'data-items',
+      '{"admin":"Admin","view":"View","edit":"Edit"}',
+    );
   });
 });
