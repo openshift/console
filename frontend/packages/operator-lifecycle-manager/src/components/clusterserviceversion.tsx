@@ -595,6 +595,21 @@ const CSVListNoDataEmptyMsg = () => {
     { project },
   );
   const noOperatorsInAllNamespacesMessage = t('olm~No Operators are available.');
+
+  const [canListPackageManifests] = useAccessReview({
+    group: PackageManifestModel.apiGroup,
+    resource: PackageManifestModel.plural,
+    verb: 'list',
+  });
+
+  const [canListOperatorGroups] = useAccessReview({
+    group: OperatorGroupModel.apiGroup,
+    resource: OperatorGroupModel.plural,
+    verb: 'list',
+  });
+
+  const hasOperatorHubAccess = canListPackageManifests && canListOperatorGroups;
+
   const detail = (
     <>
       <div>
@@ -602,11 +617,13 @@ const CSVListNoDataEmptyMsg = () => {
           ? noOperatorsInAllNamespacesMessage
           : noOperatorsInSingleNamespaceMessage}
       </div>
-      <div>
-        <Trans ns="olm">
-          Discover and install Operators from the <Link to="/operatorhub">OperatorHub</Link>.
-        </Trans>
-      </div>
+      {hasOperatorHubAccess && (
+        <div>
+          <Trans ns="olm">
+            Discover and install Operators from the <Link to="/operatorhub">OperatorHub</Link>.
+          </Trans>
+        </div>
+      )}
     </>
   );
   return <ConsoleEmptyState title={t('olm~No Operators found')}>{detail}</ConsoleEmptyState>;
