@@ -84,7 +84,7 @@ const (
 	sha256Prefix                          = "sha256~"
 	tokenizerPageTemplateName             = "tokener.html"
 	updatesEndpoint                       = "/api/check-updates"
-	crdSchemaEndpoint                     = "/api/console/crd-columns"
+	crdSchemaEndpoint                     = "/api/console/crd-columns/"
 )
 
 type CustomFaviconPath struct {

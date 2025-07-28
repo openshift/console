@@ -405,12 +405,12 @@ func TestCRDSchemaHandler_ReturnsPrinterColumns(t *testing.T) {
 	}
 
 	// Verify per-version columns
-	if response.PerVersion == nil {
-		t.Error("Expected PerVersion to be populated")
+	if response == nil {
+		t.Error("Expected response to be populated")
 	}
 
 	// Check v1 columns
-	v1Columns, exists := response.PerVersion["v1"]
+	v1Columns, exists := response["v1"]
 	if !exists {
 		t.Error("Expected v1 version to have printer columns")
 	}
@@ -427,7 +427,7 @@ func TestCRDSchemaHandler_ReturnsPrinterColumns(t *testing.T) {
 	}
 
 	// Check v1beta1 columns
-	v1beta1Columns, exists := response.PerVersion["v1beta1"]
+	v1beta1Columns, exists := response["v1beta1"]
 	if !exists {
 		t.Error("Expected v1beta1 version to have printer columns")
 	}
@@ -469,8 +469,8 @@ func TestCRDSchemaHandler_NoPrinterColumns(t *testing.T) {
 	}
 
 	// Should have nil PerVersion when no columns exist
-	if response.PerVersion != nil {
-		t.Error("Expected PerVersion to be nil when no printer columns exist")
+	if response != nil {
+		t.Error("Expected response to be nil when no printer columns exist")
 	}
 }
 
@@ -615,22 +615,22 @@ func TestExtractPrinterColumns(t *testing.T) {
 		crd := createMockCRDWithPrinterColumns("test.example.com")
 		response := handler.extractPrinterColumns(crd)
 
-		if response.PerVersion == nil {
-			t.Error("Expected PerVersion to be populated")
+		if response == nil {
+			t.Error("Expected response to be populated")
 		}
 
-		if len(response.PerVersion) != 2 {
-			t.Errorf("Expected 2 versions with printer columns, got %d", len(response.PerVersion))
+		if len(*response) != 2 {
+			t.Errorf("Expected 2 versions with printer columns, got %d", len(*response))
 		}
 
 		// Check v1 version
-		v1Columns := response.PerVersion["v1"]
+		v1Columns := (*response)["v1"]
 		if len(v1Columns) != 2 {
 			t.Errorf("Expected 2 columns for v1, got %d", len(v1Columns))
 		}
 
 		// Check v1beta1 version
-		v1beta1Columns := response.PerVersion["v1beta1"]
+		v1beta1Columns := (*response)["v1beta1"]
 		if len(v1beta1Columns) != 1 {
 			t.Errorf("Expected 1 column for v1beta1, got %d", len(v1beta1Columns))
 		}
@@ -640,8 +640,8 @@ func TestExtractPrinterColumns(t *testing.T) {
 		crd := createMockCRD("test.example.com")
 		response := handler.extractPrinterColumns(crd)
 
-		if response.PerVersion != nil {
-			t.Error("Expected PerVersion to be nil when no printer columns exist")
+		if response != nil {
+			t.Error("Expected response to be nil when no printer columns exist")
 		}
 	})
 
@@ -667,20 +667,20 @@ func TestExtractPrinterColumns(t *testing.T) {
 
 		response := handler.extractPrinterColumns(crd)
 
-		if response.PerVersion == nil {
-			t.Error("Expected PerVersion to be populated")
+		if response == nil {
+			t.Error("Expected response to be populated")
 		}
 
-		if len(response.PerVersion) != 1 {
-			t.Errorf("Expected 1 version with printer columns, got %d", len(response.PerVersion))
+		if len(*response) != 1 {
+			t.Errorf("Expected 1 version with printer columns, got %d", len(*response))
 		}
 
 		// Only v1 should have columns
-		if _, exists := response.PerVersion["v1"]; !exists {
+		if _, exists := (*response)["v1"]; !exists {
 			t.Error("Expected v1 to have printer columns")
 		}
 
-		if _, exists := response.PerVersion["v2"]; exists {
+		if _, exists := (*response)["v2"]; exists {
 			t.Error("Expected v2 to not have printer columns")
 		}
 	})
