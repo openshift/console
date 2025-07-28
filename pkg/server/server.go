@@ -171,7 +171,6 @@ type Server struct {
 	DevCatalogCategories                string
 	DevCatalogTypes                     string
 	DocumentationBaseURL                *url.URL
-	EnabledConsolePlugins               serverconfig.MultiKeyValue
 	GitOpsProxyConfig                   *proxy.Config
 	GOARCH                              string
 	GOOS                                string
@@ -209,6 +208,8 @@ type Server struct {
 	ThanosTenancyProxyForRulesConfig    *proxy.Config
 	TokenReviewer                       *auth.TokenReviewer
 	UserSettingsLocation                string
+	EnabledPlugins                      serverconfig.MultiKeyValue
+	EnabledPluginsOrder                 []string
 }
 
 func disableDirectoryListing(handler http.Handler) http.Handler {
@@ -524,7 +525,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			Timeout:   120 * time.Second,
 			Transport: &http.Transport{TLSClientConfig: s.PluginsProxyTLSConfig},
 		},
-		s.EnabledConsolePlugins,
+		s.EnabledPlugins,
 		s.PublicDir,
 	)
 
@@ -591,7 +592,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	// Metrics
 	config := &serverconfig.Config{
-		Plugins: s.EnabledConsolePlugins,
+		Plugins: s.EnabledPlugins,
 		Customization: serverconfig.Customization{
 			Perspectives: []serverconfig.Perspective{},
 		},
@@ -708,11 +709,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
 	}
 
-	plugins := make([]string, 0, len(s.EnabledConsolePlugins))
-	for plugin := range s.EnabledConsolePlugins {
-		plugins = append(plugins, plugin)
-	}
-
 	jsg := &jsGlobals{
 		AddPage:                   s.AddPage,
 		AlertManagerPublicURL:     s.AlertManagerPublicURL.String(),
@@ -720,7 +716,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		BasePath:                  s.BaseURL.Path,
 		Branding:                  s.Branding,
 		Capabilities:              s.Capabilities,
-		ConsolePlugins:            plugins,
+		ConsolePlugins:            s.EnabledPluginsOrder,
 		ConsoleVersion:            version.Version,
 		ControlPlaneTopology:      s.ControlPlaneTopology,
 		CopiedCSVsDisabled:        s.CopiedCSVsDisabled,
