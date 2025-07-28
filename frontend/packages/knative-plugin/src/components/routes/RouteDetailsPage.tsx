@@ -5,7 +5,6 @@ import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import { DetailsPage } from '@console/internal/components/factory';
-import { RoutesDetailsProps } from '@console/internal/components/routes';
 import {
   DetailsItem,
   detailsPage,
@@ -14,7 +13,12 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  K8sResourceKind,
+  referenceForModel,
+  RouteKind,
+} from '@console/internal/module/k8s';
 import {
   ActionMenu,
   ActionMenuVariant,
@@ -109,3 +113,7 @@ const RouteDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pr
 };
 
 export default RouteDetailsPage;
+
+type RoutesDetailsProps = {
+  obj: RouteKind;
+};
