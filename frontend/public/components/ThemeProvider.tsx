@@ -42,19 +42,17 @@ export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PR
   ) as PROCESSED_THEME;
 };
 
-export const ThemeContext = React.createContext<string>('');
+export const ThemeContext = React.createContext<PROCESSED_THEME>(undefined);
 
 export const ThemeProvider: React.FC<{}> = ({ children }) => {
   const htmlTagElement = document.documentElement;
-  const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY);
+  const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as PROCESSED_THEME;
   const [theme, , themeLoaded] = useUserSettings(
     THEME_USER_SETTING_KEY,
     THEME_SYSTEM_DEFAULT,
     true,
   );
-  const [processedTheme, setProcessedTheme] = React.useState<PROCESSED_THEME>(
-    localTheme as PROCESSED_THEME,
-  );
+  const [processedTheme, setProcessedTheme] = React.useState<PROCESSED_THEME>(localTheme);
 
   const mqListener = React.useCallback(
     (e) => {
