@@ -2,13 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '../../utils';
-import {
-  getImageSecretKey,
-  AUTHS_KEY,
-  CreateConfigSubform,
-  UploadConfigSubform,
-  SecretSubFormProps,
-} from '.';
+import { getImageSecretKey, AUTHS_KEY, CreateConfigSubform, UploadConfigSubform } from '.';
+import { SecretSubFormProps } from './types';
 
 export const PullSecretForm: React.FC<SecretSubFormProps> = ({
   onChange,
