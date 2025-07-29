@@ -96,6 +96,11 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusType> = ({ enabled, plugi
   );
 };
 
+const ConsolePluginStatusWrapper: React.FC<ConsolePluginCellContentsProps> = ({
+  pluginName,
+  children,
+}) => <span data-test={`${pluginName}-status`}>{children}</span>;
+
 const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
   const { t } = useTranslation();
   const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
@@ -129,7 +134,11 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
               item.version,
               item.description,
               {
-                title: <Status status={item.status} title={item.status} />,
+                title: (
+                  <ConsolePluginStatusWrapper pluginName={item.name}>
+                    <Status status={item.status} title={item.status} />
+                  </ConsolePluginStatusWrapper>
+                ),
               },
               {
                 title: t('console-app~Enabled'),
@@ -207,9 +216,11 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
             item.status
               ? {
                   title: (
-                    <Status status={item.status} title={item.status}>
-                      {item.errorMessage} <br /> {item.errorCause}
-                    </Status>
+                    <ConsolePluginStatusWrapper pluginName={item.name}>
+                      <Status status={item.status} title={item.status}>
+                        {item.errorMessage} <br /> {item.errorCause}
+                      </Status>
+                    </ConsolePluginStatusWrapper>
                   ),
                 }
               : placeholder,
@@ -283,6 +294,7 @@ const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
           rows={rows}
           sortBy={sortBy}
           variant={TableVariant.compact}
+          data-test="console-plugins-table"
         >
           <TableHeaderDeprecated />
           <TableBodyDeprecated />
@@ -337,6 +349,11 @@ export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
       }
     />
   );
+};
+
+type ConsolePluginCellContentsProps = {
+  pluginName: string;
+  children: React.ReactNode;
 };
 
 type ConsolePluginStatusType = {
