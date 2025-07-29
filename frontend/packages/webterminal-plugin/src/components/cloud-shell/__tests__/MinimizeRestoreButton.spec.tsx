@@ -1,17 +1,17 @@
-import { Button } from '@patternfly/react-core';
-import { shallow } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MinimizeRestoreButton } from '../MinimizeRestoreButton';
+import '@testing-library/jest-dom';
 
 describe('MinimizeRestoreButton', () => {
   it('should render a button', () => {
-    const wrapper = shallow(
+    render(
       <MinimizeRestoreButton minimizeText="Minimize" restoreText="Restore" onClick={() => null} />,
     );
-    expect(wrapper.find(Button).exists()).toEqual(true);
+    expect(screen.getByRole('button')).toBeInTheDocument();
   });
 
   it('should render minimize button when minimized is true', () => {
-    const wrapper = shallow(
+    render(
       <MinimizeRestoreButton
         minimizeText="Minimize"
         restoreText="Restore"
@@ -19,11 +19,11 @@ describe('MinimizeRestoreButton', () => {
         onClick={() => null}
       />,
     );
-    expect(wrapper.find('Button[aria-label="Minimize"]').exists()).toEqual(true);
+    expect(screen.getByRole('button', { name: 'Minimize' })).toBeInTheDocument();
   });
 
   it('should render restore button when minimized is false', () => {
-    const wrapper = shallow(
+    render(
       <MinimizeRestoreButton
         minimizeText="Minimize"
         restoreText="Restore"
@@ -31,12 +31,13 @@ describe('MinimizeRestoreButton', () => {
         onClick={() => null}
       />,
     );
-    expect(wrapper.find('Button[aria-label="Restore"]').exists()).toEqual(true);
+    expect(screen.getByRole('button', { name: 'Restore' })).toBeInTheDocument();
   });
 
-  it('should invoke onclose callback with argument true when minimized button clicked and false when restore button clicked', () => {
+  it('should invoke onclose callback with argument true when minimized button clicked and false when restore button clicked', async () => {
     const onClose = jest.fn();
-    const wrapper = shallow(
+
+    const { rerender } = render(
       <MinimizeRestoreButton
         minimizeText="Minimize"
         restoreText="Restore"
@@ -44,16 +45,29 @@ describe('MinimizeRestoreButton', () => {
         onClick={onClose}
       />,
     );
-    expect(wrapper.find('Button[aria-label="Minimize"]').exists()).toEqual(true);
-    expect(wrapper.find('Button[aria-label="Restore"]').exists()).toEqual(false);
+
+    expect(screen.getByRole('button', { name: 'Minimize' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Restore' })).not.toBeInTheDocument();
+
     // click on minimize button
-    wrapper.find(Button).simulate('click');
+    await fireEvent.click(screen.getByRole('button', { name: 'Minimize' }));
     expect(onClose).toHaveBeenLastCalledWith(true);
-    wrapper.setProps({ minimize: false });
-    expect(wrapper.find('Button[aria-label="Minimize"]').exists()).toEqual(false);
-    expect(wrapper.find('Button[aria-label="Restore"]').exists()).toEqual(true);
+
+    // Re-render with minimize=false to test restore button
+    rerender(
+      <MinimizeRestoreButton
+        minimizeText="Minimize"
+        restoreText="Restore"
+        minimize={false}
+        onClick={onClose}
+      />,
+    );
+
+    expect(screen.queryByRole('button', { name: 'Minimize' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Restore' })).toBeInTheDocument();
+
     // click on restore button
-    wrapper.find(Button).simulate('click');
+    await fireEvent.click(screen.getByRole('button', { name: 'Restore' }));
     expect(onClose).toHaveBeenLastCalledWith(false);
   });
 });
