@@ -7,7 +7,7 @@ const AdminNamespaceSection: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <FormSection>
+    <FormSection data-test="admin-namespace-section">
       <InputField
         type={TextInputTypes.text}
         name="namespace"

@@ -24,7 +24,6 @@ import './CloudShellDrawer.scss';
 type CloudShellDrawerProps = {
   open?: boolean;
   onClose: () => void;
-  TerminalBody?: React.FC<{ onClose: () => void }>;
 };
 
 const getMastheadHeight = (): number => {
@@ -36,12 +35,7 @@ const getMastheadHeight = (): number => {
 
 const HEADER_HEIGHT = `calc(${pfSplitterHeight.var} + var(--co-cloud-shell-header-height))`;
 
-const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({
-  open = true,
-  onClose,
-  TerminalBody = MultiTabbedTerminal,
-  children,
-}) => {
+const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ open = true, onClose, children }) => {
   const [expanded, setExpanded] = React.useState<boolean>(true);
   const [height, setHeight] = React.useState<number>(385);
   const { t } = useTranslation('webterminal-plugin');
@@ -102,7 +96,7 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({
           </FlexItem>
         </Flex>
       </DrawerHead>
-      <TerminalBody onClose={onClose} />
+      <MultiTabbedTerminal onClose={onClose} />
     </DrawerPanelContent>
   );
 

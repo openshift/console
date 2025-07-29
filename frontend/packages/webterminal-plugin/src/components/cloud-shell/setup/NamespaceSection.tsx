@@ -45,6 +45,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
     <>
       <ResourceDropdownField
         name="namespace"
+        dataTest="webterminal-namespace-dropdown"
         label={t('webterminal-plugin~Project')}
         placeholder={t('webterminal-plugin~Select Project')}
         fullWidth
@@ -75,7 +76,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
         )}
       />
       {namespace.value === CREATE_NAMESPACE_KEY && (
-        <div className="wt-project-name">
+        <div className="wt-project-name" data-test="input-field-newNamespace">
           <InputField
             type={TextInputTypes.text}
             required
