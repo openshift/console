@@ -1,51 +1,59 @@
 import * as React from 'react';
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
-import { usePoll } from '@console/internal/components/utils';
-import { ExtensionCatalogDatabaseContext } from '../contexts/ExtensionCatalogDatabaseContext';
-import { getItems, openDatabase } from '../database/indexeddb';
-import { normalizeExtensionCatalogItem } from '../fbc/catalog-item';
-import { ExtensionCatalogItem } from '../fbc/types';
+import { useOLMv1Packages, SearchFilter } from './useOLMv1API';
 
-type UseExtensionCatalogItems = () => [CatalogItem[], boolean, Error];
-export const useExtensionCatalogItems: UseExtensionCatalogItems = () => {
-  const { done: initDone, error: initError } = React.useContext(ExtensionCatalogDatabaseContext);
-  const [items, setItems] = React.useState<ExtensionCatalogItem[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<Error>();
-
-  React.useEffect(() => {
-    if (!initDone || initError) {
-      setLoading(!initDone);
-      setError(initError);
-    }
-  }, [initDone, initError]);
-
-  const tick = React.useCallback(() => {
-    if (initDone && !initError) {
-      openDatabase('olm')
-        .then((database) => getItems<ExtensionCatalogItem>(database, 'extension-catalog'))
-        .then((i) => {
-          setItems(i);
-          setError(null);
-          setLoading(false);
-        })
-        .catch((e) => {
-          setError(e);
-          setLoading(false);
-          setItems([]);
-        });
-    }
-  }, [initDone, initError]);
-
-  // Poll IndexedDB (IDB) every 10 seconds
-  usePoll(tick, 10000);
-
-  const normalizedItems = React.useMemo<CatalogItem[]>(
-    () => items.map(normalizeExtensionCatalogItem),
-    [items],
-  );
-
-  return [normalizedItems, loading, error];
+// Convert the backend data format to what the current UI expects
+const convertPackageToExtensionItem = (pkg: any, catalogName: string) => {
+  return {
+    id: `${catalogName}~${pkg.name}`,
+    name: pkg.name,
+    displayName: pkg.description || pkg.name,
+    description: pkg.description || '',
+    provider: '', // TODO: Extract from properties if available
+    keywords: [], // TODO: Extract from properties if available
+    categories: [], // TODO: Extract from properties if available
+    catalog: catalogName,
+    package: pkg.name,
+    icon: pkg.icon,
+    // Add other fields as needed for compatibility
+  };
 };
 
-export default useExtensionCatalogItems;
+export const useExtensionCatalogItems = (searchFilter?: {
+  keyword?: string;
+  category?: string;
+  provider?: string;
+  // Add other filter options as needed
+}) => {
+  // Convert the search filter to our backend format
+  const backendFilter: SearchFilter = React.useMemo(() => {
+    const filter: SearchFilter = {};
+
+    if (searchFilter?.keyword) {
+      filter.keywords = searchFilter.keyword;
+    }
+    if (searchFilter?.category) {
+      filter.category = searchFilter.category;
+    }
+
+    return filter;
+  }, [searchFilter]);
+
+  const { result, loaded, error, refetch } = useOLMv1Packages(backendFilter);
+
+  // Convert backend response to frontend format
+  const items = React.useMemo(() => {
+    if (!result || !result.packages) {
+      return [];
+    }
+
+    return result.packages.map((pkg) => convertPackageToExtensionItem(pkg, result.catalogName));
+  }, [result]);
+
+  return {
+    items,
+    loaded,
+    error,
+    refetch,
+    totalCount: result?.totalCount || 0,
+  };
+};
