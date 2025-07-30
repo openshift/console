@@ -1,8 +1,8 @@
 import { Content, ContentVariants, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { TourDataType } from '@console/app/src/components/tour';
-import AdminGuidedTourBannerDark from '../tour/AdminGidedTorBannerDark';
 import AdminGuidedTourBanner from '../tour/AdminGuidedTourBanner';
+import AdminGuidedTourBannerDark from '../tour/AdminGuidedTourBannerDark';
 import { finishTourText, helpTourText, userPreferencesTourText } from './GuidedTourText';
 
 const getSelector = (id: string): string => `[data-tour-id="${id}"]`;

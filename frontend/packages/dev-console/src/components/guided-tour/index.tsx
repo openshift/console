@@ -5,8 +5,8 @@ import {
   userPreferencesTourText,
 } from '@console/app/src/components/guided-tour/GuidedTourText';
 import { TourDataType } from '@console/app/src/components/tour';
-import GuidedTourIntroBannerDark from './GidedTourIntroBannerDark';
 import GuidedTourIntroBanner from './GuidedTourIntroBanner';
+import GuidedTourIntroBannerDark from './GuidedTourIntroBannerDark';
 import {
   perspectiveSwitcherTourText,
   searchTourText,
