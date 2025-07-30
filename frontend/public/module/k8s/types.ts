@@ -494,7 +494,7 @@ export type JobTemplate = {
     backoffLimit?: number;
     completions?: number;
     manualSelector?: boolean;
-    parallelism?: boolean;
+    parallelism?: number;
     selector?: Selector;
     template: PodTemplate;
     ttlSecondsAfterFinished?: number;

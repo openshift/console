@@ -8,10 +8,11 @@ import { KUBE_ADMIN_USERNAMES, useCanClusterUpgrade } from '@console/shared';
 import { OAuthModel } from '../models';
 import { userStateToProps } from '../reducers/ui';
 import { resourcePathFromModel } from './utils/resource-link';
+import { CoreState } from '@console/dynamic-plugin-sdk/src/app/redux-types';
 
 const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
-export const KubeAdminNotifier = connect(userStateToProps)(({ user }) => {
+export const KubeAdminNotifier = connect(userStateToProps)(({ user }: CoreState) => {
   const { t } = useTranslation();
   const canUpgrade = useCanClusterUpgrade();
   const username = _.get(user, 'username');
