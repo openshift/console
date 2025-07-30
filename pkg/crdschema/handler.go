@@ -44,6 +44,8 @@ func (h *CRDSchemaHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Reques
 	}
 
 	// Create dynamic client
+	// NOTE: We are using the InternalProxiedK8SClientConfig service account to make the Kubernetes API request
+	// This api endpoint is accessible to ALL logged in users, even if the user does not have the RBAC role to the CRD
 	client, err := dynamic.NewForConfig(h.anonConfig)
 	if err != nil {
 		h.sendError(w, http.StatusInternalServerError, "Failed to create Kubernetes client", "Failed to create dynamic client: %v", err)
@@ -71,7 +73,8 @@ func (h *CRDSchemaHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// Extract printer columns
+	
+	// IMPORTANT: Only return the printer columns, not the full CRD, to avoid leaking sensitive or unnecessary CRD data
 	response := h.extractPrinterColumns(&crd)
 
 	// Return the printer columns response

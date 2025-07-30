@@ -671,6 +671,9 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle("/api/console/version", authHandler(s.versionHandler))
 
 	// CRD Schema
+	// NOTE: We are using the InternalProxiedK8SClientConfig service account to make the Kubernetes API request
+	// This endpoint is accessible to ALL logged in users, even if the user does not have the RBAC role to the CRD
+	// Therefore only the printer columns are returned, not the full CRD
 	crdSchemaHandler := crdschema.NewCRDSchemaHandler(s.InternalProxiedK8SClientConfig)
 	handle(crdSchemaEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, crdSchemaEndpoint),
