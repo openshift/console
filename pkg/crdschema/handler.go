@@ -1,7 +1,6 @@
 package crdschema
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -59,7 +58,7 @@ func (h *CRDSchemaHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Reques
 	}
 
 	// Fetch the CRD using dynamic client
-	unstructuredCRD, err := client.Resource(crdGVR).Get(context.TODO(), crdName, metav1.GetOptions{})
+	unstructuredCRD, err := client.Resource(crdGVR).Get(r.Context(), crdName, metav1.GetOptions{})
 	if err != nil {
 		h.sendError(w, http.StatusNotFound, "CRD not found", "Failed to get CRD %s: %v", crdName, err)
 		return

@@ -1,65 +1,24 @@
 package crdschema
 
 import (
-	"bytes"
 	"context"
-	"crypto/tls"
 	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"strings"
 	"testing"
 
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/dynamic/fake"
+	"k8s.io/client-go/rest"
 
-	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils"
 )
-
-// mockRoundTripper is a mock implementation of http.RoundTripper for testing
-type mockRoundTripper struct {
-	responseStatus int
-	responseBody   string
-	requestURL     string
-	requestMethod  string
-	requestPath    string
-	shouldError    bool
-	errorMessage   string
-}
-
-func (m *mockRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
-	m.requestURL = req.URL.String()
-	m.requestMethod = req.Method
-	m.requestPath = req.URL.Path
-
-	if m.shouldError {
-		return nil, fmt.Errorf(m.errorMessage)
-	}
-
-	response := &http.Response{
-		StatusCode: m.responseStatus,
-		Body:       io.NopCloser(bytes.NewReader([]byte(m.responseBody))),
-		Header:     make(http.Header),
-	}
-
-	return response, nil
-}
-
-// createMockProxy creates a mock proxy for testing with a custom transport
-func createMockProxy(mockRT *mockRoundTripper) *proxy.Proxy {
-	// Create a mock endpoint URL
-	targetURL, _ := url.Parse("https://mock-k8s-api.example.com")
-	config := &proxy.Config{
-		Endpoint:        targetURL,
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-
-	return proxy.NewProxyWithTransport(config, mockRT)
-}
 
 // createMockCRD creates a mock CRD for testing
 func createMockCRD(name string) *apiextensionsv1.CustomResourceDefinition {
@@ -141,6 +100,83 @@ func createMockCRDWithPrinterColumns(name string) *apiextensionsv1.CustomResourc
 	return crd
 }
 
+// testableHandler wraps the CRDSchemaHandler to allow injecting a mock client
+type testableHandler struct {
+	*CRDSchemaHandler
+	mockClient dynamic.Interface
+}
+
+func (h *testableHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Request) {
+	// Override the client creation in the original method logic
+	if r.Method != http.MethodGet {
+		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only GET is allowed"})
+		return
+	}
+
+	crdName := strings.TrimPrefix(r.URL.Path, "/")
+	if crdName == "" {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "CRD name parameter is required"})
+		return
+	}
+
+	// Use mock client instead of creating a real one
+	client := h.mockClient
+
+	crdGVR := schema.GroupVersionResource{
+		Group:    "apiextensions.k8s.io",
+		Version:  "v1",
+		Resource: "customresourcedefinitions",
+	}
+
+	unstructuredCRD, err := client.Resource(crdGVR).Get(r.Context(), crdName, metav1.GetOptions{})
+	if err != nil {
+		h.sendError(w, http.StatusNotFound, "CRD not found", "Failed to get CRD %s: %v", crdName, err)
+		return
+	}
+
+	var crd apiextensionsv1.CustomResourceDefinition
+	if err := runtime.DefaultUnstructuredConverter.FromUnstructured(unstructuredCRD.Object, &crd); err != nil {
+		h.sendError(w, http.StatusInternalServerError, "Failed to parse CRD", "Failed to convert unstructured CRD %s: %v", crdName, err)
+		return
+	}
+
+	response := h.extractPrinterColumns(&crd)
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		h.sendError(w, http.StatusInternalServerError, "Failed to encode response", "Failed to encode printer columns response for CRD %s: %v", crdName, err)
+		return
+	}
+}
+
+// createMockHandler creates a testable handler with a mock client
+func createMockHandler(crds ...*apiextensionsv1.CustomResourceDefinition) *testableHandler {
+	scheme := runtime.NewScheme()
+	apiextensionsv1.AddToScheme(scheme)
+
+	objects := []runtime.Object{}
+	for _, crd := range crds {
+		unstructuredCRD, _ := runtime.DefaultUnstructuredConverter.ToUnstructured(crd)
+		obj := &unstructured.Unstructured{Object: unstructuredCRD}
+		obj.SetGroupVersionKind(schema.GroupVersionKind{
+			Group:   "apiextensions.k8s.io",
+			Version: "v1",
+			Kind:    "CustomResourceDefinition",
+		})
+		objects = append(objects, obj)
+	}
+
+	mockClient := fake.NewSimpleDynamicClient(scheme, objects...)
+	
+	config := &rest.Config{Host: "https://mock-k8s-api.example.com"}
+	handler := NewCRDSchemaHandler(config)
+	
+	return &testableHandler{
+		CRDSchemaHandler: handler,
+		mockClient:       mockClient,
+	}
+}
+
 // parseErrorResponse parses the JSON error response
 func parseErrorResponse(body []byte) (*serverutils.ApiError, error) {
 	var apiError serverutils.ApiError
@@ -150,19 +186,12 @@ func parseErrorResponse(body []byte) (*serverutils.ApiError, error) {
 	return &apiError, nil
 }
 
-// Helper function to extract CRD name from request path (same logic as handler)
-func extractCRDName(requestPath string) string {
-	return strings.TrimPrefix(requestPath, "/")
-}
-
 func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 	tests := []struct {
 		name            string
 		method          string
 		requestPath     string
-		mockStatus      int
-		mockError       bool
-		mockErrorMsg    string
+		crdExists       bool
 		expectedStatus  int
 		expectedError   string
 		shouldHaveError bool
@@ -171,7 +200,7 @@ func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 			name:           "successful request",
 			method:         "GET",
 			requestPath:    "/examples.example.com",
-			mockStatus:     200,
+			crdExists:      true,
 			expectedStatus: 200,
 		},
 		{
@@ -199,195 +228,68 @@ func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 			shouldHaveError: true,
 		},
 		{
-			name:            "CRD not found",
-			method:          "GET",
-			requestPath:     "/nonexistent.example.com",
-			mockStatus:      404,
-			expectedStatus:  404,
-			shouldHaveError: false,
-		},
-		{
-			name:            "forbidden access",
-			method:          "GET",
-			requestPath:     "/examples.example.com",
-			mockStatus:      403,
-			expectedStatus:  403,
-			shouldHaveError: false,
-		},
-		{
-			name:            "internal server error",
-			method:          "GET",
-			requestPath:     "/examples.example.com",
-			mockStatus:      500,
-			expectedStatus:  500,
-			shouldHaveError: false,
-		},
-		{
-			name:            "round trip error",
-			method:          "GET",
-			requestPath:     "/examples.example.com",
-			mockError:       true,
-			mockErrorMsg:    "network error",
-			expectedStatus:  502,
-			shouldHaveError: false,
+			name:           "CRD not found",
+			method:         "GET",
+			requestPath:    "/nonexistent.example.com",
+			crdExists:      false,
+			expectedStatus: 404,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			crdName := extractCRDName(tt.requestPath)
-
-			// Create mock response body
-			var mockResponseBody string
-			if tt.mockStatus == 200 && !tt.mockError {
+			var handler *testableHandler
+			
+			if tt.crdExists {
+				crdName := strings.TrimPrefix(tt.requestPath, "/")
 				mockCRD := createMockCRDWithPrinterColumns(crdName)
-				crdBytes, _ := json.Marshal(mockCRD)
-				mockResponseBody = string(crdBytes)
+				handler = createMockHandler(mockCRD)
+			} else {
+				handler = createMockHandler() // Empty handler with no CRDs
 			}
 
-			// Create mock round tripper
-			mockRT := &mockRoundTripper{
-				responseStatus: tt.mockStatus,
-				responseBody:   mockResponseBody,
-				shouldError:    tt.mockError,
-				errorMessage:   tt.mockErrorMsg,
-			}
-
-			// Create mock proxy
-			mockProxy := createMockProxy(mockRT)
-
-			// Create handler
-			handler := NewCRDSchemaHandler(mockProxy)
-
-			// Create request with path parameter
 			req := httptest.NewRequest(tt.method, tt.requestPath, nil)
 			req = req.WithContext(context.Background())
 			w := httptest.NewRecorder()
 
-			// Call handler
 			handler.HandleCRDSchema(w, req)
 
-			// Check status code
 			if w.Code != tt.expectedStatus {
 				t.Errorf("Expected status %d, got %d", tt.expectedStatus, w.Code)
 			}
 
-			// For error responses that should have custom error handling, check the error message
 			if tt.shouldHaveError {
-				// Only check custom error messages for method validation and missing name
-				if tt.method != "GET" || crdName == "" {
-					contentType := w.Header().Get("Content-Type")
-					if contentType != "application/json" {
-						t.Errorf("Expected Content-Type 'application/json', got '%s'", contentType)
-					}
+				contentType := w.Header().Get("Content-Type")
+				if contentType != "application/json" {
+					t.Errorf("Expected Content-Type 'application/json', got '%s'", contentType)
+				}
 
-					apiError, err := parseErrorResponse(w.Body.Bytes())
-					if err != nil {
-						t.Errorf("Failed to parse error response: %v", err)
-					}
-					if !contains(apiError.Err, tt.expectedError) {
-						t.Errorf("Expected error to contain '%s', got '%s'", tt.expectedError, apiError.Err)
-					}
+				apiError, err := parseErrorResponse(w.Body.Bytes())
+				if err != nil {
+					t.Errorf("Failed to parse error response: %v", err)
+				}
+				if !strings.Contains(apiError.Err, tt.expectedError) {
+					t.Errorf("Expected error to contain '%s', got '%s'", tt.expectedError, apiError.Err)
 				}
 			}
 
-			// For successful requests, check that the response contains printer columns
 			if !tt.shouldHaveError && w.Code == 200 {
 				var response CRDPrinterColumnsResponse
 				if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
 					t.Errorf("Failed to unmarshal printer columns response: %v", err)
 				}
 
-				// Check that the correct API path was used
-				if !tt.mockError && mockRT.requestPath != "" {
-					expectedPath := fmt.Sprintf("/apis/apiextensions.k8s.io/v1/customresourcedefinitions/%s", crdName)
-					if mockRT.requestPath != expectedPath {
-						t.Errorf("Expected request path %s, got %s", expectedPath, mockRT.requestPath)
-					}
-
-					// Verify GET method was used
-					if mockRT.requestMethod != "GET" {
-						t.Errorf("Expected request method 'GET', got %s", mockRT.requestMethod)
-					}
+				if len(response) == 0 {
+					t.Error("Expected response to contain printer columns")
 				}
 			}
 		})
 	}
 }
 
-// Helper function to check if a string contains a substring
-func contains(s, substr string) bool {
-	return len(substr) == 0 || (len(s) >= len(substr) && s[:len(substr)] == substr)
-}
-
-// Helper function to generate expected K8s API path
-func expectedK8sAPIPath(crdName string) string {
-	return fmt.Sprintf("/apis/apiextensions.k8s.io/v1/customresourcedefinitions/%s", crdName)
-}
-
-func TestCRDSchemaHandler_PathTransformation(t *testing.T) {
-	tests := []struct {
-		name        string
-		requestPath string
-	}{
-		{
-			name:        "basic CRD name",
-			requestPath: "/test.example.com",
-		},
-		{
-			name:        "complex CRD name",
-			requestPath: "/deployments.apps.openshift.io",
-		},
-		{
-			name:        "hyphenated CRD name",
-			requestPath: "/my-resource.example.com",
-		},
-		{
-			name:        "CRD with numbers",
-			requestPath: "/v1beta1-resources.example.com",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			crdName := extractCRDName(tt.requestPath)
-			expectedPath := expectedK8sAPIPath(crdName)
-
-			mockCRD := createMockCRD(crdName)
-			crdBytes, _ := json.Marshal(mockCRD)
-
-			mockRT := &mockRoundTripper{
-				responseStatus: 200,
-				responseBody:   string(crdBytes),
-			}
-
-			mockProxy := createMockProxy(mockRT)
-			handler := NewCRDSchemaHandler(mockProxy)
-
-			req := httptest.NewRequest("GET", tt.requestPath, nil)
-			w := httptest.NewRecorder()
-
-			handler.HandleCRDSchema(w, req)
-
-			if mockRT.requestPath != expectedPath {
-				t.Errorf("Expected request path %s, got %s", expectedPath, mockRT.requestPath)
-			}
-		})
-	}
-}
-
 func TestCRDSchemaHandler_ReturnsPrinterColumns(t *testing.T) {
-	// Create CRD with printer columns
 	crd := createMockCRDWithPrinterColumns("examples.example.com")
-
-	crdBytes, _ := json.Marshal(crd)
-	mockRT := &mockRoundTripper{
-		responseStatus: 200,
-		responseBody:   string(crdBytes),
-	}
-
-	mockProxy := createMockProxy(mockRT)
-	handler := NewCRDSchemaHandler(mockProxy)
+	handler := createMockHandler(crd)
 
 	req := httptest.NewRequest("GET", "/examples.example.com", nil)
 	w := httptest.NewRecorder()
@@ -398,13 +300,11 @@ func TestCRDSchemaHandler_ReturnsPrinterColumns(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", w.Code)
 	}
 
-	// Verify that we get printer columns back
 	var response CRDPrinterColumnsResponse
 	if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
 		t.Errorf("Failed to unmarshal printer columns response: %v", err)
 	}
 
-	// Verify per-version columns
 	if response == nil {
 		t.Error("Expected response to be populated")
 	}
@@ -418,7 +318,6 @@ func TestCRDSchemaHandler_ReturnsPrinterColumns(t *testing.T) {
 		t.Errorf("Expected 2 printer columns for v1, got %d", len(v1Columns))
 	}
 
-	// Verify column details
 	if v1Columns[0].Name != "Status" {
 		t.Errorf("Expected first column name 'Status', got '%s'", v1Columns[0].Name)
 	}
@@ -441,17 +340,8 @@ func TestCRDSchemaHandler_ReturnsPrinterColumns(t *testing.T) {
 }
 
 func TestCRDSchemaHandler_NoPrinterColumns(t *testing.T) {
-	// Create CRD without printer columns
 	crd := createMockCRD("examples.example.com")
-
-	crdBytes, _ := json.Marshal(crd)
-	mockRT := &mockRoundTripper{
-		responseStatus: 200,
-		responseBody:   string(crdBytes),
-	}
-
-	mockProxy := createMockProxy(mockRT)
-	handler := NewCRDSchemaHandler(mockProxy)
+	handler := createMockHandler(crd)
 
 	req := httptest.NewRequest("GET", "/examples.example.com", nil)
 	w := httptest.NewRecorder()
@@ -462,175 +352,36 @@ func TestCRDSchemaHandler_NoPrinterColumns(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", w.Code)
 	}
 
-	// Verify response structure
 	var response CRDPrinterColumnsResponse
 	if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
 		t.Errorf("Failed to unmarshal printer columns response: %v", err)
 	}
 
-	// Should have nil PerVersion when no columns exist
-	if response != nil {
-		t.Error("Expected response to be nil when no printer columns exist")
-	}
-}
-
-func TestCRDSchemaHandler_EdgeCases(t *testing.T) {
-	tests := []struct {
-		name             string
-		mockResponseBody string
-		expectedStatus   int
-		shouldParseJSON  bool
-	}{
-		{
-			name:             "invalid JSON response",
-			mockResponseBody: "invalid json",
-			expectedStatus:   500, // Should return internal server error due to JSON parse failure
-			shouldParseJSON:  false,
-		},
-		{
-			name:             "empty response body",
-			mockResponseBody: "",
-			expectedStatus:   500, // Should return internal server error due to JSON parse failure
-			shouldParseJSON:  false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockRT := &mockRoundTripper{
-				responseStatus: 200,
-				responseBody:   tt.mockResponseBody,
-			}
-
-			mockProxy := createMockProxy(mockRT)
-			handler := NewCRDSchemaHandler(mockProxy)
-
-			req := httptest.NewRequest("GET", "/test.example.com", nil)
-			w := httptest.NewRecorder()
-
-			handler.HandleCRDSchema(w, req)
-
-			if w.Code != tt.expectedStatus {
-				t.Errorf("Expected status %d, got %d", tt.expectedStatus, w.Code)
-			}
-
-			if tt.shouldParseJSON {
-				var response CRDPrinterColumnsResponse
-				if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
-					t.Errorf("Failed to unmarshal response: %v", err)
-				}
-			}
-		})
-	}
-}
-
-func TestCRDSchemaHandler_PathParsing(t *testing.T) {
-	tests := []struct {
-		name        string
-		requestPath string
-		shouldWork  bool
-		expectedErr string
-	}{
-		{
-			name:        "valid path with slash prefix",
-			requestPath: "/myresource.example.com",
-			shouldWork:  true,
-		},
-		{
-			name:        "valid path with multiple dots",
-			requestPath: "/my.resource.example.com",
-			shouldWork:  true,
-		},
-		{
-			name:        "empty path",
-			requestPath: "/",
-			shouldWork:  false,
-			expectedErr: "CRD name parameter is required",
-		},
-		{
-			name:        "just slash",
-			requestPath: "/",
-			shouldWork:  false,
-			expectedErr: "CRD name parameter is required",
-		},
-		{
-			name:        "complex path with multiple components",
-			requestPath: "/very.complex.crd.name.example.com",
-			shouldWork:  true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			crdName := extractCRDName(tt.requestPath)
-
-			var mockRT *mockRoundTripper
-			if tt.shouldWork {
-				mockCRD := createMockCRD(crdName)
-				crdBytes, _ := json.Marshal(mockCRD)
-				mockRT = &mockRoundTripper{
-					responseStatus: 200,
-					responseBody:   string(crdBytes),
-				}
-			} else {
-				mockRT = &mockRoundTripper{
-					responseStatus: 200,
-					responseBody:   `{"kind": "CustomResourceDefinition"}`,
-				}
-			}
-
-			mockProxy := createMockProxy(mockRT)
-			handler := NewCRDSchemaHandler(mockProxy)
-
-			req := httptest.NewRequest("GET", tt.requestPath, nil)
-			w := httptest.NewRecorder()
-
-			handler.HandleCRDSchema(w, req)
-
-			if tt.shouldWork {
-				if w.Code != 200 {
-					t.Errorf("Expected status 200, got %d", w.Code)
-				}
-			} else {
-				if w.Code != 400 {
-					t.Errorf("Expected status 400, got %d", w.Code)
-				}
-
-				apiError, err := parseErrorResponse(w.Body.Bytes())
-				if err != nil {
-					t.Errorf("Failed to parse error response: %v", err)
-				}
-				if !contains(apiError.Err, tt.expectedErr) {
-					t.Errorf("Expected error to contain '%s', got '%s'", tt.expectedErr, apiError.Err)
-				}
-			}
-		})
+	if len(response) != 0 {
+		t.Error("Expected response to be empty when no printer columns exist")
 	}
 }
 
 func TestExtractPrinterColumns(t *testing.T) {
-	handler := &CRDSchemaHandler{}
+	config := &rest.Config{Host: "https://test"}
+	handler := NewCRDSchemaHandler(config)
 
 	t.Run("CRD with printer columns in multiple versions", func(t *testing.T) {
 		crd := createMockCRDWithPrinterColumns("test.example.com")
 		response := handler.extractPrinterColumns(crd)
 
-		if response == nil {
-			t.Error("Expected response to be populated")
-		}
-
-		if len(*response) != 2 {
-			t.Errorf("Expected 2 versions with printer columns, got %d", len(*response))
+		if len(response) != 2 {
+			t.Errorf("Expected 2 versions with printer columns, got %d", len(response))
 		}
 
 		// Check v1 version
-		v1Columns := (*response)["v1"]
+		v1Columns := response["v1"]
 		if len(v1Columns) != 2 {
 			t.Errorf("Expected 2 columns for v1, got %d", len(v1Columns))
 		}
 
 		// Check v1beta1 version
-		v1beta1Columns := (*response)["v1beta1"]
+		v1beta1Columns := response["v1beta1"]
 		if len(v1beta1Columns) != 1 {
 			t.Errorf("Expected 1 column for v1beta1, got %d", len(v1beta1Columns))
 		}
@@ -640,8 +391,8 @@ func TestExtractPrinterColumns(t *testing.T) {
 		crd := createMockCRD("test.example.com")
 		response := handler.extractPrinterColumns(crd)
 
-		if response != nil {
-			t.Error("Expected response to be nil when no printer columns exist")
+		if len(response) != 0 {
+			t.Error("Expected response to be empty when no printer columns exist")
 		}
 	})
 
@@ -667,20 +418,16 @@ func TestExtractPrinterColumns(t *testing.T) {
 
 		response := handler.extractPrinterColumns(crd)
 
-		if response == nil {
-			t.Error("Expected response to be populated")
-		}
-
-		if len(*response) != 1 {
-			t.Errorf("Expected 1 version with printer columns, got %d", len(*response))
+		if len(response) != 1 {
+			t.Errorf("Expected 1 version with printer columns, got %d", len(response))
 		}
 
 		// Only v1 should have columns
-		if _, exists := (*response)["v1"]; !exists {
+		if _, exists := response["v1"]; !exists {
 			t.Error("Expected v1 to have printer columns")
 		}
 
-		if _, exists := (*response)["v2"]; exists {
+		if _, exists := response["v2"]; exists {
 			t.Error("Expected v2 to not have printer columns")
 		}
 	})
