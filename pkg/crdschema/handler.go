@@ -1,30 +1,42 @@
 package crdschema
 
 import (
+	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"net/http/httptest"
 	"net/url"
 	"strings"
 
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
-	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils"
 )
 
 type CRDSchemaHandler struct {
-	k8sProxy *proxy.Proxy
+	anonConfig *rest.Config
 }
 
 // CRDPrinterColumnsResponse represents the response structure for printer columns
 type CRDPrinterColumnsResponse map[string][]apiextensionsv1.CustomResourceColumnDefinition
 
-func NewCRDSchemaHandler(k8sProxy *proxy.Proxy) *CRDSchemaHandler {
+var (
+	crdGVR = schema.GroupVersionResource{
+		Group:    "apiextensions.k8s.io",
+		Version:  "v1",
+		Resource: "customresourcedefinitions",
+	}
+)
+
+func NewCRDSchemaHandler(anonConfig *rest.Config) *CRDSchemaHandler {
 	return &CRDSchemaHandler{
-		k8sProxy: k8sProxy,
+		anonConfig: anonConfig,
 	}
 }
 
@@ -42,38 +54,30 @@ func (h *CRDSchemaHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// Create a new request to fetch the full CRD
 	// URL-encode the crdName to prevent path traversal and injection attacks
 	encodedCRDName := url.PathEscape(crdName)
-	crdURL := fmt.Sprintf("/apis/apiextensions.k8s.io/v1/customresourcedefinitions/%s", encodedCRDName)
 
-	// Create a new request for the CRD
-	crdReq := httptest.NewRequest(http.MethodGet, crdURL, nil)
-	crdReq.Header.Set("Accept", "application/json")
-
-	// Create a response recorder to capture the proxy response
-	recorder := httptest.NewRecorder()
-
-	// Use the proxy to fetch the CRD
-	h.k8sProxy.ServeHTTP(recorder, crdReq)
-
-	// Check if the proxy request was successful
-	if recorder.Code != http.StatusOK {
-		// Forward the error response from the proxy
-		w.WriteHeader(recorder.Code)
-		w.Header().Set("Content-Type", recorder.Header().Get("Content-Type"))
-		_, err := w.Write(recorder.Body.Bytes())
-		if err != nil {
-			klog.Errorf("Failed to write error response for CRD %s: %v", crdName, err)
-		}
+	// Create dynamic client with service account authentication
+	client, err := h.createDynamicClient()
+	if err != nil {
+		klog.Errorf("Failed to create dynamic client: %v", err)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Failed to create Kubernetes client"})
 		return
 	}
 
-	// Parse the CRD response
+	// Fetch the CRD using dynamic client
+	unstructuredCRD, err := client.Resource(crdGVR).Get(context.TODO(), encodedCRDName, metav1.GetOptions{})
+	if err != nil {
+		klog.Errorf("Failed to get CRD %s: %v", encodedCRDName, err)
+		serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: "CRD not found"})
+		return
+	}
+
+	// Convert unstructured to typed CRD
 	var crd apiextensionsv1.CustomResourceDefinition
-	if err := json.Unmarshal(recorder.Body.Bytes(), &crd); err != nil {
-		klog.Errorf("Failed to parse CRD response for %s: %v", crdName, err)
-		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Failed to parse CRD response"})
+	if err := h.convertUnstructuredToCRD(unstructuredCRD, &crd); err != nil {
+		klog.Errorf("Failed to convert unstructured CRD %s: %v", encodedCRDName, err)
+		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: "Failed to parse CRD"})
 		return
 	}
 
@@ -91,6 +95,20 @@ func (h *CRDSchemaHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Reques
 	klog.V(4).Infof("Successfully returned printer columns for CRD %s", crdName)
 }
 
+// createDynamicClient creates a dynamic client with service account authentication
+func (h *CRDSchemaHandler) createDynamicClient() (dynamic.Interface, error) {
+	client, err := dynamic.NewForConfig(h.anonConfig)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
+}
+
+// convertUnstructuredToCRD converts unstructured object to typed CRD using runtime converter
+func (h *CRDSchemaHandler) convertUnstructuredToCRD(obj *unstructured.Unstructured, crd *apiextensionsv1.CustomResourceDefinition) error {
+	return runtime.DefaultUnstructuredConverter.FromUnstructured(obj.Object, crd)
+}
+
 // extractPrinterColumns extracts additional printer columns from the CRD
 func (h *CRDSchemaHandler) extractPrinterColumns(crd *apiextensionsv1.CustomResourceDefinition) *CRDPrinterColumnsResponse {
 	response := make(CRDPrinterColumnsResponse)
@@ -100,11 +118,6 @@ func (h *CRDSchemaHandler) extractPrinterColumns(crd *apiextensionsv1.CustomReso
 		if len(version.AdditionalPrinterColumns) > 0 {
 			response[version.Name] = version.AdditionalPrinterColumns
 		}
-	}
-
-	// If no columns exist, return nil instead of empty map
-	if len(response) == 0 {
-		return nil
 	}
 
 	return &response

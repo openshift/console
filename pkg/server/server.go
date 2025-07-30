@@ -677,8 +677,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle("/api/console/version", authHandler(s.versionHandler))
 
 	// CRD Schema
-	consoleServiceProxy := proxy.NewProxyWithTransport(s.K8sProxyConfig, internalProxiedK8SRT)
-	crdSchemaHandler := crdschema.NewCRDSchemaHandler(consoleServiceProxy)
+	crdSchemaHandler := crdschema.NewCRDSchemaHandler(s.InternalProxiedK8SClientConfig)
 	handle(crdSchemaEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, crdSchemaEndpoint),
 		authHandlerWithoutToken(crdSchemaHandler.HandleCRDSchema),
