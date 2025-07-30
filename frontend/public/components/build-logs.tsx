@@ -12,8 +12,12 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { getJenkinsLogURL, BuildPipelineLogLink } from './build-pipeline';
 import { BuildStrategyType } from './build';
 import { BuildPhase } from '../module/k8s/builds';
+import { PageComponentProps } from './utils/horizontal-nav';
+import { K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
 
-const PipelineLogMessage = ({ build }) => {
+const PipelineLogMessage: React.FCC<{
+  build: K8sResourceKind;
+}> = ({ build }) => {
   const { t } = useTranslation();
   const logURL = getJenkinsLogURL(build);
   const message = logURL
@@ -30,7 +34,7 @@ const PipelineLogMessage = ({ build }) => {
   return <ConsoleEmptyState title={t('public~See Jenkins log')}>{detail}</ConsoleEmptyState>;
 };
 
-const buildPhaseToLogSourceStatus = (phase) => {
+const buildPhaseToLogSourceStatus = (phase: BuildPhase) => {
   switch (phase) {
     case BuildPhase.New:
     case BuildPhase.Pending:
@@ -47,32 +51,17 @@ const buildPhaseToLogSourceStatus = (phase) => {
   }
 };
 
-export class BuildLogs extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      status: LOG_SOURCE_WAITING,
-    };
-  }
+export const BuildLogs: React.FCC<PageComponentProps> = ({ obj: build }) => {
+  const phase = _.get(build, 'status.phase');
+  const status = buildPhaseToLogSourceStatus(phase);
 
-  static getDerivedStateFromProps({ obj: build }, { status: prevStatus }) {
-    const phase = _.get(build, 'status.phase');
-    const status = buildPhaseToLogSourceStatus(phase);
-    return prevStatus !== status ? { status } : null;
-  }
-
-  render() {
-    const { obj: build } = this.props;
-    const isPipeline = _.get(build, 'spec.strategy.type') === BuildStrategyType.JenkinsPipeline;
-
-    return (
-      <PaneBody fullHeight>
-        {isPipeline ? (
-          <PipelineLogMessage build={build} />
-        ) : (
-          <ResourceLog resource={build} resourceStatus={this.state.status} />
-        )}
-      </PaneBody>
-    );
-  }
-}
+  return (
+    <PaneBody fullHeight>
+      {_.get(build, 'spec.strategy.type') === BuildStrategyType.JenkinsPipeline ? (
+        <PipelineLogMessage build={build} />
+      ) : (
+        <ResourceLog resource={build} resourceStatus={status} />
+      )}
+    </PaneBody>
+  );
+};

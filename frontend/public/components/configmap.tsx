@@ -3,7 +3,7 @@ import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage, Table, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableData, TableProps } from './factory';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
 import {
   Kebab,
@@ -16,6 +16,7 @@ import {
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ConfigMapModel } from '../models';
 import { Grid, GridItem } from '@patternfly/react-core';
+import { ConfigMapKind } from '@console/internal/module/k8s';
 
 const menuActions = [...Kebab.getExtensionsActionsForKind(ConfigMapModel), ...Kebab.factory.common];
 
@@ -29,7 +30,7 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ConfigMapTableRow = ({ obj: configMap }) => {
+const ConfigMapTableRow: React.FCC<{ obj: ConfigMapKind }> = ({ obj: configMap }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -55,7 +56,7 @@ const ConfigMapTableRow = ({ obj: configMap }) => {
   );
 };
 
-const ConfigMaps = (props) => {
+export const ConfigMaps: React.FCC<Partial<TableProps>> = (props) => {
   const { t } = useTranslation();
   const ConfigMapTableHeader = () => [
     {
@@ -100,7 +101,7 @@ const ConfigMaps = (props) => {
   );
 };
 
-const ConfigMapsPage = (props) => {
+export const ConfigMapsPage = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/configmaps/~new/form`,
   };
@@ -109,9 +110,9 @@ const ConfigMapsPage = (props) => {
   );
 };
 
-const ConfigMapsDetailsPage = (props) => {
+export const ConfigMapsDetailsPage = (props) => {
   const { t } = useTranslation();
-  const ConfigMapDetails = ({ obj: configMap }) => {
+  const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => {
     return (
       <>
         <PaneBody>
@@ -142,5 +143,3 @@ const ConfigMapsDetailsPage = (props) => {
     />
   );
 };
-
-export { ConfigMaps, ConfigMapsPage, ConfigMapsDetailsPage };
