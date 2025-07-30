@@ -95,8 +95,11 @@ describe(`Interacting with CatalogSource page`, () => {
     cy.byLegacyTestID(testCatalogSource.metadata.name).click();
 
     cy.byTestID('Registry poll interval-details-item__edit-button').click();
-    modal.modalTitleShouldContain('Edit registry poll interval');
-    cy.byLegacyTestID('dropdown-button').click();
+    cy.byTestID('registry-poll-interval-modal-title').should(
+      'contain.text',
+      'Edit registry poll interval',
+    );
+    cy.byTestID('registry-poll-interval-dropdown').click();
     cy.byTestDropDownMenu('30m').should('be.visible').click();
     modal.submit();
 
