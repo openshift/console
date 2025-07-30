@@ -1,9 +1,12 @@
+import { ModalVariant } from '@patternfly/react-core';
 import {
   finishTourText,
   helpTourText,
   userPreferencesTourText,
 } from '@console/app/src/components/guided-tour/GuidedTourText';
 import { TourDataType } from '@console/app/src/components/tour';
+import GuidedTourIntroBanner from './GuidedTourIntroBanner';
+import GuidedTourIntroBannerDark from './GuidedTourIntroBannerDark';
 import {
   perspectiveSwitcherTourText,
   searchTourText,
@@ -18,6 +21,9 @@ export const getGuidedTour = (): TourDataType => ({
     // t('devconsole~Welcome to the Developer Perspective!')
     heading: '%devconsole~Welcome to the Developer Perspective!%',
     content: devPerspectiveTourText,
+    introBannerLight: <GuidedTourIntroBanner />,
+    introBannerDark: <GuidedTourIntroBannerDark />,
+    modalVariant: ModalVariant.medium,
   },
   steps: [
     {
@@ -70,5 +76,8 @@ export const getGuidedTour = (): TourDataType => ({
     // t('devconsole~You’re ready to go!')
     heading: '%devconsole~You’re ready to go!%',
     content: finishTourText,
+    introBannerLight: <GuidedTourIntroBanner />,
+    introBannerDark: <GuidedTourIntroBannerDark />,
+    modalVariant: ModalVariant.medium,
   },
 });
