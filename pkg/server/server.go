@@ -301,12 +301,6 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
 	}
 
-	// authHandlerWithoutToken authenticates the user but doesn't set the Authorization header
-	// This allows handlers to use internalProxiedK8SRT transport with console service account token
-	authHandlerWithoutToken := func(h http.HandlerFunc) http.HandlerFunc {
-		return authMiddlewareWithoutToken(authenticator, s.CSRFVerifier, h)
-	}
-
 	// For requests where Authorization header with valid Bearer token is expected
 	bearerTokenReviewHandler := func(h http.HandlerFunc) http.HandlerFunc {
 		return withBearerTokenReview(s.TokenReviewer, h)
@@ -680,7 +674,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	crdSchemaHandler := crdschema.NewCRDSchemaHandler(s.InternalProxiedK8SClientConfig)
 	handle(crdSchemaEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, crdSchemaEndpoint),
-		authHandlerWithoutToken(crdSchemaHandler.HandleCRDSchema),
+		authHandler(crdSchemaHandler.HandleCRDSchema),
 	))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
