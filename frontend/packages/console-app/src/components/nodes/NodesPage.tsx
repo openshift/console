@@ -284,9 +284,9 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
       : '-';
   const pods = metrics?.pods?.[nodeName] ?? '-';
   const [machineName, machineNamespace] = getNodeMachineNameAndNamespace(node);
-  const instanceType = node.metadata.labels?.['beta.kubernetes.io/instance-type'];
+  const instanceType = node.metadata?.labels?.['beta.kubernetes.io/instance-type'];
   const labels = getLabels(node);
-  const zone = node.metadata.labels?.['topology.kubernetes.io/zone'];
+  const zone = node.metadata?.labels?.['topology.kubernetes.io/zone'];
   const resourceKind = referenceFor(node);
   const context = { [resourceKind]: node };
   return (
@@ -359,7 +359,7 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
         id={nodeColumnInfo.created.id}
         activeColumnIDs={activeColumnIDs}
       >
-        <Timestamp timestamp={node.metadata.creationTimestamp} />
+        <Timestamp timestamp={node.metadata?.creationTimestamp || ''} />
       </TableData>
       <TableData
         className={nodeColumnInfo.instanceType.classes}
@@ -537,7 +537,7 @@ const CSRTableRow: React.FC<RowProps<NodeCertificateSigningRequestKind>> = ({
         id={nodeColumnInfo.created.id}
         activeColumnIDs={activeColumnIDs}
       >
-        <Timestamp timestamp={csr.metadata.creationTimestamp} />
+        <Timestamp timestamp={csr.metadata?.creationTimestamp || ''} />
       </TableData>
       <TableData
         className={nodeColumnInfo.instanceType.classes}
@@ -597,18 +597,16 @@ const NodeList: React.FC<NodeListProps> = (props) => {
   });
 
   const statusExtensions = useNodeStatusExtensions();
-  return (
-    userSettingsLoaded && (
-      <VirtualizedTable<NodeRowItem, GetNodeStatusExtensions>
-        {...props}
-        aria-label={t('public~Nodes')}
-        label={t('public~Nodes')}
-        columns={activeColumns}
-        Row={TableRow}
-        rowData={statusExtensions}
-      />
-    )
-  );
+  return userSettingsLoaded ? (
+    <VirtualizedTable<NodeRowItem, GetNodeStatusExtensions>
+      {...props}
+      aria-label={t('public~Nodes')}
+      label={t('public~Nodes')}
+      columns={activeColumns}
+      Row={TableRow}
+      rowData={statusExtensions}
+    />
+  ) : null;
 };
 
 type NodeRowItem = NodeKind | NodeCertificateSigningRequestKind;
@@ -697,7 +695,7 @@ const useWatchCSRs = (): [CertificateSigningRequestKind[], boolean, unknown] => 
           },
           isList: true,
         }
-      : undefined,
+      : null,
   );
 
   return [csrs, !checkIsLoading && loaded, error];
@@ -744,8 +742,8 @@ const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
   const { t } = useTranslation();
 
   const data = React.useMemo(() => {
-    const csrBundle = getNodeClientCSRs(csrs).filter(
-      (csr) => !nodes.some((n) => n.metadata.name === csr.metadata.name),
+    const csrBundle = getNodeClientCSRs(csrs)?.filter(
+      (csr) => !nodes.some((n) => n.metadata?.name === csr.metadata.name),
     );
     return [...csrBundle, ...nodes];
   }, [csrs, nodes]);
@@ -774,8 +772,8 @@ const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
               id: columnManagementID,
               selectedColumns:
                 selectedColumns?.[columnManagementID]?.length > 0
-                  ? new Set(selectedColumns[columnManagementID])
-                  : null,
+                  ? new Set(selectedColumns[columnManagementID] || [])
+                  : new Set(),
               type: 'Node',
             }}
           />
