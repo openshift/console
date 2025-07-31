@@ -271,10 +271,82 @@ export const keywordCompare = (filterString, item) => {
     item.name.toLowerCase().includes(filterString) ||
     _.get(item, 'obj.metadata.name', '').toLowerCase().includes(filterString) ||
     (item.description && item.description.toLowerCase().includes(filterString)) ||
-    (item.tags && item.tags.includes(filterString)) ||
     keywords.includes(filterString)
   );
 };
+
+// Calculate relevance score for an operator based on search term matches
+export const calculateRelevanceScore = (filterString, item) => {
+  if (!filterString || !item) {
+    return 0;
+  }
+
+  const searchTerm = filterString.toLowerCase();
+  const keywords = item.keywords?.map((k) => k.toLowerCase()) ?? [];
+  let score = 0;
+
+  // Title/Name matches get highest weight
+  if (item.name && typeof item.name === 'string') {
+    const itemName = item.name.toLowerCase();
+    if (itemName.includes(searchTerm)) {
+      score += 100;
+      // Exact title match gets bonus points
+      if (itemName === searchTerm) {
+        score += 50;
+      }
+      // Title starts with search term gets bonus points
+      if (itemName.startsWith(searchTerm)) {
+        score += 25;
+      }
+    }
+  }
+
+  // Metadata name matches get high weight
+  const metadataName = _.get(item, 'obj.metadata.name', '');
+  if (metadataName && typeof metadataName === 'string') {
+    const metadataNameLower = metadataName.toLowerCase();
+    if (metadataNameLower.includes(searchTerm)) {
+      score += 80;
+      if (metadataNameLower === searchTerm) {
+        score += 40;
+      }
+      if (metadataNameLower.startsWith(searchTerm)) {
+        score += 20;
+      }
+    }
+  }
+
+  // Keywords matches get medium weight
+  if (keywords.includes(searchTerm)) {
+    score += 60;
+  }
+
+  // Description matches get lowest weight
+  if (item.description && typeof item.description === 'string') {
+    const descriptionLower = item.description.toLowerCase();
+    if (descriptionLower.includes(searchTerm)) {
+      score += 20;
+      // Description starts with search term gets small bonus
+      if (descriptionLower.startsWith(searchTerm)) {
+        score += 5;
+      }
+    }
+  }
+
+  return score;
+};
+
+export const keywordCompareWithScore = (filterString, item) => {
+  const score = calculateRelevanceScore(filterString, item);
+  return {
+    matches: score > 0,
+    score,
+    item: { ...item, relevanceScore: score },
+  };
+};
+
+// Flag to indicate this function uses scoring
+keywordCompareWithScore.useScoring = true;
 
 const setURLParams = (params) => {
   const url = new URL(window.location.href);
@@ -283,17 +355,69 @@ const setURLParams = (params) => {
   history.replace(`${url.pathname}${searchParams}`);
 };
 
-export const orderAndSortByRelevance = (items) => {
+const isRedHatProvider = (item) => {
+  if (!item) return false;
+
+  if (item.provider && item.provider.toLowerCase().includes('red hat')) {
+    return true;
+  }
+
+  const metadataProvider = _.get(item, 'obj.metadata.labels.provider', '');
+  if (metadataProvider && metadataProvider.toLowerCase().includes('red hat')) {
+    return true;
+  }
+
+  return false;
+};
+
+export const orderAndSortByRelevance = (items, searchTerm = '') => {
   if (!items || !Array.isArray(items)) {
     return [];
   }
 
+  // If there's a search term, sort by relevance score first
+  if (searchTerm) {
+    const itemsWithScores = items
+      .filter((item) => item != null) // Filter out null/undefined items
+      .map((item) => ({
+        ...item,
+        relevanceScore: calculateRelevanceScore(searchTerm, item),
+      }));
+
+    return itemsWithScores.sort((a, b) => {
+      const aIsRedHat = isRedHatProvider(a);
+      const bIsRedHat = isRedHatProvider(b);
+      const scoreDiff = Math.abs(b.relevanceScore - a.relevanceScore);
+
+      // For operators with similar relevance scores (within 100 points),
+      // prioritize Red Hat first to ensure consistent ordering
+      // This covers cases where both have title matches but slight scoring differences
+      if (scoreDiff <= 100) {
+        if (aIsRedHat && !bIsRedHat) return -1;
+        if (!aIsRedHat && bIsRedHat) return 1;
+      }
+
+      // Primary sort by relevance score (descending)
+      if (b.relevanceScore !== a.relevanceScore) {
+        return b.relevanceScore - a.relevanceScore;
+      }
+
+      // Secondary sort by provider (Red Hat first) when scores are exactly equal
+      if (aIsRedHat && !bIsRedHat) return -1;
+      if (!aIsRedHat && bIsRedHat) return 1;
+
+      // Name (alphabetical)
+      return (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase());
+    });
+  }
+
+  // No search term - use original sorting logic
   const redHatItems = items
-    .filter((item) => item.provider && item.provider.includes('Red Hat'))
+    .filter((item) => item != null && isRedHatProvider(item))
     .sort((a, b) => (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase()));
 
   const nonRedHatItems = items
-    .filter((item) => !(item.provider && item.provider.includes('Red Hat')))
+    .filter((item) => item != null && !isRedHatProvider(item))
     .sort((a, b) => (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase()));
 
   return [...redHatItems, ...nonRedHatItems];
@@ -526,7 +650,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         getAvailableFilters={determineAvailableFilters}
         filterGroups={operatorHubFilterGroups}
         filterGroupNameMap={filterGroupNameMap}
-        keywordCompare={keywordCompare}
+        keywordCompare={keywordCompareWithScore}
         renderTile={renderTile}
         emptyStateTitle={t('olm~No Results Match the Filter Criteria')}
         emptyStateInfo={t(
