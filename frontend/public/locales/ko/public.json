@@ -544,7 +544,7 @@
   "An error occurred during event retrieval. Attempting to reconnect...": "이벤트 검색 중에 오류가 발생했습니다. 다시 연결하는 중 ...",
   "Events": "이벤트",
   "Connection did not close cleanly.": "연결이 제대로 닫히지 않았습니다.",
-  "Error connecting to event stream: { error }": "이벤트 스트림에 연결 오류: { error }",
+  "Error connecting to event stream: {{ error }}": "이벤트 스트림에 연결 오류: {{ error }}",
   "Error connecting to event stream": "이벤트 스트림에 연결하는 동안 오류가 발생했습니다.",
   "Loading events...": "이벤트 로드 중...",
   "Streaming events...": "이벤트 스트리밍 중...",
