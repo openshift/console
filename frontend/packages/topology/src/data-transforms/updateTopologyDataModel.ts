@@ -48,7 +48,6 @@ export const updateTopologyDataModel = (
   return dataModelContext.getExtensionModels(resources).then((extensionsModel) => {
     const fullModel = baseDataModelGetter(
       extensionsModel,
-      dataModelContext.namespace,
       resources,
       workloadResources,
       depicters,
