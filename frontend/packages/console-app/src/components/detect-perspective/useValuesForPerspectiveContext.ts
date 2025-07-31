@@ -34,5 +34,5 @@ export const useValuesForPerspectiveContext = (): [
     fireTelemetryEvent('Perspective Changed', { perspective: newPerspective });
   };
 
-  return [isValidPerspective ? perspective : undefined, setPerspective, loaded];
+  return [isValidPerspective && perspective ? perspective : '', setPerspective, loaded];
 };
