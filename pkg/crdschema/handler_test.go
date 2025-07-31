@@ -167,10 +167,10 @@ func createMockHandler(crds ...*apiextensionsv1.CustomResourceDefinition) *testa
 	}
 
 	mockClient := fake.NewSimpleDynamicClient(scheme, objects...)
-	
+
 	config := &rest.Config{Host: "https://mock-k8s-api.example.com"}
 	handler := NewCRDSchemaHandler(config)
-	
+
 	return &testableHandler{
 		CRDSchemaHandler: handler,
 		mockClient:       mockClient,
@@ -239,7 +239,7 @@ func TestCRDSchemaHandler_HandleCRDSchema(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var handler *testableHandler
-			
+
 			if tt.crdExists {
 				crdName := strings.TrimPrefix(tt.requestPath, "/")
 				mockCRD := createMockCRDWithPrinterColumns(crdName)

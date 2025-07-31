@@ -73,7 +73,6 @@ func (h *CRDSchemaHandler) HandleCRDSchema(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	
 	// IMPORTANT: Only return the printer columns, not the full CRD, to avoid leaking sensitive or unnecessary CRD data
 	response := h.extractPrinterColumns(&crd)
 
