@@ -29,7 +29,7 @@ export const tasksPage = {
     cy.get('[data-quickstart-id="qs-nav-pipelines"]').eq(1).click({ force: true });
   },
   clickOnCreatePipeline: () => {
-    cy.get('[data-test-id="dropdown-button"]').contains('Create').click({ force: true });
+    cy.byTestID('tab-list-page-create').contains('Create').click({ force: true });
     cy.byTestDropDownMenu('pipeline').click();
   },
 };
