@@ -27,8 +27,6 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk/src';
 
-const removeLeadingSlash = (str: string | undefined) => str?.replace(/^\//, '') || '';
-
 export const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
 );
@@ -176,7 +174,7 @@ export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
   const location = useLocation();
 
   const sliced = location.pathname.split('/');
-  const lastElement = sliced.pop();
+  const lastElement = decodeURIComponent(sliced.pop());
   const defaultPage =
     pages.filter((p) => {
       return p.href === lastElement;
@@ -194,7 +192,7 @@ export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
         return (
           <li className={klass} key={href}>
             <Link
-              to={`${baseURL.replace(/\/$/, '')}/${removeLeadingSlash(href)}`}
+              to={`${baseURL.replace(/\/$/, '')}/${encodeURIComponent(href)}`}
               data-test-id={`horizontal-link-${nameKey ? nameKey.split('~')[1] : name}`}
             >
               {nameKey ? t(nameKey) : name}
@@ -336,7 +334,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   const routes = pages.map((p) => {
     return (
       <Route
-        path={p.path || p.href}
+        path={p.path || encodeURIComponent(p.href)}
         key={p.nameKey || p.name}
         element={
           <ErrorBoundaryPage>
