@@ -544,7 +544,7 @@
   "An error occurred during event retrieval. Attempting to reconnect...": "Une erreur s’est produite lors de la récupération de l’événement. Tentative de reconnexion...",
   "Events": "Événements",
   "Connection did not close cleanly.": "La connexion ne s’est pas fermée proprement.",
-  "Error connecting to event stream: { error }": "Erreur de connexion au flux d’événements : { error }",
+  "Error connecting to event stream: {{ error }}": "Erreur de connexion au flux d’événements : {{ error }}",
   "Error connecting to event stream": "Erreur de connexion au flux d’événements",
   "Loading events...": "Chargement des événements...",
   "Streaming events...": "Streaming des événements...",

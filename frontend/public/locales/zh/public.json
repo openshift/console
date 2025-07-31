@@ -544,7 +544,7 @@
   "An error occurred during event retrieval. Attempting to reconnect...": "在检索事件的过程中发生错误。尝试重新连接......",
   "Events": "事件",
   "Connection did not close cleanly.": "连接没有“干净”地关闭。",
-  "Error connecting to event stream: { error }": "连接到事件流时出错： { error }",
+  "Error connecting to event stream: {{ error }}": "连接到事件流时出错： {{ error }}",
   "Error connecting to event stream": "连接到事件流时出错",
   "Loading events...": "加载事件......",
   "Streaming events...": "流事件......",
