@@ -21,10 +21,10 @@ import { MultiTabbedTerminal } from '@console/webterminal-plugin/src/components/
 
 import './CloudShellDrawer.scss';
 
-type CloudShellDrawerProps = {
+type CloudShellDrawerProps = React.PropsWithChildren<{
   open?: boolean;
   onClose: () => void;
-};
+}>;
 
 const getMastheadHeight = (): number => {
   const masthead = document.getElementById('page-main-header');
@@ -35,7 +35,7 @@ const getMastheadHeight = (): number => {
 
 const HEADER_HEIGHT = `calc(${pfSplitterHeight.var} + var(--co-cloud-shell-header-height))`;
 
-const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ open = true, onClose, children }) => {
+const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ open = true, onClose, children }) => {
   const [expanded, setExpanded] = React.useState<boolean>(true);
   const [height, setHeight] = React.useState<number>(385);
   const { t } = useTranslation('webterminal-plugin');

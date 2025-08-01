@@ -10,7 +10,7 @@ type MinimizeRestoreButtonProps = Omit<ButtonProps, 'onClick'> & {
   onClick: (minimized: boolean) => void;
 };
 
-export const MinimizeRestoreButton: React.FC<MinimizeRestoreButtonProps> = ({
+export const MinimizeRestoreButton: React.FCC<MinimizeRestoreButtonProps> = ({
   minimizeText,
   restoreText,
   minimize = true,

@@ -7,7 +7,7 @@ import AdminNamespaceSection from './AdminNamespaceSection';
 import CloudShellAdvancedOption from './CloudShellAdvancedOption';
 import NamespaceSection from './NamespaceSection';
 
-const CloudShellSetupForm: React.FC<
+const CloudShellSetupForm: React.FCC<
   Pick<
     FormikProps<FormikValues>,
     'errors' | 'handleSubmit' | 'handleReset' | 'status' | 'isSubmitting'

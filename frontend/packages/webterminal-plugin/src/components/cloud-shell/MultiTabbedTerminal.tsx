@@ -3,7 +3,7 @@ import { Tabs, Tab } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { sendActivityTick } from './cloud-shell-utils';
-import CloudShellTerminal, { CloudShellTerminalProps } from './CloudShellTerminal';
+import CloudShellTerminal from './CloudShellTerminal';
 import { TICK_INTERVAL } from './useActivityTick';
 import './MultiTabbedTerminal.scss';
 
@@ -11,13 +11,9 @@ const MAX_TERMINAL_TABS = 8;
 
 interface MultiTabbedTerminalProps {
   onClose?: () => void;
-  TerminalComponent?: React.ComponentType<CloudShellTerminalProps>;
 }
 
-export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({
-  onClose,
-  TerminalComponent = CloudShellTerminal,
-}) => {
+export const MultiTabbedTerminal: React.FCC<MultiTabbedTerminalProps> = ({ onClose }) => {
   const [terminalTabs, setTerminalTabs] = React.useState<number[]>([1]);
   const [activeTabKey, setActiveTabKey] = React.useState<number>(1);
   const [tickNamespace, setTickNamespace] = React.useState<string>(null);
@@ -107,7 +103,7 @@ export const MultiTabbedTerminal: React.FC<MultiTabbedTerminalProps> = ({
           }}
           title={t('Terminal {{number}}', { number: terminalNumber })}
         >
-          <TerminalComponent
+          <CloudShellTerminal
             terminalNumber={terminalNumber}
             setWorkspaceName={getWorkspaceName}
             setWorkspaceNamespace={getWorkspaceNamespace}
