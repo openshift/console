@@ -26,10 +26,10 @@ export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj })
         <CodeEditor
           value={manifestJson}
           language={Language.json}
+          isReadOnly
+          isMinimapVisible={false}
           minHeight="400px"
           options={{
-            readOnly: true,
-            minimap: { enabled: false },
             scrollBeyondLastLine: false,
             wordWrap: 'on',
             automaticLayout: true,
