@@ -132,7 +132,7 @@ export const ConnectedPageHeading = connectToModel(
     ) : (
       <>
         {hasButtonActions && hasData && (
-          <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+          <ActionButtons actionButtons={buttonActions.map((a) => a())} />
         )}
 
         {hasMenuActions && hasData && (
