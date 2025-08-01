@@ -19,7 +19,7 @@ import {
   brokerModelProviderForBreadcrumbs,
 } from './providers';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
-import { getKebabActionsForKind, getKebabActionsForWorkload } from './utils/kebab-actions';
+import { getKebabActionsForWorkload, getKebabActionsForKind } from './utils/kebab-actions';
 
 type ConsumedExtensions =
   | ModelDefinition
