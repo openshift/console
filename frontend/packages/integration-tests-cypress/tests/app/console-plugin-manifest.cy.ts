@@ -1,9 +1,53 @@
+import { safeLoadAll } from 'js-yaml';
 import { checkErrors } from '../../support';
 import { isLocalDevEnvironment } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
 import { guidedTour } from '../../views/guided-tour';
+import { listPage } from '../../views/list-page';
+import { modal } from '../../views/modal';
 
 const PLUGIN_NAME = 'console-demo-plugin';
+const PLUGIN_PATH = '../../../dynamic-demo-plugin';
+const PLUGIN_PULL_SPEC = Cypress.env('PLUGIN_PULL_SPEC');
+
+const enableDemoPlugin = (enable: boolean) => {
+  // find console demo plugin and enable it
+  cy.visit('k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins');
+  cy.url().should(
+    'include',
+    'k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins',
+  );
+  cy.get('.co-resource-item__resource-name').byLegacyTestID(PLUGIN_NAME).should('be.visible');
+  cy.byLegacyTestID(PLUGIN_NAME)
+    .parents('tr')
+    .within(() => {
+      cy.byTestID('edit-console-plugin').contains(enable ? 'Disabled' : 'Enabled');
+      cy.byTestID('edit-console-plugin').click();
+    });
+  modal.shouldBeOpened();
+  cy.contains('Cancel');
+  modal.modalTitleShouldContain('Console plugin enablement');
+  cy.byTestID(enable ? 'Enable-radio-input' : 'Disable-radio-input').click();
+  modal.submit();
+  modal.shouldBeClosed();
+  cy.byLegacyTestID(PLUGIN_NAME)
+    .parents('tr')
+    .within(() => {
+      cy.byTestID('edit-console-plugin').contains(enable ? 'Enabled' : 'Disabled');
+    });
+  cy.log(`Running plugin test on ci using PLUGIN_PULL_SPEC: ${PLUGIN_PULL_SPEC}`);
+  cy.byTestID(`${PLUGIN_NAME}-status`)
+    .should('include.text', enable ? 'Loaded' : '-')
+    .then(() => {
+      if (!enable) {
+        cy.byLegacyTestID(PLUGIN_NAME).click();
+        detailsPage.titleShouldContain(PLUGIN_NAME);
+        detailsPage.clickPageActionFromDropdown('Delete ConsolePlugin');
+        modal.shouldBeOpened();
+        modal.submit();
+      }
+    });
+};
 
 // Only run tests if in local dev or if CI has plugin pull spec configured
 if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
@@ -11,6 +55,56 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
     before(() => {
       cy.login();
       guidedTour.close();
+      cy.createProjectWithCLI(PLUGIN_NAME);
+      cy.readFile(`${PLUGIN_PATH}/oc-manifest.yaml`).then((textManifest) => {
+        const yamlManifest = safeLoadAll(textManifest);
+        const deployment = yamlManifest.find(({ kind }) => kind === 'Deployment');
+
+        if (!isLocalDevEnvironment && PLUGIN_PULL_SPEC) {
+          console.log('this is not a local env, setting the pull spec for the deployment');
+          deployment.spec.template.spec.containers[0].image = PLUGIN_PULL_SPEC;
+          const service = yamlManifest.find(({ kind }) => kind === 'Service');
+          const consolePlugin = yamlManifest.find(({ kind }) => kind === 'ConsolePlugin');
+          cy.exec(` echo '${JSON.stringify(deployment)}' | oc create -f -`, {
+            failOnNonZeroExit: false,
+          })
+            .its('stdout')
+            .should('contain', 'created')
+            .then(() =>
+              cy
+                .exec(` echo '${JSON.stringify(service)}' | oc create -f -`, {
+                  failOnNonZeroExit: false,
+                })
+                .then((result) => {
+                  console.log('Error: ', result.stderr);
+                  console.log('Success: ', result.stdout);
+                })
+                .its('stdout')
+                .should('contain', 'created'),
+            )
+            .then(() =>
+              cy
+                .exec(` echo '${JSON.stringify(consolePlugin)}' | oc create -f -`, {
+                  failOnNonZeroExit: false,
+                })
+                .then((result) => {
+                  console.log('Error: ', result.stderr);
+                  console.log('Success: ', result.stdout);
+                })
+                .its('stdout')
+                .should('contain', 'created'),
+            )
+            .then(() => {
+              cy.visit(`/k8s/ns/${PLUGIN_NAME}/deployments`);
+              listPage.rows.shouldBeLoaded();
+              listPage.filter.byName(PLUGIN_NAME);
+              listPage.rows.shouldExist(PLUGIN_NAME);
+              enableDemoPlugin(true);
+            });
+        } else {
+          console.log('this IS A local env, not setting the pull spec for the deployment');
+        }
+      });
     });
 
     beforeEach(() => {
@@ -29,6 +123,13 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
 
     afterEach(() => {
       checkErrors();
+    });
+
+    after(() => {
+      if (!isLocalDevEnvironment && PLUGIN_PULL_SPEC) {
+        enableDemoPlugin(false);
+      }
+      cy.deleteProjectWithCLI(PLUGIN_NAME);
     });
 
     it('should display manifest tab in ConsolePlugin details page', () => {
@@ -166,9 +267,7 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
     });
   });
 } else {
-  describe('Skipping console plugin manifest tests', () => {
-    it('Plugin tests are skipped when not in local dev and no plugin pull spec is provided', () => {
-      cy.log('Skipping tests - plugin not available in this environment');
-    });
+  xdescribe('Skipping console plugin manifest tests', () => {
+    it('If we are running with a console-operator build, skip this test as we can not build the demo plugin', () => {});
   });
 }
