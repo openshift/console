@@ -42,7 +42,7 @@ describe('units', () => {
     };
 
     test_('banana', 0, '0');
-    test_(-1, -1, '-1');
+    test_(-1, 0, '0');
     test_(-0, -0, '0');
     test_(1 / 0, 0, '0');
     test_(-1 / 0, 0, '0');
@@ -120,7 +120,7 @@ describe('units', () => {
     };
 
     test_('banana', '0 B');
-    test_(-1, '-1 B');
+    test_(-1, '0 B');
     test_(-0, '0 B');
     test_(1 / 0, '0 B');
     test_(-1 / 0, '0 B');
@@ -158,7 +158,7 @@ describe('units', () => {
     };
 
     test_('banana', '0 B');
-    test_(-1, '-1 B');
+    test_(-1, '0 B');
     test_(-0, '0 B');
     test_(1 / 0, '0 B');
     test_(-1 / 0, '0 B');
@@ -196,7 +196,7 @@ describe('units', () => {
     };
 
     test_('banana', '0 i');
-    test_(-1, '-1 i');
+    test_(-1, '0 i');
     test_(-0, '0 i');
     test_(1 / 0, '0 i');
     test_(-1 / 0, '0 i');
