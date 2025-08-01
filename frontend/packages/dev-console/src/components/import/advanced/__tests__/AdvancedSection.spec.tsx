@@ -1,22 +1,110 @@
-import * as React from 'react';
-import { shallow } from 'enzyme';
+/* eslint-disable global-require, @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports */
+import { configure, screen } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import HealthChecks from '../../../health-checks/HealthChecks';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { BuildOptions, Resources } from '../../import-types';
 import AdvancedSection from '../AdvancedSection';
-import LabelSection from '../LabelSection';
-import ResourceLimitSection from '../ResourceLimitSection';
-import RouteSection from '../RouteSection';
-import ScalingSection from '../ScalingSection';
-import ServerlessScalingSection from '../ServerlessScalingSection';
+import '@testing-library/jest-dom';
+
+configure({ testIdAttribute: 'data-test' });
+
+jest.mock('react-i18next', () => ({
+  __esModule: true,
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  Trans: function MockTrans(props) {
+    const React = require('react');
+    return React.createElement('span', { 'data-testid': 'trans' }, props.children);
+  },
+  withTranslation: () => (Component: React.ComponentType) => Component,
+}));
+
+jest.mock('@console/internal/module/k8s', () => ({
+  ...jest.requireActual('@console/internal/module/k8s'),
+  referenceFor: () => 'apps~v1~Deployment',
+  modelFor: () => ({ kind: 'Deployment', crd: false }),
+}));
+
+jest.mock('../RouteSection', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: () => React.createElement('div', { 'data-test': 'route-section' }, 'Route Section'),
+  };
+});
+
+jest.mock('../../../health-checks/HealthChecks', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: () => React.createElement('div', { 'data-test': 'health-checks' }, 'Health Checks'),
+  };
+});
+
+jest.mock('../LabelSection', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: () => React.createElement('div', { 'data-test': 'label-section' }, 'Label Section'),
+  };
+});
+
+jest.mock('../ResourceLimitSection', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: () =>
+      React.createElement(
+        'div',
+        { 'data-test': 'resource-limit-section' },
+        'Resource Limit Section',
+      ),
+  };
+});
+
+jest.mock('../ScalingSection', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: () =>
+      React.createElement('div', { 'data-test': 'scaling-section' }, 'Scaling Section'),
+  };
+});
+
+jest.mock('../ServerlessScalingSection', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: () =>
+      React.createElement(
+        'div',
+        { 'data-test': 'serverless-scaling-section' },
+        'Serverless Scaling Section',
+      ),
+  };
+});
+
+jest.mock('../DeploymentConfigSection', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: () =>
+      React.createElement(
+        'div',
+        { 'data-test': 'deployment-config-section' },
+        'Deployment Config Section',
+      ),
+  };
+});
+
+jest.mock('@console/shared/src', () => ({
+  ...jest.requireActual('@console/shared/src'),
+  ProgressiveList: ({ children }) => children,
+  ProgressiveListItem: ({ children }) => children,
+}));
 
 let advanceSectionProps: React.ComponentProps<typeof AdvancedSection>;
-
-jest.mock('formik', () => ({
-  useFormikContext: jest.fn(() => ({
-    setFieldValue: jest.fn(),
-  })),
-}));
 
 describe('AdvancedSection', () => {
   beforeEach(() => {
@@ -43,17 +131,19 @@ describe('AdvancedSection', () => {
     };
   });
 
-  it('Should render advance section for Kubernetes(D) resource and not serverless sections', () => {
-    const wrapper = shallow(<AdvancedSection {...advanceSectionProps} />);
-    const list = wrapper.find('List');
-    const listItems = list.shallow();
-    expect(wrapper.find(RouteSection).exists()).toBe(true);
-    expect(listItems.find(HealthChecks).exists()).toBe(true);
-    expect(listItems.find(ScalingSection).exists()).toBe(true);
-    expect(listItems.find(ResourceLimitSection).exists()).toBe(true);
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
 
-    expect(listItems.find(LabelSection).exists()).toBe(true);
-    expect(listItems.find(ServerlessScalingSection).exists()).toBe(false);
+  it('Should render advance section for Kubernetes(D) resource and not serverless sections', () => {
+    renderWithProviders(<AdvancedSection {...advanceSectionProps} />);
+
+    expect(screen.getByTestId('route-section')).toBeInTheDocument();
+    expect(screen.getByTestId('health-checks')).toBeInTheDocument();
+    expect(screen.getByTestId('scaling-section')).toBeInTheDocument();
+    expect(screen.getByTestId('resource-limit-section')).toBeInTheDocument();
+    expect(screen.getByTestId('label-section')).toBeInTheDocument();
+    expect(screen.queryByTestId('serverless-scaling-section')).not.toBeInTheDocument();
   });
 
   it('Should render advance section for openshift(DC) resource and not show BuildConfigSection if pipelines enabled', () => {
@@ -68,19 +158,17 @@ describe('AdvancedSection', () => {
       },
     };
 
-    const wrapper = shallow(<AdvancedSection {...newAdvanceSectionProps} />);
-    const list = wrapper.find('List');
-    const listItems = list.shallow();
-    expect(wrapper.find(RouteSection).exists()).toBe(true);
-    expect(listItems.find(HealthChecks).exists()).toBe(true);
-    expect(listItems.find(ScalingSection).exists()).toBe(true);
-    expect(listItems.find(ResourceLimitSection).exists()).toBe(true);
-    expect(listItems.find(LabelSection).exists()).toBe(true);
+    renderWithProviders(<AdvancedSection {...newAdvanceSectionProps} />);
 
-    expect(listItems.find(ServerlessScalingSection).exists()).toBe(false);
+    expect(screen.getByTestId('route-section')).toBeInTheDocument();
+    expect(screen.getByTestId('health-checks')).toBeInTheDocument();
+    expect(screen.getByTestId('scaling-section')).toBeInTheDocument();
+    expect(screen.getByTestId('resource-limit-section')).toBeInTheDocument();
+    expect(screen.getByTestId('label-section')).toBeInTheDocument();
+    expect(screen.queryByTestId('serverless-scaling-section')).not.toBeInTheDocument();
   });
 
-  it('Should render advance section specifiic for knative(KSVC) resource', () => {
+  it('Should render advance section specific for knative(KSVC) resource', () => {
     const newAdvanceSectionProps = {
       ...advanceSectionProps,
       values: {
@@ -88,15 +176,14 @@ describe('AdvancedSection', () => {
         resources: Resources.KnativeService,
       },
     };
-    const wrapper = shallow(<AdvancedSection {...newAdvanceSectionProps} />);
-    const list = wrapper.find('List');
-    const listItems = list.shallow();
-    expect(wrapper.find(RouteSection).exists()).toBe(true);
-    expect(listItems.find(HealthChecks).exists()).toBe(true);
-    expect(listItems.find(ServerlessScalingSection).exists()).toBe(true);
-    expect(listItems.find(ResourceLimitSection).exists()).toBe(true);
-    expect(listItems.find(LabelSection).exists()).toBe(true);
 
-    expect(wrapper.find(ScalingSection).exists()).toBe(false);
+    renderWithProviders(<AdvancedSection {...newAdvanceSectionProps} />);
+
+    expect(screen.getByTestId('route-section')).toBeInTheDocument();
+    expect(screen.getByTestId('health-checks')).toBeInTheDocument();
+    expect(screen.getByTestId('serverless-scaling-section')).toBeInTheDocument();
+    expect(screen.getByTestId('resource-limit-section')).toBeInTheDocument();
+    expect(screen.getByTestId('label-section')).toBeInTheDocument();
+    expect(screen.queryByTestId('scaling-section')).not.toBeInTheDocument();
   });
 });

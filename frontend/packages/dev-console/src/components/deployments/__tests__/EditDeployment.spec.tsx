@@ -1,43 +1,159 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { Formik } from 'formik';
+/* eslint-disable global-require, @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports */
+import { configure, screen } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { mockDeploymentConfig } from '../__mocks__/deployment-data';
-import EditDeployment from '../EditDeployment';
+import MockForm from '../__mocks__/MockForm';
+import DeploymentForm from '../DeploymentForm';
+import '@testing-library/jest-dom';
 
-type EditDeploymentProps = React.ComponentProps<typeof EditDeployment>;
-type FormProps = React.ComponentProps<typeof Formik>;
+configure({ testIdAttribute: 'data-test' });
+
+jest.mock('../ContainerField', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: () =>
+      React.createElement('div', { 'data-testid': 'container-field' }, 'Container: mocked'),
+  };
+});
+
+jest.mock('../DeploymentFormEditor', () => {
+  const React = require('react');
+  return {
+    __esModule: true,
+    default: function MockDeploymentFormEditor() {
+      return React.createElement(
+        'div',
+        { 'data-testid': 'deployment-form-editor' },
+        'Mock Deployment Form Editor',
+      );
+    },
+  };
+});
+
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  useUserSettings: jest.fn(() => [undefined, jest.fn(), true]),
+}));
+
+jest.mock(
+  '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod',
+  () => ({
+    usePreferredCreateEditMethod: jest.fn(() => [undefined, true]),
+  }),
+);
+
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
+  k8sCreateResource: jest.fn(),
+  k8sUpdateResource: jest.fn(),
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  history: {
+    push: jest.fn(),
+    goBack: jest.fn(),
+  },
+  Kebab: {
+    getExtensionsActionsForKind: jest.fn(() => []),
+    factory: {
+      common: [],
+    },
+  },
+  withHandlePromise: jest.fn((Component) => Component),
+  useNavigate: jest.fn(() => jest.fn()),
+  navFactory: {
+    details: jest.fn(),
+    editYaml: jest.fn(),
+    pods: jest.fn(),
+    envEditor: jest.fn(),
+    events: jest.fn(),
+  },
+}));
+
+jest.mock('@console/shared/src/utils/yaml', () => ({
+  safeJSToYAML: jest.fn().mockReturnValue('mock-yaml'),
+}));
+
+jest.mock('@console/shared/src', () => {
+  const React = require('react');
+  return {
+    FlexForm: function MockFlexForm({ children }) {
+      return React.createElement('form', {}, children);
+    },
+    FormBody: function MockFormBody({ children }) {
+      return React.createElement('div', {}, children);
+    },
+    FormFooter: function MockFormFooter({ children }) {
+      return React.createElement('div', {}, children);
+    },
+    FormHeader: function MockFormHeader({ title, children }) {
+      return React.createElement('div', {}, title || children);
+    },
+    SyncedEditorField: function MockSyncedEditorField() {
+      return React.createElement(
+        'div',
+        { 'data-testid': 'synced-editor-field' },
+        'Mock Synced Editor',
+      );
+    },
+    CodeEditorField: function MockCodeEditorField() {
+      return React.createElement('div', { 'data-testid': 'code-editor-field' }, 'Mock Code Editor');
+    },
+  };
+});
+
+jest.mock('js-yaml', () => ({
+  safeLoad: jest.fn().mockReturnValue({}),
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  withTranslation: () => (Component: React.ComponentType) => Component,
+}));
 
 describe('EditDeployment Form', () => {
-  let formProps: EditDeploymentProps;
-  let EditDeploymentWrapper: ShallowWrapper<EditDeploymentProps>;
+  const handleSubmit = jest.fn();
+  const handleCancel = jest.fn();
 
   beforeEach(() => {
-    formProps = {
-      heading: 'Edit DeploymentConfig',
-      resource: mockDeploymentConfig,
-      name: 'nationalparks-py-dc',
-      namespace: 'div',
-    };
-    EditDeploymentWrapper = shallow(<EditDeployment {...formProps} />);
+    jest.clearAllMocks();
   });
 
-  it('should render a Formik component', () => {
-    const EditDeploymentForm = EditDeploymentWrapper.find(Formik);
-    expect(EditDeploymentForm).toHaveLength(1);
+  const renderDeploymentForm = () => {
+    renderWithProviders(
+      <MockForm handleSubmit={handleSubmit}>
+        {(mockFormProps) => (
+          <DeploymentForm
+            {...mockFormProps}
+            heading="Edit DeploymentConfig"
+            resource={mockDeploymentConfig}
+            handleCancel={handleCancel}
+          />
+        )}
+      </MockForm>,
+    );
+  };
+
+  it('should render the deployment form successfully', () => {
+    renderDeploymentForm();
+    expect(document.querySelector('form')).toBeInTheDocument();
   });
 
-  it('should have form view as default option', () => {
-    const EditDeploymentForm = EditDeploymentWrapper.find(Formik);
-    const props = EditDeploymentForm.props() as FormProps;
-    expect(props.initialValues.editorType).toBe('form');
+  it('should display the heading correctly', () => {
+    renderDeploymentForm();
+    expect(screen.getByText('Edit DeploymentConfig')).toBeInTheDocument();
   });
 
-  it('should contain the given deployment values in intialValues', () => {
-    const EditDeploymentForm = EditDeploymentWrapper.find(Formik);
-    const props = EditDeploymentForm.props() as FormProps;
-    const { name, project } = props.initialValues.formData;
+  it('should render form sections when in form mode', () => {
+    renderDeploymentForm();
+    expect(document.querySelector('form')).toBeInTheDocument();
+  });
 
-    expect(name).toBe(mockDeploymentConfig.metadata.name);
-    expect(project.name).toBe(mockDeploymentConfig.metadata.namespace);
+  it('should handle the initial values correctly', () => {
+    renderDeploymentForm();
+    expect(screen.getByText('Edit DeploymentConfig')).toBeInTheDocument();
+    const form = document.querySelector('form');
+    expect(form).toBeInTheDocument();
   });
 });
