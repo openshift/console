@@ -7,7 +7,6 @@ import useCloudShellWorkspace from '../useCloudShellWorkspace';
 import { user } from './cloud-shell-test-data';
 
 jest.mock('../setup/CloudShellDeveloperSetup', () => ({
-  __esModule: true,
   default: () => 'developer-setup',
 }));
 
@@ -39,11 +38,9 @@ jest.mock('@console/shared', () => {
 
 const useFlagMock = useFlag as jest.Mock;
 
-describe('CloudShellTerminal', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
+configure({ testIdAttribute: 'data-test' });
 
+describe('CloudShellTerminal', () => {
   it('should display loading box', () => {
     useFlagMock.mockReturnValue(true);
     (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([null, false]);

@@ -26,11 +26,9 @@ const cloudShellExecProps: CloudShellExecProps = {
   flags: { [FLAGS.OPENSHIFT]: true },
 };
 
-describe('CloudShellExec', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
+configure({ testIdAttribute: 'data-test' });
 
+describe('CloudShellExec', () => {
   it('should TerminalLoadingBox On Mount', () => {
     render(<InternalCloudShellExec {...cloudShellExecProps} />);
     expect(screen.getByTestId('loading-box')).toBeInTheDocument();

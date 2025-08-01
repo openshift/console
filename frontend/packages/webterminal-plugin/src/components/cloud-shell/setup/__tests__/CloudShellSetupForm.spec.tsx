@@ -22,11 +22,9 @@ jest.mock('formik', () => ({
   getFieldId: jest.fn(),
 }));
 
-describe('CloudShellSetupForm', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
+configure({ testIdAttribute: 'data-test' });
 
+describe('CloudShellSetupForm', () => {
   it('should disable submit button', () => {
     const { rerender } = renderWithProviders(
       <CloudShellSetupForm
