@@ -73,7 +73,7 @@ func (h *UserSettingsHandler) HandleUserSettings(user *auth.User, w http.Respons
 
 func (h *UserSettingsHandler) sendErrorResponse(format string, err error, w http.ResponseWriter) {
 	errMsg := fmt.Sprintf(format, err)
-	klog.Errorf(errMsg)
+	klog.Errorf("%s", errMsg)
 	code := http.StatusBadGateway
 	if apierrors.IsNotFound(err) {
 		code = http.StatusNotFound
