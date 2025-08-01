@@ -805,6 +805,7 @@ export type NodeKind = {
   spec: {
     taints?: Taint[];
     unschedulable?: boolean;
+    providerID?: string;
   };
   status?: {
     capacity?: {
