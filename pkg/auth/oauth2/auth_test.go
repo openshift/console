@@ -167,25 +167,3 @@ func TestRedirectAuthError(t *testing.T) {
 		t.Fatalf("wrong location header, want: %s, got: %s", wantLoc.String(), loc)
 	}
 }
-
-func makeAuthenticator() (*OAuth2Authenticator, error) {
-	errURL := "https://example.com/error"
-	sucURL := "https://example.com/success"
-
-	cfg := &Config{
-		ClientID:      "fake-client-id",
-		ClientSecret:  "fake-secret",
-		RedirectURL:   "http://example.com/callback",
-		IssuerURL:     "http://auth.example.com",
-		ErrorURL:      errURL,
-		SuccessURL:    sucURL,
-		SecureCookies: true,
-	}
-
-	ccfg, err := cfg.Complete()
-	if err != nil {
-		return nil, err
-	}
-
-	return newUnstartedAuthenticator(ccfg), nil
-}
