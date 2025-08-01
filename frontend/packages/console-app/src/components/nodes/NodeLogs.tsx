@@ -262,9 +262,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
             : doc.querySelectorAll('a');
           const filenames: string[] = [];
           for (const link of links) {
-            if (link.textContent) {
-              filenames.push(link.textContent);
-            }
+            filenames.push(link.textContent ?? '');
           }
           setLogFilenames(filenames);
           setLoadingFilenames(false);

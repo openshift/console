@@ -228,7 +228,7 @@ type GetMessage = (
 ) => {
   Icon: React.ComponentType;
   message: string;
-};
+} | null;
 
 type LimitLinkProps = {
   humanize: Humanize;

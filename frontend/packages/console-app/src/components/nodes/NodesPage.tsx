@@ -757,36 +757,34 @@ const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
 
   const columns = React.useMemo(() => getColumns(t), [t]);
 
-  return (
-    userSettingsLoaded && (
-      <>
-        <ListPageHeader title={t('public~Nodes')} />
-        <ListPageBody>
-          <ListPageFilter
-            data={allData}
-            loaded={loaded}
-            rowFilters={filters}
-            onFilterChange={onFilterChange}
-            columnLayout={{
-              columns: columns.map((column) => _.pick(column, ['title', 'additional', 'id'])),
-              id: columnManagementID,
-              selectedColumns:
-                selectedColumns?.[columnManagementID]?.length > 0
-                  ? new Set(selectedColumns[columnManagementID] || [])
-                  : new Set(),
-              type: 'Node',
-            }}
-          />
-          <NodeList
-            data={filteredData}
-            unfilteredData={allData}
-            loaded={loaded}
-            loadError={loadError}
-          />
-        </ListPageBody>
-      </>
-    )
-  );
+  return userSettingsLoaded ? (
+    <>
+      <ListPageHeader title={t('public~Nodes')} />
+      <ListPageBody>
+        <ListPageFilter
+          data={allData}
+          loaded={loaded}
+          rowFilters={filters}
+          onFilterChange={onFilterChange}
+          columnLayout={{
+            columns: columns.map((column) => _.pick(column, ['title', 'additional', 'id'])),
+            id: columnManagementID,
+            selectedColumns:
+              selectedColumns?.[columnManagementID]?.length > 0
+                ? new Set(selectedColumns[columnManagementID] || [])
+                : new Set(),
+            type: 'Node',
+          }}
+        />
+        <NodeList
+          data={filteredData}
+          unfilteredData={allData}
+          loaded={loaded}
+          loadError={loadError}
+        />
+      </ListPageBody>
+    </>
+  ) : null;
 };
 
 type NodesPageProps = {
