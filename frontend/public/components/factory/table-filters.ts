@@ -9,7 +9,7 @@ import {
   AnyRowFilter,
   FilterValue,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { routeStatus } from '../routes';
+import { routeStatus } from '@console/shared/src/components/utils/routes';
 import { secretTypeFilterReducer } from '../secret';
 import { roleType } from '../RBAC/role';
 import {

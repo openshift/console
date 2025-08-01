@@ -1,5 +1,5 @@
 import { shallow } from 'enzyme';
-import { RouteLinkAndCopy } from '@console/internal/components/routes';
+import { RouteLinkAndCopy } from '@console/shared/src/components/utils/routes';
 import { mockResources } from '../../__mocks__/import-toast-mock';
 import ImportToastContent from '../ImportToastContent';
 
