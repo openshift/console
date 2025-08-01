@@ -23,6 +23,7 @@ type CatalogFiltersProps = {
   filterGroupsShowAll: { [key: string]: boolean };
   onFilterChange: (filterType: string, id: string, value: boolean) => void;
   onShowAllToggle: (groupName: string) => void;
+  sortFilterGroups?: boolean;
 };
 
 const CatalogFilters: React.FC<CatalogFiltersProps> = ({
@@ -32,13 +33,19 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
   filterGroupsShowAll,
   onFilterChange,
   onShowAllToggle,
+  sortFilterGroups,
 }) => {
-  const sortedActiveFilters = Object.keys(activeFilters)
-    .sort()
-    .reduce<CatalogFilters>((acc, groupName) => {
-      acc[groupName] = activeFilters[groupName];
-      return acc;
-    }, {});
+  const sortedActiveFilters = sortFilterGroups
+    ? Object.keys(activeFilters)
+        .sort()
+        .reduce<CatalogFilters>((acc, groupName) => {
+          acc[groupName] = activeFilters[groupName];
+          return acc;
+        }, {})
+    : Object.keys(activeFilters).reduce<CatalogFilters>((acc, groupName) => {
+        acc[groupName] = activeFilters[groupName];
+        return acc;
+      }, {});
 
   const renderFilterItem = (filter: CatalogFilterItem, filterName: string, groupName: string) => {
     const { label, active } = filter;
@@ -60,10 +67,10 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
 
   const renderFilterGroup = (filterGroup: CatalogFilter, groupName: string) => {
     const filterGroupKeys = Object.keys(filterGroup);
-    const filterGroupComparator = filterGroupMap[groupName]?.comparator ?? alphanumericCompare;
+    const filterGroupItemComparator = filterGroupMap[groupName]?.comparator ?? alphanumericCompare;
     if (filterGroupKeys.length > 0) {
       const sortedFilterGroup = filterGroupKeys
-        .sort(filterGroupComparator || alphanumericCompare)
+        .sort(filterGroupItemComparator || alphanumericCompare)
         .reduce<CatalogFilter>((acc, filterName) => {
           acc[filterName] = filterGroup[filterName];
           return acc;

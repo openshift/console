@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { CatalogCategory, CatalogSubcategory } from './types';
+import { CatalogCategory, CatalogItem, CatalogSubcategory } from '@console/dynamic-plugin-sdk/src';
 
 export const NO_GROUPING = 'none';
 export const ALL_CATEGORY = 'all';
