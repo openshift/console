@@ -15,9 +15,9 @@ type DispatchProps = {
   onClose: () => void;
 };
 
-type CloudShellProps = WithFlagsProps & StateProps & DispatchProps;
+type CloudShellProps = React.PropsWithChildren<WithFlagsProps & StateProps & DispatchProps>;
 
-const CloudShell: React.FC<CloudShellProps> = ({ flags, open, onClose, children }) => {
+const CloudShell: React.FCC<CloudShellProps> = ({ flags, open, onClose, children }) => {
   if (!flags[FLAG_DEVWORKSPACE]) {
     return <>{children}</>;
   }
