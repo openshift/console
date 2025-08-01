@@ -15,7 +15,7 @@ export const pipelinesPage = {
       if ($body.find(pipelinesPO.createPipeline).length > 0) {
         cy.get(pipelinesPO.createPipeline).click();
       } else {
-        cy.contains(`[data-test-id="dropdown-button"]`, 'Create').click();
+        cy.byTestID('tab-list-page-create').contains('Create').click();
         cy.get(pipelineBuilderPO.pipeline).click();
       }
     });
@@ -25,8 +25,8 @@ export const pipelinesPage = {
     detailsPage.titleShouldContain(pageTitle.Pipelines);
     app.waitForLoad();
     cy.get('body').then(($body) => {
-      if ($body.find('[data-test-id="dropdown-button"]').length !== 0) {
-        cy.contains('[data-test-id="dropdown-button"]', 'Create').click();
+      if ($body.find('[data-test="tab-list-page-create"]').length !== 0) {
+        cy.byTestID('tab-list-page-create').contains('Create').click();
         cy.get(pipelineBuilderPO.repository).click();
       } else {
         cy.get(pipelinesPO.createPipeline).click();

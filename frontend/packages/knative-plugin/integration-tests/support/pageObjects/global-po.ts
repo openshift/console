@@ -1,5 +1,5 @@
 export const eventingPO = {
-  createEventDropDownMenu: '[data-test-id="dropdown-button"]',
+  createEventDropDownMenu: '[data-test="tab-list-page-create"]',
   createEventSource: '[data-test-dropdown-menu="eventSource"]',
   createKnativeEvent: '[data-test="item knative-event-source"]',
   yamlEditor: 'div.monaco-scrollable-element.editor-scrollable.vs-dark',
