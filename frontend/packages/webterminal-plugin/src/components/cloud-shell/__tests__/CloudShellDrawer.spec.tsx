@@ -10,11 +10,9 @@ jest.mock('@console/webterminal-plugin/src/components/cloud-shell/MultiTabbedTer
   MultiTabbedTerminal: () => 'Terminal content',
 }));
 
-describe('CloudShellDrawerComponent', () => {
-  beforeEach(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
+configure({ testIdAttribute: 'data-test' });
 
+describe('CloudShellDrawerComponent', () => {
   it('should render children as Drawer children when present', () => {
     const wrapper = render(
       <CloudShellDrawer onClose={() => null}>

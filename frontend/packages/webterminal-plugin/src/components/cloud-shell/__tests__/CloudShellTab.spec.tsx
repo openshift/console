@@ -9,11 +9,9 @@ jest.mock('react-router-dom-v5-compat', () => ({
   Navigate: ({ to, replace }) => `redirect to ${to}${replace ? ' and also replace' : ''}`,
 }));
 
-describe('CloudShellTab', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
+configure({ testIdAttribute: 'data-test' });
 
+describe('CloudShellTab', () => {
   it('should not render redirect component if flag check is pending', () => {
     spyOn(flagsModule, 'useFlag').and.returnValue(undefined);
     renderWithProviders(<CloudShellTab />);
