@@ -17,7 +17,7 @@ const Footer = ({ children }) => {
   );
 };
 
-const List: React.FC = () => {
+const List: React.FCC = () => {
   const { t } = useTranslation();
 
   const [visibleItems, setVisibleItems] = React.useState([]);
@@ -41,7 +41,7 @@ const List: React.FC = () => {
   );
 };
 
-const CloudShellAdvancedSection: React.FC = () => {
+const CloudShellAdvancedSection: React.FCC = () => {
   return (
     <FormSection style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
       <div>

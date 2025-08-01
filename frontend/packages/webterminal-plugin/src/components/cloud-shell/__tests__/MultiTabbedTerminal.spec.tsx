@@ -10,17 +10,17 @@ jest.mock('../cloud-shell-utils', () => {
   };
 });
 
+jest.mock('@console/webterminal-plugin/src/components/cloud-shell/CloudShellTerminal', () => ({
+  default: () => 'Terminal content',
+}));
+
 const originalWindowRequestAnimationFrame = window.requestAnimationFrame;
+
+configure({ testIdAttribute: 'data-test' });
 
 describe('MultiTabTerminal', () => {
   jest.useFakeTimers();
   (sendActivityTick as jest.Mock).mockImplementation((a, b) => [a, b]);
-
-  const MockCloudShellTerminal = () => <p data-test="terminal-content">Terminal content</p>;
-
-  beforeEach(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   beforeAll(() => {
     window.requestAnimationFrame = (cb) => setTimeout(cb, 0);
@@ -33,32 +33,32 @@ describe('MultiTabTerminal', () => {
   it('should initially load with only one console', () => {
     const multiTabTerminalWrapper = render(
       <Provider store={store}>
-        <MultiTabbedTerminal TerminalComponent={MockCloudShellTerminal} />
+        <MultiTabbedTerminal />
       </Provider>,
     );
 
-    expect(multiTabTerminalWrapper.getAllByTestId('terminal-content').length).toBe(1);
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(1);
   });
 
   it('should add terminals on add terminal icon click', () => {
     const multiTabTerminalWrapper = render(
       <Provider store={store}>
-        <MultiTabbedTerminal TerminalComponent={MockCloudShellTerminal} />
+        <MultiTabbedTerminal />
       </Provider>,
     );
 
     const addTerminalButton = multiTabTerminalWrapper.getByLabelText('Add new tab');
     addTerminalButton.click();
-    expect(multiTabTerminalWrapper.getAllByTestId('terminal-content').length).toBe(2);
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(2);
     addTerminalButton.click();
     addTerminalButton.click();
-    expect(multiTabTerminalWrapper.getAllByTestId('terminal-content').length).toBe(4);
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(4);
   });
 
   it('should not allow more than 8 terminals', () => {
     const multiTabTerminalWrapper = render(
       <Provider store={store}>
-        <MultiTabbedTerminal TerminalComponent={MockCloudShellTerminal} />
+        <MultiTabbedTerminal />
       </Provider>,
     );
 
@@ -66,14 +66,14 @@ describe('MultiTabTerminal', () => {
     for (let i = 0; i < 8; i++) {
       addTerminalButton.click();
     }
-    expect(multiTabTerminalWrapper.getAllByTestId('terminal-content')).toHaveLength(8);
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content')).toHaveLength(8);
     expect(multiTabTerminalWrapper.queryByLabelText('Add new tab')).toBeNull();
   });
 
   it('should remove terminals on remove terminal icon click', () => {
     const multiTabTerminalWrapper = render(
       <Provider store={store}>
-        <MultiTabbedTerminal TerminalComponent={MockCloudShellTerminal} />
+        <MultiTabbedTerminal />
       </Provider>,
     );
 
@@ -83,10 +83,10 @@ describe('MultiTabTerminal', () => {
     }
 
     multiTabTerminalWrapper.getAllByLabelText('Close terminal tab').at(7).click();
-    expect(multiTabTerminalWrapper.getAllByTestId('terminal-content').length).toBe(7);
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(7);
     multiTabTerminalWrapper.getAllByLabelText('Close terminal tab').at(6).click();
     multiTabTerminalWrapper.getAllByLabelText('Close terminal tab').at(5).click();
-    expect(multiTabTerminalWrapper.getAllByTestId('terminal-content').length).toBe(5);
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(5);
   });
 
   jest.clearAllTimers();

@@ -1,12 +1,14 @@
-import { shallow } from 'enzyme';
-import { StatusBox } from '@console/internal/components/utils/status-box';
+import { configure, render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { useFlag } from '@console/shared';
 import { InternalCloudShellTerminal } from '../CloudShellTerminal';
-import CloudShellDeveloperSetup from '../setup/CloudShellDeveloperSetup';
-import TerminalLoadingBox from '../TerminalLoadingBox';
 import useCloudShellNamespace from '../useCloudShellNamespace';
 import useCloudShellWorkspace from '../useCloudShellWorkspace';
 import { user } from './cloud-shell-test-data';
+
+jest.mock('../setup/CloudShellDeveloperSetup', () => ({
+  default: () => 'developer-setup',
+}));
 
 jest.mock('../useCloudShellWorkspace', () => ({
   default: jest.fn(),
@@ -36,46 +38,48 @@ jest.mock('@console/shared', () => {
 
 const useFlagMock = useFlag as jest.Mock;
 
+configure({ testIdAttribute: 'data-test' });
+
 describe('CloudShellTerminal', () => {
   it('should display loading box', () => {
     useFlagMock.mockReturnValue(true);
     (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([null, false]);
     (useCloudShellNamespace as jest.Mock).mockReturnValueOnce(['sample-namespace', '']);
-    const wrapper = shallow(
+    render(
       <InternalCloudShellTerminal
         user={user}
         userSettingState="my-app"
         setUserSettingState={jest.fn()}
       />,
     );
-    expect(wrapper.find(TerminalLoadingBox)).toHaveLength(1);
+    expect(screen.getByTestId('loading-box')).toBeInTheDocument();
   });
 
   it('should display error statusBox', () => {
     useFlagMock.mockReturnValue(true);
     (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([null, false, true]);
     (useCloudShellNamespace as jest.Mock).mockReturnValueOnce(['sample-namespace', '']);
-    const wrapper = shallow(
+    render(
       <InternalCloudShellTerminal
         user={user}
         userSettingState="my-app"
         setUserSettingState={jest.fn()}
       />,
     );
-    expect(wrapper.find(StatusBox)).toHaveLength(1);
+    expect(screen.getByTestId('console-empty-state')).toBeInTheDocument();
   });
 
   it('should display form if loaded and no workspace', () => {
     useFlagMock.mockReturnValue(true);
-    (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([[], true]);
-    (useCloudShellNamespace as jest.Mock).mockReturnValueOnce(['sample-namespace', '']);
-    const wrapper = shallow(
+    (useCloudShellWorkspace as jest.Mock).mockReturnValue([[], true]);
+    (useCloudShellNamespace as jest.Mock).mockReturnValue(['sample-namespace', '']);
+    render(
       <InternalCloudShellTerminal
         user={user}
         userSettingState="my-app"
         setUserSettingState={jest.fn()}
       />,
     );
-    expect(wrapper.find(CloudShellDeveloperSetup)).toHaveLength(1);
+    expect(screen.getByText('developer-setup')).toBeInTheDocument();
   });
 });

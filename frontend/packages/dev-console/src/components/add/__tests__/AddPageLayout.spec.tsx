@@ -20,14 +20,12 @@ jest.mock('@console/app/src/components/quick-starts/utils/useQuickStarts', () =>
   useQuickStarts: () => [[], true, null],
 }));
 
+configure({ testIdAttribute: 'data-test' });
+
 describe('AddPageLayout', () => {
   const props = { title: 'title' };
   const useAddActionExtensionsSpy = jest.spyOn(utils, 'useAddActionExtensions');
   const useAccessFilterExtensionsSpy = jest.spyOn(accessFilterHook, 'useAccessFilterExtensions');
-
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   afterEach(() => {
     jest.resetAllMocks();

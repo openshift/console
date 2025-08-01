@@ -2,14 +2,12 @@ import { render, screen, fireEvent, configure } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 
+configure({ testIdAttribute: 'data-test' });
+
 describe('ConfigureUpdateStrategy', () => {
   let onChangeStrategyType: jest.Mock;
   let onChangeMaxSurge: jest.Mock;
   let onChangeMaxUnavailable: jest.Mock;
-
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   beforeEach(() => {
     onChangeStrategyType = jest.fn();

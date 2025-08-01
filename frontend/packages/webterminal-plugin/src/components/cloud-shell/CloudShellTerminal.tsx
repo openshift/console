@@ -42,7 +42,7 @@ export type CloudShellTerminalProps = {
 
 type CloudShellTerminalInternalProps = StateProps & CloudShellTerminalProps;
 
-const CloudShellTerminal: React.FC<
+const CloudShellTerminal: React.FCC<
   CloudShellTerminalInternalProps & WithUserSettingsCompatibilityProps<string>
 > = ({
   user,

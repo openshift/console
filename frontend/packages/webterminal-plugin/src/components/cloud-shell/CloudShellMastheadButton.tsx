@@ -20,7 +20,7 @@ type StateProps = {
 
 type Props = StateProps & DispatchProps;
 
-const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
+const ClouldShellMastheadButton: React.FCC<Props> = ({ onClick, open }) => {
   const terminalAvailable = useCloudShellAvailable();
   const fireTelemetryEvent = useTelemetry();
 
