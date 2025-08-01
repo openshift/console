@@ -41,7 +41,7 @@ const ConfigureUnschedulableModal: React.FC<ConfigureUnschedulableModalProps> = 
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitText={t('console-app~Mark unschedulable')}
-        cancel={cancel ? () => cancel() : () => {}}
+        cancel={cancel ?? (() => {})}
       />
     </form>
   );

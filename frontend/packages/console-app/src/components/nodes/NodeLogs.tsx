@@ -185,7 +185,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
   const [path, setPath] = React.useState(getQueryArgument(pathQueryArgument) || pathItems[0]);
   const [logURL, setLogURL] = React.useState('');
   const [logFilenames, setLogFilenames] = React.useState<string[]>([]);
-  const [unit, setUnit] = React.useState(getQueryArgument(unitQueryArgument));
+  const [unit, setUnit] = React.useState(getQueryArgument(unitQueryArgument) || '');
   const [logFilename, setLogFilename] = React.useState(getQueryArgument(logQueryArgument));
   const [isLoadingLog, setLoadingLog] = React.useState(true);
   const [isLoadingFilenames, setLoadingFilenames] = React.useState(true);
@@ -234,7 +234,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       if (unitText) {
         extendedURL = `${baseURL}?${getUnitQueryParams(unitText)}`;
       }
-      return resourceURL(modelFor(kind || ''), {
+      return resourceURL(modelFor(kind), {
         name,
         ns,
         path: extendedURL || baseURL,
@@ -245,7 +245,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
 
   React.useEffect(() => {
     if (!path || isJournal) {
-      const journalLogURL = getLogURL('', unit || '');
+      const journalLogURL = getLogURL('', unit);
       setLogURL(journalLogURL);
     } else {
       if (path && logFilename) {
@@ -262,7 +262,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
             : doc.querySelectorAll('a');
           const filenames: string[] = [];
           for (const link of links) {
-            filenames.push(link.textContent ?? '');
+            filenames.push(link.textContent as string);
           }
           setLogFilenames(filenames);
           setLoadingFilenames(false);

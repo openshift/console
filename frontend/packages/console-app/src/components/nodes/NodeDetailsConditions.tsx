@@ -38,10 +38,10 @@ const NodeDetailsConditions: React.FC<NodeDetailsConditionsProps> = ({ node }) =
                   <CamelCaseWrap value={c.reason || ''} />
                 </td>
                 <td className="pf-v6-c-table__td">
-                  <Timestamp timestamp={c.lastHeartbeatTime || ''} />
+                  <Timestamp timestamp={c.lastHeartbeatTime} />
                 </td>
                 <td className="pf-v6-c-table__td">
-                  <Timestamp timestamp={c.lastTransitionTime || ''} />
+                  <Timestamp timestamp={c.lastTransitionTime} />
                 </td>
               </tr>
             ))}

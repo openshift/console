@@ -26,7 +26,7 @@ const DeletePDBModal: React.FC<DeletePDBModalProps> = ({ close, pdb, workloadNam
     setIsSubmitting(true);
     k8sKill(PodDisruptionBudgetModel, pdb)
       .then(() => {
-        close?.();
+        close();
       })
       .catch((error) => {
         setSubmitError(
@@ -65,7 +65,7 @@ const DeletePDBModal: React.FC<DeletePDBModalProps> = ({ close, pdb, workloadNam
         submitText={t('console-app~Remove')}
         submitDanger
         submitDisabled={!!submitError}
-        cancel={close || (() => {})}
+        cancel={close}
       />
     </Form>
   );
@@ -73,7 +73,8 @@ const DeletePDBModal: React.FC<DeletePDBModalProps> = ({ close, pdb, workloadNam
 
 export const deletePDBModal = createModalLauncher(DeletePDBModal);
 
-export type DeletePDBModalProps = ModalComponentProps & {
+export type DeletePDBModalProps = Omit<ModalComponentProps, 'close'> & {
+  close: () => void;
   pdb: PodDisruptionBudgetKind;
   workloadName: string;
 };

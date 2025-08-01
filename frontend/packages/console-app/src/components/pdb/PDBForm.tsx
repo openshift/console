@@ -77,7 +77,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   const [inProgress, setInProgress] = React.useState(false);
   const [requirement, setRequirement] = React.useState('');
   const [isDisabled, setDisabled] = React.useState(true);
-  const [labels, setLabels] = React.useState([]);
+  const [labels, setLabels] = React.useState<string[]>([]);
   const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind | null>(
     null,
   );
