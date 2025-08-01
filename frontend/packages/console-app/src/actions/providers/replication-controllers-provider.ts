@@ -4,10 +4,10 @@ import { DeploymentConfigModel } from '@console/internal/models';
 import { ReplicationControllerKind, referenceFor } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { usePDBActions } from '../creators/pdb-factory';
 import { CommonActionCreator, ReplicationControllerActionCreator } from '../hooks/types';
 import { useCommonActions } from '../hooks/useCommonActions';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
+import { usePDBActions } from '../hooks/usePDBActions';
 import { useReplicationControllerActions } from '../hooks/useReplicationControllerActions';
 
 export const useReplicationControllerActionsProvider = (resource: ReplicationControllerKind) => {
