@@ -25,6 +25,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/auth/sessions"
+	"github.com/openshift/console/pkg/crdschema"
 	devconsole "github.com/openshift/console/pkg/devconsole"
 	"github.com/openshift/console/pkg/devfile"
 	gql "github.com/openshift/console/pkg/graphql"
@@ -83,6 +84,7 @@ const (
 	sha256Prefix                          = "sha256~"
 	tokenizerPageTemplateName             = "tokener.html"
 	updatesEndpoint                       = "/api/check-updates"
+	crdSchemaEndpoint                     = "/api/console/crd-columns/"
 )
 
 type CustomFaviconPath struct {
@@ -667,6 +669,16 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	}
 
 	handle("/api/console/version", authHandler(s.versionHandler))
+
+	// CRD Schema
+	// NOTE: We are using the InternalProxiedK8SClientConfig service account to make the Kubernetes API request
+	// This endpoint is accessible to ALL logged in users, even if the user does not have the RBAC role to the CRD
+	// Therefore only the printer columns are returned, not the full CRD
+	crdSchemaHandler := crdschema.NewCRDSchemaHandler(s.InternalProxiedK8SClientConfig)
+	handle(crdSchemaEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, crdSchemaEndpoint),
+		authHandler(crdSchemaHandler.HandleCRDSchema),
+	))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
