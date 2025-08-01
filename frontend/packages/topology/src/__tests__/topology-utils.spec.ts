@@ -7,17 +7,17 @@ import {
 } from '../utils/topology-utils';
 import { topologyDataModel } from './topology-test-data';
 
-let patchData = null;
-
 describe('Topology Utils', () => {
-  beforeAll(() => {
+  let patchData = null;
+  beforeEach(() => {
+    patchData = null;
     jest.spyOn(k8sResourceModule, 'k8sPatch').mockImplementation((model, item, patch) => {
       patchData = patch;
       return Promise.resolve();
     });
   });
 
-  afterAll(() => {
+  afterEach(() => {
     jest.restoreAllMocks();
   });
 
