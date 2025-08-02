@@ -10,7 +10,7 @@ type NodeDetailsImagesProps = {
 };
 
 const NodeDetailsImages: React.FC<NodeDetailsImagesProps> = ({ node }) => {
-  const images = _.filter(node.status.images, 'names');
+  const images = _.filter(node.status?.images, 'names');
   const { t } = useTranslation();
   return (
     <PaneBody>

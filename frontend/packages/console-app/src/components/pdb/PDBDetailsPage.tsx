@@ -44,7 +44,7 @@ const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({
               obj={obj}
               path="status.disruptionsAllowed"
             >
-              {obj.status.disruptionsAllowed}
+              {obj.status?.disruptionsAllowed}
             </DetailsItem>
           </DescriptionList>
         </GridItem>

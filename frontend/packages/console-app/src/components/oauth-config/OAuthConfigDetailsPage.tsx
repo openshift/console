@@ -6,7 +6,8 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { OAuthConfigDetails } from './OAuthConfigDetails';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(OAuthModel), ...common];
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const menuActions = [...Kebab.getExtensionsActionsForKind(OAuthModel), ...common!];
 const oAuthReference = referenceForModel(OAuthModel);
 
 const OAuthConfigDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => (

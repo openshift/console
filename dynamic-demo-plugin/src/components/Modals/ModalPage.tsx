@@ -155,12 +155,12 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
   }, [launchModal]);
 
   const onClickWithID1 = React.useCallback(
-    () => launchModal(TestComponentWithID1, {}, TEST_ID_1),
+    () => launchModal(TestComponentWithID1, {}),
     [launchModal],
   );
 
   const onClickWithID2 = React.useCallback(
-    () => launchModal(TestComponentWithID2, { testProp: 'abc' }, TEST_ID_2),
+    () => launchModal(TestComponentWithID2, { testProp: 'abc' }),
     [launchModal],
   );
 
