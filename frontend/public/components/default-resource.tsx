@@ -16,9 +16,9 @@ import { DetailsPage, ListPage, Table, TableData, TableProps, RowFunctionArgs } 
 import {
   referenceFor,
   K8sResourceKind,
-  modelFor,
   referenceForExtensionModel,
   ExtensionK8sGroupModel,
+  CRDAdditionalPrinterColumn,
 } from '../module/k8s';
 import {
   DetailsItem,
@@ -44,6 +44,27 @@ const { common } = Kebab.factory;
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
+const getPathArray = (path: string) => {
+  return JSONPath.toPathArray(path);
+};
+
+const checkPathHasSpecialCharacter = (path: string) => {
+  const pathArray = getPathArray(path);
+  return pathArray.some((segment) => /[^a-zA-Z0-9]/.test(segment));
+};
+
+const getMaxAdditionalPrinterColumns = (columns: CRDAdditionalPrinterColumn[]) => {
+  return columns.slice(0, 3);
+};
+
+const checkColumnsForCreationTimestamp = (columns: CRDAdditionalPrinterColumn[]) => {
+  return columns.some((col) => col.jsonPath === '.metadata.creationTimestamp');
+};
+
+const checkAdditionalPrinterColumns = (columns: CRDAdditionalPrinterColumn[]) => {
+  return columns.length > 0;
+};
+
 export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ obj }) => {
   const { t } = useTranslation();
   const groupVersionKind = getGroupVersionKindForResource(obj);
@@ -68,7 +89,7 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
   const hasRightDetailsItems = rightDetailsItems.length > 0;
 
   const additionalPrinterColumns = useCRDAdditionalPrinterColumns(model);
-  const hasAdditionalPrinterColumns = additionalPrinterColumns.length > 0;
+  const hasAdditionalPrinterColumns = checkAdditionalPrinterColumns(additionalPrinterColumns);
 
   return (
     <>
@@ -93,17 +114,16 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
                   {hasAdditionalPrinterColumns && (
                     <>
                       {additionalPrinterColumns.map((col) => {
-                        const pathArray = JSONPath.toPathArray(col.jsonPath.replace(/^\./, ''));
-                        const pathArrayHasSpecialCharacter = pathArray.some((segment) =>
-                          /[^a-zA-Z0-9]/.test(segment),
-                        );
+                        const path = col.jsonPath;
+                        const pathArray = getPathArray(path);
+                        const pathHasSpecialCharacter = checkPathHasSpecialCharacter(path);
 
                         return (
                           <DetailsItem
                             key={col.name}
                             obj={obj}
                             label={col.name}
-                            path={!pathArrayHasSpecialCharacter && pathArray}
+                            path={!pathHasSpecialCharacter && pathArray}
                           >
                             <AdditionalPrinterColumnValue col={col} obj={obj} />
                           </DetailsItem>
@@ -149,6 +169,8 @@ const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, cust
   const hasExtensionActions =
     resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
 
+  const additionalPrinterColumns = customData.additionalPrinterColumns;
+
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -165,9 +187,22 @@ const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, cust
           t('public~None')
         )}
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
+      {additionalPrinterColumns.map((col) => {
+        return (
+          <TableData
+            key={col.name}
+            className={tableColumnClasses[2]}
+            dataTest={`additional-printer-column-data-${col.name}`}
+          >
+            <AdditionalPrinterColumnValue col={col} obj={obj} />
+          </TableData>
+        );
+      })}
+      {!checkColumnsForCreationTimestamp(additionalPrinterColumns) && (
+        <TableData className={tableColumnClasses[2]} dataTest="column-data-Created">
+          <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        </TableData>
+      )}
       <TableData className={tableColumnClasses[3]}>
         {hasExtensionActions ? (
           <LazyActionMenu context={{ [kind]: obj }} />
@@ -183,9 +218,28 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
   const { t } = useTranslation();
 
   const { kinds } = props;
+  const [model] = useK8sModel(kinds[0]);
+  const additionalPrinterColumns = getMaxAdditionalPrinterColumns(
+    useCRDAdditionalPrinterColumns(model),
+  );
 
   const TableHeader = () => {
-    return [
+    const additionalPrinterColumnsHeaders = additionalPrinterColumns.map((col) => {
+      const path = col.jsonPath;
+      const pathHasSpecialCharacter = checkPathHasSpecialCharacter(path);
+
+      return {
+        title: col.name,
+        sortField: pathHasSpecialCharacter ? undefined : path.replace(/^\./, ''),
+        transforms: pathHasSpecialCharacter ? undefined : [sortable],
+        props: {
+          className: tableColumnClasses[2],
+          'data-test': `additional-printer-column-header-${col.name}`,
+        },
+      };
+    });
+
+    const headers = [
       {
         title: t('public~Name'),
         sortField: 'metadata.name',
@@ -198,21 +252,26 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
-      {
-        title: t('public~Created'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
+      ...additionalPrinterColumnsHeaders,
       {
         title: '',
         props: { className: tableColumnClasses[3] },
       },
     ];
+
+    if (!checkColumnsForCreationTimestamp(additionalPrinterColumns)) {
+      headers.splice(headers.length - 1, 0, {
+        title: t('public~Created'),
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2], 'data-test': 'column-header-Created' },
+      });
+    }
+
+    return headers;
   };
 
-  const getAriaLabel = (item) => {
-    const model = modelFor(item);
+  const getAriaLabel = () => {
     // API discovery happens asynchronously. Avoid runtime errors if the model hasn't loaded.
     if (!model) {
       return '';
@@ -222,19 +281,23 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
 
   const customData = React.useMemo(
     () => ({
+      additionalPrinterColumns,
       kind: kinds[0],
     }),
-    [kinds],
+    [additionalPrinterColumns, kinds],
   );
+
+  const hasAdditionalPrinterColumns = checkAdditionalPrinterColumns(additionalPrinterColumns);
 
   return (
     <Table
       {...props}
-      aria-label={getAriaLabel(kinds[0])}
+      aria-label={getAriaLabel()}
       customData={customData}
       Header={TableHeader}
       Row={TableRowForKind}
       virtualize
+      data-test={hasAdditionalPrinterColumns ? 'has-additional-printer-columns' : undefined}
     />
   );
 };

@@ -175,11 +175,12 @@ export const TableData: React.FC<TableDataProps> = ({
   className,
   columnID,
   columns,
+  dataTest,
   showNamespaceOverride,
   children,
 }) => {
   return isColumnVisible(window.innerWidth, columnID, columns, showNamespaceOverride) ? (
-    <Td data-label={columnID} className={className} role="gridcell">
+    <Td data-label={columnID} className={className} role="gridcell" data-test={dataTest}>
       {children}
     </Td>
   ) : null;
@@ -189,6 +190,7 @@ export type TableDataProps = {
   className?: string;
   columnID?: string;
   columns?: Set<string>;
+  dataTest?: string;
   id?: string;
   showNamespaceOverride?: boolean;
 };
