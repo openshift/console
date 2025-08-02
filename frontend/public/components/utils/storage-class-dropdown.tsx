@@ -5,7 +5,8 @@ import * as fuzzy from 'fuzzysearch';
 /* eslint-disable import/named */
 import { WithTranslation, withTranslation } from 'react-i18next';
 
-import { Firehose, LoadingInline, Dropdown, ResourceName, ResourceIcon } from '.';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { Firehose, LoadingInline, ResourceName, ResourceIcon } from '.';
 import { isDefaultClass } from '../storage-class';
 import { css } from '@patternfly/react-styles';
 
@@ -149,7 +150,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
   };
 
   render() {
-    const { id, loaded, describedBy, noSelection, t } = this.props;
+    const { id, loaded, describedBy, t } = this.props;
     const items = {};
     _.each(
       this.state.items,
@@ -177,18 +178,18 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
             >
               {t('public~StorageClass')}
             </label>
-            <Dropdown
+            <ConsoleSelect
               className="co-storage-class-dropdown"
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               autocompleteFilter={this.autocompleteFilter}
               autocompletePlaceholder={t('public~Select StorageClass')}
               items={items}
               selectedKey={selectedKey}
               title={this.state.title}
+              alwaysShowTitle
               onChange={this.onChange}
               id={id}
               dataTest={this.props?.['data-test']}
-              noSelection={noSelection}
               menuClassName="dropdown-menu--text-wrap"
             />
             {describedBy && (
@@ -266,6 +267,5 @@ export type StorageClassDropdownInnerProps = WithTranslation & {
   required?: boolean;
   hideClassName?: string;
   filter?: (param) => boolean;
-  noSelection?: boolean;
   selectedKey?: string;
 };

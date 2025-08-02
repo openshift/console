@@ -4,8 +4,9 @@ import { UploadIcon } from '@patternfly/react-icons';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { getIcon, getIcons } from '@console/internal/components/catalog/catalog-item-icon';
-import { Dropdown } from '@console/internal/components/utils/dropdown';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { CustomIconModal } from './CustomIconModal';
+
 import './IconDropdown.scss';
 
 export type IconDropdownProps = {
@@ -21,8 +22,8 @@ type IconProps = {
 };
 
 const Icon: React.FC<IconProps> = ({ label, url }) => (
-  <div className="odc-icon-dropdown__item">
-    <img src={url} width="24" height="24" alt="" className="icon" />
+  <div className="pf-v6-u-display-flex pf-v6-u-align-items-center">
+    <img src={url} width="28" height="28" alt="" className="odc-icon-bg pf-v6-u-mr-sm" />
     {label}
   </div>
 );
@@ -67,14 +68,14 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
     <>
       <Split hasGutter>
         <SplitItem isFilled>
-          <Dropdown
+          <ConsoleSelect
             title={title}
             items={items}
-            autoSelect
+            alwaysShowTitle
             autocompletePlaceholder={t('Select an icon')}
             autocompleteFilter={iconLabelAutocompleteFilter}
-            dropDownClassName="dropdown--full-width odc-icon-dropdown"
-            menuClassName="odc-icon-dropdown__menu"
+            isFullWidth
+            className="odc-icon-dropdown"
             onChange={(value: string) => {
               // runtime icon and custom icon are mutually exclusive
               onRuntimeIconChanged(value);

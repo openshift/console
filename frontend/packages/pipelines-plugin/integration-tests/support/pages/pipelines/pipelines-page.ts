@@ -27,9 +27,6 @@ export const pipelinesPage = {
     cy.get('body').then(($body) => {
       if ($body.find('[data-test="tab-list-page-create"]').length !== 0) {
         cy.byTestID('tab-list-page-create').contains('Create').click();
-        cy.get(pipelineBuilderPO.repository).click();
-      } else {
-        cy.get(pipelinesPO.createPipeline).click();
       }
     });
   },

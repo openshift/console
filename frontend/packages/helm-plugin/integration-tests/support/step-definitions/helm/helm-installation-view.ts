@@ -8,7 +8,7 @@ When('user searches and selects {string} helm chart from catalog page', (helmCha
 });
 
 Then('user will see the information of all the chart versions', () => {
-  cy.get('[data-test-id="dropdown-menu"]').should('have.length.gte', 1);
+  cy.byTestID('console-select-item').should('have.length.gte', 1);
   cy.byLegacyTestID('reset-button').click();
 });
 
