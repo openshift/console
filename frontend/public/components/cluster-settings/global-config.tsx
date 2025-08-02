@@ -152,15 +152,15 @@ export const GlobalConfigPage: React.FC = () => {
             apiGroup: 'monitoring.coreos.com',
             id: 'alertmanager',
             description: 'Configure grouping and routing of alerts',
-            path: '/monitoring/alertmanagerconfig',
+            path: '/settings/cluster/alertmanagerconfig',
             menuItems: [
               {
                 label: t('public~Create Receiver'),
-                href: '/monitoring/alertmanagerconfig/receivers/~new',
+                href: '/settings/cluster/alertmanagerconfig/receivers/~new',
               },
               {
                 label: t('public~Edit configuration YAML'),
-                href: `/monitoring/alertmanageryaml`,
+                href: `/settings/cluster/alertmanageryaml`,
               },
             ],
           },
