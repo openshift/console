@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteLinkAndCopy } from '@console/internal/components/routes';
 import { K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
+import { RouteLinkAndCopy } from '@console/shared/src/components/utils/routes';
 
 interface ImportToastContentProps {
   deployedResources: K8sResourceKind[];
