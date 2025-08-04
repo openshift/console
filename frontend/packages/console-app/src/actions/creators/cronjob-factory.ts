@@ -29,7 +29,7 @@ const startJob = (obj: CronJobKind): Promise<JobKind> => {
       ],
     },
     spec: {
-      template: obj.spec.jobTemplate.spec.template,
+      ...obj.spec.jobTemplate.spec,
     },
   };
 
