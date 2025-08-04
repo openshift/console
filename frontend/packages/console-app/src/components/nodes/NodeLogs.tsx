@@ -156,7 +156,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
   const pathItems = ['journal'];
   isWindows
     ? pathItems.push('containers', 'hybrid-overlay', 'kube-proxy', 'kubelet', 'containerd', 'wicd')
-    : labels['node-role.kubernetes.io/master'] === '' &&
+    : labels?.['node-role.kubernetes.io/master'] === '' &&
       pathItems.push('openshift-apiserver', 'kube-apiserver', 'oauth-apiserver');
   const pathQueryArgument = 'path';
   const unitQueryArgument = 'unit';
