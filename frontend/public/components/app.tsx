@@ -24,7 +24,7 @@ import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, startAPIDiscovery } from '../actions/k8s';
 import { pluginStore } from '../plugins';
 // cloud shell imports must come later than features
-import CloudShellDrawer from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
+import { CloudShellDrawer } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellDrawer';
 import CloudShellTab from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
