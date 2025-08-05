@@ -1,7 +1,7 @@
 import { act } from 'react-dom/test-utils';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { DevfileSample } from '../../../import/devfile/devfile-types';
 import useDevfileSamples from '../useDevfileSamples';
 import { devfileSamples, expectedCatalogItems } from './useDevfileSamples.data';

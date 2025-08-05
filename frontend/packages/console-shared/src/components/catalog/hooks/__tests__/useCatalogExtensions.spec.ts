@@ -5,7 +5,7 @@ import {
   CatalogItemFilter,
   CatalogItemMetadataProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions';
-import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import useCatalogExtensions from '../useCatalogExtensions';
 
 let mockExtensions: (

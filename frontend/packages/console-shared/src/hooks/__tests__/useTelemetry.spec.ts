@@ -8,7 +8,7 @@ import {
   USER_TELEMETRY_ANALYTICS,
   useUserSettings,
 } from '@console/shared';
-import { testHook } from '../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import {
   getClusterProperties,
   updateClusterPropertiesFromTests,

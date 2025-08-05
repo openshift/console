@@ -2,8 +2,8 @@ import * as _ from 'lodash';
 import { DeploymentConfigModel, PodModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RevisionModel } from '@console/knative-plugin';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { t } from '../../../../../__mocks__/i18next';
-import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import { ExtPodKind } from '../../types';
 import {
   deployment,

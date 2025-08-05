@@ -1,7 +1,7 @@
 import { TechPreviewBadge } from '@console/shared';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { PIPELINE_GA_VERSION, TRIGGERS_GA_VERSION } from '../../components/pipelines/const';
 import * as operatorUtils from '../../components/pipelines/utils/pipeline-operator';
-import { testHook } from '../../test-data/test-utils';
 import { usePipelineTechPreviewBadge, useTriggersTechPreviewBadge } from '../hooks';
 
 describe('usePipelineTechPreviewBadge:', () => {

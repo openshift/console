@@ -1,5 +1,5 @@
 import { useResolvedExtensions, AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { testHook } from '../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { useAddActionExtensions } from '../useAddActionExtensions';
 
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
