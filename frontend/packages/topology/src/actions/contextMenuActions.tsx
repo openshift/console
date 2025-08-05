@@ -1,17 +1,12 @@
 import * as React from 'react';
-import {
-  Node,
-  ContextSubMenuItem,
-  ContextMenuItem,
-  Graph,
-  GraphElement,
-} from '@patternfly/react-topology';
+import { Node, ContextSubMenuItem, ContextMenuItem, Graph } from '@patternfly/react-topology';
 import {
   Action,
   GroupedMenuOption,
   MenuOption,
   MenuOptionType,
 } from '@console/dynamic-plugin-sdk/src';
+import { ContextMenuActions } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { referenceFor } from '@console/internal/module/k8s';
 import { getMenuOptionType, orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
@@ -51,7 +46,7 @@ export const groupActionContext = (element: Node, connectorSource?: Node) => ({
   'topology-context-actions': { element, connectorSource },
 });
 
-export const contextMenuActions = (element: GraphElement) => {
+export const contextMenuActions: ContextMenuActions = (element) => {
   const resource = getResource(element);
   const { csvName } = element.getData()?.data ?? {};
   return {

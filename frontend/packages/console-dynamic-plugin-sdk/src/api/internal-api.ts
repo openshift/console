@@ -1,4 +1,5 @@
 /* eslint-disable */
+import * as React from 'react';
 import {
   ActivityItemProps,
   ActivityBodyProps,
@@ -20,7 +21,9 @@ import {
   UseURLPoll,
   UseLastNamespace,
 } from './internal-types';
-import { UseUserSettings } from '../extensions';
+import { UseUserSettings } from '../extensions/console-types';
+
+export * from './internal-topology-api';
 
 export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
   .default;

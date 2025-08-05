@@ -1,22 +1,8 @@
-import { NamespaceMetrics } from '@console/internal/actions/ui';
+import { GetPodMetricStats } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { formatBytesAsMiB, formatCores } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { PodRCData } from '@console/shared/src';
 
-export type PodStats = {
-  name: string;
-  value: number;
-  formattedValue: string;
-};
-
-export type MetricStats = {
-  totalBytes?: number;
-  totalCores?: number;
-  memoryByPod?: PodStats[];
-  cpuByPod?: PodStats[];
-};
-
-export const getPodMetricStats = (metrics: NamespaceMetrics, podData: PodRCData): MetricStats => {
+export const getPodMetricStats: GetPodMetricStats = (metrics, podData) => {
   const currentPods = podData.current ? podData.current.pods : podData.pods;
   let totalBytes = 0;
   let totalCores = 0;

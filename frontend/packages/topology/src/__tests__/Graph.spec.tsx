@@ -13,7 +13,7 @@ describe('Graph', () => {
   beforeEach(() => {
     mockSelectFn = jest.fn();
     const model = { nodes: [], edges: [] };
-    topologyData = baseDataModelGetter(model, 'test-project', MockGraphResources, []);
+    topologyData = baseDataModelGetter(model, MockGraphResources, []);
     graphWrapper = mount(
       <ConnectedTopologyView
         model={topologyData}

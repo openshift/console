@@ -1,7 +1,12 @@
 import * as _ from 'lodash-es';
 import i18next from 'i18next';
-
+import { PodPhase } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ContainerSpec, ContainerStatus, PodKind, Volume, VolumeMount } from './types';
+
+export type {
+  PodPhase,
+  PodReadiness,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const getRestartPolicy = (pod: PodKind) =>
   _.find(
@@ -145,9 +150,6 @@ export const getVolumeLocation = (volume: Volume) => {
 };
 
 export const getRestartPolicyLabel = (pod: PodKind) => _.get(getRestartPolicy(pod), 'label', '');
-
-export type PodReadiness = string;
-export type PodPhase = string;
 
 export const getVolumeMountPermissions = (v: VolumeMount) => {
   if (!v) {
