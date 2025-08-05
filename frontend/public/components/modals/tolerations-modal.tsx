@@ -7,7 +7,8 @@ import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-ci
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
 
-import { Dropdown, EmptyBox, withHandlePromise, HandlePromiseProps } from '../utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { EmptyBox, withHandlePromise, HandlePromiseProps } from '../utils';
 import { K8sKind, k8sPatch, Toleration, TolerationOperator } from '../../module/k8s';
 import {
   createModalLauncher,
@@ -150,12 +151,13 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     </Td>
                     <Td dataLabel={t('public~Operator')}>
                       {isEditable(toleration) ? (
-                        <Dropdown
-                          dropDownClassName="dropdown--full-width"
+                        <ConsoleSelect
+                          isFullWidth
                           items={operators}
                           onChange={(op: TolerationOperator) => opChange(op, i)}
                           selectedKey={operator}
                           title={operators[operator]}
+                          alwaysShowTitle
                         />
                       ) : (
                         <span className="pf-v6-c-form-control pf-m-readonly">
@@ -179,12 +181,13 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                     </Td>
                     <Td dataLabel={t('public~Effect')}>
                       {isEditable(toleration) ? (
-                        <Dropdown
-                          dropDownClassName="dropdown--full-width"
+                        <ConsoleSelect
+                          isFullWidth
                           items={effects}
                           onChange={(e: string) => change(e, i, 'effect')}
                           selectedKey={effect}
                           title={effects[effect]}
+                          alwaysShowTitle
                         />
                       ) : (
                         <span className="pf-v6-c-form-control pf-m-readonly">

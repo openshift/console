@@ -3,7 +3,7 @@ import { pipelineBuilderPO } from '../../page-objects/pipelines-po';
 
 export const tasksPage = {
   clickOnCreateTask: () => {
-    cy.get('[data-test-id="dropdown-button"]').click();
+    cy.get('[data-test="console-select-menu-toggle"]').click();
     cy.byTestDropDownMenu('tasks').click();
     yamlEditor.isLoaded();
   },

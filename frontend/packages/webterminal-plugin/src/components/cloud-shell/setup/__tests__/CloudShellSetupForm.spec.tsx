@@ -1,12 +1,32 @@
-import { shallow } from 'enzyme';
-import { FormFooter } from '@console/shared';
-import AdminNamespaceSection from '../AdminNamespaceSection';
+import { configure, screen } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import CloudShellSetupForm from '../CloudShellSetupForm';
-import NamespaceSection from '../NamespaceSection';
+import '@testing-library/jest-dom';
+
+jest.mock('react-i18next', () => ({
+  ...jest.requireActual('react-i18next'),
+  Trans: ({ children }: { children }) => children || null,
+}));
+
+jest.mock('@openshift-console/plugin-shared/src/hooks/useResizeObserver', () => ({
+  useResizeObserver: jest.fn(),
+}));
+
+jest.mock('formik', () => ({
+  useField: jest.fn(() => [{}, {}]),
+  useFormikContext: jest.fn(() => ({
+    setFieldValue: jest.fn(),
+    setFieldTouched: jest.fn(),
+    validateForm: jest.fn(),
+  })),
+  getFieldId: jest.fn(),
+}));
+
+configure({ testIdAttribute: 'data-test' });
 
 describe('CloudShellSetupForm', () => {
   it('should disable submit button', () => {
-    const wrapper = shallow(
+    const { rerender } = renderWithProviders(
       <CloudShellSetupForm
         errors={{}}
         isSubmitting={false}
@@ -14,17 +34,31 @@ describe('CloudShellSetupForm', () => {
         handleReset={() => {}}
       />,
     );
-    expect(wrapper.find(FormFooter).props().disableSubmit).toBeFalsy();
+    expect(screen.getByTestId('save-changes')).not.toBeDisabled();
 
-    wrapper.setProps({ isSubmitting: true });
-    expect(wrapper.find(FormFooter).props().disableSubmit).toBeTruthy();
+    rerender(
+      <CloudShellSetupForm
+        errors={{}}
+        isSubmitting
+        handleSubmit={() => {}}
+        handleReset={() => {}}
+      />,
+    );
+    expect(screen.getByTestId('save-changes')).toBeDisabled();
 
-    wrapper.setProps({ isSubmitting: false, errors: { test: 'test' } });
-    expect(wrapper.find(FormFooter).props().disableSubmit).toBeTruthy();
+    rerender(
+      <CloudShellSetupForm
+        errors={{ test: 'test' }}
+        isSubmitting={false}
+        handleSubmit={() => {}}
+        handleReset={() => {}}
+      />,
+    );
+    expect(screen.getByTestId('save-changes')).toBeDisabled();
   });
 
   it('should display submit errors', () => {
-    const wrapper = shallow(
+    renderWithProviders(
       <CloudShellSetupForm
         errors={{}}
         isSubmitting={false}
@@ -33,11 +67,11 @@ describe('CloudShellSetupForm', () => {
         status={{ submitError: 'test' }}
       />,
     );
-    expect(wrapper.find(FormFooter).props().errorMessage).toBe('test');
+    expect(screen.getByTestId('alert-error')).toHaveTextContent('test');
   });
 
   it('should display AdminNamespaceSection for admins and not display NamespaceSection', () => {
-    const wrapper = shallow(
+    renderWithProviders(
       <CloudShellSetupForm
         errors={{}}
         isSubmitting={false}
@@ -46,12 +80,12 @@ describe('CloudShellSetupForm', () => {
         isAdmin
       />,
     );
-    expect(wrapper.find(NamespaceSection).exists()).toBe(false);
-    expect(wrapper.find(AdminNamespaceSection).exists()).toBe(true);
+    expect(screen.queryByTestId('webterminal-namespace-dropdown')).not.toBeInTheDocument();
+    expect(screen.getByTestId('admin-namespace-section')).toBeInTheDocument();
   });
 
   it('should display NamespaceSection for non admins and not display AdminNamespaceSection', () => {
-    const wrapper = shallow(
+    renderWithProviders(
       <CloudShellSetupForm
         errors={{}}
         isSubmitting={false}
@@ -59,7 +93,7 @@ describe('CloudShellSetupForm', () => {
         handleReset={() => {}}
       />,
     );
-    expect(wrapper.find(AdminNamespaceSection).exists()).toBe(false);
-    expect(wrapper.find(NamespaceSection).exists()).toBe(true);
+    expect(screen.queryByTestId('admin-namespace-section')).not.toBeInTheDocument();
+    expect(screen.getByTestId('webterminal-namespace-dropdown')).toBeInTheDocument();
   });
 });

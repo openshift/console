@@ -47,8 +47,8 @@ export const topologyPO = {
     connector: '[data-test-id="edge-handler"]',
     routeDecorator: '[aria-label="Open URL"]',
     subscriber: {
-      filterItemLink: '[data-test="dropdown-menu-item-link"]',
-      filterText: '[data-test-id="dropdown-text-filter"]',
+      filterItemLink: '[data-test="console-select-item"]',
+      filterText: '[data-test="console-select-search-input"]',
       filterField: '[id="form-ns-dropdown-ref-name-field"]',
     },
     displayOptions: {
@@ -159,11 +159,11 @@ export const topologyPO = {
     secretForm: '.co-create-secret-form.modal-content',
     createSecretButton: '[data-test="images-section"]  button',
     secretDropDown: '[id="form-ns-dropdown-formData-imagePullSecret-field"]',
-    secretDropDownItem: '[data-test="dropdown-menu-item-link"]',
+    secretDropDownItem: '[data-test="console-select-item"]',
     formInputs: {
       secretFormTitle: '[data-test-id="modal-title"]',
       secretName: '[id="secret-name"]',
-      authenticationType: '[data-test-id="dropdown-button"]',
+      authenticationType: '[data-test="console-select-menu-toggle"]',
       imageRegistryCredentials: '[data-test-dropdown-menu="credentials"]',
       uploadConfigurationFile: '[data-test-dropdown-menu="config-file"]',
       registryServerAddress: 'input[name="address"]',
@@ -200,7 +200,7 @@ export const topologyPO = {
     enterReplica: 'input[id="form-number-spinner-formData-replicas-field"]',
     saveEdit: '[data-test-id="submit-button"]',
     selectSecret: '[id="form-ns-dropdown-formData-imagePullSecret-field"]',
-    dropdownSecret: '[data-test-id="dropdown-text-filter"]',
+    dropdownSecret: '[data-test="console-select-search-input"]',
     timeout:
       'input[id="form-input-formData-deploymentStrategy-recreateParams-timeoutSeconds-field"]',
     deployImageCheckbox: 'input[name="formData.fromImageStreamTag"]',

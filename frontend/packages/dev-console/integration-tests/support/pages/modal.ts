@@ -16,7 +16,7 @@ export const addSubscription = {
     cy.get('[id="form-input-formData-metadata-name-field"]').clear().type(name),
   selectKnativeService: (knativeService: string = 'nodejs-ex-git') => {
     cy.get('[id$="subscriber-ref-name-field"]').click();
-    cy.get('[data-test="dropdown-menu-item-link"]').contains(knativeService).click();
+    cy.get('[data-test="console-select-item"]').contains(knativeService).click();
   },
 };
 

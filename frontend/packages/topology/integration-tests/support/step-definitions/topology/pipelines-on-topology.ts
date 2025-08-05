@@ -102,7 +102,7 @@ When('user clicks on Start on the {string} pipeline', (workloadName: string) => 
 });
 
 When('user can see "PVC" in workspace with name of PVC', () => {
-  cy.byLegacyTestID('dropdown-button').should('include.text', 'PersistentVolumeClaim');
+  cy.byTestID('console-select-menu-toggle').should('include.text', 'PersistentVolumeClaim');
   cy.get(topologyPO.pipelines.pvcIcon).should('include.text', 'PVC');
   cy.byLegacyTestID('modal-cancel-action').click();
 });

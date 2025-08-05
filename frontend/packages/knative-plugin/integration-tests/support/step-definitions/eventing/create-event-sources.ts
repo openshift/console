@@ -190,7 +190,7 @@ Then(
       .scrollIntoView()
       .should('be.visible')
       .click();
-    cy.get("[role='listbox']")
+    cy.byTestID('console-select-menu-list')
       .should('be.visible')
       .should('contain', option1)
       .and('contain', option2);

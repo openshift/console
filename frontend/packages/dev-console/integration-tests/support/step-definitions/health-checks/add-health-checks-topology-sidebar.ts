@@ -7,10 +7,10 @@ import { topologyPO } from '../../pageObjects';
 import { navigateTo, perspective, topologyHelper, topologySidePane } from '../../pages';
 
 Given('user selects type as {string}', (type: string) => {
-  cy.byLegacyTestID('dropdown-button').should('be.visible').click();
-  cy.byLegacyTestID('dropdown-menu').contains(type).should('be.visible').click();
+  cy.byTestID('console-select-menu-toggle').should('be.visible').click();
+  cy.byTestID('console-select-item').contains(type).should('be.visible').click();
   cy.get('body').then(($el) => {
-    if ($el.find('[data-test-id="dropdown-button"]').text().includes('Container command')) {
+    if ($el.find('[data-test="console-select-menu-toggle"]').text().includes('Container command')) {
       cy.get('[placeholder="argument"]').should('be.visible').type('example');
     }
   });

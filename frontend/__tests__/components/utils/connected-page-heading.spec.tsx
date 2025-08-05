@@ -4,11 +4,9 @@ import { ConnectedPageHeading } from '../../../public/components/utils/headings'
 import { testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { MemoryRouter } from 'react-router-dom-v5-compat';
 
-describe(ConnectedPageHeading.displayName, () => {
-  beforeEach(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
+configure({ testIdAttribute: 'data-test' });
 
+describe(ConnectedPageHeading.displayName, () => {
   it('renders resource icon if given `kind`', () => {
     const kind = 'Pod';
     render(

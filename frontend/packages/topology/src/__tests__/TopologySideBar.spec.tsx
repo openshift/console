@@ -11,11 +11,9 @@ jest.mock('@patternfly/react-core', () => ({
   DrawerPanelContent: ({ children }) => children,
 }));
 
-describe('TopologySideBar', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
+configure({ testIdAttribute: 'data-test' });
 
+describe('TopologySideBar', () => {
   it('renders children and close button', () => {
     const handleClose = jest.fn();
     render(<TopologySideBar onClose={handleClose} />);

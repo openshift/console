@@ -7,7 +7,8 @@ import { FormGroup, Radio } from '@patternfly/react-core';
 import { K8sKind, k8sList, k8sPatch, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { Dropdown, ResourceIcon, ResourceName, resourcePathFromModel } from '../utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { ResourceIcon, ResourceName, resourcePathFromModel } from '../utils';
 /* eslint-disable import/named */
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -178,7 +179,7 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
           <label className="co-required" htmlFor="co-add-secret-to-workload__workload">
             {t('public~Add this secret to workload')}
           </label>
-          <Dropdown
+          <ConsoleSelect
             items={workloadOptions}
             selectedKey={selectedWorkloadUID}
             title={selectWorkloadPlaceholder}

@@ -1,5 +1,6 @@
 import { ValidatedOptions, TextInputTypes, gridItemSpanValueShape } from '@patternfly/react-core';
 import { JSONSchema7 } from 'json-schema';
+import { ConsoleSelectProps } from '@console/internal/components/utils/console-select';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { RowRendererProps } from './multi-column-field/MultiColumnFieldRow';
 
@@ -58,14 +59,13 @@ export interface SearchInputFieldProps extends BaseInputFieldProps {
 }
 
 export interface DropdownFieldProps extends FieldProps {
-  items?: object;
-  selectedKey?: string;
-  title?: React.ReactNode;
-  fullWidth?: boolean;
-  disabled?: boolean;
-  autocompleteFilter?: (text: string, item: object, key?: string) => boolean;
+  items?: ConsoleSelectProps['items'];
+  selectedKey?: ConsoleSelectProps['selectedKey'];
+  title?: ConsoleSelectProps['title'];
+  fullWidth?: ConsoleSelectProps['isFullWidth'];
+  disabled?: ConsoleSelectProps['disabled'];
+  autocompleteFilter?: ConsoleSelectProps['autocompleteFilter'];
   onChange?: (value: string) => void;
-  placeholder?: string;
 }
 
 export type FormSelectFieldOption<T = any> = {
