@@ -71,6 +71,9 @@ export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGrid
       isClickable
       isSelectable
       isExpanded={isOpen}
+      {...({
+        selectableActions: { selectableActionAriaLabelledby: 'expandable-card-title' },
+      } as any)}
     >
       <CardHeader
         onExpand={() => setIsOpen(!isOpen)}

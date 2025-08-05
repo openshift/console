@@ -72,6 +72,9 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
       data-test={title.toLowerCase().replace(/\s+/g, '-')}
       isClickable
       isSelectable
+      {...({
+        selectableActions: { selectableActionAriaLabel: `Select ${title} monitoring graph` },
+      } as any)}
     >
       <CardHeader
         actions={{
