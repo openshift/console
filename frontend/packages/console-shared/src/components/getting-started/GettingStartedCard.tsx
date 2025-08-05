@@ -98,10 +98,12 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                           target: '_blank',
                           rel: 'noopener noreferrer',
                           'data-test': `item ${link.id}`,
+                          'aria-label': link.title,
                         }
                       : {
                           to: link.href,
                           'data-test': `item ${link.id}`,
+                          'aria-label': link.title,
                         }
                   }
                   href={link.href}
