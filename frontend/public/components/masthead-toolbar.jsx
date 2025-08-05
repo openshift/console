@@ -32,8 +32,8 @@ import {
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import CloudShellMastheadButton from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
-import CloudShellMastheadAction from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
+import { CloudShellMastheadButton } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
+import { CloudShellMastheadAction } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
 import { getUser, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
 import { flagPending, featureReducerName } from '../reducers/features';

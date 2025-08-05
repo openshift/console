@@ -33,23 +33,20 @@ export const webTerminalPage = {
     cy.get('button').contains('Restart terminal');
   },
 
-  exitFromCloseTerminalSessionDialod: () => {
-    cy.alertTitleShouldContain('Close terminal?');
-    cy.byTestID('modal-cancel-action').click();
-  },
-
   closeCurrentTerminalSession: () => {
     cy.get(webTerminalPO.terminalCloseWindowBtn).click();
-    cy.alertTitleShouldContain('Close terminal?');
-    cy.byTestID('confirm-action').click();
+    cy.get('[data-ouia-component-id="WebTerminalCloseConfirmation"] h1')
+      .should('be.visible')
+      .and('contain.text', 'Close terminal?');
+    cy.get('[data-ouia-component-id="WebTerminalCloseConfirmation-confirm-button"]').click();
   },
 
   deleteTerminalInstanceActionMenu: () => {
     cy.byLegacyTestID('actions-menu-button').should('be.visible').click();
     cy.get('[role="menu"]').should('be.visible');
     cy.byTestActionID('Delete DevWorkspace').should('be.visible').click();
-    cy.get('[aria-label="Modal"]').should('be.visible');
-    cy.byTestID('confirm-action').click();
+    cy.get('[data-ouia-component-id="WebTerminalCloseConfirmation"]').should('be.visible');
+    cy.get('[data-ouia-component-id="WebTerminalCloseConfirmation-confirm-button"]').click();
     cy.byTestID('empty-box').should('be.visible');
   },
 };

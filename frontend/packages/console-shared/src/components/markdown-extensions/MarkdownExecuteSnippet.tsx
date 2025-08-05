@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import useCloudShellAvailable from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
+import { useCloudShellAvailable } from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
 import { useCloudShellCommandDispatch } from '@console/webterminal-plugin/src/redux/actions/cloud-shell-dispatchers';
 import { useEventListener } from '../../hooks';
 import { Tooltip } from '../Tooltip/Tooltip';

@@ -3,10 +3,6 @@
   "Configure default timeout and image of web terminal operator.": "Configure default timeout and image of web terminal operator.",
   "DevWorkspaceTemplate": "DevWorkspaceTemplate",
   "DevWorkspaceTemplates": "DevWorkspaceTemplates",
-  "Close terminal?": "Close terminal?",
-  "This will close the terminal session. Content in the terminal will not be restored on next session.": "This will close the terminal session. Content in the terminal will not be restored on next session.",
-  "Yes": "Yes",
-  "No": "No",
   "OpenShift command line terminal": "OpenShift command line terminal",
   "Open terminal in new tab": "Open terminal in new tab",
   "Minimize terminal": "Minimize terminal",
@@ -46,5 +42,9 @@
   "Number of {{sizeUnit}}": "Number of {{sizeUnit}}",
   "Mark the configuration resource as \"Unmanaged\" to keep the default timeout even after operator restart or update.": "Mark the configuration resource as \"Unmanaged\" to keep the default timeout even after operator restart or update.",
   "Mark the configuration resource as \"Unmanaged\" to keep the default image even after operator restart or update.": "Mark the configuration resource as \"Unmanaged\" to keep the default image even after operator restart or update.",
-  "Save": "Save"
+  "Save": "Save",
+  "Close terminal?": "Close terminal?",
+  "This will close the terminal session. Content in the terminal will not be restored on next session.": "This will close the terminal session. Content in the terminal will not be restored on next session.",
+  "Yes": "Yes",
+  "No": "No"
 }

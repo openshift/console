@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { CheckIconConfig, CopyIconConfig, PlayIconConfig } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { getSvgFromPfIconConfig } from '@console/shared/src/utils/icon-utils';
-import useCloudShellAvailable from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
+import { useCloudShellAvailable } from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_EXECUTE_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 import './showdown-extension.scss';
 
