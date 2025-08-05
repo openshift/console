@@ -19,6 +19,7 @@ export const configureJobParallelismModal = (props) =>
     m.configureJobParallelismModal(props),
   );
 
+/** @deprecated use `useWarningModal` instead */
 export const confirmModal = (props) =>
   import('./confirm-modal' /* webpackChunkName: "confirm-modal" */).then((m) =>
     m.confirmModal(props),

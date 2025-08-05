@@ -18,13 +18,13 @@ import { ExternalLinkButton } from '@console/shared/src/components/links/Externa
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { MinimizeRestoreButton } from '@console/webterminal-plugin/src/components/cloud-shell/MinimizeRestoreButton';
 import { MultiTabbedTerminal } from '@console/webterminal-plugin/src/components/cloud-shell/MultiTabbedTerminal';
+import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dispatchers';
+import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
+import { useCloudShellAvailable } from './useCloudShellAvailable';
 
 import './CloudShellDrawer.scss';
 
-type CloudShellDrawerProps = React.PropsWithChildren<{
-  open?: boolean;
-  onClose: () => void;
-}>;
+type CloudShellDrawerProps = React.PropsWithChildren<{}>;
 
 const getMastheadHeight = (): number => {
   const masthead = document.getElementById('page-main-header');
@@ -35,11 +35,19 @@ const getMastheadHeight = (): number => {
 
 const HEADER_HEIGHT = `calc(${pfSplitterHeight.var} + var(--co-cloud-shell-header-height))`;
 
-const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ open = true, onClose, children }) => {
+export const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ children }) => {
   const [expanded, setExpanded] = React.useState<boolean>(true);
   const [height, setHeight] = React.useState<number>(385);
   const { t } = useTranslation('webterminal-plugin');
   const fireTelemetryEvent = useTelemetry();
+
+  const open = useIsCloudShellExpanded();
+  const toggleCloudShellExpanded = useToggleCloudShellExpanded();
+  const devWorkspaceAvailable = useCloudShellAvailable();
+
+  if (!devWorkspaceAvailable) {
+    return <>{children}</>;
+  }
 
   const onMRButtonClick = (expandedState: boolean) => {
     setExpanded(!expandedState);
@@ -88,7 +96,7 @@ const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ open = true, onClo
               <Tooltip content={t('Close terminal')}>
                 <DrawerCloseButton
                   aria-label={t('Close terminal')}
-                  onClose={onClose}
+                  onClose={toggleCloudShellExpanded}
                   data-test="cloudshell-drawer-close-button"
                 />
               </Tooltip>
@@ -96,7 +104,7 @@ const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ open = true, onClo
           </FlexItem>
         </Flex>
       </DrawerHead>
-      <MultiTabbedTerminal onClose={onClose} />
+      <MultiTabbedTerminal onClose={toggleCloudShellExpanded} />
     </DrawerPanelContent>
   );
 
@@ -108,5 +116,3 @@ const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ open = true, onClo
     </Drawer>
   );
 };
-
-export default CloudShellDrawer;
