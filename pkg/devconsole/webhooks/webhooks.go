@@ -8,7 +8,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"slices"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/devconsole/common"
@@ -20,6 +19,15 @@ var client *http.Client = &http.Client{
 	},
 }
 
+func contains(slice []string, item string) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
+}
+
 func makeHTTPRequest(ctx context.Context, url string, headers http.Header, body []byte, proxyHeaderDenyList []string) (common.DevConsoleCommonResponse, error) {
 	serviceRequest, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
@@ -27,7 +35,7 @@ func makeHTTPRequest(ctx context.Context, url string, headers http.Header, body 
 	}
 
 	for key, values := range headers {
-		if slices.Contains(proxyHeaderDenyList, key) {
+		if contains(proxyHeaderDenyList, key) {
 			continue
 		}
 		for _, value := range values {

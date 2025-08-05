@@ -20,6 +20,8 @@ import (
 	"github.com/coreos/pkg/health"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
@@ -164,6 +166,7 @@ type Server struct {
 	HubConsoleURL                       *url.URL // TODO remove multicluster
 	I18nNamespaces                      []string
 	InactivityTimeout                   int
+	InternalProxiedK8SClientConfig      *rest.Config
 	K8sClient                           *http.Client
 	K8sMode                             string
 	K8sProxyConfig                      *proxy.Config
@@ -246,6 +249,11 @@ func (s *Server) getManagedClusterList() []string {
 }
 
 func (s *Server) HTTPHandler() http.Handler {
+	internalProxiedDynamic, err := dynamic.NewForConfig(s.InternalProxiedK8SClientConfig)
+	if err != nil {
+		return nil
+	}
+
 	mux := http.NewServeMux()
 
 	// TODO remove multicluster
