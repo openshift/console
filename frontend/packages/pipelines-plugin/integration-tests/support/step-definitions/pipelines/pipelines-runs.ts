@@ -484,7 +484,7 @@ When('user clicks Show VolumeClaimTemplate options', () => {
 
 When('user selects Storage Class as {string} from dropdown', (storageClassName: string) => {
   cy.byTestID('storageclass-dropdown').click();
-  cy.byLegacyTestID('dropdown-text-filter').type(storageClassName);
+  cy.byTestID('console-select-search-input').type(storageClassName);
   cy.get(`[id="${storageClassName}-link"]`).click();
 });
 
@@ -528,7 +528,7 @@ Then(
       'PersistentVolumeClaim',
       'VolumeClaimTemplate',
     ];
-    cy.byLegacyTestID('dropdown-menu').each(($el) => {
+    cy.byTestID('console-select-item').each(($el) => {
       expect(options).toContain($el.text());
     });
     modal.cancel();

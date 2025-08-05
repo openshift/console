@@ -84,7 +84,7 @@ if (Cypress.env('BRIDGE_AWS')) {
       modal.submitShouldBeEnabled();
       cy.byTestID('input-request-size').clear().type(cloneSize);
       cy.byTestID('storage-class-dropdown').click();
-      cy.byTestID('dropdown-menu-item-link').contains('gp3-csi').click();
+      cy.byTestID('console-select-item').contains('gp3-csi').click();
       modal.submit();
       modal.shouldBeClosed();
       cy.location('pathname').should(

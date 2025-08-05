@@ -5,7 +5,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circ
 import { css } from '@patternfly/react-styles';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { Dropdown } from '@console/internal/components/utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { MatchExpression, Operator } from '@console/internal/module/k8s';
 
 const UNARY_OPERATORS = [Operator.Exists, Operator.DoesNotExist];
@@ -39,8 +39,8 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
         </span>
       </Td>
       <Td dataLabel={t('olm~Operator')}>
-        <Dropdown
-          dropDownClassName="dropdown--full-width"
+        <ConsoleSelect
+          isFullWidth
           items={allowedOperators.reduce((acc, o) => ({ ...acc, [o]: o }), {})}
           onChange={(newOperator: Operator) => onChange({ key, operator: newOperator, values: [] })}
           selectedKey={expression.operator}

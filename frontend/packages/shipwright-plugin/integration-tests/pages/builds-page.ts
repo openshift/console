@@ -8,7 +8,7 @@ export const buildsPage = {
     app.waitForLoad();
     cy.get('button');
     cy.get('body').then(() => {
-      cy.contains(`[data-test-id="dropdown-button"]`, 'Create').click();
+      cy.contains(`[data-test="console-select-menu-toggle"]`, 'Create').click();
       cy.get(buildPO.shipwrightBuild.createShipwrightBuild).click();
     });
   },

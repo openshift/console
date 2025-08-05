@@ -95,7 +95,6 @@ const MoveConnectionForm: React.FC<
           <FormGroup fieldId="target-node" label="Target">
             <Select
               id="target-node-dropdown"
-              className="dropdown--full-width"
               // @ts-expect-error FIXME: PatternFly's onSelect is typed wrong (value should be any)
               onSelect={(_, value: Node) => {
                 if (value) {
