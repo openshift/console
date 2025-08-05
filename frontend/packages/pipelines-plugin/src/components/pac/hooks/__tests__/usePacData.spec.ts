@@ -1,7 +1,7 @@
 import { act } from 'react-dom/test-utils';
 import { coFetch } from '@console/internal/co-fetch';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { sampleSecretData } from '../../../../test-data/pac-data';
 import { createPACSecret, updatePACInfo } from '../../pac-utils';
 import { usePacData } from '../usePacData';
