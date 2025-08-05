@@ -20,7 +20,7 @@ const GuidedTourMastheadTrigger: React.FC<GuidedTourMastheadTriggerProps> = Reac
         ref={ref}
         onClick={() => tourDispatch({ type: TourActions.start })}
       >
-        {t('console-app~Guided tour')}
+        {t('console-app~Guided Tour')}
       </button>
     );
   },
