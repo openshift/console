@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/tsdoc/v0/tsdoc.schema.json",
+
+  // Custom TSDoc tags are defined here.
+  //
+  // Note: we don't care about declaring these via "supportForTags" field since
+  // - 1) there is no inherent value in "this TSDoc tag is not supported by this tool" warnings,
+  // - 2) the current TSDoc parser implementation has a bug where declaring custom TSDoc tag(s)
+  // results in all the standard tags such as "@param" or "@returns" to be marked as unsupported,
+  // so we'd have to list them all explicitly via "supportForTags" field.
+  "tagDefinitions": [
+    {
+      "tagName": "@consolePluginAPI",
+      "syntaxKind": "block"
+    }
+  ]
+}
