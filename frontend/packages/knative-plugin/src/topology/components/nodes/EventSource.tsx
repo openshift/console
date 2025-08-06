@@ -8,7 +8,7 @@ import {
   WithDragNodeProps,
   Edge,
 } from '@patternfly/react-topology';
-import { WithCreateConnectorProps } from '@console/topology/src/behavior';
+import { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSourceIcon } from '../../../utils/icons';

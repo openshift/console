@@ -27,6 +27,10 @@ import {
 } from '@patternfly/react-topology';
 import styles from '@patternfly/react-topology/dist/js/css/topology-components';
 import { observer } from 'mobx-react';
+import {
+  ElementProps,
+  WithCreateConnectorProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 
 //
 // Local version of the @patternfly/react-topology withCreateConnector
@@ -261,16 +265,6 @@ const CreateConnectorWidget: React.FunctionComponent<CreateConnectorWidgetProps>
     );
   },
 );
-
-interface ElementProps {
-  element: Node;
-}
-
-export interface WithCreateConnectorProps {
-  onShowCreateConnector: () => void;
-  onHideCreateConnector: () => void;
-  createConnectorDrag: boolean;
-}
 
 export const withCreateConnector = <P extends WithCreateConnectorProps & ElementProps>(
   onCreate: React.ComponentProps<typeof CreateConnectorWidget>['onCreate'],
