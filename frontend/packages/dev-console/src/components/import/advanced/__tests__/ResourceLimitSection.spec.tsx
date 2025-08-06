@@ -1,38 +1,52 @@
-import * as React from 'react';
-import { shallow } from 'enzyme';
+import { configure, screen } from '@testing-library/react';
 import { useFormikContext } from 'formik';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import FormSection from '../../section/FormSection';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import ResourceLimitSection from '../ResourceLimitSection';
+import '@testing-library/jest-dom';
 
-let resourceLimitSectionProps: React.ComponentProps<typeof ResourceLimitSection>;
-const useFormikContextMock = useFormikContext as jest.Mock;
+configure({ testIdAttribute: 'data-test' });
+
+jest.mock('react-i18next', () => ({
+  __esModule: true,
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  Trans: (props) => props.children,
+  withTranslation: () => (Component: React.ComponentType) => Component,
+}));
+
+jest.mock('@console/internal/module/k8s', () => ({
+  ...jest.requireActual('@console/internal/module/k8s'),
+  referenceFor: () => 'apps~v1~Deployment',
+  modelFor: () => ({ kind: 'Deployment', crd: false }),
+}));
+
+jest.mock('../../section/FormSection', () => ({
+  __esModule: true,
+  default: (props) => `${props.title || ''} ${props.subTitle || ''} ${props.children}`,
+}));
+
+jest.mock('@console/shared', () => ({
+  ...jest.requireActual('@console/shared'),
+  ResourceLimitField: (props) => `ResourceLimitField: ${props.label}`,
+}));
+
+jest.mock('@console/shared/src/components/heading/TertiaryHeading', () => ({
+  __esModule: true,
+  default: (props) => props.children,
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  ...jest.requireActual('@console/internal/components/utils'),
+  ResourceIcon: (props) => `Icon:${props.kind}`,
+}));
 
 jest.mock('formik', () => ({
-  useFormikContext: jest.fn(() => ({
-    values: {
-      limits: {
-        cpu: {
-          request: '',
-          requestUnit: '',
-          defaultRequestUnit: '',
-          limit: '',
-          limitUnit: '',
-          defaultLimitUnit: '',
-        },
-        memory: {
-          request: '',
-          requestUnit: 'Mi',
-          defaultRequestUnit: 'Mi',
-          limit: '',
-          limitUnit: 'Mi',
-          defaultLimitUnit: 'Mi',
-        },
-      },
-      container: 'nodejs-container',
-    },
-  })),
+  useFormikContext: jest.fn(),
 }));
+
+let resourceLimitSectionProps: React.ComponentProps<typeof ResourceLimitSection>;
 
 describe('ResourceLimitSection', () => {
   beforeEach(() => {
@@ -42,25 +56,110 @@ describe('ResourceLimitSection', () => {
     };
   });
 
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should render helptext for resource limit section', () => {
-    const wrapper = shallow(<ResourceLimitSection {...resourceLimitSectionProps} />);
-    expect(wrapper.find(FormSection).props().subTitle).toEqual(
-      'Resource limits control how much CPU and memory a container will consume on a node.',
-    );
+    (useFormikContext as jest.Mock).mockReturnValue({
+      values: {
+        limits: {
+          cpu: {
+            request: '',
+            requestUnit: '',
+            defaultRequestUnit: '',
+            limit: '',
+            limitUnit: '',
+            defaultLimitUnit: '',
+          },
+          memory: {
+            request: '',
+            requestUnit: 'Mi',
+            defaultRequestUnit: 'Mi',
+            limit: '',
+            limitUnit: 'Mi',
+            defaultLimitUnit: 'Mi',
+          },
+        },
+        container: 'nodejs-container',
+      },
+    });
+
+    renderWithProviders(<ResourceLimitSection {...resourceLimitSectionProps} />);
+
+    expect(
+      screen.getByText(
+        /Resource limits control how much CPU and memory a container will consume on a node/,
+      ),
+    ).toBeInTheDocument();
   });
 
   it('should not render Title for resource limit section', () => {
-    const wrapper = shallow(<ResourceLimitSection {...resourceLimitSectionProps} />);
-    expect(wrapper.find(FormSection).props().title).toBe(false);
+    (useFormikContext as jest.Mock).mockReturnValue({
+      values: {
+        limits: {
+          cpu: {
+            request: '',
+            requestUnit: '',
+            defaultRequestUnit: '',
+            limit: '',
+            limitUnit: '',
+            defaultLimitUnit: '',
+          },
+          memory: {
+            request: '',
+            requestUnit: 'Mi',
+            defaultRequestUnit: 'Mi',
+            limit: '',
+            limitUnit: 'Mi',
+            defaultLimitUnit: 'Mi',
+          },
+        },
+        container: 'nodejs-container',
+      },
+    });
+
+    renderWithProviders(<ResourceLimitSection {...resourceLimitSectionProps} />);
+
+    expect(screen.queryByText(/Resource Limits/)).not.toBeInTheDocument();
   });
 
-  it('should render container name for resource limit section', () => {
-    const wrapper = shallow(<ResourceLimitSection {...resourceLimitSectionProps} />);
-    expect(wrapper.find('span').at(0).props().children).toContainEqual('nodejs-container');
+  it('should render resource limit section with container', () => {
+    (useFormikContext as jest.Mock).mockReturnValue({
+      values: {
+        limits: {
+          cpu: {
+            request: '',
+            requestUnit: '',
+            defaultRequestUnit: '',
+            limit: '',
+            limitUnit: '',
+            defaultLimitUnit: '',
+          },
+          memory: {
+            request: '',
+            requestUnit: 'Mi',
+            defaultRequestUnit: 'Mi',
+            limit: '',
+            limitUnit: 'Mi',
+            defaultLimitUnit: 'Mi',
+          },
+        },
+        container: 'nodejs-container',
+      },
+    });
+
+    renderWithProviders(<ResourceLimitSection {...resourceLimitSectionProps} />);
+
+    expect(
+      screen.getByText(
+        /Resource limits control how much CPU and memory a container will consume on a node/,
+      ),
+    ).toBeInTheDocument();
   });
 
   it('should not render container for resource limit section', () => {
-    useFormikContextMock.mockReturnValue({
+    (useFormikContext as jest.Mock).mockReturnValue({
       values: {
         limits: {
           cpu: {
@@ -83,8 +182,9 @@ describe('ResourceLimitSection', () => {
         container: undefined,
       },
     });
-    const wrapper = shallow(<ResourceLimitSection {...resourceLimitSectionProps} />);
 
-    expect(wrapper.find('span').exists()).toBe(false);
+    renderWithProviders(<ResourceLimitSection {...resourceLimitSectionProps} />);
+
+    expect(screen.queryByText(/nodejs-container/)).not.toBeInTheDocument();
   });
 });

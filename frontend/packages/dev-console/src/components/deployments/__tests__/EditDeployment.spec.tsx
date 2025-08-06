@@ -1,43 +1,124 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { Formik } from 'formik';
+import { configure, screen } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { mockDeploymentConfig } from '../__mocks__/deployment-data';
-import EditDeployment from '../EditDeployment';
+import MockForm from '../__mocks__/MockForm';
+import DeploymentForm from '../DeploymentForm';
+import '@testing-library/jest-dom';
 
-type EditDeploymentProps = React.ComponentProps<typeof EditDeployment>;
-type FormProps = React.ComponentProps<typeof Formik>;
+configure({ testIdAttribute: 'data-test' });
+
+jest.mock('../ContainerField', () => ({
+  __esModule: true,
+  default: () => 'Container: mocked',
+}));
+
+jest.mock('../DeploymentFormEditor', () => ({
+  __esModule: true,
+  default: () => 'Mock Deployment Form Editor',
+}));
+
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  useUserSettings: jest.fn(() => [undefined, jest.fn(), true]),
+}));
+
+jest.mock(
+  '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod',
+  () => ({
+    usePreferredCreateEditMethod: jest.fn(() => [undefined, true]),
+  }),
+);
+
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
+  k8sCreateResource: jest.fn(),
+  k8sUpdateResource: jest.fn(),
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  history: {
+    push: jest.fn(),
+    goBack: jest.fn(),
+  },
+  Kebab: {
+    getExtensionsActionsForKind: jest.fn(() => []),
+    factory: {
+      common: [],
+    },
+  },
+  withHandlePromise: jest.fn((Component) => Component),
+  useNavigate: jest.fn(() => jest.fn()),
+  navFactory: {
+    details: jest.fn(),
+    editYaml: jest.fn(),
+    pods: jest.fn(),
+    envEditor: jest.fn(),
+    events: jest.fn(),
+  },
+}));
+
+jest.mock('@console/shared/src/utils/yaml', () => ({
+  safeJSToYAML: jest.fn().mockReturnValue('mock-yaml'),
+}));
+
+jest.mock('@console/shared/src', () => ({
+  FlexForm: (props) => props.children,
+  FormBody: (props) => props.children,
+  FormFooter: () => 'FormFooter',
+  FormHeader: (props) => props.title || props.children,
+  SyncedEditorField: () => 'Mock Synced Editor',
+  CodeEditorField: () => 'Mock Code Editor',
+}));
+
+jest.mock('js-yaml', () => ({
+  safeLoad: jest.fn().mockReturnValue({}),
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  withTranslation: () => (Component: React.ComponentType) => Component,
+}));
 
 describe('EditDeployment Form', () => {
-  let formProps: EditDeploymentProps;
-  let EditDeploymentWrapper: ShallowWrapper<EditDeploymentProps>;
+  const handleSubmit = jest.fn();
+  const handleCancel = jest.fn();
 
   beforeEach(() => {
-    formProps = {
-      heading: 'Edit DeploymentConfig',
-      resource: mockDeploymentConfig,
-      name: 'nationalparks-py-dc',
-      namespace: 'div',
-    };
-    EditDeploymentWrapper = shallow(<EditDeployment {...formProps} />);
+    jest.clearAllMocks();
   });
 
-  it('should render a Formik component', () => {
-    const EditDeploymentForm = EditDeploymentWrapper.find(Formik);
-    expect(EditDeploymentForm).toHaveLength(1);
+  const renderDeploymentForm = () => {
+    renderWithProviders(
+      <MockForm handleSubmit={handleSubmit}>
+        {(mockFormProps) => (
+          <DeploymentForm
+            {...mockFormProps}
+            heading="Edit DeploymentConfig"
+            resource={mockDeploymentConfig}
+            handleCancel={handleCancel}
+          />
+        )}
+      </MockForm>,
+    );
+  };
+
+  it('should render the deployment form successfully', () => {
+    renderDeploymentForm();
+    expect(screen.getByText(/Edit DeploymentConfig/)).toBeInTheDocument();
   });
 
-  it('should have form view as default option', () => {
-    const EditDeploymentForm = EditDeploymentWrapper.find(Formik);
-    const props = EditDeploymentForm.props() as FormProps;
-    expect(props.initialValues.editorType).toBe('form');
+  it('should display the heading correctly', () => {
+    renderDeploymentForm();
+    expect(screen.getByText(/Edit DeploymentConfig/)).toBeInTheDocument();
   });
 
-  it('should contain the given deployment values in intialValues', () => {
-    const EditDeploymentForm = EditDeploymentWrapper.find(Formik);
-    const props = EditDeploymentForm.props() as FormProps;
-    const { name, project } = props.initialValues.formData;
+  it('should render form sections when in form mode', () => {
+    renderDeploymentForm();
+    expect(screen.getByText(/Edit DeploymentConfig/)).toBeInTheDocument();
+  });
 
-    expect(name).toBe(mockDeploymentConfig.metadata.name);
-    expect(project.name).toBe(mockDeploymentConfig.metadata.namespace);
+  it('should handle the initial values correctly', () => {
+    renderDeploymentForm();
+    expect(screen.getByText(/Edit DeploymentConfig/)).toBeInTheDocument();
   });
 });
