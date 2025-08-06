@@ -3,7 +3,7 @@ import { Language } from '@patternfly/react-code-editor';
 import { useTranslation } from 'react-i18next';
 import { PageComponentProps, EmptyBox } from '@console/internal/components/utils';
 import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
-import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
+import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj }) => {
@@ -21,11 +21,13 @@ export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj })
   }, [pluginManifest]);
 
   return (
-    <PaneBody>
+    <PaneBody fullHeight>
       {pluginManifest ? (
         <CodeEditor
           value={manifestJson}
+          isLanguageLabelVisible
           language={Language.json}
+          headerMainContent={t('console-app~console-extensions.json (read only)')}
           isReadOnly
           isMinimapVisible={false}
           minHeight="400px"
