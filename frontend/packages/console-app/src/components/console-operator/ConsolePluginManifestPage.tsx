@@ -23,8 +23,9 @@ export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj })
   return (
     <PaneBody fullHeight>
       {pluginManifest ? (
-        <CodeEditor
-          value={manifestJson}
+        <BasicCodeEditor
+          code={manifestJson}
+          isFullHeight
           isLanguageLabelVisible
           language={Language.json}
           headerMainContent={t('console-app~console-extensions.json (read only)')}
