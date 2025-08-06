@@ -7,7 +7,7 @@ import * as semver from 'semver';
 import { ChannelDocLink } from '../cluster-settings/cluster-settings';
 import { ClusterVersionModel } from '../../models';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { HandlePromiseProps, isManaged, withHandlePromise } from '../utils';
+import { isManaged } from '../utils';
 import {
   createModalLauncher,
   ModalBody,
@@ -21,9 +21,11 @@ import {
   getLastCompletedUpdate,
   k8sPatch,
 } from '../../module/k8s';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) => {
-  const { cancel, close, cv, errorMessage, handlePromise, inProgress } = props;
+const ClusterChannelModal = (props: ClusterChannelModalProps) => {
+  const { cancel, close, cv } = props;
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [channel, setChannel] = React.useState(cv.spec.channel);
   const { t } = useTranslation();
   const availableChannels = getAvailableClusterChannels(cv).reduce((o, val) => {
@@ -35,7 +37,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const patch = [{ op: 'add', path: '/spec/channel', value: channel }];
-    return handlePromise(k8sPatch(ClusterVersionModel, cv, patch), close);
+    return handlePromise(k8sPatch(ClusterVersionModel, cv, patch)).then(() => close());
   };
 
   return (
@@ -102,12 +104,11 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
       />
     </form>
   );
-});
+};
 
 export const clusterChannelModal = createModalLauncher(ClusterChannelModal);
 
 type ClusterChannelModalProps = {
   cv: ClusterVersionKind;
   t: TFunction;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;
