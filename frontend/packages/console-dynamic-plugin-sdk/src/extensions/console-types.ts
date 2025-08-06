@@ -18,6 +18,9 @@ import {
 import { Extension, ExtensionTypeGuard } from '../types';
 import { CustomDataSource } from './dashboard-data-source';
 
+// Re-export K8sVerb to make it available through the wildcard exports in index.ts and types.ts
+export { K8sVerb } from '../api/common-types';
+
 export type OwnerReference = {
   name: string;
   kind: string;
