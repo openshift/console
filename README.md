@@ -497,5 +497,32 @@ Currently this feature is behind feature gate.
 - [knative-plugin](./frontend/packages/knative-plugin/README.md)
 
 - operator-lifecycle-manager
+
+## Telemetry
+
+Console uses Segment Analytics for telemetry purposes. To test Console telemetry on local
+development environment, set up `BRIDGE_TELEMETRY` environment variable before running the
+Console Bridge server.
+
+```sh
+# https://github.com/openshift/console-operator/blob/main/manifests/05-telemetry-config.yaml
+API_HOST="console.redhat.com/connections/api/v1"
+JS_HOST="console.redhat.com/connections/cdn"
+PUBLIC_API_KEY="..." # Use API key from the link above
+
+# The BRIDGE_TELEMETRY variable contains a comma separated list of Console telemetry options
+export BRIDGE_TELEMETRY=\
+SEGMENT_API_HOST="${API_HOST}",\
+SEGMENT_JS_HOST="${JS_HOST}",\
+SEGMENT_API_KEY="${PUBLIC_API_KEY}",\
+DISABLED="false"
+
+# Run Bridge server, telemetry options should get passed to frontend as SERVER_FLAGS.telemetry
+./bin/bridge
+
+# If you no longer need the custom telemetry options, unset the BRIDGE_TELEMETRY variable
+unset BRIDGE_TELEMETRY
+```
+
 [[Descriptors README]](./frontend/packages/operator-lifecycle-manager/src/components/descriptors/README.md)
 [[Descriptors API Reference]](./frontend/packages/operator-lifecycle-manager/src/components/descriptors/reference/reference.md)
