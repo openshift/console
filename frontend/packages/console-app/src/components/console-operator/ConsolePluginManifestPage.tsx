@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Language } from '@patternfly/react-code-editor';
+import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PageComponentProps, EmptyBox } from '@console/internal/components/utils';
 import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
@@ -28,10 +29,19 @@ export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj })
           isFullHeight
           isLanguageLabelVisible
           language={Language.json}
-          headerMainContent={t('console-app~console-extensions.json (read only)')}
+          // @ts-expect-error - headerMainContent expects string but we want to use a React element with Label
+          headerMainContent={
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>{t('console-app~console-extensions.json')}</span>
+              <Label color="grey" isCompact>
+                {t('console-app~Read only')}
+              </Label>
+            </div>
+          }
           isReadOnly
           isMinimapVisible={false}
-          minHeight="400px"
+          isDownloadEnabled
+          isCopyEnabled
           options={{
             scrollBeyondLastLine: false,
             wordWrap: 'on',
