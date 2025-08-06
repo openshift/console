@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ExtensionHook, ExtensionK8sKindVersionModel } from '../api/common-types';
 import { ActionContext } from '../api/internal-types';
-import { ModalInfo } from '../app/modal-support/ModalProvider';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
@@ -103,12 +102,7 @@ export type Action = {
   /** Executable callback or href.
    * External links should automatically provide an external link icon on action.
    * */
-  cta?: (() => void) | { href: string; external?: boolean };
-  /**
-   * TODO - determine if we are gonna have a separate attribute compatible with useModal hook,
-   *  or we are gonna change/keep-using the existing cta attribute for our modals.
-   * */
-  modalInfo?: ModalInfo;
+  cta: (() => void) | { href: string; external?: boolean };
   /** Whether the action is disabled. */
   disabled?: boolean;
   /** The tooltip for this action. */
