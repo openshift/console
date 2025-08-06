@@ -2,7 +2,10 @@ import * as _ from 'lodash-es';
 
 import { STORAGE_PREFIX } from '@console/shared/src/constants';
 import { coFetchJSON } from '../../co-fetch';
-import { K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import {
+  GetSwaggerPropertyDescription,
+  K8sKind,
+} from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 
 const SWAGGER_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/swagger-definitions`;
@@ -107,10 +110,10 @@ const findDefinition = (kindObj: K8sKind, propertyPath: string[]): SwaggerDefini
   return path ? (_.get(swaggerDefinitions, path) as SwaggerDefinition) : null;
 };
 
-export const getPropertyDescription = (
-  kindObj: K8sKind,
-  propertyPath: string | string[],
-): string => {
+export const getSwaggerPropertyDescription: GetSwaggerPropertyDescription = (
+  kindObj,
+  propertyPath,
+) => {
   const path: string[] = _.toPath(propertyPath);
   const definition = findDefinition(kindObj, path);
   return definition ? definition.description : null;
