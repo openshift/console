@@ -29,71 +29,67 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
   const documentationLabel = t('console-shared~Documentation');
 
   return (
-    <div className="modal-body modal-body-border">
-      <CatalogPageOverlay>
-        <PropertiesSidePanel>
-          {details?.properties
-            ?.filter((property) => !property?.isHidden)
-            ?.map((property) => (
-              <PropertyItem
-                key={property.label}
-                label={property.label}
-                value={property.value || notAvailable}
-              />
-            ))}
-          {!customPropertyPresent(details, providerLabel) && (
-            <PropertyItem label={providerLabel} value={provider || notAvailable} />
-          )}
-          {!customPropertyPresent(details, createdAtLabel) && (
-            <PropertyItem label={createdAtLabel} value={created || notAvailable} />
-          )}
-          {!customPropertyPresent(details, supportLabel) && (
+    <CatalogPageOverlay>
+      <PropertiesSidePanel>
+        {details?.properties
+          ?.filter((property) => !property?.isHidden)
+          ?.map((property) => (
             <PropertyItem
-              label={supportLabel}
-              value={
-                supportUrl ? (
-                  <ExternalLink href={supportUrl} text={t('console-shared~Get support')} />
-                ) : (
-                  notAvailable
-                )
-              }
+              key={property.label}
+              label={property.label}
+              value={property.value || notAvailable}
             />
-          )}
-          {!customPropertyPresent(details, documentationLabel) && (
-            <PropertyItem
-              label={documentationLabel}
-              value={
-                documentationUrl ? (
-                  <ExternalLink
-                    href={documentationUrl}
-                    text={t('console-shared~Refer documentation')}
-                  />
-                ) : (
-                  notAvailable
-                )
-              }
-            />
-          )}
-        </PropertiesSidePanel>
-        {(details?.descriptions?.length || description) && (
-          <CatalogPageOverlayDescription>
-            <Stack hasGutter>
-              {!details?.descriptions?.[0]?.label && (
-                <SectionHeading text={t('console-shared~Description')} />
-              )}
-              {!details?.descriptions?.length && description && <p>{description}</p>}
-              {details?.descriptions?.map((desc, index) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <StackItem key={index}>
-                  {desc.label && <SectionHeading text={desc.label} />}
-                  {desc.value}
-                </StackItem>
-              ))}
-            </Stack>
-          </CatalogPageOverlayDescription>
+          ))}
+        {!customPropertyPresent(details, providerLabel) && (
+          <PropertyItem label={providerLabel} value={provider || notAvailable} />
         )}
-      </CatalogPageOverlay>
-    </div>
+        {!customPropertyPresent(details, createdAtLabel) && (
+          <PropertyItem label={createdAtLabel} value={created || notAvailable} />
+        )}
+        {!customPropertyPresent(details, supportLabel) && (
+          <PropertyItem
+            label={supportLabel}
+            value={
+              supportUrl ? (
+                <ExternalLink href={supportUrl} text={t('console-shared~Get support')} />
+              ) : (
+                notAvailable
+              )
+            }
+          />
+        )}
+        {!customPropertyPresent(details, documentationLabel) && (
+          <PropertyItem
+            label={documentationLabel}
+            value={
+              documentationUrl ? (
+                <ExternalLink
+                  href={documentationUrl}
+                  text={t('console-shared~Refer documentation')}
+                />
+              ) : (
+                notAvailable
+              )
+            }
+          />
+        )}
+      </PropertiesSidePanel>
+      {(details?.descriptions?.length || description) && (
+        <CatalogPageOverlayDescription>
+          <Stack hasGutter>
+            {!details?.descriptions?.length && description && (
+              <StackItem data-test="description">{description}</StackItem>
+            )}
+            {details?.descriptions?.map((desc, i) => (
+              <StackItem key={desc.label ?? i} data-test={`description-${desc.label ?? i}`}>
+                {desc.label && <SectionHeading text={desc.label} />}
+                {desc.value}
+              </StackItem>
+            ))}
+          </Stack>
+        </CatalogPageOverlayDescription>
+      )}
+    </CatalogPageOverlay>
   );
 };
 

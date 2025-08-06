@@ -9,26 +9,23 @@ import {
   HintTitle,
   HintBody,
   HintFooter,
+  Stack,
+  StackItem,
+  AlertVariant,
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { css } from '@patternfly/react-styles';
-import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { getQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  CloudCredentialKind,
-  InfrastructureKind,
-  AuthenticationKind,
-  referenceForModel,
-} from '@console/internal/module/k8s';
-import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { DismissableAlert, RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import CatalogPageOverlay from '@console/shared/src/components/catalog/catalog-view/CatalogPageOverlay';
 import CatalogPageOverlayDescription from '@console/shared/src/components/catalog/catalog-view/CatalogPageOverlayDescription';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DefaultCatalogSource } from '../../const';
+import { useCurrentCSVDescription } from '../../hooks/useCurrentCSVDescription';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { MarkdownView } from '../clusterserviceversion';
@@ -36,7 +33,6 @@ import { DeprecatedOperatorWarningAlert } from '../deprecated-operator-warnings/
 import { useDeprecatedOperatorWarnings } from '../deprecated-operator-warnings/use-deprecated-operator-warnings';
 import { defaultChannelNameFor } from '../index';
 import { OperatorChannelSelect, OperatorVersionSelect } from './operator-channel-version-select';
-import { CloudServiceTokenWarningAlert } from './operator-hub-subscribe';
 import { isAWSSTSCluster, isAzureWIFCluster, isGCPWIFCluster } from './operator-hub-utils';
 import { InfrastructureFeature, OperatorHubItem } from './index';
 
@@ -53,21 +49,7 @@ const levels = [
   'Auto Pilot',
 ];
 
-const OperatorHubItemCustomizedHint: React.FC<OperatorHubItemCustomizedHintProps> = ({
-  title,
-  body,
-  footer,
-}) => {
-  return (
-    <Hint className="pf-v6-u-mb-md">
-      <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
-      <HintBody>{body}</HintBody>
-      <HintFooter>{footer}</HintFooter>
-    </Hint>
-  );
-};
-
-export const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capability }) => {
+export const CapabilityLevel: React.FCC<CapabilityLevelProps> = ({ capability }) => {
   const { t } = useTranslation();
   const capabilityLevelIndex = levels.indexOf(capability);
 
@@ -101,7 +83,7 @@ type CapabilityLevelProps = {
   capability: string;
 };
 
-const InstalledHint: React.FC<OperatorHubItemDetailsHintProps> = ({
+const InstalledHint: React.FCC<InstalledHintProps> = ({
   latestVersion,
   subscription,
   installedChannel,
@@ -120,35 +102,31 @@ const InstalledHint: React.FC<OperatorHubItemDetailsHintProps> = ({
     : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
   const installedVersion = installedCSV?.spec?.version;
   return (
-    <OperatorHubItemCustomizedHint
-      title={t('olm~Installed Operator')}
-      body={
-        <>
-          {t('olm~This Operator has been installed on the cluster.')}{' '}
-          <Link to={to}>{t('olm~View it here.')}</Link>
-        </>
-      }
-      footer={
-        installedVersion !== latestVersion ? (
-          <HintFooter>
-            <DescriptionList columnModifier={{ default: '2Col' }}>
-              <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~Installed Channel')}</DescriptionListTerm>
-                <DescriptionListDescription>{installedChannel}</DescriptionListDescription>
-              </DescriptionListGroup>
-              <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~Installed Version')}</DescriptionListTerm>
-                <DescriptionListDescription>{installedVersion}</DescriptionListDescription>
-              </DescriptionListGroup>
-            </DescriptionList>
-          </HintFooter>
-        ) : null
-      }
-    />
+    <Hint>
+      <HintTitle>{t('olm~Installed Operator')}</HintTitle>
+      <HintBody>
+        {t('olm~This Operator has been installed on the cluster.')}{' '}
+        <Link to={to}>{t('olm~View it here.')}</Link>
+      </HintBody>
+      {installedVersion !== latestVersion ? (
+        <HintFooter>
+          <DescriptionList columnModifier={{ default: '2Col' }}>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('olm~Installed Channel')}</DescriptionListTerm>
+              <DescriptionListDescription>{installedChannel}</DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('olm~Installed Version')}</DescriptionListTerm>
+              <DescriptionListDescription>{installedVersion}</DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
+        </HintFooter>
+      ) : null}
+    </Hint>
   );
 };
 
-const InstallingHint: React.FC<OperatorHubItemDetailsHintProps> = ({ subscription }) => {
+const InstallingHint: React.FCC<InstallingHintProps> = ({ subscription }) => {
   const { t } = useTranslation();
   const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>(
     subscription?.status?.installedCSV
@@ -166,60 +144,181 @@ const InstallingHint: React.FC<OperatorHubItemDetailsHintProps> = ({ subscriptio
     ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name}/subscription`
     : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
   return (
-    <OperatorHubItemCustomizedHint
-      title={t('olm~Installing Operator')}
-      body={t(
-        'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
-      )}
-      footer={
-        <>
-          <span>
-            <Trans ns="olm">This Operator is being installed on the cluster.</Trans>
-          </span>
-          &nbsp;
-          <Link to={to}>{t('olm~View it here.')}</Link>
-        </>
-      }
-    />
+    <Hint>
+      <HintTitle>{t('olm~Installing Operator')}</HintTitle>
+      <HintBody>
+        {t(
+          'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
+        )}
+      </HintBody>
+      <HintFooter>
+        <span>
+          <Trans ns="olm">This Operator is being installed on the cluster.</Trans>
+        </span>
+        &nbsp;
+        <Link to={to}>{t('olm~View it here.')}</Link>
+      </HintFooter>
+    </Hint>
   );
 };
 
-const OperatorHubItemDetailsHint: React.FC<OperatorHubItemDetailsHintProps> = (props) => {
+const OperatorHubItemDetailsHint: React.FCC<OperatorHubItemDetailsHintProps> = (props) => {
   const { t } = useTranslation();
-  const { installed, isInstalling, catalogSource } = props;
+  const {
+    installed,
+    isInstalling,
+    catalogSource,
+    subscription,
+    latestVersion,
+    installedChannel,
+  } = props;
   if (isInstalling) {
-    return <InstallingHint {...props} />;
+    return (
+      <StackItem>
+        <InstallingHint subscription={subscription} />
+      </StackItem>
+    );
   }
 
   if (installed) {
-    return <InstalledHint {...props} />;
+    return (
+      <StackItem>
+        <InstalledHint
+          latestVersion={latestVersion}
+          subscription={subscription}
+          installedChannel={installedChannel}
+        />
+      </StackItem>
+    );
   }
 
   if (catalogSource === DefaultCatalogSource.CommunityOperators) {
     return (
-      <OperatorHubItemCustomizedHint
-        title={t('olm~Community Operator')}
-        body={t(
-          'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
-        )}
-        footer={
-          RH_OPERATOR_SUPPORT_POLICY_LINK && (
-            <HintFooter>
-              <ExternalLink
-                href={RH_OPERATOR_SUPPORT_POLICY_LINK}
-                text={t('olm~Learn more about Red Hat’s third party software support policy')}
-              />
-            </HintFooter>
-          )
-        }
-      />
+      <StackItem>
+        <Hint>
+          <HintTitle>{t('olm~Community Operator')}</HintTitle>
+          <HintBody>
+            {t(
+              'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
+            )}
+          </HintBody>
+          <HintFooter>
+            <ExternalLink
+              href={RH_OPERATOR_SUPPORT_POLICY_LINK}
+              text={t('olm~Learn more about Red Hat’s third party software support policy')}
+            />
+          </HintFooter>
+        </Hint>
+      </StackItem>
     );
   }
-
   return null;
 };
 
-export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
+export const OperatorDescription: React.FCC<OperatorDescriptionProps> = ({
+  catalogSource,
+  description,
+  infraFeatures,
+  installed,
+  isInstalling,
+  subscription,
+  version,
+  clusterIsAWSSTS,
+  clusterIsAzureWIF,
+  clusterIsGCPWIF,
+  longDescription,
+  packageManifest,
+}) => {
+  const { t } = useTranslation();
+  const {
+    deprecatedPackage,
+    deprecatedChannel,
+    deprecatedVersion,
+    setDeprecatedPackage,
+  } = useDeprecatedOperatorWarnings();
+  const deprecatedWarning =
+    deprecatedPackage?.deprecation ||
+    deprecatedChannel?.deprecation ||
+    deprecatedVersion?.deprecation;
+  const installedChannel = subscription?.spec?.channel;
+  const currentCSVDescription = useCurrentCSVDescription(packageManifest);
+  const selectedChannelDescription = currentCSVDescription?.description || longDescription;
+  const packageManifestStatus = packageManifest?.status;
+  const [isTokenAuth, isTokenAuthGCP] = React.useMemo(() => {
+    return [
+      (infraFeatures ?? []).includes(InfrastructureFeature.TokenAuth),
+      (infraFeatures ?? []).includes(InfrastructureFeature.TokenAuthGCP),
+    ];
+  }, [infraFeatures]);
+
+  React.useEffect(() => {
+    setDeprecatedPackage({ deprecation: packageManifestStatus?.deprecation });
+  }, [packageManifestStatus, setDeprecatedPackage]);
+
+  return (
+    <Stack hasGutter>
+      {clusterIsAWSSTS && isTokenAuth && (
+        <StackItem>
+          <DismissableAlert title={t('olm~Cluster in STS Mode')} variant={AlertVariant.warning}>
+            {t(
+              'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you must provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
+            )}
+          </DismissableAlert>
+        </StackItem>
+      )}
+      {clusterIsAzureWIF && isTokenAuth && (
+        <StackItem>
+          <DismissableAlert
+            title={t('olm~Cluster in Azure Workload Identity / Federated Identity Mode')}
+            variant={AlertVariant.warning}
+          >
+            {t(
+              'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. See the operator description for more details.',
+            )}
+          </DismissableAlert>
+        </StackItem>
+      )}
+      {clusterIsGCPWIF && isTokenAuthGCP && (
+        <StackItem>
+          <DismissableAlert
+            title={t('olm~Cluster in GCP Workload Identity / Federated Identity Mode')}
+            variant={AlertVariant.warning}
+          >
+            {t(
+              'olm~This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. See the operator description for more details.',
+            )}
+          </DismissableAlert>
+        </StackItem>
+      )}
+      {deprecatedWarning && (
+        <StackItem>
+          <DeprecatedOperatorWarningAlert
+            deprecatedPackage={deprecatedPackage}
+            deprecatedChannel={deprecatedChannel}
+            deprecatedVersion={deprecatedVersion}
+          />
+        </StackItem>
+      )}
+      <OperatorHubItemDetailsHint
+        installed={installed}
+        isInstalling={isInstalling}
+        latestVersion={version}
+        catalogSource={catalogSource}
+        subscription={subscription}
+        installedChannel={installedChannel}
+      />
+      <StackItem>
+        {selectedChannelDescription ? (
+          <MarkdownView content={selectedChannelDescription} />
+        ) : (
+          description
+        )}
+      </StackItem>
+    </Stack>
+  );
+};
+
+export const OperatorHubItemDetails: React.FCC<OperatorHubItemDetailsProps> = ({
   item,
   updateChannel,
   setUpdateChannel,
@@ -248,37 +347,13 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
     authentication,
   } = item;
 
-  const installChannel = getQueryArgument('channel');
-  const {
-    deprecatedPackage,
-    deprecatedChannel,
-    deprecatedVersion,
-    setDeprecatedPackage,
-  } = useDeprecatedOperatorWarnings();
-  const deprecatedWarning =
-    deprecatedPackage?.deprecation ||
-    deprecatedChannel?.deprecation ||
-    deprecatedVersion?.deprecation;
+  const currentCSVDescription = useCurrentCSVDescription(obj);
+  const { containerImage, createdAt } = currentCSVDescription?.annotations ?? {};
+  const capability = currentCSVDescription?.annotations?.capabilities ?? item.capabilityLevel;
 
-  React.useEffect(() => {
-    setDeprecatedPackage(_.pick(item?.obj?.status, 'deprecation'));
-  }, [item?.obj?.status, setDeprecatedPackage]);
-  const currentChannel = obj?.status.channels.find((ch) => ch.name === installChannel);
-  const selectedChannelContainerImage = currentChannel?.currentCSVDesc.annotations?.containerImage;
-  const selectedChannelDescription = currentChannel?.currentCSVDesc.description || longDescription;
-  const selectedChannelCreatedAt = currentChannel?.currentCSVDesc.annotations?.createdAt;
-  const selectedChannelCapabilityLevel =
-    currentChannel?.currentCSVDesc.annotations?.capabilities ?? item.capabilityLevel;
-
-  const installedChannel = item?.subscription?.spec?.channel;
   const notAvailable = t('olm~N/A');
-  const created = Date.parse(selectedChannelCreatedAt) ? (
-    <Timestamp timestamp={selectedChannelCreatedAt} />
-  ) : (
-    selectedChannelCreatedAt
-  );
+  const created = Date.parse(createdAt) ? <Timestamp timestamp={createdAt} /> : createdAt;
 
-  const [showCSTokenWarn, setShowCSTokenWarn] = React.useState(true);
   const mappedData = (data) => data?.map?.((d) => <div key={d}>{d}</div>) ?? notAvailable;
 
   const mappedInfraFeatures = mappedData(infraFeatures);
@@ -299,6 +374,9 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
   }, [marketplaceSupportWorkflow]);
 
   const selectedUpdateChannel = updateChannel || defaultChannelNameFor(obj);
+  const clusterIsAWSSTS = isAWSSTSCluster(cloudCredentials, infrastructure, authentication);
+  const clusterIsAzureWIF = isAzureWIFCluster(cloudCredentials, infrastructure, authentication);
+  const clusterIsGCPWIF = isGCPWIFCluster(cloudCredentials, infrastructure, authentication);
 
   return item ? (
     <div className="modal-body modal-body-border">
@@ -328,13 +406,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
           />
           <PropertyItem
             label={t('olm~Capability level')}
-            value={
-              selectedChannelCapabilityLevel ? (
-                <CapabilityLevel capability={selectedChannelCapabilityLevel} />
-              ) : (
-                notAvailable
-              )
-            }
+            value={capability ? <CapabilityLevel capability={capability} /> : notAvailable}
           />
           <PropertyItem label={t('olm~Source')} value={source || notAvailable} />
           <PropertyItem label={t('olm~Provider')} value={provider || notAvailable} />
@@ -351,10 +423,8 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
           <PropertyItem
             label={t('olm~Container image')}
             value={
-              selectedChannelContainerImage ? (
-                <div className="co-break-all co-select-to-copy">
-                  {selectedChannelContainerImage}
-                </div>
+              containerImage ? (
+                <div className="co-break-all co-select-to-copy">{containerImage}</div>
               ) : (
                 notAvailable
               )
@@ -373,62 +443,20 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
           />
         </PropertiesSidePanel>
         <CatalogPageOverlayDescription>
-          {isAWSSTSCluster(cloudCredentials, infrastructure, authentication) &&
-            showCSTokenWarn &&
-            infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuth) && (
-              <CloudServiceTokenWarningAlert
-                title={t('olm~Cluster in STS Mode')}
-                message={t(
-                  'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you must provide a role ARN (with an attached policy) during installation. Please see the operator description for more details.',
-                )}
-                onClose={() => setShowCSTokenWarn(false)}
-              />
-            )}
-          {isAzureWIFCluster(cloudCredentials, infrastructure, authentication) &&
-            showCSTokenWarn &&
-            infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuth) && (
-              <CloudServiceTokenWarningAlert
-                title={t('olm~Cluster in Azure Workload Identity / Federated Identity Mode')}
-                message={t(
-                  'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. See the operator description for more details.',
-                )}
-                onClose={() => setShowCSTokenWarn(false)}
-              />
-            )}
-          {isGCPWIFCluster(cloudCredentials, infrastructure, authentication) &&
-            showCSTokenWarn &&
-            infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuthGCP) && (
-              <CloudServiceTokenWarningAlert
-                title={t('olm~Cluster in GCP Workload Identity / Federated Identity Mode')}
-                message={t(
-                  'olm~This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. See the operator description for more details.',
-                )}
-                onClose={() => setShowCSTokenWarn(false)}
-              />
-            )}
-          {deprecatedWarning && (
-            <DeprecatedOperatorWarningAlert
-              deprecatedPackage={deprecatedPackage}
-              deprecatedChannel={deprecatedChannel}
-              deprecatedVersion={deprecatedVersion}
-            />
-          )}
-          <OperatorHubItemDetailsHint
+          <OperatorDescription
+            catalogSource={catalogSource}
+            description={description}
+            infraFeatures={infraFeatures}
             installed={installed}
             isInstalling={isInstalling}
-            latestVersion={version}
-            catalogSource={catalogSource}
             subscription={subscription}
-            installedChannel={installedChannel}
-            cloudCredentials={cloudCredentials}
-            authentication={authentication}
-            infrastructure={infrastructure}
+            version={version}
+            clusterIsAWSSTS={clusterIsAWSSTS}
+            clusterIsAzureWIF={clusterIsAzureWIF}
+            clusterIsGCPWIF={clusterIsGCPWIF}
+            longDescription={longDescription}
+            packageManifest={obj}
           />
-          {selectedChannelDescription ? (
-            <MarkdownView content={selectedChannelDescription} />
-          ) : (
-            description
-          )}
         </CatalogPageOverlayDescription>
       </CatalogPageOverlay>
     </div>
@@ -439,10 +467,14 @@ OperatorHubItemDetails.defaultProps = {
   item: null,
 };
 
-type OperatorHubItemCustomizedHintProps = {
-  title?: React.ReactNode;
-  body?: React.ReactNode;
-  footer?: React.ReactNode;
+type InstallingHintProps = {
+  subscription: SubscriptionKind;
+};
+
+type InstalledHintProps = {
+  latestVersion: string;
+  subscription: SubscriptionKind;
+  installedChannel: string;
 };
 
 type OperatorHubItemDetailsHintProps = {
@@ -452,9 +484,21 @@ type OperatorHubItemDetailsHintProps = {
   catalogSource: string;
   subscription: SubscriptionKind;
   installedChannel: string;
-  cloudCredentials: CloudCredentialKind;
-  authentication: AuthenticationKind;
-  infrastructure: InfrastructureKind;
+};
+
+export type OperatorDescriptionProps = {
+  catalogSource: string;
+  description: string;
+  infraFeatures: InfrastructureFeature[];
+  installed: boolean;
+  isInstalling: boolean;
+  subscription: SubscriptionKind;
+  version: string;
+  clusterIsAWSSTS: boolean;
+  clusterIsAzureWIF: boolean;
+  clusterIsGCPWIF: boolean;
+  longDescription: string;
+  packageManifest: any;
 };
 
 export type OperatorHubItemDetailsProps = {
