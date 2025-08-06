@@ -352,7 +352,28 @@
       "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
     }
   },
-
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "RoleBinding",
+        "group": "rbac.authorization.k8s.io"
+      },
+      "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "ClusterRoleBinding",
+        "group": "rbac.authorization.k8s.io"
+      },
+      "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
+    }
+  },
   {
     "type": "console.page/route",
     "properties": {
@@ -839,7 +860,7 @@
       "id": "operators",
       "section": "ecosystem",
       "name": "%console-app~Installed Operators%",
-      "insertAfter":"operatorhub",
+      "insertAfter": "operatorhub",
       "model": {
         "kind": "ClusterServiceVersion",
         "version": "v1alpha1",

@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { connect } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { css } from '@patternfly/react-styles';
 import { ActionGroup, Button } from '@patternfly/react-core';
@@ -11,16 +10,15 @@ import { FLAGS } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { LazyActionMenu } from '@console/shared';
 import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
-import * as UIActions from '../../actions/ui';
 import { Table, TableData } from '../factory';
 import ListPageFilter from '../factory/ListPage/ListPageFilter';
 import ListPageHeader from '../factory/ListPage/ListPageHeader';
 import { useListPageFilter } from '../factory/ListPage/filter-hook';
 import { ListPageCreateLink } from '../factory/ListPage/ListPageCreate';
 import { RadioGroup } from '../radio';
-import { confirmModal } from '../modals';
 import {
   ButtonBar,
   Firehose,
@@ -30,7 +28,6 @@ import {
   ListDropdown,
   ConsoleEmptyState,
   NsDropdown,
-  ResourceKebab,
   ResourceLink,
   ResourceName,
   resourceObjPath,
@@ -74,95 +71,6 @@ export const flatten = (resources) =>
 
     return ret;
   });
-
-const getKindLabel = (kind) => (kind.labelKey ? i18next.t(kind.labelKey) : kind.label);
-
-const menuActions = ({ subjectIndex, subjects }, startImpersonate, navigate) => {
-  const subject = subjects[subjectIndex];
-
-  const actions = [
-    (kind, obj) => ({
-      label: i18next.t('public~Duplicate {{kindLabel}}', {
-        kindLabel: getKindLabel(kind),
-      }),
-      href: `${decodeURIComponent(
-        resourceObjPath(obj, kind.kind),
-      )}/copy?subjectIndex=${subjectIndex}`,
-      // Only perform access checks when duplicating cluster role bindings.
-      // It's not practical to check namespace role bindings since we don't know what namespace the user will pick in the form.
-      accessReview: _.get(obj, 'metadata.namespace')
-        ? null
-        : {
-            group: kind.apiGroup,
-            resource: kind.plural,
-            verb: 'create',
-          },
-    }),
-    (kind, obj) => ({
-      label: i18next.t('public~Edit {{kindLabel}} subject', {
-        kindLabel: getKindLabel(kind),
-      }),
-      href: `${decodeURIComponent(
-        resourceObjPath(obj, kind.kind),
-      )}/edit?subjectIndex=${subjectIndex}`,
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        name: obj.metadata.name,
-        namespace: obj.metadata.namespace,
-        verb: 'update',
-      },
-    }),
-    subjects.length === 1
-      ? Kebab.factory.Delete
-      : (kind, binding) => ({
-          label: i18next.t('public~Delete {{label}} subject', kind),
-          callback: () =>
-            confirmModal({
-              title: i18next.t('public~Delete {{label}} subject', kind),
-              message: i18next.t(
-                'public~Are you sure you want to delete subject {{name}} of type {{kind}}?',
-                subject,
-              ),
-              btnText: i18next.t('public~Delete subject'),
-              executeFn: () =>
-                k8sPatch(kind, binding, [
-                  {
-                    op: 'remove',
-                    path: `/subjects/${subjectIndex}`,
-                  },
-                ]),
-            }),
-          accessReview: {
-            group: kind.apiGroup,
-            resource: kind.plural,
-            name: binding.metadata.name,
-            namespace: binding.metadata.namespace,
-            verb: 'patch',
-          },
-        }),
-  ];
-
-  if (subject.kind === 'User' || subject.kind === 'Group') {
-    actions.unshift(() => ({
-      label: i18next.t('public~Impersonate {{kind}} "{{name}}"', subject),
-      callback: () => {
-        startImpersonate(subject.kind, subject.name);
-        navigate(window.SERVER_FLAGS.basePath);
-      },
-      // Must use API group authorization.k8s.io, NOT user.openshift.io
-      // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
-      accessReview: {
-        group: 'authorization.k8s.io',
-        resource: subject.kind === 'Group' ? 'groups' : 'users',
-        name: subject.name,
-        verb: 'impersonate',
-      },
-    }));
-  }
-
-  return actions;
-};
 
 const tableColumnClasses = [
   '',
@@ -221,18 +129,16 @@ export const BindingName = ({ binding }) => (
   />
 );
 
-export const BindingKebab = connect(null, {
-  startImpersonate: UIActions.startImpersonate,
-})(({ binding, startImpersonate }) => {
-  const navigate = useNavigate();
+export const BindingKebab = ({ binding }) => {
+  const context = {
+    [referenceFor(binding)]: binding,
+  };
+
   return binding.subjects ? (
-    <ResourceKebab
-      actions={menuActions(binding, startImpersonate, navigate)}
-      kind={bindingKind(binding)}
-      resource={binding}
-    />
+    // key ensures that the action menu is re-rendered when the binding changes
+    <LazyActionMenu context={context} key={binding.metadata?.uid || binding.metadata?.name} />
   ) : null;
-});
+};
 
 export const RoleLink = ({ binding }) => {
   const kind = binding.roleRef.kind;

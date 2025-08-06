@@ -47,3 +47,10 @@ export enum ReplicationControllerActionCreator {
   RollbackDeploymentConfig = 'RollbackDeploymentConfig',
   CancelRollout = 'CancelRollout',
 }
+
+export enum BindingActionCreator {
+  DuplicateBinding = 'DuplicateBinding',
+  EditBindingSubject = 'EditBindingSubject',
+  DeleteBindingSubject = 'DeleteBindingSubject',
+  ImpersonateBindingSubject = 'ImpersonateBindingSubject',
+}
