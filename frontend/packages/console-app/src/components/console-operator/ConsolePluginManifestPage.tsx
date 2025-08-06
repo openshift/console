@@ -31,7 +31,7 @@ export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj })
           language={Language.json}
           // @ts-expect-error - headerMainContent expects string but we want to use a React element with Label
           headerMainContent={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div className="pf-v6-l-flex pf-m-align-items-center pf-m-gap-md">
               <span>{t('console-app~console-extensions.json')}</span>
               <Label color="grey" isCompact>
                 {t('console-app~Read only')}
