@@ -8,6 +8,7 @@ export enum ActionType {
 type CodeBlock = {
   id: string;
   value: string;
+  triggeredFrom?: any;
 };
 
 /* Note: Using Reducer and Selector from OLS plugin */

@@ -2,12 +2,13 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { useNavigate } from 'react-router-dom';
+import { FormGroup, Radio } from '@patternfly/react-core';
 
 import { K8sKind, k8sList, k8sPatch, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { Dropdown, ResourceIcon, ResourceName, resourcePathFromModel } from '../utils';
-import { RadioInput } from '../radio';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { ResourceIcon, ResourceName, resourcePathFromModel } from '../utils';
 /* eslint-disable import/named */
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -178,7 +179,7 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
           <label className="co-required" htmlFor="co-add-secret-to-workload__workload">
             {t('public~Add this secret to workload')}
           </label>
-          <Dropdown
+          <ConsoleSelect
             items={workloadOptions}
             selectedKey={selectedWorkloadUID}
             title={selectWorkloadPlaceholder}
@@ -191,58 +192,71 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
         </div>
         <fieldset>
           <legend className="co-legend co-required">{t('public~Add secret as')}</legend>
-          <RadioInput
-            title={t('public~Environment variables')}
-            name="co-add-secret-to-workload__add-as"
-            id="co-add-secret-to-workload__envvars"
-            value="environment"
-            onChange={onAddAsChange}
-            checked={addAsEnvironment}
-          />
-          {addAsEnvironment && (
-            <div className="co-m-radio-desc">
-              <div className="form-group">
-                <label htmlFor="co-add-secret-to-workload__prefix">{t('public~Prefix')}</label>
-                <span className="pf-v6-c-form-control">
-                  <input
-                    name="prefix"
-                    id="co-add-secret-to-workload__prefix"
-                    data-test="add-secret-to-workload-prefix"
-                    placeholder="(optional)"
-                    type="text"
-                    onChange={(e) => setPrefix(e.currentTarget.value)}
-                  />
-                </span>
-              </div>
-            </div>
-          )}
-          <RadioInput
-            title={t('public~Volume')}
-            name="co-add-secret-to-workload__add-as"
-            id="co-add-secret-to-workload__volume"
-            value="volume"
-            onChange={onAddAsChange}
-            checked={addAsVolume}
-          />
-          {addAsVolume && (
-            <div className="co-m-radio-desc">
-              <div className="form-group">
-                <label htmlFor="co-add-secret-to-workload__mountpath" className="co-required">
-                  {t('public~Mount path')}
-                </label>
-                <span className="pf-v6-c-form-control">
-                  <input
-                    name="mountPath"
-                    id="co-add-secret-to-workload__mountpath"
-                    data-test="add-secret-to-workload-mountpath"
-                    type="text"
-                    onChange={(e) => setMountPath(e.currentTarget.value)}
-                    required
-                  />
-                </span>
-              </div>
-            </div>
-          )}
+          <div className="pf-v6-c-form">
+            <FormGroup
+              role="radiogroup"
+              fieldId="co-add-secret-to-workload"
+              isStack
+              className="form-group"
+            >
+              <Radio
+                id="co-add-secret-to-workload__envvars"
+                name="co-add-secret-to-workload__add-as"
+                label={t('public~Environment variables')}
+                value="environment"
+                onChange={onAddAsChange}
+                isChecked={addAsEnvironment}
+                data-test="Environment variables-radio-input"
+                data-checked-state={addAsEnvironment}
+              />
+              {addAsEnvironment && (
+                <div className="co-m-radio-desc">
+                  <div className="form-group">
+                    <label htmlFor="co-add-secret-to-workload__prefix">{t('public~Prefix')}</label>
+                    <span className="pf-v6-c-form-control">
+                      <input
+                        name="prefix"
+                        id="co-add-secret-to-workload__prefix"
+                        data-test="add-secret-to-workload-prefix"
+                        placeholder="(optional)"
+                        type="text"
+                        onChange={(e) => setPrefix(e.currentTarget.value)}
+                      />
+                    </span>
+                  </div>
+                </div>
+              )}
+              <Radio
+                id="co-add-secret-to-workload__volume"
+                name="co-add-secret-to-workload__add-as"
+                label={t('public~Volume')}
+                value="volume"
+                onChange={onAddAsChange}
+                isChecked={addAsVolume}
+                data-test="Volume-radio-input"
+                data-checked-state={addAsVolume}
+              />
+              {addAsVolume && (
+                <div className="co-m-radio-desc">
+                  <div className="form-group">
+                    <label htmlFor="co-add-secret-to-workload__mountpath" className="co-required">
+                      {t('public~Mount path')}
+                    </label>
+                    <span className="pf-v6-c-form-control">
+                      <input
+                        name="mountPath"
+                        id="co-add-secret-to-workload__mountpath"
+                        data-test="add-secret-to-workload-mountpath"
+                        type="text"
+                        onChange={(e) => setMountPath(e.currentTarget.value)}
+                        required
+                      />
+                    </span>
+                  </div>
+                </div>
+              )}
+            </FormGroup>
+          </div>
         </fieldset>
       </ModalBody>
       <ModalSubmitFooter

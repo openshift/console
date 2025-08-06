@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { sortable, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
 import {
   Button,
@@ -82,7 +82,6 @@ import {
   ResourceSummary,
   ScrollToTopOnMount,
   SectionHeading,
-  Timestamp,
   formatBytesAsMiB,
   formatCores,
   humanizeBinaryBytes,
@@ -93,6 +92,7 @@ import {
   LabelList,
   RuntimeClass,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PodLogs } from './pod-logs';
 import {
   Area,
@@ -194,12 +194,12 @@ const podColumnInfo = Object.freeze({
     title: 'public~Status',
   },
   ready: {
-    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-10-on-lg', 'pf-v6-u-w-8-on-xl'),
+    classes: css('pf-m-nowrap', 'pf-v6-u-w-10-on-lg', 'pf-v6-u-w-8-on-xl'),
     id: 'ready',
     title: 'public~Ready',
   },
   restarts: {
-    classes: classNames('pf-m-nowrap', 'pf-v6-u-w-8-on-2xl'),
+    classes: css('pf-m-nowrap', 'pf-v6-u-w-8-on-2xl'),
     id: 'restarts',
     title: 'public~Restarts',
   },
@@ -214,17 +214,17 @@ const podColumnInfo = Object.freeze({
     title: 'public~Node',
   },
   memory: {
-    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
+    classes: css({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
     id: 'memory',
     title: 'public~Memory',
   },
   cpu: {
-    classes: classNames({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
+    classes: css({ 'pf-v6-u-w-10-on-2xl': showMetrics }),
     id: 'cpu',
     title: 'public~CPU',
   },
   created: {
-    classes: classNames('pf-v6-u-w-10-on-2xl'),
+    classes: css('pf-v6-u-w-10-on-2xl'),
     id: 'created',
     title: 'public~Created',
   },
@@ -386,7 +386,7 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
         <ResourceLink kind={kind} name={name} namespace={namespace} />
       </TableData>
       <TableData
-        className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
+        className={css(podColumnInfo.namespace.classes, 'co-break-word')}
         activeColumnIDs={activeColumnIDs}
         id={podColumnInfo.namespace.id}
       >
@@ -912,14 +912,14 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
       <ScrollToTopOnMount />
       <PaneBody>
         <SectionHeading text={t('public~Pod details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <PodResourceSummary pod={pod} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <PodDetailsList pod={pod} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       {pod.spec.initContainers && (
         <PaneBody>
@@ -970,8 +970,8 @@ export const PodConnectLoader: React.FC<PodConnectLoaderProps> = ({
   attach = false,
 }) => (
   <PaneBody>
-    <div className="row">
-      <div className="col-xs-12">
+    <Grid>
+      <GridItem>
         <div className="panel-body">
           <AsyncComponent
             loader={() => import('./pod-connect').then((c) => c.PodConnect)}
@@ -982,8 +982,8 @@ export const PodConnectLoader: React.FC<PodConnectLoaderProps> = ({
             attach={attach}
           />
         </div>
-      </div>
-    </div>
+      </GridItem>
+    </Grid>
   </PaneBody>
 );
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {

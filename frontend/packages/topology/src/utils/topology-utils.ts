@@ -6,7 +6,6 @@ import {
   GetTopologyResourceObject,
   GetResource,
 } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
-import { getRouteWebURL } from '@console/internal/components/routes';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -14,8 +13,7 @@ import {
   referenceFor,
   RouteKind,
 } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
-import { ALLOW_SERVICE_BINDING_FLAG } from '@console/service-binding-plugin/src/const';
+import { getRouteWebURL } from '@console/shared/src/components/utils/routes';
 import OdcBaseNode from '../elements/OdcBaseNode';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../operators/components/const';
 import { updateResourceApplication } from './application-utils';
@@ -35,9 +33,6 @@ export type CheDecoratorData = {
   cheURL?: string;
   cheIconURL?: string;
 };
-
-export const getServiceBindingStatus = ({ FLAGS }: RootState): boolean =>
-  FLAGS.get(ALLOW_SERVICE_BINDING_FLAG);
 
 export const getCheDecoratorData = (consoleLinks: K8sResourceKind[]): CheDecoratorData => {
   const cheConsoleLink = _.find(consoleLinks, ['metadata.name', 'che']);

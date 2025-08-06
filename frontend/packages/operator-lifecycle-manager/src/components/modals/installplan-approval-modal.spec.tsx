@@ -1,3 +1,4 @@
+import { Radio } from '@patternfly/react-core';
 import { ShallowWrapper, shallow } from 'enzyme';
 import * as _ from 'lodash';
 import {
@@ -5,7 +6,6 @@ import {
   ModalSubmitFooter,
   ModalBody,
 } from '@console/internal/components/factory/modal';
-import { RadioInput } from '@console/internal/components/radio';
 import * as k8sModelsModule from '@console/internal/module/k8s/k8s-models';
 import { testSubscription, testInstallPlan } from '../../../mocks';
 import { SubscriptionModel, InstallPlanModel } from '../../models';
@@ -46,16 +46,16 @@ describe(InstallPlanApprovalModal.name, () => {
   });
 
   it('renders a radio button for each available approval strategy', () => {
-    expect(wrapper.find(ModalBody).find(RadioInput).length).toEqual(2);
+    expect(wrapper.find(ModalBody).find(Radio).length).toEqual(2);
   });
 
   it('pre-selects the approval strategy option that is currently being used by a subscription', () => {
-    expect(wrapper.find(ModalBody).find(RadioInput).at(0).props().checked).toBe(true);
+    expect(wrapper.find(ModalBody).find(Radio).at(0).props().isChecked).toBe(true);
   });
 
   it('pre-selects the approval strategy option that is currently being used by an install plan', () => {
     wrapper = wrapper.setProps({ obj: _.cloneDeep(testInstallPlan) });
-    expect(wrapper.find(ModalBody).find(RadioInput).at(0).props().checked).toBe(true);
+    expect(wrapper.find(ModalBody).find(Radio).at(0).props().isChecked).toBe(true);
   });
 
   it('calls `props.k8sUpdate` to update the subscription when form is submitted', () => {
@@ -67,10 +67,10 @@ describe(InstallPlanApprovalModal.name, () => {
     });
     wrapper
       .find(ModalBody)
-      .find(RadioInput)
+      .find(Radio)
       .at(1)
       .props()
-      .onChange({ target: { value: InstallPlanApproval.Manual } });
+      .onChange({ target: { value: InstallPlanApproval.Manual } } as any, true);
     wrapper.find('form').simulate('submit', new Event('submit'));
   });
 
@@ -84,10 +84,10 @@ describe(InstallPlanApprovalModal.name, () => {
     });
     wrapper
       .find(ModalBody)
-      .find(RadioInput)
+      .find(Radio)
       .at(1)
       .props()
-      .onChange({ target: { value: InstallPlanApproval.Manual } });
+      .onChange({ target: { value: InstallPlanApproval.Manual } } as any, true);
     wrapper.find('form').simulate('submit', new Event('submit'));
   });
 

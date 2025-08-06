@@ -1,5 +1,5 @@
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
 
 import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s';
@@ -27,7 +27,7 @@ export const ResourceIcon: React.SFC<ResourceIconProps> = ({
   const kindObj = modelFor(kindReference);
   const kindStr = kindObj?.kind ?? kindReference;
   const backgroundColor = _.get(kindObj, 'color', undefined);
-  const klass = classNames(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, className);
+  const klass = css(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, className);
   const iconLabel = (kindObj && kindObj.abbr) || kindToAbbr(kindStr);
 
   const rendered = (

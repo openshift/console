@@ -1,5 +1,5 @@
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
 import { TFunction } from 'i18next';
 import { Kebab } from '@console/internal/components/utils';
 
@@ -8,8 +8,8 @@ const tableColumnClasses = [
   '', // Display Name
   '', // Namespace
   '', // Disabled
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // Repo URL
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // Created
+  css('pf-m-hidden', 'pf-m-visible-on-xl'), // Repo URL
+  css('pf-m-hidden', 'pf-m-visible-on-xl'), // Created
   Kebab.columnClass,
 ];
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import {
   Edge,
   WithRemoveConnectorProps,
@@ -12,7 +13,6 @@ import {
   NodeStatus,
   GraphElement,
 } from '@patternfly/react-topology';
-import classNames from 'classnames';
 import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk';
 import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { getResource } from '../../../../utils/topology-utils';
@@ -61,7 +61,7 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
 
   return (
     <DefaultEdge
-      className={classNames('odc-base-edge', className)}
+      className={css('odc-base-edge', className)}
       element={element}
       onShowRemoveConnector={editAccess ? onShowRemoveConnector : undefined}
       onHideRemoveConnector={editAccess ? onHideRemoveConnector : undefined}

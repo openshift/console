@@ -14,7 +14,7 @@ interface MonitoringOverviewAlertsProps {
 }
 
 const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ alerts }) => {
-  const [activePerspective] = useActivePerspective();
+  const [activePerspective, setActivePerspective] = useActivePerspective();
   const sortedAlerts = sortMonitoringAlerts(alerts);
 
   return (
@@ -35,11 +35,21 @@ const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ ale
             variant={getAlertType(severity)}
             isInline
             title={<Link to={alertDetailsPageLink}>{name}</Link>}
+            onClick={() => {
+              if (
+                alertDetailsPageLink.startsWith('/dev-monitoring') &&
+                activePerspective !== 'dev'
+              ) {
+                setActivePerspective('dev');
+              }
+            }}
             key={`${alertname}-${id}`}
           >
             {message}
             <div className="odc-monitoring-overview-alerts__timestamp">
-              <small className="pf-v6-u-text-color-subtle">{fromNow(activeAt)}</small>
+              <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
+                {fromNow(activeAt)}
+              </span>
             </div>
           </Alert>
         );

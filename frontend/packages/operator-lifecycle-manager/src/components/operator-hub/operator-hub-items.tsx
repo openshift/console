@@ -8,11 +8,11 @@ import {
   EmptyStateVariant,
   Truncate,
 } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
-import { ExternalLink, getQueryArgument } from '@console/internal/components/utils';
+import { Link } from 'react-router-dom';
+import { getQueryArgument } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import i18n from '@console/internal/i18n';
@@ -455,20 +455,6 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     detailsItem.subscription &&
     `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
 
-  const remoteWorkflowUrl = React.useMemo(() => {
-    if (detailsItem?.marketplaceRemoteWorkflow) {
-      try {
-        const url = new URL(detailsItem?.marketplaceRemoteWorkflow);
-        url.searchParams.set('utm_source', 'openshift_console');
-        return url.toString();
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error while setting utm_source to remote workflow URL', error.message);
-      }
-    }
-    return null;
-  }, [detailsItem]);
-
   if (_.isEmpty(filteredItems)) {
     return (
       <>
@@ -556,27 +542,11 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
               />
 
               <div className="co-catalog-page__overlay-actions">
-                {remoteWorkflowUrl && (
-                  <ExternalLink
-                    additionalClassName="pf-v6-c-button pf-m-primary co-catalog-page__overlay-action co-catalog-page__overlay-action--external"
-                    href={remoteWorkflowUrl}
-                    text={
-                      <div className="co-catalog-page__overlay-action-label">
-                        {detailsItem.marketplaceActionText || t('olm~Purchase')}
-                      </div>
-                    }
-                  />
-                )}
                 {!detailsItem.installed ? (
                   <Link
-                    className={classNames(
+                    className={css(
                       'pf-v6-c-button',
-                      {
-                        'pf-m-secondary': remoteWorkflowUrl,
-                      },
-                      {
-                        'pf-m-primary': !remoteWorkflowUrl,
-                      },
+                      'pf-m-primary',
                       {
                         'pf-m-disabled': !detailsItem.obj || detailsItem.isInstalling,
                       },

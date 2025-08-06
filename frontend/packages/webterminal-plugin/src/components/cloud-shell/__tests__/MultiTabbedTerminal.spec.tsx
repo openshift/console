@@ -1,15 +1,8 @@
-import { PlusIcon } from '@patternfly/react-icons/dist/esm/icons/plus-icon';
-import { mount } from 'enzyme';
+import { configure, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { sendActivityTick } from '../cloud-shell-utils';
-import ChoudShellTerminal from '../CloudShellTerminal';
-import MultiTabTerminal from '../MultiTabbedTerminal';
-
-Object.defineProperty(window, 'requestAnimationFrame', {
-  writable: true,
-  value: (callback) => callback(),
-});
+import { MultiTabbedTerminal } from '../MultiTabbedTerminal';
 
 jest.mock('../cloud-shell-utils', () => {
   return {
@@ -17,51 +10,84 @@ jest.mock('../cloud-shell-utils', () => {
   };
 });
 
+jest.mock('@console/webterminal-plugin/src/components/cloud-shell/CloudShellTerminal', () => ({
+  default: () => 'Terminal content',
+}));
+
+const originalWindowRequestAnimationFrame = window.requestAnimationFrame;
+
+configure({ testIdAttribute: 'data-test' });
+
 describe('MultiTabTerminal', () => {
   jest.useFakeTimers();
-  let count = 0;
-  jest
-    .spyOn(window, 'requestAnimationFrame')
-    .mockImplementation((cb) => setTimeout(() => cb(100 * ++count), 100));
   (sendActivityTick as jest.Mock).mockImplementation((a, b) => [a, b]);
-  const multiTabTerminalWrapper = mount(
-    <Provider store={store}>
-      <MultiTabTerminal />
-    </Provider>,
-  );
+
+  beforeAll(() => {
+    window.requestAnimationFrame = (cb) => setTimeout(cb, 0);
+  });
+
+  afterAll(() => {
+    window.requestAnimationFrame = originalWindowRequestAnimationFrame;
+  });
 
   it('should initially load with only one console', () => {
-    expect(multiTabTerminalWrapper.find(ChoudShellTerminal).length).toBe(1);
+    const multiTabTerminalWrapper = render(
+      <Provider store={store}>
+        <MultiTabbedTerminal />
+      </Provider>,
+    );
+
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(1);
   });
 
   it('should add terminals on add terminal icon click', () => {
-    const addTerminalButton = multiTabTerminalWrapper.find('[data-test="add-terminal-icon"]').at(0);
-    addTerminalButton.simulate('click');
-    expect(multiTabTerminalWrapper.find(ChoudShellTerminal).length).toBe(2);
-    addTerminalButton.simulate('click');
-    addTerminalButton.simulate('click');
-    expect(multiTabTerminalWrapper.find(ChoudShellTerminal).length).toBe(4);
+    const multiTabTerminalWrapper = render(
+      <Provider store={store}>
+        <MultiTabbedTerminal />
+      </Provider>,
+    );
+
+    const addTerminalButton = multiTabTerminalWrapper.getByLabelText('Add new tab');
+    addTerminalButton.click();
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(2);
+    addTerminalButton.click();
+    addTerminalButton.click();
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(4);
   });
 
   it('should not allow more than 8 terminals', () => {
-    const addTerminalButton = multiTabTerminalWrapper.find('[data-test="add-terminal-icon"]').at(0);
-    addTerminalButton.simulate('click');
-    addTerminalButton.simulate('click');
-    addTerminalButton.simulate('click');
-    addTerminalButton.simulate('click');
-    expect(multiTabTerminalWrapper.find(ChoudShellTerminal).length).toBe(8);
-    expect(addTerminalButton.find(<PlusIcon />).exists()).toBe(false);
-    expect(multiTabTerminalWrapper.find('[data-test="add-terminal-icon"]').exists()).toBe(false);
+    const multiTabTerminalWrapper = render(
+      <Provider store={store}>
+        <MultiTabbedTerminal />
+      </Provider>,
+    );
+
+    const addTerminalButton = multiTabTerminalWrapper.getByLabelText('Add new tab');
+    for (let i = 0; i < 8; i++) {
+      addTerminalButton.click();
+    }
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content')).toHaveLength(8);
+    expect(multiTabTerminalWrapper.queryByLabelText('Add new tab')).toBeNull();
   });
 
   it('should remove terminals on remove terminal icon click', () => {
-    multiTabTerminalWrapper.find('[data-test="close-terminal-icon"]').at(0).simulate('click');
-    expect(multiTabTerminalWrapper.find(ChoudShellTerminal).length).toBe(7);
-    multiTabTerminalWrapper.find('[data-test="close-terminal-icon"]').at(0).simulate('click');
-    multiTabTerminalWrapper.find('[data-test="close-terminal-icon"]').at(0).simulate('click');
-    expect(multiTabTerminalWrapper.find(ChoudShellTerminal).length).toBe(5);
+    const multiTabTerminalWrapper = render(
+      <Provider store={store}>
+        <MultiTabbedTerminal />
+      </Provider>,
+    );
+
+    const addTerminalButton = multiTabTerminalWrapper.getByLabelText('Add new tab');
+    for (let i = 0; i < 8; i++) {
+      addTerminalButton.click();
+    }
+
+    multiTabTerminalWrapper.getAllByLabelText('Close terminal tab').at(7).click();
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(7);
+    multiTabTerminalWrapper.getAllByLabelText('Close terminal tab').at(6).click();
+    multiTabTerminalWrapper.getAllByLabelText('Close terminal tab').at(5).click();
+    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(5);
   });
 
-  (window.requestAnimationFrame as any).mockRestore();
   jest.clearAllTimers();
 });

@@ -1,7 +1,7 @@
 ##################################################
 #
 # go backend build
-FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.23-openshift-4.19 AS gobuilder
+FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.24-openshift-4.20 AS gobuilder
 RUN mkdir -p /go/src/github.com/openshift/console/
 ADD . /go/src/github.com/openshift/console/
 WORKDIR /go/src/github.com/openshift/console/
@@ -11,13 +11,13 @@ RUN ./build-backend.sh
 ##################################################
 #
 # nodejs frontend build
-FROM registry.ci.openshift.org/ocp/builder:rhel-9-base-nodejs-openshift-4.19 AS nodebuilder
+FROM registry.ci.openshift.org/ocp/builder:rhel-9-base-nodejs-openshift-4.20 AS nodebuilder
 
 ADD . .
 
 USER 0
 
-ARG YARN_VERSION=v1.22.19
+ARG YARN_VERSION=v1.22.22
 
 # bootstrap yarn so we can install and run the other tools.
 RUN CACHED_YARN=./artifacts/yarn-${YARN_VERSION}.tar.gz; \
@@ -51,7 +51,7 @@ RUN container-entrypoint ./build-frontend.sh
 ##################################################
 #
 # actual base image for final product
-FROM registry.ci.openshift.org/ocp/4.19:base-rhel9
+FROM registry.ci.openshift.org/ocp/4.20:base-rhel9
 RUN mkdir -p /opt/bridge/bin
 COPY --from=gobuilder /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin
 COPY --from=nodebuilder /opt/app-root/src/frontend/public/dist /opt/bridge/static
@@ -72,4 +72,3 @@ LABEL \
         io.k8s.display-name="OpenShift Console" \
         vendor="Red Hat" \
         io.openshift.tags="openshift,console"
-

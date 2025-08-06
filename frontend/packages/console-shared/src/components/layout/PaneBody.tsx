@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PageSection } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 const PaneBody: React.FC<PaneBodyProps> = ({
   children,
@@ -12,7 +12,7 @@ const PaneBody: React.FC<PaneBodyProps> = ({
 }) => {
   return (
     <PageSection
-      className={classNames(
+      className={css(
         'co-m-pane__body',
         { 'co-m-pane__body--section-heading': sectionHeading },
         className,

@@ -2,15 +2,10 @@ import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
 import { FLAGS } from '@console/shared/src/constants';
-import { isModelFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
-  subscribeToExtensions,
-  extensionDiffListener,
-} from '@console/plugin-sdk/src/api/pluginSubscriptionService';
-import {
-  ModelFeatureFlag as DynamicModelFeatureFlag,
-  isModelFeatureFlag as isDynamicModelFeatureFlag,
-} from '@console/dynamic-plugin-sdk/src/extensions';
+  isModelFeatureFlag,
+  ModelFeatureFlag,
+} from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
 import {
   ClusterAutoscalerModel,
   ConsoleCLIDownloadModel,
@@ -24,6 +19,7 @@ import {
   MachineModel,
   PrometheusModel,
 } from '../models';
+import { K8sModel } from '../module/k8s';
 import { referenceForGroupVersionKind, referenceForModel } from '../module/k8s/k8s-ref';
 import { RootState } from '../redux';
 import { ActionType as K8sActionType } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
@@ -42,6 +38,8 @@ export const defaults = _.mapValues(FLAGS, (flag) => {
       return (
         !!window.SERVER_FLAGS.prometheusBaseURL && !!window.SERVER_FLAGS.prometheusTenancyBaseURL
       );
+    case FLAGS.DEVCONSOLE_PROXY:
+      return true;
     default:
       return undefined;
   }
@@ -69,32 +67,17 @@ const addToCRDs = (ref: string, flag: string) => {
   }
 };
 
+const getModelRef = (e: ModelFeatureFlag) => {
+  const model = e.properties.model;
+  return referenceForGroupVersionKind(model.group)(model.version)(model.kind);
+};
+
 pluginStore
   .getExtensionsInUse()
   .filter(isModelFeatureFlag)
   .forEach((ff) => {
     addToCRDs(referenceForModel(ff.properties.model), ff.properties.flag);
   });
-
-subscribeToExtensions<DynamicModelFeatureFlag>(
-  extensionDiffListener((added, removed) => {
-    const getModelRef = (e: DynamicModelFeatureFlag) => {
-      const model = e.properties.model;
-      return referenceForGroupVersionKind(model.group)(model.version)(model.kind);
-    };
-
-    added.forEach((e) => {
-      addToCRDs(getModelRef(e), e.properties.flag);
-    });
-
-    removed.forEach((e) => {
-      delete CRDs[getModelRef(e)];
-    });
-
-    // TODO(vojtech): change of 'CRDs' should trigger relevant detection logic
-  }),
-  isDynamicModelFeatureFlag,
-);
 
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state: FeatureState, action: FeatureAction): FeatureState => {
@@ -110,6 +93,33 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
       return state.withMutations((s) =>
         action.payload.flags.reduce((acc, curr) => acc.remove(curr), s),
       );
+
+    case ActionType.UpdateModelFlags:
+      action.payload.added.forEach((e) => {
+        addToCRDs(getModelRef(e), e.properties.flag);
+      });
+
+      action.payload.removed.forEach((e) => {
+        delete CRDs[getModelRef(e)];
+      });
+
+      return state.withMutations((s) => {
+        const allReferences: Set<string> = action.payload.models.reduce(
+          (acc: Set<string>, curr: K8sModel) => acc.add(referenceForModel(curr)),
+          new Set<string>(),
+        );
+
+        // Evaluate new model flags
+        // TODO: Handle model flag removals (when plugin removal without a refresh is supported in console)
+        return action.payload.added.reduce((nextState, e) => {
+          const detected = allReferences.has(getModelRef(e));
+          if (detected) {
+            // eslint-disable-next-line no-console
+            console.log(`${e.properties.flag} was detected.`);
+          }
+          return nextState.set(e.properties.flag, detected);
+        }, s);
+      });
 
     case K8sActionType.ReceivedResources:
       // Flip all flags to false to signify that we did not see them

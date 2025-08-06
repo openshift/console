@@ -1,11 +1,12 @@
 import { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src';
+import { consoleFetch } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 /**
  * Fire and forget implementation to send usage data to the backend.
  * See pkg/usage/ for more information.
  */
 const trackUsage = (data: { event: string; perspective: string }) => {
-  return fetch('/metrics/usage', {
+  return consoleFetch('/api/metrics/usage', {
     method: 'POST',
     body: JSON.stringify(data),
   })

@@ -659,8 +659,10 @@ export type CodeEditorToolbarProps = {
 // Omit the ref as we have our own ref type, which is completely different
 export type BasicCodeEditorProps = Partial<Omit<PfCodeEditorProps, 'ref'>>;
 
-export type CodeEditorProps = Omit<BasicCodeEditorProps, 'code'> &
+export type CodeEditorProps = Omit<BasicCodeEditorProps, 'code' | 'shortcutsPopoverProps'> &
   CodeEditorToolbarProps & {
+    /** Additional props to override the default popover properties */
+    shortcutsPopoverProps?: Partial<PfCodeEditorProps['shortcutsPopoverProps']>;
     /** Code displayed in code editor. */
     value?: string;
     /** Minimum editor height in valid CSS height values. */
@@ -803,6 +805,7 @@ export type NodeKind = {
   spec: {
     taints?: Taint[];
     unschedulable?: boolean;
+    providerID?: string;
   };
   status?: {
     capacity?: {

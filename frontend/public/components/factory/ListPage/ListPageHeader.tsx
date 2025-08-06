@@ -33,10 +33,10 @@ const ListPageHeader: React.FCC<ListPageHeaderProps> = ({
     ) : (
       // Badge rendered from PageHeading only when title is present
       <PageSection hasBodyWrapper={false}>
-        {children}
+        {children && <div>{children}</div>}
         {badge && <div>{badge}</div>}
         {helpText && <div>{helpText}</div>}
-        {helpAlert}
+        {helpAlert && <div>{helpAlert}</div>}
       </PageSection>
     )
   ) : // Do not produce empty space if no title, children, badge, or help alert

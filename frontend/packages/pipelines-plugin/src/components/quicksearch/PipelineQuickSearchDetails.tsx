@@ -16,9 +16,8 @@ import {
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { ExternalLink } from '@console/internal/components/utils';
 import { handleCta } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { QuickSearchDetailsRendererProps } from '@console/shared/src/components/quick-search/QuickSearchDetails';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { getArtifactHubTaskDetails } from '../catalog/apis/artifactHub';
@@ -212,7 +211,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
         {selectedItem.description}
         {hubLink && (
           <ExternalLink
-            additionalClassName="opp-quick-search-details__hublink"
+            className="opp-quick-search-details__hublink"
             dataTestID="task-hub-link"
             href={hubLink}
             text={t('pipelines-plugin~Read more')}

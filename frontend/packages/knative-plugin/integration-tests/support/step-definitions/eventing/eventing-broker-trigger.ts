@@ -44,7 +44,10 @@ When('user will click on the Subscriber dropdown on the modal', () => {
 Then(
   'Subscriber has knative service dropdown with {string} and {string} options',
   (option1: string, option2: string) => {
-    cy.get("[role='listbox']").should('be.visible').and('contain', option1).and('contain', option2);
+    cy.byTestID('console-select-menu-list')
+      .should('be.visible')
+      .and('contain', option1)
+      .and('contain', option2);
   },
 );
 

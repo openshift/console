@@ -1,13 +1,15 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import {
   Card,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
   Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -243,14 +245,14 @@ const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({ ob
         <SectionHeading text={t('public~MachineConfigPool details')} />
         {paused && <WorkloadPausedAlert model={MachineConfigPoolModel} obj={obj} />}
         <MachineConfigPoolCounts obj={obj} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <MachineConfigPoolSummary obj={obj} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <MachineConfigPoolCharacteristics obj={obj} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
@@ -341,10 +343,10 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
   const MachineConfigPoolTableRow: React.FC<RowFunctionArgs<MachineConfigPoolKind>> = ({ obj }) => {
     return (
       <>
-        <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+        <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
           <ResourceLink kind={machineConfigPoolReference} name={obj.metadata.name} />
         </TableData>
-        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
           {_.get(obj, 'status.configuration.name') ? (
             <ResourceLink
               kind={machineConfigReference}
@@ -355,7 +357,7 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
             '-'
           )}
         </TableData>
-        <TableData className={classNames(tableColumnClasses[2], 'co-truncate')}>
+        <TableData className={css(tableColumnClasses[2], 'co-truncate')}>
           {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
         </TableData>
         <TableData className={tableColumnClasses[3]}>

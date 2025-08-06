@@ -1,5 +1,12 @@
 import { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src';
+import {
+  getClusterProperties,
+  TelemetryEventProperties,
+} from '@console/shared/src/hooks/useTelemetry';
 import { TELEMETRY_DISABLED, TELEMETRY_DEBUG } from './const';
+
+// Sample 20% of sessions
+const SAMPLE_SESSION = Math.random() < 0.2;
 
 /** Segmnet API Key that looks like a hash */
 const apiKey =
@@ -97,7 +104,7 @@ const initSegment = () => {
   analytics.load(apiKey, options);
 };
 
-if (!TELEMETRY_DISABLED && apiKey) {
+if (!TELEMETRY_DISABLED && apiKey && SAMPLE_SESSION) {
   initSegment();
 }
 
@@ -105,6 +112,18 @@ const anonymousIP = {
   context: {
     ip: '0.0.0.0',
   },
+};
+
+/**
+ * Uses SHA1 hash algorithm to anonymize the user ID.
+ */
+const anonymizeId = async (anonymousIdInput: string) => {
+  const anonymousIdBuffer = await window.crypto.subtle.digest(
+    'SHA-1',
+    new TextEncoder().encode(anonymousIdInput),
+  );
+  const anonymousIdArray = Array.from(new Uint8Array(anonymousIdBuffer));
+  return anonymousIdArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 };
 
 export const eventListener: TelemetryEventListener = async (
@@ -122,42 +141,55 @@ export const eventListener: TelemetryEventListener = async (
     }
     return;
   }
+  if (!SAMPLE_SESSION) {
+    if (TELEMETRY_DEBUG) {
+      // eslint-disable-next-line no-console
+      console.debug(
+        'console-telemetry-plugin: session is not being sampled - ignoring telemetry event',
+        eventType,
+        properties,
+      );
+    }
+    return;
+  }
   switch (eventType) {
     case 'identify':
       {
-        const { user, ...otherProperties } = properties;
+        const { user, userResource, ...otherProperties }: TelemetryEventProperties = properties;
         const clusterId = otherProperties?.clusterId;
         const organizationId = otherProperties?.organizationId;
         const username = user?.username;
         if (username) {
-          let anonymousIdInput: string;
+          let userId: string;
           if (organizationId) {
             if (username === 'kubeadmin' || username === 'kube:admin') {
-              anonymousIdInput = `${organizationId}@${clusterId}`;
+              userId = `${organizationId}@${clusterId}`;
             } else {
-              anonymousIdInput = `${username}@${clusterId}`;
+              userId = `${username}@${clusterId}`;
             }
           } else {
-            anonymousIdInput = username;
+            userId = username;
           }
 
-          // Use SHA1 hash algorithm to anonymize the user
-          const anonymousIdBuffer = await crypto.subtle.digest(
-            'SHA-1',
-            new TextEncoder().encode(anonymousIdInput),
-          );
-          const anonymousIdArray = Array.from(new Uint8Array(anonymousIdBuffer));
-          const anonymousId = anonymousIdArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+          let processedUserId: string;
+
+          // anonymize user ID if cluster is not a DEVSANDBOX cluster
+          if (getClusterProperties().clusterType === 'DEVSANDBOX') {
+            processedUserId =
+              userResource?.metadata?.annotations?.['toolchain.dev.openshift.com/sso-user-id'];
+          } else {
+            processedUserId = await anonymizeId(userId);
+          }
 
           if (TELEMETRY_DEBUG) {
             // eslint-disable-next-line no-console
             console.debug(
               `console-telemetry-plugin: use anonymized user identifier to group events`,
-              { username, clusterId, organizationId, anonymousIdInput, anonymousId },
+              { username, clusterId, organizationId, userId, processedUserId },
             );
           }
 
-          (window as any).analytics.identify(anonymousId, otherProperties, anonymousIP);
+          (window as any).analytics.identify(processedUserId, otherProperties, anonymousIP);
         } else {
           // eslint-disable-next-line no-console
           console.error(

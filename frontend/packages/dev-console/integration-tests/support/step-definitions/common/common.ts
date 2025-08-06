@@ -5,6 +5,7 @@ import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import { switchPerspective, devNavigationMenu, adminNavigationMenu } from '../../constants';
 import { perspective, projectNameSpace, navigateTo, app } from '../../pages';
+import { checkDeveloperPerspective } from '../../pages/functions/checkDeveloperPerspective';
 
 Given('user has logged in as a basic user', () => {
   cy.logout();
@@ -17,6 +18,7 @@ Given('user has logged in as a basic user', () => {
 });
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
   // Due to bug ODC-6231
   // cy.testA11y('Developer perspective with guide tour modal');
@@ -24,6 +26,21 @@ Given('user is at developer perspective', () => {
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   // Commenting below line, because it is executing on every test scenario - we will remove this in future releases
   // cy.testA11y('Developer perspective');
+});
+
+Given('user has only admin perspective enabled', () => {
+  cy.exec(
+    `oc patch console.operator.openshift.io/cluster --type='merge' -p '{"spec":{"customization":{"perspectives":[{"id":"dev","visibility":{"state":"Disabled"}}]}}}'`,
+    { failOnNonZeroExit: true },
+  ).then((result) => {
+    cy.log(result.stdout);
+    cy.log(result.stderr);
+  });
+  cy.exec(`  oc rollout status -w deploy/console -n openshift-console`, {
+    failOnNonZeroExit: true,
+  }).then((result) => {
+    cy.log(result.stderr);
+  });
 });
 
 Given('user has created namespace starts with {string}', (projectName: string) => {

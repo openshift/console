@@ -4,8 +4,10 @@ import {
   perspective,
   projectNameSpace,
 } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
 });
 

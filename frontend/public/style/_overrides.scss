@@ -71,13 +71,6 @@ $masthead-logo-max-height: 60px;
   @include catalog-logo-background(var(--pf-t--global--spacer--sm));
 }
 
-// Override to remove accordion left border and prevent overlap https://bugzilla.redhat.com/show_bug.cgi?id=1942193
-.co-create-operand__form--toggle-no-border {
-  .pf-v6-c-accordion__toggle.pf-m-expanded {
-    --pf-v6-c-accordion__toggle--before--BackgroundColor: transparent;
-  }
-}
-
 .co-datalist-control label {
   margin-bottom: 0; // Overrides Bootstrap label margin for DataListCheck's internal checkbox labels
 }
@@ -176,6 +169,19 @@ $masthead-logo-max-height: 60px;
 // Drawer
 .pf-v6-c-drawer__body {
   height: 100%;
+  // (OCPBUGS-56628): A PF6 regression caused modals to not move when a drawer is open
+  position: relative;
+}
+
+.pf-v6-c-form--no-gap {
+  gap: 0;
+}
+
+.pf-v6-c-form__group-control--no-row-gap {
+  &,
+  & > .pf-v6-c-form__group-control.pf-m-inline {
+    row-gap: 0;
+  }
 }
 
 .pf-v6-c-masthead {

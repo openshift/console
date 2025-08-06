@@ -11,6 +11,7 @@ import { BuilderImage } from '../../../utils/imagestream-utils';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
+import NamespaceSection from '../NamespaceSection';
 import FormSection from '../section/FormSection';
 import IconSection from '../section/IconSection';
 import ResourceSection from '../section/ResourceSection';
@@ -43,6 +44,7 @@ const UploadJarForm: React.FunctionComponent<FormikProps<FormikValues> & UploadJ
     <FlexForm className="co-deploy-image" data-test-id="upload-jar-form" onSubmit={handleSubmit}>
       <FormBody flexLayout>
         <JarSection />
+        <NamespaceSection />
         <IconSection />
         <FormSection>
           {builderImage && selectedImagetag ? (

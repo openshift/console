@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import {
   sortable,
   SortByDirection,
@@ -53,6 +53,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
@@ -174,11 +176,11 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
     <>
       <PaneBody>
         <SectionHeading text={t('public~CustomResourceDefinition details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary showPodSelector={false} showNodeSelector={false} resource={crd} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('public~Established')}</DescriptionListTerm>
@@ -195,8 +197,8 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
               </DescriptionListGroup>
               <DetailsItem label={t('public~Scope')} obj={crd} path="spec.scope" />
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
@@ -284,7 +286,7 @@ export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsLi
             />
           </span>
         </TableData>
-        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
           {crd.spec.group}
         </TableData>
         <TableData className={tableColumnClasses[2]}>{getLatestVersionForCRD(crd)}</TableData>

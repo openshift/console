@@ -13,8 +13,9 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(LimitRangeModel), ...common];
@@ -163,11 +164,11 @@ export const LimitRangeDetailsPage = (props) => {
     <>
       <PaneBody>
         <SectionHeading text={t('public~LimitRange details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={rq} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <LimitRangeDetailsList resource={rq} />
     </>

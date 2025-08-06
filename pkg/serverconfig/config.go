@@ -171,11 +171,13 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 	addMonitoringInfo(fs, &config.MonitoringInfo)
 	addHelmConfig(fs, &config.Helm)
 	addPlugins(fs, config.Plugins)
+	addPluginsOrder(fs, config.PluginsOrder)
 	addI18nNamespaces(fs, config.I18nNamespaces)
 	err = addProxy(fs, &config.Proxy)
 	if err != nil {
 		return err
 	}
+
 	addContentSecurityPolicyEnabled(fs, &config.ContentSecurityPolicyEnabled)
 	addContentSecurityPolicy(fs, config.ContentSecurityPolicy)
 	addTelemetry(fs, config.Telemetry)
@@ -418,10 +420,51 @@ func isAlreadySet(fs *flag.FlagSet, name string) bool {
 	return alreadySet
 }
 
+func addContentSecurityPolicy(fs *flag.FlagSet, csp map[consolev1.DirectiveType][]string) error {
+	var directives []string
+	for cspDirectiveName, cspDirectiveValue := range csp {
+		directiveName := getDirectiveName(string(cspDirectiveName))
+		if directiveName == "" {
+			klog.Fatalf("invalid CSP directive: %s", cspDirectiveName)
+		}
+
+		directives = append(directives, fmt.Sprintf("%s=%s", directiveName, strings.Join(cspDirectiveValue, " ")))
+	}
+
+	if len(directives) > 0 {
+		fs.Set("content-security-policy", strings.Join(directives, ", "))
+	}
+	return nil
+}
+
+func getDirectiveName(directive string) string {
+	switch directive {
+	case string(consolev1.DefaultSrc):
+		return "default-src"
+	case string(consolev1.ImgSrc):
+		return "img-src"
+	case string(consolev1.FontSrc):
+		return "font-src"
+	case string(consolev1.ScriptSrc):
+		return "script-src"
+	case string(consolev1.StyleSrc):
+		return "style-src"
+	case string(consolev1.ConnectSrc):
+		return "connect-src"
+	default:
+		klog.Infof("ignored invalid CSP directive: %s", directive)
+		return ""
+	}
+}
+
 func addPlugins(fs *flag.FlagSet, plugins MultiKeyValue) {
 	for pluginName, pluginEndpoint := range plugins {
 		fs.Set("plugins", fmt.Sprintf("%s=%s", pluginName, pluginEndpoint))
 	}
+}
+
+func addPluginsOrder(fs *flag.FlagSet, pluginsOrder []string) {
+	fs.Set("plugins-order", strings.Join(pluginsOrder, ","))
 }
 
 func addTelemetry(fs *flag.FlagSet, telemetry MultiKeyValue) {
@@ -432,18 +475,6 @@ func addTelemetry(fs *flag.FlagSet, telemetry MultiKeyValue) {
 
 func addI18nNamespaces(fs *flag.FlagSet, i18nNamespaces []string) {
 	fs.Set("i18n-namespaces", strings.Join(i18nNamespaces, ","))
-}
-
-func addContentSecurityPolicy(fs *flag.FlagSet, csp map[consolev1.DirectiveType][]string) error {
-	if csp != nil {
-		marshaledCSP, err := json.Marshal(csp)
-		if err != nil {
-			klog.Fatalf("Could not marshal ConsoleConfig 'content-security-policy' field: %v", err)
-			return err
-		}
-		fs.Set("content-security-policy", string(marshaledCSP))
-	}
-	return nil
 }
 
 func addContentSecurityPolicyEnabled(fs *flag.FlagSet, enabled *bool) {

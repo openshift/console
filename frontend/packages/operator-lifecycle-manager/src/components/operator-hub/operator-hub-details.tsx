@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import {
@@ -28,15 +28,15 @@ const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHu
   return (
     <PaneBody>
       <SectionHeading text={t('olm~OperatorHub details')} />
-      <div className="row">
-        <div className="col-sm-6 col-xs-12">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary
             resource={operatorHub}
             podSelector="spec.podSelector"
             showNodeSelector={false}
           />
-        </div>
-        <div className="col-sm-6 col-xs-12">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             <DetailsItem
               label={t('olm~Default sources')}
@@ -66,8 +66,8 @@ const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHu
                 })}
             </DetailsItem>
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

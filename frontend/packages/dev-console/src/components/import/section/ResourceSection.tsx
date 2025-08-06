@@ -12,6 +12,7 @@ import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import { FlagsObject } from '@console/internal/reducers/features';
 import { FLAG_KNATIVE_SERVING_SERVICE, ServiceModel } from '@console/knative-plugin';
 import { SingleDropdownField, SelectInputOption } from '@console/shared';
+import { FLAG_OPENSHIFT_DEPLOYMENTCONFIG } from '../../../const';
 import { Resources, ReadableResourcesNames } from '../import-types';
 import FormSection from './FormSection';
 import { useResourceType } from './useResourceType';

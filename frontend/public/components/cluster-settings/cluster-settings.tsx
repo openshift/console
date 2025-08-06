@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as semver from 'semver';
 import {
   Alert,
@@ -89,10 +89,10 @@ import {
   splitClusterVersionChannel,
   UpdateHistory,
 } from '../../module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   documentationURLs,
   EmptyBox,
-  ExternalLink,
   FieldLevelHelp,
   Firehose,
   FirehoseResource,
@@ -103,11 +103,11 @@ import {
   ResourceLink,
   resourcePathFromModel,
   SectionHeading,
-  Timestamp,
   togglePaused,
   UpstreamConfigDetailsItem,
   useAccessReview,
 } from '../utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   isClusterExternallyManaged,
@@ -309,7 +309,7 @@ const ChannelHeader: React.FC<{}> = () => {
 const Channel: React.FC<ChannelProps> = ({ children, endOfLife }) => {
   return (
     <div
-      className={classNames('co-channel', {
+      className={css('co-channel', {
         'co-channel--end-of-life': endOfLife,
       })}
       data-test="cv-channel"
@@ -320,15 +320,13 @@ const Channel: React.FC<ChannelProps> = ({ children, endOfLife }) => {
 };
 
 const ChannelLine: React.FC<ChannelLineProps> = ({ children, start }) => {
-  return (
-    <li className={classNames('co-channel-line', { 'co-channel-start': start })}>{children}</li>
-  );
+  return <li className={css('co-channel-line', { 'co-channel-start': start })}>{children}</li>;
 };
 
 export const ChannelName: React.FC<ChannelNameProps> = ({ children, current }) => {
   return (
     <span
-      className={classNames('co-channel-name', {
+      className={css('co-channel-name', {
         'co-channel-name--current': current,
       })}
       data-test="cv-channel-name"
@@ -341,7 +339,7 @@ export const ChannelName: React.FC<ChannelNameProps> = ({ children, current }) =
 const ChannelPath: React.FC<ChannelPathProps> = ({ children, current }) => {
   return (
     <ul
-      className={classNames('co-channel-path', {
+      className={css('co-channel-path', {
         'co-channel-path--current': current,
       })}
     >
@@ -358,7 +356,7 @@ export const ChannelVersion: React.FC<ChannelVersionProps> = ({
   const test = 'cv-channel-version';
   return (
     <span
-      className={classNames('co-channel-version', {
+      className={css('co-channel-version', {
         'co-channel-version--current': current,
         'co-channel-version--update-blocked': updateBlocked,
       })}
@@ -419,7 +417,7 @@ const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({
     >
       <Button
         variant="secondary"
-        className={classNames('co-channel-version-dot', {
+        className={css('co-channel-version-dot', {
           'co-channel-version-dot--current': current,
           'co-channel-version-dot--update-blocked': updateBlocked,
         })}
@@ -428,7 +426,7 @@ const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({
     </Popover>
   ) : (
     <div
-      className={classNames('co-channel-version-dot', {
+      className={css('co-channel-version-dot', {
         'co-channel-version-dot--current': current,
         'co-channel-version-dot--update-blocked': updateBlocked,
       })}
@@ -444,7 +442,7 @@ const UpdatesBar: React.FC<UpdatesBarProps> = ({ children }) => {
 export const UpdatesGroup: React.FC<UpdatesGroupProps> = ({ children, divided }) => {
   return (
     <div
-      className={classNames('co-cluster-settings__updates-group', {
+      className={css('co-cluster-settings__updates-group', {
         'co-cluster-settings__updates-group--divided': divided,
       })}
       data-test="cv-updates-group"

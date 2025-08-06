@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import {
@@ -14,6 +14,8 @@ import {
   Flex,
   Popover,
   Content,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk/src';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -29,8 +31,8 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
@@ -56,11 +58,11 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => 
     <>
       <PaneBody>
         <SectionHeading text={t('public~MachineConfig details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <MachineConfigSummary obj={obj} t={t} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       {files && (
         <PaneBody>
@@ -149,7 +151,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={machineConfigReference} name={obj.metadata.name} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         {_.get(
           obj,
           [
@@ -163,7 +165,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
       <TableData className={tableColumnClasses[2]}>
         {_.get(obj, 'spec.config.ignition.version') || '-'}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
         {_.get(obj, 'spec.osImageURL') || '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>

@@ -2,7 +2,6 @@ import { safeLoadAll } from 'js-yaml';
 import { checkErrors } from '../../support';
 import { isLocalDevEnvironment } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
-import { refreshWebConsoleLink } from '../../views/form';
 import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
@@ -13,7 +12,6 @@ const PLUGIN_PATH = '../../../dynamic-demo-plugin';
 const PLUGIN_PULL_SPEC = Cypress.env('PLUGIN_PULL_SPEC');
 /* The update wait is the value to wait for the poll of /api/check-updates to return with the updated list of plugins
  after the plugin is enabled and loaded. This wait will be longer on ci than when debugging locally. */
-const CHECK_UPDATE_WAIT = 300000;
 /*
   These tests are meant to:
     1. show how to test a dynamic plugin using demo as the plugin instance
@@ -54,10 +52,9 @@ const enableDemoPlugin = (enable: boolean) => {
       cy.byTestID('edit-console-plugin').contains(enable ? 'Enabled' : 'Disabled');
     });
   cy.log(`Running plugin test on ci using PLUGIN_PULL_SPEC: ${PLUGIN_PULL_SPEC}`);
-  cy.byTestID(refreshWebConsoleLink, { timeout: CHECK_UPDATE_WAIT })
-    .should('exist')
+  cy.byTestID(`${PLUGIN_NAME}-status`)
+    .should('include.text', enable ? 'Loaded' : '-')
     .then(() => {
-      cy.reload();
       if (!enable) {
         cy.byLegacyTestID(PLUGIN_NAME).click();
         detailsPage.titleShouldContain(PLUGIN_NAME);

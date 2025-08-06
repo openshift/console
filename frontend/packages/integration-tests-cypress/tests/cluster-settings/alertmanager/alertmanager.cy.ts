@@ -45,10 +45,10 @@ describe('Alertmanager', () => {
     cy.byLegacyTestID('input-repeat-interval').type('24h');
     cy.byTestID('confirm-action').click();
     modal.shouldBeClosed();
-    cy.byLegacyTestID('group_by_value').should('contain', ', cluster');
-    cy.byLegacyTestID('group_wait_value').should('contain', '60s');
-    cy.byLegacyTestID('group_interval_value').should('contain', '10m');
-    cy.byLegacyTestID('repeat_interval_value').should('contain', '24h');
+    cy.byTestID('group_by_value').should('contain', ', cluster');
+    cy.byTestID('group_wait_value').should('contain', '60s');
+    cy.byTestID('group_interval_value').should('contain', '10m');
+    cy.byTestID('repeat_interval_value').should('contain', '24h');
   });
 
   it('displays the Alertmanager YAML page and saves Alertmanager YAML', () => {
@@ -69,9 +69,9 @@ describe('Alertmanager', () => {
     const webhookURL = 'http://mywebhookurl';
     alertmanager.createReceiver(receiverName, configName);
     alertmanager.showAdvancedConfiguration();
-    cy.byLegacyTestID('send-resolved-alerts').should('be.checked');
-    cy.byLegacyTestID('webhook-url').type(webhookURL);
-    cy.byLegacyTestID('label-0').type(label);
+    cy.byTestID('send-resolved-alerts').should('be.checked');
+    cy.byTestID('webhook-url').type(webhookURL);
+    cy.byTestID('label-0').type(label);
     alertmanager.save();
     alertmanager.validateCreation(receiverName, receiverType, label);
     listPage.rows.clickKebabAction(receiverName, 'Delete Receiver');
@@ -105,7 +105,7 @@ receivers:
       .within(() => {
         cy.get('[data-test-id="kebab-button"]').click();
       });
-    cy.get('[data-test-action="Delete Receiver"]').should('be.disabled');
+    cy.get('[data-test-action="Delete Receiver"] button').should('be.disabled');
     alertmanager.reset();
   });
 
@@ -181,8 +181,8 @@ route:
     detailsPage.selectTab('Details');
     listPage.rows.shouldExist(receiverName);
     alertmanager.visitEditPage(receiverName);
-    cy.byLegacyTestID('label-0').should('have.value', matcher1);
-    cy.byLegacyTestID('label-1').should('have.value', matcher2);
+    cy.byTestID('label-0').should('have.value', matcher1);
+    cy.byTestID('label-1').should('have.value', matcher2);
     alertmanager.save();
 
     cy.log('verify match and match_re routing labels were converted to matchers');

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Kebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventSourceKind, EventSourceConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
 import { getDynamicEventSourceModel } from '../../../utils/fetch-dynamic-eventsources-utils';

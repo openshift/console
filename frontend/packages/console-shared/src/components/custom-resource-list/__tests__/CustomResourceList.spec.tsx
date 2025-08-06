@@ -11,9 +11,9 @@ import CustomResourceList from '../CustomResourceList';
 let customResourceListProps: React.ComponentProps<typeof CustomResourceList>;
 
 const mockColumnClasses = {
-  name: 'col-lg-4',
-  version: 'col-lg-4',
-  status: 'col-lg-4',
+  name: 'mock-name-column',
+  version: 'mock-version-column',
+  status: 'mock-status-column',
 };
 
 const MockTableHeader = () => {

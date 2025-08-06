@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import { useSize } from '@patternfly/react-topology';
-import cx from 'classnames';
 import { get } from 'lodash';
 import { modelFor, kindToAbbr } from '@console/internal/module/k8s';
 import './SvgResourceIcon.scss';
@@ -52,7 +52,7 @@ const SvgResourceIcon = React.forwardRef<SVGRectElement, ResourceIconProps>(
 
     return (
       <g
-        className={cx('odc-resource-icon', {
+        className={css('odc-resource-icon', {
           [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
         })}
         data-test={`icon ${kindStr.toLowerCase()}`}

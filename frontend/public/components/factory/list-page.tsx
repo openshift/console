@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
+import { Button, Grid, GridItem, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { useDocumentListener } from '@console/shared/src/hooks/document-listener';
@@ -23,7 +22,6 @@ import { ErrorPage404 } from '../error';
 import { K8sKind } from '../../module/k8s/types';
 import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { Dropdown } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import {
   FirehoseResource,
@@ -39,6 +37,7 @@ import {
 import { RequireCreatePermission } from '../utils/rbac';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
 import ListPageHeader from './ListPage/ListPageHeader';
+import { SimpleDropdown } from '@patternfly/react-templates';
 
 type CreateProps = {
   action?: string;
@@ -54,27 +53,19 @@ type CreateProps = {
 
 type TextFilterProps = Omit<TextInputProps, 'type' | 'tabIndex'> & {
   label?: string;
-  parentClassName?: string;
 };
 
 export const TextFilter: React.FC<TextFilterProps> = (props) => {
-  const {
-    label,
-    className,
-    placeholder,
-    autoFocus = false,
-    parentClassName,
-    ...otherInputProps
-  } = props;
+  const { label, placeholder, autoFocus = false, ...otherInputProps } = props;
   const { ref } = useDocumentListener<HTMLInputElement>();
   const { t } = useTranslation();
   const placeholderText = placeholder ?? t('public~Filter {{label}}...', { label });
 
   return (
-    <div className={classNames('has-feedback', parentClassName)}>
+    <div className="co-text-filter">
       <TextInput
         {...otherInputProps}
-        className={classNames('co-text-filter', className)}
+        className="co-text-filter__text-input"
         data-test-id="item-filter"
         aria-label={placeholderText}
         placeholder={placeholderText}
@@ -83,7 +74,7 @@ export const TextFilter: React.FC<TextFilterProps> = (props) => {
         tabIndex={0}
         type="text"
       />
-      <span className="co-text-filter-feedback">
+      <span className="co-text-filter__feedback">
         <kbd className="co-kbd co-kbd__filter-input">{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd>
       </span>
     </div>
@@ -161,11 +152,11 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
   return (
     <div>
       {!_.isEmpty(data) && Filter}
-      <div className="row">
-        <div className="col-xs-12">
+      <Grid>
+        <GridItem>
           <ListComponent {...props} data={data} />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </div>
   );
 };
@@ -287,15 +278,20 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
       );
     } else if (createProps.items) {
       createLink = (
-        <Dropdown
-          buttonClassName="pf-m-primary"
-          id="item-create"
-          dataTest="item-create"
-          menuClassName={classNames({ 'prevent-overflow': title })}
-          title={createButtonText}
-          noSelection
-          items={createProps.items}
-          onChange={runOrNavigate}
+        <SimpleDropdown
+          toggleProps={{
+            variant: 'primary',
+            id: 'item-create',
+            // @ts-expect-error non-prop attribute is used for cypress
+            'data-test': 'item-create',
+          }}
+          toggleContent={createButtonText}
+          initialItems={Object.keys(createProps.items).map((item) => ({
+            value: item,
+            content: createProps.items[item],
+            'data-test-dropdown-menu': item,
+          }))}
+          onSelect={(_e, value: string) => runOrNavigate(value)}
         />
       );
     } else {

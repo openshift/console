@@ -3,7 +3,7 @@ import { ConfigMapKind } from '@console/internal/module/k8s';
 import {
   createConfigMap,
   updateConfigMap,
-  deseralizeData,
+  deserializeData,
   seralizeData,
   USER_SETTING_CONFIGMAP_NAMESPACE,
 } from '../user-settings';
@@ -70,21 +70,21 @@ describe('updateConfigMap', () => {
   });
 });
 
-describe('deseralizeData', () => {
+describe('deserializeData', () => {
   it('does not convert null or undefined', () => {
-    expect(deseralizeData(null)).toBe(null);
-    expect(deseralizeData(undefined)).toBe(undefined);
+    expect(deserializeData(null)).toBe(null);
+    expect(deserializeData(undefined)).toBe(undefined);
   });
 
   it('converts valid json to an object', () => {
-    expect(deseralizeData('{ "key": "value" }')).toEqual({ key: 'value' });
-    expect(deseralizeData('1234')).toBe(1234);
-    expect(deseralizeData('true')).toBe(true);
-    expect(deseralizeData('false')).toBe(false);
+    expect(deserializeData('{ "key": "value" }')).toEqual({ key: 'value' });
+    expect(deserializeData('1234')).toBe(1234);
+    expect(deserializeData('true')).toBe(true);
+    expect(deserializeData('false')).toBe(false);
   });
 
   it('return invalid json strings as string', () => {
-    expect(deseralizeData('graph')).toBe('graph');
+    expect(deserializeData('graph')).toBe('graph');
   });
 });
 

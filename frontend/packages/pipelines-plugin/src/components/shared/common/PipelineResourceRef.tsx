@@ -1,5 +1,5 @@
 import * as React from 'react';
-import cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { ResourceIcon, ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import * as models from '../../../models';
@@ -7,7 +7,11 @@ import * as models from '../../../models';
 import './PipelineResourceRef.scss';
 
 const MODEL_KINDS = Object.values(models).reduce(
-  (acc, model: K8sKind) => ({ ...acc, [model.kind]: model }),
+  (acc, model: K8sKind) => ({
+    ...acc,
+    [`${model.kind}-${model.apiVersion}`]: model,
+    [model.kind]: model,
+  }),
   {},
 );
 
@@ -18,6 +22,7 @@ type PipelineResourceRefProps = {
   displayName?: string;
   largeIcon?: boolean;
   namespace?: string;
+  resourceApiVersion?: string;
 };
 
 const PipelineResourceRef: React.FC<PipelineResourceRefProps> = ({
@@ -27,14 +32,16 @@ const PipelineResourceRef: React.FC<PipelineResourceRefProps> = ({
   namespace,
   resourceKind,
   resourceName,
+  resourceApiVersion,
 }) => {
-  const model: K8sKind | undefined = MODEL_KINDS[resourceKind];
+  const modelKey = resourceApiVersion ? `${resourceKind}-${resourceApiVersion}` : resourceKind;
+  const model: K8sKind | undefined = MODEL_KINDS[modelKey] || MODEL_KINDS[resourceKind];
   let kind = resourceKind;
   if (model) {
     kind = referenceForModel(model);
   }
 
-  const classNames = cx('opp-pipeline-resource-ref', {
+  const classNames = css('opp-pipeline-resource-ref', {
     'co-m-resource-icon--lg': largeIcon,
     'opp-pipeline-resource-ref--pipeline-color': !model,
   });

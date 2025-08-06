@@ -10,7 +10,8 @@ import {
   DynamicPluginInfo,
 } from '@console/plugin-sdk';
 import * as UIActions from '@console/internal/actions/ui';
-import { resourcePath, Timestamp } from '@console/internal/components/utils';
+import { resourcePath } from '@console/internal/components/utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 import { getClusterID } from '@console/internal/module/k8s/cluster-settings';
 
@@ -125,14 +126,14 @@ const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => {
 // to hook this into redux.
 export const getAlertActions = (
   actionsExtensions: ResolvedExtension<AlertAction>[],
-  navigate?: NavigateFunction,
+  navigate: NavigateFunction,
 ) => {
   const alertActions = new Map<
     string,
     Omit<ResolvedExtension<AlertAction>['properties'], 'alert'>
   >().set('AlertmanagerReceiversNotConfigured', {
     text: i18next.t('public~Configure'),
-    action: () => navigate('/monitoring/alertmanagerconfig'),
+    action: () => navigate('/settings/cluster/alertmanagerconfig'),
   });
   actionsExtensions.forEach(({ properties }) =>
     alertActions.set(properties.alert, {
@@ -292,11 +293,9 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
 
   const hasCriticalAlerts = criticalAlerts.length > 0;
   const hasNonCriticalAlerts = nonCriticalAlerts.length > 0;
-  const [isAlertExpanded, toggleAlertExpanded] = React.useState<boolean>(hasCriticalAlerts);
-  const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = React.useState<boolean>(
-    true,
-  );
-  const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState<boolean>(true);
+  const [isAlertExpanded, toggleAlertExpanded] = React.useState(hasCriticalAlerts);
+  const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = React.useState(true);
+  const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState(true);
   React.useEffect(() => {
     if (hasCriticalAlerts && isDrawerExpanded) {
       toggleAlertExpanded(true);
@@ -304,7 +303,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     if (hasNonCriticalAlerts && isDrawerExpanded) {
       toggleNonCriticalAlertExpanded(true);
     }
-  }, [hasCriticalAlerts, hasNonCriticalAlerts, isAlertExpanded, isDrawerExpanded]);
+  }, [hasCriticalAlerts, hasNonCriticalAlerts, isDrawerExpanded]);
 
   React.useEffect(() => {
     onDrawerChange();
@@ -465,10 +464,9 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
 };
 
 export type NotificationDrawerProps = {
-  toggleNotificationDrawer: () => any;
   isDrawerExpanded: boolean;
   onDrawerChange: () => void;
-  drawerRef: React.Ref<typeof PfNotificationDrawer>;
+  drawerRef: React.Ref<HTMLElement>;
 };
 
 type AlertErrorProps = {

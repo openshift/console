@@ -13,7 +13,7 @@ import {
   ISortBy,
   OnSort,
 } from '@patternfly/react-table';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import {
   AutoSizer,
@@ -109,7 +109,7 @@ export const TableRow: React.FC<TableRowProps> = ({
       data-test-rows="resource-row"
       data-key={trKey}
       style={style}
-      className={classNames('pf-v6-c-table__tr', className)}
+      className={css('pf-v6-c-table__tr', className)}
       role="row"
     />
   );
@@ -175,11 +175,12 @@ export const TableData: React.FC<TableDataProps> = ({
   className,
   columnID,
   columns,
+  dataTest,
   showNamespaceOverride,
   children,
 }) => {
   return isColumnVisible(window.innerWidth, columnID, columns, showNamespaceOverride) ? (
-    <Td data-label={columnID} className={className} role="gridcell">
+    <Td data-label={columnID} className={className} role="gridcell" data-test={dataTest}>
       {children}
     </Td>
   ) : null;
@@ -189,6 +190,7 @@ export type TableDataProps = {
   className?: string;
   columnID?: string;
   columns?: Set<string>;
+  dataTest?: string;
   id?: string;
   showNamespaceOverride?: boolean;
 };

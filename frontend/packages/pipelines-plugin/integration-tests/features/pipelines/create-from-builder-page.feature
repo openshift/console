@@ -4,6 +4,7 @@ Feature: Create the pipeline from builder page
 
         Background:
             Given user has created or selected namespace "aut-pipelines"
+              And user is at Add page
 
 
         @smoke
@@ -36,7 +37,7 @@ Feature: Create the pipeline from builder page
 
         @regression
         Scenario: Pipeline Builder page: P-02-TC02
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user clicks Create Pipeline button on Pipelines page
              Then user will be redirected to Pipeline Builder page
               And user is able to see pipeline name with default value "new-pipeline"
@@ -311,7 +312,7 @@ Feature: Create the pipeline from builder page
 
         @regression
         Scenario: Code assistance for referencing Context-based values in the Pipeline Builder: P-02-TC20
-            Given user is at pipelines page
+            Given user is at pipelines page in admin view
              When user clicks on import YAML button
               And user enters yaml content from yaml file "pipelineRun-using_context_variables.yaml" in the editor
         # user uses yaml content "pipelineRun-using_context_variables.yaml"

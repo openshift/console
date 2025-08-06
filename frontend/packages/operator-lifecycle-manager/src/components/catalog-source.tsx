@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Button, DescriptionList } from '@patternfly/react-core';
+import { Button, DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom';
@@ -48,10 +48,10 @@ import { CatalogSourceKind, PackageManifestKind, OperatorGroupKind } from '../ty
 import useOperatorHubConfig from '../utils/useOperatorHubConfig';
 import { deleteCatalogSourceModal } from './modals/delete-catalog-source-modal';
 import { disableDefaultSourceModal } from './modals/disable-default-source-modal';
-import { editRegitryPollInterval } from './modals/edit-registry-poll-interval-modal';
 import { requireOperatorGroup } from './operator-group';
 import { OperatorHubKind } from './operator-hub';
 import { PackageManifestsPage } from './package-manifest';
+import { RegistryPollIntervalDetailItem } from './registry-poll-interval-details';
 
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
 
@@ -151,11 +151,11 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
           resource: CatalogSourceModel.label,
         })}
       />
-      <div className="row">
-        <div className="col-sm-6 col-xs-12">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={catalogSource} />
-        </div>
-        <div className="col-sm-6 col-xs-12">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             <DetailsItem
               editAsGroup
@@ -187,13 +187,7 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
             >
               {getEndpoint(catalogSource)}
             </DetailsItem>
-            <DetailsItem
-              label={t('olm~Registry poll interval')}
-              obj={catalogSource}
-              path="spec.updateStrategy.registryPoll.interval"
-              canEdit={!_.isEmpty(catalogSource.spec.updateStrategy)}
-              onEdit={() => editRegitryPollInterval({ catalogSource })}
-            />
+            <RegistryPollIntervalDetailItem catalogSource={catalogSource} />
             <DetailsItem
               label={t('olm~Number of Operators')}
               obj={catalogSource}
@@ -202,8 +196,8 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
               {operatorCount}
             </DetailsItem>
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   ) : (
     <div />
@@ -328,12 +322,12 @@ export const CreateSubscriptionYAML: React.FC = (props) => {
 
 const tableColumnClasses = [
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  css('pf-m-hidden', 'pf-m-visible-on-sm'),
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-xl'),
+  css('pf-m-hidden', 'pf-m-visible-on-xl'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
 

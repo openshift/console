@@ -13,15 +13,9 @@ import { ModalVariant } from '@patternfly/react-core/deprecated';
 import { StarIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Modal, RedExclamationCircleIcon, useUserSettingsCompatibility } from '@console/shared';
-import { STORAGE_PREFIX } from '@console/shared/src/constants/common';
+import { FAVORITES_CONFIG_MAP_KEY, FAVORITES_LOCAL_STORAGE_KEY } from '../../consts';
+import { FavoritesType } from '../../types';
 
-export type FavoritesType = {
-  name: string;
-  url: string;
-}[];
-
-export const FAVORITES_CONFIG_MAP_KEY = 'console.favorites';
-export const FAVORITES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/favorites`;
 const MAX_FAVORITE_COUNT = 10;
 
 type FavoriteButtonProps = {
@@ -41,7 +35,7 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
     null,
     true,
   );
-  const alphanumericRegex = /^[a-zA-Z0-9- ]*$/;
+  const alphanumericRegex = /^[\p{L}\p{N}\s-]*$/u;
 
   const currentUrlPath = window.location.pathname;
 
@@ -66,7 +60,7 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
         : currentUrlPath.split('/');
       const sanitizedDefaultName = (
         defaultName ?? currentUrlSplit.slice(-1)[0].split('?')[0]
-      ).replace(/[^a-zA-Z0-9- ]/g, '-');
+      ).replace(/[^\p{L}\p{N}\s-]/gu, '-');
       setName(sanitizedDefaultName);
       setIsModalOpen(true);
     }

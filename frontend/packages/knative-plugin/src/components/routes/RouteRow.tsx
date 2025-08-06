@@ -1,9 +1,10 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp, ExternalLinkWithCopy } from '@console/internal/components/utils';
+import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { RevisionModel, RouteModel } from '../../models';
 import { RouteKind } from '../../types';
 import { getConditionString } from '../../utils/condition-utils';
@@ -24,16 +25,12 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={cx(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         {(obj.status && obj.status.url && (
-          <ExternalLinkWithCopy
-            link={obj.status.url}
-            text={obj.status.url}
-            additionalClassName="co-external-link--block"
-          />
+          <ExternalLinkWithCopy href={obj.status.url} text={obj.status.url} displayBlock />
         )) ||
           '-'}
       </TableData>

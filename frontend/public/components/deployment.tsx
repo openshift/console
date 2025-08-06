@@ -9,24 +9,14 @@ import {
   usePrometheusGate,
 } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
-import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
-import {
-  AddHorizontalPodAutoScaler,
-  DeleteHorizontalPodAutoScaler,
-  EditHorizontalPodAutoScaler,
-  hideActionForHPAs,
-} from '@console/app/src/actions/modify-hpa';
 
 import { DeploymentModel } from '../models';
 import {
   DeploymentKind,
-  K8sKind,
   K8sResourceKindReference,
   referenceFor,
   referenceForModel,
 } from '../module/k8s';
-import { configureUpdateStrategyModal, errorModal } from './modals';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
@@ -34,13 +24,10 @@ import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
-  Kebab,
-  KebabAction,
   ContainerTable,
   navFactory,
   ResourceSummary,
   SectionHeading,
-  togglePaused,
   WorkloadPausedAlert,
   RuntimeClass,
 } from './utils';
@@ -54,52 +41,11 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
-const { ModifyCount, AddStorage, common } = Kebab.factory;
-
-const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: DeploymentKind) => ({
-  // t('public~Edit update strategy')
-  labelKey: 'public~Edit update strategy',
-  callback: () => configureUpdateStrategyModal({ deployment }),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: deployment.metadata.name,
-    namespace: deployment.metadata.namespace,
-    verb: 'patch',
-  },
-});
-
-const PauseAction: KebabAction = (kind: K8sKind, obj: DeploymentKind) => ({
-  // t('public~Resume rollouts')
-  // t('public~Pause rollouts')
-  labelKey: obj.spec.paused ? 'public~Resume rollouts' : 'public~Pause rollouts',
-  callback: () => togglePaused(kind, obj).catch((err) => errorModal({ error: err.message })),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: obj.metadata.name,
-    namespace: obj.metadata.namespace,
-    verb: 'patch',
-  },
-});
-
-export const menuActions = [
-  hideActionForHPAs(ModifyCount),
-  PauseAction,
-  AddHealthChecks,
-  AddHorizontalPodAutoScaler,
-  EditHorizontalPodAutoScaler,
-  AddStorage,
-  UpdateStrategy,
-  DeleteHorizontalPodAutoScaler,
-  EditResourceLimits,
-  ...Kebab.getExtensionsActionsForKind(DeploymentModel),
-  EditHealthChecks,
-  ...common,
-];
 
 export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ deployment }) => {
   const { t } = useTranslation();
@@ -165,8 +111,8 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
         <SectionHeading text={t('public~Deployment details')} />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
         <PodRingSet key={deployment.metadata.uid} obj={deployment} path="/spec/replicas" />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={deployment} showPodSelector showNodeSelector showTolerations>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
@@ -180,11 +126,11 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DeploymentDetailsList deployment={deployment} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Containers')} />

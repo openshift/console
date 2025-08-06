@@ -133,7 +133,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
+    <form onSubmit={submit} name="form" className="modal-content pf-v6-c-form pf-v6-c-form--no-gap">
       <ModalTitle>{t('console-app~Clone')}</ModalTitle>
       <ModalBody>
         <FormGroup

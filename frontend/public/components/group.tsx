@@ -21,10 +21,11 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const addUsers: KebabAction = (kind: K8sKind, group: GroupKind) => ({
   label: i18next.t('public~Add Users'),
@@ -73,12 +74,13 @@ const getImpersonateAction = (
 export const GroupKebab: React.FC<GroupKebabProps> = ({ group }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const startImpersonate = React.useCallback(
+    (kind, name) => dispatch(UIActions.startImpersonate(kind, name)),
+    [dispatch],
+  );
   return (
     <ResourceKebab
-      actions={[
-        getImpersonateAction(dispatch(UIActions.startImpersonate), navigate),
-        ...menuActions,
-      ]}
+      actions={[getImpersonateAction(startImpersonate, navigate), ...menuActions]}
       kind={referenceForModel(GroupModel)}
       resource={group}
     />
@@ -195,11 +197,11 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ obj }) => {
     <>
       <PaneBody>
         <SectionHeading text={t('public~Group details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={obj} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Users')} />
@@ -221,15 +223,16 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
 export const GroupDetailsPage: React.FC = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const startImpersonate = React.useCallback(
+    (kind, name) => dispatch(UIActions.startImpersonate(kind, name)),
+    [dispatch],
+  );
 
   return (
     <DetailsPage
       {...props}
       kind={referenceForModel(GroupModel)}
-      menuActions={[
-        getImpersonateAction(dispatch(UIActions.startImpersonate), navigate),
-        ...menuActions,
-      ]}
+      menuActions={[getImpersonateAction(startImpersonate, navigate), ...menuActions]}
       pages={[
         navFactory.details(GroupDetails),
         navFactory.editYaml(),

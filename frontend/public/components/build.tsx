@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link, redirect } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -28,6 +28,7 @@ import {
 import { cloneBuild, getBuildNumber } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { errorModal, confirmModal } from './modals';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   AsyncComponent,
   BuildHooks,
@@ -35,7 +36,6 @@ import {
   ConsoleEmptyState,
   DetailsItem,
   documentationURLs,
-  ExternalLink,
   getDocumentationURL,
   humanizeBinaryBytes,
   humanizeCpuCores,
@@ -50,8 +50,8 @@ import {
   resourcePath,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
@@ -275,15 +275,13 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
       <PaneBody>
         {hasPipeline && <PipelineBuildStrategyAlert obj={build} />}
         <SectionHeading text={t('public~Build details')} />
-        {hasPipeline && (
-          <div className="row">
-            <div className="col-xs-12">
+        <Grid hasGutter>
+          {hasPipeline && (
+            <GridItem>
               <BuildPipeline obj={build} />
-            </div>
-          </div>
-        )}
-        <div className="row">
-          <div className="col-sm-6">
+            </GridItem>
+          )}
+          <GridItem sm={6}>
             <ResourceSummary resource={build}>
               <DetailsItem
                 label={t('public~Triggered by')}
@@ -294,8 +292,8 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
                 {triggeredBy}
               </DetailsItem>
             </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <BuildStrategy resource={build}>
               <DetailsItem label={t('public~Status')} obj={build} path="status.phase">
                 <Status status={build.status.phase} />
@@ -344,8 +342,8 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
                 <pre className="co-pre">{logSnippet}</pre>
               </DetailsItem>
             </BuildStrategy>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <BuildHooks resource={build} />
     </>
@@ -444,10 +442,7 @@ const BuildsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => 
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

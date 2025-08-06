@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import {
   DEFAULT_LAYER,
   DEFAULT_WHEN_OFFSET,
@@ -14,7 +15,6 @@ import {
   WithContextMenuProps,
   WithSelectionProps,
 } from '@patternfly/react-topology';
-import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { Link } from 'react-router-dom';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/lib-core';
@@ -175,7 +175,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
     </TaskNode>
   );
 
-  const classes = classNames('odc-pipeline-topology__task-node', { 'is-link': enableLogLink });
+  const classes = css('odc-pipeline-topology__task-node', { 'is-link': enableLogLink });
   return (
     <Layer
       id={

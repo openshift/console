@@ -2,10 +2,18 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { DragSource, DropTarget } from 'react-dnd';
 import { DRAGGABLE_TYPE } from './draggable-item-types';
-import { Button, Tooltip } from '@patternfly/react-core';
+import {
+  ActionList,
+  ActionListGroup,
+  ActionListItem,
+  Button,
+  Grid,
+  GridItem,
+  Tooltip,
+} from '@patternfly/react-core';
 import { GripVerticalIcon } from '@patternfly/react-icons/dist/esm/icons/grip-vertical-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -127,35 +135,37 @@ const NameValueEditor_ = withDragDropContext(
         );
       });
       return (
-        <>
-          <div className="row pairs-list__heading">
-            {!readOnly && allowSorting && <div className="col-xs-1 co-empty__header" />}
-            <div className="col-xs-5">{nameString}</div>
-            <div className="col-xs-5">{valueString}</div>
-            <div className="col-xs-1 co-empty__header" />
-          </div>
+        <Grid hasGutter>
+          {!readOnly && allowSorting && <GridItem span={1} />}
+          <GridItem span={5}>{nameString}</GridItem>
+          <GridItem span={5}>{valueString}</GridItem>
+          <GridItem span={1} />
+
           {pairElems}
-          <div className="row">
-            <div className="col-xs-12">
+
+          <GridItem>
+            <ActionList>
               {readOnly ? null : (
-                <div>
-                  <Button
-                    icon={
-                      <PlusCircleIcon
-                        data-test-id="pairs-list__add-icon"
-                        className="co-icon-space-r"
-                      />
-                    }
-                    className="pf-m-link--align-left"
-                    data-test="add-button"
-                    onClick={this._append}
-                    type="button"
-                    variant="link"
-                  >
-                    {addString ? addString : t('public~Add more')}
-                  </Button>
+                <ActionListGroup>
+                  <ActionListItem>
+                    <Button
+                      icon={
+                        <PlusCircleIcon
+                          data-test-id="pairs-list__add-icon"
+                          className="co-icon-space-r"
+                        />
+                      }
+                      className="pf-m-link--align-left"
+                      data-test="add-button"
+                      onClick={this._append}
+                      type="button"
+                      variant="link"
+                    >
+                      {addString ? addString : t('public~Add more')}
+                    </Button>
+                  </ActionListItem>
                   {addConfigMapSecret && (
-                    <>
+                    <ActionListItem>
                       <Button
                         icon={
                           <PlusCircleIcon
@@ -170,13 +180,13 @@ const NameValueEditor_ = withDragDropContext(
                       >
                         {t('public~Add from ConfigMap or Secret')}
                       </Button>
-                    </>
+                    </ActionListItem>
                   )}
-                </div>
+                </ActionListGroup>
               )}
-            </div>
-          </div>
-        </>
+            </ActionList>
+          </GridItem>
+        </Grid>
       );
     }
   },
@@ -308,36 +318,37 @@ const EnvFromEditor_ = withDragDropContext(
       });
 
       return (
-        <>
-          <div className="row pairs-list__heading">
-            {!readOnly && <div className="col-xs-1 co-empty__header" />}
-            <div className="col-xs-5 pf-v6-u-text-color-subtle">
-              {firstTitle || t('public~ConfigMap/Secret')}
-            </div>
-            <div className="col-xs-5 pf-v6-u-text-color-subtle">
-              {secondTitle || t('public~Prefix (optional)')}
-            </div>
-            <div className="col-xs-1 co-empty__header" />
-          </div>
+        <Grid hasGutter>
+          {!readOnly && <GridItem span={1} />}
+          <GridItem span={5} className="pf-v6-u-text-color-subtle">
+            {firstTitle || t('public~ConfigMap/Secret')}
+          </GridItem>
+          <GridItem span={5} className="pf-v6-u-text-color-subtle">
+            {secondTitle || t('public~Prefix (optional)')}
+          </GridItem>
+          <GridItem span={1} />
+
           {pairElems}
-          <div className="row">
-            <div className="col-xs-12">
-              {!readOnly && (
-                <Button
-                  icon={<PlusCircleIcon />}
-                  className="pf-m-link--align-left"
-                  onClick={this._append}
-                  type="button"
-                  variant="link"
-                  isDisabled={addButtonDisabled}
-                >
-                  {' '}
-                  {addButtonLabel || t('public~Add all from ConfigMap or Secret')}
-                </Button>
-              )}
-            </div>
-          </div>
-        </>
+
+          <GridItem>
+            <ActionList>
+              <ActionListGroup>
+                {!readOnly && (
+                  <Button
+                    icon={<PlusCircleIcon />}
+                    className="pf-m-link--align-left"
+                    onClick={this._append}
+                    type="button"
+                    variant="link"
+                    isDisabled={addButtonDisabled}
+                  >
+                    {addButtonLabel || t('public~Add all from ConfigMap or Secret')}
+                  </Button>
+                )}
+              </ActionListGroup>
+            </ActionList>
+          </GridItem>
+        </Grid>
       );
     }
   },
@@ -483,12 +494,6 @@ const PairElement_ = DragSource(
           valueString,
           alwaysAllowRemove,
         } = this.props;
-        const deleteIcon = (
-          <>
-            <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-            <span className="pf-v6-u-screen-reader">{t('public~Delete')}</span>
-          </>
-        );
         const dragButton = (
           <div>
             <Button
@@ -504,75 +509,74 @@ const PairElement_ = DragSource(
         );
         return connectDropTarget(
           connectDragPreview(
-            <div
-              className={classNames(
-                'row',
-                isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row',
-              )}
-              data-test="pairs-list-row"
-              ref={(node) => (this.node = node)}
-            >
-              {allowSorting && !readOnly && (
-                <div className="col-xs-1 pairs-list__action">
-                  {disableReorder ? dragButton : connectDragSource(dragButton)}
-                </div>
-              )}
-              <div className="col-xs-5 pairs-list__name-field">
-                <span className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
-                  <input
-                    type="text"
-                    data-test="pairs-list-name"
-                    placeholder={nameString}
-                    value={pair[NameValueEditorPair.Name]}
-                    onChange={this._onChangeName}
-                    disabled={readOnly}
-                  />
-                </span>
-              </div>
-              {_.isPlainObject(pair[NameValueEditorPair.Value]) ? (
-                <div className="col-xs-5 pairs-list__value-pair-field">
-                  <ValueFromPair
-                    data-test="pairs-list-value"
-                    pair={pair[NameValueEditorPair.Value]}
-                    configMaps={configMaps}
-                    secrets={secrets}
-                    onChange={this._onChangeValue}
-                    disabled={readOnly}
-                  />
-                </div>
-              ) : (
-                <div className="col-xs-5 pairs-list__value-field">
-                  <span
-                    className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}
-                  >
+            // React DND requires the drag source to be a native HTML element--cannot use GridItem
+            <div className="pf-v6-l-grid__item" ref={(node) => (this.node = node)}>
+              <Grid
+                hasGutter
+                className={css(isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')}
+                data-test="pairs-list-row"
+              >
+                {allowSorting && !readOnly && (
+                  <GridItem span={1} className="pairs-list__action">
+                    {disableReorder ? dragButton : connectDragSource(dragButton)}
+                  </GridItem>
+                )}
+                <GridItem span={5} className="pairs-list__name-field">
+                  <span className={css('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
                     <input
                       type="text"
-                      data-test="pairs-list-value"
-                      placeholder={valueString}
-                      value={pair[NameValueEditorPair.Value] || ''}
-                      onChange={this._onChangeValue}
+                      data-test="pairs-list-name"
+                      placeholder={nameString}
+                      value={pair[NameValueEditorPair.Name]}
+                      onChange={this._onChangeName}
                       disabled={readOnly}
                     />
                   </span>
-                </div>
-              )}
-              {!readOnly && (
-                <div className="col-xs-1 pairs-list__action">
-                  <Tooltip content={toolTip || t('public~Remove')}>
-                    <Button
-                      icon={deleteIcon}
-                      type="button"
-                      data-test="delete-button"
-                      className={classNames({
-                        'pairs-list__span-btns': allowSorting,
-                      })}
-                      onClick={this._onRemove}
-                      isDisabled={isEmpty && !alwaysAllowRemove}
-                      variant="plain"
+                </GridItem>
+                {_.isPlainObject(pair[NameValueEditorPair.Value]) ? (
+                  <GridItem span={5} className="pairs-list__value-pair-field">
+                    <ValueFromPair
+                      data-test="pairs-list-value"
+                      pair={pair[NameValueEditorPair.Value]}
+                      configMaps={configMaps}
+                      secrets={secrets}
+                      onChange={this._onChangeValue}
+                      disabled={readOnly}
                     />
-                  </Tooltip>
-                </div>
-              )}
+                  </GridItem>
+                ) : (
+                  <GridItem span={5} className="pairs-list__value-field">
+                    <span className={css('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
+                      <input
+                        type="text"
+                        data-test="pairs-list-value"
+                        placeholder={valueString}
+                        value={pair[NameValueEditorPair.Value] || ''}
+                        onChange={this._onChangeValue}
+                        disabled={readOnly}
+                      />
+                    </span>
+                  </GridItem>
+                )}
+                {!readOnly && (
+                  <GridItem span={1} className="pairs-list__action">
+                    <Tooltip content={toolTip || t('public~Remove')}>
+                      <Button
+                        icon={<MinusCircleIcon className="pairs-list__delete-icon" />}
+                        type="button"
+                        data-test="delete-button"
+                        aria-label={t('public~Delete')}
+                        className={css({
+                          'pairs-list__span-btns': allowSorting,
+                        })}
+                        onClick={this._onRemove}
+                        isDisabled={isEmpty && !alwaysAllowRemove}
+                        variant="plain"
+                      />
+                    </Tooltip>
+                  </GridItem>
+                )}
+              </Grid>
             </div>,
           ),
         );
@@ -654,62 +658,63 @@ const EnvFromPairElement_ = DragSource(
         );
         return connectDropTarget(
           connectDragPreview(
-            <div
-              className={classNames(
-                'row',
-                isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row',
-              )}
-              ref={(node) => (this.node = node)}
-            >
-              {!readOnly &&
-                connectDragSource(
-                  <div className="col-xs-1 pairs-list__action">
-                    <Button
-                      icon={<GripVerticalIcon className="pairs-list__action-icon--reorder" />}
-                      type="button"
-                      className="pairs-list__action-icon"
-                      tabIndex="-1"
-                      variant="plain"
-                      aria-label={t('public~Drag to reorder')}
-                    />
-                  </div>,
-                )}
-              <div className="col-xs-5 pairs-list__value-pair-field">
-                <ValueFromPair
-                  pair={pair[EnvFromPair.Resource]}
-                  configMaps={configMaps}
-                  secrets={secrets}
-                  serviceAccounts={serviceAccounts}
-                  onChange={this._onChangeResource}
-                  disabled={readOnly}
-                />
-              </div>
-              <div className="col-xs-5 pairs-list__name-field">
-                <span className={classNames('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
-                  <input
-                    data-test-id="env-prefix"
-                    type="text"
-                    placeholder={valueString}
-                    value={pair[EnvFromPair.Prefix]}
-                    onChange={this._onChangePrefix}
+            <div className="pf-v6-l-grid__item">
+              <Grid
+                hasGutter
+                className={css(isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')}
+                ref={(node) => (this.node = node)}
+              >
+                {!readOnly &&
+                  connectDragSource(
+                    // React DND requires the drag source to be a native HTML element--cannot use GridItem
+                    <div className="pf-v6-l-grid__item pf-m-1-col pairs-list__action">
+                      <Button
+                        icon={<GripVerticalIcon className="pairs-list__action-icon--reorder" />}
+                        type="button"
+                        className="pairs-list__action-icon"
+                        tabIndex="-1"
+                        variant="plain"
+                        aria-label={t('public~Drag to reorder')}
+                      />
+                    </div>,
+                  )}
+                <GridItem span={5} className="pairs-list__value-pair-field">
+                  <ValueFromPair
+                    pair={pair[EnvFromPair.Resource]}
+                    configMaps={configMaps}
+                    secrets={secrets}
+                    serviceAccounts={serviceAccounts}
+                    onChange={this._onChangeResource}
                     disabled={readOnly}
                   />
-                </span>
-              </div>
-              {readOnly ? null : (
-                <div className="col-xs-1 pairs-list__action">
-                  <Tooltip content={t('public~Remove')}>
-                    <Button
-                      icon={deleteButton}
-                      type="button"
-                      data-test-id="pairs-list__delete-from-btn"
-                      className="pairs-list__span-btns"
-                      onClick={this._onRemove}
-                      variant="plain"
+                </GridItem>
+                <GridItem span={5} className="pairs-list__name-field">
+                  <span className={css('pf-v6-c-form-control', { 'pf-m-disabled': readOnly })}>
+                    <input
+                      data-test-id="env-prefix"
+                      type="text"
+                      placeholder={valueString}
+                      value={pair[EnvFromPair.Prefix]}
+                      onChange={this._onChangePrefix}
+                      disabled={readOnly}
                     />
-                  </Tooltip>
-                </div>
-              )}
+                  </span>
+                </GridItem>
+                {readOnly ? null : (
+                  <GridItem span={1} className="pairs-list__action">
+                    <Tooltip content={t('public~Remove')}>
+                      <Button
+                        icon={deleteButton}
+                        type="button"
+                        data-test-id="pairs-list__delete-from-btn"
+                        className="pairs-list__span-btns"
+                        onClick={this._onRemove}
+                        variant="plain"
+                      />
+                    </Tooltip>
+                  </GridItem>
+                )}
+              </Grid>
             </div>,
           ),
         );

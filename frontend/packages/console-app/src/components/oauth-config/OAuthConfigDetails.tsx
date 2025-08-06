@@ -8,6 +8,8 @@ import {
   Dropdown,
   DropdownItem,
   DropdownList,
+  Grid,
+  GridItem,
   MenuToggle,
   MenuToggleElement,
 } from '@patternfly/react-core';
@@ -83,8 +85,8 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
     <>
       <PaneBody>
         <SectionHeading text={t('console-app~OAuth details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={obj}>
               {tokenConfig && (
                 <DescriptionListGroup>
@@ -95,8 +97,8 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
                 </DescriptionListGroup>
               )}
             </ResourceSummary>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('console-app~Identity providers')} />

@@ -39,9 +39,7 @@
 @import 'components/utils/alerts';
 @import 'components/utils/code-pre';
 @import 'components/utils/copy-to-clipboard';
-@import 'components/utils/disabled';
 @import 'components/utils/file-input';
-@import 'components/utils/kebab';
 @import 'components/utils/label';
 @import 'components/utils/number-spinner';
 @import 'components/utils/request-size-input';
@@ -71,7 +69,6 @@
 @import 'components/icon-and-text';
 @import 'components/toggle-play';
 @import 'components/edit-yaml';
-@import 'components/sidebars/resource-sidebar';
 @import 'components/graphs/graphs';
 @import 'components/masthead';
 @import 'components/modals/modals';
@@ -83,11 +80,9 @@
 @import 'components/overview/overview';
 @import 'components/deploy-image';
 @import 'components/instantiate-template';
-@import 'components/routes/create-route';
 @import 'components/storage-class-form';
 @import 'components/quota';
 @import 'components/cluster-settings/cluster-settings';
-@import 'components/radio';
 @import 'components/filter-toolbar';
 @import 'components/autocomplete';
 @import 'components/conditions';

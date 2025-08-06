@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import {
   Card,
@@ -65,7 +65,7 @@ export const DetailsCard: React.FC = () => {
           </OverviewDetailItem>
           <OverviewDetailItem isLoading={!obj} title={t('public~Description')}>
             <span
-              className={cx({
+              className={css({
                 'pf-v6-u-text-color-subtle': !description,
                 'co-project-dashboard-details-card__description': description,
               })}

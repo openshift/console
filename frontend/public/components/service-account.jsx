@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -10,9 +10,10 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
-  Timestamp,
 } from './utils';
 import { ServiceAccountModel } from '../models';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(ServiceAccountModel), ...common];
@@ -37,10 +38,7 @@ const ServiceAccountTableRow = ({ obj: serviceaccount }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={namespace} title={namespace} /> {}
       </TableData>
       <TableData className={tableColumnClasses[2]}>{secrets ? secrets.length : 0}</TableData>
@@ -60,11 +58,11 @@ const Details = ({ obj: serviceaccount }) => {
   return (
     <PaneBody>
       <SectionHeading text={t('public~ServiceAccount details')} />
-      <div className="row">
-        <div className="col-md-6">
+      <Grid hasGutter>
+        <GridItem md={6}>
           <ResourceSummary resource={serviceaccount} />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

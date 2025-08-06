@@ -6,10 +6,10 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { WatchK8sResults } from '@console/dynamic-plugin-sdk';
-import { ExternalLink } from '@console/internal/components/utils/link';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceHealthHandler } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { vulnPriority, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import { ImageManifestVuln, WatchImageVuln } from '../types';
@@ -188,7 +188,7 @@ export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
                     {quayURLFor(v) ? (
                       <ExternalLink href={quayURLFor(v)} text={getVulnerabilityCountText(v)} />
                     ) : (
-                      <span className="small pf-v6-u-text-color-subtle">-</span>
+                      <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">-</span>
                     )}
                   </div>
                 </div>

@@ -8,7 +8,7 @@ import {
   LazyActionMenu,
 } from '@console/shared';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
@@ -32,6 +32,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
@@ -58,13 +60,13 @@ const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
   return (
     <PaneBody>
       <SectionHeading text={t('public~StorageClass details')} />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={obj}>
             <DetailsItem label={t('public~Provisioner')} obj={obj} path="provisioner" />
           </ResourceSummary>
-        </div>
-        <div className="col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             <DetailsItem label={t('public~Reclaim policy')} obj={obj} path="reclaimPolicy" />
             <DescriptionListGroup>
@@ -79,8 +81,8 @@ const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
               path="volumeBindingMode"
             />
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };
@@ -91,16 +93,16 @@ const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> 
   const context = { [resourceKind]: obj };
   return (
     <>
-      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
           {isDefaultClass(obj) && (
-            <span className="small pf-v6-u-text-color-subtle co-resource-item__help-text">
+            <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
               &ndash; {t('public~Default')}
             </span>
           )}
         </ResourceLink>
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         {obj.provisioner}
       </TableData>
       <TableData className={tableColumnClasses[2]}>{obj.reclaimPolicy || '-'}</TableData>

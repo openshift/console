@@ -17,10 +17,10 @@ import {
   getMostRecentBuilderTag,
   isBuilder,
 } from '@console/internal/components/image-stream';
-import { ExternalLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ANNOTATIONS } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 const normalizeBuilderImages = (
   builderImageStreams: K8sResourceKind[],
@@ -47,9 +47,7 @@ const normalizeBuilderImages = (
     if (sampleRepo) {
       detailsProperties.push({
         label: t('devconsole~Sample repository'),
-        value: (
-          <ExternalLink href={sampleRepo} additionalClassName="co-break-all" text={sampleRepo} />
-        ),
+        value: <ExternalLink href={sampleRepo} className="co-break-all" text={sampleRepo} />,
       });
     }
 

@@ -11,7 +11,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { useParams, Link, LinkProps } from 'react-router-dom';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
@@ -52,7 +52,10 @@ import {
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
 import { InstallPlanPreview, NeedInstallPlanPermissions } from './install-plan';
 import { OLMAnnotation } from './operator-hub';
-import { getInitializationResource } from './operator-hub/operator-hub-utils';
+import {
+  getInitializationLink,
+  getInitializationResource,
+} from './operator-hub/operator-hub-utils';
 import { iconFor, InstallPlanReview } from './index';
 
 const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ namespace }) => {
@@ -158,6 +161,10 @@ export const CreateInitializationResourceButton: React.FC<InitializationResource
   obj,
 }) => {
   const { t } = useTranslation();
+  if (!initializationResource) {
+    return null;
+  }
+
   const reference = referenceFor(initializationResource);
   const kind = initializationResource?.kind;
   const button = (
@@ -165,7 +172,6 @@ export const CreateInitializationResourceButton: React.FC<InitializationResource
       {t('olm~Create {{item}}', { item: kind })}
     </Button>
   );
-
   return disabled ? (
     button
   ) : (
@@ -186,6 +192,10 @@ const InitializationResourceRequiredMessage: React.FC<InitializationResourceRequ
   obj,
 }) => {
   const { t } = useTranslation();
+  if (!initializationResource) {
+    return null;
+  }
+
   const initializationResourceKind = initializationResource?.kind;
   const initializationResourceNamespace = initializationResource?.metadata?.namespace;
   const description = obj?.metadata?.annotations?.description;
@@ -206,41 +216,70 @@ const InitializationResourceRequiredMessage: React.FC<InitializationResourceRequ
   );
 };
 
+const InitializationLinkButton: React.FC<{ disabled?: boolean }> = ({ disabled }) => {
+  const { t } = useTranslation();
+  return (
+    <Button aria-disabled={disabled} isDisabled={disabled} variant="primary">
+      {t('olm~Configure Operator')}
+    </Button>
+  );
+};
+const InitializationLink: React.FC<InitializationLinkProps> = ({ to, disabled }) => {
+  if (!to) {
+    return null;
+  }
+
+  if (disabled) {
+    return <InitializationLinkButton disabled />;
+  }
+
+  return (
+    <Link to={to}>
+      <InitializationLinkButton />
+    </Link>
+  );
+};
+
 const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
   namespace,
   csvName,
   obj,
 }) => {
   const { t } = useTranslation();
-  const initializationResource = getInitializationResource(obj?.metadata?.annotations, {
+  const annotationParserOptions = {
     onError: (error) => errorModal({ error }),
-  });
+  };
+  const initializationLink = getInitializationLink(obj?.metadata?.annotations);
+  const initializationResource =
+    !initializationLink &&
+    getInitializationResource(obj?.metadata?.annotations, annotationParserOptions);
+
   return (
     <>
       <Title headingLevel="h2" className="co-clusterserviceversion-install__heading">
-        {t('olm~Installed operator')}: &nbsp;
-        {initializationResource ? t('olm~custom resource required') : t('olm~ready for use')}
+        {!initializationLink && !initializationResource && t('olm~Operator installed successfully')}
+        {initializationLink && t('olm~Configure Operator')}
+        {initializationResource && t('olm~ Create initialization resource')}
       </Title>
-      {initializationResource && (
-        <>
-          <span>
-            {t(
-              'olm~The Operator has installed successfully. Create the required custom resource to be able to use this Operator.',
-            )}
-          </span>
-          <InitializationResourceRequiredMessage
-            initializationResource={initializationResource}
-            obj={obj}
-          />
-        </>
-      )}
+      <span>
+        {t('olm~The Operator has installed successfully.')}
+        {!initializationLink && !initializationResource && t('olm~ Ready for use.')}
+        {initializationLink &&
+          t('olm~ Complete the next configuration steps to prepare it for use.')}
+        {initializationResource &&
+          t('olm~ Create the required custom resource to prepare it for use.')}
+        <InitializationResourceRequiredMessage
+          initializationResource={initializationResource}
+          obj={obj}
+        />
+      </span>
       <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
-        {initializationResource ? (
-          <CreateInitializationResourceButton
-            initializationResource={initializationResource}
-            obj={obj}
-          />
-        ) : (
+        <InitializationLink to={initializationLink} />
+        <CreateInitializationResourceButton
+          initializationResource={initializationResource}
+          obj={obj}
+        />
+        {!initializationLink && !initializationResource && (
           <Link to={resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace)}>
             <Button variant="primary">{t('olm~View Operator')}</Button>
           </Link>
@@ -255,9 +294,13 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
   const { t } = useTranslation();
   const reason = (obj as ClusterServiceVersionKind)?.status?.reason || '';
   const message = (obj as ClusterServiceVersionKind)?.status?.message || '';
-  const initializationResource = getInitializationResource(obj?.metadata?.annotations, {
+  const annotationParserOpts = {
     onError: (error) => errorModal({ error }),
-  });
+  };
+  const initializationLink = getInitializationLink(obj?.metadata?.annotations);
+  const initializationResource =
+    !initializationLink &&
+    getInitializationResource(obj?.metadata?.annotations, annotationParserOpts);
   return (
     <>
       <Title headingLevel="h2" className="co-clusterserviceversion-install__heading">
@@ -270,29 +313,20 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
       )}
       <p>
         {t('olm~The Operator is being installed. This may take a few minutes.')}
-        {initializationResource && (
-          <>
-            &nbsp;
-            {t(
-              'olm~Once the Operator is installed the required custom resource will be available for creation.',
-            )}
-          </>
-        )}
+        {initializationLink &&
+          t('olm~ Once the Operator is installed additional configuration will be required.')}
+        {initializationResource &&
+          t(
+            'olm~ Once the Operator is installed the required custom resource will be available for creation.',
+          )}
       </p>
-      {initializationResource && (
-        <InitializationResourceRequiredMessage
+      <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
+        <InitializationLink to={initializationLink} disabled />
+        <CreateInitializationResourceButton
           initializationResource={initializationResource}
           obj={obj}
+          disabled
         />
-      )}
-      <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
-        {initializationResource && (
-          <CreateInitializationResourceButton
-            disabled
-            initializationResource={initializationResource}
-            obj={obj}
-          />
-        )}
         <ViewInstalledOperatorsButton namespace={namespace} />
       </ActionGroup>
     </>
@@ -450,21 +484,21 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
               </Alert>
             )}
             {!loading && (
-              <Card>
-                <CardBody>
-                  <div className="co-operator-install-page__pkg-indicator">
-                    <div>
-                      <OperatorInstallLogo subscription={resources.subscription.data} />
+              <>
+                <Card>
+                  <CardBody>
+                    <div className="co-operator-install-page__pkg-indicator">
+                      <div>
+                        <OperatorInstallLogo subscription={resources.subscription.data} />
+                      </div>
+                      <div>{indicator}</div>
                     </div>
-                    <div>{indicator}</div>
-                  </div>
-                </CardBody>
-              </Card>
-            )}
-            {!loading && (
-              <Card>
-                <CardBody>{installMessage}</CardBody>
-              </Card>
+                  </CardBody>
+                </Card>
+                <Card>
+                  <CardBody>{installMessage}</CardBody>
+                </Card>
+              </>
             )}
           </div>
         </Bullseye>
@@ -544,6 +578,10 @@ type InstallFailedMessageProps = {
 type InitializationResourceRequiredMessageProps = {
   initializationResource: K8sResourceKind;
   obj: ClusterServiceVersionKind | InstallPlanKind | SubscriptionKind;
+};
+type InitializationLinkProps = {
+  to: LinkProps['to'];
+  disabled?: boolean;
 };
 type InitializationResourceButtonProps = {
   disabled?: boolean;

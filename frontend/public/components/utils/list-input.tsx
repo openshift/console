@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Button } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
@@ -46,18 +46,21 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
   }
 
   render() {
-    const { label, required, helpText, t } = this.props;
+    const { id, label, required, helpText, t } = this.props;
     const { values } = this.state;
     const missingValues = required && (_.isEmpty(values) || _.every(values, (v) => !v));
     const isEmpty = values.length === 1 && (_.isEmpty(values) || _.every(values, (v) => !v));
     return (
-      <div className="form-group">
-        <label className={classNames({ 'co-required': required })}>{label}</label>
+      <div className="form-group" data-testid={id}>
+        <label htmlFor={id} className={css({ 'co-required': required })}>
+          {label}
+        </label>
         {_.map(values, (v: string, i: number) => (
           <div className="co-list-input__row" key={i}>
             <div className="co-list-input__value">
               <span className="pf-v6-c-form-control">
                 <input
+                  id={id}
                   type="text"
                   value={v}
                   onChange={(e: React.FormEvent<HTMLInputElement>) =>
@@ -66,6 +69,7 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
                   required={missingValues && i === 0}
                   aria-describedby={helpText ? this.helpID : undefined}
                   data-test-list-input-for={label}
+                  aria-label={label}
                 />
               </span>
             </div>
@@ -108,6 +112,7 @@ type ListInputState = {
 type ChangeCallback = (values: string[]) => void;
 
 type ListInputProps = WithTranslation & {
+  id?: string;
   label: string;
   initialValues?: string[];
   onChange: ChangeCallback;

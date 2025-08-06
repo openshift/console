@@ -1,8 +1,7 @@
 import * as React from 'react';
+import { SimpleDropdown, SimpleDropdownItem } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { Dropdown } from '@console/internal/components/utils';
-import { MenuAction, MenuActions } from '@console/shared/src';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 
 type CreateActionDropdownProps = {
   namespace: string;
@@ -10,51 +9,33 @@ type CreateActionDropdownProps = {
 
 export const CreateActionDropdown: React.FC<CreateActionDropdownProps> = ({ namespace }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const menuActions: MenuActions = {
-    importfromGit: {
-      label: t('knative-plugin~Import from Git'),
-      onSelection: () => `/serverless-function/ns/${namespace || 'default'}`,
+
+  const menuActions: SimpleDropdownItem[] = [
+    {
+      value: 'importFromGit',
+      content: t('knative-plugin~Import from Git'),
+      component: LinkTo(`/serverless-function/ns/${namespace || 'default'}`),
+      // @ts-expect-error non-prop attribute is used for cypress
+      'data-test-dropdown-menu': 'importFromGit',
     },
-    functionsUsingSamples: {
-      label: t('knative-plugin~Samples'),
-      onSelection: () => `/samples/ns/${namespace || 'default'}?sampleType=Serverless function`,
+    {
+      value: 'functionsUsingSamples',
+      content: t('knative-plugin~Samples'),
+      component: LinkTo(`/samples/ns/${namespace || 'default'}?sampleType=Serverless function`),
+      // @ts-expect-error non-prop attribute is used for cypress
+      'data-test-dropdown-menu': 'functionsUsingSamples',
     },
-  };
-
-  const items = menuActions
-    ? Object.keys(menuActions).reduce<Record<string, string>>((acc, key) => {
-        const menuAction: MenuAction = menuActions[key];
-        const { label } = menuAction;
-        if (!label) return acc;
-
-        return {
-          ...acc,
-          [key]: label,
-        };
-      }, {})
-    : undefined;
-
-  const onSelectCreateAction = (actionName: string): void => {
-    const selectedMenuItem: MenuAction = menuActions[actionName];
-    let url: string;
-    if (selectedMenuItem.onSelection) {
-      url = selectedMenuItem.onSelection(actionName, selectedMenuItem, url);
-    }
-    if (url) {
-      navigate(url);
-    }
-  };
+  ];
 
   return (
-    <Dropdown
-      buttonClassName="pf-m-primary"
-      menuClassName="prevent-overflow"
-      title={t('knative-plugin~Create function')}
-      noSelection
-      items={items}
-      onChange={onSelectCreateAction}
-      className=""
+    <SimpleDropdown
+      toggleProps={{
+        variant: 'primary',
+        // @ts-expect-error non-prop attribute is used for cypress
+        'data-test': 'create-action-dropdown',
+      }}
+      toggleContent={t('knative-plugin~Create function')}
+      initialItems={menuActions}
     />
   );
 };

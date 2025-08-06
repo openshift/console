@@ -8,8 +8,8 @@ import {
   ExtensionHook,
 } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { ExternalLink } from '@console/internal/components/utils';
 import { APIError } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DevfileSample } from '../../import/devfile/devfile-types';
 
 const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): CatalogItem[] => {
@@ -31,11 +31,7 @@ const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): Catalo
       detailsProperties.push({
         label: t('devconsole~Sample repository'),
         value: (
-          <ExternalLink
-            text={gitRepositoryUrl}
-            href={gitRepositoryUrl}
-            additionalClassName="co-break-all"
-          />
+          <ExternalLink text={gitRepositoryUrl} href={gitRepositoryUrl} className="co-break-all" />
         ),
       });
     }

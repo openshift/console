@@ -1,8 +1,8 @@
-import { mount } from 'enzyme';
+import { configure, render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { FLAGS } from '@console/shared';
 import { WorkspaceModel } from '../../../../models';
 import { InternalCloudShellExec, CloudShellExecProps } from '../CloudShellExec';
-import TerminalLoadingBox from '../TerminalLoadingBox';
 
 jest.mock('@console/shared', () => {
   const originalModule = jest.requireActual('@console/shared');
@@ -26,9 +26,11 @@ const cloudShellExecProps: CloudShellExecProps = {
   flags: { [FLAGS.OPENSHIFT]: true },
 };
 
+configure({ testIdAttribute: 'data-test' });
+
 describe('CloudShellExec', () => {
   it('should TerminalLoadingBox On Mount', () => {
-    const wrapper = mount(<InternalCloudShellExec {...cloudShellExecProps} />);
-    expect(wrapper.find(TerminalLoadingBox).exists()).toBe(true);
+    render(<InternalCloudShellExec {...cloudShellExecProps} />);
+    expect(screen.getByTestId('loading-box')).toBeInTheDocument();
   });
 });

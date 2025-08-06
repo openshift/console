@@ -11,11 +11,11 @@ import {
   HintFooter,
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ExternalLink, Timestamp, getQueryArgument } from '@console/internal/components/utils';
+import { getQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   CloudCredentialKind,
@@ -26,6 +26,8 @@ import {
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import CatalogPageOverlay from '@console/shared/src/components/catalog/catalog-view/CatalogPageOverlay';
 import CatalogPageOverlayDescription from '@console/shared/src/components/catalog/catalog-view/CatalogPageOverlayDescription';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DefaultCatalogSource } from '../../const';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
@@ -75,7 +77,7 @@ export const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capability }) 
         const active = capabilityLevelIndex >= i;
         return (
           <li
-            className={classNames('properties-side-panel-pf-property-value__capability-level', {
+            className={css('properties-side-panel-pf-property-value__capability-level', {
               'properties-side-panel-pf-property-value__capability-level--active': active,
             })}
             key={level}
@@ -209,23 +211,6 @@ const OperatorHubItemDetailsHint: React.FC<OperatorHubItemDetailsHintProps> = (p
               />
             </HintFooter>
           )
-        }
-      />
-    );
-  }
-
-  if (catalogSource === DefaultCatalogSource.RedHatMarketPlace) {
-    return (
-      <OperatorHubItemCustomizedHint
-        title={t('olm~Marketplace Operator')}
-        body={t(
-          'olm~This Operator is purchased through Red Hat Marketplace. After completing the purchase process, you can install the Operator on this or other OpenShift clusters. Visit Red Hat Marketplace for more details and to track your usage of this application.',
-        )}
-        footer={
-          <ExternalLink
-            href="https://marketplace.redhat.com/en-us?utm_source=openshift_console"
-            text={t('olm~Learn more about the Red Hat Marketplace')}
-          />
         }
       />
     );

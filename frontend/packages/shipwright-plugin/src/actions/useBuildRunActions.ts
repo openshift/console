@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
+import { useNavigate } from 'react-router-dom-v5-compat';
+import { useCommonResourceActions } from '@console/app/src/actions//hooks/useCommonResourceActions';
 import { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
 import { errorModal } from '@console/internal/components/modals';
 import { resourceObjPath } from '@console/internal/components/utils';
@@ -15,6 +15,7 @@ const useBuildRunActions = (buildRun: BuildRun) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [kindObj, inFlight] = useK8sModel(referenceFor(buildRun));
+  const commonActions = useCommonResourceActions(kindObj, buildRun);
 
   const actions = React.useMemo<Action[]>(() => {
     const rerun: Action = {
@@ -38,11 +39,8 @@ const useBuildRunActions = (buildRun: BuildRun) => {
       },
     };
 
-    return [
-      ...(canRerunBuildRun(buildRun) ? [rerun] : []),
-      ...getCommonResourceActions(kindObj, buildRun),
-    ];
-  }, [t, buildRun, kindObj, navigate]);
+    return [...(canRerunBuildRun(buildRun) ? [rerun] : []), ...commonActions];
+  }, [t, buildRun, navigate, commonActions]);
 
   return [actions, !inFlight, undefined];
 };

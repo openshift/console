@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
+import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { Dropdown } from '@console/internal/components/utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { MatchExpression, Operator } from '@console/internal/module/k8s';
 
 const UNARY_OPERATORS = [Operator.Exists, Operator.DoesNotExist];
@@ -27,11 +28,8 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
   const { t } = useTranslation();
   const valuesDisabled = UNARY_OPERATORS.includes(operator as Operator);
   return (
-    <div className="row key-operator-value__row">
-      <div className="col-md-4 col-xs-5 key-operator-value__name-field">
-        <div className="key-operator-value__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
-          {t('olm~Key')}
-        </div>
+    <Tr>
+      <Td dataLabel={t('olm~Key')}>
         <span className="pf-v6-c-form-control">
           <input
             type="text"
@@ -39,25 +37,19 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
             onChange={(e) => onChange({ ...expression, key: e.target.value })}
           />
         </span>
-      </div>
-      <div className="col-md-3 col-xs-5 key-operator-value__operator-field">
-        <div className="key-operator-value__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
-          {t('olm~Operator')}
-        </div>
-        <Dropdown
-          dropDownClassName="dropdown--full-width"
+      </Td>
+      <Td dataLabel={t('olm~Operator')}>
+        <ConsoleSelect
+          isFullWidth
           items={allowedOperators.reduce((acc, o) => ({ ...acc, [o]: o }), {})}
           onChange={(newOperator: Operator) => onChange({ key, operator: newOperator, values: [] })}
           selectedKey={expression.operator}
           title={expression.operator}
         />
-      </div>
-      <div className="col-md-3 col-xs-5 key-operator-value__value-field key-operator-value__value-field--stacked">
-        <div className="key-operator-value__heading hidden-md hidden-lg pf-v6-u-text-color-subtle">
-          {t('olm~Values')}
-        </div>
+      </Td>
+      <Td dataLabel={t('olm~Values')}>
         <span
-          className={classNames('pf-v6-c-form-control', {
+          className={css('pf-v6-c-form-control', {
             'pf-m-disabled': valuesDisabled,
           })}
         >
@@ -74,19 +66,17 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
             disabled={valuesDisabled}
           />
         </span>
-      </div>
-      <div className="col-xs-1 key-operator-value__action key-operator-value__action--stacked">
-        <div className="key-operator-value__heading key-operator-value__heading-button hidden-md hidden-lg" />
+      </Td>
+      <Td isActionCell>
         <Button
           icon={<MinusCircleIcon />}
           type="button"
           onClick={onClickRemove}
           aria-label="Delete"
-          className="key-operator-value__delete-button"
           variant="plain"
         />
-      </div>
-    </div>
+      </Td>
+    </Tr>
   );
 };
 
@@ -108,34 +98,41 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
     onChange([...matchExpressions, { key: '', operator: Operator.Exists, values: [] }]);
 
   return (
-    <>
-      <div className="row key-operator-value__heading hidden-sm hidden-xs">
-        <div className="col-md-4 pf-v6-u-text-color-subtle">{t('olm~Key')}</div>
-        <div className="col-md-3 pf-v6-u-text-color-subtle">{t('olm~Operator')}</div>
-        <div className="col-md-3 pf-v6-u-text-color-subtle">{t('olm~Values')}</div>
-      </div>
-      {matchExpressions.map((expression, index) => (
-        // Have to use array index in the key bc any other unique id whould have to use editable fields.
-        <MatchExpression
-          // eslint-disable-next-line react/no-array-index-key
-          key={`${uid}-match-expression-${index}`}
-          expression={expression}
-          allowedOperators={allowedOperators}
-          onClickRemove={() => removeExpression(index)}
-          onChange={(newExpression) => updateExpression(index, newExpression)}
-        />
-      ))}
-      <div className="row">
-        <Button
-          icon={<PlusCircleIcon className="co-icon-space-r" />}
-          type="button"
-          onClick={addExpression}
-          variant="link"
-        >
-          {t('olm~Add expression')}
-        </Button>
-      </div>
-    </>
+    <Table aria-label={t('olm~Match expressions')} variant="compact" borders={false}>
+      <Thead>
+        <Tr>
+          <Th>{t('olm~Key')}</Th>
+          <Th>{t('olm~Operator')}</Th>
+          <Th>{t('olm~Values')}</Th>
+          <Th />
+        </Tr>
+      </Thead>
+      <Tbody>
+        {matchExpressions.map((expression, index) => (
+          // Have to use array index in the key bc any other unique id whould have to use editable fields.
+          <MatchExpression
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${uid}-match-expression-${index}`}
+            expression={expression}
+            allowedOperators={allowedOperators}
+            onClickRemove={() => removeExpression(index)}
+            onChange={(newExpression) => updateExpression(index, newExpression)}
+          />
+        ))}
+        <Tr>
+          <Td>
+            <Button
+              icon={<PlusCircleIcon className="co-icon-space-r" />}
+              type="button"
+              onClick={addExpression}
+              variant="link"
+            >
+              {t('olm~Add expression')}
+            </Button>
+          </Td>
+        </Tr>
+      </Tbody>
+    </Table>
   );
 };
 

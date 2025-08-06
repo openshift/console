@@ -31,7 +31,7 @@ $co-affinity-row-margin: 15px;
   text-decoration: none;
 
   .co-clusterserviceversion-logo__name__clusterserviceversion {
-      text-decoration: underline;
+    text-decoration: underline;
   }
 }
 
@@ -60,9 +60,6 @@ $co-affinity-row-margin: 15px;
   font-size: 15px !important;
   margin-bottom: 5px !important;
 }
-.co-m-pane__heading--logo .co-clusterserviceversion-logo__name__provider {
-  font-size: var(--pf-t--global--font--size--sm);
-}
 
 .co-page-heading .co-clusterserviceversion-logo__name {
   margin: var(--pf-t--global--spacer--sm) 0;
@@ -84,12 +81,6 @@ $co-affinity-row-margin: 15px;
   display: flex;
   justify-content: flex-end;
   margin-bottom: 20px;
-}
-
-.co-operand-details__section--info dd {
-  margin-bottom: 20px !important;
-  min-width: 0; // enable word-break
-  overflow-wrap: break-word;
 }
 
 .co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
@@ -201,35 +192,6 @@ $co-affinity-row-margin: 15px;
   color: var(--pf-t--global--text--color--disabled);
 }
 
-.key-operator-value__action {
-  padding: 0;
-  width: 28px;
-}
-@media (max-width: $screen-sm-max) {
-  .key-operator-value__action--stacked,
-  .key-operator-value__value-field--stacked {
-    padding-top: 10px;
-  }
-}
-
-.key-operator-value__delete-button {
-  padding-left: 0 !important;
-}
-
-.key-operator-value__heading-button {
-  height: 23px; // for vertical alignment with input field; equals --pf-t--global--font--line-height--heading
-}
-
-.key-operator-value__name-field,
-.key-operator-value__operator-field,
-.key-operator-value__value-field {
-  padding-right: 0 !important;
-}
-
-.key-operator-value__row {
-  padding-bottom: 15px;
-}
-
 .olm-descriptors__invalid-pod-descriptor {
   display: inline-block;
   margin-bottom: 20px !important;
@@ -312,27 +274,4 @@ $co-affinity-row-margin: 15px;
 
 .co-operator-uninstall__operands-section loading-skeleton--table::after {
   min-height: 160px;
-}
-
-.co-operator-details__actions {
-  align-items: baseline;
-  display: flex;
-  flex-wrap: wrap;
-  @media (min-width: $screen-sm-min) {
-    flex-wrap: nowrap;
-    justify-content: flex-end;
-  }
-}
-
-.co-operator-details__toggle-value {
-  flex-grow: 1;
-  margin-right: var(--pf-t--global--spacer--xl);
-}
-
-.co-operator-details__toggle-value .radio-inline input[type='radio'] {
-  position: relative; //To override bootstrap absolute position
-}
-
-.co-operator-details__toggle-value label {
-  font-weight: var(--pf-t--global--font--weight--body--default);
 }

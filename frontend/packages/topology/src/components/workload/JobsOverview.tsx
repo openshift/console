@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ChartLabel } from '@patternfly/react-charts/victory';
+import { List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -22,7 +23,7 @@ const JobOverviewItem: React.FC<JobOverviewItemProps> = ({ job }) => {
   const { podData, loaded, loadError } = usePodsWatcher(job, 'Job', namespace);
 
   return loaded && !loadError ? (
-    <li className="list-group-item">
+    <ListItem>
       <div className="job-overview__item">
         <ResourceLink kind={kind} name={name} namespace={namespace} />
         <Link to={podsLink} className="job-overview__pod-donut-sm">
@@ -38,7 +39,7 @@ const JobOverviewItem: React.FC<JobOverviewItemProps> = ({ job }) => {
           />
         </Link>
       </div>
-    </li>
+    </ListItem>
   ) : null;
 };
 
@@ -49,11 +50,11 @@ type JobOverviewItemProps = {
 };
 
 const JobsOverviewList: React.FC<JobsOverviewListProps> = ({ jobs }) => (
-  <ul className="list-group">
+  <List isPlain isBordered>
     {jobs?.map((job) => (
       <JobOverviewItem key={job.metadata.uid} job={job} />
     ))}
-  </ul>
+  </List>
 );
 
 JobsOverviewList.displayName = 'JobsOverviewList';

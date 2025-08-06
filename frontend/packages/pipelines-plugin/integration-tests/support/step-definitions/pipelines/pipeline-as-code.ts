@@ -275,7 +275,7 @@ Then(
 );
 
 Then('user hovers over the commit id', () => {
-  cy.get('.co-external-link').focus().trigger('mouseover');
+  cy.get('[data-test="pl-sha-url"]').focus().trigger('mouseover');
 });
 
 Then('user should see commit message in tooltip', () => {

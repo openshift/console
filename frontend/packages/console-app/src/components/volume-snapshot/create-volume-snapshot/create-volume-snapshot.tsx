@@ -13,8 +13,8 @@ import {
   ContentVariants,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
+import { useParams } from 'react-router-dom';
+import { PVCStatusComponent } from '@console/internal/components/persistent-volume-claim';
 import {
   getAccessModeOptions,
   snapshotPVCStorageClassAnnotation,
@@ -62,14 +62,14 @@ import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (
   <Grid className="skeleton-box">
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
-    <GridItem span={12} className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
+    <GridItem className="skeleton-activity" />
   </Grid>
 );
 
@@ -124,7 +124,7 @@ const PVCSummary: React.FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
         <DescriptionListGroup>
           <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <PVCStatus pvc={persistentVolumeClaim} />
+            <PVCStatusComponent pvc={persistentVolumeClaim} />
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>

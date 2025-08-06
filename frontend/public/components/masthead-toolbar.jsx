@@ -26,15 +26,15 @@ import {
   useCopyCodeModal,
   useCopyLoginCommands,
   useFlag,
-  usePerspectiveExtension,
   useTelemetry,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import CloudShellMastheadButton from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
-import { getUser } from '@console/dynamic-plugin-sdk';
+import { getUser, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
 import { flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
@@ -46,8 +46,6 @@ import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster
 import redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
-import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
-import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
 import { FeedbackModal } from '@patternfly/react-user-feedback';
 import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useFeedbackLocal } from './feedback-local';
@@ -74,17 +72,6 @@ const defaultHelpLinks = [
   },
 ];
 
-const MultiClusterToolbarGroup = () => {
-  const acmPerspectiveExtension = usePerspectiveExtension(ACM_PERSPECTIVE_ID);
-  return (
-    !!acmPerspectiveExtension && (
-      <ToolbarGroup gap={{ default: 'gapNone' }}>
-        <ClusterMenu />
-      </ToolbarGroup>
-    )
-  );
-};
-
 const FeedbackModalLocalized = ({ isOpen, onClose, reportBugLink }) => {
   const feedbackLocales = useFeedbackLocal(reportBugLink);
   const theme = React.useContext(ThemeContext);
@@ -104,15 +91,13 @@ const FeedbackModalLocalized = ({ isOpen, onClose, reportBugLink }) => {
 const SystemStatusButton = ({ statuspageData }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
-    <a
-      className="pf-v6-c-button pf-m-plain co-masthead-button"
+    <ExternalLinkButton
+      variant="plain"
+      className="co-masthead-button"
       aria-label={t('public~System status')}
+      icon={<YellowExclamationTriangleIcon />}
       href={statuspageData.page.url}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <YellowExclamationTriangleIcon />
-    </a>
+    />
   ) : null;
 };
 
@@ -126,6 +111,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   const quickstartFlag = useFlag(FLAGS.CONSOLE_QUICKSTART);
   const dispatch = useDispatch();
   const [activeNamespace] = useActiveNamespace();
+  const [activePerspective] = useActivePerspective();
   const [requestTokenURL, externalLoginCommand] = useCopyLoginCommands();
   const launchCopyLoginCommandModal = useCopyCodeModal(
     t('public~Login with this command'),
@@ -245,7 +231,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     }
 
     // This should be removed when the extension to add items to the masthead is implemented: https://issues.redhat.com/browse/OU-488
-    if (isTroubleshootingPanelEnabled) {
+    if (isTroubleshootingPanelEnabled && activePerspective === 'admin') {
       sections.push({
         name: t('public~Troubleshooting'),
         isSection: true,
@@ -302,6 +288,11 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     helpActions.push({
       isSection: true,
       actions: [
+        {
+          component: () => (
+            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v6-c-menu__item" />
+          ),
+        },
         ...(quickstartFlag
           ? [
               {
@@ -330,11 +321,6 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               },
             ]
           : []),
-        {
-          component: () => (
-            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v6-c-menu__item" />
-          ),
-        },
         ...(reportBugLink
           ? [
               {
@@ -346,10 +332,6 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               },
             ]
           : []),
-        {
-          label: t('public~About'),
-          callback: onAboutModal,
-        },
       ],
     });
 
@@ -359,7 +341,13 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         ...helpLink,
         label: t(`public~${helpLink.label}`),
       }))
-      .concat(additionalHelpActions.actions);
+      .concat(
+        {
+          label: t('public~About'),
+          callback: onAboutModal,
+        },
+        ...additionalHelpActions.actions,
+      );
 
     if (!_.isEmpty(additionalHelpActions.actions)) {
       helpActions.push(additionalHelpActions);
@@ -650,7 +638,6 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     <>
       <Toolbar isFullHeight isStatic>
         <ToolbarContent>
-          <MultiClusterToolbarGroup />
           <ToolbarGroup
             align={{ default: 'alignEnd' }}
             visibility={{ default: isMastheadStacked ? 'hidden' : 'visible' }}

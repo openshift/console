@@ -4,6 +4,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { RebootingIcon } from '@patternfly/react-icons/dist/esm/icons/rebooting-icon';
 import * as _ from 'lodash';
@@ -11,7 +13,6 @@ import { useTranslation } from 'react-i18next';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import {
   SectionHeading,
-  Timestamp,
   humanizeDecimalBytes,
   ResourceLink,
 } from '@console/internal/components/utils';
@@ -33,6 +34,7 @@ import {
   SecondaryStatus,
   DASH,
 } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import {
@@ -52,12 +54,37 @@ import {
   getHostBootMACAddress,
   isHostScheduledForRestart,
   hasPowerManagement,
+  isDetached,
 } from '../../selectors';
 import { getHostStatus } from '../../status/host-status';
 import { BareMetalHostKind } from '../../types';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
 import MachineLink from './MachineLink';
+
+const PowerStatus = ({ host }: { host: BareMetalHostKind }) => {
+  const { t } = useTranslation();
+  if (isDetached(host)) {
+    return <SecondaryStatus status={t('metal3-plugin~Detached')} />;
+  }
+
+  if (!hasPowerManagement(host)) {
+    return <SecondaryStatus status={t('metal3-plugin~No power management')} />;
+  }
+
+  const powerStatus = getHostPowerStatus(host);
+  return (
+    <>
+      <StatusIconAndText
+        title={powerStatus}
+        icon={<BareMetalHostPowerStatusIcon powerStatus={powerStatus} />}
+      />
+      {isHostScheduledForRestart(host) && (
+        <StatusIconAndText title={t('metal3-plugin~Restart pending')} icon={<RebootingIcon />} />
+      )}
+    </>
+  );
+};
 
 type BareMetalHostDetailsProps = {
   obj: BareMetalHostKind;
@@ -87,7 +114,6 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
   const hostStorage = getHostTotalStorageCapacity(host);
   const totalStorageCapacity = hostStorage ? humanizeDecimalBytes(hostStorage).string : DASH;
   const description = getHostDescription(host);
-  const powerStatus = getHostPowerStatus(host);
   const provisioningState = getHostProvisioningState(host);
   const { count: CPUCount, model: CPUModel } = getHostCPU(host);
   const { manufacturer, productName, serialNumber } = getHostVendorInfo(host);
@@ -99,8 +125,8 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
   return (
     <PaneBody>
       <SectionHeading text={t('metal3-plugin~Bare Metal Host Details')} />
-      <div className="row">
-        <div className="col-xs-12 col-sm-6" id="name-description-column">
+      <Grid hasGutter>
+        <GridItem sm={6} id="name-description-column">
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('metal3-plugin~Name')}</DescriptionListTerm>
@@ -154,8 +180,8 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
-        <div className="col-xs-12 col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('metal3-plugin~Status')}</DescriptionListTerm>
@@ -168,22 +194,7 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('metal3-plugin~Power Status')}</DescriptionListTerm>
                 <DescriptionListDescription>
-                  {!hasPowerManagement(host) ? (
-                    <SecondaryStatus status={t('metal3-plugin~No power management')} />
-                  ) : (
-                    <>
-                      <StatusIconAndText
-                        title={powerStatus}
-                        icon={<BareMetalHostPowerStatusIcon powerStatus={powerStatus} />}
-                      />
-                      {isHostScheduledForRestart(host) && (
-                        <StatusIconAndText
-                          title={t('metal3-plugin~Restart pending')}
-                          icon={<RebootingIcon />}
-                        />
-                      )}
-                    </>
-                  )}
+                  <PowerStatus host={host} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
             )}
@@ -244,8 +255,8 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
               </DescriptionListGroup>
             )}
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

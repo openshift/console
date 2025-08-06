@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Accordion, Button } from '@patternfly/react-core';
 import { PauseIcon } from '@patternfly/react-icons/dist/esm/icons/pause-icon';
 import { PlayIcon } from '@patternfly/react-icons/dist/esm/icons/play-icon';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -12,8 +12,8 @@ import {
 } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { EventKind } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import EventItem from './EventItem';
 
@@ -223,7 +223,7 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
 };
 
 const ActivityBody: React.FC<ActivityBodyProps> = ({ children, className }) => (
-  <div className={classNames('co-activity-card__body', className)} id="activity-body">
+  <div className={css('co-activity-card__body', className)} id="activity-body">
     {children}
   </div>
 );

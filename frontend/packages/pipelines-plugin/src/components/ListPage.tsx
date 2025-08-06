@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { Button, Grid, GridItem, TextInput, TextInputProps } from '@patternfly/react-core';
+import { SimpleDropdown } from '@patternfly/react-templates';
 // eslint-disable-next-line no-restricted-imports
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,6 @@ import { ErrorPage404 } from '@console/internal/components/error';
 import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
 import { storagePrefix } from '@console/internal/components/row-filter';
 import {
-  Dropdown,
   FirehoseResource,
   FirehoseResourcesResult,
   FirehoseResultObject,
@@ -49,27 +48,19 @@ type CreateProps = {
 
 type TextFilterProps = Omit<TextInputProps, 'type' | 'tabIndex'> & {
   label?: string;
-  parentClassName?: string;
 };
 
 export const TextFilter: React.FC<TextFilterProps> = (props) => {
-  const {
-    label,
-    className,
-    placeholder,
-    autoFocus = false,
-    parentClassName,
-    ...otherInputProps
-  } = props;
+  const { label, placeholder, autoFocus = false, ...otherInputProps } = props;
   const { ref } = useDocumentListener<HTMLInputElement>();
   const { t } = useTranslation();
   const placeholderText = placeholder ?? t('public~Filter {{label}}...', { label });
 
   return (
-    <div className={classNames('has-feedback', parentClassName)}>
+    <div className="co-text-filter">
       <TextInput
         {...otherInputProps}
-        className={classNames('co-text-filter', className)}
+        className="co-text-filter__text-input"
         data-test-id="item-filter"
         aria-label={placeholderText}
         placeholder={placeholderText}
@@ -78,7 +69,7 @@ export const TextFilter: React.FC<TextFilterProps> = (props) => {
         tabIndex={0}
         type="text"
       />
-      <span className="co-text-filter-feedback">
+      <span className="co-text-filter__feedback">
         <kbd className="co-kbd co-kbd__filter-input">{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd>
       </span>
     </div>
@@ -157,11 +148,11 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
   return (
     <div>
       {!_.isEmpty(dta) && Filter}
-      <div className="row">
-        <div className="col-xs-12">
+      <Grid>
+        <GridItem>
           <ListComponent {...props} data={dta} />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </div>
   );
 };
@@ -280,15 +271,20 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     } else if (createProps.items) {
       createLink = (
         <div>
-          <Dropdown
-            buttonClassName="pf-m-primary"
-            id="item-create"
-            dataTest="item-create"
-            menuClassName={classNames({ 'prevent-overflow': title })}
-            title={createButtonText}
-            noSelection
-            items={createProps.items}
-            onChange={runOrNavigate}
+          <SimpleDropdown
+            toggleProps={{
+              variant: 'primary',
+              id: 'item-create',
+              // @ts-expect-error non-prop attribute is used for cypress
+              'data-test': 'item-create',
+            }}
+            toggleContent={createButtonText}
+            initialItems={Object.keys(createProps.items).map((item) => ({
+              value: item,
+              content: createProps.items[item],
+              'data-test-dropdown-menu': item,
+            }))}
+            onSelect={(_e, value: string) => runOrNavigate(value)}
           />
         </div>
       );

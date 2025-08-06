@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { css } from '@patternfly/react-styles';
 import { useLocation } from 'react-router-dom';
-import classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -9,6 +9,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
@@ -98,12 +100,7 @@ const ClusterOperatorTableRow: React.FC<RowFunctionArgs<ClusterOperator>> = ({ o
       </TableData>
       <TableData className={tableColumnClasses[2]}>{operatorVersion || '-'}</TableData>
       <TableData
-        className={classNames(
-          tableColumnClasses[3],
-          'co-break-word',
-          'co-line-clamp',
-          'co-pre-line',
-        )}
+        className={css(tableColumnClasses[3], 'co-break-word', 'co-line-clamp', 'co-pre-line')}
       >
         <LinkifyExternal>{message || '-'}</LinkifyExternal>
       </TableData>
@@ -244,11 +241,11 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
     <>
       <PaneBody>
         <SectionHeading text={t('public~ClusterOperator details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={obj} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               {operatorVersion && (
                 <DescriptionListGroup>
@@ -269,8 +266,8 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Conditions')} />

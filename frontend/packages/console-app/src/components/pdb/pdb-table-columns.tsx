@@ -1,5 +1,5 @@
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
 import i18next from 'i18next';
 import { TableColumn } from '@console/dynamic-plugin-sdk';
 import { Kebab } from '@console/internal/components/utils';
@@ -8,10 +8,10 @@ import { PodDisruptionBudgetKind } from './types';
 export const tableColumnInfo = [
   { className: '', id: 'name' },
   { className: '', id: 'namespace' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-sm'), id: 'selector' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'minAvailable' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'disruptionsAllowed' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'creationTimestamp' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-sm'), id: 'selector' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'minAvailable' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'disruptionsAllowed' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'creationTimestamp' },
   { className: Kebab.columnClass, id: '' },
 ];
 

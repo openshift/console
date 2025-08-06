@@ -1,7 +1,8 @@
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
-import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   EVENTING_IMC_KIND,
   EVENT_SOURCE_API_SERVER_KIND,

@@ -153,7 +153,7 @@ When('user enters Value as {string} in Environment Variables section', (envValue
 
 Then('build does not get started for {string}', (nodeName: string) => {
   topologyPage.verifyOrOpenSidebar(nodeName);
-  cy.get('div.build-overview li.list-group-item > span').should(
+  cy.get('div.build-overview li > span').should(
     'contain.text',
     'No Builds found for this Build Config.',
   );
@@ -235,7 +235,6 @@ Then(
     topologyPage.verifyOrOpenSidebar(nodeName);
     topologySidePane.selectTab('Resources');
     topologySidePane.verifySection('Routes');
-    // cy.get('a.co-external-link.co-external-link--block').should('contain.text', routeName);
     cy.byLegacyTestID('route-link').should('contain.text', routeName);
   },
 );

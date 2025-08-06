@@ -2,13 +2,24 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { TextArea } from '@patternfly/react-core';
+import {
+  Checkbox,
+  FormGroup,
+  FormHelperText,
+  Grid,
+  GridItem,
+  HelperText,
+  HelperTextItem,
+  Radio,
+  TextArea,
+  TextInput,
+} from '@patternfly/react-core';
 
-import { RadioInput } from '../../radio';
-import { ExpandCollapse, ExternalLink } from '../../utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
 import { FormProps } from './receiver-form-props';
+import { AdvancedConfiguration } from './advanced-configuration';
 
 const GLOBAL_FIELDS = [
   'slack_api_url',
@@ -24,156 +35,153 @@ const GLOBAL_FIELDS = [
 export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   const { t } = useTranslation();
   return (
-    <div data-test-id="slack-receiver-form">
-      <div className="form-group">
-        <label data-test-id="api-url-label" className="co-required" htmlFor="slack-api-url">
-          {t('public~Slack API URL')}
-        </label>
-        <div className="row">
-          <div className="col-sm-7">
-            <span className="pf-v6-c-form-control">
-              <input
-                type="text"
-                id="slack-api-url"
-                aria-describedby="slack-api-url-help"
-                data-test-id="slack-api-url"
-                value={formValues.slack_api_url}
-                onChange={(e) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: { slack_api_url: e.target.value },
-                  })
-                }
-              />
-            </span>
-          </div>
-          <div className="col-sm-5">
-            <SaveAsDefaultCheckbox
-              formField="slackSaveAsDefault"
-              disabled={formValues.slack_api_url === globals?.slack_api_url}
-              label={t('public~Save as default Slack API URL')}
-              formValues={formValues}
-              dispatchFormChange={dispatchFormChange}
-              tooltip={t(
-                'public~Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.',
-              )}
+    <>
+      <Grid hasGutter>
+        <GridItem span={7}>
+          <FormGroup label={t('public~Slack API URL')} fieldId="slack-api-url" isRequired>
+            <TextInput
+              id="slack-api-url"
+              type="text"
+              data-test="slack-api-url"
+              value={formValues.slack_api_url ?? ''}
+              onChange={(_e, value: string) =>
+                dispatchFormChange({
+                  type: 'setFormValues',
+                  payload: { slack_api_url: value },
+                })
+              }
+              aria-describedby="slack-api-url-help"
             />
-          </div>
-        </div>
-        <div className="help-block" id="slack-api-url-help">
-          {t('public~The URL of the Slack webhook.')}
-        </div>
-      </div>
-      <div className="form-group">
-        <label className="co-required" htmlFor="slack-channel">
-          {t('public~Channel')}
-        </label>
-        <span className="pf-v6-c-form-control">
-          <input
-            type="text"
-            id="slack-channel"
-            aria-describedby="slack-channel-help"
-            data-test-id="slack-channel"
-            value={formValues.slackChannel}
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem id="slack-api-url-help">
+                  {t('public~The URL of the Slack webhook.')}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          </FormGroup>
+        </GridItem>
+        <GridItem span={1} /> {/* fixes an overlapping control issue */}
+        <GridItem span={4} className="pf-v6-u-align-content-center">
+          <SaveAsDefaultCheckbox
+            formField="slackSaveAsDefault"
+            disabled={formValues.slack_api_url === globals?.slack_api_url}
+            label={t('public~Save as default Slack API URL')}
+            formValues={formValues}
+            dispatchFormChange={dispatchFormChange}
+            tooltip={t(
+              'public~Checking this box will write the API URL to the global section of the configuration file where it will become the default API URL for future Slack receivers.',
+            )}
+          />
+        </GridItem>
+      </Grid>
+      <FormGroup label={t('public~Channel')} fieldId="slack-channel" isRequired>
+        <TextInput
+          id="slack-channel"
+          type="text"
+          data-test="slack-channel"
+          value={formValues.slackChannel ?? ''}
+          onChange={(_e, value: string) =>
+            dispatchFormChange({
+              type: 'setFormValues',
+              payload: { slackChannel: value },
+            })
+          }
+          aria-describedby="slack-channel-help"
+        />
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem id="slack-channel-help">
+              {t('public~The Slack channel or user to send notifications to.')}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      </FormGroup>
+      <AdvancedConfiguration>
+        <SendResolvedAlertsCheckbox
+          formField="slack_send_resolved"
+          formValues={formValues}
+          dispatchFormChange={dispatchFormChange}
+        />
+        <FormGroup
+          role="radiogroup"
+          fieldId="slack-icon-type-group"
+          label={t('public~Icon')}
+          isInline
+          className="pf-v6-c-form__group-control--no-row-gap"
+        >
+          <Radio
+            id="slack-icon-type"
+            name="slackIconType"
+            label={t('public~URL')}
+            value="url"
             onChange={(e) =>
               dispatchFormChange({
                 type: 'setFormValues',
-                payload: { slackChannel: e.target.value },
+                payload: { slackIconType: (e.target as HTMLInputElement).value },
               })
             }
+            isChecked={formValues.slackIconType === 'url'}
+            data-checked-state={formValues.slackIconType === 'url'}
+            data-test="URL-radio-input"
           />
-        </span>
-        <div className="help-block" id="slack-channel-help">
-          {t('public~The Slack channel or user to send notifications to.')}
-        </div>
-      </div>
-      <div className="form-group">
-        <ExpandCollapse
-          textCollapsed={t('public~Show advanced configuration')}
-          textExpanded={t('public~Hide advanced configuration')}
-          dataTest="advanced-configuration"
-        >
-          <div className="co-form-subsection">
-            <div className="form-group">
-              <SendResolvedAlertsCheckbox
-                formField="slack_send_resolved"
-                formValues={formValues}
-                dispatchFormChange={dispatchFormChange}
+          <Radio
+            id="slack-icon-type-emoji"
+            name="slackIconType"
+            label={t('public~Emoji')}
+            value="emoji"
+            onChange={(e) =>
+              dispatchFormChange({
+                type: 'setFormValues',
+                payload: { slackIconType: (e.target as HTMLInputElement).value },
+              })
+            }
+            isChecked={formValues.slackIconType === 'emoji'}
+            data-checked-state={formValues.slackIconType === 'emoji'}
+            data-test="Emoji-radio-input"
+          />
+          {formValues.slackIconType === 'url' && (
+            <>
+              <TextInput
+                id="slack-icon-url"
+                type="text"
+                data-test="slack-icon-url"
+                value={formValues.slack_icon_url ?? ''}
+                onChange={(_e, value: string) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { slack_icon_url: value },
+                  })
+                }
+                aria-describedby="slack-icon-url-help"
               />
-            </div>
-            <div className="form-group">
-              <label htmlFor="slack-icon-type">
-                {t('public~Icon')} &nbsp;
-                <RadioInput
-                  title={t('public~URL')}
-                  name="slackIconType"
-                  id="slack-icon-type"
-                  value="url"
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { slackIconType: e.target.value },
-                    })
-                  }
-                  checked={formValues.slackIconType === 'url'}
-                  inline
-                />
-                <RadioInput
-                  title={t('public~Emoji')}
-                  name="slackIconType"
-                  value="emoji"
-                  data-test-id="slack-icon-type-emoji"
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { slackIconType: e.target.value },
-                    })
-                  }
-                  checked={formValues.slackIconType === 'emoji'}
-                  inline
-                />
-              </label>
-              {formValues.slackIconType === 'url' && (
-                <>
-                  <span className="pf-v6-c-form-control">
-                    <input
-                      type="text"
-                      aria-describedby="slack-icon-url-help"
-                      aria-label={t('public~The URL of the icon.')}
-                      data-test-id="slack-icon-url"
-                      value={formValues.slack_icon_url}
-                      onChange={(e) =>
-                        dispatchFormChange({
-                          type: 'setFormValues',
-                          payload: { slack_icon_url: e.target.value },
-                        })
-                      }
-                    />
-                  </span>
-                  <div className="help-block" id="slack-icon-url-help">
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem id="slack-icon-url-help">
                     {t('public~The URL of the icon.')}
-                  </div>
-                </>
-              )}
-              {formValues.slackIconType === 'emoji' && (
-                <>
-                  <span className="pf-v6-c-form-control">
-                    <input
-                      type="text"
-                      aria-describedby="slack-icon-emoji-help"
-                      aria-label={t('public~An emoji code to use in place of the default icon.')}
-                      name="slackIconEmoji"
-                      data-test-id="slack-icon-emoji"
-                      value={formValues.slack_icon_emoji}
-                      onChange={(e) =>
-                        dispatchFormChange({
-                          type: 'setFormValues',
-                          payload: { slack_icon_emoji: e.target.value },
-                        })
-                      }
-                    />
-                  </span>
-                  <div className="help-block" id="slack-icon-emoji-help">
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            </>
+          )}
+          {formValues.slackIconType === 'emoji' && (
+            <>
+              <TextInput
+                id="slack-icon-emoji"
+                type="text"
+                data-test="slack-icon-emoji"
+                value={formValues.slack_icon_emoji ?? ''}
+                onChange={(_e, value: string) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { slack_icon_emoji: value },
+                  })
+                }
+                aria-describedby="slack-icon-emoji-help"
+              />
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem id="slack-icon-emoji-help">
                     <Trans ns="public">
                       An{' '}
                       <ExternalLink
@@ -182,92 +190,94 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                       />{' '}
                       to use in place of the default icon.
                     </Trans>
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="form-group">
-              <label htmlFor="slack-username">{t('public~Username')}</label>
-              <span className="pf-v6-c-form-control">
-                <input
-                  type="text"
-                  aria-describedby="slack-username-help"
-                  id="slack-username"
-                  data-test-id="slack-username"
-                  value={formValues.slack_username}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { slack_username: e.target.value },
-                    })
-                  }
-                />
-              </span>
-              <div className="help-block" id="slack-username-help">
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            </>
+          )}
+        </FormGroup>
+        <FormGroup label={t('public~Username')} fieldId="slack-username" isRequired>
+          <TextInput
+            id="slack-username"
+            type="text"
+            data-test="slack-username"
+            value={formValues.slack_username ?? ''}
+            onChange={(_e, value: string) =>
+              dispatchFormChange({ type: 'setFormValues', payload: { slack_username: value } })
+            }
+            aria-describedby="slack-username-help"
+          />
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem id="slack-username-help">
                 {t('public~The displayed username.')}
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="checkbox">
-                <label htmlFor="slack-link-names">
-                  <input
-                    type="checkbox"
-                    id="slack-link-names"
-                    data-test-id="slack-link-names"
-                    aria-describedby="slack-link-names-help"
-                    onChange={(e) =>
-                      dispatchFormChange({
-                        type: 'setFormValues',
-                        payload: { slack_link_names: e.target.checked },
-                      })
-                    }
-                    checked={formValues.slack_link_names}
-                  />
-                  {t('public~Link names')}
-                </label>
-              </div>
-              <div className="help-block" id="slack-link-names-help">
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
+        <FormGroup>
+          <Checkbox
+            label={t('public~Link names')}
+            onChange={(_event, checked) =>
+              dispatchFormChange({
+                type: 'setFormValues',
+                payload: { slack_link_names: checked },
+              })
+            }
+            isChecked={formValues.slack_link_names ?? false}
+            id="slack-link-names"
+            data-test="slack-link-names"
+            aria-describedby="slack-link-names-help"
+          />
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem id="slack-link-names-help">
                 {t('public~Find and link channel names and usernames.')}
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="slack-title">{t('public~Title')}</label>
-              <TextArea
-                id="slack-title"
-                aria-describedby="slack-title-help"
-                onChange={(_event, value) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: { slack_title: value },
-                  })
-                }
-                value={formValues.slack_title}
-              />
-              <div className="help-block" id="slack-title-help">
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
+        <FormGroup label={t('public~Title')} fieldId="slack-title">
+          <TextArea
+            id="slack-title"
+            data-test="slack-title"
+            onChange={(_event, value) =>
+              dispatchFormChange({
+                type: 'setFormValues',
+                payload: { slack_title: value },
+              })
+            }
+            value={formValues.slack_title ?? ''}
+            aria-describedby="slack-title-help"
+          />
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem id="slack-title-help">
                 {t('public~The title of the Slack message.')}
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="slack-text">{t('public~Text')}</label>
-              <TextArea
-                id="slack-text"
-                aria-describedby="slack-text-help"
-                onChange={(_event, value) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: { slack_text: value },
-                  })
-                }
-                value={formValues.slack_text}
-              />
-              <div className="help-block" id="slack-text-help">
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
+        <FormGroup label={t('public~Text')} fieldId="slack-text">
+          <TextArea
+            id="slack-text"
+            data-test="slack-text"
+            onChange={(_event, value) =>
+              dispatchFormChange({ type: 'setFormValues', payload: { slack_text: value } })
+            }
+            value={formValues.slack_text ?? ''}
+            aria-describedby="slack-text-help"
+          />
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem id="slack-text-help">
                 {t('public~The text of the Slack message.')}
-              </div>
-            </div>
-          </div>
-        </ExpandCollapse>
-      </div>
-    </div>
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
+      </AdvancedConfiguration>
+    </>
   );
 };
 

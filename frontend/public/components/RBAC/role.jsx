@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useLocation, useParams } from 'react-router-dom';
 import { RoleModel, RoleBindingModel, ClusterRoleBindingModel } from '../../models';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { sortable } from '@patternfly/react-table';
@@ -18,9 +18,9 @@ import {
   navFactory,
   ResourceKebab,
   ResourceLink,
-  Timestamp,
   resourceListPathFromModel,
 } from '../utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
@@ -29,6 +29,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
@@ -71,7 +73,7 @@ const RolesTableRow = ({ obj: role }) => {
           namespace={role.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(roleColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(roleColumnClasses[1], 'co-break-word')}>
         {role.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={role.metadata.namespace} />
         ) : (
@@ -111,8 +113,8 @@ class Details extends React.Component {
       <div>
         <PaneBody>
           <SectionHeading text={t('public~Role details')} />
-          <div className="row">
-            <div className="col-xs-6">
+          <Grid hasGutter>
+            <GridItem span={6}>
               <DescriptionList>
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('public~Role name')}</DescriptionListTerm>
@@ -127,8 +129,8 @@ class Details extends React.Component {
                   </DescriptionListGroup>
                 )}
               </DescriptionList>
-            </div>
-            <div className="col-xs-6">
+            </GridItem>
+            <GridItem span={6}>
               <DescriptionList>
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('public~Created at')}</DescriptionListTerm>
@@ -137,8 +139,8 @@ class Details extends React.Component {
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               </DescriptionList>
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
         </PaneBody>
         <PaneBody>
           <SectionHeading text={t('public~Rules')} />
@@ -403,6 +405,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
         },
       ]}
       title={t('public~Roles')}
+      mock={mock}
     />
   );
 };

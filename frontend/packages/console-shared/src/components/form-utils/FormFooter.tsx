@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActionGroup, Alert, Button, ButtonVariant } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
-import * as cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils';
 import { Shadows, useScrollShadows, useScrollContainer } from '../../hooks';
@@ -32,7 +32,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
   const shadowPosition = useScrollShadows(sticky ? scrollContainer : null);
   return (
     <div
-      className={cx('ocs-form-footer', {
+      className={css('ocs-form-footer', {
         'ocs-form-footer__sticky': sticky,
         'ocs-form-footer__shadow':
           sticky && (shadowPosition === Shadows.both || shadowPosition === Shadows.bottom),
@@ -98,7 +98,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               type="button"
               data-test-id="download-button"
               variant={ButtonVariant.secondary}
-              className="pf-v6-c-button--align-right hidden-sm hidden-xs"
+              className="pf-v6-c-button--align-right pf-v6-u-display-none pf-v6-u-display-flex-on-sm"
               onClick={handleDownload}
               icon={<DownloadIcon />}
             >

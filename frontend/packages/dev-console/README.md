@@ -8,12 +8,5 @@ You'll need to install the `OpenShift Pipeline Operator` found in the Admin sect
 
 There is a helpful script to install a couple Pipelines found in the `yamls` folder.
 
-Link to the [Script](./yamls/pipelines/install_pipeline_mocks.sh) 
+Link to the [Script](./yamls/pipelines/install_pipeline_mocks.sh)
 (The above link is now deprecated)
-
-
-## Service Binding Operator
-
-> This scenario illustrates binding an imported application to an in-cluster operated managed PostgreSQL Database.
-
-https://github.com/redhat-developer/service-binding-operator/tree/master/examples/nodejs_postgresql

@@ -7,7 +7,7 @@ type ExecuteCommandProps = {
   onCommand: (command: string) => void;
 };
 
-const ExecuteCommand: React.FC<ExecuteCommandProps> = ({ onCommand }) => {
+const ExecuteCommand: React.FCC<ExecuteCommandProps> = ({ onCommand }) => {
   const command = useSelector(getCloudShellCommand);
   const setCloudShellCommand = useCloudShellCommandDispatch();
 

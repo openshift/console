@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, List } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -85,7 +85,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({
           {t('knative-plugin~No Revisions found for this resource.')}
         </span>
       ) : (
-        <ul className="list-group">
+        <List isPlain isBordered>
           {_.map(filteredRevisions, (revision) => (
             <RevisionsOverviewListItem
               key={revision.metadata.uid}
@@ -93,7 +93,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({
               service={service}
             />
           ))}
-        </ul>
+        </List>
       )}
     </>
   );

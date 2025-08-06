@@ -170,7 +170,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           {t('public~A unique name for the storage claim within the project')}
         </p>
       </div>
-      <div className="form-group">
+      <div className="form-group pf-v6-c-form">
         <AccessModeSelector
           onChange={setAccessMode}
           provisioner={storageProvisioner}
@@ -221,7 +221,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           )}
         </p>
       </div>
-      <div className="form-group">
+      <div className="form-group pf-v6-c-form">
         <VolumeModeSelector
           onChange={setVolumeMode}
           provisioner={storageProvisioner}
@@ -272,7 +272,7 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
       />
       <PaneBody>
         <div className="co-m-pane__form">
-          <form onSubmit={save}>
+          <form onSubmit={save} className="pf-v6-c-form pf-v6-c-form--no-gap">
             <CreatePVCForm onChange={setPvcObj} namespace={namespace} />
             <ButtonBar errorMessage={error} inProgress={inProgress}>
               <ActionGroup className="pf-v6-c-form">

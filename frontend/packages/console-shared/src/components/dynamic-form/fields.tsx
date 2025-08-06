@@ -8,15 +8,19 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import { FieldProps, UiSchema } from '@rjsf/core';
 import SchemaField, { SchemaFieldProps } from '@rjsf/core/dist/cjs/components/fields/SchemaField';
 import { retrieveSchema, getUiOptions } from '@rjsf/core/dist/cjs/utils';
-import classNames from 'classnames';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
-import { LinkifyExternal, SelectorInput, Dropdown } from '@console/internal/components/utils';
+import { LinkifyExternal, SelectorInput } from '@console/internal/components/utils';
+import {
+  ConsoleSelect,
+  ConsoleSelectProps,
+} from '@console/internal/components/utils/console-select';
 import {
   NodeAffinity,
   PodAffinity,
@@ -55,7 +59,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   return (
     <div id={`${id}_field`} className="form-group">
       {showLabel && label && (
-        <label className={classNames('form-label', { 'co-required': required })} htmlFor={id}>
+        <label className={css('form-label', { 'co-required': required })} htmlFor={id}>
           {label}
         </label>
       )}
@@ -84,7 +88,7 @@ export const FieldSet: React.FC<FieldSetProps> = ({
       <AccordionItem isExpanded={expanded}>
         <AccordionToggle id={`${idSchema.$id}_accordion-toggle`} onClick={onToggle}>
           <label
-            className={classNames({ 'co-required': required })}
+            className={css({ 'co-required': required })}
             htmlFor={`${idSchema.$id}_accordion-content`}
           >
             {label}
@@ -315,9 +319,12 @@ export const DropdownField: React.FC<FieldProps> = ({
   uiSchema = {},
 }) => {
   const { t } = useTranslation();
-  const { items, title } = getUiOptions(uiSchema) as { items?: object; title?: string };
+  const { items, title } = getUiOptions(uiSchema) as {
+    items?: ConsoleSelectProps['items'];
+    title?: string;
+  };
   return (
-    <Dropdown
+    <ConsoleSelect
       id={idSchema.$id}
       key={idSchema.$id}
       title={t('console-shared~Select {{title}}', { title: title || schema?.title || name })}

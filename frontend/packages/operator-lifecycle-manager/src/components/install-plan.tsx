@@ -10,9 +10,11 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListDescription,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
 import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -67,17 +69,17 @@ import { InstallPlanReview, referenceForStepResource } from './index';
 const tableColumnClasses = [
   'pf-v6-c-table__td',
   'pf-v6-c-table__td',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-v6-c-table__td'),
+  css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
+  css('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-v6-c-table__td'),
   Kebab.columnClass,
 ];
 
 const componentsTableColumnClasses = [
   'pf-v6-c-table__td',
   'pf-v6-c-table__td',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
+  css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
 ];
 
 export const InstallPlanHint: React.FC<InstallPlanHintProps> = ({ title, body, footer }) => {
@@ -346,11 +348,11 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
       )}
       <PaneBody>
         <SectionHeading text={t('olm~InstallPlan details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={obj} showAnnotations={false} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('olm~Status')}</DescriptionListTerm>
@@ -392,8 +394,8 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
                 ))}
               </DescriptionListGroup>
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('olm~Conditions')} />

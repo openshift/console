@@ -15,7 +15,7 @@ export const pipelinesPage = {
       if ($body.find(pipelinesPO.createPipeline).length > 0) {
         cy.get(pipelinesPO.createPipeline).click();
       } else {
-        cy.contains(`[data-test-id="dropdown-button"]`, 'Create').click();
+        cy.byTestID('tab-list-page-create').contains('Create').click();
         cy.get(pipelineBuilderPO.pipeline).click();
       }
     });
@@ -25,11 +25,8 @@ export const pipelinesPage = {
     detailsPage.titleShouldContain(pageTitle.Pipelines);
     app.waitForLoad();
     cy.get('body').then(($body) => {
-      if ($body.find('[data-test-id="dropdown-button"]').length !== 0) {
-        cy.contains('[data-test-id="dropdown-button"]', 'Create').click();
-        cy.get(pipelineBuilderPO.repository).click();
-      } else {
-        cy.get(pipelinesPO.createPipeline).click();
+      if ($body.find('[data-test="tab-list-page-create"]').length !== 0) {
+        cy.byTestID('tab-list-page-create').contains('Create').click();
       }
     });
   },
@@ -68,7 +65,8 @@ export const pipelinesPage = {
         }
       });
     });
-    cy.get('[data-test-id="action-items"]').should('be.visible');
+    // cy.get('[data-test-id="action-items"]').should('be.visible');
+    cy.get('[role="menu"]').should('be.visible');
   },
 
   selectActionForPipeline: (pipelineName: string, action: string | pipelineActions) => {
@@ -85,8 +83,11 @@ export const pipelinesPage = {
         }
       });
     });
-    cy.byLegacyTestID('action-items').should('be.visible');
-    cy.byTestActionID(action).click({ force: true });
+    // cy.byLegacyTestID('action-items').should('be.visible');
+    cy.get('[role="menu"]').should('be.visible');
+    /* eslint-disable cypress/no-unnecessary-waiting */
+    cy.wait(2000);
+    cy.get(`[data-test-action="${action}"] button`).click({ force: true });
   },
 
   verifyDefaultPipelineColumnValues: (defaultValue: string = '-') => {
@@ -357,7 +358,8 @@ export const startPipelineInPipelinesPage = {
       case 'Secret':
         cy.byTestDropDownMenu('secret').click();
         break;
-      case 'PersistentVolumeClaim' || 'PVC':
+      case 'PersistentVolumeClaim':
+      case 'PVC':
         cy.byTestDropDownMenu('pvc').click();
         break;
       case 'VolumeClaimTemplate':

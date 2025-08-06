@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import {
   getMachineAddresses,
@@ -45,6 +45,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
@@ -54,11 +56,11 @@ export const machineReference = referenceForModel(MachineModel);
 const tableColumnInfo = [
   { className: '', id: 'name' },
   { className: '', id: 'namespace' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-sm'), id: 'nodeRef' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'phase' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'provider' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'region' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'avail' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-sm'), id: 'nodeRef' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'phase' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'provider' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'region' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'avail' },
   { className: Kebab.columnClass, id: '' },
 ];
 
@@ -74,7 +76,7 @@ const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj, activeColumnIDs
     <>
       <TableData
         {...tableColumnInfo[0]}
-        className={classNames(tableColumnInfo[0].className, 'co-break-word')}
+        className={css(tableColumnInfo[0].className, 'co-break-word')}
         activeColumnIDs={activeColumnIDs}
       >
         <ResourceLink
@@ -85,7 +87,7 @@ const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj, activeColumnIDs
       </TableData>
       <TableData
         {...tableColumnInfo[1]}
-        className={classNames(tableColumnInfo[1].className, 'co-break-word')}
+        className={css(tableColumnInfo[1].className, 'co-break-word')}
         activeColumnIDs={activeColumnIDs}
       >
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
@@ -124,11 +126,11 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
     <>
       <PaneBody>
         <SectionHeading text={t('public~Machine details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={obj} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DetailsItem label={t('public~Phase')} obj={obj} path="status.phase">
                 <Status status={getMachinePhase(obj)} />
@@ -179,8 +181,8 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
@@ -290,7 +292,10 @@ export const MachinePage: React.FC<MachinePageProps> = ({
     selector,
     namespace,
   });
-
+  const createAccessReview = {
+    groupVersionKind: referenceForModel(MachineModel),
+    namespace: namespace || 'default',
+  };
   const machineFilter = [
     { type: 'name', filterGroupName: 'Machine', filter: tableFilters(isExactSearch).machine },
   ];
@@ -299,7 +304,10 @@ export const MachinePage: React.FC<MachinePageProps> = ({
   return (
     <>
       <ListPageHeader title={showTitle ? t(MachineModel.labelPluralKey) : undefined}>
-        <ListPageCreate groupVersionKind={referenceForModel(MachineModel)}>
+        <ListPageCreate
+          createAccessReview={createAccessReview}
+          groupVersionKind={referenceForModel(MachineModel)}
+        >
           {t('public~Create Machine')}
         </ListPageCreate>
       </ListPageHeader>

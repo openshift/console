@@ -23,7 +23,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { generateSecret } from '@console/dev-console/src/components/import/import-submit-utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { GitProvider } from '@console/git-service/src';
-import { ExternalLink, FirehoseResource } from '@console/internal/components/utils';
+import { FirehoseResource } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { ConfigMapKind } from '@console/internal/module/k8s/types';
 import {
@@ -32,6 +32,7 @@ import {
   ResourceDropdownField,
   useActiveNamespace,
 } from '@console/shared/src';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { AccessTokenDocLinks, WebhookDocLinks } from '../consts';
 import PermissionsSection from './PermissionsSection';
 
@@ -90,15 +91,9 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         helpText = (
           <Trans t={t} ns="pipelines-plugin">
             Use your GitHub Personal token. Use this{' '}
-            <a
-              href={AccessTokenDocLinks[GitProvider.GITHUB]}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              link
-            </a>{' '}
-            to create a <b>classic</b> token with <b>repo</b> & <b>admin:repo_hook</b> scopes and
-            give your token an expiration, i.e 30d.
+            <ExternalLink href={AccessTokenDocLinks[GitProvider.GITHUB]}>link</ExternalLink> to
+            create a <b>classic</b> token with <b>repo</b> & <b>admin:repo_hook</b> scopes and give
+            your token an expiration, i.e 30d.
           </Trans>
         );
         break;
@@ -107,15 +102,9 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         helpText = (
           <Trans t={t} ns="pipelines-plugin">
             Use your Gitlab Personal access token. Use this{' '}
-            <a
-              href={AccessTokenDocLinks[GitProvider.GITLAB]}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              link
-            </a>{' '}
-            to create a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>.
-            Give your token an expiration i.e 30d.
+            <ExternalLink href={AccessTokenDocLinks[GitProvider.GITLAB]}>link</ExternalLink> to
+            create a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>. Give
+            your token an expiration i.e 30d.
           </Trans>
         );
         break;
@@ -124,14 +113,8 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         helpText = (
           <Trans t={t} ns="pipelines-plugin">
             Use your Bitbucket App password. Use this{' '}
-            <a
-              href={AccessTokenDocLinks[GitProvider.BITBUCKET]}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              link
-            </a>{' '}
-            to create a token with <b>Read and Write </b>scopes in{' '}
+            <ExternalLink href={AccessTokenDocLinks[GitProvider.BITBUCKET]}>link</ExternalLink> to
+            create a token with <b>Read and Write </b>scopes in{' '}
             <b>Account, Workspace membership, Projects, Issues, Pull requests and Webhooks</b>.
           </Trans>
         );

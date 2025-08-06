@@ -5,7 +5,7 @@ import { CircleIcon } from '@patternfly/react-icons/dist/esm/icons/circle-icon';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import { HourglassHalfIcon } from '@patternfly/react-icons/dist/esm/icons/hourglass-half-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
-import * as cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk/src/app/components/status/icons';
 import { ComputedStatus } from '../../../../types';
 import { getRunStatusColor } from '../../../../utils/pipeline-augment';
@@ -21,7 +21,7 @@ export const StatusIcon: React.FC<StatusIconProps> = ({ status, disableSpin, ...
   switch (status) {
     case ComputedStatus['In Progress']:
     case ComputedStatus.Running:
-      return <SyncAltIcon {...props} className={cx({ 'co-spin': !disableSpin })} />;
+      return <SyncAltIcon {...props} className={css({ 'co-spin': !disableSpin })} />;
 
     case ComputedStatus.Succeeded:
       return <CheckCircleIcon {...props} />;

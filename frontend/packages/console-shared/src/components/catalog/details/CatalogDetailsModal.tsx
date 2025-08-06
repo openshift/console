@@ -4,7 +4,6 @@ import { Split, SplitItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { ServiceBindingDeprecationAlertForModals } from '@console/service-binding-plugin/src/components/service-binding-utils/ServiceBindingAlerts';
 import { Modal } from '../../modal';
 import CatalogBadges from '../CatalogBadges';
 import useCtaLink from '../hooks/useCtaLink';
@@ -26,14 +25,13 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
     return null;
   }
 
-  const { name, title, badges, tags } = item;
+  const { name, title, badges } = item;
 
   const provider = item.provider
     ? t('console-shared~Provided by {{provider}}', { provider: item.provider })
     : null;
 
   const vendor = <div>{provider}</div>;
-  const isBindable = tags?.includes('bindable');
 
   const modalHeader = (
     <>
@@ -71,11 +69,6 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
       aria-label={item.name}
       header={modalHeader}
     >
-      {isBindable && (
-        <div className="odc-catalog-details-modal__sbo_alert">
-          <ServiceBindingDeprecationAlertForModals />
-        </div>
-      )}
       <CatalogDetailsPanel item={item} />
     </Modal>
   );

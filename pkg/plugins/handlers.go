@@ -36,7 +36,10 @@ func NewPluginsProxyServiceHandler(consoleEndpoint string, serviceEndpoint *url.
 		ConsoleEndpoint: consoleEndpoint,
 		ProxyConfig: &proxy.Config{
 			TLSClientConfig: tlsClientConfig,
-			HeaderBlacklist: proxy.HeaderBlacklist,
+			// The Origin header can trigger CORS checks automatically for some HTTP servers,
+			// causing requests to fail. We already perform CSRF token checks in the console middleware
+			// before forwarding requests to the plugin, so there is no CSRF exposure.
+			HeaderBlacklist: []string{"Cookie", "X-CSRFToken", "Origin"},
 			Endpoint:        serviceEndpoint,
 		},
 		Authorize: authorize,
@@ -55,9 +58,9 @@ func ParsePluginProxyConfig(proxyConfig string) (*serverconfig.Proxy, error) {
 	pluginProxy := &serverconfig.Proxy{}
 	err := json.Unmarshal([]byte(proxyConfig), pluginProxy)
 	if err != nil {
-		errMsg := fmt.Sprintf("Error unmarshaling ConsoleConfig proxy field: %v", err)
-		klog.Error(errMsg)
-		return nil, fmt.Errorf(errMsg)
+		err := fmt.Errorf("error unmarshaling ConsoleConfig proxy field: %w", err)
+		klog.Error(err.Error())
+		return nil, err
 	}
 	return pluginProxy, nil
 }
@@ -73,16 +76,16 @@ func GetPluginProxyServiceHandlers(proxyConfig *serverconfig.Proxy, defaultTLSCo
 				RootCAs: customCA,
 			})
 			if !pluginProxyTLS.RootCAs.AppendCertsFromPEM([]byte(service.CACertificate)) {
-				errMsg := fmt.Sprintf("Error parsing CA cert for %s service", service.Endpoint)
-				klog.Error(errMsg)
-				return nil, fmt.Errorf(errMsg)
+				err := fmt.Errorf("failed to parse CA cert for %q service", service.Endpoint)
+				klog.Error(err.Error())
+				return nil, err
 			}
 		}
 		serviceEndpoint, err := url.Parse(service.Endpoint)
 		if err != nil {
-			errMsg := fmt.Sprintf("Error parsing %q service endpoint", service.Endpoint)
-			klog.Error(errMsg)
-			return nil, fmt.Errorf(errMsg)
+			err := fmt.Errorf("failed to parse service endpoint %q: %w", service.Endpoint, err)
+			klog.Error(err.Error())
+			return nil, err
 		}
 		proxyServiceHandlers = append(proxyServiceHandlers, NewPluginsProxyServiceHandler(service.ConsoleAPIPath, serviceEndpoint, pluginProxyTLS, service.Authorize))
 	}
@@ -147,7 +150,7 @@ func (p *PluginsHandler) HandlePluginAssets(w http.ResponseWriter, r *http.Reque
 	p.proxyPluginRequest(pluginServiceRequestURL, pluginName, w, r)
 }
 
-func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName string, w http.ResponseWriter, orignalRequest *http.Request) {
+func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName string, w http.ResponseWriter, originalRequest *http.Request) {
 	newRequest, err := http.NewRequest("GET", requestURL.String(), nil)
 	if err != nil {
 		errMsg := fmt.Sprintf("failed to create GET request for %q plugin: %v", pluginName, err)
@@ -156,7 +159,10 @@ func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName stri
 		return
 	}
 
-	proxy.CopyRequestHeaders(orignalRequest, newRequest)
+	newRequest.Header = originalRequest.Header.Clone()
+	for _, h := range []string{"Cookie", "X-CSRFToken"} {
+		newRequest.Header.Del(h)
+	}
 
 	resp, err := p.Client.Do(newRequest)
 	if err != nil {

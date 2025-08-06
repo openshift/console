@@ -1,13 +1,13 @@
 import { Tooltip } from '@patternfly/react-core';
 import { GlobeAmericasIcon } from '@patternfly/react-icons/dist/esm/icons/globe-americas-icon';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useSelector } from 'react-redux';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 import { TimestampProps } from '@console/dynamic-plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import * as dateTime from '../../utils/datetime';
 
-const Timestamp = (props: TimestampProps) => {
+export const Timestamp = (props: TimestampProps) => {
   const now = useSelector<RootState, string>(({ UI }) => UI.get('lastTick'));
 
   // Workaround for Date&Time values are not showing in supported languages onchange of language selector.
@@ -31,7 +31,7 @@ const Timestamp = (props: TimestampProps) => {
   }
 
   return (
-    <div className={classNames('co-timestamp co-icon-and-text', props.className)}>
+    <div className={css('co-timestamp co-icon-and-text', props.className)}>
       <GlobeAmericasIcon className="co-icon-and-text__icon" />
       <Tooltip
         content={[

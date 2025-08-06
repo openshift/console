@@ -3,10 +3,21 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { SectionHeading, ExpandCollapse } from '../../utils';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
 import { FormProps } from './receiver-form-props';
+import {
+  Checkbox,
+  FormGroup,
+  FormHelperText,
+  FormSection,
+  Grid,
+  GridItem,
+  HelperText,
+  HelperTextItem,
+  TextInput,
+} from '@patternfly/react-core';
+import { AdvancedConfiguration } from './advanced-configuration';
 
 const SMTP_GLOBAL_FIELDS = [
   'smtp_from',
@@ -28,268 +39,223 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
   const { t } = useTranslation();
 
   return (
-    <div data-test-id="email-receiver-form">
-      <div className="form-group">
-        <label className="co-required" htmlFor="email-to">
-          {t('public~To address')}
-        </label>
-        <span className="pf-v6-c-form-control">
-          <input
+    <>
+      <FormGroup label={t('public~To address')} fieldId="email-to" isRequired>
+        <TextInput
+          type="text"
+          id="email-to"
+          data-test="email-to"
+          value={formValues.emailTo ?? ''}
+          onChange={(_e, value: string) =>
+            dispatchFormChange({
+              type: 'setFormValues',
+              payload: { emailTo: value },
+            })
+          }
+          aria-describedby="email-to-help"
+        />
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem id="email-to-help">
+              {t('public~The email address to send notifications to.')}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      </FormGroup>
+      <FormSection title={t('public~SMTP configuration')}>
+        <SaveAsDefaultCheckbox
+          formField="emailSaveAsDefault"
+          disabled={disableSaveAsDefault}
+          label={t('public~Save as default SMTP configuration')}
+          formValues={formValues}
+          dispatchFormChange={dispatchFormChange}
+          tooltip={t(
+            'public~Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.',
+          )}
+        />
+        <FormGroup label={t('public~From address')} fieldId="email-from" isRequired>
+          <TextInput
             type="text"
-            aria-describedby="email-to-help"
-            id="email-to"
-            data-test-id="email-to"
-            value={formValues.emailTo}
-            onChange={(e) =>
+            id="email-from"
+            data-test="email-from"
+            value={formValues.smtp_from ?? ''}
+            onChange={(_e, value: string) =>
               dispatchFormChange({
                 type: 'setFormValues',
-                payload: { emailTo: e.target.value },
+                payload: { smtp_from: value },
+              })
+            }
+            aria-describedby="email-from-help"
+          />
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem id="email-from-help">
+                {t('public~The email address to send notifications from.')}
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
+        <Grid hasGutter>
+          <GridItem sm={6}>
+            <FormGroup label={t('public~SMTP smarthost')} fieldId="email-smarthost" isRequired>
+              <TextInput
+                type="text"
+                id="email-smarthost"
+                data-test="email-smarthost"
+                value={formValues.smtp_smarthost ?? ''}
+                onChange={(_e, value: string) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { smtp_smarthost: value },
+                  })
+                }
+                aria-describedby="email-smarthost-help"
+              />
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem id="email-smarthost-help">
+                    {t('public~Smarthost used for sending emails, including port number.')}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            </FormGroup>
+          </GridItem>
+          <GridItem sm={6}>
+            <FormGroup label={t('public~SMTP hello')} fieldId="email-hello" isRequired>
+              <TextInput
+                type="text"
+                id="email-hello"
+                data-test="email-hello"
+                value={formValues.smtp_hello ?? ''}
+                onChange={(_e, value: string) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { smtp_hello: value },
+                  })
+                }
+                aria-describedby="email-hello-help"
+              />
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem id="email-hello-help">
+                    {t('public~The hostname to identify to the SMTP server.')}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            </FormGroup>
+          </GridItem>
+        </Grid>
+        <Grid hasGutter>
+          <GridItem sm={6}>
+            <FormGroup label={t('public~Auth username')} fieldId="email-auth-username">
+              <TextInput
+                type="text"
+                id="email-auth-username"
+                data-test="email-auth-username"
+                value={formValues.smtp_auth_username ?? ''}
+                onChange={(_e, value: string) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { smtp_auth_username: value },
+                  })
+                }
+              />
+            </FormGroup>
+          </GridItem>
+          <GridItem sm={6}>
+            <FormGroup
+              label={t('public~Auth password (using LOGIN and PLAIN)')}
+              fieldId="email-auth-password"
+            >
+              <TextInput
+                type="password"
+                id="email-auth-password"
+                data-test="email-auth-password"
+                value={formValues.smtp_auth_password ?? ''}
+                onChange={(_e, value: string) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { smtp_auth_password: value },
+                  })
+                }
+              />
+            </FormGroup>
+          </GridItem>
+        </Grid>
+        <Grid hasGutter>
+          <GridItem sm={6}>
+            <FormGroup
+              label={t('public~Auth identity (using PLAIN)')}
+              fieldId="email-auth-identity"
+            >
+              <TextInput
+                type="text"
+                id="email-auth-identity"
+                data-test="email-auth-identity"
+                value={formValues.smtp_auth_identity ?? ''}
+                onChange={(_e, value: string) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { smtp_auth_identity: value },
+                  })
+                }
+              />
+            </FormGroup>
+          </GridItem>
+          <GridItem sm={6}>
+            <FormGroup label={t('public~Auth secret (CRAM-MDS)')} fieldId="email-auth-secret">
+              <TextInput
+                type="password"
+                id="email-auth-secret"
+                data-test="email-auth-secret"
+                value={formValues.smtp_auth_secret ?? ''}
+                onChange={(_e, value: string) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { smtp_auth_secret: value },
+                  })
+                }
+              />
+            </FormGroup>
+          </GridItem>
+        </Grid>
+        <FormGroup>
+          <Checkbox
+            label={t('public~Require TLS')}
+            onChange={(_event, checked) =>
+              dispatchFormChange({
+                type: 'setFormValues',
+                payload: { smtp_require_tls: checked },
+              })
+            }
+            isChecked={formValues.smtp_require_tls ?? false}
+            id="email-require-tls"
+            data-test="email-require-tls"
+          />
+        </FormGroup>
+      </FormSection>
+      <AdvancedConfiguration>
+        <SendResolvedAlertsCheckbox
+          formField="email_send_resolved"
+          formValues={formValues}
+          dispatchFormChange={dispatchFormChange}
+        />
+        <FormGroup label={t('public~Body of email notifications (HTML)')} fieldId="email-html">
+          <TextInput
+            type="text"
+            id="email-html"
+            data-test="email-html"
+            value={formValues.email_html ?? ''}
+            onChange={(_e, value: string) =>
+              dispatchFormChange({
+                type: 'setFormValues',
+                payload: { email_html: value },
               })
             }
           />
-        </span>
-        <div className="help-block" id="email-to-help">
-          {t('public~The email address to send notifications to.')}
-        </div>
-      </div>
-      <div className="form-group">
-        <div className="co-m-pane__body--section-heading">
-          <div className="row">
-            <div className="col-sm-6">
-              <SectionHeading text={t('public~SMTP configuration')} />
-            </div>
-            <div className="col-sm-6">
-              <SaveAsDefaultCheckbox
-                formField="emailSaveAsDefault"
-                disabled={disableSaveAsDefault}
-                label={t('public~Save as default SMTP configuration')}
-                formValues={formValues}
-                dispatchFormChange={dispatchFormChange}
-                tooltip={t(
-                  'public~Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.',
-                )}
-              />
-            </div>
-          </div>
-          <div className="form-group">
-            <label className="co-required" htmlFor="email-from">
-              {t('public~From address')}
-            </label>
-            <span className="pf-v6-c-form-control">
-              <input
-                type="text"
-                aria-describedby="email-from-help"
-                id="email-from"
-                data-test-id="email-from"
-                value={formValues.smtp_from}
-                onChange={(e) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: { smtp_from: e.target.value },
-                  })
-                }
-              />
-            </span>
-            <div className="help-block" id="email-from-help">
-              {t('public~The email address to send notifications from.')}
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-sm-6">
-              <div className="form-group">
-                <label className="co-required" htmlFor="email-smarthost">
-                  {t('public~SMTP smarthost')}
-                </label>
-                <span className="pf-v6-c-form-control">
-                  <input
-                    type="text"
-                    aria-describedby="email-smarthost-help"
-                    id="email-smarthost"
-                    data-test-id="email-smarthost"
-                    value={formValues.smtp_smarthost}
-                    onChange={(e) =>
-                      dispatchFormChange({
-                        type: 'setFormValues',
-                        payload: { smtp_smarthost: e.target.value },
-                      })
-                    }
-                  />
-                </span>
-                <div className="help-block" id="email-smarthost-help">
-                  {t('public~Smarthost used for sending emails, including port number.')}
-                </div>
-              </div>
-            </div>
-            <div className="col-sm-6">
-              <div className="form-group">
-                <label className="co-required" htmlFor="email-hello">
-                  {t('public~SMTP hello')}
-                </label>
-                <span className="pf-v6-c-form-control">
-                  <input
-                    type="text"
-                    aria-describedby="email-hello-help"
-                    id="email-hello"
-                    data-test-id="email-hello"
-                    value={formValues.smtp_hello}
-                    onChange={(e) =>
-                      dispatchFormChange({
-                        type: 'setFormValues',
-                        payload: { smtp_hello: e.target.value },
-                      })
-                    }
-                  />
-                </span>
-                <div className="help-block" id="email-hello-help">
-                  {t('public~The hostname to identify to the SMTP server.')}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-sm-6">
-              <div className="form-group">
-                <label htmlFor="email-auth-username">{t('public~Auth username')}</label>
-                <span className="pf-v6-c-form-control">
-                  <input
-                    type="text"
-                    id="email-auth-username"
-                    data-test-id="email-auth-username"
-                    value={formValues.smtp_auth_username}
-                    onChange={(e) =>
-                      dispatchFormChange({
-                        type: 'setFormValues',
-                        payload: { smtp_auth_username: e.target.value },
-                      })
-                    }
-                  />
-                </span>
-              </div>
-            </div>
-            <div className="col-sm-6">
-              <div className="form-group">
-                <label htmlFor="email-auth-password">
-                  {t('public~Auth password (using LOGIN and PLAIN)')}
-                </label>
-                <span className="pf-v6-c-form-control">
-                  <input
-                    type="password"
-                    id="email-auth-password"
-                    data-test-id="email-auth-password"
-                    value={formValues.smtp_auth_password}
-                    onChange={(e) =>
-                      dispatchFormChange({
-                        type: 'setFormValues',
-                        payload: { smtp_auth_password: e.target.value },
-                      })
-                    }
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-sm-6">
-              <div className="form-group">
-                <label htmlFor="email-auth-identity">
-                  {t('public~Auth identity (using PLAIN)')}
-                </label>
-                <span className="pf-v6-c-form-control">
-                  <input
-                    type="text"
-                    id="email-auth-identity"
-                    data-test-id="email-auth-identity"
-                    value={formValues.smtp_auth_identity}
-                    onChange={(e) =>
-                      dispatchFormChange({
-                        type: 'setFormValues',
-                        payload: { smtp_auth_identity: e.target.value },
-                      })
-                    }
-                  />
-                </span>
-              </div>
-            </div>
-            <div className="col-sm-6">
-              <div className="form-group">
-                <label htmlFor="email-auth-secret">{t('public~Auth secret (CRAM-MDS)')}</label>
-                <span className="pf-v6-c-form-control">
-                  <input
-                    type="password"
-                    id="email-auth-secret"
-                    data-test-id="email-auth-secret"
-                    value={formValues.smtp_auth_secret}
-                    onChange={(e) =>
-                      dispatchFormChange({
-                        type: 'setFormValues',
-                        payload: { smtp_auth_secret: e.target.value },
-                      })
-                    }
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="checkbox">
-            <label htmlFor="email-require-tls">
-              <input
-                type="checkbox"
-                id="email-require-tls"
-                data-test-id="email-require-tls"
-                onChange={(e) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: {
-                      smtp_require_tls: e.target.checked,
-                    },
-                  })
-                }
-                checked={formValues.smtp_require_tls}
-                aria-checked={formValues.smtp_require_tls}
-              />
-              {t('public~Require TLS')}
-            </label>
-          </div>
-        </div>
-      </div>
-      <div className="form-group">
-        <ExpandCollapse
-          textCollapsed={t('public~Show advanced configuration')}
-          textExpanded={t('public~Hide advanced configuration')}
-          dataTest="advanced-configuration"
-        >
-          <div className="co-form-subsection">
-            <div className="form-group">
-              <SendResolvedAlertsCheckbox
-                formField="email_send_resolved"
-                formValues={formValues}
-                dispatchFormChange={dispatchFormChange}
-              />
-            </div>
-            <div className="form-group">
-              <label className="co-required" htmlFor="email-html">
-                {t('public~Body of email notifications (HTML)')}
-              </label>
-              <span className="pf-v6-c-form-control">
-                <input
-                  type="text"
-                  aria-describedby="html-help"
-                  id="email-html"
-                  data-test-id="email-html"
-                  value={formValues.email_html}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { email_html: e.target.value },
-                    })
-                  }
-                />
-              </span>
-            </div>
-          </div>
-        </ExpandCollapse>
-      </div>
-    </div>
+        </FormGroup>
+      </AdvancedConfiguration>
+    </>
   );
 };
 

@@ -1,14 +1,12 @@
 import * as React from 'react';
+import { List, ListItem } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
-import {
-  SidebarSectionHeading,
-  ResourceLink,
-  ExternalLink,
-} from '@console/internal/components/utils';
+import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor, PodKind, podPhase } from '@console/internal/module/k8s';
 import { AllPodStatus, usePodsWatcher } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { getResource } from '@console/topology/src/utils';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
@@ -28,8 +26,8 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
           {t('knative-plugin~No Source found for this resource.')}
         </span>
       ) : (
-        <ul className="list-group">
-          <li className="list-group-item">
+        <List isPlain isBordered>
+          <ListItem>
             {reference ? (
               <ResourceLink
                 kind={reference}
@@ -42,15 +40,11 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
                 <span data-test="event-sink-target-uri" className="pf-v6-u-text-color-subtle">
                   {t('knative-plugin~Target URI:')}{' '}
                 </span>
-                <ExternalLink
-                  href={sinkUri}
-                  additionalClassName="co-external-link--block"
-                  text={sinkUri}
-                />
+                <ExternalLink href={sinkUri} displayBlock text={sinkUri} />
               </>
             )}
-          </li>
-        </ul>
+          </ListItem>
+        </List>
       )}
     </>
   );

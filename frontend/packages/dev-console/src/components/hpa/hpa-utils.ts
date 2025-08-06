@@ -8,41 +8,38 @@ import {
   K8sResourceKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { LimitsData } from '@console/shared/src';
+import { ResourceList } from '@console/internal/module/k8s/types';
 import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
-import { HPAFormValues, SupportedMetricTypes } from './types';
+import { SupportedMetricTypes } from './types';
 
 export const VALID_HPA_TARGET_KINDS = ['Deployment', 'DeploymentConfig'];
 
-const getResourceLimitsData = (resource: K8sResourceKind): LimitsData => {
-  const container = resource?.spec?.template?.spec?.containers?.find((c) => c.resources.limits);
-
-  return container?.resources?.limits || null;
+const getResourceRequestsData = (resource: K8sResourceKind): ResourceList | null => {
+  // Find the first container that has a 'requests' object within its 'resources'.
+  const container = resource?.spec?.template?.spec?.containers?.find((c) => c.resources?.requests);
+  return container?.resources?.requests || null;
 };
-const hasCpuLimits = (limits: LimitsData): boolean => !!limits?.cpu;
-export const isCpuUtilizationPossible = (resource: K8sResourceKind): boolean =>
-  hasCpuLimits(getResourceLimitsData(resource));
-const hasMemoryLimits = (limits: LimitsData): boolean => !!limits?.memory;
-export const isMemoryUtilizationPossible = (resource: K8sResourceKind): boolean =>
-  hasMemoryLimits(getResourceLimitsData(resource));
 
-export const getLimitWarning = (resource: K8sResourceKind): string => {
-  const limits = getResourceLimitsData(resource);
+const hasCpuRequests = (requests: ResourceList): boolean => !!requests?.cpu;
+const hasMemoryRequests = (requests: ResourceList): boolean => !!requests?.memory;
 
-  if (!limits) {
+export const getRequestsWarning = (resource: K8sResourceKind): string | null => {
+  const requests = getResourceRequestsData(resource);
+
+  if (!requests) {
     return i18next.t(
-      'devconsole~CPU and memory resource limits must be set if you want to use CPU and memory utilization. The HorizontalPodAutoscaler will not have CPU or memory metrics until resource limits are set.',
+      'devconsole~CPU and memory resource requests must be set if you want to use CPU and memory utilization. The HorizontalPodAutoscaler will not have CPU or memory metrics until resource requests are set.',
     );
   }
 
-  if (!hasCpuLimits(limits)) {
+  if (!hasCpuRequests(requests)) {
     return i18next.t(
-      'devconsole~CPU resource limits must be set if you want to use CPU utilization. The HorizontalPodAutoscaler will not have CPU metrics until resource limits are set.',
+      'devconsole~CPU resource requests must be set if you want to use CPU utilization. The HorizontalPodAutoscaler will not have CPU metrics until resource requests are set.',
     );
   }
-  if (!hasMemoryLimits(limits)) {
+  if (!hasMemoryRequests(requests)) {
     return i18next.t(
-      'devconsole~Memory resource limits must be set if you want to use memory utilization. The HorizontalPodAutoscaler will not have memory metrics until resource limits are set.',
+      'devconsole~Memory resource requests must be set if you want to use memory utilization. The HorizontalPodAutoscaler will not have memory metrics until resource requests are set.',
     );
   }
 
@@ -58,7 +55,7 @@ const getDefaultMetric = (type: SupportedMetricTypes): HPAMetric => ({
   resource: {
     name: type,
     target: {
-      averageUtilization: 0,
+      averageUtilization: 50,
       type: 'Utilization',
     },
   },
@@ -100,7 +97,7 @@ export const getMetricByType = (
   type: SupportedMetricTypes,
 ): { metric: HPAMetric; index: number } => {
   const hpaMetrics = hpa.spec.metrics || [];
-  const metricIndex = hpaMetrics.findIndex((m) => m.resource.name?.toLowerCase() === type);
+  const metricIndex = hpaMetrics.findIndex((m) => m.resource?.name?.toLowerCase() === type);
   const metric: HPAMetric = hpaMetrics[metricIndex] || getDefaultMetric(type);
 
   return { metric, index: metricIndex === -1 ? hpaMetrics.length : metricIndex };
@@ -128,43 +125,7 @@ export const sanityForSubmit = (
     { spec: { scaleTargetRef: createScaleTargetRef(targetResource) } },
   );
 
-  // Remove empty metrics
-  validHPA.spec.metrics = validHPA.spec.metrics?.filter(
-    (metric: HPAMetric) =>
-      !['cpu', 'memory'].includes(metric?.resource?.name?.toLowerCase()) ||
-      (metric.resource.target.type === 'Utilization' &&
-        metric.resource.target.averageUtilization > 0),
-  );
-
   return validHPA;
-};
-
-export const getInvalidUsageError = (
-  hpa: HorizontalPodAutoscalerKind,
-  formValues: HPAFormValues,
-): string => {
-  const lackCPULimits = formValues.disabledFields.cpuUtilization;
-  const lackMemoryLimits = formValues.disabledFields.memoryUtilization;
-  const metricNames = (hpa.spec.metrics || []).map((metric) =>
-    metric.resource?.name?.toLowerCase(),
-  );
-  const invalidCPU = lackCPULimits && metricNames.includes('cpu');
-  const invalidMemory = lackMemoryLimits && metricNames.includes('memory');
-
-  if (metricNames.length === 0) {
-    return i18next.t('devconsole~Cannot create a HorizontalPodAutoscaler with no valid metrics.');
-  }
-  if (invalidCPU && invalidMemory) {
-    return i18next.t('devconsole~CPU and memory utilization cannot be used currently.');
-  }
-  if (invalidCPU) {
-    return i18next.t('devconsole~CPU utilization cannot be used currently.');
-  }
-  if (invalidMemory) {
-    return i18next.t('devconsole~Memory utilization cannot be used currently.');
-  }
-
-  return null;
 };
 
 export const hasCustomMetrics = (hpa?: HorizontalPodAutoscalerKind): boolean => {

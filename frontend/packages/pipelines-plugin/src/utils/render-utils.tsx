@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 import './render-utils.scss';
 
@@ -16,7 +16,7 @@ export const handleURLs = (value: string): React.ReactNode => {
     return (
       <>
         {handleURLs(prefix)}
-        <ExternalLink additionalClassName="opp-render-utils-external-url" href={link}>
+        <ExternalLink className="opp-render-utils-external-url" href={link}>
           {link}
         </ExternalLink>
         {handleURLs(suffix)}

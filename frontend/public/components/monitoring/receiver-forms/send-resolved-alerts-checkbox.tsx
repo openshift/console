@@ -1,25 +1,19 @@
 import { useTranslation } from 'react-i18next';
+import { Checkbox, FormGroup } from '@patternfly/react-core';
 
 export const SendResolvedAlertsCheckbox = ({ formField, formValues, dispatchFormChange }) => {
   const { t } = useTranslation();
   return (
-    <div className="checkbox">
-      <label htmlFor={formField}>
-        <input
-          type="checkbox"
-          id={formField}
-          data-test-id="send-resolved-alerts"
-          onChange={(e) =>
-            dispatchFormChange({
-              type: 'setFormValues',
-              payload: { [formField]: e.target.checked },
-            })
-          }
-          checked={formValues[formField]}
-          aria-checked={formValues[formField]}
-        />
-        {t('public~Send resolved alerts to this receiver?')}
-      </label>
-    </div>
+    <FormGroup>
+      <Checkbox
+        label={t('public~Send resolved alerts to this receiver?')}
+        onChange={(_event, checked) =>
+          dispatchFormChange({ type: 'setFormValues', payload: { [formField]: checked } })
+        }
+        isChecked={formValues[formField]}
+        id={formField}
+        data-test="send-resolved-alerts"
+      />
+    </FormGroup>
   );
 };

@@ -29,7 +29,6 @@ import {
   ResourceIcon,
   withHandlePromise,
   RequestSizeInput,
-  Timestamp,
   resourcePathFromModel,
   convertToBaseValue,
   humanizeBinaryBytesWithoutB,
@@ -58,6 +57,7 @@ import {
   RedExclamationCircleIcon,
   onlyPvcSCs,
 } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { AccessModeSelector } from '../../access-modes/access-mode';
 
 import './restore-pvc-modal.scss';
@@ -138,7 +138,11 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       );
     };
     return (
-      <form onSubmit={submit} name="form" className="modal-content">
+      <form
+        onSubmit={submit}
+        name="form"
+        className="modal-content pf-v6-c-form pf-v6-c-form--no-gap"
+      >
         <ModalTitle>{t('console-app~Restore as new PVC')}</ModalTitle>
         <ModalBody>
           <p>

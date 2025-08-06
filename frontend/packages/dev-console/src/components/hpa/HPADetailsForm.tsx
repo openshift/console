@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, AlertActionCloseButton, Flex } from '@patternfly/react-core';
+import { Alert, AlertActionCloseButton, Flex, Grid, GridItem } from '@patternfly/react-core';
 import { useField, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
@@ -15,7 +15,7 @@ const HPADetailsForm: React.FC = () => {
   const {
     setFieldValue,
     values: {
-      disabledFields: { name: nameDisabled, cpuUtilization, memoryUtilization },
+      disabledFields: { name: nameDisabled },
       showCanUseYAMLMessage,
     },
   } = useFormikContext<HPAFormValues>();
@@ -65,8 +65,8 @@ const HPADetailsForm: React.FC = () => {
           variant="info"
         />
       )}
-      <div className="row">
-        <div className="col-lg-8">
+      <Grid hasGutter>
+        <GridItem lg={8}>
           <Flex direction={{ default: 'column' }}>
             <InputField
               isDisabled={nameDisabled}
@@ -84,22 +84,20 @@ const HPADetailsForm: React.FC = () => {
               setOutputAsIntegerFlag
             />
             <HPAUtilizationField
-              disabled={cpuUtilization}
               hpa={field.value}
               label={t('devconsole~CPU')}
               onUpdate={updateField('cpu')}
               type="cpu"
             />
             <HPAUtilizationField
-              disabled={memoryUtilization}
               hpa={field.value}
               label={t('devconsole~Memory')}
               onUpdate={updateField('memory')}
               type="memory"
             />
           </Flex>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </>
   );
 };

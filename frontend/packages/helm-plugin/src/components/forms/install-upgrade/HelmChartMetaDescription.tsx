@@ -36,7 +36,7 @@ const HelmChartMetaDescription: React.FC<HelmChartMetaDescriptionProps> = ({ cha
             {displayName}
           </Title>
           {provider && (
-            <span className="co-clusterserviceversion-logo__name__provider pf-v6-u-text-color-subtle">
+            <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
               {t('helm-plugin~{{chartVersion}} provided by {{provider}}', {
                 chartVersion: chartVersion || '',
                 provider,

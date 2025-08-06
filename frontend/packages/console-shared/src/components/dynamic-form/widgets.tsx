@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Checkbox, Switch } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import { WidgetProps } from '@rjsf/core';
 import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
-import classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { RadioGroup } from '@console/internal/components/radio';
-import { NumberSpinner, ListDropdown, Dropdown } from '@console/internal/components/utils';
+import { NumberSpinner, ListDropdown } from '@console/internal/components/utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { K8sKind, GroupVersionKind, ImagePullPolicy } from '@console/internal/module/k8s';
 import { selectorFromString } from '@console/internal/module/k8s/selector';
 import { JSON_SCHEMA_NUMBER_TYPES } from './const';
@@ -29,7 +30,7 @@ export const TextWidget: React.FC<WidgetProps> = (props) => {
     <NumberWidget {...props} />
   ) : (
     <span
-      className={classNames('pf-v6-c-form-control', {
+      className={css('pf-v6-c-form-control', {
         'pf-m-disabled': disabled,
         'pf-m-readonly': readonly,
       })}
@@ -144,7 +145,7 @@ export const K8sResourceWidget: React.FC<K8sResourceWidgetProps> = ({
     return null;
   }, [selector]);
   return (
-    <div>
+    <>
       {!_.isUndefined(model) ? (
         <ListDropdown
           key={id}
@@ -168,7 +169,7 @@ export const K8sResourceWidget: React.FC<K8sResourceWidgetProps> = ({
           })}
         </span>
       )}
-    </div>
+    </>
   );
 };
 
@@ -178,8 +179,9 @@ export const ImagePullPolicyWidget: React.FC<WidgetProps> = ({ id, value, onChan
       id={id}
       currentValue={value}
       items={_.values(ImagePullPolicy).map((policy) => ({
+        name: id,
         value: policy,
-        title: policy,
+        label: policy,
       }))}
       onChange={({ currentTarget }) => onChange(currentTarget.value)}
     />
@@ -207,7 +209,7 @@ export const SelectWidget: React.FC<WidgetProps> = ({
     {},
   );
   return (
-    <Dropdown
+    <ConsoleSelect
       id={id}
       key={id}
       title={t('console-shared~Select {{title}}', { title: title || schema?.title || label })}

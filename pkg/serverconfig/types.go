@@ -2,7 +2,7 @@ package serverconfig
 
 import (
 	configv1 "github.com/openshift/api/config/v1"
-	v1 "github.com/openshift/api/console/v1"
+	consolev1 "github.com/openshift/api/console/v1"
 	operatorv1 "github.com/openshift/api/operator/v1"
 	authorizationv1 "k8s.io/api/authorization/v1"
 )
@@ -23,12 +23,13 @@ type Config struct {
 	Providers                    `yaml:"providers"`
 	Helm                         `yaml:"helm"`
 	MonitoringInfo               `yaml:"monitoringInfo,omitempty"`
-	Plugins                      MultiKeyValue                 `yaml:"plugins,omitempty"`
-	I18nNamespaces               []string                      `yaml:"i18nNamespaces,omitempty"`
-	Proxy                        Proxy                         `yaml:"proxy,omitempty"`
-	ContentSecurityPolicyEnabled bool                          `yaml:"contentSecurityPolicyEnabled,omitempty"`
-	ContentSecurityPolicy        map[v1.DirectiveType][]string `yaml:"contentSecurityPolicy,omitempty"`
-	Telemetry                    MultiKeyValue                 `yaml:"telemetry,omitempty"`
+	Plugins                      MultiKeyValue                        `yaml:"plugins,omitempty"`
+	I18nNamespaces               []string                             `yaml:"i18nNamespaces,omitempty"`
+	Proxy                        Proxy                                `yaml:"proxy,omitempty"`
+	ContentSecurityPolicyEnabled bool                                 `yaml:"contentSecurityPolicyEnabled,omitempty"`
+	ContentSecurityPolicy        map[consolev1.DirectiveType][]string `yaml:"contentSecurityPolicy,omitempty"`
+	Telemetry                    MultiKeyValue                        `yaml:"telemetry,omitempty"`
+	PluginsOrder                 []string                             `yaml:"pluginsOrder,omitempty"`
 }
 
 type Proxy struct {

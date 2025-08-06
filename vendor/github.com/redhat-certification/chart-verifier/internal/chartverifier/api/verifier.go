@@ -74,7 +74,6 @@ func Run(options RunOptions) (*apireport.Report, error) {
 	}
 
 	verifyReport, err = verifier.Verify(options.ChartURI)
-
 	if err != nil {
 		return verifyReport, err
 	}

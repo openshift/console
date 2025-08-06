@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -12,7 +12,6 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
-  Timestamp,
   detailsPage,
   navFactory,
   resourceObjPath,
@@ -20,7 +19,8 @@ import {
 import { SecretType } from './secrets/create-secret/types';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 export const addSecretToWorkload = (kindObj, secret) => {
   const { name: secretName, namespace } = secret.metadata;
@@ -75,15 +75,10 @@ const SecretTableRow = ({ obj: secret }) => {
           namespace={secret.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={secret.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
-        {secret.type}
-      </TableData>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>{secret.type}</TableData>
       <TableData className={tableColumnClasses[3]}>{data}</TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={secret.metadata.creationTimestamp} />
@@ -102,18 +97,18 @@ const SecretDetails = ({ obj: secret }) => {
     <>
       <PaneBody>
         <SectionHeading text={t('public~Secret details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={secret} />
-          </div>
+          </GridItem>
           {type && (
-            <div className="col-md-6">
+            <GridItem md={6}>
               <DescriptionList data-test-id="resource-type">
                 <DetailsItem label={t('public~Type')} obj={secret} path="type" />
               </DescriptionList>
-            </div>
+            </GridItem>
           )}
-        </div>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SecretData data={data} type={type} />

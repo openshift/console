@@ -2,13 +2,22 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Title } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormHelperText,
+  FormSection,
+  Grid,
+  GridItem,
+  HelperText,
+  HelperTextItem,
+  Radio,
+  TextInput,
+} from '@patternfly/react-core';
 
-import { RadioInput } from '../../radio';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
 import { FormProps } from './receiver-form-props';
-import { ExpandCollapse } from '../../utils';
+import { AdvancedConfiguration } from './advanced-configuration';
 
 const GLOBAL_FIELDS = [
   'pagerduty_url',
@@ -22,211 +31,211 @@ const GLOBAL_FIELDS = [
 export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   const { t } = useTranslation();
   return (
-    <div data-test-id="pagerduty-receiver-form">
-      <div className="form-group">
-        <label htmlFor="integration-type-events">{t('public~Integration type')}</label>
-        <div>
-          <RadioInput
-            title={t('public~Events API v2')}
-            id="integration-type-events"
-            value="events"
-            onChange={(e) =>
-              dispatchFormChange({
-                type: 'setFormValues',
-                payload: { pagerdutyIntegrationKeyType: e.target.value },
-              })
-            }
-            checked={formValues.pagerdutyIntegrationKeyType === 'events'}
-            aria-checked={formValues.pagerdutyIntegrationKeyType === 'events'}
-            inline
-          />
-          <RadioInput
-            title={t('public~Prometheus')}
-            name="pagerdutyIntegrationKeyType"
-            data-test-id="integration-type-prometheus"
-            value="prometheus"
-            onChange={(e) =>
-              dispatchFormChange({
-                type: 'setFormValues',
-                payload: { pagerdutyIntegrationKeyType: e.target.value },
-              })
-            }
-            checked={formValues.pagerdutyIntegrationKeyType === 'prometheus'}
-            aria-checked={formValues.pagerdutyIntegrationKeyType === 'prometheus'}
-            inline
-          />
-        </div>
-      </div>
-      <div className="form-group">
-        <label data-test-id="pagerduty-key-label" className="co-required" htmlFor="integration-key">
-          {formValues.pagerdutyIntegrationKeyType === 'events'
+    <>
+      <FormGroup
+        role="radiogroup"
+        fieldId="integration-type"
+        label={t('public~Integration type')}
+        isInline
+      >
+        <Radio
+          id="integration-type-events"
+          name="pagerdutyIntegrationKeyType"
+          label={t('public~Events API v2')}
+          value="events"
+          onChange={(e) =>
+            dispatchFormChange({
+              type: 'setFormValues',
+              payload: { pagerdutyIntegrationKeyType: (e.target as HTMLInputElement).value },
+            })
+          }
+          isChecked={formValues.pagerdutyIntegrationKeyType === 'events'}
+          data-checked-state={formValues.pagerdutyIntegrationKeyType === 'events'}
+        />
+        <Radio
+          id="integration-type-prometheus"
+          name="pagerdutyIntegrationKeyType"
+          label={t('public~Prometheus')}
+          value="prometheus"
+          onChange={(e) =>
+            dispatchFormChange({
+              type: 'setFormValues',
+              payload: { pagerdutyIntegrationKeyType: (e.target as HTMLInputElement).value },
+            })
+          }
+          isChecked={formValues.pagerdutyIntegrationKeyType === 'prometheus'}
+          data-checked-state={formValues.pagerdutyIntegrationKeyType === 'prometheus'}
+        />
+      </FormGroup>
+      <FormGroup
+        label={
+          formValues.pagerdutyIntegrationKeyType === 'events'
             ? t('public~Routing key')
-            : t('public~Service key')}
-        </label>
-        <span className="pf-v6-c-form-control">
-          <input
-            type="text"
-            aria-describedby="integration-key-help"
-            id="integration-key"
-            data-test-id="integration-key"
-            value={formValues.pagerdutyIntegrationKey}
-            onChange={(e) =>
-              dispatchFormChange({
-                type: 'setFormValues',
-                payload: { pagerdutyIntegrationKey: e.target.value },
-              })
-            }
+            : t('public~Service key')
+        }
+        fieldId="integration-key"
+        isRequired
+      >
+        <TextInput
+          type="text"
+          id="integration-key"
+          data-test="integration-key"
+          value={formValues.pagerdutyIntegrationKey ?? ''}
+          onChange={(_e, value: string) =>
+            dispatchFormChange({
+              type: 'setFormValues',
+              payload: { pagerdutyIntegrationKey: value },
+            })
+          }
+          aria-describedby="integration-key-help"
+        />
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem id="integration-key-help">
+              {t('public~PagerDuty integration key.')}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      </FormGroup>
+      <Grid hasGutter>
+        <GridItem span={7}>
+          <FormGroup label={t('public~PagerDuty URL')} fieldId="pagerduty-url" isRequired>
+            <TextInput
+              type="text"
+              id="pagerduty-url"
+              data-test="pagerduty-url"
+              value={formValues.pagerduty_url ?? ''}
+              onChange={(_e, value: string) =>
+                dispatchFormChange({
+                  type: 'setFormValues',
+                  payload: { pagerduty_url: value },
+                })
+              }
+              aria-describedby="pagerduty-url-help"
+            />
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem id="pagerduty-url-help">
+                  {t('public~The URL of your PagerDuty installation.')}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          </FormGroup>
+        </GridItem>
+        <GridItem span={1} /> {/* fixes an overlapping control issue */}
+        <GridItem span={4} className="pf-v6-u-align-content-center">
+          <SaveAsDefaultCheckbox
+            formField="pagerdutySaveAsDefault"
+            disabled={formValues.pagerduty_url === globals?.pagerduty_url}
+            label={t('public~Save as default PagerDuty URL')}
+            formValues={formValues}
+            dispatchFormChange={dispatchFormChange}
+            tooltip={t(
+              'public~Checking this box will write the URL to the global section of the configuration file where it will become the default URL for future PagerDuty receivers.',
+            )}
           />
-        </span>
-        <div className="help-block" id="integration-key-help">
-          {t('public~PagerDuty integration key.')}
-        </div>
-      </div>
-      <div className="form-group">
-        <label data-test-id="pagerduty-url-label" className="co-required" htmlFor="pagerduty-url">
-          {t('public~PagerDuty URL')}
-        </label>
-        <div className="row">
-          <div className="col-sm-7">
-            <span className="pf-v6-c-form-control">
-              <input
-                type="text"
-                id="pagerduty-url"
-                aria-describedby="pagerduty-url-help"
-                data-test-id="pagerduty-url"
-                value={formValues.pagerduty_url}
-                onChange={(e) =>
-                  dispatchFormChange({
-                    type: 'setFormValues',
-                    payload: { pagerduty_url: e.target.value },
-                  })
-                }
-              />
-            </span>
-          </div>
-          <div className="col-sm-5">
-            <SaveAsDefaultCheckbox
-              formField="pagerdutySaveAsDefault"
-              disabled={formValues.pagerduty_url === globals?.pagerduty_url}
-              label={t('public~Save as default PagerDuty URL')}
-              formValues={formValues}
-              dispatchFormChange={dispatchFormChange}
-              tooltip={t(
-                'public~Checking this box will write the URL to the global section of the configuration file where it will become the default URL for future PagerDuty receivers.',
-              )}
+        </GridItem>
+      </Grid>
+      <AdvancedConfiguration>
+        <SendResolvedAlertsCheckbox
+          formField="pagerduty_send_resolved"
+          formValues={formValues}
+          dispatchFormChange={dispatchFormChange}
+        />
+        <FormSection title={t('public~Client details')}>
+          <FormGroup label={t('public~Client')}>
+            <TextInput
+              type="text"
+              id="pagerduty-client"
+              data-test="pagerduty-client"
+              value={formValues.pagerduty_client ?? ''}
+              onChange={(_e, value: string) =>
+                dispatchFormChange({
+                  type: 'setFormValues',
+                  payload: { pagerduty_client: value },
+                })
+              }
+              aria-describedby="pagerduty-client-help"
             />
-          </div>
-        </div>
-        <div className="help-block" id="pagerduty-url-help">
-          {t('public~The URL of your PagerDuty installation.')}
-        </div>
-      </div>
-      <div className="form-group">
-        <ExpandCollapse
-          textCollapsed={t('public~Show advanced configuration')}
-          textExpanded={t('public~Hide advanced configuration')}
-          dataTest="advanced-configuration"
-        >
-          <div className="co-form-subsection">
-            <SendResolvedAlertsCheckbox
-              formField="pagerduty_send_resolved"
-              formValues={formValues}
-              dispatchFormChange={dispatchFormChange}
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem id="pagerduty-client-help">
+                  {t('public~The client identification of the Alertmanager.')}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          </FormGroup>
+          <FormGroup label={t('public~Client URL')}>
+            <TextInput
+              type="text"
+              id="pagerduty-client-url"
+              data-test="pagerduty-client-url"
+              value={formValues.pagerduty_client_url ?? ''}
+              onChange={(_e, value: string) =>
+                dispatchFormChange({
+                  type: 'setFormValues',
+                  payload: { pagerduty_client_url: value },
+                })
+              }
+              aria-describedby="pagerduty-client-url-help"
             />
-            <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-              {t('public~Client details')}
-            </Title>
-            <div className="form-group">
-              <label htmlFor="pagerduty-client">{t('public~Client')}</label>
-              <span className="pf-v6-c-form-control">
-                <input
-                  type="text"
-                  aria-describedby="client-help"
-                  id="pagerduty-client"
-                  data-test-id="pagerduty-client"
-                  value={formValues.pagerduty_client}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { pagerduty_client: e.target.value },
-                    })
-                  }
-                />
-              </span>
-              <div className="help-block" id="client-help">
-                {t('public~The client identification of the Alertmanager.')}
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="pagerduty-client-url">{t('public~Client URL')}</label>
-              <span className="pf-v6-c-form-control">
-                <input
-                  type="text"
-                  aria-describedby="client-url-help"
-                  id="pagerduty-client-url"
-                  data-test-id="pagerduty-client-url"
-                  value={formValues.pagerduty_client_url}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { pagerduty_client_url: e.target.value },
-                    })
-                  }
-                />
-              </span>
-              <div className="help-block" id="client-url-help">
-                {t('public~A backlink to the sender of the notification.')}
-              </div>
-            </div>
-            <Title headingLevel="h3" className="pf-v6-u-mb-sm">
-              {t('public~Incident details')}
-            </Title>
-            <div className="form-group">
-              <label htmlFor="pagerduty-description">{t('public~Description')}</label>
-              <span className="pf-v6-c-form-control">
-                <input
-                  type="text"
-                  aria-describedby="description-help"
-                  id="pagerduty-description"
-                  data-test-id="pagerduty-description"
-                  value={formValues.pagerduty_description}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { pagerduty_description: e.target.value },
-                    })
-                  }
-                />
-              </span>
-              <div className="help-block" id="description-help">
-                {t('public~Description of the incident.')}
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="pagerduty-severity">{t('public~Severity')}</label>
-              <span className="pf-v6-c-form-control">
-                <input
-                  type="text"
-                  aria-describedby="severity-help"
-                  id="pagerduty-severity"
-                  data-test-id="pagerduty-severity"
-                  value={formValues.pagerduty_severity}
-                  onChange={(e) =>
-                    dispatchFormChange({
-                      type: 'setFormValues',
-                      payload: { pagerduty_severity: e.target.value },
-                    })
-                  }
-                />
-              </span>
-              <div className="help-block" id="severity-help">
-                {t('public~Severity of the incident.')}
-              </div>
-            </div>
-          </div>
-        </ExpandCollapse>
-      </div>
-    </div>
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem id="pagerduty-client-url-help">
+                  {t('public~A backlink to the sender of the notification.')}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          </FormGroup>
+        </FormSection>
+        <FormSection title={t('public~Incident details')}>
+          <FormGroup label={t('public~Description')}>
+            <TextInput
+              type="text"
+              id="pagerduty-description"
+              data-test="pagerduty-description"
+              value={formValues.pagerduty_description ?? ''}
+              onChange={(_e, value: string) =>
+                dispatchFormChange({
+                  type: 'setFormValues',
+                  payload: { pagerduty_description: value },
+                })
+              }
+              aria-describedby="pagerduty-description-help"
+            />
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem id="pagerduty-description-help">
+                  {t('public~Description of the incident.')}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          </FormGroup>
+          <FormGroup label={t('public~Severity')}>
+            <TextInput
+              type="text"
+              id="pagerduty-severity"
+              data-test="pagerduty-severity"
+              value={formValues.pagerduty_severity ?? ''}
+              onChange={(_e, value: string) =>
+                dispatchFormChange({
+                  type: 'setFormValues',
+                  payload: { pagerduty_severity: value },
+                })
+              }
+              aria-describedby="pagerduty-severity-help"
+            />
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem id="pagerduty-severity-help">
+                  {t('public~Severity of the incident.')}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          </FormGroup>
+        </FormSection>
+      </AdvancedConfiguration>
+    </>
   );
 };
 

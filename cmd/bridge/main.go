@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
 	"flag"
 	"fmt"
+	"net"
 	"runtime"
 
 	"io/ioutil"
@@ -26,6 +28,8 @@ import (
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
+	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
 const (
@@ -63,6 +67,9 @@ const (
 )
 
 func main() {
+	// Initialize controller-runtime logger, needed for the OLM handler
+	log.SetLogger(zap.New())
+
 	fs := flag.NewFlagSet("bridge", flag.ExitOnError)
 	klog.InitFlags(fs)
 	defer klog.Flush()
@@ -99,8 +106,8 @@ func main() {
 	fRedirectPort := fs.Int("redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
 	fLogLevel := fs.String("log-level", "", "level of logging information by package (pkg=level).")
 	fPublicDir := fs.String("public-dir", "./frontend/public/dist", "directory containing static web assets.")
-	fTlSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
-	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
+	fTLSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
+	fTLSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
 	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
 
 	_ = fs.String("kubectl-client-id", "", "DEPRECATED: setting this does not do anything.")
@@ -113,9 +120,13 @@ func main() {
 	fCustomProductName := fs.String("custom-product-name", "", "Custom product name for console branding.")
 
 	customLogoFlags := serverconfig.LogosKeyValue{}
-	fs.Var(&customLogoFlags, "custom-logo-files", "List of custom product images used for console branding. Each entry consist of theme type (Dark | Light ) as a key and path to image file as value.")
+	fs.Var(&customLogoFlags, "custom-logo-files", "List of custom product images used for branding of console's logo in the Masthead and 'About' modal.\n"+
+		"Each entry consist of theme type (Dark | Light ) as a key and the path to the image file used for the given theme as its value.\n"+
+		"Example --custom-logo-files Dark=./foo/dark-image.png,Light=./foo/light-image.png")
 	customFaviconFlags := serverconfig.LogosKeyValue{}
-	fs.Var(&customFaviconFlags, "custom-favicon-files", "List of custom favicon images used for console branding. Each entry consist of theme type (Dark | Light ) as a key and path to image file as value.")
+	fs.Var(&customFaviconFlags, "custom-favicon-files", "List of custom images used for branding of console's favicon.\n"+
+		"Each entry consist of theme type (Dark | Light ) as a key and the path to the image file used for the given theme as its value.\n"+
+		"Example --custom-favicon-files Dark=./foo/dark-image.png,Light=./foo/light-image.png")
 	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 
@@ -126,12 +137,15 @@ func main() {
 	fPrometheusPublicURL := fs.String("prometheus-public-url", "", "Public URL of the cluster's Prometheus server.")
 	fThanosPublicURL := fs.String("thanos-public-url", "", "Public URL of the cluster's Thanos server.")
 
-	consolePluginsFlags := serverconfig.MultiKeyValue{}
-	fs.Var(&consolePluginsFlags, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
+	enabledPlugins := serverconfig.MultiKeyValue{}
+	fs.Var(&enabledPlugins, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
+	fPluginsOrder := fs.String("plugins-order", "", "List of plugin names which determines the order in which plugin extensions will be resolved.")
 	fPluginProxy := fs.String("plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
 	fI18NamespacesFlags := fs.String("i18n-namespaces", "", "List of namespaces separated by comma. Example --i18n-namespaces=plugin__acm,plugin__kubevirt")
+
 	fContentSecurityPolicyEnabled := fs.Bool("content-security-policy-enabled", false, "Flag to indicate if Content Secrity Policy features should be enabled.")
-	fContentSecurityPolicy := fs.String("content-security-policy", "", "Content security policy for the console. (JSON as string)")
+	consoleCSPFlags := serverconfig.MultiKeyValue{}
+	fs.Var(&consoleCSPFlags, "content-security-policy", "List of CSP directives that are enabled for the console. Each entry consist of csp-directive-name as a key and csp-directive-value as a value. Example --content-security-policy script-src='localhost:9000',font-src='localhost:9001'")
 
 	telemetryFlags := serverconfig.MultiKeyValue{}
 	fs.Var(&telemetryFlags, "telemetry", "Telemetry configuration that can be used by console plugins. Each entry should be a key=value pair.")
@@ -211,13 +225,6 @@ func main() {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("branding", "value must be one of okd, openshift, ocp, online, dedicated, azure, or rosa"))
 	}
 
-	if len(consolePluginsFlags) > 0 {
-		klog.Infoln("The following console plugins are enabled:")
-		for pluginName := range consolePluginsFlags {
-			klog.Infof(" - %s\n", pluginName)
-		}
-	}
-
 	i18nNamespaces := []string{}
 	if *fI18NamespacesFlags != "" {
 		for _, str := range strings.Split(*fI18NamespacesFlags, ",") {
@@ -226,6 +233,31 @@ func main() {
 				flags.FatalIfFailed(flags.NewInvalidFlagError("i18n-namespaces", "list must contain name of i18n namespaces separated by comma"))
 			}
 			i18nNamespaces = append(i18nNamespaces, str)
+		}
+	}
+
+	enabledPluginsOrder := []string{}
+	if *fPluginsOrder != "" {
+		for _, str := range strings.Split(*fPluginsOrder, ",") {
+			str = strings.TrimSpace(str)
+			if str == "" {
+				flags.FatalIfFailed(flags.NewInvalidFlagError("plugins-order", "list must contain names of plugins separated by comma"))
+			}
+			if enabledPlugins[str] == "" {
+				flags.FatalIfFailed(flags.NewInvalidFlagError("plugins-order", "list must only contain currently enabled plugins"))
+			}
+			enabledPluginsOrder = append(enabledPluginsOrder, str)
+		}
+	} else if len(enabledPlugins) > 0 {
+		for plugin := range enabledPlugins {
+			enabledPluginsOrder = append(enabledPluginsOrder, plugin)
+		}
+	}
+
+	if len(enabledPluginsOrder) > 0 {
+		klog.Infoln("Console plugins are enabled in following order:")
+		for _, pluginName := range enabledPluginsOrder {
+			klog.Infof(" - %s", pluginName)
 		}
 	}
 
@@ -279,11 +311,12 @@ func main() {
 		DevCatalogCategories:         *fDevCatalogCategories,
 		DevCatalogTypes:              *fDevCatalogTypes,
 		UserSettingsLocation:         *fUserSettingsLocation,
-		EnabledConsolePlugins:        consolePluginsFlags,
+		EnabledPlugins:               enabledPlugins,
+		EnabledPluginsOrder:          enabledPluginsOrder,
 		I18nNamespaces:               i18nNamespaces,
 		PluginProxy:                  *fPluginProxy,
-		ContentSecurityPolicy:        *fContentSecurityPolicy,
 		ContentSecurityPolicyEnabled: *fContentSecurityPolicyEnabled,
+		ContentSecurityPolicy:        consoleCSPFlags,
 		QuickStarts:                  *fQuickStarts,
 		AddPage:                      *fAddPage,
 		ProjectAccessClusterRoles:    *fProjectAccessClusterRoles,
@@ -317,7 +350,7 @@ func main() {
 	}
 
 	// Blacklisted headers
-	srv.ProxyHeaderDenyList = []string{"Cookie", "X-CSRFToken", "X-CSRF-Token"}
+	srv.ProxyHeaderDenyList = []string{"Cookie", "X-CSRFToken"}
 
 	if *fLogLevel != "" {
 		klog.Warningf("DEPRECATED: --log-level is now deprecated, use verbosity flag --v=Level instead")
@@ -600,9 +633,14 @@ func main() {
 		caCertFilePath = k8sInClusterCA
 	}
 
+	tokenReviewer, err := auth.NewTokenReviewer(srv.InternalProxiedK8SClientConfig)
+	if err != nil {
+		klog.Fatalf("failed to create token reviewer: %v", err)
+	}
+	srv.TokenReviewer = tokenReviewer
+
 	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
 		klog.Fatalf("failed to apply configuration to server: %v", err)
-		os.Exit(1)
 	}
 
 	listenURL, err := flags.ValidateFlagIsURL("listen", *fListen, false)
@@ -611,24 +649,34 @@ func main() {
 	switch listenURL.Scheme {
 	case "http":
 	case "https":
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-cert-file", *fTlSCertFile))
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTlSKeyFile))
+		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-cert-file", *fTLSCertFile))
+		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTLSKeyFile))
 	default:
 		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
 	}
 
-	consoleHandler, err := srv.HTTPHandler()
+	handler, err := srv.HTTPHandler()
 	if err != nil {
-		klog.Errorf("failed to set up the console's HTTP handler: %v", err)
-		os.Exit(1)
+		klog.Fatalf("failed to set up HTTP handler: %v", err)
 	}
-	httpsrv := &http.Server{
-		Addr:    listenURL.Host,
-		Handler: consoleHandler,
-		// Disable HTTP/2, which breaks WebSockets.
-		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
-		TLSConfig:    oscrypto.SecureTLSConfig(&tls.Config{}),
+
+	httpsrv := &http.Server{Handler: handler}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile)
+	if err != nil {
+		klog.Fatalf("error getting listener, %v", err)
 	}
+	defer listener.Close()
+
+	go func() {
+		<-ctx.Done()
+		klog.Infof("Shutting down server...")
+		if err = httpsrv.Shutdown(ctx); err != nil {
+			klog.Fatalf("Error shutting down server: %v", err)
+		}
+	}()
 
 	if *fRedirectPort != 0 {
 		go func() {
@@ -649,12 +697,26 @@ func main() {
 		}()
 	}
 
-	klog.Infof("Binding to %s...", httpsrv.Addr)
-	if listenURL.Scheme == "https" {
-		klog.Info("using TLS")
-		klog.Fatal(httpsrv.ListenAndServeTLS(*fTlSCertFile, *fTlSKeyFile))
-	} else {
-		klog.Info("not using TLS")
-		klog.Fatal(httpsrv.ListenAndServe())
+	httpsrv.Serve(listener)
+}
+
+func listen(scheme, host, certFile, keyFile string) (net.Listener, error) {
+	klog.Infof("Binding to %s...", host)
+	if scheme == "http" {
+		klog.Info("Not using TLS")
+		return net.Listen("tcp", host)
 	}
+	klog.Info("Using TLS")
+	tlsConfig := &tls.Config{
+		NextProtos: []string{"http/1.1"},
+		GetCertificate: func(_ *tls.ClientHelloInfo) (*tls.Certificate, error) {
+			klog.V(4).Infof("Getting TLS certs.")
+			cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+			if err != nil {
+				return nil, err
+			}
+			return &cert, nil
+		},
+	}
+	return tls.Listen("tcp", host, tlsConfig)
 }

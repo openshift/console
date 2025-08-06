@@ -3,13 +3,7 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
-import {
-  DOC_URL_RED_HAT_MARKETPLACE,
-  ExternalLink,
-  Firehose,
-  skeletonCatalog,
-  StatusBox,
-} from '@console/internal/components/utils';
+import { Firehose, skeletonCatalog, StatusBox } from '@console/internal/components/utils';
 import {
   referenceForModel,
   CloudCredentialKind,
@@ -23,6 +17,7 @@ import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PageBody from '@console/shared/src/components/layout/PageBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { iconFor } from '..';
 import {
   CloudCredentialModel,
@@ -264,21 +259,17 @@ export const OperatorHubPage = withFallback((props) => {
             isSoftwareCatalogEnabled && isOperatorBackedServiceEnabled ? (
               <Trans ns="olm">
                 Discover Operators from the Kubernetes community and Red Hat partners, curated by
-                Red Hat. You can purchase commercial software through{' '}
-                <ExternalLink href={DOC_URL_RED_HAT_MARKETPLACE}>Red Hat Marketplace</ExternalLink>.
-                You can install Operators on your clusters to provide optional add-ons and shared
-                services to your developers. After installation, the Operator capabilities will
-                appear in the <Link to="/catalog">Software Catalog</Link>, providing a self-service
-                experience.
+                Red Hat. You can install Operators on your clusters to provide optional add-ons and
+                shared services to your developers. After installation, the Operator capabilities
+                will appear in the <Link to="/catalog">Software Catalog</Link>, providing a
+                self-service experience.
               </Trans>
             ) : (
               <Trans ns="olm">
                 Discover Operators from the Kubernetes community and Red Hat partners, curated by
-                Red Hat. You can purchase commercial software through{' '}
-                <ExternalLink href={DOC_URL_RED_HAT_MARKETPLACE}>Red Hat Marketplace</ExternalLink>.
-                You can install Operators on your clusters to provide optional add-ons and shared
-                services to your developers. The Operator Backed Software Catalog is currently
-                disabled, thus Operator capabilities will not be exposed to developers.
+                Red Hat. You can install Operators on your clusters to provide optional add-ons and
+                shared services to your developers. The Operator Backed Software Catalog is
+                currently disabled, thus Operator capabilities will not be exposed to developers.
               </Trans>
             )
           }

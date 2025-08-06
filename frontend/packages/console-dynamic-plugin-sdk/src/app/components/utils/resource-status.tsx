@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Badge } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import './resource-status.scss';
 
 type ResourceStatusProps = {
@@ -17,7 +17,7 @@ type ResourceStatusProps = {
  * @example
  * ```ts
  * return (
- *  <ResourceStatus additionalClassNames="hidden-xs">
+ *  <ResourceStatus>
  *    <Status status={resourceStatus} />
  *  </ResourceStatus>
  * )
@@ -29,9 +29,9 @@ const ResourceStatus: React.FC<ResourceStatusProps> = ({
   children,
 }) => {
   return (
-    <span className={classNames('dps-resource-item__resource-status', additionalClassNames)}>
+    <span className={css('dps-resource-item__resource-status', additionalClassNames)}>
       <Badge
-        className={classNames('dps-resource-item__resource-status-badge', {
+        className={css('dps-resource-item__resource-status-badge', {
           'dps-resource-item__resource-status-badge--alt': badgeAlt,
         })}
         isRead

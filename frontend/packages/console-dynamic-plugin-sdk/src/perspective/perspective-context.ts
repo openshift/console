@@ -5,6 +5,7 @@ export type PerspectiveContextType = {
   activePerspective?: PerspectiveType;
   setActivePerspective?: React.Dispatch<React.SetStateAction<PerspectiveType>>;
 };
+
 /**
  * Creates the perspective context
  * @deprecated - use the provided `usePerspectiveContext` instead

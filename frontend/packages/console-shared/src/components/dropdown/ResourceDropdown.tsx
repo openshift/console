@@ -3,12 +3,11 @@ import * as fuzzy from 'fuzzysearch';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
+import { FirehoseResult, LoadingInline, ResourceIcon } from '@console/internal/components/utils';
 import {
-  Dropdown,
-  FirehoseResult,
-  LoadingInline,
-  ResourceIcon,
-} from '@console/internal/components/utils';
+  ConsoleSelect,
+  ConsoleSelectProps,
+} from '@console/internal/components/utils/console-select';
 import {
   K8sResourceKind,
   referenceForModel,
@@ -16,53 +15,48 @@ import {
   modelFor,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { getNamespace } from '../../selectors';
 
 type DropdownItemProps = {
   model: K8sKind;
   name: string;
-  namespace?: string;
 };
 
-const DropdownItem: React.FC<DropdownItemProps> = ({ model, name, namespace }) => (
+const DropdownItem: React.FC<DropdownItemProps> = ({ model, name }) => (
   <span className="co-resource-item">
     <span className="co-resource-icon--fixed-width">
       <ResourceIcon kind={referenceForModel(model)} />
     </span>
     <span className="co-resource-item__resource-name">
       <span>{name}</span>
-      {namespace && (
-        <div className="pf-v6-u-text-color-subtle co-truncate co-nowrap small co-resource-item__resource-namespace">
-          {namespace}
-        </div>
-      )}
     </span>
   </span>
 );
 
+export type ResourceDropdownItems = ConsoleSelectProps['items'];
+
 interface State {
   resources: {};
-  items: {};
-  title: React.ReactNode;
-}
-
-export interface ResourceDropdownItems {
-  [key: string]: string | React.ReactElement;
+  items: ResourceDropdownItems;
+  title: ConsoleSelectProps['title'];
 }
 
 export interface ResourceDropdownProps {
-  id?: string;
-  ariaLabel?: string;
-  className?: string;
-  dropDownClassName?: string;
-  menuClassName?: string;
-  buttonClassName?: string;
-  title?: React.ReactNode;
-  titlePrefix?: string;
-  allApplicationsKey?: string;
-  userSettingsPrefix?: string;
-  storageKey?: string;
-  disabled?: boolean;
+  actionItems?: ConsoleSelectProps['actionItems'];
+  ariaLabel?: ConsoleSelectProps['ariaLabel'];
+  autocompleteFilter?: ConsoleSelectProps['autocompleteFilter'];
+  buttonClassName?: ConsoleSelectProps['buttonClassName'];
+  className?: ConsoleSelectProps['className'];
+  disabled?: ConsoleSelectProps['disabled'];
+  id?: ConsoleSelectProps['id'];
+  isFullWidth?: ConsoleSelectProps['isFullWidth'];
+  menuClassName?: ConsoleSelectProps['menuClassName'];
+  placeholder?: ConsoleSelectProps['autocompletePlaceholder'];
+  selectedKey: ConsoleSelectProps['selectedKey'];
+  storageKey?: ConsoleSelectProps['storageKey'];
+  title?: ConsoleSelectProps['title'];
+  titlePrefix?: ConsoleSelectProps['titlePrefix'];
+  userSettingsPrefix?: ConsoleSelectProps['userSettingsPrefix'];
+
   allSelectorItem?: {
     allSelectorKey?: string;
     allSelectorTitle?: string;
@@ -71,29 +65,24 @@ export interface ResourceDropdownProps {
     noneSelectorKey?: string;
     noneSelectorTitle?: string;
   };
-  actionItems?: {
-    actionTitle: string;
-    actionKey: string;
-  }[];
   dataSelector: string[] | number[] | symbol[];
   transformLabel?: Function;
   loaded?: boolean;
   loadError?: string;
-  placeholder?: string;
   resources?: FirehoseResult[];
-  selectedKey: string;
   autoSelect?: boolean;
   resourceFilter?: (resource: K8sResourceKind) => boolean;
   onChange?: (key: string, name?: string | object, selectedResource?: K8sResourceKind) => void;
   onLoad?: (items: ResourceDropdownItems) => void;
   showBadge?: boolean;
-  autocompleteFilter?: (strText: string, item: object) => boolean;
   customResourceKey?: (key: string, resource: K8sResourceKind) => string;
   appendItems?: ResourceDropdownItems;
-  t: TFunction;
 }
 
-class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
+class ResourceDropdownInternal extends React.Component<
+  ResourceDropdownProps & { t: TFunction },
+  State
+> {
   constructor(props) {
     super(props);
     this.state = {
@@ -195,7 +184,10 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     return resourceList;
   };
 
-  private getDropdownList = (props: ResourceDropdownProps, updateSelection: boolean) => {
+  private getDropdownList = (
+    props: ResourceDropdownProps,
+    updateSelection: boolean,
+  ): ResourceDropdownItems => {
     const {
       loaded,
       actionItems,
@@ -210,8 +202,6 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     } = props;
 
     const unsortedList = { ...appendItems };
-    const namespaces = new Set(_.flatten(_.map(resources, ({ data }) => data?.map(getNamespace))));
-    const containsMultipleNs = namespaces.size > 1;
     _.each(resources, ({ data, kind }) => {
       _.reduce(
         data,
@@ -221,14 +211,8 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
           if (dataValue) {
             if (showBadge) {
               const model = modelFor(referenceFor(resource)) || (kind && modelFor(kind));
-              const namespace = containsMultipleNs ? getNamespace(resource) : null;
               acc[dataValue] = model ? (
-                <DropdownItem
-                  key={resource.metadata.uid}
-                  model={model}
-                  name={name}
-                  namespace={namespace}
-                />
+                <DropdownItem key={resource.metadata.uid} model={model} name={name} />
               ) : (
                 name
               );
@@ -294,14 +278,14 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
 
   render() {
     return (
-      <Dropdown
+      <ConsoleSelect
         id={this.props.id}
         ariaLabel={this.props.ariaLabel}
         className={this.props.className}
-        dropDownClassName={this.props.dropDownClassName}
         menuClassName={this.props.menuClassName}
         buttonClassName={this.props.buttonClassName}
         titlePrefix={this.props.titlePrefix}
+        isFullWidth={this.props.isFullWidth}
         autocompleteFilter={this.props.autocompleteFilter || fuzzy}
         actionItems={this.props.actionItems}
         items={this.state.items}
@@ -317,4 +301,4 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
   }
 }
 
-export default withTranslation()(ResourceDropdown);
+export const ResourceDropdown = withTranslation()(ResourceDropdownInternal);

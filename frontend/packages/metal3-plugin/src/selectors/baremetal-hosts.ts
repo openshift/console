@@ -86,3 +86,6 @@ export const getHostMachine = (
 
 export const hasPowerManagement = (host: BareMetalHostKind): boolean =>
   getHostProvisioningState(host) !== HOST_STATUS_UNMANAGED;
+
+export const isDetached = (host: BareMetalHostKind): boolean =>
+  host.status?.operationalStatus === 'detached';

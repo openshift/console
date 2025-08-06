@@ -21,7 +21,6 @@ import {
   getResourceDescription,
   modelFor,
   referenceForGroupVersionKind,
-  K8sModel,
 } from '../../module/k8s';
 import { EmptyBox, ExpandableAlert, Kebab, LoadingBox, resourcePathFromModel } from '../utils';
 import { TextFilter } from '../factory';
@@ -55,7 +54,9 @@ const ItemRow = ({ item, showAPIGroup }) => {
         <Link to={item.path} data-test-id={item.label}>
           {item.label}
         </Link>
-        {showAPIGroup && <div className="pf-v6-u-text-color-subtle small">{item.apiGroup}</div>}
+        {showAPIGroup && (
+          <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">{item.apiGroup}</div>
+        )}
       </Td>
       <Td visibility={['hidden', 'visibleOnSm']}>
         <div className="co-line-clamp">{item.description || '-'}</div>
@@ -67,38 +68,47 @@ const ItemRow = ({ item, showAPIGroup }) => {
   );
 };
 
-export const GlobalConfigPage: React.FC = () => {
-  const { t } = useTranslation();
-  const canClusterUpgrade = useCanClusterUpgrade();
-  const [globalConfigs] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
-  const [configResources, clusterOperatorConfigResources] = useSelector<
+const useConfigResources = () => {
+  const { clusterOperatorConfigResources, configResources } = useSelector<
     RootState,
-    [K8sModel[], K8sModel[]]
-  >(({ k8s }) => [
-    k8s
-      .getIn(['RESOURCES', 'configResources'])
-      ?.filter((r) => canClusterUpgrade || filterNonUpgradableResources(r)) ?? [],
-    k8s.getIn(['RESOURCES', 'clusterOperatorConfigResources']) ?? [],
-  ]);
+    { clusterOperatorConfigResources: K8sKind[]; configResources: K8sKind[] }
+  >(({ k8s }) => ({
+    clusterOperatorConfigResources:
+      k8s.getIn(['RESOURCES', 'clusterOperatorConfigResources']) ?? [],
+    configResources: k8s.getIn(['RESOURCES', 'configResources']) ?? [],
+  }));
 
+  const canClusterUpgrade = useCanClusterUpgrade();
+  const adjustedConfigResources = canClusterUpgrade
+    ? configResources
+    : configResources.filter(filterNonUpgradableResources);
+
+  return [adjustedConfigResources, clusterOperatorConfigResources];
+};
+
+export const GlobalConfigPage: React.FCC = () => {
+  const { t } = useTranslation();
+  const [globalConfigs] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
+  const [configResources, clusterOperatorConfigResources] = useConfigResources();
   const [errors, setErrors] = React.useState([]);
   const [items, setItems] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [textFilter, setTextFilter] = React.useState('');
 
+  const oauthMenuItems = _.map(IDP_TYPES, (label: string, id: string) => ({
+    label: t('public~{{label}}', { label }),
+    href: `/settings/idp/${id}`,
+  }));
+  const editYAMLMenuItem = (name: string, resourceLink: string) => ({
+    label: t('public~Edit {{name}} resource', { name }),
+    href: `${resourceLink}/yaml`,
+  });
+  const viewAPIExplorerMenuItem = (name: string, apiExplorerLink: string) => ({
+    label: t('public~Explore {{name}} API', { name }),
+    href: apiExplorerLink,
+  });
+
   React.useEffect(() => {
-    const oauthMenuItems = _.map(IDP_TYPES, (label: string, id: string) => ({
-      label: t('public~{{label}}', { label }),
-      href: `/settings/idp/${id}`,
-    }));
-    const editYAMLMenuItem = (name: string, resourceLink: string) => ({
-      label: t('public~Edit {{name}} resource', { name }),
-      href: `${resourceLink}/yaml`,
-    });
-    const viewAPIExplorerMenuItem = (name: string, apiExplorerLink: string) => ({
-      label: t('public~Explore {{name}} API', { name }),
-      href: apiExplorerLink,
-    });
     let isSubscribed = true;
     Promise.all(
       [...configResources, ...clusterOperatorConfigResources].map((model: K8sKind) => {
@@ -152,15 +162,15 @@ export const GlobalConfigPage: React.FC = () => {
             apiGroup: 'monitoring.coreos.com',
             id: 'alertmanager',
             description: 'Configure grouping and routing of alerts',
-            path: '/monitoring/alertmanagerconfig',
+            path: '/settings/cluster/alertmanagerconfig',
             menuItems: [
               {
                 label: t('public~Create Receiver'),
-                href: '/monitoring/alertmanagerconfig/receivers/~new',
+                href: '/settings/cluster/alertmanagerconfig/receivers/~new',
               },
               {
                 label: t('public~Edit configuration YAML'),
-                href: `/monitoring/alertmanageryaml`,
+                href: `/settings/cluster/alertmanageryaml`,
               },
             ],
           },
@@ -175,14 +185,12 @@ export const GlobalConfigPage: React.FC = () => {
       isSubscribed = false;
     };
   }, [clusterOperatorConfigResources, configResources, globalConfigs, t]);
-
   const visibleItems = items.filter(({ label, description = '' }) => {
     return (
       fuzzyCaseInsensitive(textFilter, label) ||
       description.toLowerCase().indexOf(textFilter.toLowerCase()) !== -1
     );
   });
-
   const groupedItems = _.groupBy(visibleItems, _.property('label'));
   const showAPIGroup = (item) => groupedItems?.[item]?.length > 1;
 

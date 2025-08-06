@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { CompressIcon, DownloadIcon, ExpandIcon } from '@patternfly/react-icons/dist/js/icons';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { saveAs } from 'file-saver';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
@@ -67,7 +67,7 @@ const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({
   return (
     <div ref={fullscreenRef} className="odc-multi-stream-logs">
       <Flex
-        className={(classNames as any)({
+        className={css({
           'odc-multi-stream-logs--fullscreen': isFullscreen,
         })}
       >

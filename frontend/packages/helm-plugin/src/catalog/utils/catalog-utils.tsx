@@ -8,9 +8,9 @@ import {
   CatalogItemDetailsProperty,
 } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { ExternalLink } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { toTitleCase } from '@console/shared';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import certifiedIcon from '../../../icons/certified.svg';
 import { HelmChartEntries, HelmChartMetaData } from '../../types/helm-types';
 import { getChartRepositoryTitle } from '../../utils/helm-utils';
@@ -85,7 +85,7 @@ export const normalizeHelmCharts = (
         );
 
         const homePage = chart.home && (
-          <ExternalLink href={chart.home} additionalClassName="co-break-all" text={chart.home} />
+          <ExternalLink href={chart.home} className="co-break-all" text={chart.home} />
         );
 
         const detailsProperties: CatalogItemDetailsProperty[] = [

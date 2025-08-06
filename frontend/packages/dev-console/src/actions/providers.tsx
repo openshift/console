@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { GraphElement, Node, isGraph } from '@patternfly/react-topology';
-import i18next from 'i18next';
-import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
 import { K8sModel, Action, SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { TopologyApplicationObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
@@ -19,7 +17,6 @@ import {
   K8sResourceKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { ServiceBindingModel } from '@console/service-binding-plugin/src/models';
 import {
   isCatalogTypeEnabled,
   useActiveNamespace,
@@ -61,28 +58,6 @@ export const useEditImportActionProvider = (resource: K8sResourceKind) => {
   return [editImportAction, !inFlight, undefined];
 };
 
-export const useServiceBindingActionProvider = (resource: K8sResourceKind) => {
-  const [k8sKind, inFlight] = useK8sModel(referenceFor(resource));
-  const actions = React.useMemo(() => {
-    let commonActions: Action[];
-    if (resource.spec.application.labelSelector) {
-      const message = (
-        <p>
-          {i18next.t(
-            'devconsole~Deletion of a Service Binding resource that utilizes label selector will result in the removal of all bindings on applications that share the labels defined in the Service Binding resource.',
-          )}
-        </p>
-      );
-      commonActions = getCommonResourceActions(k8sKind, resource, message);
-    } else {
-      commonActions = getCommonResourceActions(k8sKind, resource);
-    }
-
-    return commonActions;
-  }, [k8sKind, resource]);
-  return [actions, !inFlight, undefined];
-};
-
 const resourceAttributes = (model: K8sModel, namespace: string): AccessReviewResourceAttributes => {
   return {
     group: model.apiGroup || '',
@@ -118,7 +93,6 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
   const secretAccess = useAccessReview(resourceAttributes(SecretModel, namespace));
   const routeAccess = useAccessReview(resourceAttributes(RouteModel, namespace));
   const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, namespace));
-  const serviceBindingAccess = useAccessReview(resourceAttributes(ServiceBindingModel, namespace));
   const isImportResourceAccess =
     buildConfigsAccess &&
     imageStreamAccess &&
@@ -156,14 +130,7 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
     );
     if (isOperatorBackedServiceEnabled) {
       actionsWithSourceRef.push(
-        AddActions.OperatorBacked(
-          namespace,
-          undefined,
-          sourceReference,
-          '',
-          null,
-          serviceBindingAccess,
-        ),
+        AddActions.OperatorBacked(namespace, undefined, sourceReference, '', null),
       );
     }
     if (isJavaImageStreamEnabled) {
@@ -290,7 +257,6 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
     isSampleTypeEnabled,
     isSoftwareCatalogEnabled,
     element,
-    serviceBindingAccess,
   ]);
 };
 

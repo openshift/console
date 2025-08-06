@@ -1,79 +1,93 @@
-import { shallow } from 'enzyme';
-import {
-  GettingStartedLink,
-  GettingStartedCard,
-  GettingStartedCardProps,
-} from '../GettingStartedCard';
+import { screen, fireEvent, configure } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { GettingStartedCard, GettingStartedCardProps } from '../GettingStartedCard';
+import '@testing-library/jest-dom';
 
-jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
-  useTelemetry: () => {},
-}));
+configure({ testIdAttribute: 'data-test' });
 
 describe('GettingStartedCard', () => {
-  it('should render without any props without an error', () => {
-    shallow(<GettingStartedCard {...({} as GettingStartedCardProps)} />);
-  });
-
-  it('should render the title', () => {
-    const wrapper = shallow(<GettingStartedCard id="card" title="Card title" links={[]} />);
-
-    expect(wrapper.render().text()).toContain('Card title');
-  });
-
-  it('should render the title and description', () => {
-    const wrapper = shallow(
-      <GettingStartedCard
-        id="card"
-        title="Card title"
-        description="Some more details..."
-        links={[]}
-      />,
-    );
-
-    expect(wrapper.render().text()).toContain('Card title');
-    expect(wrapper.render().text()).toContain('Some more details...');
-  });
-
-  it('should render all link as button or link', () => {
-    const links: GettingStartedLink[] = [
-      { id: 'button', title: 'Button', onClick: () => null },
-      { id: 'internallink', title: 'Internal link', href: '/' },
+  const defaultProps: GettingStartedCardProps = {
+    id: 'test-card',
+    title: 'Test Card',
+    description: 'This is a test card.',
+    links: [
       {
-        id: 'externallink',
-        title: 'External link',
-        href: 'https://www.openshift.com/',
+        id: 'link-1',
+        title: 'Internal Link',
+        href: '/internal',
+      },
+      {
+        id: 'link-2',
+        title: 'External Link',
+        href: 'https://example.com',
         external: true,
       },
-    ];
-    const wrapper = shallow(<GettingStartedCard id="card" title="Card title" links={links} />);
+    ],
+    moreLink: {
+      id: 'more-link',
+      title: 'More Info',
+      href: '/more',
+    },
+  };
 
-    expect(wrapper.find('SimpleListItem')).toHaveLength(3);
+  it('renders title and description', () => {
+    renderWithProviders(<GettingStartedCard {...defaultProps} />);
+    expect(screen.getByText('Test Card')).toBeInTheDocument();
+    expect(screen.getByText('This is a test card.')).toBeInTheDocument();
   });
 
-  it('should render internal more link', () => {
-    const moreLink: GettingStartedLink = { id: 'moreLink', title: 'Another link', href: '/' };
-
-    const wrapper = shallow(
-      <GettingStartedCard id="card" title="Card title" links={[]} moreLink={moreLink} />,
-    );
-
-    expect(wrapper.find('Link')).toHaveLength(1);
-    expect(wrapper.find('.co-external-link')).toHaveLength(0);
+  it('renders all links', () => {
+    renderWithProviders(<GettingStartedCard {...defaultProps} />);
+    expect(screen.getByTestId('item link-1')).toBeInTheDocument();
+    expect(screen.getByTestId('item link-2')).toBeInTheDocument();
+    expect(screen.getByTestId('item more-link')).toBeInTheDocument();
   });
 
-  it('should render external more link', () => {
-    const moreLink: GettingStartedLink = {
-      id: 'moreLink',
-      title: 'OpenShift',
-      href: 'https://www.openshift.com/',
-      external: true,
+  it('calls onClick for internal link', () => {
+    const onClick = jest.fn();
+    const props = {
+      ...defaultProps,
+      links: [
+        {
+          id: 'link-1',
+          title: 'Internal Link',
+          href: '/internal',
+          onClick,
+        },
+      ],
     };
+    renderWithProviders(<GettingStartedCard {...props} />);
+    fireEvent.click(screen.getByTestId('item link-1'));
+    expect(onClick).toHaveBeenCalled();
+  });
 
-    const wrapper = shallow(
-      <GettingStartedCard id="card" title="Card title" links={[]} moreLink={moreLink} />,
-    );
+  it('calls onClick for moreLink', () => {
+    const onClick = jest.fn();
+    const props = {
+      ...defaultProps,
+      moreLink: {
+        id: 'more-link',
+        title: 'More Info',
+        href: '/more',
+        onClick,
+      },
+    };
+    renderWithProviders(<GettingStartedCard {...props} />);
+    fireEvent.click(screen.getByTestId('item more-link'));
+    expect(onClick).toHaveBeenCalled();
+  });
 
-    expect(wrapper.find('a')).toHaveLength(1);
-    expect(wrapper.find('.co-external-link')).toHaveLength(1);
+  it('renders skeleton for loading links', () => {
+    const props = {
+      ...defaultProps,
+      links: [
+        {
+          id: 'loading-link',
+          loading: true,
+        },
+      ],
+    };
+    renderWithProviders(<GettingStartedCard {...props} />);
+    expect(screen.getByTestId('getting-started-skeleton')).toBeInTheDocument();
   });
 });

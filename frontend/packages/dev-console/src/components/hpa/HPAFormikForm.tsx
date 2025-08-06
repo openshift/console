@@ -12,15 +12,7 @@ import {
 } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
-import {
-  getFormData,
-  getInvalidUsageError,
-  getYAMLData,
-  hasCustomMetrics,
-  isCpuUtilizationPossible,
-  isMemoryUtilizationPossible,
-  sanityForSubmit,
-} from './hpa-utils';
+import { getFormData, getYAMLData, hasCustomMetrics, sanityForSubmit } from './hpa-utils';
 import HPAForm from './HPAForm';
 import { HPAFormValues } from './types';
 import { hpaValidationSchema } from './validation-utils';
@@ -36,8 +28,6 @@ const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResour
     showCanUseYAMLMessage: true,
     disabledFields: {
       name: !!existingHPA,
-      cpuUtilization: !isCpuUtilizationPossible(targetResource),
-      memoryUtilization: !isMemoryUtilizationPossible(targetResource),
     },
     editorType: hasCustomMetrics(existingHPA) ? EditorType.YAML : EditorType.Form,
     formData: getFormData(targetResource, existingHPA),
@@ -49,12 +39,6 @@ const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResour
       targetResource,
       values.editorType === EditorType.YAML ? safeYAMLToJS(values.yamlData) : values.formData,
     );
-
-    const invalidUsageError = getInvalidUsageError(hpa, values);
-    if (invalidUsageError) {
-      helpers.setStatus({ submitError: invalidUsageError });
-      return Promise.resolve();
-    }
 
     const method: (
       kind: K8sKind,

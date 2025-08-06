@@ -11,11 +11,13 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListDescription,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { css } from '@patternfly/react-styles';
 import { sortable, wrappable } from '@patternfly/react-table';
-import classNames from 'classnames';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams, useLocation } from 'react-router-dom';
@@ -41,7 +43,6 @@ import {
   AsyncComponent,
   DOC_URL_OPERATORFRAMEWORK_SDK,
   documentationURLs,
-  ExternalLink,
   FirehoseResult,
   getDocumentationURL,
   isManaged,
@@ -60,7 +61,6 @@ import {
   ScrollToTopOnMount,
   SectionHeading,
   StatusBox,
-  Timestamp,
 } from '@console/internal/components/utils';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -75,10 +75,12 @@ import {
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { withFallback } from '@console/shared/src/components/error';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { consolePluginModal } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
@@ -121,7 +123,12 @@ import {
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { ProvidedAPIsPage, ProvidedAPIPage, ProvidedAPIPageProps } from './operand';
 import { operatorGroupFor, operatorNamespaceFor, targetNamespacesFor } from './operator-group';
-import { getClusterServiceVersionPlugins } from './operator-hub/operator-hub-utils';
+import { OLMAnnotation } from './operator-hub';
+import {
+  getClusterServiceVersionPlugins,
+  getInitializationLink,
+  getInitializationResource,
+} from './operator-hub/operator-hub-utils';
 import { CreateInitializationResourceButton } from './operator-install-page';
 import {
   SourceMissingStatus,
@@ -141,10 +148,10 @@ const isPackageServer = (obj) =>
 
 const nameColumnClass = '';
 const namespaceColumnClass = '';
-const managedNamespacesColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-sm');
-const statusColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-lg');
-const lastUpdatedColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-2xl');
-const providedAPIsColumnClass = classNames('pf-m-hidden', 'pf-m-visible-on-xl');
+const managedNamespacesColumnClass = css('pf-m-hidden', 'pf-m-visible-on-sm');
+const statusColumnClass = css('pf-m-hidden', 'pf-m-visible-on-lg');
+const lastUpdatedColumnClass = css('pf-m-hidden', 'pf-m-visible-on-2xl');
+const providedAPIsColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
 
 const editSubscription = (sub: SubscriptionKind): KebabOption =>
   !_.isNil(sub)
@@ -987,26 +994,22 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
   props,
 ) => {
   const { t } = useTranslation();
-  const { spec, metadata, status } = props.obj;
+  const { spec, metadata, status } = props.obj ?? {};
   const { subscription } = props.customData;
   const providedAPIs = providedAPIsForCSV(props.obj);
-  // TODO (jon) remove annotation destructuring and use helper functions
-  const {
-    'marketplace.openshift.io/support-workflow': marketplaceSupportWorkflow,
-    'operatorframework.io/initialization-resource': initializationResourceJSON,
-  } = metadata.annotations || {};
-
-  const initializationResource = React.useMemo(() => {
-    if (initializationResourceJSON) {
-      try {
-        return JSON.parse(initializationResourceJSON);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error while parseing CSV initialization resource JSON', error.message);
-      }
-    }
-    return null;
-  }, [initializationResourceJSON]);
+  const marketplaceSupportWorkflow = metadata?.annotations?.[OLMAnnotation.SupportWorkflow] || '';
+  const initializationLink = getInitializationLink(metadata?.annotations);
+  const initializationResource = React.useMemo(
+    () =>
+      !initializationLink &&
+      getInitializationResource(metadata?.annotations, {
+        onError: (error) => {
+          // eslint-disable-next-line no-console
+          console.error('Error while parsing CSV initialization resource JSON,', error.message);
+        },
+      }),
+    [metadata?.annotations, initializationLink],
+  );
 
   const supportWorkflowUrl = React.useMemo(() => {
     if (marketplaceSupportWorkflow) {
@@ -1033,8 +1036,8 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
       <ScrollToTopOnMount />
 
       <PaneBody>
-        <div className="row">
-          <div className="col-sm-9">
+        <Grid hasGutter>
+          <GridItem sm={9}>
             {status && status.phase === ClusterServiceVersionPhase.CSVPhaseFailed && (
               <Alert
                 isInline
@@ -1080,8 +1083,8 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
             <CRDCardRow csv={props.obj} providedAPIs={providedAPIs} />
             <SectionHeading text={t('olm~Description')} />
             <MarkdownView content={spec.description || t('olm~Not available')} />
-          </div>
-          <div className="col-sm-3">
+          </GridItem>
+          <GridItem sm={3}>
             <DescriptionList className="co-clusterserviceversion-details__field">
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('olm~Provider')}</DescriptionListTerm>
@@ -1117,16 +1120,15 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 <DescriptionListTerm>{t('olm~Links')}</DescriptionListTerm>
                 {spec.links && spec.links.length > 0 ? (
                   spec.links.map((link) => (
-                    <DescriptionListDescription
-                      key={link.url}
-                      style={{ display: 'flex', flexDirection: 'column' }}
-                    >
-                      {link.name}{' '}
-                      <ExternalLink
-                        href={link.url}
-                        text={link.url || '-'}
-                        additionalClassName="co-break-all"
-                      />
+                    <DescriptionListDescription key={link.url}>
+                      <div className="pf-v6-u-display-flex pf-v6-u-flex-direction-column">
+                        {link.name}
+                        <ExternalLink
+                          href={link.url}
+                          text={link.url || '-'}
+                          className="co-break-all"
+                        />
+                      </div>
                     </DescriptionListDescription>
                   ))
                 ) : (
@@ -1154,13 +1156,13 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 )}
               </DescriptionListGroup>
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('olm~ClusterServiceVersion details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={props.obj}>
               <DescriptionListGroup>
                 <DescriptionListTermHelp
@@ -1175,67 +1177,69 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </ResourceSummary>
-          </div>
-          <div className="col-sm-6">
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('olm~Status')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                <Status status={status ? status.phase : t('olm~Unknown')} />
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('olm~Status reason')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                {status ? status.message : t('olm~Unknown')}
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-            {!_.isEmpty(spec.install.spec?.deployments) && (
+          </GridItem>
+          <GridItem sm={6}>
+            <DescriptionList>
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~Operator Deployments')}</DescriptionListTerm>
-                {spec.install.spec.deployments.map(({ name }) => (
-                  <DescriptionListDescription key={name}>
-                    <ResourceLink
-                      name={name}
-                      kind="Deployment"
-                      namespace={operatorNamespaceFor(props.obj)}
-                    />
-                  </DescriptionListDescription>
-                ))}
+                <DescriptionListTerm>{t('olm~Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <Status status={status ? status.phase : t('olm~Unknown')} />
+                </DescriptionListDescription>
               </DescriptionListGroup>
-            )}
-            {!_.isEmpty(permissions) && (
               <DescriptionListGroup>
-                <DescriptionListTerm>{t('olm~Operator ServiceAccounts')}</DescriptionListTerm>
-                {permissions.map(({ serviceAccountName }) => (
-                  <DescriptionListDescription
-                    key={serviceAccountName}
-                    data-service-account-name={serviceAccountName}
-                  >
-                    <ResourceLink
-                      name={serviceAccountName}
-                      kind="ServiceAccount"
-                      namespace={operatorNamespaceFor(props.obj)}
-                    />
-                  </DescriptionListDescription>
-                ))}
+                <DescriptionListTerm>{t('olm~Status reason')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {status ? status.message : t('olm~Unknown')}
+                </DescriptionListDescription>
               </DescriptionListGroup>
-            )}
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('olm~OperatorGroup')}</DescriptionListTerm>
-              <DescriptionListDescription>
-                {operatorGroupFor(props.obj) ? (
-                  <ResourceLink
-                    name={operatorGroupFor(props.obj)}
-                    namespace={operatorNamespaceFor(props.obj)}
-                    kind={referenceForModel(OperatorGroupModel)}
-                  />
-                ) : (
-                  '-'
-                )}
-              </DescriptionListDescription>
-            </DescriptionListGroup>
-          </div>
-        </div>
+              {!_.isEmpty(spec.install.spec?.deployments) && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('olm~Operator Deployments')}</DescriptionListTerm>
+                  {spec.install.spec.deployments.map(({ name }) => (
+                    <DescriptionListDescription key={name}>
+                      <ResourceLink
+                        name={name}
+                        kind="Deployment"
+                        namespace={operatorNamespaceFor(props.obj)}
+                      />
+                    </DescriptionListDescription>
+                  ))}
+                </DescriptionListGroup>
+              )}
+              {!_.isEmpty(permissions) && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('olm~Operator ServiceAccounts')}</DescriptionListTerm>
+                  {permissions.map(({ serviceAccountName }) => (
+                    <DescriptionListDescription
+                      key={serviceAccountName}
+                      data-service-account-name={serviceAccountName}
+                    >
+                      <ResourceLink
+                        name={serviceAccountName}
+                        kind="ServiceAccount"
+                        namespace={operatorNamespaceFor(props.obj)}
+                      />
+                    </DescriptionListDescription>
+                  ))}
+                </DescriptionListGroup>
+              )}
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('olm~OperatorGroup')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {operatorGroupFor(props.obj) ? (
+                    <ResourceLink
+                      name={operatorGroupFor(props.obj)}
+                      namespace={operatorNamespaceFor(props.obj)}
+                      kind={referenceForModel(OperatorGroupModel)}
+                    />
+                  ) : (
+                    '-'
+                  )}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+            </DescriptionList>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('olm~Conditions')} />

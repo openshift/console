@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import './MasonryLayout.scss';
 
 type MasonryProps = {
@@ -64,7 +64,7 @@ export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
   });
 
   return (
-    <div className={cx('odc-masonry-layout', { 'odc-masonry-layout__allRendered': allRendered })}>
+    <div className={css('odc-masonry-layout', { 'odc-masonry-layout__allRendered': allRendered })}>
       {groupedColumns.map((groupedColumn, columnIndex) => (
         <div key={columnIndex.toString()} className="odc-masonry-layout__column">
           {groupedColumn.items}

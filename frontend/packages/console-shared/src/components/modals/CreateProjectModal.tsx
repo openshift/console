@@ -17,12 +17,11 @@ import {
   isManaged,
 } from '@console/internal/components/utils/documentation';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
-import { ExternalLink } from '@console/internal/components/utils/link';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared';
-import { LoadingInline } from '@console/shared/src/components/loading/LoadingInline';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
 const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
@@ -110,9 +109,11 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
         <Button
           type="submit"
           variant="primary"
-          disabled={inProgress}
+          isDisabled={inProgress}
+          isLoading={inProgress}
           onClick={submit}
           data-test="confirm-action"
+          key="confirm-action"
           id="confirm-action"
         >
           {t('console-shared~Create')}
@@ -123,10 +124,10 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
           disabled={inProgress}
           onClick={closeModal}
           data-test-id="modal-cancel-action"
+          key="cancel-action"
         >
           {t('console-shared~Cancel')}
         </Button>,
-        ...(inProgress ? [<LoadingInline />] : []),
       ]}
     >
       <form onSubmit={submit} name="form" className="modal-content">

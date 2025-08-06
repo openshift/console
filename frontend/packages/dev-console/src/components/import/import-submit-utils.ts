@@ -50,7 +50,7 @@ import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { BUILD_OUTPUT_IMAGESTREAM_URL } from '@console/shipwright-plugin/src/const';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
-import { RUNTIME_LABEL } from '../../const';
+import { CUSTOM_ICON_ANNOTATION, RUNTIME_LABEL } from '../../const';
 import {
   getAppLabels,
   getPodLabels,
@@ -434,6 +434,7 @@ export const createOrUpdateDeployment = (
     limits: { cpu, memory },
     git: { url: repository, ref },
     healthChecks,
+    customIcon,
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
@@ -452,6 +453,7 @@ export const createOrUpdateDeployment = (
     ...getRouteAnnotations(),
     'alpha.image.policy.openshift.io/resolve-names': '*',
     ...getTriggerAnnotation(name, imageName, namespace, imageChange),
+    [CUSTOM_ICON_ANNOTATION]: customIcon,
   };
   const podLabels = getPodLabels(Resources.Kubernetes, name);
   const templateLabels = getTemplateLabels(originalDeployment);
@@ -515,6 +517,7 @@ export const createOrUpdateDeploymentConfig = (
     limits: { cpu, memory },
     git: { url: repository, ref },
     healthChecks,
+    customIcon,
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
@@ -534,7 +537,10 @@ export const createOrUpdateDeploymentConfig = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
-      annotations: defaultAnnotations,
+      annotations: {
+        [CUSTOM_ICON_ANNOTATION]: customIcon,
+        ...defaultAnnotations,
+      },
     },
     spec: {
       selector: podLabels,

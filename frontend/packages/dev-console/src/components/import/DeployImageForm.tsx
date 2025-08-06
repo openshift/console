@@ -9,6 +9,7 @@ import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import ImageSearchSection from './image-search/ImageSearchSection';
 import { DeployImageFormProps } from './import-types';
+import NamespaceSection from './NamespaceSection';
 import { DeploySection } from './section/deploy-section/DeploySection';
 import IconSection from './section/IconSection';
 
@@ -32,6 +33,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
     <FlexForm className="co-deploy-image" data-test-id="deploy-image-form" onSubmit={handleSubmit}>
       <FormBody>
         <ImageSearchSection />
+        <NamespaceSection />
         <IconSection />
         <AppSection
           project={values.project}

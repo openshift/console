@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DropdownItemProps, KeyTypes, MenuItem, Tooltip } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -28,7 +28,7 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   const navigate = useNavigate();
   const { href, external } = (cta ?? {}) as { href?: string; external?: boolean };
   const isDisabled = !isAllowed || disabled;
-  const classes = classNames({ 'pf-m-disabled': isDisabled });
+  const classes = css({ 'pf-m-disabled': isDisabled });
   const launcher = useModal();
 
   const handleClick = React.useCallback(

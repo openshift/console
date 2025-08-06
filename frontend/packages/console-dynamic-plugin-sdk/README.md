@@ -129,6 +129,7 @@ The following shared modules are provided by Console, without plugins providing 
 
 - `@openshift-console/dynamic-plugin-sdk`
 - `@openshift-console/dynamic-plugin-sdk-internal`
+- `@patternfly/react-topology`
 - `react`
 - `react-i18next`
 - `react-redux`
@@ -141,14 +142,14 @@ The following shared modules are provided by Console, without plugins providing 
 Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
 in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
 
-### Changes in shared modules and plugin APIs
+### Changes in shared modules and APIs
 
-This section documents notable changes in the Console provided shared modules across Console versions.
+This section documents notable changes in Console provided shared modules and other plugin APIs.
 
 #### Console 4.14.x
 
-- Added `react-router-dom-v5-compat` module to allow plugins to migrate to React Router v6. Check the
-  [Official v5 to v6 Migration Guide](https://github.com/remix-run/react-router/discussions/8753)
+- Added `react-router-dom-v5-compat` shared module to allow plugins to migrate to React Router v6.
+  Check the [Official v5 to v6 Migration Guide](https://github.com/remix-run/react-router/discussions/8753)
   (section "Migration Strategy" and beyond) for details.
 
 #### Console 4.15.x
@@ -158,7 +159,7 @@ This section documents notable changes in the Console provided shared modules ac
 
 #### Console 4.16.x
 
-- Removed `react-helmet` module.
+- Removed `react-helmet` shared module.
 - All Console provided PatternFly 4.x shared modules are deprecated and will be removed in the future.
   See [PatternFly Upgrade Notes][console-pf-upgrade-notes] for details on upgrading to PatternFly 5.
 - All Console provided React Router v5 shared modules are deprecated and will be removed in the future.
@@ -169,14 +170,14 @@ This section documents notable changes in the Console provided shared modules ac
 - Removed PatternFly 4.x shared modules. Console now uses PatternFly 6.x and provides PatternFly 5.x
   styles for compatibility with existing plugins.
 - VirtualizedTable, ListPageFilter, and useListPageFilter are deprecated and will be removed in the future.
- 
   PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview) extension should be used
- 
+- Added `@patternfly/react-topology` shared module. This allows plugins to use PatternFly's topology
+  components with consistent React context and styling.
+- `react-router-dom-v5-compat` shared module is deprecated and will be removed in the future. Plugins
+  should continue using `react-router-dom-v5-compat` module in order to consume React Router v6 APIs.
+- `VirtualizedTable`, `ListPageFilter` and `useListPageFilter` are deprecated and will be removed in
+  the future. Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview)
   instead. See this [proof of concept](https://github.com/openshift/console/pull/14897) for an example.
-- `react-router-dom-v5-compat` module is deprecated and will aliased to `react-router-dom` v6 and
-  `react-router-dom-v5-compat` will be removed in the future. Plugins should continue migration to the
-  `react-router-dom-v5-compat` module until `react-router-dom` v6 is aliased to `react-router-dom` v6. See the
-  [Official v5 to v6 Migration Guide](https://reactrouter.com/6.30.0/upgrading/v5) for details.
 
 #### Console 4.20.x
 
@@ -213,6 +214,18 @@ This section documents notable changes in the Console provided shared modules ac
 - Removed Bootstrap `table`, `text-muted`, `text-secondary` styling.
 - Removed `co-m-pane__details` and `details-item` styling. Use
   [PatternFly DescriptionList](https://www.patternfly.org/components/description-list) instead.
+
+#### Console 4.20.x
+
+##### CSS styling
+
+> [!WARNING]
+> Usage of non-PatternFly CSS provided by Console in plugins is not supported. This section only serves
+> as a courtesy for plugins which use these unsupported CSS classes.
+- Removed support for the Bootstrap Grid system (`.row`, `.col-*`, etc.). Use
+  [PatternFly Grid](https://www.patternfly.org/layouts/grid) instead.
+- Removed `co-external-link` styling. Use PatternFly Buttons with `variant="link"` instead.
+- Removed `co-disabled` styling.
 
 ### PatternFly 5+ dynamic modules
 
@@ -301,7 +314,7 @@ Older versions of webpack `ConsoleRemotePlugin` assumed that the plugin metadata
       "barUtils": "./utils/bar"
     },
     "dependencies": {
-      "@console/pluginAPI": "~4.11.0"
+      "@console/pluginAPI": "~4.19.0"
     }
   }
 }
@@ -324,17 +337,51 @@ of the corresponding `ConsolePlugin` resource on the cluster. Therefore, it must
 
 `version` must be [semver](https://semver.org/) compliant version string.
 
+### Exposed modules
+
 Dynamic plugins can expose modules representing plugin code that can be referenced, loaded and executed
 at runtime. A separate [webpack chunk](https://webpack.js.org/guides/code-splitting/) is generated for
 each entry in the `exposedModules` object. Exposed modules are resolved relative to the plugin's webpack
 `context` option.
 
+### Dependencies
+
+Dynamic plugins might declare dependency on specific Console versions and other plugins. This metadata
+field is similar to `dependencies` in the `package.json` file with values represented as semver ranges.
+
 The `@console/pluginAPI` dependency is optional and refers to Console versions this dynamic plugin is
-compatible with. The `dependencies` object may also refer to other dynamic plugins that are required for
-this plugin to work correctly. For dependencies where the version string may include a
-[semver pre-release](https://semver.org/#spec-item-9) identifier, adapt your semver range constraint
-(dependency value) to include the relevant pre-release prefix, e.g. use `~4.11.0-0.ci` when targeting
-pre-release versions like `4.11.0-0.ci-1234`.
+meant to be compatible with. It is matched against the actual Console release version, as provided by
+the Console operator.
+
+The `dependencies` object might also refer to other dynamic plugins that are required for this plugin to
+work correctly. Such other plugins will be loaded before loading this plugin.
+
+Plugins might also use the `optionalDependencies` object to support use cases, such as plugin A integrating
+with plugin B while still allowing plugin A to be loaded when plugin B is not enabled on the cluster.
+This object has the same structure as `dependencies` object.
+
+```jsonc
+{
+  // ...
+  "consolePlugin": {
+    // ...
+    "dependencies": {
+      // If foo-plugin is available, load it before loading this plugin.
+      // If foo-plugin is NOT available, this plugin will fail to load.
+      "foo-plugin": "~1.1.0",
+    },
+    "optionalDependencies": {
+      // If bar-plugin is available, load it before loading this plugin.
+      // If bar-plugin is NOT available, load this plugin regardless.
+      "bar-plugin": "^2.3.4"
+    },
+  }
+}
+```
+
+For dependencies where the version string might include a [semver pre-release](https://semver.org/#spec-item-9)
+identifier, adapt your semver range constraint (dependency value) to include the relevant pre-release
+prefix, e.g. use `~4.11.0-0.ci` when targeting pre-release versions such as `4.11.0-0.ci-1234`.
 
 ## Extensions contributed by the plugin
 

@@ -65,7 +65,8 @@ export class PluginStore {
   // Static plugins that were disabled by loading replacement dynamic plugins
   private readonly disabledStaticPluginNames = new Set<string>();
 
-  private readonly allowedDynamicPluginNames: Set<string>;
+  // Names of dynamic plugins that can be loaded
+  private readonly allowedDynamicPluginNames: string[];
 
   // Dynamic plugins that were loaded successfully (keys are plugin IDs)
   private readonly loadedDynamicPlugins = new Map<string, LoadedDynamicPlugin>();
@@ -89,7 +90,7 @@ export class PluginStore {
       ),
     }));
 
-    this.allowedDynamicPluginNames = new Set(allowedDynamicPluginNames);
+    this.allowedDynamicPluginNames = _.uniq(allowedDynamicPluginNames);
     this.i18nNamespaces = new Set(i18nNamespaces);
     this.updateExtensions();
   }
@@ -99,7 +100,7 @@ export class PluginStore {
   }
 
   getAllowedDynamicPluginNames() {
-    return Array.from(this.allowedDynamicPluginNames);
+    return [...this.allowedDynamicPluginNames];
   }
 
   getI18nNamespaces() {
@@ -134,7 +135,7 @@ export class PluginStore {
       return;
     }
 
-    if (!this.allowedDynamicPluginNames.has(manifest.name)) {
+    if (!this.allowedDynamicPluginNames.includes(manifest.name)) {
       console.warn(`Attempt to add unexpected plugin ${pluginID}`);
       return;
     }
@@ -171,12 +172,14 @@ export class PluginStore {
   }
 
   private updateExtensions() {
-    const allowedDynamicPluginNames = Array.from(this.allowedDynamicPluginNames.values());
-    const dynamicPlugins = Array.from(this.loadedDynamicPlugins.values()).sort((a, b) => {
-      const indexA = allowedDynamicPluginNames.indexOf(a.manifest.name);
-      const indexB = allowedDynamicPluginNames.indexOf(b.manifest.name);
-      return indexA - indexB;
-    });
+    // Sort loaded plugins according to allowed plugin names array passed to Console frontend.
+    // When interpreting extensions of the same type, this allows us to prioritize extensions
+    // based on allowed plugin names array order.
+    const dynamicPlugins = Array.from(this.loadedDynamicPlugins.values()).sort(
+      (a, b) =>
+        this.allowedDynamicPluginNames.indexOf(a.manifest.name) -
+        this.allowedDynamicPluginNames.indexOf(b.manifest.name),
+    );
 
     this.staticPluginExtensions = this.staticPlugins
       .filter((plugin) => !this.disabledStaticPluginNames.has(plugin.name))
@@ -225,7 +228,7 @@ export class PluginStore {
   }
 
   registerFailedDynamicPlugin(pluginName: string, errorMessage: string, errorCause?: unknown) {
-    if (!this.allowedDynamicPluginNames.has(pluginName)) {
+    if (!this.allowedDynamicPluginNames.includes(pluginName)) {
       console.warn(`Attempt to register unexpected plugin ${pluginName} as failed`);
       return;
     }
@@ -287,7 +290,7 @@ export class PluginStore {
       [] as NotLoadedDynamicPluginInfo[],
     );
 
-    const pendingPluginEntries = Array.from(this.allowedDynamicPluginNames.values())
+    const pendingPluginEntries = this.allowedDynamicPluginNames
       .filter(
         (pluginName) =>
           !this.isDynamicPluginLoaded(pluginName) && !this.isDynamicPluginFailed(pluginName),

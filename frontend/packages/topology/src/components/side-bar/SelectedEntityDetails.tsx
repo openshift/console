@@ -7,7 +7,7 @@ import {
   TYPE_KAFKA_CONNECTION_LINK,
   TYPE_EVENT_SINK_LINK,
 } from '@console/knative-plugin/src/topology/const';
-import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING } from '../../const';
+import { TYPE_CONNECTS_TO } from '../../const';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import TopologySideBarContent from './TopologySideBarContent';
 
@@ -36,7 +36,6 @@ export const SelectedEntityDetails: React.FC<{ selectedEntity: GraphElement }> =
         TYPE_EVENT_SOURCE_LINK,
         TYPE_EVENT_SINK_LINK,
         TYPE_KAFKA_CONNECTION_LINK,
-        TYPE_SERVICE_BINDING,
         TYPE_EVENT_PUB_SUB_LINK,
         TYPE_CONNECTS_TO,
       ].includes(selectedEntity.getType())

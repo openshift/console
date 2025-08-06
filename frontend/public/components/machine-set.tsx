@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { getMachineAWSPlacement, getMachineRole, getMachineSetInstanceType } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ListPageBody, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
@@ -14,10 +14,13 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListDescription,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { useTranslation } from 'react-i18next';
 
+import { useActiveColumns } from '@console/dynamic-plugin-sdk/src/lib-core';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { MachineAutoscalerModel, MachineModel, MachineSetModel, NodeModel } from '../models';
@@ -131,10 +134,10 @@ export const getAvailableReplicas = (machineSet: MachineSetKind | MachineDeploym
 const tableColumnInfo = [
   { className: '', id: 'name' },
   { className: '', id: 'namespace' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'machines' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'instanceType' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'cpu' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'memory' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'machines' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'instanceType' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'cpu' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'memory' },
   { className: Kebab.columnClass, id: '' },
 ];
 
@@ -243,8 +246,8 @@ const MachineSetDetails: React.FC<MachineSetDetailsProps> = ({ obj }) => {
     <PaneBody>
       <SectionHeading text={t('public~MachineSet details')} />
       <MachineCounts resourceKind={MachineSetModel} resource={obj} />
-      <div className="row">
-        <div className="col-md-6">
+      <Grid hasGutter>
+        <GridItem md={6}>
           <ResourceSummary resource={obj}>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Selector')}</DescriptionListTerm>
@@ -279,8 +282,8 @@ const MachineSetDetails: React.FC<MachineSetDetailsProps> = ({ obj }) => {
               </DescriptionListGroup>
             )}
           </ResourceSummary>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };
@@ -383,7 +386,8 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
         </TableData>
         <TableData
           {...tableColumnInfo[1]}
-          className={classNames(tableColumnInfo[1].className, 'co-break-word')}
+          className={css(tableColumnInfo[1].className, 'co-break-word')}
+          columnID="namespace"
         >
           <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
         </TableData>
@@ -411,12 +415,18 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
     );
   };
 
+  const [columns] = useActiveColumns({
+    columns: machineSetTableColumn,
+    showNamespaceOverride: false,
+    columnManagementID: machineSetReference,
+  });
+
   return (
     <VirtualizedTable<MachineSetKind>
       {...props}
       aria-label={t('public~MachineSets')}
       label={t('public~MachineSets')}
-      columns={machineSetTableColumn}
+      columns={columns}
       Row={MachineSetTableRow}
     />
   );
@@ -436,6 +446,10 @@ export const MachineSetPage: React.FC<MachineSetPageProps> = ({
     selector,
     namespace,
   });
+  const createAccessReview = {
+    groupVersionKind: referenceForModel(MachineSetModel),
+    namespace: namespace || 'default',
+  };
 
   const [data, filteredData, onFilterChange] = useListPageFilter(machineSets);
 
@@ -443,7 +457,10 @@ export const MachineSetPage: React.FC<MachineSetPageProps> = ({
   return (
     <>
       <ListPageHeader title={showTitle ? t('public~MachineSets') : undefined}>
-        <ListPageCreate groupVersionKind={referenceForModel(MachineSetModel)}>
+        <ListPageCreate
+          createAccessReview={createAccessReview}
+          groupVersionKind={referenceForModel(MachineSetModel)}
+        >
           {t('public~Create MachineSet')}
         </ListPageCreate>
       </ListPageHeader>

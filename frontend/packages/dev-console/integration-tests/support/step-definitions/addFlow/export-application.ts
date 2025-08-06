@@ -8,6 +8,7 @@ import {
   closeExportNotification,
 } from '../../pages';
 import { navigateTo } from '../../pages/app';
+import { checkDeveloperPerspective } from '../../pages/functions/checkDeveloperPerspective';
 
 Given(
   'user has created {string} workload in {string} application',
@@ -23,6 +24,7 @@ Given(
 );
 
 Given('user is at Add page', () => {
+  checkDeveloperPerspective();
   navigateTo(devNavigationMenu.Add);
 });
 

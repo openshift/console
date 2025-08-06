@@ -7,10 +7,10 @@ import {
   ResourceKebab,
   ResourceLink,
   resourcePath,
-  Timestamp,
 } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { getLatestRun } from '@console/pipelines-plugin/src/utils/pipeline-augment';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PipelineRunModel, RepositoryModel } from '../../../models';
 import {
   pipelineRunFilterReducer,

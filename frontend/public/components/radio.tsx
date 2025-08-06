@@ -1,99 +1,47 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
-import classNames from 'classnames';
+import { FormGroup, Radio } from '@patternfly/react-core';
 
-export const RadioInput: React.SFC<RadioInputProps> = (props) => {
-  const inputProps: React.InputHTMLAttributes<any> = _.omit(props, [
-    'title',
-    'subTitle',
-    'desc',
-    'children',
-    'inline',
-  ]);
-  const inputElement = (
-    <>
-      <label
-        className={classNames({ 'radio-inline': props.inline, 'co-disabled': props.disabled })}
-      >
-        <input
-          type="radio"
-          {...inputProps}
-          data-test={`${props.title}-radio-input`}
-          data-checked-state={props.checked}
-        />
-        {props.title} {props.subTitle && <span className="co-no-bold">{props.subTitle}</span>}
-      </label>
-      {props.desc && <p className="co-m-radio-desc pf-v6-u-text-color-subtle">{props.desc}</p>}
-      {props.children}
-    </>
-  );
-
-  return props.inline ? inputElement : <div className="radio">{inputElement}</div>;
-};
-
-export const RadioGroup: React.SFC<RadioGroupProps> = ({
-  currentValue,
-  inline = false,
-  items,
-  label,
-  onChange,
-  id = JSON.stringify(items),
-}) => {
-  const radios = items.map(({ desc, title, subTitle, value, disabled }) => (
-    <RadioInput
-      key={value}
-      checked={value === currentValue}
-      desc={desc}
-      onChange={onChange}
-      title={title}
-      subTitle={subTitle}
-      value={value}
-      disabled={disabled}
-      inline={inline}
-    />
-  ));
+export const RadioGroup = ({ currentValue, items, label, onChange }: RadioGroupProps) => {
+  const radios = items.map(({ label: radioLabel, value, disabled, name, description }) => {
+    const checked = value === currentValue;
+    return (
+      <Radio
+        key={value}
+        id={value}
+        name={name}
+        value={value}
+        label={radioLabel}
+        description={description}
+        onChange={onChange}
+        isChecked={checked}
+        data-checked-state={checked}
+        isDisabled={disabled}
+        data-test={`${radioLabel}-radio-input`}
+      />
+    );
+  });
   return (
-    <div className={classNames('co-radio-group', { 'co-radio-group--inline': inline })}>
-      {label ? (
-        <>
-          <label className="form-label co-radio-group__label" htmlFor={id}>
-            {label}
-          </label>
-          <div className="co-radio-group__controls" id={id}>
-            {radios}
-          </div>
-        </>
-      ) : (
-        radios
-      )}
+    // use div.pf-v6-c-form instead of Form to avoid additional form element
+    <div className="pf-v6-c-form">
+      <FormGroup role="radiogroup" fieldId={label ?? 'pf-radio-group'} label={label} isStack>
+        {radios}
+      </FormGroup>
     </div>
   );
 };
 
-export type RadioInputProps = {
-  checked: boolean;
-  desc?: string | JSX.Element;
-  onChange: (v: any) => void;
-  subTitle?: string | JSX.Element;
-  value: any;
-  disabled?: boolean;
-  inline?: boolean;
-} & React.InputHTMLAttributes<any>;
-
 export type RadioGroupProps = {
-  currentValue: any;
+  currentValue: string;
   id?: string;
-  inline?: boolean;
-  items: ({
-    desc?: string | JSX.Element;
-    title: string | JSX.Element;
-    subTitle?: string | JSX.Element;
-    value: any;
-    disabled?: boolean;
-  } & React.InputHTMLAttributes<any>)[];
+  items: RadioGroupItems;
   label?: string;
   onChange: React.InputHTMLAttributes<any>['onChange'];
 };
 
-RadioInput.displayName = 'RadioInput';
-RadioGroup.displayName = 'RadioGroup';
+export type RadioGroupItems = {
+  name: string;
+  value: string;
+  label: React.ReactNode;
+  description?: React.ReactNode;
+  disabled?: boolean;
+}[];

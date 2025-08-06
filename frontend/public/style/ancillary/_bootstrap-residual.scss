@@ -3,10 +3,6 @@
   margin-bottom: var(--pf-t--global--spacer--md);
 }
 
-.has-feedback {
-  position: relative;
-}
-
 .help-block {
   display: block; // account for any element using help-block
   margin-top: var(--pf-t--global--spacer--xs);
@@ -19,95 +15,4 @@
     margin-bottom: var(--pf-t--global--spacer--xs);
     font-weight: var(--pf-t--global--font--weight--body--bold);
   }
-}
-
-//
-// List groups
-// --------------------------------------------------
-
-// Base class
-//
-// Easily usable on <ul>, <ol>, or <div>.
-
-.list-group {
-  // No need to set list-style: none; since .list-group-item is block level
-  margin-bottom: var(--pf-t--global--spacer--lg);
-  padding-left: 0; // reset padding because ul and ol
-}
-
-// Individual list items
-//
-// Use on `li`s or `div`s within the `.list-group` parent.
-
-.list-group-item {
-  position: relative;
-  display: block;
-  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
-  // Place the border on the list items and negative margin up for better styling
-  margin-bottom: -1px;
-  background-color: var(--pf-t--global--background--color--primary--default);
-  border: 1px solid var(--pf-t--global--border--color--default);
-}
-
-.radio,
-.checkbox {
-  position: relative;
-  display: block;
-  margin-top: var(--pf-t--global--spacer--sm);
-  margin-bottom: var(--pf-t--global--spacer--sm);
-
-  // These are used on elements with <label> descendants
-  &.disabled,
-  fieldset[disabled] & {
-    label {
-      cursor: not-allowed;
-    }
-  }
-
-  label {
-    min-height: $line-height-computed; // Ensure the input doesn't jump when there is no text
-    padding-left: 20px;
-    margin-bottom: 0;
-    font-weight: var(--pf-t--global--font--weight--body--default);
-    cursor: pointer;
-  }
-}
-.radio input[type='radio'],
-.radio-inline input[type='radio'],
-.checkbox input[type='checkbox'],
-.checkbox-inline input[type='checkbox'] {
-  position: absolute;
-  margin-top: var(--pf-t--global--spacer--xs);
-  margin-left: -20px;
-}
-
-.radio + .radio,
-.checkbox + .checkbox {
-  margin-top: calc(
-    var(--pf-t--global--spacer--xs) * -1
-  ); // Move up sibling radios or checkboxes for tighter spacing
-}
-
-// Radios and checkboxes on same line
-.radio-inline,
-.checkbox-inline {
-  position: relative;
-  display: inline-block;
-  padding-left: 20px;
-  margin-bottom: 0;
-  margin-right: 20px;
-  font-weight: var(--pf-t--global--font--weight--body--default);
-  vertical-align: middle;
-  cursor: pointer;
-
-  // These are used directly on <label>s
-  &.disabled,
-  fieldset[disabled] & {
-    cursor: not-allowed;
-  }
-}
-
-.small,
-small {
-  font-size: var(--pf-t--global--font--size--xs) !important;
 }

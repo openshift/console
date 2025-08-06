@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
-import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
@@ -85,7 +84,7 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
         selectedKey={field.value}
         placeholder={t('pipelines-plugin~Select a {{label}}', { label: t(resourceModel.labelKey) })}
         autocompleteFilter={autocompleteFilter}
-        dropDownClassName={cx({ 'dropdown--full-width': true })}
+        isFullWidth
         onChange={(value: string) => {
           setFieldValue(resourceKeysField, undefined);
           setFieldValue(resourceNameField, value);

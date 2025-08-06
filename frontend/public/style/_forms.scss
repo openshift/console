@@ -25,10 +25,6 @@
   vertical-align: top;
 }
 
-.co-form--within-modal {
-  gap: 0;
-}
-
 .co-form-section__label {
   font-size: 14px;
   margin-bottom: $pf-v6-global-gutter-y;
@@ -78,22 +74,21 @@
   }
 }
 
-.co-text-filter:focus + .co-text-filter-feedback {
-  display: none;
-}
-
-.co-text-filter-feedback {
-  display: block;
-  pointer-events: none;
-  position: absolute;
-  right: 7px;
-  text-align: center;
-  top: 8px;
-  z-index: 2;
-}
-
-.has-feedback .pf-v6-c-form-control > :is(input) {
-  --pf-v6-c-form-control--PaddingInlineEnd: 30px;
+.co-text-filter {
+  position: relative;
+  width: 100%;
+  &__feedback {
+    display: block;
+    pointer-events: none;
+    position: absolute;
+    right: 7px;
+    text-align: center;
+    top: 8px;
+    z-index: 2;
+  }
+  &__text-input > :is(input) {
+    --pf-v6-c-form-control--PaddingInlineEnd: 30px;
+  }
 }
 
 .pf-v6-c-form__actions--right {

@@ -1,9 +1,9 @@
 export const pipelineBuilderPO = {
-  title: '.odc-pipeline-builder-header h1',
+  title: '[data-test="page-heading"] h1',
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
-  pipeline: '#pipeline-link',
-  repository: '#repository-link',
+  pipeline: '[data-test-dropdown-menu="pipeline"]',
+  repository: '[data-test-dropdown-menu="repository"]',
   configureVia: {
     pipelineBuilder: '#form-radiobutton-editorType-form-field',
     yamlView: '#form-radiobutton-editorType-yaml-field',
@@ -35,7 +35,7 @@ export const pipelineBuilderPO = {
       dialog: 'div.opp-task-sidebar',
       displayName: '#task-name',
       inputResource: 'select[id*="form-dropdown-formData-resources-0-type-field"]',
-      workSpace: '.odc-task-sidebar__workspace [data-test-id="dropdown-button"] span',
+      workSpace: '.odc-task-sidebar__workspace [data-test="console-select-menu-toggle"] span',
       parameterUrl: '[data-test="value formData.tasks.0.params.0.value"]',
       parameterUrlHelper: '[data-test="parameter url"]',
       parameterRevision: '[data-test="value formData.tasks.0.params.1.value"]',

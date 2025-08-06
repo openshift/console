@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { FormProps } from '@rjsf/core';
-import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { AsyncComponent } from '@console/internal/components/utils';
 
@@ -24,18 +24,16 @@ const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
   const { setFieldValue } = useFormikContext<FormikValues>();
 
   return (
-    <div className={cx({ row: formDescription })}>
-      <div
-        className={cx({
-          'col-sm-12 col-md-4 col-md-push-8 col-lg-5 col-lg-push-7': formDescription,
-        })}
-      >
-        {formDescription}
-      </div>
-      <div
-        className={cx({
-          'col-sm-12 col-md-8 col-md-pull-4 col-lg-7 col-lg-pull-5': formDescription,
-        })}
+    <Grid hasGutter>
+      {formDescription && (
+        <GridItem md={4} lg={5} order={{ default: '0', md: '1' }}>
+          {formDescription}
+        </GridItem>
+      )}
+      <GridItem
+        md={formDescription ? 8 : 12}
+        lg={formDescription ? 7 : 12}
+        order={{ default: '1', md: '0' }}
       >
         <AsyncComponent
           loader={() => import('../dynamic-form').then((c) => c.DynamicForm)}
@@ -51,8 +49,8 @@ const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
           noActions
           liveValidate
         />
-      </div>
-    </div>
+      </GridItem>
+    </Grid>
   );
 };
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Grid, GridItem } from '@patternfly/react-core';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -69,8 +70,8 @@ export const OperandForm: React.FC<OperandFormProps> = ({
 
   return (
     <PaneBody>
-      <div className="row">
-        <div className="col-md-4 col-md-push-8 col-lg-5 col-lg-push-7">
+      <Grid hasGutter>
+        <GridItem md={4} lg={5} order={{ default: '0', lg: '1' }}>
           {csv && providedAPI && (
             <div style={{ marginBottom: '30px' }}>
               <ClusterServiceVersionLogo
@@ -81,8 +82,8 @@ export const OperandForm: React.FC<OperandFormProps> = ({
               <SyncMarkdownView content={providedAPI.description} />
             </div>
           )}
-        </div>
-        <div className="col-md-8 col-md-pull-4 col-lg-7 col-lg-pull-5 co-create-operand__form--toggle-no-border">
+        </GridItem>
+        <GridItem md={8} lg={7} order={{ default: '1', lg: '0' }}>
           <DynamicForm
             noValidate
             errors={errors}
@@ -95,8 +96,8 @@ export const OperandForm: React.FC<OperandFormProps> = ({
             onCancel={handleCancel}
             schema={schema}
           />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

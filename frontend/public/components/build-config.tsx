@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, redirect } from 'react-router-dom';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
@@ -32,9 +32,9 @@ import {
   resourceObjPath,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
   WebhookTriggers,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import {
   BuildsPage,
   BuildEnvironmentComponent,
@@ -47,6 +47,7 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { Status } from '@console/shared';
 import { displayDurationInWords } from './utils/build-utils';
+import { Grid, GridItem } from '@patternfly/react-core';
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 const BuildsReference: K8sResourceKindReference = 'Build';
@@ -113,14 +114,14 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: 
       <PaneBody>
         {hasPipeline && <PipelineBuildStrategyAlert obj={buildConfig} />}
         <SectionHeading text={t('public~BuildConfig details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={buildConfig} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <BuildStrategy resource={buildConfig} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <WebhookTriggers resource={buildConfig} />
       <BuildHooks resource={buildConfig} />
@@ -202,10 +203,7 @@ const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) =
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

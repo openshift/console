@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { NavigateFunction } from 'react-router-dom';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import NamespaceBarApplicationSelector from '@console/topology/src/components/dropdowns/NamespaceBarApplicationSelector';
@@ -39,7 +39,7 @@ const NamespacedPage: React.FC<NamespacedPageProps> = ({
       {toolbar && <div className="odc-namespaced-page__toolbar">{toolbar}</div>}
     </NamespaceBar>
     <div
-      className={cx('odc-namespaced-page__content', {
+      className={css('odc-namespaced-page__content', {
         [`is-${variant}`]: variant !== NamespacedPageVariants.default,
       })}
     >

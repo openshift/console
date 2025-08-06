@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { ActionListItem, Button } from '@patternfly/react-core';
+import { SimpleDropdown } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { HorizontalNav, Page, Dropdown } from '@console/internal/components/utils';
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import { HorizontalNav, Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '../pagetitle/PageTitleContext';
@@ -85,13 +86,21 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
             )}
             {items && (
               <ActionListItem>
-                <Dropdown
-                  buttonClassName="pf-m-primary"
-                  menuClassName="prevent-overflow"
-                  title={t('console-shared~Create')}
-                  noSelection
-                  items={items}
-                  onChange={onSelectCreateAction}
+                <SimpleDropdown
+                  toggleProps={{
+                    variant: 'primary',
+                    // @ts-expect-error non-prop attribute is used for cypress
+                    'data-test': 'tab-list-page-create',
+                  }}
+                  toggleContent={t('console-shared~Create')}
+                  initialItems={Object.keys(items).map((item) => ({
+                    value: item,
+                    content: items[item],
+                    'data-test-dropdown-menu': item,
+                  }))}
+                  onSelect={(_e, value: string) => {
+                    onSelectCreateAction(value);
+                  }}
                 />
               </ActionListItem>
             )}

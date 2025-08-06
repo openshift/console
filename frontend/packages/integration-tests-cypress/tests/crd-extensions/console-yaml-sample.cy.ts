@@ -75,9 +75,20 @@ metadata:
       });
     });
 
+    cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
+    listPage.rows.shouldBeLoaded();
+    cy.log('Additional printer columns should not exist.');
+    cy.byTestID('has-additional-printer-columns').should('not.exist');
+    cy.log('Created date should exist since Age does not.');
+    cy.byTestID('column-header-Created').should('exist');
+    cy.byTestID('column-data-Created').should('exist');
+
     // Check if ConsoleYAMLSample CR was created
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}/${name}`);
+    detailsPage.isLoaded();
     detailsPage.titleShouldContain(name);
+    cy.log('Additional printer columns should not exist.');
+    cy.byTestID('additional-printer-columns').should('not.exist');
 
     // Create Job from sample
     cy.visit(`k8s/ns/${testName}/batch~v1~Job`);

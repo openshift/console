@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
+	"embed"
 	"errors"
 	"fmt"
 	"io"
@@ -341,6 +342,19 @@ func (a AssetMigrationSource) FindMigrations() ([]*Migration, error) {
 	sort.Sort(byId(migrations))
 
 	return migrations, nil
+}
+
+// A set of migrations loaded from an go1.16 embed.FS
+type EmbedFileSystemMigrationSource struct {
+	FileSystem embed.FS
+
+	Root string
+}
+
+var _ MigrationSource = (*EmbedFileSystemMigrationSource)(nil)
+
+func (f EmbedFileSystemMigrationSource) FindMigrations() ([]*Migration, error) {
+	return findMigrations(http.FS(f.FileSystem), f.Root)
 }
 
 // Avoids pulling in the packr library for everyone, mimicks the bits of
@@ -686,13 +700,14 @@ func (ms MigrationSet) planMigrationCommon(db *sql.DB, dialect string, m Migrati
 		toApplyCount = max
 	}
 	for _, v := range toApply[0:toApplyCount] {
-		if dir == Up {
+		switch dir {
+		case Up:
 			result = append(result, &PlannedMigration{
 				Migration:          v,
 				Queries:            v.Up,
 				DisableTransaction: v.DisableTransactionUp,
 			})
-		} else if dir == Down {
+		case Down:
 			result = append(result, &PlannedMigration{
 				Migration:          v,
 				Queries:            v.Down,
@@ -765,14 +780,13 @@ func ToApply(migrations []*Migration, current string, direction MigrationDirecti
 		}
 	}
 
-	if direction == Up {
+	switch direction {
+	case Up:
 		return migrations[index+1:]
-	} else if direction == Down {
+	case Down:
 		if index == -1 {
 			return []*Migration{}
 		}
-
-		// Add in reverse order
 		toApply := make([]*Migration, index+1)
 		for i := 0; i < index+1; i++ {
 			toApply[index-i] = migrations[i]

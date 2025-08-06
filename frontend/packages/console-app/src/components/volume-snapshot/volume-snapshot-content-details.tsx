@@ -4,6 +4,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
@@ -35,8 +37,8 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   return (
     <PaneBody>
       <SectionHeading text={t('console-app~VolumeSnapshotContent details')} />
-      <div className="row">
-        <div className="col-md-6 col-xs-12">
+      <Grid hasGutter>
+        <GridItem md={6}>
           <ResourceSummary resource={obj}>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
@@ -45,8 +47,8 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
               </DescriptionListDescription>
             </DescriptionListGroup>
           </ResourceSummary>
-        </div>
-        <div className="col-md-6">
+        </GridItem>
+        <GridItem md={6}>
           <DescriptionList>
             {size && (
               <DescriptionListGroup>
@@ -94,8 +96,8 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
               </DescriptionListGroup>
             )}
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };

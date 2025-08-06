@@ -5,10 +5,15 @@ export const openshiftHelpBase = window.SERVER_FLAGS.documentationBaseURL || UPS
 
 export const DOC_URL_OPENSHIFT_WHATS_NEW = 'https://www.openshift.com/learn/whats-new';
 export const DOC_URL_OPERATORFRAMEWORK_SDK = 'https://sdk.operatorframework.io/';
-export const DOC_URL_PODDISRUPTIONBUDGET_POLICY = `${UPSTREAM_LATEST}rest_api/policy_apis/poddisruptionbudget-policy-v1.html#poddisruptionbudget-policy-v1`;
 export const DOC_URL_PODMAN = 'https://podman.io/';
-export const DOC_URL_RED_HAT_MARKETPLACE =
-  'https://marketplace.redhat.com/en-us?utm_source=openshift_console';
+export const DOC_URL_PROMETHEUS_MATCHERS =
+  'https://prometheus.io/docs/alerting/latest/configuration/#matcher';
+
+// documentationBaseUrl points to OCP and not Serverless so we cannot use it
+const OPENSHIFT_SERVERLESS_DOCS =
+  'https://docs.redhat.com/en/documentation/red_hat_openshift_serverless/latest/';
+// no OKD equivalent docs either
+export const DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED = `${OPENSHIFT_SERVERLESS_DOCS}html/functions/serverless-functions-getting-started`;
 
 const KUBE_DOCS = 'https://kubernetes.io/docs/';
 export const DOC_URL_STORAGE_CLASSES_AWS_EBS = `${KUBE_DOCS}/concepts/storage/storage-classes/#aws-ebs`;
@@ -24,7 +29,13 @@ export const DOC_URL_STORAGE_CLASSES_SCALEIO = `${KUBE_DOCS}/concepts/storage/st
 export const DOC_URL_STORAGE_CLASSES_STORAGEOS = `${KUBE_DOCS}/concepts/storage/storage-classes/#storageos`;
 export const DOC_URL_STORAGE_CLASSES_VSPHERE = `${KUBE_DOCS}/concepts/storage/storage-classes/#vsphere`;
 
-export const documentationURLs: documentationURLsType = {
+type docURLs = {
+  downstream: string;
+  kube?: string;
+  upstream: string;
+};
+
+export const documentationURLs = {
   applicationHealth: {
     downstream: 'html/building_applications/application-health',
     upstream: 'applications/application-health.html',
@@ -61,11 +72,6 @@ export const documentationURLs: documentationURLsType = {
       'html/updating_clusters/performing-a-cluster-update#updating-a-cluster-in-a-disconnected-environment',
     upstream: '', // intentionally blank as there is no upstream equivalent
   },
-  updateUsingCustomMachineConfigPools: {
-    downstream:
-      'html/updating_clusters/performing-a-cluster-update#update-using-custom-machine-config-pools',
-    upstream: 'updating/updating_a_cluster/update-using-custom-machine-config-pools.html',
-  },
   usingInsights: {
     downstream:
       'html/support/remote-health-monitoring-with-connected-clusters#using-insights-to-identify-issues-with-your-cluster',
@@ -89,6 +95,16 @@ export const documentationURLs: documentationURLsType = {
     kube: `${KUBE_DOCS}/reference/access-authn-authz/extensible-admission-controllers/#response`,
     upstream: 'architecture/index.html#about-admission-plug-ins',
   },
+  creatingQuickStartsTutorials: {
+    downstream: 'html/web_console/creating-quick-start-tutorials',
+    upstream: 'web_console/creating-quick-start-tutorials.html',
+  },
+  podDisruptionBudgetPolicyV1: {
+    downstream: 'html/policy_apis/poddisruptionbudget-policy-v1',
+    kube: `${KUBE_DOCS}/reference/kubernetes-api/policy-resources/pod-disruption-budget-v1/`,
+    upstream:
+      'rest_api/policy_apis/poddisruptionbudget-policy-v1.html#poddisruptionbudget-policy-v1',
+  },
 };
 
 export const isUpstream = () => window.SERVER_FLAGS.branding === 'okd';
@@ -105,14 +121,4 @@ export const getNetworkPolicyDocURL = (openshiftFlag: boolean): string => {
   const networkLink = getDocumentationURL(documentationURLs.networkPolicy);
 
   return openshiftFlag ? networkLink : documentationURLs.networkPolicy.kube;
-};
-
-type documentationURLsType = {
-  [key: string]: docURLs;
-};
-
-type docURLs = {
-  downstream: string;
-  kube?: string;
-  upstream: string;
 };

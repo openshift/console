@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKindReference } from '../module/k8s';
 import { ResourceLink } from './utils/resource-link';
-import { Timestamp } from './utils/timestamp';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EmptyBox } from './utils/status-box';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';

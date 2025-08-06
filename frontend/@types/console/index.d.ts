@@ -57,7 +57,10 @@ declare interface Window {
     nodeOperatingSystems: string[];
     hubConsoleURL: string;
     k8sMode: string;
-    capabilities: Record<string, string>[];
+    capabilities: {
+      name: string;
+      visibility: { state: 'Enabled' | 'Disabled' };
+    }[];
   };
   /** (OCPBUGS-46415) Do not override this string! To add new errors please append to windowError if it exists*/
   windowError?: string;

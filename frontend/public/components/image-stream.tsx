@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import * as semver from 'semver';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable, Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -10,6 +10,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
   Popover,
 } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
@@ -21,14 +23,14 @@ import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './fact
 import { DOC_URL_PODMAN } from './utils';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
-import { ExternalLink } from './utils/link';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Kebab, ResourceKebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
-import { Timestamp } from './utils/timestamp';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 
@@ -198,7 +200,7 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
     >
       <Button
         icon={<QuestionCircleIcon className="co-icon-space-r" />}
-        className="hidden-sm hidden-xs"
+        className="pf-v6-u-display-none pf-v6-u-display-inline-flex-on-sm"
         type="button"
         variant="link"
       >
@@ -245,8 +247,8 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
           />
         )}
         <SectionHeading text={t('public~ImageStream details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary resource={imageStream}>
               {imageRepository && (
                 <DescriptionListGroup>
@@ -268,8 +270,8 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
               </DescriptionListGroup>
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Tags')} />
@@ -342,10 +344,7 @@ const ImageStreamsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj 
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

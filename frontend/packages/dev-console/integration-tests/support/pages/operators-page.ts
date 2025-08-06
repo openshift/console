@@ -8,7 +8,7 @@ export const operatorsPage = {
   navigateToOperatorHubPage: () => {
     cy.get(operatorsPO.nav.operatorHub).then(($nav) => {
       if (!$nav.is(':visible')) {
-        cy.get(operatorsPO.nav.operators).click();
+        cy.get(operatorsPO.nav.ecosystem).click();
       }
       cy.get(operatorsPO.nav.operatorHub).click({ force: true });
     });
@@ -19,7 +19,7 @@ export const operatorsPage = {
   navigateToInstallOperatorsPage: () => {
     cy.get(operatorsPO.nav.installedOperators).then(($nav) => {
       if (!$nav.is(':visible')) {
-        cy.get(operatorsPO.nav.operators).click();
+        cy.get(operatorsPO.nav.ecosystem).click();
       }
       cy.get(operatorsPO.nav.installedOperators).click({ force: true });
     });
@@ -142,11 +142,6 @@ export const operatorsPage = {
       case 'gitops-primer':
       case operators.GitopsPrimer: {
         cy.get(operatorsPO.operatorHub.gitopsPrimer).click();
-        break;
-      }
-      case 'Service Binding':
-      case operators.ServiceBinding: {
-        cy.get(operatorsPO.operatorHub.serviceBinding).click();
         break;
       }
       case 'Crunchy Postgres for Kubernetes':

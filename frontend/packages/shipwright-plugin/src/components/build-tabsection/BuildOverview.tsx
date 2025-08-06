@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem, List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -79,8 +79,8 @@ const BuildsOverview: React.FC<BuildsOverviewProps> = ({ item: { builds, buildRu
           )
           .sort(byCreationTime);
         return (
-          <ul className="list-group pf-v6-u-mb-xl">
-            <li className="list-group-item">
+          <List isPlain isBordered className="pf-v6-u-mb-xl">
+            <ListItem>
               <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
                 <FlexItem>
                   <ResourceLink
@@ -106,12 +106,12 @@ const BuildsOverview: React.FC<BuildsOverviewProps> = ({ item: { builds, buildRu
                   )}
                 </FlexItem>
               </Flex>
-            </li>
+            </ListItem>
             {buildRunsforBuild.length > 0 &&
               buildRunsforBuild
                 .slice(0, MAX_VISIBLE)
                 .map((br) => <BuildRunItem key={br.metadata.uid} buildRun={br} />)}
-          </ul>
+          </List>
         );
       })}
     </>

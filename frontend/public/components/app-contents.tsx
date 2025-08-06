@@ -173,6 +173,14 @@ const AppContents: React.FC<{}> = () => {
       <Route path="/overview/all-namespaces" element={<Navigate to="/dashboards" replace />} />
       <Route path="/overview/ns/:ns" element={<OverviewProjectsRedirect />} />
       <Route path="/overview" element={<NamespaceRedirect />} />
+      <Route
+        path="/monitoring/alertmanagerconfig"
+        element={<Navigate to="/settings/cluster/alertmanagerconfig" replace />}
+      />
+      <Route
+        path="/monitoring/alertmanageryaml"
+        element={<Navigate to="/settings/cluster/alertmanageryaml" replace />}
+      />
 
       <Route
         path="/api-explorer"
@@ -374,76 +382,6 @@ const AppContents: React.FC<{}> = () => {
       />
 
       <Route
-        path="/k8s/ns/:ns/networkpolicies/~new/form"
-        element={
-          <AsyncComponent
-            kind="NetworkPolicy"
-            loader={() =>
-              import(
-                '@console/app/src/components/network-policies/create-network-policy' /* webpackChunkName: "create-network-policy" */
-              ).then((m) => m.CreateNetworkPolicy)
-            }
-          />
-        }
-      />
-
-      <Route
-        path="/k8s/ns/:ns/networking.k8s.io~v1~NetworkPolicy/~new/form"
-        element={
-          <AsyncComponent
-            kind="NetworkPolicy"
-            loader={() =>
-              import(
-                '@console/app/src/components/network-policies/create-network-policy' /* webpackChunkName: "create-network-policy" */
-              ).then((m) => m.CreateNetworkPolicy)
-            }
-          />
-        }
-      />
-
-      <Route
-        path="/k8s/ns/:ns/k8s.cni.cncf.io~v1beta1~MultiNetworkPolicy/~new/form"
-        element={
-          <AsyncComponent
-            kind="NetworkPolicy"
-            loader={() =>
-              import(
-                '@console/app/src/components/network-policies/create-network-policy' /* webpackChunkName: "create-network-policy" */
-              ).then((m) => m.CreateNetworkPolicy)
-            }
-          />
-        }
-      />
-
-      <Route
-        path="/k8s/ns/:ns/routes/~new/form"
-        element={
-          <AsyncComponent
-            kind="Route"
-            loader={() =>
-              import('./routes/RoutePage' /* webpackChunkName: "create-route" */).then(
-                (m) => m.RoutePage,
-              )
-            }
-          />
-        }
-      />
-
-      <Route
-        path="/k8s/ns/:ns/routes/:name/form"
-        element={
-          <AsyncComponent
-            kind="Route"
-            loader={() =>
-              import('./routes/RoutePage' /* webpackChunkName: "edit-route" */).then(
-                (m) => m.RoutePage,
-              )
-            }
-          />
-        }
-      />
-
-      <Route
         path="/k8s/cluster/rolebindings/~new"
         element={
           <AsyncComponent
@@ -554,43 +492,6 @@ const AppContents: React.FC<{}> = () => {
           <Navigate
             to={`/k8s/all-namespaces/${getReferenceForModel(VolumeSnapshotModel)}`}
             replace
-          />
-        }
-      />
-
-      <Route
-        path="/monitoring/alertmanagerconfig/receivers/~new"
-        element={
-          <AsyncComponent
-            loader={() =>
-              import(
-                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
-              ).then((m) => m.CreateReceiver)
-            }
-          />
-        }
-      />
-      <Route
-        path="/monitoring/alertmanagerconfig/receivers/:name/edit"
-        element={
-          <AsyncComponent
-            loader={() =>
-              import(
-                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
-              ).then((m) => m.EditReceiver)
-            }
-          />
-        }
-      />
-      <Route
-        path="/monitoring/*"
-        element={
-          <AsyncComponent
-            loader={() =>
-              import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
-                (m) => m.MonitoringUI,
-              )
-            }
           />
         }
       />
@@ -723,6 +624,54 @@ const AppContents: React.FC<{}> = () => {
               import(
                 './cluster-settings/cluster-settings' /* webpackChunkName: "cluster-settings" */
               ).then((m) => m.ClusterSettingsPage)
+            }
+          />
+        }
+      />
+      <Route
+        path="/settings/cluster/alertmanagerconfig"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './monitoring/alertmanager/alertmanager-config' /* webpackChunkName: "alertmanager-config" */
+              ).then((m) => m.AlertmanagerConfig)
+            }
+          />
+        }
+      />
+      <Route
+        path="/settings/cluster/alertmanagerconfig/receivers/~new"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
+              ).then((m) => m.CreateReceiver)
+            }
+          />
+        }
+      />
+      <Route
+        path="/settings/cluster/alertmanagerconfig/receivers/:name/edit"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
+              ).then((m) => m.EditReceiver)
+            }
+          />
+        }
+      />
+      <Route
+        path="/settings/cluster/alertmanageryaml"
+        element={
+          <AsyncComponent
+            loader={() =>
+              import(
+                './monitoring/alertmanager/alertmanager-yaml-editor' /* webpackChunkName: "alertmanager-yaml-editor" */
+              ).then((m) => m.default)
             }
           />
         }

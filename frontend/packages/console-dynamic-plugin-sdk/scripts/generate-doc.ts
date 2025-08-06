@@ -4,15 +4,17 @@ import * as tsdoc from '@microsoft/tsdoc';
 import chalk from 'chalk';
 import * as ejs from 'ejs';
 import * as _ from 'lodash';
-import * as tsu from 'tsutils';
 import * as ts from 'typescript';
+import { parseJSONC } from '../src/utils/jsonc';
 import { resolvePath, relativePath } from './utils/path';
 import { ExtensionTypeInfo, getConsoleTypeResolver } from './utils/type-resolver';
 import { getProgramFromFile, printJSDocComments } from './utils/typescript';
 
-const EXAMPLE = '@example';
-const DYNAMIC_PKG_PATH = '@console/dynamic-plugin-sdk/';
-const GITHUB_URL = 'https://github.com/openshift/console/tree/release-4.12/frontend';
+const printComments = (docComments: string[] | string) =>
+  printJSDocComments(Array.isArray(docComments) ? docComments : [docComments]).replace(
+    /\n/g,
+    '<br/>',
+  );
 
 const getConsoleExtensions = () => {
   const program = getProgramFromFile(resolvePath('src/schema/console-extensions.ts'));
@@ -37,7 +39,7 @@ console.log('Generating Console plugin documentation');
 
 renderTemplate('scripts/templates/console-extensions.md.ejs', {
   extensions: getConsoleExtensions()
-    // Sort extensions by their `type` value
+    // Sort extensions by type, list non-deprecated extensions first
     .sort((a, b) => {
       if (a.isDeprecated !== b.isDeprecated) {
         return a.isDeprecated ? 1 : -1;
@@ -51,152 +53,139 @@ renderTemplate('scripts/templates/console-extensions.md.ejs', {
         a.optional === b.optional ? 0 : a.optional ? 1 : -1,
       ),
     })),
-  printComments: (docComments: string[]) => printJSDocComments(docComments).replace(/\n/g, '<br/>'),
+  printComments,
   escapeTableCell: (value: string) => value.replace(/\|/g, '\\|'),
   safeHeaderLink: (value: string) => value.replace(/[./]/g, ''),
 });
 
-type ComponentInfo = {
-  name: string;
-  doc: any;
-};
+const renderDocNode = (docNode?: tsdoc.DocNode): string => {
+  let result = '';
 
-const renderDocNode = (docNode: tsdoc.DocNode): string => {
-  let result: string = '';
   if (docNode) {
-    // Todo (bipuladh): Improve support for links.
+    // TODO(bipuladh): Improve support for links.
     if (docNode instanceof tsdoc.DocExcerpt) {
       result += docNode.content.toString();
     }
+
     for (const childNode of docNode.getChildNodes()) {
       result += renderDocNode(childNode);
     }
   }
+
   return result;
 };
 
-// Use typescript AST to traverse the VariableDeclaration initializer, find the first call to
-// require(), and resolve the import. If no call to require is found, returns null.
-const resolveRequire = (variableDeclaration: ts.VariableDeclaration) => {
-  return variableDeclaration.initializer?.forEachChild((node) => {
-    if (ts.isCallExpression(node) && node.expression.getText() === 'require') {
-      const [requireArgument] = node.arguments ?? [];
-      if (ts.isStringLiteral(requireArgument)) {
-        return require.resolve(requireArgument.text);
-      }
-    }
-    return null; // ts.Node.forEachChild keeps traversing until a truthy value is returned
-  });
-};
-
-const generateGitLinkDoc = (variableDeclaration: ts.VariableDeclaration) => {
-  const resolvedRequire = resolveRequire(variableDeclaration);
-  const absolutePath = resolvedRequire ?? variableDeclaration.getSourceFile().fileName;
-  const urlPath = absolutePath.replace(/.*((packages|public)\/.*)/, '$1');
-  const link = `${GITHUB_URL}/${urlPath}`;
-  return {
-    summary: `[For more details please refer the implementation](${link})`,
+type PluginAPIInfo = {
+  name: string;
+  kind: 'Variable' | 'TypeAlias' | 'Interface' | 'Enum';
+  srcFilePath: string;
+  isDeprecated: boolean;
+  doc: {
+    summary: string;
+    example?: string;
+    parameters?: { name: string; description: string }[];
+    returns?: string;
+    deprecated?: string;
   };
 };
 
-const generateDoc = (comment: tsdoc.DocComment) => {
-  const summary = renderDocNode(comment.summarySection);
-  const exampleBlock = comment.customBlocks.find((block) => block?.blockTag?.tagName === EXAMPLE);
-  const example = renderDocNode(exampleBlock?.content);
-  const parameters = comment.params.blocks.map((param) => ({
-    parameterName: param.parameterName,
-    description: renderDocNode(param.content),
-  }));
-  const returns = renderDocNode(comment.returnsBlock?.content);
-  const deprecated = renderDocNode(comment.deprecatedBlock);
-  return {
-    summary,
-    example,
-    parameters,
-    returns,
-    deprecated,
-  };
-};
+console.log('Generating Console plugin API docs');
 
-const getDocPath = (relPath: string, absolutePath?: string): string => {
-  // Uses '@console/dynamic-plugin-sdk' based imports
-  if (!absolutePath) {
-    const slicedPath = relPath.replace(DYNAMIC_PKG_PATH, '');
-    return resolvePath(slicedPath);
+const getPluginAPIKind = (declaration: ts.Declaration): PluginAPIInfo['kind'] => {
+  if (ts.isVariableDeclaration(declaration)) {
+    return 'Variable';
   }
-  const dirName = path.dirname(absolutePath);
-  return require.resolve(path.resolve(dirName, relPath));
+  if (ts.isTypeAliasDeclaration(declaration)) {
+    return 'TypeAlias';
+  }
+  if (ts.isInterfaceDeclaration(declaration)) {
+    return 'Interface';
+  }
+  if (ts.isEnumDeclaration(declaration)) {
+    return 'Enum';
+  }
+  throw new Error(`Unexpected declaration kind: ${declaration.kind}`);
 };
 
-const sanitizePath = (uglyPath: string): string => uglyPath.replace(/'/g, '');
+const getConsolePluginAPIs = () => {
+  const srcPath = resolvePath('src/api/core-api.ts');
+  const program = getProgramFromFile(srcPath);
+  const typeChecker = program.getTypeChecker();
+  const tsDocParser = new tsdoc.TSDocParser();
 
-const parseFile = (
-  tsdocParser: tsdoc.TSDocParser,
-  fPath: string,
-  exportedComponents: ComponentInfo[],
-  exposedComponents?: string[],
-) => {
-  const program = getProgramFromFile(fPath);
-  const sourceFile = program.getSourceFile(fPath);
-  ts.forEachChild(sourceFile, (node) => {
-    if (ts.isExportDeclaration(node)) {
-      const isAbsPath = node.moduleSpecifier.getText().includes(DYNAMIC_PKG_PATH);
-      const filePath = getDocPath(
-        sanitizePath(node.moduleSpecifier.getText()),
-        isAbsPath ? undefined : fPath,
-      );
-      if (!node.exportClause) {
-        parseFile(tsdocParser, filePath, exportedComponents, exposedComponents);
+  return typeChecker
+    .getExportsOfModule(typeChecker.getSymbolAtLocation(program.getSourceFile(srcPath)))
+    .reduce<PluginAPIInfo[]>((acc, symbol) => {
+      const name = symbol.getName();
+      let declaration = _.head(symbol.declarations);
+
+      if (ts.isExportSpecifier(declaration)) {
+        declaration = _.head(
+          typeChecker.getExportSpecifierLocalTargetSymbol(declaration)?.declarations,
+        );
       }
-      if (node.exportClause) {
-        const componentsExposed = node.exportClause;
-        const docRequired = (componentsExposed as ts.NamedExports).elements.map((element) => {
-          // Ensures `x as y` returns only x.
-          return element.getChildAt(0).getText();
+
+      const kind = getPluginAPIKind(declaration);
+      const jsDocs = ts.getJSDocCommentsAndTags(declaration).filter(ts.isJSDoc);
+
+      const pkgFilePath = relativePath(declaration.getSourceFile().fileName);
+      const srcFilePath = `frontend/packages/console-dynamic-plugin-sdk/${pkgFilePath}`;
+
+      if (jsDocs.length === 0) {
+        acc.push({
+          name,
+          kind,
+          srcFilePath,
+          isDeprecated: false,
+          doc: {
+            summary: `Documentation is not available, please refer to the implementation.`,
+          },
         });
-        parseFile(tsdocParser, require.resolve(filePath), exportedComponents, docRequired);
-      }
-    } else if (ts.isVariableStatement(node) && tsu.canHaveJsDoc(node)) {
-      const [variableDeclaration] = node.declarationList.declarations;
-      const name = variableDeclaration.name.getText();
-      if ((exposedComponents && exposedComponents.includes(name)) || !exposedComponents) {
-        const [comment] = _.compact(tsu.getJsDoc(node, sourceFile)) ?? [];
-        if (comment) {
-          const str = comment.getFullText();
-          const parsedText = tsdocParser.parseString(str).docComment;
-          exportedComponents.push({
-            name,
-            doc: generateDoc(parsedText),
-          });
-        } else {
-          exportedComponents.push({
-            name,
-            doc: generateGitLinkDoc(variableDeclaration),
-          });
-        }
-      }
-    }
-  });
-  return exportedComponents;
-};
 
-const getAPIs = () => {
-  const tsdocParser: tsdoc.TSDocParser = new tsdoc.TSDocParser();
-  console.log('Generating core API docs');
-  const FILE = resolvePath('src/api/core-api.ts');
-  const exportedComponents: ComponentInfo[] = [];
-  parseFile(tsdocParser, FILE, exportedComponents);
-  return exportedComponents;
+        return acc;
+      }
+
+      // Console APIs should be documented using a single JSDoc comment block
+      const jsDocText = jsDocs[0].getFullText();
+      const { docComment } = tsDocParser.parseString(jsDocText);
+      const getDocText = (docNode?: tsdoc.DocNode) => renderDocNode(docNode).trim();
+
+      const doc = {
+        summary: getDocText(docComment.summarySection),
+        example: getDocText(
+          docComment.customBlocks.find((block) => block.blockTag.tagName === '@example')?.content,
+        ),
+        parameters: docComment.params.blocks.map((param) => ({
+          name: param.parameterName,
+          description: getDocText(param.content),
+        })),
+        returns: getDocText(docComment.returnsBlock?.content),
+        deprecated: getDocText(docComment.deprecatedBlock),
+      };
+
+      acc.push({
+        name,
+        kind,
+        srcFilePath,
+        isDeprecated: !!doc.deprecated,
+        doc,
+      });
+
+      return acc;
+    }, []);
 };
 
 renderTemplate('scripts/templates/api.md.ejs', {
-  apis: getAPIs().sort((a, b) => {
-    if (a.doc.deprecated !== b.doc.deprecated) {
-      return a.doc.deprecated ? 1 : -1;
-    }
-    return 1;
-  }),
-  printComments: (docComments: string) => printJSDocComments([docComments]).replace(/\n/g, '<br/>'),
-  removeNewLines: (comment: string) => comment.replace('\n', ''),
-  toLowerCase: (str: string) => str.toLocaleLowerCase(),
+  apis: getConsolePluginAPIs()
+    // Sort APIs by name, list non-deprecated APIs first
+    .sort((a, b) => {
+      if (a.isDeprecated !== b.isDeprecated) {
+        return a.isDeprecated ? 1 : -1;
+      }
+      return a.name.localeCompare(b.name);
+    }),
+  declarationKinds: ['Variable', 'TypeAlias', 'Interface', 'Enum'],
+  gitBranch: parseJSONC('console-meta.jsonc')['git-branch'],
+  printComments,
+  removeNewLines: (text: string) => text.replace('\n', ''),
 });

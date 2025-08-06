@@ -4,13 +4,13 @@ Feature: Pipeline Runs
 
         Background:
             Given user has created or selected namespace "aut-pipelines"
-              And user is at pipelines page
+              And user is at pipelines page in developer view
 
 
         @regression
         Scenario Outline: Start pipeline popup details for pipeline with one resource: P-07-TC01
             Given pipeline "<pipeline_name>" consists of task "<task_name>" with one git resource
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user selects "Start" option from kebab menu for pipeline "<pipeline_name>"
              Then Start Pipeline modal displays with Workspaces, Advanced Options sections
               And start button is enabled
@@ -23,7 +23,7 @@ Feature: Pipeline Runs
         @smoke
         Scenario Outline: Start the pipeline with one resource: P-07-TC02
             Given pipeline "<pipeline_name>" consists of task "<task_name>" with one git resource
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user selects "Start" option from kebab menu for pipeline "<pipeline_name>"
               And user enters git url as "https://github.com/sclorg/nodejs-ex.git" in start pipeline modal
               And user clicks Start button in start pipeline modal
@@ -40,7 +40,7 @@ Feature: Pipeline Runs
         @smoke
         Scenario Outline: Pipeline Run Details page for pipeline without resource: P-07-TC04
             Given pipeline run is displayed for "<pipeline_name>" without resource
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user clicks Last Run value of "<pipeline_name>"
              Then user will be redirected to Pipeline Run Details page
               And user is able to see Details, YAML, TaskRuns, Parameters, Logs, Events and Output tabs
@@ -75,7 +75,7 @@ Feature: Pipeline Runs
         @smoke
         Scenario Outline: Rerun the Pipeline Run from pipeline runs page: P-07-TC07
             Given pipeline run is displayed for "<pipeline_name>" without resource
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user selects the Pipeline Run for "<pipeline_name>"
               And user navigates to Pipeline runs page
               And user selects Rerun option from kebab menu of "<pipeline_name>"
@@ -89,7 +89,7 @@ Feature: Pipeline Runs
         @smoke
         Scenario Outline: Pipeline Run Details page for a pipeline with resource: P-07-TC08
             Given pipeline run is displayed for "<pipeline_name>" with resource
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user clicks Last Run value of the pipeline "<pipeline_name>"
              Then user will be redirected to Pipeline Run Details page
               And Pipeline Resources field will be displayed
@@ -103,7 +103,7 @@ Feature: Pipeline Runs
   # Marking it as to-do due to flakiness
         Scenario Outline: Filter the pipeline runs based on status: P-07-TC09
             Given pipeline "<pipeline_name>" is executed for 3 times
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user filters the pipeline runs of pipeline "<pipeline_name>" based on the "<status>"
              Then user is able to see the filtered results with pipelineRuns status "<status>"
 
@@ -168,7 +168,7 @@ Feature: Pipeline Runs
         @manual
         Scenario: Maximum pipeline runs display in topology page: P-07-TC16
             Given user created workload "nodejs-last-run-1" from add page with pipeline
-              And user is at pipelines page
+              And user is at pipelines page in developer view
               And pipeline "nodejs-last-run-1" is executed for 5 times
              When user clicks node "nodejs-last-run-1" to open the side bar
              Then side bar is displayed with the pipelines section
@@ -342,7 +342,7 @@ Feature: Pipeline Runs
         @regression @odc-4793
         Scenario: Pipeline Run details page with Parameters tab and no parameters: P-07-TC34
             Given pipeline run is displayed for "pipeline-run-no-parameters" without resource
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user clicks Last Run value of "pipeline-run-no-parameters"
              Then user will be redirected to Pipeline Run Details page
               And user is able to see Details, YAML, TaskRuns, Parameters, Logs, Events and Output tabs
@@ -352,7 +352,7 @@ Feature: Pipeline Runs
         @regression @odc-4793
         Scenario: Pipeline Run with parameters: P-07-TC35
             Given pipeline run is displayed for "pipeline-run-parameters" with parameters
-              And user is at pipelines page
+              And user is at pipelines page in developer view
              When user clicks Last Run value of "pipeline-run-parameters"
              Then user will be redirected to Pipeline Run Details page
               And user navigates to pipelineRun parameters tab

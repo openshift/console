@@ -95,12 +95,12 @@ Then('user will see build running for {string} of type {string}', (name: string,
     cy.get('g.odc-knative-service__label > text').click({ force: true });
 
     cy.get('div.ocs-sidebar-tabsection:nth-child(6)')
-      .find('ul.list-group > li.so-build-run-item')
+      .find('ul.pf-v6-c-list > li.so-build-run-item')
       .should('have.length.greaterThan', 1);
   } else {
     cy.byLegacyTestID(name).click('center');
     cy.get('div.ocs-sidebar-tabsection:nth-child(5)')
-      .find('ul.list-group > li.so-build-run-item')
+      .find('ul.pf-v6-c-list > li.so-build-run-item')
       .should('have.length.greaterThan', 1);
   }
 });
@@ -112,12 +112,12 @@ When(
       cy.get('g.odc-knative-service__label > text').click({ force: true });
 
       cy.get('div.ocs-sidebar-tabsection:nth-child(6)').should('be.visible');
-      cy.get('ul.list-group > li.so-build-run-item').contains('View logs').click({ force: true });
+      cy.get('ul.pf-v6-c-list > li.so-build-run-item').contains('View logs').click({ force: true });
     } else {
       cy.byLegacyTestID(name).click('center');
 
       cy.get('div.ocs-sidebar-tabsection:nth-child(5)').should('be.visible');
-      cy.get('ul.list-group > li.so-build-run-item').contains('View logs').click({ force: true });
+      cy.get('ul.pf-v6-c-list > li.so-build-run-item').contains('View logs').click({ force: true });
     }
   },
 );

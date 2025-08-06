@@ -35,6 +35,7 @@ const initSharedScope = () => {
   addModule('@openshift-console/dynamic-plugin-sdk-internal', async () => () =>
     require('@console/dynamic-plugin-sdk/src/lib-internal'),
   );
+  addModule('@patternfly/react-topology', async () => () => require('@patternfly/react-topology'));
   addModule('react', async () => () => require('react'));
   addModule('react-i18next', async () => () => require('react-i18next'));
   addModule('react-redux', async () => () => require('react-redux'));

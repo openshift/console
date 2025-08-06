@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable, Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
@@ -23,6 +23,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 
 const menuActions = Kebab.factory.common;
@@ -37,14 +39,14 @@ const tableColumnClasses = [
 const TemplateInstanceTableRow: React.FC<RowFunctionArgs<TemplateInstanceKind>> = ({ obj }) => {
   return (
     <>
-      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink
           kind="TemplateInstance"
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
         />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -138,11 +140,11 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
     <>
       <PaneBody>
         <SectionHeading text={t('public~TemplateInstance details')} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={obj} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('public~Status')}</DescriptionListTerm>
@@ -167,8 +169,8 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
                 <DescriptionListDescription>{requester || '-'}</DescriptionListDescription>
               </DescriptionListGroup>
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Objects')} />

@@ -5,9 +5,10 @@ import * as fuzzy from 'fuzzysearch';
 /* eslint-disable import/named */
 import { WithTranslation, withTranslation } from 'react-i18next';
 
-import { Firehose, LoadingInline, Dropdown, ResourceName, ResourceIcon } from '.';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { Firehose, LoadingInline, ResourceName, ResourceIcon } from '.';
 import { isDefaultClass } from '../storage-class';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 /* Component StorageClassDropdown - creates a dropdown list of storage classes */
 
@@ -149,7 +150,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
   };
 
   render() {
-    const { id, loaded, describedBy, noSelection, t } = this.props;
+    const { id, loaded, describedBy, t } = this.props;
     const items = {};
     _.each(
       this.state.items,
@@ -170,25 +171,25 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
         {loaded && itemsAvailableToShow && (
           <div>
             <label
-              className={classNames(this.props.hideClassName, {
+              className={css(this.props.hideClassName, {
                 'co-required': this.props.required,
               })}
               htmlFor={id}
             >
               {t('public~StorageClass')}
             </label>
-            <Dropdown
+            <ConsoleSelect
               className="co-storage-class-dropdown"
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               autocompleteFilter={this.autocompleteFilter}
               autocompletePlaceholder={t('public~Select StorageClass')}
               items={items}
               selectedKey={selectedKey}
               title={this.state.title}
+              alwaysShowTitle
               onChange={this.onChange}
               id={id}
               dataTest={this.props?.['data-test']}
-              noSelection={noSelection}
               menuClassName="dropdown-menu--text-wrap"
             />
             {describedBy && (
@@ -230,7 +231,10 @@ const StorageClassDropdownEntry = (props) => {
       <ResourceIcon kind={props.kindLabel} />
       <span className="co-resource-item__resource-name">
         {props.name}
-        <div className="pf-v6-u-text-color-subtle small"> {storageClassDescriptionLine}</div>
+        <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
+          {' '}
+          {storageClassDescriptionLine}
+        </div>
       </span>
     </span>
   );
@@ -263,6 +267,5 @@ export type StorageClassDropdownInnerProps = WithTranslation & {
   required?: boolean;
   hideClassName?: string;
   filter?: (param) => boolean;
-  noSelection?: boolean;
   selectedKey?: string;
 };

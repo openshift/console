@@ -21,6 +21,8 @@ import {
   Toolbar,
   ToolbarContent,
   ToolbarItem,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -59,7 +61,6 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
     <PaneBody>
       <SectionHeading text={t('public~Alert routing')}>
         <Button
-          className="co-alert-manager-config__edit-alert-routing-btn"
           onClick={() => createAlertRoutingModal({ config, secret })}
           variant="secondary"
           data-test="edit-alert-routing-btn"
@@ -67,40 +68,40 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
           {t('public~Edit')}
         </Button>
       </SectionHeading>
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Group by')}</DescriptionListTerm>
-              <DescriptionListDescription data-test-id="group_by_value">
+              <DescriptionListDescription data-test="group_by_value">
                 {_.isEmpty(groupBy) ? '-' : _.join(groupBy, ', ')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Group wait')}</DescriptionListTerm>
-              <DescriptionListDescription data-test-id="group_wait_value">
+              <DescriptionListDescription data-test="group_wait_value">
                 {_.get(config, ['route', 'group_wait'], '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
-        <div className="col-sm-6">
+        </GridItem>
+        <GridItem sm={6}>
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Group interval')}</DescriptionListTerm>
-              <DescriptionListDescription data-test-id="group_interval_value">
+              <DescriptionListDescription data-test="group_interval_value">
                 {_.get(config, ['route', 'group_interval'], '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('public~Repeat interval')}</DescriptionListTerm>
-              <DescriptionListDescription data-test-id="repeat_interval_value">
+              <DescriptionListDescription data-test="repeat_interval_value">
                 {_.get(config, ['route', 'repeat_interval'], '-')}
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PaneBody>
   );
 };
@@ -192,7 +193,7 @@ const hasSimpleReceiver = (
     return true;
   } else if (receiverIntegrationTypes.length === 1) {
     const receiverConfig = receiverIntegrationTypes[0]; // ex: 'pagerduty_configs'
-    const numConfigs = _.get(receiver, receiverConfig).length; // 'pagerduty_configs' is array and may have multiple sets of properties
+    const numConfigs = _.get(receiver, receiverConfig)?.length; // 'pagerduty_configs' is array and may have multiple sets of properties
     return _.hasIn(receiverTypes, receiverConfig) && numConfigs <= 1; // known receiver type and a single set of props
   }
   return false;
@@ -250,7 +251,7 @@ const deleteReceiver = (
     return receivers;
   });
   return patchAlertmanagerConfig(secret, config).then(() => {
-    navigate('/monitoring/alertmanagerconfig');
+    navigate('/settings/cluster/alertmanagerconfig');
   });
 };
 
@@ -291,8 +292,8 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
       label: t('public~Edit Receiver'),
       callback: () => {
         const targetUrl = canUseEditForm
-          ? `/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`
-          : `/monitoring/alertmanageryaml`;
+          ? `/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`
+          : `/settings/cluster/alertmanageryaml`;
         return navigate(targetUrl);
       },
     },
@@ -321,7 +322,7 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
         {(receiver.name === InitialReceivers.Critical ||
           receiver.name === InitialReceivers.Default) &&
         !integrationTypesLabel ? (
-          <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
+          <Link to={`/settings/cluster/alertmanagerconfig/receivers/${receiver.name}/edit`}>
             {t('public~Configure')}
             <PencilAltIcon className="co-icon-space-l" />
           </Link>
@@ -461,8 +462,8 @@ const Receivers = ({ secret, config }: ReceiversProps) => {
             />
           </ToolbarItem>
           <ToolbarItem align={{ default: 'alignEnd' }}>
-            <Link to="/monitoring/alertmanagerconfig/receivers/~new">
-              <Button variant="primary" data-test-id="create-receiver">
+            <Link to="/settings/cluster/alertmanagerconfig/receivers/~new">
+              <Button variant="primary" data-test="create-receiver">
                 {t('public~Create Receiver')}
               </Button>
             </Link>

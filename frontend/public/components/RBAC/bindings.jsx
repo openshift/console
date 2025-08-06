@@ -3,7 +3,7 @@ import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { connect } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
@@ -248,16 +248,16 @@ const RoleBindingsTableRow = ({ obj: binding }) => {
       <TableData className={tableColumnClasses[0]}>
         <BindingName binding={binding} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
         <RoleLink binding={binding} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         {binding.subject.kind}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
         {binding.subject.name}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[4], 'co-break-word')}>
         {binding.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
         ) : (
@@ -609,28 +609,30 @@ const BaseEditRoleBinding = (props) => {
 
   const bindingKinds = [
     {
+      name: 'binding-type',
       value: 'RoleBinding',
-      title: t('public~Namespace role binding (RoleBinding)'),
-      desc: t(
+      label: t('public~Namespace role binding (RoleBinding)'),
+      description: t(
         'public~Grant the permissions to a user or set of users within the selected namespace.',
       ),
     },
     {
+      name: 'binding-type',
       value: 'ClusterRoleBinding',
-      title: t('public~Cluster-wide role binding (ClusterRoleBinding)'),
-      desc: t(
+      label: t('public~Cluster-wide role binding (ClusterRoleBinding)'),
+      description: t(
         'public~Grant the permissions to a user or set of users at the cluster level and in all namespaces.',
       ),
     },
   ];
 
   const subjectKinds = [
-    { value: 'User', title: t('public~User'), disabled: false },
-    { value: 'Group', title: t('public~Group'), disabled: false },
+    { name: 'subject-kind', value: 'User', label: t('public~User') },
+    { name: 'subject-kind', value: 'Group', label: t('public~Group') },
     {
+      name: 'subject-kind',
       value: 'ServiceAccount',
-      title: t('public~ServiceAccount'),
-      disabled: false,
+      label: t('public~ServiceAccount'),
     },
   ];
 
@@ -737,9 +739,7 @@ const BaseEditRoleBinding = (props) => {
                 <label htmlFor="subject-name" className="co-required">
                   {t('public~Subject name')}
                 </label>
-                <span
-                  className={classNames('pf-v6-c-form-control', { disabled: isSubjectDisabled })}
-                >
+                <span className={css('pf-v6-c-form-control', { disabled: isSubjectDisabled })}>
                   <input
                     type="text"
                     onChange={changeSubjectName}

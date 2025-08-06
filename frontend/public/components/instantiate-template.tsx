@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import {
   ActionGroup,
   Button,
@@ -16,6 +16,8 @@ import {
   TextArea,
   InputGroup,
   InputGroupItem,
+  Grid,
+  GridItem,
 } from '@patternfly/react-core';
 import { CompressIcon, ExpandIcon } from '@patternfly/react-icons/dist/js/icons';
 /* eslint-disable import/named */
@@ -23,17 +25,16 @@ import { useTranslation } from 'react-i18next';
 
 import { ANNOTATIONS, withActivePerspective } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
 import { withExtensions } from '@console/plugin-sdk';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
-import catalogImg from '../imgs/logos/catalog-icon.svg';
 import {
-  getImageForIconClass,
   getTemplateIcon,
+  getTemplateIconClass,
   normalizeIconClass,
 } from './catalog/catalog-item-icon';
-import { ButtonBar, ExternalLink, Firehose, LoadError, LoadingBox, NsDropdown } from './utils';
+import { ButtonBar, Firehose, LoadError, LoadingBox, NsDropdown } from './utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {
@@ -70,14 +71,14 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
   const annotations = template.metadata.annotations || {};
   const { description } = annotations;
   const displayName = annotations[ANNOTATIONS.displayName] || template.metadata.name;
-  const iconClass = getTemplateIcon(template);
-  const imgURL = iconClass ? getImageForIconClass(iconClass) : catalogImg;
+  const iconClass = getTemplateIconClass(template);
+  const imgURL = getTemplateIcon(template);
   const tags = (annotations.tags || '').split(/\s*,\s*/);
   const documentationURL = annotations[ANNOTATIONS.documentationURL];
   const supportURL = annotations[ANNOTATIONS.supportURL];
 
   return (
-    <div className="co-catalog-item-info">
+    <div className="pf-v6-u-mb-md">
       <div className="co-catalog-item-details">
         <div className="co-catalog-item-icon">
           <span className="co-catalog-item-icon__bg">
@@ -90,7 +91,7 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
               />
             ) : (
               <span
-                className={classNames(
+                className={css(
                   'co-catalog-item-icon__icon co-catalog-item-icon__icon--large',
                   normalizeIconClass(iconClass),
                 )}
@@ -330,11 +331,11 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
   const params = template.parameters || [];
 
   return (
-    <div className="row">
-      <div className="col-md-7 col-md-push-5 co-catalog-item-info">
+    <Grid hasGutter>
+      <GridItem md={7} order={{ default: '0', md: '1' }}>
         <TemplateInfo template={template} />
-      </div>
-      <div className="col-md-5 col-md-pull-7">
+      </GridItem>
+      <GridItem md={5} order={{ default: '1', md: '0' }}>
         <form className="pf-v6-c-form co-instantiate-template-form" onSubmit={save}>
           <div className="form-group">
             <label className="co-required" htmlFor="namespace">
@@ -381,8 +382,8 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
             </ActionGroup>
           </ButtonBar>
         </form>
-      </div>
-    </div>
+      </GridItem>
+    </Grid>
   );
 };
 

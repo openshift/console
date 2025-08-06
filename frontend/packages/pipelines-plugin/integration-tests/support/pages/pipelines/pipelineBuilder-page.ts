@@ -189,7 +189,7 @@ export const pipelineBuilderPage = {
 
   selectSampleInYamlView: (yamlSample: string) => {
     cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.sidebar).within(() => {
-      cy.get('li.co-resource-sidebar-item')
+      cy.byTestID('resource-sidebar-item')
         .contains(yamlSample)
         .parent()
         .find('button')

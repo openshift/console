@@ -5,7 +5,7 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import PipelineResourceRef from '../../shared/common/PipelineResourceRef';
 import './DynamicResourceLinkList.scss';
 
@@ -14,6 +14,7 @@ export type ResourceModelLink = {
   name: string;
   qualifier?: string;
   disableLink?: boolean;
+  resourceApiVersion?: string;
 };
 
 type DynamicResourceLinkListProps = {
@@ -34,7 +35,7 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
   }
   return (
     <div
-      className={classNames('odc-dynamic-resource-link-list', {
+      className={css('odc-dynamic-resource-link-list', {
         'odc-dynamic-resource-link-list--addSpaceBelow': !removeSpaceBelow,
       })}
     >
@@ -42,23 +43,26 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
         <DescriptionListGroup>
           {title && <DescriptionListTerm>{title}</DescriptionListTerm>}
           <DescriptionListDescription>
-            {links.map(({ name, resourceKind, qualifier = '', disableLink = false }) => {
-              let linkName = qualifier;
-              if (qualifier?.length > 0 && name !== qualifier) {
-                linkName += ` (${name})`;
-              }
-              return (
-                <div key={`${resourceKind}/${linkName}`}>
-                  <PipelineResourceRef
-                    resourceKind={resourceKind}
-                    resourceName={name}
-                    displayName={linkName}
-                    namespace={namespace}
-                    disableLink={disableLink}
-                  />
-                </div>
-              );
-            })}
+            {links.map(
+              ({ name, resourceKind, qualifier = '', disableLink = false, resourceApiVersion }) => {
+                let linkName = qualifier;
+                if (qualifier?.length > 0 && name !== qualifier) {
+                  linkName += ` (${name})`;
+                }
+                return (
+                  <div key={`${resourceKind}/${linkName}`}>
+                    <PipelineResourceRef
+                      resourceKind={resourceKind}
+                      resourceName={name}
+                      displayName={linkName}
+                      namespace={namespace}
+                      disableLink={disableLink}
+                      resourceApiVersion={resourceApiVersion}
+                    />
+                  </div>
+                );
+              },
+            )}
           </DescriptionListDescription>
         </DescriptionListGroup>
       </DescriptionList>

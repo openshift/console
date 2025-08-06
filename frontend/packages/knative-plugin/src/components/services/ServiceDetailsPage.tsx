@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom';
@@ -10,7 +10,6 @@ import { PodsPage } from '@console/internal/components/pod';
 import {
   ContainerTable,
   DetailsItem,
-  ExternalLink,
   ResourceSummary,
   SectionHeading,
   navFactory,
@@ -24,6 +23,7 @@ import {
   useTabbedTableBreadcrumbsFor,
 } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { RevisionModel, RouteModel } from '../../models';
 import { isServerlessFunction } from '../../topology/knative-topology-utils';
 import { RevisionKind, ServiceKind, ServiceTypeValue } from '../../types';
@@ -50,15 +50,15 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
     <>
       <PaneBody>
         <SectionHeading text={t('knative-plugin~Details')} />
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <ResourceSummary
               resource={obj}
               podSelector="spec.podSelector"
               showNodeSelector={false}
             />
-          </div>
-          <div className="col-md-6">
+          </GridItem>
+          <GridItem md={6}>
             <DescriptionList>
               {isServerlessFunction(obj) && (
                 <DetailsItem label={t('knative-plugin~Type')} obj={obj}>
@@ -67,11 +67,7 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
               )}
               {obj?.status?.url && (
                 <DetailsItem label={t('knative-plugin~URL')} obj={obj} path="status.url">
-                  <ExternalLink
-                    href={obj.status.url}
-                    additionalClassName="co-external-link--block"
-                    text={obj.status.url}
-                  />
+                  <ExternalLink href={obj.status.url} displayBlock text={obj.status.url} />
                 </DetailsItem>
               )}
               {revisions && revisionLoaded && !revisionErrorLoad && (
@@ -80,8 +76,8 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
                 </DetailsItem>
               )}
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('knative-plugin~Containers')} />

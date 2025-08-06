@@ -85,7 +85,7 @@
   "Prerequisites": "전제 조건",
   "Quick Starts": "퀵스타트",
   "Start": "시작",
-  "View all developer catalog items ({{itemCount, number}})": "모든 개발자 카탈로그 항목보기 ({{itemCount, number}})",
+  "View all software catalog items ({{itemCount, number}})": "모든 소프트웨어 카탈로그 항목 보기 ({{itemCount, number}})",
   "View all quick starts ({{itemCount, number}})": "모든 퀵스타트보기 ({{itemCount, number}})",
   "View all samples ({{itemCount, number}})": "모든 샘플보기 ({{itemCount, number}})",
   "Add to Project": "프로젝트에 추가",

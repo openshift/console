@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   ListPageBody,
@@ -27,8 +27,8 @@ import { getAnnotations, LazyActionMenu } from '@console/shared';
 
 const tableColumnInfo = [
   { id: 'name' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'driver' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-md'), id: 'deletionPolicy' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'driver' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'deletionPolicy' },
   { className: Kebab.columnClass, id: '' },
 ];
 
@@ -48,7 +48,7 @@ const Row: React.FC<RowProps<VolumeSnapshotClassKind>> = ({ obj }) => {
       <TableData {...tableColumnInfo[0]}>
         <ResourceLink name={name} kind={referenceForModel(VolumeSnapshotClassModel)}>
           {isDefaultSnapshotClass(obj) && (
-            <span className="small pf-v6-u-text-color-subtle co-resource-item__help-text">
+            <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
               &ndash; Default
             </span>
           )}

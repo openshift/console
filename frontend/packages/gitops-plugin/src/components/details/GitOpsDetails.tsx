@@ -19,7 +19,9 @@ import { ExternalLink, Timestamp } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { GitOpsEnvironment } from '../utils/gitops-types';
 import ArgoCdLink from './ArgoCdLink';
 import GitOpsRenderStatusLabel from './GitOpsRenderStatusLabel';
@@ -93,7 +95,7 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName, manifestUR
                       <StackItem className="co-truncate co-nowrap">
                         {env.cluster ? (
                           <ExternalLink
-                            additionalClassName="gop-gitops-details__env-section__cluster-url"
+                            className="gop-gitops-details__env-section__cluster-url"
                             href={env.cluster}
                           >
                             {env.cluster}

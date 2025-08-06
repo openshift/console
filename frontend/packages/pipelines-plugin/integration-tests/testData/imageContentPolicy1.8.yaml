@@ -379,9 +379,6 @@ spec:
     - brew.registry.redhat.io/container-native-virtualization/virt-cdi-controller
     source: registry.redhat.io/container-native-virtualization/virt-cdi-controller
   - mirrors:
-    - brew.registry.redhat.io/ocp-tools-4/service-binding-rhel8-operator
-    source: registry.redhat.io/ocp-tools-4/service-binding-rhel8-operator
-  - mirrors:
     - brew.registry.redhat.io/fuse7/fuse-apicurito-rhel8-operator-bundle
     source: registry.stage.redhat.io/fuse7/fuse-apicurito-rhel8-operator-bundle
   - mirrors:
@@ -423,9 +420,6 @@ spec:
   - mirrors:
     - brew.registry.redhat.io/advanced-cluster-security/rhacs-collector-rhel8
     source: registry.redhat.io/advanced-cluster-security/rhacs-collector-rhel8
-  - mirrors:
-    - brew.registry.redhat.io/ocp-tools-4-tech-preview/service-binding-rhel8-operator-metadata
-    source: registry.stage.redhat.io/ocp-tools-4-tech-preview/service-binding-rhel8-operator-metadata
   - mirrors:
     - brew.registry.redhat.io/multicluster-engine/cluster-api-provider-kubevirt-rhel8
     source: registry.redhat.io/multicluster-engine/cluster-api-provider-kubevirt-rhel8
@@ -1576,9 +1570,6 @@ spec:
     - brew.registry.redhat.io/odf4/odf-lvm-rhel8-operator
     source: registry.redhat.io/odf4/odf-lvm-rhel8-operator
   - mirrors:
-    - brew.registry.redhat.io/ocp-tools-4-tech-preview/service-binding-rhel8-operator
-    source: registry.redhat.io/ocp-tools-4-tech-preview/service-binding-rhel8-operator
-  - mirrors:
     - quay.io/openshift-pipeline/openshift-pipelines-pipelines-controller-rhel8
     source: registry.redhat.io/openshift-pipelines/pipelines-controller-rhel8
   - mirrors:
@@ -1791,9 +1782,6 @@ spec:
   - mirrors:
     - brew.registry.redhat.io/oadp/oadp-velero-restic-restore-helper-rhel8
     source: registry.redhat.io/oadp/oadp-velero-restic-restore-helper-rhel8
-  - mirrors:
-    - brew.registry.redhat.io/ocp-tools-4/service-binding-operator-bundle
-    source: registry.stage.redhat.io/ocp-tools-4/service-binding-operator-bundle
   - mirrors:
     - brew.registry.redhat.io/quay/clair-rhel8
     source: registry.redhat.io/quay/clair-rhel8

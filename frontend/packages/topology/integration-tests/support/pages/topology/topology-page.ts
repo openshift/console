@@ -218,7 +218,7 @@ export const topologyPage = {
   },
   verifyPipelineRunStatus: (status: string) =>
     cy
-      .get('li.list-group-item.pipeline-overview')
+      .get('li.pipeline-overview')
       .next('li')
       .find('span.co-icon-and-text span')
       .should('have.text', status),
@@ -284,7 +284,8 @@ export const topologyPage = {
   verifyDecorators: (nodeName: string, numOfDecorators: number) =>
     topologyPage.componentNode(nodeName).siblings('a').should('have.length', numOfDecorators),
   selectContextMenuAction: (action: nodeActions | string) => {
-    cy.byTestActionID(action).should('be.visible').click();
+    cy.byTestActionID(action).should('be.visible');
+    cy.get(`[data-test-action="${action}"] button`).click();
   },
   getNode: (nodeName: string) => {
     return cy.get(topologyPO.graph.nodeLabel).should('be.visible').contains(nodeName);
@@ -352,8 +353,10 @@ export const topologyPage = {
     cy.log(id);
     cy.get('[data-test-id="base-node-handler"] image').should('be.visible');
     cy.get('body').then(($el) => {
-      if ($el.find(topologyPO.sidePane.applicationGroupingsTitle).length === 0) {
+      if (!$el.find(topologyPO.sidePane.applicationGroupingsTitle).text().includes(appName)) {
         cy.get(id).next('text').click({ force: true });
+      } else {
+        cy.log('sidebar is already open');
       }
     });
     // cy.get(id).next('text').click({ force: true });
@@ -425,8 +428,8 @@ export const topologyPage = {
         },
         selectStorageClass: (storageClass: string = 'standard') => {
           cy.get(topologyPO.addStorage.pvc.createNewClaim.storageClass).click();
-          cy.byLegacyTestID('dropdown-text-filter').type(storageClass);
-          cy.get('ul[role="listbox"]').find('li').contains(storageClass).click();
+          cy.byTestID('console-select-search-input').type(storageClass);
+          cy.byTestID('console-select-menu-list').find('li').contains(storageClass).click();
         },
         enterPVCName: (name: string) => {
           cy.get(topologyPO.addStorage.pvc.createNewClaim.pvcName).type(name);

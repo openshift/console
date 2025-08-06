@@ -3,9 +3,10 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp, resourcePath } from '@console/internal/components/utils';
+import { ResourceLink, resourcePath } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { tableColumnClasses } from './HelmReleaseResourcesHeader';
 
 type HelmReleaseResourceStatusProps = {

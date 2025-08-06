@@ -11,7 +11,7 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
@@ -104,7 +104,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
               id={item.uid}
               key={item.uid}
               tabIndex={-1}
-              className={cx('ocs-quick-search-list__item', {
+              className={css('ocs-quick-search-list__item', {
                 'ocs-quick-search-list__item--highlight': item.uid === selectedItemId,
               })}
               onDoubleClick={(e: React.SyntheticEvent) => {

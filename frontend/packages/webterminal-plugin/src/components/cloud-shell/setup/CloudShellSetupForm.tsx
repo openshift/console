@@ -7,7 +7,7 @@ import AdminNamespaceSection from './AdminNamespaceSection';
 import CloudShellAdvancedOption from './CloudShellAdvancedOption';
 import NamespaceSection from './NamespaceSection';
 
-const CloudShellSetupForm: React.FC<
+const CloudShellSetupForm: React.FCC<
   Pick<
     FormikProps<FormikValues>,
     'errors' | 'handleSubmit' | 'handleReset' | 'status' | 'isSubmitting'
@@ -16,7 +16,7 @@ const CloudShellSetupForm: React.FC<
   const { t } = useTranslation();
   return (
     <FlexForm onSubmit={handleSubmit}>
-      <FormBody className="co-m-pane__form" style={{ padding: 'var(--pf-t--global--spacer--md)' }}>
+      <FormBody className="co-m-pane__form pf-v6-u-p-md">
         {isAdmin ? <AdminNamespaceSection /> : <NamespaceSection />}
         <CloudShellAdvancedOption />
       </FormBody>

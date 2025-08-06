@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, FlexItem, Button } from '@patternfly/react-core';
+import { Flex, FlexItem, Button, ButtonVariant } from '@patternfly/react-core';
 
 type StepFooterProps = {
   primaryButton: {
@@ -11,35 +11,101 @@ type StepFooterProps = {
     onClick: () => void;
   };
   children?: React.ReactNode;
+  step?: number;
+};
+
+const IntroductionModalFooter = ({
+  primaryButton,
+  secondaryButton,
+  primaryButtonCallback,
+  secondaryButtonCallback,
+}) => {
+  return (
+    <FlexItem>
+      <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+        <FlexItem>
+          <Button
+            variant={ButtonVariant.primary}
+            id="tour-step-footer-primary"
+            data-test="tour-step-footer-primary"
+            onClick={primaryButtonCallback}
+          >
+            {primaryButton}
+          </Button>
+        </FlexItem>
+        <FlexItem>
+          <Button
+            variant={ButtonVariant.link}
+            id="tour-step-footer-secondary"
+            data-test="tour-step-footer-secondary"
+            onClick={secondaryButtonCallback}
+          >
+            {secondaryButton}
+          </Button>
+        </FlexItem>
+      </Flex>
+    </FlexItem>
+  );
+};
+
+const PopoverFooter = ({
+  primaryButton,
+  secondaryButton,
+  primaryButtonCallback,
+  secondaryButtonCallback,
+}) => {
+  return (
+    <FlexItem>
+      <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+        <FlexItem>
+          <Button
+            variant={ButtonVariant.secondary}
+            id="tour-step-footer-secondary"
+            data-test="tour-step-footer-secondary"
+            onClick={secondaryButtonCallback}
+          >
+            {secondaryButton}
+          </Button>
+        </FlexItem>
+        <FlexItem>
+          <Button
+            variant={ButtonVariant.primary}
+            id="tour-step-footer-primary"
+            data-test="tour-step-footer-primary"
+            onClick={primaryButtonCallback}
+          >
+            {primaryButton}
+          </Button>
+        </FlexItem>
+      </Flex>
+    </FlexItem>
+  );
 };
 
 const StepFooter: React.FC<StepFooterProps> = ({
   children,
   primaryButton: { name: primaryButton, onClick: primaryButtonCallback },
   secondaryButton: { name: secondaryButton, onClick: secondaryButtonCallback },
+  step,
 }) => (
-  <Flex>
+  <Flex alignItems={{ default: 'alignItemsCenter' }}>
     {children && <FlexItem>{children}</FlexItem>}
-    <FlexItem align={{ default: 'alignRight' }}>
-      <Button
-        variant="secondary"
-        id="tour-step-footer-secondary"
-        data-test="tour-step-footer-secondary"
-        onClick={secondaryButtonCallback}
-      >
-        {secondaryButton}
-      </Button>
-    </FlexItem>
-    <FlexItem>
-      <Button
-        variant="primary"
-        id="tour-step-footer-primary"
-        data-test="tour-step-footer-primary"
-        onClick={primaryButtonCallback}
-      >
-        {primaryButton}
-      </Button>
-    </FlexItem>
+    {children && <FlexItem grow={{ default: 'grow' }} />}
+    {step === 0 ? (
+      <IntroductionModalFooter
+        primaryButton={primaryButton}
+        secondaryButton={secondaryButton}
+        primaryButtonCallback={primaryButtonCallback}
+        secondaryButtonCallback={secondaryButtonCallback}
+      />
+    ) : (
+      <PopoverFooter
+        primaryButton={primaryButton}
+        secondaryButton={secondaryButton}
+        primaryButtonCallback={primaryButtonCallback}
+        secondaryButtonCallback={secondaryButtonCallback}
+      />
+    )}
   </Flex>
 );
 

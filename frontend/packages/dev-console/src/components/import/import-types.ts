@@ -79,6 +79,7 @@ export interface DeployImageFormData {
   };
   isi: ImageStreamImageData;
   image: ImageStreamImageData;
+  customIcon?: string;
   runtimeIcon?: string;
   isSearchingForImage: boolean;
   resources: Resources;
@@ -111,6 +112,7 @@ export interface BaseFormData {
   application: ApplicationData;
   serverless?: ServerlessData;
   image: ImageData;
+  customIcon?: string;
   runtimeIcon?: string;
   route: RouteData;
   resources: Resources;

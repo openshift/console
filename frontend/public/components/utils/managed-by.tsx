@@ -1,6 +1,6 @@
 import * as React from 'react';
-import classNames from 'classnames';
 import { Link } from 'react-router-dom';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from './resource-icon';
 import { resourcePathFromModel, ResourceLink } from './resource-link';
@@ -67,7 +67,7 @@ export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = ({ obj, clas
   const csv = data && owner ? matchOwnerAndCSV(owner, data) : undefined;
 
   return owner && csv ? (
-    <div className={classNames('co-m-pane__heading-owner', className)}>
+    <div className={css('co-m-pane__heading-owner', className)}>
       {t('public~Managed by')}{' '}
       <ManagedByOperatorResourceLink
         className="co-resource-item"

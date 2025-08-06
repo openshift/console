@@ -50,7 +50,7 @@ export const app = {
 
 export const sidePane = {
   operatorClose: () => cy.get('button[aria-label="Close"]').click({ force: true }),
-  close: () => cy.byLegacyTestID('sidebar-close-button').click({ force: true }),
+  close: () => cy.byTestID('sidebar-close-button').click({ force: true }),
 };
 
 export const perspective = {
@@ -92,7 +92,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
       break;
     }
     case devNavigationMenu.Topology: {
-      cy.get(devNavigationMenuPO.topology).click();
+      cy.get(devNavigationMenuPO.topology).should('exist').click({ force: true });
       cy.url().should('include', 'topology');
       app.waitForLoad();
       cy.url().then(($url) => {

@@ -1,9 +1,9 @@
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 
 export const GitOpsDeploymentHistoryTableColumnClasses = [
-  classNames('pf-m-width-30'),
-  classNames('pf-m-width-30'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-m-width-25'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-md', 'pf-m-width-30'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-m-width-25'),
+  css('pf-m-width-30'),
+  css('pf-m-width-30'),
+  css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-m-width-25'),
+  css('pf-m-hidden', 'pf-m-visible-on-md', 'pf-m-width-30'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-m-width-25'),
 ];

@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -35,16 +35,16 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp,
   navFactory,
   FirehoseResourcesResult,
 } from './utils';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
 import { PodList, getFilters as getPodFilters } from './pod';
 import { JobsList } from './job';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 export const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
@@ -73,10 +73,7 @@ const CronJobTableRow: React.FC<RowFunctionArgs<CronJobKind>> = ({ obj: cronjob 
           namespace={cronjob.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={cronjob.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>{cronjob.spec.schedule}</TableData>
@@ -102,8 +99,8 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   return (
     <>
       <PaneBody>
-        <div className="row">
-          <div className="col-md-6">
+        <Grid hasGutter>
+          <GridItem md={6}>
             <SectionHeading text={t('public~CronJob details')} />
             <ResourceSummary resource={cronjob}>
               <DetailsItem label={t('public~Schedule')} obj={cronjob} path="spec.schedule" />
@@ -132,8 +129,8 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
                 <Timestamp timestamp={cronjob.status.lastScheduleTime} />
               </DetailsItem>
             </ResourceSummary>
-          </div>
-          <div className="col-md-6">
+          </GridItem>
+          <GridItem md={6}>
             <SectionHeading text={t('public~Job details')} />
             <DescriptionList>
               <DetailsItem
@@ -157,8 +154,8 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
               </DetailsItem>
               <PodDisruptionBudgetField obj={cronjob} />
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Containers')} />

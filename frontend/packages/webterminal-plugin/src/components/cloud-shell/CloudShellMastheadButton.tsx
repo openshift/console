@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, Tooltip } from '@patternfly/react-core';
 import { TerminalIcon } from '@patternfly/react-icons/dist/esm/icons/terminal-icon';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
@@ -20,11 +20,11 @@ type StateProps = {
 
 type Props = StateProps & DispatchProps;
 
-const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
+const ClouldShellMastheadButton: React.FCC<Props> = ({ onClick, open }) => {
   const terminalAvailable = useCloudShellAvailable();
   const fireTelemetryEvent = useTelemetry();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('webterminal-plugin');
 
   if (!terminalAvailable) {
     return null;
@@ -36,15 +36,17 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
   };
 
   return (
-    <Button
-      icon={<TerminalIcon />}
-      variant="plain"
-      aria-label={t('webterminal-plugin~Command line terminal')}
-      onClick={openCloudshell}
-      className={classNames({ 'pf-m-selected': open }, 'co-masthead-button')}
-      data-tour-id="tour-cloud-shell-button"
-      data-quickstart-id="qs-masthead-cloudshell"
-    />
+    <Tooltip content={t('OpenShift command line')} position="bottom" enableFlip>
+      <Button
+        icon={<TerminalIcon />}
+        variant="plain"
+        aria-label={t('Command line terminal')}
+        onClick={openCloudshell}
+        className={css({ 'pf-m-selected': open }, 'co-masthead-button')}
+        data-tour-id="tour-cloud-shell-button"
+        data-quickstart-id="qs-masthead-cloudshell"
+      />
+    </Tooltip>
   );
 };
 

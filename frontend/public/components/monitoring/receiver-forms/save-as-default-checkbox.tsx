@@ -1,7 +1,6 @@
-import classNames from 'classnames';
 import * as React from 'react';
-import { Tooltip } from '@patternfly/react-core';
-import { BlueInfoCircleIcon } from '@console/shared';
+import { Checkbox, FormGroup } from '@patternfly/react-core';
+import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 
 export const SaveAsDefaultCheckbox: React.FC<SaveAsDefaultCheckboxProps> = ({
   formField,
@@ -11,29 +10,27 @@ export const SaveAsDefaultCheckbox: React.FC<SaveAsDefaultCheckboxProps> = ({
   dispatchFormChange,
   tooltip,
 }) => {
-  const saveAsDefaultLabelClass = classNames('checkbox', { 'co-no-bold': disabled });
   return (
-    <label className={saveAsDefaultLabelClass} htmlFor={formField}>
-      <input
-        type="checkbox"
-        id={formField}
-        data-test-id="save-as-default"
-        onChange={(e) =>
+    <FormGroup>
+      <Checkbox
+        label={
+          <>
+            {label}
+            <FieldLevelHelp>{tooltip}</FieldLevelHelp>
+          </>
+        }
+        isChecked={formValues[formField]}
+        isDisabled={disabled}
+        onChange={(_e, checked) =>
           dispatchFormChange({
             type: 'setFormValues',
-            payload: { [formField]: e.target.checked },
+            payload: { [formField]: checked },
           })
         }
-        checked={formValues[formField]}
-        aria-checked={formValues[formField]}
-        disabled={disabled}
-        aria-disabled={disabled}
+        id={formField}
+        data-test="save-as-default"
       />
-      <span className="co-alert-manager-config__save-as-default-label">{label}</span>
-      <Tooltip content={<p>{tooltip}</p>}>
-        <BlueInfoCircleIcon />
-      </Tooltip>
-    </label>
+    </FormGroup>
   );
 };
 

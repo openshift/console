@@ -10,11 +10,13 @@ import {
   SimpleList,
   Skeleton,
   SimpleListItem,
+  Icon,
 } from '@patternfly/react-core';
+import { ArrowRightIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-
 import './GettingStartedCard.scss';
 
 export interface GettingStartedLink {
@@ -58,8 +60,6 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
       id: activePerspective,
     });
   };
-  const getLinkTitleClassNames = (external: boolean) =>
-    external ? 'co-external-link pf-v6-u-display-block' : 'co-goto-arrow';
 
   return (
     <Flex
@@ -84,14 +84,13 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
           <SimpleList isControlled={false} className="ocs-getting-started-card__list">
             {links.map((link) =>
               link.loading ? (
-                <li key={link.id}>
+                <li key={link.id} data-test="getting-started-skeleton">
                   <Skeleton fontSize="sm" />
                 </li>
               ) : (
                 <SimpleListItem
                   key={link.id}
                   component={link.href ? (link.external ? 'a' : (Link as any)) : 'button'}
-                  componentClassName={link.description ? '' : getLinkTitleClassNames(link.external)}
                   componentProps={
                     link.external
                       ? {
@@ -111,16 +110,17 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                     link.onClick?.(e);
                   }}
                 >
-                  {link.description ? (
-                    <>
-                      <Content component="p" className={getLinkTitleClassNames(link.external)}>
-                        {link.title}
-                      </Content>
+                  <>
+                    <Content component="p">
+                      {link.title}
+                      <Icon size="bodySm" className="pf-v6-u-ml-xs">
+                        {link.external ? <ExternalLinkAltIcon /> : <ArrowRightIcon />}
+                      </Icon>
+                    </Content>
+                    {link.description && (
                       <Content component={ContentVariants.small}>{link.description}</Content>
-                    </>
-                  ) : (
-                    link.title
-                  )}
+                    )}
+                  </>
                 </SimpleListItem>
               ),
             )}
@@ -143,16 +143,13 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
               {moreLink.title}
             </Button>
           ) : moreLink.external ? (
-            <a
+            <ExternalLink
               onClick={telemetryCallback}
               href={moreLink.href}
-              target="_blank"
-              className="co-external-link"
-              rel="noopener noreferrer"
               data-test={`item ${moreLink.id}`}
             >
               {moreLink.title}
-            </a>
+            </ExternalLink>
           ) : (
             <Link to={moreLink.href} data-test={`item ${moreLink.id}`} onClick={telemetryCallback}>
               {moreLink.title}

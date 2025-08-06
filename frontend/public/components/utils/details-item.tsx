@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import {
   Breadcrumb,
@@ -122,7 +122,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
         </Split>
       </DescriptionListTermHelpText>
       <DescriptionListDescription
-        className={classNames(valueClassName, {
+        className={css(valueClassName, {
           'co-editable-label-group': editable && editAsGroup,
         })}
         data-test-selector={`details-item-value__${label}`}

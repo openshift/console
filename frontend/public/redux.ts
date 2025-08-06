@@ -26,7 +26,7 @@ export type RootState = {
 } & SDKStoreState &
   FeatureSubStore;
 
-const baseReducers = Object.freeze({
+export const baseReducers = Object.freeze({
   observe: ObserveReducers,
   UI: UIReducers,
   [featureReducerName]: featureReducer,

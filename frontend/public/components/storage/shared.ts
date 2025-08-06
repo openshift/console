@@ -145,16 +145,17 @@ export const getAccessModeOptions = () => [
 export const getVolumeModeRadios = () => [
   {
     value: 'Filesystem',
-    title: i18next.t('public~Filesystem'),
+    label: i18next.t('public~Filesystem'),
   },
   {
     value: 'Block',
-    title: i18next.t('public~Block'),
+    label: i18next.t('public~Block'),
   },
 ];
 
+// Link to the Kubernetes documentation for supported units in PVC resource request storage:
+// https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
 export const dropdownUnits = {
-  i: 'B',
   Ki: 'KiB',
   Mi: 'MiB',
   Gi: 'GiB',

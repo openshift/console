@@ -1,8 +1,15 @@
 import * as React from 'react';
-import { DescriptionList, EmptyState, EmptyStateVariant, Tooltip } from '@patternfly/react-core';
+import {
+  DescriptionList,
+  EmptyState,
+  EmptyStateVariant,
+  Grid,
+  GridItem,
+  Tooltip,
+} from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
+import { css } from '@patternfly/react-styles';
 import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
-import classNames from 'classnames';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +27,6 @@ import {
 import { ContainerLink } from '@console/internal/components/pod';
 import {
   ResourceLink,
-  ExternalLink,
   navFactory,
   SectionHeading,
   ResourceSummary,
@@ -32,6 +38,7 @@ import {
 import { referenceForModel, PodKind, ContainerStatus } from '@console/internal/module/k8s';
 import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { vulnPriority, totalFor, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import { ImageManifestVuln } from '../types';
@@ -64,11 +71,11 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
         <ImageVulnerabilityToggleGroup obj={props.obj} />
       </PaneBody>
       <PaneBody>
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={props.obj} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <DescriptionList>
               <DetailsItem
                 label={t('container-security~Registry')}
@@ -86,8 +93,8 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
                 </DetailsItem>
               )}
             </DescriptionList>
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <div className="cs-imagevulnerabilitieslist__wrapper">
         <ImageVulnerabilitiesList {...props} />
@@ -147,12 +154,12 @@ export const ImageManifestVulnDetailsPage: React.FC = () => {
 
 const tableColumnClasses = [
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-md', 'co-break-word'),
+  css('pf-m-hidden', 'pf-m-visible-on-md', 'co-break-word'),
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-md'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  css('pf-m-hidden', 'pf-m-visible-on-md'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-xl'),
+  css('pf-m-hidden', 'pf-m-visible-on-xl'),
 ];
 
 export const ImageManifestVulnTableRow: React.FC<RowFunctionArgs<ImageManifestVuln>> = ({
@@ -190,7 +197,7 @@ export const ImageManifestVulnTableRow: React.FC<RowFunctionArgs<ImageManifestVu
         {queryURL ? (
           <ExternalLink text={shortenHash(obj.spec.manifest)} href={queryURL} />
         ) : (
-          <span className="small pf-v6-u-text-color-subtle">-</span>
+          <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">-</span>
         )}
       </TableData>
     </>

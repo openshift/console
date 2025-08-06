@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
-import * as cx from 'classnames';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import {
@@ -194,7 +194,7 @@ const TaskComponent: React.FC<TaskProps> = ({
       ref={nameRef}
       x={showStatusState ? 30 : width / 2}
       y={height / 2 + 1}
-      className={cx('odc-pipeline-vis-task-text', {
+      className={css('odc-pipeline-vis-task-text', {
         'is-text-center': !isPipelineRun,
         'is-linked': enableLogLink,
       })}
@@ -211,7 +211,7 @@ const TaskComponent: React.FC<TaskProps> = ({
         width={width}
         height={height}
         rx={15}
-        className={cx('odc-pipeline-vis-task', {
+        className={css('odc-pipeline-vis-task', {
           'is-selected': selected,
           'is-linked': enableLogLink,
         })}
@@ -235,7 +235,7 @@ const TaskComponent: React.FC<TaskProps> = ({
             }}
           >
             <g
-              className={cx({
+              className={css({
                 'co-spin odc-pipeline-vis-task--icon-spin':
                   status.reason === ComputedStatus.Running,
                 'odc-pipeline-vis-task--icon-stop': status.reason !== ComputedStatus.Running,

@@ -1,11 +1,13 @@
 # OpenShift Console API
 
 <%# Table of contents _%>
-<% apis.forEach((api, index) => { _%>
-<%- index + 1 %>. <%- api.doc.deprecated ? '[DEPRECATED]' : '' %> [<%- api.name %>](#<%- toLowerCase(api.name) %>)
+| API kind | Exposed APIs |
+| -------- | ------------ |
+<% declarationKinds.forEach((kind) => { _%>
+| <%- `${kind} (${apis.filter((api) => api.kind === kind).length})` %> | <%- apis.filter((api) => api.kind === kind).map((api) => `[${api.name}](#${api.name.toLocaleLowerCase()})`).join(', ') %> |
 <% }); _%>
 
-<%# Generate one section per extension type _%>
+<%# Generate one section per API item _%>
 <% apis.forEach((api) => { _%>
 ---
 
@@ -15,28 +17,30 @@
 
 <%- printComments((api.doc.deprecated ? api.doc.deprecated : '') + api.doc.summary) || '(not available)' %>
 
-<% if(api.doc.example) { %>
-
+<% if (api.doc.example) { %>
 ### Example
 
-<%- api.doc.example  %>
-
+<%- api.doc.example %>
 <% } %>
 
-<% if(api.doc.parameters?.length > 0) { %>
+<% if (api.doc.parameters?.length > 0) { %>
 ### Parameters
 
 | Parameter Name | Description |
 | -------------- | ----------- |
 <% api.doc.parameters.forEach((param) => { _%>
-| `<%- param.parameterName %>` | <%- removeNewLines(param.description) %> |
+| `<%- param.name %>` | <%- removeNewLines(param.description) %> |
 <% }); _%>
 <% } %>
 
-<% if(api.doc.returns) { %>
+<% if (api.doc.returns) { %>
 ### Returns
 
 <%- printComments(api.doc.returns) %>
-
 <% } %>
+
+### Source
+
+[`<%- api.srcFilePath %>`](https://github.com/openshift/console/tree/<%- `${gitBranch}/${api.srcFilePath}` %>)
+
 <% }); _%>

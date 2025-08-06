@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
@@ -36,7 +36,7 @@ import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 export const menuActions: KebabAction[] = [
   AddHealthChecks,
@@ -51,9 +51,9 @@ const kind = 'DaemonSet';
 const tableColumnClasses = [
   '',
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg'),
+  css('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
 
@@ -94,19 +94,19 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
         ) : (
           <LoadingInline />
         )}
-        <div className="row">
-          <div className="col-lg-6">
+        <Grid hasGutter>
+          <GridItem lg={6}>
             <ResourceSummary
               resource={daemonset}
               showPodSelector
               showNodeSelector
               showTolerations
             />
-          </div>
-          <div className="col-lg-6">
+          </GridItem>
+          <GridItem lg={6}>
             <DaemonSetDetailsList ds={daemonset} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Containers')} />
@@ -149,10 +149,7 @@ const DaemonSetTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj: da
           namespace={daemonset.metadata.namespace}
         />
       </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={daemonset.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>

@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   ListPageBody,
@@ -17,7 +17,6 @@ import { useActiveColumns } from '@console/internal/components/factory/Table/act
 import {
   ResourceLink,
   ResourceKebab,
-  Timestamp,
   Kebab,
   humanizeBinaryBytes,
   PageComponentProps,
@@ -30,15 +29,16 @@ import {
 } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 export const tableColumnInfo = [
   { id: 'name' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'status' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'size' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'volumeSnapshot' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'snapshotClass' },
-  { className: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'createdAt' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'status' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'size' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'volumeSnapshot' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'snapshotClass' },
+  { className: css('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'createdAt' },
   { className: Kebab.columnClass, id: '' },
 ];
 

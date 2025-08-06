@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { css } from '@patternfly/react-styles';
 import {
   Node,
   observer,
@@ -12,11 +13,9 @@ import {
   useDndDrop,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
 import {
   canDropEdgeOnNode,
   highlightNode,
@@ -24,7 +23,7 @@ import {
   nodesEdgeIsDragging,
 } from '../../components/graph-view/components';
 import { getKindStringAndAbbreviation } from '../../components/graph-view/components/nodes/nodeUtils';
-import { getServiceBindingStatus, getResource } from '../../utils/topology-utils';
+import { getResource } from '../../utils/topology-utils';
 import OperatorBackedServiceGroup from './OperatorBackedServiceGroup';
 import OperatorBackedServiceNode from './OperatorBackedServiceNode';
 
@@ -94,7 +93,7 @@ const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({
   const { data } = element.getData();
   const ownerReferenceKind = referenceFor({ kind: data.operatorKind, apiVersion: data.apiVersion });
   const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation(ownerReferenceKind);
-  const badgeClassName = classNames('odc-resource-icon', {
+  const badgeClassName = css('odc-resource-icon', {
     [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
   });
 
@@ -127,9 +126,9 @@ const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
+const mapStateToProps = (): StateProps => {
   return {
-    serviceBinding: getServiceBindingStatus(state),
+    serviceBinding: null,
   };
 };
 

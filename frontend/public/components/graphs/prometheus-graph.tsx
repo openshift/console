@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -24,7 +24,7 @@ const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   namespace,
   ariaChartLinkLabel,
 }) => {
-  const [perspective] = useActivePerspective();
+  const [activePerspective, setActivePerspective] = useActivePerspective();
   const queries = _.compact(_.castArray(query));
   if (!queries.length) {
     return <>{children}</>;
@@ -34,7 +34,7 @@ const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   queries.forEach((q, index) => params.set(`query${index}`, q));
 
   const url =
-    canAccessMonitoring && perspective === 'admin'
+    canAccessMonitoring && activePerspective === 'admin'
       ? `/monitoring/query-browser?${params.toString()}`
       : `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`;
 
@@ -43,6 +43,11 @@ const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
       to={url}
       aria-label={ariaChartLinkLabel}
       style={{ color: 'inherit', textDecoration: 'none' }}
+      onClick={() => {
+        if (url.startsWith('/dev-monitoring/') && activePerspective !== 'dev') {
+          setActivePerspective('dev');
+        }
+      }}
     >
       {children}
     </Link>
@@ -52,7 +57,7 @@ export const PrometheusGraphLink = connect(mapStateToProps)(PrometheusGraphLink_
 
 export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
   ({ children, className, title }, ref: React.RefObject<HTMLDivElement>) => (
-    <div ref={ref} className={classNames('graph-wrapper graph-wrapper__horizontal-bar', className)}>
+    <div ref={ref} className={css('graph-wrapper graph-wrapper__horizontal-bar', className)}>
       {title && (
         <Title headingLevel="h5" className="graph-title">
           {title}

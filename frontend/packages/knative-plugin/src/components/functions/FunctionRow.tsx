@@ -1,15 +1,12 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import { css } from '@patternfly/react-styles';
 import { Link } from 'react-router-dom';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import {
-  ResourceLink,
-  Timestamp,
-  ExternalLink,
-  ResourceIcon,
-} from '@console/internal/components/utils';
+import { ResourceLink, ResourceIcon } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu, ClampedText } from '@console/shared';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ServiceModel } from '../../models';
 import { ServiceKind, ConditionTypes } from '../../types';
 import { getCondition } from '../../utils/condition-utils';
@@ -36,16 +33,12 @@ const FunctionRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
           {obj.metadata.name}
         </Link>
       </TableData>
-      <TableData className={cx(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
+      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
-      <TableData className={cx(tableColumnClasses[2], 'co-break-word')}>
+      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         {(obj.status && obj.status.url && (
-          <ExternalLink
-            href={obj.status.url}
-            additionalClassName="co-external-link--block"
-            text={obj.status.url}
-          />
+          <ExternalLink href={obj.status.url} displayBlock text={obj.status.url} />
         )) ||
           '-'}
       </TableData>

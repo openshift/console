@@ -1,17 +1,14 @@
 import { Given, When, Then, And } from 'cypress-cucumber-preprocessor/steps';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { switchPerspective } from '@console/dev-console/integration-tests/support/constants';
-import { devNavigationMenuPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import {
-  perspective,
-  projectNameSpace,
-} from '@console/dev-console/integration-tests/support/pages';
+import { perspective } from '@console/dev-console/integration-tests/support/pages';
+import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { checkTerminalIcon } from '@console/dev-console/integration-tests/support/pages/functions/checkTerminalIcon';
 import { webTerminalPage } from '@console/webterminal-plugin/integration-tests/support/step-definitions/pages/web-terminal/webTerminal-page';
 
-const idp = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'consoledeveloper';
-const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'consoledeveloper';
-const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'developer';
+const idp = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'test';
+const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
+const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
 const kubeAdmUserName = Cypress.env('KUBEADMIN_NAME') || 'kubeadmin';
 const kubeAdmUserPass = Cypress.env('BRIDGE_KUBEADMIN_PASSWORD');
 
@@ -49,7 +46,7 @@ When('user clicks on the Web Terminal icon on the Masthead', () => {
 Then('user will see the terminal window', () => {
   cy.get('.co-cloudshell-terminal__container').should('be.visible');
   // cy.wait(15000);
-  // webTerminalPage.verifyConnectionRediness();
+  webTerminalPage.verifyConnectionRediness();
 });
 
 // check  existing of web terminal in the dedicated project. Create it for the correct checking if a webterminal instance is not existed.
@@ -76,19 +73,13 @@ And('user has logged in as basic user', () => {
   // sometimes guide tour is not closed properly without delay
   cy.wait(1000);
   guidedTour.close();
-  perspective.switchTo(switchPerspective.Developer);
-  cy.get(devNavigationMenuPO.project).click();
 });
 
 Given('user is at developer perspective', () => {
+  checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
 });
 
 Given('user is at administrator perspective', () => {
   perspective.switchTo(switchPerspective.Administrator);
-});
-
-Given('user has created or selected namespace {string}', (projectName: string) => {
-  Cypress.env('NAMESPACE', projectName);
-  projectNameSpace.selectOrCreateProject(`${projectName}`);
 });
