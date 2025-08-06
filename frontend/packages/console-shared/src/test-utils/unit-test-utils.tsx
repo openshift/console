@@ -3,7 +3,7 @@ import { Form } from '@patternfly/react-core';
 import { render, RenderOptions } from '@testing-library/react';
 import { Formik, FormikValues } from 'formik';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom-v5-compat';
+import { MemoryRouter } from 'react-router-dom';
 import { combineReducers, createStore } from 'redux';
 import { RootState, baseReducers } from '@console/internal/redux';
 

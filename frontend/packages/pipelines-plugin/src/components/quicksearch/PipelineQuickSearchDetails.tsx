@@ -41,6 +41,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
+  const navigate = useNavigate();
   const [selectedVersion, setSelectedVersion] = React.useState<string>();
   const [versions, setVersions] = React.useState(selectedItem?.attributes?.versions ?? []);
   const [hasInstalledVersion, setHasInstalledVersion] = React.useState<boolean>(
@@ -176,7 +177,9 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
                 variant={ButtonVariant.primary}
                 className="opp-quick-search-details__form-button"
                 onClick={(e) => {
-                  handleCta(e, selectedItem, closeModal, fireTelemetryEvent, { selectedVersion });
+                  handleCta(e, selectedItem, navigate, closeModal, fireTelemetryEvent, {
+                    selectedVersion,
+                  });
                 }}
               >
                 {getCtaButtonText(selectedItem, selectedVersion)}

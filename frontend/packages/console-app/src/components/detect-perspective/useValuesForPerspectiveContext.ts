@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { PerspectiveType } from '@console/dynamic-plugin-sdk';
 import { usePerspectiveExtension, usePerspectives, useTelemetry } from '@console/shared';
 import { ACM_PERSPECTIVE_ID } from '../../consts';

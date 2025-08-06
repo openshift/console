@@ -14,11 +14,6 @@ export const configureReplicaCountModal = (props) =>
     m.configureReplicaCountModal(props),
   );
 
-export const configureJobParallelismModal = (props) =>
-  import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */).then((m) =>
-    m.configureJobParallelismModal(props),
-  );
-
 export const confirmModal = (props) =>
   import('./confirm-modal' /* webpackChunkName: "confirm-modal" */).then((m) =>
     m.confirmModal(props),
@@ -36,11 +31,6 @@ export const configureNamespacePullSecretModal = (props) =>
   import(
     './configure-ns-pull-secret-modal' /* webpackChunkName: "configure-ns-pull-secret-modal" */
   ).then((m) => m.configureNamespacePullSecretModal(props));
-
-export const labelsModalLauncher = (props) =>
-  import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
-    m.labelsModalLauncher(props),
-  );
 
 export const podSelectorModal = (props) =>
   import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>

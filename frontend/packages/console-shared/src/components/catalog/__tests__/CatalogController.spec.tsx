@@ -4,8 +4,8 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import * as UseQueryParams from '@console/shared/src/hooks/useQueryParams';
 import CatalogController from '../CatalogController';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useLocation: () => {
     return 'path';
   },

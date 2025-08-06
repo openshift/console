@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { ActionGroup, Button, Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   ContainerSpec,
   k8sCreate,

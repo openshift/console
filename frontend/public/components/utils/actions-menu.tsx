@@ -7,7 +7,7 @@ import { Dropdown, MenuToggle, MenuToggleElement } from '@patternfly/react-core'
 import { some } from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 
 import { ReactNode, RefObject, useEffect, useState } from 'react';
 import { KebabItems, KebabOption } from './kebab';

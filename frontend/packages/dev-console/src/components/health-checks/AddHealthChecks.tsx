@@ -3,11 +3,11 @@ import { Form } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   ContainerSelect,
   documentationURLs,
   getDocumentationURL,
-  history,
   isManaged,
   ResourceLink,
 } from '@console/internal/components/utils';
@@ -43,6 +43,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
 }) => {
   const viewOnly = useViewOnlyAccess(resource);
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [currentKey, setCurrentKey] = React.useState(currentContainer);
   const containers = resource?.spec?.template?.spec?.containers;
   const healthCheckAdded = _.every(
@@ -71,7 +72,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
     setCurrentKey(containerName);
     setFieldValue('containerName', containerName);
     setFieldValue('healthChecks', getHealthChecksData(resource, containerIndex));
-    history.replace(
+    navigate(
       `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containerName}/health-checks`,
     );
   };

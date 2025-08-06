@@ -16,7 +16,7 @@ import {
   WithSelectionProps,
 } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';

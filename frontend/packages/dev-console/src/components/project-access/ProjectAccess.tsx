@@ -3,7 +3,7 @@ import { Content, ContentVariants } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import {
   documentationURLs,
   getDocumentationURL,
@@ -157,7 +157,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
               {...formikProps}
               roles={roles.data}
               roleBindings={initialValues}
-              onCancel={fullFormView ? history.goBack : null}
+              onCancel={fullFormView ? () => history.go(-1) : null}
             />
           )}
         </Formik>

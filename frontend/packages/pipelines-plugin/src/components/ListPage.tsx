@@ -6,7 +6,7 @@ import { SimpleDropdown } from '@patternfly/react-templates';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { Link, useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ColumnLayout } from '@console/dynamic-plugin-sdk';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { ListPageHeader } from '@console/dynamic-plugin-sdk/src/lib-core';

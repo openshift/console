@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import { ConfigMapModel } from '@console/internal/models';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { StatusBox } from '../utils/status-box';

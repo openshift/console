@@ -9,7 +9,7 @@ import {
   PageSection,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import {
   useResolvedExtensions,
   UserPreferenceGroup,

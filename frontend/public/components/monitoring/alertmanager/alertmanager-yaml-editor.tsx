@@ -7,7 +7,6 @@ import { Alert, Content, ContentVariants, PageSection } from '@patternfly/react-
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
-
 import { K8sResourceKind } from '../../../module/k8s';
 import { AsyncComponent, Firehose, StatusBox } from '../../utils';
 import { patchAlertmanagerConfig, getAlertmanagerYAML } from './alertmanager-utils';

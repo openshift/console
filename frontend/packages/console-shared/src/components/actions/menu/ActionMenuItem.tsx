@@ -3,8 +3,10 @@ import { DropdownItemProps, KeyTypes, MenuItem, Tooltip } from '@patternfly/reac
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Action, ImpersonateKind, impersonateStateToProps } from '@console/dynamic-plugin-sdk';
-import { useAccessReview, history } from '@console/internal/components/utils';
+import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
+import { useAccessReview } from '@console/internal/components/utils';
 
 export type ActionMenuItemProps = {
   action: Action;
@@ -22,25 +24,32 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   isAllowed,
   component,
 }) => {
-  const { label, icon, disabled, cta } = action;
-  const { href, external } = cta as { href: string; external?: boolean };
+  const { label, icon, disabled, cta, modalInfo } = action;
+  const navigate = useNavigate();
+  const { href, external } = (cta ?? {}) as { href?: string; external?: boolean };
   const isDisabled = !isAllowed || disabled;
   const classes = css({ 'pf-m-disabled': isDisabled });
+  const launcher = useModal();
 
   const handleClick = React.useCallback(
     (event) => {
       event.preventDefault();
-      if (_.isFunction(cta)) {
+      // TODO - refine after consolidating the Action type
+      if (modalInfo) {
+        launcher(modalInfo.component, {
+          ...modalInfo.props,
+        });
+      } else if (_.isFunction(cta)) {
         cta();
       } else if (_.isObject(cta)) {
         if (!cta.external) {
-          history.push(cta.href);
+          navigate(cta.href);
         }
       }
       onClick && onClick();
       event.stopPropagation();
     },
-    [cta, onClick],
+    [cta, modalInfo, onClick, launcher, navigate],
   );
 
   const handleKeyDown = (event) => {

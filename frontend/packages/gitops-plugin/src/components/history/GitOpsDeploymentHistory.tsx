@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Location } from 'history';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation, Location } from 'react-router-dom';
 import { Table } from '@console/internal/components/factory';
 import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
 import { LoadingBox } from '@console/internal/components/utils';
@@ -18,7 +17,7 @@ type GitOpsDeploymentHistoryProps = {
     emptyStateMsg: string;
     envs: string[];
     applicationBaseURI: string;
-    location?: Location;
+    location?: Location<any>;
   };
 };
 

@@ -1,4 +1,4 @@
-import { Link, LinkProps } from 'react-router-dom-v5-compat';
+import { Link, LinkProps } from 'react-router-dom';
 
 /**
  * A helper which creates a `Link` component that **only**

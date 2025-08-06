@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
-import { useLocation, useParams, Link, useSearchParams } from 'react-router-dom-v5-compat';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { Map as ImmutableMap } from 'immutable';
@@ -175,15 +173,13 @@ const stateToProps = ({ k8s }) => ({
   models: k8s.getIn(['RESOURCES', 'models']),
 });
 
-const APIResourcesList = compose(
-  withRouter,
-  connect<APIResourcesListPropsFromState>(stateToProps),
-)(({ models, location }) => {
+const APIResourcesList_ = ({ models }) => {
   const ALL = '#all#';
   const GROUP_PARAM = 'g';
   const VERSION_PARAM = 'v';
   const TEXT_FILTER_PARAM = 'q';
   const SCOPE_PARAM = 's';
+  const location = useLocation();
   const search = new URLSearchParams(location.search);
   // Differentiate between an empty group and an unspecified param.
   const groupFilter = search.has(GROUP_PARAM) ? search.get(GROUP_PARAM) : ALL;
@@ -381,7 +377,11 @@ const APIResourcesList = compose(
       />
     </PaneBody>
   );
-});
+};
+
+export const APIResourcesList = connect<APIResourcesListPropsFromState>(stateToProps)(
+  APIResourcesList_,
+);
 APIResourcesList.displayName = 'APIResourcesList';
 
 export const APIExplorerPage: React.FC<{}> = () => {

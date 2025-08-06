@@ -1,16 +1,16 @@
 import * as React from 'react';
+import { NavigateFunction } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { history } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import HelmReleaseDetails from './HelmReleaseDetails';
 
-const handleNamespaceChange = (newNamespace: string): void => {
+const handleNamespaceChange = (newNamespace: string, navigate: NavigateFunction): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {
-    history.push('/helm-releases/all-namespaces');
+    navigate('/helm-releases/all-namespaces');
   } else {
-    history.push('/helm-releases/ns/:ns');
+    navigate('/helm-releases/ns/:ns');
   }
 };
 

@@ -3,7 +3,7 @@ import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router-dom';
 import {
   MultiListPage,
   Table,

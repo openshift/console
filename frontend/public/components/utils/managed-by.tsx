@@ -1,8 +1,7 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { css } from '@patternfly/react-styles';
-import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
-
 import { ResourceIcon } from './resource-icon';
 import { resourcePathFromModel, ResourceLink } from './resource-link';
 import {

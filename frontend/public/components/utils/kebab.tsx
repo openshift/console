@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import { KebabActions, isKebabActions } from '@console/plugin-sdk/src/typings/kebab-actions';
 import {
@@ -20,12 +20,12 @@ import {
   ProjectHelmChartRepositoryModel,
 } from '@console/helm-plugin/src/models';
 import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import { ModalInfo } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import {
   annotationsModalLauncher,
   configureReplicaCountModal,
   taintsModal,
   tolerationsModal,
-  labelsModalLauncher,
   podSelectorModal,
   deleteModal,
 } from '../modals';
@@ -47,6 +47,7 @@ import {
   DeploymentModel,
   RouteModel,
 } from '../../models';
+import { LabelsProviderModal } from '../modals/labels-modal';
 import { ContextSubMenuItem } from '@patternfly/react-topology';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
@@ -228,12 +229,10 @@ const kebabFactory: KebabFactory = {
   ModifyLabels: (kind, obj) => ({
     // t('public~Edit labels')
     labelKey: 'public~Edit labels',
-    callback: () =>
-      labelsModalLauncher({
-        kind,
-        resource: obj,
-        blocking: true,
-      }),
+    modalInfo: {
+      component: LabelsProviderModal,
+      props: { kind, resource: obj },
+    },
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyPodSelector: (kind, obj) => ({
@@ -432,6 +431,7 @@ export type KebabOption = {
   labelKind?: { [key: string]: string | string[] };
   href?: string;
   callback?: () => any;
+  modalInfo?: ModalInfo;
   accessReview?: AccessReviewResourceAttributes;
   isDisabled?: boolean;
   tooltip?: string;

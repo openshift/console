@@ -6,7 +6,7 @@ import {
 import { mount, ReactWrapper, shallow } from 'enzyme';
 import store from '@console/internal/redux';
 import { Provider } from 'react-redux';
-import * as ReactRouter from 'react-router-dom-v5-compat';
+import * as ReactRouter from 'react-router-dom';
 import { useLocation } from 'react-router';
 import {
   Firehose,
@@ -29,8 +29,8 @@ jest.mock('react-router', () => ({
 const useFavoritesOptionsMock = useFavoritesOptions as jest.Mock;
 const useLocationMock = useLocation as jest.Mock;
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

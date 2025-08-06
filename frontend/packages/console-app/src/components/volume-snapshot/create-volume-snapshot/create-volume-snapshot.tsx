@@ -13,7 +13,7 @@ import {
   ContentVariants,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import { PVCStatusComponent } from '@console/internal/components/persistent-volume-claim';
 import {
   getAccessModeOptions,
@@ -24,7 +24,6 @@ import {
 import {
   ListDropdown,
   ButtonBar,
-  history,
   ResourceIcon,
   resourceObjPath,
   HandlePromiseProps,
@@ -160,7 +159,7 @@ const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
 
 const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
   const { namespace, pvcName, handlePromise, inProgress, errorMessage } = props;
-
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [selectedPVCName, setSelectedPVCName] = React.useState(pvcName);
   const [pvcObj, setPVCObj] = React.useState<PersistentVolumeClaimKind>(null);
@@ -241,7 +240,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
     };
 
     handlePromise(k8sCreate(VolumeSnapshotModel, snapshotTemplate), (resource) => {
-      history.push(resourceObjPath(resource, referenceFor(resource)));
+      navigate(resourceObjPath(resource, referenceFor(resource)));
     });
   };
 
@@ -336,7 +335,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
                 >
                   {t('console-app~Create')}
                 </Button>
-                <Button type="button" variant="secondary" onClick={history.goBack}>
+                <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
                   {t('console-app~Cancel')}
                 </Button>
               </ActionGroup>

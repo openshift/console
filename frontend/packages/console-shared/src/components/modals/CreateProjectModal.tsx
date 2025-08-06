@@ -3,7 +3,7 @@ import { Button, Alert, ContentVariants, Content } from '@patternfly/react-core'
 import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import {
   CreateProjectModal as CreateProjectModalExtension,
   CreateProjectModalProps,
