@@ -47,3 +47,9 @@ export enum ReplicationControllerActionCreator {
   RollbackDeploymentConfig = 'RollbackDeploymentConfig',
   CancelRollout = 'CancelRollout',
 }
+
+export enum PDBActionCreator {
+  AddPDB = 'AddPDB',
+  EditPDB = 'EditPDB',
+  DeletePDB = 'DeletePDB',
+}

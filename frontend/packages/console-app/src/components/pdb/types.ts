@@ -1,10 +1,18 @@
-import { K8sResourceCommon, K8sResourceCondition, Selector } from '@console/internal/module/k8s';
+import {
+  K8sResourceCommon,
+  K8sResourceCondition,
+  ObjectMetadata,
+  Selector,
+} from '@console/internal/module/k8s';
 
 export type PDBCondition = {
   observedGeneration?: number;
 } & K8sResourceCondition;
 
 export type PodDisruptionBudgetKind = {
+  metadata: Omit<ObjectMetadata, 'namespace'> & {
+    namespace: string;
+  };
   spec: {
     maxUnavailable?: number | string;
     minAvailable?: number | string;
@@ -19,4 +27,4 @@ export type PodDisruptionBudgetKind = {
     expectedPods?: number;
     observedGeneration?: number;
   };
-} & K8sResourceCommon;
+} & Omit<K8sResourceCommon, 'metadata'>;

@@ -28,7 +28,7 @@ export const pdbToK8sResource = (
     apiVersion: `${PodDisruptionBudgetModel.apiGroup}/${PodDisruptionBudgetModel.apiVersion}`,
     metadata: {
       name: from.name,
-      namespace: from.namespace,
+      namespace: from.namespace || 'default',
     },
     spec: {
       selector: {
