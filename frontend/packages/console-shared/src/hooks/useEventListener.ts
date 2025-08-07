@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 export const useEventListener = (
   target: EventTarget,
-  event: keyof WindowEventMap,
+  event: keyof WindowEventMap | keyof DocumentEventMap,
   callback: EventListener,
 ) => {
   useEffect(() => {
