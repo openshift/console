@@ -47,16 +47,12 @@ import {
   getDocumentationURL,
   isManaged,
   Kebab,
-  KebabAction,
-  KebabOption,
   ConsoleEmptyState,
   navFactory,
   Page,
   RequireCreatePermission,
-  ResourceKebab,
   ResourceLink,
   resourceObjPath,
-  resourcePathFromModel,
   ResourceSummary,
   ScrollToTopOnMount,
   SectionHeading,
@@ -68,13 +64,11 @@ import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import {
   referenceForModel,
   referenceFor,
-  k8sKill,
-  k8sPatch,
-  k8sGet,
   K8sResourceCommon,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
+import { LazyActionMenu, ActionMenuVariant } from '@console/shared/src/components/actions';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -120,7 +114,6 @@ import {
   DeprecatedOperatorWarningAlert,
   findDeprecatedOperator,
 } from './deprecated-operator-warnings/deprecated-operator-warnings';
-import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { ProvidedAPIsPage, ProvidedAPIPage, ProvidedAPIPageProps } from './operand';
 import { operatorGroupFor, operatorNamespaceFor, targetNamespacesFor } from './operator-group';
 import { OLMAnnotation } from './operator-hub';
@@ -152,52 +145,6 @@ const managedNamespacesColumnClass = css('pf-m-hidden', 'pf-m-visible-on-sm');
 const statusColumnClass = css('pf-m-hidden', 'pf-m-visible-on-lg');
 const lastUpdatedColumnClass = css('pf-m-hidden', 'pf-m-visible-on-2xl');
 const providedAPIsColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
-
-const editSubscription = (sub: SubscriptionKind): KebabOption =>
-  !_.isNil(sub)
-    ? {
-        // t('olm~Edit Subscription')
-        labelKey: 'olm~Edit Subscription',
-        href: `${resourcePathFromModel(
-          SubscriptionModel,
-          sub.metadata.name,
-          sub.metadata.namespace,
-        )}/yaml`,
-      }
-    : null;
-
-const uninstall = (sub: SubscriptionKind, csv?: ClusterServiceVersionKind): KebabOption =>
-  !_.isNil(sub)
-    ? {
-        // t('olm~Uninstall Operator')
-        labelKey: 'olm~Uninstall Operator',
-        callback: () =>
-          createUninstallOperatorModal({
-            k8sKill,
-            k8sGet,
-            k8sPatch,
-            subscription: sub,
-            csv,
-            blocking: true,
-          }),
-        accessReview: {
-          group: SubscriptionModel.apiGroup,
-          resource: SubscriptionModel.plural,
-          name: sub.metadata.name,
-          namespace: sub.metadata.namespace,
-          verb: 'delete',
-        },
-      }
-    : null;
-
-const menuActionsForCSV = (
-  csv: ClusterServiceVersionKind,
-  subscription: SubscriptionKind,
-): KebabAction[] => {
-  return _.isEmpty(subscription)
-    ? [Kebab.factory.Delete]
-    : [() => editSubscription(subscription), () => uninstall(subscription, csv)];
-};
 
 const SubscriptionStatus: React.FC<{ muted?: boolean; subscription: SubscriptionKind }> = ({
   muted = false,
@@ -481,10 +428,9 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
 
         {/* Kebab */}
         <TableData className={Kebab.columnClass}>
-          <ResourceKebab
-            resource={obj}
-            kind={referenceFor(obj)}
-            actions={menuActionsForCSV(obj, subscription)}
+          <LazyActionMenu
+            context={{ 'operator-actions': { resource: obj, subscription } }}
+            variant={ActionMenuVariant.KEBAB}
           />
         </TableData>
       </>
@@ -499,7 +445,6 @@ export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
 }) => {
   const { t } = useTranslation();
   const csvName = obj?.spec?.name;
-  const menuActions = [Kebab.factory.Edit, () => uninstall(obj)];
   const namespace = getNamespace(obj);
   const route = resourceObjPath(obj, referenceForModel(SubscriptionModel));
 
@@ -546,7 +491,10 @@ export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
 
       {/* Kebab */}
       <TableData className={Kebab.columnClass}>
-        <ResourceKebab resource={obj} kind={referenceFor(obj)} actions={menuActions} />
+        <LazyActionMenu
+          context={{ 'operator-actions': { resource: obj, subscription: obj } }}
+          variant={ActionMenuVariant.KEBAB}
+        />
       </TableData>
     </>
   );
@@ -1330,13 +1278,6 @@ export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
     [csv, subscriptions],
   );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const menuActions = React.useCallback(
-    !subscription
-      ? () => [Kebab.factory.Delete(ClusterServiceVersionModel, csv)]
-      : () => [editSubscription(subscription), uninstall(subscription, csv)],
-    [subscription],
-  );
   const { deprecatedPackage } = findDeprecatedOperator(subscription);
 
   const pagesFor = React.useCallback((obj: ClusterServiceVersionKind) => {
@@ -1409,7 +1350,12 @@ export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
       kind={referenceForModel(ClusterServiceVersionModel)}
       name={params.name}
       pagesFor={pagesFor}
-      menuActions={menuActions}
+      customActionMenu={[
+        <LazyActionMenu
+          context={{ 'operator-actions': { resource: csv, subscription } }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />,
+      ]}
       createRedirect
     />
   );

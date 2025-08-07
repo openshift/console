@@ -44,7 +44,7 @@ describe('context menu actions', () => {
     const expectedContext = {
       'topology-actions': mockOperatorBackedServiceNode,
       [referenceFor(resource)]: resource,
-      'csv-actions': {
+      'operand-actions': {
         csvName,
         resource,
       },
