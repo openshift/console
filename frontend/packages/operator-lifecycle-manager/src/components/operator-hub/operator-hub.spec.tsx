@@ -37,8 +37,9 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () 
       <MemoryRouter>
         <OperatorHubList
           {...operatorHubListPageProps}
-          marketplacePackageManifests={null}
+          marketplacePackageManifests={null as any}
           subscriptions={{ loaded: false, data: [] }}
+          clusterServiceVersions={{ loaded: false, data: [] }}
         />
       </MemoryRouter>,
     );
@@ -63,7 +64,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () 
     );
     expect(amqTileProps.iconClass).toBe(null);
     expect(amqTileProps.vendor).toEqual(
-      `provided by ${amqPackageManifest.metadata.labels.provider}`,
+      `provided by ${amqPackageManifest.metadata?.labels?.provider}`,
     );
     expect(
       amqTileProps.description.startsWith(
@@ -85,7 +86,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () 
     );
     expect(prometheusTileProps.iconClass).toBe(null);
     expect(prometheusTileProps.vendor).toEqual(
-      `provided by ${prometheusPackageManifest.metadata.labels.provider}`,
+      `provided by ${prometheusPackageManifest.metadata?.labels?.provider}`,
     );
     expect(
       prometheusTileProps.description.startsWith(
@@ -110,7 +111,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () 
     expect(modalItem.imgUrl).toEqual(
       '/api/kubernetes/apis/packages.operators.coreos.com/v1/namespaces/openshift-operator-lifecycle-manager/packagemanifests/amq-streams/icon?resourceVersion=amq-streams.preview.amqstreams.v1.0.0.beta',
     );
-    expect(modalItem.provider).toEqual(amqPackageManifest.metadata.labels.provider);
+    expect(modalItem.provider).toEqual(amqPackageManifest.metadata?.labels?.provider);
     expect(
       modalItem.description.startsWith(
         '**Red Hat AMQ Streams** is a massively scalable, distributed, and high performance data streaming platform based on the Apache Kafka project.',
@@ -142,7 +143,7 @@ xdescribe(`[https://issues.redhat.com/browse/CONSOLE-2136] ${OperatorHubTileView
   });
 
   it('updates filter counts on item changes', () => {
-    wrapper.setProps(operatorHubTileViewPagePropsWithDummy);
+    wrapper.setProps(operatorHubTileViewPagePropsWithDummy as any);
     wrapper.update();
     const filterItemsChanged = wrapper.find(FilterSidePanelCategoryItem);
 
@@ -171,11 +172,11 @@ xdescribe(`[https://issues.redhat.com/browse/CONSOLE-2136] ${OperatorHubTileView
         operatorHubTileViewPageProps.items,
         (matches, item) => {
           if (keywordCompare(filter, item)) {
-            matches.push(item);
+            matches.push(item as any);
           }
           return matches;
         },
-        [],
+        [] as any[],
       );
 
       expect(results.length).toBe(resultLength);
@@ -194,7 +195,7 @@ xdescribe(`[https://issues.redhat.com/browse/CONSOLE-2136] ${OperatorHubTileView
   // TODO: Test category functionality
 });
 
-describe(OperatorHubItemDetails.displayName, () => {
+describe(OperatorHubItemDetails.displayName || 'OperatorHubItemDetails', () => {
   const wrapper: ReactWrapper<OperatorHubItemDetailsProps> = mount(
     <OperatorHubItemDetails updateChannel={''} updateVersion={''} {...operatorHubDetailsProps} />,
     {
@@ -211,7 +212,7 @@ describe(OperatorHubItemDetails.displayName, () => {
 
     expect(noMarkdown.exists()).toBe(false);
 
-    wrapper.setProps({ item: itemWithLongDescription });
+    wrapper.setProps({ item: itemWithLongDescription as any });
     wrapper.update();
     const markdown = wrapper.find(MarkdownView);
 

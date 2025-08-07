@@ -10,10 +10,12 @@ export const useClusterServiceVersionPath = (csv: ClusterServiceVersionKind): st
   // Don't link to csv in 'openshift' namespace when copiedCSVsDisabled and in another namespace
   if (
     window.SERVER_FLAGS.copiedCSVsDisabled &&
-    csv.metadata.namespace === 'openshift' && // Is global csv
+    csv?.metadata?.namespace === 'openshift' && // Is global csv
     activeNamespace !== ALL_NAMESPACES_KEY
   ) {
-    return resourcePath(csvReference, csv.metadata.name, activeNamespace);
+    const namespace = activeNamespace || 'default';
+    const path = resourcePath(csvReference, csv?.metadata?.name || '', namespace);
+    return path || '';
   }
-  return resourceObjPath(csv, csvReference);
+  return resourceObjPath(csv, csvReference) || '';
 };

@@ -23,8 +23,8 @@ export const useExtensionCatalogCategories = (): [CatalogCategory[], boolean, Er
         .then((database) => getUniqueIndexKeys(database, 'extension-catalog', 'categories'))
         .then((c) => {
           setLoading(false);
-          setError(null);
-          setCategories(c);
+          setError(null as any);
+          setCategories(c as any);
         })
         .catch((e) => {
           setLoading(false);

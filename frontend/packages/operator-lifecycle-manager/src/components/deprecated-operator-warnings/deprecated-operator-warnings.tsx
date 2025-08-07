@@ -71,7 +71,7 @@ export const DeprecatedOperatorWarningAlert: React.FC<DeprecatedOperatorWarningP
   const [alertVisible, setAlertVisible] = React.useState<boolean>(true);
 
   return (
-    alertVisible && (
+    (alertVisible && (
       <FormAlert className="pf-v6-u-my-md">
         <Alert
           variant="warning"
@@ -93,7 +93,8 @@ export const DeprecatedOperatorWarningAlert: React.FC<DeprecatedOperatorWarningP
           </div>
         </Alert>
       </FormAlert>
-    )
+    )) ||
+    null
   );
 };
 

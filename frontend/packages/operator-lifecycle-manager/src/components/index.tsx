@@ -46,7 +46,7 @@ export const providedAPIsForCSV = (csv: ClusterServiceVersionKind): ProvidedAPI[
 };
 
 export const providedAPIsForChannel = (pkg: PackageManifestKind) => (channel: string) => {
-  const { currentCSVDesc } = pkg.status.channels.find((ch) => ch.name === channel);
+  const { currentCSVDesc } = pkg?.status?.channels?.find((ch) => ch.name === channel) || {};
   const allProvidedAPIs: ProvidedAPI[] = [
     ...(currentCSVDesc?.customresourcedefinitions?.owned ?? []),
     ...(currentCSVDesc?.apiservicedefinitions?.owned ?? []),
@@ -91,12 +91,14 @@ export const iconFor = (pkg: PackageManifestKind) => {
 
   return resourceURL(PackageManifestModel, {
     ns: pkg?.status?.catalogSourceNamespace,
-    name: pkg.metadata.name,
+    name: pkg?.metadata?.name || '',
     path: 'icon',
     queryParams: {
-      resourceVersion: [pkg.metadata.name, defaultChannel.name, defaultChannel.currentCSV].join(
-        '.',
-      ),
+      resourceVersion: [
+        pkg?.metadata?.name || '',
+        defaultChannel.name,
+        defaultChannel.currentCSV,
+      ].join('.'),
     },
   });
 };
@@ -106,8 +108,10 @@ export const providedAPIForReference = (csv, reference) => {
   return providedAPIs.find((api) => referenceForProvidedAPI(api) === reference);
 };
 
-export const providedAPIForModel = (csv: ClusterServiceVersionKind, model: K8sKind): ProvidedAPI =>
-  providedAPIForReference(csv, referenceForModel(model));
+export const providedAPIForModel = (
+  csv: ClusterServiceVersionKind,
+  model: K8sKind,
+): ProvidedAPI | undefined => providedAPIForReference(csv, referenceForModel(model));
 
 export const parseALMExamples = (
   csv: ClusterServiceVersionKind,
@@ -116,7 +120,7 @@ export const parseALMExamples = (
   try {
     if (useInitializationResource) {
       const resource = JSON.parse(
-        csv?.metadata?.annotations?.['operatorframework.io/initialization-resource'],
+        csv?.metadata?.annotations?.['operatorframework.io/initialization-resource'] || '',
       );
       return [resource];
     }
@@ -150,8 +154,8 @@ export const getManualSubscriptionsInNamespace = (
 ) => {
   return subscriptions?.filter(
     (subscription) =>
-      subscription.metadata.namespace === namespace &&
-      subscription.spec.installPlanApproval === InstallPlanApproval.Manual,
+      subscription?.metadata?.namespace === namespace &&
+      subscription?.spec?.installPlanApproval === InstallPlanApproval.Manual,
   );
 };
 
@@ -161,7 +165,7 @@ export const OperatorsWithManualApproval: React.FC<OperatorsWithManualApprovalPr
   const { t } = useTranslation();
   const subs = subscriptions
     ?.map((subscription) => (
-      <strong key={subscription.metadata.uid}>{subscription.metadata.name}</strong>
+      <strong key={subscription?.metadata?.uid}>{subscription?.metadata?.name}</strong>
     ))
     .map((sub, i) => (i > 0 ? [', ', sub] : sub));
   return (

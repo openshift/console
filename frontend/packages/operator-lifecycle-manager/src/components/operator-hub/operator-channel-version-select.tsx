@@ -77,10 +77,12 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
             {getChannelLabel(channels.find((f) => f.name === selectedUpdateChannel))}
           </MenuToggle>
         )}
-        onSelect={(event: React.MouseEvent | React.ChangeEvent, value: string) => {
-          setUpdateChannel(value);
-          setIsChannelSelectOpen(false);
-          setUpdateVersion('');
+        onSelect={(event, value) => {
+          if (typeof value === 'string') {
+            setUpdateChannel(value);
+            setIsChannelSelectOpen(false);
+            setUpdateVersion('');
+          }
         }}
         selected={selectedUpdateChannel || '-'}
         onOpenChange={(isOpen) => setIsChannelSelectOpen(isOpen)}
@@ -179,9 +181,11 @@ export const OperatorVersionSelect: React.FC<OperatorVersionSelectProps> = ({
             )}
           </MenuToggle>
         )}
-        onSelect={(event: React.MouseEvent | React.ChangeEvent, value: string) => {
-          setUpdateVersion(value);
-          setIsVersionSelectOpen(false);
+        onSelect={(event, value) => {
+          if (typeof value === 'string') {
+            setUpdateVersion(value);
+            setIsVersionSelectOpen(false);
+          }
         }}
         selected={selectedUpdateVersion}
         onOpenChange={(isOpen) => setIsVersionSelectOpen(isOpen)}

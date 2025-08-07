@@ -95,7 +95,7 @@ export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> =
       <ModalSubmitFooter
         inProgress={inProgress}
         errorMessage={errorMessage}
-        cancel={cancel}
+        cancel={cancel || (() => {})}
         submitText={t('public~Save')}
         submitDisabled={getApprovalStrategy(obj) === selectedApprovalStrategy}
       />

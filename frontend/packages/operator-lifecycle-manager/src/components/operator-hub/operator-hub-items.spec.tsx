@@ -77,7 +77,7 @@ describe('determineCategories', () => {
       {} as OperatorHubItem,
       // Empty categories array
       {
-        categories: [],
+        categories: [] as any,
       } as OperatorHubItem,
     ];
     const actualCategories = determineCategories(operatorHubItems);

@@ -15,7 +15,7 @@ const getBundleVersion = (bundle: FileBasedCatalogBundle): SemVer.SemVer => {
   const versionString =
     getBundleProperty<PackagePropertyValue>(bundle, FileBasedCatalogPropertyType.Package)
       ?.version || '';
-  return SemVer.parse(versionString);
+  return SemVer.parse(versionString) as any;
 };
 
 export const compareBundleVersions = (

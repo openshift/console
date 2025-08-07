@@ -13,16 +13,16 @@ export const CSVDefaultActions = {
       label: i18next.t('olm~Edit {{item}}', { item: kindObj.label }),
       cta: {
         href: kindObj.namespaced
-          ? `/k8s/ns/${resource.metadata.namespace}/${ClusterServiceVersionModel.plural}/${
+          ? `/k8s/ns/${resource.metadata?.namespace}/${ClusterServiceVersionModel.plural}/${
               csvName || csvNameFromWindow()
-            }/${reference}/${resource.metadata.name}/yaml`
-          : `/k8s/cluster/${reference}/${resource.metadata.name}/yaml`,
+            }/${reference}/${resource.metadata?.name}/yaml`
+          : `/k8s/cluster/${reference}/${resource.metadata?.name}/yaml`,
       },
       accessReview: {
         group: kindObj.apiGroup,
         resource: kindObj.plural,
-        name: resource.metadata.name,
-        namespace: resource.metadata.namespace,
+        name: resource.metadata?.name,
+        namespace: resource.metadata?.namespace,
         verb: 'update',
       },
     };
@@ -35,7 +35,7 @@ export const CSVDefaultActions = {
         deleteModal({
           kind: kindObj,
           resource,
-          redirectTo: `/k8s/ns/${resource.metadata.namespace}/${
+          redirectTo: `/k8s/ns/${resource.metadata?.namespace}/${
             ClusterServiceVersionModel.plural
           }/${csvName || csvNameFromWindow()}/${referenceFor(resource)}`,
         });
@@ -43,8 +43,8 @@ export const CSVDefaultActions = {
       accessReview: {
         group: kindObj.apiGroup,
         resource: kindObj.plural,
-        name: resource.metadata.name,
-        namespace: resource.metadata.namespace,
+        name: resource.metadata?.name,
+        namespace: resource.metadata?.namespace,
         verb: 'delete',
       },
     };

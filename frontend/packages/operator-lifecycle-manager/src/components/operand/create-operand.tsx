@@ -51,7 +51,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
 }) => {
   const { t } = useTranslation();
   const params = useParams();
-  const [model] = useK8sModel(params.plural);
+  const [model] = useK8sModel(params.plural || '');
   const [crd] = useK8sWatchResource<CustomResourceDefinitionKind>(
     model
       ? {
@@ -59,7 +59,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
           isList: false,
           name: nameForModel(model),
         }
-      : undefined,
+      : null,
   );
 
   const formHelpText = t(
@@ -75,10 +75,10 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
           params.plural
         }`;
 
-  const providedAPI = React.useMemo<ProvidedAPI>(() => providedAPIForModel(csv, model), [
-    csv,
-    model,
-  ]);
+  const providedAPI = React.useMemo<ProvidedAPI>(
+    () => providedAPIForModel(csv, model) || ({} as ProvidedAPI),
+    [csv, model],
+  );
 
   const baseSchema = React.useMemo(
     () =>
@@ -128,7 +128,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
     <StatusBox loaded={loaded} loadError={loadError} data={csv}>
       <PageHeading
         title={t('olm~Create {{item}}', { item: model.label })}
-        badge={getBadgeFromType(model.badge)}
+        badge={getBadgeFromType(model.badge ?? ('Default' as any))}
         helpText={helpText}
       />
       <SyncedEditor
@@ -153,16 +153,16 @@ type CreateOperandPageRouteParams = RouteParams<'csvName' | 'ns'>;
 const CreateOperandPage: React.FC = () => {
   const { t } = useTranslation();
   const params = useParams();
-  const createResourceExtension = useCreateResourceExtension(params.plural);
+  const createResourceExtension = useCreateResourceExtension(params.plural || '');
   const { csvName, ns } = useParams<CreateOperandPageRouteParams>();
-  const [csv, loaded, loadError] = useClusterServiceVersion(csvName, ns);
+  const [csv, loaded, loadError] = useClusterServiceVersion(csvName || '', ns || '');
 
   return (
     <>
       <DocumentTitle>
-        {t('olm~Create {{item}}', { item: kindForReference(params.plural) })}
+        {t('olm~Create {{item}}', { item: kindForReference(params.plural || '') })}
       </DocumentTitle>
-      <ModelStatusBox groupVersionKind={params.plural}>
+      <ModelStatusBox groupVersionKind={params.plural || ''}>
         {createResourceExtension ? (
           <ErrorBoundaryPage>
             <AsyncComponent

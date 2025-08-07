@@ -13,5 +13,5 @@ export const isCopiedCSV = (obj: K8sResourceKind): boolean =>
 
 export const isStandaloneCSV = (obj: K8sResourceKind): boolean =>
   isCSV(obj) &&
-  (obj.metadata.annotations?.[OLMAnnotation.OperatorType] !== NON_STANDALONE_ANNOTATION_VALUE ||
+  (obj?.metadata?.annotations?.[OLMAnnotation.OperatorType] !== NON_STANDALONE_ANNOTATION_VALUE ||
     obj.status?.phase === ClusterServiceVersionPhase.CSVPhaseFailed);

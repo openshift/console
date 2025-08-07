@@ -6,7 +6,7 @@ import { getItems, openDatabase } from '../database/indexeddb';
 import { normalizeExtensionCatalogItem } from '../fbc/catalog-item';
 import { ExtensionCatalogItem } from '../fbc/types';
 
-type UseExtensionCatalogItems = () => [CatalogItem[], boolean, Error];
+type UseExtensionCatalogItems = () => [CatalogItem[], boolean, Error | undefined];
 export const useExtensionCatalogItems: UseExtensionCatalogItems = () => {
   const { done: initDone, error: initError } = React.useContext(ExtensionCatalogDatabaseContext);
   const [items, setItems] = React.useState<ExtensionCatalogItem[]>([]);
@@ -26,7 +26,7 @@ export const useExtensionCatalogItems: UseExtensionCatalogItems = () => {
         .then((database) => getItems<ExtensionCatalogItem>(database, 'extension-catalog'))
         .then((i) => {
           setItems(i);
-          setError(null);
+          setError(null as any);
           setLoading(false);
         })
         .catch((e) => {

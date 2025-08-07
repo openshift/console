@@ -160,11 +160,11 @@ const editSubscription = (sub: SubscriptionKind): KebabOption =>
         labelKey: 'olm~Edit Subscription',
         href: `${resourcePathFromModel(
           SubscriptionModel,
-          sub.metadata.name,
-          sub.metadata.namespace,
+          sub?.metadata?.name,
+          sub?.metadata?.namespace,
         )}/yaml`,
       }
-    : null;
+    : ({} as KebabOption);
 
 const uninstall = (sub: SubscriptionKind, csv?: ClusterServiceVersionKind): KebabOption =>
   !_.isNil(sub)
@@ -183,12 +183,12 @@ const uninstall = (sub: SubscriptionKind, csv?: ClusterServiceVersionKind): Keba
         accessReview: {
           group: SubscriptionModel.apiGroup,
           resource: SubscriptionModel.plural,
-          name: sub.metadata.name,
-          namespace: sub.metadata.namespace,
+          name: sub?.metadata?.name || '',
+          namespace: sub?.metadata?.namespace || '',
           verb: 'delete',
         },
       }
-    : null;
+    : ({} as KebabOption);
 
 const menuActionsForCSV = (
   csv: ClusterServiceVersionKind,
@@ -229,7 +229,7 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
   subscription,
 }) => {
   const status = obj?.status?.phase;
-  if (obj.metadata.deletionTimestamp) {
+  if (obj?.metadata?.deletionTimestamp) {
     return (
       <span className="co-icon-and-text">
         <Status status={ClusterServiceVersionPhase.CSVPhaseDeleting} />
@@ -254,29 +254,29 @@ const ManagedNamespaces: React.FC<ManagedNamespacesProps> = ({ obj }) => {
       <>
         <ResourceLink
           kind="Namespace"
-          title={obj.metadata.namespace}
-          name={obj.metadata.namespace}
+          title={obj?.metadata?.namespace}
+          name={obj?.metadata?.namespace}
         />
-        <span className="pf-v6-u-text-color-subtle">{obj.status.message}</span>
+        <span className="pf-v6-u-text-color-subtle">{obj?.status?.message}</span>
       </>
     );
   }
 
   switch (managedNamespaces.length) {
     case 0:
-      return t('olm~All Namespaces');
+      return <>{t('olm~All Namespaces')}</>;
     case 1:
       return managedNamespaces[0] ? (
         <ResourceLink kind="Namespace" title={managedNamespaces[0]} name={managedNamespaces[0]} />
       ) : (
-        t('olm~All Namespaces')
+        <>{t('olm~All Namespaces')}</>
       );
     default:
       return (
         <Popover
           headerContent={t('olm~Managed Namespaces')}
           bodyContent={managedNamespaces.map((namespace) => (
-            <ResourceLink kind="Namespace" title={namespace} name={namespace} />
+            <ResourceLink key={namespace} kind="Namespace" title={namespace} name={namespace} />
           ))}
         >
           <Button variant="link" isInline>
@@ -363,9 +363,7 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
   });
 
   return (
-    consoleOperatorConfig &&
-    canPatchConsoleOperatorConfig &&
-    csvPlugins.length > 0 && (
+    (consoleOperatorConfig && canPatchConsoleOperatorConfig && csvPlugins.length > 0 && (
       <Popover
         headerContent={<div>{t('olm~Console plugin available')}</div>}
         bodyContent={
@@ -375,7 +373,7 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
                 'olm~To let this operator provide a custom interface and run its own code in your console, enable its console plugin in the operator details.',
               )}
             </p>
-            <Link to={resourceObjPath(csv, referenceFor(csv))}>
+            <Link to={resourceObjPath(csv, referenceFor(csv)) || ''}>
               {t('olm~View operator details')}
             </Link>
           </div>
@@ -385,7 +383,8 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
           {t('olm~Plugin available')}
         </Button>
       </Popover>
-    )
+    )) ||
+    null
   );
 };
 
@@ -411,7 +410,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
           >
             <ClusterServiceVersionLogo
               icon={icon}
-              displayName={displayName}
+              displayName={displayName || ''}
               version={version}
               provider={provider}
             />
@@ -506,12 +505,12 @@ export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
     <>
       {/* Name */}
       <TableData className={nameColumnClass}>
-        <Link to={route}>
+        <Link to={route || ''}>
           <ClusterServiceVersionLogo
-            icon={null}
-            displayName={csvName}
-            version={null}
-            provider={null}
+            icon={''}
+            displayName={csvName || ''}
+            version={''}
+            provider={{ name: '' }}
           />
         </Link>
       </TableData>
@@ -535,7 +534,7 @@ export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
 
       {/* Last Updated */}
       <TableData className={lastUpdatedColumnClass}>
-        {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdated} />}
+        {obj.status == null ? '-' : <Timestamp timestamp={obj.status.lastUpdated || ''} />}
       </TableData>
 
       {/* Provided APIs */}
@@ -555,9 +554,9 @@ const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
   obj,
   customData,
 }) => {
-  const { catalogSources, subscriptions, activeNamespace } = customData;
+  const { catalogSources, subscriptions, activeNamespace } = customData || {};
   const subscription = isCSV(obj)
-    ? subscriptionForCSV(subscriptions, obj as ClusterServiceVersionKind)
+    ? subscriptionForCSV(subscriptions || [], obj as ClusterServiceVersionKind)
     : (obj as SubscriptionKind);
   // Only warn about missing catalog sources if the user was able to list them
   // but exclude PackageServer as it does not have a subscription.
@@ -694,7 +693,7 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
 
       if (
         window.SERVER_FLAGS.copiedCSVsDisabled &&
-        operator.metadata.namespace === GLOBAL_COPIED_CSV_NAMESPACE &&
+        operator?.metadata?.namespace === GLOBAL_COPIED_CSV_NAMESPACE &&
         activeNamespace !== GLOBAL_COPIED_CSV_NAMESPACE
       ) {
         return isCopiedCSV(operator) && isStandaloneCSV(operator);
@@ -709,7 +708,7 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
     }
 
     if (isCopiedCSV(obj)) {
-      return obj.metadata.namespace;
+      return obj?.metadata?.namespace || '';
     }
 
     const targetNamespaces = targetNamespacesFor(obj)?.split(',') ?? [];
@@ -723,11 +722,9 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
     }
   };
 
-  const getOperatorNamespace = (
-    obj: ClusterServiceVersionKind | SubscriptionKind,
-  ): string | null => {
+  const getOperatorNamespace = (obj: ClusterServiceVersionKind | SubscriptionKind): string => {
     const olmOperatorNamespace = operatorNamespaceFor(obj);
-    return olmOperatorNamespace ?? getNamespace(obj);
+    return olmOperatorNamespace ?? getNamespace(obj) ?? '';
   };
   const allNamespaceActive = activeNamespace === ALL_NAMESPACES_KEY;
 
@@ -797,7 +794,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       ...(clusterServiceVersions?.data ?? []),
       ...(subscriptions?.data ?? []).filter(
         (sub) =>
-          ['', sub.metadata.namespace].includes(props.namespace || '') &&
+          ['', sub?.metadata?.namespace].includes(props.namespace || '') &&
           _.isNil(_.get(sub, 'status.installedCSV')),
       ),
     ].filter(
@@ -887,7 +884,9 @@ export const CRDCard: React.FC<CRDCardProps> = ({ csv, crd, required, ...rest })
   const createRoute = React.useMemo(
     () =>
       csv
-        ? `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${reference}/~new`
+        ? `/k8s/ns/${csv?.metadata?.namespace || ''}/${ClusterServiceVersionModel.plural}/${
+            csv?.metadata?.name || ''
+          }/${reference}/~new`
         : null,
     [csv, reference],
   );
@@ -910,10 +909,10 @@ export const CRDCard: React.FC<CRDCardProps> = ({ csv, crd, required, ...rest })
         </span>
       </CardTitle>
       <CardBody>
-        <MarkdownView content={crd.description} truncateContent />
+        <MarkdownView content={crd.description || ''} truncateContent />
       </CardBody>
       {canCreate && createRoute && (
-        <RequireCreatePermission model={model} namespace={csv.metadata.namespace}>
+        <RequireCreatePermission model={model} namespace={csv?.metadata?.namespace || ''}>
           <CardFooter>
             <Link to={createRoute}>
               <AddCircleOIcon className="co-icon-space-r" />
@@ -962,8 +961,8 @@ const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = 
     group: model?.apiGroup,
     resource: model?.plural,
     namespace: model?.namespaced
-      ? initializationResource?.metadata.namespace || csv.metadata.namespace
-      : null,
+      ? initializationResource?.metadata?.namespace || csv?.metadata?.namespace || ''
+      : undefined,
     verb: 'create',
   });
 
@@ -1050,7 +1049,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                     <Trans t={t} ns="olm">
                       This Operator was copied from another namespace. For the reason it failed, see{' '}
                       <ResourceLink
-                        name={metadata.name}
+                        name={metadata?.name || ''}
                         kind={referenceForModel(ClusterServiceVersionModel)}
                         namespace={operatorNamespaceFor(props.obj)}
                         hideIcon
@@ -1105,7 +1104,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('olm~Created at')}</DescriptionListTerm>
                 <DescriptionListDescription>
-                  <Timestamp timestamp={metadata.creationTimestamp} />
+                  <Timestamp timestamp={metadata?.creationTimestamp || ''} />
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </DescriptionList>
@@ -1193,10 +1192,10 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   {status ? status.message : t('olm~Unknown')}
                 </DescriptionListDescription>
               </DescriptionListGroup>
-              {!_.isEmpty(spec.install.spec?.deployments) && (
+              {!_.isEmpty(spec?.install?.spec?.deployments) && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('olm~Operator Deployments')}</DescriptionListTerm>
-                  {spec.install.spec.deployments.map(({ name }) => (
+                  {spec.install?.spec?.deployments?.map(({ name }) => (
                     <DescriptionListDescription key={name}>
                       <ResourceLink
                         name={name}
@@ -1288,7 +1287,10 @@ export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();
-  const [csv, csvLoaded, csvLoadError] = useClusterServiceVersion(params.name, params.ns);
+  const [csv, csvLoaded, csvLoadError] = useClusterServiceVersion(
+    params.name || '',
+    params.ns || '',
+  );
   const namespace = operatorNamespaceFor(csv);
   const [subscriptions, subscriptionsLoaded, subscriptionsLoadError] = useK8sWatchResource<
     SubscriptionKind[]
@@ -1309,7 +1311,7 @@ export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
   });
 
   const subscription = React.useMemo(
-    () => (subscriptions ?? []).find((s) => s.status.installedCSV === csv?.metadata?.name),
+    () => (subscriptions ?? []).find((s) => s?.status?.installedCSV === csv?.metadata?.name),
     [csv, subscriptions],
   );
 
@@ -1320,7 +1322,7 @@ export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
       : () => [editSubscription(subscription), uninstall(subscription, csv)],
     [subscription],
   );
-  const { deprecatedPackage } = findDeprecatedOperator(subscription);
+  const { deprecatedPackage } = findDeprecatedOperator(subscription || ({} as SubscriptionKind));
 
   const pagesFor = React.useCallback((obj: ClusterServiceVersionKind) => {
     const providedAPIs = providedAPIsForCSV(obj);
@@ -1379,7 +1381,7 @@ export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
           ...(canListClusterScopeInstallPlans ? {} : { namespace }),
         },
       ]}
-      icon={<ClusterServiceVersionHeaderIcon icon={csv?.spec?.icon?.[0]} />}
+      icon={<ClusterServiceVersionHeaderIcon icon={csv?.spec?.icon?.[0] || ''} />}
       OverrideTitle={({ obj }) => (
         <ClusterServiceVersionHeaderTitle
           displayName={obj?.spec?.displayName}

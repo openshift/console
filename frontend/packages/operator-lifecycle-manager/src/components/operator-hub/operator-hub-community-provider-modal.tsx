@@ -20,7 +20,7 @@ export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityPro
   const submit = React.useCallback(
     (event) => {
       event.preventDefault();
-      close();
+      close?.();
       showCommunityOperators(ignoreWarnings);
     },
     [close, ignoreWarnings, showCommunityOperators],
@@ -65,7 +65,7 @@ export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityPro
         submitText={t('olm~Continue')}
         inProgress={false}
         errorMessage=""
-        cancel={close}
+        cancel={close as any}
       />
     </form>
   );

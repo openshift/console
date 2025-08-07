@@ -30,7 +30,7 @@ export const subscriptionForCSV = (
     status: {
       installedCSV: getName(csv),
     },
-  });
+  }) || ({} as SubscriptionKind);
 
 export const getCSVStatus = (
   csv: ClusterServiceVersionKind,

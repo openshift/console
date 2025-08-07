@@ -61,19 +61,23 @@ export const ResourceTableRow: React.FC<RowFunctionArgs<
     linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
     providedAPI: ProvidedAPI;
   }
->> = ({ obj, customData: { linkFor, providedAPI } }) => (
-  <>
-    <TableData className={tableColumnClasses[0]}>{linkFor(obj, providedAPI)}</TableData>
-    <TableData className={tableColumnClasses[1]}>{obj.kind}</TableData>
-    <TableData className={tableColumnClasses[2]}>
-      <Status status={obj?.status?.phase ?? 'Created'} />
-    </TableData>
-    <TableData className={tableColumnClasses[3]}>
-      <Timestamp timestamp={obj.metadata.creationTimestamp} />
-    </TableData>
-  </>
-);
-
+>> = ({ obj, customData }) => {
+  const { linkFor, providedAPI } = customData || {};
+  return (
+    <>
+      <TableData className={tableColumnClasses[0]}>
+        {linkFor?.(obj, providedAPI || ({} as any))}
+      </TableData>
+      <TableData className={tableColumnClasses[1]}>{obj.kind}</TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <Status status={obj?.status?.phase ?? 'Created'} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <Timestamp timestamp={obj?.metadata?.creationTimestamp || ''} />
+      </TableData>
+    </>
+  );
+};
 export const ResourceTable: React.FC<ResourceTableProps> = (props) => {
   const { t } = useTranslation();
   const ResourceTableHeader = () => [
@@ -125,14 +129,14 @@ export const flattenCsvResources = (
   return _.flatMap(resources, (resource, kind: string) =>
     _.map(resource.data, (item) => ({ ...item, kind })),
   ).reduce((owned, resource) => {
-    return (resource.metadata.ownerReferences || []).some(
+    return (resource?.metadata?.ownerReferences || []).some(
       (ref) =>
-        ref.uid === parentObj.metadata.uid ||
-        owned.some(({ metadata }) => metadata.uid === ref.uid),
+        ref.uid === parentObj?.metadata?.uid ||
+        owned.some(({ metadata }: { metadata: { uid: string } }) => metadata?.uid === ref.uid),
     )
       ? owned.concat([resource])
       : owned;
-  }, []);
+  }, [] as K8sResourceCommon[]);
 };
 
 // NOTE: This is us building the `ownerReferences` graph client-side
@@ -142,11 +146,15 @@ export const linkForCsvResource = (
   providedAPI: ProvidedAPI,
   csvName?: string,
 ) =>
-  obj.metadata.namespace &&
+  obj?.metadata?.namespace &&
   (providedAPI?.resources ?? []).some(({ kind, name }) => name && kind === obj.kind) ? (
     <OperandLink obj={obj} csvName={csvName} />
   ) : (
-    <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
+    <ResourceLink
+      kind={obj.kind}
+      name={obj?.metadata?.name || ''}
+      namespace={obj?.metadata?.namespace || ''}
+    />
   );
 
 type ResourcesPageRouteParams = RouteParams<'plural'>;
@@ -193,7 +201,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
         },
       ]}
       flatten={flattenCsvResources(props.obj)}
-      namespace={props.obj.metadata.namespace}
+      namespace={props.obj?.metadata?.namespace || ''}
       ListComponent={ResourceTable}
       customData={customData}
     />

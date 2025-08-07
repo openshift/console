@@ -125,7 +125,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   //   : useOperands(subscriptionName, subscriptionNamespace);
   const [operands, operandsLoaded, operandsLoadedErrorMessage] = useOperands(
     subscriptionName,
-    subscriptionNamespace,
+    subscriptionNamespace || '',
   );
 
   const uninstallOperator = React.useCallback(async () => {
@@ -137,8 +137,8 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       try {
         await k8sGetResource({
           model: ClusterServiceVersionModel,
-          name: subscription.status.installedCSV,
-          ns: subscription.metadata.namespace,
+          name: subscription?.status?.installedCSV || '',
+          ns: subscription?.metadata?.namespace || '',
         });
         return true;
       } catch (err) {
@@ -157,8 +157,8 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
               ClusterServiceVersionModel,
               {
                 metadata: {
-                  name: subscription.status.installedCSV,
-                  namespace: subscription.metadata.namespace,
+                  name: subscription?.status?.installedCSV || '',
+                  namespace: subscription?.metadata?.namespace || '',
                 },
               },
               {},
@@ -167,7 +167,11 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
           ]
         : []),
       ...(removePlugins
-        ? [k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, [patch])]
+        ? [
+            k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, [
+              patch || { op: '', path: '', value: '' },
+            ]),
+          ]
         : []),
     ];
 
@@ -220,13 +224,13 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   }, [finishVerification, subscriptionName, subscriptionNamespace]);
 
   const closeAndRedirect = React.useCallback(() => {
-    close();
+    close?.();
     // if url contains subscription name (ex: "codeready-workspaces") or installedCSV version (ex: "crwoperator.v2.9.0")
     // redirect to ClusterServiceVersion "Installed Operators" list page,
     // else uninstalled from "Installed Operators" list page, so do not redirect
     if (
-      window.location.pathname.split('/').includes(subscription.metadata.name) ||
-      window.location.pathname.split('/').includes(subscription?.status?.installedCSV)
+      window.location.pathname.split('/').includes(subscription?.metadata?.name || '') ||
+      window.location.pathname.split('/').includes(subscription?.status?.installedCSV || '')
     ) {
       history.push(resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()));
     }
@@ -288,9 +292,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const name = csv?.spec?.displayName || subscription?.spec?.name;
   const csvName = csv?.metadata?.name;
   const namespace =
-    subscription.metadata.namespace === DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE
+    subscription?.metadata?.namespace === DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE
       ? 'all-namespaces'
-      : subscription.metadata.namespace;
+      : subscription?.metadata?.namespace || '';
   const uninstallMessage = csv?.metadata?.annotations?.[OLMAnnotation.UninstallMessage];
   const showOperandsContent = !operandsLoaded || operands.length > 0;
 
@@ -331,8 +335,8 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
           <OperandsTable
             operands={operands}
             loaded={operandsLoaded}
-            csvName={csvName}
-            cancel={cancel} // for breadcrumbs & cancel modal when clicking on operand links
+            csvName={csvName || ''}
+            cancel={cancel || (() => {})} // for breadcrumbs & cancel modal when clicking on operand links
           />
         </span>
         <Checkbox
@@ -348,15 +352,15 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const operandDeletionAlert = operandDeletionErrors.length ? (
     <OperandDeletionErrorAlert
       operandDeletionErrors={operandDeletionErrors}
-      csvName={csvName}
-      cancel={cancel}
+      csvName={csvName || ''}
+      cancel={cancel || (() => {})}
     />
   ) : operandDeletionVerificationError ? (
     <OperandsLoadedErrorAlert
       operandsLoadedErrorMessage={t('olm~Error listing operand to verify deletion')}
     />
   ) : (
-    <OperandDeletionSuccessAlert name={name} namespace={namespace} />
+    <OperandDeletionSuccessAlert name={name || ''} namespace={namespace || ''} />
   );
 
   const results = (
@@ -370,7 +374,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
             : '')
         }
         name={name}
-        namespace={namespace}
+        namespace={namespace || ''}
       />
       {deleteOperands && operandDeletionAlert}
     </>
@@ -416,7 +420,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitInProgress}
-        cancel={cancel}
+        cancel={cancel || (() => {})}
         submitDanger={!isSubmitFinished} // if submit finished show a non-danger 'OK'
         submitText={t(isSubmitFinished ? 'olm~OK' : 'olm~Uninstall')}
         submitDisabled={isSubmitInProgress}
@@ -584,9 +588,9 @@ const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName
         </thead>
         <tbody>
           {operands
-            .sort((a, b) => a.metadata.name.localeCompare(b.metadata.name))
+            .sort((a, b) => a.metadata?.name?.localeCompare(b.metadata?.name || '') || 0)
             .map((operand) => (
-              <tr className="pf-v6-c-table__tr" key={operand.metadata.uid}>
+              <tr className="pf-v6-c-table__tr" key={operand.metadata?.uid || ''}>
                 <td className="pf-v6-c-table__td">
                   <OperandLink obj={operand} csvName={csvName} onClick={cancel} />
                 </td>
@@ -597,10 +601,10 @@ const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName
                   {operand.kind}
                 </td>
                 <td className="pf-v6-c-table__td">
-                  {operand.metadata.namespace ? (
+                  {operand.metadata?.namespace ? (
                     <ResourceLink
                       kind="Namespace"
-                      name={operand.metadata.namespace}
+                      name={operand.metadata?.namespace || ''}
                       onClick={cancel}
                     />
                   ) : (
@@ -621,7 +625,7 @@ const OperandErrorList: React.FC<OperandErrorListProps> = ({ operandErrors, csvN
     <ul className="co-operator-uninstall-alert__list">
       {_.map(operandErrors, (operandError) => (
         <li
-          key={operandError.operand.metadata.uid}
+          key={operandError.operand?.metadata?.uid || ''}
           className="pf-v6-c-list pf-m-plain co-operator-uninstall-alert__list-item"
         >
           <OperandLink obj={operandError.operand} csvName={csvName} onClick={cancel} />{' '}

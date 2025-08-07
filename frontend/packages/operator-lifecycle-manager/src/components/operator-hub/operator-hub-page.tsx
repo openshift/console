@@ -57,20 +57,20 @@ import { OperatorHubItem, InstalledState, OLMAnnotation, CSVAnnotations } from '
 const clusterServiceVersionFor = (
   clusterServiceVersions: ClusterServiceVersionKind[],
   csvName: string,
-): ClusterServiceVersionKind =>
-  clusterServiceVersions?.find((csv) => csv.metadata.name === csvName);
+): ClusterServiceVersionKind | undefined =>
+  clusterServiceVersions?.find((csv) => csv.metadata?.name === csvName);
 
 const onInfrastructureFeaturesAnnotationError = (error: Error, pkg: PackageManifestKind) =>
   // eslint-disable-next-line no-console
   console.warn(
-    `Error parsing infrastructure features from PackageManifest "${pkg.metadata.name}":`,
+    `Error parsing infrastructure features from PackageManifest "${pkg.metadata?.name}":`,
     error,
   );
 
 const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKind) =>
   // eslint-disable-next-line no-console
   console.warn(
-    `Error parsing valid subscription from PackageManifest "${pkg.metadata.name}":`,
+    `Error parsing valid subscription from PackageManifest "${pkg.metadata?.name}":`,
     error,
   );
 
@@ -110,9 +110,21 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
     const packageManifests = props.packageManifests?.data ?? [];
     const marketplacePackageManifests = props.marketplacePackageManifests?.data ?? [];
     const allPackageManifests = [...marketplacePackageManifests, ...packageManifests];
-    const clusterIsAWSSTS = isAWSSTSCluster(cloudCredentials, infrastructure, authentication);
-    const clusterIsAzureWIF = isAzureWIFCluster(cloudCredentials, infrastructure, authentication);
-    const clusterIsGCPWIF = isGCPWIFCluster(cloudCredentials, infrastructure, authentication);
+    const clusterIsAWSSTS = isAWSSTSCluster(
+      cloudCredentials as any,
+      infrastructure as any,
+      authentication as any,
+    );
+    const clusterIsAzureWIF = isAzureWIFCluster(
+      cloudCredentials as any,
+      infrastructure as any,
+      authentication as any,
+    );
+    const clusterIsGCPWIF = isGCPWIFCluster(
+      cloudCredentials as any,
+      infrastructure as any,
+      authentication as any,
+    );
     return allPackageManifests
       .filter((pkg) => {
         const { channels, defaultChannel } = pkg.status ?? {};
@@ -120,12 +132,12 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
         if (!defaultChannel) {
           // eslint-disable-next-line no-console
           console.warn(
-            `PackageManifest ${pkg.metadata.name} has no status.defaultChannel and has been excluded`,
+            `PackageManifest ${pkg.metadata?.name} has no status.defaultChannel and has been excluded`,
           );
           return false;
         }
 
-        const { currentCSVDesc } = channels.find((ch) => ch.name === defaultChannel);
+        const { currentCSVDesc } = channels.find((ch) => ch.name === defaultChannel) as any;
         // if CSV contains annotation for a non-standalone operator, filter it out
         return !(
           currentCSVDesc.annotations?.[OLMAnnotation.OperatorType] ===
@@ -138,9 +150,14 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             loaded && subscriptionFor(subscriptions)(operatorGroups)(pkg)(namespace);
           const clusterServiceVersion =
             loaded &&
-            clusterServiceVersionFor(clusterServiceVersions, subscription?.status?.installedCSV);
+            clusterServiceVersionFor(
+              clusterServiceVersions,
+              subscription?.status?.installedCSV as any,
+            );
           const { channels, defaultChannel } = pkg.status ?? {};
-          const { currentCSVDesc } = (channels || []).find(({ name }) => name === defaultChannel);
+          const { currentCSVDesc } = (channels || []).find(
+            ({ name }) => name === defaultChannel,
+          ) as any;
           const currentCSVAnnotations: CSVAnnotations = currentCSVDesc?.annotations ?? {};
           const infraFeatures = getInfrastructureFeatures(currentCSVAnnotations, {
             clusterIsAWSSTS,
@@ -170,7 +187,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
           const installed = loaded && clusterServiceVersion?.status?.phase === 'Succeeded';
 
           return {
-            authentication,
+            authentication: authentication as AuthenticationKind,
             capabilityLevel,
             catalogSource: pkg.status.catalogSource,
             catalogSourceNamespace: pkg.status.catalogSourceNamespace,
@@ -178,14 +195,14 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
               .split(',')
               .map((category) => category.trim()),
             certifiedLevel,
-            cloudCredentials,
+            cloudCredentials: cloudCredentials as CloudCredentialKind,
             containerImage,
             createdAt,
             description: currentCSVAnnotations.description || currentCSVDesc.description,
             healthIndex,
             imgUrl: iconFor(pkg),
             infraFeatures,
-            infrastructure,
+            infrastructure: infrastructure as InfrastructureKind,
             installed,
             installState: installed ? InstalledState.Installed : InstalledState.NotInstalled,
             isInstalling:
@@ -199,15 +216,15 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             marketplaceActionText,
             marketplaceRemoteWorkflow,
             marketplaceSupportWorkflow,
-            name: currentCSVDesc?.displayName ?? pkg.metadata.name,
+            name: currentCSVDesc?.displayName ?? pkg.metadata?.name,
             obj: pkg,
-            provider: pkg.status.provider?.name ?? pkg.metadata.labels?.provider,
+            provider: pkg.status.provider?.name ?? pkg.metadata?.labels?.provider,
             repository,
             source: getPackageSource(pkg),
             subscription,
             support,
             tags: [],
-            uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
+            uid: `${pkg.metadata?.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
             validSubscription,
             validSubscriptionFilters,
             version: currentCSVDesc?.version,

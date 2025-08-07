@@ -114,10 +114,10 @@ const InstalledHint: React.FC<OperatorHubItemDetailsHintProps> = ({
     isList: false,
     namespaced: true,
   });
-  const nsPath = `/k8s/ns/${subscription.metadata.namespace}`;
+  const nsPath = `/k8s/ns/${subscription?.metadata?.namespace}`;
   const to = installedCSV
     ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name ?? ''}`
-    : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
+    : `${nsPath}/subscriptions/${subscription?.metadata?.name ?? ''}`;
   const installedVersion = installedCSV?.spec?.version;
   return (
     <OperatorHubItemCustomizedHint
@@ -161,10 +161,10 @@ const InstallingHint: React.FC<OperatorHubItemDetailsHintProps> = ({ subscriptio
         }
       : null,
   );
-  const nsPath = `/k8s/ns/${subscription.metadata.namespace}`;
+  const nsPath = `/k8s/ns/${subscription?.metadata?.namespace}`;
   const to = installedCSV
     ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name}/subscription`
-    : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
+    : `${nsPath}/subscriptions/${subscription?.metadata?.name ?? ''}`;
   return (
     <OperatorHubItemCustomizedHint
       title={t('olm~Installing Operator')}
@@ -435,8 +435,8 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             isInstalling={isInstalling}
             latestVersion={version}
             catalogSource={catalogSource}
-            subscription={subscription}
-            installedChannel={installedChannel}
+            subscription={subscription as SubscriptionKind}
+            installedChannel={installedChannel as string}
             cloudCredentials={cloudCredentials}
             authentication={authentication}
             infrastructure={infrastructure}
@@ -449,11 +449,13 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
         </CatalogPageOverlayDescription>
       </CatalogPageOverlay>
     </div>
-  ) : null;
+  ) : (
+    (null as any)
+  );
 };
 
 OperatorHubItemDetails.defaultProps = {
-  item: null,
+  item: null as any,
 };
 
 type OperatorHubItemCustomizedHintProps = {

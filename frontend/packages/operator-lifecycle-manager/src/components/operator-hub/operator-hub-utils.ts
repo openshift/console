@@ -151,7 +151,7 @@ export const getInitializationResource: AnnotationParser<K8sResourceKind> = (
   });
 
 export const getInitializationLink: AnnotationParser<string> = (annotations) =>
-  annotations?.[OLMAnnotation.InitializationLink];
+  annotations?.[OLMAnnotation.InitializationLink] || '';
 
 const parseValidSubscriptionAnnotation: AnnotationParser<string[]> = (annotations, options) =>
   parseJSONAnnotation<string[]>(annotations, OLMAnnotation.ValidSubscription, {
@@ -218,9 +218,9 @@ export const getInfrastructureFeatures: AnnotationParser<
     onError,
   });
   const azureTokenAuthIsSupported =
-    clusterIsAzureWIF && annotations[OLMAnnotation.TokenAuthAzure] !== 'false';
+    clusterIsAzureWIF && annotations?.[OLMAnnotation.TokenAuthAzure] !== 'false';
   const awsTokenAuthIsSupported =
-    clusterIsAWSSTS && annotations[OLMAnnotation.TokenAuthAWS] !== 'false';
+    clusterIsAWSSTS && annotations?.[OLMAnnotation.TokenAuthAWS] !== 'false';
   return [...parsedInfrastructureFeatures, ...Object.keys(annotations ?? {})].reduce(
     (supportedFeatures, key) => {
       const feature = infrastructureFeatureMap[key];
@@ -230,7 +230,9 @@ export const getInfrastructureFeatures: AnnotationParser<
       }
 
       const featureIsSupported = annotations?.[key] !== 'false';
-      const featureIsIncluded = supportedFeatures.includes(feature);
+      const featureIsIncluded = (supportedFeatures as InfrastructureFeature[]).includes(
+        feature as InfrastructureFeature,
+      );
       const includeFeature = () =>
         featureIsIncluded ? supportedFeatures : [...supportedFeatures, feature];
       const excludeFeature = () =>

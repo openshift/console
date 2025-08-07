@@ -17,12 +17,12 @@ export const useExtensionCatalogDatabaseContextValues: UseExtensionCatalogDataba
   const refresh = React.useRef(
     _.debounce((newCatalogs: K8sResourceCommon[]) => {
       setDone(false);
-      setError(null);
+      setError(null as any);
       openDatabase('olm')
         .then((database) => populateExtensionCatalogDatabase(database, newCatalogs))
         .then(() => {
           setDone(true);
-          setError(null);
+          setError(null as any);
         })
         .catch((e) => {
           setDone(true);
@@ -36,7 +36,7 @@ export const useExtensionCatalogDatabaseContextValues: UseExtensionCatalogDataba
     currentRefresh(catalogs);
     return () => currentRefresh.cancel();
   }, [catalogs]);
-  return { done, error };
+  return { done, error: error || new Error() };
 };
 
 export default useExtensionCatalogDatabaseContextValues;

@@ -35,19 +35,22 @@ export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEdito
   handleCancel,
   setStatus,
   setErrors,
+  setSubmitting,
   errors,
 }) => {
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<ConfigMapFormInitialValues>();
+  const { editorType, formData, yamlData, formReloadCount, isCreateFlow, resourceVersion } = values;
+
   const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.configMapForm.editor.lastView';
-  const isStale = !!configMap && configMap?.metadata?.resourceVersion !== values.resourceVersion;
+  const isStale = !!configMap && configMap?.metadata?.resourceVersion !== resourceVersion;
   const immutableCfg = !!configMap && configMap.immutable;
   const immutableCfgError = t(
     'public~Cannot update the object when immutable field is set to true',
   );
   const disableSubmit =
     immutableCfg ||
-    (values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
+    (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
     isSubmitting;
 
   const formEditor = (
@@ -68,21 +71,18 @@ export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEdito
   const onReload = React.useCallback(() => {
     setStatus({ submitSuccess: '', submitError: '' });
     setErrors({});
-    if (values.editorType === EditorType.Form) {
-      setFieldValue(
-        'formData',
-        getInitialConfigMapFormData(configMap, values.formData.namespace),
-        false,
-      );
+    if (editorType === EditorType.Form) {
+      setFieldValue('formData', getInitialConfigMapFormData(configMap, formData.namespace), false);
     }
     setFieldValue('yamlData', safeJSToYAML(configMap, '', { skipInvalid: true }), false);
     setFieldValue('resourceVersion', configMap?.metadata?.resourceVersion, true);
-    setFieldValue('formReloadCount', values.formReloadCount + 1);
+    setFieldValue('formReloadCount', formReloadCount + 1);
   }, [setErrors, setFieldValue, setStatus, values, configMap]);
 
   React.useEffect(() => {
     setStatus({ submitError: null });
-  }, [setStatus, values.editorType]);
+    setSubmitting(false);
+  }, [setStatus, setSubmitting, editorType, formData, yamlData]);
 
   return (
     <FlexForm onSubmit={handleSubmit} className="configmap-form">
@@ -98,17 +98,13 @@ export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEdito
           formContext={{
             name: 'formData',
             editor: formEditor,
-            sanitizeTo: (yamlConfigMap: ConfigMap) =>
-              sanitizeToForm(values.formData, yamlConfigMap),
+            sanitizeTo: (yamlConfigMap: ConfigMap) => sanitizeToForm(formData, yamlConfigMap),
           }}
           yamlContext={{
             name: 'yamlData',
             editor: yamlEditor,
             sanitizeTo: () =>
-              sanitizeToYaml(
-                values.formData,
-                _.merge({}, configMap, safeYAMLToJS(values.yamlData)),
-              ),
+              sanitizeToYaml(formData, _.merge({}, configMap, safeYAMLToJS(yamlData))),
           }}
           lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
           noMargin
@@ -116,19 +112,17 @@ export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEdito
       </FormBody>
       <FormFooter
         handleSubmit={handleSubmit}
-        handleReset={values.isCreateFlow ? null : onReload}
+        handleReset={isCreateFlow ? null : onReload}
         errorMessage={status?.submitError || (immutableCfg && immutableCfgError)}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
         infoTitle={t('public~This object has been updated.')}
         infoMessage={t('public~Click reload to see the new version.')}
         isSubmitting={isSubmitting}
-        submitLabel={values.isCreateFlow ? t('public~Create') : t('public~Save')}
+        submitLabel={isCreateFlow ? t('public~Create') : t('public~Save')}
         disableSubmit={disableSubmit}
         handleCancel={handleCancel}
-        handleDownload={
-          values.editorType === EditorType.YAML && (() => downloadYaml(values.yamlData))
-        }
+        handleDownload={editorType === EditorType.YAML && (() => downloadYaml(yamlData))}
         sticky
       />
     </FlexForm>

@@ -41,8 +41,9 @@ export const fetchAndProcessJSONLines = <ObjectType = any>(
     if (!response.ok) {
       throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
     }
-    return response.body
-      .pipeThrough(new TextDecoderStream())
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return response
+      .body!.pipeThrough(new TextDecoderStream())
       .pipeThrough<ObjectType>(parseJSONLines<ObjectType>())
       .getReader();
   });
