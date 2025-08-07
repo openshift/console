@@ -58,7 +58,7 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
 
   it(`attempts to uninstall the Operator, shows 'Cannot load Operands' alert`, () => {
     // return a static error response
-    cy.intercept('GET', 'api/list-operands/?*', {
+    cy.intercept('GET', 'api/olm/list-operands?*', {
       statusCode: 400, // Bad Request
       body: { error: 'Failed to list operands' },
     }).as('listOperands');
