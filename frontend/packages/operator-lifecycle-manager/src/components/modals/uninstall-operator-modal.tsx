@@ -1,6 +1,14 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
-import { Alert, Progress, ProgressSize, Title } from '@patternfly/react-core';
+import {
+  Alert,
+  Backdrop,
+  Modal,
+  ModalVariant,
+  Progress,
+  ProgressSize,
+  Title,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
@@ -40,7 +48,6 @@ import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { getPatchForRemovingPlugins, isPluginEnabled } from '@console/shared/src/utils';
 import { DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE } from '../../const';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
-import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { OperandLink } from '../operand/operand-link';
 import { OLMAnnotation } from '../operator-hub';
 import { getClusterServiceVersionPlugins } from '../operator-hub/operator-hub-utils';
@@ -425,6 +432,18 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   );
 };
 
+export const UninstallOperatorOverlay: React.FC<UninstallOperatorModalProps> = (props) => {
+  const [isOpen, setIsOpen] = React.useState(true);
+  const closeOverlay = () => setIsOpen(false);
+  return isOpen ? (
+    <Backdrop>
+      <Modal variant={ModalVariant.small} isOpen>
+        <UninstallOperatorModal cancel={closeOverlay} close={closeOverlay} {...props} />;
+      </Modal>
+    </Backdrop>
+  ) : null;
+};
+
 const OperandDeleteProgress: React.FC<{
   total: number;
   remaining: number;
@@ -648,8 +667,8 @@ export type UninstallOperatorModalProps = {
     resource: K8sResourceKind,
     data: { op: string; path: string; value: any }[],
   ) => Promise<any>;
-  subscription: SubscriptionKind | K8sResourceKind;
-  csv?: ClusterServiceVersionKind;
+  subscription: K8sResourceKind;
+  csv?: K8sResourceKind;
   blocking?: boolean;
 };
 

@@ -177,7 +177,7 @@ describe(OperandTableRow.displayName, () => {
 
   it('renders a `LazyActionsMenu` for resource actions', () => {
     const kebab = wrapper.find(LazyActionMenu);
-    expect(kebab.props().context.hasOwnProperty('csv-actions')).toBeTruthy();
+    expect(kebab.props().context.hasOwnProperty('operand-actions')).toBeTruthy();
   });
 });
 
