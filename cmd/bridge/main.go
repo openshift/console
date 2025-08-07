@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"runtime"
+	"time"
 
 	"io/ioutil"
 	"net/http"
@@ -23,6 +24,7 @@ import (
 	"github.com/openshift/console/pkg/controllers"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
+	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
@@ -38,8 +40,6 @@ import (
 const (
 	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-
-	catalogdHost = "catalogd-service.openshift-catalogd.svc:443"
 
 	// Well-known location of the tenant aware Thanos service for OpenShift exposing the query and query_range endpoints. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
@@ -415,11 +415,6 @@ func main() {
 				},
 			}
 
-			srv.CatalogdProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				Endpoint:        &url.URL{Scheme: "https", Host: catalogdHost},
-			}
-
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: srv.ProxyHeaderDenyList,
@@ -561,6 +556,7 @@ func main() {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: in-cluster, off-cluster"))
 	}
 
+<<<<<<< HEAD
 	mgr, err := ctrl.NewManager(srv.InternalProxiedK8SClientConfig, ctrl.Options{
 		Scheme: kruntime.NewScheme(),
 	})
@@ -577,6 +573,11 @@ func main() {
 	// if err := clustercatalog.StartClusterCatalogController(context.TODO(), srv.InternalProxiedK8SClientConfig); err != nil {
 	// 	klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
 	// }
+=======
+	catalogService := olm.NewCatalogService(srv.ServiceClient, 5*time.Minute)
+	catalogService.Start()
+	srv.CatalogService = catalogService
+>>>>>>> 22d0a0bc17 (wip)
 
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
