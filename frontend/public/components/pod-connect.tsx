@@ -20,7 +20,7 @@ import store from '../redux';
 import { ContainerLabel, ContainerSelect, LoadingBox } from './utils';
 import { FLAGS, useFlag } from '@console/shared';
 import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
-import { Terminal } from './terminal';
+import { Terminal, ImperativeTerminalType } from './terminal';
 import { WSFactory } from '../module/ws-factory';
 import { PodKind, resourceURL } from '../module/k8s';
 import { PodModel } from '../models';
@@ -54,7 +54,7 @@ export const PodConnect: React.FCC<PodConnectProps> = ({
   infoMessage,
 }) => {
   const { t } = useTranslation('public');
-  const terminalRef = useRef<any>(null);
+  const terminalRef = useRef<ImperativeTerminalType>(null);
   const wsRef = useRef<any>(null);
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
   const [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
