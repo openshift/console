@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"runtime"
+	"time"
 
 	"io/ioutil"
 	"net/http"
@@ -16,6 +17,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/fsnotify/fsnotify"
 	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
@@ -664,16 +666,27 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// Set up config file watcher if a config file was specified
+	configFile := fs.Lookup("config").Value.String()
+	if configFile != "" {
+		go watchConfigFile(configFile, cancel)
+	}
+
 	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile)
 	if err != nil {
 		klog.Fatalf("error getting listener, %v", err)
 	}
 	defer listener.Close()
 
+	// Handle graceful shutdown
 	go func() {
 		<-ctx.Done()
 		klog.Infof("Shutting down server...")
-		if err = httpsrv.Shutdown(ctx); err != nil {
+
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer shutdownCancel()
+
+		if err = httpsrv.Shutdown(shutdownCtx); err != nil {
 			klog.Fatalf("Error shutting down server: %v", err)
 		}
 	}()
@@ -698,6 +711,44 @@ func main() {
 	}
 
 	httpsrv.Serve(listener)
+}
+
+// watchConfigFile sets up a file watcher for the config file and exits the app when it changes.
+// When running in-cluster, this allows the container to restart with the new config without a full rollout.
+func watchConfigFile(configFile string, cancel context.CancelFunc) {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		klog.Errorf("Failed to create file watcher: %v", err)
+		return
+	}
+	defer watcher.Close()
+
+	err = watcher.Add(configFile)
+	if err != nil {
+		klog.Errorf("Failed to watch config file %q: %v", configFile, err)
+		return
+	}
+
+	klog.Infof("Watching config file %q for changes", configFile)
+
+	for {
+		select {
+		case event, ok := <-watcher.Events:
+			if !ok {
+				return
+			}
+			if event.Has(fsnotify.Write) || event.Has(fsnotify.Create) || event.Has(fsnotify.Remove) {
+				klog.Infof("Config file %q changed, signaling graceful shutdown", configFile)
+				cancel()
+				return
+			}
+		case err, ok := <-watcher.Errors:
+			if !ok {
+				return
+			}
+			klog.Errorf("File watcher error: %v", err)
+		}
+	}
 }
 
 func listen(scheme, host, certFile, keyFile string) (net.Listener, error) {
