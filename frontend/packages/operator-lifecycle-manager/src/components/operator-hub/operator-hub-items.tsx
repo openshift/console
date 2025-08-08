@@ -24,7 +24,6 @@ import {
   useUserSettingsCompatibility,
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { isModifiedEvent } from '@console/shared/src/utils';
 import { DefaultCatalogSource } from '../../const';
 import { SubscriptionModel } from '../../models';
@@ -465,20 +464,6 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       ? `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`
       : '';
 
-  const remoteWorkflowUrl = React.useMemo(() => {
-    if (detailsItem?.marketplaceRemoteWorkflow) {
-      try {
-        const url = new URL(detailsItem?.marketplaceRemoteWorkflow);
-        url.searchParams.set('utm_source', 'openshift_console');
-        return url.toString();
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error while setting utm_source to remote workflow URL', error.message);
-      }
-    }
-    return null;
-  }, [detailsItem]);
-
   if (_.isEmpty(filteredItems)) {
     return (
       <>
@@ -566,18 +551,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
               />
 
               <div className="co-catalog-page__overlay-actions">
-                {remoteWorkflowUrl && (
-                  <ExternalLink
-                    className="pf-v6-c-button pf-m-primary co-catalog-page__overlay-action co-catalog-page__overlay-action--external"
-                    href={remoteWorkflowUrl}
-                    text={
-                      <div className="co-catalog-page__overlay-action-label">
-                        {detailsItem?.marketplaceActionText || t('olm~Purchase')}
-                      </div>
-                    }
-                  />
-                )}
-                {!detailsItem?.installed ? (
+                {!detailsItem.installed ? (
                   <Link
                     className={css(
                       'pf-v6-c-button',

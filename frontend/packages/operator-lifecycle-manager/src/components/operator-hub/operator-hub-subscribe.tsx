@@ -1064,7 +1064,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                       label={t('olm~A specific namespace on the cluster')}
                       description={descFor(InstallModeType.InstallModeTypeOwnNamespace)}
                       onChange={(e) => {
-                        setInstallMode((e.target as HTMLInputElement).value as any);
+                        setInstallMode((e.target as HTMLInputElement).value as any);                        
                         setTargetNamespace(
                           useSuggestedNSForSingleInstallMode ? operatorSuggestedNamespace : null,
                         );

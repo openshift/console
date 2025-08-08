@@ -519,7 +519,7 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
   return (
     <>
       <ListPageHeader
-        title={showTitle ? `${labelPlural}` : ''}
+        title={showTitle ? `${labelPlural}` : ''}       
         hideFavoriteButton
         helpText={managesAllNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
       >
