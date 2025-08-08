@@ -16,7 +16,7 @@ const getPerspectiveURLParam = (perspectives: Perspective[]) => {
 
   const urlParams = new URLSearchParams(window.location.search);
   const perspectiveParam = urlParams.get('perspective');
-  return perspectiveIDs.includes(perspectiveParam) ? perspectiveParam : null;
+  return perspectiveParam && perspectiveIDs.includes(perspectiveParam) ? perspectiveParam : '';
 };
 
 const DetectPerspective: React.FC<DetectPerspectiveProps> = ({ children }) => {
@@ -29,9 +29,15 @@ const DetectPerspective: React.FC<DetectPerspectiveProps> = ({ children }) => {
       setActivePerspective(perspectiveParam, location.pathname);
     }
   }, [perspectiveParam, activePerspective, setActivePerspective, location]);
+
   return loaded ? (
     activePerspective ? (
-      <PerspectiveContext.Provider value={{ activePerspective, setActivePerspective }}>
+      <PerspectiveContext.Provider
+        value={{
+          activePerspective,
+          setActivePerspective,
+        }}
+      >
         {children}
       </PerspectiveContext.Provider>
     ) : (
