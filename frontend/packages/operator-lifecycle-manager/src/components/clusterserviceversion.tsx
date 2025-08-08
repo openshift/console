@@ -380,6 +380,7 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
             </Link>
           </div>
         }
+        appendTo="inline"
       >
         <Button variant="link" isInline>
           {t('olm~Plugin available')}
