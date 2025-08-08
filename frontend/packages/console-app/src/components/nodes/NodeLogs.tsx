@@ -167,11 +167,11 @@ const LogControls: React.FC<LogControlsProps> = ({
 };
 
 const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
-  const {
-    kind,
-    metadata: { labels, name, namespace: ns },
-    status,
-  } = node;
+  const { kind } = node;
+  const labels = node.metadata?.labels;
+  const name = node.metadata?.name;
+  const ns = node.metadata?.namespace;
+  const { status } = node;
   const isWindows = status?.nodeInfo?.operatingSystem === 'windows';
   const pathItems = ['journal'];
   isWindows
@@ -184,8 +184,8 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
 
   const [path, setPath] = React.useState(getQueryArgument(pathQueryArgument) || pathItems[0]);
   const [logURL, setLogURL] = React.useState('');
-  const [logFilenames, setLogFilenames] = React.useState([]);
-  const [unit, setUnit] = React.useState(getQueryArgument(unitQueryArgument));
+  const [logFilenames, setLogFilenames] = React.useState<string[]>([]);
+  const [unit, setUnit] = React.useState(getQueryArgument(unitQueryArgument) || '');
   const [logFilename, setLogFilename] = React.useState(getQueryArgument(logQueryArgument));
   const [isLoadingLog, setLoadingLog] = React.useState(true);
   const [isLoadingFilenames, setLoadingFilenames] = React.useState(true);
@@ -234,7 +234,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       if (unitText) {
         extendedURL = `${baseURL}?${getUnitQueryParams(unitText)}`;
       }
-      return resourceURL(modelFor(kind), {
+      return resourceURL(modelFor(kind || ''), {
         name,
         ns,
         path: extendedURL || baseURL,
@@ -260,9 +260,9 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
           const links = !isWindows
             ? doc.querySelectorAll('a[href^="audit"]')
             : doc.querySelectorAll('a');
-          const filenames = [];
+          const filenames: string[] = [];
           for (const link of links) {
-            filenames.push(link.textContent);
+            filenames.push(link.textContent as string);
           }
           setLogFilenames(filenames);
           setLoadingFilenames(false);
@@ -333,12 +333,12 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       setPathOpen={setPathOpen}
       isJournal={isJournal}
       onChangeUnit={onChangeUnit}
-      unit={unit}
+      unit={unit || ''}
       isLoadingFilenames={isLoadingFilenames}
       logFilenamesExist={logFilenamesExist}
       onToggleFilename={onToggleFilename}
       onChangeFilename={onChangeFilename}
-      logFilename={logFilename}
+      logFilename={logFilename || ''}
       isFilenameOpen={isFilenameOpen}
       setFilenameOpen={setFilenameOpen}
       logFilenames={logFilenames}
