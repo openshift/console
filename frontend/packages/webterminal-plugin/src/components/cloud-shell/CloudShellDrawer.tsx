@@ -35,7 +35,7 @@ const getMastheadHeight = (): number => {
 
 const HEADER_HEIGHT = `calc(${pfSplitterHeight.var} + var(--co-cloud-shell-header-height))`;
 
-export const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ children }) => {
+const CloudShell: React.FCC<CloudShellDrawerProps> = ({ children }) => {
   const [expanded, setExpanded] = React.useState<boolean>(true);
   const [height, setHeight] = React.useState<number>(385);
   const { t } = useTranslation('webterminal-plugin');
@@ -43,11 +43,6 @@ export const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ children })
 
   const open = useIsCloudShellExpanded();
   const toggleCloudShellExpanded = useToggleCloudShellExpanded();
-  const devWorkspaceAvailable = useCloudShellAvailable();
-
-  if (!devWorkspaceAvailable) {
-    return <>{children}</>;
-  }
 
   const onMRButtonClick = (expandedState: boolean) => {
     setExpanded(!expandedState);
@@ -62,9 +57,11 @@ export const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ children })
         'co-cloud-shell-drawer__body-collapsed': !expanded,
       })}
       isResizable
-      onResize={(_, w) => {
-        setExpanded(w > 47); // 47px is an arbitrary computed value of HEADER_HEIGHT.
-        setHeight(w);
+      onResize={(_, h) => {
+        setExpanded(h > 47); // 47px is an arbitrary computed value of HEADER_HEIGHT.
+        setHeight(h);
+        // Page size has changed after resize, reflow as necessary.
+        window.dispatchEvent(new Event('sidebar_toggle'));
       }}
       defaultSize={expanded ? `${height}px` : '0px'}
       minSize={HEADER_HEIGHT}
@@ -115,4 +112,15 @@ export const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ children })
       </DrawerContent>
     </Drawer>
   );
+};
+
+export const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ children }) => {
+  const devWorkspaceAvailable = useCloudShellAvailable();
+  const open = useIsCloudShellExpanded();
+
+  if (!devWorkspaceAvailable) {
+    return <>{children}</>;
+  }
+
+  return <CloudShell key={`cloud-shell-drawer-${open}`}>{children}</CloudShell>;
 };
