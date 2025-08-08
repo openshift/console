@@ -24,6 +24,7 @@ import {
   useUserSettingsCompatibility,
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
+import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { isModifiedEvent } from '@console/shared/src/utils';
 import { DefaultCatalogSource } from '../../const';
 import { SubscriptionModel } from '../../models';
@@ -198,7 +199,7 @@ const determineAvailableFilters = (initialFilters, items: OperatorHubItem[], fil
   const filters = _.cloneDeep(initialFilters);
 
   _.each(filterGroups, (field) => {
-    const values = [];
+    const values: { label: string; synonyms: string[]; value: string; active: boolean }[] = [];
     _.each(items, (item) => {
       let value = item[field];
       let synonyms;
@@ -336,14 +337,14 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
 
 export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) => {
   const { t } = useTranslation();
-  const [detailsItem, setDetailsItem] = React.useState(null);
+  const [detailsItem, setDetailsItem] = React.useState<OperatorHubItem | null>(null);
   const [showDetails, setShowDetails] = React.useState(false);
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
     boolean
   >(userSettingsKey, storeKey, false);
   const [updateChannel, setUpdateChannel] = React.useState('');
   const [updateVersion, setUpdateVersion] = React.useState('');
-  const [tokenizedAuth, setTokenizedAuth] = React.useState(null);
+  const [tokenizedAuth, setTokenizedAuth] = React.useState<string | null>(null);
   const installVersion = getQueryArgument('version');
   const filteredItems = filterByArchAndOS(props.items);
 
@@ -352,7 +353,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     const currentItem = _.find(filteredItems, {
       uid: detailsItemID,
     });
-    setDetailsItem(currentItem);
+    setDetailsItem(currentItem as any);
     setShowDetails(!_.isNil(currentItem));
     if (
       currentItem &&
@@ -363,7 +364,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       ) &&
       currentItem.infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuth)
     ) {
-      setTokenizedAuth('AWS');
+      setTokenizedAuth('AWS' as any);
     }
     if (
       currentItem &&
@@ -374,7 +375,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       ) &&
       currentItem.infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuth)
     ) {
-      setTokenizedAuth('Azure');
+      setTokenizedAuth('Azure' as any);
     }
     if (
       currentItem &&
@@ -385,7 +386,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       ) &&
       currentItem.infraFeatures?.find((i) => i === InfrastructureFeature.TokenAuthGCP)
     ) {
-      setTokenizedAuth('GCP');
+      setTokenizedAuth('GCP' as any);
     }
   }, [filteredItems]);
 
@@ -393,7 +394,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     const params = new URLSearchParams(window.location.search);
     params.set('details-item', item.uid);
     setURLParams(params);
-    setDetailsItem(item);
+    setDetailsItem(item as any);
     setShowDetails(true);
 
     if (loaded && ignoreWarning) {
@@ -412,7 +413,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     // reset version and channel state so that switching between operator cards does not carry over previous selections
     setUpdateChannel('');
     setUpdateVersion('');
-    setTokenizedAuth('');
+    setTokenizedAuth('' as any);
   };
 
   const openOverlay = (item: OperatorHubItem) => {
@@ -424,7 +425,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       const params = new URLSearchParams(window.location.search);
       params.set('details-item', item.uid);
       setURLParams(params);
-      setDetailsItem(item);
+      setDetailsItem(item as any);
       setShowDetails(true);
     }
   };
@@ -436,23 +437,47 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   const installParamsURL =
     detailsItem &&
     detailsItem.obj &&
-    new URLSearchParams({
-      pkg: detailsItem.obj.metadata.name,
-      catalog: detailsItem.catalogSource,
-      catalogNamespace: detailsItem.catalogSourceNamespace,
-      targetNamespace: props.namespace,
-      channel: updateChannel,
-      version: updateVersion,
-      tokenizedAuth,
-    }).toString();
+    (() => {
+      const params: Record<string, string> = {
+        pkg: detailsItem.obj.metadata?.name || '',
+        catalog: detailsItem.catalogSource || '',
+        catalogNamespace: detailsItem.catalogSourceNamespace || '',
+        targetNamespace: props.namespace || '',
+        channel: updateChannel,
+        version: updateVersion,
+      };
+      if (tokenizedAuth) {
+        params.tokenizedAuth = tokenizedAuth;
+      }
+      return new URLSearchParams(params).toString();
+    })();
 
   const installLink =
-    detailsItem && detailsItem.obj && `/operatorhub/subscribe?${installParamsURL.toString()}`;
+    detailsItem && detailsItem.obj && installParamsURL
+      ? `/operatorhub/subscribe?${installParamsURL}`
+      : '';
 
   const uninstallLink = () =>
     detailsItem &&
     detailsItem.subscription &&
-    `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
+    detailsItem.subscription.metadata?.namespace &&
+    detailsItem.subscription.metadata?.name
+      ? `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`
+      : '';
+
+  const remoteWorkflowUrl = React.useMemo(() => {
+    if (detailsItem?.marketplaceRemoteWorkflow) {
+      try {
+        const url = new URL(detailsItem?.marketplaceRemoteWorkflow);
+        url.searchParams.set('utm_source', 'openshift_console');
+        return url.toString();
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error while setting utm_source to remote workflow URL', error.message);
+      }
+    }
+    return null;
+  }, [detailsItem]);
 
   if (_.isEmpty(filteredItems)) {
     return (
@@ -492,7 +517,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
 
   const titleAndDeprecatedPackage = () => (
     <>
-      {detailsItem.name}
+      {detailsItem?.name}
       {detailsItem?.obj?.status?.deprecation && (
         <DeprecatedOperatorWarningBadge
           className="pf-v6-u-ml-sm"
@@ -524,35 +549,46 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
           aria-labelledby="catalog-item-header"
           isOpen={!!detailsItem && showDetails}
           onClose={closeOverlay}
-          title={detailsItem.name}
+          title={detailsItem?.name || ''}
           header={
             <>
               <CatalogItemHeader
                 className="co-catalog-page__overlay-header"
-                iconClass={detailsItem.iconClass}
-                iconImg={detailsItem.imgUrl}
+                iconClass={detailsItem?.iconClass}
+                iconImg={detailsItem?.imgUrl}
                 title={titleAndDeprecatedPackage()}
                 vendor={t('olm~{{version}} provided by {{provider}}', {
-                  version: updateVersion || installVersion || detailsItem.version,
-                  provider: detailsItem.provider,
+                  version: updateVersion || installVersion || detailsItem?.version || '',
+                  provider: detailsItem?.provider || '',
                 })}
                 data-test-id="operator-modal-header"
                 id="catalog-item-header"
               />
 
               <div className="co-catalog-page__overlay-actions">
-                {!detailsItem.installed ? (
+                {remoteWorkflowUrl && (
+                  <ExternalLink
+                    className="pf-v6-c-button pf-m-primary co-catalog-page__overlay-action co-catalog-page__overlay-action--external"
+                    href={remoteWorkflowUrl}
+                    text={
+                      <div className="co-catalog-page__overlay-action-label">
+                        {detailsItem?.marketplaceActionText || t('olm~Purchase')}
+                      </div>
+                    }
+                  />
+                )}
+                {!detailsItem?.installed ? (
                   <Link
                     className={css(
                       'pf-v6-c-button',
                       'pf-m-primary',
                       {
-                        'pf-m-disabled': !detailsItem.obj || detailsItem.isInstalling,
+                        'pf-m-disabled': !detailsItem?.obj || detailsItem?.isInstalling,
                       },
                       'co-catalog-page__overlay-action',
                     )}
                     data-test-id="operator-install-btn"
-                    to={installLink}
+                    to={installLink || '#'}
                   >
                     {t('olm~Install')}
                   </Link>
@@ -560,8 +596,11 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                   <Button
                     className="co-catalog-page__overlay-action"
                     data-test-id="operator-uninstall-btn"
-                    isDisabled={!detailsItem.installed}
-                    onClick={() => history.push(uninstallLink())}
+                    isDisabled={!detailsItem?.installed}
+                    onClick={() => {
+                      const link = uninstallLink();
+                      if (link) history.push(link);
+                    }}
                     variant="secondary"
                   >
                     {t('olm~Uninstall')}

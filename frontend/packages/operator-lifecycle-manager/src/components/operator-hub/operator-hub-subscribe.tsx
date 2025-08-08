@@ -182,7 +182,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   const defaultEnableMonitoring =
     packageManifest?.metadata?.labels?.provider?.includes('Red Hat') &&
-    currentCSVDesc.annotations?.['console.openshift.io/operator-monitoring-default'] === 'true';
+    currentCSVDesc?.annotations?.['console.openshift.io/operator-monitoring-default'] === 'true';
   const [enableMonitoring, setEnableMonitoring] = React.useState(defaultEnableMonitoring);
 
   const [error, setError] = React.useState('');
@@ -234,16 +234,16 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     );
 
   const suggestedNamespace =
-    currentCSVDesc.annotations?.['operatorframework.io/suggested-namespace'];
+    currentCSVDesc?.annotations?.['operatorframework.io/suggested-namespace'];
   const suggestedNamespaceTemplate =
-    getSuggestedNamespaceTemplate(currentCSVDesc.annotations, {
+    getSuggestedNamespaceTemplate(currentCSVDesc?.annotations, {
       // eslint-disable-next-line no-console
       onError: () => console.error('Could not parse JSON annotation.'),
     }) ?? {};
   const suggestedNamespaceTemplateName = suggestedNamespaceTemplate?.metadata?.name;
   const operatorRequestsMonitoring =
-    currentCSVDesc.annotations?.['operatorframework.io/cluster-monitoring'] === 'true';
-  const initializationResource = getInitializationResource(currentCSVDesc.annotations, {
+    currentCSVDesc?.annotations?.['operatorframework.io/cluster-monitoring'] === 'true';
+  const initializationResource = getInitializationResource(currentCSVDesc?.annotations, {
     // eslint-disable-next-line no-console
     onError: () => console.error('Operator Hub Subscribe: Could not get initialization resource.'),
   });
@@ -262,7 +262,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   const globalNS =
     (props.operatorGroup?.data || ([] as OperatorGroupKind[])).find(
-      (og) => og.metadata.name === 'global-operators',
+      (og) => og.metadata?.name === 'global-operators',
     )?.metadata?.namespace || 'openshift-operators';
 
   let selectedTargetNamespace = targetNamespace || props.targetNamespace;
@@ -330,7 +330,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   const manualSubscriptionsInNamespace = getManualSubscriptionsInNamespace(
     props.subscription.data,
-    selectedTargetNamespace,
+    selectedTargetNamespace as any,
   );
 
   React.useEffect(() => {
@@ -391,7 +391,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       ns,
     );
   const namespaceSupports = (ns: string) => (mode: InstallModeType) => {
-    const operatorGroup = props.operatorGroup.data.find((og) => og.metadata.namespace === ns);
+    const operatorGroup = props.operatorGroup.data.find((og) => og.metadata?.namespace === ns);
     if (!operatorGroup || !ns) {
       return true;
     }
@@ -481,7 +481,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         ? {}
         : {
             spec: {
-              targetNamespaces: [selectedTargetNamespace],
+              targetNamespaces: [selectedTargetNamespace as any],
             },
           }),
     };
@@ -568,7 +568,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       }
       if (
         !props.operatorGroup.data.some(
-          (group) => group.metadata.namespace === selectedTargetNamespace,
+          (group) => group.metadata?.namespace === selectedTargetNamespace,
         )
       ) {
         await k8sCreate(OperatorGroupModel, operatorGroup);
@@ -591,7 +591,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           },
         ]);
       }
-      navigateToInstallPage(currentCSVName);
+      navigateToInstallPage(currentCSVName as any);
     } catch (err) {
       setError(err.message || t('olm~Could not create Operator Subscription.'));
     }
@@ -601,10 +601,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     [updateChannelName, selectedInstallMode, selectedTargetNamespace, approval].some(
       (v) => _.isNil(v) || _.isEmpty(v),
     ) ||
-    subscriptionExists(selectedTargetNamespace) ||
-    !namespaceSupports(selectedTargetNamespace)(selectedInstallMode) ||
+    subscriptionExists(selectedTargetNamespace as any) ||
+    !namespaceSupports(selectedTargetNamespace as any)(selectedInstallMode) ||
     (selectedTargetNamespace && cannotResolve) ||
-    !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) ||
+    !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace as any)) ||
     (tokenizedAuth === 'AWS' && _.isEmpty(roleARNText)) ||
     (tokenizedAuth === 'Azure' &&
       [azureClientId, azureTenantId, azureSubscriptionId].some((v) => _.isEmpty(v))) ||
@@ -623,7 +623,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           <div className="co-pre-line">{error}</div>
         </Alert>
       )) ||
-      (!namespaceSupports(selectedTargetNamespace)(selectedInstallMode) && (
+      (!namespaceSupports(selectedTargetNamespace as any)(selectedInstallMode) && (
         <Alert
           isInline
           className="co-alert"
@@ -654,7 +654,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           )}
         </Alert>
       )) ||
-      (subscriptionExists(selectedTargetNamespace) && (
+      (subscriptionExists(selectedTargetNamespace as any) && (
         <Alert
           isInline
           className="co-alert"
@@ -681,7 +681,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           </p>
         </Alert>
       )) ||
-      (!_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) && (
+      (!_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace as any)) && (
         <Alert
           isInline
           className="co-alert"
@@ -692,7 +692,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             'olm~Installing this Operator in the selected Namespace would cause conflicts with another Operator providing these APIs:',
           )}
           <ul>
-            {conflictingProvidedAPIs(selectedTargetNamespace).map((gvk) => (
+            {conflictingProvidedAPIs(selectedTargetNamespace as any).map((gvk) => (
               <li key={gvk}>
                 <strong>{kindForReference(gvk)}</strong> <i>({apiVersionForReference(gvk)})</i>
               </li>
@@ -747,7 +747,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             isChecked={enableMonitoring}
             data-checked-state={enableMonitoring}
           />
-          {!props.packageManifest.data[0].metadata.labels.provider?.includes('Red Hat') && (
+          {!props.packageManifest.data[0]?.metadata?.labels?.provider?.includes('Red Hat') && (
             <Alert
               isInline
               className="co-alert pf-v6-c-alert--top-margin"
@@ -813,7 +813,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             <NsDropdown
               id="dropdown-selectbox"
               selectedKey={selectedTargetNamespace}
-              onChange={(ns) => setTargetNamespace(ns)}
+              onChange={(ns) => setTargetNamespace(ns as any)}
               dataTest="dropdown-selectbox"
             />
             <Alert
@@ -834,7 +834,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       <NsDropdown
         id="dropdown-selectbox"
         selectedKey={selectedTargetNamespace}
-        onChange={(ns) => setTargetNamespace(ns)}
+        onChange={(ns) => setTargetNamespace(ns as any)}
         dataTest="dropdown-selectbox"
       />
     </div>
@@ -1044,7 +1044,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                       label={`${t('olm~All namespaces on the cluster')} ${t('olm~(default)')}`}
                       description={descFor(InstallModeType.InstallModeTypeAllNamespaces)}
                       onChange={(e) => {
-                        setInstallMode((e.target as HTMLInputElement).value);
+                        setInstallMode((e.target as HTMLInputElement).value as any);
                         setTargetNamespace(null);
                         setCannotResolve(false);
                       }}
@@ -1064,7 +1064,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                       label={t('olm~A specific namespace on the cluster')}
                       description={descFor(InstallModeType.InstallModeTypeOwnNamespace)}
                       onChange={(e) => {
-                        setInstallMode((e.target as HTMLInputElement).value);
+                        setInstallMode((e.target as HTMLInputElement).value as any);
                         setTargetNamespace(
                           useSuggestedNSForSingleInstallMode ? operatorSuggestedNamespace : null,
                         );
@@ -1135,7 +1135,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                       >
                         <NamespaceIncludesManualApproval
                           subscriptions={manualSubscriptionsInNamespace}
-                          namespace={selectedTargetNamespace}
+                          namespace={selectedTargetNamespace as any}
                         />
                       </Alert>
                     )}
@@ -1197,7 +1197,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               displayName={
                 currentCSVDesc?.displayName || channels?.[0]?.currentCSVDesc?.displayName
               }
-              icon={iconFor(props.packageManifest.data[0])}
+              icon={iconFor(props.packageManifest.data[0]) as any}
               provider={provider}
               deprecation={packageManifest?.status?.deprecation}
             />
@@ -1215,7 +1215,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     key={referenceForProvidedAPI(api)}
                     canCreate={false}
                     crd={api}
-                    csv={null}
+                    csv={null as any}
                     required={referenceForProvidedAPI(api) === initializationResourceReference}
                   />
                 ))
