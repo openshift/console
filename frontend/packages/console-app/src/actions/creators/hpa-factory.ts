@@ -18,8 +18,10 @@ import { deleteHPAModal, isHelmResource, isOperatorBackedService } from '@consol
 import { doesHpaMatch } from '@console/shared/src/utils/hpa-utils';
 import { ResourceActionFactory } from './types';
 
-const hpaRoute = ({ metadata: { name, namespace } }: K8sResourceCommon, kind: K8sKind) =>
-  `/workload-hpa/ns/${namespace}/${referenceForModel(kind)}/${name}`;
+const hpaRoute = (
+  { metadata: { name = '', namespace = '' } = {} }: K8sResourceCommon,
+  kind: K8sKind,
+) => `/workload-hpa/ns/${namespace}/${referenceForModel(kind)}/${name}`;
 
 export const HpaActionFactory: ResourceActionFactory = {
   AddHorizontalPodAutoScaler: (kind: K8sKind, obj: K8sResourceKind) => ({
@@ -30,7 +32,7 @@ export const HpaActionFactory: ResourceActionFactory = {
     accessReview: {
       group: HorizontalPodAutoscalerModel.apiGroup,
       resource: HorizontalPodAutoscalerModel.plural,
-      namespace: obj.metadata.namespace,
+      namespace: obj.metadata?.namespace,
       verb: 'create',
     },
   }),
@@ -42,7 +44,7 @@ export const HpaActionFactory: ResourceActionFactory = {
     accessReview: {
       group: HorizontalPodAutoscalerModel.apiGroup,
       resource: HorizontalPodAutoscalerModel.plural,
-      namespace: obj.metadata.namespace,
+      namespace: obj.metadata?.namespace,
       verb: 'update',
     },
   }),
@@ -63,7 +65,7 @@ export const HpaActionFactory: ResourceActionFactory = {
     accessReview: {
       group: HorizontalPodAutoscalerModel.apiGroup,
       resource: HorizontalPodAutoscalerModel.plural,
-      namespace: obj.metadata.namespace,
+      namespace: obj.metadata?.namespace,
       verb: 'delete',
     },
   }),

@@ -55,7 +55,7 @@ export const usePVCActions = (
         disabled: obj?.status?.phase !== 'Bound',
         tooltip: obj?.status?.phase !== 'Bound' ? t('console-app~PVC is not Bound') : '',
         cta: {
-          href: `/k8s/ns/${obj.metadata.namespace}/${VolumeSnapshotModel.plural}/~new/form?pvc=${obj.metadata.name}`,
+          href: `/k8s/ns/${obj.metadata?.namespace}/${VolumeSnapshotModel.plural}/~new/form?pvc=${obj.metadata?.name}`,
         },
         accessReview: asAccessReview(PersistentVolumeClaimModel, obj, 'create'),
       }),

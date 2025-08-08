@@ -64,23 +64,26 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
     () => ({
       [CommonActionCreator.Delete]: (): Action => ({
         id: `delete-resource`,
-        label: t('console-app~Delete {{kind}}', { kind: kind.kind }),
+        label: t('console-app~Delete {{kind}}', { kind: kind?.kind }),
         cta: () =>
           deleteModal({
             kind,
             resource,
             message,
           }),
-        accessReview: asAccessReview(kind, resource, 'delete'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'delete'),
       }),
       [CommonActionCreator.Edit]: (): Action => ({
         id: `edit-resource`,
-        label: t('console-app~Edit {{kind}}', { kind: kind.kind }),
+        label: t('console-app~Edit {{kind}}', { kind: kind?.kind }),
         cta: {
-          href: `${resourceObjPath(resource, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
+          href: `${resourceObjPath(
+            resource as K8sResourceKind,
+            kind?.crd ? referenceForModel(kind as K8sModel) : (kind?.kind as string),
+          )}/yaml`,
         },
         // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
-        accessReview: asAccessReview(kind, resource, 'update'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'update'),
       }),
       [CommonActionCreator.ModifyLabels]: (): Action => ({
         id: 'edit-labels',
@@ -91,7 +94,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind, resource, 'patch'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
       [CommonActionCreator.ModifyAnnotations]: (): Action => ({
         id: 'edit-annotations',
@@ -102,7 +105,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind, resource, 'patch'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
       [CommonActionCreator.ModifyCount]: (): Action => ({
         id: 'edit-pod-count',
@@ -112,7 +115,12 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resourceKind: kind,
             resource,
           }),
-        accessReview: asAccessReview(kind, resource, 'patch', 'scale'),
+        accessReview: asAccessReview(
+          kind as K8sModel,
+          resource as K8sResourceKind,
+          'patch',
+          'scale',
+        ),
       }),
       [CommonActionCreator.ModifyPodSelector]: (): Action => ({
         id: 'edit-pod-selector',
@@ -123,7 +131,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind, resource, 'patch'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
       [CommonActionCreator.ModifyTolerations]: (): Action => ({
         id: 'edit-toleration',
@@ -134,18 +142,18 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             modalClassName: 'modal-lg',
           }),
-        accessReview: asAccessReview(kind, resource, 'patch'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
       [CommonActionCreator.AddStorage]: (): Action => ({
         id: 'add-storage',
         label: t('console-app~Add storage'),
         cta: {
           href: `${resourceObjPath(
-            resource,
-            kind.crd ? referenceForModel(kind) : kind.kind,
+            resource as K8sResourceKind,
+            kind?.crd ? referenceForModel(kind as K8sModel) : (kind?.kind as string),
           )}/attach-storage`,
         },
-        accessReview: asAccessReview(kind, resource, 'patch'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
     [kind, resource, t, message],

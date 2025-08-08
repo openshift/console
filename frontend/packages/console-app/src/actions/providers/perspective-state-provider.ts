@@ -19,14 +19,17 @@ export const useDeveloperPerspectiveStateProvider = (setFeatureFlag: SetFeatureF
     } else if (devPerspective.visibility.state === PerspectiveVisibilityState.Enabled) {
       setFeatureFlag(FLAG_DEVELOPER_PERSPECTIVE, true);
     } else if (devPerspective.visibility.state === PerspectiveVisibilityState.AccessReview) {
-      hasReviewAccess(devPerspective?.visibility?.accessReview)
-        .then((res) => {
-          setFeatureFlag(FLAG_DEVELOPER_PERSPECTIVE, res);
-        })
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.warn('Could not check access', e);
-        });
+      const accessReview = devPerspective?.visibility?.accessReview;
+      if (accessReview) {
+        hasReviewAccess(accessReview)
+          .then((res) => {
+            setFeatureFlag(FLAG_DEVELOPER_PERSPECTIVE, res);
+          })
+          .catch((e) => {
+            // eslint-disable-next-line no-console
+            console.warn('Could not check access', e);
+          });
+      }
     }
   }
 };

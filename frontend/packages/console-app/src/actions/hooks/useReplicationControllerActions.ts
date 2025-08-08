@@ -51,7 +51,7 @@ export const useReplicationControllerActions = <
         id: 'rollback-deployment-config',
         label: t('console-app~Rollback'),
         disabled: INACTIVE_STATUSES.includes(
-          obj?.metadata?.annotations?.['openshift.io/deployment.phase'],
+          obj?.metadata?.annotations?.['openshift.io/deployment.phase'] || '',
         ),
         cta: () =>
           rollbackModal({
