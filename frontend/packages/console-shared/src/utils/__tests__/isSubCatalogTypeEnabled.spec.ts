@@ -5,7 +5,7 @@ import {
   isCatalogTypeEnabled,
   useIsSoftwareCatalogEnabled,
 } from '@console/shared';
-import { testHook } from '../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { mockExtensions } from './catalogTypeExtensions.data';
 
 jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({

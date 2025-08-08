@@ -1,7 +1,7 @@
 import * as redux from 'react-redux';
 import * as useExtensionsModule from '@console/plugin-sdk/src/api/useExtensions';
 import * as userHooks from '@console/shared/src/hooks/useUserSettingsCompatibility';
-import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { TourActions } from '../const';
 import * as TourModule from '../tour-context';
 import { TourDataType } from '../type';
