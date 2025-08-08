@@ -38,7 +38,7 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
   const [favorites, setFavorites, loaded] = useUserSettingsCompatibility<FavoritesType>(
     FAVORITES_CONFIG_MAP_KEY,
     FAVORITES_LOCAL_STORAGE_KEY,
-    null,
+    undefined,
     true,
   );
   const alphanumericRegex = /^[a-zA-Z0-9- ]*$/;
