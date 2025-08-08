@@ -19,7 +19,7 @@ import NodeTerminal from './NodeTerminal';
 const NodePodsPage: React.FC<PageComponentProps<NodeKind>> = ({ obj }) => (
   <PodsPage
     showTitle={false}
-    fieldSelector={`spec.nodeName=${obj.metadata.name}`}
+    fieldSelector={`spec.nodeName=${obj?.metadata?.name}`}
     showNamespaceOverride
   />
 );

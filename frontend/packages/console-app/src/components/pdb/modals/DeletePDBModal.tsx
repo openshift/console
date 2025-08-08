@@ -16,10 +16,10 @@ import { PodDisruptionBudgetModel } from '../../../models';
 import { PodDisruptionBudgetKind } from '../types';
 
 const DeletePDBModal: React.FC<DeletePDBModalProps> = ({ close, pdb, workloadName }) => {
-  const [submitError, setSubmitError] = React.useState<string>(null);
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const { t } = useTranslation();
-  const pdbName = pdb.metadata.name;
+  const pdbName = pdb.metadata?.name || '';
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -60,7 +60,7 @@ const DeletePDBModal: React.FC<DeletePDBModalProps> = ({ close, pdb, workloadNam
         )}
       </ModalBody>
       <ModalSubmitFooter
-        errorMessage={submitError}
+        errorMessage={submitError || undefined}
         inProgress={isSubmitting}
         submitText={t('console-app~Remove')}
         submitDanger
@@ -73,7 +73,8 @@ const DeletePDBModal: React.FC<DeletePDBModalProps> = ({ close, pdb, workloadNam
 
 export const deletePDBModal = createModalLauncher(DeletePDBModal);
 
-export type DeletePDBModalProps = ModalComponentProps & {
+export type DeletePDBModalProps = Omit<ModalComponentProps, 'close'> & {
+  close: () => void;
   pdb: PodDisruptionBudgetKind;
   workloadName: string;
 };

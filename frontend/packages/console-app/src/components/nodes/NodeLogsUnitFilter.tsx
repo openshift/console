@@ -25,9 +25,13 @@ const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit })
         event.currentTarget.value = '';
       }
     };
-    input.addEventListener('keydown', listener);
+    if (input) {
+      input.addEventListener('keydown', listener);
+    }
     return () => {
-      input.removeEventListener('keydown', listener);
+      if (input) {
+        input.removeEventListener('keydown', listener);
+      }
     };
   }, [onChangeUnit]);
 
@@ -65,7 +69,7 @@ const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit })
           id="log-unit"
           name="log-unit"
           aria-label={label}
-          ref={inputRef}
+          ref={inputRef as React.RefObject<HTMLInputElement>}
           placeholder={label}
         />
       </FlexItem>
