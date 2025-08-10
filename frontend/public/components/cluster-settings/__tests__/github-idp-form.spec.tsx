@@ -2,7 +2,6 @@ import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import { AddGitHubPage } from '../../cluster-settings/github-idp-form';
 import {
-  verifyInputField,
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
   verifyIDPFileFields,
@@ -10,7 +9,10 @@ import {
   mockData,
   setupFileReaderMock,
 } from './test-utils';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import {
+  renderWithProviders,
+  verifyInputField,
+} from '@console/shared/src/test-utils/unit-test-utils';
 
 describe('Add Identity Provider: GitHub', () => {
   beforeEach(() => {

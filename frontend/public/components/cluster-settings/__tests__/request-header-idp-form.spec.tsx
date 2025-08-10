@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import {
-  verifyInputField,
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
   verifyIDPFileFields,
@@ -9,7 +8,10 @@ import {
   mockData,
   setupFileReaderMock,
 } from './test-utils';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import {
+  renderWithProviders,
+  verifyInputField,
+} from '@console/shared/src/test-utils/unit-test-utils';
 import { AddRequestHeaderPage } from '../../cluster-settings/request-header-idp-form';
 
 describe('Add Identity Provider: Request Header', () => {
