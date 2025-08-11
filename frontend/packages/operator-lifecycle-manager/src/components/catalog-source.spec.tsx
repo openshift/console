@@ -33,7 +33,7 @@ jest.mock('react-router-dom-v5-compat', () => ({
   useLocation: jest.fn(),
 }));
 
-describe(CatalogSourceDetails.displayName, () => {
+describe(CatalogSourceDetails.displayName || '', () => {
   let wrapper: ShallowWrapper<CatalogSourceDetailsProps>;
   let obj: CatalogSourceDetailsProps['obj'];
 
@@ -43,15 +43,16 @@ describe(CatalogSourceDetails.displayName, () => {
   });
 
   it('renders name and publisher of the catalog', () => {
-    expect(wrapper.find(DetailsItem).at(1).props().obj.spec.displayName).toEqual(
+    expect(wrapper.find(DetailsItem).at(1).props().obj?.spec?.displayName).toEqual(
       obj.spec.displayName,
     );
-
-    expect(wrapper.find(DetailsItem).at(2).props().obj.spec.publisher).toEqual(obj.spec.publisher);
+    expect(wrapper.find(DetailsItem).at(2).props().obj?.spec?.publisher).toEqual(
+      obj.spec.publisher,
+    );
   });
 });
 
-describe(CatalogSourceDetailsPage.displayName, () => {
+describe(CatalogSourceDetailsPage.displayName || '', () => {
   let wrapper: ShallowWrapper;
 
   beforeEach(() => {
@@ -65,13 +66,13 @@ describe(CatalogSourceDetailsPage.displayName, () => {
 
     const detailsPage = wrapper.find(DetailsPage);
     const { pages } = detailsPage.props();
-    expect(pages.length).toEqual(3);
-    expect(pages[0].nameKey).toEqual(`public~Details`);
-    expect(pages[1].nameKey).toEqual(`public~YAML`);
-    expect(pages[2].nameKey).toEqual(`olm~Operators`);
+    expect(pages?.length).toEqual(3);
+    expect(pages?.[0]?.nameKey).toEqual(`public~Details`);
+    expect(pages?.[1]?.nameKey).toEqual(`public~YAML`);
+    expect(pages?.[2]?.nameKey).toEqual(`olm~Operators`);
 
-    expect(pages[0].component).toEqual(CatalogSourceDetails);
-    expect(pages[2].component).toEqual(CatalogSourceOperatorsPage);
+    expect(pages?.[0]?.component).toEqual(CatalogSourceDetails);
+    expect(pages?.[2]?.component).toEqual(CatalogSourceOperatorsPage);
 
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
       {
@@ -84,16 +85,18 @@ describe(CatalogSourceDetailsPage.displayName, () => {
   });
 });
 
-describe(CreateSubscriptionYAML.displayName, () => {
+describe(CreateSubscriptionYAML.displayName || '', () => {
   let wrapper: ShallowWrapper;
 
   beforeEach(() => {
     jest
       .spyOn(Router, 'useParams')
-      .mockReturnValue({ ns: 'default', pkgName: testPackageManifest.metadata.name });
+      .mockReturnValue({ ns: 'default', pkgName: testPackageManifest.metadata?.name || '' });
     jest.spyOn(Router, 'useLocation').mockReturnValue({
       ...window.location,
-      search: `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`,
+      search: `?pkg=${
+        testPackageManifest.metadata?.name || ''
+      }&catalog=ocs&catalogNamespace=default`,
     });
     wrapper = shallow(<CreateSubscriptionYAML />);
   });
@@ -103,7 +106,7 @@ describe(CreateSubscriptionYAML.displayName, () => {
       {
         kind: referenceForModel(PackageManifestModel),
         isList: false,
-        name: testPackageManifest.metadata.name,
+        name: testPackageManifest.metadata?.name || '',
         namespace: 'default',
         prop: 'packageManifest',
       },
@@ -141,12 +144,16 @@ describe(CreateSubscriptionYAML.displayName, () => {
       .dive<CreateYAMLProps, {}>();
     const subTemplate = safeLoad(createYAML.props().template);
 
-    window.location.search = `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`;
+    window.location.search = `?pkg=${
+      testPackageManifest.metadata?.name || ''
+    }&catalog=ocs&catalogNamespace=default`;
 
     expect(subTemplate.kind).toContain(SubscriptionModel.kind);
-    expect(subTemplate.spec.name).toEqual(testPackageManifest.metadata.name);
-    expect(subTemplate.spec.channel).toEqual(testPackageManifest.status.channels[0].name);
-    expect(subTemplate.spec.startingCSV).toEqual(testPackageManifest.status.channels[0].currentCSV);
+    expect(subTemplate.spec.name).toEqual(testPackageManifest.metadata?.name || '');
+    expect(subTemplate.spec.channel).toEqual(testPackageManifest.status?.channels?.[0]?.name || '');
+    expect(subTemplate.spec.startingCSV).toEqual(
+      testPackageManifest.status?.channels?.[0]?.currentCSV || '',
+    );
     expect(subTemplate.spec.source).toEqual('ocs');
   });
 

@@ -37,7 +37,7 @@ const getOperatorStatus = (
   ) {
     return {
       ...healthStateMapping[HealthState.UPDATING],
-      title: subscriptionStatus.title,
+      title: subscriptionStatus.title || '',
     };
   }
   if (
@@ -46,12 +46,12 @@ const getOperatorStatus = (
   ) {
     return {
       ...healthStateMapping[HealthState.UPGRADABLE],
-      title: subscriptionStatus.title,
+      title: subscriptionStatus.title || '',
     };
   }
   return {
     ...healthStateMapping[operatorHealth],
-    title: csvStatus.title,
+    title: csvStatus.title || '',
   };
 };
 
@@ -69,7 +69,7 @@ export const getClusterServiceVersionsWithStatuses: GetOperatorsWithStatuses<Clu
 ) => {
   const grouppedOperators = _.groupBy(
     resources.clusterServiceVersions.data as ClusterServiceVersionKind[],
-    (o) => o.metadata.name,
+    (o) => o.metadata?.name || '',
   );
   return _.values(grouppedOperators).map((operators) =>
     getOperatorsStatus<ClusterServiceVersionKind>(operators, (csv) =>

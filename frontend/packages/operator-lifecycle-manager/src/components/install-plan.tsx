@@ -62,7 +62,7 @@ import {
   OperatorGroupModel,
   CatalogSourceModel,
 } from '../models';
-import { InstallPlanKind, InstallPlanApproval, Step } from '../types';
+import { InstallPlanKind, InstallPlanApproval, Step, InstallPlanPhase } from '../types';
 import { installPlanPreviewModal } from './modals/installplan-preview-modal';
 import { requireOperatorGroup } from './operator-group';
 import { InstallPlanReview, referenceForStepResource } from './index';
@@ -95,7 +95,7 @@ export const InstallPlanHint: React.FC<InstallPlanHintProps> = ({ title, body, f
 
 export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
-  const phaseFor = (phase: InstallPlanKind['status']['phase']) => <Status status={phase} />;
+  const phaseFor = (phase: InstallPlanPhase) => <Status status={phase} />;
   return (
     <>
       {/* Name */}
@@ -269,9 +269,9 @@ export const InstallPlansPage: React.FC<InstallPlansPageProps> = (props) => {
 
 const updateUser = (isOpenShift: boolean, user: UserInfo): string => {
   if (!isOpenShift) {
-    return authSvc.name();
+    return authSvc.name() || '';
   }
-  return user?.username;
+  return user?.username || '';
 };
 
 export const NeedInstallPlanPermissions: React.FC<NeedInstallPlanPermissionsProps> = ({
@@ -299,11 +299,11 @@ export const NeedInstallPlanPermissions: React.FC<NeedInstallPlanPermissionsProp
       {username
         ? t(
             'olm~User "{{user}}" does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
-            { user: username, apiGroup, namespace: installPlan.metadata.namespace },
+            { user: username, apiGroup, namespace: installPlan.metadata?.namespace },
           )
         : t(
             'olm~User does not have permissions to patch resource InstallPlans in API group "{{apiGroup}}" in the namespace "{{namespace}}."',
-            { apiGroup, namespace: installPlan.metadata.namespace },
+            { apiGroup, namespace: installPlan.metadata?.namespace },
           )}
     </Alert>
   );
@@ -317,7 +317,7 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
   const canPatchInstallPlans = useAccessReview({
     group: InstallPlanModel.apiGroup,
     resource: InstallPlanModel.plural,
-    namespace: obj.metadata.namespace,
+    namespace: obj.metadata?.namespace,
     verb: 'patch',
   });
 
@@ -332,8 +332,8 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
             )}
             footer={
               <Link
-                to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(InstallPlanModel)}/${
-                  obj.metadata.name
+                to={`/k8s/ns/${obj.metadata?.namespace}/${referenceForModel(InstallPlanModel)}/${
+                  obj.metadata?.name
                 }/components`}
               >
                 <Button variant="primary">{t('olm~Preview InstallPlan')}</Button>
@@ -365,11 +365,11 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
                 <DescriptionListTerm>{t('olm~Components')}</DescriptionListTerm>
                 {(obj.spec.clusterServiceVersionNames || []).map((csvName) => (
                   <DescriptionListDescription key={csvName}>
-                    {obj.status.phase === 'Complete' ? (
+                    {obj.status?.phase === 'Complete' ? (
                       <ResourceLink
                         kind={referenceForModel(ClusterServiceVersionModel)}
                         name={csvName}
-                        namespace={obj.metadata.namespace}
+                        namespace={obj.metadata?.namespace}
                         title={csvName}
                       />
                     ) : (
@@ -400,7 +400,7 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('olm~Conditions')} />
-        <Conditions conditions={obj.status?.conditions} />
+        <Conditions conditions={obj.status?.conditions || []} />
       </PaneBody>
     </>
   );
@@ -414,7 +414,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   const [needsApproval, setNeedsApproval] = React.useState(
     obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false,
   );
-  const subscription = obj?.metadata?.ownerReferences.find(
+  const subscription = obj?.metadata?.ownerReferences?.find(
     (ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel),
   );
 
@@ -442,7 +442,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   const canPatchInstallPlans = useAccessReview({
     group: InstallPlanModel.apiGroup,
     resource: InstallPlanModel.plural,
-    namespace: obj.metadata.namespace,
+    namespace: obj.metadata?.namespace,
     verb: 'patch',
   });
 
@@ -469,9 +469,9 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
                     isDisabled={false}
                     onClick={() =>
                       history.push(
-                        `/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
+                        `/k8s/ns/${obj.metadata?.namespace}/${referenceForModel(
                           SubscriptionModel,
-                        )}/${subscription.name}?showDelete=true`,
+                        )}/${subscription?.name}?showDelete=true`,
                       )
                     }
                   >
@@ -506,7 +506,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
                       {['Present', 'Created'].includes(step.status) ? (
                         <ResourceLink
                           kind={referenceForStepResource(step.resource)}
-                          namespace={obj.metadata.namespace}
+                          namespace={obj.metadata?.namespace}
                           name={step.resource.name}
                           title={step.resource.name}
                         />
@@ -560,8 +560,8 @@ export const InstallPlanDetailsPage: React.FC = (props) => {
         { href: 'components', nameKey: 'olm~Components', component: InstallPlanPreview },
       ]}
       menuActions={[
-        ...Kebab.getExtensionsActionsForKind(InstallPlanModel),
-        ...Kebab.factory.common,
+        ...(Kebab.getExtensionsActionsForKind(InstallPlanModel) || []),
+        ...(Kebab.factory.common || []),
       ]}
     />
   );

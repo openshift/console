@@ -47,7 +47,7 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
     name: 'testapp',
     uid: 'c02c0a8f-88e0-11e7-851b-080027b424ef',
     creationTimestamp: '2017-09-20T18:19:49Z',
-    deletionTimestamp: null,
+    deletionTimestamp: undefined,
     namespace: 'default',
   },
   spec: {
@@ -250,10 +250,10 @@ export const testOwnedResourceInstance: K8sResourceKind = {
     creationTimestamp: '2005-02-20T18:13:42Z',
     ownerReferences: [
       {
-        name: testResourceInstance.metadata.name,
+        name: testResourceInstance.metadata?.name || '',
         kind: 'TestResource',
-        apiVersion: testResourceInstance.apiVersion,
-        uid: testResourceInstance.metadata.uid,
+        apiVersion: testResourceInstance.apiVersion || '',
+        uid: testResourceInstance.metadata?.uid || '',
       },
     ],
   },
@@ -359,14 +359,14 @@ export const testOperatorDeployment: K8sResourceKind = {
   apiVersion: 'apps/v1beta2',
   kind: 'Deployment',
   metadata: {
-    namespace: testClusterServiceVersion.metadata.namespace,
+    namespace: testClusterServiceVersion.metadata?.namespace || '',
     name: 'test-operator',
     ownerReferences: [
       {
-        name: testClusterServiceVersion.metadata.name,
-        uid: testClusterServiceVersion.metadata.uid,
+        name: testClusterServiceVersion.metadata?.name || '',
+        uid: testClusterServiceVersion.metadata?.uid || '',
         kind: testClusterServiceVersion.kind,
-        apiVersion: testClusterServiceVersion.apiVersion,
+        apiVersion: testClusterServiceVersion.apiVersion || '',
       },
     ],
   },
@@ -772,7 +772,7 @@ export const operatorHubListPageProps = {
 };
 
 export const operatorHubTileViewPageProps = {
-  items: [
+  items: ([
     {
       obj: amqPackageManifest,
       installState: 'Installed',
@@ -893,7 +893,7 @@ export const operatorHubTileViewPageProps = {
       infrastructure: infra,
       authentication: auth,
     },
-  ] as OperatorHubItem[],
+  ] as unknown) as OperatorHubItem[],
   openOverlay: null,
 };
 

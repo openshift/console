@@ -114,8 +114,8 @@ const getOperatorCount = (
 ): number =>
   packageManifests.filter(
     (p) =>
-      p.status?.catalogSource === catalogSource.metadata.name &&
-      p.status?.catalogSourceNamespace === catalogSource.metadata.namespace,
+      p.status?.catalogSource === catalogSource.metadata?.name &&
+      p.status?.catalogSourceNamespace === catalogSource.metadata?.namespace,
   ).length;
 
 const getEndpoint = (catalogSource: CatalogSourceKind): React.ReactNode => {
@@ -124,7 +124,7 @@ const getEndpoint = (catalogSource: CatalogSourceKind): React.ReactNode => {
       <ResourceLink
         kind={referenceForModel(ConfigMapModel)}
         name={catalogSource.spec.configmap}
-        namespace={catalogSource.metadata.namespace}
+        namespace={catalogSource.metadata?.namespace}
       />
     );
   }
@@ -140,9 +140,9 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
   const operatorCount = getOperatorCount(catalogSource, packageManifests);
 
   const catsrcNamespace =
-    catalogSource.metadata.namespace === DEFAULT_SOURCE_NAMESPACE
+    catalogSource.metadata?.namespace === DEFAULT_SOURCE_NAMESPACE
       ? 'Cluster wide'
-      : catalogSource.metadata.namespace;
+      : catalogSource.metadata?.namespace;
 
   return !_.isEmpty(catalogSource) ? (
     <PaneBody>
@@ -220,7 +220,10 @@ export const CatalogSourceDetailsPage: React.FC = (props) => {
   );
 
   const menuActions = isDefaultSource
-    ? [Kebab.factory.Edit, () => disableSourceModal(OperatorHubModel, operatorHub, params.name)]
+    ? [
+        Kebab.factory.Edit,
+        () => disableSourceModal(OperatorHubModel, operatorHub, params.name || ''),
+      ]
     : Kebab.factory.common;
 
   return (
@@ -273,14 +276,14 @@ export const CreateSubscriptionYAML: React.FC = (props) => {
           apiVersion: ${SubscriptionModel.apiGroup}/${SubscriptionModel.apiVersion}
           kind: ${SubscriptionModel.kind},
           metadata:
-            generateName: ${pkg.metadata.name}-
+            generateName: ${pkg.metadata?.name || ''}-
             namespace: default
           spec:
             source: ${new URLSearchParams(location.search).get('catalog')}
             sourceNamespace: ${new URLSearchParams(location.search).get('catalogNamespace')}
-            name: ${pkg.metadata.name}
-            startingCSV: ${channel.currentCSV}
-            channel: ${channel.name}
+            name: ${pkg.metadata?.name || ''}
+            startingCSV: ${channel?.currentCSV || ''}
+            channel: ${channel?.name || ''}
         `;
           return (
             <CreateYAML {...(props as any)} plural={SubscriptionModel.plural} template={template} />
@@ -355,14 +358,14 @@ const CatalogSourceTableRow: React.FC<RowFunctionArgs<CatalogSourceTableRowObj>>
       {source ? (
         <ResourceLink
           kind={catalogSourceModelReference}
-          name={source.metadata.name}
-          namespace={source.metadata.namespace}
+          name={source.metadata?.name || ''}
+          namespace={source.metadata?.namespace || ''}
         />
       ) : (
         name
       )}
     </TableData>
-    <TableData className={tableColumnClasses[1]} data-test={`${source?.metadata.name}-status`}>
+    <TableData className={tableColumnClasses[1]} data-test={`${source?.metadata?.name}-status`}>
       {status}
     </TableData>
     <TableData className={tableColumnClasses[2]}>{publisher}</TableData>
@@ -459,19 +462,19 @@ const CatalogSourceList: React.FC<TableProps> = (props) => {
 };
 
 const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceName }) => {
-  const [visible, setVisible] = React.useState<boolean>(null);
+  const [visible, setVisible] = React.useState<boolean | null>(null);
   const close = React.useCallback(() => {
     setVisible(false);
   }, []);
   const onClickEnable = React.useCallback(
-    () => enableSource(OperatorHubModel, operatorHub, sourceName).callback().then(close),
+    () => enableSource(OperatorHubModel, operatorHub, sourceName)?.callback?.().then(close),
     [close, operatorHub, sourceName],
   );
   const { t } = useTranslation();
   return (
     <PopoverStatus
       title={t('olm~Disabled')}
-      isVisible={visible}
+      isVisible={visible || false}
       shouldClose={close}
       statusBody={<StatusIconAndText title={t('olm~Disabled')} />}
     >
@@ -488,7 +491,7 @@ const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceNa
 };
 
 const getRegistryPollInterval = (catalogSource: CatalogSourceKind): string => {
-  return catalogSource.spec?.updateStrategy?.registryPoll?.interval;
+  return catalogSource.spec?.updateStrategy?.registryPoll?.interval || '';
 };
 
 const flatten = ({
@@ -499,8 +502,8 @@ const flatten = ({
   const defaultSources: CatalogSourceTableRowObj[] = _.map(
     operatorHub.status?.sources,
     (defaultSource) => {
-      const catalogSource = _.find(catalogSources.data, {
-        metadata: { name: defaultSource.name, namespace: DEFAULT_SOURCE_NAMESPACE },
+      const catalogSource = _.find(catalogSources?.data, {
+        metadata: { name: defaultSource.name || '', namespace: DEFAULT_SOURCE_NAMESPACE },
       });
       const catalogSourceExists = !_.isEmpty(catalogSource);
       return {
@@ -518,25 +521,31 @@ const flatten = ({
         operatorHub,
         ...(catalogSourceExists && {
           source: catalogSource,
-          endpoint: getEndpoint(catalogSource),
-          operatorCount: getOperatorCount(catalogSource, packageManifests.data),
-          publisher: catalogSource.spec.publisher,
-          registryPollInterval: getRegistryPollInterval(catalogSource),
-          status: catalogSource.status?.connectionState?.lastObservedState,
+          endpoint: getEndpoint(catalogSource || ({} as CatalogSourceKind)),
+          operatorCount: getOperatorCount(
+            catalogSource || ({} as CatalogSourceKind),
+            packageManifests?.data || [],
+          ),
+          publisher: catalogSource?.spec?.publisher,
+          registryPollInterval: getRegistryPollInterval(catalogSource || ({} as CatalogSourceKind)),
+          status: catalogSource?.status?.connectionState?.lastObservedState,
         }),
       };
     },
   );
 
-  const customSources: CatalogSourceTableRowObj[] = _.map(catalogSources.data, (source) => ({
+  const customSources: CatalogSourceTableRowObj[] = _.map(catalogSources?.data, (source) => ({
     availability:
-      source.metadata.namespace === DEFAULT_SOURCE_NAMESPACE
+      source?.metadata?.namespace === DEFAULT_SOURCE_NAMESPACE
         ? i18n.t('olm~Cluster wide')
-        : source.metadata.namespace,
+        : source?.metadata?.namespace,
     endpoint: getEndpoint(source),
-    name: source.metadata.name,
-    namespace: source.metadata.namespace,
-    operatorCount: getOperatorCount(source, packageManifests.data),
+    name: source?.metadata?.name || '',
+    namespace: source?.metadata?.namespace || '',
+    operatorCount: getOperatorCount(
+      source || ({} as CatalogSourceKind),
+      packageManifests?.data || [],
+    ),
     operatorHub,
     publisher: source.spec.publisher,
     registryPollInterval: getRegistryPollInterval(source),

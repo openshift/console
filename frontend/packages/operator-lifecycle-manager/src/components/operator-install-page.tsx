@@ -48,6 +48,7 @@ import {
   SubscriptionKind,
   InstallPlanKind,
   PackageManifestKind,
+  ClusterServiceVersionIcon,
 } from '../types';
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
 import { InstallPlanPreview, NeedInstallPlanPermissions } from './install-plan';
@@ -68,7 +69,7 @@ const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ names
     <div className="co-operator-install-page__link">
       <Link
         data-test="view-installed-operators-btn"
-        to={resourcePathFromModel(ClusterServiceVersionModel, null, namespace)}
+        to={resourcePathFromModel(ClusterServiceVersionModel, undefined, namespace)}
       >
         {namespace ? singleNamespaceText : allNamespacesText}
       </Link>
@@ -178,8 +179,8 @@ export const CreateInitializationResourceButton: React.FC<InitializationResource
     <Link
       to={`${resourcePathFromModel(
         ClusterServiceVersionModel,
-        obj.metadata.name,
-        obj.metadata.namespace,
+        obj?.metadata?.name,
+        obj?.metadata?.namespace,
       )}/${reference}/~new?useInitializationResource`}
     >
       {button}
@@ -269,14 +270,14 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
         {initializationResource &&
           t('olm~ Create the required custom resource to prepare it for use.')}
         <InitializationResourceRequiredMessage
-          initializationResource={initializationResource}
+          initializationResource={initializationResource as K8sResourceKind}
           obj={obj}
         />
       </span>
       <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         <InitializationLink to={initializationLink} />
         <CreateInitializationResourceButton
-          initializationResource={initializationResource}
+          initializationResource={initializationResource as K8sResourceKind}
           obj={obj}
         />
         {!initializationLink && !initializationResource && (
@@ -323,7 +324,7 @@ const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj })
       <ActionGroup className="pf-v6-c-form pf-v6-c-form__group--no-top-margin">
         <InitializationLink to={initializationLink} disabled />
         <CreateInitializationResourceButton
-          initializationResource={initializationResource}
+          initializationResource={initializationResource as K8sResourceKind}
           obj={obj}
           disabled
         />
@@ -351,8 +352,8 @@ const OperatorInstallLogo = ({ subscription }) => {
     },
     selector: {
       matchLabels: {
-        'catalog-namespace': catalogNamespace,
-        catalog,
+        'catalog-namespace': catalogNamespace || '',
+        catalog: catalog || '',
       },
     },
     fieldSelector: `metadata.name=${pkg}`,
@@ -366,7 +367,7 @@ const OperatorInstallLogo = ({ subscription }) => {
   if (loadError || !pkgManifest) {
     return (
       <ClusterServiceVersionLogo
-        icon={null}
+        icon={''}
         displayName={loadError ? t('olm~Error: {{loadError}}', { loadError }) : notFound}
       />
     );
@@ -380,7 +381,7 @@ const OperatorInstallLogo = ({ subscription }) => {
   return (
     <ClusterServiceVersionLogo
       displayName={displayName}
-      icon={iconFor(pkgManifest)}
+      icon={iconFor(pkgManifest) as ClusterServiceVersionIcon | ''}
       provider={provider}
       version={startingCSV}
     />
@@ -392,19 +393,19 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
   const { currentCSV, targetNamespace } = useParams<OperatorInstallStatusPageRouteParams>();
   let loading = true;
   let status = '';
-  let installObj: ClusterServiceVersionKind | InstallPlanKind =
+  let installObj: ClusterServiceVersionKind | InstallPlanKind | undefined =
     resources?.clusterServiceVersion?.data;
   const subscription = resources?.subscription?.data;
-  status = installObj?.status?.phase;
+  status = installObj?.status?.phase || '';
   if (installObj && status) {
     loading = false;
   } else if (subscription) {
     // There is no ClusterServiceVersion for the package, so look at Subscriptions/InstallPlans
     loading = false;
-    status = subscription?.status?.state || null;
+    status = subscription?.status?.state || '';
     const installPlanName = subscription?.status?.installPlanRef?.name || '';
-    const installPlan: InstallPlanKind = resources?.installPlans?.data?.find(
-      (ip) => ip.metadata.name === installPlanName,
+    const installPlan: InstallPlanKind | undefined = resources?.installPlans?.data?.find(
+      (ip) => ip.metadata?.name === installPlanName,
     );
     if (installPlan) {
       installObj = installPlan;
@@ -417,7 +418,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
     installObj?.spec?.approval === 'Manual' && installObj?.spec?.approved === false;
 
   const approve = () => {
-    k8sPatch(InstallPlanModel, installObj, [
+    k8sPatch(InstallPlanModel, installObj as InstallPlanKind, [
       { op: 'replace', path: '/spec/approved', value: true },
     ]).catch((error) => {
       errorModal({ error: error.toString() });
@@ -447,23 +448,36 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
     );
   }
 
-  let installMessage = <InstallingMessage namespace={targetNamespace} obj={installObj} />;
+  let installMessage = (
+    <InstallingMessage
+      namespace={targetNamespace || ''}
+      obj={installObj as ClusterServiceVersionKind | InstallPlanKind}
+    />
+  );
   if (isStatusFailed) {
     installMessage = (
-      <InstallFailedMessage namespace={targetNamespace} obj={installObj} csvName={currentCSV} />
+      <InstallFailedMessage
+        namespace={targetNamespace || ''}
+        obj={installObj as ClusterServiceVersionKind | InstallPlanKind}
+        csvName={currentCSV || ''}
+      />
     );
   } else if (isApprovalNeeded) {
     installMessage = (
       <InstallNeedsApprovalMessage
-        namespace={targetNamespace}
-        subscriptionObj={subscription}
-        installObj={installObj}
+        namespace={targetNamespace || ''}
+        subscriptionObj={subscription as SubscriptionKind}
+        installObj={installObj as ClusterServiceVersionKind | InstallPlanKind}
         approve={approve}
       />
     );
   } else if (isStatusSucceeded) {
     installMessage = (
-      <InstallSucceededMessage namespace={targetNamespace} csvName={currentCSV} obj={installObj} />
+      <InstallSucceededMessage
+        namespace={targetNamespace || ''}
+        csvName={currentCSV || ''}
+        obj={installObj as ClusterServiceVersionKind | InstallPlanKind}
+      />
     );
   }
 
@@ -489,7 +503,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
                   <CardBody>
                     <div className="co-operator-install-page__pkg-indicator">
                       <div>
-                        <OperatorInstallLogo subscription={resources.subscription.data} />
+                        <OperatorInstallLogo subscription={resources?.subscription?.data} />
                       </div>
                       <div>{indicator}</div>
                     </div>

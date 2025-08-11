@@ -25,11 +25,11 @@ const InstallPlanPreview: React.FC<InstallPlanPreviewModalProps> = ({ cancel, st
         />
       </ModalTitle>
       <ModalBody>
-        <CopyToClipboard value={safeDump(JSON.parse(stepResource.manifest))} />
+        <CopyToClipboard value={safeDump(JSON.parse(stepResource.manifest || ''))} />
       </ModalBody>
       <ModalFooter inProgress={false}>
         <ActionGroup className="pf-v6-c-form pf-v6-c-form__actions--right pf-v6-c-form__group--no-top-margin">
-          <Button type="button" variant="secondary" onClick={() => cancel()}>
+          <Button type="button" variant="secondary" onClick={() => cancel?.()}>
             {t('public~OK')}
           </Button>
         </ActionGroup>
