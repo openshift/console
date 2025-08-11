@@ -40,7 +40,11 @@ export const useClusterServiceVersion = (
 
   return useMemo(() => {
     if (copiedCSVsDisabled && Boolean(namespacedCSVLoadError)) {
-      return [isCopiedCSV(globalCSV) ? globalCSV : null, globalCSVLoaded, globalCSVLoadError];
+      return [
+        isCopiedCSV(globalCSV) ? globalCSV : ({} as ClusterServiceVersionKind),
+        globalCSVLoaded,
+        globalCSVLoadError,
+      ];
     }
     return [namespacedCSV, namespacedCSVLoaded, namespacedCSVLoadError];
   }, [

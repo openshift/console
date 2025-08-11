@@ -66,7 +66,7 @@ describe('PackageManifestTableRow', () => {
   });
 
   it('renders column for creation timestamp', () => {
-    const pkgManifestCreationTimestamp = testPackageManifest.metadata.creationTimestamp;
+    const pkgManifestCreationTimestamp = testPackageManifest.metadata?.creationTimestamp || '';
     expect(wrapper.childAt(2).dive().find(Timestamp).props().timestamp).toEqual(
       `${pkgManifestCreationTimestamp}`,
     );
@@ -80,7 +80,7 @@ describe('PackageManifestTableRow', () => {
     wrapper = shallow(
       <PackageManifestTableRow
         obj={testPackageManifest}
-        customData={{ catalogSource: null }}
+        customData={{ catalogSource: {} as CatalogSourceKind }}
         columns={columns}
       />,
     );

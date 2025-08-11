@@ -109,13 +109,15 @@ export const catalogSourceForSubscription = (
     (source) =>
       source?.metadata?.name === subscription?.spec?.source &&
       source?.metadata?.namespace === subscription?.spec?.sourceNamespace,
-  );
+  ) as CatalogSourceKind;
 
 export const installedCSVForSubscription = (
   clusterServiceVersions: ClusterServiceVersionKind[] = [],
   subscription: SubscriptionKind,
 ): ClusterServiceVersionKind =>
-  clusterServiceVersions.find((csv) => csv?.metadata?.name === subscription?.status?.installedCSV);
+  clusterServiceVersions.find(
+    (csv) => csv?.metadata?.name === subscription?.status?.installedCSV,
+  ) as ClusterServiceVersionKind;
 
 export const packageForSubscription = (
   packageManifests: PackageManifestKind[] = [],
@@ -127,13 +129,15 @@ export const packageForSubscription = (
       pkg?.status?.packageName === subscription?.spec?.name &&
       pkg?.status?.catalogSource === subscription?.spec?.source &&
       pkg?.status?.catalogSourceNamespace === subscription?.spec?.sourceNamespace,
-  );
+  ) as PackageManifestKind;
 
 export const installPlanForSubscription = (
   installPlans: InstallPlanKind[] = [],
   subscription: SubscriptionKind,
 ): InstallPlanKind =>
-  installPlans.find((ip) => ip?.metadata?.name === subscription?.status?.installPlanRef?.name);
+  installPlans.find(
+    (ip) => ip?.metadata?.name === subscription?.status?.installPlanRef?.name,
+  ) as InstallPlanKind;
 
 export const SourceMissingStatus: React.FC = () => {
   const { t } = useTranslation();
@@ -170,8 +174,8 @@ export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> =
   const { t } = useTranslation();
   const to = resourcePathFromModel(
     InstallPlanModel,
-    subscription.status.installPlanRef.name,
-    subscription.metadata.namespace,
+    subscription.status?.installPlanRef?.name || '',
+    subscription.metadata?.namespace || '',
   );
   return (
     <span className="co-icon-and-text">
@@ -223,8 +227,8 @@ export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(SubscriptionModel)}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata?.name || ''}
+          namespace={obj.metadata?.namespace || ''}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
@@ -424,7 +428,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   const { t } = useTranslation();
   const { source, sourceNamespace } = obj?.spec ?? {};
   const catalogHealth = obj?.status?.catalogHealth?.find(
-    (ch) => ch.catalogSourceRef.name === source,
+    (ch) => ch?.catalogSourceRef?.name === source,
   );
   const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
   const installPlan = installPlanForSubscription(installPlans, obj);
@@ -464,7 +468,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
         <SectionHeading text={t('olm~Subscription details')} />
         <PaneBodyGroup>
           <SubscriptionUpdates
-            catalogHealth={catalogHealth}
+            catalogHealth={catalogHealth as { healthy?: boolean }}
             pkg={pkg}
             obj={obj}
             installedCSV={installedCSV}
@@ -539,7 +543,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('olm~Conditions')} />
-        <Conditions conditions={obj?.status?.conditions} />
+        <Conditions conditions={obj?.status?.conditions || []} />
       </PaneBody>
     </>
   );
@@ -606,7 +610,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
   }, [installPlan, t]);
   const manualSubscriptionsInNamespace = getManualSubscriptionsInNamespace(
     subscriptions,
-    obj.metadata.namespace,
+    obj.metadata?.namespace || '',
   );
   const { deprecatedChannel } = findDeprecatedOperator(obj);
 
@@ -674,7 +678,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                       bodyContent={
                         <NamespaceIncludesManualApproval
                           subscriptions={manualSubscriptionsInNamespace}
-                          namespace={obj.metadata.namespace}
+                          namespace={obj.metadata?.namespace || ''}
                         />
                       }
                     >
@@ -705,7 +709,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
               <SplitItem className="co-detail-table__breakdown">
                 {obj?.status?.installedCSV && installedCSV ? (
                   <Link
-                    to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
+                    to={`/k8s/ns/${obj.metadata?.namespace || ''}/${referenceForModel(
                       ClusterServiceVersionModel,
                     )}/${obj.status.installedCSV}`}
                   >
@@ -718,9 +722,9 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                 obj?.status?.installPlanRef &&
                 installPlan ? (
                   <Link
-                    to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(InstallPlanModel)}/${
-                      obj.status.installPlanRef.name
-                    }`}
+                    to={`/k8s/ns/${obj.metadata?.namespace || ''}/${referenceForModel(
+                      InstallPlanModel,
+                    )}/${obj.status?.installPlanRef?.name || ''}`}
                   >
                     <span>{installPlanPhase}</span>
                   </Link>

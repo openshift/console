@@ -48,7 +48,7 @@ describe('requireOperatorGroup', () => {
 
 describe('subscriptionFor', () => {
   const pkg = testPackageManifest;
-  const ns = testSubscription.metadata.namespace;
+  const ns = testSubscription.metadata?.namespace;
   let subscriptions: SubscriptionKind[];
   let operatorGroups: OperatorGroupKind[];
 
@@ -59,7 +59,9 @@ describe('subscriptionFor', () => {
 
   it('returns nothing if no `Subscriptions` exist for the given package', () => {
     subscriptions = [testSubscription];
-    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
+    operatorGroups = [
+      { ...testOperatorGroup, status: { namespaces: [ns || ''], lastUpdated: '' } },
+    ];
 
     expect(
       subscriptionFor(subscriptions)(operatorGroups)(dummyPackageManifest)(ns),
@@ -69,7 +71,7 @@ describe('subscriptionFor', () => {
   it('returns nothing if no `OperatorGroups` target the given namespace', () => {
     subscriptions = [testSubscription];
     operatorGroups = [
-      { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: null } },
+      { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: '' } },
     ];
 
     expect(subscriptionFor(subscriptions)(operatorGroups)(pkg)(ns)).toBeUndefined();
@@ -78,7 +80,7 @@ describe('subscriptionFor', () => {
   it('returns nothing if no `Subscriptions` share the package namespace', () => {
     subscriptions = [testSubscription];
     operatorGroups = [
-      { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: null } },
+      { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: '' } },
     ];
 
     expect(
@@ -89,7 +91,7 @@ describe('subscriptionFor', () => {
   it('returns nothing if no `Subscriptions` share the package catalog source', () => {
     subscriptions = [testSubscription];
     operatorGroups = [
-      { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: null } },
+      { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: '' } },
     ];
 
     expect(
@@ -99,21 +101,25 @@ describe('subscriptionFor', () => {
 
   it('returns nothing if checking for `all-namespaces`', () => {
     subscriptions = [testSubscription];
-    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
+    operatorGroups = [
+      { ...testOperatorGroup, status: { namespaces: [ns || ''], lastUpdated: '' } },
+    ];
 
     expect(subscriptionFor(subscriptions)(operatorGroups)(pkg)('')).toBeUndefined();
   });
 
   it('returns `Subscription` when it exists in the "global" `OperatorGroup`', () => {
     subscriptions = [testSubscription];
-    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [''], lastUpdated: null } }];
+    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [''], lastUpdated: '' } }];
 
     expect(subscriptionFor(subscriptions)(operatorGroups)(pkg)(ns)).toEqual(testSubscription);
   });
 
   it('returns `Subscription` when it exists in an `OperatorGroup` that targets given namespace', () => {
     subscriptions = [testSubscription];
-    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
+    operatorGroups = [
+      { ...testOperatorGroup, status: { namespaces: [ns || ''], lastUpdated: '' } },
+    ];
 
     expect(subscriptionFor(subscriptions)(operatorGroups)(pkg)(ns)).toEqual(testSubscription);
   });
@@ -121,7 +127,7 @@ describe('subscriptionFor', () => {
 
 describe('installedFor', () => {
   const pkg = testPackageManifest;
-  const ns = testSubscription.metadata.namespace;
+  const ns = testSubscription.metadata?.namespace;
   let subscriptions: SubscriptionKind[];
   let operatorGroups: OperatorGroupKind[];
 
@@ -132,7 +138,9 @@ describe('installedFor', () => {
 
   it('returns false if no `Subscriptions` exist for the given package', () => {
     subscriptions = [testSubscription];
-    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
+    operatorGroups = [
+      { ...testOperatorGroup, status: { namespaces: [ns || ''], lastUpdated: '' } },
+    ];
 
     expect(installedFor(subscriptions)(operatorGroups)(dummyPackageManifest)(ns)).toBe(false);
   });
@@ -140,7 +148,7 @@ describe('installedFor', () => {
   it('returns false if no `OperatorGroups` target the given namespace', () => {
     subscriptions = [testSubscription];
     operatorGroups = [
-      { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: null } },
+      { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: '' } },
     ];
 
     expect(installedFor(subscriptions)(operatorGroups)(pkg)(ns)).toBe(false);
@@ -148,35 +156,43 @@ describe('installedFor', () => {
 
   it('returns false if checking for `all-namespaces`', () => {
     subscriptions = [testSubscription];
-    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
+    operatorGroups = [
+      { ...testOperatorGroup, status: { namespaces: [ns || ''], lastUpdated: '' } },
+    ];
 
     expect(installedFor(subscriptions)(operatorGroups)(pkg)('')).toBe(false);
   });
 
   it('returns false if `Subscription` is in a different namespace than the given package', () => {
     subscriptions = [testSubscription];
-    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
+    operatorGroups = [
+      { ...testOperatorGroup, status: { namespaces: [ns || ''], lastUpdated: '' } },
+    ];
 
     expect(installedFor(subscriptions)(operatorGroups)(dummyPackageManifest)(ns)).toBe(false);
   });
 
   it('returns false if `Subscription` is from a different catalog source than the given package', () => {
     subscriptions = [testSubscription];
-    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
+    operatorGroups = [
+      { ...testOperatorGroup, status: { namespaces: [ns || ''], lastUpdated: '' } },
+    ];
 
     expect(installedFor(subscriptions)(operatorGroups)(dummyPackageManifest)(ns)).toBe(false);
   });
 
   it('returns true if `Subscription` exists in the "global" `OperatorGroup`', () => {
     subscriptions = [testSubscription];
-    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [''], lastUpdated: null } }];
+    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [''], lastUpdated: '' } }];
 
     expect(installedFor(subscriptions)(operatorGroups)(pkg)(ns)).toBe(true);
   });
 
   it('returns true if `Subscription` exists in an `OperatorGroup` that targets given namespace', () => {
     subscriptions = [testSubscription];
-    operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
+    operatorGroups = [
+      { ...testOperatorGroup, status: { namespaces: [ns || ''], lastUpdated: '' } },
+    ];
 
     expect(installedFor(subscriptions)(operatorGroups)(pkg)(ns)).toBe(true);
   });
@@ -192,15 +208,15 @@ describe('supports', () => {
   beforeEach(() => {
     ownNamespaceGroup = _.cloneDeep(testOperatorGroup);
     ownNamespaceGroup.status = {
-      namespaces: [ownNamespaceGroup.metadata.namespace],
-      lastUpdated: null,
+      namespaces: [ownNamespaceGroup.metadata?.namespace || ''],
+      lastUpdated: '',
     };
     singleNamespaceGroup = _.cloneDeep(testOperatorGroup);
-    singleNamespaceGroup.status = { namespaces: ['test-ns'], lastUpdated: null };
+    singleNamespaceGroup.status = { namespaces: ['test-ns'], lastUpdated: '' };
     multiNamespaceGroup = _.cloneDeep(testOperatorGroup);
-    multiNamespaceGroup.status = { namespaces: ['test-ns', 'default'], lastUpdated: null };
+    multiNamespaceGroup.status = { namespaces: ['test-ns', 'default'], lastUpdated: '' };
     allNamespacesGroup = _.cloneDeep(testOperatorGroup);
-    allNamespacesGroup.status = { namespaces: [''], lastUpdated: null };
+    allNamespacesGroup.status = { namespaces: [''], lastUpdated: '' };
   });
 
   it('correctly returns for an Operator that can only run in its own namespace', () => {
