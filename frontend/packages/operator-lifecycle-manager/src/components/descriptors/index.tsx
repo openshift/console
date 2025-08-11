@@ -63,7 +63,7 @@ const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps>
   const label =
     descriptor?.displayName ||
     arrayGroupSchema?.title ||
-    _.startCase(_.last(arrayGroupPath.split('.')));
+    _.startCase(_.last(arrayGroupPath?.split('.') || []));
   const arrayElementDescriptors = nested ?? [elementDescriptor];
   const value = _.get(obj, [type, ..._.toPath(arrayGroupPath)], []);
   return (
@@ -117,10 +117,10 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
       <DetailsItem description={description} label={label} obj={obj} path={`${type}.${groupPath}`}>
         <DescriptionList className="olm-descriptors__group co-editable-label-group">
           {!_.isEmpty(primitives) &&
-            _.map(primitives, ({ descriptor: primitiveDescriptor }) => (
+            _.map(primitives, ({ descriptor: primitiveDescriptor }: DescriptorGroup) => (
               <DescriptorDetailsItem
-                descriptor={primitiveDescriptor}
-                key={`${type}.${primitiveDescriptor.path}`}
+                descriptor={primitiveDescriptor as Descriptor}
+                key={`${type}.${primitiveDescriptor?.path}`}
                 model={model}
                 obj={obj}
                 onError={onError}
@@ -132,8 +132,8 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
             _.map(arrayGroups, (arrayGroup: DescriptorGroup) => (
               <DescriptorDetailsItemArrayGroup
                 group={arrayGroup}
-                groupPath={arrayGroup.arrayGroupPath}
-                key={`${type}.${groupPath}.${arrayGroup.arrayGroupPath}`}
+                groupPath={arrayGroup?.arrayGroupPath || ''}
+                key={`${type}.${groupPath}.${arrayGroup?.arrayGroupPath}`}
                 model={model}
                 obj={obj}
                 onError={onError}
@@ -200,7 +200,7 @@ export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps>
           <DescriptorDetailsItem
             key={`${type}.${groupPath}`}
             className={itemClassName}
-            descriptor={descriptor}
+            descriptor={descriptor as Descriptor}
             {...commonProps}
           />
         );

@@ -16,8 +16,8 @@ import './csv-status.scss';
 const ClusterServiceVersionRow: React.FC<OperatorRowProps<ClusterServiceVersionKind>> = ({
   operatorStatus,
 }) => {
-  const { name, namespace } = operatorStatus.operators[0].metadata;
-  const { displayName } = operatorStatus.operators[0].spec;
+  const { name, namespace } = operatorStatus.operators[0]?.metadata || {};
+  const { displayName } = operatorStatus.operators[0]?.spec || {};
   const to =
     operatorStatus.operators.length > 1
       ? `${resourcePathFromModel(ClusterServiceVersionModel)}?name=${name}`
@@ -28,7 +28,7 @@ const ClusterServiceVersionRow: React.FC<OperatorRowProps<ClusterServiceVersionK
   )} ${operatorStatus.status.title.toLowerCase()}`;
   return (
     <Status value={value} icon={operatorStatus.status.icon}>
-      <Link className="csv-operator-status__title" to={to}>
+      <Link className="csv-operator-status__title" to={to as any}>
         {displayName || name}
       </Link>
     </Status>
