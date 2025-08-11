@@ -28,25 +28,37 @@
 
   &__flex {
     display: flex;
-    flex: 1;
     flex-direction: column;
+    flex: 1;
   }
 
   .co-file-dropzone-container {
-    border: var(--pf-t--global--border--width--extra-strong) solid
-      var(--pf-t--global--border--color--default);
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--pf-t--global--background--color--backdrop--default);
     bottom: 0;
     left: 0;
-    margin: -3px;
+    outline: var(--pf-t--global--border--width--extra-strong) dashed var(--pf-t--global--border--color--default);
     position: absolute;
     right: 0;
     top: 0;
-    z-index: 1001;
+    z-index: var(--pf-t--global--z-index--2xl);
     &.co-file-dropzone--drop-over {
-      border-color: var(--pf-t--global--color--brand--default);
       color: var(--pf-t--global--color--brand--default);
+      outline-color: var(--pf-t--global--color--brand--default);
     }
+  }
+}
+
+// For compatibility with MultipleFileUpload
+.pf-v6-c-multiple-file-upload {
+  & .co-file-dropzone-container {
+    display: none;
+    outline-offset: calc(-1 * var(--pf-t--global--border--width--extra-strong));
+  }
+
+  &.pf-m-drag-over .co-file-dropzone-container {
+    color: var(--pf-t--global--color--brand--default);
+    display: block;
+    outline-color: var(--pf-t--global--color--brand--default);
   }
 }
 
