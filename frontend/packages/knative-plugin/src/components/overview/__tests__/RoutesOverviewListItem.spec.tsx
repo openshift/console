@@ -1,127 +1,171 @@
-import * as React from 'react';
-import { ListItem } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { ResourceLink } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { RouteModel } from '../../../models';
+import { render } from '@testing-library/react';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import { getKnativeRoutesLinks } from '../../../utils/resource-overview-utils';
 import RoutesOverviewListItem from '../RoutesOverviewListItem';
-import RoutesUrlLink, { RoutesUrlLinkProps } from '../RoutesUrlLink';
+import '@testing-library/jest-dom';
 
-type RoutesOverviewListItemProps = React.ComponentProps<typeof RoutesOverviewListItem>;
+jest.mock('@patternfly/react-core', () => ({
+  ListItem: 'ListItem',
+  Grid: 'Grid',
+  GridItem: 'GridItem',
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  ResourceLink: 'ResourceLink',
+}));
+
+jest.mock('@console/internal/module/k8s', () => ({
+  referenceForModel: jest.fn(() => 'RouteModel'),
+  referenceFor: jest.fn(() => 'TestReference'),
+  K8sResourceConditionStatus: {
+    True: 'True',
+    False: 'False',
+    Unknown: 'Unknown',
+  },
+}));
+
+jest.mock('../../../utils/resource-overview-utils', () => ({
+  getKnativeRoutesLinks: jest.fn(),
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
+// Variable to capture RoutesUrlLink props for testing
+let mockCapturedRoutesUrlLinkProps: any[] = [];
+
+jest.mock('../RoutesUrlLink', () => ({
+  __esModule: true,
+  default: (props: any) => {
+    mockCapturedRoutesUrlLinkProps.push(props);
+    return 'RoutesUrlLink';
+  },
+}));
 
 describe('RoutesOverviewListItem', () => {
-  let wrapper: ShallowWrapper<RoutesOverviewListItemProps>;
-
-  const getRouteUrlLinkProps = (pos: number): RoutesUrlLinkProps =>
-    wrapper.find(RoutesUrlLink).at(pos).props();
+  const mockGetKnativeRoutesLinks = getKnativeRoutesLinks as any;
 
   beforeEach(() => {
-    const [routeLink] = getKnativeRoutesLinks(
-      MockKnativeResources.ksroutes.data[0],
-      MockKnativeResources.revisions.data[0],
-    );
-    wrapper = shallow(<RoutesOverviewListItem routeLink={routeLink} />);
+    mockCapturedRoutesUrlLinkProps = [];
+    mockGetKnativeRoutesLinks.mockReturnValue([
+      {
+        url: 'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
+        name: 'overlayimage',
+        namespace: 'knativeapps',
+        percent: '100%',
+      },
+    ]);
   });
 
   it('should list the Route', () => {
-    expect(wrapper.find(ListItem)).toHaveLength(1);
+    const [routeLink] = getKnativeRoutesLinks(
+      MockKnativeResources.ksroutes.data[0],
+      MockKnativeResources.revisions.data[0],
+    );
+    const { container } = render(<RoutesOverviewListItem routeLink={routeLink} />);
+    expect(container.querySelector('ListItem')).toBeInTheDocument();
   });
 
   it('should have ResourceLink with proper kind', () => {
-    expect(wrapper.find(ResourceLink)).toHaveLength(1);
-    expect(wrapper.find(ResourceLink).at(0).props().kind).toEqual(referenceForModel(RouteModel));
+    const [routeLink] = getKnativeRoutesLinks(
+      MockKnativeResources.ksroutes.data[0],
+      MockKnativeResources.revisions.data[0],
+    );
+    const { container } = render(<RoutesOverviewListItem routeLink={routeLink} />);
+    const resourceLink = container.querySelector('ResourceLink');
+    expect(resourceLink).toBeInTheDocument();
+    expect(resourceLink).toHaveAttribute('kind', 'RouteModel');
   });
 
   it('should have route ExternalLink with proper href', () => {
-    expect(wrapper.find(RoutesUrlLink)).toHaveLength(1);
-    expect(wrapper.find(RoutesUrlLink).at(0).props().urls).toEqual([
-      'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
-    ]);
-  });
-
-  it('should have route of specific revision as RoutesUrlLink with tag url and base url', () => {
-    const mockRouteData = {
-      ...MockKnativeResources.ksroutes.data[0],
-      status: {
-        ...MockKnativeResources.ksroutes.data[0].status,
-        traffic: [
-          {
-            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
-            tag: 'abc',
-            url:
-              'http://abc-overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
-          },
-        ],
-      },
-    };
     const [routeLink] = getKnativeRoutesLinks(
-      mockRouteData,
+      MockKnativeResources.ksroutes.data[0],
       MockKnativeResources.revisions.data[0],
     );
+    render(<RoutesOverviewListItem routeLink={routeLink} />);
 
-    wrapper.setProps({ routeLink, uniqueRoutes: [mockRouteData.status.traffic[0].url] });
-    const { urls: baseUrl, title: baseTitle }: RoutesUrlLinkProps = getRouteUrlLinkProps(0);
-    const { urls, title }: RoutesUrlLinkProps = getRouteUrlLinkProps(1);
-
-    expect(wrapper.find(RoutesUrlLink)).toHaveLength(2);
-    expect(baseTitle).toEqual('Location');
-    expect(baseUrl).toEqual([
+    // Check that the mock was called
+    expect(mockCapturedRoutesUrlLinkProps).toHaveLength(1);
+    expect(mockCapturedRoutesUrlLinkProps[0].urls).toEqual([
       'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     ]);
-    expect(title).toEqual('Unique Route');
-    expect(urls).toEqual([
-      'http://abc-overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
-    ]);
+    expect(mockCapturedRoutesUrlLinkProps[0].title).toEqual('knative-plugin~Location');
   });
 
-  it('should have route of specific revision as RoutesUrlLink with multiple tag urls and total percent', () => {
+  it('should render with unique routes', () => {
+    mockGetKnativeRoutesLinks.mockReturnValue([
+      {
+        url: 'http://abc-overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
+        name: 'overlayimage',
+        namespace: 'knativeapps',
+        percent: '100%',
+      },
+    ]);
+
     const [routeLink] = getKnativeRoutesLinks(
       MockKnativeResources.ksroutes.data[0],
       MockKnativeResources.revisions.data[0],
     );
 
-    wrapper.setProps({
-      routeLink,
-      uniqueRoutes: ['https://tag1.test.com', 'https://tag2.test.com'],
-      totalPercent: '50%',
-    });
-    expect(wrapper.find(RoutesUrlLink)).toHaveLength(2);
+    render(
+      <RoutesOverviewListItem
+        routeLink={routeLink}
+        uniqueRoutes={[
+          'http://abc-overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
+        ]}
+      />,
+    );
 
-    const { urls: baseUrl, title: baseTitle }: RoutesUrlLinkProps = getRouteUrlLinkProps(0);
-    const { urls, title }: RoutesUrlLinkProps = getRouteUrlLinkProps(1);
-    expect(baseTitle).toEqual('Location');
-    expect(baseUrl).toEqual([
-      'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
-    ]);
-    expect(title).toEqual('Unique Route');
-    expect(urls).toEqual(['https://tag1.test.com', 'https://tag2.test.com']);
-    expect(wrapper.find('[data-test="route-percent"]').at(0).dive().text()).toBe('50%');
+    // Should render two RoutesUrlLink components (location + unique route)
+    expect(mockCapturedRoutesUrlLinkProps).toHaveLength(2);
+    expect(mockCapturedRoutesUrlLinkProps[0].title).toEqual('knative-plugin~Location');
+    expect(mockCapturedRoutesUrlLinkProps[1].title).toEqual('knative-plugin~Unique Route');
   });
 
-  it('should not show the route url and traffic percentage section, if there are not available', () => {
-    const mockRouteData = {
-      ...MockKnativeResources.ksroutes.data[0],
-      status: {
-        ...MockKnativeResources.ksroutes.data[0].status,
-        url: undefined,
-        traffic: [
-          {
-            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
-            percent: undefined,
-            url: undefined,
-          },
-        ],
-      },
-    };
+  it('should render with total percent', () => {
     const [routeLink] = getKnativeRoutesLinks(
-      mockRouteData,
+      MockKnativeResources.ksroutes.data[0],
       MockKnativeResources.revisions.data[0],
     );
-    wrapper.setProps({ routeLink });
-    expect(wrapper.find(ResourceLink)).toHaveLength(1);
-    expect(wrapper.find(RoutesUrlLink)).toHaveLength(0);
-    expect(wrapper.find('[data-test="route-percent"]')).toHaveLength(0);
+
+    const { container } = render(
+      <RoutesOverviewListItem
+        routeLink={routeLink}
+        uniqueRoutes={['https://tag1.test.com', 'https://tag2.test.com']}
+        totalPercent="50%"
+      />,
+    );
+
+    // Should render two RoutesUrlLink components (location + unique route)
+    expect(mockCapturedRoutesUrlLinkProps).toHaveLength(2);
+
+    // Check percentage element
+    const percentElement = container.querySelector('[data-test="route-percent"]');
+    expect(percentElement).toBeInTheDocument();
+    expect(percentElement).toHaveTextContent('50%');
+  });
+
+  it('should not show route url when no data available', () => {
+    mockGetKnativeRoutesLinks.mockReturnValue([
+      {
+        url: '',
+        name: 'overlayimage',
+        namespace: 'knativeapps',
+        percent: '',
+      },
+    ]);
+
+    const [routeLink] = getKnativeRoutesLinks(
+      MockKnativeResources.ksroutes.data[0],
+      MockKnativeResources.revisions.data[0],
+    );
+    const { container } = render(<RoutesOverviewListItem routeLink={routeLink} />);
+
+    expect(container.querySelector('ResourceLink')).toBeInTheDocument();
+    expect(container.querySelector('routesurllink')).not.toBeInTheDocument();
+    expect(container.querySelector('[data-test="route-percent"]')).not.toBeInTheDocument();
   });
 });

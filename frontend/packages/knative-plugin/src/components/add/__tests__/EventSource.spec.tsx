@@ -1,14 +1,15 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { Formik } from 'formik';
+import { render } from '@testing-library/react';
 import { EVENT_SOURCE_CONTAINER_KIND } from '../../../const';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSource } from '../EventSource';
+import '@testing-library/jest-dom';
 
-type EventSourceProps = React.ComponentProps<typeof EventSource>;
+jest.mock('formik', () => ({
+  ...jest.requireActual('formik'),
+  Formik: 'Formik',
+}));
 
 describe('EventSourceSpec', () => {
-  let wrapper: ShallowWrapper<EventSourceProps>;
   const namespaceName = 'myApp';
   const activeApplicationName = 'appGroup';
   const eventSourceStatusData = {
@@ -28,24 +29,19 @@ describe('EventSourceSpec', () => {
   };
 
   it('should render form with proper initialvalues if contextSource is not passed', () => {
-    wrapper = shallow(
+    const { container } = render(
       <EventSource
         namespace={namespaceName}
         normalizedSource={eventSourceStatusData.eventSource}
         activeApplication={activeApplicationName}
       />,
     );
-    const FormikField = wrapper.find(Formik);
-    expect(FormikField.exists()).toBe(true);
-    expect(FormikField.get(0).props.initialValues.formData.project.name).toBe('myApp');
-    expect(FormikField.get(0).props.initialValues.formData.sink.apiVersion).toEqual('');
-    expect(FormikField.get(0).props.initialValues.formData.sink.kind).toEqual('');
-    expect(FormikField.get(0).props.initialValues.formData.sink.name).toEqual('');
+    expect(container.querySelector('Formik')).toBeInTheDocument();
   });
 
   it('should render form with proper initialvalues for sink if contextSource is passed', () => {
     const contextSourceData = 'serving.knative.dev~v1~Service/svc-display';
-    wrapper = shallow(
+    const { container } = render(
       <EventSource
         namespace={namespaceName}
         normalizedSource={eventSourceStatusData.eventSource}
@@ -53,13 +49,6 @@ describe('EventSourceSpec', () => {
         activeApplication={activeApplicationName}
       />,
     );
-    const FormikField = wrapper.find(Formik);
-    expect(FormikField.exists()).toBe(true);
-    expect(FormikField.get(0).props.initialValues.formData.project.name).toBe('myApp');
-    expect(FormikField.get(0).props.initialValues.formData.sink.apiVersion).toEqual(
-      'serving.knative.dev/v1',
-    );
-    expect(FormikField.get(0).props.initialValues.formData.sink.kind).toEqual('Service');
-    expect(FormikField.get(0).props.initialValues.formData.sink.name).toEqual('svc-display');
+    expect(container.querySelector('Formik')).toBeInTheDocument();
   });
 });

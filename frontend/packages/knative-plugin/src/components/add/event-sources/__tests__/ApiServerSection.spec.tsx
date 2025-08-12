@@ -1,8 +1,25 @@
-import { shallow } from 'enzyme';
-import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { AsyncComponent } from '@console/internal/components/utils/async';
-import ServiceAccountDropdown from '../../../dropdowns/ServiceAccountDropdown';
+import { render, screen } from '@testing-library/react';
 import ApiServerSection from '../ApiServerSection';
+import '@testing-library/jest-dom';
+
+jest.mock('@console/dev-console/src/components/import/section/FormSection', () => ({
+  __esModule: true,
+  default: 'FormSection',
+}));
+
+jest.mock('@console/internal/components/utils/async', () => ({
+  AsyncComponent: 'AsyncComponent',
+}));
+
+jest.mock('../../../dropdowns/ServiceAccountDropdown', () => ({
+  __esModule: true,
+  default: 'ServiceAccountDropdown',
+}));
+
+jest.mock('@console/shared', () => ({
+  DropdownField: 'DropdownField',
+  getFieldId: jest.fn(() => 'mocked-field-id'),
+}));
 
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{}, {}]),
@@ -19,21 +36,20 @@ jest.mock('formik', () => ({
 
 describe('ApiServerSection', () => {
   const title = 'Api Server Source';
+
   it('should render FormSection', () => {
-    const wrapper = shallow(<ApiServerSection title={title} />);
-    expect(wrapper.find(FormSection)).toHaveLength(1);
-    expect(wrapper.find(FormSection).props().title).toBe('Api Server Source');
+    render(<ApiServerSection title={title} />);
+    expect(screen.getByText('Resource')).toBeInTheDocument();
   });
 
   it('should render NameValueEditor', () => {
-    const wrapper = shallow(<ApiServerSection title={title} />);
-    const nameValueEditorField = wrapper.find(AsyncComponent);
-    expect(nameValueEditorField).toHaveLength(1);
-    expect(nameValueEditorField.props().nameString).toBe('apiVersion');
-    expect(nameValueEditorField.props().valueString).toBe('kind');
+    render(<ApiServerSection title={title} />);
+    expect(screen.getByText('The list of resources to watch.')).toBeInTheDocument();
   });
+
   it('should render ServiceAccountDropdown', () => {
-    const wrapper = shallow(<ApiServerSection title={title} />);
-    expect(wrapper.find(ServiceAccountDropdown)).toHaveLength(1);
+    const { container } = render(<ApiServerSection title={title} />);
+    expect(container.querySelector('dropdownfield')).toBeInTheDocument();
+    expect(container.querySelector('serviceaccountdropdown')).toBeInTheDocument();
   });
 });

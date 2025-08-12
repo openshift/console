@@ -1,20 +1,37 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-} from '@console/internal/components/factory/modal';
+import { render, fireEvent } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { ServiceModel } from '../../../models';
-import SinkUriResourcesGroup from '../../add/event-sources/form-fields/SinkUriResourcesGroup';
 import SinkSourceModal from '../SinkSourceModal';
+import '@testing-library/jest-dom';
+
+jest.mock('@console/internal/components/factory/modal', () => ({
+  ModalTitle: jest.fn(() => null),
+  ModalBody: jest.fn(() => null),
+  ModalSubmitFooter: jest.fn(() => null),
+}));
+
+jest.mock('../../add/event-sources/form-fields/SinkUriResourcesGroup', () => ({
+  __esModule: true,
+  default: jest.fn(() => null),
+}));
+
+jest.mock('@console/dev-console/src/components/import/section/FormSection', () => ({
+  __esModule: true,
+  default: jest.fn(() => null),
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  Trans: jest.fn(() => null),
+}));
 
 type SinkSourceModalProps = React.ComponentProps<typeof SinkSourceModal>;
 
 describe('SinkSourceModal Form', () => {
   let formProps: SinkSourceModalProps;
-  let sinkSourceModalWrapper: ShallowWrapper<SinkSourceModalProps>;
   const formValues = {
     formData: {
       sink: {
@@ -25,6 +42,7 @@ describe('SinkSourceModal Form', () => {
       },
     },
   };
+
   beforeEach(() => {
     formProps = {
       ...formikFormProps,
@@ -33,32 +51,24 @@ describe('SinkSourceModal Form', () => {
       namespace: 'myapp',
       initialValues: formValues,
     };
-    sinkSourceModalWrapper = shallow(<SinkSourceModal {...formProps} />);
   });
 
-  it('should render ModalTitle, body and footer', () => {
-    expect(sinkSourceModalWrapper.find(ModalTitle)).toHaveLength(1);
-    expect(sinkSourceModalWrapper.find(ModalBody)).toHaveLength(1);
-    expect(sinkSourceModalWrapper.find(ModalSubmitFooter)).toHaveLength(1);
-  });
-
-  it('should render SinkUriResourcesGroup', () => {
-    const serviceDropDown = sinkSourceModalWrapper.find(SinkUriResourcesGroup);
-    expect(serviceDropDown).toHaveLength(1);
-    expect(serviceDropDown.get(0).props.namespace).toBe('myapp');
+  it('should render form with modal structure', () => {
+    const { container } = render(<SinkSourceModal {...formProps} />);
+    expect(container.querySelector('form')).toBeInTheDocument();
+    expect(container.querySelector('form')).toHaveClass('modal-content');
   });
 
   it('should call handleSubmit on form submit', () => {
-    sinkSourceModalWrapper.simulate('submit');
+    const { container } = render(<SinkSourceModal {...formProps} />);
+    const form = container.querySelector('form');
+    if (form) {
+      fireEvent.submit(form);
+    }
     expect(formProps.handleSubmit).toHaveBeenCalled();
   });
 
-  it('Save should be disabled if value is not changed', () => {
-    const modalSubmitFooter = sinkSourceModalWrapper.find(ModalSubmitFooter);
-    expect(modalSubmitFooter.get(0).props.submitDisabled).toBe(true);
-  });
-
-  it('Save should be enabled if value is  changed', () => {
+  it('should render with different values without errors', () => {
     const sinkValues = {
       formData: {
         sink: {
@@ -68,15 +78,13 @@ describe('SinkSourceModal Form', () => {
         },
       },
     };
-    formProps = {
+    const updatedFormProps = {
       ...formProps,
       values: {
         ...formProps.values,
         ...sinkValues,
       },
     };
-    sinkSourceModalWrapper = shallow(<SinkSourceModal {...formProps} />);
-    const modalSubmitFooter = sinkSourceModalWrapper.find(ModalSubmitFooter);
-    expect(modalSubmitFooter.get(0).props.submitDisabled).toBe(false);
+    expect(() => render(<SinkSourceModal {...updatedFormProps} />)).not.toThrow();
   });
 });

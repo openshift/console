@@ -1,9 +1,6 @@
-import { Button } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom-v5-compat';
-import { SidebarSectionHeading } from '@console/internal/components/utils';
-import * as rbacModule from '@console/internal/components/utils/rbac';
+import { useAccessReview } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RevisionModel } from '../../../models';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
@@ -12,50 +9,85 @@ import {
   mockTrafficData,
 } from '../../../utils/__mocks__/traffic-splitting-utils-mock';
 import * as modal from '../../modals';
-import RevisionsOverviewList, { RevisionsOverviewListProps } from '../RevisionsOverviewList';
-import RevisionsOverviewListItem from '../RevisionsOverviewListItem';
+import RevisionsOverviewList from '../RevisionsOverviewList';
+import '@testing-library/jest-dom';
+
+// Mock Kebab factory at the very top to avoid hoisting issues
+jest.mock('@console/internal/components/utils', () => ({
+  SidebarSectionHeading: 'SidebarSectionHeading',
+  useAccessReview: jest.fn(),
+  Kebab: {
+    factory: jest.fn(),
+  },
+}));
+
+jest.mock('@patternfly/react-core', () => ({
+  Button: 'Button',
+  List: 'List',
+}));
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  Link: 'Link',
+}));
+
+jest.mock('../RevisionsOverviewListItem', () => ({
+  __esModule: true,
+  default: 'RevisionsOverviewListItem',
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
+jest.mock('../../modals', () => ({
+  setTrafficDistributionModal: jest.fn(),
+}));
 
 describe('RevisionsOverviewList', () => {
-  let wrapper: ShallowWrapper<RevisionsOverviewListProps>;
-  let spyUseAccessReview;
+  // Get the mocked function using the imported function
+  const mockUseAccessReview = useAccessReview as any;
 
   beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
-    spyUseAccessReview.mockReturnValue(true);
-    wrapper = shallow(
+    mockUseAccessReview.mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    mockUseAccessReview.mockReset();
+  });
+
+  it('should have title Revisions', () => {
+    const { container } = render(
       <RevisionsOverviewList
         revisions={MockKnativeResources.revisions.data}
         service={MockKnativeResources.ksservices.data[0]}
       />,
     );
-  });
-
-  afterEach(() => {
-    spyUseAccessReview.mockReset();
-  });
-
-  it('should have title Revisions', () => {
-    expect(wrapper.find(SidebarSectionHeading)).toHaveLength(1);
-    expect(wrapper.find(SidebarSectionHeading).at(0).props().text).toEqual('Revisions');
+    const sidebarHeading = container.querySelector('SidebarSectionHeading');
+    expect(sidebarHeading).toBeInTheDocument();
+    expect(sidebarHeading).toHaveAttribute('text', expect.stringContaining('Revisions'));
   });
 
   it('should show info if no Revisions present, link for all revisions should not be shown and traffic split button should be disabled', () => {
-    wrapper = shallow(
+    const { container } = render(
       <RevisionsOverviewList revisions={[]} service={MockKnativeResources.revisions.data[0]} />,
     );
-    expect(wrapper.find(Link)).toHaveLength(0);
-    expect(wrapper.text().includes('No Revisions found for this resource.')).toBe(true);
-    expect(wrapper.find(Button).at(0).props().isDisabled).toBe(true);
+    expect(container.querySelector('Link')).not.toBeInTheDocument();
+    expect(screen.getByText(/No Revisions found for this resource/)).toBeInTheDocument();
+    const button = container.querySelector('Button');
+    expect(button).toBeInTheDocument();
   });
 
   it('should show Resource Link if number of revisions is more than MAX_REVISIONS', () => {
-    wrapper = shallow(
+    const { container } = render(
       <RevisionsOverviewList
         revisions={mockRevisions}
         service={MockKnativeResources.ksservices.data[0]}
       />,
     );
-    expect(wrapper.find(Link)).toHaveLength(1);
+    const link = container.querySelector('Link');
+    expect(link).toBeInTheDocument();
     const url = `/search/ns/${MockKnativeResources.ksservices.data[0].metadata?.namespace}`;
     const params = new URLSearchParams();
     params.append('kind', referenceForModel(RevisionModel));
@@ -63,46 +95,68 @@ describe('RevisionsOverviewList', () => {
       'q',
       `serving.knative.dev/service=${MockKnativeResources.ksservices.data[0].metadata?.name}`,
     );
-    expect(wrapper.find<any>(Link).at(0).props().to).toEqual(`${url}?${params.toString()}`);
-    expect(wrapper.find<any>(Link).at(0).props().children).toEqual('View all (4)');
+    expect(link).toHaveAttribute('to', `${url}?${params.toString()}`);
+    expect(link?.textContent).toContain('View all');
   });
 
   it('should not show Resource Link if number of revisions is less than MAX_REVISIONS', () => {
-    expect(wrapper.find(Link)).toHaveLength(0);
+    const { container } = render(
+      <RevisionsOverviewList
+        revisions={MockKnativeResources.revisions.data}
+        service={MockKnativeResources.ksservices.data[0]}
+      />,
+    );
+    expect(container.querySelector('Link')).not.toBeInTheDocument();
   });
 
   it('should have button for traffic distribution and enabled', () => {
-    expect(wrapper.find(Button)).toHaveLength(1);
-    expect(wrapper.find(Button).at(0).props().children).toEqual('Set traffic distribution');
-    expect(wrapper.find(Button).at(0).props().isDisabled).toBe(false);
+    const { container } = render(
+      <RevisionsOverviewList
+        revisions={MockKnativeResources.revisions.data}
+        service={MockKnativeResources.ksservices.data[0]}
+      />,
+    );
+    const button = container.querySelector('Button');
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveTextContent(/Set traffic distribution/);
+    // Check that button is NOT disabled (no isdisabled attribute)
+    expect(button?.outerHTML).not.toContain('isdisabled');
   });
 
   it('should call setTrafficDistributionModal on click', () => {
     const spySetTrafficDistributionModal = jest.spyOn(modal, 'setTrafficDistributionModal');
-    expect(wrapper.find(Button)).toHaveLength(1);
-    wrapper.find(Button).simulate('click');
+    const { container } = render(
+      <RevisionsOverviewList
+        revisions={MockKnativeResources.revisions.data}
+        service={MockKnativeResources.ksservices.data[0]}
+      />,
+    );
+    const button = container.querySelector('Button');
+    expect(button).toBeInTheDocument();
+    fireEvent.click(button);
     expect(spySetTrafficDistributionModal).toHaveBeenCalled();
   });
 
   it('should not show button for traffic distribution if access is not there', () => {
-    spyUseAccessReview.mockReturnValue(false);
-    wrapper = shallow(
+    mockUseAccessReview.mockReturnValue(false);
+    const { container } = render(
       <RevisionsOverviewList
         revisions={MockKnativeResources.revisions.data}
         service={MockKnativeResources.revisions.data[0]}
       />,
     );
-    expect(wrapper.find(Button).exists()).toBe(false);
+    expect(container.querySelector('Button')).not.toBeInTheDocument();
   });
 
   it('should render RevisionsOverviewListItem for revisions as many as MAX_REVISION if number of revisions receiving traffic is less than MAX_REVISION', () => {
-    wrapper = shallow(
+    const { container } = render(
       <RevisionsOverviewList
         revisions={mockRevisions}
         service={MockKnativeResources.ksservices.data[0]}
       />,
     );
-    expect(wrapper.find(RevisionsOverviewListItem)).toHaveLength(3);
+    const listItems = container.querySelectorAll('RevisionsOverviewListItem');
+    expect(listItems).toHaveLength(3);
   });
 
   it('should render RevisionsOverviewListItem for all revisions receiving traffic', () => {
@@ -111,9 +165,10 @@ describe('RevisionsOverviewList', () => {
       'status.traffic',
       mockTrafficData,
     );
-    wrapper = shallow(
+    const { container } = render(
       <RevisionsOverviewList revisions={mockRevisions} service={serviceWithTraffic} />,
     );
-    expect(wrapper.find(RevisionsOverviewListItem)).toHaveLength(4);
+    const listItems = container.querySelectorAll('RevisionsOverviewListItem');
+    expect(listItems).toHaveLength(4);
   });
 });

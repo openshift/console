@@ -1,6 +1,4 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
+import { render } from '@testing-library/react';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Subscriber } from 'packages/knative-plugin/src/topology/topology-types';
 import {
@@ -11,10 +9,19 @@ import {
   EventTriggerObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
 import EventPubSubResources, { PubSubResourceOverviewList } from '../EventPubSubResources';
-import PubSubSubscribers from '../EventPubSubSubscribers';
+import '@testing-library/jest-dom';
+
+jest.mock('@console/internal/components/utils', () => ({
+  ResourceLink: 'ResourceLink',
+  SidebarSectionHeading: 'SidebarSectionHeading',
+}));
+
+jest.mock('../EventPubSubSubscribers', () => ({
+  __esModule: true,
+  default: 'PubSubSubscribers',
+}));
 
 type EventPubSubResourcesProps = React.ComponentProps<typeof EventPubSubResources>;
-type PubSubResourceOverviewListProps = React.ComponentProps<typeof PubSubResourceOverviewList>;
 let sampleItemData: EventPubSubResourcesProps;
 
 const sampleSubscribers: Subscriber[] = [
@@ -34,7 +41,6 @@ const sampleSubscribers: Subscriber[] = [
 ];
 
 describe('EventPubSubResources', () => {
-  let wrapper: ShallowWrapper<EventPubSubResourcesProps>;
   sampleItemData = {
     item: {
       obj: EventSubscriptionObj,
@@ -44,12 +50,14 @@ describe('EventPubSubResources', () => {
   };
 
   it('should render related resources for the Subscription', () => {
-    wrapper = shallow(<EventPubSubResources item={sampleItemData.item} />);
-    const findPubSubList = wrapper.find(PubSubResourceOverviewList);
-    expect(findPubSubList).toHaveLength(3);
-    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
-    expect(findPubSubList.at(1).props().title).toEqual('Channel');
-    expect(findPubSubList.at(2).props().title).toEqual('Subscriber');
+    const { container } = render(<EventPubSubResources item={sampleItemData.item} />);
+    const sidebarHeadings = container.querySelectorAll('SidebarSectionHeading');
+    expect(sidebarHeadings).toHaveLength(3);
+    expect(
+      container.querySelector('SidebarSectionHeading[text="Event Sources"]'),
+    ).toBeInTheDocument();
+    expect(container.querySelector('SidebarSectionHeading[text="Channel"]')).toBeInTheDocument();
+    expect(container.querySelector('SidebarSectionHeading[text="Subscriber"]')).toBeInTheDocument();
   });
 
   it('should render related resources for channel without subscribers', () => {
@@ -59,10 +67,12 @@ describe('EventPubSubResources', () => {
       ksservices: [knativeServiceObj],
       eventingsubscription: [EventSubscriptionObj],
     };
-    wrapper = shallow(<EventPubSubResources item={channelItemData} />);
-    const findPubSubList = wrapper.find(PubSubResourceOverviewList);
-    expect(findPubSubList).toHaveLength(1);
-    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
+    const { container } = render(<EventPubSubResources item={channelItemData} />);
+    const sidebarHeadings = container.querySelectorAll('SidebarSectionHeading');
+    expect(sidebarHeadings).toHaveLength(1); // Only Event Sources
+    expect(
+      container.querySelector('SidebarSectionHeading[text="Event Sources"]'),
+    ).toBeInTheDocument();
   });
 
   it('should render related resources for channel with subscribers', () => {
@@ -73,15 +83,14 @@ describe('EventPubSubResources', () => {
       eventingsubscription: [EventSubscriptionObj],
       subscribers: sampleSubscribers,
     };
-    wrapper = shallow(<EventPubSubResources item={channelItemData} />);
-    const findPubSubList = wrapper.find(PubSubResourceOverviewList);
-    const findPubSubSubscriberList = wrapper.find(PubSubSubscribers);
-    expect(findPubSubList).toHaveLength(1);
-    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
-    expect(findPubSubSubscriberList).toHaveLength(1);
-    expect(findPubSubSubscriberList.dive().find(SidebarSectionHeading).props().text).toEqual(
-      'Subscribers',
-    );
+    const { container } = render(<EventPubSubResources item={channelItemData} />);
+    const sidebarHeadings = container.querySelectorAll('SidebarSectionHeading');
+    const pubSubSubscribers = container.querySelectorAll('PubSubSubscribers');
+    expect(sidebarHeadings).toHaveLength(1); // Only Event Sources (PubSubSubscribers doesn't add SidebarSectionHeading to the count)
+    expect(
+      container.querySelector('SidebarSectionHeading[text="Event Sources"]'),
+    ).toBeInTheDocument();
+    expect(pubSubSubscribers).toHaveLength(1);
   });
 
   it('should render broker section if the kind is Broker and  without subscribers ', () => {
@@ -91,12 +100,16 @@ describe('EventPubSubResources', () => {
       ksservices: [knativeServiceObj],
       triggers: [EventTriggerObj],
     };
-    wrapper = shallow(<EventPubSubResources item={brokerItemData} />);
-    const findPubSubList = wrapper.find(PubSubResourceOverviewList);
-    expect(findPubSubList).toHaveLength(3);
-    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
-    expect(findPubSubList.at(1).props().title).toEqual('Pods');
-    expect(findPubSubList.at(2).props().title).toEqual('Deployments');
+    const { container } = render(<EventPubSubResources item={brokerItemData} />);
+    const sidebarHeadings = container.querySelectorAll('SidebarSectionHeading');
+    expect(sidebarHeadings).toHaveLength(3); // Event Sources + Pods + Deployments
+    expect(
+      container.querySelector('SidebarSectionHeading[text="Event Sources"]'),
+    ).toBeInTheDocument();
+    expect(container.querySelector('SidebarSectionHeading[text="Pods"]')).toBeInTheDocument();
+    expect(
+      container.querySelector('SidebarSectionHeading[text="Deployments"]'),
+    ).toBeInTheDocument();
   });
 
   it('should render broker section with Subscribers if the kind is Broker and subscribers available ', () => {
@@ -107,35 +120,32 @@ describe('EventPubSubResources', () => {
       triggers: [EventTriggerObj],
       subscribers: sampleSubscribers,
     };
-    wrapper = shallow(<EventPubSubResources item={brokerItemData} />);
-    const findPubSubSubscriberList = wrapper.find(PubSubSubscribers);
-    const findPubSubList = wrapper.find(PubSubResourceOverviewList);
-    expect(findPubSubList).toHaveLength(3);
-    expect(findPubSubSubscriberList).toHaveLength(1);
-    expect(findPubSubSubscriberList.dive().find(SidebarSectionHeading).props().text).toEqual(
-      'Subscribers',
-    );
+    const { container } = render(<EventPubSubResources item={brokerItemData} />);
+    const pubSubSubscribers = container.querySelectorAll('PubSubSubscribers');
+    const sidebarHeadings = container.querySelectorAll('SidebarSectionHeading');
+    expect(sidebarHeadings).toHaveLength(3); // Event Sources + Pods + Deployments (PubSubSubscribers doesn't add to count)
+    expect(pubSubSubscribers).toHaveLength(1);
   });
 });
 
 describe('PubSubResourceOverviewList', () => {
-  let wrapper: ShallowWrapper<PubSubResourceOverviewListProps>;
   const itemsData: K8sResourceKind[] = [EventIMCObj, knativeServiceObj];
 
   it('should render ResourceLink respective for each resources, SidebarSectionHeading and no span', () => {
-    wrapper = shallow(<PubSubResourceOverviewList items={itemsData} title="Connections" />);
-    const findPubSubList = wrapper.find(ResourceLink);
-    expect(findPubSubList).toHaveLength(2);
-    expect(findPubSubList.at(0).props().name).toEqual('testchannel');
-    expect(wrapper.find(SidebarSectionHeading)).toHaveLength(1);
-    expect(wrapper.find('.pf-v6-u-text-color-subtle').exists()).toBe(false);
+    const { container } = render(
+      <PubSubResourceOverviewList items={itemsData} title="Connections" />,
+    );
+    const resourceLinks = container.querySelectorAll('ResourceLink');
+    expect(resourceLinks).toHaveLength(2);
+    expect(resourceLinks[0]).toHaveAttribute('name', 'testchannel');
+    expect(container.querySelector('SidebarSectionHeading')).toBeInTheDocument();
+    expect(container.querySelector('.pf-v6-u-text-color-subtle')).not.toBeInTheDocument();
   });
 
   it('should render SidebarSectionHeading, pf-v6-u-text-color-subtle and not ResourceLink if no resources exists', () => {
-    wrapper = shallow(<PubSubResourceOverviewList items={[]} title="Connections" />);
-    const findTextMutedList = wrapper.find('.pf-v6-u-text-color-subtle');
-    expect(wrapper.find(ResourceLink).exists()).toBe(false);
-    expect(wrapper.find(SidebarSectionHeading)).toHaveLength(1);
-    expect(findTextMutedList.exists()).toBe(true);
+    const { container } = render(<PubSubResourceOverviewList items={[]} title="Connections" />);
+    expect(container.querySelector('ResourceLink')).not.toBeInTheDocument();
+    expect(container.querySelector('SidebarSectionHeading')).toBeInTheDocument();
+    expect(container.querySelector('.pf-v6-u-text-color-subtle')).toBeInTheDocument();
   });
 });
