@@ -20,10 +20,10 @@ import {
   useAccessReview,
 } from '@console/internal/components/utils';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel, K8sResourceKind, K8sModel } from '@console/internal/module/k8s';
 import { testInstallPlan } from '../../mocks';
 import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel } from '../models';
-import { InstallPlanKind, InstallPlanApproval } from '../types';
+import { InstallPlanKind, InstallPlanApproval, StepResource, InstallPlanPhase } from '../types';
 import {
   InstallPlanTableRow,
   InstallPlansList,
@@ -80,10 +80,10 @@ describe('InstallPlanTableRow', () => {
       referenceForModel(InstallPlanModel),
     );
     expect(wrapper.childAt(0).find(ResourceLink).props().namespace).toEqual(
-      testInstallPlan.metadata.namespace,
+      testInstallPlan.metadata?.namespace,
     );
     expect(wrapper.childAt(0).find(ResourceLink).props().name).toEqual(
-      testInstallPlan.metadata.name,
+      testInstallPlan.metadata?.name,
     );
   });
 
@@ -93,12 +93,12 @@ describe('InstallPlanTableRow', () => {
 
   it('renders column for install plan status', () => {
     expect(wrapper.childAt(2).render().find('[data-test="status-text"]').text()).toEqual(
-      testInstallPlan.status.phase,
+      testInstallPlan.status?.phase,
     );
   });
 
   it('renders column with fallback status if `status.phase` is undefined', () => {
-    obj = { ..._.cloneDeep(testInstallPlan), status: null };
+    obj = { ..._.cloneDeep(testInstallPlan), status: {} as any };
     wrapper = updateWrapper();
 
     expect(wrapper.childAt(2).render().text()).toEqual('Unknown');
@@ -116,7 +116,7 @@ describe('InstallPlanTableRow', () => {
       testInstallPlan.spec.clusterServiceVersionNames.toString(),
     );
     expect(wrapper.childAt(3).find(ResourceLink).props().namespace).toEqual(
-      testInstallPlan.metadata.namespace,
+      testInstallPlan.metadata?.namespace,
     );
   });
 
@@ -129,7 +129,9 @@ describe('InstallPlansList', () => {
   let wrapper: ShallowWrapper<InstallPlansListProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<InstallPlansList.WrappedComponent operatorGroup={null} />);
+    wrapper = shallow(
+      <InstallPlansList.WrappedComponent operatorGroup={{ loaded: false, data: [] } as any} />,
+    );
   });
 
   it('renders a `Table` component with the correct props', () => {
@@ -196,12 +198,14 @@ describe('InstallPlanPreview', () => {
     ...testInstallPlan,
     status: {
       ...testInstallPlan.status,
+      phase: InstallPlanPhase.InstallPlanPhasePlanning,
+      catalogSources: [],
       plan: [
         {
           resolving: 'testoperator.v1.0.0',
           status: 'Created',
           resource: {
-            group: ClusterServiceVersionModel.apiGroup,
+            group: ClusterServiceVersionModel.apiGroup || '',
             version: ClusterServiceVersionModel.apiVersion,
             kind: ClusterServiceVersionModel.kind,
             name: 'testoperator.v1.0.0',
@@ -212,7 +216,7 @@ describe('InstallPlanPreview', () => {
           resolving: 'testoperator.v1.0.0',
           status: 'Unknown',
           resource: {
-            group: CustomResourceDefinitionModel.apiGroup,
+            group: CustomResourceDefinitionModel.apiGroup || '',
             version: CustomResourceDefinitionModel.apiVersion,
             kind: CustomResourceDefinitionModel.kind,
             name: 'test-crds.test.com',
@@ -233,7 +237,7 @@ describe('InstallPlanPreview', () => {
 
   it('renders empty message if `status.plan` is not filled', () => {
     const wrapper = shallow(
-      <InstallPlanPreview obj={{ ...obj, status: { ...obj.status, plan: [] } }} />,
+      <InstallPlanPreview obj={{ ...obj, status: { ...obj.status, plan: [] } as any }} />,
     );
     expect(wrapper.find(ConsoleEmptyState).exists()).toBe(true);
   });
@@ -263,7 +267,7 @@ describe('InstallPlanPreview', () => {
       .mockImplementation((_model, data) => Promise.resolve(data));
 
     spyAndExpect(spyOn(k8sResourceModule, 'k8sPatch'))(Promise.resolve(testInstallPlan))
-      .then(([model, installPlan]) => {
+      .then(([model, installPlan]: [K8sModel, K8sResourceKind]) => {
         expect(model).toEqual(InstallPlanModel);
         expect(jest.spyOn(k8sResourceModule, 'k8sPatch')).toHaveBeenLastCalledWith(
           InstallPlanModel,
@@ -327,7 +331,7 @@ describe('InstallPlanPreview', () => {
     const row = wrapper.find('.co-m-pane__body').find('tbody').find('tr').at(0);
 
     expect(row.find('td').at(0).find(ResourceLink).props().name).toEqual(
-      obj.status.plan[0].resource.name,
+      obj.status?.plan?.[0]?.resource?.name,
     );
   });
 
@@ -337,12 +341,12 @@ describe('InstallPlanPreview', () => {
     const modalSpy = spyOn(modal, 'installPlanPreviewModal').and.returnValue(null);
 
     expect(row.find('td').at(0).find(ResourceIcon).props().kind).toEqual(
-      referenceForStepResource(obj.status.plan[1].resource),
+      referenceForStepResource(obj.status?.plan?.[1]?.resource || ({} as StepResource)),
     );
 
     row.find('td').at(0).find(Button).simulate('click');
 
-    expect(modalSpy.calls.argsFor(0)[0].stepResource).toEqual(obj.status.plan[1].resource);
+    expect(modalSpy.calls.argsFor(0)[0].stepResource).toEqual(obj.status?.plan?.[1]?.resource);
   });
 });
 
@@ -363,7 +367,7 @@ describe('InstallPlanDetails', () => {
       wrapper.find(InstallPlanHint).dive().find(Hint).shallow().find<any>(Link).props().to,
     ).toEqual(
       `/k8s/ns/default/${referenceForModel(InstallPlanModel)}/${
-        testInstallPlan.metadata.name
+        testInstallPlan.metadata?.name
       }/components`,
     );
   });
@@ -379,7 +383,7 @@ describe('InstallPlanDetailsPage', () => {
   beforeEach(() => {
     jest
       .spyOn(Router, 'useParams')
-      .mockReturnValue({ ns: 'default', name: testInstallPlan.metadata.name });
+      .mockReturnValue({ ns: 'default', name: testInstallPlan.metadata?.name });
     wrapper = shallow(<InstallPlanDetailsPage />);
   });
 
@@ -388,7 +392,7 @@ describe('InstallPlanDetailsPage', () => {
       wrapper
         .find(DetailsPage)
         .props()
-        .pages.map((p) => p.name || p.nameKey),
+        .pages?.map((p) => p.name || p.nameKey),
     ).toEqual([`${i18nNS}~Details`, `${i18nNS}~YAML`, 'olm~Components']);
   });
 });
