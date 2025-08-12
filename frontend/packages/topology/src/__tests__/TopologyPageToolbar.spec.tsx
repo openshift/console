@@ -1,17 +1,20 @@
 import * as React from 'react';
-import { Button, Tooltip } from '@patternfly/react-core';
-import { shallow } from 'enzyme';
+import { configure, render, screen } from '@testing-library/react';
+import * as FileUploadContextModule from '@console/app/src/components/file-upload/file-upload-context';
+import * as AddToProjectAccessModule from '@console/dev-console/src/utils/useAddToProjectAccess';
 import * as rbacModule from '@console/internal/components/utils/rbac';
+import * as SharedHooks from '@console/shared';
 import TopologyPageToolbar from '../components/page/TopologyPageToolbar';
+import { ModelContext } from '../data-transforms/ModelContext';
 import { TopologyViewType } from '../topology-types';
+import '@testing-library/jest-dom';
 
-jest.mock('react', () => {
-  const ActualReact = jest.requireActual('react');
-  return {
-    ...ActualReact,
-    useContext: () => jest.fn(),
-  };
-});
+configure({ testIdAttribute: 'data-test-id' });
+
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useContext: jest.fn(),
+}));
 
 jest.mock('react-redux', () => {
   const ActualReactRedux = jest.requireActual('react-redux');
@@ -27,91 +30,100 @@ jest.mock('@console/shared', () => {
   return {
     ...ActualShared,
     useQueryParams: () => new Map(),
+    useIsMobile: jest.fn(),
   };
 });
 
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  useAccessReview: jest.fn(),
+}));
+
+jest.mock('@console/dev-console/src/utils/useAddToProjectAccess', () => ({
+  useAddToProjectAccess: jest.fn(),
+}));
+
+jest.mock('@console/app/src/components/file-upload/file-upload-context', () => ({
+  FileUploadContext: { extensions: ['.yaml'] },
+}));
+
 describe('TopologyPageToolbar tests', () => {
-  let spyUseAccessReview;
+  const mockContext = {
+    isEmptyModel: false,
+    namespace: 'test-namespace',
+  };
 
   beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
-    spyUseAccessReview.mockReturnValue(true);
-  });
-
-  afterEach(() => {
-    spyUseAccessReview.mockReset();
-  });
-
-  it('should render view shortcuts button on topology page toolbar', () => {
-    const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
-      isEmptyModel: false,
-      namespace: 'test-namespace',
+    jest.clearAllMocks();
+    jest.spyOn(rbacModule, 'useAccessReview').mockReturnValue(true);
+    jest.spyOn(SharedHooks, 'useIsMobile').mockReturnValue(false);
+    jest.spyOn(AddToProjectAccessModule, 'useAddToProjectAccess').mockReturnValue(['import']);
+    jest.spyOn(React, 'useContext').mockImplementation((ctx) => {
+      if (ctx === FileUploadContextModule.FileUploadContext) {
+        return { extensions: ['.yaml'] };
+      }
+      if (ctx === ModelContext) {
+        return mockContext;
+      }
+      return {};
     });
-    const wrapper = shallow(
-      <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
-    );
-    expect(wrapper.find('[data-test-id="topology-view-shortcuts"]').exists()).toBe(true);
   });
 
-  it('should render view shortcuts button on topology list page toolbar', () => {
-    const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
-      isEmptyModel: false,
-      namespace: 'test-namespace',
-    });
-    const wrapper = shallow(
-      <TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={mockViewChange} />,
-    );
-    expect(wrapper.find('[data-test-id="topology-view-shortcuts"]').exists()).toBe(true);
+  it('should render view shortcuts button on graph view', () => {
+    render(<TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={jest.fn()} />);
+    expect(screen.getByTestId('topology-view-shortcuts')).toBeInTheDocument();
   });
 
-  it('should show the topology icon when on topology list page', () => {
-    const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
-      isEmptyModel: false,
-      namespace: 'test-namespace',
-    });
-    const wrapper = shallow(
-      <TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={mockViewChange} />,
-    );
-    expect(wrapper.find(Tooltip).props().content).toBe('Graph view');
+  it('should render view shortcuts button on list view', () => {
+    render(<TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={jest.fn()} />);
+    expect(screen.getByTestId('topology-view-shortcuts')).toBeInTheDocument();
   });
 
-  it('should show the topology list icon when on topology page', () => {
-    const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
-      isEmptyModel: false,
-      namespace: 'test-namespace',
-    });
-    const wrapper = shallow(
-      <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
-    );
-    expect(wrapper.find(Tooltip).props().content).toBe('List view');
+  it('should show the topology icon when in list view (meaning switch to graph)', () => {
+    render(<TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={jest.fn()} />);
+    expect(screen.getByLabelText('Graph view')).toBeInTheDocument();
   });
 
-  it('should not contain view switcher when when no project is selected', () => {
-    const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
-      isEmptyModel: false,
-      namespace: undefined,
-    });
-    const wrapper = shallow(
-      <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
-    );
-    expect(wrapper.find(Button).exists()).toBe(false);
+  it('should show the list icon when in graph view (meaning switch to list)', () => {
+    render(<TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={jest.fn()} />);
+    expect(screen.getByLabelText('List view')).toBeInTheDocument();
   });
 
-  it('should disable view switcher when no model', () => {
-    const mockViewChange = jest.fn();
-    spyOn(React, 'useContext').and.returnValue({
-      isEmptyModel: true,
-      namespace: 'test-namespace',
+  it('should not show toolbar when no namespace is set', () => {
+    jest.spyOn(React, 'useContext').mockImplementation((ctx) => {
+      if (ctx === FileUploadContextModule.FileUploadContext) {
+        return { extensions: [] };
+      }
+      if (ctx === ModelContext) {
+        return {
+          isEmptyModel: false,
+          namespace: undefined,
+        };
+      }
+      return {};
     });
-    const wrapper = shallow(
-      <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
+
+    const { container } = render(
+      <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={jest.fn()} />,
     );
-    const switcher = wrapper.find(Button);
-    expect(switcher.at(1).props().isDisabled).toBe(true);
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should disable view switcher when model is empty', () => {
+    jest.spyOn(React, 'useContext').mockImplementation((ctx) => {
+      if (ctx === FileUploadContextModule.FileUploadContext) {
+        return { extensions: [] };
+      }
+      if (ctx === ModelContext) {
+        return {
+          isEmptyModel: true,
+          namespace: 'test-namespace',
+        };
+      }
+      return {};
+    });
+
+    render(<TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={jest.fn()} />);
+    const switcher = screen.getByTestId('topology-switcher-view');
+    expect(switcher).toBeDisabled();
   });
 });
