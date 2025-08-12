@@ -11,7 +11,6 @@ import {
   HelperTextItem,
   ValidatedOptions,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -80,10 +79,7 @@ const ImageStream: React.FC<{
     isStreamsAvailable &&
     isTagsAvailable;
   const helperTextInvalid = validated === ValidatedOptions.error && isi.status?.message && (
-    <>
-      <ExclamationCircleIcon />
-      &nbsp;{isi.status?.message}
-    </>
+    <>{isi.status?.message}</>
   );
 
   return (
