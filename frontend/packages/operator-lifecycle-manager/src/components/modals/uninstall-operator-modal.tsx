@@ -3,6 +3,8 @@ import * as React from 'react';
 import { Alert, Progress, ProgressSize, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { getActiveNamespace } from '@console/internal/actions/ui';
@@ -10,9 +12,11 @@ import { coFetchJSON } from '@console/internal/co-fetch';
 import { Checkbox } from '@console/internal/components/checkbox';
 import {
   createModalLauncher,
+  ModalComponentProps,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import {
   history,
@@ -637,6 +641,26 @@ const OperandErrorList: React.FC<OperandErrorListProps> = ({ operandErrors, csvN
 };
 
 export const createUninstallOperatorModal = createModalLauncher(UninstallOperatorModal);
+
+const UninstallOperatorModalProvider: OverlayComponent<UninstallOperatorModalProviderProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <UninstallOperatorModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
+    </ModalWrapper>
+  );
+};
+
+export const useUninstallOperatorModal = (props: UninstallOperatorModalProps) => {
+  const launcher = useOverlay();
+  return React.useCallback(
+    () => launcher<UninstallOperatorModalProviderProps>(UninstallOperatorModalProvider, props),
+    [launcher, props],
+  );
+};
+
+type UninstallOperatorModalProviderProps = UninstallOperatorModalProps & ModalComponentProps;
 
 export type UninstallOperatorModalProps = {
   cancel?: () => void;
