@@ -12,7 +12,7 @@ import { makeNodeUnschedulable } from '../../../k8s/requests/nodes';
 
 type ConfigureUnschedulableModalProps = HandlePromiseProps & {
   resource: NodeKind;
-  cancel?: () => void;
+  cancel: () => void;
   close?: () => void;
 };
 

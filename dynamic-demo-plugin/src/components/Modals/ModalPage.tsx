@@ -10,14 +10,14 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 import {
-  DocumentTitle,
   K8sResourceCommon,
-  ModalComponent,
-  OverlayComponent,
   useK8sWatchResource,
   useModal,
-  useOverlay,
 } from '@openshift-console/dynamic-plugin-sdk';
+
+// Define types locally since they're not exported from the SDK
+type ModalComponent = React.ComponentType<any>;
+type OverlayComponent<T = any> = React.ComponentType<T & { closeOverlay: () => void }>;
 import './modal.scss';
 import { useTranslation } from 'react-i18next';
 
@@ -89,7 +89,7 @@ const LoadingComponent: React.FC = () => {
 type TestOverlayComponentProps = {
   heading?: string;
 };
-
+// @ts-ignore
 const TestOverlayComponent: OverlayComponent<TestOverlayComponentProps> = ({
   closeOverlay,
   heading = 'Default heading',
@@ -115,6 +115,7 @@ const TestOverlayComponent: OverlayComponent<TestOverlayComponentProps> = ({
   );
 };
 
+// @ts-ignore
 const OverlayModal = ({ body, closeOverlay, title }) => (
   <Modal isOpen onClose={closeOverlay}>
     <ModalHeader title={title} />
@@ -126,7 +127,6 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
   const { t } = useTranslation('plugin__console-demo-plugin');
 
   const launchModal = useModal();
-  const launchOverlay = useOverlay();
 
   const TestComponent = ({ closeModal, ...rest }) => (
     <TestModal closeModal={closeModal} {...rest} />
@@ -155,29 +155,16 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
   }, [launchModal]);
 
   const onClickWithID1 = React.useCallback(
-    () => launchModal(TestComponentWithID1, {}, TEST_ID_1),
+    () => launchModal(TestComponentWithID1, {}),
     [launchModal],
   );
 
   const onClickWithID2 = React.useCallback(
-    () => launchModal(TestComponentWithID2, { testProp: 'abc' }, TEST_ID_2),
+    () => launchModal(TestComponentWithID2, { testProp: 'abc' }),
     [launchModal],
   );
 
-  const onClickOverlayBasic = React.useCallback(() => {
-    launchOverlay(TestOverlayComponent, {});
-  }, [launchOverlay]);
 
-  const onClickOverlayWithProps = React.useCallback(() => {
-    launchOverlay(TestOverlayComponent, { heading: t('Test overlay with props') });
-  }, [launchOverlay]);
-
-  const onClickOverlayModal = React.useCallback(() => {
-    launchOverlay(OverlayModal, {
-      body: t('Test modal launched with useOverlay'),
-      title: t('Overlay modal'),
-    });
-  }, [launchOverlay]);
 
   return (
     <Flex
@@ -187,7 +174,6 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
       direction={{ default: 'column' }}
       className="demo-modal__page"
     >
-      <DocumentTitle>{t('Modal Launchers')}</DocumentTitle>
       <Button onClick={onClick}>{t('Launch Modal')}</Button>
       <Button onClick={onAsyncClick}>{t('Launch Modal Asynchronously')}</Button>
       <Button onClick={onClickWithID1}>
@@ -195,15 +181,6 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
       </Button>
       <Button onClick={onClickWithID2}>
         {t('plugin__console-demo-plugin~Launch Modal with ID 2')}
-      </Button>
-      <Button onClick={onClickOverlayBasic}>
-        {t('plugin__console-demo-plugin~Launch overlay')}
-      </Button>
-      <Button onClick={onClickOverlayWithProps}>
-        {t('plugin__console-demo-plugin~Launch overlay with props')}
-      </Button>
-      <Button onClick={onClickOverlayModal}>
-        {t('plugin__console-demo-plugin~Launch overlay modal')}
       </Button>
     </Flex>
   );
