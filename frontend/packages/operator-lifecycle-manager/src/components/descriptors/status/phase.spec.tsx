@@ -1,11 +1,11 @@
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Phase, PhaseProps } from './phase';
 
-describe(Phase.displayName, () => {
+describe(Phase.displayName || '', () => {
   let wrapper: ShallowWrapper<PhaseProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<Phase status={null} />);
+    wrapper = shallow(<Phase status={''} />);
   });
 
   it('renders icon for failed status', () => {

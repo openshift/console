@@ -95,7 +95,7 @@ const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
   });
 };
 
-const Badge = ({ text }) => (
+const Badge = ({ text }: { text: string }) => (
   <span key={text} className="pf-v6-c-badge pf-m-read">
     <Truncate className="pf-v6-c-truncate--no-min-width" content={text} />
   </span>
@@ -151,7 +151,7 @@ export const determineCategories = (items: OperatorHubItem[]): Record<string, Ca
   );
 };
 
-export const getProviderValue = (value) => {
+export const getProviderValue = (value: any) => {
   if (!value) {
     return value;
   }
@@ -164,7 +164,7 @@ export const getProviderValue = (value) => {
   return value;
 };
 
-const sortFilterValues = (values, field) => {
+const sortFilterValues = (values: any[], field: string) => {
   let sorter: any = ['value'];
 
   if (field === 'provider') {
@@ -194,11 +194,15 @@ const sortFilterValues = (values, field) => {
   return _.sortBy(values, sorter);
 };
 
-const determineAvailableFilters = (initialFilters, items: OperatorHubItem[], filterGroups) => {
+const determineAvailableFilters = (
+  initialFilters: any,
+  items: OperatorHubItem[],
+  filterGroups: string[],
+) => {
   const filters = _.cloneDeep(initialFilters);
 
   _.each(filterGroups, (field) => {
-    const values = [];
+    const values: { label: any; synonyms?: any; value: any; active: boolean }[] = [];
     _.each(items, (item) => {
       let value = item[field];
       let synonyms;
@@ -258,7 +262,7 @@ const determineAvailableFilters = (initialFilters, items: OperatorHubItem[], fil
   return filters;
 };
 
-export const keywordCompare = (filterString, item) => {
+export const keywordCompare = (filterString: string, item: OperatorHubItem) => {
   if (!filterString) {
     return true;
   }
@@ -276,7 +280,7 @@ export const keywordCompare = (filterString, item) => {
   );
 };
 
-const setURLParams = (params) => {
+const setURLParams = (params: URLSearchParams) => {
   const url = new URL(window.location.href);
   const searchParams = `?${params.toString()}${url.hash}`;
 
@@ -336,14 +340,14 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
 
 export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) => {
   const { t } = useTranslation();
-  const [detailsItem, setDetailsItem] = React.useState(null);
+  const [detailsItem, setDetailsItem] = React.useState<OperatorHubItem | null>(null);
   const [showDetails, setShowDetails] = React.useState(false);
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
     boolean
   >(userSettingsKey, storeKey, false);
   const [updateChannel, setUpdateChannel] = React.useState('');
   const [updateVersion, setUpdateVersion] = React.useState('');
-  const [tokenizedAuth, setTokenizedAuth] = React.useState(null);
+  const [tokenizedAuth, setTokenizedAuth] = React.useState<string | null>(null);
   const installVersion = getQueryArgument('version');
   const filteredItems = filterByArchAndOS(props.items);
 
@@ -352,7 +356,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     const currentItem = _.find(filteredItems, {
       uid: detailsItemID,
     });
-    setDetailsItem(currentItem);
+    setDetailsItem(currentItem as OperatorHubItem);
     setShowDetails(!_.isNil(currentItem));
     if (
       currentItem &&
@@ -436,23 +440,30 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   const installParamsURL =
     detailsItem &&
     detailsItem.obj &&
-    new URLSearchParams({
-      pkg: detailsItem.obj.metadata.name,
-      catalog: detailsItem.catalogSource,
-      catalogNamespace: detailsItem.catalogSourceNamespace,
-      targetNamespace: props.namespace,
-      channel: updateChannel,
-      version: updateVersion,
-      tokenizedAuth,
-    }).toString();
+    new URLSearchParams(
+      Object.entries({
+        pkg: detailsItem.obj.metadata?.name,
+        catalog: detailsItem.catalogSource,
+        catalogNamespace: detailsItem.catalogSourceNamespace,
+        targetNamespace: props.namespace,
+        channel: updateChannel,
+        version: updateVersion,
+        tokenizedAuth,
+      }).reduce((acc, [key, value]) => {
+        if (value !== undefined && value !== '') {
+          acc[key] = value as string;
+        }
+        return acc;
+      }, {} as Record<string, string>),
+    ).toString();
 
   const installLink =
-    detailsItem && detailsItem.obj && `/operatorhub/subscribe?${installParamsURL.toString()}`;
+    detailsItem && detailsItem.obj && `/operatorhub/subscribe?${installParamsURL}`;
 
   const uninstallLink = () =>
     detailsItem &&
     detailsItem.subscription &&
-    `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
+    `/k8s/ns/${detailsItem.subscription.metadata?.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata?.name}?showDelete=true`;
 
   if (_.isEmpty(filteredItems)) {
     return (
@@ -492,7 +503,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
 
   const titleAndDeprecatedPackage = () => (
     <>
-      {detailsItem.name}
+      {detailsItem?.name}
       {detailsItem?.obj?.status?.deprecation && (
         <DeprecatedOperatorWarningBadge
           className="pf-v6-u-ml-sm"
@@ -552,7 +563,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                       'co-catalog-page__overlay-action',
                     )}
                     data-test-id="operator-install-btn"
-                    to={installLink}
+                    to={installLink as any}
                   >
                     {t('olm~Install')}
                   </Link>
@@ -561,7 +572,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                     className="co-catalog-page__overlay-action"
                     data-test-id="operator-uninstall-btn"
                     isDisabled={!detailsItem.installed}
-                    onClick={() => history.push(uninstallLink())}
+                    onClick={() => history.push(uninstallLink() as any)}
                     variant="secondary"
                   >
                     {t('olm~Uninstall')}

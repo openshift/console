@@ -139,7 +139,9 @@ describe('SubscriptionTableRow', () => {
     };
     wrapper = updateWrapper();
 
-    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain('Upgrading');
+    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain(
+      'Upgrade available',
+    );
   });
 
   it('renders column for subscription state when no updates available', () => {

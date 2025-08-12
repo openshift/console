@@ -54,8 +54,8 @@ export const OperandForm: React.FC<OperandFormProps> = ({
       history.replace(
         resourcePathFromModel(
           ClusterServiceVersionModel,
-          csv.metadata.name,
-          csv.metadata.namespace,
+          csv.metadata?.name || '',
+          csv.metadata?.namespace || '',
         ),
       );
     } else {

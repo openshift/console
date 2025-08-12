@@ -117,7 +117,7 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
         </div>
       )}
       <MatchExpressions
-        matchExpressions={selector?.matchExpressions}
+        matchExpressions={selector?.matchExpressions || []}
         onChange={onChangeMatchExpressions}
         allowedOperators={ALLOWED_MATCH_EXPRESSION_OPERATORS}
         uid={key}
@@ -181,7 +181,7 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
     onChange?.({
       ...affinity,
       preferredDuringSchedulingIgnoredDuringExecution: preferredRules.map((current, index) =>
-        index === atIndex ? { preference, weight } : current,
+        index === atIndex ? { preference, weight: weight || 0 } : current,
       ),
     });
 
@@ -339,7 +339,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
         </div>
       </div>
       <MatchExpressions
-        matchExpressions={selector?.matchExpressions}
+        matchExpressions={selector?.matchExpressions || []}
         onChange={onChangeMatchExpressions}
         allowedOperators={ALLOWED_MATCH_EXPRESSION_OPERATORS}
         uid={key}

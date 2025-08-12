@@ -57,6 +57,7 @@ import {
   CustomResourceDefinitionKind,
   definitionFor,
   K8sResourceCommon,
+  K8sResourceKindReference,
 } from '@console/internal/module/k8s';
 import {
   Status,
@@ -97,7 +98,7 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {
+const getOperandStatus = (obj: K8sResourceKind): OperandStatusType | null => {
   const { phase, status, state, conditions } = obj?.status || {};
 
   if (phase && _.isString(phase)) {
@@ -146,7 +147,7 @@ const hasAllNamespaces = (csv: ClusterServiceVersionKind) => {
 };
 
 export const OperandStatus: React.FC<OperandStatusProps> = ({ operand }) => {
-  const status: OperandStatusType = getOperandStatus(operand);
+  const status: OperandStatusType | null = getOperandStatus(operand);
   if (!status) {
     return <>-</>;
   }
@@ -182,11 +183,11 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, showNames
       </TableData>
       {showNamespace && (
         <TableData className={tableColumnClasses[2]}>
-          {obj.metadata.namespace ? (
+          {obj.metadata?.namespace ? (
             <ResourceLink
               kind="Namespace"
-              title={obj.metadata.namespace}
-              name={obj.metadata.namespace}
+              title={obj.metadata?.namespace}
+              name={obj.metadata?.namespace}
             />
           ) : (
             '-'
@@ -197,10 +198,13 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, showNames
         <OperandStatus operand={obj} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <LabelList kind={obj.kind} labels={obj.metadata.labels} />
+        <LabelList
+          kind={obj.kind as K8sResourceKindReference}
+          labels={obj.metadata?.labels || {}}
+        />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata?.creationTimestamp || ''} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
         <LazyActionMenu context={context} isDisabled={_.has(obj.metadata, 'deletionTimestamp')} />
@@ -280,10 +284,10 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
         if (obj.apiVersion && obj.kind) {
           return obj;
         }
-        const reference = props.kinds[0];
+        const reference = props.kinds?.[0];
         return {
-          apiVersion: apiVersionForReference(reference),
-          kind: kindForReference(reference),
+          apiVersion: apiVersionForReference(reference as any),
+          kind: kindForReference(reference as any),
           ...obj,
         };
       }) ?? [],
@@ -295,7 +299,7 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
       {...props}
       customSorts={{
         operandStatus: getOperandStatusText,
-        getOperandNamespace,
+        getOperandNamespace: getOperandNamespace as (obj: any) => string,
       }}
       data={data}
       EmptyMsg={() =>
@@ -366,7 +370,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const providedAPIs = providedAPIsForCSV(obj);
 
   const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) =>
-    ownerRefs.filter(({ uid }) => items.filter(({ metadata }) => metadata.uid === uid).length > 0);
+    ownerRefs.filter(({ uid }) => items.filter(({ metadata }) => metadata?.uid === uid).length > 0);
   const flatten: Flatten<{
     [key: string]: K8sResourceCommon[];
   }> = React.useCallback(
@@ -374,7 +378,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
       _.flatMap(resources, (resource) => _.map(resource.data, (item) => item)).filter(
         ({ kind, metadata }, i, allResources) =>
           providedAPIs.filter((item) => item.kind === kind).length > 0 ||
-          owners(metadata.ownerReferences || [], allResources).length > 0,
+          owners(metadata?.ownerReferences || [], allResources).length > 0,
       ),
     [providedAPIs],
   );
@@ -391,7 +395,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const watchedResources = getK8sWatchResources(
     models,
     providedAPIs,
-    listAllNamespaces ? null : namespace,
+    listAllNamespaces ? undefined : namespace,
   );
 
   const resources = useK8sWatchResources<{ [key: string]: K8sResourceKind[] }>(watchedResources);
@@ -448,7 +452,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   return inFlight ? null : (
     <>
       <ListPageHeader
-        title={showTitle ? t('olm~All Instances') : undefined}
+        title={showTitle ? t('olm~All Instances') : ''}
         hideFavoriteButton
         helpText={managesAllNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
       >
@@ -467,7 +471,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
           hideColumnManagement={hideColumnManagement}
         />
         <OperandList
-          data={filteredData}
+          data={filteredData as K8sResourceKind[]}
           loaded={loaded}
           loadError={loadError}
           noAPIsFound={Object.keys(watchedResources).length === 0}
@@ -515,7 +519,7 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
   return (
     <>
       <ListPageHeader
-        title={showTitle ? `${labelPlural}` : undefined}
+        title={showTitle ? `${labelPlural}` : ''}
         hideFavoriteButton
         helpText={managesAllNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
       >
@@ -594,7 +598,7 @@ const PodStatuses: React.FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescri
               descriptor={statusDescriptor}
               model={kindObj}
               obj={obj}
-              schema={schema}
+              schema={schema as JSONSchema7}
             />
           </GridItem>
         );
@@ -605,7 +609,7 @@ const PodStatuses: React.FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescri
 export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: OperandDetailsProps) => {
   const { t } = useTranslation();
   const { kind, status } = obj;
-  const [errorMessage, setErrorMessage] = React.useState(null);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const handleError = (err: Error) => setErrorMessage(err.message);
 
   // Find the matching CRD spec for the kind of this resource in the CSV.
@@ -705,7 +709,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
             <Grid hasGutter>
               <GridItem sm={6}>
                 <DescriptorDetailsItemList
-                  descriptors={specDescriptors}
+                  descriptors={specDescriptors || []}
                   model={kindObj}
                   obj={obj}
                   onError={handleError}
@@ -744,7 +748,7 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
   const params = useParams();
   const { appName, ns, name, plural } = params;
   const location = useLocation();
-  const [csv] = useClusterServiceVersion(appName, ns);
+  const [csv] = useClusterServiceVersion(appName as string, ns as string);
   const actionItems = React.useCallback((resourceModel: K8sKind, resource: K8sResourceKind) => {
     const context = {
       [referenceForModel(resourceModel)]: resource,
@@ -755,8 +759,8 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
 
   return (
     <DetailsPage
-      name={name}
-      kind={plural}
+      name={name || ''}
+      kind={plural as K8sResourceKindReference}
       namespace={ns}
       customData={csv}
       resources={[
@@ -775,11 +779,11 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
           path: `/k8s/ns/${params.ns}/${ClusterServiceVersionModel.plural}`,
         },
         {
-          name: params.appName,
+          name: params.appName || '',
           path: location.pathname.slice(0, location.pathname.lastIndexOf('/')),
         },
         {
-          name: t('olm~{{item}} details', { item: kindForReference(params.plural) }), // Use url param in case model doesn't exist
+          name: t('olm~{{item}} details', { item: kindForReference(params.plural as any) }), // Use url param in case model doesn't exist
           path: `${location.pathname}`,
         },
       ]}
@@ -800,7 +804,7 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
 
 export const OperandDetailsPage = (props) => {
   const { plural, ns, name } = useParams<OperandDetailsPageRouteParams>();
-  const resourceDetailsPage = useResourceDetailsPage(plural);
+  const resourceDetailsPage = useResourceDetailsPage(plural as any);
   const [k8sModel, inFlight] = useK8sModel(plural);
   if (inFlight && !k8sModel) {
     return null;

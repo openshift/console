@@ -1,4 +1,4 @@
 export type ExtensionCatalogDatabaseContextValues = {
   done: boolean;
-  error: Error;
+  error: Error | null;
 };

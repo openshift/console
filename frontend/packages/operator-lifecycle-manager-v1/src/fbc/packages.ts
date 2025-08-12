@@ -40,7 +40,7 @@ export const addPackagesToExtensionCatalog = (
           pkg.name,
           e.toString(),
         );
-        return null;
+        throw e;
       }),
     ),
   );

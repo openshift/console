@@ -29,7 +29,12 @@ const PodStatuses: React.FC<StatusCapabilityProps<PodStatusChartProps['statuses'
   }, [descriptor.path, t, value]);
   return (
     <div className="co-operand-details__section--info">
-      <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+      <DetailsItem
+        description={description || ''}
+        label={label || ''}
+        obj={obj}
+        path={fullPath || ''}
+      >
         {detail}
       </DetailsItem>
     </div>
@@ -45,7 +50,12 @@ const Link: React.FC<StatusCapabilityProps<string>> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <DetailsItem
+      description={description || ''}
+      label={label || ''}
+      obj={obj}
+      path={fullPath || ''}
+    >
       {!_.isNil(value) ? (
         <a href={value}>{value.replace(/https?:\/\//, '')}</a>
       ) : (
@@ -62,7 +72,7 @@ const K8sPhase: React.FC<StatusCapabilityProps<string>> = ({
   obj,
   value,
 }) => (
-  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+  <DetailsItem description={description || ''} label={label || ''} obj={obj} path={fullPath || ''}>
     <Phase status={value} />
   </DetailsItem>
 );
@@ -76,7 +86,12 @@ const K8sPhaseReason: React.FC<StatusCapabilityProps<string>> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <DetailsItem
+      description={description || ''}
+      label={label || ''}
+      obj={obj}
+      path={fullPath || ''}
+    >
       {_.isEmpty(value) ? (
         <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>
       ) : (
@@ -95,7 +110,7 @@ const MainStatus: React.FC<StatusCapabilityProps<string>> = ({
   obj,
   value,
 }) => (
-  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+  <DetailsItem description={description || ''} label={label || ''} obj={obj} path={fullPath || ''}>
     {value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />}
   </DetailsItem>
 );

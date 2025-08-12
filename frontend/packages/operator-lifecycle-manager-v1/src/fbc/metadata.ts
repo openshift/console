@@ -139,7 +139,7 @@ const aggregateMetadata = (
   csvMetadata: CSVMetadata,
   packageMetadata?: PackageMetadata,
 ): PackageMetadata => {
-  if (!csvMetadata) return packageMetadata;
+  if (!csvMetadata) return packageMetadata ?? {};
   return Object.keys(csvMetadata)
     .sort() // ensure annotations are handled first
     .reduce((acc, key) => {

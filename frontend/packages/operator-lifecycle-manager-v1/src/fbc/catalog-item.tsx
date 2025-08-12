@@ -29,7 +29,7 @@ export const normalizeExtensionCatalogItem: NormalizeExtensionCatalogItem = (pkg
     createdAt,
   } = pkg;
   const [validSubscriptions, validSubscriptionFilters] = validSubscriptionReducer(
-    validSubscription,
+    validSubscription ?? [],
   );
   return {
     attributes: {
@@ -50,7 +50,7 @@ export const normalizeExtensionCatalogItem: NormalizeExtensionCatalogItem = (pkg
       properties: [
         {
           label: 'Capability level',
-          value: <CapabilityLevel capability={capabilities} />,
+          value: <CapabilityLevel capability={capabilities ?? ''} />,
         },
         { label: 'Source', value: source || '-' },
         { label: 'Provider', value: provider || '-' },
@@ -77,7 +77,7 @@ export const normalizeExtensionCatalogItem: NormalizeExtensionCatalogItem = (pkg
       descriptions: [{ value: <SyncMarkdownView content={longDescription} /> }],
     },
     displayName,
-    icon: icon ? { url: `data:${icon.mediatype};base64,${icon.base64data}` } : null,
+    icon: icon ? { url: `data:${icon.mediatype};base64,${icon.base64data}` } : undefined,
     name: displayName || name,
     supportUrl: support,
     provider,
