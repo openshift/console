@@ -2,7 +2,6 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
@@ -17,7 +16,7 @@ import {
   navFactory,
 } from './utils';
 import { SecretType } from './secrets/create-secret/types';
-import { useSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
+import { useAddSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -27,16 +26,6 @@ import {
   ActionMenuVariant,
   LazyActionMenu,
 } from '@console/shared';
-import { ModalCallback } from './modals/types';
-
-export const addSecretToWorkload = (t: TFunction, addSecretToWorkloadLauncher: ModalCallback) => {
-  return () => {
-    return {
-      callback: () => addSecretToWorkloadLauncher(),
-      label: t('public~Add Secret to workload'),
-    };
-  };
-};
 
 const tableColumnClasses = [
   '',
@@ -244,12 +233,20 @@ const SecretsDetailsPage: React.FCC<SecretDetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const { name: secretName, namespace, kindObj: kind } = props;
 
-  const addSecretToWorkloadLauncher = useSecretToWorkloadModalLauncher({ secretName, namespace });
+  const addSecretToWorkloadLauncher = useAddSecretToWorkloadModalLauncher({
+    secretName,
+    namespace,
+  });
 
-  const actionButtons = React.useMemo(() => [addSecretToWorkload(t, addSecretToWorkloadLauncher)], [
-    t,
-    addSecretToWorkloadLauncher,
-  ]);
+  const actionButtons = React.useMemo(
+    () => [
+      () => ({
+        callback: () => addSecretToWorkloadLauncher(),
+        label: t('public~Add Secret to workload'),
+      }),
+    ],
+    [t, addSecretToWorkloadLauncher],
+  );
 
   const customActionMenu = (kindObj: K8sResourceKind, obj: K8sModel) => {
     const resourceKind = referenceFor(kindObj);

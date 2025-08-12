@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
@@ -11,7 +11,6 @@ import {
   tolerationsModal,
 } from '@console/internal/components/modals';
 import { resourceObjPath, asAccessReview } from '@console/internal/components/utils';
-import { SecretModel } from '@console/internal/models';
 import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { CommonActionCreator, ActionObject } from './types';
 
@@ -23,6 +22,7 @@ import { CommonActionCreator, ActionObject } from './types';
  * @param [filterActions] - Optional. If provided, the returned object will contain only the specified actions.
  * Specify which actions to include using CommonActionCreator enum values.
  * If omitted, it will contain all common actions.
+ * @param {string} editPath - Optional URL path used for editing the resource.
  * @param {JSX.Element} [message] - Optional message to display in the delete modal.
  *
  * This hook is robust to inline arrays/objects for the `filterActions` argument, so you do not need to memoize or define
@@ -32,39 +32,35 @@ import { CommonActionCreator, ActionObject } from './types';
  * When isReady is false, do not access properties on the actions object.
  * When isReady is true, all requested actions are guaranteed to exist on the actions object.
  *
- * @example
- * // Getting Delete and Edit actions for a resource
- * const MyResourceComponent = ({ kind, resource }) => {
- *   const [actions] = useCommonActions(kind, resource, [CommonActionCreator.Delete, CommonActionCreator.Edit]);
- *   return <Kebab actions={ Object.values(actions) } />;
- * };
- *
- * @example
- * // Getting actions in specific order
- * const MyResourceComponent = ({ kind, resource }) => {
- *   const [commonActions, isReady] = useCommonActions(kind, resource, [CommonActionCreator.ModifyCount, CommonActionCreator.AddStorage]);
- *   const actions = [
- *     ...(isReady ? [commonActions.ModifyCount] : []),
- *     ...otherActions,
- *     ...(isReady ? [commonActions.AddStorage] : []),
- *   ];
- *   return <Kebab actions={actions} />;
- * };
  */
 export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   kind: K8sModel | undefined,
   resource: K8sResourceKind | undefined,
   filterActions?: T,
   message?: JSX.Element,
+  editPath?: string,
 ): [ActionObject<T>, boolean] => {
   const { t } = useTranslation();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
-  const factory = React.useMemo(
+  const actualEditPath = useMemo(() => {
+    if (editPath) {
+      return editPath;
+    }
+    // Only calculate the default if `kind` and `resource` are available.
+    if (kind && resource) {
+      const reference = kind.crd ? referenceFor(kind) : kind.kind;
+      return `${resourceObjPath(resource, reference)}/yaml`;
+    }
+    // Return a sensible fallback if dependencies aren't ready.
+    return '';
+  }, [kind, resource, editPath]);
+
+  const factory = useMemo(
     () => ({
       [CommonActionCreator.Delete]: (): Action => ({
-        id: `delete-resource`,
+        id: 'delete-resource',
         label: t('console-app~Delete {{kind}}', { kind: kind.kind }),
         cta: () =>
           deleteModal({
@@ -75,19 +71,11 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind, resource, 'delete'),
       }),
       [CommonActionCreator.Edit]: (): Action => {
-        let href: string;
-        switch (kind.kind) {
-          case SecretModel.kind:
-            href = `${resourceObjPath(resource, kind.kind)}/edit`;
-            break;
-          default:
-            href = `${resourceObjPath(resource, kind.crd ? referenceFor(kind) : kind.kind)}/yaml`;
-        }
         return {
-          id: `edit-resource`,
+          id: 'edit-resource',
           label: t('console-app~Edit {{kind}}', { kind: kind.kind }),
           cta: {
-            href,
+            href: actualEditPath,
           },
           accessReview: asAccessReview(kind, resource, 'update'),
         };
@@ -158,10 +146,10 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind, resource, 'patch'),
       }),
     }),
-    [kind, resource, t, message],
+    [kind, resource, t, message, actualEditPath],
   );
 
-  const result = React.useMemo((): [ActionObject<T>, boolean] => {
+  const result = useMemo((): [ActionObject<T>, boolean] => {
     const actions = {} as ActionObject<T>;
 
     if (!kind || !resource) {

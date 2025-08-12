@@ -1,1 +1,1 @@
-export type ModalCallback = () => void | false | null | undefined;
+export type ModalCallback = () => void;
