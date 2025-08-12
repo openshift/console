@@ -12,6 +12,7 @@ import { useCommonActions } from './useCommonActions';
  * @param {K8sResourceKind | undefined} resource - The specific resource instance for which to generate the action.
  * @param {CommonActionCreator} actionCreator - The single action creator to use.
  * @param {JSX.Element} [message] - Optional message to display in the delete modal.
+ * @param {string} editPath - Optional URL path used for editing the resource.
  *
  * This hook is robust to inline arguments, thanks to internal deep compare memoization.
  *
@@ -28,6 +29,7 @@ export const useCommonResourceActions = (
   kind: K8sModel | undefined,
   resource: K8sResourceKind | undefined,
   message?: JSX.Element,
+  editPath?: string,
 ): Action[] => {
   const [actions, isReady] = useCommonActions(
     kind,
@@ -39,6 +41,7 @@ export const useCommonResourceActions = (
       CommonActionCreator.Delete,
     ] as const,
     message,
+    editPath,
   );
   return useMemo(() => (isReady ? Object.values(actions) : []), [actions, isReady]);
 };

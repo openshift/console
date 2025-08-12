@@ -282,7 +282,7 @@ export const AddSecretToWorkloadModalProvider: OverlayComponent<AddSecretToWorkl
   );
 };
 
-export const useSecretToWorkloadModalLauncher = (
+export const useAddSecretToWorkloadModalLauncher = (
   props: AddSecretToWorkloadModalProps,
 ): ModalCallback => {
   const launcher = useOverlay();

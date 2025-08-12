@@ -225,7 +225,7 @@
         "version": "v1",
         "kind": "Secret"
       },
-      "provider": { "$codeRef": "commonProvider.useCommonResourceActionsProvider" }
+      "provider": { "$codeRef": "secretsProvider.useSecretsActionsProvider" }
     }
   },
   {
