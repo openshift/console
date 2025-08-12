@@ -889,7 +889,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
 
       <PageBody className="pf-v6-c-form">
         <div
-          className={css('co-p-has-sidebar', { 'yaml-editor__fullscreen': isFullscreen })}
+          className={css('co-p-has-sidebar', { 'co-fullscreen': isFullscreen })}
           ref={fullscreenRef}
         >
           <div
