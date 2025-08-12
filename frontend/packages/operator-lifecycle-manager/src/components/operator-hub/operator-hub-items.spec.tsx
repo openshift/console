@@ -110,28 +110,28 @@ describe('determineCategories', () => {
 describe('orderAndSortByRelevance', () => {
   it('sorts Red Hat items before non-Red Hat items', () => {
     const items = [
-      { name: 'B Operator', provider: 'Other' },
-      { name: 'A Operator', provider: 'Red Hat' },
-      { name: 'C Operator', provider: 'Red Hat, Inc.' },
-      { name: 'D Operator', provider: 'Another' },
+      { name: 'B Operator', obj: { metadata: { labels: { provider: 'Other Company' } } } },
+      { name: 'A Operator', obj: { metadata: { labels: { provider: 'Red Hat' } } } },
+      { name: 'C Operator', obj: { metadata: { labels: { provider: 'Red Hat Marketplace' } } } },
+      { name: 'D Operator', obj: { metadata: { labels: { provider: 'Another Company' } } } },
     ];
     const sortedItems = orderAndSortByRelevance(items);
-    expect(sortedItems[0].provider).toBe('Red Hat');
-    expect(sortedItems[1].provider).toBe('Red Hat, Inc.');
-    expect(sortedItems[2].provider).not.toBe('Red Hat');
-    expect(sortedItems[3].provider).not.toBe('Red Hat');
+    expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat');
+    expect(sortedItems[1].obj.metadata.labels.provider).toBe('Red Hat Marketplace');
+    expect(sortedItems[2].obj.metadata.labels.provider).not.toBe('Red Hat');
+    expect(sortedItems[3].obj.metadata.labels.provider).not.toBe('Red Hat');
   });
 
   it('sorts items alphabetically within each provider group', () => {
     const items = [
-      { name: 'Z Operator', provider: 'Other' },
-      { name: 'B Operator', provider: 'Red Hat' },
-      { name: 'A Operator', provider: 'Red Hat, Inc.' },
-      { name: 'Y Operator', provider: 'Another' },
+      { name: 'Z Operator', obj: { metadata: { labels: { provider: 'Other Company' } } } },
+      { name: 'B Operator', obj: { metadata: { labels: { provider: 'Red Hat' } } } },
+      { name: 'A Operator', obj: { metadata: { labels: { provider: 'Red Hat Marketplace' } } } },
+      { name: 'Y Operator', obj: { metadata: { labels: { provider: 'Another Company' } } } },
     ];
     const sortedItems = orderAndSortByRelevance(items);
-    expect(sortedItems[0].name).toBe('A Operator');
-    expect(sortedItems[1].name).toBe('B Operator');
+    expect(sortedItems[0].name).toBe('B Operator');
+    expect(sortedItems[1].name).toBe('A Operator');
     expect(sortedItems[2].name).toBe('Y Operator');
     expect(sortedItems[3].name).toBe('Z Operator');
   });
@@ -151,6 +151,7 @@ describe('orderAndSortByRelevance', () => {
       {
         name: 'Standard Red Hat Operator',
         provider: 'Red Hat',
+        obj: { metadata: { labels: { provider: 'Red Hat' } } },
       },
       {
         name: 'Third Party Operator',
@@ -160,12 +161,10 @@ describe('orderAndSortByRelevance', () => {
     ];
     const sortedItems = orderAndSortByRelevance(items);
 
-    // Red Hat providers should come first
     expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat Inc');
-    expect(sortedItems[1].provider).toBe('Red Hat');
-    // Non-Red Hat providers should come after
-    expect(sortedItems[2].provider).toBe('Community');
-    expect(sortedItems[3].provider).toBe('Third Party');
+    expect(sortedItems[1].obj.metadata.labels.provider).toBe('Red Hat');
+    expect(sortedItems[2].obj.metadata.labels.provider).toBe('Community Team');
+    expect(sortedItems[3].obj.metadata.labels.provider).toBe('Third Party Solutions');
   });
 
   describe('with search terms', () => {
@@ -264,12 +263,11 @@ describe('orderAndSortByRelevance', () => {
 
       const sortedItems = orderAndSortByRelevance(items, 'storage');
 
-      // "Storage Manager Tool" should score higher due to name starting with "storage"
-      // Title match (100) + starts with search term (25) = 125 points
-      // "Red Hat Storage Solution" gets title match (100) but doesn't start with term = 100 points
+      // "Storage Manager Tool" scores: title match (100) + starts with (25) + keyword (60) = 185 points
+      // "Red Hat Storage Solution" scores: title match (100) + keyword (60) = 160 points
       // Score difference is 25, which is <= 100, so Red Hat priority should apply
-      expect(sortedItems[0].provider).toBe('Red Hat');
-      expect(sortedItems[1].provider).toBe('Other Company');
+      expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat');
+      expect(sortedItems[1].obj.metadata.labels.provider).toBe('Other Company');
     });
 
     it('sorts by relevance score when Red Hat priority difference is minimal', () => {
@@ -300,10 +298,10 @@ describe('orderAndSortByRelevance', () => {
       const sortedItems = orderAndSortByRelevance(items, 'database');
 
       // Red Hat should be prioritized even with same relevance score
-      expect(sortedItems[0].provider).toBe('Red Hat');
+      expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat');
       expect(sortedItems[0].name).toBe('Database Operator');
 
-      // "Database Tool" has higher relevance score (185) than "Another Database Solution" (160)
+      // "Database Tool" has higher relevance score than "Another Database Solution"
       // Database Tool: name match (100) + starts with (25) + keyword (60) = 185
       // Another Database Solution: name match (100) + keyword (60) = 160
       expect(sortedItems[1].name).toBe('Database Tool');
@@ -314,21 +312,18 @@ describe('orderAndSortByRelevance', () => {
       const items = [
         {
           name: 'Community Tool',
-          provider: 'Community',
           obj: { metadata: { labels: { provider: 'Community' } } },
           description: 'Community developed tool',
           keywords: ['community', 'tool'],
         },
         {
           name: 'Red Hat Certified Tool',
-          provider: 'Some Vendor',
           obj: { metadata: { labels: { provider: 'Red Hat, Inc.' } } },
           description: 'Tool certified by Red Hat',
           keywords: ['certified', 'tool'],
         },
         {
           name: 'Red Hat Native Tool',
-          provider: 'Red Hat Enterprise',
           obj: { metadata: { labels: { provider: 'Other Company' } } },
           description: 'Native Red Hat tool',
           keywords: ['native', 'tool'],
@@ -338,8 +333,39 @@ describe('orderAndSortByRelevance', () => {
       const sortedItems = orderAndSortByRelevance(items, 'tool');
 
       expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat, Inc.');
-      expect(sortedItems[1].provider).toBe('Red Hat Enterprise');
-      expect(sortedItems[2].provider).toBe('Community');
+      expect(sortedItems[1].name).toBe('Community Tool');
+      expect(sortedItems[2].name).toBe('Red Hat Native Tool');
+    });
+
+    it('prioritizes exact Red Hat matches over contains matches', () => {
+      const items = [
+        {
+          name: 'Red Hat Marketplace Tool',
+          obj: { metadata: { labels: { provider: 'Red Hat Marketplace Solutions' } } },
+          description: 'Tool from Red Hat Marketplace',
+          keywords: ['marketplace', 'tool'],
+        },
+        {
+          name: 'Red Hat Core Tool',
+          obj: { metadata: { labels: { provider: 'Red Hat Inc' } } },
+          description: 'Core Red Hat tool',
+          keywords: ['core', 'tool'],
+        },
+        {
+          name: 'Red Hat Official Tool',
+          obj: { metadata: { labels: { provider: 'Red Hat' } } },
+          description: 'Official Red Hat tool',
+          keywords: ['official', 'tool'],
+        },
+      ];
+
+      const sortedItems = orderAndSortByRelevance(items, 'tool');
+
+      expect(sortedItems[0].name).toBe('Red Hat Core Tool');
+      expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat Inc');
+      expect(sortedItems[1].name).toBe('Red Hat Official Tool');
+      expect(sortedItems[1].obj.metadata.labels.provider).toBe('Red Hat');
+      expect(sortedItems[2].obj.metadata.labels.provider).toBe('Red Hat Marketplace Solutions');
     });
   });
 

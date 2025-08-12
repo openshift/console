@@ -302,7 +302,7 @@ export const calculateRelevanceScore = (filterString, item) => {
   }
 
   // Metadata name matches get high weight
-  const metadataName = _.get(item, 'obj.metadata.name', '');
+  const metadataName = item?.obj?.metadata?.name ?? '';
   if (metadataName && typeof metadataName === 'string') {
     const metadataNameLower = metadataName.toLowerCase();
     if (metadataNameLower.includes(searchTerm)) {
@@ -355,19 +355,20 @@ const setURLParams = (params) => {
   history.replace(`${url.pathname}${searchParams}`);
 };
 
-const isRedHatProvider = (item) => {
-  if (!item) return false;
-
-  if (item.provider && item.provider.toLowerCase().includes('red hat')) {
-    return true;
-  }
-
+const getRedHatPriority = (item) => {
+  // Check metadata.labels.provider
   const metadataProvider = _.get(item, 'obj.metadata.labels.provider', '');
-  if (metadataProvider && metadataProvider.toLowerCase().includes('red hat')) {
-    return true;
+  if (metadataProvider) {
+    const provider = metadataProvider.toLowerCase();
+    if (/^red hat(,?\s?inc\.?)?$/.test(provider)) {
+      return 2; // Highest priority for exact matches of 'red hat', 'red hat, inc.', 'red hat inc.', 'red hat inc'
+    }
+    if (provider.includes('red hat')) {
+      return 1; // Medium priority for contains 'red hat'
+    }
   }
 
-  return false;
+  return 0; // Not Red Hat
 };
 
 export const orderAndSortByRelevance = (items, searchTerm = '') => {
@@ -385,16 +386,18 @@ export const orderAndSortByRelevance = (items, searchTerm = '') => {
       }));
 
     return itemsWithScores.sort((a, b) => {
-      const aIsRedHat = isRedHatProvider(a);
-      const bIsRedHat = isRedHatProvider(b);
+      const aRedHatPriority = getRedHatPriority(a);
+      const bRedHatPriority = getRedHatPriority(b);
       const scoreDiff = Math.abs(b.relevanceScore - a.relevanceScore);
 
       // For operators with similar relevance scores (within 100 points),
       // prioritize Red Hat first to ensure consistent ordering
       // This covers cases where both have title matches but slight scoring differences
       if (scoreDiff <= 100) {
-        if (aIsRedHat && !bIsRedHat) return -1;
-        if (!aIsRedHat && bIsRedHat) return 1;
+        // Sort by Red Hat priority (2 = exact match, 1 = contains, 0 = not Red Hat)
+        if (aRedHatPriority !== bRedHatPriority) {
+          return bRedHatPriority - aRedHatPriority;
+        }
       }
 
       // Primary sort by relevance score (descending)
@@ -402,25 +405,31 @@ export const orderAndSortByRelevance = (items, searchTerm = '') => {
         return b.relevanceScore - a.relevanceScore;
       }
 
-      // Secondary sort by provider (Red Hat first) when scores are exactly equal
-      if (aIsRedHat && !bIsRedHat) return -1;
-      if (!aIsRedHat && bIsRedHat) return 1;
+      // Secondary sort by Red Hat priority when scores are exactly equal
+      if (aRedHatPriority !== bRedHatPriority) {
+        return bRedHatPriority - aRedHatPriority;
+      }
 
-      // Name (alphabetical)
+      // Tertiary sort by name (alphabetical)
       return (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase());
     });
   }
 
-  // No search term - use original sorting logic
-  const redHatItems = items
-    .filter((item) => item != null && isRedHatProvider(item))
-    .sort((a, b) => (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase()));
+  // No search term - use priority-based sorting logic
+  const allValidItems = items.filter((item) => item != null);
 
-  const nonRedHatItems = items
-    .filter((item) => item != null && !isRedHatProvider(item))
-    .sort((a, b) => (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase()));
+  return allValidItems.sort((a, b) => {
+    const aRedHatPriority = getRedHatPriority(a);
+    const bRedHatPriority = getRedHatPriority(b);
 
-  return [...redHatItems, ...nonRedHatItems];
+    // Primary sort by Red Hat priority (2 = exact match, 1 = contains, 0 = not Red Hat)
+    if (aRedHatPriority !== bRedHatPriority) {
+      return bRedHatPriority - aRedHatPriority;
+    }
+
+    // Secondary sort by name (alphabetical)
+    return (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase());
+  });
 };
 
 const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
@@ -641,6 +650,181 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       )}
     </>
   );
+
+  /* eslint-disable */
+  // CONSOLE TABLE FOR TESTING
+  // Displays search results with 'Search Relevance Score' and 'Is Red Hat' provider priority values, used in determining display order of operators
+    const searchTerm = new URLSearchParams(window.location.search).get('keyword');
+    const selectedCategory = new URLSearchParams(window.location.search).get('category') || 'all';
+    const selectedSource = new URLSearchParams(window.location.search).get('source') || 'all';
+    const selectedProvider = new URLSearchParams(window.location.search).get('provider') || 'all';
+    const selectedCapabilityLevel = new URLSearchParams(window.location.search).get('capabilityLevel') || 'all';
+    const selectedInfraFeatures = new URLSearchParams(window.location.search).get('infraFeatures') || 'all';
+    const selectedValidSubscriptionFilters = new URLSearchParams(window.location.search).get('validSubscriptionFilters') || 'all';
+    
+    const getFilteredItems = () => {
+      let items = filteredItems;
+      
+      if (selectedCategory !== 'all') {
+        items = items.filter(item => {
+          if (!item.categories || !Array.isArray(item.categories)) {
+            return false;
+          }
+          return item.categories.includes(selectedCategory);
+        });
+      }
+      
+      if (selectedSource !== 'all') {
+        const sourcesToFilter = JSON.parse(selectedSource);
+        items = items.filter(item => sourcesToFilter.includes(item.source));
+      }
+      
+      if (selectedProvider !== 'all') {
+        const providersToFilter = JSON.parse(selectedProvider);
+        items = items.filter(item => {
+          const providerValue = getProviderValue(item.provider);
+          return providersToFilter.includes(providerValue);
+        });
+      }
+      
+      if (selectedCapabilityLevel !== 'all') {
+        const capabilityLevelsToFilter = JSON.parse(selectedCapabilityLevel);
+        items = items.filter(item => {
+          if (item.capabilityLevel) {
+            if (Array.isArray(item.capabilityLevel)) {
+              return item.capabilityLevel.some(level => capabilityLevelsToFilter.includes(level));
+            } else if (typeof item.capabilityLevel === 'string') {
+              return capabilityLevelsToFilter.includes(item.capabilityLevel);
+            }
+          }
+          
+          const specCapability = item?.obj?.spec?.capabilityLevel ?? '';
+          if (specCapability && capabilityLevelsToFilter.includes(specCapability)) {
+            return true;
+          }
+          
+          const metadataCapability = item?.obj?.metadata?.annotations?.['operators.operatorframework.io/capability-level'] ?? '';
+          if (metadataCapability && capabilityLevelsToFilter.includes(metadataCapability)) {
+            return true;
+          }
+          
+          return false;
+        });
+      }
+      
+      if (selectedInfraFeatures !== 'all') {
+        const infraFeaturesToFilter = JSON.parse(selectedInfraFeatures);
+        items = items.filter(item => {
+          if (!item.infraFeatures || !Array.isArray(item.infraFeatures)) {
+            return false;
+          }
+          return item.infraFeatures.some(feature => infraFeaturesToFilter.includes(feature));
+        });
+      }
+      
+      if (selectedValidSubscriptionFilters !== 'all') {
+        const validSubscriptionToFilter = JSON.parse(selectedValidSubscriptionFilters);
+        items = items.filter(item => {
+          if (!item.validSubscriptionFilters || !Array.isArray(item.validSubscriptionFilters)) {
+            return false;
+          }
+          return item.validSubscriptionFilters.some(filter => validSubscriptionToFilter.includes(filter));
+        });
+      }
+      
+      return items;
+    };
+    
+    const filteredCategoryItems = getFilteredItems();
+    
+    const getActiveFiltersDescription = () => {
+      const activeFilters = [];
+      if (selectedCategory !== 'all') activeFilters.push(`Category: ${selectedCategory}`);
+      if (selectedSource !== 'all') activeFilters.push(`Source: ${selectedSource}`);
+      if (selectedProvider !== 'all') activeFilters.push(`Provider: ${selectedProvider}`);
+      if (selectedCapabilityLevel !== 'all') activeFilters.push(`Capability Level: ${selectedCapabilityLevel}`);
+      if (selectedInfraFeatures !== 'all') activeFilters.push(`Infrastructure Features: ${selectedInfraFeatures}`);
+      if (selectedValidSubscriptionFilters !== 'all') activeFilters.push(`Valid Subscription: ${selectedValidSubscriptionFilters}`);
+      
+      return activeFilters.length > 0 ? activeFilters.join(', ') : 'No filters applied';
+    };
+    
+    if (searchTerm && filteredCategoryItems.length > 0) {
+      const itemsWithScores = filteredCategoryItems
+        .map(item => ({
+          ...item,
+          relevanceScore: calculateRelevanceScore(searchTerm, item)
+        }))
+        .filter(item => item.relevanceScore > 0); // Only include items that actually match the search
+      
+      const sortedItems = orderAndSortByRelevance(itemsWithScores, searchTerm);
+      
+      const tableData = sortedItems.map((item, index) => ({
+        Title: item.name || 'N/A',
+        'Search Relevance Score': item.relevanceScore || 0,
+        'Is Red Hat Provider (Priority)': getRedHatPriority(item) === 2 ? 'Exact Match (2)' : 
+                            getRedHatPriority(item) === 1 ? 'Contains Red Hat (1)' : 'Non-Red Hat (0)',
+        // Source: item.source || 'N/A',
+        'Metadata Provider': _.get(item, 'obj.metadata.labels.provider', 'N/A'),
+        'Capability Level': (() => {
+          if (item.capabilityLevel) {
+            if (Array.isArray(item.capabilityLevel)) {
+              return item.capabilityLevel.join(', ');
+            } else if (typeof item.capabilityLevel === 'string') {
+              return item.capabilityLevel;
+            }
+          }
+          
+          const specCapability = _.get(item, 'obj.spec.capabilityLevel', '');
+          if (specCapability) return specCapability;
+          
+          const metadataCapability = _.get(item, 'obj.metadata.annotations["operators.operatorframework.io/capability-level"]', '');
+          if (metadataCapability) return metadataCapability;
+          
+          return 'N/A';
+        })(),
+        'Infrastructure Features': Array.isArray(item.infraFeatures) ? item.infraFeatures.join(', ') : 'N/A',
+      }));
+      
+      console.log(`\n🔍 OperatorHub Search Results for "${searchTerm}" (${tableData.length} matches)`);
+      console.log(`📌 Active Filters: ${getActiveFiltersDescription()}`);
+      console.table(tableData);
+    } else if (!searchTerm && filteredCategoryItems.length > 0) {
+      // Console table for filtered results without search term (category/filter-based)
+      const sortedItems = orderAndSortByRelevance(filteredCategoryItems);
+      
+      const tableData = sortedItems.map((item, index) => ({
+        Title: item.name || 'N/A',
+        'Is Red Hat Provider (Priority)': getRedHatPriority(item) === 2 ? 'Exact Match (2)' : 
+                            getRedHatPriority(item) === 1 ? 'Contains Red Hat (1)' : 'Non-Red Hat (0)',
+        // Source: item.source || 'N/A',
+        'Metadata Provider': _.get(item, 'obj.metadata.labels.provider', 'N/A'),
+        'Capability Level': (() => {
+          if (item.capabilityLevel) {
+            if (Array.isArray(item.capabilityLevel)) {
+              return item.capabilityLevel.join(', ');
+            } else if (typeof item.capabilityLevel === 'string') {
+              return item.capabilityLevel;
+            }
+          }
+          
+          const specCapability = _.get(item, 'obj.spec.capabilityLevel', '');
+          if (specCapability) return specCapability;
+          
+          const metadataCapability = _.get(item, 'obj.metadata.annotations["operators.operatorframework.io/capability-level"]', '');
+          if (metadataCapability) return metadataCapability;
+          
+          return 'N/A';
+        })(),
+        'Infrastructure Features': Array.isArray(item.infraFeatures) ? item.infraFeatures.join(', ') : 'N/A',
+      }));
+      
+      console.log(`\n📂 OperatorHub Filtered Results (${tableData.length} items)`);
+      console.log(`📌 Active Filters: ${getActiveFiltersDescription()}`);
+      console.table(tableData);
+    }
+    /* eslint-enable */
+
   return (
     <>
       <TileViewPage
