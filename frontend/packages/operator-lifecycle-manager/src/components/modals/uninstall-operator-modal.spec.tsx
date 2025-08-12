@@ -113,7 +113,7 @@ describe(UninstallOperatorModal.name, () => {
     expect(k8sKill).toHaveBeenCalledTimes(2);
     expect(k8sKill.calls.argsFor(1)[0]).toEqual(ClusterServiceVersionModel);
     expect(k8sKill.calls.argsFor(1)[1].metadata.namespace).toEqual(
-      testSubscription.metadata.namespace,
+      testSubscription?.metadata?.namespace || '',
     );
     expect(k8sKill.calls.argsFor(1)[1].metadata.name).toEqual('testapp.v1.0.0');
     expect(k8sKill.calls.argsFor(1)[2]).toEqual({});

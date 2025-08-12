@@ -63,7 +63,10 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
   it('passes correct YAML to YAML editor', () => {
     const data = _.cloneDeep(testClusterServiceVersion);
     const testResourceInstanceYAML = safeDump(testResourceInstance);
-    data.metadata.annotations = { 'alm-examples': JSON.stringify([testResourceInstance]) };
+    data.metadata = {
+      ...data.metadata,
+      annotations: { 'alm-examples': JSON.stringify([testResourceInstance]) },
+    };
     wrapper = wrapper.setProps({ csv: data, loaded: true, loadError: null });
     expect(wrapper.find(OperandYAML).props().initialYAML).toEqual(testResourceInstanceYAML);
   });
@@ -93,7 +96,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
     wrapper = shallow(
       <OperandForm
         model={testModel}
-        providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
+        providedAPI={testClusterServiceVersion.spec?.customresourcedefinitions?.owned?.[0] as any}
         csv={testClusterServiceVersion}
         schema={testCRD.spec.versions[0].schema.openAPIV3Schema}
       />,
@@ -102,7 +105,9 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
 
   it('renders form', () => {
     expect(
-      referenceForProvidedAPI(testClusterServiceVersion.spec.customresourcedefinitions.owned[0]),
+      referenceForProvidedAPI(
+        testClusterServiceVersion.spec?.customresourcedefinitions?.owned?.[0] as any,
+      ),
     ).toEqual(k8s.referenceForModel(testModel));
 
     expect(wrapper.find('form').exists()).toBe(true);
@@ -110,7 +115,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
 
   it('renders input component for each field', () => {
     wrapper.find('.co-dynamic-form__form-group').forEach((formGroup) => {
-      const descriptor = testClusterServiceVersion.spec.customresourcedefinitions.owned[0].specDescriptors.find(
+      const descriptor = testClusterServiceVersion.spec?.customresourcedefinitions?.owned?.[0]?.specDescriptors?.find(
         (d) => d.displayName === formGroup.find('.form-label').text(),
       );
 
@@ -131,8 +136,8 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
         expect(model).toEqual(testModel);
         expect(obj.apiVersion).toEqual(k8s.apiVersionForModel(testModel));
         expect(obj.kind).toEqual(testModel.kind);
-        expect(obj.metadata.name).toEqual('example');
-        expect(obj.metadata.namespace).toEqual('default');
+        expect(obj.metadata?.name).toEqual('example');
+        expect(obj.metadata?.namespace).toEqual('default');
         done();
       })
       .catch((err) => fail(err));
@@ -157,7 +162,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', (
   });
 });
 
-describe(OperandYAML.displayName, () => {
+describe(OperandYAML.displayName || '', () => {
   let wrapper: ShallowWrapper<OperandYAMLProps>;
 
   beforeEach(() => {

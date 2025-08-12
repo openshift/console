@@ -75,7 +75,11 @@ describe('Spec descriptors', () => {
       });
       done();
     });
-    wrapper.find('dd').find(Button).props().onClick(null);
+    wrapper
+      .find('dd')
+      .find(Button)
+      .props()
+      .onClick?.(null as any);
   });
 
   it('renders an endpoints list', () => {

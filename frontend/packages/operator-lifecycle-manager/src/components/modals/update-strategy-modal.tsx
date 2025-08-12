@@ -77,7 +77,7 @@ export const UpdateStrategyModal: React.FC<UpdateStrategyModalProps> = ({
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitText={t('public~Save')}
-        cancel={cancel}
+        cancel={cancel as any}
       />
     </form>
   );

@@ -41,6 +41,9 @@ export const fetchAndProcessJSONLines = <ObjectType = any>(
     if (!response.ok) {
       throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
     }
+    if (!response.body) {
+      throw new Error(`Response body is null for ${url}`);
+    }
     return response.body
       .pipeThrough(new TextDecoderStream())
       .pipeThrough<ObjectType>(parseJSONLines<ObjectType>())

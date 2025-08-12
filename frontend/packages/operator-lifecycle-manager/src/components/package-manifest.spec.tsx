@@ -80,7 +80,7 @@ describe('PackageManifestTableRow', () => {
     wrapper = shallow(
       <PackageManifestTableRow
         obj={testPackageManifest}
-        customData={{ catalogSource: {} as CatalogSourceKind }}
+        customData={{ catalogSource: undefined as any }}
         columns={columns}
       />,
     );

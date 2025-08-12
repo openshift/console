@@ -18,10 +18,16 @@ import {
   LabelList,
   LabelListProps,
 } from '@console/internal/components/utils';
-import { k8sPatch, k8sUpdate, Selector as SelectorType } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  K8sResourceKind,
+  k8sPatch,
+  k8sUpdate,
+  Selector as SelectorType,
+} from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { DefaultCapability, K8sResourceLinkCapability, SecretCapability } from '../common';
-import { CapabilityProps, SpecCapability, Error } from '../types';
+import { CapabilityProps, Descriptor, SpecCapability, Error } from '../types';
 import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { configureSizeModal } from './configure-size';
 import { configureUpdateStrategyModal } from './configure-update-strategy';
@@ -39,14 +45,14 @@ const PodCount: React.FC<SpecCapabilityProps<number>> = ({
 }) => (
   <DetailsItem
     description={description}
-    label={label}
+    label={label || ''}
     obj={obj}
     path={fullPath}
     onEdit={() =>
       configureSizeModal({
-        kindObj: model,
-        resource: obj,
-        specDescriptor: descriptor,
+        kindObj: model as K8sKind,
+        resource: obj as K8sResourceKind,
+        specDescriptor: descriptor as Descriptor,
         specValue: value,
       })
     }
@@ -62,7 +68,7 @@ const Endpoints: React.FC<SpecCapabilityProps<EndpointListProps['endpoints']>> =
   fullPath,
   value,
 }) => (
-  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+  <DetailsItem description={description || ''} label={label || ''} obj={obj} path={fullPath || ''}>
     <EndpointList endpoints={value} />
   </DetailsItem>
 );
@@ -75,9 +81,9 @@ const Label: React.FC<SpecCapabilityProps<LabelListProps['labels']>> = ({
   fullPath,
   value,
 }) => (
-  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+  <DetailsItem description={description || ''} label={label || ''} obj={obj} path={fullPath || ''}>
     {_.isObject(value) ? (
-      <LabelList kind={model.kind} labels={value} />
+      <LabelList kind={model?.kind || ''} labels={value} />
     ) : (
       <span>{value || '-'}</span>
     )}
@@ -93,7 +99,12 @@ const NamespaceSelector: React.FC<SpecCapabilityProps<{ matchNames: string[] }>>
 }) => {
   const { t } = useTranslation();
   return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <DetailsItem
+      description={description || ''}
+      label={label || ''}
+      obj={obj}
+      path={fullPath || ''}
+    >
       {value?.matchNames?.[0] ? (
         <ResourceLink kind="Namespace" name={value.matchNames[0]} title={value.matchNames[0]} />
       ) : (
@@ -112,18 +123,31 @@ const ResourceRequirements: React.FC<SpecCapabilityProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <DetailsItem
+      description={description || ''}
+      label={label || ''}
+      obj={obj}
+      path={fullPath || ''}
+    >
       <DescriptionList className="co-spec-descriptor--resource-requirements">
         <DescriptionListGroup>
           <DescriptionListTerm>{t('olm~Resource limits')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} />
+            <ResourceRequirementsModalLink
+              type="limits"
+              obj={obj as K8sResourceKind}
+              path={descriptor.path}
+            />
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
           <DescriptionListTerm>{t('olm~Resource requests')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} />
+            <ResourceRequirementsModalLink
+              type="requests"
+              obj={obj as K8sResourceKind}
+              path={descriptor.path}
+            />
           </DescriptionListDescription>
         </DescriptionListGroup>
       </DescriptionList>
@@ -139,9 +163,14 @@ const BasicSelector: React.FC<SpecCapabilityProps<SelectorType>> = ({
   fullPath,
   value,
 }) => {
-  const [, kind] = capability.split(SpecCapability.selector);
+  const [, kind] = capability?.split(SpecCapability.selector) || [];
   return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <DetailsItem
+      description={description || ''}
+      label={label || ''}
+      obj={obj}
+      path={fullPath || ''}
+    >
       <Selector selector={value} kind={kind?.replace(/:/g, '~')} />
     </DetailsItem>
   );
@@ -160,16 +189,16 @@ const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
   const { t } = useTranslation();
   const [checked, setChecked] = React.useState(Boolean(value));
   const [confirmed, setConfirmed] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState(null);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
   const errorCb = (err: Error): void => {
     setConfirmed(false);
     setChecked(Boolean(value));
     setErrorMessage(err.message);
-    onError(err);
+    onError?.(err);
   };
 
-  const update = () => {
+  const update = (): void => {
     setConfirmed(true);
     setErrorMessage(null);
 
@@ -177,21 +206,31 @@ const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
       const patchFor = (val: boolean) => [
         { op: 'add', path: `/spec/${getPatchPathFromDescriptor(descriptor)}`, value: val },
       ];
-      return k8sPatch(model, obj, patchFor(checked)).catch((err) => errorCb(err));
+      k8sPatch(model as K8sKind, obj as K8sResourceKind, patchFor(checked)).catch((err) =>
+        errorCb(err),
+      );
+      return;
     }
 
     const newObj = _.cloneDeep(obj);
-    _.set(newObj, `spec.${descriptor.path}`, checked);
-    return k8sUpdate(model, newObj).catch((err) => errorCb(err));
+    if (newObj) {
+      _.set(newObj, `spec.${descriptor.path}`, checked);
+      k8sUpdate(model as K8sKind, newObj as K8sResourceKind).catch((err) => errorCb(err));
+    }
   };
 
   return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <DetailsItem
+      description={description || ''}
+      label={label || ''}
+      obj={obj}
+      path={fullPath || ''}
+    >
       <div className="co-spec-descriptor--switch">
         <Switch
           id={descriptor.path}
           isChecked={checked}
-          onChange={(_event, val) => {
+          onChange={(_event, val): void => {
             setChecked(val);
             setConfirmed(false);
             setErrorMessage(null);
@@ -235,13 +274,18 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps<boolean>> = ({
   const patchFor = (val: boolean) => [
     { op: 'add', path: `/spec/${getPatchPathFromDescriptor(descriptor)}`, value: val },
   ];
-  const update = () => {
+  const update = (): void => {
     setConfirmed(true);
-    return k8sPatch(model, obj, patchFor(checked));
+    k8sPatch(model as K8sKind, obj as K8sResourceKind, patchFor(checked));
   };
 
   return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <DetailsItem
+      description={description || ''}
+      label={label || ''}
+      obj={obj}
+      path={fullPath || ''}
+    >
       <div className="co-spec-descriptor--switch">
         <Checkbox
           id={descriptor.path}
@@ -249,7 +293,7 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps<boolean>> = ({
           isChecked={checked}
           data-checked-state={checked}
           label={label}
-          onChange={(_event, val) => {
+          onChange={(_event, val): void => {
             setChecked(val);
             setConfirmed(false);
           }}
@@ -284,13 +328,13 @@ const UpdateStrategy: React.FC<SpecCapabilityProps> = ({
   return (
     <DetailsItem
       description={description}
-      label={label}
+      label={label || ''}
       obj={obj}
       onEdit={() =>
         configureUpdateStrategyModal({
-          kindObj: model,
-          resource: obj,
-          specDescriptor: descriptor,
+          kindObj: model as K8sKind,
+          resource: obj as K8sResourceKind,
+          specDescriptor: descriptor as Descriptor,
           specValue: value,
         })
       }
