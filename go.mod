@@ -2,7 +2,7 @@ module github.com/openshift/console
 
 go 1.24.0
 
-toolchain go1.24.2
+toolchain go1.24.4
 
 require (
 	github.com/cloudevents/sdk-go/v2 v2.16.0
