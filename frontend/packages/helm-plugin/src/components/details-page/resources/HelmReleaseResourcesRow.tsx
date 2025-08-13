@@ -20,10 +20,10 @@ export const HelmReleaseResourceStatus: React.FC<HelmReleaseResourceStatusProps>
   const kind = referenceFor(resource);
   return resource.status?.replicas ? (
     <Link
-      to={`${resourcePath(kind, resource.metadata.name, resource.metadata.namespace)}/pods`}
+      to={`${resourcePath(kind, resource.metadata?.name, resource.metadata?.namespace)}/pods`}
       title={t('helm-plugin~Pods')}
     >
-      {resource.status.replicas || 0} of {resource.spec.replicas} pods
+      {resource.status?.replicas || 0} of {resource.spec?.replicas} pods
     </Link>
   ) : (
     <Status status={_.get(resource.status, 'phase', 'Created')} />
@@ -37,8 +37,8 @@ const HelmReleaseResourcesRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ o
       <TableData className={tableColumnClasses.name}>
         <ResourceLink
           kind={kind}
-          name={resource.metadata.name}
-          namespace={resource.metadata.namespace}
+          name={resource.metadata?.name}
+          namespace={resource.metadata?.namespace}
         />
       </TableData>
       <TableData className={tableColumnClasses.type}>{resource.kind}</TableData>
@@ -46,7 +46,7 @@ const HelmReleaseResourcesRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ o
         <HelmReleaseResourceStatus resource={resource} />
       </TableData>
       <TableData className={tableColumnClasses.created}>
-        <Timestamp timestamp={resource.metadata.creationTimestamp} />
+        <Timestamp timestamp={resource.metadata?.creationTimestamp || ''} />
       </TableData>
     </>
   );

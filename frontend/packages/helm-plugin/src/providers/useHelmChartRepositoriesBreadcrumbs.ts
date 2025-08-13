@@ -18,7 +18,7 @@ export const useHelmChartRepositoriesBreadcrumbs = (kindObj: K8sKind) => {
   return useTabbedTableBreadcrumbsFor(
     kindObj,
     location,
-    params,
+    params as { string },
     isAdminPerspective ? 'helm-repositories' : 'helm',
     isAdminPerspective ? '' : 'repositories',
     t('helm-plugin~Repositories'),
