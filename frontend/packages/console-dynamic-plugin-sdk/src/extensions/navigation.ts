@@ -25,7 +25,66 @@ export type NavItem = ExtensionDeclaration<
   }
 >;
 
-/** This extension can be used to contribute a navigation item that points to a specific link in the UI. */
+/**
+ * This extension can be used to contribute a navigation item that points to a specific link in the UI.
+ *
+ * HrefNavItem provides a way to add custom navigation links to Console pages within the web application.
+ * It supports namespace-aware routing and flexible positioning within the navigation.
+ *
+ * **Common use cases:**
+ * - Adding links to custom plugin pages
+ * - Creating navigation to specific Console views with parameters
+ * - Adding shortcuts to custom dashboards or tools
+ * - Linking to configuration or settings pages
+ *
+ * **Navigation features:**
+ * - Automatic active state detection based on current URL
+ * - Namespace-aware routing for namespaced pages
+ * - Flexible positioning within navigation sections
+ * - Support for custom data attributes for testing/analytics
+ *
+ * **URL handling:**
+ * - `href` should be a relative path within the Console application
+ * - `namespaced: true` appends `/ns/{activeNamespace}` to href
+ * - `prefixNamespaced: true` prefixes href with `/k8s/ns/{activeNamespace}`
+ * - `startsWith` array defines when link should appear active
+ *
+ * @example
+ * ```json
+ * // console-extensions.json - Custom plugin page
+ * [
+ *   {
+ *     "type": "console.navigation/href",
+ *     "properties": {
+ *       "id": "custom-dashboard",
+ *       "name": "My Dashboard",
+ *       "href": "/my-plugin/dashboard",
+ *       "section": "admin",
+ *       "startsWith": ["/my-plugin/dashboard"],
+ *       "dataAttributes": {"test-id": "custom-dashboard-nav"}
+ *     }
+ *   }
+ * ]
+ * ```
+ *
+ * @example
+ * ```json
+ * // console-extensions.json - Namespace-aware page
+ * [
+ *   {
+ *     "type": "console.navigation/href",
+ *     "properties": {
+ *       "id": "namespace-settings",
+ *       "name": "Namespace Settings",
+ *       "href": "/settings",
+ *       "namespaced": true,
+ *       "section": "administration",
+ *       "insertAfter": "namespaces"
+ *     }
+ *   }
+ * ]
+ * ```
+ */
 export type HrefNavItem = ExtensionDeclaration<
   'console.navigation/href',
   NavItemProperties & {
@@ -40,8 +99,67 @@ export type HrefNavItem = ExtensionDeclaration<
   }
 >;
 
-/** This extension can be used to contribute a navigation item that points to a namespaced resource details page.
-    The K8s model of that resource can be used to define the navigation item. */
+/**
+ * This extension can be used to contribute a navigation item that points to a namespaced resource details page.
+ *
+ * ResourceNSNavItem automatically generates navigation links for Kubernetes resources,
+ * handling the complex URL structure and active state detection for resource list pages.
+ *
+ * **Advantages over HrefNavItem:**
+ * - Automatic URL generation based on resource model
+ * - Built-in namespace handling for namespaced resources
+ * - Automatic pluralization and naming from K8s model
+ * - Consistent routing patterns with core Console resources
+ *
+ * **Common use cases:**
+ * - Adding navigation for Custom Resource Definitions
+ * - Creating shortcuts to specific resource types
+ * - Organizing related resources into navigation sections
+ * - Building domain-specific navigation groupings
+ *
+ * **Model integration:**
+ * - Uses K8s model metadata for automatic link generation
+ * - Inherits resource naming and pluralization rules
+ * - Supports both core and custom resources
+ * - Handles API group routing automatically
+ *
+ * @example
+ * ```json
+ * // console-extensions.json - Custom Resource navigation
+ * [
+ *   {
+ *     "type": "console.navigation/resource-ns",
+ *     "properties": {
+ *       "id": "my-custom-resources",
+ *       "model": {
+ *         "group": "example.com",
+ *         "version": "v1",
+ *         "kind": "MyResource"
+ *       },
+ *       "section": "custom-resources",
+ *       "insertBefore": "other-resources"
+ *     }
+ *   }
+ * ]
+ * ```
+ *
+ * @example
+ * ```json
+ * // console-extensions.json - Core resource with custom name
+ * [
+ *   {
+ *     "type": "console.navigation/resource-ns",
+ *     "properties": {
+ *       "id": "application-pods",
+ *       "name": "Application Pods",
+ *       "model": {"group": "", "version": "v1", "kind": "Pod"},
+ *       "section": "applications",
+ *       "perspective": "dev"
+ *     }
+ *   }
+ * ]
+ * ```
+ */
 export type ResourceNSNavItem = ExtensionDeclaration<
   'console.navigation/resource-ns',
   NavItemProperties & {

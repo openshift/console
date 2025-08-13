@@ -13,7 +13,10 @@ import storeHandler from '../../storeHandler';
 import { useSafetyFirst } from '../safety-first';
 
 /**
- * It provides impersonation key based on data from the redux store.
+ * Generates a cache key for impersonation context from Redux store state.
+ *
+ * This internal utility creates stable cache keys for RBAC requests when user impersonation
+ * is active, ensuring proper access review caching across different impersonation contexts.
  */
 const getImpersonateKey = (impersonate?: ImpersonateKind): string => {
   const newImpersonate = impersonate || getImpersonate(storeHandler.getStore().getState());
@@ -69,10 +72,52 @@ const checkAccessInternal = _.memoize(
 );
 
 /**
- * Provides information about user access to a given resource.
- * @param resourceAttributes resource attributes for access review
- * @param impersonate impersonation details
- * @returns Object with resource access information.
+ * Performs a Kubernetes access review to determine if the current user has permission for a specific resource operation.
+ *
+ * **Note:** For React components, use the `useAccessReview` hook instead of calling this function directly.
+ * This function is primarily intended for non-React contexts and programmatic permission checks.
+ *
+ * **Common use cases:**
+ * - Permission checks in utility functions and services
+ * - Conditional logic outside of React components
+ * - One-time permission validation in event handlers
+ * - Server-side or non-React permission checks
+ *
+ * **Access review process:**
+ * - Creates SelfSubjectAccessReview API request
+ * - Handles impersonation context automatically
+ * - Returns cached results for identical requests
+ * - Follows Kubernetes RBAC evaluation rules
+ *
+ * @example
+ * ```tsx
+ * // Non-React permission check
+ * const validateUserAction = async (namespace: string) => {
+ *   const result = await checkAccess({
+ *     group: '',
+ *     resource: 'pods',
+ *     verb: 'create',
+ *     namespace
+ *   });
+ *   return result.status.allowed;
+ * };
+ *
+ * // For React components, use useAccessReview instead:
+ * const MyComponent: React.FC = () => {
+ *   const [canCreate] = useAccessReview({
+ *     group: '',
+ *     resource: 'pods',
+ *     verb: 'create',
+ *     namespace: 'default'
+ *   });
+ *
+ *   return canCreate ? <CreateButton /> : null;
+ * };
+ * ```
+ *
+ * @param resourceAttributes Object containing resource details for the access review
+ * @param impersonate Optional impersonation context for the permission check
+ * @returns Promise resolving to SelfSubjectAccessReview response containing permission status
  */
 export const checkAccess = (
   resourceAttributes: AccessReviewResourceAttributes,
@@ -99,10 +144,122 @@ export const checkAccess = (
 };
 
 /**
- * Hook that provides information about user access to a given resource.
- * @param resourceAttributes resource attributes for access review
- * @param impersonate impersonation details
- * @returns Array with `isAllowed` and `loading` values.
+ * React hook that provides user permission status for specific Kubernetes resource operations.
+ *
+ * This is the recommended way to check user permissions in React components. It handles
+ * loading states, caching, and error conditions automatically while providing a clean
+ * React-friendly API.
+ *
+ * **Common use cases:**
+ * - Conditionally rendering create/edit/delete buttons
+ * - Showing/hiding menu items based on permissions
+ * - Disabling form fields for read-only users
+ * - Implementing fine-grained access control in UIs
+ *
+ * **Hook behavior:**
+ * - Starts with loading=true, isAllowed=false
+ * - Performs async access review on mount and when dependencies change
+ * - Updates state when permission check completes
+ * - Defaults to allowing access if permission check fails (fail-open)
+ *
+ * **Error handling:**
+ * - Network failures default to allowing access (server enforces final permissions)
+ * - Logs errors to console for debugging
+ * - Never blocks UI indefinitely due to permission check failures
+ * - Graceful degradation ensures functional UI even with RBAC issues
+ *
+ * **Performance considerations:**
+ * - Results are cached to avoid redundant API calls
+ * - Prevents state updates on unmounted components
+ * - Efficiently handles dependency changes without excessive re-renders
+ *
+ * @example
+ * ```tsx
+ * // Basic permission-based rendering
+ * const CreatePodButton: React.FC<{namespace: string}> = ({namespace}) => {
+ *   const [canCreate, loading] = useAccessReview({
+ *     group: '',
+ *     resource: 'pods',
+ *     verb: 'create',
+ *     namespace
+ *   });
+ *
+ *   if (loading) {
+ *     return <Spinner size="sm" />;
+ *   }
+ *
+ *   return canCreate ? (
+ *     <Button variant="primary">Create Pod</Button>
+ *   ) : (
+ *     <Tooltip content="You don't have permission to create pods">
+ *       <Button variant="primary" isDisabled>Create Pod</Button>
+ *     </Tooltip>
+ *   );
+ * };
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Multiple permission checks
+ * const ResourceActions: React.FC<{resource: K8sResourceKind, model: K8sModel}> = ({resource, model}) => {
+ *   const [canEdit] = useAccessReview({
+ *     group: model.apiGroup || '',
+ *     resource: model.plural,
+ *     verb: 'update',
+ *     name: resource.metadata.name,
+ *     namespace: resource.metadata.namespace
+ *   });
+ *
+ *   const [canDelete] = useAccessReview({
+ *     group: model.apiGroup || '',
+ *     resource: model.plural,
+ *     verb: 'delete',
+ *     name: resource.metadata.name,
+ *     namespace: resource.metadata.namespace
+ *   });
+ *
+ *   return (
+ *     <div className="resource-actions">
+ *       {canEdit && <Button onClick={editResource}>Edit</Button>}
+ *       {canDelete && <Button variant="danger" onClick={deleteResource}>Delete</Button>}
+ *     </div>
+ *   );
+ * };
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Conditional form field access
+ * const ResourceForm: React.FC<{resource: K8sResourceKind, model: K8sModel}> = ({resource, model}) => {
+ *   const [canUpdateSpec] = useAccessReview({
+ *     group: model.apiGroup || '',
+ *     resource: model.plural,
+ *     subresource: 'spec',
+ *     verb: 'update',
+ *     namespace: resource.metadata.namespace
+ *   });
+ *
+ *   return (
+ *     <Form>
+ *       <FormGroup label="Name">
+ *         <TextInput value={resource.metadata.name} isDisabled />
+ *       </FormGroup>
+ *       <FormGroup label="Replicas">
+ *         <NumberInput
+ *           value={resource.spec.replicas}
+ *           isDisabled={!canUpdateSpec}
+ *           onChange={updateReplicas}
+ *         />
+ *       </FormGroup>
+ *     </Form>
+ *   );
+ * };
+ * ```
+ *
+ * @param resourceAttributes Object containing resource details for the access review
+ * @param impersonate Optional impersonation context for the permission check
+ * @param noCheckForEmptyGroupAndResource Optional flag to skip check when group and resource are empty
+ * @returns Tuple containing [isAllowed: boolean, loading: boolean] - isAllowed indicates if user has permission, loading indicates if check is in progress
  */
 export const useAccessReview = (
   resourceAttributes: AccessReviewResourceAttributes,

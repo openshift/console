@@ -7,12 +7,58 @@ import { TimeoutError } from '../error/http-error';
 import { getConsoleRequestHeaders } from './console-fetch-utils';
 
 /**
- * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
- * It also validates the response status code and throws an appropriate error or logs out the user if required.
- * @param url The URL to fetch
- * @param options The options to pass to fetch
- * @param timeout The timeout in milliseconds
- * @returns A promise that resolves to the response.
+ * A custom wrapper around `fetch` that adds Console-specific headers and provides timeout functionality.
+ *
+ * This is the base fetch function used throughout the Console for all HTTP requests.
+ * It provides consistent behavior for authentication, CSRF protection, and error handling.
+ *
+ * **Common use cases:**
+ * - Making API requests to Kubernetes API server through Console proxy
+ * - Fetching data from Console backend services
+ * - Custom plugin API requests that need Console authentication
+ *
+ * **Features provided:**
+ * - Automatic timeout handling with configurable duration
+ * - Console-specific headers (CSRF, impersonation, etc.)
+ * - Integration with Console's authentication system
+ * - Error handling for common HTTP status codes
+ *
+ * **Timeout behavior:**
+ * - Default timeout of 60 seconds for all requests
+ * - Set timeout to 0 or negative value to disable timeout
+ * - Throws TimeoutError when timeout is exceeded
+ * - Uses Promise.race to implement timeout functionality
+ *
+ * **Edge cases:**
+ * - Timeout of 0 or negative disables timeout completely
+ * - May throw TimeoutError for slow network conditions
+ * - Response validation is handled by higher-level wrapper functions
+ *
+ * @example
+ * ```tsx
+ * // Basic fetch with default timeout
+ * const response = await consoleFetch('/api/kubernetes/api/v1/pods');
+ * const pods = await response.json();
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Custom timeout and options
+ * const response = await consoleFetch(
+ *   '/api/kubernetes/api/v1/nodes',
+ *   {
+ *     method: 'POST',
+ *     headers: { 'Content-Type': 'application/json' },
+ *     body: JSON.stringify(nodeData)
+ *   },
+ *   30000  // 30 second timeout
+ * );
+ * ```
+ *
+ * @param url The URL to fetch, can be relative or absolute
+ * @param options Standard fetch options (method, headers, body, etc.)
+ * @param timeout Timeout duration in milliseconds (default: 60000). Set to 0 to disable timeout
+ * @returns Promise that resolves to the Response object or rejects with TimeoutError
  */
 export const consoleFetch: ConsoleFetch = async (url, options = {}, timeout = 60000) => {
   const fetchPromise = getUtilsConfig().appFetch(url, options);
@@ -69,15 +115,74 @@ const consoleFetchCommon = async (
 };
 
 /**
- * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
- * It also validates the response status code and throws an appropriate error or logs out the user if required.
- * It returns the response as a JSON object.
- * Uses consoleFetch internally.
- * @param url The URL to fetch
- * @param method  The HTTP method to use. Defaults to GET
- * @param options The options to pass to fetch
- * @param timeout The timeout in milliseconds
- * @returns A promise that resolves to the response as text or JSON object.
+ * A wrapper around `consoleFetch` that automatically parses JSON responses and handles Console-specific behavior.
+ *
+ * This is the preferred method for making JSON API requests in Console plugins.
+ * It automatically handles JSON parsing, error responses, and Console-specific features.
+ *
+ * **Common use cases:**
+ * - API requests to Kubernetes API server
+ * - Fetching configuration data from Console backend
+ * - CRUD operations on Kubernetes resources
+ * - Plugin API calls that expect JSON responses
+ *
+ * **Response handling:**
+ * - Automatically sets Accept: application/json header
+ * - Parses JSON responses automatically
+ * - Handles empty responses gracefully
+ * - Processes warning headers for admission webhook feedback
+ *
+ * **Error behavior:**
+ * - Throws errors for HTTP error status codes
+ * - Preserves original error information
+ * - Handles network timeouts appropriately
+ * - Logs admission webhook warnings to Redux store
+ *
+ * **Content type handling:**
+ * - JSON responses are automatically parsed
+ * - Plain text responses are returned as strings
+ * - Empty responses return empty object or string based on content type
+ *
+ * @example
+ * ```tsx
+ * // GET request for resource list
+ * const pods = await consoleFetchJSON('/api/kubernetes/api/v1/namespaces/default/pods');
+ * console.log('Pod count:', pods.items.length);
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // POST request to create resource
+ * const newPod = await consoleFetchJSON(
+ *   '/api/kubernetes/api/v1/namespaces/default/pods',
+ *   'POST',
+ *   {
+ *     headers: { 'Content-Type': 'application/json' },
+ *     body: JSON.stringify(podDefinition)
+ *   },
+ *   30000  // 30 second timeout
+ * );
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Error handling
+ * try {
+ *   const resource = await consoleFetchJSON('/api/kubernetes/api/v1/nonexistent');
+ * } catch (error) {
+ *   if (error.status === 404) {
+ *     console.log('Resource not found');
+ *   } else {
+ *     console.error('API error:', error.message);
+ *   }
+ * }
+ * ```
+ *
+ * @param url The URL to fetch, typically a Kubernetes API endpoint
+ * @param method HTTP method to use (GET, POST, PUT, PATCH, DELETE). Defaults to GET
+ * @param options Additional fetch options (headers, body, etc.)
+ * @param timeout Timeout in milliseconds (default: 60000)
+ * @returns Promise that resolves to parsed JSON response or string for plain text
  */
 export const consoleFetchJSON: ConsoleFetchJSON = (url, method = 'GET', options = {}, timeout) => {
   const allOptions = _.defaultsDeep({}, options, {
@@ -87,14 +192,59 @@ export const consoleFetchJSON: ConsoleFetchJSON = (url, method = 'GET', options 
 };
 
 /**
- * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
- * It also validates the response status code and throws an appropriate error or logs out the user if required.
- * It returns the response as a text.
- * Uses `consoleFetch` internally.
- * @param url The URL to fetch
- * @param options The options to pass to fetch
- * @param timeout The timeout in milliseconds
- * @returns A promise that resolves to the response as text or JSON object.
+ * A wrapper around `consoleFetch` specifically for text responses.
+ *
+ * This function is optimized for fetching plain text content such as logs,
+ * configuration files, or other non-JSON resources.
+ *
+ * **Common use cases:**
+ * - Fetching container logs from Kubernetes API
+ * - Downloading configuration files or manifests as text
+ * - Retrieving plain text API responses
+ * - Accessing raw content that shouldn't be JSON parsed
+ *
+ * **Response handling:**
+ * - Always returns response as plain text
+ * - Preserves original text formatting and encoding
+ * - Handles empty responses appropriately
+ * - No automatic JSON parsing unlike consoleFetchJSON
+ *
+ * **Use cases over consoleFetchJSON:**
+ * - When you specifically need text content
+ * - For responses that might not be valid JSON
+ * - When dealing with large text files or logs
+ * - For endpoints that return mixed content types
+ *
+ * @example
+ * ```tsx
+ * // Fetch container logs
+ * const logs = await consoleFetchText(
+ *   '/api/kubernetes/api/v1/namespaces/default/pods/my-pod/log?container=app'
+ * );
+ * console.log(logs);  // Raw log text
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Fetch YAML manifest
+ * const yaml = await consoleFetchText('/api/resources/manifest.yaml');
+ * const parsedYaml = YAML.parse(yaml);
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Fetch with custom timeout for large files
+ * const configFile = await consoleFetchText(
+ *   '/api/config/large-config.txt',
+ *   { method: 'GET' },
+ *   120000  // 2 minute timeout for large file
+ * );
+ * ```
+ *
+ * @param url The URL to fetch text content from
+ * @param options Additional fetch options (headers, etc.)
+ * @param timeout Timeout in milliseconds (default: 60000)
+ * @returns Promise that resolves to the response as plain text
  */
 export const consoleFetchText: ConsoleFetchText = (url, options = {}, timeout) => {
   return consoleFetchCommon(url, 'GET', options, timeout);

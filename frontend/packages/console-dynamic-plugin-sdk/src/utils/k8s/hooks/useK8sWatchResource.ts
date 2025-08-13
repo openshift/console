@@ -11,19 +11,123 @@ import { useK8sModel } from './useK8sModel';
 import { useModelsLoaded } from './useModelsLoaded';
 
 /**
- * Hook that retrieves the Kubernetes resource along with their respective status for loaded and error.
- * @param initResource resources need to be watched as key-value pair, wherein key will be unique to resource and value will be options needed to watch for the respective resource.
- * @returns An array with first item as resource(s), second item as loaded status and third item as error state if any.
+ * Hook that retrieves a single Kubernetes resource with live updates and loading states.
+ *
+ * This is one of the most important hooks for plugin developers, providing real-time access
+ * to Kubernetes resources with automatic updates, error handling, and loading states.
+ *
+ * **Common use cases:**
+ * - Watching a specific resource instance (Pod, Deployment, ConfigMap, etc.)
+ * - Building resource detail pages that stay in sync with cluster state
+ * - Implementing forms that need current resource data
+ *
+ * **Watch behavior:**
+ * - Establishes WebSocket connection to Kubernetes API server
+ * - Automatically reconnects on connection failures
+ * - Provides live updates when resource changes in cluster
+ * - Manages resource lifecycle (creation, updates, deletion)
+ *
+ * **Performance considerations:**
+ * - Uses Redux for efficient state management and caching
+ * - Automatically deduplicates identical watch requests
+ * - Cleans up WebSocket connections when component unmounts
+ * - Deep compares watch parameters to prevent unnecessary re-subscriptions
+ *
+ * **Error handling:**
+ * - Returns loading state during initial fetch
+ * - Provides detailed error objects for network/permission issues
+ * - Handles 404 errors for deleted resources gracefully
+ * - Supports retry logic for transient failures
+ *
+ * **Edge cases:**
+ * - Returns empty object/array during initial load
+ * - Handles undefined resource parameter gracefully
+ * - Manages permission errors (403/401) appropriately
+ * - Supports both namespaced and cluster-scoped resources
+ *
  * @example
- * ```ts
- * const Component: React.FC = () => {
- *   const watchRes = {
-        ...
-      }
- *   const [data, loaded, error] = useK8sWatchResource(watchRes)
- *   return ...
- * }
+ * ```tsx
+ * // Watch a specific Pod
+ * const PodDetails: React.FC<{podName: string, namespace: string}> = ({podName, namespace}) => {
+ *   const [pod, loaded, error] = useK8sWatchResource({
+ *     groupVersionKind: {kind: 'Pod', version: 'v1'},
+ *     name: podName,
+ *     namespace,
+ *   });
+ *
+ *   if (error) {
+ *     return <Alert variant="danger">Failed to load pod: {error.message}</Alert>;
+ *   }
+ *
+ *   if (!loaded) {
+ *     return <Skeleton />;
+ *   }
+ *
+ *   return (
+ *     <div>
+ *       <h1>{pod.metadata.name}</h1>
+ *       <p>Status: {pod.status.phase}</p>
+ *       <p>Node: {pod.spec.nodeName}</p>
+ *     </div>
+ *   );
+ * };
  * ```
+ *
+ * @example
+ * ```tsx
+ * // Watch a CustomResourceDefinition
+ * const CustomResourceDetails: React.FC<{name: string}> = ({name}) => {
+ *   const [resource, loaded, error] = useK8sWatchResource({
+ *     groupVersionKind: {
+ *       group: 'example.com',
+ *       version: 'v1',
+ *       kind: 'MyCustomResource'
+ *     },
+ *     name,
+ *     namespace: 'default'
+ *   });
+ *
+ *   return loaded ? (
+ *     <ResourceDetailsCard resource={resource} />
+ *   ) : (
+ *     <LoadingSpinner />
+ *   );
+ * };
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Conditional watching based on props
+ * const ConditionalResourceWatcher: React.FC<{shouldWatch: boolean, resourceName: string}> = ({shouldWatch, resourceName}) => {
+ *   const [resource, loaded, error] = useK8sWatchResource(
+ *     shouldWatch ? {
+ *       kind: 'ConfigMap',
+ *       name: resourceName,
+ *       namespace: 'kube-system'
+ *     } : null
+ *   );
+ *
+ *   if (!shouldWatch) {
+ *     return <div>Resource watching disabled</div>;
+ *   }
+ *
+ *   return loaded && resource ? (
+ *     <ConfigMapEditor configMap={resource} />
+ *   ) : (
+ *     <Spinner />
+ *   );
+ * };
+ * ```
+ *
+ * @param initResource Watch resource configuration object or null/undefined to disable watching. Contains:
+ *   - `groupVersionKind` or `kind`: Resource type identifier
+ *   - `name`: Specific resource name to watch
+ *   - `namespace`: Namespace for namespaced resources (omit for cluster-scoped)
+ *   - `isList`: Should be false/undefined for single resource watching
+ * @returns Tuple containing:
+ *   - `resource`: The Kubernetes resource object, empty object during loading, undefined if watching disabled
+ *   - `loaded`: Boolean indicating if initial load completed (true when data available or error occurred)
+ *   - `error`: Error object if watch failed, undefined if successful or still loading
  */
 export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
   const resource = useDeepCompareMemoize(initResource, true);

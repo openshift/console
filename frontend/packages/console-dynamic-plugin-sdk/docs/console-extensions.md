@@ -86,7 +86,7 @@
 
 ### Summary 
 
-ActionFilter can be used to filter an action
+ActionFilter can be used to filter an action.<br/><br/>Action filters provide fine-grained control over when actions should be visible<br/>or available. They allow for dynamic action visibility based on context,<br/>resource state, user permissions, or other runtime conditions.<br/><br/>**Common filtering scenarios:**<br/>- Hide actions based on resource state (e.g., no restart for stopped pods)<br/>- Filter actions based on user permissions or cluster features<br/>- Remove conflicting actions (e.g., hide manual scale for HPA-controlled resources)<br/>- Context-sensitive action availability<br/><br/>**Filter execution:**<br/>- Filters run after actions are provided by ActionProviders<br/>- Multiple filters can apply to the same context<br/>- Filters can examine both the context and the specific action<br/>- Return false to hide the action, true to show it<br/><br/>**Performance considerations:**<br/>- Filters run frequently as context changes<br/>- Keep filter logic lightweight and fast<br/>- Avoid expensive API calls in filter functions<br/><br/><br/>**Example console-extensions.json:**<br/>```json<br/>[<br/>  {<br/>    "type": "console.action/filter",<br/>    "properties": {<br/>      "contextId": "resource",<br/>      "filter": {"$codeRef": "hideScaleActionFilter"}<br/>    }<br/>  }<br/>]<br/>```<br/><br/>**Example implementation:**<br/>```tsx<br/>// hideScaleActionFilter.tsx<br/>export const hideScaleActionFilter = (<br/>  resource: K8sResourceCommon,<br/>  action: Action<br/>) => {<br/>  // Hide scale actions if resource has HPA<br/>  if (action.id === 'scale-deployment' && resource.kind === 'Deployment') {<br/>    const hasHPA = resource.metadata?.annotations?.['hpa.autoscaling.k8s.io/enabled'];<br/>    return !hasHPA;  // Hide action if HPA is enabled<br/>  }<br/><br/>  return true;  // Show other actions normally<br/>};<br/>```
 
 ### Properties
 
@@ -101,7 +101,7 @@ ActionFilter can be used to filter an action
 
 ### Summary 
 
-ActionGroup contributes an action group that can also be a submenu
+ActionGroup contributes an action group that can also be a submenu.<br/><br/>Action groups provide logical organization for related actions, improving UX<br/>by grouping similar operations together. Groups can be rendered as sections<br/>with separators or as nested submenus.<br/><br/>**Organization benefits:**<br/>- Groups related actions together visually<br/>- Reduces clutter in action menus<br/>- Provides hierarchical organization for complex actions<br/>- Supports custom ordering and positioning<br/><br/>**Rendering modes:**<br/>- Section: Actions grouped with separator lines<br/>- Submenu: Actions nested under a parent menu item<br/><br/>**Positioning control:**<br/>- `insertBefore`/`insertAfter` control group ordering<br/>- Supports positioning relative to other groups<br/>- First match in array is used for positioning<br/><br/><br/>**Example console-extensions.json:**<br/>```json<br/>[<br/>  {<br/>    "type": "console.action/group",<br/>    "properties": {<br/>      "id": "advanced-operations",<br/>      "label": "Advanced",<br/>      "submenu": true,<br/>      "insertAfter": "basic-operations"<br/>    }<br/>  }<br/>]<br/>```<br/><br/>**Example usage in action provider:**<br/>```tsx<br/>export const advancedActionProvider = () => [<br/>  {<br/>    id: 'export-config',<br/>    label: 'Export Configuration',<br/>    groupId: 'advanced-operations',<br/>    cta: exportConfiguration<br/>  }<br/>];<br/>```
 
 ### Properties
 
@@ -119,7 +119,7 @@ ActionGroup contributes an action group that can also be a submenu
 
 ### Summary 
 
-ActionProvider contributes a hook that returns list of actions for specific context
+ActionProvider contributes a hook that returns list of actions for specific context.<br/><br/>This extension allows plugins to contribute context-sensitive actions (buttons, menu items)<br/>that appear in various parts of the Console UI. Actions are dynamically provided based<br/>on the current context and user permissions.<br/><br/>**Common use cases:**<br/>- Adding custom actions to resource kebab menus<br/>- Contributing toolbar buttons to specific pages<br/>- Providing context-sensitive operations in topology view<br/>- Adding bulk actions to resource list pages<br/><br/>**Context scoping:**<br/>- `contextId` determines where actions appear in the UI<br/>- Built-in contexts: 'resource', 'topology', 'helm', etc.<br/>- Custom contexts can be defined by other extensions<br/><br/>**Action lifecycle:**<br/>- Hook is called whenever context changes<br/>- Actions are filtered based on user permissions<br/>- Actions can be conditionally shown/hidden<br/><br/><br/>**Example console-extensions.json:**<br/>```json<br/>[<br/>  {<br/>    "type": "console.action/provider",<br/>    "properties": {<br/>      "contextId": "resource",<br/>      "provider": {"$codeRef": "resourceActionProvider"}<br/>    }<br/>  }<br/>]<br/>```<br/><br/>**Example implementation:**<br/>```tsx<br/>// resourceActionProvider.tsx<br/>export const resourceActionProvider = (resource: K8sResourceCommon) => {<br/>  return [<br/>    {<br/>      id: 'restart-deployment',<br/>      label: 'Restart',<br/>      cta: () => restartDeployment(resource.metadata.name),<br/>      disabled: resource.kind !== 'Deployment'<br/>    }<br/>  ];<br/>};<br/>```
 
 ### Properties
 
@@ -134,7 +134,7 @@ ActionProvider contributes a hook that returns list of actions for specific cont
 
 ### Summary 
 
-ResourceActionProvider contributes a hook that returns list of actions for specific resource model
+ResourceActionProvider contributes a hook that returns list of actions for specific resource model.<br/><br/>This extension provides a more targeted way to contribute actions that are specific to<br/>particular Kubernetes resource types. It's more efficient than ActionProvider when<br/>actions only apply to specific resource kinds.<br/><br/>**Advantages over ActionProvider:**<br/>- Actions only load for specified resource types<br/>- Better performance for resource-specific actions<br/>- Automatic filtering by resource model<br/>- Type-safe access to resource-specific properties<br/><br/>**Common use cases:**<br/>- Pod-specific actions (restart, debug, logs)<br/>- Deployment-specific actions (scale, rollout)<br/>- Service-specific actions (expose, edit endpoints)<br/>- Custom Resource actions for operators<br/><br/><br/>**Example console-extensions.json:**<br/>```json<br/>[<br/>  {<br/>    "type": "console.action/resource-provider",<br/>    "properties": {<br/>      "model": {"group": "", "version": "v1", "kind": "Pod"},<br/>      "provider": {"$codeRef": "podActionProvider"}<br/>    }<br/>  }<br/>]<br/>```<br/><br/>**Example implementation:**<br/>```tsx<br/>// podActionProvider.tsx<br/>export const podActionProvider = (pod: PodKind) => {<br/>  const isRunning = pod.status?.phase === 'Running';<br/><br/>  return [<br/>    {<br/>      id: 'view-logs',<br/>      label: 'View Logs',<br/>      cta: () => navigateToLogs(pod)<br/>    },<br/>    {<br/>      id: 'debug-pod',<br/>      label: 'Debug',<br/>      cta: () => startDebugSession(pod),<br/>      disabled: !isRunning<br/>    }<br/>  ];<br/>};<br/>```
 
 ### Properties
 
@@ -648,7 +648,7 @@ Customize the display of models by overriding values retrieved and generated thr
 
 ### Summary 
 
-This extension can be used to contribute a navigation item that points to a specific link in the UI.
+@example ```json<br/>// console-extensions.json - Custom plugin page<br/>[<br/>  {<br/>    "type": "console.navigation/href",<br/>    "properties": {<br/>      "id": "custom-dashboard",<br/>      "name": "My Dashboard",<br/>      "href": "/my-plugin/dashboard",<br/>      "section": "admin",<br/>      "startsWith": ["/my-plugin/dashboard"],<br/>      "dataAttributes": {"test-id": "custom-dashboard-nav"}<br/>    }<br/>  }<br/>]<br/>```<br/>@example ```json<br/>// console-extensions.json - Namespace-aware page<br/>[<br/>  {<br/>    "type": "console.navigation/href",<br/>    "properties": {<br/>      "id": "namespace-settings",<br/>      "name": "Namespace Settings",<br/>      "href": "/settings",<br/>      "namespaced": true,<br/>      "section": "administration",<br/>      "insertAfter": "namespaces"<br/>    }<br/>  }<br/>]<br/>```
 
 ### Properties
 
@@ -694,7 +694,7 @@ This extension can be used to contribute a navigation item that points to a clus
 
 ### Summary 
 
-This extension can be used to contribute a navigation item that points to a namespaced resource details page.<br/>The K8s model of that resource can be used to define the navigation item.
+@example ```json<br/>// console-extensions.json - Custom Resource navigation<br/>[<br/>  {<br/>    "type": "console.navigation/resource-ns",<br/>    "properties": {<br/>      "id": "my-custom-resources",<br/>      "model": {<br/>        "group": "example.com",<br/>        "version": "v1",<br/>        "kind": "MyResource"<br/>      },<br/>      "section": "custom-resources",<br/>      "insertBefore": "other-resources"<br/>    }<br/>  }<br/>]<br/>```<br/>@example ```json<br/>// console-extensions.json - Core resource with custom name<br/>[<br/>  {<br/>    "type": "console.navigation/resource-ns",<br/>    "properties": {<br/>      "id": "application-pods",<br/>      "name": "Application Pods",<br/>      "model": {"group": "", "version": "v1", "kind": "Pod"},<br/>      "section": "applications",<br/>      "perspective": "dev"<br/>    }<br/>  }<br/>]<br/>```
 
 ### Properties
 
