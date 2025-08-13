@@ -222,7 +222,7 @@ const PerspectiveConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
     const patch: PerspectivesConsoleConfig = {
       spec: {
         customization: {
-          perspectives: configuredPerspectives,
+          perspectives: configuredPerspectives ?? [],
         },
       },
     };
@@ -257,10 +257,14 @@ const PerspectiveConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
                 if (index === -1) {
                   newConfiguredPerspectives.push({
                     id: perspectiveId,
-                    visibility: selectedOption.visibility,
+                    visibility: selectedOption.visibility ?? {
+                      state: PerspectiveVisibilityState.Enabled,
+                    },
                   });
                 } else {
-                  newConfiguredPerspectives[index].visibility = selectedOption.visibility;
+                  newConfiguredPerspectives[index].visibility = selectedOption.visibility ?? {
+                    state: PerspectiveVisibilityState.Enabled,
+                  };
                 }
                 return newConfiguredPerspectives;
               });
@@ -286,7 +290,7 @@ const PerspectiveConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
         })}
 
         <LoadError error={consoleConfigError} />
-        <SaveStatus {...saveStatus} />
+        {saveStatus && <SaveStatus status={saveStatus.status} error={saveStatus.error} />}
       </FormSection>
     </FormLayout>
   );
