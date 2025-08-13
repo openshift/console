@@ -36,5 +36,21 @@
     "flags": {
       "required": ["NODE_MAINTENANCE_ENABLED"]
     }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1alpha1",
+        "kind": "BareMetalHost",
+        "group": "metal3.io"
+      },
+      "provider": {
+        "$codeRef": "baremetal-hosts.useBareMetalHostActions"
+      }
+    },
+    "flags": {
+      "required": ["BMO_ENABLED", "METAL3"]
+    }
   }
 ]

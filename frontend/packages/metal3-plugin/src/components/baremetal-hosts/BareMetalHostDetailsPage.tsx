@@ -1,19 +1,17 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory, FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared/src/hooks/flag';
-import { BMO_ENABLED_FLAG } from '../../features';
+import { ActionServiceProvider, ActionMenu, ActionMenuVariant } from '@console/shared';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
+import { BareMetalHostKind } from '../../types';
 import BareMetalHostDetails from './BareMetalHostDetails';
 import BareMetalHostDisks from './BareMetalHostDisks';
 import BareMetalHostNICs from './BareMetalHostNICs';
 import BareMetalHostDashboard from './dashboard/BareMetalHostDashboard';
-import { menuActionsCreator } from './host-menu-actions';
 
 type BareMetalHostDetailsPageProps = {
   namespace: string;
@@ -21,9 +19,7 @@ type BareMetalHostDetailsPageProps = {
 };
 
 const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props) => {
-  const { t } = useTranslation();
   const [maintenanceModel] = useMaintenanceCapability();
-  const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
   const resources: FirehoseResource[] = [
     {
       kind: referenceForModel(MachineModel),
@@ -79,6 +75,21 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props
     nameKey: 'metal3-plugin~Details',
     component: BareMetalHostDetails,
   };
+
+  const customActionMenu = (_, obj: BareMetalHostKind) => {
+    const resourceKind = referenceForModel(BareMetalHostModel);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+
   return (
     <DetailsPage
       {...props}
@@ -92,13 +103,7 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props
       ]}
       kind={referenceForModel(BareMetalHostModel)}
       resources={resources}
-      menuActions={menuActionsCreator}
-      customData={{
-        hasNodeMaintenanceCapability: !!maintenanceModel,
-        maintenanceModel,
-        bmoEnabled,
-        t,
-      }}
+      customActionMenu={customActionMenu}
     />
   );
 };
