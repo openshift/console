@@ -15,6 +15,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { isCatalogTypeEnabled, CustomResourceList } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { HELM_CHART_CATALOG_TYPE_ID } from '../../const';
+import { HelmRelease } from '../../types/helm-types';
 import {
   helmReleasesRowFilters,
   filterHelmReleasesByName,
@@ -36,7 +37,7 @@ const HelmReleaseList: React.FC = () => {
   const secretsCountRef = React.useRef<number>(0);
   const [releasesLoaded, setReleasesLoaded] = React.useState<boolean>(false);
   const [loadError, setLoadError] = React.useState<string>();
-  const [releases, setReleases] = React.useState([]);
+  const [releases, setReleases] = React.useState<HelmRelease[]>([]);
   const secretResource = React.useMemo(
     () => ({
       isList: true,
@@ -66,17 +67,17 @@ const HelmReleaseList: React.FC = () => {
     let destroyed = false;
     if (secretsLoaded && !secretsLoadError) {
       if (newCount === 0) {
-        setLoadError(null);
+        setLoadError(undefined);
         setReleasesLoaded(true);
         setReleases([]);
       } else if (newCount !== secretsCountRef.current) {
         setReleasesLoaded(false);
-        fetchHelmReleases(namespace, true)
+        fetchHelmReleases(namespace || '', true)
           .then((helmReleases) => {
             if (!destroyed) {
-              setReleases(helmReleases);
+              setReleases((helmReleases as unknown) as HelmRelease[]);
               setReleasesLoaded(true);
-              setLoadError(null);
+              setLoadError(undefined);
             }
           })
           .catch((err) => {

@@ -38,7 +38,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
   existingRepoName,
 }) => {
   const queryParams = useQueryParams();
-  const resourceKind: K8sResourceKindReference = queryParams.get('kind');
+  const resourceKind: K8sResourceKindReference = queryParams.get('kind') || '';
   const isEditForm = !!existingRepoName;
   const actionOrigin = queryParams.get('actionOrigin');
   const { t } = useTranslation();
@@ -182,7 +182,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
               namespace={namespace}
               handleCancel={handleCancel}
               showScopeType={showScopeType}
-              existingRepo={existingRepoName && hcr}
+              existingRepo={existingRepoName && hcr ? hcr : null}
             />
           );
         }}

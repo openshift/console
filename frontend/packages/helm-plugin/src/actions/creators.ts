@@ -25,8 +25,8 @@ export const getHelmDeleteAction = (
       onSubmit: () => {
         return coFetchJSON.delete(
           `/api/helm/release/async?name=${releaseName}&ns=${namespace}&version=${releaseVersion}`,
-          null,
-          null,
+          undefined,
+          undefined,
           -1,
         );
       },
@@ -66,16 +66,16 @@ export const editChartRepository = (
   cta: {
     href:
       hcr.kind === ProjectHelmChartRepositoryModel.kind
-        ? `/helm-repositories/ns/${hcr.metadata.namespace}/${
-            hcr.metadata.name
+        ? `/helm-repositories/ns/${hcr.metadata?.namespace}/${
+            hcr.metadata?.name
           }/form?kind=${referenceFor(hcr)}`
-        : `/k8s/cluster/helmchartrepositories/${hcr.metadata.name}/form?kind=${referenceFor(hcr)}`,
+        : `/k8s/cluster/helmchartrepositories/${hcr.metadata?.name}/form?kind=${referenceFor(hcr)}`,
   },
   accessReview: {
     group: model.apiGroup,
     resource: model.plural,
-    name: hcr.metadata.name,
-    namespace: hcr.metadata.namespace,
+    name: hcr.metadata?.name,
+    namespace: hcr.metadata?.namespace,
     verb: 'update',
   },
 });

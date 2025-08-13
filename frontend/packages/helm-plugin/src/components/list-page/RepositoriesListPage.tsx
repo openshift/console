@@ -51,50 +51,59 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({
     verb: 'update',
   });
 
-  let resources = [];
-  if (
-    projectHelmChartListAccess &&
-    projectHelmChartEditAccess &&
-    helmChartListAccess &&
-    helmChartEditAccess
-  ) {
-    resources = [
-      {
-        prop: 'helmChartRepository',
-        kind: referenceForModel(HelmChartRepositoryModel),
-        namespaced: false,
-        isList: true,
-      },
-      {
-        prop: 'projectHelmChartRepository',
-        kind: referenceForModel(ProjectHelmChartRepositoryModel),
-        namespaced: true,
-        namespace,
-        isList: true,
-      },
-    ];
-  } else if (projectHelmChartListAccess && projectHelmChartEditAccess) {
-    resources = [
-      {
-        prop: 'projectHelmChartRepository',
-        kind: referenceForModel(ProjectHelmChartRepositoryModel),
-        namespaced: true,
-        namespace,
-        isList: true,
-      },
-    ];
-  } else if (helmChartListAccess && helmChartEditAccess) {
-    resources = [
-      {
-        prop: 'helmChartRepository',
-        kind: referenceForModel(HelmChartRepositoryModel),
-        namespaced: false,
-        isList: true,
-      },
-    ];
-  }
+  const resources = React.useMemo(() => {
+    let res: any[] = [];
+    if (
+      projectHelmChartListAccess &&
+      projectHelmChartEditAccess &&
+      helmChartListAccess &&
+      helmChartEditAccess
+    ) {
+      res = [
+        {
+          prop: 'helmChartRepository',
+          kind: referenceForModel(HelmChartRepositoryModel),
+          namespaced: false,
+          isList: true,
+        },
+        {
+          prop: 'projectHelmChartRepository',
+          kind: referenceForModel(ProjectHelmChartRepositoryModel),
+          namespaced: true,
+          namespace,
+          isList: true,
+        },
+      ];
+    } else if (projectHelmChartListAccess && projectHelmChartEditAccess) {
+      res = [
+        {
+          prop: 'projectHelmChartRepository',
+          kind: referenceForModel(ProjectHelmChartRepositoryModel),
+          namespaced: true,
+          namespace,
+          isList: true,
+        },
+      ];
+    } else if (helmChartListAccess && helmChartEditAccess) {
+      res = [
+        {
+          prop: 'helmChartRepository',
+          kind: referenceForModel(HelmChartRepositoryModel),
+          namespaced: false,
+          isList: true,
+        },
+      ];
+    }
+    return res;
+  }, [
+    projectHelmChartListAccess,
+    projectHelmChartEditAccess,
+    helmChartListAccess,
+    helmChartEditAccess,
+    namespace,
+  ]);
 
-  const flatten = (resourceLists) => {
+  const flatten = (resourceLists: any) => {
     const projectHelmChartRepositoryData = _.get(
       resourceLists?.projectHelmChartRepository,
       'data',

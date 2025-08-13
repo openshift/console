@@ -7,7 +7,12 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import { history, getQueryArgument } from '@console/internal/components/utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { HelmRelease, HelmActionType, HelmActionOrigins } from '../../../types/helm-types';
+import {
+  HelmRelease,
+  HelmActionType,
+  HelmActionOrigins,
+  HelmActionConfigType,
+} from '../../../types/helm-types';
 import { fetchHelmReleaseHistory, getHelmActionConfig } from '../../../utils/helm-utils';
 import HelmReleaseRollbackForm from './HelmReleaseRollbackForm';
 
@@ -19,10 +24,17 @@ const HelmReleaseRollbackPage: React.FC = () => {
   const { t } = useTranslation();
   const { releaseName, ns: namespace } = useParams();
   const actionOrigin = getQueryArgument('actionOrigin') as HelmActionOrigins;
-  const [releaseHistory, setReleaseHistory] = React.useState<HelmRelease[]>(null);
+  const [releaseHistory, setReleaseHistory] = React.useState<HelmRelease[] | null>(null);
 
   const config = React.useMemo(
-    () => getHelmActionConfig(HelmActionType.Rollback, releaseName, namespace, t, actionOrigin),
+    () =>
+      getHelmActionConfig(
+        HelmActionType.Rollback,
+        releaseName || '',
+        namespace || '',
+        t,
+        actionOrigin,
+      ),
     [actionOrigin, namespace, releaseName, t],
   );
 
@@ -30,13 +42,15 @@ const HelmReleaseRollbackPage: React.FC = () => {
     let ignore = false;
 
     const getReleaseHistory = async () => {
-      let res: HelmRelease[];
+      let res: HelmRelease[] | null = null;
       try {
-        res = await fetchHelmReleaseHistory(releaseName, namespace);
+        res = await fetchHelmReleaseHistory(releaseName || '', namespace || '');
       } catch {} // eslint-disable-line no-empty
       if (ignore) return;
 
-      res?.length > 0 && setReleaseHistory(res);
+      if (res && res.length > 0) {
+        setReleaseHistory(res);
+      }
     };
 
     getReleaseHistory();
@@ -58,9 +72,9 @@ const HelmReleaseRollbackPage: React.FC = () => {
     };
 
     return config
-      .fetch('/api/helm/release', payload, null, -1)
+      ?.fetch('/api/helm/release', payload, undefined, -1)
       .then(() => {
-        history.push(config.redirectURL);
+        history.push(config?.redirectURL || '');
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -69,14 +83,14 @@ const HelmReleaseRollbackPage: React.FC = () => {
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-      <DocumentTitle>{config.title}</DocumentTitle>
+      <DocumentTitle>{config?.title || ''}</DocumentTitle>
       <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={history.goBack}>
         {(props) => (
           <HelmReleaseRollbackForm
             {...props}
-            releaseName={releaseName}
-            releaseHistory={releaseHistory}
-            helmActionConfig={config}
+            releaseName={releaseName || ''}
+            releaseHistory={releaseHistory || []}
+            helmActionConfig={config as HelmActionConfigType}
           />
         )}
       </Formik>

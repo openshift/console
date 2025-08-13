@@ -20,9 +20,9 @@ export const getTopologyFilters = () => {
 
 export const applyHelmDisplayOptions = (model: Model, filters: DisplayFilters): string[] => {
   let found = false;
-  const appliedFilters = [];
+  const appliedFilters: string[] = [];
   const expanded = isExpanded(EXPAND_HELM_RELEASE_FILTER, filters);
-  model.nodes.forEach((d) => {
+  model.nodes?.forEach((d) => {
     if (d.type === TYPE_HELM_RELEASE) {
       if (!found) {
         found = true;

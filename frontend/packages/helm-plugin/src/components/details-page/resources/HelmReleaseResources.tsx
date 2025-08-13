@@ -29,8 +29,8 @@ const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ customData 
       return {
         ...(model.namespaced ? { namespace } : {}),
         kind: model.crd ? referenceForModel(model) : model.kind,
-        name: resource.metadata.name,
-        prop: `${resource.metadata.name}-${resource.kind.toLowerCase()}`,
+        name: resource.metadata?.name,
+        prop: `${resource.metadata?.name}-${resource.kind?.toLowerCase()}`,
         isList: false,
         optional: true,
       };

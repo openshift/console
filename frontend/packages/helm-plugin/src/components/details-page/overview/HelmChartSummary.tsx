@@ -28,11 +28,7 @@ const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease })
     info: { last_deployed: updated },
   } = helmRelease;
 
-  const {
-    metadata: {
-      labels: { version: revision },
-    },
-  } = obj;
+  const revision = obj?.metadata?.labels?.version;
 
   return (
     <DescriptionList>

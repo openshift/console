@@ -31,7 +31,7 @@ const HelmReleaseStatusDecorator: React.FC<HelmReleaseStatusDecoratorProps> = ({
 
   return (
     <Tooltip triggerRef={ref} content={label} position={TooltipPosition.left}>
-      <g ref={ref}>
+      <g ref={(ref as unknown) as React.RefObject<SVGGElement>}>
         <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={label}>
           <Status status={status} iconOnly noTooltip />
         </BuildDecoratorBubble>
