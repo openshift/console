@@ -201,7 +201,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({ obj, rows }) => {
   const compare = useCallback<Comparator<ConsolePluginTableRow>>(
     (a, b) => {
       const { index, direction } = sortBy;
-      const { id } = columns[index];
+      const { id } = columns[index ?? 0];
       const desc = direction === SortByDirection.desc;
       const left = (desc ? b : a)[id];
       const right = (desc ? a : b)[id];
@@ -247,7 +247,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({ obj, rows }) => {
           <Thead>
             <Tr>
               {columns.map(({ id, name, sortable }, columnIndex) => (
-                <Th key={id} sort={sortable ? { sortBy, onSort, columnIndex } : null}>
+                <Th key={id} sort={sortable ? { sortBy, onSort, columnIndex } : undefined}>
                   {name}
                 </Th>
               ))}
@@ -331,7 +331,7 @@ const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
       return [];
     }
     return consolePlugins.map((plugin) => {
-      const pluginName = plugin?.metadata?.name;
+      const pluginName = plugin?.metadata?.name ?? 'unknown';
       const enabled = enabledPlugins.includes(pluginName);
       const loadedPluginInfo = pluginInfo
         .filter((p) => p.status === 'loaded')
@@ -341,7 +341,7 @@ const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
         .find((i) => i?.pluginName === pluginName);
       if (loadedPluginInfo) {
         return {
-          name: plugin?.metadata?.name,
+          name: pluginName,
           version: loadedPluginInfo?.metadata?.version,
           description: loadedPluginInfo?.metadata?.customProperties?.console?.description,
           enabled,
@@ -350,9 +350,9 @@ const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
         };
       }
       return {
-        name: plugin?.metadata?.name,
+        name: pluginName,
         enabled,
-        status: notLoadedPluginInfo?.status,
+        status: notLoadedPluginInfo?.status || 'Pending',
         errorMessage:
           notLoadedPluginInfo?.status === 'failed' ? notLoadedPluginInfo?.errorMessage : undefined,
         errorCause:

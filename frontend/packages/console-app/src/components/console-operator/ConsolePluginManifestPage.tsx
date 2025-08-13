@@ -14,10 +14,10 @@ export const ConsolePluginManifestPage: FC<PageComponentProps> = ({ obj }) => {
   const pluginStore = usePluginStore();
   const pluginName = useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
-  const pluginManifest = useMemo(() => pluginStore.getDynamicPluginManifest(pluginName), [
-    pluginStore,
-    pluginName,
-  ]);
+  const pluginManifest = useMemo(
+    () => (pluginName ? pluginStore.getDynamicPluginManifest(pluginName) : undefined),
+    [pluginStore, pluginName],
+  );
 
   const manifestJson = useMemo(() => {
     return pluginManifest ? JSON.stringify(pluginManifest, null, 2) : '';
