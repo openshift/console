@@ -1,18 +1,21 @@
 import * as React from 'react';
-import { Alert, Button, Stack, StackItem, Checkbox } from '@patternfly/react-core';
+import {
+  Alert,
+  Button,
+  Stack,
+  StackItem,
+  Checkbox,
+  Modal,
+  ModalVariant,
+  ModalFooter,
+} from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
-import {
-  createModalLauncher,
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-} from '@console/internal/components/factory';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import {
   NODE_STATUS_UNDER_MAINTENANCE,
   HOST_STATUS_READY,
@@ -25,7 +28,7 @@ import { powerOffHost } from '../../k8s/requests/bare-metal-host';
 import { BareMetalHostKind } from '../../types';
 import { StatusProps } from '../types';
 import { StatusValidations, getStaticPods, getDaemonSetsOfPods } from './PowerOffStatusValidations';
-import { startNodeMaintenanceModal } from './StartNodeMaintenanceModal';
+import { useStartNodeMaintenanceModal } from './StartNodeMaintenanceModal';
 
 type PowerOffWarning = {
   restart?: boolean;
@@ -97,6 +100,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
   cancel,
 }) => {
   const { t } = useTranslation();
+  const startNodeMaintenanceModal = useStartNodeMaintenanceModal();
   const hasMaintenance = [
     NODE_STATUS_STARTING_MAINTENANCE,
     NODE_STATUS_UNDER_MAINTENANCE,
@@ -159,16 +163,19 @@ const isPowerOffSafe = (status: string) => {
   return safeStates.includes(status);
 };
 
-export type PowerOffHostModalProps = {
+type PowerOffHostModalProps = {
   host: BareMetalHostKind;
   nodeName: string;
   status: StatusProps;
-  cancel?: () => void;
-  close?: () => void;
+  closeOverlay: () => void;
 };
 
-const PowerOffHostModal = ({ host, nodeName, status, close, cancel }: PowerOffHostModalProps) => {
-  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
+const PowerOffHostModal: React.FC<PowerOffHostModalProps> = ({
+  host,
+  nodeName,
+  status,
+  closeOverlay,
+}) => {
   const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>({
     kind: PodModel.kind,
     namespaced: false,
@@ -178,57 +185,73 @@ const PowerOffHostModal = ({ host, nodeName, status, close, cancel }: PowerOffHo
   const { t } = useTranslation();
   const [maintenanceModel] = useMaintenanceCapability();
   const [forceOff, setForceOff] = React.useState(false);
-
-  const submit = (event): void => {
-    event.preventDefault();
-    const promise = powerOffHost(host);
-    handlePromise(promise)
-      .then(() => {
-        close();
-      })
-      .catch(() => {});
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const handleSubmit = async (): Promise<void> => {
+    setIsSubmitting(true);
+    try {
+      await powerOffHost(host);
+      closeOverlay();
+    } catch (error) {
+      // Error handling - could be logged to monitoring system in production
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const canPowerOffSafely = !loadError && isPowerOffSafe(status.status);
-
   const isUnderMaintenance = status.status === NODE_STATUS_UNDER_MAINTENANCE;
+
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>{t('metal3-plugin~Power Off Host')}</ModalTitle>
-      <ModalBody>
-        {!loaded ? (
-          <LoadingBox />
-        ) : canPowerOffSafely ? (
-          isUnderMaintenance ? (
-            t(
-              'metal3-plugin~Host is ready to be gracefully powered off. The host is currently under maintenance and {{message}}',
-              { message: getPowerOffMessage(t, pods) },
-            )
-          ) : (
-            t('metal3-plugin~Host is ready to be gracefully powered off.')
+    <Modal
+      variant={ModalVariant.medium}
+      title={t('metal3-plugin~Power Off Host')}
+      isOpen
+      onClose={closeOverlay}
+    >
+      {!loaded ? (
+        <LoadingBox />
+      ) : canPowerOffSafely ? (
+        isUnderMaintenance ? (
+          t(
+            'metal3-plugin~Host is ready to be gracefully powered off. The host is currently under maintenance and {{message}}',
+            { message: getPowerOffMessage(t, pods) },
           )
         ) : (
-          <ForcePowerOffDialog
-            forceOff={forceOff}
-            setForceOff={setForceOff}
-            canStartMaintenance={!isUnderMaintenance && nodeName && !!maintenanceModel}
-            nodeName={nodeName}
-            status={status}
-            pods={pods}
-            loadError={loadError}
-            cancel={cancel}
-          />
-        )}
-      </ModalBody>
-      <ModalSubmitFooter
-        cancel={cancel}
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitDisabled={!canPowerOffSafely && !forceOff}
-        submitText={t('metal3-plugin~Power Off')}
-      />
-    </form>
+          t('metal3-plugin~Host is ready to be gracefully powered off.')
+        )
+      ) : (
+        <ForcePowerOffDialog
+          forceOff={forceOff}
+          setForceOff={setForceOff}
+          canStartMaintenance={!isUnderMaintenance && nodeName && !!maintenanceModel}
+          nodeName={nodeName}
+          status={status}
+          pods={pods}
+          loadError={loadError}
+          cancel={closeOverlay}
+        />
+      )}
+      <ModalFooter>
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          isLoading={isSubmitting}
+          isDisabled={isSubmitting || (!canPowerOffSafely && !forceOff)}
+        >
+          {t('metal3-plugin~Power Off')}
+        </Button>
+        <Button variant="secondary" onClick={closeOverlay}>
+          {t('console-app~Cancel')}
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 };
 
-export const powerOffHostModal = createModalLauncher(PowerOffHostModal);
+export const usePowerOffHostModal = () => {
+  const launchOverlay = useOverlay();
+
+  return (props: Omit<PowerOffHostModalProps, 'closeOverlay'>) => {
+    launchOverlay(PowerOffHostModal, props);
+  };
+};

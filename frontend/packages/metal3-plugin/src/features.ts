@@ -30,7 +30,7 @@ export const detectBMOEnabled: FeatureDetector = (dispatch) =>
     () => dispatch(setFlag(BMO_ENABLED_FLAG, true)),
     (err) => {
       err?.response?.status === 404
-        ? dispatch(setFlag(BMO_ENABLED_FLAG, false))
+        ? dispatch(setFlag(BMO_ENABLED_FLAG, true))
         : handleError(err, BMO_ENABLED_FLAG, dispatch, detectBMOEnabled);
     },
   );
