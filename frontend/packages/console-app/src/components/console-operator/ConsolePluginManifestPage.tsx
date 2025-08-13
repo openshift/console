@@ -9,10 +9,10 @@ export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj })
   const pluginStore = usePluginStore();
   const pluginName = React.useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
-  const pluginManifest = React.useMemo(() => pluginStore.getDynamicPluginManifest(pluginName), [
-    pluginStore,
-    pluginName,
-  ]);
+  const pluginManifest = React.useMemo(
+    () => pluginStore.getDynamicPluginManifest(pluginName ?? ''),
+    [pluginStore, pluginName],
+  );
 
   return (
     <PaneBody>
