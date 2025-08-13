@@ -11,7 +11,7 @@ const ClusterOperatorStatusRow: React.FC<OperatorRowProps<ClusterOperator>> = ({
   <Status value={operatorStatus.status.title} icon={operatorStatus.status.icon}>
     <ResourceLink
       kind={referenceForModel(ClusterOperatorModel)}
-      name={operatorStatus.operators[0].metadata.name}
+      name={operatorStatus.operators[0]?.metadata?.name ?? ''}
       hideIcon
       className="co-status-popup__title"
     />
