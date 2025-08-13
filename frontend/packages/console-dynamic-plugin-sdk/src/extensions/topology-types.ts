@@ -305,3 +305,18 @@ export type CreateConnectorProps = {
   dragging?: boolean;
   hover?: boolean;
 };
+
+export interface OdcBaseNodeInterface extends Node<OdcNodeModel> {
+  resource?: K8sResourceKind;
+  resourceKind?: K8sResourceKindReference;
+
+  getResource(): K8sResourceKind | undefined;
+  setResource(resource: K8sResourceKind | undefined): void;
+
+  getResourceKind(): K8sResourceKindReference | undefined;
+  setResourceKind(kind: K8sResourceKindReference | undefined): void;
+
+  setModel(model: OdcNodeModel): void;
+}
+
+export type OdcBaseNodeConstructor = new () => OdcBaseNodeInterface;

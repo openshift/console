@@ -1,16 +1,14 @@
+import { BaseNode, Node } from '@patternfly/react-topology';
 import { observable, makeObservable } from 'mobx';
+import { OdcBaseNodeInterface } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
   referenceFor,
 } from '@console/internal/module/k8s';
 import { OdcNodeModel } from '../topology-types';
-//
-// Import from @patternfly/react-topology when updated to a branch containing https://github.com/patternfly/patternfly-react/pull/7573
-//
-import BaseNode from './BaseNode';
 
-class OdcBaseNode extends BaseNode {
+class OdcBaseNode extends BaseNode implements OdcBaseNodeInterface {
   public resource?: K8sResourceKind | undefined = undefined;
 
   public resourceKind?: K8sResourceKindReference | undefined = undefined;
@@ -22,6 +20,10 @@ class OdcBaseNode extends BaseNode {
       resource: observable.ref,
       resourceKind: observable,
     });
+  }
+
+  getPositionableChildren(): Node[] {
+    return [];
   }
 
   getResource(): K8sResourceKind | undefined {
