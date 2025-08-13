@@ -10,7 +10,6 @@ import {
   nodeDropTargetSpec,
   withContextMenu,
   withNoDrop,
-  CreateConnector,
   noRegroupDragSourceSpec,
 } from '@console/topology/src/components/graph-view';
 import { withEditReviewAccess } from '@console/topology/src/utils';
@@ -29,10 +28,7 @@ export const getHelmComponentFactory = (
         ),
       );
     case TYPE_HELM_WORKLOAD:
-      return withCreateConnector(
-        createConnectorCallback(),
-        CreateConnector,
-      )(
+      return withCreateConnector(createConnectorCallback())(
         withDndDrop<
           any,
           any,

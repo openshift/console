@@ -116,7 +116,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     let ignore = false;
 
     const fetchChartVersions = async () => {
-      let json: { entries: HelmChartEntries };
+      let json: { entries: HelmChartEntries } | undefined;
 
       try {
         const response = await coFetch(`/api/helm/charts/index.yaml?namespace=${namespace}`);
@@ -127,7 +127,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       }
       if (ignore) return;
       const chartEntries = getChartEntriesByName(
-        json?.entries,
+        json?.entries || {},
         chartName,
         chartRepoName,
         chartRepositories,
@@ -137,10 +137,10 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       if (!chartIndexEntry) {
         setFieldValue(
           'chartIndexEntry',
-          getChartIndexEntry(json?.entries, chartName, chartEntries[0]?.repoName),
+          getChartIndexEntry(json?.entries || {}, chartName, chartEntries[0]?.repoName || ''),
         );
       }
-      setHelmChartRepos(json?.entries);
+      setHelmChartRepos(json?.entries || {});
       setHelmChartEntries(chartEntries);
       setHelmChartVersions(getChartVersions(chartEntries, t));
     };
@@ -170,7 +170,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     coFetchJSON(
       `/api/helm/chart?url=${encodeURIComponent(
         chartURL,
-      )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartRepoIndex)}`,
+      )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartRepoIndex || '')}`,
     )
       .then((res: HelmChart) => {
         onVersionChange(res);

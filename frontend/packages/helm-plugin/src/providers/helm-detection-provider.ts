@@ -17,18 +17,18 @@ export const useDetectHelmChartRepositories = (setFeatureFlag: SetFeatureFlag) =
   const fetchHelmChartRepositories = useCallback(() => {
     const helmChartRepos: Promise<ListKind<K8sResourceKind>>[] = [
       fetchK8s<ListKind<K8sResourceKind>>(HelmChartRepositoryModel),
-      fetchK8s<ListKind<K8sResourceKind>>(ProjectHelmChartRepositoryModel, null, namespace),
+      fetchK8s<ListKind<K8sResourceKind>>(ProjectHelmChartRepositoryModel, undefined, namespace),
     ];
     settleAllPromises(helmChartRepos)
       .then(([fulfilledValues, rejectedReasons]) => {
-        if (fulfilledValues.some((l) => hasEnabledHelmCharts(l?.items))) {
+        if (fulfilledValues.some((l) => hasEnabledHelmCharts(l?.items as K8sResourceKind[]))) {
           setFeatureFlag(FLAG_OPENSHIFT_HELM, true);
         } else if (rejectedReasons.length === helmChartRepos.length) {
           const notFound = rejectedReasons.some((e) => e?.response?.status === 404);
           notFound
             ? setFeatureFlag(FLAG_OPENSHIFT_HELM, false)
-            : setFeatureFlag(FLAG_OPENSHIFT_HELM, undefined);
-          setDelay(null);
+            : setFeatureFlag(FLAG_OPENSHIFT_HELM, false);
+          setDelay(0);
         } else {
           setFeatureFlag(FLAG_OPENSHIFT_HELM, false);
         }

@@ -56,7 +56,10 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
   const [{ dragging: labelDragging }, dragLabelRef] = useDragNode(noRegroupDragSourceSpec);
-  const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
+  const nodeRefs = useCombineRefs(
+    (innerHoverRef as unknown) as React.RefObject<Element>,
+    (dragNodeRef as unknown) as React.RefObject<Element>,
+  );
   const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
   const showLabel = useShowLabel(hover);
   const hasChildren = element.getChildren()?.length > 0;
@@ -76,9 +79,11 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
 
   return (
     <g
-      ref={hoverRef}
+      ref={(hoverRef as unknown) as React.RefObject<SVGGElement>}
       onClick={onSelect}
-      onContextMenu={editAccess ? onContextMenu : null}
+      onContextMenu={
+        editAccess ? (onContextMenu as React.MouseEventHandler<SVGGElement>) : undefined
+      }
       className={css('pf-topology__group odc-helm-release', {
         'pf-m-dragging': dragging || labelDragging,
         'is-filtered': filtered,
@@ -87,7 +92,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
       <NodeShadows />
       <Layer id={dragging || labelDragging ? undefined : 'groups2'}>
         <g
-          ref={nodeRefs}
+          ref={(nodeRefs as unknown) as React.RefObject<SVGGElement>}
           className={css('odc-helm-release', {
             'pf-m-selected': selected,
             'pf-m-dragging': dragging || labelDragging,

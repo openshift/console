@@ -162,7 +162,7 @@ const HelmInstallUpgradeForm: React.FC<
                 helmAction={helmAction}
                 onVersionChange={onVersionChange}
                 namespace={namespace}
-                chartIndexEntry={chartIndexEntry}
+                chartIndexEntry={chartIndexEntry || ''}
                 annotatedName={annotatedName}
                 providerName={providerName}
               />

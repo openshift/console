@@ -56,10 +56,7 @@ export const useHelmActionProviderForTopology = (element: GraphElement) => {
     if (nodeType !== TYPE_HELM_RELEASE) return undefined;
     const releaseName = element.getLabel();
     if (!resource?.metadata) return null;
-    const {
-      namespace,
-      labels: { version },
-    } = resource.metadata;
+    const { namespace, labels: { version } = {} } = resource.metadata;
     return {
       release: {
         name: releaseName,
@@ -72,7 +69,7 @@ export const useHelmActionProviderForTopology = (element: GraphElement) => {
       actionOrigin: 'topology',
     };
   }, [data, element, resource]);
-  const result = useHelmActionProvider(scope);
+  const result = useHelmActionProvider(scope as HelmActionsScope);
   return result;
 };
 

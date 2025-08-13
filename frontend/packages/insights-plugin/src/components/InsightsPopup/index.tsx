@@ -26,14 +26,14 @@ import {
 } from './mappers';
 
 const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
-  const Icon = riskIcons[datum.id];
-  return <Icon x={x} y={y - 5} fill={legendColorScale[datum.id]} />;
+  const Icon = riskIcons[datum?.id as string];
+  return <Icon x={x} y={y ? y - 5 : 0} fill={legendColorScale[datum?.id as string]} />;
 };
 
 const LabelComponent = ({ clusterID, ...props }) => (
   <ExternalLink
     href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}?total_risk=${
-      riskSorting[props.datum.id] + 1
+      riskSorting[props.datum?.id as string] + 1
     }`}
   >
     <ChartLabel
