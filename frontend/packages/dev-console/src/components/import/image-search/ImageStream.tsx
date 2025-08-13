@@ -97,17 +97,21 @@ const ImageStream: React.FC<{
           required={required}
           data-test={dataTest}
         >
-          <Grid hasGutter>
+          <Grid hasGutter style={{ position: 'relative' }}>
             <GridItem lg={4} md={4} sm={4}>
-              <ImageStreamNsDropdown disabled={disabled} formContextField={formContextField} />
+              <ImageStreamNsDropdown
+                disabled={disabled}
+                formContextField={formContextField}
+                className="odc-imagestream-slash"
+              />
             </GridItem>
             <GridItem lg={4} md={4} sm={4}>
               <ImageStreamDropdown
                 disabled={disabled}
                 formContextField={formContextField}
                 reloadCount={reloadCount}
+                className="odc-imagestream-colon"
               />
-              <div className="odc-imagestream-separator">/</div>
             </GridItem>
             <GridItem lg={4} md={4} sm={4}>
               <ImageStreamTagDropdown
@@ -115,7 +119,6 @@ const ImageStream: React.FC<{
                 formContextField={formContextField}
                 reloadCount={reloadCount}
               />
-              <div className="odc-imagestream-separator">:</div>
             </GridItem>
           </Grid>
 
