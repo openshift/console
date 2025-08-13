@@ -73,7 +73,8 @@
     "**/public/dist": true
   },
   "files.associations": {
-    "**/console-extensions.json": "jsonc"
+    "**/console-extensions.json": "jsonc",
+    "**/tsdoc.json": "jsonc"
   },
   "json.schemas": [
     {
