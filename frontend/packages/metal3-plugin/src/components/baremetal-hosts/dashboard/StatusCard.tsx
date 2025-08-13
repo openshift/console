@@ -37,6 +37,7 @@ import {
   getHostPowerStatus,
   getHostProvisioningState,
   hasPowerManagement,
+  isDetached,
   isHostScheduledForRestart,
 } from '../../../selectors';
 import { getBareMetalHostStatus, getHostStatus } from '../../../status/host-status';
@@ -64,6 +65,37 @@ const getHostHardwareHealthState = (obj): HostHealthState => {
 const filterAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'labels.hwalert'));
 
+const PowerStatus = ({ obj }: { obj: BareMetalHostKind }) => {
+  const hasPowerMgmt = hasPowerManagement(obj);
+  const powerStatus = getHostPowerStatus(obj);
+  const restartScheduled = isHostScheduledForRestart(obj);
+  const { t } = useTranslation();
+  if (isDetached(obj)) {
+    return <HealthItem title={t('metal3-plugin~Detached')} state={HealthState.UNKNOWN} />;
+  }
+  if (!hasPowerMgmt) {
+    return (
+      <HealthItem
+        title={t('metal3-plugin~No power management')}
+        state={HealthState.NOT_AVAILABLE}
+      />
+    );
+  }
+  return (
+    <StatusIconAndText
+      title={restartScheduled ? t('metal3-plugin~Restart pending') : powerStatus}
+      icon={
+        restartScheduled ? (
+          <RebootingIcon />
+        ) : (
+          <BareMetalHostPowerStatusIcon powerStatus={powerStatus} />
+        )
+      }
+      className="bmh-health__status"
+    />
+  );
+};
+
 const HealthCard: React.FC<HealthCardProps> = ({
   watchAlerts,
   stopWatchAlerts,
@@ -86,8 +118,6 @@ const HealthCard: React.FC<HealthCardProps> = ({
 
   const hasPowerMgmt = hasPowerManagement(obj);
   const provisioningState = getHostProvisioningState(obj);
-  const powerStatus = getHostPowerStatus(obj);
-  const restartScheduled = isHostScheduledForRestart(obj);
 
   return (
     <Card className="co-overview-card--gradient">
@@ -114,30 +144,13 @@ const HealthCard: React.FC<HealthCardProps> = ({
             </GalleryItem>
             {!HOST_REGISTERING_STATES.includes(provisioningState) && (
               <GalleryItem>
-                {!hasPowerMgmt ? (
-                  <HealthItem
-                    title={t('metal3-plugin~No power management')}
-                    state={HealthState.NOT_AVAILABLE}
-                  />
-                ) : (
-                  <StatusIconAndText
-                    title={restartScheduled ? t('metal3-plugin~Restart pending') : powerStatus}
-                    icon={
-                      restartScheduled ? (
-                        <RebootingIcon />
-                      ) : (
-                        <BareMetalHostPowerStatusIcon powerStatus={powerStatus} />
-                      )
-                    }
-                    className="bmh-health__status"
-                  />
-                )}
+                <PowerStatus obj={obj} />
               </GalleryItem>
             )}
           </Gallery>
         </HealthBody>
         <AlertsBody error={!_.isEmpty(loadError)}>
-          {!hasPowerMgmt && (
+          {!hasPowerMgmt && !isDetached(obj) && (
             <StatusItem
               Icon={BlueInfoCircleIcon}
               message={t(HOST_STATUS_DESCRIPTION_KEYS[HOST_STATUS_UNMANAGED])}
