@@ -20,14 +20,17 @@ import (
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/controllers"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
+	kruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
@@ -557,6 +560,23 @@ func main() {
 	default:
 		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: in-cluster, off-cluster"))
 	}
+
+	mgr, err := ctrl.NewManager(srv.InternalProxiedK8SClientConfig, ctrl.Options{
+		Scheme: kruntime.NewScheme(),
+	})
+
+	if err = controllers.NewClusterCatalogReconciler(mgr).SetupWithManager(mgr); err != nil {
+		klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
+	}
+
+	klog.Info("starting manager")
+	if err := mgr.Start(context.TODO()); err != nil {
+		klog.Errorf("problem running manager: %v", err)
+	}
+
+	// if err := clustercatalog.StartClusterCatalogController(context.TODO(), srv.InternalProxiedK8SClientConfig); err != nil {
+	// 	klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
+	// }
 
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
