@@ -19,7 +19,8 @@
       "install": "src/components/operator-install-page.tsx",
       "useOperatorCatalogItems": "src/hooks/useOperatorCatalogItems.tsx",
       "useOperatorCatalogCategories": "src/hooks/useOperatorCatalogCategories.ts",
-      "filters": "src/utils/filters.ts"
+      "filters": "src/utils/filters.ts",
+      "CatalogRedirect": "src/components/catalog-redirect.tsx"
     }
   }
 }
