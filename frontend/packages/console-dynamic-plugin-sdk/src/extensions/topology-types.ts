@@ -10,9 +10,21 @@ import {
   GraphElement,
   TopologyQuadrant,
   NodeShape,
+  WithSelectionProps,
+  WithDragNodeProps,
+  WithDndDropProps,
+  WithContextMenuProps,
+  BadgeLocation,
+  NodeStatus,
+  withContextMenu,
+  DragEvent,
+  DragObjectWithType,
+  DragOperationWithType,
+  ConnectorChoice,
 } from '@patternfly/react-topology';
 import PFPoint from '@patternfly/react-topology/dist/esm/geom/Point';
 import { Alerts, K8sKind, K8sVerb, PrometheusAlert } from '../api/common-types';
+import { ActionContext } from '../api/internal-types';
 import { Action } from './actions';
 import {
   K8sResourceCommon,
@@ -320,3 +332,114 @@ export interface OdcBaseNodeInterface extends Node<OdcNodeModel> {
 }
 
 export type OdcBaseNodeConstructor = new () => OdcBaseNodeInterface;
+
+export interface WithCreateConnectorProps {
+  onShowCreateConnector: () => void;
+  onHideCreateConnector: () => void;
+  createConnectorDrag: boolean;
+}
+
+export type WorkloadNodeProps = {
+  element: Node;
+  dragging?: boolean;
+  highlight?: boolean;
+  canDrop?: boolean;
+  dropTarget?: boolean;
+  urlAnchorRef?: React.Ref<SVGCircleElement>;
+  dropTooltip?: React.ReactNode;
+} & WithSelectionProps &
+  WithDragNodeProps &
+  WithDndDropProps &
+  WithContextMenuProps &
+  WithCreateConnectorProps;
+
+export interface PodSetProps {
+  size: number;
+  data: PodRCData;
+  showPodCount?: boolean;
+  x?: number;
+  y?: number;
+}
+
+export type BaseNodeProps = {
+  className?: string;
+  innerRadius?: number;
+  icon?: string;
+  kind?: string;
+  labelIconClass?: string; // Icon to show in label
+  labelIcon?: React.ReactNode;
+  labelIconPadding?: number;
+  badge?: string;
+  badgeColor?: string;
+  badgeTextColor?: string;
+  badgeBorderColor?: string;
+  badgeClassName?: string;
+  badgeLocation?: BadgeLocation;
+  children?: React.ReactNode;
+  attachments?: React.ReactNode;
+  element: Node;
+  hoverRef?: (node: Element) => () => void;
+  dragging?: boolean;
+  dropTarget?: boolean;
+  canDrop?: boolean;
+  createConnectorAccessVerb?: K8sVerb;
+  nodeStatus?: NodeStatus;
+  showStatusBackground?: boolean;
+  alertVariant?: NodeStatus;
+} & Partial<WithSelectionProps> &
+  Partial<WithDragNodeProps> &
+  Partial<WithDndDropProps> &
+  Partial<WithContextMenuProps> &
+  Partial<WithCreateConnectorProps>;
+
+export type WithContextMenu = <E extends GraphElement>(
+  actions: (element: E) => ActionContext,
+) => ReturnType<typeof withContextMenu>;
+
+export interface ElementProps {
+  element: Node;
+}
+
+export interface CreateConnectorOptions {
+  handleAngle?: number;
+  handleAngleTop?: number;
+  handleLength?: number;
+  dragItem?: DragObjectWithType;
+  dragOperation?: DragOperationWithType;
+  hideConnectorMenu?: boolean;
+}
+
+interface ConnectorComponentProps {
+  startPoint: PFPoint;
+  endPoint: PFPoint;
+  hints: string[];
+  dragging: boolean;
+  hover?: boolean;
+}
+
+type CreateConnectorRenderer = React.ComponentType<ConnectorComponentProps>;
+
+type OnCreateResult = ConnectorChoice[] | void | undefined | null | React.ReactElement[];
+
+type CreateConnectorWidgetProps = {
+  element: Node;
+  onKeepAlive: (isAlive: boolean) => void;
+  onCreate: (
+    element: Node,
+    target: Node | Graph,
+    event: DragEvent,
+    dropHints?: string[] | undefined,
+    choice?: ConnectorChoice,
+  ) => Promise<OnCreateResult> | OnCreateResult;
+  ConnectorComponent: CreateConnectorRenderer;
+  contextMenuClass?: string;
+} & CreateConnectorOptions;
+
+export type WithCreateConnector = <P extends WithCreateConnectorProps & ElementProps>(
+  onCreate: CreateConnectorWidgetProps['onCreate'],
+  ConnectorComponent?: CreateConnectorRenderer,
+  contextMenuClass?: string,
+  options?: CreateConnectorOptions,
+) => (
+  WrappedComponent: React.ComponentType<Partial<P>>,
+) => React.FC<Omit<P, keyof WithCreateConnectorProps>>;
