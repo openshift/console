@@ -12,7 +12,10 @@ in [Console dynamic plugins README](./README.md).
 
 ## 4.20.0-prerelease.1 - 2025-08-15
 
-- Ensure proper pass-through of `shortcutsPopoverProps` to `CodeEditor` ([CONSOLE-4499], [#15254])
+- Add fullscreen toggle button to `ResourceYAMLEditor` component ([CONSOLE-4656], [#15254])
+- Add copy to clipboard button to `ResourceYAMLEditor` when download button is shown ([CONSOLE-4654], [#15254])
+- Move `CodeEditor` settings into a modal that can be opened from the editor toolbar ([CONSOLE-4499], [#15254])
+- Ensure proper pass-through of `shortcutsPopoverProps` to `CodeEditor` component ([CONSOLE-4499], [#15254])
 - Improve `initialResource` prop type in `ResourceYAMLEditor` component ([OCPBUGS-45297], [#15386])
 - Improve plugin API documentation ([OCPBUGS-56248], [#15167])
 
@@ -111,6 +114,8 @@ in [Console dynamic plugins README](./README.md).
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
 [CONSOLE-4407]: https://issues.redhat.com/browse/CONSOLE-4407
 [CONSOLE-4499]: https://issues.redhat.com/browse/CONSOLE-4499
+[CONSOLE-4654]: https://issues.redhat.com/browse/CONSOLE-4654
+[CONSOLE-4656]: https://issues.redhat.com/browse/CONSOLE-4656
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
