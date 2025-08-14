@@ -28,9 +28,9 @@ export const AdmissionWebhookWarningNotifications = () => {
         variant: AlertVariant.warning,
         title: t('public~Admission Webhook Warning'),
         content: t(`{{kind}} {{name}} violates policy {{warning}}`, {
-          kind: warning.kind,
-          name: warning.name,
-          warning: warning.warning,
+          kind: warning?.kind ?? '',
+          name: warning?.name ?? '',
+          warning: warning?.warning ?? '',
         }),
         actions: [
           {

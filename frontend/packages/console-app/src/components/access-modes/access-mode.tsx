@@ -18,14 +18,14 @@ import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 export const getPVCAccessModes = (resource: PersistentVolumeClaimKind, key: string) =>
   _.reduce(
     resource?.spec?.accessModes,
-    (res, value) => {
+    (res: any[], value) => {
       const mode = getAccessModeOptions().find((accessMode) => accessMode.value === value);
       if (mode) {
         res.push(mode[key]);
       }
       return res;
     },
-    [],
+    [] as any[],
   );
 
 export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => {
@@ -45,7 +45,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
   const pvcInitialAccessMode = pvcResource
     ? getPVCAccessModes(pvcResource, 'value')
     : availableAccessModes;
-  const volumeMode: string = pvcResource?.spec?.volumeMode;
+  const volumeMode: string = pvcResource?.spec?.volumeMode ?? '';
 
   const [allowedAccessModes, setAllowedAccessModes] = React.useState<string[]>();
   const [accessMode, setAccessMode] = React.useState<string>();
@@ -60,7 +60,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<string>(
-    getAccessModeOptions().find((mode) => mode.value === pvcInitialAccessMode[0]).title,
+    getAccessModeOptions().find((mode) => mode.value === pvcInitialAccessMode[0])?.title ?? '',
   );
 
   const onToggleClick = () => {
@@ -107,7 +107,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
         getAccessModeForProvisioner(
           provisioner,
           ignoreReadOnly,
-          filterByVolumeMode ? volumeMode : null,
+          filterByVolumeMode ? volumeMode : undefined,
         ),
       );
     }
@@ -119,7 +119,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
       if (!accessMode && allowedAccessModes.includes(pvcInitialAccessMode[0])) {
         // To view the same access mode value of pvc
         changeAccessMode(pvcInitialAccessMode[0]);
-      } else if (!allowedAccessModes.includes(accessMode)) {
+      } else if (!allowedAccessModes.includes(accessMode ?? '')) {
         // Old access mode will be disabled
         changeAccessMode(allowedAccessModes[0]);
       }
