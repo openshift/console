@@ -96,5 +96,5 @@ export const useStorageClassActions = (
     ],
   );
 
-  return [storageClassActions, !inFlight, undefined];
+  return [storageClassActions, !inFlight, false];
 };

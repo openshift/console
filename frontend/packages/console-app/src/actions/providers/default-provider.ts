@@ -12,5 +12,5 @@ export const useDefaultActionsProvider = (
 
   const actions = React.useMemo(() => [...commonActions], [commonActions]);
 
-  return [actions, !inFlight, undefined];
+  return [actions, !inFlight, (undefined as unknown) as Error];
 };

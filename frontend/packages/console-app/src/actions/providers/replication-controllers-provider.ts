@@ -37,7 +37,9 @@ export const useReplicationControllerActionsProvider = (resource: ReplicationCon
               : []),
             ...pdbActions,
             commonActions.AddStorage,
-            ...(!deploymentPhase || resource?.status?.replicas > 0 || !dcName
+            ...(!deploymentPhase ||
+            (resource?.status?.replicas && resource?.status?.replicas > 0) ||
+            !dcName
               ? []
               : [rcActions.RollbackDeploymentConfig]),
             ...commonResourceActions,
