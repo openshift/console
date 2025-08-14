@@ -102,6 +102,16 @@
     }
   },
   {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/operatorhub",
+      "exact": true,
+      "component": {
+        "$codeRef": "CatalogRedirect"
+      }
+    }
+  },
+  {
     "type": "console.catalog/item-provider",
     "properties": {
       "catalogId": "dev-catalog",

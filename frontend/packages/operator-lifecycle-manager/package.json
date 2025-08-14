@@ -21,7 +21,8 @@
       "useDefaultOperandActions": "src/actions/useDefaultOperandActions.ts",
       "useOperatorCatalogItems": "src/hooks/useOperatorCatalogItems.tsx",
       "useOperatorCatalogCategories": "src/hooks/useOperatorCatalogCategories.ts",
-      "filters": "src/utils/filters.ts"
+      "filters": "src/utils/filters.ts",
+      "CatalogRedirect": "src/components/catalog-redirect.tsx"
     }
   }
 }
