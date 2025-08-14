@@ -10,9 +10,13 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
 in [Console dynamic plugins README](./README.md).
 
+## 4.19.1 - 2025-08-15
+
+- Fix `href` handling bug for extension type `console.tab/horizontalNav` ([OCPBUGS-58375], [#15239])
+
 ## 4.19.0 - 2025-06-27
 
-> Release for OCP Console 4.19.
+> Initial release for OCP Console 4.19.
 
 - Improve `useModal` hook to support multiple modals and prop pass-through ([OCPBUGS-57755], [#15189])
 - Add `noCheckForEmptyGroupAndResource` parameter to `useAccessReview` hook ([OCPBUGS-56413], [#15067])
@@ -116,6 +120,7 @@ in [Console dynamic plugins README](./README.md).
 [OCPBUGS-52948]: https://issues.redhat.com/browse/OCPBUGS-52948
 [OCPBUGS-56413]: https://issues.redhat.com/browse/OCPBUGS-56413
 [OCPBUGS-57755]: https://issues.redhat.com/browse/OCPBUGS-57755
+[OCPBUGS-58375]: https://issues.redhat.com/browse/OCPBUGS-58375
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -147,3 +152,4 @@ in [Console dynamic plugins README](./README.md).
 [#14876]: https://github.com/openshift/console/pull/14876
 [#15067]: https://github.com/openshift/console/pull/15067
 [#15189]: https://github.com/openshift/console/pull/15189
+[#15239]: https://github.com/openshift/console/pull/15239

@@ -12,7 +12,7 @@ in [Console dynamic plugins README](./README.md).
 
 ## 4.19.0 - 2025-06-27
 
-> Release for OCP Console 4.19.
+> Initial release for OCP Console 4.19.
 
 ## 4.19.0-prerelease.2 - 2025-05-20
 
