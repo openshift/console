@@ -8,7 +8,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { GroupModel, UserModel } from '../models';
 import { referenceForModel, GroupKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
-import { removeUserModal } from './modals';
+// remove-user modal migrated to useOverlay
 import { RoleBindingsPage } from './RBAC';
 import {
   asAccessReview,
@@ -22,21 +22,13 @@ import {
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import { Grid, GridItem } from '@patternfly/react-core';
+// i18next removed; using useTranslation()
+import { Grid, GridItem, ButtonVariant } from '@patternfly/react-core';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
-const removeUser = (group: GroupKind, user: string): KebabOption => {
-  return {
-    label: i18next.t('public~Remove User'),
-    callback: () =>
-      removeUserModal({
-        group,
-        user,
-      }),
-    accessReview: asAccessReview(GroupModel, group, 'patch'),
-  };
-};
+// remove user action implemented inside UserKebab to respect hooks rules
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
@@ -113,7 +105,32 @@ export const GroupPage: React.FC<GroupPageProps> = (props) => {
 };
 
 const UserKebab: React.FC<UserKebabProps> = ({ group, user }) => {
-  const options: KebabOption[] = [removeUser(group, user)];
+  const { t } = useTranslation();
+  const showConfirm = useWarningModal({
+    title: t('public~Remove User from Group?'),
+    children: t('public~Remove User {{ user }} from Group {{ name }}?', {
+      user,
+      name: group.metadata.name,
+    }),
+    confirmButtonVariant: ButtonVariant.danger,
+    confirmButtonLabel: t('public~Remove'),
+    cancelButtonLabel: t('public~Cancel'),
+    onConfirm: () => {
+      const value = (group.users || []).filter((u: string) => u !== user);
+      return k8sPatchResource({
+        model: (GroupModel as unknown) as any,
+        resource: group,
+        data: [{ op: 'replace', path: '/users', value }],
+      });
+    },
+  });
+  const options: KebabOption[] = [
+    {
+      label: t('public~Remove User'),
+      callback: () => showConfirm(),
+      accessReview: asAccessReview(GroupModel, group, 'patch'),
+    },
+  ];
   return <Kebab options={options} />;
 };
 
