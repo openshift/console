@@ -1,7 +1,6 @@
 import { forwardRef, useRef, useEffect, useImperativeHandle, useCallback, useState } from 'react';
 import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import { XtermAddonFullscreen } from '@console/shared';
 import { useIsFullscreen } from '@console/shared/src/hooks/useFullscreen';
 
 const defaultOptions: ITerminalOptions = {
@@ -82,13 +81,11 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
     useEffect(() => {
       const term = new XTerminal({ ...options });
       const fit = new FitAddon();
-      const fullscreen = new XtermAddonFullscreen();
 
       terminal.current = term;
       fitAddon.current = fit;
 
       term.loadAddon(fit);
-      term.loadAddon(fullscreen);
 
       if (terminalRef.current) {
         term.open(terminalRef.current);
