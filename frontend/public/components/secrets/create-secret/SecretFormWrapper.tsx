@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { isBinary } from 'istextorbinary/edition-es2017/index';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
 import { ActionGroup, Button } from '@patternfly/react-core';
@@ -41,11 +42,15 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState();
   const [stringData, setStringData] = React.useState(
-    _.mapValues(_.get(props.obj, 'data'), (value) => {
-      return value ? Base64.decode(value) : '';
-    }),
+    Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
+      if (isBinary(null, Buffer.from(value, 'base64'))) {
+        return {};
+      }
+      acc[key] = value ? Base64.decode(value) ?? '' : '';
+      return acc;
+    }, {}),
   );
-  const [base64StringData, setBase64StringData] = React.useState({});
+  const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
   const [disableForm, setDisableForm] = React.useState(false);
   const title = useSecretTitle(isCreate, secretTypeAbstraction);
   const helptext = useSecretDescription(secretTypeAbstraction);
@@ -141,6 +146,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
           onError={onError}
           onFormDisable={(disable) => setDisableForm(disable)}
           stringData={stringData}
+          base64StringData={base64StringData}
           secretType={secret.type}
           isCreate={isCreate}
         />

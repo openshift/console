@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { withTranslation } from 'react-i18next';
 import { WithT } from 'i18next';
-import { DroppableFileInput } from '.';
+import { DroppableFileInput } from './DropableFileInput';
+import { KeyValueEntryFormState, KeyValueEntryFormProps } from './types';
+import { Base64 } from 'js-base64';
 
 export class KeyValueEntryFormWithTranslation extends React.Component<
   KeyValueEntryFormProps & WithT,
@@ -12,7 +14,7 @@ export class KeyValueEntryFormWithTranslation extends React.Component<
     this.state = {
       key: props.entry.key,
       value: props.entry.value,
-      isBinary: props.entry.isBinary,
+      isBinary_: props.entry.isBinary_,
     };
     this.onValueChange = this.onValueChange.bind(this);
     this.onKeyChange = this.onKeyChange.bind(this);
@@ -20,8 +22,8 @@ export class KeyValueEntryFormWithTranslation extends React.Component<
   onValueChange(fileData, isBinary) {
     this.setState(
       {
-        value: fileData,
-        isBase64: isBinary,
+        value: isBinary ? fileData : Base64.encode(fileData),
+        isBinary_: isBinary,
       },
       () => this.props.onChange(this.state, this.props.id),
     );
@@ -59,13 +61,13 @@ export class KeyValueEntryFormWithTranslation extends React.Component<
           <div>
             <DroppableFileInput
               onChange={this.onValueChange}
-              inputFileData={this.state.value}
+              inputFileData={Base64.decode(this.state.value)}
               id={`${this.props.id}-value`}
               label={t('public~Value')}
               inputFieldHelpText={t(
                 'public~Drag and drop file with your value here or browse to upload it.',
               )}
-              inputFileIsBinary={this.state.isBinary}
+              inputFileIsBinary={this.state.isBinary_}
             />
           </div>
         </div>
@@ -75,16 +77,3 @@ export class KeyValueEntryFormWithTranslation extends React.Component<
 }
 
 export const KeyValueEntryForm = withTranslation()(KeyValueEntryFormWithTranslation);
-
-export type KeyValueEntryFormState = {
-  isBase64?: boolean;
-  isBinary?: boolean;
-  key: string;
-  value: string;
-};
-
-export type KeyValueEntryFormProps = {
-  entry: KeyValueEntryFormState;
-  id: number;
-  onChange: Function;
-};
