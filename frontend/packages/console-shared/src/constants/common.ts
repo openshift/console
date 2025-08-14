@@ -126,3 +126,4 @@ export const CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER =
 export const GETTING_STARTED_USER_SETTINGS_KEY_CLUSTER_DASHBOARD =
   'console.clusterDashboard.gettingStarted.expanded';
 export const PREFERRED_TELEMETRY_USER_SETTING_KEY = 'telemetry.analytics';
+export const IS_PRODUCTION = process.env.NODE_ENV === 'production';
