@@ -1,14 +1,12 @@
 import { forwardRef, useRef, useEffect, useImperativeHandle, useCallback, useState } from 'react';
-import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
+import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
+import { FitAddon } from '@xterm/addon-fit';
 import { useIsFullscreen } from '@console/shared/src/hooks/useFullscreen';
 
 const defaultOptions: ITerminalOptions = {
   fontFamily: 'Red Hat Mono, monospace',
   fontSize: 16,
   cursorBlink: false,
-  cols: 80,
-  rows: 25,
 };
 
 export type ImperativeTerminalType = {
@@ -80,6 +78,9 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
 
     useEffect(() => {
       const term = new XTerminal({ ...options });
+
+      term.resize(80, 25);
+
       const fit = new FitAddon();
 
       terminal.current = term;
@@ -133,7 +134,7 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
         }
         terminal.current.reset();
         terminal.current.clear();
-        terminal.current.setOption('disableStdin', false);
+        terminal.current.options.disableStdin = false;
       },
       onDataReceived: (data: string) => {
         terminal.current?.write(data);
@@ -146,8 +147,7 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
           document.exitFullscreen();
         }
         terminal.current.write(`\x1b[31m${msg || 'disconnected'}\x1b[m\r\n`);
-        (terminal.current as any).cursorHidden = true;
-        terminal.current.setOption('disableStdin', true);
+        terminal.current.options.disableStdin = true;
         terminal.current.refresh(0, terminal.current.rows - 1);
       },
       loadAttachAddon: (addOn: ITerminalAddon) => {
