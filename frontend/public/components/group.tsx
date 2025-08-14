@@ -1,24 +1,21 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
-import { useDispatch } from 'react-redux';
-import { NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
+// no-op
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import * as UIActions from '../actions/ui';
+// import * as UIActions from '../actions/ui';
 import { GroupModel, UserModel } from '../models';
-import { referenceForModel, GroupKind, K8sKind } from '../module/k8s';
+import { referenceForModel, GroupKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
-import { addUsersModal, removeUserModal } from './modals';
+import { removeUserModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import {
   asAccessReview,
   EmptyBox,
   Kebab,
-  KebabAction,
   KebabOption,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -27,15 +24,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { Grid, GridItem } from '@patternfly/react-core';
-
-const addUsers: KebabAction = (kind: K8sKind, group: GroupKind) => ({
-  label: i18next.t('public~Add Users'),
-  callback: () =>
-    addUsersModal({
-      group,
-    }),
-  accessReview: asAccessReview(kind, group, 'patch'),
-});
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const removeUser = (group: GroupKind, user: string): KebabOption => {
   return {
@@ -49,46 +38,11 @@ const removeUser = (group: GroupKind, user: string): KebabOption => {
   };
 };
 
-const menuActions = [addUsers, ...Kebab.factory.common];
-
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
-const getImpersonateAction = (
-  startImpersonate: StartImpersonate,
-  navigate: NavigateFunction,
-): KebabAction => (kind: K8sKind, group: GroupKind) => ({
-  label: i18next.t('public~Impersonate Group {{name}}', group.metadata),
-  callback: () => {
-    startImpersonate('Group', group.metadata.name);
-    navigate(window.SERVER_FLAGS.basePath);
-  },
-  // Must use API group authorization.k8s.io, NOT user.openshift.io
-  // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
-  accessReview: {
-    group: 'authorization.k8s.io',
-    resource: 'groups',
-    name: group.metadata.name,
-    verb: 'impersonate',
-  },
-});
-
-export const GroupKebab: React.FC<GroupKebabProps> = ({ group }) => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const startImpersonate = React.useCallback(
-    (kind, name) => dispatch(UIActions.startImpersonate(kind, name)),
-    [dispatch],
-  );
-  return (
-    <ResourceKebab
-      actions={[getImpersonateAction(startImpersonate, navigate), ...menuActions]}
-      kind={referenceForModel(GroupModel)}
-      resource={group}
-    />
-  );
-};
-
 const GroupTableRow: React.FC<RowFunctionArgs<GroupKind>> = ({ obj }) => {
+  const resourceKind = referenceForModel(GroupModel);
+  const context = { [resourceKind]: obj };
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -99,7 +53,7 @@ const GroupTableRow: React.FC<RowFunctionArgs<GroupKind>> = ({ obj }) => {
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <GroupKebab group={obj} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
@@ -222,18 +176,16 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
 );
 
 export const GroupDetailsPage: React.FC = (props) => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const startImpersonate = React.useCallback(
-    (kind, name) => dispatch(UIActions.startImpersonate(kind, name)),
-    [dispatch],
-  );
+  const customActionMenu = (kindObj, obj) => {
+    const context = { [referenceForModel(GroupModel)]: obj };
+    return <LazyActionMenu context={context} />;
+  };
 
   return (
     <DetailsPage
       {...props}
       kind={referenceForModel(GroupModel)}
-      menuActions={[getImpersonateAction(startImpersonate, navigate), ...menuActions]}
+      customActionMenu={customActionMenu}
       pages={[
         navFactory.details(GroupDetails),
         navFactory.editYaml(),
@@ -243,11 +195,7 @@ export const GroupDetailsPage: React.FC = (props) => {
   );
 };
 
-type StartImpersonate = (kind: string, name: string) => (dispatch, store) => Promise<void>;
-
-type GroupKebabProps = {
-  group: GroupKind;
-};
+// removed unused types after action provider migration
 
 type UserKebabProps = {
   group: GroupKind;
