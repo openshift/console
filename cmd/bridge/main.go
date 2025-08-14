@@ -556,12 +556,14 @@ func main() {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: in-cluster, off-cluster"))
 	}
 
-<<<<<<< HEAD
 	mgr, err := ctrl.NewManager(srv.InternalProxiedK8SClientConfig, ctrl.Options{
 		Scheme: kruntime.NewScheme(),
 	})
 
-	if err = controllers.NewClusterCatalogReconciler(mgr).SetupWithManager(mgr); err != nil {
+	catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, 5*time.Minute)
+	srv.CatalogService = catalogService
+
+	if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {
 		klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
 	}
 
@@ -569,15 +571,6 @@ func main() {
 	if err := mgr.Start(context.TODO()); err != nil {
 		klog.Errorf("problem running manager: %v", err)
 	}
-
-	// if err := clustercatalog.StartClusterCatalogController(context.TODO(), srv.InternalProxiedK8SClientConfig); err != nil {
-	// 	klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
-	// }
-=======
-	catalogService := olm.NewCatalogService(srv.ServiceClient, 5*time.Minute)
-	catalogService.Start()
-	srv.CatalogService = catalogService
->>>>>>> 22d0a0bc17 (wip)
 
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
