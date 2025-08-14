@@ -8,7 +8,6 @@ import {
 } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { useFormikValidationFix } from '../../hooks';
-import { RedExclamationCircleIcon } from '../status';
 import { BaseInputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -57,9 +56,7 @@ const BaseInputField: React.FC<
       <FormHelperText id={`${fieldId}-helper`}>
         <HelperText>
           {!isValid ? (
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {errorMessage || helpTextInvalid}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{errorMessage || helpTextInvalid}</HelperTextItem>
           ) : (
             <HelperTextItem variant={validated}>{helpText}</HelperTextItem>
           )}

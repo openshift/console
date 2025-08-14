@@ -7,7 +7,6 @@ import {
   TextArea,
 } from '@patternfly/react-core';
 import { useField } from 'formik';
-import { RedExclamationCircleIcon } from '../status';
 import { TextAreaProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -38,9 +37,7 @@ const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
         <FormHelperText>
           <HelperText>
             {!isValid ? (
-              <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-                {errorMessage}
-              </HelperTextItem>
+              <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
             ) : (
               <HelperTextItem>{helpText}</HelperTextItem>
             )}

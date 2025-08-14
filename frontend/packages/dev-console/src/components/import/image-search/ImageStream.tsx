@@ -14,7 +14,6 @@ import {
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   RegistryType,
@@ -118,9 +117,7 @@ const ImageStream: React.FC<{
           {validated === ValidatedOptions.error && (
             <FormHelperText>
               <HelperText>
-                <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-                  {helperTextInvalid}
-                </HelperTextItem>
+                <HelperTextItem variant="error">{helperTextInvalid}</HelperTextItem>
               </HelperText>
             </FormHelperText>
           )}
