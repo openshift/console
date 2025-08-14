@@ -544,7 +544,7 @@
   "An error occurred during event retrieval. Attempting to reconnect...": "イベントの取得中にエラーが発生しました。再接続の試行中...",
   "Events": "イベント",
   "Connection did not close cleanly.": "接続が正常に閉じられませんでした。",
-  "Error connecting to event stream: { error }": "イベントストリームへの接続エラー: { error }",
+  "Error connecting to event stream: {{ error }}": "イベントストリームへの接続エラー: {{ error }}",
   "Error connecting to event stream": "イベントストリームへの接続エラー",
   "Loading events...": "イベントを読み込み中...",
   "Streaming events...": "イベントをストリーミング中...",
