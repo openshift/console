@@ -7,7 +7,8 @@ import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { RadioGroup } from '@console/internal/components/radio';
-import { NumberSpinner, ListDropdown, Dropdown } from '@console/internal/components/utils';
+import { NumberSpinner, ListDropdown } from '@console/internal/components/utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { K8sKind, GroupVersionKind, ImagePullPolicy } from '@console/internal/module/k8s';
 import { selectorFromString } from '@console/internal/module/k8s/selector';
 import { JSON_SCHEMA_NUMBER_TYPES } from './const';
@@ -208,7 +209,7 @@ export const SelectWidget: React.FC<WidgetProps> = ({
     {},
   );
   return (
-    <Dropdown
+    <ConsoleSelect
       id={id}
       key={id}
       title={t('console-shared~Select {{title}}', { title: title || schema?.title || label })}

@@ -3,15 +3,19 @@
   position: relative;
 }
 
-.slide-entering {
-  left: 100%;
-  opacity: 0;
+.co-sysevent-slide-in {
+  animation: co-sysevent-enter
+    var(--pf-t--global--motion--duration--slide-in--default)
+    var(--pf-t--global--motion--timing-function--accelerate);
 }
 
-.slide-entered {
-  left: 0;
-  opacity: 1;
-  transition: all 0.5s;
+@keyframes co-sysevent-enter {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .co-sysevent-stream__connection-error {

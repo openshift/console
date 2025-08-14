@@ -20,5 +20,5 @@ export const usePVCActionsProvider = (
     actionsPVC,
     commonActions,
   ]);
-  return [actions, !inFlight, undefined];
+  return [actions, !inFlight, false];
 };

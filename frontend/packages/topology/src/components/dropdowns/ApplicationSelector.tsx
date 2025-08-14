@@ -108,7 +108,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           <ApplicationDropdown
             id={fieldId}
             ariaLabel={label}
-            dropDownClassName="dropdown--full-width"
+            isFullWidth
             menuClassName="dropdown-menu--text-wrap"
             namespace={namespace}
             actionItems={actionItems}

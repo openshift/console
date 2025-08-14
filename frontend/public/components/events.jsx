@@ -33,8 +33,8 @@ import { EventModel, NodeModel } from '../models';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared/src/constants';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import {
-  Dropdown,
   Loading,
   ConsoleEmptyState,
   ResourceIcon,
@@ -269,7 +269,7 @@ export const EventsList = (props) => {
             selected={Array.from(selected)}
             clearSelection={clearSelection}
           />
-          <Dropdown
+          <ConsoleSelect
             items={eventTypes}
             onChange={(v) => setType(v)}
             selectedKey={type}
@@ -481,7 +481,7 @@ const EventStream = ({
     statusBtnTxt = (
       <span className="co-sysevent-stream__connection-error">
         {_.isString(error)
-          ? t('public~Error connecting to event stream: { error }', {
+          ? t('public~Error connecting to event stream: {{ error }}', {
               error,
             })
           : t('public~Error connecting to event stream')}

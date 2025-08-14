@@ -28,7 +28,7 @@ Cypress.Commands.add('testI18n', (selectors: string[] = [], testIDs: string[] = 
       if ($body.find('#filter-toolbar').length) {
         cy.get('#content').within(() => {
           listPage.filter.clickSearchByDropdown();
-          cy.byLegacyTestID('dropdown-menu').isPseudoLocalized(); // 'search by' menu items
+          cy.byTestID('console-select-item').isPseudoLocalized(); // 'search by' menu items
         });
       }
 

@@ -83,10 +83,10 @@ export const gitPage = {
         cy.log(`Application Name "${appName}" is created`);
       } else if ($body.find('#form-dropdown-application-name-field').length !== 0) {
         cy.get(gitPO.appName).click();
-        cy.get('[data-test-id="dropdown-text-filter"]').type(appName);
-        cy.get('[role="listbox"]').then(($el) => {
-          if ($el.find('li[role="option"]').length === 0) {
-            cy.get('[data-test-dropdown-menu="#CREATE_APPLICATION_KEY#"]').click();
+        cy.get('[data-test="console-select-search-input"]').type(appName);
+        cy.get('[data-test="console-select-menu-list"]').then(($el) => {
+          if ($el.find('[data-test="console-select-item"]').length === 0) {
+            cy.byTestDropDownMenu('#CREATE_APPLICATION_KEY#').click();
             cy.get('#form-input-application-name-field')
               .clear()
               .type(appName)

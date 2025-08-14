@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
-import { css } from '@patternfly/react-styles';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useFormikValidationFix } from '../../hooks';
-import ResourceDropdown, { ResourceDropdownItems } from '../dropdown/ResourceDropdown';
+import { ResourceDropdown, ResourceDropdownItems } from '../dropdown/ResourceDropdown';
 import { RedExclamationCircleIcon } from '../status';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
@@ -57,7 +56,7 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
           id={fieldId}
           dataSelector={dataSelector}
           selectedKey={field.value}
-          dropDownClassName={css({ 'dropdown--full-width': fullWidth })}
+          isFullWidth={fullWidth}
           onLoad={onLoad}
           resourceFilter={resourceFilter}
           onChange={(value: string, name: string | object, resource: K8sResourceKind) => {

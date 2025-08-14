@@ -1,4 +1,4 @@
-const option = '[role="option"]';
+const option = '[data-test="console-select-item"]';
 
 export const environment = {
   isLoaded: () => {
@@ -15,7 +15,7 @@ export const environment = {
   },
   addVariableFrom: (resourceName: string, resourcePrefix?: string, getExactResource?: boolean) => {
     environment.isLoaded();
-    cy.get('.value-from button').click().byLegacyTestID('dropdown-text-filter').type(resourceName);
+    cy.get('.value-from button').click().byTestID('console-select-search-input').type(resourceName);
     if (getExactResource) {
       cy.get(option).find('.co-resource-item__resource-name').contains(resourceName).click();
     } else {

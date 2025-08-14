@@ -29,7 +29,9 @@ export const useReplicaSetActionsProvider = (resource: ReplicaSetKind) => {
             ...pdbActions,
             commonActions.AddStorage,
             ...commonResourceActions,
-            ...(resource?.status?.replicas > 0 || !deploymentName ? [] : replicaSetActions),
+            ...((resource?.status?.replicas && resource?.status?.replicas > 0) || !deploymentName
+              ? []
+              : replicaSetActions),
           ],
     [
       resource,

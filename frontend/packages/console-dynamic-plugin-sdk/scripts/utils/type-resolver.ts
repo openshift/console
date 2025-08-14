@@ -15,7 +15,7 @@ export type ConsoleTypeDeclarations = Record<'CodeRef' | 'EncodedCodeRef', ts.De
 type ContainsJSDoc = {
   /** JSDoc comments attached to the corresponding AST node. */
   docComments: string[];
-  /** If a JSDoc tag of @deprecated is present on the item */
+  /** True if `@deprecated` JSDoc tag is present on the AST node. */
   isDeprecated: boolean;
 };
 
@@ -80,7 +80,8 @@ const parseExtensionTypeInfo = (
     .getTypeFromTypeNode(typeArgP)
     .getProperties()
     .map<ExtensionPropertyInfo>((p) => {
-      const declarations = _.head(p.declarations);
+      const declaration = _.head(p.declarations);
+
       return {
         name: p.getName(),
         // TODO(vojtech): using ts.TypeFormatFlags.MultilineObjectLiterals flag doesn't seem
@@ -95,8 +96,8 @@ const parseExtensionTypeInfo = (
         ),
         // eslint-disable-next-line no-bitwise
         optional: !!(p.flags & ts.SymbolFlags.Optional),
-        docComments: getJSDocComments(declarations),
-        isDeprecated: hasDeprecationJSDoc(declarations),
+        docComments: getJSDocComments(declaration),
+        isDeprecated: hasDeprecationJSDoc(declaration),
       };
     });
 

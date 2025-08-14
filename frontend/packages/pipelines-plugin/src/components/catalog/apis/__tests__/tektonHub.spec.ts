@@ -2,7 +2,7 @@ import { act } from 'react-dom/test-utils';
 import { setUtilsConfig } from '@console/dynamic-plugin-sdk/src/app/configSetup';
 import { appInternalFetch } from '@console/internal/co-fetch';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { sampleTektonHubCatalogItem } from '../../../../test-data/catalog-item-data';
 import { sampleTektonHubCR } from '../../../../test-data/tektonhub-data';
 import {

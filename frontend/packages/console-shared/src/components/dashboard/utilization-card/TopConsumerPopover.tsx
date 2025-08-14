@@ -12,7 +12,7 @@ import {
 import { DataPoint } from '@console/internal/components/graphs';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { Dropdown } from '@console/internal/components/utils/dropdown';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
 import { getName, getNamespace, useFlag } from '../../..';
@@ -131,7 +131,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
     }) => {
       const { t } = useTranslation();
       const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
-      const activePerspective = useActivePerspective()[0];
+      const [activePerspective, setActivePerspective] = useActivePerspective();
       const canAccessMonitoring =
         useFlag(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL;
       const { query, model, metric, fieldSelector } = currentConsumer;
@@ -235,7 +235,16 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
                   );
                 })}
             </ul>
-            <Link to={monitoringURL}>{t('console-shared~View more')}</Link>
+            <Link
+              to={monitoringURL}
+              onClick={() => {
+                if (monitoringURL.startsWith('/dev-monitoring') && activePerspective !== 'dev') {
+                  setActivePerspective('dev');
+                }
+              }}
+            >
+              {t('console-shared~View more')}
+            </Link>
           </>
         );
       }
@@ -254,10 +263,11 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
               : t('console-shared~Top consumers')}
           </div>
           {consumers.length > 1 && (
-            <Dropdown
-              className="co-utilization-card-popover__dropdown"
+            <ConsoleSelect
               id="consumer-select"
-              name="selectConsumerType"
+              renderInline // needed for popover to not close on selection
+              isFullWidth
+              buttonClassName="pf-v6-u-my-sm"
               aria-label={t('console-shared~Select consumer type')}
               items={dropdownItems}
               onChange={onDropdownChange}

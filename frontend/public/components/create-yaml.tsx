@@ -20,49 +20,70 @@ import {
 import { ErrorPage404 } from './error';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 
-export const CreateYAMLInner = (props) => {
-  const {
-    params,
-    kindsInFlight,
-    kindObj,
-    hideHeader = false,
-    onChange = () => null,
-    resourceObjPath,
-    isCreate = true,
-  } = props;
+export const CreateYAMLInner = ({
+  params,
+  kindsInFlight,
+  kindObj,
+  hideHeader = false,
+  onChange = () => null,
+  resourceObjPath,
+  isCreate = true,
+  template,
+}: CreateYAMLProps) => {
   const { t } = useTranslation();
+  const namespace = params.ns || 'default';
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
     React.useCallback(
       (e): e is YAMLTemplate => isYAMLTemplate(e) && e.properties.model.kind === kindObj?.kind,
       [kindObj],
     ),
   );
+
   const yamlTemplates = React.useMemo(() => getYAMLTemplates(templateExtensions), [
     templateExtensions,
   ]);
+
+  const initialResource = React.useMemo(() => {
+    if (!kindObj) {
+      return {};
+    }
+    const resolvedTemplate =
+      template ||
+      yamlTemplates.getIn([referenceForModel(kindObj), 'default']) ||
+      yamlTemplates.getIn(['DEFAULT', 'default']);
+    if (!resolvedTemplate) {
+      return {};
+    }
+
+    const parsed = safeYAMLToJS(resolvedTemplate);
+    if (!parsed || typeof parsed === 'string') {
+      return {};
+    }
+
+    const { metadata, spec } = parsed;
+    const { crd, kind, namespaced } = kindObj;
+    const isDefaultTemplate = crd && template === yamlTemplates.getIn(['DEFAULT', 'default']);
+    return {
+      ...parsed,
+      kind,
+      metadata: {
+        ...(metadata ?? {}),
+        ...(namespaced ? { namespace } : {}),
+      },
+      ...(isDefaultTemplate
+        ? {
+            apiVersion: apiVersionForModel(kindObj),
+            spec: spec ?? {},
+          }
+        : {}),
+    };
+  }, [template, kindObj, namespace, yamlTemplates]);
 
   if (!kindObj) {
     if (kindsInFlight || !resolvedTemplates) {
       return <LoadingBox />;
     }
     return <ErrorPage404 />;
-  }
-
-  const namespace = params.ns || 'default';
-  const template =
-    props.template ||
-    yamlTemplates.getIn([referenceForModel(kindObj), 'default']) ||
-    yamlTemplates.getIn(['DEFAULT', 'default']);
-
-  const obj = safeYAMLToJS(template);
-  obj.kind = kindObj.kind;
-  obj.metadata = obj.metadata || {};
-  if (kindObj.namespaced) {
-    obj.metadata.namespace = namespace;
-  }
-  if (kindObj.crd && template === yamlTemplates.getIn(['DEFAULT', 'default'])) {
-    obj.apiVersion = apiVersionForModel(kindObj);
-    obj.spec = obj.spec || {};
   }
   const header = t('public~Create {{objLabel}}', {
     objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
@@ -73,7 +94,7 @@ export const CreateYAMLInner = (props) => {
   return (
     <AsyncComponent
       loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
-      initialResource={obj}
+      initialResource={initialResource}
       create={isCreate}
       kind={kindObj.kind}
       header={header}

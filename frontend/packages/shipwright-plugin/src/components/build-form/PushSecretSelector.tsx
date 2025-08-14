@@ -48,7 +48,7 @@ const PushSecretSelector: React.FC<{
       >
         <PushSecretDropdown
           name={`${fieldPrefix}`}
-          dropDownClassName="dropdown--full-width"
+          isFullWidth
           menuClassName="dropdown-menu--text-wrap"
           namespace={namespace}
           actionItems={[

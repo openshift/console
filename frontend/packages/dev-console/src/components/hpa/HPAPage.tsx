@@ -9,7 +9,7 @@ import { getGroupVersionKind, K8sResourceKind } from '@console/internal/module/k
 import { useRelatedHPA } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import { getLimitWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
+import { getRequestsWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 import HPAFormikForm from './HPAFormikForm';
 import HPAPageHeader from './HPAPageHeader';
 
@@ -48,7 +48,7 @@ const HPAPage: React.FC<PageComponentProps> = () => {
         <>
           <HPAPageHeader
             kind={kind}
-            limitWarning={workloadLoaded && validSupportedType ? getLimitWarning(data) : null}
+            limitWarning={workloadLoaded && validSupportedType ? getRequestsWarning(data) : null}
             loadError={error}
             name={name}
             title={title}

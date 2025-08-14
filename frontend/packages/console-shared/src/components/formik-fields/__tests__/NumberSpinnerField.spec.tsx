@@ -4,11 +4,9 @@ import NumberSpinnerField from '../NumberSpinnerField';
 
 const getInput = () => screen.getByTestId('number-spinner-field') as HTMLInputElement;
 
-describe('Number Spinner Field', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test-id' });
-  });
+configure({ testIdAttribute: 'data-test-id' });
 
+describe('Number Spinner Field', () => {
   it('should render input field with type number', () => {
     mockFormikRenderer(<NumberSpinnerField name="spinnerField" />);
     const input = getInput();

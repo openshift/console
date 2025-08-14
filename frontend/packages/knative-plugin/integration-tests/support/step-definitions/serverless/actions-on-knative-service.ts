@@ -222,8 +222,8 @@ When('user enters {string} into the Split text box of new revision', (splitPerce
 });
 
 When('user selects another revision from Revision drop down', () => {
-  cy.byLegacyTestID('dropdown-button').eq(1).click();
-  cy.byLegacyTestID('dropdown-menu').first().click();
+  cy.byTestID('console-select-menu-toggle').eq(1).click();
+  cy.byTestID('console-select-item').first().click();
 });
 
 Then(

@@ -30,7 +30,7 @@ Then(
     cy.byTestID(webTerminalPO.createProjectMenu.inputField)
       .type(nameSpace)
       .should('have.value', nameSpace);
-    cy.byTestID('dropdown-menu-item-link').contains(nameSpace).click();
+    cy.byTestID('console-select-item').contains(nameSpace).click();
     perspective.switchTo(switchPerspective.Administrator);
     searchResource.searchResourceByNameAsAdmin('DevWorkspace');
     cy.get('div').contains('Resources').click();

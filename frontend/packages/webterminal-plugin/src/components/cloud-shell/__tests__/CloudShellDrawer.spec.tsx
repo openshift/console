@@ -1,34 +1,35 @@
-import { shallow } from 'enzyme';
-import { Drawer } from '@console/shared';
-import CloseButton from '@console/shared/src/components/close-button';
+import { configure, render } from '@testing-library/react';
 import CloudShellDrawer from '../CloudShellDrawer';
+import '@testing-library/jest-dom';
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
 }));
 
+jest.mock('@console/webterminal-plugin/src/components/cloud-shell/MultiTabbedTerminal', () => ({
+  MultiTabbedTerminal: () => 'Terminal content',
+}));
+
+configure({ testIdAttribute: 'data-test' });
+
 describe('CloudShellDrawerComponent', () => {
   it('should render children as Drawer children when present', () => {
-    const wrapper = shallow(
+    const wrapper = render(
       <CloudShellDrawer onClose={() => null}>
-        <p data-test="terminal-content">Terminal content</p>
+        <p>Console webapp</p>
       </CloudShellDrawer>,
     );
-    expect(wrapper.find(Drawer).children().find('[data-test="terminal-content"]').text()).toEqual(
-      'Terminal content',
-    );
+    expect(wrapper.getByText('Console webapp')).toBeInTheDocument();
+    expect(wrapper.getByText('Terminal content')).toBeInTheDocument();
   });
 
-  it('should call onClose when clicked on close button', () => {
-    const onClose = jest.fn();
-    const wrapper = shallow(
-      <CloudShellDrawer onClose={onClose}>
-        <p>Terminal content</p>
+  it('should still render children when the Drawer is closed', () => {
+    const wrapper = render(
+      <CloudShellDrawer onClose={() => null} open={false}>
+        <p data-test="body">Console webapp</p>
       </CloudShellDrawer>,
     );
-    const closeButton = wrapper.find(Drawer).shallow().find(CloseButton);
-    expect(closeButton.props().ariaLabel).toEqual('Close terminal');
-    closeButton.simulate('click');
-    expect(onClose).toHaveBeenCalled();
+    expect(wrapper.getByTestId('body').innerHTML).toEqual('Console webapp');
+    expect(wrapper.queryByText('Terminal content')).not.toBeInTheDocument();
   });
 });

@@ -17,7 +17,7 @@ import {
   cloudShellSetupValidationSchema,
   getCloudShellTimeout,
 } from './cloud-shell-setup-utils';
-import CloudSehellSetupForm from './CloudShellSetupForm';
+import CloudShellSetupForm from './CloudShellSetupForm';
 import './CloudShellSetup.scss';
 
 type Props = {
@@ -116,7 +116,7 @@ const CloudShellAdminSetup: React.FunctionComponent<Props> = ({
         onReset={onCancel}
         validationSchema={cloudShellSetupValidationSchema()}
       >
-        {(formikProps) => <CloudSehellSetupForm {...formikProps} isAdmin />}
+        {(formikProps) => <CloudShellSetupForm {...formikProps} isAdmin />}
       </Formik>
     </div>
   );

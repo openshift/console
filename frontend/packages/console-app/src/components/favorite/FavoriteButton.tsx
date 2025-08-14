@@ -32,10 +32,10 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
   const [favorites, setFavorites, loaded] = useUserSettingsCompatibility<FavoritesType>(
     FAVORITES_CONFIG_MAP_KEY,
     FAVORITES_LOCAL_STORAGE_KEY,
-    null,
+    undefined,
     true,
   );
-  const alphanumericRegex = /^[a-zA-Z0-9- ]*$/;
+  const alphanumericRegex = /^[\p{L}\p{N}\s-]*$/u;
 
   const currentUrlPath = window.location.pathname;
 
@@ -60,7 +60,7 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
         : currentUrlPath.split('/');
       const sanitizedDefaultName = (
         defaultName ?? currentUrlSplit.slice(-1)[0].split('?')[0]
-      ).replace(/[^a-zA-Z0-9- ]/g, '-');
+      ).replace(/[^\p{L}\p{N}\s-]/gu, '-');
       setName(sanitizedDefaultName);
       setIsModalOpen(true);
     }

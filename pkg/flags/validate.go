@@ -43,16 +43,16 @@ func ValidateFlagIsURL(name string, value string, allowEmpty bool) (*url.URL, er
 		return nil, NewRequiredFlagError(name)
 	}
 
-	ur, err := url.Parse(value)
+	url, err := url.Parse(value)
 	if err != nil {
-		return nil, NewInvalidFlagError(name, err.Error())
+		return nil, NewInvalidFlagError(name, "invalid URL: %v", err)
 	}
 
-	if ur == nil || ur.String() == "" || ur.Scheme == "" || ur.Host == "" {
-		return nil, NewInvalidFlagError(name, "malformed URL")
+	if url == nil || url.String() == "" || url.Scheme == "" || url.Host == "" {
+		return nil, NewInvalidFlagError(name, "malformed URL: %s", url.String())
 	}
 
-	return ur, nil
+	return url, nil
 }
 
 func ValidateFlagIs(name string, value string, expectedValues ...string) error {
@@ -73,6 +73,6 @@ func ValidateFlagIs(name string, value string, expectedValues ...string) error {
 
 func FatalIfFailed(err error) {
 	if err != nil {
-		klog.Fatalf(err.Error())
+		klog.Fatalf("fatal error: %v", err)
 	}
 }

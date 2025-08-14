@@ -54,8 +54,8 @@ export const operator = {
     }
     if (installToNamespace !== GlobalInstalledNamespace && !useOperatorRecommendedNamespace) {
       cy.byTestID('dropdown-selectbox').click();
-      cy.byLegacyTestID('dropdown-text-filter').type(installToNamespace);
-      cy.byTestID('dropdown-menu-item-link').click();
+      cy.byTestID('console-select-search-input').type(installToNamespace);
+      cy.byTestDropDownMenu(`${installToNamespace}-Project`).click();
       cy.byTestID('dropdown-selectbox').should('contain', installToNamespace);
     }
     // Install

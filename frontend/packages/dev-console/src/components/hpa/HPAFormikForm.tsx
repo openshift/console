@@ -12,14 +12,7 @@ import {
 } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
-import {
-  getFormData,
-  getYAMLData,
-  hasCustomMetrics,
-  isCpuUtilizationPossible,
-  isMemoryUtilizationPossible,
-  sanityForSubmit,
-} from './hpa-utils';
+import { getFormData, getYAMLData, hasCustomMetrics, sanityForSubmit } from './hpa-utils';
 import HPAForm from './HPAForm';
 import { HPAFormValues } from './types';
 import { hpaValidationSchema } from './validation-utils';
@@ -35,8 +28,6 @@ const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResour
     showCanUseYAMLMessage: true,
     disabledFields: {
       name: !!existingHPA,
-      cpuUtilization: !isCpuUtilizationPossible(targetResource),
-      memoryUtilization: !isMemoryUtilizationPossible(targetResource),
     },
     editorType: hasCustomMetrics(existingHPA) ? EditorType.YAML : EditorType.Form,
     formData: getFormData(targetResource, existingHPA),

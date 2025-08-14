@@ -11,7 +11,7 @@ import './NamespaceSection.scss';
 
 type NamespaceSectionProps = WithFlagsProps;
 
-const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
+const NamespaceSection: React.FCC<NamespaceSectionProps> = ({ flags }) => {
   const canCreateNs = flags[FLAGS.CAN_CREATE_NS];
   const canCreateProject = flags[FLAGS.CAN_CREATE_PROJECT];
   const canCreate = canCreateNs || canCreateProject;
@@ -45,6 +45,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
     <>
       <ResourceDropdownField
         name="namespace"
+        dataTest="webterminal-namespace-dropdown"
         label={t('webterminal-plugin~Project')}
         placeholder={t('webterminal-plugin~Select Project')}
         fullWidth
@@ -75,7 +76,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
         )}
       />
       {namespace.value === CREATE_NAMESPACE_KEY && (
-        <div className="wt-project-name">
+        <div className="wt-project-name" data-test="input-field-newNamespace">
           <InputField
             type={TextInputTypes.text}
             required

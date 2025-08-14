@@ -69,7 +69,7 @@ const SourceSecretSelector: React.FC<{
         label={t('devconsole~Source Secret')}
       >
         <SourceSecretDropdown
-          dropDownClassName="dropdown--full-width"
+          isFullWidth
           menuClassName="dropdown-menu--text-wrap"
           namespace={namespace}
           actionItems={[

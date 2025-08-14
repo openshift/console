@@ -3,6 +3,8 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { GettingStartedCard, GettingStartedCardProps } from '../GettingStartedCard';
 import '@testing-library/jest-dom';
 
+configure({ testIdAttribute: 'data-test' });
+
 describe('GettingStartedCard', () => {
   const defaultProps: GettingStartedCardProps = {
     id: 'test-card',
@@ -27,10 +29,6 @@ describe('GettingStartedCard', () => {
       href: '/more',
     },
   };
-
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   it('renders title and description', () => {
     renderWithProviders(<GettingStartedCard {...defaultProps} />);

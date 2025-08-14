@@ -49,11 +49,11 @@ const useReplicationController = (resource: DeploymentConfigKind) => {
     watch
       ? {
           kind: rcModel.kind,
-          namespace: resource.metadata.namespace,
+          namespace: resource.metadata?.namespace,
           namespaced: true,
           selector: {
             matchLabels: {
-              'openshift.io/deployment-config.name': resource.metadata.name,
+              'openshift.io/deployment-config.name': resource.metadata?.name || '',
             },
           },
         }
@@ -83,12 +83,12 @@ export const useRetryRolloutAction = (resource: DeploymentConfigKind): Action =>
         ? t(
             'console-app~This action is only enabled when the latest revision of the ReplicationController resource is in a failed state.',
           )
-        : null,
+        : undefined,
       accessReview: {
         group: dcModel.apiGroup,
         resource: dcModel.plural,
-        name: resource.metadata.name,
-        namespace: resource.metadata.namespace,
+        name: resource.metadata?.name,
+        namespace: resource.metadata?.namespace,
         verb: 'patch',
       },
     }),

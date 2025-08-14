@@ -2,19 +2,14 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Firehose } from '@console/internal/components/utils/firehose';
 import { SecretModel } from '@console/internal/models';
-import { ResourceDropdown } from '@console/shared';
+import {
+  ResourceDropdown,
+  ResourceDropdownProps,
+} from '@console/shared/src/components/dropdown/ResourceDropdown';
 
-interface SourceSecretDropdownProps {
-  dropDownClassName?: string;
-  menuClassName?: string;
+interface SourceSecretDropdownProps
+  extends Omit<ResourceDropdownProps, 'resources' | 'placeholder' | 'dataSelector'> {
   namespace?: string;
-  actionItems?: {
-    actionTitle: string;
-    actionKey: string;
-  }[];
-  selectedKey: string;
-  onChange?: (key: string) => void;
-  title?: React.ReactNode;
 }
 
 const SourceSecretDropdown: React.FC<SourceSecretDropdownProps> = (props) => {

@@ -22,7 +22,9 @@ export const useValuesForPerspectiveContext = (): [
   const acmPerspectiveExtension = usePerspectiveExtension(ACM_PERSPECTIVE_ID);
   const existingPerspective = activePerspective || latestPerspective;
   const perspective =
-    !!acmPerspectiveExtension && !existingPerspective ? ACM_PERSPECTIVE_ID : existingPerspective;
+    !!acmPerspectiveExtension && !existingPerspective
+      ? ACM_PERSPECTIVE_ID
+      : existingPerspective || '';
   const isValidPerspective =
     loaded && perspectiveExtensions.some((p) => p.properties.id === perspective);
 
@@ -34,5 +36,5 @@ export const useValuesForPerspectiveContext = (): [
     fireTelemetryEvent('Perspective Changed', { perspective: newPerspective });
   };
 
-  return [isValidPerspective ? perspective : undefined, setPerspective, loaded];
+  return [isValidPerspective ? perspective : '', setPerspective, loaded];
 };

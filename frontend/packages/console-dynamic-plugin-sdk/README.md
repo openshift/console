@@ -214,6 +214,7 @@ This section documents notable changes in Console provided shared modules and ot
 - Removed support for the Bootstrap Grid system (`.row`, `.col-*`, etc.). Use
   [PatternFly Grid](https://www.patternfly.org/layouts/grid) instead.
 - Removed `co-external-link` styling. Use PatternFly Buttons with `variant="link"` instead.
+- Removed `co-disabled` styling.
 
 ### PatternFly 5+ dynamic modules
 

@@ -6,9 +6,9 @@ export const upgradeHelmRelease = {
     cy.get(helmPO.upgradeHelmRelease.replicaCount).clear().type(replicaCount),
   upgradeChartVersion: () => {
     cy.get(helmPO.upgradeHelmRelease.chartVersion).click();
-    const count = Cypress.$('[data-test-id="dropdown-menu"]').length;
+    const count = Cypress.$('[data-test="console-select"]').length;
     const randNum = Math.floor(Math.random() * count);
-    cy.byLegacyTestID('dropdown-menu').eq(randNum).click();
+    cy.byTestID('console-select-item').eq(randNum).click();
     cy.get('body').then(($body) => {
       if ($body.find('form.modal-content').length) {
         cy.log('Change Chart version popup is displayed, so clicking on the proceed button');

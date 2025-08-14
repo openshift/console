@@ -52,7 +52,7 @@ describe('ClusterSetupGettingStartedCard', () => {
     useAlertReceiverLinkMock.mockReturnValue({
       id: 'alert-receivers',
       title: 'Configure alert receivers',
-      href: '/monitoring/alertmanagerconfig',
+      href: '/settings/cluster/alertmanagerconfig',
     });
 
     const wrapper = shallow(<ClusterSetupGettingStartedCard />);
@@ -67,7 +67,7 @@ describe('ClusterSetupGettingStartedCard', () => {
       {
         id: 'alert-receivers',
         title: 'Configure alert receivers',
-        href: '/monitoring/alertmanagerconfig',
+        href: '/settings/cluster/alertmanagerconfig',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toMatchObject({

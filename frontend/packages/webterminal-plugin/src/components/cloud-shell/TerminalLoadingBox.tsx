@@ -6,7 +6,7 @@ type TerminalLoadingBoxProps = {
   message?: string;
 };
 
-const TerminalLoadingBox: React.FC<TerminalLoadingBoxProps> = ({ message }) => {
+const TerminalLoadingBox: React.FCC<TerminalLoadingBoxProps> = ({ message }) => {
   const { t } = useTranslation();
   return (
     <LoadingBox>

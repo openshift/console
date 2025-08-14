@@ -6,7 +6,6 @@ import {
   WatchK8sResults,
   WatchK8sResultsObject,
 } from '@console/dynamic-plugin-sdk';
-import { getRouteWebURL } from '@console/internal/components/routes';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import {
   useK8sWatchResource,
@@ -14,6 +13,7 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { RouteModel } from '@console/internal/models';
 import { K8sResourceCommon, referenceForModel, RouteKind } from '@console/internal/module/k8s';
+import { getRouteWebURL } from '@console/shared/src/components/utils/routes';
 import { EventListenerModel, PipelineRunModel, TriggerTemplateModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
 import {
