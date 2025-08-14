@@ -122,10 +122,7 @@ export const createColumnManagementModal = (props) =>
     m.createColumnManagementModal(props),
   );
 
-export const addUsersModal = (props) =>
-  import('./add-users-modal' /* webpackChunkName: "add-users-modal" */).then((m) =>
-    m.addUsersModal(props),
-  );
+// add-users modal migrated to useOverlay in console-app; legacy launcher removed
 
 export const removeUserModal = (props) =>
   import('./remove-user-modal' /* webpackChunkName: "remove-user-modal" */).then((m) =>
