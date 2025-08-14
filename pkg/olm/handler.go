@@ -6,12 +6,12 @@ import (
 
 type OLMHandler struct {
 	client         *http.Client
-	catalogService *catalogService
+	catalogService *CatalogService
 	apiServerURL   string
 	mux            *http.ServeMux
 }
 
-func NewOLMHandler(apiServerURL string, client *http.Client, service *catalogService) http.Handler {
+func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogService) http.Handler {
 	o := &OLMHandler{
 		apiServerURL:   apiServerURL,
 		client:         client,

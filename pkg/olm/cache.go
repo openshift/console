@@ -17,7 +17,12 @@ type catalogCache struct {
 func (c *catalogCache) UpdateCatalog(catalogName string, items []CatalogItem) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c.catalogItems[catalogName] = items
+	//
+	if items == nil {
+		delete(c.catalogItems, catalogName)
+	} else {
+		c.catalogItems[catalogName] = items
+	}
 	c.lastModified = time.Now()
 }
 
