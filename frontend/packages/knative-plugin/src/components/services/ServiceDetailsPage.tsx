@@ -15,7 +15,12 @@ import {
   navFactory,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind, referenceForModel, K8sKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  referenceForModel,
+  K8sKind,
+  K8sModel,
+} from '@console/internal/module/k8s';
 import {
   ActionMenu,
   ActionMenuVariant,
@@ -41,9 +46,9 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
   const { t } = useTranslation();
   const [revisions, revisionLoaded, revisionErrorLoad] = useK8sWatchResource<RevisionKind[]>({
     kind: referenceForModel(RevisionModel),
-    namespace: obj.metadata.namespace,
+    namespace: obj?.metadata?.namespace ?? '',
     isList: true,
-    selector: { matchLabels: { 'serving.knative.dev/service': obj.metadata.name } },
+    selector: { matchLabels: { 'serving.knative.dev/service': obj?.metadata?.name ?? '' } },
   });
 
   return (
@@ -81,7 +86,7 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('knative-plugin~Containers')} />
-        <ContainerTable containers={obj.spec.template.spec.containers} />
+        <ContainerTable containers={obj?.spec?.template?.spec?.containers ?? []} />
       </PaneBody>
       {_.isArray(obj?.status?.conditions) && (
         <PaneBody>
@@ -96,10 +101,10 @@ const ServiceDetails: React.FC<{ obj: ServiceKind }> = ({ obj }) => {
 const FunctionsPods: React.FC<FunctionsPodsProps> = ({ obj }) => (
   <PodsPage
     showTitle={false}
-    selector={{ matchLabels: { 'serving.knative.dev/service': obj.metadata.name } }}
+    selector={{ matchLabels: { 'serving.knative.dev/service': obj?.metadata?.name ?? '' } }}
     showNamespaceOverride
     canCreate={false}
-    namespace={obj.metadata.namespace}
+    namespace={obj?.metadata?.namespace ?? ''}
   />
 );
 
@@ -107,7 +112,7 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
   const { t } = useTranslation();
   const serviceTypeValue = React.useContext(KnativeServiceTypeContext);
   const { kindObj } = props;
-  const params = useParams();
+  const params = useParams() as any;
   const location = useLocation();
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const pages = [
@@ -153,11 +158,11 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
     );
   };
   const breadcrumbs = useTabbedTableBreadcrumbsFor(
-    kindObj,
+    kindObj ?? ({} as K8sModel),
     location,
     params,
     serviceTypeValue === ServiceTypeValue.Function ? 'functions' : 'serving',
-    serverlessTab(kindObj.kind),
+    serverlessTab(kindObj?.kind ?? '') || undefined,
     serviceTypeValue === ServiceTypeValue.Function ? t('knative-plugin~Functions') : undefined,
     serviceTypeValue === ServiceTypeValue.Function ? true : isAdminPerspective,
     serviceTypeValue === ServiceTypeValue.Function ? t('knative-plugin~Function') : undefined,
@@ -165,7 +170,9 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
   return (
     <DetailsPage
       {...props}
-      breadcrumbsFor={() => breadcrumbs}
+      breadcrumbsFor={() =>
+        (breadcrumbs ?? []).filter((b) => b.name).map((b) => ({ ...b, name: b.name ?? '' }))
+      }
       pages={pages}
       customActionMenu={actionMenu}
       customData={{ selectResourcesForName: params.name }}

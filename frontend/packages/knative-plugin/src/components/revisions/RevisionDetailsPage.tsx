@@ -4,7 +4,7 @@ import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { K8sModel, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   ActionMenuVariant,
   ActionServiceProvider,
@@ -15,21 +15,21 @@ import { serverlessTab } from '../../utils/serverless-tab-utils';
 
 const RevisionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const location = useLocation();
-  const params = useParams();
+  const params = useParams() as any;
   const { kindObj } = props;
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
   const breadcrumbs = useTabbedTableBreadcrumbsFor(
-    kindObj,
+    kindObj ?? ({} as K8sModel),
     location,
-    params,
+    params ?? ({} as any),
     'serving',
-    serverlessTab(kindObj.kind),
+    serverlessTab(kindObj?.kind ?? '') || undefined,
     undefined,
     isAdminPerspective,
   );
 
-  const actionMenu = (kindObjData: K8sKind, obj: K8sResourceKind) => {
+  const actionMenu = (kindObjData: K8sModel, obj: K8sResourceKind) => {
     const resourceKind = referenceForModel(kindObjData);
     const context = { [resourceKind]: obj };
     return (
@@ -46,8 +46,10 @@ const RevisionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = 
   return (
     <DetailsPage
       {...props}
-      breadcrumbsFor={() => breadcrumbs}
-      pages={pages}
+      breadcrumbsFor={() =>
+        (breadcrumbs ?? []).filter((b) => b.name).map((b) => ({ ...b, name: b.name ?? '' }))
+      }
+      pages={pages ?? []}
       customActionMenu={actionMenu}
     />
   );
