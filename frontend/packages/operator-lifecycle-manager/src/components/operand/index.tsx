@@ -168,7 +168,7 @@ const getOperandStatusText = (operand: K8sResourceKind): string => {
 
 export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, showNamespace }) => {
   const objReference = referenceFor(obj);
-  const context = { [objReference]: obj, 'csv-actions': { resource: obj } };
+  const context = { [objReference]: obj, 'operand-actions': { resource: obj } };
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -748,7 +748,7 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
   const actionItems = React.useCallback((resourceModel: K8sKind, resource: K8sResourceKind) => {
     const context = {
       [referenceForModel(resourceModel)]: resource,
-      'csv-actions': { resource },
+      'operand-actions': { resource },
     };
     return <LazyActionMenu context={context} variant={ActionMenuVariant.DROPDOWN} />;
   }, []);
