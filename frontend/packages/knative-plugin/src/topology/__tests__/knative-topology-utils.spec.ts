@@ -166,7 +166,7 @@ describe('knative topology utils', () => {
 
   it('should return undefined if traffic status is not defined', () => {
     const mockService = { metadata: { name: 'ser', namepspace: '' }, status: {}, spec: {} };
-    expect(filterRevisionsBaseOnTrafficStatus(mockService, mockRevisions)).toBeUndefined();
+    expect(filterRevisionsBaseOnTrafficStatus(mockService, mockRevisions)).toEqual([]);
   });
   it('expect isOperatorBackedKnResource to return true if resource is backing camel connector source', () => {
     jest

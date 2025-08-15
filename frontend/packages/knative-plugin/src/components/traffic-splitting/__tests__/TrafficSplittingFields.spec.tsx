@@ -46,7 +46,7 @@ describe('TrafficSplittingFields', () => {
     );
     const multiColumnField = wrapper.find(MultiColumnField).first();
     expect(multiColumnField.props().disableDeleteRow).toBe(false);
-    expect(multiColumnField.props().tooltipDeleteRow).toBe(undefined);
+    expect(multiColumnField.props().tooltipDeleteRow).toBe(null);
     expect(multiColumnField.props().disableAddRow).toBe(false);
     expect(multiColumnField.props().tooltipAddRow).toBe(null);
   });
