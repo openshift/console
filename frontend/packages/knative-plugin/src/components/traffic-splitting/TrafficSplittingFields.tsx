@@ -33,13 +33,13 @@ const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
       tooltipDeleteRow={
         values.trafficSplitting.length === 1
           ? t('knative-plugin~Service must have at least one assigned revision')
-          : undefined /* default */
+          : null
       }
       disableAddRow={values.trafficSplitting.length === size(revisionItems)}
       tooltipAddRow={
         values.trafficSplitting.length === size(revisionItems)
           ? t('knative-plugin~All revisions are already set to receive traffic')
-          : undefined /* no tooltip */
+          : null
       }
       spans={[2, 3, 7]}
     >

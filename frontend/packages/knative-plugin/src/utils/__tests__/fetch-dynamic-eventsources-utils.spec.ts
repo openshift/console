@@ -82,9 +82,9 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
     expect(isEqual(referenceForModel(resultModel), ref)).toBe(true);
   });
 
-  it('should return undefined if model is not found', () => {
+  it('should return null if model is not found', () => {
     const resultModel = getDynamicEventSourceModel(referenceForModel(ServiceModel));
-    expect(resultModel).toBe(undefined);
+    expect(resultModel).toBe(null);
   });
 
   it('should return limit if passed to getDynamicEventSourcesResourceList', async () => {
@@ -160,6 +160,6 @@ describe('fetch-dynamic-eventsources: Channels', () => {
   it('should get model from reference', async () => {
     await fetchChannelsCrd();
     const resultModel = getDynamicChannelModel('ab~v1~r');
-    expect(resultModel).toEqual(undefined);
+    expect(resultModel).toEqual(null);
   });
 });
