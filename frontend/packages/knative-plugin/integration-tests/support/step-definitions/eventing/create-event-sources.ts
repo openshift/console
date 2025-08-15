@@ -162,7 +162,7 @@ When('user clicks on the Create button', () => {
 });
 
 Then('user can see message in sink section as {string}', (message: string) => {
-  cy.get(eventSourcePO.sinkBinding.notifierMessage);
+  cy.get(eventSourcePO.sinkBinding.notifierHeader);
   cy.log(message);
 });
 

@@ -18,8 +18,8 @@ export const addTrigger = (model: K8sKind, source: K8sResourceKind): KebabOption
     accessReview: {
       group: EventingTriggerModel.apiGroup,
       resource: EventingTriggerModel.plural,
-      name: source.metadata.name,
-      namespace: source.metadata.namespace,
+      name: source.metadata?.name,
+      namespace: source.metadata?.namespace,
       verb: 'create',
     },
   };
@@ -36,8 +36,8 @@ export const AddTriggerAction = (source: K8sResourceKind): Action => {
     accessReview: {
       group: EventingTriggerModel.apiGroup,
       resource: EventingTriggerModel.plural,
-      name: source.metadata.name,
-      namespace: source.metadata.namespace,
+      name: source.metadata?.name,
+      namespace: source.metadata?.namespace,
       verb: 'create',
     },
   };

@@ -47,4 +47,4 @@ export const getEventSourceCatalogProviderData = (
       provider: 'Red Hat',
       support: t('knative-plugin~Supported'),
     },
-  }[ref]);
+  }[ref] ?? {});

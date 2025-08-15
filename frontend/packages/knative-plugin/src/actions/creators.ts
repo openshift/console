@@ -28,8 +28,8 @@ export const setTrafficDistribution = (kind: K8sKind, obj: K8sResourceKind): Act
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
-    name: obj.metadata.name,
-    namespace: obj.metadata.namespace,
+    name: obj.metadata?.name,
+    namespace: obj.metadata?.namespace,
     verb: 'update',
   },
 });
@@ -47,8 +47,8 @@ export const moveSinkPubsub = (model: K8sKind, source: K8sResourceKind): Action 
   accessReview: {
     group: model.apiGroup,
     resource: model.plural,
-    name: source.metadata.name,
-    namespace: source.metadata.namespace,
+    name: source.metadata?.name,
+    namespace: source.metadata?.namespace,
     verb: 'update',
   },
 });
@@ -63,8 +63,8 @@ export const addTriggerBroker = (model: K8sKind, source: K8sResourceKind): Actio
   accessReview: {
     group: EventingTriggerModel.apiGroup,
     resource: EventingTriggerModel.plural,
-    name: source.metadata.name,
-    namespace: source.metadata.namespace,
+    name: source.metadata?.name,
+    namespace: source.metadata?.namespace,
     verb: 'create',
   },
 });
@@ -79,8 +79,8 @@ export const addSubscriptionChannel = (model: K8sKind, source: K8sResourceKind):
   accessReview: {
     group: EventingSubscriptionModel.apiGroup,
     resource: EventingSubscriptionModel.plural,
-    name: source.metadata.name,
-    namespace: source.metadata.namespace,
+    name: source.metadata?.name,
+    namespace: source.metadata?.namespace,
     verb: 'create',
   },
 });
@@ -88,10 +88,12 @@ export const addSubscriptionChannel = (model: K8sKind, source: K8sResourceKind):
 export const editKnativeService = (kind: K8sKind, obj: K8sResourceKind): Action => ({
   id: 'edit-knative-service',
   label: i18next.t('knative-plugin~Edit {{applicationName}}', {
-    applicationName: truncateMiddle(obj.metadata.name, { length: RESOURCE_NAME_TRUNCATE_LENGTH }),
+    applicationName: truncateMiddle(obj.metadata?.name ?? '', {
+      length: RESOURCE_NAME_TRUNCATE_LENGTH,
+    }),
   }),
   cta: {
-    href: `/edit/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${
+    href: `/edit/ns/${obj.metadata?.namespace}?name=${obj.metadata?.name}&kind=${
       obj.kind || kind.kind
     }`,
   },
@@ -99,8 +101,8 @@ export const editKnativeService = (kind: K8sKind, obj: K8sResourceKind): Action 
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
-    name: obj.metadata.name,
-    namespace: obj.metadata.namespace,
+    name: obj.metadata?.name,
+    namespace: obj.metadata?.namespace,
     verb: 'update',
   },
 });
@@ -119,15 +121,15 @@ export const editKnativeServiceResource = (
     cta: {
       href:
         serviceTypeValue === ServiceTypeValue.Function
-          ? `/functions/ns/${obj.metadata.namespace}/${obj.metadata.name}/yaml`
+          ? `/functions/ns/${obj.metadata?.namespace}/${obj.metadata?.name}/yaml`
           : `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
     },
     insertAfter: 'edit-annotations',
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
+      name: obj.metadata?.name,
+      namespace: obj.metadata?.namespace,
       verb: 'update',
     },
   };
@@ -170,8 +172,8 @@ export const moveSinkSource = (model: K8sKind, source: K8sResourceKind): Action 
   accessReview: {
     group: model.apiGroup,
     resource: model.plural,
-    name: source.metadata.name,
-    namespace: source.metadata.namespace,
+    name: source.metadata?.name,
+    namespace: source.metadata?.namespace,
     verb: 'update',
   },
 });
@@ -186,8 +188,8 @@ export const deleteRevision = (model: K8sKind, revision: K8sResourceKind): Actio
   accessReview: {
     group: model.apiGroup,
     resource: model.plural,
-    name: revision.metadata.name,
-    namespace: revision.metadata.namespace,
+    name: revision.metadata?.name,
+    namespace: revision.metadata?.namespace,
     verb: 'delete',
   },
 });
@@ -207,8 +209,8 @@ export const editSinkUri = (
   accessReview: {
     group: model.apiGroup,
     resource: model.plural,
-    name: resources[0].metadata.name,
-    namespace: resources[0].metadata.namespace,
+    name: resources[0]?.metadata?.name,
+    namespace: resources[0]?.metadata?.namespace,
     verb: 'update',
   },
 });

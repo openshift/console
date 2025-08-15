@@ -29,7 +29,7 @@ const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink
   >();
 
   const resourcesData = [
-    ...getDynamicChannelResourceList(namespace),
+    ...(getDynamicChannelResourceList(namespace) ?? []),
     ...knativeEventingResourcesBroker(namespace),
   ];
 
@@ -90,7 +90,7 @@ const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink
         onChange={onChange}
         autocompleteFilter={autocompleteFilter}
         autoSelect
-        customResourceKey={craftResourceKey}
+        customResourceKey={craftResourceKey as any}
         resourceFilter={resourceFilter}
         onLoad={handleOnLoad}
       />
