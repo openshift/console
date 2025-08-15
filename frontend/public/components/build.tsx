@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Link, redirect } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
@@ -19,15 +19,14 @@ import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
-  K8sResourceKindReference,
-  referenceFor,
-  K8sResourceKind,
-  k8sPatch,
-  K8sKind,
-} from '../module/k8s';
-import { cloneBuild, getBuildNumber } from '../module/k8s/builds';
+  ActionMenu,
+  ActionMenuVariant,
+  ActionServiceProvider,
+  LazyActionMenu,
+} from '@console/shared/src/components/actions';
+import { K8sResourceKindReference, referenceFor, K8sResourceKind } from '../module/k8s';
+import { getBuildNumber } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
-import { errorModal, confirmModal } from './modals';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   AsyncComponent,
@@ -42,11 +41,8 @@ import {
   isManaged,
   isUpstream,
   Kebab,
-  KebabAction,
   navFactory,
-  ResourceKebab,
   ResourceLink,
-  resourceObjPath,
   resourcePath,
   ResourceSummary,
   SectionHeading,
@@ -56,70 +52,14 @@ import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
 import { Area } from './graphs';
-import { BuildConfigModel, BuildModel } from '../models';
+import { BuildConfigModel } from '../models';
 import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { displayDurationInWords } from './utils/build-utils';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
-const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
-  // t('public~Rebuild')
-  labelKey: 'public~Rebuild',
-  callback: () =>
-    cloneBuild(build)
-      .then((clone) => {
-        redirect(resourceObjPath(clone, referenceFor(clone)));
-      })
-      .catch((err) => {
-        const error = err.message;
-        errorModal({ error });
-      }),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    subresource: 'clone',
-    name: build.metadata.name,
-    namespace: build.metadata.namespace,
-    verb: 'create',
-  },
-});
-
-const CancelAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
-  // t('public~Cancel build')
-  labelKey: 'public~Cancel build',
-  hidden:
-    build.status.phase !== 'Running' &&
-    build.status.phase !== 'Pending' &&
-    build.status.phase !== 'New',
-  callback: () =>
-    confirmModal({
-      // t('public~Cancel build'),
-      // t('public~Are you sure you want to cancel this build?'),
-      // t('public~Yes, cancel'),
-      // t("public~No, don't cancel"),
-      titleKey: 'public~Cancel build',
-      messageKey: 'public~Are you sure you want to cancel this build?',
-      btnTextKey: 'public~Yes, cancel',
-      cancelTextKey: "public~No, don't cancel",
-      executeFn: () =>
-        k8sPatch(kind, build, [{ op: 'add', path: '/status/cancelled', value: true }]),
-    }),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: build.metadata.name,
-    namespace: build.metadata.namespace,
-    verb: 'patch',
-  },
-});
-
-const menuActions = [
-  CloneBuildAction,
-  CancelAction,
-  ...Kebab.getExtensionsActionsForKind(BuildModel),
-  ...Kebab.factory.common,
-];
+// The menuActions are now handled by the useBuildsActions hook in the action provider
 
 export enum BuildStrategyType {
   Docker = 'Docker',
@@ -230,7 +170,7 @@ const BuildMetrics = ({ obj }) => {
   ) : null;
 };
 
-const OpenShiftPipelines: React.FC = () => {
+const OpenShiftPipelines: React.FCC = () => {
   const { t } = useTranslation();
   const text = t('public~OpenShift Pipelines based on Tekton');
   return isUpstream() || isManaged() ? (
@@ -240,7 +180,7 @@ const OpenShiftPipelines: React.FC = () => {
   );
 };
 
-export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
+export const PipelineBuildStrategyAlert: React.FCC<BuildsDetailsProps> = () => {
   const { t } = useTranslation();
   return (
     <Alert
@@ -262,7 +202,7 @@ export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
   );
 };
 
-export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => {
+export const BuildsDetails: React.FCC<BuildsDetailsProps> = ({ obj: build }) => {
   const { logSnippet, message, startTimestamp, completionTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
   const hasPipeline = build.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
@@ -404,13 +344,28 @@ export const BuildEnvironmentComponent = (props) => {
   );
 };
 
-export const BuildsDetailsPage: React.SFC = (props) => {
+export const BuildsDetailsPage: React.FCC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
+
+  const customActionMenu = (kind, build) => {
+    const kindReference = referenceFor(build);
+    const context = { [kindReference]: build };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+
   return (
     <DetailsPage
       {...props}
       kind={BuildsReference}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       pages={[
         navFactory.details(BuildsDetails),
         ...(prometheusIsAvailable ? [navFactory.metrics(BuildMetrics)] : []),
@@ -432,7 +387,10 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const BuildsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
+const BuildsTableRow: React.FCC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
+  const kindReference = referenceFor(obj);
+  const context = { [kindReference]: obj };
+
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -455,13 +413,13 @@ const BuildsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => 
         {displayDurationInWords(obj.status?.startTimestamp, obj.status?.completionTimestamp)}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <ResourceKebab actions={menuActions} kind={BuildsReference} resource={obj} />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
 };
 
-export const BuildsList: React.SFC = (props) => {
+export const BuildsList: React.FCC = (props) => {
   const { t } = useTranslation();
   const BuildsTableHeader = () => {
     return [
@@ -521,7 +479,7 @@ export const buildPhase = (build) => build.status.phase;
 
 export const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
 
-export const BuildsPage: React.SFC<BuildsPageProps> = (props) => {
+export const BuildsPage: React.FCC<BuildsPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ListPage
