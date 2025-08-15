@@ -12,9 +12,9 @@ type ChannelSubscriptionTabProps = {
 const ChannelSubscriptionTab: React.FC<ChannelSubscriptionTabProps> = ({ obj }) => {
   const customData = React.useMemo(
     () => ({
-      channel: obj.metadata.name,
+      channel: obj.metadata?.name ?? '',
     }),
-    [obj.metadata.name],
+    [obj.metadata?.name],
   );
   return (
     <ListPage
@@ -22,7 +22,7 @@ const ChannelSubscriptionTab: React.FC<ChannelSubscriptionTabProps> = ({ obj }) 
       showTitle={false}
       kind={referenceForModel(EventingSubscriptionModel)}
       ListComponent={SubscriptionList}
-      namespace={obj.metadata.namespace}
+      namespace={obj.metadata?.namespace ?? ''}
       customData={customData}
     />
   );

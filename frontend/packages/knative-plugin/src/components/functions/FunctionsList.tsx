@@ -29,7 +29,7 @@ const FunctionsList: React.FC<TableProps> = (props) => {
         )}
       </span>
       <div className="odc-functions__empty-list__dropdown">
-        <CreateActionDropdown namespace={ns} />
+        <CreateActionDropdown namespace={ns ?? ''} />
       </div>
     </EmptyState>
   );

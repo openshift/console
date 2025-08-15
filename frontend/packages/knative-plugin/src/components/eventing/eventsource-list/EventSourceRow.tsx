@@ -11,7 +11,12 @@ import { getDynamicEventSourceModel } from '../../../utils/fetch-dynamic-eventso
 
 const EventSourceRow: React.FC<RowFunctionArgs<EventSourceKind>> = ({ obj }) => {
   const {
-    metadata: { name, namespace, creationTimestamp, uid },
+    metadata: { name, namespace, creationTimestamp, uid } = {
+      name: '',
+      namespace: '',
+      creationTimestamp: '',
+      uid: '',
+    },
   } = obj;
   const objReference = referenceFor(obj);
   const kind = getDynamicEventSourceModel(objReference) || modelFor(objReference);
@@ -32,7 +37,7 @@ const EventSourceRow: React.FC<RowFunctionArgs<EventSourceKind>> = ({ obj }) => 
       </TableData>
       <TableData>{kind.label}</TableData>
       <TableData>
-        <Timestamp timestamp={creationTimestamp} />
+        <Timestamp timestamp={creationTimestamp ?? ''} />
       </TableData>
       <TableData className={Kebab.columnClass}>
         <LazyActionMenu context={{ 'event-source-actions': obj }} />

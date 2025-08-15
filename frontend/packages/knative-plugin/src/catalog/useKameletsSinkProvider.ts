@@ -16,23 +16,20 @@ const normalizeKamelets = (
   t: TFunction,
 ): CatalogItem[] => {
   const normalizedKamelets = kamelets.map((k) => {
-    const {
-      kind,
-      metadata: { uid, name, creationTimestamp, annotations },
-      spec,
-    } = k;
+    const { kind, metadata, spec } = k;
+    const { uid, name, creationTimestamp, annotations } = metadata ?? {};
     const provider = annotations?.[CAMEL_K_PROVIDER_ANNOTATION] || '';
-    const iconUrl = getEventSourceIcon(kind, k) as string;
+    const iconUrl = getEventSourceIcon(kind ?? '', k) as string;
     const href = `/catalog/ns/${namespace}/eventsink?sinkKind=${CamelKameletBindingModel.kind}&name=${name}`;
     return {
-      uid,
+      uid: uid ?? '',
       name: spec?.definition?.title || name,
       description: spec?.definition?.description || '',
       provider,
       creationTimestamp,
       cta: { label: t('knative-plugin~Create Event Sink'), href },
       type: 'EventSink',
-      icon: { url: iconUrl },
+      icon: { url: iconUrl, class: undefined },
       details: {
         properties: [
           {

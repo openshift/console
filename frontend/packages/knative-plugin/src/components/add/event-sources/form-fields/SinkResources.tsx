@@ -63,7 +63,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
   const resourcesData = [
     ...k8sServices(namespace),
     ...knativeServingResourcesServices(namespace),
-    ...getDynamicChannelResourceList(namespace),
+    ...(getDynamicChannelResourceList(namespace) ?? []),
     ...knativeEventingResourcesBroker(namespace),
     ...knativeKafkaSinks(namespace),
   ];
@@ -108,7 +108,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
         onChange={onChange}
         autocompleteFilter={autocompleteFilter}
         autoSelect
-        customResourceKey={craftResourceKey}
+        customResourceKey={craftResourceKey as any}
         resourceFilter={resourceFilter}
         onLoad={handleOnLoad}
       />

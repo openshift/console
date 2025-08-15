@@ -40,14 +40,14 @@ const EventType: React.FC<EventTypeProps> = ({ eventType }) => {
   const specAttributes = ['type', 'source', 'schema'];
 
   const rows = specAttributes
-    .filter((a) => eventType.spec.hasOwnProperty(a))
+    .filter((a) => eventType?.spec?.hasOwnProperty(a))
     .map((a) => {
-      return { key: a, value: eventType.spec[a] };
+      return { key: a, value: eventType?.spec?.[a] ?? '' };
     });
 
   return (
     <>
-      {eventType.spec.description ? eventType.spec.description : ''}
+      {eventType?.spec?.description ? eventType?.spec?.description : ''}
       <div style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
         <Content component={ContentVariants.h3}>{t('knative-plugin~Event details')}</Content>
       </div>

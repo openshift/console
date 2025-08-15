@@ -16,7 +16,12 @@ const SubscriptionRow: React.FC<RowFunctionArgs<EventSubscriptionKind, Subscript
   customData,
 }) => {
   const {
-    metadata: { name, namespace, creationTimestamp, uid },
+    metadata: { name, namespace, creationTimestamp, uid } = {
+      name: '',
+      namespace: '',
+      creationTimestamp: '',
+      uid: '',
+    },
     spec: { channel: connectedChannel, subscriber },
   } = obj;
 
@@ -60,7 +65,7 @@ const SubscriptionRow: React.FC<RowFunctionArgs<EventSubscriptionKind, Subscript
         )}
       </TableData>
       <TableData columnID="created" className={tableColumnClasses[6]}>
-        <Timestamp timestamp={creationTimestamp} />
+        <Timestamp timestamp={creationTimestamp ?? ''} />
       </TableData>
       <TableData className={tableColumnClasses[7]}>
         <LazyActionMenu context={context} />

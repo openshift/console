@@ -37,7 +37,7 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
     if (typeof err === 'string') {
       errMsg = err;
     } else {
-      errMsg = err?.name || err?.key;
+      errMsg = err?.name || err?.key || '';
     }
     return errMsg;
   };
@@ -46,7 +46,7 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
   useFormikValidationFix(field.value);
 
   React.useEffect(() => {
-    k8sGet(SecretModel, null, namespace)
+    k8sGet(SecretModel, '', namespace ?? '')
       .then((nsSecrets) => {
         setSecrets(nsSecrets);
       })

@@ -8,7 +8,7 @@ export type RoutesUrlLinkProps = {
 };
 
 const RoutesUrlLink: React.FC<RoutesUrlLinkProps> = ({ urls = [], title }) =>
-  urls.length > 0 && (
+  urls?.length && urls?.length > 0 ? (
     <>
       {title && <span className="pf-v6-u-text-color-subtle">{title}: </span>}
       {urls.map((url) =>
@@ -21,6 +21,6 @@ const RoutesUrlLink: React.FC<RoutesUrlLinkProps> = ({ urls = [], title }) =>
         ),
       )}
     </>
-  );
+  ) : null;
 
 export default RoutesUrlLink;

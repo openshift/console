@@ -11,8 +11,11 @@ export type ConfigurationsOverviewListItemProps = {
 
 const ConfigurationsOverviewListItem: React.FC<ConfigurationsOverviewListItemProps> = ({
   configuration: {
-    metadata: { name, namespace },
-    status: { latestCreatedRevisionName, latestReadyRevisionName },
+    metadata: { name, namespace } = { name: '', namespace: '' },
+    status: { latestCreatedRevisionName, latestReadyRevisionName } = {
+      latestCreatedRevisionName: '',
+      latestReadyRevisionName: '',
+    },
   },
 }) => {
   const { t } = useTranslation();

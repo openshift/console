@@ -12,9 +12,9 @@ type BrokerTriggerTabProps = {
 const BrokerTriggerTab: React.FC<BrokerTriggerTabProps> = ({ obj }) => {
   const customData = React.useMemo(
     () => ({
-      broker: obj.metadata.name,
+      broker: obj.metadata?.name ?? '',
     }),
-    [obj.metadata.name],
+    [obj.metadata?.name],
   );
   return (
     <ListPage
@@ -22,7 +22,7 @@ const BrokerTriggerTab: React.FC<BrokerTriggerTabProps> = ({ obj }) => {
       showTitle={false}
       kind={referenceForModel(EventingTriggerModel)}
       ListComponent={TriggerList}
-      namespace={obj.metadata.namespace}
+      namespace={obj.metadata?.namespace ?? ''}
       customData={customData}
     />
   );

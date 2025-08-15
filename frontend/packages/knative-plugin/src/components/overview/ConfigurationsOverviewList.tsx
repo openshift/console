@@ -25,7 +25,7 @@ const ConfigurationsOverviewList: React.FC<ConfigurationsOverviewListProps> = ({
         <List isPlain isBordered>
           {_.map(configurations, (configuration) => (
             <ConfigurationsOverviewListItem
-              key={configuration.metadata.uid}
+              key={configuration.metadata?.uid ?? ''}
               configuration={configuration}
             />
           ))}

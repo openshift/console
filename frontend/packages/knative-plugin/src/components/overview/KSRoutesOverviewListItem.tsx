@@ -13,10 +13,7 @@ type KSRoutesOverviewListItemProps = {
 
 const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksroute }) => {
   const { t } = useTranslation();
-  const {
-    metadata: { name, namespace },
-    status,
-  } = ksroute;
+  const { metadata: { name, namespace } = { name: '', namespace: '' }, status } = ksroute;
 
   const isPrivateKSVC =
     ksroute?.metadata?.labels?.[PRIVATE_KNATIVE_SERVING_LABEL] === 'cluster-local';
@@ -31,10 +28,14 @@ const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksr
               <span className="pf-v6-u-text-color-subtle">{t('knative-plugin~Location:')} </span>
               {isPrivateKSVC ? (
                 <ClipboardCopy isReadOnly hoverTip="Copy" clickTip="Copied">
-                  {status.url}
+                  {status?.url ?? ''}
                 </ClipboardCopy>
               ) : (
-                <ExternalLinkWithCopy href={status.url} text={status.url} displayBlock />
+                <ExternalLinkWithCopy
+                  href={status?.url ?? ''}
+                  text={status?.url ?? ''}
+                  displayBlock
+                />
               )}
             </>
           )}

@@ -65,8 +65,10 @@ const EventSink: React.FC<EventSinkProps> = ({
     sinkName = _.kebabCase(sinkKind);
   } else {
     sinkApiVersion = `${CamelKameletBindingModel.apiGroup}/${CamelKameletBindingModel.apiVersion}`;
-    sinkData = { [CamelKameletBindingModel.kind]: getKameletSinkData(kameletSink) };
-    sinkName = `kamelet-${kameletSink.metadata.name}`;
+    sinkData = {
+      [CamelKameletBindingModel.kind]: getKameletSinkData(kameletSink as K8sResourceKind),
+    };
+    sinkName = `kamelet-${kameletSink?.metadata?.name ?? ''}`;
   }
 
   const activeApplication = currentApp !== ALL_APPLICATIONS_KEY ? currentApp : '';
@@ -96,10 +98,11 @@ const EventSink: React.FC<EventSinkProps> = ({
         apiVersion: sourceApiVersion,
         kind: sourceKind,
         name: sourceName,
-        key: craftResourceKey(sourceName, {
-          kind: sourceKind,
-          apiVersion: `${sourceGroup}/${sourceVersion}`,
-        }),
+        key:
+          craftResourceKey(sourceName, {
+            kind: sourceKind,
+            apiVersion: `${sourceGroup}/${sourceVersion}`,
+          }) ?? '',
       },
     }),
     type: sinkKind,
@@ -170,7 +173,7 @@ const EventSink: React.FC<EventSinkProps> = ({
           {...formikProps}
           namespace={namespace}
           eventSinkMetaDescription={eventSinkMetaDescription}
-          kameletSink={kameletSink}
+          kameletSink={kameletSink as K8sResourceKind}
         />
       )}
     </Formik>

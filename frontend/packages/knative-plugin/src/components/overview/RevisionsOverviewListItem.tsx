@@ -20,14 +20,12 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
   revision,
   service,
 }) => {
-  const {
-    metadata: { name, namespace },
-  } = revision;
-  const { pods } = usePodsForRevisions(revision.metadata.uid, namespace);
+  const { metadata: { name, namespace } = { name: '', namespace: '' } } = revision;
+  const { pods } = usePodsForRevisions(revision?.metadata?.uid ?? '', namespace ?? '');
   const current = pods?.[0];
-  const deploymentData = current?.obj?.metadata.ownerReferences?.[0] || ({} as OwnerReference);
+  const deploymentData = current?.obj?.metadata?.ownerReferences?.[0] || ({} as OwnerReference);
   const availableReplicas = current?.obj?.status?.availableReplicas || '0';
-  const { urls = [], percent: trafficPercent } = getTrafficByRevision(name, service);
+  const { urls = [], percent: trafficPercent } = getTrafficByRevision(name ?? '', service);
   return (
     <ListItem>
       <Grid hasGutter>
@@ -52,14 +50,14 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
               <ResourceLink
                 kind={deploymentData.kind}
                 name={deploymentData.name}
-                namespace={namespace}
+                namespace={namespace ?? ''}
               />
             </GridItem>
             <GridItem span={3} sm={4}>
               <div className="odc-revision-deployment-list__pod">
                 <PodStatus
                   standalone
-                  data={current ? current.pods : []}
+                  data={current ? current?.pods ?? [] : []}
                   size={25}
                   innerRadius={8}
                   outerRadius={12}
@@ -70,7 +68,7 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
               </div>
             </GridItem>
           </Grid>
-          {urls.length > 0 && (
+          {urls?.length && urls?.length > 0 && (
             <Grid hasGutter>
               <GridItem>
                 <RoutesUrlLink urls={urls} />

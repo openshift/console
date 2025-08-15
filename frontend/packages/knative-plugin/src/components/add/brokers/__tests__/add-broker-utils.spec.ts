@@ -17,13 +17,13 @@ describe('broker-utils: ', () => {
     it('should contain default application name', () => {
       const { formData } = addBrokerInitialValues('test-ns', '');
       const broker = convertFormToBrokerYaml(formData);
-      expect(broker.metadata.labels[LABEL_PART_OF]).toBe(EVENT_BROKER_APP);
+      expect(broker.metadata?.labels?.[LABEL_PART_OF]).toBe(EVENT_BROKER_APP);
     });
 
     it('should contain custom application name', () => {
       const { formData } = addBrokerInitialValues('test-ns', 'custom-group-name');
       const broker = convertFormToBrokerYaml(formData);
-      expect(broker.metadata.labels[LABEL_PART_OF]).toBe('custom-group-name');
+      expect(broker.metadata?.labels?.[LABEL_PART_OF]).toBe('custom-group-name');
     });
 
     it('should not contain the metadata labels', () => {
@@ -32,12 +32,12 @@ describe('broker-utils: ', () => {
       const broker = convertFormToBrokerYaml({
         ...formData,
         application: {
-          initial: null,
+          initial: '',
           name: '',
           selectedKey: '',
         },
       });
-      expect(broker.metadata.labels).toBeUndefined();
+      expect(broker.metadata?.labels).toBeUndefined();
     });
   });
 });

@@ -1,9 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ConfigurationModel } from '../../../models';
 import { sampleKnativeConfigurations } from '../../../topology/__tests__/topology-knative-test-data';
 import ConfigurationsOverviewListItem from '../ConfigurationsOverviewListItem';
 import '@testing-library/jest-dom';
+import { shallow } from 'enzyme';
 
 jest.mock('@patternfly/react-core', () => ({
   ListItem: 'ListItem',
@@ -31,22 +32,22 @@ describe('ConfigurationsOverviewListItem', () => {
   });
 
   it('should display latestCreatedRevisionName and latestReadyRevisionName', () => {
-    render(<ConfigurationsOverviewListItem configuration={sampleKnativeConfigurations.data[0]} />);
-
-    const {
-      status: { latestCreatedRevisionName },
-    } = sampleKnativeConfigurations.data[0];
-
-    // Check for the labels and the revision names
-    expect(screen.getByText('Latest created Revision name:')).toBeInTheDocument();
-    expect(screen.getByText('Latest ready Revision name:')).toBeInTheDocument();
-
-    // Use getAllByText to handle duplicate revision names
-    const revisionNameElements = screen.getAllByText(latestCreatedRevisionName);
-    expect(revisionNameElements).toHaveLength(2); // Should appear twice if they're the same
-
-    // Or verify just that the text content includes both revision names
-    expect(screen.getByText('Latest created Revision name:')).toBeInTheDocument();
-    expect(screen.getByText('Latest ready Revision name:')).toBeInTheDocument();
+    const wrapper = shallow(
+      <ConfigurationsOverviewListItem configuration={sampleKnativeConfigurations.data[0]} />,
+    );
+    expect(
+      wrapper
+        .find('span')
+        .at(1)
+        .text()
+        .includes(sampleKnativeConfigurations.data[0].status?.latestCreatedRevisionName ?? ''),
+    ).toBe(true);
+    expect(
+      wrapper
+        .find('span')
+        .at(3)
+        .text()
+        .includes(sampleKnativeConfigurations.data[0].status?.latestReadyRevisionName ?? ''),
+    ).toBe(true);
   });
 });

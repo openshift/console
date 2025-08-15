@@ -14,9 +14,9 @@ const getSidebarResources = (item: KnativeServiceOverviewItem) => {
 
   return (
     <>
-      <RevisionsOverviewList revisions={revisions} service={obj} />
-      <KSRoutesOverviewList ksroutes={ksroutes} resource={obj} />
-      <ConfigurationsOverviewList configurations={configurations} />
+      <RevisionsOverviewList revisions={revisions ?? []} service={obj} />
+      <KSRoutesOverviewList ksroutes={ksroutes ?? []} resource={obj} />
+      <ConfigurationsOverviewList configurations={configurations ?? []} />
     </>
   );
 };

@@ -30,7 +30,7 @@ const KnatifyForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = 
         <IconSection />
         <AppSection
           project={values.project}
-          noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+          noProjectsAvailable={projects?.loaded && _.isEmpty(projects?.data)}
         />
         <AdvancedSection values={values} />
       </FormBody>

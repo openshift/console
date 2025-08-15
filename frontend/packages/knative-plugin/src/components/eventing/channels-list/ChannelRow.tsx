@@ -12,7 +12,12 @@ import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsource
 
 const ChannelRow: React.FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
   const {
-    metadata: { name, namespace, creationTimestamp, uid },
+    metadata: { name, namespace, creationTimestamp, uid } = {
+      name: '',
+      namespace: '',
+      creationTimestamp: '',
+      uid: '',
+    },
   } = obj;
   const { t } = useTranslation();
   const objReference = referenceFor(obj);
@@ -38,9 +43,9 @@ const ChannelRow: React.FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
             )
           : '-'}
       </TableData>
-      <TableData>{kind.label}</TableData>
+      <TableData>{kind?.label ?? ''}</TableData>
       <TableData>
-        <Timestamp timestamp={creationTimestamp} />
+        <Timestamp timestamp={creationTimestamp ?? ''} />
       </TableData>
       <TableData className={Kebab.columnClass}>
         <LazyActionMenu context={context} />;

@@ -83,10 +83,12 @@ export const useAddSubscriptionChannelAction = (
 export const editKnativeService = (kind: K8sKind, obj: K8sResourceKind): Action => ({
   id: 'edit-knative-service',
   label: i18next.t('knative-plugin~Edit {{applicationName}}', {
-    applicationName: truncateMiddle(obj.metadata.name, { length: RESOURCE_NAME_TRUNCATE_LENGTH }),
+    applicationName: truncateMiddle(obj.metadata?.name ?? '', {
+      length: RESOURCE_NAME_TRUNCATE_LENGTH,
+    }),
   }),
   cta: {
-    href: `/edit/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${
+    href: `/edit/ns/${obj.metadata?.namespace}?name=${obj.metadata?.name}&kind=${
       obj.kind || kind.kind
     }`,
   },
@@ -108,7 +110,7 @@ export const editKnativeServiceResource = (
     cta: {
       href:
         serviceTypeValue === ServiceTypeValue.Function
-          ? `/functions/ns/${obj.metadata.namespace}/${obj.metadata.name}/yaml`
+          ? `/functions/ns/${obj.metadata?.namespace}/${obj.metadata?.name}/yaml`
           : `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
     },
     insertAfter: 'edit-annotations',
