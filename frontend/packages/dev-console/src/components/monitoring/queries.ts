@@ -225,7 +225,7 @@ export const workloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
 
 const getMetricsQuery = (id: string, t: TFunction): _.TemplateExecutor => {
   const queryObject = _.find(monitoringDashboardQueries(t), (q) => q.id === id);
-  return queryObject?.query;
+  return queryObject?.query ?? _.template('');
 };
 
 const topMetricsQueries = (t: TFunction) => ({

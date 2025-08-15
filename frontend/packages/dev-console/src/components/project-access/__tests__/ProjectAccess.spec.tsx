@@ -30,15 +30,22 @@ describe('Project Access', () => {
   });
 
   it('should show the StatusBox when there is error loading the role bindings', () => {
-    projectAccessProps.roleBindings.loadError = { error: 'user has no access to role bindigs' };
+    if (projectAccessProps.roleBindings) {
+      projectAccessProps.roleBindings.loadError = {
+        error: 'user has no access to role bindigs',
+      } as any;
+    }
     const renderProjectAccess = shallow(<ProjectAccess {...projectAccessProps} />);
     expect(renderProjectAccess.find(StatusBox).exists()).toBeTruthy();
     expect(renderProjectAccess.find(Formik).exists()).toBe(false);
   });
 
   it('should load the Formik Form Component when role bindings loads without any error', () => {
-    projectAccessProps.roleBindings.loaded = true;
-    projectAccessProps.roleBindings.loadError = undefined;
+    // Ensure roleBindings is defined before accessing its properties
+    if (projectAccessProps.roleBindings) {
+      projectAccessProps.roleBindings.loaded = true;
+      projectAccessProps.roleBindings.loadError = {} as any;
+    }
     const renderProjectAccess = shallow(<ProjectAccess {...projectAccessProps} />);
     expect(renderProjectAccess.find(Formik).exists()).toBe(true);
   });

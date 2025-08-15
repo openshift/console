@@ -43,7 +43,8 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
   if (
     !resourceEvents ||
     !resourceEvents.loaded ||
-    (pods && pods.find((pod) => !props[pod.metadata.uid] || !props[pod.metadata.uid].loaded))
+    (pods &&
+      pods.find((pod) => !props[pod.metadata?.uid ?? ''] || !props[pod.metadata?.uid ?? ''].loaded))
   ) {
     return <LoadingBox />;
   }
@@ -51,7 +52,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
   let events = [...resourceEvents.data];
   if (pods) {
     pods.forEach((pod) => {
-      const podData = props[pod.metadata.uid];
+      const podData = props[pod.metadata?.uid ?? ''];
       if (podData) {
         events.push(...podData.data);
       }

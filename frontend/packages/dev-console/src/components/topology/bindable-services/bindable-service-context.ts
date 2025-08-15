@@ -15,7 +15,7 @@ export const ServiceBindingContext = React.createContext<ServiceBindingContextTy
 export const ServiceBindingContextProvider = ServiceBindingContext.Provider;
 
 export const useValuesServiceBindingContext = (): ServiceBindingContextType => {
-  const [bindableServices, setBindableServices] = React.useState([]);
+  const [bindableServices, setBindableServices] = React.useState<BindableServiceGVK[]>([]);
   const [loaded, setLoaded] = React.useState(false);
   React.useEffect(() => {
     fetchBindableServices()

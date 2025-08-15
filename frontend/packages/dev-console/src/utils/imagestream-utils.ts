@@ -12,7 +12,12 @@ import {
 } from '@console/internal/components/image-stream';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { ProjectModel, ImageStreamModel } from '@console/internal/models';
-import { ContainerPort, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import {
+  ContainerPort,
+  K8sResourceKind,
+  K8sResourceCommon,
+  ObjectMetadata,
+} from '@console/internal/module/k8s';
 
 export interface ImageTag {
   name: string;
@@ -98,24 +103,25 @@ export const normalizeBuilderImages = (
   return builderImageStreams.reduce((builderImages: NormalizedBuilderImages, imageStream) => {
     const tags = getBuilderTagsSortedByVersion(imageStream);
     const recentTag = getMostRecentBuilderTag(imageStream);
-    const { name } = imageStream.metadata;
+    const { name } = imageStream.metadata as ObjectMetadata;
     const displayName = imageStream?.metadata?.annotations?.['openshift.io/display-name'];
     const description = recentTag?.annotations?.description;
-    const imageStreamNamespace = imageStream.metadata.namespace;
-    const title = displayName && displayName.length < 14 ? displayName : prettifyName(name);
+    const imageStreamNamespace = imageStream.metadata?.namespace;
+    const title =
+      displayName && displayName.length < 14 ? displayName : prettifyName(name as string);
     const iconClass = getImageStreamIcon(recentTag);
     const iconUrl = getImageForIconClass(iconClass);
 
-    builderImages[name] = {
+    builderImages[name as string] = {
       obj: imageStream,
-      name,
-      displayName,
+      name: name as string,
+      displayName: displayName ?? '',
       description,
       title,
       iconUrl,
       tags,
       recentTag,
-      imageStreamNamespace,
+      imageStreamNamespace: imageStreamNamespace as string,
     };
     return builderImages;
   }, {});
@@ -129,14 +135,14 @@ export const getTagDataWithDisplayName = (
   const imageTag = _.find(imageTags, { name: selectedTag });
   const displayName = imageTag?.annotations?.['openshift.io/display-name'] ?? defaultName;
 
-  return [imageTag, displayName];
+  return [imageTag as ImageTag, displayName];
 };
 
 export const getSuggestedName = (name: string): string | undefined => {
   if (!name) {
     return undefined;
   }
-  const imageName: string = _.last(name.split('/'));
+  const imageName: string = _.last(name.split('/')) as string;
   return _.first(imageName.split(/[^a-z0-9-]/));
 };
 
@@ -161,8 +167,8 @@ export const imageRegistryType = (t: TFunction) => {
 };
 
 export const getSortedTags = (imageStream: K8sResourceKind) => {
-  return _.isArray(imageStream.status.tags) && imageStream.status.tags.length
-    ? imageStream.status.tags.sort(({ tag: a }, { tag: b }) => {
+  return _.isArray(imageStream.status?.tags) && imageStream.status?.tags.length
+    ? imageStream.status?.tags.sort(({ tag: a }, { tag: b }) => {
         const v1 = semver.coerce(a);
         const v2 = semver.coerce(b);
         if (!v1 && !v2) {
@@ -191,18 +197,18 @@ export const getProjectResource = (): FirehoseResource[] => {
     {
       isList: true,
       kind: ProjectModel.kind,
-      prop: ProjectModel.id,
+      prop: ProjectModel.id as string,
     },
   ];
 };
 
 export const getImageStreamResource = (namespace: string): FirehoseResource[] => {
-  const resource = [];
+  const resource: FirehoseResource[] = [];
   if (namespace) {
     resource.push({
       isList: true,
       kind: ImageStreamModel.kind,
-      prop: ImageStreamModel.id,
+      prop: ImageStreamModel.id as string,
       namespace,
     });
   }

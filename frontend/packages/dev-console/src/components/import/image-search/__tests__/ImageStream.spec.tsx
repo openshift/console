@@ -23,7 +23,7 @@ const spyUseState = jest.spyOn(React, 'useState');
 const mockReducerState = {
   loading: false,
   accessLoading: false,
-  selectedImageStream: appResources.imageStream.data[0],
+  selectedImageStream: appResources.imageStream?.data?.[0],
 };
 type ImagestreamProps = React.ComponentProps<typeof ImageStream>;
 

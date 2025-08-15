@@ -12,7 +12,7 @@ export const notSupportedRuntime = ['go', 'rust', 'springboot', 'python'];
 export const getRuntimeImage = (
   runtime: SupportedRuntime,
   builderImages: NormalizedBuilderImages,
-): BuilderImage => {
+): BuilderImage | null => {
   switch (runtime) {
     case SupportedRuntime.Node:
       return builderImages.nodejs;
@@ -23,6 +23,6 @@ export const getRuntimeImage = (
     case SupportedRuntime.Quarkus:
       return builderImages.java;
     default:
-      return undefined;
+      return null;
   }
 };

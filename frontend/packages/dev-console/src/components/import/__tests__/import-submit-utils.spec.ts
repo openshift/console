@@ -15,7 +15,7 @@ import * as triggerUtils from '@console/pipelines-plugin/src/components/pipeline
 import * as pipelineOverviewUtils from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import * as submitUtils from '../import-submit-utils';
-import { Resources } from '../import-types';
+import { GitImportFormData, Resources, ServerlessData } from '../import-types';
 import {
   defaultData,
   devfileImportData,
@@ -34,7 +34,7 @@ const {
 } = submitUtils;
 
 describe('Import Submit Utils', () => {
-  const t = jest.fn();
+  const t = jest.fn() as TFunction;
 
   describe('createDeployment tests', () => {
     beforeAll(() => {
@@ -268,7 +268,7 @@ describe('Import Submit Utils', () => {
         {},
       );
       const pipelineRunResource = returnValue[1];
-      expect(pipelineRunResource.metadata.name.includes(mockData.name)).toEqual(true);
+      expect(pipelineRunResource?.metadata?.name?.includes(mockData.name)).toEqual(true);
       done();
     });
 
@@ -420,7 +420,8 @@ describe('Import Submit Utils', () => {
       const formData = sampleDevfileFormData;
       const returnValue = await createDevfileResources(formData, false, {}, '');
 
-      const deployment = returnValue.find((resource) => resource.data.kind === 'Deployment').data;
+      const deployment = returnValue.find((resource) => resource?.data?.kind === 'Deployment')
+        ?.data;
 
       expect(deployment).toEqual({
         apiVersion: 'apps/v1',
@@ -518,7 +519,7 @@ describe('Import Submit Utils', () => {
       const telGhScalingData = submitUtils.isScalingAdvOptions(
         ghImportDefaultData.resources,
         ghImportDefaultData.deployment,
-        ghImportDefaultData.serverless,
+        ghImportDefaultData.serverless as ServerlessData,
       );
       expect(telGhScalingData).toEqual(false);
     });
@@ -527,7 +528,7 @@ describe('Import Submit Utils', () => {
       const telGhRouteData = submitUtils.isRouteAdvOptionsUsed(
         ghImportDefaultData.resources,
         ghImportDefaultData.route,
-        ghImportDefaultData.serverless,
+        ghImportDefaultData.serverless as ServerlessData,
       );
       expect(telGhRouteData).toEqual(false);
     });
@@ -546,7 +547,7 @@ describe('Import Submit Utils', () => {
       const telGhRouteData = submitUtils.isRouteAdvOptionsUsed(
         ghImportAdvData.resources,
         ghImportAdvData.route,
-        ghImportAdvData.serverless,
+        ghImportAdvData.serverless as ServerlessData,
       );
 
       expect(telGhRouteData).toEqual(true);
@@ -566,7 +567,7 @@ describe('Import Submit Utils', () => {
       const telGhScalingData = submitUtils.isScalingAdvOptions(
         ghImportAdvData.resources,
         ghImportAdvData.deployment,
-        ghImportAdvData.serverless,
+        ghImportAdvData.serverless as ServerlessData,
       );
 
       expect(telGhScalingData).toEqual(true);
@@ -577,14 +578,14 @@ describe('Import Submit Utils', () => {
         ...ghImportDefaultData,
         resources: Resources.KnativeService,
         serverless: {
-          ...ghImportDefaultData.serverless,
+          ...(ghImportDefaultData.serverless as ServerlessData),
           scaling: {
-            ...ghImportDefaultData.serverless.scaling,
+            ...ghImportDefaultData.serverless?.scaling,
             concurrencytarget: 102,
           },
         },
       };
-      const telGHData = submitUtils.getTelemetryImport(ghImportAdvData);
+      const telGHData = submitUtils.getTelemetryImport(ghImportAdvData as GitImportFormData);
       expect(telGHData).toEqual({
         ...ghImportTelData,
         resource: 'Knative Service',
@@ -594,7 +595,7 @@ describe('Import Submit Utils', () => {
       const telGhScalingData = submitUtils.isScalingAdvOptions(
         ghImportAdvData.resources,
         ghImportAdvData.deployment,
-        ghImportAdvData.serverless,
+        ghImportAdvData.serverless as ServerlessData,
       );
 
       expect(telGhScalingData).toEqual(true);
@@ -614,7 +615,7 @@ describe('Import Submit Utils', () => {
       const telGhScalingData = submitUtils.isRouteAdvOptionsUsed(
         ghImportAdvData.resources,
         ghImportAdvData.route,
-        ghImportAdvData.serverless,
+        ghImportAdvData.serverless as ServerlessData,
       );
 
       expect(telGhScalingData).toEqual(true);
@@ -625,7 +626,7 @@ describe('Import Submit Utils', () => {
         ...ghImportDefaultData,
         resources: Resources.KnativeService,
         serverless: {
-          ...ghImportDefaultData.serverless,
+          ...(ghImportDefaultData.serverless as ServerlessData),
           domainMapping: ['domain.org'],
         },
       };
@@ -639,7 +640,7 @@ describe('Import Submit Utils', () => {
       const telGhScalingData = submitUtils.isRouteAdvOptionsUsed(
         ghImportAdvData.resources,
         ghImportAdvData.route,
-        ghImportAdvData.serverless,
+        ghImportAdvData.serverless as ServerlessData,
       );
 
       expect(telGhScalingData).toEqual(true);
