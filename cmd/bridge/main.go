@@ -29,6 +29,7 @@ import (
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
+	"github.com/patrickmn/go-cache"
 	kruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
@@ -560,7 +561,8 @@ func main() {
 		Scheme: kruntime.NewScheme(),
 	})
 
-	catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, 5*time.Minute)
+	cache := cache.New(5*time.Minute, 30*time.Minute)
+	catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, cache)
 	srv.CatalogService = catalogService
 
 	if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {

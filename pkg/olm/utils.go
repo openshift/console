@@ -1,11 +1,14 @@
 package olm
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/operator-framework/kubectl-operator/pkg/action"
+	"github.com/operator-framework/operator-registry/alpha/declcfg"
+	"github.com/operator-framework/operator-registry/alpha/property"
 	"k8s.io/client-go/rest"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -53,4 +56,17 @@ func (o *OLMHandler) getClientWithScheme(r *http.Request) (client.Client, *runti
 		return nil, nil, fmt.Errorf("failed to get new olm client: %v", err)
 	}
 	return client, scheme, nil
+}
+
+func getBundleVersion(bundle *declcfg.Bundle) (string, error) {
+	for _, prop := range bundle.Properties {
+		if prop.Type == "olm.package" {
+			var pkg property.Package
+			if err := json.Unmarshal(prop.Value, &pkg); err != nil {
+				return "", fmt.Errorf("failed to unmarshal package property for bundle %q: %w", bundle.Name, err)
+			}
+			return pkg.Version, nil
+		}
+	}
+	return "", fmt.Errorf("no olm.package property found for bundle %q", bundle.Name)
 }

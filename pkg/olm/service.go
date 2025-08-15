@@ -5,48 +5,65 @@ import (
 	"time"
 
 	"github.com/openshift/console/pkg/proxy"
+	"github.com/patrickmn/go-cache"
+	"k8s.io/klog"
 )
 
 // catalogService orchestrates the fetching, caching, and polling of catalog data.
 type CatalogService struct {
-	fetcher *catalogFetcher
-	cache   *catalogCache
+	lastModified time.Time
+	cache        *cache.Cache
+	client       CatalogdClientInterface
+	catalogs     map[string]string
 }
 
 // NewCatalogService creates a new catalog service.
-func NewCatalogService(client *http.Client, catalogdProxyConfig *proxy.Config, pollInterval time.Duration) *CatalogService {
-	cache := &catalogCache{
-		catalogItems: make(map[string][]CatalogItem),
-	}
-
-	if catalogdProxyConfig == nil {
-
-	}
-	fetcher := &catalogFetcher{
-		client:      client,
-		proxyConfig: catalogdProxyConfig,
-	}
+func NewCatalogService(httpClient *http.Client, proxyConfig *proxy.Config, cache *cache.Cache) *CatalogService {
 	return &CatalogService{
-		fetcher: fetcher,
-		cache:   cache,
+		cache:    cache,
+		client:   NewCatalogdClient(httpClient, proxyConfig),
+		catalogs: make(map[string]string),
 	}
 }
 
-// GetCatalogItems returns the cached catalog items.
-func (s *CatalogService) GetCatalogItems(r *http.Request) ([]CatalogItem, time.Time, bool) {
-	return s.cache.GetCatalogItems(r)
-}
-
-func (s *CatalogService) AddCatalogItemsFromClusterCatalogToCache(catalogName, baseURL string) error {
-	catalogItems, err := s.fetcher.FetchAndTransformCatalog(catalogName, baseURL)
+// Start begins the polling process.
+func (s *CatalogService) UpdateCatalog(catalog string, baseURL string) error {
+	packages, bundles, err := s.client.Fetch(catalog, baseURL)
 	if err != nil {
 		return err
 	}
-	s.cache.UpdateCatalog(catalogName, catalogItems)
+	catalogData := CreateConsoleCatalog(catalog, packages, bundles)
+	s.cache.Set(catalog, catalogData, cache.NoExpiration)
+	s.lastModified = time.Now()
+	s.catalogs[catalog] = baseURL
 	return nil
 }
 
-func (s *CatalogService) RemoveCatalogItemsFromClusterCatalogFromCache(catalogName string) error {
-	s.cache.UpdateCatalog(catalogName, nil)
+func (s *CatalogService) RemoveCatalog(catalogName string) error {
+	s.cache.Set(catalogName, nil, cache.NoExpiration)
 	return nil
+}
+
+// GetCatalogItems returns the cached catalog items.
+func (s *CatalogService) GetCatalogItems(r *http.Request) ([]ConsoleCatalogItem, time.Time, bool) {
+	// Check If-Modified-Since header
+	if ifModifiedSince := r.Header.Get("If-Modified-Since"); ifModifiedSince != "" {
+		if parsedTime, err := time.Parse(http.TimeFormat, ifModifiedSince); err == nil {
+			if !s.lastModified.After(parsedTime) {
+				// Cache hasn't been modified since the request, return 304 Not Modified
+				return nil, s.lastModified, true
+			}
+		}
+	}
+
+	catlogItems := []ConsoleCatalogItem{}
+	for _, catalog := range s.catalogs {
+		items, ok := s.cache.Get(catalog)
+		if !ok {
+			klog.Errorf("Failed to get catalog %s from cache", catalog)
+			continue
+		}
+		catlogItems = append(catlogItems, items.([]ConsoleCatalogItem)...)
+	}
+	return catlogItems, s.lastModified, false
 }
