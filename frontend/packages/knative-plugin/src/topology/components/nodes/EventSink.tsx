@@ -63,7 +63,7 @@ const EventSink: React.FC<EventSinkProps> = ({
   const ref = React.useRef();
   const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
-  const groupRefs = useCombineRefs(dragNodeRef, dndDropRef);
+  const groupRefs = useCombineRefs(dragNodeRef || null, dndDropRef || null);
   const { data, resources, resource } = element.getData();
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
@@ -130,13 +130,13 @@ const EventSink: React.FC<EventSinkProps> = ({
       isVisible={dropTarget && canDrop}
       animationDuration={0}
     >
-      <g ref={ref}>
+      <g ref={ref as any}>
         <BaseNode
           className="odc-event-source"
-          onShowCreateConnector={isKafkaConnectionLinkPresent && onShowCreateConnector}
+          onShowCreateConnector={isKafkaConnectionLinkPresent && (onShowCreateConnector as any)}
           kind={data.kind}
           element={element}
-          hoverRef={hoverRef}
+          hoverRef={hoverRef as any}
           dragNodeRef={groupRefs}
           dropTarget={dropTarget}
           canDrop={canDrop}

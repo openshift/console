@@ -71,7 +71,7 @@ describe('RoutesOverviewList', () => {
         ...MockKnativeResources.ksroutes.data[0].status,
         traffic: [
           {
-            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
+            ...MockKnativeResources.ksroutes.data[0].status?.traffic?.[0],
             tag: 'tag1',
             url: 'http://tag1.test.com',
           },
@@ -95,13 +95,13 @@ describe('RoutesOverviewList', () => {
         ...MockKnativeResources.ksroutes.data[0].status,
         traffic: [
           {
-            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
+            ...MockKnativeResources.ksroutes.data[0].status?.traffic?.[0],
             tag: 'tag1',
             url: 'http://tag1.test.com',
             percent: 20,
           },
           {
-            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
+            ...MockKnativeResources.ksroutes.data[0].status?.traffic?.[0],
             tag: 'tag2',
             url: 'http://tag2.test.com',
             percent: 30,

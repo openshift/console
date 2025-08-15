@@ -48,7 +48,7 @@ describe('SinkPubsubModal', () => {
       isSubmitting: false,
       status: { error: null },
       cancel: jest.fn(),
-    } as any;
+    } as undefined;
   });
 
   it('should render without crashing', () => {

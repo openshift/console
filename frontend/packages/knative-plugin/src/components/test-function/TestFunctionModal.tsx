@@ -67,7 +67,7 @@ const TestFunctionModal: React.FC<Props> = (props) => {
             data-test="close-action"
             onClick={() => {
               clearResponseValues(props);
-              close();
+              close?.();
             }}
           >
             {t('knative-plugin~Close')}

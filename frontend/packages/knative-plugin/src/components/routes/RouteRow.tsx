@@ -21,12 +21,12 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={routeReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj?.metadata?.name ?? ''}
+          namespace={obj?.metadata?.namespace ?? ''}
         />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={obj?.metadata?.namespace ?? ''} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         {(obj.status && obj.status.url && (
@@ -35,7 +35,7 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
           '-'}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj?.metadata?.creationTimestamp ?? ''} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         {obj.status ? getConditionString(obj.status.conditions) : '-'}
@@ -47,7 +47,7 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
                 {i > 0 ? ', ' : ''}
                 {`${t.percent}% → `}
                 <ResourceLink
-                  namespace={obj.metadata.namespace}
+                  namespace={obj?.metadata?.namespace ?? ''}
                   kind={revisionReference}
                   name={t.revisionName}
                   inline

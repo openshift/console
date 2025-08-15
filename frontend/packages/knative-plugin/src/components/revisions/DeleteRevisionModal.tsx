@@ -26,7 +26,7 @@ type Props = FormikProps<FormikValues> & TrafficSplittingDeleteModalProps;
 const DeleteRevisionModal: React.FC<Props> = (props) => {
   const { t } = useTranslation();
   const { deleteRevision, handleSubmit, isSubmitting, status, showTraffic, cancel } = props;
-  const serviceName = deleteRevision.metadata.labels[KNATIVE_SERVING_LABEL];
+  const serviceName = deleteRevision?.metadata?.labels?.[KNATIVE_SERVING_LABEL] ?? '';
 
   return (
     <form className="modal-content" onSubmit={handleSubmit}>
@@ -37,9 +37,10 @@ const DeleteRevisionModal: React.FC<Props> = (props) => {
       <ModalBody>
         <p>
           {t('knative-plugin~Are you sure you want to delete ')}
-          <strong className="co-break-word">{deleteRevision.metadata.name}</strong>{' '}
+          <strong className="co-break-word">{deleteRevision?.metadata?.name ?? ''}</strong>{' '}
           {t('knative-plugin~from ')} <strong className="co-break-word">{serviceName}</strong>{' '}
-          {t('knative-plugin~in namespace ')} <strong>{deleteRevision.metadata.namespace}</strong>?
+          {t('knative-plugin~in namespace ')}{' '}
+          <strong>{deleteRevision?.metadata?.namespace ?? ''}</strong>?
         </p>
         {showTraffic && (
           <>
@@ -59,7 +60,7 @@ const DeleteRevisionModal: React.FC<Props> = (props) => {
         inProgress={isSubmitting}
         submitText={t('knative-plugin~Delete')}
         cancelText={t('knative-plugin~Cancel')}
-        cancel={cancel}
+        cancel={cancel ?? (() => {})}
         errorMessage={status.error}
         submitDisabled={isSubmitting}
         submitDanger

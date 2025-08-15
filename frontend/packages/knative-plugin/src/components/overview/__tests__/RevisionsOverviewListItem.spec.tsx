@@ -121,7 +121,7 @@ describe('RevisionsOverviewListItem', () => {
   });
 
   it('should sum the traffic percentage for the same revision', () => {
-    const { revisionName } = MockKnativeResources.ksservices.data[0].status.traffic[0];
+    const { revisionName } = MockKnativeResources.ksservices.data[0].status?.traffic?.[0];
     const mockServiceData = {
       ...MockKnativeResources.ksservices.data[0],
       status: {

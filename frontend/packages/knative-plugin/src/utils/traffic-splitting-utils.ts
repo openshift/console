@@ -12,7 +12,7 @@ export const getRevisionItems = (revisions: K8sResourceKind[]): RevisionItems =>
   if (!revisions) return {} as RevisionItems;
 
   return revisions.reduce((acc, currValue) => {
-    acc[currValue.metadata.name] = currValue.metadata.name;
+    acc[currValue.metadata?.name ?? ''] = currValue.metadata?.name ?? '';
     return acc;
   }, {} as RevisionItems);
 };

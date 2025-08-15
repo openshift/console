@@ -80,7 +80,7 @@ const alignNodeConnector = (
           right: link.target.index,
           gap: serviceDistance + link.source.width / 2 + options.linkDistance,
           equality: true,
-        });
+        } as never);
       } else {
         // Keep the event sources to the left
         constraints.push({
@@ -89,11 +89,11 @@ const alignNodeConnector = (
           right: filteredNode.index,
           gap: serviceDistance + link.source.width / 2 + options.linkDistance,
           equality: true,
-        });
+        } as never);
       }
       nextOffset += link.source.height;
     });
-    constraints.push(linkNodeConstraint);
+    constraints.push(linkNodeConstraint as never);
   }
   return constraints;
 };

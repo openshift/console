@@ -42,7 +42,7 @@ const EventSource: React.FC<EventSourceProps> = ({
   return (
     <BaseNode
       className="odc-event-source"
-      onShowCreateConnector={isKafkaConnectionLinkPresent && onShowCreateConnector}
+      onShowCreateConnector={isKafkaConnectionLinkPresent && (onShowCreateConnector as any)}
       kind={data.kind}
       element={element}
       labelIcon={<EventSourceIcon />}

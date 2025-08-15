@@ -185,7 +185,7 @@ export const eventSourceLinkDragSourceSpec = (): DragSourceSpec<
     if (
       monitor.didDrop() &&
       dropResult &&
-      canDropEventSourceSinkOnNode(monitor.getOperation().type, edge, dropResult)
+      canDropEventSourceSinkOnNode(monitor.getOperation()?.type ?? '', edge, dropResult)
     ) {
       createSinkConnection(edge.getSource(), dropResult).catch((error) => {
         errorModal({
@@ -257,7 +257,7 @@ export const eventingPubSubLinkDragSourceSpec = (): DragSourceSpec<
     if (
       monitor.didDrop() &&
       dropResult &&
-      canDropPubSubSinkOnNode(monitor.getOperation().type, edge, dropResult)
+      canDropPubSubSinkOnNode(monitor.getOperation()?.type ?? '', edge, dropResult)
     ) {
       createSinkPubSubConnection(edge, dropResult).catch((error) => {
         errorModal({
@@ -296,10 +296,10 @@ export const kafkaSourceCreateConnectorCallback = (
 ): Promise<React.ReactElement[] | null> => {
   const createConnectors = target.getGraph()?.getData()?.createConnectorExtensions;
   if (source === target || isGraph(target) || !createConnectors) {
-    return null;
+    return null as any;
   }
   const relationshipProviders = target.getGraph()?.getData()?.relationshipProviderExtensions;
-  const curRelProvider = relationshipProviders?.find(({ uid }) => dropHints.includes(uid));
+  const curRelProvider = relationshipProviders?.find(({ uid }) => dropHints?.includes(uid ?? ''));
   if (curRelProvider) {
     return curRelProvider.properties.create(source, target);
   }
@@ -309,5 +309,5 @@ export const kafkaSourceCreateConnectorCallback = (
     return creator(dropHints, source, target)(source, target);
   }
 
-  return null;
+  return null as any;
 };

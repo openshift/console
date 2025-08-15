@@ -71,12 +71,12 @@ export const usePodsForRevisions = (
               apiVersion: apiVersionForModel(DeploymentModel),
               kind: DeploymentModel.kind,
             };
-            acc.push(...getReplicaSetsForResource(depObj, updatedResources));
+            acc.push(...(getReplicaSetsForResource(depObj, updatedResources) as never[]));
           }
           return acc;
         }, []);
         setLoaded(true);
-        setLoadError(null);
+        setLoadError('');
         setPods(revisionsPods);
       }
     },

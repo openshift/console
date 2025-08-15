@@ -124,7 +124,7 @@ export const knatifyResources = async (
     metadata: {
       ...knDeploymentRes.metadata,
       labels: {
-        ...knDeploymentRes.metadata.labels,
+        ...knDeploymentRes.metadata?.labels,
         ...(!!appName && { 'app.kubernetes.io/name': appName }),
       },
     },
@@ -132,7 +132,7 @@ export const knatifyResources = async (
   const domainMappingResources = await getDomainMappingRequests(
     formData,
     knDeploymentResource,
-    dryRun,
+    dryRun ?? false,
   );
 
   return Promise.all([
@@ -186,7 +186,7 @@ const getInternalImageInitialValues = (
       if (tagData) {
         return {
           tag: tagData.tag,
-          image: is.metadata.name,
+          image: is.metadata?.name,
         };
       }
       return acc;
@@ -232,5 +232,5 @@ export const getInitialValuesKnatify = (
     ...iconValues,
     ...(!!isInternalImageValid && internalImageValues),
     ...(!isInternalImageValid && externalImageValues),
-  };
+  } as DeployImageFormData;
 };

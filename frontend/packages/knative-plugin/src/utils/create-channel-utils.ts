@@ -35,7 +35,9 @@ export const getChannelKind = (ref: string): string => {
   if (!ref || (ref && ref.length === 0) || (ref && !isGroupVersionKind(ref))) {
     return '';
   }
-  const [, , channelKind] = getGroupVersionKind(ref);
+  const groupVersionKind = getGroupVersionKind(ref);
+  if (!groupVersionKind) return '';
+  const [, , channelKind] = groupVersionKind;
   return channelKind;
 };
 
@@ -55,20 +57,20 @@ export const useChannelList = (namespace: string): ChannelListProps => {
               resource: plural,
               namespace,
               verb: 'create',
-            }).then((result) => (result.status.allowed ? channelRef : '')),
+            }).then((result) => (result.status?.allowed ? channelRef : '')),
           );
         }
       });
       Promise.all(accessList)
         .then((results) => {
-          const channelList = results.reduce((acc, result) => {
+          const channelList = results.reduce<string[]>((acc, result) => {
             if (result.length > 0) {
               return [...acc, result];
             }
             return acc;
           }, []);
 
-          setAccessData({ loaded: true, channelList });
+          setAccessData({ loaded: true, channelList: channelList as never[] });
         })
         .catch((err) =>
           // eslint-disable-next-line no-console
@@ -100,7 +102,7 @@ export const channelYamltoFormData = (
         selectedKey: UNASSIGNED_APPLICATIONS_KEY,
       }),
     },
-    name: newFormData.metadata?.name,
+    name: newFormData.metadata?.name ?? '',
     data: {
       [getChannelKind(formDataValues.type).toLowerCase()]: {
         ...specData,
@@ -122,8 +124,10 @@ export const getCreateChannelData = (formData: AddChannelFormData): K8sResourceK
     return {};
   }
   const defaultLabel = getAppLabels({ name, applicationName });
-  const [channelGroup, channelVersion, channelKind] = getGroupVersionKind(type);
-  const channelSpecData = data[channelKind.toLowerCase()];
+  const groupVersionKind = getGroupVersionKind(type);
+  if (!groupVersionKind) return {};
+  const [channelGroup, channelVersion, channelKind] = groupVersionKind;
+  const channelSpecData = data?.[channelKind.toLowerCase()];
   const eventSourceResource: K8sResourceKind = {
     apiVersion: `${channelGroup}/${channelVersion}`,
     kind: channelKind,

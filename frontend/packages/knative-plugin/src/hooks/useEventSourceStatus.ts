@@ -2,10 +2,14 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { KnEventCatalogMetaData } from '../components/add/import-types';
 import { CAMEL_K_OPERATOR_NS, GLOBAL_OPERATOR_NS } from '../const';
-import { CamelKameletBindingModel, CamelKameletModel } from '../models';
+import {
+  CamelKameletBindingModel,
+  CamelKameletModel,
+  CamelKameletModel as CamelKameletModel2,
+} from '../models';
 import { getEventSourceMetadata, getKameletMetadata } from '../utils/create-eventsources-utils';
 import { useEventSourceModels } from '../utils/fetch-dynamic-eventsources-utils';
 
@@ -19,7 +23,7 @@ export const useEventSourceStatus = (
   createSourceAccess: boolean;
   loaded: boolean;
   normalizedSource: KnEventCatalogMetaData;
-  kamelet: K8sResourceKind;
+  kamelet: K8sResourceKind | undefined;
 } => {
   const { t } = useTranslation();
   const { eventSourceModels, loaded: eventSourceModelsLoaded } = useEventSourceModels();
@@ -34,7 +38,7 @@ export const useEventSourceStatus = (
     GLOBAL_OPERATOR_NS,
   );
   const [kameletGlobalNs2, kameletGlobalNs2Loaded] = useK8sGet<K8sResourceKind>(
-    CamelKameletModel,
+    CamelKameletModel2,
     kameletName,
     CAMEL_K_OPERATOR_NS,
   );
@@ -48,12 +52,12 @@ export const useEventSourceStatus = (
   const eventSourceModel =
     sourceKindProp &&
     !isKameletSource &&
-    eventSourceModels?.find((model: K8sKind) => model.kind === sourceKindProp);
+    eventSourceModels?.find((model: K8sModel) => model.kind === sourceKindProp);
   const sourceModel = isKameletSource ? CamelKameletBindingModel : eventSourceModel;
   const [createSourceAccess, createSourceAccessLoading] = useAccessReview(
     {
-      group: sourceModel?.apiGroup,
-      resource: sourceModel?.plural,
+      group: (sourceModel as K8sModel)?.apiGroup,
+      resource: (sourceModel as K8sModel)?.plural,
       verb: 'create',
       namespace,
     },
@@ -73,8 +77,8 @@ export const useEventSourceStatus = (
       isValidSource: !!eventSourceModel || (kameletLoaded && kamelet && isKameletSource),
       loaded: isKameletSource ? kameletLoaded : eventSourceModelsLoaded,
       normalizedSource: isKameletSource
-        ? getKameletMetadata(kamelet)
-        : getEventSourceMetadata(eventSourceModel, t),
+        ? getKameletMetadata(kamelet as K8sResourceKind)
+        : getEventSourceMetadata(eventSourceModel as K8sModel, t),
     };
   }, [
     isSourceKindPresent,
@@ -88,8 +92,9 @@ export const useEventSourceStatus = (
 
   return {
     ...sourceStatus,
+    isValidSource: Boolean(sourceStatus.isValidSource),
     createSourceAccessLoading,
     createSourceAccess,
-    kamelet,
+    kamelet: kamelet as K8sResourceKind,
   };
 };

@@ -13,7 +13,7 @@ const TrafficLink: React.FC<TrafficLinkProps> = ({ element }) => {
     <BaseEdge
       element={element}
       className="odc-traffic-link"
-      tag={detailsLevel === ScaleDetailsLevel.high && `${percent}%`}
+      tag={detailsLevel === ScaleDetailsLevel.high && (`${percent}%` as any)}
     />
   );
 };

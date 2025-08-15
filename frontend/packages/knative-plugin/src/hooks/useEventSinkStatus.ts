@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { KnEventCatalogMetaData } from '../components/add/import-types';
 import { CAMEL_K_OPERATOR_NS, GLOBAL_OPERATOR_NS } from '../const';
 import { CamelKameletBindingModel, CamelKameletModel, KafkaSinkModel } from '../models';
@@ -19,7 +19,7 @@ export const useEventSinkStatus = (
   createSinkAccess: boolean;
   loaded: boolean;
   normalizedSink: KnEventCatalogMetaData;
-  kamelet: K8sResourceKind;
+  kamelet: K8sResourceKind | undefined;
 } => {
   const { t } = useTranslation();
   const [kameletNs, kameletNsLoaded] = useK8sGet<K8sResourceKind>(
@@ -50,8 +50,8 @@ export const useEventSinkStatus = (
   const sinkModel = isKameletSink ? CamelKameletBindingModel : eventSinkModel;
 
   const [createSinkAccess, createSinkAccessLoading] = useAccessReview({
-    group: sinkModel?.apiGroup,
-    resource: sinkModel?.plural,
+    group: (sinkModel as K8sModel)?.apiGroup,
+    resource: (sinkModel as K8sModel)?.plural,
     verb: 'create',
     namespace,
   });
@@ -68,15 +68,16 @@ export const useEventSinkStatus = (
       isValidSink: !!eventSinkModel || (kameletLoaded && kamelet && isKameletSink),
       loaded: isKameletSink ? kameletLoaded : !!eventSinkModel,
       normalizedSink: isKameletSink
-        ? getKameletMetadata(kamelet)
-        : getEventSinkMetadata(eventSinkModel, t),
+        ? getKameletMetadata(kamelet as K8sResourceKind)
+        : getEventSinkMetadata(eventSinkModel as K8sModel, t),
     };
   }, [isSinkKindPresent, eventSinkModel, kameletLoaded, kamelet, isKameletSink, t]);
 
   return {
     ...sourceStatus,
+    isValidSink: Boolean(sourceStatus.isValidSink),
     createSinkAccessLoading,
     createSinkAccess,
-    kamelet,
+    kamelet: kamelet as K8sResourceKind,
   };
 };

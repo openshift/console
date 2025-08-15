@@ -72,8 +72,8 @@ export const DomainMappingsOverviewList: React.FC<OverviewListProps> = ({ items 
 export const KnativeOverviewRevisionPodsRing: React.FC<KnativeOverviewDetailsProps> = ({
   item,
 }) => {
-  const { obj } = item;
-  const { pods } = usePodsForRevisions(obj.metadata.uid, obj.metadata.namespace);
+  const { obj } = item as { obj: K8sResourceKind };
+  const { pods } = usePodsForRevisions(obj.metadata?.uid ?? '', obj.metadata?.namespace ?? '');
   return (
     <div className="resource-overview__pod-counts">
       <PodRing
@@ -88,7 +88,7 @@ export const KnativeOverviewRevisionPodsRing: React.FC<KnativeOverviewDetailsPro
 };
 
 export const KnativeOverviewDetails: React.FC<KnativeOverviewDetailsProps> = ({ item }) => {
-  const { obj } = item;
+  const { obj } = item as { obj: K8sResourceKind };
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
       {obj.kind === RevisionModel.kind ? <KnativeOverviewRevisionPodsRing item={item} /> : null}
@@ -107,8 +107,8 @@ export const KnativeOverviewDetails: React.FC<KnativeOverviewDetailsProps> = ({ 
 export const KnativeEventSinkPodRing: React.FC<KnativeOverviewDetailsProps> = ({ item }) => {
   const { revisions, obj } = item as { obj: K8sResourceKind; revisions: K8sResourceKind[] };
   const { pods } = usePodsForRevisions(
-    revisions?.map((r) => r.metadata.uid),
-    obj.metadata.namespace,
+    revisions?.map((r) => r.metadata?.uid ?? ''),
+    obj.metadata?.namespace ?? '',
   );
   return (
     <div className="resource-overview__pod-counts">
@@ -127,7 +127,7 @@ export const KnativeEventSinkPodRing: React.FC<KnativeOverviewDetailsProps> = ({
 export const KnativeEventSinkOverviewDetails: React.FC<KnativeOverviewDetailsProps> = ({
   item,
 }) => {
-  const { obj } = item;
+  const { obj } = item as { obj: K8sResourceKind };
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
       <KnativeEventSinkPodRing item={item} />

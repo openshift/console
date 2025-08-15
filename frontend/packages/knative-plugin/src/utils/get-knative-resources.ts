@@ -49,9 +49,9 @@ const isKnativeDeployment = (dc: K8sResourceKind) => {
 };
 
 const getKsResource = (dc: K8sResourceKind, { data }: K8sResourceKind): K8sResourceKind[] => {
-  let ksResource = [];
+  let ksResource: K8sResourceKind[] = [];
   if (isKnativeDeployment(dc)) {
-    const name = dc.metadata.labels?.[KNATIVE_SERVING_LABEL];
+    const name = dc.metadata?.labels?.[KNATIVE_SERVING_LABEL];
     ksResource = _.filter(data, (config: K8sResourceKind) => {
       return name === _.get(config, 'metadata.name');
     });
@@ -60,11 +60,11 @@ const getKsResource = (dc: K8sResourceKind, { data }: K8sResourceKind): K8sResou
 };
 
 const getRevisions = (dc: K8sResourceKind, { data }): K8sResourceKind[] => {
-  let revisionResource = [];
+  let revisionResource: K8sResourceKind[] = [];
   if (isKnativeDeployment(dc)) {
-    const ownerUid = dc.metadata.ownerReferences?.[0]?.uid;
+    const ownerUid = dc.metadata?.ownerReferences?.[0]?.uid;
     revisionResource = _.filter(data, (revision: K8sResourceKind) => {
-      return ownerUid && ownerUid === revision.metadata.uid;
+      return ownerUid && ownerUid === revision.metadata?.uid;
     });
   }
   return revisionResource;

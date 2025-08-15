@@ -12,7 +12,7 @@ type ServiceRouteDecoratorProps = {
 };
 
 const ServiceRouteDecorator: React.FC<ServiceRouteDecoratorProps> = ({ url, radius, x, y }) => {
-  const ref = React.useRef();
+  const ref = React.useRef<SVGGElement | null>(null);
   const { t } = useTranslation();
   return (
     <Tooltip
