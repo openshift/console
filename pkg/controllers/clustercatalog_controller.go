@@ -50,7 +50,7 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 		if apierrors.IsNotFound(err) {
 			// The ClusterCatalog has been deleted, delete its CatalogItems from the cache
 			log.Info("Removing CatalogItems for ClusterCatalog from cache", "name", req.Name)
-			r.catalogService.RemoveCatalogItemsFromClusterCatalogFromCache(req.Name)
+			r.catalogService.RemoveCatalog(req.Name)
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, err
@@ -63,7 +63,7 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 	}
 
 	if found && baseURL != "" {
-		err = r.catalogService.AddCatalogItemsFromClusterCatalogToCache(req.Name, baseURL)
+		err = r.catalogService.UpdateCatalog(req.Name, baseURL)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
