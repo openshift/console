@@ -28,20 +28,20 @@ const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { na
   const {
     apiVersion: sourceApiVersion,
     kind: sourceKind,
-    metadata: { namespace, name: sourceName },
+    metadata: { namespace, name: sourceName } = { namespace: '', name: '' },
   } = source;
   const {
     apiVersion: targetApiVersion = '',
     kind: targetKind = '',
-    metadata: { name: targetName },
+    metadata: { name: targetName } = { name: '' },
   } = target;
   const getResourceModel = () =>
     sourceKind === EventingBrokerModel.kind ? EventingTriggerModel : EventingSubscriptionModel;
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const eventTypeName = searchParams.get(EVENT_TYPE_NAME_PARAM);
-  const eventTypeNamespace = searchParams.get(EVENT_TYPE_NAMESPACE_PARAM);
+  const eventTypeName = searchParams.get(EVENT_TYPE_NAME_PARAM) ?? '';
+  const eventTypeNamespace = searchParams.get(EVENT_TYPE_NAMESPACE_PARAM) ?? '';
 
   const [eventType, loaded] = useK8sGet<K8sResourceKind>(
     EventingEventTypeModel,
@@ -52,7 +52,7 @@ const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { na
 
   const rows = specAttributes
     .filter((a) => loaded && eventType?.spec?.hasOwnProperty(a))
-    .reduce((a, v) => ({ ...a, [v]: eventType.spec[v] }), {});
+    .reduce((a, v) => ({ ...a, [v]: eventType?.spec?.[v] }), {});
   const { kind, apiVersion, apiGroup } = getResourceModel();
   const getSpecForKind = (connectorSourceKind: string) => {
     let spec = {};

@@ -39,8 +39,8 @@ const KnativeService: React.FC<KnativeServiceProps> = ({ children, ...props }) =
     group: resourceModel.apiGroup,
     verb: 'patch',
     resource: resourceModel.plural,
-    name: resourceObj.metadata.name,
-    namespace: resourceObj.metadata.namespace,
+    name: resourceObj.metadata?.name ?? '',
+    namespace: resourceObj.metadata?.namespace ?? '',
   });
   const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation(data.kind);
   const badgeClassName = css('odc-resource-icon', {

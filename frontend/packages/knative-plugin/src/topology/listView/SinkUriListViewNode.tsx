@@ -16,7 +16,7 @@ const ObservedSinkUriListViewNode: React.FC<SinkUriListViewNodeProps> = ({ item,
 
   const labelCell = (
     <DataListCell className="odc-topology-list-view__label-cell" key="label" id={sinkUri}>
-      <TypedResourceBadgeCell key="type-icon" kind={item.getResourceKind()} />
+      <TypedResourceBadgeCell key="type-icon" kind={item.getResourceKind() ?? ''} />
       {sinkUri}
     </DataListCell>
   );

@@ -26,15 +26,15 @@ const FunctionRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceIcon kind={serviceReference} />
         <Link
-          to={`/functions/ns/${obj.metadata.namespace}/${obj.metadata.name}`}
-          title={obj.metadata.name}
+          to={`/functions/ns/${obj.metadata?.namespace}/${obj.metadata?.name}`}
+          title={obj.metadata?.name}
           className="co-resource-item__resource-name"
         >
-          {obj.metadata.name}
+          {obj.metadata?.name}
         </Link>
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={obj.metadata?.namespace} />
       </TableData>
       <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         {(obj.status && obj.status.url && (
@@ -54,9 +54,9 @@ const FunctionRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
         )) ||
           '-'}
       </TableData>
-      <TableData className={tableColumnClasses[6]}>{obj.metadata.generation || '-'}</TableData>
+      <TableData className={tableColumnClasses[6]}>{obj.metadata?.generation ?? '-'}</TableData>
       <TableData className={tableColumnClasses[7]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata?.creationTimestamp ?? ''} />
       </TableData>
       <TableData className={tableColumnClasses[8]}>
         <LazyActionMenu context={context} />

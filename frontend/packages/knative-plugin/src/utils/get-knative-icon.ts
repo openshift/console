@@ -48,9 +48,9 @@ export const getEventSourceIcon = (
   nodeType?: string,
 ): React.ReactNode | string => {
   const objAnnotations = obj?.metadata?.annotations;
-  return isValidUrl(objAnnotations?.[EVENT_SOURCE_ICON])
+  return isValidUrl(objAnnotations?.[EVENT_SOURCE_ICON] ?? '')
     ? objAnnotations?.[EVENT_SOURCE_ICON]
-    : isValidUrl(objAnnotations?.[CAMEL_KAMELET_ICON])
+    : isValidUrl(objAnnotations?.[CAMEL_KAMELET_ICON] ?? '')
     ? objAnnotations?.[CAMEL_KAMELET_ICON]
     : getEventSourceIconFromKind(kind, nodeType);
 };

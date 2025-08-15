@@ -28,10 +28,10 @@ const normalizeEventSources = (
     const href = `/catalog/ns/${namespace}/eventsource?sourceKind=${kind}`;
     const { description, provider, support } = getEventSourceCatalogProviderData(kind, t) ?? {};
     return {
-      uid,
+      uid: uid ?? '',
       name,
       description,
-      icon: { url: getEventSourceIcon(referenceForModel(eventSource)) as string, class: null },
+      icon: { url: getEventSourceIcon(referenceForModel(eventSource)) as string, class: undefined },
       type: 'EventSource',
       provider,
       cta: { label: t('knative-plugin~Create Event Source'), href },

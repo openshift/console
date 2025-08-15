@@ -6,7 +6,7 @@ import { RouteModel } from '../models';
 import { getRoutesURL } from '../topology/knative-topology-utils';
 
 export const useRoutesURL = (resource: K8sResourceKind): string => {
-  const { namespace, annotations } = resource.metadata;
+  const { namespace, annotations } = resource.metadata ?? {};
   const disabled = annotations?.[ROUTE_DISABLED_ANNOTATION] === 'true';
   const annotationURL = annotations?.[ROUTE_URL_ANNOTATION];
 
@@ -32,7 +32,7 @@ export const useRoutesURL = (resource: K8sResourceKind): string => {
 
   const url = annotationURL || watchedURL;
   if (disabled || !url || !(url.startsWith('http://') || url.startsWith('https://'))) {
-    return null;
+    return '';
   }
   return url;
 };

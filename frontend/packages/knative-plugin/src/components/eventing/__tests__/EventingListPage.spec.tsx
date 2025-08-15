@@ -28,19 +28,19 @@ describe('EventingListPage', () => {
     const multiTablistPage = wrapper.find(MultiTabListPage);
     expect(multiTablistPage.props().title).toEqual('Eventing');
     expect(multiTablistPage.props().pages).toHaveLength(5);
-    expect(Object.keys(multiTablistPage.props().menuActions)).toHaveLength(3);
-    expect(multiTablistPage.props().menuActions.eventSource).toBeDefined();
+    expect(Object.keys(multiTablistPage.props().menuActions ?? {})).toHaveLength(3);
+    expect(multiTablistPage.props().menuActions?.eventSource).toBeDefined();
   });
 
   it('should show correct url for creation for valid namespace', () => {
     wrapper = shallow(<EventingListPage />);
     const multiTablistPage = wrapper.find(MultiTabListPage);
-    expect(Object.keys(multiTablistPage.props().menuActions)).toHaveLength(3);
-    expect(multiTablistPage.props().menuActions.eventSource).toBeDefined();
+    expect(Object.keys(multiTablistPage.props().menuActions ?? {})).toHaveLength(3);
+    expect(multiTablistPage.props().menuActions?.eventSource).toBeDefined();
     expect(
       multiTablistPage
-        .props()
-        .menuActions.eventSource.onSelection('eventSource', { label: 'Event Source' }, undefined),
+        ?.props()
+        .menuActions?.eventSource?.onSelection?.('eventSource', { label: 'Event Source' }, ''),
     ).toEqual('/catalog/ns/my-project?catalogType=EventSource&provider=["Red+Hat"]');
   });
 
@@ -50,12 +50,12 @@ describe('EventingListPage', () => {
     });
     wrapper = shallow(<EventingListPage />);
     const multiTablistPage = wrapper.find(MultiTabListPage);
-    expect(Object.keys(multiTablistPage.props().menuActions)).toHaveLength(3);
-    expect(multiTablistPage.props().menuActions.eventSource).toBeDefined();
+    expect(Object.keys(multiTablistPage.props().menuActions ?? {})).toHaveLength(3);
+    expect(multiTablistPage.props().menuActions?.eventSource).toBeDefined();
     expect(
       multiTablistPage
-        .props()
-        .menuActions.eventSource.onSelection('eventSource', { label: 'Event Source' }, undefined),
+        ?.props()
+        .menuActions?.eventSource?.onSelection?.('eventSource', { label: 'Event Source' }, ''),
     ).toEqual('/catalog/ns/default?catalogType=EventSource&provider=["Red+Hat"]');
   });
 });

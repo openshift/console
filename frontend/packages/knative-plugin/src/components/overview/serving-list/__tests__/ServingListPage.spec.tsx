@@ -28,7 +28,7 @@ describe('ServingListPage', () => {
     const multiTablistPage = wrapper.find(MultiTabListPage);
     expect(multiTablistPage.props().title).toEqual('Serving');
     expect(multiTablistPage.props().pages).toHaveLength(3);
-    expect(Object.keys(multiTablistPage.props().menuActions)).toHaveLength(1);
-    expect(multiTablistPage.props().menuActions.service).toBeDefined();
+    expect(Object.keys(multiTablistPage.props().menuActions ?? {})).toHaveLength(1);
+    expect(multiTablistPage.props().menuActions?.service).toBeDefined();
   });
 });

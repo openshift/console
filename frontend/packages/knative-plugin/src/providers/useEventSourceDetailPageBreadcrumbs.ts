@@ -15,9 +15,9 @@ export const useEventSourceDetailPageBreadcrumbs = (kindObj: K8sKind) => {
   return useTabbedTableBreadcrumbsFor(
     kindObj,
     location,
-    params,
+    params as any,
     'eventing',
-    serverlessTab('EventSource'),
+    serverlessTab('EventSource') ?? '',
     isAdminPerspective ? t('knative-plugin~Event Sources') : undefined,
     isAdminPerspective,
   );

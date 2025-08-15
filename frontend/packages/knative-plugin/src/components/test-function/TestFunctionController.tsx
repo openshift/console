@@ -27,8 +27,8 @@ const TestFunctionController: React.FC<TestFunctionControllerProps> = (props) =>
       kind: ServiceModel.kind,
       isList: false,
       prop: `obj`,
-      namespace: obj.metadata.namespace,
-      name: obj.metadata.name,
+      namespace: obj?.metadata?.namespace ?? '',
+      name: obj?.metadata?.name ?? '',
     },
   ];
 

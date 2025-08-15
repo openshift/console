@@ -50,7 +50,7 @@ const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
     return k8sPatch(ServiceModel, service, ksvcPatch)
       .then(() => {
         action.setStatus({ error: '' });
-        close();
+        close?.();
       })
       .catch((err) => {
         const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');

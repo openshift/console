@@ -52,7 +52,7 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
               <DynamicResourceLink
                 title={t('knative-plugin~Broker')}
                 name={trigger.spec.broker}
-                namespace={trigger.metadata.namespace}
+                namespace={trigger.metadata?.namespace ?? ''}
                 kind={referenceForModel(EventingBrokerModel)}
               />
             )}
@@ -60,7 +60,7 @@ const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
               <DynamicResourceLink
                 title={t('knative-plugin~Subscriber')}
                 name={trigger.spec.subscriber.ref.name}
-                namespace={trigger.metadata.namespace}
+                namespace={trigger.metadata?.namespace ?? ''}
                 kind={referenceFor(trigger.spec.subscriber.ref)}
               />
             )}
