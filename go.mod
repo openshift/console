@@ -24,6 +24,7 @@ require (
 	github.com/operator-framework/kubectl-operator v0.6.0
 	github.com/operator-framework/operator-lifecycle-manager v0.31.0
 	github.com/operator-framework/operator-registry v1.50.0
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/prometheus/client_golang v1.22.0
 	github.com/prometheus/common v0.63.0
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
@@ -40,6 +41,7 @@ require (
 	k8s.io/apimachinery v0.33.3
 	k8s.io/cli-runtime v0.32.2
 	k8s.io/client-go v0.32.2
+	k8s.io/klog v1.0.0
 	k8s.io/klog/v2 v2.130.1
 	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738
 	sigs.k8s.io/controller-runtime v0.20.4
@@ -212,7 +214,6 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	k8s.io/apiserver v0.32.2 // indirect
 	k8s.io/component-base v0.32.2 // indirect
-	k8s.io/klog v1.0.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff // indirect
 	k8s.io/kubectl v0.32.2 // indirect
 	k8s.io/pod-security-admission v0.31.1 // indirect
