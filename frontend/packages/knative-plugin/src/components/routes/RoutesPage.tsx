@@ -15,7 +15,7 @@ const RoutesPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
       selector={
         customData?.selectResourcesForName
           ? { matchLabels: { 'serving.knative.dev/service': customData.selectResourcesForName } }
-          : null
+          : undefined
       }
     />
   );

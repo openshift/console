@@ -16,10 +16,7 @@ export interface SinkSourceProps {
 
 const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
   const { t } = useTranslation();
-  const {
-    metadata: { namespace, name },
-    spec,
-  } = source;
+  const { metadata: { namespace, name } = { namespace: '', name: '' } as any, spec } = source;
   const isSinkRef = !!spec?.sink?.ref;
   const { name: sinkName = '', apiVersion = '', kind = '', uri = '' } = isSinkRef
     ? spec?.sink?.ref
@@ -60,7 +57,7 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
     return k8sUpdate(modelFor(referenceFor(source)), updatePayload)
       .then(() => {
         action.setStatus({ error: '' });
-        close();
+        close?.();
       })
       .catch((err) => {
         const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');

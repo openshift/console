@@ -48,7 +48,7 @@ describe('RoutesOverviewListItem', () => {
         ...MockKnativeResources.ksroutes.data[0].status,
         traffic: [
           {
-            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
+            ...MockKnativeResources.ksroutes.data[0].status?.traffic?.[0],
             tag: 'abc',
             url:
               'http://abc-overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
@@ -108,7 +108,7 @@ describe('RoutesOverviewListItem', () => {
         url: undefined,
         traffic: [
           {
-            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
+            ...MockKnativeResources.ksroutes.data[0].status?.traffic?.[0],
             percent: undefined,
             url: undefined,
           },

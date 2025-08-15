@@ -48,7 +48,7 @@ describe('SinkPubsubModal Form', () => {
 
   it('should call validateForm, setFieldValue onChange', () => {
     const modal = sinkPubsubeModalWrapper.find(ResourceDropdownField);
-    modal.props().onChange('event-greeter');
+    modal.props().onChange?.('event-greeter');
     expect(formProps.setFieldTouched).toHaveBeenCalled();
     expect(formProps.setFieldValue).toHaveBeenCalled();
     expect(formProps.validateForm).toHaveBeenCalled();

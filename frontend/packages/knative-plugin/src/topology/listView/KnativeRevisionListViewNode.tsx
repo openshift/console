@@ -26,7 +26,10 @@ const ObservedKnativeRevisionListViewNode: React.FC<KnativeRevisionListViewNodeP
 }) => {
   const resource = getTopologyResourceObject(item.getData());
   const metrics = useOverviewMetrics();
-  const { loaded, pods } = usePodsForRevisions(resource.metadata.uid, resource.metadata.namespace);
+  const { loaded, pods } = usePodsForRevisions(
+    resource.metadata?.uid ?? '',
+    resource.metadata?.namespace ?? '',
+  );
   const podData = React.useMemo(() => {
     if (!loaded) {
       return null;
@@ -54,7 +57,7 @@ const ObservedKnativeRevisionListViewNode: React.FC<KnativeRevisionListViewNodeP
       {!metricStats || !metricStats.totalBytes || !metricStats.totalCores ? null : (
         <MemoryCellComponent
           totalBytes={metricStats.totalBytes}
-          memoryByPod={metricStats.memoryByPod}
+          memoryByPod={metricStats.memoryByPod ?? []}
         />
       )}
     </DataListCell>
@@ -62,7 +65,10 @@ const ObservedKnativeRevisionListViewNode: React.FC<KnativeRevisionListViewNodeP
   const cpuCell = (
     <DataListCell key="cpu" id={`${item.getId()}_metrics`}>
       {!metricStats || !metricStats.totalBytes || !metricStats.totalCores ? null : (
-        <CpuCellComponent cpuByPod={metricStats.cpuByPod} totalCores={metricStats.totalCores} />
+        <CpuCellComponent
+          cpuByPod={metricStats.cpuByPod ?? []}
+          totalCores={metricStats.totalCores}
+        />
       )}
     </DataListCell>
   );

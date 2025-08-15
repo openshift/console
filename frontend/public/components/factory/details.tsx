@@ -64,7 +64,7 @@ const useBreadCrumbsForDetailPage = (
                 : models.kind === kindObj?.kind;
             },
           )
-        : undefined,
+        : ({} as any),
     [
       breadCrumbsResolved,
       breadCrumbsExtension,
@@ -132,7 +132,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
     setPluginBreadcrumbs(breadcrumbs || undefined);
   }, []);
   let allPages = [...pages, ...pluginPages];
-  allPages = allPages.length ? allPages : null;
+  allPages = allPages.length ? allPages : [];
   const objResource: FirehoseResource = {
     kind: props.kind,
     name: props.name,
@@ -142,7 +142,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   };
   const titleProviderValues = {
     telemetryPrefix: props?.kindObj?.kind,
-    titlePrefix: `${props.name} · ${getTitleForNodeKind(props?.kindObj?.kind)}`,
+    titlePrefix: `${props.name} · ${getTitleForNodeKind(props?.kindObj?.kind ?? '')}`,
   };
 
   return (
@@ -176,7 +176,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           resourceKeys={resourceKeys}
           getResourceStatus={props.getResourceStatus}
           customData={props.customData}
-          badge={props.badge || getBadgeFromType(kindObj?.badge)}
+          badge={props.badge || getBadgeFromType(kindObj?.badge ?? ('default' as any))}
           OverrideTitle={props.OverrideTitle}
           helpText={props.helpText}
           helpAlert={props.helpAlert}
