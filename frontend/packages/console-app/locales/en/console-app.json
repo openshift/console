@@ -232,6 +232,8 @@
   "Volume Snapshot is not Ready": "Volume Snapshot is not Ready",
   "Current default StorageClass": "Current default StorageClass",
   "Set as default": "Set as default",
+  "Current default StorageClass for VirtualMachines": "Current default StorageClass for VirtualMachines",
+  "Set as default for VirtualMachines": "Set as default for VirtualMachines",
   "Access mode": "Access mode",
   "Cluster configuration": "Cluster configuration",
   "Set cluster-wide configuration for the console experience. Your changes will be autosaved and will affect after a refresh.": "Set cluster-wide configuration for the console experience. Your changes will be autosaved and will affect after a refresh.",
