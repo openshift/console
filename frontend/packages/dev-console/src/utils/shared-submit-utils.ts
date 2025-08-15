@@ -58,7 +58,7 @@ export const createService = (
     !_.isEmpty(originalService?.spec?.ports)
   ) {
     ports = [
-      ...originalService.spec.ports.map((port) => ({
+      ...originalService?.spec?.ports?.map((port) => ({
         name: port.name,
         containerPort: port.port,
         protocol: 'TCP',
@@ -70,7 +70,7 @@ export const createService = (
     } = formData;
     ports = isiPorts;
   } else if (_.isEmpty(ports)) {
-    const port = { containerPort: defaultUnknownPort, protocol: 'TCP' };
+    const port = { containerPort: defaultUnknownPort ?? 0, protocol: 'TCP' };
     ports = [port];
   }
   if (
@@ -107,7 +107,7 @@ export const createService = (
     },
   };
 
-  const service = mergeData(originalService, newService);
+  const service = mergeData(originalService as K8sResourceKind, newService);
 
   return service;
 };
@@ -163,7 +163,7 @@ export const createRoute = (
     targetPort = makePortName({ containerPort: _.toInteger(unknownTargetPort), protocol: 'TCP' });
   } else {
     targetPort = makePortName({
-      containerPort: ports[0]?.containerPort || defaultUnknownPort,
+      containerPort: ports[0]?.containerPort ?? defaultUnknownPort,
       protocol: 'TCP',
     });
   }
@@ -197,7 +197,7 @@ export const createRoute = (
     },
   };
 
-  const route = mergeData(originalRoute, newRoute);
+  const route = mergeData(originalRoute as K8sResourceKind, newRoute);
 
   return route;
 };

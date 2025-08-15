@@ -33,9 +33,9 @@ const HPAUtilizationField: React.FC<HPAUtilizationFieldProps> = ({
 }) => {
   const { errors } = useFormikContext<HPAFormValues>();
   const { metric, index } = getMetricByType(hpa, type);
-  const value: number = metric?.resource?.target?.averageUtilization;
+  const value: number = metric?.resource?.target?.averageUtilization ?? 0;
   const thisErrorMetric = errors.formData?.spec?.metrics?.[index] as FormikErrors<HPAMetric>;
-  const error: string = thisErrorMetric?.resource?.target?.averageUtilization;
+  const error: string = thisErrorMetric?.resource?.target?.averageUtilization ?? '';
   const { t } = useTranslation();
   return (
     <FormGroup

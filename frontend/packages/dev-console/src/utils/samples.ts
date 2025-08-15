@@ -18,7 +18,7 @@ export const createSampleLink = (sample: ConsoleSample, activeNamespace: string)
     const { gitImport } = sample.spec.source;
     const searchParams = new URLSearchParams();
     searchParams.set('formType', 'sample');
-    searchParams.set('sample', sample.metadata.name);
+    searchParams.set('sample', sample.metadata?.name ?? '');
     searchParams.set('git.repository', gitImport.repository.url);
     if (gitImport.repository.revision) {
       searchParams.set('git.revision', gitImport.repository.revision);
@@ -32,7 +32,7 @@ export const createSampleLink = (sample: ConsoleSample, activeNamespace: string)
   if (isContainerImportSource(sample.spec.source)) {
     const { containerImport } = sample.spec.source;
     const searchParams = new URLSearchParams();
-    searchParams.set('sample', sample.metadata.name);
+    searchParams.set('sample', sample.metadata?.name ?? '');
     searchParams.set('image', containerImport.image);
     return `/deploy-image/ns/${activeNamespace}?${searchParams}`;
   }
@@ -47,11 +47,11 @@ export const getGitImportSample = (): {
 } => {
   const searchParams = new URLSearchParams(window.location.search);
   return {
-    sampleName: searchParams.get('sample'),
+    sampleName: searchParams.get('sample') ?? '',
     repository: {
-      url: searchParams.get('git.repository'),
-      revision: searchParams.get('git.revision'),
-      contextDir: searchParams.get('git.contextDir'),
+      url: searchParams.get('git.repository') ?? '',
+      revision: searchParams.get('git.revision') ?? undefined,
+      contextDir: searchParams.get('git.contextDir') ?? undefined,
     },
   };
 };
@@ -71,9 +71,9 @@ export const hasSampleQueryParameter = () => {
 export const groupConsoleSamplesByName = (samples: ConsoleSample[]) => {
   return samples.reduce<Record<string, ConsoleSample[]>>((grouped, consoleSample) => {
     const name =
-      consoleSample.metadata.labels?.[LOCALIZATION_NAME_LABEL] || consoleSample.metadata.name;
-    if (!grouped[name]) grouped[name] = [];
-    grouped[name].push(consoleSample);
+      consoleSample.metadata?.labels?.[LOCALIZATION_NAME_LABEL] || consoleSample.metadata?.name;
+    if (!grouped[name ?? '']) grouped[name ?? ''] = [];
+    grouped[name ?? '']?.push(consoleSample);
     return grouped;
   }, {});
 };
@@ -102,11 +102,11 @@ export const getBestMatch = (samples: ConsoleSample[], language: string): Consol
   const preferredLanguage = (language || 'en').split('-')[0].toLowerCase();
   const preferredCountry = ((language || '').split('-')[1] || '').toUpperCase();
 
-  let sameLanguageWithoutCountry: ConsoleSample = null;
-  let sameLanguageWithAnyCountry: ConsoleSample = null;
-  let fallbackLanguageSameCountry: ConsoleSample = null;
-  let fallbackLanguageNoCountry: ConsoleSample = null;
-  let fallbackLanguageAnyCountry: ConsoleSample = null;
+  let sameLanguageWithoutCountry: ConsoleSample | null = null;
+  let sameLanguageWithAnyCountry: ConsoleSample | null = null;
+  let fallbackLanguageSameCountry: ConsoleSample | null = null;
+  let fallbackLanguageNoCountry: ConsoleSample | null = null;
+  let fallbackLanguageAnyCountry: ConsoleSample | null = null;
 
   for (const sample of samples) {
     const sampleLanguage = (

@@ -41,7 +41,7 @@ export const navigateTo = (e: React.SyntheticEvent, url: string) => {
 };
 
 export const resolvedHref = (href: string, namespace: string): string =>
-  href && namespace ? href.replace(/:namespace\b/g, namespace) : null;
+  href && namespace ? href.replace(/:namespace\b/g, namespace) : '';
 
 export const filterNamespaceScopedUrl = (
   namespace: string,

@@ -29,9 +29,9 @@ describe('SecureRouteFields', () => {
     const secureRouteCheckbox = screen.queryByTestId('secure-route-checkbox');
     const tlsTermination = screen.queryByTestId('tls-termination');
     const inSecureTraffic = screen.queryByTestId('insecure-traffic');
-    expect(secureRouteCheckbox.hasAttribute('disabled')).toBeTruthy();
-    expect(tlsTermination.hasAttribute('disabled')).toBeTruthy();
-    expect(inSecureTraffic.hasAttribute('disabled')).toBeTruthy();
+    expect(secureRouteCheckbox?.hasAttribute('disabled')).toBeTruthy();
+    expect(tlsTermination?.hasAttribute('disabled')).toBeTruthy();
+    expect(inSecureTraffic?.hasAttribute('disabled')).toBeTruthy();
   });
 
   it('should not show Allow option in Insecure traffic dropdown if TLS termination is Passthrough', async () => {
@@ -46,7 +46,7 @@ describe('SecureRouteFields', () => {
     ]);
     render(<SecureRouteFields />);
     const inSecureTraffic = screen.queryByTestId('insecure-traffic');
-    fireEvent.click(inSecureTraffic);
+    fireEvent.click(inSecureTraffic as Element);
     await waitFor(() => {
       expect(screen.queryByRole('option', { name: /Allow/i })).toBeNull();
       expect(screen.queryByRole('option', { name: /None/i })).not.toBeNull();
@@ -66,7 +66,7 @@ describe('SecureRouteFields', () => {
     ]);
     render(<SecureRouteFields />);
     const inSecureTraffic = screen.queryByTestId('insecure-traffic');
-    fireEvent.click(inSecureTraffic);
+    fireEvent.click(inSecureTraffic as Element);
     await waitFor(() => {
       expect(screen.queryByRole('option', { name: /Allow/i })).not.toBeNull();
       expect(screen.queryByRole('option', { name: /None/i })).not.toBeNull();

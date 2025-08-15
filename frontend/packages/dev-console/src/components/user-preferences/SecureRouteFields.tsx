@@ -31,8 +31,20 @@ const SecureRouteFields: React.FC = () => {
     setPreferredRoutingOptions,
     preferredRoutingOptionsLoaded,
   ] = usePreferredRoutingOptions();
-  const { secure, tlsTermination, insecureTraffic } =
-    preferredRoutingOptionsLoaded && preferredRoutingOptions;
+
+  const secure =
+    preferredRoutingOptionsLoaded && preferredRoutingOptions
+      ? preferredRoutingOptions.secure
+      : false;
+  const tlsTermination =
+    preferredRoutingOptionsLoaded && preferredRoutingOptions
+      ? preferredRoutingOptions.tlsTermination
+      : undefined;
+  const insecureTraffic =
+    preferredRoutingOptionsLoaded && preferredRoutingOptions
+      ? preferredRoutingOptions.insecureTraffic
+      : undefined;
+
   const [isTLSTerminationOpen, setIsTLSTerminationOpen] = React.useState<boolean>(false);
   const [isInsecureTrafficOpen, setIsInsecureTrafficOpen] = React.useState<boolean>(false);
 
@@ -145,7 +157,7 @@ const SecureRouteFields: React.FC = () => {
         } as React.CSSProperties
       }
     >
-      {terminationOptions[tlsTermination]}
+      {terminationOptions[tlsTermination ?? '']}
     </MenuToggle>
   );
 
@@ -165,7 +177,7 @@ const SecureRouteFields: React.FC = () => {
         } as React.CSSProperties
       }
     >
-      {insecureTrafficOptions[insecureTraffic]}
+      {insecureTrafficOptions[insecureTraffic ?? '']}
     </MenuToggle>
   );
 
