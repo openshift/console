@@ -53,7 +53,7 @@ const PubSubModal: React.FC<Props> = ({
         submitText={t('knative-plugin~Add')}
         cancelText={t('knative-plugin~Cancel')}
         submitDisabled={!dirty || !_.isEmpty(errors) || isSubmitting}
-        cancel={cancel}
+        cancel={cancel ?? (() => {})}
         errorMessage={status.error}
       />
     </form>

@@ -16,7 +16,7 @@ const serviceReference = referenceForModel(ServiceModel);
 
 const RevisionRow: React.FC<RowFunctionArgs<RevisionKind>> = ({ obj }) => {
   const readyCondition = obj.status
-    ? getCondition(obj.status.conditions, ConditionTypes.Ready)
+    ? getCondition(obj?.status?.conditions ?? [], ConditionTypes.Ready)
     : null;
   const service = _.get(obj.metadata, `labels["serving.knative.dev/service"]`);
   const objReference = referenceFor(obj);
@@ -26,31 +26,31 @@ const RevisionRow: React.FC<RowFunctionArgs<RevisionKind>> = ({ obj }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={revisionReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj?.metadata?.name ?? ''}
+          namespace={obj?.metadata?.namespace ?? ''}
         />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={obj?.metadata?.namespace ?? ''} />
       </TableData>
       <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         {service && (
           <ResourceLink
             kind={serviceReference}
             name={service}
-            namespace={obj.metadata.namespace}
+            namespace={obj?.metadata?.namespace ?? ''}
             title={service}
           />
         )}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj?.metadata?.creationTimestamp ?? ''} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        {obj.status ? getConditionString(obj.status.conditions) : '-'}
+        {obj?.status ? getConditionString(obj?.status?.conditions ?? []) : '-'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        {(readyCondition && readyCondition.status) || '-'}
+        {(readyCondition && readyCondition?.status) || '-'}
       </TableData>
       <TableData className={tableColumnClasses[6]}>
         {(readyCondition?.message && (

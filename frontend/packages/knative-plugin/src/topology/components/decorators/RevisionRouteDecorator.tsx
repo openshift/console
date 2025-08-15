@@ -20,7 +20,7 @@ const RevisionRouteDecorator: React.FC<RevisionRouteDecoratorProps> = ({
   x,
   y,
 }) => {
-  const ref = React.useRef();
+  const ref = React.useRef<SVGGElement | null>(null);
   const { t } = useTranslation();
   const resourceObj = getResource(element);
   const url = useRoutesURL(resourceObj);
