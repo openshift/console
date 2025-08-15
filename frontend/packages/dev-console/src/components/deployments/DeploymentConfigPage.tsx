@@ -26,7 +26,7 @@ const DeploymentConfigPage: React.FC = () => {
   );
 
   const deploymentConfig: K8sResourceKind = isNew
-    ? getDefaultDeploymentConfig(namespace)
+    ? getDefaultDeploymentConfig(namespace ?? '')
     : watchedDeployment;
 
   const title = isNew
@@ -40,8 +40,8 @@ const DeploymentConfigPage: React.FC = () => {
         <EditDeployment
           heading={title}
           resource={deploymentConfig}
-          name={isNew ? null : name}
-          namespace={namespace}
+          name={isNew ? '' : name ?? ''}
+          namespace={namespace ?? ''}
         />
       </StatusBox>
     </>

@@ -32,7 +32,7 @@ const DevfileStrategySection: React.FC = () => {
     let info;
     if (selectedSample) {
       info = selectedSample;
-      setFieldValue('devfile.devfileProjectType', SampleRuntime[selectedSample.projectType]);
+      setFieldValue('devfile.devfileProjectType', SampleRuntime[selectedSample.projectType ?? '']);
     } else if (devfile.devfileContent) {
       const devfileJSON = safeYAMLToJS(devfile.devfileContent);
       info = {

@@ -44,7 +44,9 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
     if (values.editorType === EditorType.YAML) {
       try {
         deploymentRes = safeLoad(values.yamlData);
-        if (!deploymentRes?.metadata?.namespace) {
+        if (!deploymentRes?.metadata) {
+          deploymentRes.metadata = { namespace };
+        } else if (!deploymentRes.metadata.namespace) {
           deploymentRes.metadata.namespace = namespace;
         }
       } catch (err) {
@@ -52,7 +54,7 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
           submitSuccess: '',
           submitError: t('devconsole~Invalid YAML - {{err}}', { err }),
         });
-        return null;
+        return undefined;
       }
     } else {
       deploymentRes = convertEditFormToDeployment(values.formData, resource);
@@ -80,7 +82,7 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
             submitSuccess: t('devconsole~{{resource}} has been created', { resource: res.kind }),
           });
         } else {
-          const resVersion = res.metadata.resourceVersion;
+          const resVersion = res.metadata?.resourceVersion ?? '';
           actions.setStatus({
             submitError: '',
             submitSuccess: t('devconsole~{{name}} has been updated to version {{resVersion}}', {
@@ -89,7 +91,7 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
             }),
           });
         }
-        history.push(`/k8s/ns/${namespace}/${model.plural}/${res.metadata.name}`);
+        history.push(`/k8s/ns/${namespace}/${model.plural}/${res.metadata?.name ?? ''}`);
       })
       .catch((err) => {
         actions.setStatus({ submitSuccess: '', submitError: err.message });

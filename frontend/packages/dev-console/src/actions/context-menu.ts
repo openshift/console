@@ -19,20 +19,20 @@ export const DeleteApplicationAction = (
     id: 'delete-application',
     label: i18next.t('devconsole~Delete application'),
     cta: () => {
-      const reqs = [];
+      const reqs: Promise<K8sResourceKind[]>[] = [];
       deleteResourceModal({
         blocking: true,
         resourceName: application.name,
         resourceType: ApplicationModel.label,
         onSubmit: () => {
           application.resources.forEach((resource) => {
-            reqs.push(cleanUpWorkload(resource.resource));
+            reqs.push(cleanUpWorkload(resource.resource as K8sResourceKind));
           });
           return Promise.all(reqs);
         },
       });
     },
-    accessReview: asAccessReview(resourceModel, primaryResource, 'delete'),
+    accessReview: asAccessReview(resourceModel, primaryResource as K8sResourceKind, 'delete'),
   };
 };
 

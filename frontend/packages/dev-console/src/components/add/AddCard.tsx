@@ -35,7 +35,7 @@ const AddCard: React.FC<AddCardProps> = ({ id, title, items, namespace, icon }) 
         </span>
       );
     }
-    return null;
+    return null as any;
   };
   return items?.length > 0 ? (
     <Card key={title} className="odc-add-card" data-test={`card ${id}`}>

@@ -11,7 +11,7 @@ export const healthChecksData: HealthChecksFormData = {
       failureThreshold: '3',
       requestType: RequestType.HTTPGET,
       httpGet: {
-        scheme: undefined,
+        scheme: ['HTTP'],
         path: '/',
         port: '8080',
         httpHeaders: [{ name: 'header', value: 'val' }],

@@ -23,10 +23,10 @@ export const normalizeConsoleSamples = (activeNamespace: string, t: TFunction) =
     }
 
     return {
-      uid: sample.metadata.uid,
+      uid: sample.metadata?.uid ?? '',
       type: 'ConsoleSample',
       typeLabel: sample.spec.type || '',
-      name: sample.metadata.name,
+      name: sample.metadata?.name ?? '',
       title: sample.spec.title,
       description: sample.spec.abstract,
       provider: sample.spec.provider,
@@ -39,7 +39,7 @@ export const normalizeConsoleSamples = (activeNamespace: string, t: TFunction) =
         ? {
             url: `data:image;base64,${sample.spec.icon}`,
           }
-        : null,
+        : undefined,
       cta: {
         label: createLabel,
         href,
@@ -64,11 +64,13 @@ export const useConsoleSamplesCatalogProvider = (): [CatalogItem[], boolean, any
       getBestMatch(samples2, preferredLanguage),
     );
 
-    bestMatchSamples.sort((sampleA, sampleB) =>
-      sampleA.spec.title.localeCompare(sampleB.spec.title),
+    bestMatchSamples.sort(
+      (sampleA, sampleB) => sampleA?.spec.title?.localeCompare(sampleB?.spec.title ?? '') ?? 0,
     );
 
-    return bestMatchSamples.map(normalizeConsoleSamples(activeNamespace, t)).filter(Boolean);
+    return bestMatchSamples
+      .map(normalizeConsoleSamples(activeNamespace, t))
+      .filter(Boolean) as CatalogItem[];
   }, [allSamples, activeNamespace, preferredLanguage, t]);
 
   return [catalogItems, loaded, loadedError];

@@ -26,7 +26,7 @@ describe('convertFormDataToBuildConfig', () => {
   });
 
   it('converts also null to a BuildConfig', () => {
-    const originBuildConfig = null as BuildConfig;
+    const originBuildConfig = null as any;
     const values = getInitialBuildConfigFormikValues();
 
     expect(convertFormDataToBuildConfig(originBuildConfig, values)).toEqual(
@@ -410,9 +410,11 @@ describe('convertFormDataToBuildConfig', () => {
       const values = getInitialBuildConfigFormikValues();
       values.formData.images.buildFrom.type = 'imageStreamTag';
       values.formData.images.buildFrom.imageStreamTag.fromImageStreamTag = true;
-      values.formData.images.buildFrom.imageStreamTag.imageStream.namespace = 'openshift';
-      values.formData.images.buildFrom.imageStreamTag.imageStream.image = 'ruby';
-      values.formData.images.buildFrom.imageStreamTag.imageStream.tag = '2.7';
+      if (values.formData.images.buildFrom.imageStreamTag.imageStream) {
+        values.formData.images.buildFrom.imageStreamTag.imageStream.namespace = 'openshift';
+        values.formData.images.buildFrom.imageStreamTag.imageStream.image = 'ruby';
+        values.formData.images.buildFrom.imageStreamTag.imageStream.tag = '2.7';
+      }
       values.formData.images.buildFrom.imageStreamTag.project.name = 'openshift';
 
       const buildConfig = convertFormDataToBuildConfig(originBuildConfig, values);
@@ -438,9 +440,11 @@ describe('convertFormDataToBuildConfig', () => {
       const values = getInitialBuildConfigFormikValues();
       values.formData.images.buildFrom.type = 'imageStreamTag';
       values.formData.images.buildFrom.imageStreamTag.fromImageStreamTag = true;
-      values.formData.images.buildFrom.imageStreamTag.imageStream.namespace = 'current-namespace';
-      values.formData.images.buildFrom.imageStreamTag.imageStream.image = 'ruby';
-      values.formData.images.buildFrom.imageStreamTag.imageStream.tag = '2.7';
+      if (values.formData.images.buildFrom.imageStreamTag.imageStream) {
+        values.formData.images.buildFrom.imageStreamTag.imageStream.namespace = 'current-namespace';
+        values.formData.images.buildFrom.imageStreamTag.imageStream.image = 'ruby';
+        values.formData.images.buildFrom.imageStreamTag.imageStream.tag = '2.7';
+      }
       values.formData.images.buildFrom.imageStreamTag.project.name = 'current-namespace';
 
       const buildConfig = convertFormDataToBuildConfig(originBuildConfig, values);
@@ -557,9 +561,11 @@ describe('convertFormDataToBuildConfig', () => {
       const values = getInitialBuildConfigFormikValues();
       values.formData.images.pushTo.type = 'imageStreamTag';
       values.formData.images.pushTo.imageStreamTag.fromImageStreamTag = true;
-      values.formData.images.pushTo.imageStreamTag.imageStream.namespace = 'openshift';
-      values.formData.images.pushTo.imageStreamTag.imageStream.image = 'nodejs-ex-git';
-      values.formData.images.pushTo.imageStreamTag.imageStream.tag = 'latest';
+      if (values.formData.images.pushTo.imageStreamTag.imageStream) {
+        values.formData.images.pushTo.imageStreamTag.imageStream.namespace = 'openshift';
+        values.formData.images.pushTo.imageStreamTag.imageStream.image = 'nodejs-ex-git';
+        values.formData.images.pushTo.imageStreamTag.imageStream.tag = 'latest';
+      }
       values.formData.images.pushTo.imageStreamTag.project.name = 'openshift';
 
       const buildConfig = convertFormDataToBuildConfig(originBuildConfig, values);
@@ -725,7 +731,7 @@ describe('convertFormDataToBuildConfig', () => {
     it('convert default runPolicy to BuildConfig runPolicy', () => {
       const originBuildConfig = {} as BuildConfig;
       const values = getInitialBuildConfigFormikValues();
-      values.formData.policy.runPolicy = null;
+      values.formData.policy.runPolicy = undefined;
 
       const buildConfig = convertFormDataToBuildConfig(originBuildConfig, values);
 

@@ -70,7 +70,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
               <span className="odc-heath-check-probe__successText">
                 <GreenCheckCircleIcon />{' '}
                 {t('devconsole~{{healthCheckProbeAdded}} added', {
-                  healthCheckProbeAdded: getHealthChecksProbeConfig(probeType, t).formTitle,
+                  healthCheckProbeAdded: getHealthChecksProbeConfig(probeType, t)?.formTitle,
                 })}
               </span>
             }
@@ -94,7 +94,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
     }
     return viewOnly ? (
       t('devconsole~No {{noHealthCheckProbe}}', {
-        noHealthCheckProbe: getHealthChecksProbeConfig(probeType, t).formTitle,
+        noHealthCheckProbe: getHealthChecksProbeConfig(probeType, t)?.formTitle,
       })
     ) : (
       <Button
@@ -104,7 +104,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
         icon={<PlusCircleIcon />}
       >
         {t('devconsole~Add {{addHealthCheckProbe}}', {
-          addHealthCheckProbe: getHealthChecksProbeConfig(probeType, t).formTitle,
+          addHealthCheckProbe: getHealthChecksProbeConfig(probeType, t)?.formTitle,
         })}
       </Button>
     );
@@ -113,7 +113,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
   return (
     <>
       <TertiaryHeading className="odc-heath-check-probe__formTitle">
-        {getHealthChecksProbeConfig(probeType, t).formTitle}
+        {getHealthChecksProbeConfig(probeType, t)?.formTitle}
         {healthChecks?.[probeType]?.enabled && (
           <Button
             className="pf-m-link--align-left"
@@ -126,7 +126,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
         )}
       </TertiaryHeading>
       <div className="pf-v6-c-form__helper-text">
-        {getHealthChecksProbeConfig(probeType, t).formSubtitle}
+        {getHealthChecksProbeConfig(probeType, t)?.formSubtitle}
       </div>
       <div>{renderProbe()}</div>
     </>

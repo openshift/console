@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { SingleTypeaheadField } from '@console/shared/src';
-import { Resources } from '../../import-types';
+import { InsecureTrafficType, Resources, TerminationType } from '../../import-types';
 import PortInputField from '../../route/PortInputField';
 import RouteSection from '../RouteSection';
 
@@ -32,9 +32,9 @@ describe('RouteSection', () => {
           caCertificate: '',
           certificate: '',
           destinationCACertificate: '',
-          insecureEdgeTerminationPolicy: null,
+          insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
           key: '',
-          termination: null,
+          termination: 'None' as TerminationType,
         },
         unknownTargetPort: '',
         labels: {},

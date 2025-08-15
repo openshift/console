@@ -196,7 +196,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   const handleDevfileStrategyDetection = React.useCallback(
     async (devfilePath: string, gitType: GitProvider) => {
       if (gitUrlError) {
-        setFieldValue('devfile.devfileContent', null);
+        setFieldValue('devfile.devfileContent', undefined as any);
         setFieldValue('devfile.devfileHasError', true);
         return;
       }
@@ -213,7 +213,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         );
         const devfileContents = gitService && (await gitService.getDevfileContent());
         if (!devfileContents) {
-          setFieldValue('devfile.devfileContent', null);
+          setFieldValue('devfile.devfileContent', undefined as any);
           setFieldValue('devfile.devfileHasError', true);
         } else {
           setFieldValue('devfile.devfileContent', devfileContents);
@@ -359,7 +359,7 @@ const GitSection: React.FC<GitSectionProps> = ({
           priority: 2,
           detectedFiles: [],
         });
-        setFieldValue('import.recommendedStrategy', null);
+        setFieldValue('import.recommendedStrategy', undefined as any);
         setFieldValue('import.showEditImportStrategy', true);
       }
       setFieldValue('import.strategyChanged', false);
@@ -563,7 +563,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     const { sampleName, repository: sampleRepository } = getGitImportSample();
     if (sampleRepository?.url) {
       const name = detectGitRepoName(sampleRepository.url);
-      setFieldValue('name', name, false);
+      setFieldValue('name', name ?? '', false);
       setFieldValue('application.name', `${name}-app`, false);
       setFieldValue('git.url', sampleRepository.url, false);
       if (sampleRepository.revision) {
@@ -586,7 +586,7 @@ const GitSection: React.FC<GitSectionProps> = ({
             const { gitImport } = sample.spec.source;
             if (!sampleRepository?.url) {
               const name = detectGitRepoName(sampleRepository.url);
-              setFieldValue('name', name, false);
+              setFieldValue('name', name ?? '', false);
               setFieldValue('application.name', `${name}-app`, false);
               setFieldValue('git.url', gitImport.repository.url, false);
               if (sampleRepository.revision) {
@@ -632,7 +632,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   return (
     <FormSection title={title ?? t('devconsole~Git')}>
       <InputField
-        ref={inputRef}
+        ref={inputRef as React.RefObject<HTMLInputElement>}
         type={TextInputTypes.text}
         name={`${fieldPrefix}git.url`}
         label={t('devconsole~Git Repo URL')}

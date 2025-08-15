@@ -118,8 +118,8 @@ export const defaultData: GitImportFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: 'None' as TerminationType,
+      insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -568,8 +568,8 @@ export const defaultDevfileFormData: GitImportFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: 'None' as TerminationType,
+      insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -622,7 +622,7 @@ export const defaultDevfileFormData: GitImportFormData = {
         failureThreshold: '3',
         requestType: 'httpGet',
         httpGet: {
-          scheme: undefined,
+          scheme: [],
           path: '/',
           port: '8080',
           httpHeaders: [],
@@ -647,7 +647,7 @@ export const defaultDevfileFormData: GitImportFormData = {
         failureThreshold: '3',
         requestType: 'httpGet',
         httpGet: {
-          scheme: undefined,
+          scheme: [],
           path: '/',
           port: '8080',
           httpHeaders: [],
@@ -672,7 +672,7 @@ export const defaultDevfileFormData: GitImportFormData = {
         failureThreshold: '3',
         requestType: 'httpGet',
         httpGet: {
-          scheme: undefined,
+          scheme: [],
           path: '/',
           port: '8080',
           httpHeaders: [],
@@ -779,7 +779,7 @@ export const sampleDevfileFormData: GitImportFormData = {
         kind: 'ImageStream',
         apiVersion: 'image.openshift.io/v1',
         metadata: {
-          creationTimestamp: null,
+          creationTimestamp: undefined,
         },
         spec: {
           lookupPolicy: {
@@ -794,7 +794,7 @@ export const sampleDevfileFormData: GitImportFormData = {
         kind: 'BuildConfig',
         apiVersion: 'build.openshift.io/v1',
         metadata: {
-          creationTimestamp: null,
+          creationTimestamp: undefined,
         },
         spec: {
           source: {
@@ -829,7 +829,7 @@ export const sampleDevfileFormData: GitImportFormData = {
         kind: 'Deployment',
         apiVersion: 'apps/v1',
         metadata: {
-          creationTimestamp: null,
+          creationTimestamp: undefined,
         },
         spec: {
           selector: {
@@ -839,7 +839,7 @@ export const sampleDevfileFormData: GitImportFormData = {
           },
           template: {
             metadata: {
-              creationTimestamp: null,
+              creationTimestamp: undefined,
             },
             spec: {},
           },
@@ -853,7 +853,7 @@ export const sampleDevfileFormData: GitImportFormData = {
         kind: 'Service',
         apiVersion: 'v1',
         metadata: {
-          creationTimestamp: null,
+          creationTimestamp: undefined,
         },
         spec: {
           ports: [
@@ -872,7 +872,7 @@ export const sampleDevfileFormData: GitImportFormData = {
         kind: 'Route',
         apiVersion: 'route.openshift.io/v1',
         metadata: {
-          creationTimestamp: null,
+          creationTimestamp: undefined,
         },
         spec: {
           path: '/',
@@ -1120,7 +1120,7 @@ export const ghImportDefaultData: GitImportFormData = {
   devfile: { devfilePath: '', devfileHasError: false },
   import: {
     loaded: true,
-    loadError: null,
+    loadError: undefined,
     strategies: [
       {
         name: 'Builder Image',
@@ -1205,7 +1205,7 @@ export const devfileImportData: DevfileData = {
       kind: 'ImageStream',
       apiVersion: 'image.openshift.io/v1',
       metadata: {
-        creationTimestamp: null,
+        creationTimestamp: undefined,
       },
       spec: {
         lookupPolicy: {
@@ -1220,7 +1220,7 @@ export const devfileImportData: DevfileData = {
       kind: 'BuildConfig',
       apiVersion: 'build.openshift.io/v1',
       metadata: {
-        creationTimestamp: null,
+        creationTimestamp: undefined,
       },
       spec: {
         source: {
@@ -1254,7 +1254,7 @@ export const devfileImportData: DevfileData = {
       kind: 'Deployment',
       apiVersion: 'apps/v1',
       metadata: {
-        creationTimestamp: null,
+        creationTimestamp: undefined,
       },
       spec: {
         selector: {
@@ -1278,7 +1278,7 @@ export const devfileImportData: DevfileData = {
       kind: 'Service',
       apiVersion: 'v1',
       metadata: {
-        creationTimestamp: null,
+        creationTimestamp: undefined,
       },
       spec: {
         ports: [
@@ -1302,7 +1302,7 @@ export const devfileImportData: DevfileData = {
       kind: 'Route',
       apiVersion: 'route.openshift.io/v1',
       metadata: {
-        creationTimestamp: null,
+        creationTimestamp: undefined,
       },
       spec: {
         path: '/',

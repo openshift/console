@@ -25,14 +25,18 @@ describe('HealthCheckWrapper', () => {
   });
 
   it('should show StatusBox on load error', () => {
-    addHealthCheckWrapperProps.resource.loaded = true;
-    addHealthCheckWrapperProps.resource.loadError = `Not Found`;
+    if (addHealthCheckWrapperProps.resource) {
+      addHealthCheckWrapperProps.resource.loaded = true;
+      addHealthCheckWrapperProps.resource.loadError = `Not Found`;
+    }
     const wrapper = shallow(<AddHealthChecksForm {...addHealthCheckWrapperProps} />);
     expect(wrapper.find(StatusBox).exists()).toBe(true);
   });
 
   it('should show container not found error', () => {
-    addHealthCheckWrapperProps.resource.loaded = true;
+    if (addHealthCheckWrapperProps.resource) {
+      addHealthCheckWrapperProps.resource.loaded = true;
+    }
     const wrapper = shallow(<AddHealthChecksForm {...addHealthCheckWrapperProps} />);
     expect(wrapper.find('div').text()).toEqual('Container not found');
   });

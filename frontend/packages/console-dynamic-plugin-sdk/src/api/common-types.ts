@@ -52,7 +52,7 @@ export type K8sModel = {
   annotations?: { [key: string]: string };
   verbs?: K8sVerb[];
   shortNames?: string[];
-  badge?: BadgeType;
+  badge?: BadgeType | string;
   color?: string;
 
   // Legacy option for supporing plural names in URL paths when `crd: true`.

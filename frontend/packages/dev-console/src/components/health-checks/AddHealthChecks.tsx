@@ -41,10 +41,10 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
   values,
   dirty,
 }) => {
-  const viewOnly = useViewOnlyAccess(resource);
+  const viewOnly = useViewOnlyAccess(resource as K8sResourceKind);
   const { t } = useTranslation();
   const [currentKey, setCurrentKey] = React.useState(currentContainer);
-  const containers = resource?.spec?.template?.spec?.containers;
+  const containers = resource?.spec?.template?.spec?.containers ?? [];
   const healthCheckAdded = _.every(
     containers,
     (container) => container.readinessProbe || container.livenessProbe || container.startupProbe,
@@ -55,22 +55,22 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
     : t('devconsole~Add health checks');
   const {
     kind,
-    metadata: { name, namespace },
-  } = resource;
-  const kindForCRDResource = referenceFor(resource);
+    metadata: { name, namespace } = { name: '', namespace: '' },
+  } = resource as K8sResourceKind;
+  const kindForCRDResource = referenceFor(resource as K8sResourceKind);
   const resourceKind = modelFor(kindForCRDResource).crd ? kindForCRDResource : kind;
   const isFormClean = _.every(values.healthChecks, { modified: false });
 
   const healthURL = getDocumentationURL(documentationURLs.applicationHealth);
 
   const handleSelectContainer = (containerName: string) => {
-    const containerIndex = _.findIndex(resource.spec.template.spec.containers, [
+    const containerIndex = _.findIndex(resource?.spec?.template?.spec?.containers, [
       'name',
       containerName,
     ]);
     setCurrentKey(containerName);
     setFieldValue('containerName', containerName);
-    setFieldValue('healthChecks', getHealthChecksData(resource, containerIndex));
+    setFieldValue('healthChecks', getHealthChecksData(resource as K8sResourceKind, containerIndex));
     history.replace(
       `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containerName}/health-checks`,
     );
@@ -97,7 +97,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
             <Trans t={t} ns="devconsole">
               Health checks for{' '}
               <ResourceLink
-                kind={referenceFor(resource)}
+                kind={referenceFor(resource as K8sResourceKind)}
                 name={name}
                 namespace={namespace}
                 title={name}
@@ -123,7 +123,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
             )}
           </p>
           <br />
-          <HealthChecks resourceType={getResourcesType(resource)} />
+          <HealthChecks resourceType={getResourcesType(resource as K8sResourceKind)} />
         </div>
         <FormFooter
           handleReset={handleReset}

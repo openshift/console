@@ -35,9 +35,9 @@ const normalizeTemplates = (
       const supportUrl = annotations[ANNOTATIONS.supportURL];
 
       const normalizedTemplate: CatalogItem<PartialObjectMetadata> = {
-        uid,
+        uid: uid ?? '',
         type: 'Template',
-        name: displayName,
+        name: displayName ?? '',
         description,
         provider,
         tags,
@@ -45,8 +45,8 @@ const normalizeTemplates = (
         supportUrl,
         documentationUrl,
         icon: {
-          class: iconClass,
-          url: imgURL,
+          class: iconClass ?? '',
+          url: imgURL ?? '',
         },
         cta: {
           label: t('devconsole~Instantiate Template'),
@@ -54,12 +54,9 @@ const normalizeTemplates = (
         },
         data: template,
       };
-
-      acc.push(normalizedTemplate);
-
-      return acc;
+      return [...acc, normalizedTemplate];
     },
-    [],
+    [] as CatalogItem<PartialObjectMetadata>[],
   );
 
   return normalizedTemplates;
@@ -85,7 +82,7 @@ const useTemplates: ExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
       .then((metadata) => {
         setTemplates(metadata ?? []);
         setTemplatesLoaded(true);
-        setTemplatesError(null);
+        setTemplatesError(undefined);
       })
       .catch(setTemplatesError);
   }, []);
@@ -96,13 +93,13 @@ const useTemplates: ExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
     if (!namespace || namespace === 'openshift') {
       setProjectTemplates([]);
       setProjectTemplatesLoaded(true);
-      setProjectTemplatesError(null);
+      setProjectTemplatesError(undefined);
     } else {
       k8sListPartialMetadata(TemplateModel, { ns: namespace })
         .then((metadata) => {
           setProjectTemplates(metadata ?? []);
           setProjectTemplatesLoaded(true);
-          setProjectTemplatesError(null);
+          setProjectTemplatesError(undefined);
         })
         .catch(setProjectTemplatesError);
     }

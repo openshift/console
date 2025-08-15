@@ -62,9 +62,9 @@ const getDefaultMetric = (type: SupportedMetricTypes): HPAMetric => ({
 });
 
 const createScaleTargetRef = (resource: K8sResourceKind) => ({
-  apiVersion: resource.apiVersion,
-  kind: resource.kind,
-  name: resource.metadata.name,
+  apiVersion: resource.apiVersion ?? '',
+  kind: resource.kind ?? '',
+  name: resource.metadata?.name ?? '',
 });
 
 export const getFormData = (
@@ -120,7 +120,7 @@ export const sanityForSubmit = (
     {},
     hpa,
     // Make sure it's against _this_ namespace
-    { metadata: { namespace: targetResource.metadata.namespace } },
+    { metadata: { namespace: targetResource.metadata?.namespace ?? '' } },
     // Make sure we kept the target we started with
     { spec: { scaleTargetRef: createScaleTargetRef(targetResource) } },
   );
@@ -134,5 +134,5 @@ export const hasCustomMetrics = (hpa?: HorizontalPodAutoscalerKind): boolean => 
     return false;
   }
 
-  return !!metrics.find((metric) => !['cpu', 'memory'].includes(metric?.resource?.name));
+  return !!metrics.find((metric) => !['cpu', 'memory'].includes(metric?.resource?.name ?? ''));
 };

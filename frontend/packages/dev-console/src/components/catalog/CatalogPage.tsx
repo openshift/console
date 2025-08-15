@@ -22,7 +22,11 @@ const PageContents: React.FC = () => {
   const categories = useCatalogCategories();
 
   return namespace ? (
-    <CatalogServiceProvider namespace={namespace} catalogId="dev-catalog" catalogType={catalogType}>
+    <CatalogServiceProvider
+      namespace={namespace}
+      catalogId="dev-catalog"
+      catalogType={catalogType ?? ''}
+    >
       {(service) => (
         <CatalogController
           {...service}
@@ -52,7 +56,7 @@ const PageContentsWithStartGuide = withStartGuide(PageContents);
 const CatalogPage: React.FC = () => {
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
-  const isCatalogEnabled = isCatalogTypeEnabled(catalogType);
+  const isCatalogEnabled = isCatalogTypeEnabled(catalogType ?? '');
 
   if (catalogType && !isCatalogEnabled) {
     return <ErrorPage404 />;

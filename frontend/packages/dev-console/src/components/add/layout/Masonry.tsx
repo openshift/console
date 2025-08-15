@@ -24,7 +24,7 @@ export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
     const MeasuredItem = () => {
       const measureRef = React.useRef<HTMLDivElement>(null);
       React.useEffect(() => {
-        const newHeight = measureRef.current.getBoundingClientRect().height;
+        const newHeight = measureRef.current?.getBoundingClientRect().height ?? 0;
         if (heights[item.key as string] !== newHeight) {
           setHeight(item.key as string, newHeight);
         }

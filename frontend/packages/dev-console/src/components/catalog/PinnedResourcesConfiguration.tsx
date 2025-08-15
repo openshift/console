@@ -92,8 +92,11 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
 
   const resources = React.useMemo(() => {
     return allK8sModels
-      ?.filter(({ apiGroup, apiVersion, kind, verbs }) => {
-        if (skipGroups.has(apiGroup) || skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)) {
+      ?.filter(({ apiGroup, apiVersion, kind, verbs }: K8sModel) => {
+        if (
+          skipGroups.has(apiGroup ?? '') ||
+          skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)
+        ) {
           return false;
         }
 
@@ -104,19 +107,19 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
 
         // Only show preferred version for resources in the same API group.
         const preferred = (m: K8sKind) =>
-          groupVersionMap?.[m.apiGroup]?.preferredVersion === m.apiVersion;
+          groupVersionMap?.[m.apiGroup ?? '']?.preferredVersion === m.apiVersion;
 
         const sameGroupKind = (m: K8sKind) =>
           m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
 
-        return !allK8sModels.find((m) => sameGroupKind(m) && preferred(m));
+        return !allK8sModels.find((m) => sameGroupKind(m as K8sKind) && preferred(m as K8sKind));
       })
       .toOrderedMap()
-      .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`);
+      .sortBy(({ kind, apiGroup }: K8sModel) => `${kind} ${apiGroup}`);
   }, [allK8sModels, groupVersionMap]);
 
   // Track duplicate names so we know when to show the group.
-  const kinds = resources.groupBy((m) => m.kind);
+  const kinds = resources.groupBy((m) => m?.kind ?? '');
   const isDup = (kind) => kinds.get(kind).size > 1;
 
   type ItemProps = { title?: string; model?: K8sKind };
@@ -125,18 +128,18 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-item">
         <span className="co-resource-icon--fixed-width">
-          <ResourceIcon kind={referenceForModel(model)} />
+          <ResourceIcon kind={referenceForModel(model as K8sModel)} />
         </span>
         <span className="co-resource-item__resource-name">
           <span>
-            {model.labelKey ? t(model.labelKey) : model.kind}
-            {model.badge && model.badge === 'Tech Preview' && (
+            {model?.labelKey ? t(model.labelKey) : model?.kind}
+            {model?.badge && model.badge === 'Tech Preview' && (
               <span className="co-resource-item__tech-dev-preview">{t('public~Tech Preview')}</span>
             )}
           </span>
-          {isDup(model.kind) && (
+          {isDup(model?.kind) && (
             <div className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-truncate co-nowrap">
-              {model.apiGroup || 'core'}/{model.apiVersion}
+              {model?.apiGroup || 'core'}/{model?.apiVersion}
             </div>
           )}
         </span>
@@ -168,7 +171,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
     if (consoleConfig && consoleConfigLoaded && !configuredPerspectives) {
       const perspectiveDetails = consoleConfig?.spec?.customization?.perspectives;
       const devPerspective = perspectiveDetails?.find((p) => p.id === 'dev');
-      let defaultPinnedResources = [];
+      let defaultPinnedResources: PerspectivePinnedResource[] = [];
       if (!devPerspective || !devPerspective?.pinnedResources) {
         if (defaultPins?.dev) {
           const getModels = defaultPins?.dev.map((groupVersionKind) => {
@@ -200,7 +203,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
   const items = React.useMemo(() => {
     return resources
       .map((model: K8sKind) => {
-        return <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />;
+        return <Item title={model?.labelKey ? t(model.labelKey) : model?.kind} model={model} />;
       })
       .toArray();
   }, [resources, t, Item]);
@@ -251,7 +254,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
     const patch: PerspectivesConsoleConfig = {
       spec: {
         customization: {
-          perspectives: perspectiveData,
+          perspectives: perspectiveData ?? [],
         },
       },
     };
@@ -287,21 +290,21 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
         newConfiguredPerspectives.push({
           id: 'dev',
           visibility: { state: PerspectiveVisibilityState.Enabled },
-          pinnedResources: newPinnedResources,
+          pinnedResources: newPinnedResources as PerspectivePinnedResource[],
         });
       } else {
-        devPerspective.pinnedResources = newPinnedResources;
+        devPerspective.pinnedResources = newPinnedResources as PerspectivePinnedResource[];
       }
       return newConfiguredPerspectives;
     });
 
-    setPinnedResources(newPinnedResources);
+    setPinnedResources(newPinnedResources as PerspectivePinnedResource[]);
     setSaveStatus({ status: 'pending' });
     save();
   };
 
   const filterOption = (option: React.ReactElement<ItemProps>, input: string): boolean => {
-    return fuzzy(input?.toLocaleLowerCase(), option?.props?.title.toLocaleLowerCase());
+    return fuzzy(input?.toLocaleLowerCase(), option?.props?.title?.toLocaleLowerCase() ?? '');
   };
 
   return (
@@ -326,7 +329,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
       />
 
       <LoadError error={consoleConfigError} />
-      <SaveStatus {...saveStatus} />
+      <SaveStatus {...(saveStatus as SaveStatusProps)} />
     </FormSection>
   );
 };

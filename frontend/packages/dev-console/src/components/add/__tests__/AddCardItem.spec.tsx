@@ -32,7 +32,9 @@ describe('AddCardItem', () => {
 
     it('should render icon inside an <img /> if icon is a string', () => {
       props = {
-        action: addActionExtensions.find((action) => typeof action.properties.icon === 'string'),
+        action: addActionExtensions.find(
+          (action) => typeof action.properties.icon === 'string',
+        ) as ResolvedExtension<AddAction>,
         namespace,
       };
       wrapper = shallow(<AddCardItem {...props} />);
@@ -42,7 +44,9 @@ describe('AddCardItem', () => {
 
     it('should render icon as a react element if icon is not a string and a valid react element', () => {
       props = {
-        action: addActionExtensions.find((action) => typeof action.properties.icon !== 'string'),
+        action: addActionExtensions.find(
+          (action) => typeof action.properties.icon !== 'string',
+        ) as ResolvedExtension<AddAction>,
         namespace,
       };
       wrapper = shallow(<AddCardItem {...props} />);

@@ -77,7 +77,7 @@ const BuildConfigForm: React.FC<
     }
     setFieldValue('yamlData', safeJSToYAML(watchedBuildConfig, '', { skipInvalid: true }), false);
     setFieldValue('resourceVersion', watchedBuildConfig?.metadata?.resourceVersion, true);
-    setFieldValue('formReloadCount', values.formReloadCount + 1);
+    setFieldValue('formReloadCount', (values.formReloadCount ?? 0) + 1);
   }, [setErrors, setFieldValue, setStatus, values, watchedBuildConfig]);
 
   return (
@@ -101,7 +101,7 @@ const BuildConfigForm: React.FC<
         />
       </FormBody>
       <FormFooter
-        handleReset={isNew ? null : onReload}
+        handleReset={isNew ? undefined : onReload}
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
@@ -115,7 +115,7 @@ const BuildConfigForm: React.FC<
         }
         handleCancel={handleCancel}
         handleDownload={
-          values.editorType === EditorType.YAML && (() => downloadYaml(values.yamlData))
+          values.editorType === EditorType.YAML ? () => downloadYaml(values.yamlData) : undefined
         }
         sticky
       />
