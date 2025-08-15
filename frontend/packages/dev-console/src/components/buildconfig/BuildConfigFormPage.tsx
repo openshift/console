@@ -39,8 +39,8 @@ const BuildConfigFormPage: React.FC = () => {
       <StatusBox loaded={loaded} loadError={loadError} label={title} data={buildConfig}>
         <EditBuildConfig
           heading={title}
-          namespace={namespace}
-          name={name}
+          namespace={namespace as string}
+          name={name as string}
           buildConfig={buildConfig}
         />
       </StatusBox>

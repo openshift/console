@@ -7,7 +7,7 @@ const HealthChecksPage: React.FC = () => {
   const { ns, kind, name, containerName } = useParams();
   const resource: FirehoseResource[] = [
     {
-      kind,
+      kind: kind ?? '',
       namespace: ns,
       isList: false,
       name,
@@ -17,7 +17,7 @@ const HealthChecksPage: React.FC = () => {
 
   return (
     <Firehose resources={resource}>
-      <AddHealthChecksForm currentContainer={containerName} />
+      <AddHealthChecksForm currentContainer={containerName ?? ''} />
     </Firehose>
   );
 };

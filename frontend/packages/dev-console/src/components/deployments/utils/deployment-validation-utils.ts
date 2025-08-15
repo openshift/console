@@ -71,7 +71,7 @@ export const deploymentStrategySchema = (strategy: DeploymentStrategy) => {
       });
     }
     case DeploymentStrategyType.rollingParams: {
-      const { pre, post } = strategy.rollingParams;
+      const { pre, post } = strategy.rollingParams ?? {};
       return yup.object().shape({
         type: yup.string(),
         rollingParams: yup.object().shape({

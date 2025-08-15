@@ -40,7 +40,7 @@ export const healthChecksDefaultValues: HealthCheckFormProbe = {
     failureThreshold: '3',
     requestType: RequestType.HTTPGET,
     httpGet: {
-      scheme: undefined,
+      scheme: ['HTTP'],
       path: '/',
       port: '8080',
       httpHeaders: [],

@@ -21,7 +21,7 @@ export const deploymentExamples: { [key: string]: DeploymentKind } = {
       },
       template: {
         metadata: {
-          creationTimestamp: null,
+          creationTimestamp: undefined,
           labels: {
             app: 'nodejs-rest-http',
             deploymentconfig: 'nodejs-rest-http',
@@ -78,7 +78,7 @@ export const deploymentExamples: { [key: string]: DeploymentKind } = {
       },
       template: {
         metadata: {
-          creationTimestamp: null,
+          creationTimestamp: undefined,
           labels: {
             app: 'nodejs-rest-http-with-memory-limits',
             deploymentconfig: 'nodejs-rest-http-with-memory-limits',
@@ -139,7 +139,7 @@ export const deploymentExamples: { [key: string]: DeploymentKind } = {
       },
       template: {
         metadata: {
-          creationTimestamp: null,
+          creationTimestamp: undefined,
           labels: {
             app: 'nodejs-rest-http-with-cpu-limits',
             deploymentconfig: 'nodejs-rest-http-with-cpu-limits',
@@ -200,7 +200,7 @@ export const deploymentExamples: { [key: string]: DeploymentKind } = {
       },
       template: {
         metadata: {
-          creationTimestamp: null,
+          creationTimestamp: undefined,
           labels: {
             app: 'nodejs-rest-http-with-resource-limits',
             deploymentconfig: 'nodejs-rest-http-with-resource-limits',

@@ -1,6 +1,11 @@
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { serverlessInitialValues } from '../__mocks__/serverless-mock';
-import { DeployImageFormData, Resources } from '../import-types';
+import {
+  DeployImageFormData,
+  InsecureTrafficType,
+  Resources,
+  TerminationType,
+} from '../import-types';
 
 export const defaultData: DeployImageFormData = {
   project: {
@@ -37,7 +42,7 @@ export const defaultData: DeployImageFormData = {
     ports: [],
   },
   isSearchingForImage: false,
-  runtimeIcon: null,
+  runtimeIcon: undefined,
   resources: Resources.OpenShift,
   serverless: serverlessInitialValues,
   route: {
@@ -49,8 +54,8 @@ export const defaultData: DeployImageFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: 'None' as TerminationType,
+      insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -101,7 +106,7 @@ export const dataWithTargetPort: DeployImageFormData = {
   project: { name: 'andrew-test', displayName: '', description: '' },
   application: { initial: '', name: 'helloworld-go-app', selectedKey: 'helloworld-go-app' },
   name: 'helloworld-go',
-  runtimeIcon: null,
+  runtimeIcon: undefined,
   searchTerm: 'docker.io/mgencur/helloworld-go',
   registry: 'external',
   allowInsecureRegistry: false,
@@ -178,8 +183,8 @@ export const dataWithTargetPort: DeployImageFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: 'None' as TerminationType,
+      insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -215,7 +220,7 @@ export const dataWithPorts: DeployImageFormData = {
   project: { name: 'andrew-test', displayName: '', description: '' },
   application: { initial: '', name: 'helloworld-go-app', selectedKey: 'helloworld-go-app' },
   name: 'test-admin-console',
-  runtimeIcon: null,
+  runtimeIcon: undefined,
   searchTerm: 'rohitkrai03/test-admin-console',
   registry: 'external',
   allowInsecureRegistry: false,
@@ -400,8 +405,8 @@ export const dataWithPorts: DeployImageFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: 'None' as TerminationType,
+      insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -437,7 +442,7 @@ export const dataWithoutPorts: DeployImageFormData = {
   project: { name: 'andrew-test', displayName: '', description: '' },
   application: { initial: '', name: 'helloworld-go-app', selectedKey: '#CREATE_APPLICATION_KEY#' },
   name: 'helloworld-go',
-  runtimeIcon: null,
+  runtimeIcon: undefined,
   searchTerm: 'docker.io/mgencur/helloworld-go',
   registry: 'external',
   allowInsecureRegistry: false,
@@ -514,8 +519,8 @@ export const dataWithoutPorts: DeployImageFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: 'None' as TerminationType,
+      insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -559,7 +564,7 @@ export const internalImageData: DeployImageFormData = {
     selectedKey: 'react-web-app-app',
   },
   name: 'react-web-app',
-  runtimeIcon: null,
+  runtimeIcon: undefined,
   searchTerm: '',
   registry: 'internal',
   allowInsecureRegistry: false,
@@ -778,8 +783,8 @@ export const internalImageData: DeployImageFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: 'None' as TerminationType,
+      insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',

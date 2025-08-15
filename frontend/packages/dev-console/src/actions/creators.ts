@@ -7,12 +7,12 @@ import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
 export const EditImportApplication = (kind: K8sKind, obj: K8sResourceKind): Action => ({
   id: 'edit-import-app',
   label: i18next.t('devconsole~Edit {{applicationName}}', {
-    applicationName: truncateMiddle(obj.metadata.name, {
+    applicationName: truncateMiddle(obj.metadata?.name ?? '', {
       length: RESOURCE_NAME_TRUNCATE_LENGTH,
     }),
   }),
   cta: {
-    href: `/edit/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${
+    href: `/edit/ns/${obj.metadata?.namespace}?name=${obj.metadata?.name}&kind=${
       obj.kind || kind.kind
     }`,
   },
@@ -20,8 +20,8 @@ export const EditImportApplication = (kind: K8sKind, obj: K8sResourceKind): Acti
   accessReview: {
     group: kind.apiGroup,
     resource: kind.plural,
-    name: obj.metadata.name,
-    namespace: obj.metadata.namespace,
+    name: obj.metadata?.name ?? '',
+    namespace: obj.metadata?.namespace ?? '',
     verb: 'update',
   },
 });

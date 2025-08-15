@@ -48,7 +48,7 @@ export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType 
     setFieldValue,
   } = useFormikContext<FormikValues>();
   const { viewOnly } = React.useContext(HealthCheckContext);
-  const httpHeaders = healthChecks?.[probeType]?.data?.httpGet?.httpHeaders;
+  const httpHeaders = healthChecks?.[probeType as string]?.data?.httpGet?.httpHeaders;
   const initialNameValuePairs = !_.isEmpty(httpHeaders)
     ? httpHeaders.map((val) => _.values(val))
     : [['', '']];
@@ -124,7 +124,7 @@ export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeTy
     values: { healthChecks },
   } = useFormikContext<FormikValues>();
   const { viewOnly } = React.useContext(HealthCheckContext);
-  const commands = healthChecks?.[probeType]?.data?.exec?.command || [''];
+  const commands = healthChecks?.[probeType as string]?.data?.exec?.command || [''];
   return (
     <TextColumnField
       name={`healthChecks.${probeType}.data.exec.command`}

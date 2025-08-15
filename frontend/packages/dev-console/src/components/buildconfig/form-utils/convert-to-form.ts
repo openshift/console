@@ -17,7 +17,7 @@ const convertBuildConfigSourceToFormData = (
 ) => {
   // Always set the project name (namespace) so that the AdvancedGitOptions
   // modal can create a secret in the right namespace.
-  values.formData.source.git.project.name = buildConfig.metadata.namespace;
+  values.formData.source.git.project.name = buildConfig.metadata.namespace as string;
 
   if (buildConfig.spec.source?.type === 'Git') {
     values.formData.source.type = 'git';
@@ -46,7 +46,7 @@ const convertImageReferenceToImageStreamFormData = (
     const namespace = imageReference.namespace || buildConfigNamespace;
     const { name = '' } = imageReference;
     const image = name.includes(':') ? name.substring(0, name.indexOf(':')) : name;
-    const tag = name.includes(':') ? name.substring(name.indexOf(':') + 1) : null;
+    const tag = name.includes(':') ? name.substring(name.indexOf(':') + 1) : '';
     imageOptionFormData.type = 'imageStreamTag';
     imageOptionFormData.imageStreamTag = {
       fromImageStreamTag: true,
@@ -98,15 +98,15 @@ const convertBuildConfigImagesToFormData = (
   convertImageReferenceToImageStreamFormData(
     from,
     values.formData.images.buildFrom,
-    buildConfig.metadata.namespace,
+    buildConfig.metadata.namespace as string,
   );
 
   // Output => Push to
   const to = buildConfig.spec.output?.to;
   convertImageReferenceToImageStreamFormData(
-    to,
+    to as ImageReference,
     values.formData.images.pushTo,
-    buildConfig.metadata.namespace,
+    buildConfig.metadata.namespace as string,
   );
 };
 
@@ -170,7 +170,7 @@ const convertBuildConfigPolicyToFormData = (
   values: BuildConfigFormikValues,
 ) => {
   // Use null instead of undefined to match initial values
-  values.formData.policy.runPolicy = buildConfig.spec.runPolicy || null;
+  values.formData.policy.runPolicy = buildConfig.spec.runPolicy || undefined;
 };
 
 const convertBuildConfigHooksToFormData = (

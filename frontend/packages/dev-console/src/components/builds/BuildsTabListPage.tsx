@@ -9,6 +9,7 @@ import {
   MultiTabListPage,
   getBadgeFromType,
   useUserSettings,
+  BadgeType,
 } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useResourceListPages } from '@console/shared/src/hooks/useResourceListPages';
@@ -104,7 +105,7 @@ const BuildsTabListPage: React.FC = () => {
           <AsyncComponent
             key="shipwright-builds"
             loader={shipwrightBuildLoader}
-            badge={getBadgeFromType(shipwrightBuildModel.badge)}
+            badge={getBadgeFromType(shipwrightBuildModel.badge as BadgeType)}
             {...childProps}
           />
         )
