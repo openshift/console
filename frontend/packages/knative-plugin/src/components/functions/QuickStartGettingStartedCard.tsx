@@ -32,12 +32,12 @@ const orderQuickStarts = (
   const filteredQuickStarts = filter ? allQuickStarts.filter(filter) : allQuickStarts;
 
   const getStatus = (quickStart: QuickStart) =>
-    getQuickStartStatus(allQuickStartStates, quickStart.metadata.name);
+    getQuickStartStatus(allQuickStartStates ?? {}, quickStart.metadata?.name ?? '');
 
   // Prioritize featured quick starts and keep specified order
   if (featured) {
     const featuredQuickStartsByName = filteredQuickStarts.reduce((acc, q) => {
-      acc[q.metadata.name] = q;
+      acc[q.metadata?.name ?? ''] = q;
       return acc;
     }, {} as Record<string, QuickStart>);
     featured.forEach((quickStartName) => {
@@ -67,13 +67,13 @@ export const QuickStartGettingStartedCard: React.FC<QuickStartGettingStartedCard
       {(quickStarts, loaded) => {
         const orderedQuickStarts = orderQuickStarts(
           quickStarts,
-          allQuickStartStates,
-          featured,
+          allQuickStartStates ?? {},
+          featured ?? [],
           filter,
         );
         const slicedQuickStarts = orderedQuickStarts.slice(0, 2);
 
-        let links: GettingStartedLink[] = [];
+        let links: GettingStartedLink[] | undefined = [];
         if (loaded && slicedQuickStarts.length === 0) {
           links.push(
             {
@@ -94,10 +94,13 @@ export const QuickStartGettingStartedCard: React.FC<QuickStartGettingStartedCard
         } else {
           links = loaded
             ? slicedQuickStarts.map((quickStart: QuickStart) => ({
-                id: quickStart.metadata.name,
-                title: quickStart.spec.displayName,
+                id: quickStart.metadata?.name ?? '',
+                title: quickStart.spec?.displayName ?? '',
                 onClick: () => {
-                  setActiveQuickStart(quickStart.metadata.name, quickStart.spec.tasks.length);
+                  setActiveQuickStart?.(
+                    quickStart.metadata?.name ?? '',
+                    quickStart.spec?.tasks?.length ?? 0,
+                  );
                 },
               }))
             : featured?.map((name) => ({
@@ -117,7 +120,7 @@ export const QuickStartGettingStartedCard: React.FC<QuickStartGettingStartedCard
                 'knative-plugin~Follow guided documentation to build applications and familiarize yourself with key features.',
               )
             }
-            links={links}
+            links={links ?? []}
           />
         );
       }}

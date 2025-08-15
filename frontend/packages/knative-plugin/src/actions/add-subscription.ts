@@ -18,8 +18,8 @@ export const addSubscription = (model: K8sKind, source: K8sResourceKind): KebabO
     accessReview: {
       group: EventingSubscriptionModel.apiGroup,
       resource: EventingSubscriptionModel.plural,
-      name: source.metadata.name,
-      namespace: source.metadata.namespace,
+      name: source.metadata?.name,
+      namespace: source.metadata?.namespace,
       verb: 'create',
     },
   };
@@ -36,8 +36,8 @@ export const AddSubscriptionAction = (source: K8sResourceKind): Action => {
     accessReview: {
       group: EventingSubscriptionModel.apiGroup,
       resource: EventingSubscriptionModel.plural,
-      name: source.metadata.name,
-      namespace: source.metadata.namespace,
+      name: source.metadata?.name,
+      namespace: source.metadata?.namespace,
       verb: 'create',
     },
   };

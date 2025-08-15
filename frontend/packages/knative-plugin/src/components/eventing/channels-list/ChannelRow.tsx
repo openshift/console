@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
-import { referenceFor } from '@console/internal/module/k8s';
+import { K8sModel, referenceFor } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventChannelKind, ChannelConditionTypes } from '../../../types';
 import { getCondition, getConditionStats } from '../../../utils/condition-utils';
@@ -11,12 +11,20 @@ import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsource
 
 const ChannelRow: React.FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
   const {
-    metadata: { name, namespace, creationTimestamp, uid },
+    metadata: { name, namespace, creationTimestamp, uid } = {
+      name: '',
+      namespace: '',
+      creationTimestamp: '',
+      uid: '',
+    },
   } = obj;
   const { t } = useTranslation();
   const objReference = referenceFor(obj);
   const kind = getDynamicChannelModel(objReference);
-  const menuActions = [...Kebab.getExtensionsActionsForKind(kind), ...Kebab.factory.common];
+  const menuActions = [
+    ...(Kebab.getExtensionsActionsForKind(kind as K8sModel) ?? []),
+    ...(Kebab.factory.common ?? []),
+  ];
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, ChannelConditionTypes.Ready)
     : null;
@@ -37,9 +45,9 @@ const ChannelRow: React.FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
             )
           : '-'}
       </TableData>
-      <TableData>{kind.label}</TableData>
+      <TableData>{kind?.label ?? ''}</TableData>
       <TableData>
-        <Timestamp timestamp={creationTimestamp} />
+        <Timestamp timestamp={creationTimestamp ?? ''} />
       </TableData>
       <TableData className={Kebab.columnClass}>
         <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />

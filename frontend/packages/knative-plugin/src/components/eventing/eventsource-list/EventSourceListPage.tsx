@@ -58,7 +58,7 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
       {
         filterGroupName: t('knative-plugin~Type'),
         type: 'event-source-type',
-        items: sourcesModel.map(({ id, label }) => ({ id, title: label })),
+        items: sourcesModel.map(({ id, label }) => ({ id: id ?? '', title: label ?? '' })),
         reducer: getModelId,
         filter: (filter, obj) =>
           !filter.selected?.length || filter.selected?.includes(getModelId(obj)),

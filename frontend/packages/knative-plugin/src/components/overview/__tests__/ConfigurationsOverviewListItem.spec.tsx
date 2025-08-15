@@ -33,14 +33,14 @@ describe('ConfigurationsOverviewListItem', () => {
         .find('span')
         .at(1)
         .text()
-        .includes(sampleKnativeConfigurations.data[0].status.latestCreatedRevisionName),
+        .includes(sampleKnativeConfigurations.data[0].status?.latestCreatedRevisionName ?? ''),
     ).toBe(true);
     expect(
       wrapper
         .find('span')
         .at(3)
         .text()
-        .includes(sampleKnativeConfigurations.data[0].status.latestReadyRevisionName),
+        .includes(sampleKnativeConfigurations.data[0].status?.latestReadyRevisionName ?? ''),
     ).toBe(true);
   });
 });

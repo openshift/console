@@ -13,7 +13,7 @@ import AddChannel from './channels/AddChannel';
 const EventingChannelPage: React.FC = () => {
   const { ns: namespace } = useParams();
   const location = useLocation();
-  const channels = useChannelList(namespace);
+  const channels = useChannelList(namespace ?? '');
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   return (
@@ -26,10 +26,10 @@ const EventingChannelPage: React.FC = () => {
         )}
       />
       <AddChannel
-        namespace={namespace}
+        namespace={namespace ?? ''}
         channels={channels}
-        selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION)}
-        contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
+        selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION) ?? ''}
+        contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE) ?? ''}
       />
     </NamespacedPage>
   );
