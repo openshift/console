@@ -10,12 +10,25 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
 in [Console dynamic plugins README](./README.md).
 
+## 4.20.0-prerelease.1 - 2025-08-15
+
+- Add fullscreen toggle button to `ResourceYAMLEditor` component ([CONSOLE-4656], [#15254])
+- Add copy to clipboard button to `ResourceYAMLEditor` when download button is shown ([CONSOLE-4654], [#15254])
+- Move `CodeEditor` settings into a modal that can be opened from the editor toolbar ([CONSOLE-4499], [#15254])
+- Ensure proper pass-through of `shortcutsPopoverProps` to `CodeEditor` component ([CONSOLE-4499], [#15254])
+- Improve `initialResource` prop type in `ResourceYAMLEditor` component ([OCPBUGS-45297], [#15386])
+- Improve plugin API documentation ([OCPBUGS-56248], [#15167])
+
+## 4.19.1 - 2025-08-15
+
+- Fix `href` handling bug for extension type `console.tab/horizontalNav` ([OCPBUGS-58258], [#15231])
+
 ## 4.19.0 - 2025-06-27
 
-> Release for OCP Console 4.19.
+> Initial release for OCP Console 4.19.
 
-- Improve `useModal` hook to support multiple modals and prop pass-through ([OCPBUGS-57755], [#15189])
-- Add `noCheckForEmptyGroupAndResource` parameter to `useAccessReview` hook ([OCPBUGS-56413], [#15067])
+- Improve `useModal` hook to support multiple modals and prop pass-through ([OCPBUGS-49709], [#15139])
+- Add `noCheckForEmptyGroupAndResource` parameter to `useAccessReview` hook ([OCPBUGS-55368], [#15017])
 
 ## 4.19.0-prerelease.2 - 2025-05-20
 
@@ -100,6 +113,9 @@ in [Console dynamic plugins README](./README.md).
 [CONSOLE-4269]: https://issues.redhat.com/browse/CONSOLE-4269
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
 [CONSOLE-4407]: https://issues.redhat.com/browse/CONSOLE-4407
+[CONSOLE-4499]: https://issues.redhat.com/browse/CONSOLE-4499
+[CONSOLE-4654]: https://issues.redhat.com/browse/CONSOLE-4654
+[CONSOLE-4656]: https://issues.redhat.com/browse/CONSOLE-4656
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -111,11 +127,16 @@ in [Console dynamic plugins README](./README.md).
 [OCPBUGS-37426]: https://issues.redhat.com/browse/OCPBUGS-37426
 [OCPBUGS-43538]: https://issues.redhat.com/browse/OCPBUGS-43538
 [OCPBUGS-43998]: https://issues.redhat.com/browse/OCPBUGS-43998
+[OCPBUGS-45297]: https://issues.redhat.com/browse/OCPBUGS-45297
 [OCPBUGS-45319]: https://issues.redhat.com/browse/OCPBUGS-45319
+[OCPBUGS-49709]: https://issues.redhat.com/browse/OCPBUGS-49709
 [OCPBUGS-52589]: https://issues.redhat.com/browse/OCPBUGS-52589
 [OCPBUGS-52948]: https://issues.redhat.com/browse/OCPBUGS-52948
-[OCPBUGS-56413]: https://issues.redhat.com/browse/OCPBUGS-56413
+[OCPBUGS-55368]: https://issues.redhat.com/browse/OCPBUGS-55368
+[OCPBUGS-56248]: https://issues.redhat.com/browse/OCPBUGS-56248
 [OCPBUGS-57755]: https://issues.redhat.com/browse/OCPBUGS-57755
+[OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
+[OCPBUGS-58375]: https://issues.redhat.com/browse/OCPBUGS-58375
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -145,5 +166,9 @@ in [Console dynamic plugins README](./README.md).
 [#14863]: https://github.com/openshift/console/pull/14863
 [#14864]: https://github.com/openshift/console/pull/14864
 [#14876]: https://github.com/openshift/console/pull/14876
-[#15067]: https://github.com/openshift/console/pull/15067
-[#15189]: https://github.com/openshift/console/pull/15189
+[#15017]: https://github.com/openshift/console/pull/15017
+[#15139]: https://github.com/openshift/console/pull/15139
+[#15167]: https://github.com/openshift/console/pull/15167
+[#15231]: https://github.com/openshift/console/pull/15231
+[#15254]: https://github.com/openshift/console/pull/15254
+[#15386]: https://github.com/openshift/console/pull/15386

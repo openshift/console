@@ -7,6 +7,7 @@ import {
   CronJobKind,
   JobKind,
   referenceFor,
+  K8sResourceCommon,
 } from '@console/internal/module/k8s';
 import { ResourceActionFactory } from './types';
 
@@ -33,7 +34,7 @@ const startJob = (obj: CronJobKind): Promise<JobKind> => {
     },
   };
 
-  return k8sCreate(JobModel, reqPayload);
+  return k8sCreate(JobModel, reqPayload as K8sResourceCommon);
 };
 
 export const CronJobActionFactory: ResourceActionFactory = {
@@ -42,7 +43,12 @@ export const CronJobActionFactory: ResourceActionFactory = {
     label: i18next.t('console-app~Start Job'),
     cta: () => {
       startJob(obj)
-        .then((job) => history.push(resourceObjPath(job, referenceFor(job))))
+        .then((job) => {
+          const path = resourceObjPath(job, referenceFor(job));
+          if (path) {
+            history.push(path);
+          }
+        })
         .catch((error) => {
           // TODO: Show error in notification in the follow on tech-debt.
           // eslint-disable-next-line no-console
