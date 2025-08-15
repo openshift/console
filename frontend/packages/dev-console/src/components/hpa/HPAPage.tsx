@@ -16,9 +16,14 @@ import HPAPageHeader from './HPAPageHeader';
 const HPAPage: React.FC<PageComponentProps> = () => {
   const { t } = useTranslation();
   const { ns, resourceRef, name } = useParams();
-  const breakdown = getGroupVersionKind(resourceRef) || [];
+  const breakdown = getGroupVersionKind(resourceRef ?? '') || [];
   const [group, version, kind] = breakdown;
-  const [hpa, hpaLoaded, hpaError] = useRelatedHPA(`${group}/${version}`, kind, name, ns);
+  const [hpa, hpaLoaded, hpaError] = useRelatedHPA(
+    `${group}/${version}`,
+    kind ?? '',
+    name ?? '',
+    ns ?? '',
+  );
   const resource = React.useMemo(
     () => ({
       kind,
@@ -32,7 +37,7 @@ const HPAPage: React.FC<PageComponentProps> = () => {
   const fullyLoaded = hpaLoaded && workloadLoaded;
   const error = hpaError || workloadError?.message;
 
-  const validSupportedType = VALID_HPA_TARGET_KINDS.includes(kind);
+  const validSupportedType = VALID_HPA_TARGET_KINDS.includes(kind ?? '');
   const title = `${hpa ? t('devconsole~Edit') : t('devconsole~Add')} ${
     HorizontalPodAutoscalerModel.label
   }`;
@@ -47,10 +52,12 @@ const HPAPage: React.FC<PageComponentProps> = () => {
       {fullyLoaded || error ? (
         <>
           <HPAPageHeader
-            kind={kind}
-            limitWarning={workloadLoaded && validSupportedType ? getRequestsWarning(data) : null}
+            kind={kind ?? ''}
+            limitWarning={
+              workloadLoaded && validSupportedType ? getRequestsWarning(data) : undefined
+            }
             loadError={error}
-            name={name}
+            name={name ?? ''}
             title={title}
             validSupportedType={validSupportedType}
           />

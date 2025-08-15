@@ -27,7 +27,12 @@ const ProjectAccessPage: React.FC = (props) => {
           },
         ]}
       >
-        <ProjectAccess fullFormView={showFullForm} namespace={namespace} roles={roles} {...props} />
+        <ProjectAccess
+          fullFormView={showFullForm}
+          namespace={namespace ?? ''}
+          roles={roles}
+          {...props}
+        />
       </Firehose>
     </>
   );

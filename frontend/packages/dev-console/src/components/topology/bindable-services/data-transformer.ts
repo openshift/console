@@ -13,7 +13,7 @@ import { TYPE_BINDABLE_NODE } from '../const';
 import { getBindableServicesList } from './fetch-bindable-services-utils';
 
 export const isServiceBindable = (resource: K8sResourceKind) =>
-  resource.metadata.labels?.['app.kubernetes.io/component'] === 'external-service';
+  resource.metadata?.labels?.['app.kubernetes.io/component'] === 'external-service';
 
 const BINDABLE_PROPS = {
   width: NODE_WIDTH,
@@ -33,10 +33,10 @@ const getTopologyBindableServiceNodes = (
     const resKindMap = getOperatorBackedServiceKindMap(
       resources?.clusterServiceVersions?.data as ClusterServiceVersionKind[],
     );
-    const csvData = resKindMap?.[obj.kind];
+    const csvData = resKindMap?.[obj.kind ?? ''];
     const data: TopologyDataObject = {
-      id: obj.metadata.uid,
-      name: obj.metadata.name,
+      id: obj.metadata?.uid ?? '',
+      name: obj.metadata?.name ?? '',
       type: TYPE_BINDABLE_NODE,
       resource: obj,
       resources: { obj },
@@ -73,7 +73,7 @@ export const getBindableServicesTopologyDataModel = async (
     nodes: [],
   };
   watchedBindableResources.forEach((services) => {
-    servicesDataModel.nodes.push(...getTopologyBindableServiceNodes(services, resources));
+    servicesDataModel.nodes?.push(...getTopologyBindableServiceNodes(services, resources));
   });
 
   return servicesDataModel;

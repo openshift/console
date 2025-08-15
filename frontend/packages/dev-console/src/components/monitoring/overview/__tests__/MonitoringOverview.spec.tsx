@@ -87,7 +87,7 @@ describe('Monitoring Metric Section', () => {
       kind: 'Deployment',
     },
     pods: mockPods,
-    resourceEvents: mockResourceEvents,
+    resourceEvents: mockResourceEvents as any,
     monitoringAlerts: mockAlerts.data,
     ...mockPodEvents,
   };

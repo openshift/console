@@ -524,7 +524,7 @@ export const newRoles: UserRoleBinding[] = [
       apiGroup: '',
       kind: '',
     },
-    subjects: null,
+    subjects: [],
   },
   {
     role: 'admin',

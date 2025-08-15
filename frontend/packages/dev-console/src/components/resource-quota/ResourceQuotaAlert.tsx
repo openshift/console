@@ -17,8 +17,8 @@ export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespac
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [warningMessageFlag, setWarningMessageFlag] = React.useState<boolean>();
-  const [resourceQuotaName, setResourceQuotaName] = React.useState(null);
-  const [resourceQuotaKind, setResourceQuotaKind] = React.useState(null);
+  const [resourceQuotaName, setResourceQuotaName] = React.useState<string | null>(null);
+  const [resourceQuotaKind, setResourceQuotaKind] = React.useState<string | null>(null);
 
   const watchedResources = React.useMemo(
     () => ({
@@ -72,8 +72,8 @@ export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespac
 
   React.useEffect(() => {
     if (totalResourcesAtQuota.length === 1) {
-      setResourceQuotaName(quotaName || clusterRQName);
-      setResourceQuotaKind(quotaKind || clusterRQKind);
+      setResourceQuotaName(quotaName ?? clusterRQName ?? null);
+      setResourceQuotaKind(quotaKind ?? clusterRQKind ?? null);
     } else {
       setResourceQuotaName(null);
       setResourceQuotaKind(null);
@@ -95,7 +95,7 @@ export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespac
     if (resourceQuotaName) {
       return resourcePathFromModel(ResourceQuotaModel, resourceQuotaName, namespace);
     }
-    return resourcePathFromModel(ResourceQuotaModel, null, namespace);
+    return resourcePathFromModel(ResourceQuotaModel, undefined, namespace);
   };
 
   const onResourceQuotaLinkClick = () => {
