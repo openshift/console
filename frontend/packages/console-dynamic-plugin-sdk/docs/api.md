@@ -2,7 +2,7 @@
 
 | API kind | Exposed APIs |
 | -------- | ------------ |
-| Variable (82) | [ActionServiceProvider](#actionserviceprovider), [BlueInfoCircleIcon](#blueinfocircleicon), [CamelCaseWrap](#camelcasewrap), [checkAccess](#checkaccess), [CodeEditor](#codeeditor), [consoleFetch](#consolefetch), [consoleFetchJSON](#consolefetchjson), [consoleFetchText](#consolefetchtext), [DocumentTitle](#documenttitle), [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage), [ErrorStatus](#errorstatus), [GenericStatus](#genericstatus), [getAPIVersionForModel](#getapiversionformodel), [getGroupVersionKindForModel](#getgroupversionkindformodel), [getGroupVersionKindForResource](#getgroupversionkindforresource), [GreenCheckCircleIcon](#greencheckcircleicon), [HorizontalNav](#horizontalnav), [InfoStatus](#infostatus), [InventoryItem](#inventoryitem), [InventoryItemBody](#inventoryitembody), [InventoryItemLoading](#inventoryitemloading), [InventoryItemStatus](#inventoryitemstatus), [InventoryItemTitle](#inventoryitemtitle), [isAllNamespacesKey](#isallnamespaceskey), [k8sCreate](#k8screate), [k8sDelete](#k8sdelete), [k8sGet](#k8sget), [k8sList](#k8slist), [k8sListItems](#k8slistitems), [k8sPatch](#k8spatch), [k8sUpdate](#k8supdate), [ListPageBody](#listpagebody), [ListPageCreate](#listpagecreate), [ListPageCreateButton](#listpagecreatebutton), [ListPageCreateDropdown](#listpagecreatedropdown), [ListPageCreateLink](#listpagecreatelink), [ListPageHeader](#listpageheader), [NamespaceBar](#namespacebar), [Overview](#overview), [OverviewGrid](#overviewgrid), [PopoverStatus](#popoverstatus), [ProgressStatus](#progressstatus), [QueryBrowser](#querybrowser), [RedExclamationCircleIcon](#redexclamationcircleicon), [ResourceEventStream](#resourceeventstream), [ResourceIcon](#resourceicon), [ResourceLink](#resourcelink), [ResourceStatus](#resourcestatus), [ResourceYAMLEditor](#resourceyamleditor), [StatusComponent](#statuscomponent), [StatusIconAndText](#statusiconandtext), [StatusPopupItem](#statuspopupitem), [StatusPopupSection](#statuspopupsection), [SuccessStatus](#successstatus), [TableData](#tabledata), [Timestamp](#timestamp), [useAccessReview](#useaccessreview), [useActiveColumns](#useactivecolumns), [useActiveNamespace](#useactivenamespace), [useActivePerspective](#useactiveperspective), [useAnnotationsModal](#useannotationsmodal), [useDeleteModal](#usedeletemodal), [useFlag](#useflag), [useK8sModel](#usek8smodel), [useK8sModels](#usek8smodels), [useK8sWatchResource](#usek8swatchresource), [useK8sWatchResources](#usek8swatchresources), [useLabelsModal](#uselabelsmodal), [useOverlay](#useoverlay), [usePrometheusPoll](#useprometheuspoll), [useQuickStartContext](#usequickstartcontext), [useResolvedExtensions](#useresolvedextensions), [useUserSettings](#useusersettings), [YellowExclamationTriangleIcon](#yellowexclamationtriangleicon), [ListPageFilter](#listpagefilter), [PerspectiveContext](#perspectivecontext), [useAccessReviewAllowed](#useaccessreviewallowed), [useListPageFilter](#uselistpagefilter), [useModal](#usemodal), [useSafetyFirst](#usesafetyfirst), [VirtualizedTable](#virtualizedtable), [YAMLEditor](#yamleditor) |
+| Variable (83) | [ActionServiceProvider](#actionserviceprovider), [BlueInfoCircleIcon](#blueinfocircleicon), [CamelCaseWrap](#camelcasewrap), [checkAccess](#checkaccess), [CodeEditor](#codeeditor), [consoleFetch](#consolefetch), [consoleFetchJSON](#consolefetchjson), [consoleFetchText](#consolefetchtext), [DocumentTitle](#documenttitle), [ErrorBoundaryFallbackPage](#errorboundaryfallbackpage), [ErrorStatus](#errorstatus), [GenericStatus](#genericstatus), [getAPIVersionForModel](#getapiversionformodel), [getGroupVersionKindForModel](#getgroupversionkindformodel), [getGroupVersionKindForResource](#getgroupversionkindforresource), [getSegmentAnalytics](#getsegmentanalytics), [GreenCheckCircleIcon](#greencheckcircleicon), [HorizontalNav](#horizontalnav), [InfoStatus](#infostatus), [InventoryItem](#inventoryitem), [InventoryItemBody](#inventoryitembody), [InventoryItemLoading](#inventoryitemloading), [InventoryItemStatus](#inventoryitemstatus), [InventoryItemTitle](#inventoryitemtitle), [isAllNamespacesKey](#isallnamespaceskey), [k8sCreate](#k8screate), [k8sDelete](#k8sdelete), [k8sGet](#k8sget), [k8sList](#k8slist), [k8sListItems](#k8slistitems), [k8sPatch](#k8spatch), [k8sUpdate](#k8supdate), [ListPageBody](#listpagebody), [ListPageCreate](#listpagecreate), [ListPageCreateButton](#listpagecreatebutton), [ListPageCreateDropdown](#listpagecreatedropdown), [ListPageCreateLink](#listpagecreatelink), [ListPageHeader](#listpageheader), [NamespaceBar](#namespacebar), [Overview](#overview), [OverviewGrid](#overviewgrid), [PopoverStatus](#popoverstatus), [ProgressStatus](#progressstatus), [QueryBrowser](#querybrowser), [RedExclamationCircleIcon](#redexclamationcircleicon), [ResourceEventStream](#resourceeventstream), [ResourceIcon](#resourceicon), [ResourceLink](#resourcelink), [ResourceStatus](#resourcestatus), [ResourceYAMLEditor](#resourceyamleditor), [StatusComponent](#statuscomponent), [StatusIconAndText](#statusiconandtext), [StatusPopupItem](#statuspopupitem), [StatusPopupSection](#statuspopupsection), [SuccessStatus](#successstatus), [TableData](#tabledata), [Timestamp](#timestamp), [useAccessReview](#useaccessreview), [useActiveColumns](#useactivecolumns), [useActiveNamespace](#useactivenamespace), [useActivePerspective](#useactiveperspective), [useAnnotationsModal](#useannotationsmodal), [useDeleteModal](#usedeletemodal), [useFlag](#useflag), [useK8sModel](#usek8smodel), [useK8sModels](#usek8smodels), [useK8sWatchResource](#usek8swatchresource), [useK8sWatchResources](#usek8swatchresources), [useLabelsModal](#uselabelsmodal), [useOverlay](#useoverlay), [usePrometheusPoll](#useprometheuspoll), [useQuickStartContext](#usequickstartcontext), [useResolvedExtensions](#useresolvedextensions), [useUserSettings](#useusersettings), [YellowExclamationTriangleIcon](#yellowexclamationtriangleicon), [ListPageFilter](#listpagefilter), [PerspectiveContext](#perspectivecontext), [useAccessReviewAllowed](#useaccessreviewallowed), [useListPageFilter](#uselistpagefilter), [useModal](#usemodal), [useSafetyFirst](#usesafetyfirst), [VirtualizedTable](#virtualizedtable), [YAMLEditor](#yamleditor) |
 | TypeAlias (28) | [Alert](#alert), [Alerts](#alerts), [AlwaysOnExtension](#alwaysonextension), [ColoredIconProps](#colorediconprops), [DiscoveryResources](#discoveryresources), [ExtensionHook](#extensionhook), [ExtensionHookResult](#extensionhookresult), [ExtensionK8sGroupKindModel](#extensionk8sgroupkindmodel), [ExtensionK8sGroupModel](#extensionk8sgroupmodel), [ExtensionK8sKindVersionModel](#extensionk8skindversionmodel), [ExtensionK8sModel](#extensionk8smodel), [K8sModel](#k8smodel), [K8sVerb](#k8sverb), [MatchExpression](#matchexpression), [MatchLabels](#matchlabels), [ModalComponent](#modalcomponent), [OverlayComponent](#overlaycomponent), [PerspectiveContextType](#perspectivecontexttype), [PrometheusAlert](#prometheusalert), [PrometheusLabels](#prometheuslabels), [PrometheusRule](#prometheusrule), [PrometheusRulesResponse](#prometheusrulesresponse), [PrometheusValue](#prometheusvalue), [ResolvedExtension](#resolvedextension), [Rule](#rule), [Selector](#selector), [Silence](#silence), [K8sKind](#k8skind) |
 | Interface (1) | [ModelDefinition](#modeldefinition) |
 | Enum (6) | [AlertSeverity](#alertseverity), [AlertStates](#alertstates), [Operator](#operator), [PrometheusEndpoint](#prometheusendpoint), [RuleStates](#rulestates), [SilenceStates](#silencestates) |
@@ -720,6 +720,34 @@ The group, version, kind for the provided resource.<br/>If the resource does not
 ### Source
 
 [`frontend/packages/console-dynamic-plugin-sdk/src/utils/k8s/k8s-ref.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/utils/k8s/k8s-ref.ts)
+
+---
+
+## `getSegmentAnalytics`
+
+### Summary 
+
+This function provides access to Segment Analytics API.<br/><br/>Console application takes care of loading the analytics.min.js script.<br/>Console plugins should _not_ attempt to initialize Segment Analytics on their own.
+
+
+### Example
+
+```ts
+const { analytics, analyticsEnabled } = getSegmentAnalytics();
+
+if (analyticsEnabled) {
+  // invoke methods on analytics object as needed
+}
+```
+
+
+
+
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
