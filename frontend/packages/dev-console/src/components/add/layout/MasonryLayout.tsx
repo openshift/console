@@ -28,7 +28,7 @@ export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
   const measureRef = React.useRef<HTMLDivElement>(null);
   const [width, setWidth] = React.useState<number>(0);
   const handleResize = React.useCallback(() => {
-    const newWidth = measureRef.current.getBoundingClientRect().width;
+    const newWidth = measureRef.current?.getBoundingClientRect().width ?? 0;
     if (newWidth) {
       setWidth((oldWidth) =>
         Math.abs(oldWidth - newWidth) < resizeThreshold ? oldWidth : newWidth,
@@ -44,13 +44,13 @@ export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
     handleResize();
 
     // change the column count if the window is resized
-    const observer = getResizeObserver(undefined, handleResize, true);
+    const observer = getResizeObserver(undefined as any, handleResize, true);
     return () => observer();
   }, [handleResize]);
 
   const columns: React.ReactElement[] =
     loading && LoadingComponent
-      ? Array.from({ length: columnCount }, (_, i) => <LoadingComponent key={i.toString()} />)
+      ? Array.from({ length: columnCount ?? 0 }, (_, i) => <LoadingComponent key={i.toString()} />)
       : children;
 
   return (

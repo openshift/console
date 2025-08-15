@@ -46,7 +46,7 @@ const convertFormDataToBuildConfigSource = (
       if (!buildConfig.spec.strategy?.type) {
         buildConfig.spec.strategy = {
           type: values.formData.images.strategyType || 'Source',
-          ...buildConfig.spec.strategy,
+          ...(buildConfig.spec.strategy as any),
         };
       }
 
@@ -75,7 +75,7 @@ const convertFormDataToBuildConfigSource = (
       if (!buildConfig.spec.strategy?.type) {
         buildConfig.spec.strategy = {
           type: values.formData.images.strategyType || 'Docker',
-          ...buildConfig.spec.strategy,
+          ...(buildConfig.spec.strategy as any),
         };
       }
       break;
@@ -90,7 +90,7 @@ const convertFormDataToBuildConfigSource = (
       if (!buildConfig.spec.strategy?.type) {
         buildConfig.spec.strategy = {
           type: values.formData.images.strategyType || 'Source',
-          ...buildConfig.spec.strategy,
+          ...(buildConfig.spec.strategy as any),
         };
       }
       break;
@@ -105,7 +105,11 @@ const convertImageOptionFormDataToImageReference = (
   buildConfigNamespace: string,
 ): ImageReference => {
   if (imageOptionFormData.type === 'imageStreamTag') {
-    const { namespace, image = '', tag } = imageOptionFormData.imageStreamTag.imageStream;
+    const { namespace, image = '', tag } = imageOptionFormData.imageStreamTag.imageStream as {
+      namespace: string;
+      image: string;
+      tag: string;
+    };
     const name = tag ? `${image}:${tag}` : image;
     return namespace === buildConfigNamespace
       ? {
@@ -136,7 +140,7 @@ const convertImageOptionFormDataToImageReference = (
       name: imageOptionFormData.dockerImage,
     };
   }
-  return null;
+  return null as any;
 };
 
 const convertFormDataImagesToBuildConfig = (
@@ -146,7 +150,7 @@ const convertFormDataImagesToBuildConfig = (
   // Build from => Strategy
   const from = convertImageOptionFormDataToImageReference(
     values.formData.images.buildFrom,
-    buildConfig.metadata.namespace,
+    buildConfig.metadata.namespace as string,
   );
 
   // The strategy object is automatically created in convertFormDataToBuildConfigSource
@@ -155,14 +159,20 @@ const convertFormDataImagesToBuildConfig = (
   if (from && !buildConfig.spec.strategy?.type) {
     buildConfig.spec.strategy = {
       type: values.formData.images.strategyType || 'Source',
-      ...buildConfig.spec.strategy,
+      ...(buildConfig.spec.strategy as any),
     };
   }
 
   const strategyKey = `${buildConfig.spec.strategy?.type?.toLowerCase()}Strategy`;
   if (from && !buildConfig.spec.strategy?.[strategyKey]) {
-    buildConfig.spec.strategy[strategyKey] = { from };
-  } else if (from) {
+    if (buildConfig.spec.strategy) {
+      buildConfig.spec.strategy[strategyKey] = { from } as any;
+    }
+  } else if (
+    from &&
+    buildConfig.spec.strategy?.[strategyKey] &&
+    buildConfig.spec.strategy[strategyKey]
+  ) {
     buildConfig.spec.strategy[strategyKey].from = from;
   } else if (buildConfig.spec.strategy?.[strategyKey]) {
     delete buildConfig.spec.strategy[strategyKey].from;
@@ -171,11 +181,11 @@ const convertFormDataImagesToBuildConfig = (
   // Push to => Output
   const to = convertImageOptionFormDataToImageReference(
     values.formData.images.pushTo,
-    buildConfig.metadata.namespace,
+    buildConfig.metadata.namespace as string,
   );
   if (to && !buildConfig.spec.output) {
-    buildConfig.spec.output = { to };
-  } else if (to) {
+    buildConfig.spec.output = { to } as any;
+  } else if (to && buildConfig.spec.output && buildConfig.spec.output) {
     buildConfig.spec.output.to = to;
   } else if (buildConfig.spec.output) {
     delete buildConfig.spec.output.to;
@@ -194,17 +204,27 @@ const convertFormDataEnvironmentVariablesToBuildConfig = (
   if (env.length > 0 && !buildConfig.spec.strategy?.type) {
     buildConfig.spec.strategy = {
       type: values.formData.images.strategyType || 'Source',
-      ...buildConfig.spec.strategy,
+      ...(buildConfig.spec.strategy as any),
     };
   }
 
   const strategyKey = `${buildConfig.spec.strategy?.type?.toLowerCase()}Strategy`;
   if (env.length > 0 && !buildConfig.spec.strategy?.[strategyKey]) {
-    buildConfig.spec.strategy[strategyKey] = { env };
-  } else if (env.length > 0) {
-    buildConfig.spec.strategy[strategyKey].env = env;
+    if (buildConfig.spec.strategy) {
+      buildConfig.spec.strategy[strategyKey] = { env } as any;
+    }
+  } else if (
+    env.length > 0 &&
+    buildConfig.spec.strategy?.[strategyKey] &&
+    buildConfig.spec.strategy[strategyKey]
+  ) {
+    if (buildConfig.spec.strategy[strategyKey]) {
+      buildConfig.spec.strategy[strategyKey].env = env;
+    }
   } else if (buildConfig.spec.strategy?.[strategyKey]) {
-    delete buildConfig.spec.strategy[strategyKey].env;
+    if (buildConfig.spec.strategy[strategyKey]) {
+      delete buildConfig.spec.strategy[strategyKey].env;
+    }
   }
 };
 
@@ -236,7 +256,7 @@ const convertFormDataTriggersToBuildConfig = (
                   : { secretReference: { name: trigger.secret } }),
                 ...(trigger.allowEnv ? { allowEnv: trigger.allowEnv } : {}),
               },
-            } as BuildConfigTrigger),
+            } as any),
         ),
     );
   }
@@ -262,13 +282,13 @@ const convertFormDataSecretsToBuildConfig = (
   if (secrets.length > 0 && !buildConfig.spec.source?.type) {
     buildConfig.spec.source = {
       type: 'Source',
-      ...buildConfig.spec.source,
+      ...(buildConfig.spec.source as any),
     };
   }
 
   if (secrets.length > 0) {
     buildConfig.spec.source = {
-      ...buildConfig.spec.source,
+      ...(buildConfig.spec.source as any),
       secrets,
     };
   } else if (buildConfig.spec.source?.secrets) {
