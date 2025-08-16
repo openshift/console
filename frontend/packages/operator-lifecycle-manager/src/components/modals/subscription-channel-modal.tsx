@@ -87,7 +87,7 @@ export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> =
       <ModalSubmitFooter
         inProgress={inProgress}
         errorMessage={errorMessage}
-        cancel={cancel}
+        cancel={cancel as any}
         submitText={t('public~Save')}
         submitDisabled={selectedChannel === currentChannel}
       />

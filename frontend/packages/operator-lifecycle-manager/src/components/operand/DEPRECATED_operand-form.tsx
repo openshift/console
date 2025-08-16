@@ -117,7 +117,11 @@ const idFromPath = (path) => `DEPRECATED_root_${path.split('.').join('_')}`;
  * both prefix and suffix are provided, this will return true only if the field has a capability
  * that matches the concatenation of prefix + suffix.
  */
-const hasDescriptor = (field: OperandField, prefix: string, suffix: string = null): boolean => {
+const hasDescriptor = (
+  field: OperandField,
+  prefix: string,
+  suffix: string | null = null,
+): boolean => {
   return suffix
     ? _.includes(field.capabilities, `${prefix}${suffix}`)
     : _.some(field.capabilities, (capability) => capability.startsWith(prefix));
@@ -137,7 +141,7 @@ const parseGroupDescriptor = (
       descriptor.startsWith(SpecCapability.fieldGroup) ||
       descriptor.startsWith(SpecCapability.arrayFieldGroup),
   );
-  const [regexMatch, groupType, groupName] = groupDescriptor.match(GROUP_PATTERN) || [];
+  const [regexMatch, groupType, groupName] = groupDescriptor?.match(GROUP_PATTERN) || [];
   return { regexMatch, groupName, groupType };
 };
 
@@ -435,8 +439,8 @@ const specDescriptorToFields = (
         displayName,
         description,
         capabilities,
-        type: null,
-        required: null,
+        type: null as any,
+        required: null as any,
       })),
     );
   }
@@ -445,8 +449,8 @@ const specDescriptorToFields = (
       path: `spec.${path}`,
       displayName,
       description,
-      type: null,
-      required: null,
+      type: null as any,
+      required: null as any,
       capabilities,
     },
   ];
@@ -520,16 +524,16 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     // Immutable will not initialize a deep path as a List if it includes an integer, so we need to manually
     // initialize non-existent array properties to a List instance before updating state at that path.
     if (regexMatch && index === 0) {
-      const existing = immutableFormData.getIn([...pathToArray(pathBeforeIndex), 0]);
-      const item = Immutable.Map(existing || {}).setIn(pathToArray(pathAfterIndex), value);
+      const existing = immutableFormData.getIn([...pathToArray(pathBeforeIndex || ''), 0]);
+      const item = Immutable.Map(existing || {}).setIn(pathToArray(pathAfterIndex || ''), value);
       const list = Immutable.List([item]);
-      onChange(immutableFormData.setIn(pathToArray(pathBeforeIndex), list).toJS());
+      onChange?.(immutableFormData.setIn(pathToArray(pathBeforeIndex || ''), list).toJS());
     }
-    onChange(immutableFormData.setIn(pathToArray(path), value).toJS());
+    onChange?.(immutableFormData.setIn(pathToArray(path), value).toJS());
   };
 
-  const handleFormDataDelete = (path) => {
-    onChange(immutableFormData.deleteIn(pathToArray(path)).toJS());
+  const handleFormDataDelete = (path: string) => {
+    onChange?.(immutableFormData.deleteIn(pathToArray(path)).toJS());
   };
 
   // Map providedAPI spec descriptors and openAPI spec properties to OperandField[] array
@@ -538,7 +542,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     const schemaFields = fieldsForOpenAPI(
       schema?.properties?.spec as JSONSchema6,
       providedAPI,
-      formData,
+      formData as K8sResourceKind,
     );
 
     // Get fields from providedAPI that do not exist in the OpenAPI spec.
@@ -553,7 +557,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
         // Add the field if it doesn't exist
         return [
           ...providedAPIFieldsAccumulator,
-          ...specDescriptorToFields(specDescriptor, formData),
+          ...specDescriptorToFields(specDescriptor, formData as K8sResourceKind),
         ];
       },
       [],
@@ -643,14 +647,17 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       groupName,
       fieldLists: _.reduce(
         fieldsInGroup,
-        (fieldListsAccumulator, field) => {
+        (fieldListsAccumulator: OperandField[][], field) => {
           const { index, regexMatch } = parseArrayPath(field.path);
           if (regexMatch) {
-            fieldListsAccumulator[index] = [...(fieldListsAccumulator[index] || []), field];
+            fieldListsAccumulator[index || 0] = [
+              ...(fieldListsAccumulator[index || 0] || []),
+              field,
+            ];
           }
           return fieldListsAccumulator;
         },
-        [],
+        [] as OperandField[][],
       ),
     }));
   }, [arrayFields]);
@@ -790,8 +797,10 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       );
     }
     if (capabilities.some((c) => c.startsWith(SpecCapability.k8sResourcePrefix))) {
-      const groupVersionKind: GroupVersionKind = capabilities
-        .find((c) => c.startsWith(SpecCapability.k8sResourcePrefix))
+      const capability = capabilities.find((c) => c.startsWith(SpecCapability.k8sResourcePrefix));
+      if (!capability) return null;
+
+      const groupVersionKind: GroupVersionKind = capability
         .split(SpecCapability.k8sResourcePrefix)[1]
         .replace('core~v1~', '');
       const k8sModel = modelFor(groupVersionKind);
@@ -805,13 +814,13 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           resources={[
             {
               kind: groupVersionKind,
-              namespace: k8sModel.namespaced ? params?.ns : null,
+              namespace: k8sModel.namespaced ? params?.ns : undefined,
             },
           ]}
           desc={displayName}
           placeholder={t('olm~Select {{item}}', { item: kindForReference(groupVersionKind) })}
           onChange={(value) => handleFormDataUpdate(path, value)}
-          selectedKey={currentValue ? `${currentValue}-${k8sModel?.kind}` : null}
+          selectedKey={currentValue ? `${currentValue}-${k8sModel?.kind}` : undefined}
         />
       ) : null;
     }
@@ -980,7 +989,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     const leftShiftedFields = _.reduce(
       fieldsToLeftShift,
       (fieldAccumulator, field) => {
-        const path = modifyArrayFieldPathIndex(field.path, (index) => index - 1);
+        const path = modifyArrayFieldPathIndex(field.path, (index) => (index || 1) - 1);
         return [...fieldAccumulator, { ...field, path }];
       },
       [],
@@ -1010,8 +1019,11 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       const groupDisplayName = _.startCase(groupName);
       const singularGroupDisplayName = groupDisplayName.replace(/s$/, '');
       const id = `root_spec_${groupName}`;
-      const isExpanded = !_.some(fieldLists, (fieldList) =>
-        _.some(fieldList, (f) => hasDescriptor(f, SpecCapability.advanced) && !f.required),
+      const isExpanded = !_.some(fieldLists, (fieldList: OperandField[]) =>
+        _.some(
+          fieldList,
+          (f) => hasDescriptor(f as OperandField, SpecCapability.advanced) && !f.required,
+        ),
       );
 
       return (
@@ -1033,7 +1045,11 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                 </div>
               )}
               {_.map(fieldList, (field) => (
-                <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
+                <OperandFormInputGroup
+                  key={field.path}
+                  field={field as OperandField}
+                  input={inputFor(field as OperandField) as any}
+                />
               ))}
             </React.Fragment>
           ))}
@@ -1049,7 +1065,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           </div>
         </FieldGroup>
       );
-    });
+    }).filter(Boolean);
 
   const renderFieldGroups = () =>
     _.map(_.sortBy(fieldGroups, 'groupName'), ({ fieldList, groupName }) => {
@@ -1064,16 +1080,16 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       return (
         <FieldGroup key={id} id={id} isExpanded={isExpanded} label={_.startCase(groupName)}>
           {_.map(fieldList, (field) => (
-            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
+            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field) as any} />
           ))}
         </FieldGroup>
       );
-    });
+    }).filter(Boolean);
 
   const renderNormalFields = () =>
     _.map(normalFields, (field) => (
-      <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
-    ));
+      <OperandFormInputGroup key={field.path} field={field} input={inputFor(field) as any} />
+    )).filter(Boolean);
 
   const renderAdvancedFields = () =>
     advancedFields.length > 0 && (
@@ -1083,8 +1099,8 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           textCollapsed={t('olm~Advanced configuration')}
         >
           {_.map(advancedFields, (field) => (
-            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
-          ))}
+            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field) as any} />
+          )).filter(Boolean)}
         </ExpandCollapse>
       </div>
     );

@@ -13,7 +13,7 @@ export const useExtensionCatalogDatabaseContextValues: UseExtensionCatalogDataba
     isList: true,
   });
   const [done, setDone] = React.useState(false);
-  const [error, setError] = React.useState<Error>();
+  const [error, setError] = React.useState<Error | null>(null);
   const refresh = React.useRef(
     _.debounce((newCatalogs: K8sResourceCommon[]) => {
       setDone(false);

@@ -70,31 +70,29 @@ export const DeprecatedOperatorWarningAlert: React.FC<DeprecatedOperatorWarningP
   const { t } = useTranslation();
   const [alertVisible, setAlertVisible] = React.useState<boolean>(true);
 
-  return (
-    alertVisible && (
-      <FormAlert className="pf-v6-u-my-md">
-        <Alert
-          variant="warning"
-          title={t('olm~Deprecated warnings')}
-          aria-live="polite"
-          isInline
-          actionClose={
-            dismissible && <AlertActionCloseButton onClose={() => setAlertVisible(false)} />
-          }
-        >
-          <div data-test="deprecated-operator-warning-package">
-            {deprecatedPackage?.deprecation?.message}
-          </div>
-          <div data-test="deprecated-operator-warning-channel">
-            {deprecatedChannel?.deprecation?.message}
-          </div>
-          <div data-test="deprecated-operator-warning-version">
-            {deprecatedVersion?.deprecation?.message}
-          </div>
-        </Alert>
-      </FormAlert>
-    )
-  );
+  return alertVisible ? (
+    <FormAlert className="pf-v6-u-my-md">
+      <Alert
+        variant="warning"
+        title={t('olm~Deprecated warnings')}
+        aria-live="polite"
+        isInline
+        actionClose={
+          dismissible && <AlertActionCloseButton onClose={() => setAlertVisible(false)} />
+        }
+      >
+        <div data-test="deprecated-operator-warning-package">
+          {deprecatedPackage?.deprecation?.message}
+        </div>
+        <div data-test="deprecated-operator-warning-channel">
+          {deprecatedChannel?.deprecation?.message}
+        </div>
+        <div data-test="deprecated-operator-warning-version">
+          {deprecatedVersion?.deprecation?.message}
+        </div>
+      </Alert>
+    </FormAlert>
+  ) : null;
 };
 
 type DeprecatedOperatorWarningBadge = {

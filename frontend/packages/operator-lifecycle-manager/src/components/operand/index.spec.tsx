@@ -122,7 +122,7 @@ jest.mock('react-router-dom-v5-compat', () => ({
 
 const i18nNS = 'public';
 
-describe(OperandTableRow.displayName, () => {
+describe(OperandTableRow.displayName || '', () => {
   let wrapper: ReactWrapper<OperandTableRowProps>;
 
   beforeEach(() => {
@@ -152,7 +152,7 @@ describe(OperandTableRow.displayName, () => {
     const col = wrapper.childAt(2);
     const link = col.find(ResourceLink);
 
-    expect(link.props().name).toEqual(testResourceInstance.metadata.namespace);
+    expect(link.props().name).toEqual(testResourceInstance.metadata?.namespace);
   });
   it('renders column for resource status', () => {
     const col = wrapper.childAt(3);
@@ -165,14 +165,14 @@ describe(OperandTableRow.displayName, () => {
     const labelList = col.find(LabelList);
 
     expect(labelList.props().kind).toEqual(testResourceInstance.kind);
-    expect(labelList.props().labels).toEqual(testResourceInstance.metadata.labels);
+    expect(labelList.props().labels).toEqual(testResourceInstance.metadata?.labels);
   });
 
   it('renders column for last updated timestamp', () => {
     const col = wrapper.childAt(5);
     const timestamp = col.find(Timestamp);
 
-    expect(timestamp.props().timestamp).toEqual(testResourceInstance.metadata.creationTimestamp);
+    expect(timestamp.props().timestamp).toEqual(testResourceInstance.metadata?.creationTimestamp);
   });
 
   it('renders a `LazyActionsMenu` for resource actions', () => {
@@ -181,7 +181,7 @@ describe(OperandTableRow.displayName, () => {
   });
 });
 
-describe(OperandList.displayName, () => {
+describe(OperandList.displayName || '', () => {
   let wrapper: ReactWrapper<OperandListProps>;
   let resources: K8sResourceKind[];
 
@@ -217,14 +217,14 @@ describe(OperandList.displayName, () => {
   });
 });
 
-describe(OperandDetails.displayName, () => {
+describe(OperandDetails.displayName || '', () => {
   let wrapper: ShallowWrapper<OperandDetailsProps>;
   let resourceDefinition: any;
 
   beforeEach(() => {
     resourceDefinition = {
       plural: testModel.plural,
-      annotations: testCRD.metadata.annotations,
+      annotations: testCRD.metadata?.annotations,
       apiVersion: testModel.apiVersion,
     };
     wrapper = shallow(
@@ -233,7 +233,7 @@ describe(OperandDetails.displayName, () => {
         crd={testCRD}
         obj={testResourceInstance}
         kindObj={resourceDefinition}
-        appName={testClusterServiceVersion.metadata.name}
+        appName={testClusterServiceVersion.metadata?.name || ''}
       />,
     );
   });
@@ -250,10 +250,10 @@ describe(OperandDetails.displayName, () => {
   });
 
   it('does not render filtered status fields', () => {
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(
+    const crd = testClusterServiceVersion.spec?.customresourcedefinitions?.owned?.find(
       (c) => c.name === 'testresources.testapp.coreos.com',
     );
-    const filteredDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'importantMetrics');
+    const filteredDescriptor = crd?.statusDescriptors?.find((sd) => sd.path === 'importantMetrics');
     const statusView = wrapper
       .find(DescriptorDetailsItem)
       .filterWhere((node) => node.props().descriptor === filteredDescriptor);
@@ -263,7 +263,9 @@ describe(OperandDetails.displayName, () => {
 
   it('does not render any spec descriptor fields if there are none defined on the `ClusterServiceVersion`', () => {
     const csv = _.cloneDeep(testClusterServiceVersion);
-    csv.spec.customresourcedefinitions.owned = [];
+    if (csv.spec?.customresourcedefinitions?.owned) {
+      csv.spec.customresourcedefinitions.owned = [];
+    }
     wrapper = wrapper.setProps({ csv });
 
     expect(wrapper.find(DescriptorDetailsItem).length).toEqual(0);
@@ -273,28 +275,31 @@ describe(OperandDetails.displayName, () => {
     expect(
       wrapper.find(DescriptorDetailsItemList).last().shallow().find(DescriptorDetailsItem).length,
     ).toEqual(
-      testClusterServiceVersion.spec.customresourcedefinitions.owned[0].specDescriptors.length,
+      testClusterServiceVersion.spec?.customresourcedefinitions?.owned?.[0]?.specDescriptors
+        ?.length,
     );
   });
 
   xit('[CONSOLE-2336] renders spec descriptor fields if the custom resource is `required`', () => {
     const csv = _.cloneDeep(testClusterServiceVersion);
-    csv.spec.customresourcedefinitions.required = _.cloneDeep(
-      csv.spec.customresourcedefinitions.owned,
-    );
-    csv.spec.customresourcedefinitions.owned = [];
+    if (csv.spec?.customresourcedefinitions?.owned) {
+      csv.spec.customresourcedefinitions.required = _.cloneDeep(
+        csv.spec.customresourcedefinitions.owned,
+      );
+      csv.spec.customresourcedefinitions.owned = [];
+    }
     wrapper = wrapper.setProps({ csv });
 
     expect(
       wrapper.find(DescriptorDetailsItemList).last().shallow().find(DescriptorDetailsItem).length,
-    ).toEqual(csv.spec.customresourcedefinitions.required[0].specDescriptors.length);
+    ).toEqual(csv.spec?.customresourcedefinitions?.required?.[0]?.specDescriptors?.length);
   });
 
   it('renders a Condtions table', () => {
     expect(wrapper.find('SectionHeading').at(1).prop('text')).toEqual('Conditions');
 
     expect(wrapper.find('Conditions').prop('conditions')).toEqual(
-      testResourceInstance.status.conditions,
+      testResourceInstance.status?.conditions,
     );
   });
 
@@ -332,7 +337,7 @@ describe('ResourcesList', () => {
     );
     const multiListPage = wrapper.find(MultiListPage);
     expect(multiListPage.props().resources).toEqual(
-      testClusterServiceVersion.spec.customresourcedefinitions.owned[0].resources.map(
+      testClusterServiceVersion.spec?.customresourcedefinitions?.owned?.[0]?.resources?.map(
         (resource) => ({ kind: resource.kind, namespaced: true, prop: 'Pod' }),
       ),
     );
@@ -377,12 +382,12 @@ describe(OperandDetailsPage.displayName, () => {
     );
 
     const detailsPage = wrapper.find(DetailsPage);
-    expect(detailsPage.props().pages[0].nameKey).toEqual(`${i18nNS}~Details`);
-    expect(detailsPage.props().pages[0].href).toEqual('');
-    expect(detailsPage.props().pages[1].nameKey).toEqual(`${i18nNS}~YAML`);
-    expect(detailsPage.props().pages[1].href).toEqual('yaml');
-    expect(detailsPage.props().pages[2].nameKey).toEqual('olm~Resources');
-    expect(detailsPage.props().pages[2].href).toEqual('resources');
+    expect(detailsPage.props().pages?.[0]?.nameKey).toEqual(`${i18nNS}~Details`);
+    expect(detailsPage.props().pages?.[0]?.href).toEqual('');
+    expect(detailsPage.props().pages?.[1]?.nameKey).toEqual(`${i18nNS}~YAML`);
+    expect(detailsPage.props().pages?.[1]?.href).toEqual('yaml');
+    expect(detailsPage.props().pages?.[2]?.nameKey).toEqual('olm~Resources');
+    expect(detailsPage.props().pages?.[2]?.href).toEqual('resources');
   });
 
   it('renders a `DetailsPage` which also watches the parent CSV', () => {
@@ -393,7 +398,7 @@ describe(OperandDetailsPage.displayName, () => {
         </ReactRouter.BrowserRouter>
       </Provider>,
     );
-    expect(wrapper.find(DetailsPage).prop('resources')[0]).toEqual({
+    expect(wrapper.find(DetailsPage).prop('resources')?.[0]).toEqual({
       kind: 'CustomResourceDefinition',
       name: 'testresources.testapp.coreos.com',
       isList: false,
@@ -420,7 +425,12 @@ describe(OperandDetailsPage.displayName, () => {
         </ReactRouter.BrowserRouter>
       </Provider>,
     );
-    expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
+    expect(
+      wrapper
+        .find(DetailsPage)
+        .props()
+        .breadcrumbsFor?.(null as any),
+    ).toEqual([
       {
         name: 'Installed Operators',
         path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}`,
@@ -456,7 +466,12 @@ describe(OperandDetailsPage.displayName, () => {
       </Provider>,
     );
 
-    expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
+    expect(
+      wrapper
+        .find(DetailsPage)
+        .props()
+        .breadcrumbsFor?.(null as any),
+    ).toEqual([
       {
         name: 'Installed Operators',
         path: `/k8s/ns/example/${ClusterServiceVersionModel.plural}`,
@@ -501,7 +516,7 @@ describe(OperandDetailsPage.displayName, () => {
         uid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         ownerReferences: [
           {
-            uid: testResourceInstance.metadata.uid,
+            uid: testResourceInstance.metadata?.uid || '',
             name: 'foo',
             kind: 'fooKind',
             apiVersion: 'fooVersion',
@@ -519,20 +534,20 @@ describe(OperandDetailsPage.displayName, () => {
       Deployment: {
         data: [deployment],
         loaded: true,
-        loadError: undefined,
+        loadError: undefined as any,
       },
       Secret: {
         data: [secret],
         loaded: true,
-        loadError: undefined,
+        loadError: undefined as any,
       },
       Pod: {
         data: [pod],
         loaded: true,
-        loadError: undefined,
+        loadError: undefined as any,
       },
     };
-    const data = flatten(resources);
+    const data = flatten?.(resources);
 
     expect(data.map((obj) => obj.metadata.uid)).not.toContain(secret.metadata.uid);
     expect(data.map((obj) => obj.metadata.uid)).toContain(pod.metadata.uid);
@@ -580,7 +595,7 @@ describe(ProvidedAPIsPage.displayName, () => {
 
   it('passes `items` props and render ListPageCreateDropdown create button if app has multiple owned CRDs', () => {
     const obj = _.cloneDeep(testClusterServiceVersion);
-    obj.spec.customresourcedefinitions.owned.push({
+    obj.spec?.customresourcedefinitions?.owned?.push({
       name: 'foobars.testapp.coreos.com',
       displayName: 'Foo Bars',
       version: 'v1',

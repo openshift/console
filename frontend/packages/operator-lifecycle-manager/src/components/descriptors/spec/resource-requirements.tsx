@@ -124,7 +124,7 @@ export const ResourceRequirementsModal = withHandlePromise(
           errorMessage={props.errorMessage}
           inProgress={props.inProgress}
           submitText={t('public~Save')}
-          cancel={props.cancel}
+          cancel={props.cancel as any}
         />
       </form>
     );

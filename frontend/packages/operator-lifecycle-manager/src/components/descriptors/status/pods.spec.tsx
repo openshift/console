@@ -3,7 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { SpecCapability, Descriptor } from '../types';
 import { PodStatusChart, PodStatusChartProps } from './pods';
 
-describe(PodStatusChart.displayName, () => {
+describe(PodStatusChart.displayName || '', () => {
   let wrapper: ShallowWrapper<PodStatusChartProps>;
   let descriptor: Descriptor;
 
