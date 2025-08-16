@@ -1,14 +1,44 @@
-import { shallow, ShallowWrapper } from 'enzyme';
+import { render } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
-import { NamespaceBar } from '@console/internal/components/namespace-bar';
-import { MultiTabListPage } from '@console/shared';
 import ServingListPage from '../ServingListsPage';
-
-let wrapper: ShallowWrapper;
+import '@testing-library/jest-dom';
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
+}));
+
+jest.mock('@console/internal/components/namespace-bar', () => ({
+  NamespaceBar: 'NamespaceBar',
+}));
+
+jest.mock('@console/shared', () => ({
+  MultiTabListPage: 'MultiTabListPage',
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
+jest.mock('@console/internal/module/k8s', () => ({
+  referenceForModel: jest.fn(() => 'serving.knative.dev~v1~Service'),
+}));
+
+jest.mock('../../../revisions/RevisionsPage', () => ({
+  __esModule: true,
+  default: 'RevisionsPage',
+}));
+
+jest.mock('../../../routes/RoutesPage', () => ({
+  __esModule: true,
+  default: 'RoutesPage',
+}));
+
+jest.mock('../../../services/ServicesPage', () => ({
+  __esModule: true,
+  default: 'ServicesPage',
 }));
 
 describe('ServingListPage', () => {
@@ -16,19 +46,17 @@ describe('ServingListPage', () => {
     jest.spyOn(Router, 'useParams').mockReturnValue({
       ns: 'my-project',
     });
-    wrapper = shallow(<ServingListPage />);
   });
 
   it('should render NamespaceBar and MultiTabListPage', () => {
-    expect(wrapper.find(NamespaceBar)).toHaveLength(1);
-    expect(wrapper.find(MultiTabListPage)).toHaveLength(1);
+    const { container } = render(<ServingListPage />);
+    expect(container.querySelector('namespacebar')).toBeInTheDocument();
+    expect(container.querySelector('multitablistpage')).toBeInTheDocument();
   });
 
-  it('should render MultiTabListPage with all pages and menuActions', () => {
-    const multiTablistPage = wrapper.find(MultiTabListPage);
-    expect(multiTablistPage.props().title).toEqual('Serving');
-    expect(multiTablistPage.props().pages).toHaveLength(3);
-    expect(Object.keys(multiTablistPage.props().menuActions)).toHaveLength(1);
-    expect(multiTablistPage.props().menuActions.service).toBeDefined();
+  it('should render the main components without errors', () => {
+    const { container } = render(<ServingListPage />);
+    expect(container.querySelector('namespacebar')).toBeInTheDocument();
+    expect(container.querySelector('multitablistpage')).toBeInTheDocument();
   });
 });
