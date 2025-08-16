@@ -35,10 +35,12 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { isKubevirtPluginActive } from '@console/internal/plugins';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
 export const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
+export const kubevirtDefaultClassAnnotation = 'storageclass.kubevirt.io/is-default-virt-class';
 const betaDefaultStorageClassAnnotation = 'storageclass.beta.kubernetes.io/is-default-class';
 export const isDefaultClass = (storageClass: K8sResourceKind) => {
   const annotations = _.get(storageClass, 'metadata.annotations') || {};
@@ -46,6 +48,11 @@ export const isDefaultClass = (storageClass: K8sResourceKind) => {
     annotations[defaultClassAnnotation] === 'true' ||
     annotations[betaDefaultStorageClassAnnotation] === 'true'
   );
+};
+
+export const isKubevirtDefaultClass = (storageClass: K8sResourceKind) => {
+  const annotations = _.get(storageClass, 'metadata.annotations') || {};
+  return annotations[kubevirtDefaultClassAnnotation] === 'true';
 };
 
 const tableColumnClasses = [
@@ -98,6 +105,11 @@ const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> 
           {isDefaultClass(obj) && (
             <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
               &ndash; {t('public~Default')}
+            </span>
+          )}
+          {isKubevirtDefaultClass(obj) && isKubevirtPluginActive() && (
+            <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
+              &ndash; {t('public~Default for VirtualMachines')}
             </span>
           )}
         </ResourceLink>
