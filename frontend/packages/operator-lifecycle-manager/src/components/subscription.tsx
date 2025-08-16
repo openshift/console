@@ -345,7 +345,7 @@ export const SubscriptionsPage: React.FC<SubscriptionsPageProps> = (props) => {
       flatten={(resources) => _.get(resources.subscription, 'data', [])}
       title={t('olm~Subscriptions')}
       canCreate
-      createProps={{ to: '/operatorhub' }}
+      createProps={{ to: '/catalog?catalogType=operator' }}
       createButtonText={t('olm~Create Subscription')}
       ListComponent={SubscriptionsList}
       filterLabel={t('olm~Subscriptions by package')}

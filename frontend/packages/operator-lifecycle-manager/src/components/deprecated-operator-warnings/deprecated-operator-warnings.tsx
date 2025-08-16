@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Label, FormAlert, Alert, Tooltip, AlertActionCloseButton } from '@patternfly/react-core';
+import { Label, Alert, Tooltip, AlertActionCloseButton } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
@@ -72,27 +72,25 @@ export const DeprecatedOperatorWarningAlert: React.FC<DeprecatedOperatorWarningP
 
   return (
     alertVisible && (
-      <FormAlert className="pf-v6-u-my-md">
-        <Alert
-          variant="warning"
-          title={t('olm~Deprecated warnings')}
-          aria-live="polite"
-          isInline
-          actionClose={
-            dismissible && <AlertActionCloseButton onClose={() => setAlertVisible(false)} />
-          }
-        >
-          <div data-test="deprecated-operator-warning-package">
-            {deprecatedPackage?.deprecation?.message}
-          </div>
-          <div data-test="deprecated-operator-warning-channel">
-            {deprecatedChannel?.deprecation?.message}
-          </div>
-          <div data-test="deprecated-operator-warning-version">
-            {deprecatedVersion?.deprecation?.message}
-          </div>
-        </Alert>
-      </FormAlert>
+      <Alert
+        variant="warning"
+        title={t('olm~Deprecation warnings')}
+        aria-live="polite"
+        isInline
+        actionClose={
+          dismissible && <AlertActionCloseButton onClose={() => setAlertVisible(false)} />
+        }
+      >
+        <div data-test="deprecated-operator-warning-package">
+          {deprecatedPackage?.deprecation?.message}
+        </div>
+        <div data-test="deprecated-operator-warning-channel">
+          {deprecatedChannel?.deprecation?.message}
+        </div>
+        <div data-test="deprecated-operator-warning-version">
+          {deprecatedVersion?.deprecation?.message}
+        </div>
+      </Alert>
     )
   );
 };
