@@ -4,7 +4,58 @@ import { ActionContext } from '../api/internal-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
-/** ActionProvider contributes a hook that returns list of actions for specific context */
+/**
+ * ActionProvider contributes a hook that returns list of actions for specific context.
+ *
+ * This extension allows plugins to contribute context-sensitive actions (buttons, menu items)
+ * that appear in various parts of the Console UI. Actions are dynamically provided based
+ * on the current context and user permissions.
+ *
+ * **Common use cases:**
+ * - Adding custom actions to resource kebab menus
+ * - Contributing toolbar buttons to specific pages
+ * - Providing context-sensitive operations in topology view
+ * - Adding bulk actions to resource list pages
+ *
+ * **Context scoping:**
+ * - `contextId` determines where actions appear in the UI
+ * - Built-in contexts: 'resource', 'topology', 'helm', etc.
+ * - Custom contexts can be defined by other extensions
+ *
+ * **Action lifecycle:**
+ * - Hook is called whenever context changes
+ * - Actions are filtered based on user permissions
+ * - Actions can be conditionally shown/hidden
+ *
+ *
+ * **Example console-extensions.json:**
+ * ```json
+ * [
+ *   {
+ *     "type": "console.action/provider",
+ *     "properties": {
+ *       "contextId": "resource",
+ *       "provider": {"$codeRef": "resourceActionProvider"}
+ *     }
+ *   }
+ * ]
+ * ```
+ *
+ * **Example implementation:**
+ * ```tsx
+ * // resourceActionProvider.tsx
+ * export const resourceActionProvider = (resource: K8sResourceCommon) => {
+ *   return [
+ *     {
+ *       id: 'restart-deployment',
+ *       label: 'Restart',
+ *       cta: () => restartDeployment(resource.metadata.name),
+ *       disabled: resource.kind !== 'Deployment'
+ *     }
+ *   ];
+ * };
+ * ```
+ */
 export type ActionProvider = ExtensionDeclaration<
   'console.action/provider',
   {
@@ -17,7 +68,61 @@ export type ActionProvider = ExtensionDeclaration<
   }
 >;
 
-/** ResourceActionProvider contributes a hook that returns list of actions for specific resource model */
+/**
+ * ResourceActionProvider contributes a hook that returns list of actions for specific resource model.
+ *
+ * This extension provides a more targeted way to contribute actions that are specific to
+ * particular Kubernetes resource types. It's more efficient than ActionProvider when
+ * actions only apply to specific resource kinds.
+ *
+ * **Advantages over ActionProvider:**
+ * - Actions only load for specified resource types
+ * - Better performance for resource-specific actions
+ * - Automatic filtering by resource model
+ * - Type-safe access to resource-specific properties
+ *
+ * **Common use cases:**
+ * - Pod-specific actions (restart, debug, logs)
+ * - Deployment-specific actions (scale, rollout)
+ * - Service-specific actions (expose, edit endpoints)
+ * - Custom Resource actions for operators
+ *
+ *
+ * **Example console-extensions.json:**
+ * ```json
+ * [
+ *   {
+ *     "type": "console.action/resource-provider",
+ *     "properties": {
+ *       "model": {"group": "", "version": "v1", "kind": "Pod"},
+ *       "provider": {"$codeRef": "podActionProvider"}
+ *     }
+ *   }
+ * ]
+ * ```
+ *
+ * **Example implementation:**
+ * ```tsx
+ * // podActionProvider.tsx
+ * export const podActionProvider = (pod: PodKind) => {
+ *   const isRunning = pod.status?.phase === 'Running';
+ *
+ *   return [
+ *     {
+ *       id: 'view-logs',
+ *       label: 'View Logs',
+ *       cta: () => navigateToLogs(pod)
+ *     },
+ *     {
+ *       id: 'debug-pod',
+ *       label: 'Debug',
+ *       cta: () => startDebugSession(pod),
+ *       disabled: !isRunning
+ *     }
+ *   ];
+ * };
+ * ```
+ */
 export type ResourceActionProvider = ExtensionDeclaration<
   'console.action/resource-provider',
   {
@@ -28,7 +133,56 @@ export type ResourceActionProvider = ExtensionDeclaration<
   }
 >;
 
-/** ActionGroup contributes an action group that can also be a submenu */
+/**
+ * ActionGroup contributes an action group that can also be a submenu.
+ *
+ * Action groups provide logical organization for related actions, improving UX
+ * by grouping similar operations together. Groups can be rendered as sections
+ * with separators or as nested submenus.
+ *
+ * **Organization benefits:**
+ * - Groups related actions together visually
+ * - Reduces clutter in action menus
+ * - Provides hierarchical organization for complex actions
+ * - Supports custom ordering and positioning
+ *
+ * **Rendering modes:**
+ * - Section: Actions grouped with separator lines
+ * - Submenu: Actions nested under a parent menu item
+ *
+ * **Positioning control:**
+ * - `insertBefore`/`insertAfter` control group ordering
+ * - Supports positioning relative to other groups
+ * - First match in array is used for positioning
+ *
+ *
+ * **Example console-extensions.json:**
+ * ```json
+ * [
+ *   {
+ *     "type": "console.action/group",
+ *     "properties": {
+ *       "id": "advanced-operations",
+ *       "label": "Advanced",
+ *       "submenu": true,
+ *       "insertAfter": "basic-operations"
+ *     }
+ *   }
+ * ]
+ * ```
+ *
+ * **Example usage in action provider:**
+ * ```tsx
+ * export const advancedActionProvider = () => [
+ *   {
+ *     id: 'export-config',
+ *     label: 'Export Configuration',
+ *     groupId: 'advanced-operations',
+ *     cta: exportConfiguration
+ *   }
+ * ];
+ * ```
+ */
 export type ActionGroup = ExtensionDeclaration<
   'console.action/group',
   {
@@ -52,7 +206,61 @@ export type ActionGroup = ExtensionDeclaration<
   }
 >;
 
-/** ActionFilter can be used to filter an action */
+/**
+ * ActionFilter can be used to filter an action.
+ *
+ * Action filters provide fine-grained control over when actions should be visible
+ * or available. They allow for dynamic action visibility based on context,
+ * resource state, user permissions, or other runtime conditions.
+ *
+ * **Common filtering scenarios:**
+ * - Hide actions based on resource state (e.g., no restart for stopped pods)
+ * - Filter actions based on user permissions or cluster features
+ * - Remove conflicting actions (e.g., hide manual scale for HPA-controlled resources)
+ * - Context-sensitive action availability
+ *
+ * **Filter execution:**
+ * - Filters run after actions are provided by ActionProviders
+ * - Multiple filters can apply to the same context
+ * - Filters can examine both the context and the specific action
+ * - Return false to hide the action, true to show it
+ *
+ * **Performance considerations:**
+ * - Filters run frequently as context changes
+ * - Keep filter logic lightweight and fast
+ * - Avoid expensive API calls in filter functions
+ *
+ *
+ * **Example console-extensions.json:**
+ * ```json
+ * [
+ *   {
+ *     "type": "console.action/filter",
+ *     "properties": {
+ *       "contextId": "resource",
+ *       "filter": {"$codeRef": "hideScaleActionFilter"}
+ *     }
+ *   }
+ * ]
+ * ```
+ *
+ * **Example implementation:**
+ * ```tsx
+ * // hideScaleActionFilter.tsx
+ * export const hideScaleActionFilter = (
+ *   resource: K8sResourceCommon,
+ *   action: Action
+ * ) => {
+ *   // Hide scale actions if resource has HPA
+ *   if (action.id === 'scale-deployment' && resource.kind === 'Deployment') {
+ *     const hasHPA = resource.metadata?.annotations?.['hpa.autoscaling.k8s.io/enabled'];
+ *     return !hasHPA;  // Hide action if HPA is enabled
+ *   }
+ *
+ *   return true;  // Show other actions normally
+ * };
+ * ```
+ */
 export type ActionFilter = ExtensionDeclaration<
   'console.action/filter',
   {
