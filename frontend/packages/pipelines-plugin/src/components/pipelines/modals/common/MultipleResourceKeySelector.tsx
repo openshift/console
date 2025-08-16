@@ -5,7 +5,7 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { RedExclamationCircleIcon, WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
@@ -100,9 +100,7 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
       {!isValid && (
         <FormHelperText>
           <HelperText>
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {error}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{error}</HelperTextItem>
           </HelperText>
         </FormHelperText>
       )}
