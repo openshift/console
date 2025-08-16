@@ -105,7 +105,8 @@ const pruneCategoriesWithNoItems = (categories) => {
   }
 
   _.forOwn(categories, (category, key) => {
-    if (isCategoryEmpty(category)) {
+    // Never delete essential categories like 'all' and 'other', even if empty
+    if (isCategoryEmpty(category) && key !== 'all' && key !== 'other') {
       delete categories[key];
     } else {
       pruneCategoriesWithNoItems(category.subcategories);
@@ -114,13 +115,17 @@ const pruneCategoriesWithNoItems = (categories) => {
 };
 
 const processSubCategories = (category, itemsSorter) => {
+  if (!category || !category.subcategories) {
+    return;
+  }
+
   _.forOwn(category.subcategories, (subcategory) => {
-    if (subcategory.items) {
+    if (subcategory && subcategory.items) {
       subcategory.numItems = _.size(subcategory.items);
       subcategory.items = itemsSorter(subcategory.items);
       processSubCategories(subcategory, itemsSorter);
     }
-    if (category.subcategories) {
+    if (category.subcategories && category.items) {
       _.each(category.items, (item) => {
         const included = _.find(_.keys(category.subcategories), (subcat) =>
           _.includes(category.subcategories[subcat].items, item),
@@ -140,8 +145,12 @@ const processSubCategories = (category, itemsSorter) => {
 
 // calculate numItems per Category and subcategories, sort items
 const processCategories = (categories, itemsSorter) => {
+  if (!categories || !itemsSorter) {
+    return;
+  }
+
   _.forOwn(categories, (category) => {
-    if (category.items) {
+    if (category && category.items) {
       category.numItems = _.size(category.items);
       category.items = itemsSorter(category.items);
       processSubCategories(category, itemsSorter);
@@ -166,8 +175,19 @@ const categorize = (items, categories) => {
     }
   });
 
-  categories.all.numItems = _.size(items);
-  categories.all.items = items;
+  // Ensure categories.all exists before setting properties
+  if (categories.all) {
+    categories.all.numItems = _.size(items);
+    categories.all.items = items;
+  } else {
+    // Recreate the 'all' category if it was somehow deleted
+    categories.all = {
+      id: 'all',
+      label: i18n.t('public~All Items'),
+      numItems: _.size(items),
+      items,
+    };
+  }
 };
 
 /**
@@ -193,10 +213,18 @@ export const categorizeItems = (items, itemsSorter, initCategories) => {
 };
 
 const clearItemsFromCategories = (categories) => {
+  if (!categories) {
+    return;
+  }
+
   _.forOwn(categories, (category) => {
-    category.numItems = 0;
-    category.items = [];
-    clearItemsFromCategories(category.subcategories);
+    if (category) {
+      category.numItems = 0;
+      category.items = [];
+      if (category.subcategories) {
+        clearItemsFromCategories(category.subcategories);
+      }
+    }
   });
 };
 
@@ -207,6 +235,16 @@ const filterByKeyword = (items, filters, compFunction) => {
   }
 
   const filterString = keyword.value.toLowerCase();
+
+  if (compFunction.useScoring && window.location.pathname.includes('operatorhub')) {
+    return items
+      .map((item) => {
+        const result = compFunction(filterString, item);
+        return result.matches ? result.item : null;
+      })
+      .filter((item) => item !== null);
+  }
+
   return _.filter(items, (item) => compFunction(filterString, item));
 };
 
@@ -269,11 +307,22 @@ const filterItems = (items, filters, keywordCompare) => {
 const recategorizeItems = (items, itemsSorter, filters, keywordCompare, categories) => {
   const filteredItems = filterItems(items, filters, keywordCompare);
 
+  const searchTerm = filters?.keyword?.active ? filters.keyword.value : '';
+
   const newCategories = _.cloneDeep(categories);
   clearItemsFromCategories(newCategories);
 
   categorize(filteredItems, newCategories);
-  processCategories(newCategories, itemsSorter);
+
+  // Process the categories with search term for relevance sorting
+  processCategories(newCategories, (categoryItems) => {
+    // For OperatorHub, pass the search term to the sorter
+    if (itemsSorter.name === 'orderAndSortByRelevance') {
+      return itemsSorter(categoryItems, searchTerm);
+    }
+    return itemsSorter(categoryItems);
+  });
+  pruneCategoriesWithNoItems(newCategories);
 
   return newCategories;
 };
@@ -806,6 +855,17 @@ export const TileViewPage = (props) => {
   if (!activeCategory) {
     activeCategory = findActiveCategory('all', categories);
   }
+
+  if (!activeCategory) {
+    activeCategory = { id: 'all', label: 'All Items', numItems: 0, items: [] };
+  }
+  if (typeof activeCategory.numItems !== 'number') {
+    activeCategory.numItems = 0;
+  }
+  if (!Array.isArray(activeCategory.items)) {
+    activeCategory.items = [];
+  }
+
   const numItems = t('public~{{totalItems}} items', {
     totalItems: activeCategory.numItems,
   });
