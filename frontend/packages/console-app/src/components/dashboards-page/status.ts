@@ -96,6 +96,10 @@ export const getControlPlaneHealth: PrometheusHealthHandler = (
   resource,
   infrastructure,
 ) => {
+  if (!t) {
+    return { state: HealthState.NOT_AVAILABLE };
+  }
+
   const componentsHealth = responses.map(({ response, error }) =>
     getControlPlaneComponentHealth(response, error, t),
   );
@@ -105,7 +109,7 @@ export const getControlPlaneHealth: PrometheusHealthHandler = (
   const worstStatus = getWorstStatus(componentsHealth, t);
 
   const singleMasterMsg =
-    worstStatus.state === HealthState.OK && isSingleNode(infrastructure)
+    worstStatus.state === HealthState.OK && infrastructure && isSingleNode(infrastructure)
       ? t('console-app~Single control plane node')
       : undefined;
 
@@ -117,7 +121,7 @@ export const getControlPlaneHealth: PrometheusHealthHandler = (
         ? worstStatus.count === 4
           ? worstStatus.message
           : `${pluralize(worstStatus.count, 'component')} ${worstStatus.message.toLowerCase()}`
-        : null),
+        : undefined),
   };
 };
 
