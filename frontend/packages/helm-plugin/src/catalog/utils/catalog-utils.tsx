@@ -34,7 +34,7 @@ export const normalizeHelmCharts = (
     chartEntries,
     (normalizedCharts, charts, key) => {
       const chartRepoName = key.split('--').pop();
-      const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
+      const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName || '');
 
       charts.forEach((chart: HelmChartMetaData) => {
         const { name, created, version, appVersion, description, keywords, annotations } = chart;
@@ -47,7 +47,7 @@ export const normalizeHelmCharts = (
         const imgUrl = chart.icon || getImageForIconClass('icon-helm');
         const chartURL = chart.urls[0];
         const encodedChartURL = encodeURIComponent(chartURL);
-        const encodedChartRepoName = encodeURIComponent(chartRepoName);
+        const encodedChartRepoName = encodeURIComponent(chartRepoName || '');
         const encodedChartName = encodeURIComponent(name);
         const encodedChartIndexKey = encodeURIComponent(key);
         const href = `/catalog/helm-install?chartName=${encodedChartName}&chartRepoName=${encodedChartRepoName}&chartURL=${encodedChartURL}&preselected-ns=${activeNamespace}&indexEntry=${encodedChartIndexKey}`;
@@ -70,7 +70,7 @@ export const normalizeHelmCharts = (
             </>
           ) : null;
 
-        const maintainers = chart.maintainers?.length > 0 && (
+        const maintainers = chart.maintainers?.length && chart.maintainers?.length > 0 && (
           <>
             {chart.maintainers?.map((maintainer, index) => (
               // eslint-disable-next-line react/no-array-index-key
@@ -156,7 +156,7 @@ export const normalizeHelmCharts = (
             providerType: translatedProviderType,
           },
           icon: {
-            class: null,
+            class: undefined,
             url: imgUrl,
           },
           cta: {

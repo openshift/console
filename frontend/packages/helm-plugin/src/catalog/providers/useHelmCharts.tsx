@@ -69,7 +69,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   const normalizedHelmCharts: CatalogItem[] = React.useMemo(
     () =>
       normalizeHelmCharts(
-        helmCharts,
+        helmCharts || {},
         [...chartRepositories?.hcrs?.data, ...chartRepositories?.phcrs?.data],
         namespace,
         t,

@@ -115,7 +115,7 @@ const CreateHelmChartRepositoryFormEditor: React.FC<CreateHelmChartRepositoryFor
                 kind: ConfigMapModel.kind,
                 namespace: 'openshift-config',
                 optional: true,
-                prop: ConfigMapModel.id,
+                prop: ConfigMapModel.id || '',
               },
             ]}
             dataSelector={['metadata', 'name']}
@@ -134,7 +134,7 @@ const CreateHelmChartRepositoryFormEditor: React.FC<CreateHelmChartRepositoryFor
                 kind: SecretModel.kind,
                 namespace: 'openshift-config',
                 optional: true,
-                prop: SecretModel.id,
+                prop: SecretModel.id || '',
               },
             ]}
             dataSelector={['metadata', 'name']}
