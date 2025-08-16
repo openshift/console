@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { ModalComponentProps, ModalWrapper } from '@console/internal/components/factory';
 import { Firehose } from '@console/internal/components/utils';
 import { ServiceModel } from '../../models';
 import { ServiceKind } from '../../types';
@@ -41,6 +43,18 @@ const TestFunctionController: React.FC<TestFunctionControllerProps> = (props) =>
 
 type Props = TestFunctionControllerProps & ModalComponentProps;
 
-export const testFunctionModalLauncher = createModalLauncher<Props>(TestFunctionController, false);
+const TestFunctionModalProvider: OverlayComponent<Props> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <TestFunctionController cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
+    </ModalWrapper>
+  );
+};
 
-export default TestFunctionController;
+export const useTestFunctionModalLauncher = (props: Props) => {
+  const launcher = useOverlay();
+  return React.useCallback(() => launcher<Props>(TestFunctionModalProvider, props), [
+    launcher,
+    props,
+  ]);
+};

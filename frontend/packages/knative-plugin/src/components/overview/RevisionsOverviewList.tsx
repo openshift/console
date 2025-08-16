@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom-v5-compat';
 import { SidebarSectionHeading, useAccessReview } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel, RevisionModel } from '../../models';
-import { setTrafficDistributionModal } from '../modals';
+import { useTrafficSplittingModalLauncher } from '../traffic-splitting/TrafficSplittingController';
 import RevisionsOverviewListItem from './RevisionsOverviewListItem';
 import './RevisionsOverviewList.scss';
 
@@ -24,6 +24,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({
   hideSectionHeading,
 }) => {
   const { t } = useTranslation();
+  const trafficDistributionModalLauncher = useTrafficSplittingModalLauncher({ obj: service });
   const canSetTrafficDistribution = useAccessReview({
     group: ServiceModel.apiGroup,
     resource: ServiceModel.plural,
@@ -72,7 +73,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({
           {canSetTrafficDistribution && (
             <Button
               variant="secondary"
-              onClick={() => setTrafficDistributionModal({ obj: service })}
+              onClick={trafficDistributionModalLauncher}
               isDisabled={!(revisions && revisions.length)}
             >
               {t('knative-plugin~Set traffic distribution')}
