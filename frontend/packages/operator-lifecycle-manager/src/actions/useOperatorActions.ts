@@ -6,9 +6,9 @@ import { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { k8sGet, k8sKill, k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { DeleteOverlay } from '@console/internal/components/modals/delete-modal';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s';
-import { getAccessReviewResourceAttributes } from '@console/shared/src/utils/access-review';
 import { UninstallOperatorOverlay } from '../components/modals/uninstall-operator-modal';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../models';
 
@@ -31,11 +31,7 @@ const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any
               kind: ClusterServiceVersionModel,
               resource,
             }),
-          accessReview: getAccessReviewResourceAttributes(
-            K8S_VERB_DELETE,
-            ClusterServiceVersionModel,
-            resource,
-          ),
+          accessReview: asAccessReview(ClusterServiceVersionModel, resource, K8S_VERB_DELETE),
         },
       ];
     }
@@ -60,11 +56,7 @@ const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any
             csv: resource,
             blocking: true,
           }),
-        accessReview: getAccessReviewResourceAttributes(
-          K8S_VERB_DELETE,
-          SubscriptionModel,
-          subscription,
-        ),
+        accessReview: asAccessReview(SubscriptionModel, subscription, K8S_VERB_DELETE),
       },
     ];
   }, [resource, subscription, t, launcher]);

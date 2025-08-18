@@ -24,8 +24,8 @@ export const subscriptionForCSV = (
   const csvName = getName(csv);
   const operatorNamespace = operatorNamespaceFor(csv);
   return (subscriptions ?? []).find((subscription) => {
-    const subscriptionNamespace = subscription.metadata.namespace;
-    const installedCSV = subscription.status.installedCSV || '';
+    const subscriptionNamespace = subscription.metadata?.namespace || '';
+    const installedCSV = subscription.status?.installedCSV || '';
     return (
       operatorNamespace &&
       csvName &&

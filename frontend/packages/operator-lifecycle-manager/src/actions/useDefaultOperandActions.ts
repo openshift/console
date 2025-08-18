@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { K8S_VERB_DELETE, K8S_VERB_UPDATE } from '@console/dynamic-plugin-sdk/src/api/constants';
 import { Action, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { DeleteModalProps, DeleteOverlay } from '@console/internal/components/modals/delete-modal';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { getAccessReviewResourceAttributes } from '@console/shared/src/utils/access-review';
 import { csvNameFromWindow } from '../components/operand/operand-link';
 import { ClusterServiceVersionModel } from '../models';
 
@@ -27,7 +27,7 @@ const useDefaultOperandActions = ({ csvName, resource }): [Action[], boolean, an
                     }/${referenceFor(resource)}/${resource.metadata.name}/yaml`
                   : `/k8s/cluster/${referenceFor(resource)}/${resource.metadata.name}/yaml`,
               },
-              accessReview: getAccessReviewResourceAttributes(K8S_VERB_UPDATE, k8sModel, resource),
+              accessReview: asAccessReview(k8sModel, resource, K8S_VERB_UPDATE),
             },
             {
               id: 'delete-operand',
@@ -40,7 +40,7 @@ const useDefaultOperandActions = ({ csvName, resource }): [Action[], boolean, an
                     ClusterServiceVersionModel.plural
                   }/${csvName || csvNameFromWindow()}/${referenceFor(resource)}`,
                 }),
-              accessReview: getAccessReviewResourceAttributes(K8S_VERB_DELETE, k8sModel, resource),
+              accessReview: asAccessReview(k8sModel, resource, K8S_VERB_DELETE),
             },
           ]
         : [],
