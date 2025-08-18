@@ -14,7 +14,7 @@ export type FileUploadContextType = {
 };
 
 export const FileUploadContext = React.createContext<FileUploadContextType>({
-  fileUpload: undefined,
+  fileUpload: undefined as any,
   setFileUpload: () => {},
   extensions: [],
 });
@@ -26,7 +26,7 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
   const [fileUploadExtensions, resolved] = useResolvedExtensions<FileUpload>(isFileUpload);
   const toastContext = useToast();
   const [namespace] = useActiveNamespace();
-  const [file, setFile] = React.useState<File>(undefined);
+  const [file, setFile] = React.useState<File>(undefined as any);
   const fileExtensions = React.useMemo(
     () =>
       resolved
@@ -40,7 +40,7 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
   const setFileUpload = React.useCallback(
     (f: File): void => {
       if (!f) {
-        setFile(undefined);
+        setFile(undefined as any);
       } else if (fileExtensions.length > 0) {
         const requiredFileExtension = getRequiredFileUploadExtension(fileUploadExtensions, f.name);
         if (requiredFileExtension) {

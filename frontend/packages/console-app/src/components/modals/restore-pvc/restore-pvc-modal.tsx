@@ -96,7 +96,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
     };
 
     const handleStorageClass = (updatedStorageClass: StorageClassResourceKind) => {
-      setPVCStorageClass(updatedStorageClass?.metadata.name || '');
+      setPVCStorageClass(updatedStorageClass?.metadata?.name || '');
       setUpdatedProvisioner(updatedStorageClass?.provisioner);
     };
 
@@ -114,7 +114,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
           dataSource: {
             name: snapshotName,
             kind: VolumeSnapshotModel.kind,
-            apiGroup: VolumeSnapshotModel.apiGroup,
+            apiGroup: VolumeSnapshotModel.apiGroup || '',
           },
           accessModes: [restoreAccessMode],
           volumeMode,
@@ -129,7 +129,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       return handlePromise(
         k8sCreate(PersistentVolumeClaimModel, restorePVCTemplate, { ns: namespace }),
         (newPVC) => {
-          close();
+          close?.();
           history.push(
             resourcePathFromModel(PersistentVolumeClaimModel, newPVC.metadata.name, namespace),
           );
@@ -245,7 +245,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
                 <div className="co-restore-pvc-modal__pvc-details">
                   <strong>{t('console-app~Created at')}</strong>
                   <span>
-                    <Timestamp timestamp={resource?.metadata?.creationTimestamp} />
+                    <Timestamp timestamp={resource?.metadata?.creationTimestamp || ''} />
                   </span>
                 </div>
                 <div className="co-restore-pvc-modal__pvc-details">
