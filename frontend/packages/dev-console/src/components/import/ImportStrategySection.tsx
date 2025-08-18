@@ -119,13 +119,13 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
 
   const handleEditStrategy = React.useCallback(() => {
     if (showEditImportStrategy) {
-      setValues(recommendedValues.current);
-    } else {
-      recommendedValues.current = values;
+      if (showEditImportStrategy) {
+        setValues(recommendedValues.current as FormikValues);
+      }
+      setFieldValue('import.showEditImportStrategy', !showEditImportStrategy);
+      setFieldValue('import.strategyChanged', false);
     }
-    setFieldValue('import.showEditImportStrategy', !showEditImportStrategy);
-    setFieldValue('import.strategyChanged', false);
-  }, [setFieldValue, setValues, showEditImportStrategy, values]);
+  }, [setFieldValue, setValues, showEditImportStrategy]);
 
   return (
     <>

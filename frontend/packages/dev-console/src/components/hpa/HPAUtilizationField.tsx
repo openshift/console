@@ -10,9 +10,9 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 import { PercentIcon } from '@patternfly/react-icons/dist/esm/icons/percent-icon';
-import { FormikErrors, useFormikContext } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { HorizontalPodAutoscalerKind, HPAMetric } from '@console/internal/module/k8s';
+import { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
 import { getMetricByType } from './hpa-utils';
 import { HPAFormValues, SupportedMetricTypes } from './types';
 
@@ -34,8 +34,11 @@ const HPAUtilizationField: React.FC<HPAUtilizationFieldProps> = ({
   const { errors } = useFormikContext<HPAFormValues>();
   const { metric, index } = getMetricByType(hpa, type);
   const value: number = metric?.resource?.target?.averageUtilization ?? 0;
-  const thisErrorMetric = errors.formData?.spec?.metrics?.[index] as FormikErrors<HPAMetric>;
-  const error: string = thisErrorMetric?.resource?.target?.averageUtilization ?? '';
+  const thisErrorMetric = errors.formData?.spec?.metrics?.[index];
+  const error: string =
+    typeof thisErrorMetric === 'string'
+      ? thisErrorMetric
+      : (thisErrorMetric as any)?.resource?.target?.averageUtilization || '';
   const { t } = useTranslation();
   return (
     <FormGroup

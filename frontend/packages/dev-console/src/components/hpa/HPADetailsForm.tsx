@@ -34,12 +34,13 @@ const HPADetailsForm: React.FC = () => {
     updatedMetrics[index] = {
       ...metric,
       resource: {
-        ...metric.resource,
+        ...metric?.resource,
         target: {
-          ...metric.resource.target,
+          ...metric?.resource?.target,
+          type: metric?.resource?.target?.type || 'Utilization',
           averageUtilization: numValue,
         },
-      },
+      } as any,
     };
 
     setFieldValue(name, {

@@ -90,7 +90,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
           perspective,
           perspectiveExtensions,
           new URLSearchParams({
-            selectId: filterDeployedResources(resp)[0]?.metadata?.uid,
+            selectId: filterDeployedResources(resp)[0]?.metadata?.uid || '',
           }),
         );
       })

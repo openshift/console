@@ -1,6 +1,6 @@
 import { sanitizeApplicationValue } from '@console/topology/src/utils';
 import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';
-import { BaseFormData, Resources } from './import-types';
+import { BaseFormData, InsecureTrafficType, Resources, TerminationType } from './import-types';
 
 export const getBaseInitialValues = (
   namespace: string,
@@ -55,8 +55,8 @@ export const getBaseInitialValues = (
       hostname: '',
       secure: false,
       tls: {
-        termination: null,
-        insecureEdgeTerminationPolicy: null,
+        termination: TerminationType.EDGE,
+        insecureEdgeTerminationPolicy: InsecureTrafficType.None,
         caCertificate: '',
         certificate: '',
         destinationCACertificate: '',

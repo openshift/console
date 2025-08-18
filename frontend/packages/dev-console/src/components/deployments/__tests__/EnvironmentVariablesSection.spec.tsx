@@ -21,7 +21,7 @@ jest.mock('../ContainerField', () => ({
 const mockedContainerField = ContainerField as jest.Mock<React.FC>;
 const handleSubmit = jest.fn();
 const mockInitialValues = _.cloneDeep(mockEditDeploymentData);
-mockInitialValues.formData.envs = [
+(mockInitialValues.formData as any).envs = [
   { name: 'xyz', value: 'abc' },
   { name: 'xyz2', value: 'abc2' },
 ];

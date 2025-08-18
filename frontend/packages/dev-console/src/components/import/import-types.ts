@@ -325,8 +325,8 @@ export enum SampleRuntime {
 }
 
 export const ReadableResourcesNames: Record<Resources, string> = {
-  [Resources.OpenShift]: DeploymentConfigModel.labelKey,
-  [Resources.Kubernetes]: DeploymentModel.labelKey,
+  [Resources.OpenShift]: (DeploymentConfigModel.labelKey as string) || '',
+  [Resources.Kubernetes]: (DeploymentModel.labelKey as string) || '',
   // t('devconsole~Serverless Deployment')
   [Resources.KnativeService]: `devconsole~Serverless Deployment`,
 };
@@ -341,8 +341,8 @@ export const ReadableBuildOptions: Record<BuildOptions, string> = {
 };
 
 export const ResourcesKinds: Record<Resources, string> = {
-  [Resources.OpenShift]: DeploymentConfigModel.kind,
-  [Resources.Kubernetes]: DeploymentModel.kind,
+  [Resources.OpenShift]: DeploymentConfigModel.kind as string,
+  [Resources.Kubernetes]: DeploymentModel.kind as string,
   [Resources.KnativeService]: 'Service',
 };
 

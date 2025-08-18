@@ -54,7 +54,7 @@ const HPAPage: React.FC<PageComponentProps> = () => {
           <HPAPageHeader
             kind={kind ?? ''}
             limitWarning={
-              workloadLoaded && validSupportedType ? getRequestsWarning(data) : undefined
+              workloadLoaded && validSupportedType ? getRequestsWarning(data) : (undefined as any)
             }
             loadError={error}
             name={name ?? ''}

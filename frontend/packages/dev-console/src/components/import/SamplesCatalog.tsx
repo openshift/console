@@ -14,7 +14,7 @@ const SampleCatalog: React.FC = () => {
   const sampleType = params.get('sampleType');
   const labelFilter: Record<string, string> = {
     label: 'sample-type',
-    value: sampleType,
+    value: sampleType || '',
   };
   return (
     <>

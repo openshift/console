@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
-import { SingleTypeaheadField } from '@console/shared/src';
-import { InsecureTrafficType, Resources, TerminationType } from '../../import-types';
-import PortInputField from '../../route/PortInputField';
 import { configure, screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { InsecureTrafficType, Resources, TerminationType } from '../../import-types';
 import RouteSection from '../RouteSection';
 import '@testing-library/jest-dom';
 

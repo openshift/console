@@ -13,7 +13,6 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import { SAMPLE_APPLICATION_GROUP } from '../../const';
 import {
   normalizeBuilderImages,
-  NormalizedBuilderImages,
   getSampleRepo,
   getSampleRef,
   getSampleContextDir,
@@ -44,18 +43,21 @@ const ImportSamplePage: React.FC = () => {
 
   if (!imageStreamloaded) return <LoadingBox />;
 
-  const { [imageStreamName]: builderImage }: NormalizedBuilderImages = normalizeBuilderImages(
-    imageStream,
-  );
+  const builderImage = imageStream
+    ? normalizeBuilderImages(imageStream)[imageStreamName || '']
+    : undefined;
 
-  const { name: imageName, recentTag: tag } = builderImage;
+  const { name: imageName, recentTag: tag } = builderImage || {};
 
   const gitUrl = getSampleRepo(tag);
   const gitRef = getSampleRef(tag);
   const gitDir = getSampleContextDir(tag);
   const gitType = detectGitType(gitUrl);
 
-  const initialBaseValues: BaseFormData = getBaseInitialValues(namespace, SAMPLE_APPLICATION_GROUP);
+  const initialBaseValues: BaseFormData = getBaseInitialValues(
+    namespace || '',
+    SAMPLE_APPLICATION_GROUP,
+  );
   const initialValues: GitImportFormData = {
     ...initialBaseValues,
     name: `${imageName}-sample`,
@@ -78,9 +80,9 @@ const ImportSamplePage: React.FC = () => {
     },
     image: {
       ...initialBaseValues.image,
-      selected: imageName,
-      tag: tag.name,
-      tagObj: tag,
+      selected: imageName || '',
+      tag: tag?.name || '',
+      tagObj: tag || {},
     },
     pipeline: {
       enabled: false,
@@ -134,7 +136,9 @@ const ImportSamplePage: React.FC = () => {
         onReset={history.goBack}
         validationSchema={validationSchema(t)}
       >
-        {(formikProps) => <ImportSampleForm {...formikProps} builderImage={builderImage} />}
+        {(formikProps) =>
+          builderImage && <ImportSampleForm {...formikProps} builderImage={builderImage} />
+        }
       </Formik>
     </NamespacedPage>
   );

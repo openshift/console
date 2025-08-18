@@ -50,9 +50,9 @@ const JarSection: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (fileUpload) {
-      updatedJarFile(null, fileUpload);
+      updatedJarFile(null as any, fileUpload);
       if (fileName) {
-        setFileUpload(undefined);
+        setFileUpload(undefined as any);
       }
     }
   }, [fileUpload, updatedJarFile, setFileUpload, fileName]);

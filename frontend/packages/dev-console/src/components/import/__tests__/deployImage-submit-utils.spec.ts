@@ -45,7 +45,9 @@ describe('DeployImage Submit Utils', () => {
     });
 
     it('expect to get a suggested name from the docker path ', () => {
-      const suggestedName: string = getSuggestedName(dataWithoutPorts.isi.name);
+      const { name } = dataWithoutPorts.isi;
+      expect(typeof name).toBe('string');
+      const suggestedName = getSuggestedName(name as string);
       expect(suggestedName).toEqual('helloworld-go');
     });
 
@@ -90,7 +92,7 @@ describe('DeployImage Submit Utils', () => {
       const imageStream = await submitUtils.createOrUpdateImageStream(
         mockDeployImageFormData,
         true,
-        null,
+        undefined,
         'create',
       );
 
@@ -127,7 +129,7 @@ describe('DeployImage Submit Utils', () => {
       const imageStream = await submitUtils.createOrUpdateImageStream(
         mockDeployImageFormData,
         false,
-        null,
+        undefined,
         'create',
       );
 
@@ -204,10 +206,12 @@ describe('DeployImage Submit Utils', () => {
       createOrUpdateDeployment(internalImageStreamData, false)
         .then((returnValue) => {
           const { data: Deployment } = returnValue;
-          expect(Deployment.metadata.labels.app).toEqual('react-web-app');
-          expect(Deployment.metadata.labels['app.kubernetes.io/name']).toEqual('nodejs');
-          expect(Deployment.metadata.labels['app.kubernetes.io/runtime']).toEqual('nodejs');
-          expect(Deployment.metadata.labels['app.kubernetes.io/runtime-version']).toEqual('10-SCL');
+          expect(Deployment?.metadata.labels.app).toEqual('react-web-app');
+          expect(Deployment?.metadata.labels['app.kubernetes.io/name']).toEqual('nodejs');
+          expect(Deployment?.metadata.labels['app.kubernetes.io/runtime']).toEqual('nodejs');
+          expect(Deployment?.metadata.labels['app.kubernetes.io/runtime-version']).toEqual(
+            '10-SCL',
+          );
           done();
         })
         .catch(() => {
@@ -219,10 +223,10 @@ describe('DeployImage Submit Utils', () => {
       createOrUpdateDeployment(internalImageData, false)
         .then((returnValue) => {
           const { data: Deployment } = returnValue;
-          expect(Deployment.metadata.labels.app).toEqual('react-web-app');
-          expect(Deployment.metadata.labels['app.kubernetes.io/name']).toBeUndefined();
-          expect(Deployment.metadata.labels['app.kubernetes.io/runtime']).toBeUndefined();
-          expect(Deployment.metadata.labels['app.kubernetes.io/runtime-version']).toBeUndefined();
+          expect(Deployment?.metadata.labels.app).toEqual('react-web-app');
+          expect(Deployment?.metadata.labels['app.kubernetes.io/name']).toBeUndefined();
+          expect(Deployment?.metadata.labels['app.kubernetes.io/runtime']).toBeUndefined();
+          expect(Deployment?.metadata.labels['app.kubernetes.io/runtime-version']).toBeUndefined();
           done();
         })
         .catch(() => {

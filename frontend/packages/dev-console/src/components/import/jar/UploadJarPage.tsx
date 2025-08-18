@@ -59,10 +59,10 @@ const UploadJarPage: React.FunctionComponent = () => {
         {(desiredApplication) => (
           <UploadJar
             forApplication={desiredApplication}
-            namespace={namespace}
+            namespace={namespace || ''}
             projects={resources.projects as WatchK8sResultsObject<K8sResourceKind[]>}
             builderImage={normalizedJavaImages?.[JAVA_IMAGESTREAM_NAME]}
-            contextualSource={params.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
+            contextualSource={params.get(QUERY_PROPERTIES.CONTEXT_SOURCE) || undefined}
           />
         )}
       </QueryFocusApplication>

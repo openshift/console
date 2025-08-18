@@ -134,8 +134,8 @@ describe('UploadJar', () => {
 
     // Extract and parse the initial values from the text content
     const formikContent = formikText.textContent;
-    const initialValuesJson = formikContent.match(/initialValues=(.+)/)[1];
-    const initialValues = JSON.parse(initialValuesJson);
+    const initialValuesJson = formikContent?.match(/initialValues=(.+)/)?.[1];
+    const initialValues = JSON.parse(initialValuesJson || '');
 
     expect(initialValues.namespace).toBe('my-app');
     expect(initialValues.image.selected).toBe('java');

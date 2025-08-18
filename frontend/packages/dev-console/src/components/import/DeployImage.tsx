@@ -14,7 +14,13 @@ import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
 import DeployImageForm from './DeployImageForm';
 import { filterDeployedResources } from './import-submit-utils';
-import { DeployImageFormData, FirehoseList, Resources } from './import-types';
+import {
+  DeployImageFormData,
+  FirehoseList,
+  Resources,
+  TerminationType,
+  InsecureTrafficType,
+} from './import-types';
 import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScalingDefaultValues';
 
 export interface DeployImageProps {
@@ -80,7 +86,7 @@ const DeployImage: React.FC<Props> = ({
         detectedFiles: [],
       },
     },
-    runtimeIcon: null,
+    runtimeIcon: undefined,
     isSearchingForImage: false,
     serverless: {
       scaling: {
@@ -107,8 +113,8 @@ const DeployImage: React.FC<Props> = ({
       hostname: '',
       secure: false,
       tls: {
-        termination: null,
-        insecureEdgeTerminationPolicy: null,
+        termination: TerminationType.EDGE,
+        insecureEdgeTerminationPolicy: InsecureTrafficType.None,
         caCertificate: '',
         certificate: '',
         destinationCACertificate: '',

@@ -13,8 +13,15 @@ import {
 const SecureRoute: React.FC = () => {
   const { t } = useTranslation();
   const [preferredRoutingOptions, , preferredRoutingOptionsLoaded] = usePreferredRoutingOptions();
-  const { secure: secureRoute, tlsTermination, insecureTraffic } =
-    preferredRoutingOptionsLoaded && preferredRoutingOptions;
+  const {
+    secure: secureRoute,
+    tlsTermination,
+    insecureTraffic,
+  } = (preferredRoutingOptions as unknown) as {
+    secure: boolean;
+    tlsTermination: TerminationType;
+    insecureTraffic: InsecureTrafficType;
+  };
   const {
     values: {
       formType,

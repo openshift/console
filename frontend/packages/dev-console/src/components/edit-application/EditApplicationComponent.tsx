@@ -43,7 +43,7 @@ const EditApplicationComponent: React.FunctionComponent<EditApplicationComponent
     const associatedRes = resourcesObj.data?.find(filterAssociatedResource);
     return {
       ...resourcesObj,
-      data: associatedRes,
+      data: associatedRes ? [associatedRes] : [],
     };
   };
 
@@ -60,9 +60,10 @@ const EditApplicationComponent: React.FunctionComponent<EditApplicationComponent
       {...props}
       resources={{
         ...resources,
-        pipeline: getAssociatedResource(
-          resources.pipeline as WatchK8sResultsObject<PipelineKind[]>,
-        ),
+        pipeline: {
+          ...resources.pipeline,
+          data: resources.pipeline?.data?.find(filterAssociatedResource),
+        } as WatchK8sResultsObject<PipelineKind>,
         buildConfig: getAssociatedResource(
           resources.buildConfig as WatchK8sResultsObject<K8sResourceKind[]>,
         ),

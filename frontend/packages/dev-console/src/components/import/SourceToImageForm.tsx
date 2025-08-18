@@ -32,16 +32,20 @@ const SourceToImageForm: React.FC<
   return (
     <form onSubmit={handleSubmit}>
       <FormBody>
-        <BuilderSection builderImages={builderImages} />
-        <GitSection showSample builderImages={builderImages} imageStreamName={imageStreamName} />
+        <BuilderSection builderImages={builderImages || {}} />
+        <GitSection
+          showSample
+          builderImages={builderImages || {}}
+          imageStreamName={imageStreamName || ''}
+        />
         <NamespaceSection />
         <AppSection
           project={values.project}
-          noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+          noProjectsAvailable={projects?.loaded && _.isEmpty(projects?.data)}
         />
         <BuildSection values={values} />
         {values.build?.option === BuildOptions.PIPELINES && (
-          <PipelineSection builderImages={builderImages} />
+          <PipelineSection builderImages={builderImages || {}} />
         )}
         <DeploySection values={values} />
         <AdvancedSection values={values} />

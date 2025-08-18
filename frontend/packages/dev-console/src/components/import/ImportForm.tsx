@@ -8,7 +8,7 @@ import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
 import { RouteModel } from '@console/internal/models';
-import { RouteKind } from '@console/internal/module/k8s';
+import { ConfigMapKind, RouteKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
@@ -82,7 +82,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   const perspectiveExtensions = usePerspectives();
   const postFormCallback = usePostFormSubmitAction();
   const toastContext = useToast();
-  const [pac, loaded] = usePacInfo();
+  const [loaded] = usePacInfo();
   const defaultBuildOption = useDefaultBuildOption();
 
   const initialBaseValues: BaseFormData = getBaseInitialValues(namespace, activeApplication);
@@ -139,7 +139,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     import: {
       loaded: false,
       knativeFuncLoaded: false,
-      loadError: null,
+      loadError: undefined,
       strategies: [],
       selectedStrategy: {
         name: 'Builder Image',
@@ -147,7 +147,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         priority: 0,
         detectedFiles: [],
       },
-      recommendedStrategy: null,
+      recommendedStrategy: undefined,
       showEditImportStrategy: importData.type !== ImportTypes.git,
       strategyChanged: false,
     },
@@ -155,17 +155,20 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
 
   const initialVals = useUpdateKnScalingDefaultValues(initialValues);
   const builderImages: NormalizedBuilderImages =
-    imageStreams && imageStreams.loaded && normalizeBuilderImages(imageStreams.data);
+    imageStreams && imageStreams.loaded ? normalizeBuilderImages(imageStreams.data || []) : {};
 
   const handleSubmit = (values: GitImportFormData, actions) => {
     const imageStream = builderImages && builderImages[values.image.selected]?.obj;
-    const createNewProject = projects.loaded && _.isEmpty(projects.data);
+    const createNewProject = projects?.loaded && _.isEmpty(projects.data);
     const {
       build: { option: buildOption },
       project: { name: projectName },
-      pipeline: { enabled: pipelineEnabled, type: pipelineType },
-      pac: { repository },
+      pipeline,
+      pac,
     } = values;
+    const pipelineEnabled = pipeline?.enabled || false;
+    const pipelineType = pipeline?.type || PipelineType.PIPELINE;
+    const repository = pac?.repository || defaultRepositoryFormValues;
 
     const resourceActions = createOrUpdateResources(
       t,
@@ -183,8 +186,12 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
 
     return resourceActions
       .then(async (resources) => {
-        if (pipelineEnabled && pipelineType === PipelineType.PAC) {
-          const isWebHookAttached = await createRemoteWebhook(repository, pac, loaded);
+        if (pipelineEnabled && pipelineType === PipelineType.PAC && pac) {
+          const isWebHookAttached = await createRemoteWebhook(
+            repository,
+            pac as ConfigMapKind,
+            (loaded as unknown) as boolean,
+          );
           toastContext.addToast({
             variant: isWebHookAttached ? AlertVariant.success : AlertVariant.danger,
             title: isWebHookAttached
@@ -237,8 +244,8 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
             dismissible: true,
           });
 
-          if (typeof deployedResources[0].metadata.uid === 'string') {
-            redirectSearchParams.set('selectId', deployedResources[0].metadata.uid);
+          if (deployedResources[0]?.metadata?.uid) {
+            redirectSearchParams.set('selectId', deployedResources[0]?.metadata?.uid);
           }
         }
 
