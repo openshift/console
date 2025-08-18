@@ -56,7 +56,7 @@ export const useBuildsActions = (
     }),
     confirmButtonVariant: ButtonVariant.danger,
     confirmButtonLabel: t('public~Yes, cancel'),
-    cancelButtonLabel: t('public~No, don't cancel'),
+    cancelButtonLabel: t("public~No, don't cancel"),
     onConfirm: () => {
       return k8sPatchResource({
         model: kindObj,
