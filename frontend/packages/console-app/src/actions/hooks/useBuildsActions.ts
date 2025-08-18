@@ -49,28 +49,33 @@ export const useBuildsActions = (
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
-  const cancelBuildModal = useWarningModal({
-    title: t('public~Cancel build?'),
-    children: t('public~Are you sure you want to cancel build {{name}}?', {
-      name: obj.metadata.name,
+  const warningModalProps = useMemo(
+    () => ({
+      title: t('public~Cancel build?'),
+      children: t('public~Are you sure you want to cancel build {{name}}?', {
+        name: obj.metadata.name,
+      }),
+      confirmButtonVariant: ButtonVariant.danger,
+      confirmButtonLabel: t('public~Yes, cancel'),
+      cancelButtonLabel: t("public~No, don't cancel"),
+      onConfirm: () => {
+        return k8sPatchResource({
+          model: kindObj,
+          resource: obj,
+          data: [
+            {
+              op: 'add',
+              path: '/status/cancelled',
+              value: true,
+            },
+          ],
+        });
+      },
     }),
-    confirmButtonVariant: ButtonVariant.danger,
-    confirmButtonLabel: t('public~Yes, cancel'),
-    cancelButtonLabel: t("public~No, don't cancel"),
-    onConfirm: () => {
-      return k8sPatchResource({
-        model: kindObj,
-        resource: obj,
-        data: [
-          {
-            op: 'add',
-            path: '/status/cancelled',
-            value: true,
-          },
-        ],
-      });
-    },
-  });
+    [t, obj, kindObj],
+  );
+
+  const cancelBuildModal = useWarningModal(warningModalProps);
 
   const factory = useMemo(
     () => ({

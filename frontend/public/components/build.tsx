@@ -18,12 +18,7 @@ import { ONE_HOUR, ONE_MINUTE, Status, usePrometheusGate } from '@console/shared
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  ActionMenu,
-  ActionMenuVariant,
-  ActionServiceProvider,
-  LazyActionMenu,
-} from '@console/shared/src/components/actions';
+import { LazyActionMenu } from '@console/shared/src/components/actions';
 import { K8sResourceKindReference, referenceFor, K8sResourceKind } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
@@ -346,20 +341,6 @@ export const BuildEnvironmentComponent = (props) => {
 
 export const BuildsDetailsPage: React.FCC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
-
-  const customActionMenu = (kind, build) => {
-    const kindReference = referenceFor(build);
-    const context = { [kindReference]: build };
-    return (
-      <ActionServiceProvider context={context}>
-        {({ actions, options, loaded }) =>
-          loaded && (
-            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
-          )
-        }
-      </ActionServiceProvider>
-    );
-  };
 
   return (
     <DetailsPage

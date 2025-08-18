@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { WarningModal, WarningModalProps } from '@patternfly/react-component-groups';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 
@@ -28,7 +28,7 @@ const ControlledWarningModal: React.FCC<WarningModalProps> = (props) => {
  */
 export const useWarningModal = (props: Omit<WarningModalProps, 'isOpen'>): ModalCallback => {
   const launcher = useOverlay();
-  return () => {
+  return useCallback(() => {
     launcher<WarningModalProps>(ControlledWarningModal, props);
-  };
+  }, [launcher, props]);
 };
