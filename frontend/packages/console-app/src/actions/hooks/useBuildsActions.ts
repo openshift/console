@@ -72,7 +72,7 @@ export const useBuildsActions = (
     },
   });
 
-  const factory = React.useMemo(
+  const factory = useMemo(
     () => ({
       [BuildActionCreator.CloneBuild]: () => ({
         id: 'clone-build',
