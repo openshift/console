@@ -24,7 +24,7 @@ type ConsoleCatalogItem struct {
 	Image                  string   `json:"image"`
 	InfrastructureFeatures []string `json:"infrastructureFeatures"`
 	Keywords               []string `json:"keywords"`
-	MarkdownDescription    string   `json:"longDescription"`
+	MarkdownDescription    string   `json:"markdownDescription"`
 	Name                   string   `json:"name"`
 	Provider               string   `json:"provider"`
 	Repository             string   `json:"repository"`

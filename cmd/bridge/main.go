@@ -21,7 +21,6 @@ import (
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/controllers"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/olm"
@@ -30,10 +29,8 @@ import (
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 	"github.com/patrickmn/go-cache"
-	kruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
-	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
@@ -557,22 +554,27 @@ func main() {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: in-cluster, off-cluster"))
 	}
 
-	mgr, err := ctrl.NewManager(srv.InternalProxiedK8SClientConfig, ctrl.Options{
-		Scheme: kruntime.NewScheme(),
-	})
-
 	cache := cache.New(5*time.Minute, 30*time.Minute)
 	catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, cache)
 	srv.CatalogService = catalogService
 
-	if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {
-		klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
-	}
+	catalogService.UpdateCatalog("openshift-certified-operators", "https://localhost:8443/catalogs/openshift-certified-operators/")
+	catalogService.UpdateCatalog("openshift-community-operators", "https://localhost:8443/catalogs/openshift-community-operators/")
+	catalogService.UpdateCatalog("openshift-redhat-marketplace", "https://localhost:8443/catalogs/openshift-redhat-marketplace/")
+	catalogService.UpdateCatalog("openshift-redhat-operators", "https://localhost:8443/catalogs/openshift-redhat-operators/")
 
-	klog.Info("starting manager")
-	if err := mgr.Start(context.TODO()); err != nil {
-		klog.Errorf("problem running manager: %v", err)
-	}
+	// mgr, err := ctrl.NewManager(srv.InternalProxiedK8SClientConfig, ctrl.Options{
+	// 	Scheme: kruntime.NewScheme(),
+	// })
+
+	// if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {
+	// 	klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
+	// }
+
+	// klog.Info("starting manager")
+	// if err := mgr.Start(context.TODO()); err != nil {
+	// 	klog.Errorf("problem running manager: %v", err)
+	// }
 
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {

@@ -2,14 +2,14 @@ import { Trans, useTranslation } from 'react-i18next';
 import { CatalogController, CatalogServiceProvider } from '@console/shared/src/components/catalog';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 
-const ExtensionCatalog = () => {
+const Catalog = () => {
   const { t } = useTranslation('olm-v1');
   const [namespace] = useActiveNamespace();
   return (
     <CatalogServiceProvider
-      catalogType="ExtensionCatalogItem"
+      catalogType="OLMv1CatalogItem"
       namespace={namespace}
-      catalogId="olm-extension-catalog"
+      catalogId="olm-v1-catalog"
     >
       {(service) => (
         <CatalogController
@@ -30,4 +30,4 @@ const ExtensionCatalog = () => {
   );
 };
 
-export default ExtensionCatalog;
+export default Catalog;
