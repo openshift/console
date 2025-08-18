@@ -11,11 +11,9 @@ import {
   HelperTextItem,
   ValidatedOptions,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   RegistryType,
@@ -80,10 +78,7 @@ const ImageStream: React.FC<{
     isStreamsAvailable &&
     isTagsAvailable;
   const helperTextInvalid = validated === ValidatedOptions.error && isi.status?.message && (
-    <>
-      <ExclamationCircleIcon />
-      &nbsp;{isi.status?.message}
-    </>
+    <>{isi.status?.message}</>
   );
 
   return (
@@ -125,9 +120,7 @@ const ImageStream: React.FC<{
           {validated === ValidatedOptions.error && (
             <FormHelperText>
               <HelperText>
-                <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-                  {helperTextInvalid}
-                </HelperTextItem>
+                <HelperTextItem variant="error">{helperTextInvalid}</HelperTextItem>
               </HelperText>
             </FormHelperText>
           )}
