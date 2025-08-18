@@ -122,6 +122,7 @@ type Config struct {
 	SecureCookies           bool
 	CookieEncryptionKey     []byte
 	CookieAuthenticationKey []byte
+	SessionDir              string
 
 	K8sConfig *rest.Config
 	Metrics   *auth.Metrics
@@ -202,12 +203,21 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 		clientID:               c.ClientID,
 		cookiePath:             c.CookiePath,
 		secureCookies:          c.SecureCookies,
+		sessionDir:             c.SessionDir,
 		constructOAuth2Config:  a.oauth2ConfigConstructor,
 	}
 
 	var tokenHandler loginMethod
 	switch c.AuthSource {
 	case AuthSourceOpenShift:
+		sessionStore := sessions.NewSessionStore(
+			c.CookieAuthenticationKey,
+			c.CookieEncryptionKey,
+			c.SecureCookies,
+			c.CookiePath,
+			c.SessionDir,
+		)
+
 		// TODO: once https://github.com/kubernetes/kubernetes/issues/11948 is fixed,
 		// copy the transport config from c.k8sConfig with rest.CopyConfig,
 		// add the c.K8SCA to it and use the roundtripper created from that config
@@ -218,7 +228,7 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 			return nil, errK8Client
 		}
 
-		tokenHandler, err = newOpenShiftAuth(ctx, k8sClient, authConfig)
+		tokenHandler, err = newOpenShiftAuth(ctx, sessionStore, k8sClient, authConfig)
 		if err != nil {
 			return nil, err
 		}
@@ -228,6 +238,7 @@ func NewOAuth2Authenticator(ctx context.Context, config *Config) (*OAuth2Authent
 			c.CookieEncryptionKey,
 			c.SecureCookies,
 			c.CookiePath,
+			c.SessionDir,
 		)
 		tokenHandler, err = newOIDCAuth(ctx, sessionStore, authConfig, a.metrics)
 		if err != nil {
