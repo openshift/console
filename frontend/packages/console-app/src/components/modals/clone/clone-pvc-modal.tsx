@@ -64,7 +64,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
   const [cloneAccessMode, setCloneAccessMode] = React.useState(resource?.spec?.accessModes?.[0]);
   const [requestedUnit, setRequestedUnit] = React.useState(defaultSize[1] || 'Ti');
   const [validSize, setValidSize] = React.useState(true);
-  const pvcAccessMode = getPVCAccessModes(resource, 'title');
+  const pvcAccessMode = getPVCAccessModes(resource as PersistentVolumeClaimKind, 'title');
   const [pvcSC, setPVCStorageClass] = React.useState('');
   const [updatedProvisioner, setUpdatedProvisioner] = React.useState('');
   const handleStorageClass = (updatedStorageClass: StorageClassResourceKind) => {
@@ -85,7 +85,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
   });
   const pvcUsedCapacityQueryResult: DataPoint[] = getInstantVectorStats(
     response,
-    null,
+    undefined,
     humanizeBinaryBytes,
   );
   const pvcUsedCapacity = pvcUsedCapacityQueryResult?.[0]?.label || '-';
@@ -93,7 +93,9 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
     setRequestedSize(value);
     setRequestedUnit(unit);
     const cloneSizeInBytes = convertToBaseValue(value + unit);
-    const pvcSizeInBytes = convertToBaseValue(getRequestedPVCSize(resource));
+    const pvcSizeInBytes = convertToBaseValue(
+      getRequestedPVCSize(resource as PersistentVolumeClaimKind),
+    );
     const isValid = cloneSizeInBytes >= pvcSizeInBytes;
     setValidSize(isValid);
   };
@@ -106,12 +108,12 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
       kind: PersistentVolumeClaimModel.kind,
       metadata: {
         name: clonePVCName,
-        namespace: resource.metadata.namespace,
+        namespace: resource?.metadata?.namespace,
       },
       spec: {
         storageClassName: pvcSC,
         dataSource: {
-          name: pvcName,
+          name: pvcName || '',
           kind: PersistentVolumeClaimModel.kind,
           apiGroup: '',
         },
@@ -120,17 +122,15 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
             storage: `${requestedSize}${requestedUnit}`,
           },
         },
-        volumeMode: resource.spec.volumeMode,
-        accessModes: [cloneAccessMode],
+        volumeMode: resource?.spec?.volumeMode,
+        accessModes: [cloneAccessMode || ''],
       },
     };
 
-    handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj))
-      .then((cloneResource) => {
-        close();
-        history.push(resourceObjPath(cloneResource, referenceFor(cloneResource)));
-      })
-      .catch(() => {});
+    return handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj)).then((cloneResource) => {
+      close?.();
+      history.push(resourceObjPath(cloneResource, referenceFor(cloneResource)));
+    });
   };
 
   return (
@@ -155,7 +155,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
         <AccessModeSelector
           onChange={setCloneAccessMode}
           className="co-clone-pvc-modal__form--space"
-          pvcResource={resource}
+          pvcResource={resource as PersistentVolumeClaimKind}
           provisioner={updatedProvisioner}
           loaded={scResourceLoaded}
           loadError={scResourceLoadError}
@@ -219,7 +219,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
                 <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Namespace')}</p>
                 <p>
                   <ResourceIcon kind={NamespaceModel.kind} />
-                  {resource.metadata.namespace}
+                  {resource?.metadata?.namespace}
                 </p>
               </div>
               <div>
@@ -253,7 +253,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
               </div>
               <div>
                 <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Volume mode')}</p>
-                <p>{resource.spec.volumeMode}</p>
+                <p>{resource?.spec?.volumeMode}</p>
               </div>
             </div>
           </div>
