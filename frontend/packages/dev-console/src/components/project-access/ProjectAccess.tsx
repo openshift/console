@@ -162,7 +162,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
             <ProjectAccessForm
               {...formikProps}
               roles={roles.data}
-              roleBindings={initialValues}
+              roleBindings={initialValues as any}
               onCancel={fullFormView ? history.goBack : undefined}
             />
           )}

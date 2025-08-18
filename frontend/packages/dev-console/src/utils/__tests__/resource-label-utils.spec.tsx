@@ -18,20 +18,20 @@ describe('resource-label-utils', () => {
 
     it('should return mergedData with newResource labels', () => {
       const mergedResource = mergeData(originalDeployment, newDeployment);
-      expect(mergedResource.metadata.labels).toEqual(newDeployment.metadata.labels);
+      expect(mergedResource.metadata?.labels).toEqual(newDeployment.metadata?.labels);
     });
 
     it('should return mergedData with newResource and originalResource labels if originalResource is a devfile resource', () => {
       const mergedResource = mergeData(devfileDeployment, newDeployment);
-      expect(mergedResource.metadata.labels).toEqual({
-        ...newDeployment.metadata.labels,
-        ...devfileDeployment.metadata.labels,
+      expect(mergedResource.metadata?.labels).toEqual({
+        ...newDeployment.metadata?.labels,
+        ...devfileDeployment.metadata?.labels,
       });
     });
 
     it('should return mergedData with default and user annotations with correct values', () => {
       const mergedResource = mergeData(originalDeployment, newDeployment);
-      expect(mergedResource.metadata.annotations).toEqual({
+      expect(mergedResource.metadata?.annotations).toEqual({
         'alpha.image.policy.openshift.io/resolve-names': '*',
         'app.openshift.io/vcs-ref': 'master',
         'app.openshift.io/vcs-uri': 'https://github.com/divyanshiGupta/nationalparks-py',
@@ -45,22 +45,22 @@ describe('resource-label-utils', () => {
 
     it('should return mergedData with newResource and originalResource annotations if originalResource is a devfile resource', () => {
       const mergedResource = mergeData(devfileDeployment, newDeployment);
-      expect(mergedResource.metadata.annotations).toEqual({
-        ...newDeployment.metadata.annotations,
-        ...devfileDeployment.metadata.annotations,
+      expect(mergedResource.metadata?.annotations).toEqual({
+        ...newDeployment.metadata?.annotations,
+        ...devfileDeployment.metadata?.annotations,
       });
     });
 
     it('should return mergedData with newResource template labels', () => {
       const mergedResource = mergeData(originalDeployment, newDeployment);
-      expect(mergedResource.spec.template.metadata.labels).toEqual(
-        newDeployment.spec.template.metadata.labels,
+      expect(mergedResource.spec?.template?.metadata?.labels).toEqual(
+        newDeployment.spec?.template?.metadata?.labels,
       );
     });
 
     it('should return mergedData with newResource template container values', () => {
       const mergedResource = mergeData(originalDeployment, newDeployment);
-      expect(mergedResource.spec.template.spec.containers).toEqual([
+      expect(mergedResource.spec?.template?.spec?.containers).toEqual([
         {
           name: 'nationalparks-py',
           image:
@@ -100,23 +100,23 @@ describe('resource-label-utils', () => {
 
     it('should return mergedData with newResource strategy', () => {
       const mergedResource = mergeData(originalBuildConfig, newBuildConfig);
-      expect(mergedResource.spec.strategy).toEqual(newBuildConfig.spec.strategy);
+      expect(mergedResource.spec?.strategy).toEqual(newBuildConfig.spec?.strategy);
     });
 
     it('should return mergedData with originalResource strategy if newResource strategy is undefined', () => {
       const mergedResource = mergeData(originalDeployment, newDeployment);
-      expect(mergedResource.spec.strategy).toEqual(originalDeployment.spec.strategy);
+      expect(mergedResource.spec?.strategy).toEqual(originalDeployment.spec?.strategy);
     });
 
     it('should return mergedData with newResource triggers', () => {
       const mergedResource = mergeData(originalDeploymentConfig, newDeploymentConfig);
-      expect(mergedResource.spec.triggers).toEqual(newDeploymentConfig.spec.triggers);
+      expect(mergedResource.spec?.triggers).toEqual(newDeploymentConfig.spec?.triggers);
     });
 
     it('should return mergedData with originalResource template volumes', () => {
       const mergedResource = mergeData(originalDeployment, newDeployment);
-      expect(mergedResource.spec.template.spec.volumes).toEqual(
-        originalDeployment.spec.template.spec.volumes,
+      expect(mergedResource.spec?.template?.spec?.volumes).toEqual(
+        originalDeployment.spec?.template?.spec?.volumes,
       );
     });
   });
