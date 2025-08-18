@@ -12,7 +12,7 @@ import {
 import { ModalVariant } from '@patternfly/react-core/deprecated';
 import { StarIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Modal, RedExclamationCircleIcon, useUserSettingsCompatibility } from '@console/shared';
+import { Modal, useUserSettingsCompatibility } from '@console/shared';
 import { FAVORITES_CONFIG_MAP_KEY, FAVORITES_LOCAL_STORAGE_KEY } from '../../consts';
 import { FavoritesType } from '../../types';
 
@@ -174,9 +174,7 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
               {error && (
                 <FormHelperText>
                   <HelperText>
-                    <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-                      {error}
-                    </HelperTextItem>
+                    <HelperTextItem variant="error">{error}</HelperTextItem>
                   </HelperText>
                 </FormHelperText>
               )}
