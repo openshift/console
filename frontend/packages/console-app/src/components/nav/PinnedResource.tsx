@@ -57,7 +57,7 @@ const RemoveButton: React.FC<RemoveButtonProps> = ({ resourceRef, navResources, 
   const unPin = (e: React.MouseEvent<HTMLButtonElement>, navItem: string) => {
     e.preventDefault();
     e.stopPropagation();
-    confirmNavUnpinModal(navItem, navResources, onChange);
+    confirmNavUnpinModal(navItem, navResources || [], onChange);
   };
   return (
     <Button
@@ -65,7 +65,7 @@ const RemoveButton: React.FC<RemoveButtonProps> = ({ resourceRef, navResources, 
       className="oc-pinned-resource__unpin-button"
       variant="link"
       aria-label={t('console-app~Unpin')}
-      onClick={(e) => unPin(e, resourceRef)}
+      onClick={(e) => unPin(e, resourceRef || '')}
     />
   );
 };
@@ -92,7 +92,7 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
     end: (item, monitor) => {
       const didDrop = monitor.didDrop();
       if (!didDrop) {
-        onDrag(false);
+        onDrag?.(false);
       }
     },
   });
@@ -106,14 +106,14 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
       if (item.idx === idx) {
         return;
       }
-      onReorder(reorder(navResources, item.idx, idx));
+      onReorder?.(reorder(navResources || [], item.idx || 0, idx || 0));
       // monitor item updated here to avoid expensive index searches.
-      item.idx = idx;
-      onDrag(true);
+      item.idx = idx || 0;
+      onDrag?.(true);
     }, 10),
     drop() {
-      onChange(navResources); // update user-settings when the resource is dropped
-      onDrag(false);
+      onChange?.(navResources || []); // update user-settings when the resource is dropped
+      onDrag?.(false);
     },
   });
 
@@ -133,15 +133,16 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
     }
     return '';
   };
-  const label = getLabelForResourceRef(resourceRef);
-  const duplicates = navResources.filter((res) => getLabelForResourceRef(res) === label).length > 1;
+  const label = getLabelForResourceRef(resourceRef || '');
+  const duplicates =
+    (navResources || []).filter((res) => getLabelForResourceRef(res) === label).length > 1;
   const previewRef = draggable ? (node: React.ReactElement) => preview(drop(node)) : null;
   return (
     <NavItemResource
       key={`pinned-${resourceRef}`}
-      namespaced={namespaced}
-      title={duplicates ? `${label}: ${apiGroup || 'core'}/${apiVersion}` : null}
-      model={{ group: apiGroup, version: apiVersion, kind }}
+      namespaced={namespaced || false}
+      title={duplicates ? `${label}: ${apiGroup || 'core'}/${apiVersion}` : undefined}
+      model={{ group: apiGroup || '', version: apiVersion || '', kind }}
       id={resourceRef}
       dragRef={previewRef}
       dataAttributes={{
@@ -151,7 +152,7 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
         'oc-pinned-resource--dragging': draggable && isOver,
       })}
     >
-      {draggable ? <DraggableButton dragRef={drag} /> : null}
+      {draggable ? <DraggableButton dragRef={drag as any} /> : null}
       {label}
       <RemoveButton onChange={onChange} navResources={navResources} resourceRef={resourceRef} />
     </NavItemResource>
