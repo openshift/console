@@ -365,7 +365,9 @@ export const BuildsDetailsPage: React.FCC = (props) => {
     <DetailsPage
       {...props}
       kind={BuildsReference}
-      customActionMenu={customActionMenu}
+      customActionMenu={(obj: K8sResourceKind) => (
+        <LazyActionMenu context={{ [referenceFor(obj)]: obj }} />
+      )}
       pages={[
         navFactory.details(BuildsDetails),
         ...(prometheusIsAvailable ? [navFactory.metrics(BuildMetrics)] : []),
