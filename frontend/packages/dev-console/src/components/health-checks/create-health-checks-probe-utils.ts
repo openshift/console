@@ -68,7 +68,7 @@ export const convertResourceDataToFormData = (
     ...(resourceData.tcpSocket && {
       tcpSocket: { port: resourceData.tcpSocket.port?.toString() || '' },
     }),
-  };
+  } as HealthCheckFormProbeData;
 };
 
 export const getHealthChecksData = (

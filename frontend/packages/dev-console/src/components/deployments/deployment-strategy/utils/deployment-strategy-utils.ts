@@ -35,7 +35,7 @@ export const getDeploymentStrategyHelpText = (
             'devconsole~The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.',
           );
         default:
-          return null;
+          return '';
       }
     case Resources.OpenShift:
       switch (deploymentStrategyType) {
@@ -52,10 +52,10 @@ export const getDeploymentStrategyHelpText = (
             'devconsole~The custom strategy allows you to specify container image that will provide your own deployment behavior.',
           );
         default:
-          return null;
+          return '';
       }
     default:
-      return null;
+      return '';
   }
 };
 

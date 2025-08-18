@@ -25,7 +25,7 @@ const Wrapper: React.FC<FormikConfig<PolicySectionFormData>> = ({ children, ...f
 const initialValues: PolicySectionFormData = {
   formData: {
     policy: {
-      runPolicy: null,
+      runPolicy: undefined,
     },
   },
 };

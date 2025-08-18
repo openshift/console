@@ -24,8 +24,8 @@ const DeployImagePage: React.FunctionComponent = () => {
           <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
             <DeployImage
               forApplication={desiredApplication}
-              namespace={namespace}
-              contextualSource={params.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
+              namespace={namespace || ''}
+              contextualSource={params.get(QUERY_PROPERTIES.CONTEXT_SOURCE) || ''}
             />
           </Firehose>
         )}
