@@ -19,8 +19,8 @@ const ImageStreamDropdown: React.FCC<{
   const imgCollection = {};
 
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
-  const { imageStream, formType } = _.get(values, formContextField) || values;
-  const { isi: initialIsi } = _.get(initialValues, formContextField) || initialValues;
+  const { imageStream, formType } = _.get(values, formContextField || '') || values;
+  const { isi: initialIsi } = _.get(initialValues, formContextField || '') || initialValues;
   const { state, dispatch, hasImageStreams, setHasImageStreams } = React.useContext(
     ImageStreamContext,
   );
@@ -32,7 +32,7 @@ const ImageStreamDropdown: React.FCC<{
     if (!imgCollection[namespace]) {
       imgCollection[namespace] = {};
     }
-    imgCollection[namespace][resource.metadata.name] = resource;
+    imgCollection[namespace][resource.metadata?.name] = resource;
   };
   const getTitle = () => {
     return loading && !isStreamsAvailable
@@ -72,10 +72,8 @@ const ImageStreamDropdown: React.FCC<{
       dispatch({ type: ImageStreamActions.setLoading, value: false });
   };
   const resourceFilter = (resource: K8sResourceKind) => {
-    const {
-      metadata: { namespace },
-    } = resource;
-    collectImageStreams(namespace, resource);
+    const { metadata: { namespace } = { namespace: '' } } = resource;
+    collectImageStreams(namespace || '', resource);
     return namespace === imageStream.namespace;
   };
 

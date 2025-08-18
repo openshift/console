@@ -12,6 +12,7 @@ import {
   k8sCreate,
   k8sUpdate,
   k8sWaitForUpdate,
+  ContainerPort,
 } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import {
@@ -55,7 +56,7 @@ export const createOrUpdateImageStream = async (
   const NAME_LABEL = 'app.kubernetes.io/name';
   const imgStreamName =
     verb === 'update' && !_.isEmpty(originalImageStream)
-      ? originalImageStream.metadata.labels[NAME_LABEL]
+      ? originalImageStream?.metadata?.labels?.[NAME_LABEL] || ''
       : name;
   const defaultLabels = getAppLabels({ name, applicationName });
   const newImageStream = {
@@ -86,8 +87,13 @@ export const createOrUpdateImageStream = async (
   };
 
   if (verb === 'update' && !_.isEmpty(originalImageStream)) {
-    const mergedImageStream = mergeData(originalImageStream, newImageStream);
-    mergedImageStream.metadata.name = originalImageStream.metadata.name;
+    const mergedImageStream = mergeData(
+      originalImageStream as K8sResourceKind,
+      newImageStream,
+    ) as K8sResourceKind;
+    if (mergedImageStream.metadata) {
+      mergedImageStream.metadata.name = originalImageStream?.metadata?.name;
+    }
     return k8sUpdate(ImageStreamModel, mergedImageStream);
   }
   const createdImageStream = await k8sCreate(
@@ -101,9 +107,9 @@ export const createOrUpdateImageStream = async (
   return k8sWaitForUpdate(
     ImageStreamModel,
     createdImageStream,
-    (imageStream) => imageStream.metadata.generation >= WAIT_FOR_IMAGESTREAM_GENERATION,
+    (imageStream) => imageStream.metadata?.generation >= WAIT_FOR_IMAGESTREAM_GENERATION,
     WAIT_FOR_IMAGESTREAM_UPDATE_TIMEOUT,
-  ).catch(() => createdImageStream);
+  ).catch(() => createdImageStream) as Promise<K8sResourceKind>;
 };
 
 const getMetadata = (resource: Resources, formData: DeployImageFormData) => {
@@ -126,8 +132,8 @@ const getMetadata = (resource: Resources, formData: DeployImageFormData) => {
   const labels = { ...defaultLabels, ...userLabels };
   const podLabels = getPodLabels(resource, name);
 
-  const volumes = [];
-  const volumeMounts = [];
+  const volumes: any[] = [];
+  const volumeMounts: any[] = [];
   let volumeNumber = 0;
   _.each(_.get(image, ['dockerImageMetadata', 'Config', 'Volumes']), (value, path) => {
     volumeNumber++;
@@ -229,7 +235,10 @@ export const createOrUpdateDeployment = (
     },
   };
 
-  const deployment = mergeData(originalDeployment, newDeployment);
+  const deployment = mergeData(
+    originalDeployment as K8sResourceKind,
+    newDeployment as K8sResourceKind,
+  );
 
   return verb === 'update'
     ? k8sUpdate(DeploymentModel, deployment)
@@ -313,7 +322,10 @@ export const createOrUpdateDeploymentConfig = (
     },
   };
 
-  const deploymentConfig = mergeData(originalDeploymentConfig, newDeploymentConfig);
+  const deploymentConfig = mergeData(
+    originalDeploymentConfig as K8sResourceKind,
+    newDeploymentConfig as K8sResourceKind,
+  );
 
   return verb === 'update'
     ? k8sUpdate(DeploymentConfigModel, deploymentConfig)
@@ -336,7 +348,7 @@ export const ensurePortExists = (formData: DeployImageFormData): DeployImageForm
       ...values,
       isi: {
         ...values.isi,
-        ports: suppliedPorts,
+        ports: suppliedPorts as ContainerPort[],
       },
     };
   }
@@ -399,7 +411,7 @@ export const createOrUpdateDeployImageResources = async (
             ? k8sUpdate(ServiceModel, service)
             : null
           : k8sCreate(ServiceModel, service, dryRun ? dryRunOpt : {});
-      requests.push(request);
+      requests.push(request as Promise<K8sResourceKind>);
       const route = createRoute(formData, undefined, _.get(appResources, 'route.data'));
       if (verb === 'update' && disable) {
         requests.push(k8sUpdate(RouteModel, route));
@@ -426,7 +438,7 @@ export const createOrUpdateDeployImageResources = async (
         generatedImageStreamName ? 'create' : verb,
         generatedImageStreamName,
       );
-      const imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
+      const imageStreamRepo = imageStreamResponse?.status?.dockerImageRepository;
       imageStreamUrl = imageStreamTag ? `${imageStreamRepo}:${imageStreamTag}` : imageStreamRepo;
     }
     const originalAnnotations = appResources?.editAppResource?.data?.metadata?.annotations || {};
@@ -466,7 +478,13 @@ export const createOrUpdateDeployImageResources = async (
     );
     requests.push(
       verb === 'update'
-        ? k8sUpdate(KnServiceModel, knDeploymentResource, null, null, dryRun ? dryRunOpt : {})
+        ? k8sUpdate(
+            KnServiceModel,
+            knDeploymentResource,
+            undefined,
+            undefined,
+            dryRun ? dryRunOpt : {},
+          )
         : k8sCreate(KnServiceModel, knDeploymentResource, dryRun ? dryRunOpt : {}),
       ...domainMappingResources,
     );

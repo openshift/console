@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
@@ -34,7 +35,7 @@ const {
 } = submitUtils;
 
 describe('Import Submit Utils', () => {
-  const t = jest.fn() as TFunction;
+  const t = (jest.fn() as unknown) as TFunction;
 
   describe('createDeployment tests', () => {
     beforeAll(() => {
@@ -197,7 +198,9 @@ describe('Import Submit Utils', () => {
 
     it('should create pipeline resources if pipeline is enabled and template is present', async (done) => {
       const mockData = _.cloneDeep(defaultData);
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
 
       const createPipelineResourceSpy = jest
         .spyOn(pipelineUtils, 'createPipelineForImportFlow')
@@ -242,7 +245,9 @@ describe('Import Submit Utils', () => {
 
     it('should create pipeline resource with same name as application name', async (done) => {
       const mockData = _.cloneDeep(defaultData);
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
 
       const createPipelineResourceSpy = jest.spyOn(pipelineUtils, 'createPipelineForImportFlow');
 
@@ -275,7 +280,9 @@ describe('Import Submit Utils', () => {
     it('should suppress the error if the trigger creation fails with the error', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
 
       // Suppress the console log for a cleaner test
       const errorLogger = jest.spyOn(console, 'warn').mockImplementation(jest.fn());
@@ -300,7 +307,9 @@ describe('Import Submit Utils', () => {
     it('should suppress the error if the pipelinerun creation fails with the error', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
 
       // Suppress the console log for a cleaner test
       jest.spyOn(console, 'log').mockImplementation(jest.fn());
@@ -336,7 +345,10 @@ describe('Import Submit Utils', () => {
     it('should throw error if the deployment creation fails with the error', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
+
       jest
         .spyOn(submitUtils, 'createOrUpdateDeployment')
         .mockImplementation(() => Promise.reject(new Error('Deployment')));
@@ -365,7 +377,10 @@ describe('Import Submit Utils', () => {
 
     it('should add pipeline annotations to secret if present and update service account', async (done) => {
       const mockData = _.cloneDeep(defaultData);
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
+
       mockData.git.secret = 'sample-secret';
 
       const k8sUpdateMock = jest

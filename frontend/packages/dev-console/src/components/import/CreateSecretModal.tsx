@@ -18,8 +18,8 @@ type Props = CreateSecretModalProps & ModalComponentProps;
 
 const CreateSecretModal: React.FC<Props> = ({ close, namespace, save, formType }) => {
   const handleSave = (name: string) => {
-    close();
-    save(name);
+    close?.();
+    save?.(name);
   };
 
   return (
