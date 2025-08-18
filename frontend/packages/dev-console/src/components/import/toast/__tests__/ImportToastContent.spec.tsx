@@ -47,7 +47,7 @@ describe('ImportToastContent', () => {
   });
 
   it('should render null when deployed resources is undefined', () => {
-    const { container } = render(<ImportToastContent deployedResources={undefined} />);
+    const { container } = render(<ImportToastContent deployedResources={[]} />);
 
     expect(container.firstChild).toBeNull();
   });

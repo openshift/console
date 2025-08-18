@@ -10,21 +10,21 @@ import { getAddGroups, resolvedHref, filterNamespaceScopedUrl } from '../add-pag
 
 describe('getAddGroups', () => {
   it('should return empty array if addActions is not defined', () => {
-    expect(getAddGroups(undefined, addActionGroup).length).toEqual(0);
+    expect(getAddGroups(undefined as any, addActionGroup).length).toEqual(0);
   });
 
   it('should return empty array if addActions is not defined', () => {
-    expect(getAddGroups(addActionExtensions, undefined).length).toEqual(0);
+    expect(getAddGroups(addActionExtensions, undefined as any).length).toEqual(0);
   });
 
   it('should add actions to their respective action groups', () => {
     const softwareCatalogGroupItems: ResolvedExtension<
       AddAction
     >[] = addActionExtensions.filter((action) =>
-      action.properties.groupId.includes('developer-catalog'),
+      action.properties?.groupId?.includes('developer-catalog'),
     );
     const addGroups: AddGroup[] = getAddGroups(addActionExtensions, addActionGroup);
-    expect(addGroups.find((group) => group.id === 'developer-catalog').items.length).toEqual(
+    expect(addGroups.find((group) => group.id === 'developer-catalog')?.items?.length).toEqual(
       softwareCatalogGroupItems.length,
     );
   });
@@ -33,7 +33,7 @@ describe('getAddGroups', () => {
     const addActionsExcludingSoftwareCatalogGroupItems: ResolvedExtension<
       AddAction
     >[] = addActionExtensions.filter(
-      (action) => !action.properties.groupId.includes('developer-catalog'),
+      (action) => !action.properties?.groupId?.includes('developer-catalog'),
     );
     const addGroups: AddGroup[] = getAddGroups(
       addActionsExcludingSoftwareCatalogGroupItems,
@@ -59,26 +59,26 @@ describe('resolvedHref', () => {
   const namespace: string = 'ns';
 
   it('should return null if href or namespace is not defined', () => {
-    expect(resolvedHref(null, namespace)).toBeNull();
-    expect(resolvedHref('href', null)).toBeNull();
+    expect(resolvedHref(null as any, namespace)).toBeNull();
+    expect(resolvedHref('href', null as any)).toBeNull();
   });
 
   it('should replace ":namespace" in the href with namespace', () => {
     const {
       properties: { href },
     } = addActionExtensions.find(({ properties: { href: currHref } }) =>
-      currHref.match(/:namespace\b/),
-    );
-    expect(resolvedHref(href, namespace).includes(namespace)).toBe(true);
+      currHref?.match(/:namespace\b/),
+    ) as ResolvedExtension<AddAction>;
+    expect(resolvedHref(href || '', namespace)?.includes(namespace)).toBe(true);
   });
 
   it('should return the href unchanged if the href does not have ":namespace"', () => {
     const {
       properties: { href },
     } = addActionExtensions.find(
-      ({ properties: { href: currHref } }) => !currHref.match(/:namespace\b/),
-    );
-    expect(resolvedHref(href, namespace)).toMatch(href);
+      ({ properties: { href: currHref } }) => !currHref?.match(/:namespace\b/),
+    ) as ResolvedExtension<AddAction>;
+    expect(resolvedHref(href || '', namespace)?.match(href || '')).toBe(true);
   });
 });
 
@@ -86,15 +86,15 @@ describe('filterNamespaceScopedUrl', () => {
   const namespace: string = 'ns';
 
   it('should return empty array if namespace or addActions is not defined', () => {
-    expect(filterNamespaceScopedUrl(null, addActionExtensions).length).toBe(0);
-    expect(filterNamespaceScopedUrl(namespace, null).length).toBe(0);
+    expect(filterNamespaceScopedUrl(null as any, addActionExtensions).length).toBe(0);
+    expect(filterNamespaceScopedUrl(namespace, null as any).length).toBe(0);
     expect(filterNamespaceScopedUrl(namespace, []).length).toBe(0);
   });
 
   it(`should return only those add actions whose href does not have ":namespace" if namespace equals ${ALL_NAMESPACES_KEY}`, () => {
     const addActionsWithoutNamespacedHref: ResolvedExtension<
       AddAction
-    >[] = addActionExtensions.filter(({ properties: { href } }) => !href.match(/:namespace\b/));
+    >[] = addActionExtensions.filter(({ properties: { href } }) => !href?.match(/:namespace\b/));
 
     const filteredAddActions: ResolvedExtension<AddAction>[] = filterNamespaceScopedUrl(
       ALL_NAMESPACES_KEY,
@@ -104,7 +104,7 @@ describe('filterNamespaceScopedUrl', () => {
     expect(
       filteredAddActions.every((filteredAction) =>
         addActionsWithoutNamespacedHref.find(
-          (action) => action.properties.id === filteredAction.properties.id,
+          (action) => action.properties?.id === filteredAction.properties?.id,
         ),
       ),
     ).toBe(true);

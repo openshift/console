@@ -54,7 +54,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const onChange = React.useCallback(
     (selection: string) => {
       const value = _.findKey(ReadableResourcesNames, (name) => t(name) === selection);
-      setResourceType(value);
+      setResourceType(value as Resources);
       setFieldValue(fieldName, value);
     },
     [setFieldValue, setResourceType, t],

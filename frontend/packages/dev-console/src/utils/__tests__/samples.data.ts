@@ -53,12 +53,12 @@ const getPseudoTranslatedConsoleSample = (
     ...sample,
     metadata: {
       ...sample.metadata,
-      name: `${sample.metadata.name}${lang ? `-${lang}` : ''}${country ? `-${country}` : ''}`,
+      name: `${sample.metadata?.name}${lang ? `-${lang}` : ''}${country ? `-${country}` : ''}`,
       labels: {
-        ...sample.metadata.labels,
-        'console.openshift.io/name': sample.metadata.name,
-        'console.openshift.io/lang': lang,
-        'console.openshift.io/country': country,
+        ...sample.metadata?.labels,
+        'console.openshift.io/name': sample.metadata?.name || '',
+        'console.openshift.io/lang': lang || '',
+        'console.openshift.io/country': country || '',
       },
     },
     spec: {

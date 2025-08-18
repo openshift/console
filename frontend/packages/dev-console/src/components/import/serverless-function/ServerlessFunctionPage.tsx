@@ -16,7 +16,7 @@ const ServerlessFunctionPage: React.FC = () => {
         <NamespacedPage disabled variant={NamespacedPageVariants.light}>
           <DocumentTitle>{t('devconsole~Create Serverless function')}</DocumentTitle>
           <PageHeading title={t('devconsole~Create Serverless function')} />
-          <AddServerlessFunction namespace={namespace} forApplication={application} />
+          <AddServerlessFunction namespace={namespace || ''} forApplication={application || ''} />
         </NamespacedPage>
       )}
     </QueryFocusApplication>
