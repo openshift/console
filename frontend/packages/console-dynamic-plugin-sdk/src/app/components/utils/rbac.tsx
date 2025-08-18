@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import * as _ from 'lodash';
 import { K8sVerb } from '../../../api/common-types';
 import {
@@ -123,7 +123,7 @@ export const useAccessReview = (
   } = resourceAttributes;
   const impersonateKey = getImpersonateKey(impersonate);
   const skipCheck = noCheckForEmptyGroupAndResource && !group && !resource;
-  React.useEffect(() => {
+  useEffect(() => {
     if (skipCheck) {
       setAllowed(false);
       setLoading(false);

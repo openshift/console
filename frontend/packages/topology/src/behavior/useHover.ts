@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useCallbackRef } from '@patternfly/react-topology';
 
 //
@@ -13,28 +13,28 @@ const useHover = <T extends Element>(
   delayOut: number = 200,
   dependencies: any[] = EMPTY,
 ): [boolean, (node: T) => (() => void) | undefined] => {
-  const [hover, setHover] = React.useState<boolean>(false);
-  const mountRef = React.useRef(true);
+  const [hover, setHover] = useState<boolean>(false);
+  const mountRef = useRef(true);
 
   // need to ensure we do not start the unset timer on unmount
-  React.useEffect(
+  useEffect(
     () => () => {
       mountRef.current = false;
     },
     [],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setHover(false);
     // dynamic dependencies
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 
   // The unset handle needs to be referred by listeners in different closures.
-  const unsetHandle = React.useRef<number>();
+  const unsetHandle = useRef<number>();
 
   const callbackRef = useCallbackRef(
-    React.useCallback(
+    useCallback(
       (node: T) => {
         if (node) {
           // store locally instead of a ref because it only needs to be referred by inner closures

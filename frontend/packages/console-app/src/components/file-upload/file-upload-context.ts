@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { createContext, useState, useMemo, useCallback } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ export type FileUploadContextType = {
   setFileUpload: (file: File) => void;
 };
 
-export const FileUploadContext = React.createContext<FileUploadContextType>({
+export const FileUploadContext = createContext<FileUploadContextType>({
   fileUpload: undefined,
   setFileUpload: () => {},
   extensions: [],
@@ -26,8 +26,8 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
   const [fileUploadExtensions, resolved] = useResolvedExtensions<FileUpload>(isFileUpload);
   const toastContext = useToast();
   const [namespace] = useActiveNamespace();
-  const [file, setFile] = React.useState<File>(undefined);
-  const fileExtensions = React.useMemo(
+  const [file, setFile] = useState<File>(undefined);
+  const fileExtensions = useMemo(
     () =>
       resolved
         ? _.flatten(fileUploadExtensions.map((e) => e.properties.fileExtensions)).map((ext) =>
@@ -37,7 +37,7 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
     [fileUploadExtensions, resolved],
   );
 
-  const setFileUpload = React.useCallback(
+  const setFileUpload = useCallback(
     (f: File): void => {
       if (!f) {
         setFile(undefined);

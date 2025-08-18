@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import useMirroredLocalState, { UseMirroredLocalStateReturn } from './useMirroredLocalState';
 import { setOrRemoveQueryArgument } from './utils';
 
@@ -14,7 +14,7 @@ const useLabelSelectorFix = (
   params: URLSearchParams,
   labelFilterQueryArgumentKey: string,
 ): UseMirroredLocalStateReturn<string[]> => {
-  const syncSearchParams = React.useCallback(
+  const syncSearchParams = useCallback(
     (values: string[]) => {
       setOrRemoveQueryArgument(labelFilterQueryArgumentKey, values.join(','));
     },

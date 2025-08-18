@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback, useEffect } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -75,7 +75,7 @@ export const useCSPViolationDetector = () => {
     pluginCSPViolationsAreEqual,
   );
 
-  const reportViolation = React.useCallback(
+  const reportViolation = useCallback(
     (event) => {
       // eslint-disable-next-line no-console
       console.warn('Content Security Policy violation detected', event);
@@ -127,7 +127,7 @@ export const useCSPViolationDetector = () => {
     [cacheEvent, fireTelemetryEvent, pluginStore, toastContext, t],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.addEventListener('securitypolicyviolation', reportViolation);
     return () => {
       document.removeEventListener('securitypolicyviolation', reportViolation);

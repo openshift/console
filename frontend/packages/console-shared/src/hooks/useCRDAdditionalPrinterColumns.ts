@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { consoleFetchJSON as coFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import {
   CRDAdditionalPrinterColumn,
@@ -7,10 +7,10 @@ import {
 } from '@console/internal/module/k8s';
 
 export const useCRDAdditionalPrinterColumns = (model: K8sModel): CRDAdditionalPrinterColumn[] => {
-  const [CRDAPC, setCRDAPC] = React.useState<CRDAdditionalPrinterColumns>({});
-  const [loading, setLoading] = React.useState(true);
+  const [CRDAPC, setCRDAPC] = useState<CRDAdditionalPrinterColumns>({});
+  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     coFetchJSON(`/api/console/crd-columns/${model.plural}.${model.apiGroup}`)
       .then((response) => {
         setCRDAPC(response);

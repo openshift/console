@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { Extension, LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { isTranslatableString, translateExtensionDeep } from './extension-i18n';
 import useTranslationExt from './useTranslationExt';
@@ -16,7 +16,7 @@ const useTranslatedExtensions = <E extends Extension>(
 ): typeof extensions => {
   const { t } = useTranslationExt();
 
-  React.useMemo(
+  useMemo(
     // Mutate "extensions" parameter only if changed (i.e. a flag-enabled or translations changed)
     () =>
       extensions.forEach((e) => {

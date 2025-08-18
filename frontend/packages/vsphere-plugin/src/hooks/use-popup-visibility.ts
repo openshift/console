@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 
 const setPopupVisibility = (v: 'visible' | 'hidden') => {
   const popup = document.getElementsByClassName('plugin-vsphere-status-popup');
@@ -8,7 +8,7 @@ const setPopupVisibility = (v: 'visible' | 'hidden') => {
 };
 
 export const usePopupVisibility = () => {
-  React.useEffect(
+  useEffect(
     // Hack to stick with the Health status popup
     () => {
       setPopupVisibility('hidden');

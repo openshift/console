@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PodControllerOverviewItem } from '../types';
@@ -13,7 +13,7 @@ export const useReplicationControllersWatcher = (
   visibleReplicationControllers: PodControllerOverviewItem[];
 } => {
   const { namespace } = resource.metadata;
-  const watchedResources = React.useMemo(
+  const watchedResources = useMemo(
     () => ({
       replicationControllers: {
         isList: true,
@@ -30,7 +30,7 @@ export const useReplicationControllersWatcher = (
   );
   const resources = useK8sWatchResources(watchedResources);
 
-  const { loaded, loadError, mostRecentRC, visibleReplicationControllers } = React.useMemo(() => {
+  const { loaded, loadError, mostRecentRC, visibleReplicationControllers } = useMemo(() => {
     const resourcesLoaded =
       Object.keys(resources).length > 0 &&
       Object.keys(resources).every((key) => resources[key].loaded);

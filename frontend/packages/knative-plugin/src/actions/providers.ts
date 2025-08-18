@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useContext } from 'react';
 import { GraphElement, Graph, Node, Edge, isEdge, isGraph } from '@patternfly/react-topology';
 import { getHealthChecksAction } from '@console/app/src/actions/creators/health-checks-factory';
 import { DeploymentActionCreator, CommonActionCreator } from '@console/app/src/actions/hooks/types';
@@ -71,7 +71,7 @@ import { hideKnatifyAction, MakeServerless } from './knatify';
 export const useMakeServerlessActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
 
-  const deploymentActions = React.useMemo(() => {
+  const deploymentActions = useMemo(() => {
     return hideKnatifyAction(resource) ? [] : MakeServerless(kindObj, resource);
   }, [kindObj, resource]);
 
@@ -81,7 +81,7 @@ export const useMakeServerlessActionProvider = (resource: K8sResourceKind) => {
 export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const commonActions = useCommonResourceActions(kindObj, resource);
-  const actions = React.useMemo(() => {
+  const actions = useMemo(() => {
     return [moveSinkPubsub(kindObj, resource), ...commonActions];
   }, [kindObj, resource, commonActions]);
 
@@ -90,7 +90,7 @@ export const useSinkPubSubActionProvider = (resource: K8sResourceKind) => {
 
 export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
-  const serviceTypeValue = React.useContext(KnativeServiceTypeContext);
+  const serviceTypeValue = useContext(KnativeServiceTypeContext);
   const [deploymentActions, deploymentActionsReady] = useDeploymentActions(kindObj, resource, [
     DeploymentActionCreator.EditResourceLimits,
   ] as const);
@@ -102,7 +102,7 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
 
   const isReady = commonActionsReady || deploymentActionsReady;
 
-  const knativeServiceActions = React.useMemo(
+  const knativeServiceActions = useMemo(
     () =>
       !isReady
         ? []
@@ -131,7 +131,7 @@ export const useBrokerActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
   const commonActions = useCommonResourceActions(kindObj, resource);
-  const actions = React.useMemo(() => {
+  const actions = useMemo(() => {
     const addActions: Action[] = [];
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
     addActions.push(addTriggerBroker(kindObj, resource));
@@ -150,7 +150,7 @@ export const useBrokerActionProvider = (resource: K8sResourceKind) => {
 export const useCommonActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const commonActions = useCommonResourceActions(kindObj, resource);
-  const actions = React.useMemo(() => {
+  const actions = useMemo(() => {
     if (
       resource.kind === RevisionModel.kind &&
       commonActions.findIndex((action: Action) => action.id === 'delete-resource')
@@ -172,7 +172,7 @@ export const useChannelActionProvider = (resource: K8sResourceKind) => {
   const isEventSinkTypeEnabled = isCatalogTypeEnabled(EVENT_SINK_CATALOG_TYPE_ID);
   const commonActions = useCommonResourceActions(kindObj, resource);
 
-  const actions = React.useMemo(() => {
+  const actions = useMemo(() => {
     const addActions: Action[] = [];
     const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
     addActions.push(addSubscriptionChannel(kindObj, resource));
@@ -216,7 +216,7 @@ export const useTopologyActionsProvider = ({
   } = getEventingEnabledAddAction();
 
   const [namespace] = useActiveNamespace();
-  const actions = React.useMemo(() => {
+  const actions = useMemo(() => {
     const application = element.getLabel();
     if (!connectorSource) {
       if (!isGraph(element) && element.getType() !== TYPE_APPLICATION_GROUP) {
@@ -305,7 +305,7 @@ export const useEventSourcesActionsProvider = (resource: K8sResourceKind) => {
   const kindObj = resource ? modelFor(referenceFor(resource)) : null;
 
   const commonActions = useCommonResourceActions(kindObj, resource);
-  return React.useMemo(() => {
+  return useMemo(() => {
     if (!resource || resource.kind === 'URI') return [[], true, undefined];
 
     return [[moveSinkSource(kindObj, resource), ...commonActions], true, undefined];
@@ -313,7 +313,7 @@ export const useEventSourcesActionsProvider = (resource: K8sResourceKind) => {
 };
 
 export const useEventSourcesActionsProviderForTopology = (element: GraphElement) => {
-  const resource = React.useMemo(() => {
+  const resource = useMemo(() => {
     if (![TYPE_EVENT_SOURCE, TYPE_EVENT_SOURCE_KAFKA].includes(element.getType())) return undefined;
 
     return element.getData().resources.obj;
@@ -323,7 +323,7 @@ export const useEventSourcesActionsProviderForTopology = (element: GraphElement)
 };
 
 export const useModifyApplicationActionProvider = (element: GraphElement) => {
-  const actions = React.useMemo(() => {
+  const actions = useMemo(() => {
     if (
       ![
         TYPE_KNATIVE_SERVICE,
@@ -345,14 +345,14 @@ export const useModifyApplicationActionProvider = (element: GraphElement) => {
     ];
   }, [element]);
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     if (!actions) return [[], true, undefined];
     return [actions, true, undefined];
   }, [actions]);
 };
 
 export const useUriActionsProvider = (element: GraphElement) => {
-  const actions = React.useMemo(() => {
+  const actions = useMemo(() => {
     if (element.getType() !== TYPE_SINK_URI) return undefined;
     const { obj, eventSources } = element.getData().resources;
     if (eventSources.length > 0) {
@@ -362,7 +362,7 @@ export const useUriActionsProvider = (element: GraphElement) => {
     return null;
   }, [element]);
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     if (!actions) {
       return [[], true, undefined];
     }
@@ -371,7 +371,7 @@ export const useUriActionsProvider = (element: GraphElement) => {
 };
 
 export const useKnativeConnectorActionProvider = (element: Edge) => {
-  const actions = React.useMemo(() => {
+  const actions = useMemo(() => {
     const isEventSourceConnector = element.getType() === TYPE_EVENT_SOURCE_LINK;
     if (isEdge(element) && element.getSource()?.getData()) {
       const { resource } = element.getSource().getData();
@@ -385,7 +385,7 @@ export const useKnativeConnectorActionProvider = (element: Edge) => {
     }
     return null;
   }, [element]);
-  return React.useMemo(() => {
+  return useMemo(() => {
     if (!actions) {
       return [[], true, undefined];
     }
@@ -412,10 +412,10 @@ export const topologyServerlessActionsFilter = (
 };
 
 export const useKnativeEventSinkActionProvider = (element: Node) => {
-  const resource = React.useMemo(() => element.getData()?.resources?.obj || {}, [element]);
+  const resource = useMemo(() => element.getData()?.resources?.obj || {}, [element]);
   const [k8sModel] = useK8sModel(referenceFor(resource));
   const commonActions = useCommonResourceActions(k8sModel, resource);
-  const actions = React.useMemo(() => {
+  const actions = useMemo(() => {
     const type = element.getType();
     if ((type !== TYPE_EVENT_SINK && type !== TYPE_KAFKA_SINK) || !k8sModel) return undefined;
     return k8sModel && resource
@@ -423,7 +423,7 @@ export const useKnativeEventSinkActionProvider = (element: Node) => {
       : undefined;
   }, [element, k8sModel, resource, commonActions]);
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     if (!actions) {
       return [[], true, undefined];
     }

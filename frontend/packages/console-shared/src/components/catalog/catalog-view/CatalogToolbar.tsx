@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { forwardRef } from 'react';
 import { Flex, FlexItem, SearchInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,7 @@ type CatalogToolbarProps = {
   onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
 };
 
-const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
+const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
   (
     {
       title,

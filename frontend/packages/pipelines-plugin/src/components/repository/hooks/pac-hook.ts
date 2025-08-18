@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { ConfigMapModel } from '@console/internal/models';
 import { ConfigMapKind, k8sList } from '@console/internal/module/k8s';
@@ -10,9 +10,9 @@ export const usePacInfo = () =>
   useK8sGet<ConfigMapKind>(ConfigMapModel, PAC_INFO, PIPELINE_NAMESPACE);
 
 export const useRepositoryPresent = (repoURL: string) => {
-  const [repoAlreadyExists, setRepoAlreadyExists] = React.useState(false);
+  const [repoAlreadyExists, setRepoAlreadyExists] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     k8sList(RepositoryModel)
       .then((repos) => {
         setRepoAlreadyExists(repos.some((r) => r.spec.url === repoURL));

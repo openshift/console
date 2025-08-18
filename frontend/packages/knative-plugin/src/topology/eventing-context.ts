@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { createContext } from 'react';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useEventSourceModels, useChannelModels } from '../utils/fetch-dynamic-eventsources-utils';
 
@@ -17,7 +17,7 @@ export type EventingContextType = {
   channelsData: DynamicChannelDataType;
 };
 
-export const EventingContext = React.createContext<EventingContextType>({
+export const EventingContext = createContext<EventingContextType>({
   eventSourceData: { eventSourceModels: [], loaded: false },
   channelsData: { eventSourceChannels: [], loaded: false },
 });

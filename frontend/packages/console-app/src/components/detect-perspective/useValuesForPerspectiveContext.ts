@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { PerspectiveType } from '@console/dynamic-plugin-sdk';
 import { usePerspectiveExtension, usePerspectives, useTelemetry } from '@console/shared';
@@ -16,7 +16,7 @@ export const useValuesForPerspectiveContext = (): [
   const perspectiveExtensions = usePerspectives();
   const [lastPerspective, setLastPerspective, lastPerspectiveLoaded] = useLastPerspective();
   const [preferredPerspective, , preferredPerspectiveLoaded] = usePreferredPerspective();
-  const [activePerspective, setActivePerspective] = React.useState('');
+  const [activePerspective, setActivePerspective] = useState('');
   const loaded = lastPerspectiveLoaded && preferredPerspectiveLoaded;
   const latestPerspective = loaded && (preferredPerspective || lastPerspective);
   const acmPerspectiveExtension = usePerspectiveExtension(ACM_PERSPECTIVE_ID);

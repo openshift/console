@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { Component } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as TagsInput from 'react-tagsinput';
 import { Label as PfLabel } from '@patternfly/react-core';
@@ -12,7 +12,7 @@ import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 const cleanSelectorStr = (tag) => selectorToString(selectorFromString(tag));
 const cleanTags = (tags) => split(cleanSelectorStr(tags.join(',')));
 
-export class SelectorInput extends React.Component {
+export class SelectorInput extends Component {
   constructor(props) {
     super(props);
     this.isBasic = !!_.get(this.props.options, 'basic');

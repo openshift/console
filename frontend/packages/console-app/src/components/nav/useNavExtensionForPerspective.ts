@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useCallback } from 'react';
 import { NavExtension, isNavExtension } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { LoadedExtension, useExtensions } from '@console/plugin-sdk';
 import { usePerspectives } from '@console/shared/src';
@@ -8,19 +8,19 @@ export const useNavExtensionsForPerspective = (
 ): LoadedExtension<NavExtension>[] => {
   const allPerspectives = usePerspectives();
   const allNavExtensions = useExtensions<NavExtension>(isNavExtension);
-  const isDefaultPerspective = React.useMemo(
+  const isDefaultPerspective = useMemo(
     () =>
       allPerspectives?.some((p) => p.properties.default && p.properties.id === perspective) ??
       false,
     [allPerspectives, perspective],
   );
-  const isExtensionForCurrentPerspective = React.useCallback(
+  const isExtensionForCurrentPerspective = useCallback(
     (extension) =>
       perspective === extension.properties.perspective ||
       (!extension.properties.perspective && isDefaultPerspective),
     [isDefaultPerspective, perspective],
   );
-  return React.useMemo(() => allNavExtensions.filter(isExtensionForCurrentPerspective), [
+  return useMemo(() => allNavExtensions.filter(isExtensionForCurrentPerspective), [
     allNavExtensions,
     isExtensionForCurrentPerspective,
   ]);

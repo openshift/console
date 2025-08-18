@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
 import { UseLabelsModal } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -19,7 +19,7 @@ export const useLabelsModal: UseLabelsModal = (resource) => {
   const launcher = useModal();
   const groupVersionKind = getGroupVersionKindForResource(resource);
   const [kind] = useK8sModel(groupVersionKind);
-  return React.useCallback(
+  return useCallback(
     () => resource && kind && launcher<LabelsModalProps>(LabelsModalComponent, { kind, resource }),
     [launcher, kind, resource],
   );

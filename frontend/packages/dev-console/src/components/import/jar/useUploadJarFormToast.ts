@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useCallback } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
@@ -12,7 +12,7 @@ export const useUploadJarFormToast = () => {
   const toast = useToast();
   const { t } = useTranslation();
   const [namespace] = useActiveNamespace();
-  const buildsResource: WatchK8sResource = React.useMemo(
+  const buildsResource: WatchK8sResource = useMemo(
     () => ({
       kind: BuildModel.kind,
       namespace,
@@ -22,7 +22,7 @@ export const useUploadJarFormToast = () => {
   );
   const [builds] = useK8sWatchResource<K8sResourceKind[]>(buildsResource);
 
-  return React.useCallback(
+  return useCallback(
     (resp) => {
       const createdBuildConfig = resp.find((d) => d.kind === BuildConfigModel.kind);
       const ownBuilds = getOwnedResources(createdBuildConfig, builds);

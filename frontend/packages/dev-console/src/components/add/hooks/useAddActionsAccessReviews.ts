@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { checkAccess } from '@console/internal/components/utils';
 import { SelfSubjectAccessReviewKind } from '@console/internal/module/k8s';
@@ -19,10 +19,10 @@ export const useAddActionsAccessReviews = (
   namespace: string,
   addActionExtensions: ResolvedExtension<AddAction>[],
 ): AddAccessReviewResults => {
-  const [namespacedAccessReviewResults, setNamespacedAccessReviewResults] = React.useState<
+  const [namespacedAccessReviewResults, setNamespacedAccessReviewResults] = useState<
     NamespacedAddAccessReviewResults
   >({});
-  const setAccessReviewResults = React.useCallback(
+  const setAccessReviewResults = useCallback(
     (newResults: AddAccessReviewResults) => {
       setNamespacedAccessReviewResults((oldResults) => ({
         ...oldResults,
@@ -34,7 +34,7 @@ export const useAddActionsAccessReviews = (
     },
     [namespace, setNamespacedAccessReviewResults],
   );
-  React.useEffect(() => {
+  useEffect(() => {
     const newAddActions = addActionExtensions.filter(
       ({ properties: { id } }) => !namespacedAccessReviewResults[namespace]?.[id],
     );

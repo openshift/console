@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import {
   ClusterConfigurationGroup,
   isClusterConfigurationGroup,
@@ -16,7 +16,7 @@ const useClusterConfigurationGroups = (): [
     isClusterConfigurationGroup,
   );
 
-  const sortedGroups = React.useMemo(() => {
+  const sortedGroups = useMemo(() => {
     return orderExtensionBasedOnInsertBeforeAndAfter(
       resolvedExtensions.map((resolvedExtension) => resolvedExtension.properties),
     );

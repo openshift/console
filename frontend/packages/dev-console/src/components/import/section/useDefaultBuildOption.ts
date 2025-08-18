@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useShipwrightBuilds } from '@console/dev-console/src/utils/shipwright-build-hook';
 import { FLAG_OPENSHIFT_PIPELINE } from '@console/pipelines-plugin/src/const';
 import { useFlag } from '@console/shared';
@@ -10,7 +10,7 @@ export const useDefaultBuildOption = (): BuildOptions => {
   const isShipwrightEnabled = useShipwrightBuilds();
   const isPipelineEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE);
 
-  const defaultBuildOption = React.useMemo(() => {
+  const defaultBuildOption = useMemo(() => {
     if (isShipwrightEnabled) {
       return BuildOptions.SHIPWRIGHT_BUILD;
     }

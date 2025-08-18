@@ -1,14 +1,14 @@
-import * as React from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { EventingEventTypeModel } from '../models';
 
 export const useEventTypesData = (namespace: string): [K8sResourceKind[], boolean, any] => {
-  const [eventTypes, setEventTypes] = React.useState<K8sResourceKind[]>([]);
-  const [eventTypesLoaded, setEventTypesLoaded] = React.useState(false);
-  const [eventTypesLoadError, setEventTypesLoadError] = React.useState(null);
+  const [eventTypes, setEventTypes] = useState<K8sResourceKind[]>([]);
+  const [eventTypesLoaded, setEventTypesLoaded] = useState(false);
+  const [eventTypesLoadError, setEventTypesLoadError] = useState(null);
 
-  const watchedResources = React.useMemo(
+  const watchedResources = useMemo(
     () => ({
       eventTypes: {
         isList: true,
@@ -24,7 +24,7 @@ export const useEventTypesData = (namespace: string): [K8sResourceKind[], boolea
     [key: string]: K8sResourceKind[];
   }>(watchedResources);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const resDataLoaded = Object.keys(extraResources).some((key) => extraResources[key].loaded);
     const resDataloadError = Object.keys(extraResources).every(
       (key) => extraResources[key].loadError,

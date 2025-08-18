@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getImpersonate, getUser, K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -28,7 +28,7 @@ export const useGetUserSettingConfigMap = () => {
     return impersonateName || uid || hashName || '';
   });
 
-  const configMapResource = React.useMemo(
+  const configMapResource = useMemo(
     () =>
       !userUid
         ? null

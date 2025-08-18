@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getServicesForResource } from '../utils';
@@ -13,7 +13,7 @@ export const useServicesWatcher = (
     namespace,
   });
 
-  const services = React.useMemo(
+  const services = useMemo(
     () => (!loadError && loaded ? getServicesForResource(resource, allServices) : []),
     [allServices, loadError, loaded, resource],
   );

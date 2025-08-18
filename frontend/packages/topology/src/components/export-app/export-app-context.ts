@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { createContext, useState, useMemo, useCallback, useEffect } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -10,21 +10,19 @@ import { USERSETTINGS_PREFIX, useToast, useUserSettings } from '@console/shared/
 import { ExportModel } from '../../models';
 import { ExportAppUserSettings } from './types';
 
-export const ExportAppContext = React.createContext({});
+export const ExportAppContext = createContext({});
 
 export const ExportAppContextProvider = ExportAppContext.Provider;
 
 export const useExportAppFormToast = () => {
   const toast = useToast();
   const { t } = useTranslation();
-  const [currentToasts, setCurrentToasts] = React.useState<{ [key: string]: { toastId: string } }>(
-    {},
-  );
+  const [currentToasts, setCurrentToasts] = useState<{ [key: string]: { toastId: string } }>({});
   const [exportAppToast, setExportAppToast, exportAppToastLoaded] = useUserSettings<
     ExportAppUserSettings
   >(`${USERSETTINGS_PREFIX}.exportApp`, {}, true);
 
-  const exportAppWatchResources = React.useMemo<Record<string, WatchK8sResource>>(() => {
+  const exportAppWatchResources = useMemo<Record<string, WatchK8sResource>>(() => {
     if (!exportAppToastLoaded || _.isEmpty(exportAppToast)) return {};
     const keys = Object.keys(exportAppToast);
     const watchRes = keys.reduce((acc, k) => {
@@ -46,7 +44,7 @@ export const useExportAppFormToast = () => {
     exportAppWatchResources,
   );
 
-  const cleanToast = React.useCallback(
+  const cleanToast = useCallback(
     (k: string) => {
       const toastDismiss = currentToasts[k];
       if (toastDismiss) {
@@ -57,7 +55,7 @@ export const useExportAppFormToast = () => {
     [currentToasts, toast],
   );
 
-  const cleanToastConfig = React.useCallback(
+  const cleanToastConfig = useCallback(
     (k: string) => {
       if (exportAppToastLoaded) {
         setExportAppToast(_.omit(exportAppToast, k));
@@ -66,7 +64,7 @@ export const useExportAppFormToast = () => {
     [exportAppToast, exportAppToastLoaded, setExportAppToast],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (exportResources) {
       const keys = Object.keys(exportResources);
       keys.forEach((k) => {
@@ -78,7 +76,7 @@ export const useExportAppFormToast = () => {
     }
   }, [cleanToast, cleanToastConfig, exportResources]);
 
-  const showDownloadToast = React.useCallback(
+  const showDownloadToast = useCallback(
     (expNamespace: string, routeUrl: string, key: string) => {
       const toastId = toast.addToast({
         variant: AlertVariant.info,
@@ -110,7 +108,7 @@ export const useExportAppFormToast = () => {
     [cleanToast, cleanToastConfig, t, toast],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (exportAppToastLoaded) {
       const keys = Object.keys(exportAppToast);
       keys.forEach((k) => {

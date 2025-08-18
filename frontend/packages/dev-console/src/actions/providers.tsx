@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { GraphElement, Node, isGraph } from '@patternfly/react-topology';
 import { K8sModel, Action, SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { TopologyApplicationObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
@@ -47,7 +47,7 @@ type TopologyActionProvider = (data: {
 export const useEditImportActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
 
-  const editImportAction = React.useMemo(() => {
+  const editImportAction = useMemo(() => {
     const annotation = resource?.metadata?.annotations?.['openshift.io/generated-by'];
     const isFromDevfile = resource?.metadata?.annotations?.isFromDevfile;
     const hideEditImportAction = annotation !== 'OpenShiftWebConsole' || !!isFromDevfile;
@@ -109,7 +109,7 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
   const isServerlessEnabled = useFlag('KNATIVE_SERVING_SERVICE');
   const isJavaImageStreamEnabled = useFlag('JAVA_IMAGE_STREAM_ENABLED');
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     const sourceObj = connectorSource?.getData()?.resource;
     const sourceReference = sourceObj
       ? `${referenceFor(sourceObj)}/${sourceObj?.metadata?.name}`
@@ -287,7 +287,7 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
   const isServerlessEnabled = useFlag('KNATIVE_SERVING_SERVICE');
   const isJavaImageStreamEnabled = useFlag('JAVA_IMAGE_STREAM_ENABLED');
   const application = element.getLabel();
-  const appData: TopologyApplicationObject = React.useMemo(
+  const appData: TopologyApplicationObject = useMemo(
     () => ({
       id: element.getId(),
       name: application,
@@ -298,7 +298,7 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
   const primaryResource = appData.resources?.[0]?.resource || {};
   const [kindObj, inFlight] = useK8sModel(referenceFor(primaryResource));
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     if (element.getType() === TYPE_APPLICATION_GROUP) {
       if (inFlight) return [[], !inFlight, undefined];
       const path = connectorSource ? '' : 'add-to-application';

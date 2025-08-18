@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import {
   QuickStartContextValues,
   getDefaultQuickStartState,
@@ -60,7 +60,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   const inlineExecuteCommandShowdownExtension = useInlineExecuteCommandShowdownExtension();
   const multilineExecuteCommandShowdownExtension = useMultilineExecuteCommandShowdownExtension();
 
-  const startQuickStart = React.useCallback(
+  const startQuickStart = useCallback(
     (quickStartId: string, totalTasks?: number) => {
       setActiveQuickStartID((id) => {
         if (!id || id !== quickStartId) {
@@ -88,7 +88,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [setActiveQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
-  const restartQuickStart = React.useCallback(
+  const restartQuickStart = useCallback(
     (quickStartId: string, totalTasks: number) => {
       setActiveQuickStartID((id) => {
         if (!id || id !== quickStartId) {
@@ -108,7 +108,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [setActiveQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
-  const nextStep = React.useCallback(
+  const nextStep = useCallback(
     (totalTasks: number) => {
       if (!activeQuickStartID) return;
 

@@ -1,7 +1,7 @@
-import * as React from 'react';
+import { createContext } from 'react';
 import { K8sResourceKind } from '../../../../module/k8s';
 
-export const ClusterDashboardContext = React.createContext<ClusterDashboardContext>({
+export const ClusterDashboardContext = createContext<ClusterDashboardContext>({
   infrastructureLoaded: true,
   infrastructureError: null,
 });
