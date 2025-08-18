@@ -114,7 +114,7 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
                   {hasAdditionalPrinterColumns && (
                     <>
                       {additionalPrinterColumns.map((col) => {
-                        const path = col.jsonPath;
+                        const path = col.jsonPath.replace(/^\./, '');
                         const pathArray = getPathArray(path);
                         const pathHasSpecialCharacter = checkPathHasSpecialCharacter(path);
 

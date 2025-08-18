@@ -4,7 +4,7 @@ import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise
 import * as clientUtils from '@console/internal/graphql/client';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { testHook } from '../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { mockHelmChartRepositories } from '../../components/__tests__/helm-release-mock-data';
 import { FLAG_OPENSHIFT_HELM } from '../../const';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';

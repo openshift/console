@@ -69,4 +69,5 @@ ConfirmModal.propTypes = {
   submitDanger: PropTypes.bool,
 };
 
+/** @deprecated use `useWarningModal` instead */
 export const confirmModal = createModalLauncher(ConfirmModal);

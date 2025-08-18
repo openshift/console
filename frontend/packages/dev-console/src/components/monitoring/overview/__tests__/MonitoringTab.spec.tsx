@@ -1,21 +1,42 @@
-import * as React from 'react';
-import { shallow } from 'enzyme';
-import MonitoringOverview from '../MonitoringOverview';
+import { configure, render, screen } from '@testing-library/react';
 import MonitoringTab from '../MonitoringTab';
+import '@testing-library/jest-dom';
 
-jest.mock('@console/shared', () => {
-  const ActualShared = jest.requireActual('@console/shared');
-  return {
-    ...ActualShared,
-    usePodsWatcher: () => {
-      return {
-        loaded: true,
-        loadError: '',
-        podData: {},
-      };
-    },
-  };
-});
+configure({ testIdAttribute: 'data-test' });
+
+jest.mock('@console/internal/components/utils', () => ({
+  Firehose: (props) => props.children,
+}));
+
+jest.mock('@console/internal/models', () => ({
+  PodModel: { kind: 'Pod' },
+}));
+
+jest.mock('@console/internal/module/k8s', () => ({
+  PodKind: {},
+}));
+
+jest.mock('@console/dynamic-plugin-sdk', () => ({
+  getReferenceForModel: jest.fn(
+    (model) => `${model.apiGroup || 'core'}~${model.apiVersion}~${model.kind}`,
+  ),
+  getReference: jest.fn((ref) => `${ref.group || 'core'}~${ref.version}~${ref.kind}`),
+  K8sModel: {},
+}));
+
+jest.mock('../MonitoringOverview', () => ({
+  __esModule: true,
+  default: () => 'MonitoringOverview',
+}));
+
+jest.mock('@console/shared', () => ({
+  usePodsWatcher: () => ({
+    loaded: true,
+    loadError: '',
+    podData: {},
+  }),
+  OverviewItem: {},
+}));
 
 describe('Monitoring Tab', () => {
   const monTabProps: React.ComponentProps<typeof MonitoringTab> = {
@@ -41,7 +62,8 @@ describe('Monitoring Tab', () => {
   };
 
   it('should render Monitoring tab with Metrics section for selected workload', () => {
-    const component = shallow(<MonitoringTab {...monTabProps} />);
-    expect(component.find(MonitoringOverview).exists()).toBe(true);
+    render(<MonitoringTab {...monTabProps} />);
+
+    expect(screen.getByText(/MonitoringOverview/)).toBeInTheDocument();
   });
 });

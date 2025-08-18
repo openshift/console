@@ -64,7 +64,6 @@ import {
 } from '../module/k8s';
 import { ConsoleYAMLSampleModel } from '../models';
 import { getYAMLTemplates } from '../models/yaml-templates';
-import { ConnectDropTarget } from 'react-dnd';
 import { findOwner } from '../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { definitionFor } from '../module/k8s/swagger';
@@ -99,69 +98,62 @@ const stateToProps = (state: RootState) => ({
   models: state.k8s.getIn(['RESOURCES', 'models']) as Map<string, K8sModel>,
 });
 
-type EditYAMLInnerProps = WithPostFormSubmissionCallbackProps<any> &
-  ReturnType<typeof stateToProps> & {
-    /** The sample object to load into the editor */
-    sampleObj?: ReturnType<typeof generateObjToLoad>;
+type EditYAMLProps = {
+  /** The sample object to load into the editor */
+  sampleObj?: ReturnType<typeof generateObjToLoad>;
+  /** Whether to allow multiple YAML documents in the editor */
+  allowMultiple?: boolean;
+  /** Whether this is a create operation */
+  create: boolean;
+  /** List of YAML samples to display */
+  yamlSamplesList?: FirehoseResult;
+  /** Custom CSS class for the editor */
+  customClass?: string;
+  /** Callback function to handle changes in the YAML content */
+  onChange?: (yaml: string) => void;
+  /** Model to use for the editor */
+  model?: K8sModel;
+  /** Whether to show tooltips in the editor */
+  showTooltips?: boolean;
+  /** Whether to add a button to download the YAML */
+  download?: boolean;
+  /** Header text or component to display above the editor */
+  header?: React.ComponentProps<typeof PageHeading>['title'];
+  /** Whether the YAML is generic (not tied to a specific resource) */
+  genericYAML?: boolean;
+  /** Custom alerts to display in the editor */
+  children?: React.ReactNode;
+  /** URL to redirect to after saving */
+  redirectURL?: string;
+  /** Function to clear the file upload state */
+  clearFileUpload: () => void;
+  /** Callback function to save the YAML content */
+  onSave?: (yaml: string) => void;
+  /** Whether this is a redirect from code import */
+  isCodeImportRedirect?: boolean;
+  /** The object being edited */
+  obj?: K8sResourceKind;
+  /** Error message to display */
+  error?: string;
+  /** Whether the editor is in read-only mode */
+  readOnly?: boolean;
+  /** Whether to hide the header */
+  hideHeader?: boolean;
+  /** Function to get the resource object path */
+  resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string;
+  /** Callback function to be called on cancel */
+  onCancel?: () => void;
+  /** The file upload content */
+  fileUpload?: string;
+};
 
-    /** Whether to allow multiple YAML documents in the editor */
-    allowMultiple?: boolean;
-    /** Function to connect the drop target for drag-and-drop */
-    connectDropTarget?: ConnectDropTarget;
-    /** Whether the drop target is currently being hovered over */
-    isOver?: boolean;
-    /** Whether the drop target can accept a file */
-    canDrop?: boolean;
-    /** Whether this is a create operation */
-    create: boolean;
-    /** List of YAML samples to display */
-    yamlSamplesList?: FirehoseResult;
-    /** Custom CSS class for the editor */
-    customClass?: string;
-    /** Callback function to handle changes in the YAML content */
-    onChange?: (yaml: string) => void;
-    /** Model to use for the editor */
-    model?: K8sModel;
-    /** Whether to show tooltips in the editor */
-    showTooltips?: boolean;
-    /** Whether to add a button to download the YAML */
-    download?: boolean;
-    /** Header text or component to display above the editor */
-    header: React.ComponentProps<typeof PageHeading>['title'];
-    /** Whether the YAML is generic (not tied to a specific resource) */
-    genericYAML?: boolean;
-    /** Custom alerts to display in the editor */
-    children?: React.ReactNode;
-    /** URL to redirect to after saving */
-    redirectURL?: string;
-    /** Function to clear the file upload state */
-    clearFileUpload: () => void;
-    /** Callback function to save the YAML content */
-    onSave?: (yaml: string) => void;
-    /** Whether this is a redirect from code import */
-    isCodeImportRedirect?: boolean;
-    /** The object being edited */
-    obj?: K8sResourceKind;
-    /** Error message to display */
-    error?: string;
-    /** Whether the editor is in read-only mode */
-    readOnly?: boolean;
-    /** Whether to hide the header */
-    hideHeader?: boolean;
-    /** Function to get the resource object path */
-    resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string;
-    /** Callback function to be called on cancel */
-    onCancel?: () => void;
-    /** The file upload content */
-    fileUpload?: string;
-  };
+type EditYAMLInnerProps = WithPostFormSubmissionCallbackProps<any> &
+  ReturnType<typeof stateToProps> &
+  EditYAMLProps;
 
 const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   const {
     allowMultiple,
-    connectDropTarget,
-    isOver,
-    canDrop,
     create,
     yamlSamplesList,
     customClass,
@@ -180,7 +172,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
 
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
-  const [errors, setErrors] = React.useState(null);
+  const [errors, setErrors] = React.useState<string[]>(null);
   const [success, setSuccess] = React.useState<string>(null);
   const [initialized, setInitialized] = React.useState(false);
   const [stale, setStale] = React.useState(false);
@@ -454,34 +446,31 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   }, [create, props.obj]);
 
   React.useEffect(() => {
-    if (props.error) {
-      handleError(props.error);
-    }
     editorMounted && loadYaml();
     loadCSVs();
-  }, [loadCSVs, loadYaml, props.error, editorMounted]);
-
-  const prevProps = React.useRef(props);
+  }, [loadCSVs, loadYaml, editorMounted]);
 
   // unsafecomponentwillreceiveprops
   React.useEffect(() => {
-    if (isOver) {
-      return;
-    }
-
     const newVersion = _.get(props.obj, 'metadata.resourceVersion');
     const s = displayedVersion.current !== newVersion && editorMounted;
     setStale(s);
-    handleError(props.error, success);
     if (props.sampleObj) {
       editorMounted && loadYaml(!_.isEqual(sampleObj, props.sampleObj), props.sampleObj);
-    } else if (props.fileUpload) {
-      editorMounted &&
-        loadYaml(!_.isEqual(prevProps.current.fileUpload, props.fileUpload), props.fileUpload);
     } else {
       editorMounted && loadYaml();
     }
-  }, [props, isOver, loadYaml, sampleObj, success, editorMounted]);
+  }, [props, loadYaml, sampleObj, editorMounted]);
+
+  // update editor as fileUpload changes
+  const prevProps = React.useRef(props);
+  React.useEffect(() => {
+    if (props.fileUpload) {
+      editorMounted &&
+        loadYaml(!_.isEqual(prevProps.current.fileUpload, props.fileUpload), props.fileUpload);
+    }
+    prevProps.current = props;
+  }, [props.fileUpload, props, loadYaml, editorMounted]);
 
   const reload = () => {
     loadYaml(true);
@@ -855,18 +844,8 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     />
   );
 
-  const editYamlComponent = (
-    <div className="co-file-dropzone co-file-dropzone__flex">
-      {canDrop && (
-        <div
-          className={css('co-file-dropzone-container', {
-            'co-file-dropzone--drop-over': isOver,
-          })}
-        >
-          <p className="co-file-dropzone__drop-text">{t('public~Drop file here')}</p>
-        </div>
-      )}
-
+  return (
+    <>
       {(header || create) && !props.hideHeader && (
         <PageHeading
           title={header}
@@ -889,7 +868,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
 
       <PageBody className="pf-v6-c-form">
         <div
-          className={css('co-p-has-sidebar', { 'yaml-editor__fullscreen': isFullscreen })}
+          className={css('co-p-has-sidebar', { 'co-fullscreen': isFullscreen })}
           ref={fullscreenRef}
         >
           <div
@@ -915,7 +894,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
               />
               <div className="yaml-editor__buttons" ref={buttons}>
                 {customAlerts}
-                {errors?.length > 0 && (
+                {(errors?.length > 0 || props.error) && (
                   <Alert
                     isInline
                     className="co-alert co-alert--scrollable"
@@ -923,7 +902,9 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
                     title={t('public~An error occurred')}
                     data-test="yaml-error"
                   >
-                    <div className="co-pre-line">{errors.join('\n')}</div>
+                    <div className="co-pre-line">
+                      {[...(errors ? errors : []), props.error].join('\n')}
+                    </div>
                   </Alert>
                 )}
                 {success && (
@@ -1014,10 +995,8 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
           )}
         </div>
       </PageBody>
-    </div>
+    </>
   );
-
-  return _.isFunction(connectDropTarget) ? connectDropTarget(editYamlComponent) : editYamlComponent;
 };
 
 /**
@@ -1026,8 +1005,8 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
  */
 export const EditYAML_ = connect(stateToProps)(withPostFormSubmissionCallback(EditYAMLInner));
 
-export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(
-  ({ flags, ...props }: WithFlagsProps & EditYAMLInnerProps) => {
+export const EditYAML = connectToFlags<WithFlagsProps & EditYAMLProps>(FLAGS.CONSOLE_YAML_SAMPLE)(
+  ({ flags, ...props }) => {
     const resources = flags[FLAGS.CONSOLE_YAML_SAMPLE]
       ? [
           {

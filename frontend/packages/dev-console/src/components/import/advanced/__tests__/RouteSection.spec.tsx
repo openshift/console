@@ -3,7 +3,42 @@ import { shallow } from 'enzyme';
 import { SingleTypeaheadField } from '@console/shared/src';
 import { InsecureTrafficType, Resources, TerminationType } from '../../import-types';
 import PortInputField from '../../route/PortInputField';
+import { configure, screen } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import RouteSection from '../RouteSection';
+import '@testing-library/jest-dom';
+
+configure({ testIdAttribute: 'data-test' });
+
+jest.mock('react-i18next', () => ({
+  __esModule: true,
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  Trans: (props) => props.children,
+  withTranslation: () => (Component: React.ComponentType) => Component,
+}));
+
+jest.mock('@console/internal/module/k8s', () => ({
+  ...jest.requireActual('@console/internal/module/k8s'),
+  referenceFor: () => 'apps~v1~Deployment',
+  modelFor: () => ({ kind: 'Deployment', crd: false }),
+}));
+
+jest.mock('../../route/PortInputField', () => ({
+  __esModule: true,
+  default: (props) => `Port Input Field defaultPort=${props.defaultPort}`,
+}));
+
+jest.mock('@console/shared', () => ({
+  ...jest.requireActual('@console/shared'),
+  CheckboxField: (props) => `CheckboxField ${props.name}`,
+}));
+
+jest.mock('../../route/AdvancedRouteOptions', () => ({
+  __esModule: true,
+  default: () => 'Advanced Route Options',
+}));
 
 jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({
@@ -43,24 +78,28 @@ describe('RouteSection', () => {
     };
   });
 
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('Render RouteCheckbox', () => {
-    const component = shallow(<RouteSection {...props} />);
-    expect(component.isEmptyRender()).toBe(false);
+    renderWithProviders(<RouteSection {...props} />);
+
+    expect(screen.getByText(/Port Input Field/)).toBeInTheDocument();
+    expect(screen.getByText(/CheckboxField route\.create/)).toBeInTheDocument();
+    expect(screen.getByText(/Advanced Route Options/)).toBeInTheDocument();
   });
 
-  it('should show the Target port field if the create route checkbox is checked ', () => {
-    const component = shallow(<RouteSection {...props} />);
-    expect(component.find(PortInputField).exists()).toBe(true);
-    expect(component.find(PortInputField).dive().find(SingleTypeaheadField).props().label).toEqual(
-      'Target port',
-    );
+  it('should show the Target port field if the create route checkbox is checked', () => {
+    renderWithProviders(<RouteSection {...props} />);
+
+    expect(screen.getByText(/Port Input Field defaultPort=8080/)).toBeInTheDocument();
   });
 
-  it('should also show the Target port field if the create route checkbox is not checked ', () => {
+  it('should also show the Target port field if the create route checkbox is not checked', () => {
     props.route.create = false;
-    const component = shallow(<RouteSection {...props} />);
-    expect(component.find(PortInputField).dive().find(SingleTypeaheadField).props().label).toEqual(
-      'Target port',
-    );
+    renderWithProviders(<RouteSection {...props} />);
+
+    expect(screen.getByText(/Port Input Field defaultPort=8080/)).toBeInTheDocument();
   });
 });

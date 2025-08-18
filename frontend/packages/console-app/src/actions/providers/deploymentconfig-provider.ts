@@ -48,7 +48,7 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
             commonActions.ModifyLabels,
             commonActions.ModifyAnnotations,
             deploymentActions.EditDeployment,
-            ...(resource.metadata.annotations?.['openshift.io/generated-by'] ===
+            ...(resource.metadata?.annotations?.['openshift.io/generated-by'] ===
             'OpenShiftWebConsole'
               ? [DeleteResourceAction(kindObj, resource)]
               : [commonActions.Delete]),

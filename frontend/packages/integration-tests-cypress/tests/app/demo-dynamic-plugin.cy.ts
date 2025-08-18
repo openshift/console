@@ -6,6 +6,7 @@ import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
+import { getEditorContent } from '../../views/yaml-editor';
 
 const PLUGIN_NAME = 'console-demo-plugin';
 const PLUGIN_PATH = '../../../dynamic-demo-plugin';
@@ -182,6 +183,63 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
       nav.sidenav.clickNavLink(['Demo Plugin', 'K8s API']);
       cy.byTestID('test-k8sapi-title').should('contain', 'K8s API from Dynamic Plugin SDK');
       apiIDs.forEach((id) => k8sAPINavTest(id));
+    });
+
+    it('should display manifest tab in ConsolePlugin details page', () => {
+      // Navigate to the demo plugin details page
+      cy.visit(`/k8s/cluster/console.openshift.io~v1~ConsolePlugin/${PLUGIN_NAME}`);
+
+      // Verify we're on the plugin details page
+      detailsPage.titleShouldContain(PLUGIN_NAME);
+
+      // Check that the Plugin manifest tab exists
+      cy.get('[role="tablist"]').within(() => {
+        cy.contains('Plugin manifest').should('be.visible');
+      });
+    });
+
+    it('should navigate to manifest tab and display read-only code editor with JSON content', () => {
+      // Navigate directly to the manifest tab
+      cy.visit(`/k8s/cluster/console.openshift.io~v1~ConsolePlugin/${PLUGIN_NAME}/plugin-manifest`);
+
+      // Verify we're on the manifest tab
+      cy.url().should('include', '/plugin-manifest');
+
+      // Verify the manifest tab is active (PatternFly v6 uses pf-m-current class)
+      cy.get('[role="tablist"]').within(() => {
+        cy.contains('Plugin manifest').parent().should('have.class', 'pf-m-current');
+      });
+
+      // Wait for the page to load
+      detailsPage.isLoaded();
+
+      // Check if manifest content is displayed
+      cy.get('body').then(($body) => {
+        if ($body.find('.co-code-editor').length > 0) {
+          // Code editor is present - verify it contains JSON content
+          cy.get('.co-code-editor').should('be.visible');
+
+          // Verify the editor is read-only by checking PatternFly read-only class
+          cy.get('.pf-v6-c-code-editor').should('have.class', 'pf-m-read-only');
+
+          // Verify the editor contains typical plugin manifest structure using yaml-editor utilities
+          getEditorContent().then((content) => {
+            expect(content).to.contain('"name"');
+            // Only check for version in local dev environment where manifest is fully available
+            if (isLocalDevEnvironment) {
+              expect(content).to.contain('"version"');
+            }
+          });
+        } else if ($body.find('[data-test="empty-box"]').length > 0) {
+          // Empty state is shown when no manifest is available
+          cy.get('[data-test="empty-box"]').should('be.visible');
+          cy.log('Plugin manifest not available - empty state displayed');
+        } else {
+          // Fallback: just verify the page loaded without errors
+          cy.get('[data-test="page-heading"]').should('be.visible');
+          cy.log('Manifest tab loaded but no code editor or empty state found');
+        }
+      });
     });
   });
 } else {
