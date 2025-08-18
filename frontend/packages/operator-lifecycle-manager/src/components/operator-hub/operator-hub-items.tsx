@@ -11,7 +11,7 @@ import {
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link, useSearchParams } from 'react-router-dom-v5-compat';
 import { getQueryArgument } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
@@ -42,6 +42,17 @@ import {
   validSubscriptionSort,
 } from './operator-hub-utils';
 import { InfrastructureFeature, OperatorHubItem } from './index';
+
+// Performance optimization types for precomputed scoring
+type ScoringData = {
+  relevanceScore: number;
+  redHatPriority: number;
+  nameLower: string;
+};
+
+type ItemWithScoring = OperatorHubItem & {
+  _scoringData: ScoringData;
+};
 
 const osBaseLabel = 'operatorframework.io/os.';
 const archBaseLabel = 'operatorframework.io/arch.';
@@ -371,64 +382,91 @@ const getRedHatPriority = (item) => {
   return 0; // Not Red Hat
 };
 
+// Performance optimization: Precompute all scoring data upfront
+const precomputeItemScoring = (items: OperatorHubItem[], searchTerm = ''): ItemWithScoring[] => {
+  if (!items || !Array.isArray(items)) {
+    return [];
+  }
+
+  return items
+    .filter((item) => item != null)
+    .map((item) => ({
+      ...item,
+      _scoringData: {
+        relevanceScore: searchTerm ? calculateRelevanceScore(searchTerm, item) : 0,
+        redHatPriority: getRedHatPriority(item),
+        nameLower: (item.name || '').toLowerCase(),
+      },
+    }));
+};
+
+// Performance optimization: Sort using only precomputed numbers (no function calls)
+const sortPrecomputedItems = (
+  itemsWithScoring: ItemWithScoring[],
+  hasSearchTerm: boolean,
+): ItemWithScoring[] => {
+  return itemsWithScoring.sort((a, b) => {
+    // eslint-disable-next-line no-underscore-dangle
+    const aScoring = a._scoringData;
+    // eslint-disable-next-line no-underscore-dangle
+    const bScoring = b._scoringData;
+
+    if (hasSearchTerm) {
+      // Search term sorting logic
+      const scoreDiff = Math.abs(bScoring.relevanceScore - aScoring.relevanceScore);
+
+      // For operators with similar relevance scores (within 100 points),
+      // prioritize Red Hat first to ensure consistent ordering
+      if (scoreDiff <= 100) {
+        if (aScoring.redHatPriority !== bScoring.redHatPriority) {
+          return bScoring.redHatPriority - aScoring.redHatPriority;
+        }
+      }
+
+      // Primary sort by relevance score (descending)
+      if (bScoring.relevanceScore !== aScoring.relevanceScore) {
+        return bScoring.relevanceScore - aScoring.relevanceScore;
+      }
+
+      // Secondary sort by Red Hat priority when scores are exactly equal
+      if (aScoring.redHatPriority !== bScoring.redHatPriority) {
+        return bScoring.redHatPriority - aScoring.redHatPriority;
+      }
+
+      // Tertiary sort by name (alphabetical)
+      return aScoring.nameLower.localeCompare(bScoring.nameLower);
+    }
+
+    // No search term - use priority-based sorting logic
+    // Primary sort by Red Hat priority (2 = exact match, 1 = contains, 0 = not Red Hat)
+    if (aScoring.redHatPriority !== bScoring.redHatPriority) {
+      return bScoring.redHatPriority - aScoring.redHatPriority;
+    }
+
+    // Secondary sort by name (alphabetical)
+    return aScoring.nameLower.localeCompare(bScoring.nameLower);
+  });
+};
+
 export const orderAndSortByRelevance = (items, searchTerm = '') => {
   if (!items || !Array.isArray(items)) {
     return [];
   }
 
-  // If there's a search term, sort by relevance score first
-  if (searchTerm) {
-    const itemsWithScores = items
-      .filter((item) => item != null) // Filter out null/undefined items
-      .map((item) => ({
-        ...item,
-        relevanceScore: calculateRelevanceScore(searchTerm, item),
-      }));
+  // Use precomputed scoring for performance optimization
+  const itemsWithScoring = precomputeItemScoring(items, searchTerm);
+  const sortedItems = sortPrecomputedItems(itemsWithScoring, !!searchTerm);
 
-    return itemsWithScores.sort((a, b) => {
-      const aRedHatPriority = getRedHatPriority(a);
-      const bRedHatPriority = getRedHatPriority(b);
-      const scoreDiff = Math.abs(b.relevanceScore - a.relevanceScore);
-
-      // For operators with similar relevance scores (within 100 points),
-      // prioritize Red Hat first to ensure consistent ordering
-      // This covers cases where both have title matches but slight scoring differences
-      if (scoreDiff <= 100) {
-        // Sort by Red Hat priority (2 = exact match, 1 = contains, 0 = not Red Hat)
-        if (aRedHatPriority !== bRedHatPriority) {
-          return bRedHatPriority - aRedHatPriority;
-        }
-      }
-
-      // Primary sort by relevance score (descending)
-      if (b.relevanceScore !== a.relevanceScore) {
-        return b.relevanceScore - a.relevanceScore;
-      }
-
-      // Secondary sort by Red Hat priority when scores are exactly equal
-      if (aRedHatPriority !== bRedHatPriority) {
-        return bRedHatPriority - aRedHatPriority;
-      }
-
-      // Tertiary sort by name (alphabetical)
-      return (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase());
-    });
-  }
-
-  // No search term - use priority-based sorting logic
-  const allValidItems = items.filter((item) => item != null);
-
-  return allValidItems.sort((a, b) => {
-    const aRedHatPriority = getRedHatPriority(a);
-    const bRedHatPriority = getRedHatPriority(b);
-
-    // Primary sort by Red Hat priority (2 = exact match, 1 = contains, 0 = not Red Hat)
-    if (aRedHatPriority !== bRedHatPriority) {
-      return bRedHatPriority - aRedHatPriority;
-    }
-
-    // Secondary sort by name (alphabetical)
-    return (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase());
+  // Return items without the internal _scoringData field but preserve relevanceScore for debugging
+  return sortedItems.map((item) => {
+    // eslint-disable-next-line no-underscore-dangle
+    const { _scoringData, ...itemWithoutScoring } = item;
+    return {
+      ...itemWithoutScoring,
+      // Preserve relevanceScore for console table debugging
+      // eslint-disable-next-line no-underscore-dangle
+      relevanceScore: _scoringData.relevanceScore,
+    };
   });
 };
 
@@ -496,8 +534,114 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   const installVersion = getQueryArgument('version');
   const filteredItems = filterByArchAndOS(props.items);
 
+  // Use useSearchParams to reactively get URL parameters that update on URL changes
+  const [searchParams] = useSearchParams();
+  const searchTerm = searchParams.get('keyword');
+  const selectedCategory = searchParams.get('category') || 'all';
+  const selectedSource = searchParams.get('source') || 'all';
+  const selectedProvider = searchParams.get('provider') || 'all';
+  const selectedCapabilityLevel = searchParams.get('capabilityLevel') || 'all';
+  const selectedInfraFeatures = searchParams.get('infraFeatures') || 'all';
+  const selectedValidSubscriptionFilters = searchParams.get('validSubscriptionFilters') || 'all';
+
+  // Performance optimization: Memoize sorted items with all filter dependencies
+  const sortedItems = React.useMemo(() => {
+    // Ensure we have items before processing - prevents race conditions on initial load
+    if (!filteredItems || filteredItems.length === 0) {
+      return [];
+    }
+
+    // Apply the same filtering logic that was in getFilteredItems()
+    let items = filteredItems;
+
+    if (selectedCategory !== 'all') {
+      items = items.filter((item) => {
+        if (!item.categories || !Array.isArray(item.categories)) {
+          return false;
+        }
+        return item.categories.includes(selectedCategory);
+      });
+    }
+
+    if (selectedSource !== 'all') {
+      const sourcesToFilter = JSON.parse(selectedSource);
+      items = items.filter((item) => sourcesToFilter.includes(item.source));
+    }
+
+    if (selectedProvider !== 'all') {
+      const providersToFilter = JSON.parse(selectedProvider);
+      items = items.filter((item) => {
+        const providerValue = getProviderValue(item.provider);
+        return providersToFilter.includes(providerValue);
+      });
+    }
+
+    if (selectedCapabilityLevel !== 'all') {
+      const capabilityLevelsToFilter = JSON.parse(selectedCapabilityLevel);
+      items = items.filter((item) => {
+        const itemCapability = (item as any).capabilityLevel;
+        if (itemCapability) {
+          if (Array.isArray(itemCapability)) {
+            return itemCapability.some((level) => capabilityLevelsToFilter.includes(level));
+          }
+          if (typeof itemCapability === 'string') {
+            return capabilityLevelsToFilter.includes(itemCapability);
+          }
+        }
+
+        const specCapability = item?.obj?.spec?.capabilityLevel ?? '';
+        if (specCapability && capabilityLevelsToFilter.includes(specCapability)) {
+          return true;
+        }
+
+        const metadataCapability =
+          item?.obj?.metadata?.annotations?.['operators.operatorframework.io/capability-level'] ??
+          '';
+        if (metadataCapability && capabilityLevelsToFilter.includes(metadataCapability)) {
+          return true;
+        }
+
+        return false;
+      });
+    }
+
+    if (selectedInfraFeatures !== 'all') {
+      const infraFeaturesToFilter = JSON.parse(selectedInfraFeatures);
+      items = items.filter((item) => {
+        if (!item.infraFeatures || !Array.isArray(item.infraFeatures)) {
+          return false;
+        }
+        return item.infraFeatures.some((feature) => infraFeaturesToFilter.includes(feature));
+      });
+    }
+
+    if (selectedValidSubscriptionFilters !== 'all') {
+      const validSubscriptionToFilter = JSON.parse(selectedValidSubscriptionFilters);
+      items = items.filter((item) => {
+        if (!item.validSubscriptionFilters || !Array.isArray(item.validSubscriptionFilters)) {
+          return false;
+        }
+        return item.validSubscriptionFilters.some((filter) =>
+          validSubscriptionToFilter.includes(filter),
+        );
+      });
+    }
+
+    // Don't filter by search term here - let TileViewPage handle it through keywordCompareWithScore
+    // We only apply category and filter-based filtering, not keyword filtering
+    return orderAndSortByRelevance(items);
+  }, [
+    filteredItems,
+    selectedCategory,
+    selectedSource,
+    selectedProvider,
+    selectedCapabilityLevel,
+    selectedInfraFeatures,
+    selectedValidSubscriptionFilters,
+  ]);
+
   React.useEffect(() => {
-    const detailsItemID = new URLSearchParams(window.location.search).get('details-item');
+    const detailsItemID = searchParams.get('details-item');
     const currentItem = _.find(filteredItems, {
       uid: detailsItemID,
     });
@@ -536,7 +680,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     ) {
       setTokenizedAuth('GCP');
     }
-  }, [filteredItems]);
+  }, [filteredItems, searchParams]);
 
   const showCommunityOperator = (item: OperatorHubItem) => (ignoreWarning = false) => {
     const params = new URLSearchParams(window.location.search);
@@ -652,114 +796,60 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   );
 
   /* eslint-disable */
-  // CONSOLE TABLE FOR TESTING
+  // CONSOLE TABLE FOR TESTING - Using memoized sorted data for performance
   // Displays search results with 'Search Relevance Score' and 'Is Red Hat' provider priority values, used in determining display order of operators
-    const searchTerm = new URLSearchParams(window.location.search).get('keyword');
-    const selectedCategory = new URLSearchParams(window.location.search).get('category') || 'all';
-    const selectedSource = new URLSearchParams(window.location.search).get('source') || 'all';
-    const selectedProvider = new URLSearchParams(window.location.search).get('provider') || 'all';
-    const selectedCapabilityLevel = new URLSearchParams(window.location.search).get('capabilityLevel') || 'all';
-    const selectedInfraFeatures = new URLSearchParams(window.location.search).get('infraFeatures') || 'all';
-    const selectedValidSubscriptionFilters = new URLSearchParams(window.location.search).get('validSubscriptionFilters') || 'all';
+  
+  // Simple console.log array of operator list  
+  if (searchTerm) {
+    // For search terms, show filtered results
+    const searchFilteredForDisplay = sortedItems
+      .map((item) => ({
+        ...item,
+        relevanceScore: calculateRelevanceScore(searchTerm, item),
+      }))
+      .filter((item) => item.relevanceScore > 0);
+    console.log('📋 OperatorHub Items Array (Search Filtered):', searchFilteredForDisplay.map(item => item.name || 'N/A'));
+  } else {
+    console.log('📋 OperatorHub Items Array:', sortedItems.map(item => item.name || 'N/A'));
+  }
+  
+  // Debug: Log component state to identify race conditions
+  console.log('🐛 Debug Info:', {
+    searchTerm,
+    filteredItemsCount: filteredItems?.length || 0,
+    sortedItemsCount: sortedItems?.length || 0,
+    hasSearchTerm: !!searchTerm,
+    isInitialLoad: (!filteredItems || filteredItems.length === 0)
+  });
+  
+  const getActiveFiltersDescription = () => {
+    const activeFilters = [];
+    if (selectedCategory !== 'all') activeFilters.push(`Category: ${selectedCategory}`);
+    if (selectedSource !== 'all') activeFilters.push(`Source: ${selectedSource}`);
+    if (selectedProvider !== 'all') activeFilters.push(`Provider: ${selectedProvider}`);
+    if (selectedCapabilityLevel !== 'all') activeFilters.push(`Capability Level: ${selectedCapabilityLevel}`);
+    if (selectedInfraFeatures !== 'all') activeFilters.push(`Infrastructure Features: ${selectedInfraFeatures}`);
+    if (selectedValidSubscriptionFilters !== 'all') activeFilters.push(`Valid Subscription: ${selectedValidSubscriptionFilters}`);
     
-    const getFilteredItems = () => {
-      let items = filteredItems;
-      
-      if (selectedCategory !== 'all') {
-        items = items.filter(item => {
-          if (!item.categories || !Array.isArray(item.categories)) {
-            return false;
-          }
-          return item.categories.includes(selectedCategory);
-        });
-      }
-      
-      if (selectedSource !== 'all') {
-        const sourcesToFilter = JSON.parse(selectedSource);
-        items = items.filter(item => sourcesToFilter.includes(item.source));
-      }
-      
-      if (selectedProvider !== 'all') {
-        const providersToFilter = JSON.parse(selectedProvider);
-        items = items.filter(item => {
-          const providerValue = getProviderValue(item.provider);
-          return providersToFilter.includes(providerValue);
-        });
-      }
-      
-      if (selectedCapabilityLevel !== 'all') {
-        const capabilityLevelsToFilter = JSON.parse(selectedCapabilityLevel);
-        items = items.filter(item => {
-          if (item.capabilityLevel) {
-            if (Array.isArray(item.capabilityLevel)) {
-              return item.capabilityLevel.some(level => capabilityLevelsToFilter.includes(level));
-            } else if (typeof item.capabilityLevel === 'string') {
-              return capabilityLevelsToFilter.includes(item.capabilityLevel);
-            }
-          }
-          
-          const specCapability = item?.obj?.spec?.capabilityLevel ?? '';
-          if (specCapability && capabilityLevelsToFilter.includes(specCapability)) {
-            return true;
-          }
-          
-          const metadataCapability = item?.obj?.metadata?.annotations?.['operators.operatorframework.io/capability-level'] ?? '';
-          if (metadataCapability && capabilityLevelsToFilter.includes(metadataCapability)) {
-            return true;
-          }
-          
-          return false;
-        });
-      }
-      
-      if (selectedInfraFeatures !== 'all') {
-        const infraFeaturesToFilter = JSON.parse(selectedInfraFeatures);
-        items = items.filter(item => {
-          if (!item.infraFeatures || !Array.isArray(item.infraFeatures)) {
-            return false;
-          }
-          return item.infraFeatures.some(feature => infraFeaturesToFilter.includes(feature));
-        });
-      }
-      
-      if (selectedValidSubscriptionFilters !== 'all') {
-        const validSubscriptionToFilter = JSON.parse(selectedValidSubscriptionFilters);
-        items = items.filter(item => {
-          if (!item.validSubscriptionFilters || !Array.isArray(item.validSubscriptionFilters)) {
-            return false;
-          }
-          return item.validSubscriptionFilters.some(filter => validSubscriptionToFilter.includes(filter));
-        });
-      }
-      
-      return items;
-    };
+    return activeFilters.length > 0 ? activeFilters.join(', ') : 'No filters applied';
+  };
+  
+  // Always show active filters for debugging
+  console.log(`📌 Current Active Filters: ${getActiveFiltersDescription()}`);
+  console.log(`🔍 Search Term: "${searchTerm || 'none'}"`);
+  console.log(`📊 Sorted Items Count: ${sortedItems.length}`);
+  
+  // Use memoized sortedItems instead of recalculating
+  if (searchTerm && sortedItems.length > 0) {
+    // For console display, filter items by search term since TileViewPage will do this later
+    const searchFilteredItems = sortedItems
+      .map((item) => ({
+        ...item,
+        relevanceScore: calculateRelevanceScore(searchTerm, item),
+      }))
+      .filter((item) => item.relevanceScore > 0);
     
-    const filteredCategoryItems = getFilteredItems();
-    
-    const getActiveFiltersDescription = () => {
-      const activeFilters = [];
-      if (selectedCategory !== 'all') activeFilters.push(`Category: ${selectedCategory}`);
-      if (selectedSource !== 'all') activeFilters.push(`Source: ${selectedSource}`);
-      if (selectedProvider !== 'all') activeFilters.push(`Provider: ${selectedProvider}`);
-      if (selectedCapabilityLevel !== 'all') activeFilters.push(`Capability Level: ${selectedCapabilityLevel}`);
-      if (selectedInfraFeatures !== 'all') activeFilters.push(`Infrastructure Features: ${selectedInfraFeatures}`);
-      if (selectedValidSubscriptionFilters !== 'all') activeFilters.push(`Valid Subscription: ${selectedValidSubscriptionFilters}`);
-      
-      return activeFilters.length > 0 ? activeFilters.join(', ') : 'No filters applied';
-    };
-    
-    if (searchTerm && filteredCategoryItems.length > 0) {
-      const itemsWithScores = filteredCategoryItems
-        .map(item => ({
-          ...item,
-          relevanceScore: calculateRelevanceScore(searchTerm, item)
-        }))
-        .filter(item => item.relevanceScore > 0); // Only include items that actually match the search
-      
-      const sortedItems = orderAndSortByRelevance(itemsWithScores, searchTerm);
-      
-      const tableData = sortedItems.map((item, index) => ({
+    const tableData = searchFilteredItems.map((item, index) => ({
         Title: item.name || 'N/A',
         'Search Relevance Score': item.relevanceScore || 0,
         'Is Red Hat Provider (Priority)': getRedHatPriority(item) === 2 ? 'Exact Match (2)' : 
@@ -767,11 +857,12 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         // Source: item.source || 'N/A',
         'Metadata Provider': _.get(item, 'obj.metadata.labels.provider', 'N/A'),
         'Capability Level': (() => {
-          if (item.capabilityLevel) {
-            if (Array.isArray(item.capabilityLevel)) {
-              return item.capabilityLevel.join(', ');
-            } else if (typeof item.capabilityLevel === 'string') {
-              return item.capabilityLevel;
+          const itemCapability = (item as any).capabilityLevel;
+          if (itemCapability) {
+            if (Array.isArray(itemCapability)) {
+              return itemCapability.join(', ');
+            } else if (typeof itemCapability === 'string') {
+              return itemCapability;
             }
           }
           
@@ -786,13 +877,11 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         'Infrastructure Features': Array.isArray(item.infraFeatures) ? item.infraFeatures.join(', ') : 'N/A',
       }));
       
-      console.log(`\n🔍 OperatorHub Search Results for "${searchTerm}" (${tableData.length} matches)`);
+      console.log(`\n🔍 OperatorHub Search Results for "${searchTerm}" (${searchFilteredItems.length} matches)`);
       console.log(`📌 Active Filters: ${getActiveFiltersDescription()}`);
       console.table(tableData);
-    } else if (!searchTerm && filteredCategoryItems.length > 0) {
-      // Console table for filtered results without search term (category/filter-based)
-      const sortedItems = orderAndSortByRelevance(filteredCategoryItems);
-      
+    } else if (sortedItems.length > 0) {
+      // Console table for filtered results without search term (category/filter-based) - using memoized data
       const tableData = sortedItems.map((item, index) => ({
         Title: item.name || 'N/A',
         'Is Red Hat Provider (Priority)': getRedHatPriority(item) === 2 ? 'Exact Match (2)' : 
@@ -800,11 +889,12 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         // Source: item.source || 'N/A',
         'Metadata Provider': _.get(item, 'obj.metadata.labels.provider', 'N/A'),
         'Capability Level': (() => {
-          if (item.capabilityLevel) {
-            if (Array.isArray(item.capabilityLevel)) {
-              return item.capabilityLevel.join(', ');
-            } else if (typeof item.capabilityLevel === 'string') {
-              return item.capabilityLevel;
+          const itemCapability = (item as any).capabilityLevel;
+          if (itemCapability) {
+            if (Array.isArray(itemCapability)) {
+              return itemCapability.join(', ');
+            } else if (typeof itemCapability === 'string') {
+              return itemCapability;
             }
           }
           
@@ -828,7 +918,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   return (
     <>
       <TileViewPage
-        items={filteredItems}
+        items={sortedItems}
         itemsSorter={orderAndSortByRelevance}
         getAvailableCategories={determineCategories}
         getAvailableFilters={determineAvailableFilters}
