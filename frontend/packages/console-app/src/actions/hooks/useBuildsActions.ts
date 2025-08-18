@@ -17,15 +17,15 @@ import { useCommonActions } from './useCommonActions';
 /**
  * A React hook for retrieving actions related to a Build resource.
  *
- * @param {K8sResourceKind} obj - The specific Build resource instance for which to generate actions.
- * @param {BuildActionCreator[]} [filterActions] - Optional. If provided, the returned `actions` array will contain
+ * @param obj - The specific Build resource instance for which to generate actions.
+ * @param [filterActions] - Optional. If provided, the returned `actions` array will contain
  * only the specified actions. If omitted, it will contain all Build actions. In case of invalid `actionCreators`
  * returned `actions` are an empty array.
  *
  * This hook is robust to inline arrays/objects for the `filterActions` argument, so you do not need to memoize or define
  * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
  *
- * @returns {Action[]} An array containing the generated action(s).
+ * @returns An array containing the generated action(s).
  *
  * @example
  * // Getting Build actions for Build resource
@@ -55,8 +55,8 @@ export const useBuildsActions = (
       name: obj.metadata.name,
     }),
     confirmButtonVariant: ButtonVariant.danger,
-    confirmButtonLabel: t('public~Cancel build'),
-    cancelButtonLabel: t('public~Cancel'),
+    confirmButtonLabel: t('public~Yes, cancel'),
+    cancelButtonLabel: t('public~No, don't cancel'),
     onConfirm: () => {
       return k8sPatchResource({
         model: kindObj,

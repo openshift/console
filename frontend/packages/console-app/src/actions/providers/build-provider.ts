@@ -7,5 +7,5 @@ export const useBuildActionsProvider = (resource: K8sResourceKind) => {
 
   const actions = React.useMemo(() => [...buildActions], [buildActions]);
 
-  return [actions, true, false];
+  return [actions, true];
 };
