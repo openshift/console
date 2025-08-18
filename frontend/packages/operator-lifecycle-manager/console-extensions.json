@@ -52,7 +52,9 @@
     "properties": {
       "id": "operator-backed-panel-tab-section-details",
       "tab": "topology-side-bar-tab-details",
-      "provider": { "$codeRef": "topologySidebarDetailsSections.useOperatorBackedPanelDetailsSection" }
+      "provider": {
+        "$codeRef": "topologySidebarDetailsSections.useOperatorBackedPanelDetailsSection"
+      }
     }
   },
   {
@@ -60,7 +62,9 @@
     "properties": {
       "id": "operator-backed-panel-tab-section-resource",
       "tab": "topology-side-bar-tab-resource",
-      "provider": { "$codeRef": "topologySidebarResourceSections.useOperatorBackedPanelResourceSection" }
+      "provider": {
+        "$codeRef": "topologySidebarResourceSections.useOperatorBackedPanelResourceSection"
+      }
     }
   },
   {
@@ -77,6 +81,17 @@
       "component": {
         "$codeRef": "install.OperatorInstallStatusPage"
       }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1alpha1",
+        "kind": "Subscription",
+        "group": "operators.coreos.com"
+      },
+      "provider": { "$codeRef": "subscriptionProvider.useSubscriptionActionsProvider" }
     }
   }
 ]
