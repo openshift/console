@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { redirect } from 'react-router-dom-v5-compat';
@@ -106,12 +106,12 @@ export const useBuildsActions = (
   );
 
   const buildPhase = obj.status?.phase;
-  const isCancellable = React.useMemo(
+  const isCancellable = useMemo(
     () => buildPhase === 'Running' || buildPhase === 'Pending' || buildPhase === 'New',
     [buildPhase],
   );
 
-  const actions = React.useMemo<Action[]>(() => {
+  const actions = useMemo<Action[]>(() => {
     if (!commonActionsReady) {
       return [];
     }
