@@ -25,10 +25,10 @@ const useClusterConfigurationItems = (): [ResolvedClusterConfigurationItem[], bo
   const [canWrite, updateCanWrite] = React.useState<Record<string, boolean>>({});
   React.useEffect(() => {
     sortedItems.forEach((item) => {
-      if (item.readAccessReview?.length > 0) {
+      if (item.readAccessReview?.length && item.readAccessReview.length > 0) {
         Promise.all(item.readAccessReview.map((accessReview) => checkAccess(accessReview)))
           .then((result) => {
-            const allowed = result.every((r) => r.status.allowed);
+            const allowed = result.every((r) => r.status?.allowed);
             updateCanRead((x) => ({ ...x, [item.id]: allowed }));
           })
           .catch((error) => {
@@ -37,10 +37,10 @@ const useClusterConfigurationItems = (): [ResolvedClusterConfigurationItem[], bo
           });
       }
 
-      if (item.writeAccessReview?.length > 0) {
+      if (item.writeAccessReview?.length && item.writeAccessReview.length > 0) {
         Promise.all(item.writeAccessReview.map((accessReview) => checkAccess(accessReview)))
           .then((result) => {
-            const allowed = result.every((r) => r.status.allowed);
+            const allowed = result.every((r) => r.status?.allowed);
             updateCanWrite((x) => ({ ...x, [item.id]: allowed }));
           })
           .catch((error) => {
@@ -53,11 +53,16 @@ const useClusterConfigurationItems = (): [ResolvedClusterConfigurationItem[], bo
 
   const filteredItems = React.useMemo<ResolvedClusterConfigurationItem[]>(() => {
     return sortedItems
-      .filter((item) => (item.readAccessReview?.length > 0 ? canRead[item.id] : true))
+      .filter((item) =>
+        item.readAccessReview?.length && item.readAccessReview.length > 0 ? canRead[item.id] : true,
+      )
       .map((item) => {
         return {
           ...item,
-          readonly: item.writeAccessReview?.length > 0 ? !canWrite[item.id] : false,
+          readonly:
+            item.writeAccessReview?.length && item.writeAccessReview.length > 0
+              ? !canWrite[item.id]
+              : false,
         };
       });
   }, [sortedItems, canRead, canWrite]);
