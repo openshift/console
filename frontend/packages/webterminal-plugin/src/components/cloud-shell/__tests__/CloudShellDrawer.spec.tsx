@@ -48,7 +48,7 @@ describe('CloudShellDrawer', () => {
     mockUseIsCloudShellExpanded.mockReturnValue(false);
 
     const wrapper = render(
-      <CloudShellDrawer>
+      <CloudShellDrawer open={false}>
         <p data-test="body">Console webapp</p>
       </CloudShellDrawer>,
     );
@@ -61,7 +61,7 @@ describe('CloudShellDrawer', () => {
     mockUseIsCloudShellExpanded.mockReturnValue(true);
 
     const wrapper = render(
-      <CloudShellDrawer>
+      <CloudShellDrawer open={false}>
         <p>Console webapp</p>
       </CloudShellDrawer>,
     );

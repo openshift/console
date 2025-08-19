@@ -15,21 +15,16 @@ import { css } from '@patternfly/react-styles';
 import { c_drawer_m_inline_m_panel_bottom__splitter_Height as pfSplitterHeight } from '@patternfly/react-tokens/dist/esm/c_drawer_m_inline_m_panel_bottom__splitter_Height';
 import { useTranslation } from 'react-i18next';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { MinimizeRestoreButton } from '@console/webterminal-plugin/src/components/cloud-shell/MinimizeRestoreButton';
 import { MultiTabbedTerminal } from '@console/webterminal-plugin/src/components/cloud-shell/MultiTabbedTerminal';
-import { FLAG_DEVWORKSPACE } from '../../const';
-import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dispatchers';
-import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
 
 import './CloudShellDrawer.scss';
 
-type CloudShellDrawerProps = React.PropsWithChildren<{}>;
-
-type CloudShellProps = CloudShellDrawerProps & {
-  open: boolean;
-};
+type CloudShellDrawerProps = React.PropsWithChildren<{
+  open?: boolean;
+  onClose?: () => void;
+}>;
 
 const getMastheadHeight = (): number => {
   const masthead = document.getElementById('page-main-header');
@@ -40,12 +35,14 @@ const getMastheadHeight = (): number => {
 
 const HEADER_HEIGHT = `calc(${pfSplitterHeight.var} + var(--co-cloud-shell-header-height))`;
 
-const CloudShell: React.FCC<CloudShellProps> = ({ children, open }) => {
-  const { t } = useTranslation('webterminal-plugin');
-
+export const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({
+  open = true,
+  onClose = () => undefined,
+  children,
+}) => {
   const [expanded, setExpanded] = React.useState<boolean>(true);
   const [height, setHeight] = React.useState<number>(385);
-  const toggleCloudShellExpanded = useToggleCloudShellExpanded();
+  const { t } = useTranslation('webterminal-plugin');
   const fireTelemetryEvent = useTelemetry();
 
   const onMRButtonClick = (expandedState: boolean) => {
@@ -95,7 +92,7 @@ const CloudShell: React.FCC<CloudShellProps> = ({ children, open }) => {
               <Tooltip content={t('Close terminal')}>
                 <DrawerCloseButton
                   aria-label={t('Close terminal')}
-                  onClose={toggleCloudShellExpanded}
+                  onClose={onClose}
                   data-test="cloudshell-drawer-close-button"
                 />
               </Tooltip>
@@ -103,7 +100,7 @@ const CloudShell: React.FCC<CloudShellProps> = ({ children, open }) => {
           </FlexItem>
         </Flex>
       </DrawerHead>
-      <MultiTabbedTerminal onClose={toggleCloudShellExpanded} />
+      <MultiTabbedTerminal onClose={onClose} />
     </DrawerPanelContent>
   );
 
@@ -113,20 +110,5 @@ const CloudShell: React.FCC<CloudShellProps> = ({ children, open }) => {
         <DrawerContentBody>{children}</DrawerContentBody>
       </DrawerContent>
     </Drawer>
-  );
-};
-
-export const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ children }) => {
-  const devWorkspaceAvailable = useFlag(FLAG_DEVWORKSPACE);
-  const open = useIsCloudShellExpanded();
-
-  if (!devWorkspaceAvailable) {
-    return <>{children}</>;
-  }
-
-  return (
-    <CloudShell open={open} key={`cloud-shell-${open ? 'open' : 'closed'}`}>
-      {children}
-    </CloudShell>
   );
 };
