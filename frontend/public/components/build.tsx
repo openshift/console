@@ -18,8 +18,14 @@ import { ONE_HOUR, ONE_MINUTE, Status, usePrometheusGate } from '@console/shared
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { LazyActionMenu } from '@console/shared/src/components/actions';
-import { K8sResourceKindReference, referenceFor, K8sResourceKind } from '../module/k8s';
+import { LazyActionMenu, ActionMenuVariant } from '@console/shared/src/components/actions';
+import {
+  K8sResourceKindReference,
+  referenceFor,
+  referenceForModel,
+  K8sResourceKind,
+  K8sModel,
+} from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
@@ -346,9 +352,11 @@ export const BuildsDetailsPage: React.FCC = (props) => {
     <DetailsPage
       {...props}
       kind={BuildsReference}
-      customActionMenu={(obj: K8sResourceKind) => (
-        <LazyActionMenu context={{ [referenceFor(obj)]: obj }} />
-      )}
+      customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) => {
+        const reference = referenceForModel(kindObj);
+        const context = { [reference]: obj };
+        return <LazyActionMenu context={context} variant={ActionMenuVariant.DROPDOWN} />;
+      }}
       pages={[
         navFactory.details(BuildsDetails),
         ...(prometheusIsAvailable ? [navFactory.metrics(BuildMetrics)] : []),
