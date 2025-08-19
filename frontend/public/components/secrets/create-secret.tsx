@@ -10,6 +10,7 @@ import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-ci
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../module/k8s';
+import { isBinary } from 'istextorbinary/edition-es2017/index';
 import {
   ButtonBar,
   Dropdown,
@@ -23,7 +24,6 @@ import { ModalBody, ModalTitle, ModalSubmitFooter } from '../factory/modal';
 import { AsyncComponent } from '../utils/async';
 import { SecretModel } from '../../models';
 import { WebHookSecretKey } from '../secret';
-import { containsNonPrintableCharacters } from '../utils/file-input';
 export enum SecretTypeAbstraction {
   generic = 'generic',
   source = 'source',
@@ -157,11 +157,15 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState();
   const [stringData, setStringData] = React.useState(
-    _.mapValues(_.get(props.obj, 'data'), (value) => {
-      return value ? Base64.decode(value) : '';
-    }),
+    Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
+      if (isBinary(null, Buffer.from(value, 'base64'))) {
+        return {};
+      }
+      acc[key] = value ? Base64.decode(value) ?? '' : '';
+      return acc;
+    }, {}),
   );
-  const [base64StringData, setBase64StringData] = React.useState({});
+  const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
   const [disableForm, setDisableForm] = React.useState(false);
 
   const cancel = () => navigate(`/k8s/ns/${params.ns}/core~v1~Secret`);
@@ -256,6 +260,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
           onError={onError}
           onFormDisable={(disable) => setDisableForm(disable)}
           stringData={stringData}
+          base64StringData={base64StringData}
           secretType={secret.type}
           isCreate={isCreate}
         />
@@ -1054,9 +1059,11 @@ class SSHAuthSubformWithTranslation extends React.Component<
 
 export const SSHAuthSubform = withTranslation()(SSHAuthSubformWithTranslation);
 
+export type SecretStringData = Record<string, string>;
+export type Base64StringData = Record<string, string>;
+
 type KeyValueEntryFormState = {
-  isBase64?: boolean;
-  isBinary?: boolean;
+  isBinary_?: boolean;
   key: string;
   value: string;
 };
@@ -1069,9 +1076,8 @@ type KeyValueEntryFormProps = {
 
 type GenericSecretFormProps = {
   onChange: Function;
-  stringData: {
-    [key: string]: string;
-  };
+  stringData: SecretStringData;
+  base64StringData: Base64StringData;
   isCreate: boolean;
 };
 
@@ -1089,7 +1095,7 @@ class GenericSecretFormWithTranslation extends React.Component<
   constructor(props) {
     super(props);
     this.state = {
-      secretEntriesArray: this.genericSecretObjectToArray(this.props.stringData),
+      secretEntriesArray: this.genericSecretObjectToArray(this.props.base64StringData),
     };
     this.onDataChanged = this.onDataChanged.bind(this);
   }
@@ -1102,30 +1108,29 @@ class GenericSecretFormWithTranslation extends React.Component<
       uid: _.uniqueId(),
     };
   }
-  genericSecretObjectToArray(genericSecretObject) {
-    if (_.isEmpty(genericSecretObject)) {
+  genericSecretObjectToArray(base64StringData) {
+    if (_.isEmpty(base64StringData)) {
       return [this.newGenericSecretEntry()];
     }
-    return _.map(genericSecretObject, (value, key) => {
-      const isBinary = containsNonPrintableCharacters(value);
-      return {
-        uid: _.uniqueId(),
-        entry: {
-          key,
-          value: isBinary ? Base64.encode(value) : value,
-          isBase64: isBinary,
-          isBinary,
-        },
-      };
-    });
+    if (base64StringData) {
+      return _.map(base64StringData, (value, key) => {
+        return {
+          uid: _.uniqueId(),
+          entry: {
+            key,
+            value,
+            isBinary_: isBinary(null, Buffer.from(value || '', 'base64')),
+          },
+        };
+      });
+    }
   }
   genericSecretArrayToObject(genericSecretArray) {
     return _.reduce(
       genericSecretArray,
       (acc, k) =>
         _.assign(acc, {
-          [k.entry.key]:
-            k.entry?.isBase64 || k.entry?.isBinary ? k.entry.value : Base64.encode(k.entry.value),
+          [k.entry.key]: k.entry.value,
         }),
       {},
     );
@@ -1222,16 +1227,16 @@ class KeyValueEntryFormWithTranslation extends React.Component<
     this.state = {
       key: props.entry.key,
       value: props.entry.value,
-      isBinary: props.entry.isBinary,
+      isBinary_: props.entry.isBinary_,
     };
     this.onValueChange = this.onValueChange.bind(this);
     this.onKeyChange = this.onKeyChange.bind(this);
   }
-  onValueChange(fileData, isBinary) {
+  onValueChange(fileData, isBinary_) {
     this.setState(
       {
-        value: fileData,
-        isBase64: isBinary,
+        value: isBinary_ ? fileData : Base64.encode(fileData),
+        isBinary_,
       },
       () => this.props.onChange(this.state, this.props.id),
     );
@@ -1269,13 +1274,13 @@ class KeyValueEntryFormWithTranslation extends React.Component<
           <div>
             <DroppableFileInput
               onChange={this.onValueChange}
-              inputFileData={this.state.value}
+              inputFileData={Base64.decode(this.state.value)}
               id={`${this.props.id}-value`}
               label={t('public~Value')}
               inputFieldHelpText={t(
                 'public~Drag and drop file with your value here or browse to upload it.',
               )}
-              inputFileIsBinary={this.state.isBinary}
+              inputFileIsBinary={this.state.isBinary_}
             />
           </div>
         </div>
