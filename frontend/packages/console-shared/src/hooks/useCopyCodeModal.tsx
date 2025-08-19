@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { CopyToClipboard } from '@console/internal/components/utils';
 import { Modal } from '@console/shared/src/components/modal';
@@ -12,7 +12,7 @@ const CopyCodeModal: CopyCodeModalComponent = ({ title, snippet, closeModal }) =
 
 export const useCopyCodeModal: UseCopyCodeModal = (title, snippet) => {
   const launcher = useModal();
-  return React.useCallback(() => (snippet ? launcher(CopyCodeModal, { title, snippet }) : null), [
+  return useCallback(() => (snippet ? launcher(CopyCodeModal, { title, snippet }) : null), [
     launcher,
     snippet,
     title,

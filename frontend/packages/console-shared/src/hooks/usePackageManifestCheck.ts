@@ -1,15 +1,15 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { consoleFetchJSON as coFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 
 export const usePackageManifestCheck = (
   operatorName: string,
   operatorNamespace: string,
 ): [boolean, boolean, string] => {
-  const [pmExists, setPMExists] = React.useState<boolean>(false);
-  const [loaded, setLoaded] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
+  const [pmExists, setPMExists] = useState<boolean>(false);
+  const [loaded, setLoaded] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     const url = `${window.SERVER_FLAGS.basePath}api/check-package-manifest/?name=${operatorName}&namespace=${operatorNamespace}`;
     coFetchJSON(url)
       .then(() => {

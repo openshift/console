@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { k8sGet, K8sKind, K8sResourceCommon } from '../../module/k8s';
 
 export const useK8sGet = <R extends K8sResourceCommon = K8sResourceCommon>(
@@ -7,10 +7,10 @@ export const useK8sGet = <R extends K8sResourceCommon = K8sResourceCommon>(
   namespace?: string,
   opts?: { [k: string]: string },
 ): [R, boolean, any] => {
-  const [data, setData] = React.useState<R>();
-  const [loaded, setLoaded] = React.useState(false);
-  const [loadError, setLoadError] = React.useState();
-  React.useEffect(() => {
+  const [data, setData] = useState<R>();
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState();
+  useEffect(() => {
     const fetch = async () => {
       try {
         setLoadError(null);

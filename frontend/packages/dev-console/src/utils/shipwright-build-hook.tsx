@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { ImportStrategy } from '@console/git-service/src';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -17,11 +17,11 @@ export interface AvailableBuildStrategies {
 }
 
 export const useClusterBuildStrategy = (): [AvailableBuildStrategies, boolean] => {
-  const [data, setData] = React.useState<AvailableBuildStrategies>({
+  const [data, setData] = useState<AvailableBuildStrategies>({
     s2i: false,
     buildah: false,
   });
-  const [loaded, setLoaded] = React.useState<boolean>(false);
+  const [loaded, setLoaded] = useState<boolean>(false);
   const [, s2iLoaded, s2iErr] = useK8sGet<K8sResourceKind>(
     ClusterBuildStrategyModel,
     ClusterBuildStrategy.S2I,
@@ -31,13 +31,13 @@ export const useClusterBuildStrategy = (): [AvailableBuildStrategies, boolean] =
     ClusterBuildStrategy.BUILDAH,
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (s2iLoaded && buildahLoaded) {
       setLoaded(true);
     }
   }, [s2iLoaded, buildahLoaded]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded) {
       if (!s2iErr) {
         setData((prevData) => ({

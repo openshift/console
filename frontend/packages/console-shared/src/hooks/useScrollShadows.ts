@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useResizeObserver } from './useResizeObserver';
 
 export enum Shadows {
@@ -9,8 +9,8 @@ export enum Shadows {
 }
 
 export const useScrollShadows = (node: HTMLElement): Shadows => {
-  const [shadows, setShadows] = React.useState(Shadows.none);
-  const computeShadows = React.useCallback(() => {
+  const [shadows, setShadows] = useState(Shadows.none);
+  const computeShadows = useCallback(() => {
     if (node) {
       const { scrollTop, clientHeight, scrollHeight } = node;
       const top = scrollTop !== 0;
@@ -28,7 +28,7 @@ export const useScrollShadows = (node: HTMLElement): Shadows => {
   }, [node]);
   // recompute when the scroll container changes in size
   useResizeObserver(computeShadows, node);
-  React.useEffect(() => {
+  useEffect(() => {
     if (node) {
       // compute initial shadows
       computeShadows();

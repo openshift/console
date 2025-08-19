@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback } from 'react';
 import { OnSelect } from '@patternfly/react-table';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 
@@ -11,9 +11,9 @@ export const useSelectList = <R extends K8sResourceCommon>(
   selectedRows: Set<string>;
   updateSelectedRows: (rows: R[]) => void;
 } => {
-  const [selectedRows, setSelectedRows] = React.useState<Set<string>>(visibleRows);
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(visibleRows);
 
-  const onSelect = React.useCallback(
+  const onSelect = useCallback(
     (_event, isSelected, rowIndex, rowData) => {
       const uniqueUIDs: Set<string> = selectedRows ? new Set([...selectedRows]) : new Set<string>();
 
@@ -31,7 +31,7 @@ export const useSelectList = <R extends K8sResourceCommon>(
     [data, onRowSelected, selectedRows, visibleRows],
   );
 
-  const updateSelectedRows = React.useCallback(
+  const updateSelectedRows = useCallback(
     (rows: R[]) => {
       onRowSelected(rows);
       setSelectedRows(new Set(rows.map((row) => row.metadata.uid)));

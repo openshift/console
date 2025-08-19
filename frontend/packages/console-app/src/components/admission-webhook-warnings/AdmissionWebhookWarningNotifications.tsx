@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import { Map } from 'immutable';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +21,7 @@ export const AdmissionWebhookWarningNotifications = () => {
   const toastContext = useToast();
   const dispatch = useDispatch();
   const admissionWebhookWarnings = useAdmissionWebhookWarnings();
-  React.useEffect(() => {
+  useEffect(() => {
     const docURL = getDocumentationURL(documentationURLs.admissionWebhookWarning);
     admissionWebhookWarnings.forEach((warning, id) => {
       toastContext.addToast({

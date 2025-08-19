@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook, SetFeatureFlag } from '@console/dynamic-plugin-sdk';
@@ -55,7 +55,7 @@ export const useEventSourceProvider: ExtensionHook<CatalogItem[]> = ({
   const { loaded, eventSourceModelsList: eventSourceModels } = useEventSourceModelsWithAccess(
     namespace,
   );
-  const normalizedSources = React.useMemo(
+  const normalizedSources = useMemo(
     () => (loaded ? normalizeEventSources(eventSourceModels, namespace, t) : []),
 
     [loaded, namespace, t, eventSourceModels],

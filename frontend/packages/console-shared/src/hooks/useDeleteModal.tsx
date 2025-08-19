@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import { UseDeleteModal } from '@console/dynamic-plugin-sdk/src';
 import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
@@ -42,7 +42,7 @@ export const useDeleteModal: UseDeleteModal = (
   const launcher = useModal();
   const groupVersionKind = getGroupVersionKindForResource(resource);
   const [kind] = useK8sModel(groupVersionKind);
-  return React.useCallback(
+  return useCallback(
     () =>
       resource &&
       kind &&

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { getHealthChecksAction } from '../creators/health-checks-factory';
@@ -16,7 +16,7 @@ export const useStatefulSetActionsProvider = (resource: K8sResourceKind) => {
   ] as const);
   const commonResourceActions = useCommonResourceActions(kindObj, resource);
 
-  const actions = React.useMemo(
+  const actions = useMemo(
     () =>
       !isReady
         ? []

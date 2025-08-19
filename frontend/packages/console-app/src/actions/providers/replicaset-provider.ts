@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { DeploymentModel } from '@console/internal/models';
 import { ReplicaSetKind, referenceFor } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src';
@@ -20,7 +20,7 @@ export const useReplicaSetActionsProvider = (resource: ReplicaSetKind) => {
   const commonResourceActions = useCommonResourceActions(kindObj, resource);
   const replicaSetActions = useReplicaSetActions(kindObj, resource);
 
-  const actions = React.useMemo(
+  const actions = useMemo(
     () =>
       !isReady
         ? []

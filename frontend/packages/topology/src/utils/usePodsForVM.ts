@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/dist/core/lib/utils/k8s/hooks';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { PodModel, ReplicationControllerModel } from '@console/internal/models';
@@ -17,13 +17,13 @@ export const usePodsForVm = (
   vm: K8sResourceKind,
 ): { loaded: boolean; loadError: string; podData: PodRCData } => {
   const { namespace } = vm.metadata;
-  const [loaded, setLoaded] = React.useState<boolean>(false);
-  const [loadError, setLoadError] = React.useState<string>('');
-  const [podData, setPodData] = React.useState<PodRCData>();
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [loadError, setLoadError] = useState<string>('');
+  const [podData, setPodData] = useState<PodRCData>();
   const vmName = vm.metadata.name;
-  const vmRef = React.useRef<K8sResourceKind>(vm);
+  const vmRef = useRef<K8sResourceKind>(vm);
 
-  const watchedResources = React.useMemo(
+  const watchedResources = useMemo(
     () => ({
       replicationControllers: {
         isList: true,
@@ -47,7 +47,7 @@ export const usePodsForVm = (
 
   const resources = useK8sWatchResources<{ [key: string]: K8sResourceCommon[] }>(watchedResources);
 
-  const updateResults = React.useCallback(
+  const updateResults = useCallback(
     (updatedResources) => {
       const errorKey = Object.keys(updatedResources).find((key) => updatedResources[key].loadError);
       if (errorKey) {
@@ -85,7 +85,7 @@ export const usePodsForVm = (
 
   const debouncedUpdateResources = useDebounceCallback(updateResults, 250);
 
-  React.useEffect(() => {
+  useEffect(() => {
     debouncedUpdateResources(resources);
   }, [debouncedUpdateResources, resources]);
 

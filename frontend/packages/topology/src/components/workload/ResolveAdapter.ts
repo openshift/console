@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 
 type ResolveAdapterProps<D, T> = {
@@ -16,7 +16,7 @@ const ResolveAdapter = <D extends {}, T = {}>({
 }: ResolveAdapterProps<D, T>) => {
   const data = useAdapterHook(resource, customData);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data) {
       onAdapterDataResolved(data);
     }

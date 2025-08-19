@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentModel } from '@console/internal/models';
@@ -18,11 +18,11 @@ export const usePodsForRevisions = (
   revisionIds: string | string[],
   namespace: string,
 ): { loaded: boolean; loadError: string; pods: PodControllerOverviewItem[] } => {
-  const [loaded, setLoaded] = React.useState<boolean>(false);
-  const [loadError, setLoadError] = React.useState<string>('');
-  const [pods, setPods] = React.useState<PodControllerOverviewItem[]>([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [loadError, setLoadError] = useState<string>('');
+  const [pods, setPods] = useState<PodControllerOverviewItem[]>([]);
   const revisions = useDeepCompareMemoize(Array.isArray(revisionIds) ? revisionIds : [revisionIds]);
-  const watchedResources = React.useMemo(
+  const watchedResources = useMemo(
     () => ({
       deployments: {
         isList: true,
@@ -45,7 +45,7 @@ export const usePodsForRevisions = (
 
   const resources = useK8sWatchResources<{ [key: string]: K8sResourceCommon[] }>(watchedResources);
 
-  const updateResults = React.useCallback(
+  const updateResults = useCallback(
     (updatedResources) => {
       const errorKey = Object.keys(updatedResources).find((key) => updatedResources[key].loadError);
       if (errorKey) {
@@ -85,7 +85,7 @@ export const usePodsForRevisions = (
 
   const debouncedUpdateResources = useDebounceCallback(updateResults, 250);
 
-  React.useEffect(() => {
+  useEffect(() => {
     debouncedUpdateResources(resources);
   }, [debouncedUpdateResources, resources]);
 

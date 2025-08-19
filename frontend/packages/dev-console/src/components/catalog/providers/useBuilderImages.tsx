@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -140,11 +140,9 @@ const useBuilderImages: ExtensionHook<CatalogItem[]> = ({
     resourceSelector,
   );
 
-  const builderImageStreams = React.useMemo(() => _.filter(imageStreams, isBuilder), [
-    imageStreams,
-  ]);
+  const builderImageStreams = useMemo(() => _.filter(imageStreams, isBuilder), [imageStreams]);
 
-  const normalizedBuilderImages = React.useMemo(
+  const normalizedBuilderImages = useMemo(
     () => normalizeBuilderImages(builderImageStreams, namespace, t),
     [builderImageStreams, namespace, t],
   );

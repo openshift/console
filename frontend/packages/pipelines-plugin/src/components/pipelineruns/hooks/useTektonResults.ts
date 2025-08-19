@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { uniqBy } from 'lodash';
 import { K8sResourceCommon, Selector } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
@@ -33,15 +33,15 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
   const IS_PIPELINE_OPERATOR_VERSION_1_16_OR_NEWER = useFlag(
     FLAG_PIPELINES_OPERATOR_VERSION_1_16_OR_NEWER,
   );
-  const [nextPageToken, setNextPageToken] = React.useState<string>(null);
-  const [localCacheKey, setLocalCacheKey] = React.useState(cacheKey);
+  const [nextPageToken, setNextPageToken] = useState<string>(null);
+  const [localCacheKey, setLocalCacheKey] = useState(cacheKey);
 
   if (cacheKey !== localCacheKey) {
     // force update local cache key
     setLocalCacheKey(cacheKey);
   }
 
-  const [result, setResult] = React.useState<[Kind[], boolean, unknown, GetNextPage]>([
+  const [result, setResult] = useState<[Kind[], boolean, unknown, GetNextPage]>([
     [],
     false,
     undefined,
@@ -49,12 +49,12 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
   ]);
 
   // reset token if namespace or options change
-  React.useEffect(() => {
+  useEffect(() => {
     setNextPageToken(null);
   }, [namespace, options, cacheKey]);
 
   // eslint-disable-next-line consistent-return
-  React.useEffect(() => {
+  useEffect(() => {
     let disposed = false;
     (async () => {
       try {
@@ -170,8 +170,8 @@ export const useTRTaskRunLog = (
   taskRunName: string,
   taskRunPath: string,
 ): [string, boolean, unknown] => {
-  const [result, setResult] = React.useState<[string, boolean, unknown]>([null, false, undefined]);
-  React.useEffect(() => {
+  const [result, setResult] = useState<[string, boolean, unknown]>([null, false, undefined]);
+  useEffect(() => {
     let disposed = false;
     if (namespace && taskRunName) {
       (async () => {

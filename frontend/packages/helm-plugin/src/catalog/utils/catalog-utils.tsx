@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Fragment } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
@@ -74,12 +74,12 @@ export const normalizeHelmCharts = (
           <>
             {chart.maintainers?.map((maintainer, index) => (
               // eslint-disable-next-line react/no-array-index-key
-              <React.Fragment key={index}>
+              <Fragment key={index}>
                 {maintainer.name}
                 <br />
                 <a href={`mailto:${maintainer.email}`}>{maintainer.email}</a>
                 <br />
-              </React.Fragment>
+              </Fragment>
             ))}
           </>
         );

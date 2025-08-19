@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import * as React from 'react';
+import { useMemo } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
@@ -55,7 +55,7 @@ export const useConsoleSamplesCatalogProvider = (): [CatalogItem[], boolean, any
   const [activeNamespace] = useActiveNamespace();
   const [allSamples, loaded, loadedError] = useSamples();
 
-  const catalogItems = React.useMemo<CatalogItem[]>(() => {
+  const catalogItems = useMemo<CatalogItem[]>(() => {
     const filteredSamples = allSamples.filter((sample) => !sample.spec.tags?.includes('hidden'));
 
     const groupedSamples = groupConsoleSamplesByName(filteredSamples);

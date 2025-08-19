@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   RequestMap,
@@ -25,7 +25,7 @@ export const useDashboardResources: UseDashboardResources = ({
   );
 
   const dispatch = useDispatch();
-  React.useEffect(() => {
+  useEffect(() => {
     prometheusQueries?.forEach((query) =>
       dispatch(watchPrometheusQuery(query.query, null, query.timespan)),
     );

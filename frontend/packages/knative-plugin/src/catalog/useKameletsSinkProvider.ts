@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
@@ -58,7 +58,7 @@ const useKameletsSinkProvider: ExtensionHook<CatalogItem[]> = ({
   });
   const [kamelets, kameletsLoaded, kameletsLoadError] = useKameletsData(namespace);
 
-  const normalizedSource = React.useMemo(() => {
+  const normalizedSource = useMemo(() => {
     if (!kameletsLoaded || !canCreateKameletBinding) return [];
     const kameletSource = kamelets.filter(
       (k) => k.metadata?.labels?.[CAMEL_K_TYPE_LABEL] === 'sink',

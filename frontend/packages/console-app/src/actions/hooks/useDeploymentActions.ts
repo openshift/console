@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
@@ -85,7 +85,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
-  const factory = React.useMemo(
+  const factory = useMemo(
     () => ({
       [DeploymentActionCreator.EditDeployment]: (): Action => ({
         id: `edit-deployment`,
@@ -180,7 +180,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
     [t, resource, kind],
   );
 
-  return React.useMemo((): [ActionObject<T>, boolean] => {
+  return useMemo((): [ActionObject<T>, boolean] => {
     const actions = {} as ActionObject<T>;
 
     if (!kind || !resource) {

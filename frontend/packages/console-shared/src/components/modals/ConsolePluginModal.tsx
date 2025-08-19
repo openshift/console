@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { Form } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -30,7 +30,7 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
   } = props;
   const previouslyEnabled = isPluginEnabled(consoleOperatorConfig, pluginName);
   const { t } = useTranslation();
-  const [enabled, setEnabled] = React.useState(previouslyEnabled);
+  const [enabled, setEnabled] = useState(previouslyEnabled);
   const submit = (event) => {
     event.preventDefault();
     const patch = getPluginPatch(consoleOperatorConfig, pluginName, enabled);

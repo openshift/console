@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as UIActions from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
@@ -11,7 +11,7 @@ export const useShowOperandsInAllNamespaces: UseShowOperandsInAllNamespaces = ()
   const showOperandsInAllNamespaces = useSelector((state: RootState) =>
     state.UI.get('showOperandsInAllNamespaces'),
   );
-  const setShowOperandsInAllNamespaces = React.useCallback(
+  const setShowOperandsInAllNamespaces = useCallback(
     (value: boolean) => dispatch(UIActions.setShowOperandsInAllNamespaces(value)),
     [dispatch],
   );

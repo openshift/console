@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useMemo } from 'react';
 import differenceBy from 'lodash-es/differenceBy';
 import uniqBy from 'lodash-es/uniqBy';
 import { Selector } from '@console/dynamic-plugin-sdk/src';
@@ -27,12 +27,12 @@ const useRuns = <Kind extends K8sResourceCommon>(
   },
   cacheKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
-  const etcdRunsRef = React.useRef<Kind[]>([]);
+  const etcdRunsRef = useRef<Kind[]>([]);
   const optionsMemo = useDeepCompareMemoize(options);
   const isList = !optionsMemo?.name;
   const limit = optionsMemo?.limit;
   // do not include the limit when querying etcd because result order is not sorted
-  const watchOptions = React.useMemo(() => {
+  const watchOptions = useMemo(() => {
     // reset cached runs as the options have changed
     etcdRunsRef.current = [];
     return {
@@ -47,7 +47,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
   const [resources, loaded, error] = useK8sWatchResource(watchOptions);
 
   // if a pipeline run was removed from etcd, we want to still include it in the return value without re-querying tekton-results
-  const etcdRuns = React.useMemo(() => {
+  const etcdRuns = useMemo(() => {
     if (!loaded || error) {
       return [];
     }
@@ -56,7 +56,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
     return resourcesArray;
   }, [isList, resources, loaded, error]);
 
-  const runs = React.useMemo(() => {
+  const runs = useMemo(() => {
     if (!etcdRuns) {
       return etcdRuns;
     }
@@ -81,7 +81,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
   const queryTr =
     !limit || (namespace && ((runs && loaded && optionsMemo.limit > runs.length) || error));
 
-  const trOptions: typeof optionsMemo = React.useMemo(() => {
+  const trOptions: typeof optionsMemo = useMemo(() => {
     if (optionsMemo?.name) {
       const { name, ...rest } = optionsMemo;
       return {
@@ -104,7 +104,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
     GetNextPage,
   ];
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     const rResources =
       runs && trResources
         ? uniqBy([...runs, ...trResources], (r) => r.metadata.uid)
@@ -161,7 +161,7 @@ export const usePipelineRun = (
 ): [PipelineRunKind, boolean, string] => {
   const result = (usePipelineRuns(
     namespace,
-    React.useMemo(
+    useMemo(
       () => ({
         name: pipelineRunName,
         limit: 1,
@@ -170,7 +170,7 @@ export const usePipelineRun = (
     ),
   ) as unknown) as [PipelineRunKind[], boolean, string];
 
-  return React.useMemo(() => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]], [
+  return useMemo(() => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]], [
     result,
   ]);
 };
@@ -181,7 +181,7 @@ export const useTaskRun = (
 ): [TaskRunKind, boolean, string] => {
   const result = (useTaskRuns(
     namespace,
-    React.useMemo(
+    useMemo(
       () => ({
         name: taskRunName,
         limit: 1,
@@ -190,7 +190,7 @@ export const useTaskRun = (
     ),
   ) as unknown) as [TaskRunKind[], boolean, string];
 
-  return React.useMemo(() => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]], [
+  return useMemo(() => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]], [
     result,
   ]);
 };

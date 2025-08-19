@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
@@ -61,7 +61,7 @@ export const useEventSourceStatus = (
     true,
   );
 
-  const sourceStatus = React.useMemo(() => {
+  const sourceStatus = useMemo(() => {
     if (!isSourceKindPresent) {
       return {
         isValidSource: false,

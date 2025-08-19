@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import i18next from 'i18next';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { ResourceIcon, useAccessReview } from '@console/internal/components/utils';
@@ -66,7 +66,7 @@ const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
   const [artifactHubTasks, tasksLoaded, tasksError] = useGetArtifactHubTasks(
     canCreateTask && canUpdateTask && artifactHubIntegration,
   );
-  const normalizedArtifactHubTasks = React.useMemo<CatalogItem<TektonHubTask>[]>(
+  const normalizedArtifactHubTasks = useMemo<CatalogItem<TektonHubTask>[]>(
     () => normalizeArtifactHubTasks(artifactHubTasks),
     [artifactHubTasks],
   );

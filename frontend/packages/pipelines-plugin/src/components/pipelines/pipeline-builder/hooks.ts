@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import { useFormikContext, FormikTouched } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
@@ -78,7 +78,7 @@ export const useFormikFetchAndSaveTasks = (
     : watchedClusterTasks.loaded
     ? watchedClusterTasks.data
     : null;
-  React.useEffect(() => {
+  useEffect(() => {
     if (namespacedTaskData) {
       setFieldValue('taskResources.namespacedTasks', namespacedTaskData, false);
     }
@@ -103,7 +103,7 @@ export const useFormikFetchAndSaveTasks = (
   const error =
     namespacedTasks.loadError ||
     (!IS_PIPELINE_OPERATOR_VERSION_1_17_OR_NEWER && watchedClusterTasks.loadError);
-  React.useEffect(() => {
+  useEffect(() => {
     if (!error) return;
 
     setStatus({
@@ -123,7 +123,7 @@ const useConnectFinally = (
   tasksInError: TaskErrors,
 ): PipelineMixedNodeModel => {
   const { clusterTasks, namespacedTasks } = taskResources;
-  const taskGroupRef = React.useRef(taskGroup);
+  const taskGroupRef = useRef(taskGroup);
   taskGroupRef.current = taskGroup;
   const addNewFinallyListNode = () => {
     const data: UpdateOperationConvertToFinallyTaskData = {
@@ -248,7 +248,7 @@ export const useNodes = (
 ): PipelineMixedNodeModel[] => {
   const { clusterTasks, namespacedTasks } = taskResources;
 
-  const taskGroupRef = React.useRef(taskGroup);
+  const taskGroupRef = useRef(taskGroup);
   taskGroupRef.current = taskGroup;
 
   const onNewListNode = (task: PipelineTask, direction: AddNodeDirection) => {
@@ -398,7 +398,7 @@ export const useExplicitPipelineTaskTouch = () => {
   const workspacesTouched = !!touched.formData?.workspaces;
   const resourcesTouched = !!touched.formData?.resources;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (workspacesTouched) {
       setTouched({
         formData: {
@@ -425,7 +425,7 @@ export const useLoadingTaskCleanup = (
 ) => {
   const { values } = useFormikContext<PipelineBuilderFormikValues>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const { loadingTasks } = values.formData;
     loadingTasks.forEach((task) => {
       const installedTask = values.taskResources.namespacedTasks.find(
@@ -455,7 +455,7 @@ export const useCleanupOnFailure = (
   taskGroup: PipelineBuilderTaskGroup,
 ) => {
   const { values } = useFormikContext<PipelineBuilderFormikValues>();
-  React.useEffect(() => {
+  useEffect(() => {
     const { loadingTasks } = values.formData;
     loadingTasks.forEach((task) => {
       if (failedTasks.includes(task?.taskRef.name)) {

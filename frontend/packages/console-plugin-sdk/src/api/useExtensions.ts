@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useForceRender } from '@console/shared/src/hooks/useForceRender';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
@@ -46,12 +46,12 @@ export const useExtensions = <E extends Extension>(
 
   const forceRender = useForceRender();
 
-  const isMountedRef = React.useRef(true);
-  const unsubscribeRef = React.useRef<VoidFunction>(null);
-  const extensionsInUseRef = React.useRef<LoadedExtension<E>[]>([]);
-  const latestTypeGuardsRef = React.useRef<ExtensionTypeGuard<E>[]>(typeGuards);
+  const isMountedRef = useRef(true);
+  const unsubscribeRef = useRef<VoidFunction>(null);
+  const extensionsInUseRef = useRef<LoadedExtension<E>[]>([]);
+  const latestTypeGuardsRef = useRef<ExtensionTypeGuard<E>[]>(typeGuards);
 
-  const trySubscribe = React.useCallback(() => {
+  const trySubscribe = useCallback(() => {
     if (unsubscribeRef.current === null) {
       unsubscribeRef.current = subscribeToExtensions<E>((extensions) => {
         extensionsInUseRef.current = extensions;
@@ -60,7 +60,7 @@ export const useExtensions = <E extends Extension>(
     }
   }, [forceRender]);
 
-  const tryUnsubscribe = React.useCallback(() => {
+  const tryUnsubscribe = useCallback(() => {
     if (unsubscribeRef.current !== null) {
       unsubscribeRef.current();
       unsubscribeRef.current = null;
@@ -74,7 +74,7 @@ export const useExtensions = <E extends Extension>(
 
   trySubscribe();
 
-  React.useEffect(
+  useEffect(
     () => () => {
       isMountedRef.current = false;
       tryUnsubscribe();

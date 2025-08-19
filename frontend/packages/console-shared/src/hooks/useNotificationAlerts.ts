@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useSelector } from 'react-redux';
 import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY } from '@console/app/src/consts';
@@ -27,9 +27,9 @@ export const useNotificationAlerts = (
     ({ observe }) => observe.get('notificationAlerts') ?? {},
   );
 
-  const [filteredAlerts, setFilteredAlerts] = React.useState<NotificationAlerts['data']>([]);
+  const [filteredAlerts, setFilteredAlerts] = useState<NotificationAlerts['data']>([]);
 
-  const next = React.useMemo(() => {
+  const next = useMemo(() => {
     const alertLabelSelector = new LabelSelector(overrideMatchLabels);
     const alertRuleLabelSelector = new LabelSelector(
       hideUserWorkloadNotifications ? SYSTEM_ALERT_RULE_LABEL : {},
@@ -42,7 +42,7 @@ export const useNotificationAlerts = (
     );
   }, [alerts, overrideMatchLabels, hideUserWorkloadNotifications]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setFilteredAlerts((current) => (_.isEqual(current, next) ? current : next));
   }, [next]);
   return [filteredAlerts, loaded, loadError];

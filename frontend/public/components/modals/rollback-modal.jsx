@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
 import { getDeploymentConfigVersion, getOwnerNameByKind } from '@console/shared/src';
@@ -25,9 +25,9 @@ const BaseRollbackModal = withHandlePromise((props) => {
     props.resource,
     isDCRollback ? DeploymentConfigModel : DeploymentModel,
   );
-  const [changeScaleSettings, setChangeScaleSettings] = React.useState(false);
-  const [changeStrategy, setChangeStrategy] = React.useState(false);
-  const [changeTriggers, setChangeTriggers] = React.useState(false);
+  const [changeScaleSettings, setChangeScaleSettings] = useState(false);
+  const [changeStrategy, setChangeStrategy] = useState(false);
+  const [changeTriggers, setChangeTriggers] = useState(false);
   const deploymentResource = {
     kind: isDCRollback ? DeploymentConfigModel.kind : DeploymentModel.kind,
     isList: false,
@@ -35,7 +35,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
     namespace: props.resource.metadata.namespace,
   };
   const [deployment, loaded, loadError] = useK8sWatchResource(deploymentResource);
-  const [deploymentError, setDeploymentError] = React.useState();
+  const [deploymentError, setDeploymentError] = useState();
 
   const submitDCRollback = () => {
     const dcVersion = getDeploymentConfigVersion(props.resource);
@@ -109,7 +109,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
     return submitDeploymentRollback();
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded && !loadError && deployment) {
       if (deployment.spec.paused) {
         setDeploymentError(

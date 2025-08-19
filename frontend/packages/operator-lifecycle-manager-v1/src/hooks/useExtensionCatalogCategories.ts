@@ -1,23 +1,23 @@
-import * as React from 'react';
+import { useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { usePoll } from '@console/internal/components/utils';
 import { CatalogCategory } from '@console/shared/src/components/catalog/utils/types';
 import { ExtensionCatalogDatabaseContext } from '../contexts/ExtensionCatalogDatabaseContext';
 import { getUniqueIndexKeys, openDatabase } from '../database/indexeddb';
 
 export const useExtensionCatalogCategories = (): [CatalogCategory[], boolean, Error] => {
-  const { done: initDone, error: initError } = React.useContext(ExtensionCatalogDatabaseContext);
-  const [categories, setCategories] = React.useState([]);
-  const [loading, setLoading] = React.useState(!initDone);
-  const [error, setError] = React.useState<Error>(initError);
+  const { done: initDone, error: initError } = useContext(ExtensionCatalogDatabaseContext);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(!initDone);
+  const [error, setError] = useState<Error>(initError);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!initDone || initError) {
       setLoading(!initDone);
       setError(initError);
     }
   }, [initDone, initError]);
 
-  const tick = React.useCallback(() => {
+  const tick = useCallback(() => {
     if (initDone && !initError) {
       openDatabase('olm')
         .then((database) => getUniqueIndexKeys(database, 'extension-catalog', 'categories'))
@@ -36,7 +36,7 @@ export const useExtensionCatalogCategories = (): [CatalogCategory[], boolean, Er
 
   // Poll IndexedDB (IDB) every 10 seconds
   usePoll(tick, 10000);
-  const catalogCategories = React.useMemo<CatalogCategory[]>(
+  const catalogCategories = useMemo<CatalogCategory[]>(
     () => categories.map((c) => ({ id: c, label: c, tags: [c] })),
     [categories],
   );

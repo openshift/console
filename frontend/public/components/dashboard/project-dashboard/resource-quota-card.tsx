@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
@@ -11,7 +11,7 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 import { ResourceQuotaKind, AppliedClusterResourceQuotaKind } from '../../../module/k8s';
 
 export const ResourceQuotaCard = () => {
-  const { obj } = React.useContext(ProjectDashboardContext);
+  const { obj } = useContext(ProjectDashboardContext);
 
   const [quotas, rqLoaded, rqLoadError] = useK8sWatchResource<ResourceQuotaKind[]>({
     groupVersionKind: {

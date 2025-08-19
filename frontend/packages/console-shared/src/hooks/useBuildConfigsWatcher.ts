@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { BuildConfigOverviewItem } from '../types';
@@ -12,7 +12,7 @@ export type BuildConfigData = {
 
 export const useBuildConfigsWatcher = (resource: K8sResourceKind): BuildConfigData => {
   const { namespace } = resource.metadata;
-  const watchedResources = React.useMemo(
+  const watchedResources = useMemo(
     () => ({
       buildConfigs: {
         isList: true,
@@ -30,7 +30,7 @@ export const useBuildConfigsWatcher = (resource: K8sResourceKind): BuildConfigDa
 
   const resources = useK8sWatchResources(watchedResources);
 
-  const result = React.useMemo(() => {
+  const result = useMemo(() => {
     const resourceWithLoadError = Object.values(resources).find((r) => r.loadError);
     if (resourceWithLoadError) {
       return { loaded: false, loadError: resourceWithLoadError.loadError, buildConfigs: null };

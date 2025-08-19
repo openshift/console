@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { forwardRef } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -10,7 +10,7 @@ import { useField } from 'formik';
 import { TextAreaProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
+const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ label, helpText, required, onChange, ...props }, ref) => {
     const [field, { touched, error }] = useField(props.name);
     const fieldId = getFieldId(props.name, 'input');

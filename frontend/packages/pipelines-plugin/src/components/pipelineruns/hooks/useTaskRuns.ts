@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { Selector } from '@console/dynamic-plugin-sdk/src';
 import { TaskRunKind } from '../../../types';
 import { TektonResourceLabel } from '../../pipelines/const';
@@ -12,7 +12,7 @@ export const useTaskRuns = (
   cacheKey?: string,
   pipelineRunUid?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] => {
-  const selector: Selector = React.useMemo(() => {
+  const selector: Selector = useMemo(() => {
     if (pipelineRunName && pipelineRunUid) {
       return {
         matchLabels: {
@@ -37,7 +37,7 @@ export const useTaskRuns = (
     cacheKey,
   );
 
-  const sortedTaskRuns = React.useMemo(
+  const sortedTaskRuns = useMemo(
     () =>
       taskRuns?.sort((a, b) => {
         if (a?.status?.completionTime) {
@@ -53,7 +53,7 @@ export const useTaskRuns = (
       }),
     [taskRuns],
   );
-  return React.useMemo(() => [sortedTaskRuns, loaded, error, getNextPage], [
+  return useMemo(() => [sortedTaskRuns, loaded, error, getNextPage], [
     sortedTaskRuns,
     loaded,
     error,
