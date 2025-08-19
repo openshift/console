@@ -5,12 +5,14 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { NodeKind } from '@console/internal/module/k8s';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { findNodeMaintenance } from '../../selectors';
-import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
-import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
+import { useStartNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
+import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 
 export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (resource) => {
   const { t } = useTranslation();
   const [maintenanceModel] = useMaintenanceCapability();
+  const launchStartNodeMaintenanceModal = useStartNodeMaintenanceModal();
+  const launchStopNodeMaintenanceModal = useStopNodeMaintenanceModal();
 
   const [maintenances, loading, loadError] = useK8sWatchResource<K8sResourceCommon[]>({
     isList: true,
@@ -28,7 +30,7 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
     let action: Action = {
       id: 'start-node-maintenance',
       label: t('metal3-plugin~Start Maintenance'),
-      cta: () => startNodeMaintenanceModal({ nodeName: resource.metadata.name }),
+      cta: () => launchStartNodeMaintenanceModal({ nodeName: resource.metadata.name }),
       insertBefore: 'edit-labels',
     };
 
@@ -36,12 +38,18 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
       action = {
         id: 'stop-node-maintenance',
         label: t('metal3-plugin~Stop Maintenance'),
-        cta: () => stopNodeMaintenanceModal(nodeMaintenance, t),
+        cta: () => launchStopNodeMaintenanceModal(nodeMaintenance),
         insertBefore: 'edit-labels',
       };
     }
     return [action];
-  }, [maintenances, resource.metadata.name, t]);
+  }, [
+    maintenances,
+    resource.metadata.name,
+    t,
+    launchStartNodeMaintenanceModal,
+    launchStopNodeMaintenanceModal,
+  ]);
 
   return [actions, loading, loadError];
 };

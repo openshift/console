@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { TFunction } from 'i18next';
 import { confirmModal, deleteModal } from '@console/internal/components/modals';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
@@ -47,11 +48,26 @@ import { getMachineMachineSetOwner } from '../../selectors/machine';
 import { findMachineSet } from '../../selectors/machine-set';
 import { getHostStatus } from '../../status/host-status';
 import { BareMetalHostKind } from '../../types';
-import { powerOffHostModal } from '../modals/PowerOffHostModal';
-import { restartHostModal } from '../modals/RestartHostModal';
-import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
-import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
+import { usePowerOffHostModal } from '../modals/PowerOffHostModal';
+import { useRestartHostModal } from '../modals/RestartHostModal';
+import { useStartNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
+import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 import { StatusProps } from '../types';
+
+// Custom hook to get modal functions
+export const useHostMenuActions = () => {
+  const powerOffHostModal = usePowerOffHostModal();
+  const restartHostModal = useRestartHostModal();
+  const startNodeMaintenanceModal = useStartNodeMaintenanceModal();
+  const stopNodeMaintenanceModal = useStopNodeMaintenanceModal();
+
+  return {
+    powerOffHostModal,
+    restartHostModal,
+    startNodeMaintenanceModal,
+    stopNodeMaintenanceModal,
+  };
+};
 
 type ActionArgs = {
   machine?: MachineKind;
@@ -63,6 +79,7 @@ type ActionArgs = {
   status: StatusProps;
   bmoEnabled: string;
   t: TFunction;
+  modalActions: ReturnType<typeof useHostMenuActions>;
 };
 
 export const Edit = (
@@ -77,21 +94,28 @@ export const Edit = (
 export const SetNodeMaintenance = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { hasNodeMaintenanceCapability, nodeMaintenance, nodeName, t }: ActionArgs,
+  { hasNodeMaintenanceCapability, nodeMaintenance, nodeName, t, modalActions }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !!nodeMaintenance,
   label: t('metal3-plugin~Start Maintenance'),
-  callback: () => startNodeMaintenanceModal({ nodeName }),
+  callback: () => modalActions.startNodeMaintenanceModal({ nodeName }),
 });
 
 export const RemoveNodeMaintenance = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { hasNodeMaintenanceCapability, nodeMaintenance, nodeName, maintenanceModel, t }: ActionArgs,
+  {
+    hasNodeMaintenanceCapability,
+    nodeMaintenance,
+    nodeName,
+    maintenanceModel,
+    t,
+    modalActions,
+  }: ActionArgs,
 ): KebabOption => ({
   hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
   label: t('metal3-plugin~Stop Maintenance'),
-  callback: () => stopNodeMaintenanceModal(nodeMaintenance, t),
+  callback: () => modalActions.stopNodeMaintenanceModal(nodeMaintenance),
   accessReview: nodeMaintenance && asAccessReview(maintenanceModel, nodeMaintenance, 'delete'),
 });
 
@@ -167,24 +191,25 @@ export const Deprovision = (
 export const PowerOff = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { nodeName, status, bmoEnabled, t }: ActionArgs,
-) => ({
+  { bmoEnabled, nodeName, status, t, modalActions }: ActionArgs,
+): KebabOption => ({
   hidden:
     [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
       getHostPowerStatus(host),
     ) ||
+    isHostScheduledForRestart(host) ||
     !hasPowerManagement(host) ||
     !bmoEnabled ||
     isDetached(host),
   label: t('metal3-plugin~Power Off'),
-  callback: () => powerOffHostModal({ host, nodeName, status }),
+  callback: () => modalActions.powerOffHostModal({ host, nodeName, status }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
 });
 
 export const Restart = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { bmoEnabled, t }: ActionArgs,
+  { bmoEnabled, t, modalActions }: ActionArgs,
 ) => ({
   hidden:
     [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
@@ -195,7 +220,7 @@ export const Restart = (
     !bmoEnabled ||
     isDetached(host),
   label: t('metal3-plugin~Restart'),
-  callback: () => restartHostModal({ host }),
+  callback: () => modalActions.restartHostModal({ host }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
 });
 
@@ -269,6 +294,62 @@ export const menuActionsCreator = (
       bmoEnabled,
       maintenanceModel,
       t,
+      modalActions: {
+        powerOffHostModal: () => {},
+        restartHostModal: () => {},
+        startNodeMaintenanceModal: () => {},
+        stopNodeMaintenanceModal: () => {},
+      },
     });
   });
+};
+
+export const useMenuActionsCreator = (
+  kindObj: K8sKind,
+  host: BareMetalHostKind,
+  { machines, machineSets, nodes, nodeMaintenances }: ExtraResources,
+  { hasNodeMaintenanceCapability, maintenanceModel, bmoEnabled, t },
+) => {
+  const modalActions = useHostMenuActions();
+
+  const machine = getHostMachine(host, machines);
+  const node = getMachineNode(machine, nodes);
+  const nodeName = getMachineNodeName(machine);
+  const nodeMaintenance = findNodeMaintenance(nodeMaintenances, nodeName);
+  const status = getHostStatus({ host, machine, node, nodeMaintenance });
+
+  const machineOwner = getMachineMachineSetOwner(machine);
+  const machineSet = findMachineSet(machineSets, machineOwner && machineOwner.uid);
+
+  const actions = React.useMemo(() => {
+    return menuActions.map((action) => {
+      return action(kindObj, host, {
+        hasNodeMaintenanceCapability,
+        nodeMaintenance,
+        nodeName,
+        machine,
+        machineSet,
+        status,
+        bmoEnabled,
+        maintenanceModel,
+        t,
+        modalActions,
+      });
+    });
+  }, [
+    kindObj,
+    host,
+    hasNodeMaintenanceCapability,
+    nodeMaintenance,
+    nodeName,
+    machine,
+    machineSet,
+    status,
+    bmoEnabled,
+    maintenanceModel,
+    t,
+    modalActions,
+  ]);
+
+  return actions;
 };
