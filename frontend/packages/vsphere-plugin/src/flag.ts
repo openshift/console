@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { k8sGet, useK8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { VSPHERE_FEATURE_FLAG, VSPHERE_PLATFORM } from './constants';
@@ -11,7 +11,7 @@ export const useVSphereFlagHandler = (setFeatureFlag: SetFeatureFlag) => {
     kind: 'Infrastructure',
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const doItAsync = async () => {
       try {
         const infra = await k8sGet<Infrastructure>({

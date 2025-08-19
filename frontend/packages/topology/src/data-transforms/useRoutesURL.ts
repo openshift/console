@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useRoutesWatcher } from '@console/shared';
 import { ROUTE_DISABLED_ANNOTATION, ROUTE_URL_ANNOTATION } from '../const';
@@ -9,11 +9,11 @@ export const useRoutesURL = (resource: K8sResourceKind): string => {
   const annotationURL = resource?.metadata?.annotations?.[ROUTE_URL_ANNOTATION];
 
   const routeResources = useRoutesWatcher(resource);
-  const routes = React.useMemo(
+  const routes = useMemo(
     () => (routeResources.loaded && !routeResources.loadError ? routeResources.routes : []),
     [routeResources],
   );
-  const watchedURL = React.useMemo(() => getRoutesURL(resource, routes), [resource, routes]);
+  const watchedURL = useMemo(() => getRoutesURL(resource, routes), [resource, routes]);
 
   const url = annotationURL || watchedURL;
   if (disabled || !url || !(url.startsWith('http://') || url.startsWith('https://'))) {

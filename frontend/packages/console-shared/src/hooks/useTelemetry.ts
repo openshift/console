@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useCallback } from 'react';
 import {
   useResolvedExtensions,
   isTelemetryListener,
@@ -85,7 +85,7 @@ export const useTelemetry = () => {
 
   const [extensions] = useResolvedExtensions<TelemetryListener>(isTelemetryListener);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       userIsOptedInToTelemetry(currentUserPreferenceTelemetryValue) &&
       clusterIsOptedInToTelemetry() &&
@@ -100,7 +100,7 @@ export const useTelemetry = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUserPreferenceTelemetryValue, userResourceIsLoaded]);
 
-  return React.useCallback<TelemetryEventListener>(
+  return useCallback<TelemetryEventListener>(
     (eventType, properties: Record<string, any>) => {
       if (isOptedOutFromTelemetry(currentUserPreferenceTelemetryValue)) return;
 

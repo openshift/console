@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
 import { ClusterServiceVersionModel } from '../models';
@@ -38,7 +38,7 @@ export const useClusterServiceVersion = (
       : null,
   );
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     if (copiedCSVsDisabled && Boolean(namespacedCSVLoadError)) {
       return [isCopiedCSV(globalCSV) ? globalCSV : null, globalCSVLoaded, globalCSVLoadError];
     }

@@ -54,7 +54,6 @@ import {
   Status,
   isCephProvisioner,
   getAnnotations,
-  RedExclamationCircleIcon,
   onlyPvcSCs,
 } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
@@ -225,7 +224,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             {!validSize && (
               <FormHelperText>
                 <HelperText>
-                  <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                  <HelperTextItem variant="error">
                     {t(
                       'console-app~Size should be equal or greater than the restore size of snapshot.',
                     )}

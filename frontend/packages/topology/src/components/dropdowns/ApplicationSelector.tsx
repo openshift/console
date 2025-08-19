@@ -10,12 +10,7 @@ import {
 import { useFormikContext, FormikValues, useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  InputField,
-  RedExclamationCircleIcon,
-  getFieldId,
-  useFormikValidationFix,
-} from '@console/shared';
+import { InputField, getFieldId, useFormikValidationFix } from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../../const';
 import { sanitizeApplicationValue } from '../../utils/application-utils';
 import ApplicationDropdown from './ApplicationDropdown';
@@ -121,9 +116,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           <FormHelperText>
             <HelperText>
               {!isValid ? (
-                <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-                  {errorMessage}
-                </HelperTextItem>
+                <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
               ) : (
                 <HelperTextItem>
                   {t('topology~Select an Application to group this component.')}

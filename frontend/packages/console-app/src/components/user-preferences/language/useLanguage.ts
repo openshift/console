@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';
 import { getProcessedResourceBundle } from '../../quick-starts/utils/quick-start-context';
@@ -9,7 +9,7 @@ export const useLanguage = (preferredLanguage: string, preferredLanguageLoaded: 
   const { i18n } = useTranslation();
   const { setResourceBundle } = useQuickStartContext();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const onLanguageChange = (lng: string) => {
       if (setResourceBundle) {
         // Update language resource of quick starts components

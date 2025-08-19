@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { LaunchOverlay, OverlayContext } from './OverlayProvider';
 
 type UseOverlayLauncher = () => LaunchOverlay;
@@ -45,6 +45,6 @@ type UseOverlayLauncher = () => LaunchOverlay;
  * ```
  */
 export const useOverlay: UseOverlayLauncher = () => {
-  const { launchOverlay } = React.useContext(OverlayContext);
+  const { launchOverlay } = useContext(OverlayContext);
   return launchOverlay;
 };

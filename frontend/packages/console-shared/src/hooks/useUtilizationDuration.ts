@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { UseUtilizationDuration } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import * as UIActions from '@console/internal/actions/ui';
@@ -20,16 +20,16 @@ export const useUtilizationDuration: UseUtilizationDuration = (
     useSelector<RootState, string>(({ UI }) => UI.getIn(['utilizationDuration', 'selectedKey'])) ??
     DEFAULT_DURATION_KEY;
   const startDate = new Date(endDate.getTime() - duration);
-  const updateEndDate = React.useCallback(
+  const updateEndDate = useCallback(
     (date: Date) => date > endDate && dispatch(UIActions.setUtilizationDurationEndTime(date)),
     [dispatch, endDate],
   );
-  const updateDuration = React.useCallback(
+  const updateDuration = useCallback(
     (newDuration: number) =>
       dispatch(UIActions.setUtilizationDuration(adjustDuration?.(newDuration) ?? newDuration)),
     [adjustDuration, dispatch],
   );
-  const updateSelectedKey = React.useCallback(
+  const updateSelectedKey = useCallback(
     (key: string) => dispatch(UIActions.setUtilizationDurationSelectedKey(key)),
     [dispatch],
   );

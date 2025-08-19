@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define, tsdoc/syntax */
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as PropTypes from 'prop-types';
 import { Link, useParams } from 'react-router-dom-v5-compat';
@@ -96,7 +96,7 @@ const kindFilter = (reference, { involvedObject }) => {
 };
 
 const Actions = ({ actions, options, list, cache, index }) => {
-  React.useEffect(() => {
+  useEffect(() => {
     // Actions contents will render after the initial row height calculation,
     // so recompute the row height.
     cache.clear(index);
@@ -229,10 +229,10 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
 
 export const EventsList = (props) => {
   const { t } = useTranslation();
-  const [type, setType] = React.useState('all');
-  const [textFilter, setTextFilter] = React.useState('');
+  const [type, setType] = useState('all');
+  const [textFilter, setTextFilter] = useState('');
   const { ns } = useParams();
-  const [selected, setSelected] = React.useState(new Set([]));
+  const [selected, setSelected] = useState(new Set([]));
   const eventTypes = {
     all: t('public~All types'),
     normal: t('public~Normal'),
@@ -372,18 +372,18 @@ const EventStream = ({
   textFilter,
 }) => {
   const { t } = useTranslation();
-  const [active, setActive] = React.useState(true);
-  const [sortedEvents, setSortedEvents] = React.useState([]);
-  const [error, setError] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
-  const ws = React.useRef(null);
+  const [active, setActive] = useState(true);
+  const [sortedEvents, setSortedEvents] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const ws = useRef(null);
 
-  const filteredEvents = React.useMemo(() => {
+  const filteredEvents = useMemo(() => {
     return filterEvents(sortedEvents, { kind, type, filter, textFilter }).slice(0, maxMessages);
   }, [sortedEvents, kind, type, filter, textFilter]);
 
   // Handle websocket setup and teardown when dependent props change
-  React.useEffect(() => {
+  useEffect(() => {
     ws.current?.destroy();
     if (!mock) {
       const webSocketID = `${namespace || 'all'}-sysevents`;
@@ -452,7 +452,7 @@ const EventStream = ({
   }, [namespace, fieldSelector, mock, t]);
 
   // Pause/unpause the websocket when the active state changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (active) {
       ws.current?.unpause();
     } else {

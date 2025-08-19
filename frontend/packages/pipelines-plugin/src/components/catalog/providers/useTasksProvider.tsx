@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useFormikContext } from 'formik';
 import i18next from 'i18next';
 import * as _ from 'lodash';
@@ -72,14 +72,12 @@ const useTasksProvider: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boole
     taskResources: { namespacedTasks, clusterTasks, tasksLoaded },
   } = values;
 
-  const tektonTasks = React.useMemo(() => _.filter([...namespacedTasks, ...clusterTasks]), [
+  const tektonTasks = useMemo(() => _.filter([...namespacedTasks, ...clusterTasks]), [
     namespacedTasks,
     clusterTasks,
   ]);
 
-  const normalizedTektonTasks = React.useMemo(() => normalizeTektonTasks(tektonTasks), [
-    tektonTasks,
-  ]);
+  const normalizedTektonTasks = useMemo(() => normalizeTektonTasks(tektonTasks), [tektonTasks]);
   return [normalizedTektonTasks, tasksLoaded, status?.taskLoadingError];
 };
 

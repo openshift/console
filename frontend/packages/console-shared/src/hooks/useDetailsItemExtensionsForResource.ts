@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback, useMemo } from 'react';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
@@ -20,7 +20,7 @@ export const useDetailsItemExtensionsForResource: UseDetailsItemExtensionsForRes
   obj,
   column,
 ) => {
-  const typeGuard = React.useCallback<ExtensionTypeGuard<DetailsItem>>(
+  const typeGuard = useCallback<ExtensionTypeGuard<DetailsItem>>(
     (e): e is DetailsItem => {
       const columnMatches = e.properties.column === column;
       const modelMatches = referenceFor(obj) === referenceForExtensionModel(e.properties.model);
@@ -31,7 +31,7 @@ export const useDetailsItemExtensionsForResource: UseDetailsItemExtensionsForRes
 
   const [extensions] = useResolvedExtensions<DetailsItem>(typeGuard);
 
-  return React.useMemo(
+  return useMemo(
     () =>
       (extensions ?? []).sort((a, b) => {
         const aWeight = Number(a.properties.sortWeight);

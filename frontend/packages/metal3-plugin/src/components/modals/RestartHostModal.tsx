@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
@@ -29,7 +29,7 @@ const RestartHostModal = ({
   cancel = undefined,
 }: RestartHostModalProps) => {
   const { t } = useTranslation();
-  const onSubmit = React.useCallback(
+  const onSubmit = useCallback(
     async (event) => {
       event.preventDefault();
       const promise = restartHost(host);

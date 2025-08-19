@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
 import { getRoutesForServices } from '../utils';
@@ -14,7 +14,7 @@ export const useRoutesWatcher = (
     namespace: resource?.metadata?.namespace,
   });
 
-  const servicesNames = React.useMemo(
+  const servicesNames = useMemo(
     () =>
       !watchedServices.loadError && watchedServices.loaded
         ? watchedServices.services.map((s) => s.metadata?.name)
@@ -22,7 +22,7 @@ export const useRoutesWatcher = (
     [watchedServices.loadError, watchedServices.loaded, watchedServices.services],
   );
 
-  const routes = React.useMemo(() => getRoutesForServices(servicesNames, allRoutes), [
+  const routes = useMemo(() => getRoutesForServices(servicesNames, allRoutes), [
     servicesNames,
     allRoutes,
   ]);

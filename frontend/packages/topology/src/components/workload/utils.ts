@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import {
   AdapterDataType,
@@ -42,7 +42,7 @@ export const getDataFromAdapter = <T extends { resource: K8sResourceCommon }, E 
 const usePodsAdapterForWorkloads = (resource: K8sResourceCommon): PodsAdapterDataType => {
   const buildConfigData = useBuildConfigsWatcher(resource);
   const { podData, loaded, loadError } = usePodsWatcher(resource);
-  return React.useMemo(() => ({ pods: podData?.pods, loaded, loadError, buildConfigData }), [
+  return useMemo(() => ({ pods: podData?.pods, loaded, loadError, buildConfigData }), [
     buildConfigData,
     loadError,
     loaded,
@@ -120,16 +120,16 @@ const usePodsAdapterForCronJobWorkloads = (resource: K8sResourceCommon): PodsAda
     metadata: { namespace },
   } = resource;
 
-  const [pods, setPods] = React.useState([]);
-  const [loaded, setLoaded] = React.useState<boolean>(false);
-  const [loadError, setLoadError] = React.useState<string>('');
-  const watchedResources = React.useMemo(() => getResourcesToWatchForPods('CronJob', namespace), [
+  const [pods, setPods] = useState([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [loadError, setLoadError] = useState<string>('');
+  const watchedResources = useMemo(() => getResourcesToWatchForPods('CronJob', namespace), [
     namespace,
   ]);
 
   const resources = useK8sWatchResources(watchedResources);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const errorKey = Object.keys(resources).find((key) => resources[key].loadError);
     if (errorKey) {
       setLoadError(resources[errorKey].loadError);

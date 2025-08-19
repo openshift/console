@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import i18n from '@console/internal/i18n';
 import { useTranslation } from 'react-i18next';
@@ -493,16 +493,16 @@ export const TileViewPage = (props) => {
 
   const { t } = useTranslation();
   const [, setSearchParams] = useSearchParams();
-  const filterByKeywordInput = React.useRef();
-  const [prevProps, setPrevProps] = React.useState(props);
+  const filterByKeywordInput = useRef();
+  const [prevProps, setPrevProps] = useState(props);
 
-  const [categories, setCategories] = React.useState(
+  const [categories, setCategories] = useState(
     categorizeItems(items, itemsSorter, getAvailableCategories(items)),
   );
-  const [selectedCategoryId, setSelectedCategoryId] = React.useState('all');
-  const [activeFilters, setActiveFilters] = React.useState(defaultFilters);
-  const [filterCounts, setFilterCounts] = React.useState(null);
-  const [filterGroupsShowAll, setFilterGroupsShowAll] = React.useState({});
+  const [selectedCategoryId, setSelectedCategoryId] = useState('all');
+  const [activeFilters, setActiveFilters] = useState(defaultFilters);
+  const [filterCounts, setFilterCounts] = useState(null);
+  const [filterGroupsShowAll, setFilterGroupsShowAll] = useState({});
 
   const updateURLParams = (paramName, value) => {
     const params = new URLSearchParams(window.location.search);
@@ -525,7 +525,7 @@ export const TileViewPage = (props) => {
     setSearchParams(params);
   };
 
-  const getUpdatedState = React.useCallback((selectedCategories, categoryId, filters) => {
+  const getUpdatedState = useCallback((selectedCategories, categoryId, filters) => {
     if (!items) {
       return;
     }
@@ -574,9 +574,9 @@ export const TileViewPage = (props) => {
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  React.useEffect(initState, []);
+  useEffect(initState, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!_.isEqual(items, prevProps?.items)) {
       const availableFilters = getAvailableFilters(defaultFilters, items, filterGroups);
       const availableCategories = getAvailableCategories(items);

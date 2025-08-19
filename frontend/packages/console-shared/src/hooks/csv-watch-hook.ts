@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
@@ -12,7 +12,7 @@ type CsvWatchResource = {
   csvError: {};
 };
 export const useCsvWatchResource = (ns: string): CsvWatchResource => {
-  const csvResource = React.useMemo(
+  const csvResource = useMemo(
     () => ({
       isList: true,
       kind: referenceForModel(ClusterServiceVersionModel),

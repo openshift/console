@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { Alert } from '@console/dynamic-plugin-sdk';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
@@ -12,7 +12,7 @@ export const useMonitoringAlerts = (
   loadError: string;
 } => {
   const [alertsResponse, alertsError, alertsLoading] = usePrometheusRulesPoll({ namespace });
-  const response = React.useMemo(() => {
+  const response = useMemo(() => {
     let alertData;
     if (!alertsLoading && !alertsError) {
       alertData = getAlertsAndRules(alertsResponse?.data).alerts;

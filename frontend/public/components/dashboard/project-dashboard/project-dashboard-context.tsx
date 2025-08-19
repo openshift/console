@@ -1,7 +1,7 @@
-import * as React from 'react';
+import { createContext } from 'react';
 import { K8sResourceKind } from '../../../module/k8s';
 
-export const ProjectDashboardContext = React.createContext<ProjectDashboardContext>({});
+export const ProjectDashboardContext = createContext<ProjectDashboardContext>({});
 
 // eslint-disable-next-line no-redeclare
 type ProjectDashboardContext = {

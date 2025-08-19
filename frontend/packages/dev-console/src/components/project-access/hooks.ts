@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterRoleModel } from '@console/internal/models';
 import { K8sResourceCommon, WatchK8sResource } from '@console/internal/module/k8s';
@@ -11,7 +11,7 @@ export type ClusterRoleKind = K8sResourceCommon & {
 export const useProjectAccessRoles = (): { data: Roles; loaded: boolean } => {
   const availableClusterRoles = getAvailableAccessRoles();
 
-  const watchedClusterRoles = React.useMemo<Record<string, WatchK8sResource>>(() => {
+  const watchedClusterRoles = useMemo<Record<string, WatchK8sResource>>(() => {
     if (!availableClusterRoles || !availableClusterRoles.length) {
       return {};
     }

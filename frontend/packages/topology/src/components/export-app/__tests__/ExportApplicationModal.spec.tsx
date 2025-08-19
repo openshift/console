@@ -1,14 +1,25 @@
-import { shallow } from 'enzyme';
+import { screen, render, configure, fireEvent } from '@testing-library/react';
 import * as _ from 'lodash';
 import { act } from 'react-dom/test-utils';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import * as useToastModule from '@console/shared/src/components/toast/useToast';
 import * as useUserSettingsModule from '@console/shared/src/hooks/useUserSettings';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { getExportAppData } from '@console/topology/src/utils/export-app-utils';
 import { ExportModel } from '../../../models';
 import { ExportApplicationModal } from '../ExportApplicationModal';
-import ExportViewLogButton from '../ExportViewLogButton';
 import { mockExportData } from './export-data';
+import '@testing-library/jest-dom';
+
+configure({ testIdAttribute: 'data-test' });
+
+jest.mock('react-i18next', () => {
+  const reactI18next = jest.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    Trans: () => null,
+  };
+});
 
 describe('ExportApplicationModal', () => {
   const spyUseToast = jest.spyOn(useToastModule, 'default');
@@ -24,50 +35,48 @@ describe('ExportApplicationModal', () => {
   });
 
   it('should show cancel and  ok buttons when export app resource is not found', async () => {
-    const wrapper = shallow(<ExportApplicationModal name="my-export" namespace="my-app" />);
-    expect(wrapper.find('[data-test="cancel-btn"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test="close-btn"]').exists()).toBe(true);
+    render(<ExportApplicationModal name="my-export" namespace="my-app" />);
+    expect(screen.getByTestId('cancel-btn')).toBeInTheDocument();
+    expect(screen.getByTestId('close-btn')).toBeInTheDocument();
   });
 
-  it('should show cancel export, restart export and  ok buttons when export app is in progress', () => {
+  it('should show cancel export, restart export and ok buttons when export app is in progress', async () => {
     const exportData = _.cloneDeep(mockExportData);
     exportData.status.completed = false;
-    const wrapper = shallow(
+    renderWithProviders(
       <ExportApplicationModal name="my-export" namespace="my-app" exportResource={exportData} />,
     );
-    expect(wrapper.find('[data-test="export-close-btn"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test="export-cancel-btn"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test="export-restart-btn"]').exists()).toBe(true);
+    expect(screen.getByTestId('export-close-btn')).toBeInTheDocument();
+    expect(screen.getByTestId('export-cancel-btn')).toBeInTheDocument();
+    expect(screen.getByTestId('export-restart-btn')).toBeInTheDocument();
   });
 
   it('should contain view log button and call onViewLog', () => {
     const exportData = _.cloneDeep(mockExportData);
     exportData.status.completed = false;
-    const wrapper = shallow(
+    renderWithProviders(
       <ExportApplicationModal name="my-export" namespace="my-app" exportResource={exportData} />,
     );
-    expect(wrapper.find(ExportViewLogButton).exists()).toBe(true);
+    expect(screen.getByTestId('export-view-log-btn')).toBeInTheDocument();
   });
 
   it('should show cancel and ok buttons when export app resource is created', async () => {
-    const wrapper = shallow(
+    render(
       <ExportApplicationModal
         name="my-export"
         namespace="my-app"
         exportResource={mockExportData}
       />,
     );
-    expect(wrapper.find('[data-test="cancel-btn"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test="close-btn"]').exists()).toBe(true);
+    expect(screen.getByTestId('cancel-btn')).toBeInTheDocument();
+    expect(screen.getByTestId('close-btn')).toBeInTheDocument();
   });
 
   it('should call k8sCreate with correct data on click of Ok button when the export resource is not created', async () => {
     const spyk8sCreate = jest.spyOn(k8sResourceModule, 'k8sCreate');
-    const wrapper = shallow(
-      <ExportApplicationModal namespace="my-app" name="my-export" cancel={jest.fn()} />,
-    );
+    render(<ExportApplicationModal namespace="my-app" name="my-export" cancel={jest.fn()} />);
     await act(async () => {
-      wrapper.find('[data-test="close-btn"]').simulate('click');
+      fireEvent.click(screen.getByTestId('close-btn'));
     });
 
     expect(spyk8sCreate).toHaveBeenCalledTimes(1);
@@ -78,7 +87,7 @@ describe('ExportApplicationModal', () => {
     const spyk8sKill = jest.spyOn(k8sResourceModule, 'k8sKill');
     const spyk8sCreate = jest.spyOn(k8sResourceModule, 'k8sCreate');
 
-    const wrapper = shallow(
+    render(
       <ExportApplicationModal
         name="my-export"
         namespace="my-app"
@@ -87,7 +96,7 @@ describe('ExportApplicationModal', () => {
       />,
     );
     await act(async () => {
-      wrapper.find('[data-test="close-btn"]').simulate('click');
+      fireEvent.click(screen.getByTestId('close-btn'));
     });
 
     expect(spyk8sKill).toHaveBeenCalledTimes(1);
@@ -101,12 +110,12 @@ describe('ExportApplicationModal', () => {
     const spyk8sCreate = jest.spyOn(k8sResourceModule, 'k8sCreate');
     const exportData = _.cloneDeep(mockExportData);
     exportData.status.completed = false;
-    const wrapper = shallow(
+    renderWithProviders(
       <ExportApplicationModal name="my-export" namespace="my-app" exportResource={exportData} />,
     );
 
     await act(async () => {
-      wrapper.find('[data-test="export-restart-btn"]').simulate('click');
+      fireEvent.click(screen.getByTestId('export-restart-btn'));
     });
 
     expect(spyk8sKill).toHaveBeenCalledTimes(1);
@@ -119,12 +128,12 @@ describe('ExportApplicationModal', () => {
     const spyk8sKill = jest.spyOn(k8sResourceModule, 'k8sKill');
     const exportData = _.cloneDeep(mockExportData);
     exportData.status.completed = false;
-    const wrapper = shallow(
+    renderWithProviders(
       <ExportApplicationModal name="my-export" namespace="my-app" exportResource={exportData} />,
     );
 
     await act(async () => {
-      wrapper.find('[data-test="export-restart-btn"]').simulate('click');
+      fireEvent.click(screen.getByTestId('export-restart-btn'));
     });
 
     expect(spyk8sKill).toHaveBeenCalledTimes(1);

@@ -1,11 +1,18 @@
-.odc-imagestream-separator {
-  position: absolute;
-  top: 50%;
-  left: 0;
-}
 .odc-imagestream-alert {
   margin-top: 1em;
 }
 .odc-imagestream-clipboard {
   margin-top: var(--pf-t--global--spacer--md);
+}
+.odc-imagestream-colon::after {
+  content: ":";
+  @extend %odc-imagestream-separator;
+}
+%odc-imagestream-separator {
+  padding: .4rem;
+  position: absolute;
+}
+.odc-imagestream-slash::after {
+  content: "/";
+  @extend %odc-imagestream-separator;
 }

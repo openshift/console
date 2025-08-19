@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { PureComponent } from 'react';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
@@ -321,7 +321,7 @@ const keyStringToComponent = {
   },
 };
 
-export class ValueFromPair extends React.PureComponent {
+export class ValueFromPair extends PureComponent {
   constructor(props) {
     super(props);
 

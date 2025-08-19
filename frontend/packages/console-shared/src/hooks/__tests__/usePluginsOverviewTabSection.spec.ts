@@ -1,7 +1,7 @@
-import * as React from 'react';
+import { createElement } from 'react';
 import { Button } from '@patternfly/react-core';
 import { useExtensions, OverviewTabSection, LazyLoader } from '@console/plugin-sdk';
-import { testHook } from '../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { OverviewItem } from '../../types/resource';
 import { sampleDeploymentConfigs } from '../../utils/__tests__/test-resource-data';
 import { usePluginsOverviewTabSection } from '../plugins-overview-tab-section';
@@ -28,7 +28,7 @@ describe('usePluginsOverviewTabSection', () => {
   it('should not be empty, when there is overview tab section registered', () => {
     const loader: LazyLoader = jasmine
       .createSpy('loader')
-      .and.returnValue(Promise.resolve(React.createElement(Button)));
+      .and.returnValue(Promise.resolve(createElement(Button)));
 
     const tabSection: OverviewTabSection = {
       type: 'Overview/Section',

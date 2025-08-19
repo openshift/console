@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { createContext, useState, useMemo, useCallback } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +37,7 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
     [fileUploadExtensions, resolved],
   );
 
-  const setFileUpload = React.useCallback(
+  const setFileUpload = useCallback(
     (f: File): void => {
       if (!f) {
         setFile(undefined as any);

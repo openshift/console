@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { Component } from 'react';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
@@ -54,7 +54,7 @@ const containerToLogSourceStatus = (container) => {
   return LOG_SOURCE_RUNNING;
 };
 
-export class PodLogs extends React.Component {
+export class PodLogs extends Component {
   constructor(props) {
     super(props);
     this._selectContainer = this._selectContainer.bind(this);

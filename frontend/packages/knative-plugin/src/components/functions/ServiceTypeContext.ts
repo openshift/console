@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { createContext } from 'react';
 import { ServiceTypeValue } from '../../types';
 
-export const KnativeServiceTypeContext = React.createContext(ServiceTypeValue.Service);
+export const KnativeServiceTypeContext = createContext(ServiceTypeValue.Service);
