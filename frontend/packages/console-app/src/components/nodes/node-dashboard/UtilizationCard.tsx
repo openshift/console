@@ -11,6 +11,7 @@ import {
   humanizeDecimalBytesPerSec,
   humanizeNumber,
 } from '@console/internal/components/utils';
+import { NodeKind } from '@console/internal/module/k8s';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
@@ -37,12 +38,14 @@ const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
   const { obj, setCPULimit, setMemoryLimit } = React.useContext(NodeDashboardContext);
 
-  const nodeName = obj.metadata.name;
-  const nodeIP = getNodeAddresses(obj).find((addr) => addr.type === 'InternalIP')?.address;
+  const nodeName = obj?.metadata?.name ?? '';
+  const nodeIP = getNodeAddresses(obj ?? ({} as NodeKind)).find(
+    (addr) => addr.type === 'InternalIP',
+  )?.address;
 
   const [queries, multilineQueries, resourceQuotaQueries] = React.useMemo(
     () => [
-      getUtilizationQueries(nodeName, nodeIP),
+      getUtilizationQueries(nodeName, nodeIP ?? ''),
       getMultilineQueries(nodeName),
       getResourceQutoaQueries(nodeName),
     ],
@@ -65,7 +68,7 @@ const UtilizationCard: React.FC = () => {
         <CardTitle>{t('console-app~Utilization')}</CardTitle>
       </CardHeader>
       <UtilizationBody>
-        <NodeUtilizationContext.Provider value={{ nodeIP, nodeName }}>
+        <NodeUtilizationContext.Provider value={{ nodeIP: nodeIP ?? '', nodeName }}>
           <PrometheusUtilizationItem
             title={t('console-app~CPU')}
             humanizeValue={humanizeCpuCores}

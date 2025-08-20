@@ -68,7 +68,7 @@ export type LabelProps = {
 };
 
 export type LabelListProps = WithTranslation & {
-  labels: { [key: string]: string };
+  labels?: { [key: string]: string };
   kind: K8sResourceKindReference;
   expand?: boolean;
 };

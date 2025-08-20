@@ -26,8 +26,8 @@ const getNodeCSRs = (
     )
     .sort(
       (a, b) =>
-        new Date(b.metadata.creationTimestamp).getTime() -
-        new Date(a.metadata.creationTimestamp).getTime(),
+        new Date(b.metadata?.creationTimestamp ?? '').getTime() -
+        new Date(a.metadata?.creationTimestamp ?? '').getTime(),
     );
 
 const isCSRPending = (csr: CertificateSigningRequestKind): boolean =>
@@ -53,19 +53,19 @@ export const getNodeClientCSRs = (
         metadata: {
           ...csr.metadata,
           name: commonName.value.valueBlock.value.replace('system:node:', ''),
-          originalName: csr.metadata.name,
+          originalName: csr.metadata?.name ?? '',
         },
       };
     })
     .sort(
       (a, b) =>
-        new Date(b.metadata.creationTimestamp).getTime() -
-        new Date(a.metadata.creationTimestamp).getTime(),
+        new Date(b.metadata?.creationTimestamp ?? '').getTime() -
+        new Date(a.metadata?.creationTimestamp ?? '').getTime(),
     );
 
   const grouped = _.groupBy(nodeCSRs, (csr) => csr.metadata.name);
 
-  return Object.keys(grouped).reduce((acc, key) => {
+  return Object.keys(grouped).reduce<NodeCertificateSigningRequestKind[]>((acc, key) => {
     const csr = grouped[key][0];
     if (isCSRPending(csr)) {
       acc.push(csr);
@@ -76,8 +76,8 @@ export const getNodeClientCSRs = (
 export const getNodeServerCSR = (
   csrs: CertificateSigningRequestKind[] = [],
   node: NodeKind,
-): CertificateSigningRequestKind => {
-  const nodeCSRs = getNodeCSRs(csrs, `system:node:${node.metadata.name}`, false);
+): CertificateSigningRequestKind | null => {
+  const nodeCSRs = getNodeCSRs(csrs, `system:node:${node.metadata?.name ?? ''}`, false);
   if (!nodeCSRs.length || !isCSRPending(nodeCSRs[0])) {
     return null;
   }
