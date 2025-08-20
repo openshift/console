@@ -68,7 +68,7 @@ const useCatalogExtensions = (
   const [categoryProviderExtensions, categoryProvidersResolved] = useResolvedExtensions<
     CatalogCategoriesProvider
   >(
-    React.useCallback(
+    useCallback(
       (e): e is CatalogCategoriesProvider =>
         isCatalogCategoriesProvider(e) &&
         (!e.properties.catalogId ||
