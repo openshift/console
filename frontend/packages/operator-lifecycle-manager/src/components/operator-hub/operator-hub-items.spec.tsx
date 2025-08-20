@@ -115,7 +115,7 @@ describe('orderAndSortByRelevance', () => {
       { name: 'C Operator', obj: { metadata: { labels: { provider: 'Red Hat Marketplace' } } } },
       { name: 'D Operator', obj: { metadata: { labels: { provider: 'Another Company' } } } },
     ];
-    const sortedItems = orderAndSortByRelevance(items);
+    const sortedItems = orderAndSortByRelevance((items as unknown) as OperatorHubItem[]);
     expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat');
     expect(sortedItems[1].obj.metadata.labels.provider).toBe('Red Hat Marketplace');
     expect(sortedItems[2].obj.metadata.labels.provider).not.toBe('Red Hat');
@@ -129,7 +129,7 @@ describe('orderAndSortByRelevance', () => {
       { name: 'A Operator', obj: { metadata: { labels: { provider: 'Red Hat Marketplace' } } } },
       { name: 'Y Operator', obj: { metadata: { labels: { provider: 'Another Company' } } } },
     ];
-    const sortedItems = orderAndSortByRelevance(items);
+    const sortedItems = orderAndSortByRelevance((items as unknown) as OperatorHubItem[]);
     expect(sortedItems[0].name).toBe('B Operator');
     expect(sortedItems[1].name).toBe('A Operator');
     expect(sortedItems[2].name).toBe('Y Operator');
@@ -159,7 +159,7 @@ describe('orderAndSortByRelevance', () => {
         obj: { metadata: { labels: { provider: 'Third Party Solutions' } } },
       },
     ];
-    const sortedItems = orderAndSortByRelevance(items);
+    const sortedItems = orderAndSortByRelevance((items as unknown) as OperatorHubItem[]);
 
     expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat Inc');
     expect(sortedItems[1].obj.metadata.labels.provider).toBe('Red Hat');
@@ -193,7 +193,10 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'serverless');
+      const sortedItems = orderAndSortByRelevance(
+        (items as unknown) as OperatorHubItem[],
+        'serverless',
+      );
 
       // Red Hat operator should be first even with similar relevance score
       expect(sortedItems[0].name).toBe('OpenShift Serverless Logic Operator');
@@ -229,7 +232,10 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'gitops');
+      const sortedItems = orderAndSortByRelevance(
+        (items as unknown) as OperatorHubItem[],
+        'gitops',
+      );
 
       // Red Hat operator should be prioritized even with lower relevance score
       // because score difference is within 100 points
@@ -261,7 +267,10 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'storage');
+      const sortedItems = orderAndSortByRelevance(
+        (items as unknown) as OperatorHubItem[],
+        'storage',
+      );
 
       // "Storage Manager Tool" scores: title match (100) + starts with (25) + keyword (60) = 185 points
       // "Red Hat Storage Solution" scores: title match (100) + keyword (60) = 160 points
@@ -295,7 +304,10 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'database');
+      const sortedItems = orderAndSortByRelevance(
+        (items as unknown) as OperatorHubItem[],
+        'database',
+      );
 
       // Red Hat should be prioritized even with same relevance score
       expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat');
@@ -330,7 +342,7 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'tool');
+      const sortedItems = orderAndSortByRelevance((items as unknown) as OperatorHubItem[], 'tool');
 
       expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat, Inc.');
       expect(sortedItems[1].name).toBe('Community Tool');
@@ -359,7 +371,7 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'tool');
+      const sortedItems = orderAndSortByRelevance((items as unknown) as OperatorHubItem[], 'tool');
 
       expect(sortedItems[0].name).toBe('Red Hat Core Tool');
       expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat Inc');
@@ -384,7 +396,10 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'database');
+      const sortedItems = orderAndSortByRelevance(
+        (items as unknown) as OperatorHubItem[],
+        'database',
+      );
 
       // Exact match should come first due to bonus points
       expect(sortedItems[0].name).toBe('database');
@@ -407,7 +422,10 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'database');
+      const sortedItems = orderAndSortByRelevance(
+        (items as unknown) as OperatorHubItem[],
+        'database',
+      );
 
       // Starts with should come first due to bonus points
       expect(sortedItems[0].name).toBe('database-operator');
@@ -450,7 +468,10 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'database');
+      const sortedItems = orderAndSortByRelevance(
+        (items as unknown) as OperatorHubItem[],
+        'database',
+      );
 
       expect(sortedItems[0].name).toBe('Storage Tool');
       expect(sortedItems[0].relevanceScore).toBe(140); // 140 metadata (exact + starts)
@@ -476,7 +497,10 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'database');
+      const sortedItems = orderAndSortByRelevance(
+        (items as unknown) as OperatorHubItem[],
+        'database',
+      );
 
       expect(sortedItems[0].name).toBe('Storage Operator');
       expect(sortedItems[0].relevanceScore).toBe(60);
@@ -505,7 +529,10 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'database');
+      const sortedItems = orderAndSortByRelevance(
+        (items as unknown) as OperatorHubItem[],
+        'database',
+      );
 
       expect(sortedItems[0].name).toBe('Storage Tool');
       expect(sortedItems[0].relevanceScore).toBe(25);
@@ -545,7 +572,10 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'database');
+      const sortedItems = orderAndSortByRelevance(
+        (items as unknown) as OperatorHubItem[],
+        'database',
+      );
 
       expect(sortedItems[0].name).toBe('Database Management Tool');
       expect(sortedItems[0].relevanceScore).toBe(245); // Updated to match actual calculated score
@@ -572,7 +602,10 @@ describe('orderAndSortByRelevance', () => {
         },
       ];
 
-      const sortedItems = orderAndSortByRelevance(items, 'database');
+      const sortedItems = orderAndSortByRelevance(
+        (items as unknown) as OperatorHubItem[],
+        'database',
+      );
 
       // All items are returned, sorted by relevance score (filtering happens at UI level)
       expect(sortedItems).toHaveLength(3);
@@ -594,8 +627,8 @@ describe('orderAndSortByRelevance', () => {
       expect(orderAndSortByRelevance([])).toEqual([]);
       expect(orderAndSortByRelevance([], 'search')).toEqual([]);
 
-      expect(orderAndSortByRelevance('not-an-array')).toEqual([]);
-      expect(orderAndSortByRelevance({}, 'search')).toEqual([]);
+      expect(orderAndSortByRelevance('not-an-array' as any)).toEqual([]);
+      expect(orderAndSortByRelevance({} as any, 'search')).toEqual([]);
     });
 
     it('filters out null and undefined items from arrays', () => {
@@ -617,7 +650,7 @@ describe('orderAndSortByRelevance', () => {
         null,
       ];
 
-      const sortedItems = orderAndSortByRelevance(items);
+      const sortedItems = orderAndSortByRelevance((items as unknown) as OperatorHubItem[]);
 
       // Should only return the valid items
       expect(sortedItems).toHaveLength(2);
@@ -650,10 +683,12 @@ describe('orderAndSortByRelevance', () => {
       ];
 
       // Should not throw errors
-      expect(() => orderAndSortByRelevance(items)).not.toThrow();
-      expect(() => orderAndSortByRelevance(items, 'search')).not.toThrow();
+      expect(() => orderAndSortByRelevance((items as unknown) as OperatorHubItem[])).not.toThrow();
+      expect(() =>
+        orderAndSortByRelevance((items as unknown) as OperatorHubItem[], 'search'),
+      ).not.toThrow();
 
-      const sortedItems = orderAndSortByRelevance(items);
+      const sortedItems = orderAndSortByRelevance((items as unknown) as OperatorHubItem[]);
 
       // Should return all items, with Red Hat first
       expect(sortedItems).toHaveLength(4);

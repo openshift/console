@@ -97,22 +97,8 @@ const addItem = (item, category, subcategory = null) => {
   }
 };
 
-const isCategoryEmpty = ({ items }) => _.isEmpty(items);
-
-const pruneCategoriesWithNoItems = (categories) => {
-  if (!categories) {
-    return;
-  }
-
-  _.forOwn(categories, (category, key) => {
-    // Never delete essential categories like 'all' and 'other', even if empty
-    if (isCategoryEmpty(category) && key !== 'all' && key !== 'other') {
-      delete categories[key];
-    } else {
-      pruneCategoriesWithNoItems(category.subcategories);
-    }
-  });
-};
+// Removed isCategoryEmpty and pruneCategoriesWithNoItems functions - no longer needed since we preserve
+// all categories for navigation purposes, even if they have 0 items
 
 const processSubCategories = (category, itemsSorter) => {
   if (!category || !category.subcategories) {
@@ -206,7 +192,9 @@ export const categorizeItems = (items, itemsSorter, initCategories) => {
   };
 
   categorize(items, categories);
-  pruneCategoriesWithNoItems(categories);
+  // Don't prune categories - preserve all categories for navigation
+  // Users should see all available categories even if they currently have 0 items
+  // pruneCategoriesWithNoItems(categories);
   processCategories(categories, itemsSorter);
 
   return categories;
@@ -322,7 +310,10 @@ const recategorizeItems = (items, itemsSorter, filters, keywordCompare, categori
     }
     return itemsSorter(categoryItems);
   });
-  pruneCategoriesWithNoItems(newCategories);
+
+  // Don't prune categories during filtering - preserve all categories for navigation
+  // Users should see all available categories even if they currently have 0 items
+  // pruneCategoriesWithNoItems(newCategories);
 
   return newCategories;
 };
