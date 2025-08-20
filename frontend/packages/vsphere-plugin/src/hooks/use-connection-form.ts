@@ -22,20 +22,17 @@ const initialLoad = async (
   secretModel: K8sModel,
   infrastructureModel: K8sModel,
   cloudProviderConfig: ConfigMap,
-): Promise<{ values: ConnectionFormFormikValues; mustPatch: boolean }> => {
+): Promise<ConnectionFormFormikValues> => {
   const config = cloudProviderConfig.data?.config;
   if (!config) {
     return {
-      values: {
-        vcenter: '',
-        datacenter: '',
-        defaultDatastore: '',
-        folder: '',
-        username: '',
-        password: '',
-        vCenterCluster: '',
-      },
-      mustPatch: false,
+      vcenter: '',
+      datacenter: '',
+      defaultDatastore: '',
+      folder: '',
+      username: '',
+      password: '',
+      vCenterCluster: '',
     };
   }
 
@@ -85,7 +82,6 @@ const initialLoad = async (
     }
   }
 
-  let mustPatch = false;
   try {
     const infrastructure = await k8sGet<Infrastructure>({
       model: infrastructureModel,
@@ -105,26 +101,19 @@ const initialLoad = async (
       if (!vCenterCluster) {
         vCenterCluster = infraVCenterCluster;
       }
-      const datacenterDiff = domain.topology.datacenter !== datacenter;
-      const datastoreDiff = domain.topology.datastore !== defaultDatastore;
-      const vCenterClusterDiff = infraVCenterCluster !== vCenterCluster;
-      mustPatch = datacenterDiff || datastoreDiff || vCenterClusterDiff;
     }
   } catch (e) {
     throw new LoadError(t('Failed to fetch infrastructure resource'), getErrorMessage(t, e));
   }
 
   return {
-    values: {
-      vcenter: server,
-      datacenter,
-      defaultDatastore,
-      folder,
-      username,
-      password,
-      vCenterCluster,
-    },
-    mustPatch,
+    vcenter: server,
+    datacenter,
+    defaultDatastore,
+    folder,
+    username,
+    password,
+    vCenterCluster,
   };
 };
 
@@ -133,10 +122,7 @@ export const useConnectionForm = (cloudProviderConfig?: ConfigMap) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [error, setError] = React.useState<{ title: string; message: string }>();
   const { secretModel, infrastructureModel } = useConnectionModels();
-  const [result, setResult] = React.useState<{
-    values: ConnectionFormFormikValues;
-    mustPatch: boolean;
-  }>();
+  const [result, setResult] = React.useState<ConnectionFormFormikValues>();
 
   React.useEffect(() => {
     const doItAsync = async () => {
@@ -165,9 +151,8 @@ export const useConnectionForm = (cloudProviderConfig?: ConfigMap) => {
   }, [cloudProviderConfig, infrastructureModel, isLoaded, secretModel, t]);
 
   return {
-    initValues: result?.values,
+    initValues: result,
     isLoaded,
     error,
-    mustPatch: result?.mustPatch,
   };
 };
