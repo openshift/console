@@ -359,7 +359,7 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
         id={nodeColumnInfo.created.id}
         activeColumnIDs={activeColumnIDs}
       >
-        <Timestamp timestamp={node.metadata?.creationTimestamp || ''} />
+        <Timestamp timestamp={node.metadata?.creationTimestamp} />
       </TableData>
       <TableData
         className={nodeColumnInfo.instanceType.classes}
@@ -537,7 +537,7 @@ const CSRTableRow: React.FC<RowProps<NodeCertificateSigningRequestKind>> = ({
         id={nodeColumnInfo.created.id}
         activeColumnIDs={activeColumnIDs}
       >
-        <Timestamp timestamp={csr.metadata?.creationTimestamp || ''} />
+        <Timestamp timestamp={csr.metadata?.creationTimestamp} />
       </TableData>
       <TableData
         className={nodeColumnInfo.instanceType.classes}

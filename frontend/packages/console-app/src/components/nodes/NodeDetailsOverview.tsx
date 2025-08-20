@@ -173,7 +173,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
             <DescriptionListGroup>
               <DescriptionListTerm>{t('console-app~Created')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <Timestamp timestamp={node.metadata?.creationTimestamp || ''} />
+                <Timestamp timestamp={node.metadata?.creationTimestamp} />
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>

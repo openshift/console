@@ -26,8 +26,8 @@ const getNodeCSRs = (
     )
     .sort(
       (a, b) =>
-        new Date(b.metadata?.creationTimestamp ?? '').getTime() -
-        new Date(a.metadata?.creationTimestamp ?? '').getTime(),
+        new Date(b.metadata?.creationTimestamp ?? new Date(0)).getTime() -
+        new Date(a.metadata?.creationTimestamp ?? new Date(0)).getTime(),
     );
 
 const isCSRPending = (csr: CertificateSigningRequestKind): boolean =>
@@ -59,8 +59,8 @@ export const getNodeClientCSRs = (
     })
     .sort(
       (a, b) =>
-        new Date(b.metadata?.creationTimestamp ?? '').getTime() -
-        new Date(a.metadata?.creationTimestamp ?? '').getTime(),
+        new Date(b.metadata?.creationTimestamp ?? new Date(0)).getTime() -
+        new Date(a.metadata?.creationTimestamp ?? new Date(0)).getTime(),
     );
 
   const grouped = _.groupBy(nodeCSRs, (csr) => csr.metadata.name);

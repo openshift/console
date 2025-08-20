@@ -73,7 +73,7 @@ const DeletePDBModal: React.FC<DeletePDBModalProps> = ({ close, pdb, workloadNam
 
 export const deletePDBModal = createModalLauncher(DeletePDBModal);
 
-export type DeletePDBModalProps = Omit<ModalComponentProps, 'close'> & {
+export type DeletePDBModalProps = ModalComponentProps & {
   close: () => void;
   pdb: PodDisruptionBudgetKind;
   workloadName: string;
