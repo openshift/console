@@ -92,7 +92,7 @@ export type CatalogCategoriesProvider = ExtensionDeclaration<
   {
     /** The catalog ID the categories are for. If not specified, the categories will be available for all catalogs. */
     catalogId?: string;
-    /** The catalog item type these categories are for. If not specified, the categories will be available for all types. */
+    /** The catalog item type for these categories. If not specified, the categories will be available for all types. */
     type?: string;
     /** A hook that returns categories. */
     provider: CodeRef<ExtensionHook<CatalogCategory[]>>;

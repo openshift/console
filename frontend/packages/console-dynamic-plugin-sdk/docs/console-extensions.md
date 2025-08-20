@@ -174,7 +174,7 @@ This extension allows plugins to contribute a set of categories for a specific c
 | ---- | ---------- | -------- | ----------- |
 | `provider` | `CodeRef<ExtensionHook<CatalogCategory[]>>` | no | A hook that returns categories. |
 | `catalogId` | `string` | yes | The catalog ID the categories are for. If not specified, the categories will be available for all catalogs. |
-| `type` | `string` | yes | The catalog item type these categories are for. If not specified, the categories will be available for all types. |
+| `type` | `string` | yes | The catalog item type for these categories. If not specified, the categories will be available for all types. |
 
 ---
 
