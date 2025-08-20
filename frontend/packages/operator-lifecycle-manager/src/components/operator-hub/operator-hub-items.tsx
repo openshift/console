@@ -691,9 +691,11 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
 
     // Don't filter by search term here - let TileViewPage handle it through keywordCompareWithScore
     // We only apply category and filter-based filtering, not keyword filtering
-    return orderAndSortByRelevance(items);
+    // But we still need to pass the search term for correct relevance-based sorting
+    return orderAndSortByRelevance(items, searchTerm);
   }, [
     filteredItems,
+    searchTerm,
     selectedCategory,
     selectedSource,
     selectedProvider,
