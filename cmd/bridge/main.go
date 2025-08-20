@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"runtime"
+	"text/tabwriter"
 
 	"io/ioutil"
 	"net/http"
@@ -175,6 +176,15 @@ func main() {
 	if err := serverconfig.Validate(fs); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
+	}
+
+	klog.V(4).Infof("Running with flags:")
+	if klog.V(4).Enabled() {
+		w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, ' ', 0)
+		fs.VisitAll(func(f *flag.Flag) {
+			fmt.Fprintf(w, "\t--%s\t%s\n", f.Name, f.Value.String())
+		})
+		w.Flush()
 	}
 
 	authOptions.ApplyConfig(&cfg.Auth)
