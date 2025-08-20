@@ -6,7 +6,6 @@ import { getQueryArgument } from '@console/internal/components/utils';
 
 type NodeLogsUnitFilterProps = {
   onChangeUnit: (value: string) => void;
-  unit: string;
 };
 
 const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit }) => {
