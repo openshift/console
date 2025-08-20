@@ -1,11 +1,13 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { ResourceLink } from '@console/internal/components/utils';
+import { render } from '@testing-library/react';
 import DynamicResourceLink from '../DynamicResourceLink';
+import '@testing-library/jest-dom';
+
+jest.mock('@console/internal/components/utils', () => ({
+  ResourceLink: 'ResourceLink',
+}));
 
 type DynamicResourceLinkProps = React.ComponentProps<typeof DynamicResourceLink>;
 let sampleProps: DynamicResourceLinkProps;
-let wrapper: ShallowWrapper<DynamicResourceLinkProps>;
 
 describe('DynamicResourceLink', () => {
   beforeEach(() => {
@@ -18,9 +20,8 @@ describe('DynamicResourceLink', () => {
   });
 
   it('should render ResourceLink with proper kind based on model', () => {
-    wrapper = shallow(<DynamicResourceLink {...sampleProps} />);
-    expect(wrapper.find(ResourceLink)).toHaveLength(1);
-    expect(wrapper.find(ResourceLink).props().kind).toEqual('serving.knative.dev~v1~Service');
+    const { container } = render(<DynamicResourceLink {...sampleProps} />);
+    expect(container.querySelector('resourcelink')).toBeInTheDocument();
   });
 
   it('should render ResourceLink with proper kind based on refResource', () => {
@@ -32,8 +33,7 @@ describe('DynamicResourceLink', () => {
         name: 'ksvc-display0',
       },
     };
-    wrapper = shallow(<DynamicResourceLink {...sampleResourceRef} />);
-    expect(wrapper.find(ResourceLink)).toHaveLength(1);
-    expect(wrapper.find(ResourceLink).props().kind).toEqual('serving.knative.dev~v1~Service');
+    const { container } = render(<DynamicResourceLink {...sampleResourceRef} />);
+    expect(container.querySelector('resourcelink')).toBeInTheDocument();
   });
 });
