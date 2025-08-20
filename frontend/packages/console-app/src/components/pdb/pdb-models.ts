@@ -49,8 +49,8 @@ export const pdbToK8sResource = (
         spec: {
           [requirement]:
             from.minAvailable !== ''
-              ? intOrString(from.minAvailable)
-              : intOrString(from.maxUnavailable),
+              ? intOrString(from.minAvailable || '')
+              : intOrString(from.maxUnavailable || ''),
         },
       })
     : res;
@@ -83,32 +83,32 @@ export const patchPDB = (
   existingResource: PodDisruptionBudgetKind,
 ): Promise<PodDisruptionBudgetKind> => {
   const patch: Patch[] = [];
-  if (!_.isEmpty(formValues.selector.matchLabels)) {
+  if (!_.isEmpty(formValues.selector?.matchLabels)) {
     patch.push({
       op: 'add',
       path: '/spec/selector/matchLabels',
-      value: formValues.selector.matchLabels,
+      value: formValues.selector?.matchLabels,
     });
   }
-  if (!_.isEmpty(formValues.selector.matchExpressions)) {
+  if (!_.isEmpty(formValues.selector?.matchExpressions)) {
     patch.push({
       op: 'add',
       path: '/spec/selector/matchExpressions',
-      value: formValues.selector.matchExpressions,
+      value: formValues.selector?.matchExpressions,
     });
   }
   if (formValues.minAvailable !== '') {
     patch.push({
       op: 'add',
       path: '/spec/minAvailable',
-      value: intOrString(formValues.minAvailable),
+      value: intOrString(formValues.minAvailable || ''),
     });
   }
   if (formValues.maxUnavailable !== '') {
     patch.push({
       op: 'add',
       path: '/spec/maxUnavailable',
-      value: intOrString(formValues.maxUnavailable),
+      value: intOrString(formValues.maxUnavailable || ''),
     });
   }
   if (!_.isNil(existingResource?.spec?.minAvailable) && formValues.maxUnavailable !== '') {
@@ -120,7 +120,7 @@ export const patchPDB = (
       {
         op: 'add',
         path: '/spec/maxUnavailable',
-        value: intOrString(formValues.maxUnavailable),
+        value: intOrString(formValues.maxUnavailable || ''),
       },
     );
   }
@@ -133,7 +133,7 @@ export const patchPDB = (
       {
         op: 'add',
         path: '/spec/minAvailable',
-        value: intOrString(formValues.minAvailable),
+        value: intOrString(formValues.minAvailable || ''),
       },
     );
   }
