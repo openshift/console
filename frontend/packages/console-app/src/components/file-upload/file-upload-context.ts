@@ -9,12 +9,12 @@ import { getRequiredFileUploadExtension } from './file-upload-utils';
 
 export type FileUploadContextType = {
   extensions: string[];
-  fileUpload: File;
+  fileUpload: File | undefined;
   setFileUpload: (file: File) => void;
 };
 
-export const FileUploadContext = React.createContext<FileUploadContextType>({
-  fileUpload: undefined as any,
+export const FileUploadContext = createContext<FileUploadContextType>({
+  fileUpload: undefined,
   setFileUpload: () => {},
   extensions: [],
 });
@@ -26,8 +26,8 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
   const [fileUploadExtensions, resolved] = useResolvedExtensions<FileUpload>(isFileUpload);
   const toastContext = useToast();
   const [namespace] = useActiveNamespace();
-  const [file, setFile] = React.useState<File>(undefined as any);
-  const fileExtensions = React.useMemo(
+  const [file, setFile] = useState<File | undefined>(undefined);
+  const fileExtensions = useMemo(
     () =>
       resolved
         ? _.flatten(fileUploadExtensions.map((e) => e.properties.fileExtensions)).map((ext) =>

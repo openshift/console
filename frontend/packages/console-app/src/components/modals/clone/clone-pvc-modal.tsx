@@ -129,7 +129,10 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
 
     return handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj), (cloneResource) => {
       close?.();
-      history.push(resourceObjPath(cloneResource, referenceFor(cloneResource)) as any);
+      const resourcePath = resourceObjPath(cloneResource, referenceFor(cloneResource));
+      if (resourcePath) {
+        history.push(resourcePath);
+      }
     });
   };
 
@@ -264,7 +267,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
         submitDisabled={!validSize || !pvcSC}
         errorMessage={errorMessage}
         submitText={t('console-app~Clone')}
-        cancel={cancel as any}
+        cancel={cancel}
       />
     </form>
   );
