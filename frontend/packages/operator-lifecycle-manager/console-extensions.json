@@ -70,8 +70,15 @@
   {
     "type": "console.action/provider",
     "properties": {
-      "contextId": "csv-actions",
-      "provider": { "$codeRef": "csvActionsProvider.useDefaultCSVActions" }
+      "contextId": "operator-actions",
+      "provider": { "$codeRef": "useOperatorActions" }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "operand-actions",
+      "provider": { "$codeRef": "useDefaultOperandActions" }
     }
   },
   {
