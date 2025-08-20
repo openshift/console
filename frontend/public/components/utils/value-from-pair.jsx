@@ -1,10 +1,11 @@
-import * as React from 'react';
+import { PureComponent } from 'react';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 
-import { Dropdown, ResourceName } from './';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { ResourceName } from './';
 
 // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#envvarsource-v1-core
 //   valueFrom:
@@ -116,13 +117,14 @@ export const NameKeyDropdownPair = ({
   const items = _.assign({}, cmItems, secretItems, saItems);
   return (
     <>
-      <Dropdown
+      <ConsoleSelect
         menuClassName="value-from__menu dropdown-menu--text-wrap"
         className="value-from"
         autocompleteFilter={nameAutocompleteFilter}
         autocompletePlaceholder={placeholderString}
         items={items}
         selectedKey={name}
+        alwaysShowTitle
         title={nameTitle}
         headerBefore={headerBefore}
         spacerBefore={spacerBefore}
@@ -136,13 +138,14 @@ export const NameKeyDropdownPair = ({
         }}
       />
       {isKeyRef && (
-        <Dropdown
+        <ConsoleSelect
           menuClassName="value-from__menu dropdown-menu--text-wrap"
           className="value-from value-from--key"
           autocompleteFilter={keyAutocompleteFilter}
           autocompletePlaceholder={t('public~Key')}
           items={itemKeys}
           selectedKey={pairKey}
+          alwaysShowTitle
           title={keyTitle}
           onChange={(val) => onChange({ [refProperty]: { name, key: val } })}
         />
@@ -318,7 +321,7 @@ const keyStringToComponent = {
   },
 };
 
-export class ValueFromPair extends React.PureComponent {
+export class ValueFromPair extends PureComponent {
   constructor(props) {
     super(props);
 

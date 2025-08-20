@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { forwardRef } from 'react';
 import { css } from '@patternfly/react-styles';
 import { useSize } from '@patternfly/react-topology';
 import { get } from 'lodash';
@@ -20,7 +20,7 @@ function getKindStringAndAbbreviation(kind: string) {
   return { kindStr, kindAbbr, kindColor };
 }
 
-const SvgResourceIcon = React.forwardRef<SVGRectElement, ResourceIconProps>(
+const SvgResourceIcon = forwardRef<SVGRectElement, ResourceIconProps>(
   ({ x, y, kind, leftJustified }, iconRef) => {
     const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation(kind);
     const [textSize, textRef] = useSize([]);

@@ -75,7 +75,7 @@ When('task named {string} is available with task run', () => {
   tasksPage.togglePipelineSidebar();
   tasksPage.togglePipelineSidebar();
   tasksPage.openPipelinePage();
-  cy.get('[data-test-id="dropdown-button"]').click();
+  cy.get('[data-test="console-select-menu-toggle"]').click();
   cy.byTestDropDownMenu('pipeline').click();
   startPipelineInPipelinesPage.selectView('YAML View');
   yamlEditor.isLoaded();

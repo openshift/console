@@ -10,7 +10,7 @@ export const devNavigationMenuPO = {
   helm: '[data-test-id="helm-releases-header"]',
   project: '[data-test-id="project-details-header"]',
   secret: '#Secret',
-  dropdownButton: '[data-test-id="dropdown-button"]',
+  dropdownButton: '[data-test="console-select-menu-toggle"]',
   environments: '[data-test-id="environments-header"]',
   functions: '[data-test-id="functions-details-header"]',
 };

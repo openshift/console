@@ -48,10 +48,10 @@ import { CatalogSourceKind, PackageManifestKind, OperatorGroupKind } from '../ty
 import useOperatorHubConfig from '../utils/useOperatorHubConfig';
 import { deleteCatalogSourceModal } from './modals/delete-catalog-source-modal';
 import { disableDefaultSourceModal } from './modals/disable-default-source-modal';
-import { editRegitryPollInterval } from './modals/edit-registry-poll-interval-modal';
 import { requireOperatorGroup } from './operator-group';
 import { OperatorHubKind } from './operator-hub';
 import { PackageManifestsPage } from './package-manifest';
+import { RegistryPollIntervalDetailItem } from './registry-poll-interval-details';
 
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
 
@@ -187,13 +187,7 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
             >
               {getEndpoint(catalogSource)}
             </DetailsItem>
-            <DetailsItem
-              label={t('olm~Registry poll interval')}
-              obj={catalogSource}
-              path="spec.updateStrategy.registryPoll.interval"
-              canEdit={!_.isEmpty(catalogSource.spec.updateStrategy)}
-              onEdit={() => editRegitryPollInterval({ catalogSource })}
-            />
+            <RegistryPollIntervalDetailItem catalogSource={catalogSource} />
             <DetailsItem
               label={t('olm~Number of Operators')}
               obj={catalogSource}

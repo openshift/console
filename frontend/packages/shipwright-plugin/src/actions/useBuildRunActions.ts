@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { useCommonResourceActions } from '@console/app/src/actions//hooks/useCommonResourceActions';
@@ -17,7 +17,7 @@ const useBuildRunActions = (buildRun: BuildRun) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(buildRun));
   const commonActions = useCommonResourceActions(kindObj, buildRun);
 
-  const actions = React.useMemo<Action[]>(() => {
+  const actions = useMemo<Action[]>(() => {
     const rerun: Action = {
       id: 'shipwright-buildrun-rerun',
       label: t('shipwright-plugin~Rerun'),

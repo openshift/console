@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback } from 'react';
 import { Button, Alert, ContentVariants, Content } from '@patternfly/react-core';
 import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,6 @@ import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { LoadingInline } from '@console/shared/src/components/loading/LoadingInline';
 import { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
 const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
@@ -31,12 +30,12 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('');
-  const [displayName, setDisplayName] = React.useState('');
-  const [description, setDescription] = React.useState('');
-  const hideStartGuide = React.useCallback(
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [description, setDescription] = useState('');
+  const hideStartGuide = useCallback(
     () => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, false)),
     [dispatch],
   );
@@ -110,9 +109,11 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
         <Button
           type="submit"
           variant="primary"
-          disabled={inProgress}
+          isDisabled={inProgress}
+          isLoading={inProgress}
           onClick={submit}
           data-test="confirm-action"
+          key="confirm-action"
           id="confirm-action"
         >
           {t('console-shared~Create')}
@@ -123,10 +124,10 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
           disabled={inProgress}
           onClick={closeModal}
           data-test-id="modal-cancel-action"
+          key="cancel-action"
         >
           {t('console-shared~Cancel')}
         </Button>,
-        ...(inProgress ? [<LoadingInline />] : []),
       ]}
     >
       <form onSubmit={submit} name="form" className="modal-content">

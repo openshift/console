@@ -95,7 +95,7 @@ Then('user will see the name section', () => {
 });
 
 Then('user will see builder image version dropdown', () => {
-  cy.byLegacyTestID('dropdown-button').should('be.visible');
+  cy.byTestID('console-select-menu-toggle').should('be.visible');
 });
 
 Then('user will see git url is ineditable field', () => {
@@ -116,8 +116,8 @@ When('user assign a new name as {string} in the name section', (workload: string
 });
 
 When('user changes the builder image version from dropdown to {string}', (version: string) => {
-  cy.byLegacyTestID('dropdown-button').should('be.visible').click();
-  cy.byLegacyTestID('dropdown-menu').contains(version).click();
+  cy.byTestID('console-select-menu-toggle').should('be.visible').click();
+  cy.byTestID('console-select-item').contains(version).click();
 });
 
 Then(

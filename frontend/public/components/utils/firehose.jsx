@@ -1,6 +1,6 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { memo, Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
@@ -113,7 +113,7 @@ const propsAreEqual = (prevProps, nextProps) => {
 // A wrapper Component that takes data out of redux for a list or object at some reduxID ...
 // passing it to children
 const ConnectToState = connect(mapStateToProps)(
-  React.memo(({ k8s, reduxes, children }) => {
+  memo(({ k8s, reduxes, children }) => {
     const resources = {};
 
     reduxes.forEach((redux) => {
@@ -178,7 +178,7 @@ export const Firehose = connect(
   },
 )(
   /** @augments {React.Component<React.PropsWithChildren<{k8sModels?: Map<string, K8sKind>, doNotConnectToState?: boolean}>> */
-  class Firehose extends React.Component {
+  class Firehose extends Component {
     state = {
       firehoses: [],
     };

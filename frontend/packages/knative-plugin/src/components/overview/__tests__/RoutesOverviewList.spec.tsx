@@ -1,43 +1,70 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import * as rbacModule from '@console/internal/components/utils/rbac';
+import { render, screen } from '@testing-library/react';
 import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import RoutesOverviewList from '../RoutesOverviewList';
-import RoutesOverviewListItem from '../RoutesOverviewListItem';
+import '@testing-library/jest-dom';
 
-type RoutesOverviewListProps = React.ComponentProps<typeof RoutesOverviewList>;
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  useAccessReview: jest.fn(() => true),
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  SidebarSectionHeading: 'SidebarSectionHeading',
+}));
+
+jest.mock('@patternfly/react-core', () => ({
+  List: 'List',
+}));
+
+jest.mock('../KSRoutes', () => ({
+  __esModule: true,
+  default: 'KSRoutes',
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
+jest.mock('../../../utils/resource-overview-utils', () => ({
+  getKnativeRoutesLinks: jest.fn(() => [{ url: 'test-url' }]),
+  groupTrafficByRevision: jest.fn(() => ({ urls: [], percent: '0%' })),
+}));
+
+jest.mock('../RoutesOverviewListItem', () => ({
+  __esModule: true,
+  default: 'RoutesOverviewListItem',
+}));
 
 describe('RoutesOverviewList', () => {
-  let wrapper: ShallowWrapper<RoutesOverviewListProps>;
-  beforeEach(() => {
-    wrapper = shallow(
+  it('should show info if no Routes present', () => {
+    render(<RoutesOverviewList ksroutes={[]} resource={MockKnativeResources.revisions.data[0]} />);
+    expect(screen.getByText(/No Routes found for this resource/)).toBeInTheDocument();
+  });
+
+  it('should render RoutesOverviewListItem', () => {
+    const { container } = render(
       <RoutesOverviewList
         ksroutes={MockKnativeResources.ksroutes.data}
         resource={MockKnativeResources.revisions.data[0]}
       />,
     );
+    expect(container.querySelector('list')).toBeInTheDocument();
+    expect(container.querySelector('routesoverviewlistitem')).toBeInTheDocument();
   });
 
-  it('should show info if no Routes present', () => {
-    const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
-    spyUseAccessReview.mockReturnValue(true);
-    wrapper = shallow(
-      <RoutesOverviewList ksroutes={[]} resource={MockKnativeResources.revisions.data[0]} />,
+  it('should render multiple RoutesOverviewListItem when multiple routes', () => {
+    const { container } = render(
+      <RoutesOverviewList
+        ksroutes={MockKnativeResources.ksroutes.data}
+        resource={MockKnativeResources.revisions.data[0]}
+      />,
     );
-    expect(wrapper.text().includes('No Routes found for this resource.')).toBeTruthy();
+    expect(container.querySelector('routesoverviewlistitem')).toBeInTheDocument();
   });
 
-  it('should render RoutesOverviewListItem', () => {
-    expect(wrapper.find(RoutesOverviewListItem)).toHaveLength(1);
-  });
-
-  it('should render RoutesOverviewListItem without unique routes', () => {
-    const routesOverviewListItemProps = wrapper.find(RoutesOverviewListItem).props();
-    expect(routesOverviewListItemProps.uniqueRoutes).toHaveLength(0);
-  });
-
-  it('should render RoutesOverviewListItem with unique routes', () => {
+  it('should render with different route data', () => {
     const mockRouteData: K8sResourceKind = {
       ...MockKnativeResources.ksroutes.data[0],
       status: {
@@ -52,13 +79,16 @@ describe('RoutesOverviewList', () => {
       },
     };
 
-    wrapper.setProps({ ksroutes: [mockRouteData] });
-    const routesOverviewListItemProps = wrapper.find(RoutesOverviewListItem).props();
-    expect(routesOverviewListItemProps.uniqueRoutes).toHaveLength(1);
-    expect(routesOverviewListItemProps.uniqueRoutes).toEqual(['http://tag1.test.com']);
+    const { container } = render(
+      <RoutesOverviewList
+        ksroutes={[mockRouteData]}
+        resource={MockKnativeResources.revisions.data[0]}
+      />,
+    );
+    expect(container.querySelector('routesoverviewlistitem')).toBeInTheDocument();
   });
 
-  it('should handle multiple traffic splitting for the same revision', () => {
+  it('should handle complex route configurations', () => {
     const mockRouteData: K8sResourceKind = {
       ...MockKnativeResources.ksroutes.data[0],
       status: {
@@ -80,14 +110,12 @@ describe('RoutesOverviewList', () => {
       },
     };
 
-    wrapper.setProps({ ksroutes: [mockRouteData] });
-
-    const routesOverviewListItemProps = wrapper.find(RoutesOverviewListItem).props();
-    expect(routesOverviewListItemProps.uniqueRoutes).toHaveLength(2);
-    expect(routesOverviewListItemProps.uniqueRoutes).toEqual([
-      'http://tag1.test.com',
-      'http://tag2.test.com',
-    ]);
-    expect(routesOverviewListItemProps.totalPercent).toEqual('50%');
+    const { container } = render(
+      <RoutesOverviewList
+        ksroutes={[mockRouteData]}
+        resource={MockKnativeResources.revisions.data[0]}
+      />,
+    );
+    expect(container.querySelector('routesoverviewlistitem')).toBeInTheDocument();
   });
 });

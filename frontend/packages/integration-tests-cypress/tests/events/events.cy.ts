@@ -63,7 +63,7 @@ describe('Events', () => {
     cy.byTestID(name).should('exist');
 
     cy.log('Event type filter should work');
-    cy.byLegacyTestID('dropdown-button').click();
+    cy.byTestID('console-select-menu-toggle').click();
     cy.get('[data-test-dropdown-menu="warning"]').click();
     cy.byTestID('event-totals').should('have.text', 'Showing 3 events');
     cy.byTestID('event-warning').should('have.length', 3);

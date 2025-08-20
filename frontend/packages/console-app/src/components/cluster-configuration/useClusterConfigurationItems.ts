@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   checkAccess,
   ClusterConfigurationItem,
@@ -14,21 +14,21 @@ const useClusterConfigurationItems = (): [ResolvedClusterConfigurationItem[], bo
   );
 
   // Sort
-  const sortedItems = React.useMemo(() => {
+  const sortedItems = useMemo(() => {
     return orderExtensionBasedOnInsertBeforeAndAfter(
       resolvedExtensions.map((resolvedExtension) => resolvedExtension.properties),
     );
   }, [resolvedExtensions]);
 
   // Filter based on permission checks
-  const [canRead, updateCanRead] = React.useState<Record<string, boolean>>({});
-  const [canWrite, updateCanWrite] = React.useState<Record<string, boolean>>({});
-  React.useEffect(() => {
+  const [canRead, updateCanRead] = useState<Record<string, boolean>>({});
+  const [canWrite, updateCanWrite] = useState<Record<string, boolean>>({});
+  useEffect(() => {
     sortedItems.forEach((item) => {
-      if (item.readAccessReview?.length > 0) {
+      if (item.readAccessReview?.length && item.readAccessReview.length > 0) {
         Promise.all(item.readAccessReview.map((accessReview) => checkAccess(accessReview)))
           .then((result) => {
-            const allowed = result.every((r) => r.status.allowed);
+            const allowed = result.every((r) => r.status?.allowed);
             updateCanRead((x) => ({ ...x, [item.id]: allowed }));
           })
           .catch((error) => {
@@ -37,10 +37,10 @@ const useClusterConfigurationItems = (): [ResolvedClusterConfigurationItem[], bo
           });
       }
 
-      if (item.writeAccessReview?.length > 0) {
+      if (item.writeAccessReview?.length && item.writeAccessReview.length > 0) {
         Promise.all(item.writeAccessReview.map((accessReview) => checkAccess(accessReview)))
           .then((result) => {
-            const allowed = result.every((r) => r.status.allowed);
+            const allowed = result.every((r) => r.status?.allowed);
             updateCanWrite((x) => ({ ...x, [item.id]: allowed }));
           })
           .catch((error) => {
@@ -51,13 +51,18 @@ const useClusterConfigurationItems = (): [ResolvedClusterConfigurationItem[], bo
     });
   }, [sortedItems]);
 
-  const filteredItems = React.useMemo<ResolvedClusterConfigurationItem[]>(() => {
+  const filteredItems = useMemo<ResolvedClusterConfigurationItem[]>(() => {
     return sortedItems
-      .filter((item) => (item.readAccessReview?.length > 0 ? canRead[item.id] : true))
+      .filter((item) =>
+        item.readAccessReview?.length && item.readAccessReview.length > 0 ? canRead[item.id] : true,
+      )
       .map((item) => {
         return {
           ...item,
-          readonly: item.writeAccessReview?.length > 0 ? !canWrite[item.id] : false,
+          readonly:
+            item.writeAccessReview?.length && item.writeAccessReview.length > 0
+              ? !canWrite[item.id]
+              : false,
         };
       });
   }, [sortedItems, canRead, canWrite]);

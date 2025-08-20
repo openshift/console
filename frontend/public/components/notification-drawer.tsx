@@ -133,7 +133,7 @@ export const getAlertActions = (
     Omit<ResolvedExtension<AlertAction>['properties'], 'alert'>
   >().set('AlertmanagerReceiversNotConfigured', {
     text: i18next.t('public~Configure'),
-    action: () => navigate('/monitoring/alertmanagerconfig'),
+    action: () => navigate('/settings/cluster/alertmanagerconfig'),
   });
   actionsExtensions.forEach(({ properties }) =>
     alertActions.set(properties.alert, {

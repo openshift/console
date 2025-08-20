@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Component } from 'react';
 import * as Immutable from 'immutable';
 import * as _ from 'lodash-es';
 
@@ -109,7 +109,7 @@ describe('featureReducer', () => {
 describe('connectToFlags', () => {
   type MyComponentProps = { propA: number; propB: boolean; flags: { [key: string]: boolean } };
 
-  class MyComponent extends React.Component<MyComponentProps> {
+  class MyComponent extends Component<MyComponentProps> {
     render() {
       return <div>{this.props.propA}</div>;
     }

@@ -20,10 +20,10 @@ import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import {
   AsyncComponent,
   ButtonBar,
-  Dropdown,
   Firehose,
   FirehoseResult,
   NameValueEditorPair,
@@ -462,10 +462,10 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
           <label className={css({ 'co-required': paramIsRequired(key) })} htmlFor={paramId}>
             {_.get(parameter, 'name', key)}
           </label>
-          <Dropdown
+          <ConsoleSelect
             title={parameter.hintText}
             items={parameter.values}
-            dropDownClassName="dropdown--full-width"
+            isFullWidth
             selectedKey={_.get(newStorageClass, selectedKey)}
             onChange={(event) => setParameterHandler(key, event, false)}
             id={paramId}
@@ -613,10 +613,10 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             <label className="co-required" htmlFor="storage-class-reclaim-policy">
               {t('public~Reclaim policy')}
             </label>
-            <Dropdown
+            <ConsoleSelect
               title={t('public~Select reclaim policy')}
               items={reclaimPolicies}
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               selectedKey={reclaimPolicyKey}
               onChange={(event) => setStorageHandler('reclaim', event)}
               id="storage-class-reclaim-policy"
@@ -632,10 +632,10 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             <label className="co-required" htmlFor="storage-class-volume-binding-mode">
               {t('public~Volume binding mode')}
             </label>
-            <Dropdown
+            <ConsoleSelect
               title={t('public~Select volume binding mode')}
               items={volumeBindingModes}
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               selectedKey={volumeBindingModeKey}
               onChange={(event) => setStorageHandler('volumeBindingMode', event)}
               id="storage-class-volume-binding-mode"
@@ -652,12 +652,12 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
             <label className="co-required" htmlFor="storage-class-provisioner">
               {t('public~Provisioner')}
             </label>
-            <Dropdown
+            <ConsoleSelect
               title={t('public~Select Provisioner')}
               autocompleteFilter={autocompleteFilter}
               autocompletePlaceholder={t('public~Select Provisioner')}
               items={_.mapValues(storageTypes.current, 'provisioner')}
-              dropDownClassName="dropdown--full-width"
+              isFullWidth
               menuClassName="dropdown-menu--text-wrap"
               selectedKey={newStorageClass.type}
               onChange={(event) => setStorageHandler('type', event)}

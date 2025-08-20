@@ -1,5 +1,5 @@
 import { shallow } from 'enzyme';
-import { Dropdown } from '@console/internal/components/utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import DropdownField from '../DropdownField';
 
 jest.mock('formik', () => ({
@@ -15,6 +15,6 @@ describe('DropdownField', () => {
   it('should pass through autocompleteFilter to Dropdown', () => {
     const filterFn = jest.fn<React.ComponentProps<typeof DropdownField>['autocompleteFilter']>();
     const wrapper = shallow(<DropdownField name="test" items={{}} autocompleteFilter={filterFn} />);
-    expect(wrapper.find(Dropdown).first().props().autocompleteFilter).toBe(filterFn);
+    expect(wrapper.find(ConsoleSelect).first().props().autocompleteFilter).toBe(filterFn);
   });
 });

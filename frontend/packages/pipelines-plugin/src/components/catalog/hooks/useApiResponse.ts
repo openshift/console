@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { coFetch } from '@console/internal/co-fetch';
 
 export type ApiResult<R extends any[]> = [R, boolean, string];
@@ -8,11 +8,11 @@ export type UseApiResponse = <R extends any = any>(
 ) => ApiResult<R[]>;
 
 const useApiResponse: UseApiResponse = (url: string, hasPermission: boolean) => {
-  const [resultData, setResult] = React.useState([]);
-  const [loaded, setLoaded] = React.useState(false);
-  const [loadedError, setLoadedError] = React.useState<string>();
+  const [resultData, setResult] = useState([]);
+  const [loaded, setLoaded] = useState(false);
+  const [loadedError, setLoadedError] = useState<string>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     let mounted = true;
     if (hasPermission) {
       coFetch(url)

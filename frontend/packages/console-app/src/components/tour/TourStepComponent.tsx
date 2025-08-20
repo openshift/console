@@ -1,7 +1,14 @@
 import * as React from 'react';
-import { ModalBody, ModalFooter, ModalHeader } from '@patternfly/react-core';
-import { ModalVariant } from '@patternfly/react-core/deprecated';
+import {
+  Grid,
+  GridItem,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { Popover, PopoverPlacement, Modal, Spotlight } from '@console/shared';
 import StepBadge from './steps/StepBadge';
 import StepContent from './steps/StepContent';
@@ -15,6 +22,9 @@ type TourStepComponentProps = {
   placement?: string;
   heading: string;
   content: React.ReactNode;
+  introBannerLight?: React.ReactNode;
+  introBannerDark?: React.ReactNode;
+  modalVariant?: ModalVariant;
   step?: number;
   totalSteps?: number;
   showStepBadge?: boolean;
@@ -34,6 +44,9 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   showStepBadge,
   step,
   totalSteps,
+  introBannerLight,
+  introBannerDark,
+  modalVariant,
   nextButtonText,
   backButtonText,
   onNext,
@@ -41,6 +54,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
+  const theme = React.useContext(ThemeContext);
   const header = <StepHeader>{heading}</StepHeader>;
   const footer = (
     <StepFooter
@@ -56,6 +70,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
           onBack && onBack();
         },
       }}
+      step={step}
     >
       {showStepBadge ? <StepBadge stepNumber={step} totalSteps={totalSteps} /> : null}
     </StepFooter>
@@ -83,7 +98,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   ) : (
     <Modal
       className="co-tour-step-component"
-      variant={ModalVariant.small}
+      variant={modalVariant ?? ModalVariant.small}
       isOpen
       onClose={handleClose}
       id="guided-tour-modal"
@@ -91,9 +106,18 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
       aria-label={t('console-app~guided tour {{step, number}}', { step })}
       isFullScreen
     >
-      <ModalHeader data-test="close-guided-tour">{header}</ModalHeader>
-      <ModalBody>{stepContent}</ModalBody>
-      <ModalFooter>{footer}</ModalFooter>
+      <ModalBody>
+        <Grid hasGutter>
+          {(introBannerLight || introBannerDark) && (
+            <GridItem span={4}>{theme === 'light' ? introBannerLight : introBannerDark}</GridItem>
+          )}
+          <GridItem span={introBannerLight || introBannerDark ? 8 : 12}>
+            <ModalHeader>{header}</ModalHeader>
+            <ModalBody>{stepContent}</ModalBody>
+            <ModalFooter>{footer}</ModalFooter>
+          </GridItem>
+        </Grid>
+      </ModalBody>
     </Modal>
   );
 };

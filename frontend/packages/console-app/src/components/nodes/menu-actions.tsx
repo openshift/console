@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommonResourceActions } from '@console/app/src/actions//hooks/useCommonResourceActions';
 import { Action } from '@console/dynamic-plugin-sdk';
@@ -47,7 +47,7 @@ export const denyCSR = (csr: CertificateSigningRequestKind) => updateCSR(csr, 'D
 export const useNodeActions: ExtensionHook<Action[], NodeKind> = (obj) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(obj));
   const { t } = useTranslation();
-  const deleteMessage = React.useMemo(
+  const deleteMessage = useMemo(
     () => (
       <p>
         {t(
@@ -58,7 +58,7 @@ export const useNodeActions: ExtensionHook<Action[], NodeKind> = (obj) => {
     [t],
   );
   const commonActions = useCommonResourceActions(kindObj, obj, deleteMessage);
-  const nodeActions = React.useMemo<Action[]>(() => {
+  const nodeActions = useMemo<Action[]>(() => {
     const actions: Action[] = [];
     if (isNodeUnschedulable(obj)) {
       actions.push({

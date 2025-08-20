@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { memo, useMemo, useState, useEffect, useCallback } from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -54,7 +54,7 @@ const getFirehoseResource = (model: K8sKind) => ({
 });
 
 const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
-  React.memo(
+  memo(
     ({
       model,
       resolvedMapper,
@@ -62,14 +62,14 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
       additionalResources,
       expandedComponent,
     }: ClusterInventoryItemProps) => {
-      const mainResource = React.useMemo(() => getFirehoseResource(model), [model]);
-      const otherResources = React.useMemo(() => additionalResources || {}, [additionalResources]);
-      const [mapper, setMapper] = React.useState<StatusGroupMapper>();
+      const mainResource = useMemo(() => getFirehoseResource(model), [model]);
+      const otherResources = useMemo(() => additionalResources || {}, [additionalResources]);
+      const [mapper, setMapper] = useState<StatusGroupMapper>();
       const [resourceData, resourceLoaded, resourceLoadError] = useK8sWatchResource<
         K8sResourceCommon[]
       >(mainResource);
       const resources = useK8sWatchResources(otherResources);
-      React.useEffect(() => {
+      useEffect(() => {
         mapperLoader &&
           mapperLoader()
             .then((res) => setMapper(() => res))
@@ -83,7 +83,7 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
         additionalResourcesData,
         additionalResourcesLoaded,
         additionalResourcesLoadError,
-      ] = React.useMemo(() => {
+      ] = useMemo(() => {
         const resourcesData = {};
         let resourcesLoaded = true;
         let resourcesLoadError = false;
@@ -103,7 +103,7 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
         return [resourcesData, resourcesLoaded, resourcesLoadError];
       }, [additionalResources, resources]);
 
-      const ExpandedComponent = React.useCallback(
+      const ExpandedComponent = useCallback(
         () => (
           <AsyncComponent
             loader={expandedComponent}
@@ -149,12 +149,12 @@ export const InventoryCard = () => {
     isClusterOverviewInventoryItem,
   );
 
-  const mergedItems = React.useMemo(() => mergeItems(itemExtensions, replacementExtensions), [
+  const mergedItems = useMemo(() => mergeItems(itemExtensions, replacementExtensions), [
     itemExtensions,
     replacementExtensions,
   ]);
 
-  const dynamicMergedItems = React.useMemo(
+  const dynamicMergedItems = useMemo(
     () => mergeDynamicItems(dynamicItemExtensions, dynamicReplacementExtensions),
     [dynamicItemExtensions, dynamicReplacementExtensions],
   );

@@ -5,9 +5,9 @@ export const roleBindings = {
     cy
       .byTestID('namespace-dropdown')
       .click()
-      .byLegacyTestID('dropdown-text-filter')
+      .byTestID('console-select-search-input')
       .type(namespace)
-      .parents('.co-namespace-dropdown__menu')
+      .byTestID('console-select-menu-list')
       .within(() => {
         cy.get('.co-resource-item__resource-name').click();
       }),
@@ -15,7 +15,7 @@ export const roleBindings = {
     cy
       .byTestID('role-dropdown')
       .click()
-      .byLegacyTestID('dropdown-text-filter')
+      .byTestID('console-select-search-input')
       .type(role)
       .get('#cluster-admin-ClusterRole-link')
       .click(),

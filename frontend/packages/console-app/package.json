@@ -47,6 +47,7 @@
       "volumeSnapshotProvider": "src/actions/providers/volume-snaphot-provider.ts",
       "podProvider": "src/actions/providers/pod-provider.ts",
       "perspectiveStateProvider": "src/actions/providers/perspective-state-provider.ts",
+      "bindingProvider": "src/actions/providers/binding-provider.ts",
       "ClusterConfigurationPage": "src/components/cluster-configuration/ClusterConfigurationPage.tsx",
       "PreferredPerspectiveSelect": "src/components/user-preferences/perspective/PreferredPerspectiveSelect.tsx",
       "NamespaceDropdown": "src/components/user-preferences/namespace/NamespaceDropdown.tsx",

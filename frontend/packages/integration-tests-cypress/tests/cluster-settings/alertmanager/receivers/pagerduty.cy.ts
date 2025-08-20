@@ -34,19 +34,19 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
   it('creates and edits PagerDuty Receiver correctly', () => {
     cy.log('create PagerDuty Receiver');
     alertmanager.createReceiver(receiverName, configName);
-    cy.byLegacyTestID('integration-key').type('<integration_key>');
-    cy.byLegacyTestID('pagerduty-url')
+    cy.byTestID('integration-key').type('<integration_key>');
+    cy.byTestID('pagerduty-url')
       .invoke('val')
       .should('eq', 'https://events.pagerduty.com/v2/enqueue');
     alertmanager.showAdvancedConfiguration();
-    cy.byLegacyTestID('send-resolved-alerts').should('be.checked');
-    cy.byLegacyTestID('pagerduty-client').invoke('val').should('eq', pagerDutyClient);
-    cy.byLegacyTestID('pagerduty-client-url').invoke('val').should('eq', pagerDutyClientURL);
-    cy.byLegacyTestID('pagerduty-description')
+    cy.byTestID('send-resolved-alerts').should('be.checked');
+    cy.byTestID('pagerduty-client').invoke('val').should('eq', pagerDutyClient);
+    cy.byTestID('pagerduty-client-url').invoke('val').should('eq', pagerDutyClientURL);
+    cy.byTestID('pagerduty-description')
       .invoke('val')
       .should('eq', '{{ template "pagerduty.default.description" .}}');
-    cy.byLegacyTestID('pagerduty-severity').invoke('val').should('eq', 'error');
-    cy.byLegacyTestID('label-0').type(label);
+    cy.byTestID('pagerduty-severity').invoke('val').should('eq', 'error');
+    cy.byTestID('label-0').type(label);
     alertmanager.save();
 
     cy.log('verify PagerDuty Receiver was created correctly');
@@ -55,11 +55,11 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
     cy.log('update pagerduty_url');
     listPage.rows.clickKebabAction(receiverName, 'Edit Receiver');
     // Save as default checkbox disabled when url equals global url
-    cy.byLegacyTestID('save-as-default').should('be.disabled');
+    cy.byTestID('save-as-default').should('be.disabled');
     // changing url enables Save as default checkbox, should save pagerduty_url with Receiver
-    cy.byLegacyTestID('pagerduty-url').clear();
-    cy.byLegacyTestID('pagerduty-url').type(pagerDutyURL1);
-    cy.byLegacyTestID('save-as-default').should('be.enabled');
+    cy.byTestID('pagerduty-url').clear();
+    cy.byTestID('pagerduty-url').type(pagerDutyURL1);
+    cy.byTestID('save-as-default').should('be.enabled');
     alertmanager.save();
 
     cy.log('verify pagerduty_url was saved with Receiver and not global');
@@ -72,9 +72,9 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
 
     cy.log('save pagerduty_url as global');
     alertmanager.visitEditPage(receiverName);
-    cy.byLegacyTestID('pagerduty-url').clear();
-    cy.byLegacyTestID('pagerduty-url').type(pagerDutyURL2);
-    cy.byLegacyTestID('save-as-default').should('be.enabled').check();
+    cy.byTestID('pagerduty-url').clear();
+    cy.byTestID('pagerduty-url').type(pagerDutyURL2);
+    cy.byTestID('save-as-default').should('be.enabled').check();
     alertmanager.save();
 
     cy.log('verify pagerduty_url was saved as global');
@@ -87,10 +87,10 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
 
     cy.log('add pagerduty_url to receiver with existing global');
     alertmanager.visitEditPage(receiverName);
-    cy.byLegacyTestID('pagerduty-url').clear();
-    cy.byLegacyTestID('pagerduty-url').type(pagerDutyURL3);
-    cy.byLegacyTestID('save-as-default').should('be.enabled');
-    cy.byLegacyTestID('save-as-default').should('not.be.checked');
+    cy.byTestID('pagerduty-url').clear();
+    cy.byTestID('pagerduty-url').type(pagerDutyURL3);
+    cy.byTestID('save-as-default').should('be.enabled');
+    cy.byTestID('save-as-default').should('not.be.checked');
     alertmanager.save();
 
     cy.log(
@@ -106,12 +106,12 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
     cy.log('update advanced configuration fields correctly');
     alertmanager.visitEditPage(receiverName);
     alertmanager.showAdvancedConfiguration();
-    cy.byLegacyTestID('send-resolved-alerts').should('be.checked').click();
-    cy.byLegacyTestID('send-resolved-alerts').should('not.be.checked');
-    cy.byLegacyTestID('pagerduty-client').clear();
-    cy.byLegacyTestID('pagerduty-client').type('updated-client');
-    cy.byLegacyTestID('pagerduty-client-url').clear();
-    cy.byLegacyTestID('pagerduty-client-url').type(clientURL);
+    cy.byTestID('send-resolved-alerts').should('be.checked').click();
+    cy.byTestID('send-resolved-alerts').should('not.be.checked');
+    cy.byTestID('pagerduty-client').clear();
+    cy.byTestID('pagerduty-client').type('updated-client');
+    cy.byTestID('pagerduty-client-url').clear();
+    cy.byTestID('pagerduty-client-url').type(clientURL);
     alertmanager.save();
 
     cy.log('verify 3 changed fields should be saved with Receiver');
@@ -130,20 +130,20 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
     );
     alertmanager.visitEditPage(receiverName);
     alertmanager.showAdvancedConfiguration();
-    cy.byLegacyTestID('send-resolved-alerts').should('not.be.checked').click();
-    cy.byLegacyTestID('send-resolved-alerts').should('be.checked');
-    cy.byLegacyTestID('pagerduty-client').clear();
-    cy.byLegacyTestID('pagerduty-client').type(pagerDutyClient, {
+    cy.byTestID('send-resolved-alerts').should('not.be.checked').click();
+    cy.byTestID('send-resolved-alerts').should('be.checked');
+    cy.byTestID('pagerduty-client').clear();
+    cy.byTestID('pagerduty-client').type(pagerDutyClient, {
       parseSpecialCharSequences: false,
     });
-    cy.byLegacyTestID('pagerduty-client-url').clear();
-    cy.byLegacyTestID('pagerduty-client-url').type(pagerDutyClientURL, {
+    cy.byTestID('pagerduty-client-url').clear();
+    cy.byTestID('pagerduty-client-url').type(pagerDutyClientURL, {
       parseSpecialCharSequences: false,
     });
-    cy.byLegacyTestID('pagerduty-description').clear();
-    cy.byLegacyTestID('pagerduty-description').type(pagerDutyDescription);
-    cy.byLegacyTestID('pagerduty-severity').clear();
-    cy.byLegacyTestID('pagerduty-severity').type(severity);
+    cy.byTestID('pagerduty-description').clear();
+    cy.byTestID('pagerduty-description').type(pagerDutyDescription);
+    cy.byTestID('pagerduty-severity').clear();
+    cy.byTestID('pagerduty-severity').type(severity);
     alertmanager.save();
 
     cy.log('verify');

@@ -181,7 +181,7 @@ Then('Actions dropdown display on Cluster Trigger Binding page', () => {
 
 When('user selects the first option from the Trigger Template drop down field', () => {
   cy.get(pipelinesPO.removeTrigger.triggerTemplate).should('be.enabled').click();
-  cy.byLegacyTestID('dropdown-menu').click();
+  cy.byTestID('console-select-item').click();
 });
 
 When('user clicks on Remove button', () => {

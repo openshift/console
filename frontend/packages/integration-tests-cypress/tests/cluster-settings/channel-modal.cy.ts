@@ -61,7 +61,10 @@ describe('Cluster Settings channel modal', () => {
       .and('contain.text', 'stable-4.16')
       .click();
     cy.byLegacyTestID('modal-title').should('contain.text', 'Select channel');
-    cy.byTestID('channel-modal').find('[data-test-id="dropdown-button"]').should('exist').click();
+    cy.byTestID('channel-modal')
+      .find('[data-test="console-select-menu-toggle"]')
+      .should('exist')
+      .click();
     cy.get(`[data-test-dropdown-menu="${CHANNEL_STABLE}"]`).should('exist').click();
     cy.byTestID('confirm-action').should('exist').click();
     cy.log('Reload to test changes');

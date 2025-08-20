@@ -59,7 +59,7 @@ export const fillStorageClassInformation = (provisioner: string) => {
   cy.byTestID('storage-class-name').type(name);
   cy.byTestID('storage-class-description').type(COMMON_DESCRIPTION);
   cy.byTestID('storage-class-provisioner-dropdown').click();
-  cy.byLegacyTestID('dropdown-text-filter').type(provisioner);
+  cy.byTestID('console-select-search-input').type(provisioner);
   cy.contains(provisioner).click();
 };
 

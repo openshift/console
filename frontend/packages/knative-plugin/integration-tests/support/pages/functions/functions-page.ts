@@ -21,11 +21,11 @@ export const functionsPage = {
   verifyPodsTab: () => cy.get(functionsPO.podsTab).should('be.visible'),
   verifyGettingStarted: () => cy.get(functionsPO.gettingStarted).should('be.visible'),
   verifyFunctionsActionsDropdown: () =>
-    cy.byLegacyTestID('dropdown-button').eq(0).should('be.visible'),
-  clickFunctionsActionButton: () => cy.byLegacyTestID('dropdown-button').eq(0).click(),
+    cy.byTestID('create-action-dropdown').eq(0).should('be.visible'),
+  clickFunctionsActionButton: () => cy.byTestID('create-action-dropdown').eq(0).click(),
   verifyActionsInCreateMenu: () => {
-    cy.byLegacyTestID('dropdown-menu').contains('Import from Git').should('exist');
-    cy.byLegacyTestID('dropdown-menu').contains('Samples').should('exist');
+    cy.byTestDropDownMenu('importFromGit').should('exist');
+    cy.byTestDropDownMenu('functionsUsingSamples').should('exist');
   },
   clickonEmptyAreaTopology: () => {
     topologyPage.waitForLoad();

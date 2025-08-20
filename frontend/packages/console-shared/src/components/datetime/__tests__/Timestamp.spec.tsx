@@ -33,7 +33,7 @@ describe('Timestamp', () => {
   });
   it('should show formatted date', () => {
     store.dispatch(updateTimestamps(Date.now()));
-    const timestamp = new Date(Date.now() - 630000);
+    const timestamp = new Date(Date.now() - 11 * ONE_MINUTE);
     render(<Timestamp timestamp={timestamp} />, {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });

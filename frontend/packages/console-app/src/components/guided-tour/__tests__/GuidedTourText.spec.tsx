@@ -9,11 +9,9 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   ],
 }));
 
-describe('GuidedTourText', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
+configure({ testIdAttribute: 'data-test' });
 
+describe('GuidedTourText', () => {
   it('renders helpTourText', () => {
     render(helpTourText);
     expect(

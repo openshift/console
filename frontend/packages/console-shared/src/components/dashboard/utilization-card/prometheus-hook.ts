@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useMemo } from 'react';
 import { Map as ImmutableMap } from 'immutable';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -13,7 +13,7 @@ import { RootState } from '@console/internal/redux';
 /** @deprecated use usePrometheusPoll() instead */
 export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
   const dispatch = useDispatch();
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(watchPrometheusQuery(query));
     return () => {
       dispatch(stopWatchPrometheusQuery(query));
@@ -23,7 +23,7 @@ export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
   const queryResult = useSelector<RootState, ImmutableMap<string, any>>(({ dashboards }) =>
     dashboards.getIn([RESULTS_TYPE.PROMETHEUS, query]),
   );
-  const results = React.useMemo<[HumanizeResult, any, number]>(() => {
+  const results = useMemo<[HumanizeResult, any, number]>(() => {
     if (!queryResult || !queryResult.get('data')) {
       return [{}, null, null] as [HumanizeResult, any, number];
     }

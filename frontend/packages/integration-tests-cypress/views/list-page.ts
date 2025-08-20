@@ -32,7 +32,7 @@ export const listPage = {
     },
     clickSearchByDropdown: () => {
       cy.byTestID('filter-toolbar').within(() => {
-        cy.byLegacyTestID('dropdown-button').click();
+        cy.byTestID('console-select-menu-toggle').click();
       });
     },
     clickFilterDropdown: () => {

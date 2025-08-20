@@ -28,9 +28,9 @@ describe('Alertmanager: Webhook Receiver Form', () => {
     cy.log('create Webhook Receiver');
     alertmanager.createReceiver(receiverName, configName);
     alertmanager.showAdvancedConfiguration();
-    cy.byLegacyTestID('send-resolved-alerts').should('be.checked');
-    cy.byLegacyTestID('webhook-url').type(webhookURL);
-    cy.byLegacyTestID('label-0').type(label);
+    cy.byTestID('send-resolved-alerts').should('be.checked');
+    cy.byTestID('webhook-url').type(webhookURL);
+    cy.byTestID('label-0').type(label);
     alertmanager.save();
 
     cy.log('verify Webhook Receiver was created correctly');
@@ -44,16 +44,17 @@ describe('Alertmanager: Webhook Receiver Form', () => {
 
     cy.log('edits Webhook Receiver and saves advanced fields correctly');
     alertmanager.visitEditPage(receiverName);
-    cy.byLegacyTestID('webhook-url').invoke('val').should('eq', webhookURL);
-    cy.byLegacyTestID('webhook-url').clear();
-    cy.byLegacyTestID('webhook-url').type(updatedWebhookURL);
+    cy.byTestID('webhook-url').invoke('val').should('eq', webhookURL);
+    cy.byTestID('webhook-url').clear();
+    cy.byTestID('webhook-url').type(updatedWebhookURL);
     alertmanager.showAdvancedConfiguration();
-    cy.byLegacyTestID('send-resolved-alerts').click();
+    cy.byTestID('send-resolved-alerts').click();
     alertmanager.save();
 
     cy.log('verify advanced fields were saved correctly');
     alertmanager.visitEditPage(receiverName);
-    cy.byLegacyTestID('send-resolved-alerts').should('not.be.checked');
+    alertmanager.showAdvancedConfiguration();
+    cy.byTestID('send-resolved-alerts').should('not.be.checked');
     alertmanager.visitAlertmanagerPage();
     alertmanager.visitYAMLPage();
     yamlEditor.getEditorContent().then((content) => {

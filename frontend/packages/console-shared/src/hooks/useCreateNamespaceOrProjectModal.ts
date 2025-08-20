@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import { CreateProjectModalProps } from '@console/dynamic-plugin-sdk/src';
 import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
 import { FLAGS } from '@console/shared/src/constants/common';
@@ -10,7 +10,7 @@ export const useCreateNamespaceOrProjectModal: UseCreateProjectModal = () => {
   const launcher = useModal();
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
   const ModalComponent = isOpenShift ? CreateProjectModal : CreateNamespaceModal;
-  return React.useCallback((props) => launcher(ModalComponent, props), [launcher, ModalComponent]);
+  return useCallback((props) => launcher(ModalComponent, props), [launcher, ModalComponent]);
 };
 
 type UseCreateProjectModal = () => (props: CreateProjectModalProps) => void;

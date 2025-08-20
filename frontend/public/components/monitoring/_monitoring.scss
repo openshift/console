@@ -1,35 +1,3 @@
-.co-alert-manager {
-  margin-bottom: var(--pf-t--global--spacer--md);
-}
-
-.co-alert-manager-config__edit-alert-routing-btn {
-  margin-bottom: 10px;
-}
-
-.co-alert-manager-config__save-as-default-label {
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-.co-resource-item.co-resource-item--monitoring-alert {
-  margin: 0 5px;
-}
-
-.co-routing-label-editor__error-message {
-  margin-top: -15px;
-}
-
-.pf-v6-c-modal-box {
-  .custom-time-range-modal {
-    overflow: visible;
-    padding: var(--pf-v6-c-modal-box__body--PaddingTop) var(--pf-v6-c-modal-box__body--PaddingLeft);
-  }
-
-  .custom-time-range-modal-footer {
-    padding-top: var(--pf-v6-c-modal-box__body--PaddingTop);
-  }
-}
-
 .graph-empty-state {
   min-height: 310px;
   &__loaded {

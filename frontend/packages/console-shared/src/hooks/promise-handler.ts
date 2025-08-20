@@ -1,8 +1,8 @@
-import * as React from 'react';
+import { useState } from 'react';
 
 export const usePromiseHandler: PromiseHandlerHook = <T extends unknown = any>() => {
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const handlePromise: PromiseHandlerCallback<T> = (promise) => {
     setInProgress(true);
     return promise

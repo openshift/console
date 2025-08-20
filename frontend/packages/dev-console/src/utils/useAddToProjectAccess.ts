@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useAccessReview } from '@console/internal/components/utils';
 import {
   BuildConfigModel,
@@ -34,7 +34,7 @@ export const useAddToProjectAccess = (activeNamespace: string): string[] => {
   const routeAccess = useAccessReview(resourceAttributes(RouteModel, activeNamespace));
   const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, activeNamespace));
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     const createResourceAccess: string[] = [];
     if (
       buildConfigsAccess &&

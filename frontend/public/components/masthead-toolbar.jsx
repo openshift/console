@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useContext, useState, useRef, useCallback, createRef, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +26,6 @@ import {
   useCopyCodeModal,
   useCopyLoginCommands,
   useFlag,
-  usePerspectiveExtension,
   useTelemetry,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
@@ -47,8 +46,6 @@ import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster
 import redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
-import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
-import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
 import { FeedbackModal } from '@patternfly/react-user-feedback';
 import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useFeedbackLocal } from './feedback-local';
@@ -75,20 +72,9 @@ const defaultHelpLinks = [
   },
 ];
 
-const MultiClusterToolbarGroup = () => {
-  const acmPerspectiveExtension = usePerspectiveExtension(ACM_PERSPECTIVE_ID);
-  return (
-    !!acmPerspectiveExtension && (
-      <ToolbarGroup gap={{ default: 'gapNone' }}>
-        <ClusterMenu />
-      </ToolbarGroup>
-    )
-  );
-};
-
 const FeedbackModalLocalized = ({ isOpen, onClose, reportBugLink }) => {
   const feedbackLocales = useFeedbackLocal(reportBugLink);
-  const theme = React.useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
   return (
     <FeedbackModal
       onShareFeedback="https://console.redhat.com/self-managed-feedback-form?source=openshift"
@@ -137,26 +123,25 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     alertCount: state.observe.getIn(['alertCount']),
     canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
   }));
-  const [isAppLauncherDropdownOpen, setIsAppLauncherDropdownOpen] = React.useState(false);
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = React.useState(false);
-  const [isKebabDropdownOpen, setIsKebabDropdownOpen] = React.useState(false);
-  const [isHelpDropdownOpen, setIsHelpDropdownOpen] = React.useState(false);
-  const [statusPageData, setStatusPageData] = React.useState(null);
-  const [showAboutModal, setshowAboutModal] = React.useState(false);
-  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = React.useState(false);
-  const applicationLauncherMenuRef = React.useRef(null);
-  const helpMenuRef = React.useRef(null);
-  const userMenuRef = React.useRef(null);
-  const kebabMenuRef = React.useRef(null);
+  const [isAppLauncherDropdownOpen, setIsAppLauncherDropdownOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isKebabDropdownOpen, setIsKebabDropdownOpen] = useState(false);
+  const [isHelpDropdownOpen, setIsHelpDropdownOpen] = useState(false);
+  const [statusPageData, setStatusPageData] = useState(null);
+  const [showAboutModal, setshowAboutModal] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const applicationLauncherMenuRef = useRef(null);
+  const helpMenuRef = useRef(null);
+  const userMenuRef = useRef(null);
+  const kebabMenuRef = useRef(null);
   const reportBugLink = cv?.data ? getReportBugLink(cv.data, t) : null;
-  const userInactivityTimeout = React.useRef(null);
+  const userInactivityTimeout = useRef(null);
   const username = user?.username ?? '';
   const isKubeAdmin = username === 'kube:admin';
 
-  const drawerToggle = React.useCallback(
-    () => dispatch(UIActions.notificationDrawerToggleExpanded()),
-    [dispatch],
-  );
+  const drawerToggle = useCallback(() => dispatch(UIActions.notificationDrawerToggleExpanded()), [
+    dispatch,
+  ]);
 
   const getImportYAMLPath = () => formatNamespacedRouteForResource('import', activeNamespace);
   const onFeedbackModal = () => setIsFeedbackModalOpen(true);
@@ -297,11 +282,16 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
 
   const getHelpActions = (additionalHelpActions) => {
     const helpActions = [];
-    const tourRef = React.createRef();
+    const tourRef = createRef();
 
     helpActions.push({
       isSection: true,
       actions: [
+        {
+          component: () => (
+            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v6-c-menu__item" />
+          ),
+        },
         ...(quickstartFlag
           ? [
               {
@@ -330,11 +320,6 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               },
             ]
           : []),
-        {
-          component: () => (
-            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v6-c-menu__item" />
-          ),
-        },
         ...(reportBugLink
           ? [
               {
@@ -346,10 +331,6 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               },
             ]
           : []),
-        {
-          label: t('public~About'),
-          callback: onAboutModal,
-        },
       ],
     });
 
@@ -359,7 +340,13 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         ...helpLink,
         label: t(`public~${helpLink.label}`),
       }))
-      .concat(additionalHelpActions.actions);
+      .concat(
+        {
+          label: t('public~About'),
+          callback: onAboutModal,
+        },
+        ...additionalHelpActions.actions,
+      );
 
     if (!_.isEmpty(additionalHelpActions.actions)) {
       helpActions.push(additionalHelpActions);
@@ -599,7 +586,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     );
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (window.SERVER_FLAGS.statuspageID) {
       fetch(`https://${window.SERVER_FLAGS.statuspageID}.statuspage.io/api/v2/summary.json`, {
         headers: { Accept: 'application/json' },
@@ -612,7 +599,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   const setLastConsoleActivityTimestamp = () =>
     localStorage.setItem(LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY, Date.now().toString());
 
-  const resetInactivityTimeout = React.useCallback(() => {
+  const resetInactivityTimeout = useCallback(() => {
     setLastConsoleActivityTimestamp();
     clearTimeout(userInactivityTimeout.current);
     userInactivityTimeout.current = setTimeout(() => {
@@ -620,7 +607,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     }, window.SERVER_FLAGS.inactivityTimeout * 1000);
   }, [isKubeAdmin]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const onStorageChange = (e) => {
       const { key, oldValue, newValue } = e;
       if (key === LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY && oldValue < newValue) {
@@ -650,7 +637,6 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     <>
       <Toolbar isFullHeight isStatic>
         <ToolbarContent>
-          <MultiClusterToolbarGroup />
           <ToolbarGroup
             align={{ default: 'alignEnd' }}
             visibility={{ default: isMastheadStacked ? 'hidden' : 'visible' }}

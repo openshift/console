@@ -1,3 +1,5 @@
+@use '../../../../../public/style/vars';
+
 .co-cloud-shell-tab {
   &__body {
     display: flex;
@@ -12,9 +14,6 @@
     align-items: center;
     display: flex;
     flex-shrink: 0;
-    min-height: var(--pf-v6-global--target-size--MinHeight);
-    &-text {
-      padding: 0 var(--pf-t--global--spacer--md);
-    }
+    min-height: #{vars.$co-button-height};
   }
 }

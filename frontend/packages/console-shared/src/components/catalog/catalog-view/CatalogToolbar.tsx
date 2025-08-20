@@ -1,8 +1,8 @@
-import * as React from 'react';
+import { forwardRef } from 'react';
 import { Flex, FlexItem, SearchInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Dropdown } from '@console/internal/components/utils';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useDebounceCallback } from '@console/shared';
 import { NO_GROUPING } from '../utils/category-utils';
 import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
@@ -23,7 +23,7 @@ type CatalogToolbarProps = {
   onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
 };
 
-const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
+const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
   (
     {
       title,
@@ -72,21 +72,23 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
               />
             </FlexItem>
             <FlexItem>
-              <Dropdown
+              <ConsoleSelect
                 className="co-catalog-page__sort"
                 items={catalogSortItems}
                 title={catalogSortItems[sortOrder]}
+                alwaysShowTitle
                 onChange={onSortOrderChange}
               />
             </FlexItem>
             {showGrouping && (
               <FlexItem>
-                <Dropdown
+                <ConsoleSelect
                   menuClassName="dropdown-menu--text-wrap"
                   items={catalogGroupItems}
                   onChange={onGroupingChange}
                   titlePrefix={t('console-shared~Group by')}
                   title={catalogGroupItems[activeGrouping]}
+                  alwaysShowTitle
                 />
               </FlexItem>
             )}

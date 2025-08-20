@@ -5,19 +5,22 @@ import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
 import { ConfigMapKind } from '@console/internal/module/k8s';
-import { ResourceDropdown } from '@console/shared';
+import {
+  ResourceDropdown,
+  ResourceDropdownProps,
+} from '@console/shared/src/components/dropdown/ResourceDropdown';
 
-type ConfigMapDropdownProps = {
-  dropDownClassName?: string;
-  menuClassName?: string;
+type ConfigMapDropdownProps = Omit<
+  ResourceDropdownProps,
+  | 'dataSelector'
+  | 'placeholder'
+  | 'autocompleteFilter'
+  | 'showBadge'
+  | 'resources'
+  | 'loadError'
+  | 'loaded'
+> & {
   namespace?: string;
-  actionItems?: {
-    actionTitle: string;
-    actionKey: string;
-  }[];
-  selectedKey: string;
-  onChange?: (key: string) => void;
-  title?: React.ReactNode;
   name: string;
 };
 

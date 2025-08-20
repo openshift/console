@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
@@ -37,7 +37,7 @@ export const usePipelineRunRelatedResources = (
   namespace: string,
   pipelineRunName: string,
 ): WatchK8sResults<ResourcesType> => {
-  const plrRelatedResources: WatchK8sResources<ResourcesType> = React.useMemo(() => {
+  const plrRelatedResources: WatchK8sResources<ResourcesType> = useMemo(() => {
     return {
       taskruns: {
         kind: referenceForModel(TaskRunModel),
@@ -62,7 +62,7 @@ export const useTaskRunRelatedResources = (
   namespace: string,
   taskRunName: string,
 ): WatchK8sResults<ResourcesType> => {
-  const tsrRelatedResources: WatchK8sResources<ResourcesType> = React.useMemo(() => {
+  const tsrRelatedResources: WatchK8sResources<ResourcesType> = useMemo(() => {
     return {
       pods: getPodsByLabels(namespace, { [TektonResourceLabel.taskrun]: taskRunName }),
     };

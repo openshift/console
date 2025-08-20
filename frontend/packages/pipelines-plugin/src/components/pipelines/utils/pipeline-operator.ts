@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { compare, gt, gte, parse, SemVer } from 'semver';
 import { SetFeatureFlag, useAccessReview } from '@console/dynamic-plugin-sdk';
 import { k8sList } from '@console/dynamic-plugin-sdk/src/utils/k8s';
@@ -42,8 +42,8 @@ export const getPipelineOperatorVersion = async (namespace: string): Promise<Sem
 };
 
 export const usePipelineOperatorVersion = (namespace: string): SemVer | null => {
-  const [version, setVersion] = React.useState<SemVer | null>(null);
-  React.useEffect(() => {
+  const [version, setVersion] = useState<SemVer | null>(null);
+  useEffect(() => {
     getPipelineOperatorVersion(namespace)
       .then(setVersion)
       .catch((error) =>

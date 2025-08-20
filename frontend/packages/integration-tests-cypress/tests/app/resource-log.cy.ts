@@ -1,7 +1,7 @@
 import { checkErrors } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { guidedTour } from '../../views/guided-tour';
-import { listPage, listPage } from '../../views/list-page';
+import { listPage } from '../../views/list-page';
 
 describe('Pod log viewer tab', () => {
   before(() => {

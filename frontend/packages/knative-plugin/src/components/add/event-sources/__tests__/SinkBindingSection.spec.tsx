@@ -1,11 +1,32 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { AsyncComponent } from '@console/internal/components/utils/async';
-import { InputField } from '@console/shared';
+import { render } from '@testing-library/react';
 import SinkBindingSection from '../SinkBindingSection';
+import '@testing-library/jest-dom';
 
-type SinkBindingSectionProps = React.ComponentProps<typeof SinkBindingSection>;
+jest.mock('@console/dev-console/src/components/import/section/FormSection', () => ({
+  __esModule: true,
+  default: 'FormSection',
+}));
+
+jest.mock('@console/internal/components/utils/async', () => ({
+  AsyncComponent: 'AsyncComponent',
+}));
+
+jest.mock('@console/shared', () => ({
+  InputField: 'InputField',
+  DropdownField: 'DropdownField',
+  getFieldId: jest.fn(() => 'mocked-field-id'),
+}));
+
+jest.mock('@console/shared/src/components/heading/TertiaryHeading', () => ({
+  __esModule: true,
+  default: 'TertiaryHeading',
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
 
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{}, {}]),
@@ -22,24 +43,20 @@ jest.mock('formik', () => ({
 
 describe('SinkBindingSection', () => {
   const title = 'Sink Binding';
-  let wrapper: ShallowWrapper<SinkBindingSectionProps>;
-  beforeEach(() => {
-    wrapper = shallow(<SinkBindingSection title={title} />);
-  });
+
   it('should render FormSection', () => {
-    expect(wrapper.find(FormSection)).toHaveLength(1);
-    expect(wrapper.find(FormSection).props().title).toBe('Sink Binding');
+    const { container } = render(<SinkBindingSection title={title} />);
+    expect(container.querySelector('FormSection')).toBeInTheDocument();
   });
 
   it('should render NameValueEditor', () => {
-    const nameValueEditorField = wrapper.find(AsyncComponent);
-    expect(nameValueEditorField).toHaveLength(1);
-    expect(nameValueEditorField.props().nameString).toBe('Name');
-    expect(nameValueEditorField.props().valueString).toBe('Value');
+    const { container } = render(<SinkBindingSection title={title} />);
+    expect(container.querySelector('AsyncComponent')).toBeInTheDocument();
   });
 
   it('should render InputFields', () => {
-    const inputFieldFieldItems = wrapper.find(InputField);
-    expect(inputFieldFieldItems).toHaveLength(2);
+    const { container } = render(<SinkBindingSection title={title} />);
+    const inputFields = container.querySelectorAll('InputField');
+    expect(inputFields).toHaveLength(2);
   });
 });

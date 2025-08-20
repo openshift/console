@@ -49,8 +49,31 @@ describe(`${crd} CRD`, () => {
       });
     });
 
+    cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
+    listPage.rows.shouldBeLoaded();
+    cy.log('Additional printer columns should exist.');
+    cy.byTestID('has-additional-printer-columns').should('exist');
+    cy.byTestID('additional-printer-column-header-Text').should('have.text', 'Text');
+    cy.byTestID('additional-printer-column-data-Text').should('have.text', text);
+    cy.byTestID('additional-printer-column-header-Location').should('have.text', 'Location');
+    cy.byTestID('additional-printer-column-data-Location').should('have.text', location);
+    cy.byTestID('additional-printer-column-header-Age').should('have.text', 'Age');
+    cy.byTestID('additional-printer-column-data-Age').should('exist');
+    cy.log('Created date should not exist since Age does.');
+    cy.byTestID('column-header-Created').should('not.exist');
+    cy.byTestID('column-data-Created').should('not.exist');
+
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}/${name}`);
+    detailsPage.isLoaded();
     detailsPage.titleShouldContain(name);
+    cy.log('Additional printer columns should exist.');
+    cy.byTestID('additional-printer-columns').should('exist');
+    cy.byTestSelector('details-item-label__Text').should('have.text', 'Text');
+    cy.byTestSelector('details-item-value__Text').should('have.text', text);
+    cy.byTestSelector('details-item-label__Location').should('have.text', 'Location');
+    cy.byTestSelector('details-item-value__Location').should('have.text', location);
+    cy.byTestSelector('details-item-label__Age').should('have.text', 'Age');
+    cy.byTestSelector('details-item-value__Age').should('exist');
 
     cy.get(notification).contains(text).should('exist').and('be.visible');
 

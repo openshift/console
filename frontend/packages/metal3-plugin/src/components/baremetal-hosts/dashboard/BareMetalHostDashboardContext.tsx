@@ -1,8 +1,8 @@
-import * as React from 'react';
+import { createContext } from 'react';
 import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { BareMetalHostKind } from '../../../types';
 
-export const BareMetalHostDashboardContext = React.createContext<BareMetalDashboardContext>({});
+export const BareMetalHostDashboardContext = createContext<BareMetalDashboardContext>({});
 
 type BareMetalDashboardContext = {
   obj?: BareMetalHostKind;

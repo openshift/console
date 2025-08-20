@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
@@ -31,11 +31,11 @@ export const getArtifactHubTaskDetails = async (
 };
 
 export const useGetArtifactHubTasks = (hasPermission: boolean): ApiResult<ArtifactHubTask[]> => {
-  const [resultData, setResult] = React.useState<ArtifactHubTask[]>([]);
-  const [loaded, setLoaded] = React.useState(false);
-  const [loadedError, setLoadedError] = React.useState<string>();
+  const [resultData, setResult] = useState<ArtifactHubTask[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [loadedError, setLoadedError] = useState<string>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     let mounted = true;
     if (hasPermission) {
       searchTasks()

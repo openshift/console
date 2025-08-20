@@ -11,7 +11,7 @@ export const monitoringPage = {
   dashboard: {
     selectWorkload: (workloadName: string = 'All Workloads') => {
       cy.get(monitoringPO.dashboardTab.workloadsFilter).click();
-      cy.byLegacyTestID('dropdown-text-filter').type(workloadName);
+      cy.byTestID('console-select-search-input').type(workloadName);
       cy.get(`[id="${workloadName}-link"]`).click();
     },
     selectDashboard: (dashboardName: string) => {
@@ -54,7 +54,7 @@ export const monitoringPage = {
       cy.selectValueFromAutoCompleteDropDown(monitoringPO.eventsTab.resources, resourceName);
     },
     selectType: () => {
-      cy.byLegacyTestID('dropdown-button').click();
+      cy.byTestID('console-select-menu-toggle').click();
       cy.get('#all-link').click();
       // To Do
     },

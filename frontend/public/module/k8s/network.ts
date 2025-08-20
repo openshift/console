@@ -1,5 +1,5 @@
 /* eslint-disable tsdoc/syntax */
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { useK8sGet } from '../../components/utils/k8s-get-hook';
 import { K8sResourceKind } from './types';
 import { ConfigMapModel } from '../../models';
@@ -34,14 +34,14 @@ const getFeatureState = (data: { [key: string]: string }, key: string): boolean 
  *  returned)
  */
 export const useClusterNetworkFeatures = (): [ClusterNetworkFeatures, boolean] => {
-  const [features, setFeatures] = React.useState<ClusterNetworkFeatures>({});
-  const [featuresLoaded, setFeaturesLoaded] = React.useState(false);
+  const [features, setFeatures] = useState<ClusterNetworkFeatures>({});
+  const [featuresLoaded, setFeaturesLoaded] = useState(false);
   const [config, configLoaded] = useK8sGet<K8sResourceKind>(
     ConfigMapModel,
     networkConfigMapName,
     networkConfigMapNamespace,
   );
-  React.useEffect(() => {
+  useEffect(() => {
     if (configLoaded) {
       if (config?.data) {
         setFeatures({

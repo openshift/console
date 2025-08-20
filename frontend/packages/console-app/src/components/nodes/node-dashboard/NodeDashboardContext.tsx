@@ -1,8 +1,8 @@
-import * as React from 'react';
+import { createContext } from 'react';
 import { NodeKind } from '@console/internal/module/k8s';
 import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 
-export const NodeDashboardContext = React.createContext<NodeDashboardContext>({
+export const NodeDashboardContext = createContext<NodeDashboardContext>({
   setCPULimit: () => {},
   setMemoryLimit: () => {},
   setHealthCheck: () => {},

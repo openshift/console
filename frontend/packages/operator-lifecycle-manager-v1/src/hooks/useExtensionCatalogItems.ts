@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
 import { usePoll } from '@console/internal/components/utils';
 import { ExtensionCatalogDatabaseContext } from '../contexts/ExtensionCatalogDatabaseContext';
@@ -8,19 +8,19 @@ import { ExtensionCatalogItem } from '../fbc/types';
 
 type UseExtensionCatalogItems = () => [CatalogItem[], boolean, Error];
 export const useExtensionCatalogItems: UseExtensionCatalogItems = () => {
-  const { done: initDone, error: initError } = React.useContext(ExtensionCatalogDatabaseContext);
-  const [items, setItems] = React.useState<ExtensionCatalogItem[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<Error>();
+  const { done: initDone, error: initError } = useContext(ExtensionCatalogDatabaseContext);
+  const [items, setItems] = useState<ExtensionCatalogItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!initDone || initError) {
       setLoading(!initDone);
       setError(initError);
     }
   }, [initDone, initError]);
 
-  const tick = React.useCallback(() => {
+  const tick = useCallback(() => {
     if (initDone && !initError) {
       openDatabase('olm')
         .then((database) => getItems<ExtensionCatalogItem>(database, 'extension-catalog'))
@@ -40,10 +40,9 @@ export const useExtensionCatalogItems: UseExtensionCatalogItems = () => {
   // Poll IndexedDB (IDB) every 10 seconds
   usePoll(tick, 10000);
 
-  const normalizedItems = React.useMemo<CatalogItem[]>(
-    () => items.map(normalizeExtensionCatalogItem),
-    [items],
-  );
+  const normalizedItems = useMemo<CatalogItem[]>(() => items.map(normalizeExtensionCatalogItem), [
+    items,
+  ]);
 
   return [normalizedItems, loading, error];
 };

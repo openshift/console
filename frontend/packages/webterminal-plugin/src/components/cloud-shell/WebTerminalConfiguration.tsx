@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { Dropdown } from '@console/internal/components/utils/dropdown';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { NumberSpinner } from '@console/internal/components/utils/number-spinner';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useTelemetry } from '@console/shared';
@@ -29,7 +29,7 @@ import { CloudShellResource } from './cloud-shell-utils';
 import { getCloudShellTimeout } from './setup/cloud-shell-setup-utils';
 import useCloudShellNamespace from './useCloudShellNamespace';
 
-const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
+const WebTerminalConfiguration: React.FCC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [operatorNamespace] = useCloudShellNamespace();
@@ -214,10 +214,11 @@ const WebTerminalConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
             min={0}
             disabled={readonly}
           />
-          <Dropdown
+          <ConsoleSelect
             title={TimeoutUnits[unit]}
+            alwaysShowTitle
             selectedKey={unit}
-            name="timeout-unit"
+            id="timeout-unit"
             className="request-size-input__unit"
             items={TimeoutUnits}
             onChange={onUnitChange}

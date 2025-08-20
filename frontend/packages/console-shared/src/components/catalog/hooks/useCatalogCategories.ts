@@ -1,9 +1,9 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { defaultCatalogCategories } from '../../../utils/default-categories';
 import { CatalogCategory } from '../utils/types';
 
 const useCatalogCategories = (): CatalogCategory[] => {
-  const categories = React.useMemo<CatalogCategory[]>(() => {
+  const categories = useMemo<CatalogCategory[]>(() => {
     try {
       const categoriesString = window.SERVER_FLAGS.developerCatalogCategories;
       if (!categoriesString) {

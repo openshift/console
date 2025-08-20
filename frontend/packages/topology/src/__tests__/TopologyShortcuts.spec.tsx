@@ -1,12 +1,15 @@
-import { mount, shallow } from 'enzyme';
-import { Shortcut } from '@console/shared';
+import { render, screen } from '@testing-library/react';
+import { TFunction } from 'react-i18next';
 import { getTopologyShortcuts } from '../components/graph-view/TopologyShortcuts';
 import { TopologyViewType } from '../topology-types';
+import '@testing-library/jest-dom';
+
+const t = ((key: string) => key) as TFunction;
 
 describe('TopologyShortcuts tests', () => {
-  it('should show reduced list in view shortcuts popover on topology toolbar when there are no workloads', () => {
-    const wrapper = mount(
-      getTopologyShortcuts(jest.fn(), {
+  it('should show reduced list in view shortcuts popover when there are no workloads', () => {
+    render(
+      getTopologyShortcuts(t, {
         supportedFileTypes: undefined,
         isEmptyModel: true,
         viewType: TopologyViewType.graph,
@@ -14,23 +17,22 @@ describe('TopologyShortcuts tests', () => {
       }),
     );
 
-    expect(wrapper.find(Shortcut).exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="open-quick-search"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="ctrl-button"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="Spacebar-button"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="create-connector-handle"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="hover"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="context-menu"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="right-click"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="view-details"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="click"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="edit-application-grouping"]').exists()).toBe(false);
-    wrapper.unmount();
+    expect(screen.getByText(/open quick search modal/i)).toBeInTheDocument();
+    expect(screen.getByText(/ctrl/i)).toBeInTheDocument();
+    expect(screen.getByText(/spacebar/i)).toBeInTheDocument();
+
+    expect(screen.queryByText(/create connector/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/hover/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/context menu/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/right click/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/view details/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/click/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/edit application grouping/i)).not.toBeInTheDocument();
   });
 
-  it('should show dragNdrop action in the view shortcuts popover on topology toolbar only when supportedFileTypes is not empty', () => {
-    const wrapper = mount(
-      getTopologyShortcuts(jest.fn(), {
+  it('should show drag and drop when supportedFileTypes is not empty', () => {
+    render(
+      getTopologyShortcuts(t, {
         supportedFileTypes: ['jar'],
         isEmptyModel: true,
         viewType: TopologyViewType.graph,
@@ -38,15 +40,13 @@ describe('TopologyShortcuts tests', () => {
       }),
     );
 
-    expect(wrapper.find(Shortcut).exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="upload-file"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="drag-and-drop"]').exists()).toBe(true);
-    wrapper.unmount();
+    expect(screen.getByText(/drag \+ drop/i)).toBeInTheDocument();
+    expect(screen.getByText(/upload file.*to project/i)).toBeInTheDocument();
   });
 
-  it('should show reduced list in the view shortcuts popover on topology toolbar for list view', () => {
-    const wrapper = shallow(
-      getTopologyShortcuts(jest.fn(), {
+  it('should show reduced list in list view', () => {
+    render(
+      getTopologyShortcuts(t, {
         supportedFileTypes: ['jar'],
         isEmptyModel: false,
         viewType: TopologyViewType.list,
@@ -54,63 +54,71 @@ describe('TopologyShortcuts tests', () => {
       }),
     );
 
-    expect(wrapper.find('[data-test-id="upload-file"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="view-details"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="open-quick-search"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="create-connector-handle"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="context-menu"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="edit-application-grouping"]').exists()).toBe(false);
+    expect(screen.getByText(/upload file.*to project/i)).toBeInTheDocument();
+    expect(screen.getByText(/view details/i)).toBeInTheDocument();
+    expect(screen.getByText(/open quick search modal/i)).toBeInTheDocument();
+
+    expect(screen.queryByText(/create connector/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/context menu/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/edit application grouping/i)).not.toBeInTheDocument();
   });
-  it('should show the full list in the view shortcuts popover on topology toolbar for graph view', () => {
-    const wrapper = shallow(
-      getTopologyShortcuts(jest.fn(), {
+
+  it('should show full list in graph view with all access', () => {
+    render(
+      getTopologyShortcuts(t, {
         supportedFileTypes: ['jar'],
         isEmptyModel: false,
         viewType: TopologyViewType.graph,
         allImportAccess: true,
       }),
     );
-    expect(wrapper.find('[data-test-id="move"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="upload-file"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="context-menu"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="create-connector-handle"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="view-details"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="open-quick-search"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="edit-application-grouping"]').exists()).toBe(true);
+
+    expect(screen.getByText(/move/i)).toBeInTheDocument();
+    expect(screen.getByText(/upload file.*to project/i)).toBeInTheDocument();
+    expect(screen.getByText(/context menu/i)).toBeInTheDocument();
+    expect(screen.getByText(/create connector/i)).toBeInTheDocument();
+    expect(screen.getByText(/view details/i)).toBeInTheDocument();
+    expect(screen.getByText(/open quick search modal/i)).toBeInTheDocument();
+    expect(screen.getByText(/edit application grouping/i)).toBeInTheDocument();
   });
-  it('should show only view details and quick search actions in list view', () => {
-    const wrapper = shallow(
-      getTopologyShortcuts(jest.fn(), {
+
+  it('should show minimal actions in list view without access', () => {
+    render(
+      getTopologyShortcuts(t, {
         supportedFileTypes: ['jar'],
         isEmptyModel: false,
         viewType: TopologyViewType.list,
         allImportAccess: false,
       }),
     );
-    expect(wrapper.find('[data-test-id="move"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="view-details"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="open-quick-search"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="create-connector-handle"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="context-menu"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="edit-application-grouping"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="upload-file"]').exists()).toBe(false);
+
+    expect(screen.getByText(/view details/i)).toBeInTheDocument();
+    expect(screen.getByText(/open quick search modal/i)).toBeInTheDocument();
+
+    expect(screen.queryByText(/move/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/create connector/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/context menu/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/edit application grouping/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/upload file/i)).not.toBeInTheDocument();
   });
 
-  it('should show only view details and quick search actions in graph view', () => {
-    const wrapper = shallow(
-      getTopologyShortcuts(jest.fn(), {
+  it('should show minimal actions in graph view without access', () => {
+    render(
+      getTopologyShortcuts(t, {
         supportedFileTypes: ['jar'],
         isEmptyModel: false,
         viewType: TopologyViewType.graph,
         allImportAccess: false,
       }),
     );
-    expect(wrapper.find('[data-test-id="move"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="view-details"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="open-quick-search"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="create-connector-handle"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="context-menu"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="edit-application-grouping"]').exists()).toBe(false);
-    expect(wrapper.find('[data-test-id="upload-file"]').exists()).toBe(false);
+
+    expect(screen.getByText(/move/i)).toBeInTheDocument();
+    expect(screen.getByText(/view details/i)).toBeInTheDocument();
+    expect(screen.getByText(/open quick search modal/i)).toBeInTheDocument();
+
+    expect(screen.queryByText(/create connector/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/context menu/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/edit application grouping/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/upload file/i)).not.toBeInTheDocument();
   });
 });

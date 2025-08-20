@@ -1,16 +1,18 @@
-import { SelectOption, SelectOptionProps } from '@patternfly/react-core';
-import { mount, shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { DisplayFilters, TopologyDisplayFilterType } from '../../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS } from '../const';
 import KindFilterDropdown from '../KindFilterDropdown';
+import '@testing-library/jest-dom';
 
 describe(KindFilterDropdown.displayName, () => {
   let dropdownFilter: DisplayFilters;
-  let onChange: () => void;
-  let supportedKinds;
+  let onChange: jest.Mock;
+  let supportedKinds: { [key: string]: number };
+
   beforeEach(() => {
     dropdownFilter = [...DEFAULT_TOPOLOGY_FILTERS];
-    onChange = jasmine.createSpy();
+    onChange = jest.fn();
     supportedKinds = {
       'Kind-B': 3,
       'Kind-A': 4,
@@ -22,31 +24,19 @@ describe(KindFilterDropdown.displayName, () => {
     };
   });
 
-  it('should exists', () => {
-    const wrapper = shallow(
+  it('should render the dropdown button', () => {
+    render(
       <KindFilterDropdown
         filters={dropdownFilter}
         supportedKinds={supportedKinds}
         onChange={onChange}
       />,
     );
-    expect(wrapper.exists()).toBeTruthy();
+    expect(screen.getByRole('button', { name: /filter by resource/i })).toBeInTheDocument();
   });
 
-  it('should have the correct number of filters', () => {
-    const wrapper = mount(
-      <KindFilterDropdown
-        filters={dropdownFilter}
-        supportedKinds={supportedKinds}
-        onChange={onChange}
-        opened
-      />,
-    );
-    expect(wrapper.find(SelectOption)).toHaveLength(Object.keys(supportedKinds).length);
-  });
-
-  it('should have no badge when there are no filters', () => {
-    const wrapper = mount(
+  it('should display all kinds as filter options when opened', async () => {
+    render(
       <KindFilterDropdown
         filters={dropdownFilter}
         supportedKinds={supportedKinds}
@@ -54,10 +44,55 @@ describe(KindFilterDropdown.displayName, () => {
         opened
       />,
     );
-    expect(wrapper.find('.odc-kind-filter-dropdown__kind-count').exists()).toBeFalsy();
+    const options = await screen.findAllByRole('menuitem');
+    expect(options).toHaveLength(Object.keys(supportedKinds).length);
   });
 
-  it('should have the correct badge count when there are filters', () => {
+  it('should not show a badge when no kinds are selected', () => {
+    render(
+      <KindFilterDropdown
+        filters={dropdownFilter}
+        supportedKinds={supportedKinds}
+        onChange={onChange}
+        opened
+      />,
+    );
+    expect(screen.queryByText(/^\d+$/)).not.toBeInTheDocument(); // no badge
+  });
+
+  it('should show correct badge count when filters are selected', () => {
+    dropdownFilter.push(
+      {
+        type: TopologyDisplayFilterType.kind,
+        id: 'Kind-A',
+        label: 'Kind-A',
+        labelKey: 'Kind-A',
+        priority: 1,
+        value: true,
+      },
+      {
+        type: TopologyDisplayFilterType.kind,
+        id: 'Kind-C',
+        label: 'Kind-C',
+        labelKey: 'Kind-C',
+        priority: 1,
+        value: true,
+      },
+    );
+
+    render(
+      <KindFilterDropdown
+        filters={dropdownFilter}
+        supportedKinds={supportedKinds}
+        onChange={onChange}
+        opened
+      />,
+    );
+
+    expect(screen.getByText('2')).toBeInTheDocument();
+  });
+
+  it('should mark a selected kind as checked', () => {
     dropdownFilter.push({
       type: TopologyDisplayFilterType.kind,
       id: 'Kind-A',
@@ -66,15 +101,8 @@ describe(KindFilterDropdown.displayName, () => {
       priority: 1,
       value: true,
     });
-    dropdownFilter.push({
-      type: TopologyDisplayFilterType.kind,
-      id: 'Kind-C',
-      label: 'Kind-C',
-      labelKey: 'Kind-C',
-      priority: 1,
-      value: true,
-    });
-    const wrapper = mount(
+
+    render(
       <KindFilterDropdown
         filters={dropdownFilter}
         supportedKinds={supportedKinds}
@@ -82,21 +110,12 @@ describe(KindFilterDropdown.displayName, () => {
         opened
       />,
     );
-    const badge = wrapper.find('.odc-kind-filter-dropdown__kind-count');
-    expect(badge.exists()).toBeTruthy();
-    expect(badge.first().text()).toEqual('2');
+
+    expect(screen.getByRole('checkbox', { name: /kind-a/i })).toBeChecked();
   });
 
-  it('should select kinds when filtered', () => {
-    dropdownFilter.push({
-      type: TopologyDisplayFilterType.kind,
-      id: 'Kind-A',
-      label: 'Kind A',
-      labelKey: 'Kind A',
-      priority: 1,
-      value: true,
-    });
-    const wrapper = mount(
+  it('should show resource counts next to kind labels', () => {
+    render(
       <KindFilterDropdown
         filters={dropdownFilter}
         supportedKinds={supportedKinds}
@@ -104,13 +123,18 @@ describe(KindFilterDropdown.displayName, () => {
         opened
       />,
     );
+
     expect(
-      (wrapper.find(SelectOption).first().props() as SelectOptionProps).isSelected,
-    ).toBeTruthy();
+      screen.getByText((content, element) => {
+        const hasText = content.includes('Kind B') && content.includes('(3)');
+        const isTarget = element?.tagName.toLowerCase() === 'span';
+        return hasText && isTarget;
+      }),
+    ).toBeInTheDocument();
   });
 
-  it('should show resource counts correctly', () => {
-    const wrapper = mount(
+  it('should call onChange when a kind is selected', async () => {
+    render(
       <KindFilterDropdown
         filters={dropdownFilter}
         supportedKinds={supportedKinds}
@@ -118,12 +142,10 @@ describe(KindFilterDropdown.displayName, () => {
         opened
       />,
     );
-    const selectOptions = wrapper.find(SelectOption);
-    const firstType = selectOptions.at(0);
-    const secondType = selectOptions.at(1);
-    const thirdType = selectOptions.at(2);
-    expect(firstType.find('.pf-v6-c-menu__item-text').text()).toContain('(4)');
-    expect(secondType.find('.pf-v6-c-menu__item-text').text()).toContain('(3)');
-    expect(thirdType.find('.pf-v6-c-menu__item-text').text()).toContain('(2)');
+
+    const checkbox = screen.getByRole('checkbox', { name: /kind-a/i });
+    await userEvent.click(checkbox);
+
+    expect(onChange).toHaveBeenCalled();
   });
 });

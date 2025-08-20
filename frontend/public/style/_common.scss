@@ -41,10 +41,6 @@
   }
 }
 
-.co-no-bold {
-  font-weight: var(--pf-t--global--font--weight--body--default);
-}
-
 .cos-error-title {
   color: var(--pf-t--global--color--status--danger--default);
 }
@@ -107,6 +103,11 @@
 
 .co-break-word {
   @include co-break-word;
+}
+
+.co-fullscreen {
+  // so that the background colour isn't black
+  background-color: var(--pf-t--global--background--color--secondary--default);
 }
 
 // Prefer `co-break-word` in most cases. `co-break-all` should generally be reserved for URLs and long,

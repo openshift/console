@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
 import { Content, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartCon
 export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogItem[] => {
   const { setActiveQuickStart } = useQuickStartContext();
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () =>
       quickStarts.map((qs: QuickStart) => {
         const prerequisites = qs.spec.prerequisites?.filter((p) => p);
