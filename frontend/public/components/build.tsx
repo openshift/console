@@ -60,7 +60,6 @@ import { displayDurationInWords } from './utils/build-utils';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
-// The menuActions are now handled by the useBuildsActions hook in the action provider
 
 export enum BuildStrategyType {
   Docker = 'Docker',
