@@ -47,7 +47,6 @@ type LogControlsProps = {
   pathItems: string[];
   isJournal: boolean;
   onChangeUnit: (value: string) => void;
-  unit: string;
   isLoadingFilenames: boolean;
   logFilenamesExist: boolean;
   onToggleFilename: () => void;
@@ -70,7 +69,6 @@ const LogControls: React.FC<LogControlsProps> = ({
   pathItems,
   isJournal,
   onChangeUnit,
-  unit,
   isLoadingFilenames,
   logFilenamesExist,
   onToggleFilename,
@@ -120,7 +118,7 @@ const LogControls: React.FC<LogControlsProps> = ({
             <SelectList>{options(pathItems)}</SelectList>
           </Select>
         </FlexItem>
-        {isJournal && <NodeLogsUnitFilter onChangeUnit={onChangeUnit} unit={unit} />}
+        {isJournal && <NodeLogsUnitFilter onChangeUnit={onChangeUnit} />}
         {!isJournal && (
           <FlexItem>
             {isLoadingFilenames ? (
@@ -179,13 +177,11 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     : labels?.['node-role.kubernetes.io/master'] === '' &&
       pathItems.push('openshift-apiserver', 'kube-apiserver', 'oauth-apiserver');
   const pathQueryArgument = 'path';
-  const unitQueryArgument = 'unit';
   const logQueryArgument = 'log';
 
   const [path, setPath] = React.useState(getQueryArgument(pathQueryArgument) || pathItems[0]);
   const [logURL, setLogURL] = React.useState('');
   const [logFilenames, setLogFilenames] = React.useState<string[]>([]);
-  const [unit, setUnit] = React.useState(getQueryArgument(unitQueryArgument) || '');
   const [logFilename, setLogFilename] = React.useState(getQueryArgument(logQueryArgument));
   const [isLoadingLog, setLoadingLog] = React.useState(true);
   const [isLoadingFilenames, setLoadingFilenames] = React.useState(true);
@@ -219,11 +215,6 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     },
     [t],
   );
-  const getUnitQueryParams = (unitText: string) => {
-    const unitsArray = unitText?.split(',');
-    const unitQueryParams = unitsArray?.map((val) => `unit=${val}`);
-    return unitQueryParams?.join('&');
-  };
   const getLogURL = React.useCallback(
     (ext?: string, unitText?: string) => {
       const baseURL = `proxy/logs/${path}`;
@@ -232,7 +223,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
         extendedURL = `${baseURL}${ext}`;
       }
       if (unitText) {
-        extendedURL = `${baseURL}?${getUnitQueryParams(unitText)}`;
+        extendedURL = `${baseURL}?unit=${unitText}`;
       }
       return resourceURL(modelFor(kind as string), {
         name,
@@ -245,7 +236,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
 
   React.useEffect(() => {
     if (!path || isJournal) {
-      const journalLogURL = getLogURL('', unit);
+      const journalLogURL = getLogURL('', '');
       setLogURL(journalLogURL);
     } else {
       if (path && logFilename) {
@@ -273,7 +264,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
           setError(t('public~Error fetching log filenames: {{message}}', { message: e.message }));
         });
     }
-  }, [kind, name, ns, path, isJournal, isWindows, logFilename, getLogURL, t, unit]);
+  }, [kind, name, ns, path, isJournal, isWindows, logFilename, getLogURL, t]);
 
   React.useEffect(() => {
     if (logURL) {
@@ -294,9 +285,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     setPath(newAPI);
     setLogFilenames([]);
     setLogFilename('');
-    setUnit('');
     setQueryArgument(pathQueryArgument, newAPI);
-    removeQueryArgument(unitQueryArgument);
     removeQueryArgument(logQueryArgument);
     setLoadingFilenames(true);
     setLoadingLog(true);
@@ -304,10 +293,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
   };
   const onTogglePath = () => setPathOpen(!isPathOpen);
   const onChangeUnit = (value: string) => {
-    setUnit(value);
-    value === ''
-      ? removeQueryArgument(unitQueryArgument)
-      : setQueryArgument(unitQueryArgument, value);
+    value === '' ? removeQueryArgument('unit') : setQueryArgument('unit', value);
   };
   const onChangeFilename = (event: React.MouseEvent<Element, MouseEvent>, newFilename: string) => {
     event.preventDefault();
@@ -333,7 +319,6 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       setPathOpen={setPathOpen}
       isJournal={isJournal}
       onChangeUnit={onChangeUnit}
-      unit={unit || ''}
       isLoadingFilenames={isLoadingFilenames}
       logFilenamesExist={logFilenamesExist}
       onToggleFilename={onToggleFilename}
