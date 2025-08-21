@@ -24,7 +24,7 @@ github.com/Masterminds/goutils
 # github.com/Masterminds/semver v1.5.0
 ## explicit
 github.com/Masterminds/semver
-# github.com/Masterminds/semver/v3 v3.3.0
+# github.com/Masterminds/semver/v3 v3.3.1
 ## explicit; go 1.21
 github.com/Masterminds/semver/v3
 # github.com/Masterminds/sprig/v3 v3.3.0
@@ -195,7 +195,7 @@ github.com/devfile/registry-support/registry-library/library
 # github.com/distribution/reference v0.6.0
 ## explicit; go 1.20
 github.com/distribution/reference
-# github.com/docker/cli v27.4.1+incompatible
+# github.com/docker/cli v27.5.0+incompatible
 ## explicit
 github.com/docker/cli/cli/config
 github.com/docker/cli/cli/config/configfile
@@ -213,7 +213,7 @@ github.com/docker/distribution/registry/client/auth/challenge
 github.com/docker/distribution/registry/client/transport
 github.com/docker/distribution/registry/storage/cache
 github.com/docker/distribution/registry/storage/cache/memory
-# github.com/docker/docker v27.3.1+incompatible
+# github.com/docker/docker v27.5.0+incompatible
 ## explicit
 github.com/docker/docker/api/types/filters
 github.com/docker/docker/api/types/registry
@@ -545,8 +545,8 @@ github.com/lib/pq/scram
 # github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 ## explicit
 github.com/liggitt/tabwriter
-# github.com/mailru/easyjson v0.7.7
-## explicit; go 1.12
+# github.com/mailru/easyjson v0.9.0
+## explicit; go 1.20
 github.com/mailru/easyjson/buffer
 github.com/mailru/easyjson/jlexer
 github.com/mailru/easyjson/jwriter
@@ -638,20 +638,19 @@ github.com/openshift/client-go/oauth/clientset/versioned/typed/oauth/v1
 # github.com/openshift/library-go v0.0.0-20231020125034-5a2d9fe760b3
 ## explicit; go 1.20
 github.com/openshift/library-go/pkg/crypto
-# github.com/operator-framework/api v0.29.0
+# github.com/operator-framework/api v0.30.0
 ## explicit; go 1.23.0
 github.com/operator-framework/api/pkg/constraints
 github.com/operator-framework/api/pkg/lib/version
 github.com/operator-framework/api/pkg/operators
 github.com/operator-framework/api/pkg/operators/v1
 github.com/operator-framework/api/pkg/operators/v1alpha1
-# github.com/operator-framework/kubectl-operator v0.6.0
-## explicit; go 1.23.0
+# github.com/operator-framework/kubectl-operator v0.6.1-0.20250513190322-8066c7311c76
+## explicit; go 1.23.4
 github.com/operator-framework/kubectl-operator/pkg/action
-# github.com/operator-framework/operator-controller v0.15.0
-## explicit; go 1.22.5
-github.com/operator-framework/operator-controller/api/v1alpha1
-github.com/operator-framework/operator-controller/internal/conditionsets
+# github.com/operator-framework/operator-controller v1.2.0
+## explicit; go 1.23.4
+github.com/operator-framework/operator-controller/api/v1
 # github.com/operator-framework/operator-lifecycle-manager v0.31.0
 ## explicit; go 1.23.0
 github.com/operator-framework/operator-lifecycle-manager/pkg/package-server/apis/operators
@@ -666,6 +665,9 @@ github.com/operator-framework/operator-registry/pkg/image
 github.com/operator-framework/operator-registry/pkg/lib/semver
 github.com/operator-framework/operator-registry/pkg/prettyunmarshaler
 github.com/operator-framework/operator-registry/pkg/registry
+# github.com/patrickmn/go-cache v2.1.0+incompatible
+## explicit
+github.com/patrickmn/go-cache
 # github.com/pelletier/go-toml/v2 v2.2.3
 ## explicit; go 1.21.0
 github.com/pelletier/go-toml/v2
@@ -889,9 +891,8 @@ golang.org/x/crypto/ssh
 golang.org/x/crypto/ssh/agent
 golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
 golang.org/x/crypto/ssh/knownhosts
-# golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c
-## explicit; go 1.22.0
-golang.org/x/exp/constraints
+# golang.org/x/exp v0.0.0-20250228200357-dead58393ab7
+## explicit; go 1.23.0
 golang.org/x/exp/maps
 golang.org/x/exp/slices
 # golang.org/x/mod v0.25.0
@@ -948,17 +949,17 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# golang.org/x/time v0.9.0
+# golang.org/x/time v0.10.0
 ## explicit; go 1.18
 golang.org/x/time/rate
 # gomodules.xyz/jsonpatch/v2 v2.4.0
 ## explicit; go 1.20
 gomodules.xyz/jsonpatch/v2
-# google.golang.org/genproto/googleapis/api v0.0.0-20241209162323-e6fa225c2576
-## explicit; go 1.21
+# google.golang.org/genproto/googleapis/api v0.0.0-20250303144028-a0af3efb3deb
+## explicit; go 1.23.0
 google.golang.org/genproto/googleapis/api/expr/v1alpha1
-# google.golang.org/genproto/googleapis/rpc v0.0.0-20241223144023-3abc09e42ca8
-## explicit; go 1.21
+# google.golang.org/genproto/googleapis/rpc v0.0.0-20250227231956-55c901821b1e
+## explicit; go 1.23.0
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.68.1
 ## explicit; go 1.22
@@ -1667,7 +1668,7 @@ k8s.io/kubectl/pkg/validation
 ## explicit; go 1.22.0
 k8s.io/pod-security-admission/api
 k8s.io/pod-security-admission/policy
-# k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738
+# k8s.io/utils v0.0.0-20241210054802-24370beab758
 ## explicit; go 1.18
 k8s.io/utils/buffer
 k8s.io/utils/clock
@@ -1767,8 +1768,8 @@ sigs.k8s.io/controller-runtime/pkg/webhook/admission
 sigs.k8s.io/controller-runtime/pkg/webhook/admission/metrics
 sigs.k8s.io/controller-runtime/pkg/webhook/conversion
 sigs.k8s.io/controller-runtime/pkg/webhook/internal/metrics
-# sigs.k8s.io/json v0.0.0-20241010143419-9aa6b5e7a4b3
-## explicit; go 1.21
+# sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8
+## explicit; go 1.23
 sigs.k8s.io/json
 sigs.k8s.io/json/internal/golang/encoding/json
 # sigs.k8s.io/kustomize/api v0.19.0

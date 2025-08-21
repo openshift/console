@@ -1,5 +1,5 @@
 /*
-Copyright 2023.
+Copyright 2024.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,11 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package conditionsets
+package v1
 
-// ConditionTypes is the full set of ClusterExtension condition Types.
-// ConditionReasons is the full set of ClusterExtension condition Reasons.
-//
-// NOTE: These are populated by init() in api/v1alpha1/clusterextension_types.go
-var ConditionTypes []string
-var ConditionReasons []string
+const (
+	TypeInstalled   = "Installed"
+	TypeProgressing = "Progressing"
+	TypeServing     = "Serving"
+
+	// Progressing reasons
+	ReasonSucceeded = "Succeeded"
+	ReasonRetrying  = "Retrying"
+	ReasonBlocked   = "Blocked"
+
+	// Terminal reasons
+	ReasonDeprecated = "Deprecated"
+	ReasonFailed     = "Failed"
+
+	// Serving reasons
+	ReasonAvailable                = "Available"
+	ReasonUnavailable              = "Unavailable"
+	ReasonUserSpecifiedUnavailable = "UserSpecifiedUnavailable"
+)

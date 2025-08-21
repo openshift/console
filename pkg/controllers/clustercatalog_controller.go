@@ -5,10 +5,10 @@ import (
 
 	// ocv1 "github.com/operator-framework/operator-controller/api/v1"
 	"github.com/openshift/console/pkg/olm"
+	ocv1 "github.com/operator-framework/operator-controller/api/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/runtime/schema"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
@@ -36,14 +36,7 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 	log.Info("Reconciling ClusterCatalog", "name", req.Name)
 	defer log.Info("ClusterCatalog reconcilation ending")
 
-	// Would be good to import the actual ocv1.ClusterCatalog from operator-controller but
-	// currently running into a dependency conflict since kubectl-operator uses an old op-con version
-	clusterCatalog := &unstructured.Unstructured{}
-	clusterCatalog.SetGroupVersionKind(schema.GroupVersionKind{
-		Group:   "olm.operatorframework.io",
-		Version: "v1",
-		Kind:    "ClusterCatalog",
-	})
+	clusterCatalog := &ocv1.ClusterCatalog{}
 
 	err := r.Get(ctx, req.NamespacedName, clusterCatalog)
 	if err != nil {
@@ -57,12 +50,9 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 	}
 
 	// The ClusterCatalog has been found on the cluster, add to or update cache
-	baseURL, found, err := unstructured.NestedString(clusterCatalog.Object, "status", "urls", "base")
-	if err != nil {
-		return ctrl.Result{}, err
-	}
+	baseURL := clusterCatalog.Status.URLs.Base
 
-	if found && baseURL != "" {
+	if baseURL != "" {
 		err = r.catalogService.UpdateCatalog(req.Name, baseURL)
 		if err != nil {
 			return ctrl.Result{}, err
@@ -74,12 +64,11 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 
 // SetupWithManager sets up the controller with the Manager
 func (r *ClusterCatalogReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	clusterCatalog := &unstructured.Unstructured{}
-	clusterCatalog.SetGroupVersionKind(schema.GroupVersionKind{
-		Group:   "olm.operatorframework.io",
-		Version: "v1",
-		Kind:    "ClusterCatalog",
-	})
+	// Add ClusterCatalog type to the scheme
+	utilruntime.Must(ocv1.AddToScheme(mgr.GetScheme()))
+
+	clusterCatalog := &ocv1.ClusterCatalog{}
+
 	_, err := ctrl.NewControllerManagedBy(mgr).
 		For(clusterCatalog).
 		Build(r)
