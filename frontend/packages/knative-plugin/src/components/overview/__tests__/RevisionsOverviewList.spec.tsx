@@ -8,7 +8,7 @@ import {
   mockRevisions,
   mockTrafficData,
 } from '../../../utils/__mocks__/traffic-splitting-utils-mock';
-import * as modal from '../../modals';
+import * as TrafficSplittingController from '../../traffic-splitting/TrafficSplittingController';
 import RevisionsOverviewList from '../RevisionsOverviewList';
 import '@testing-library/jest-dom';
 
@@ -16,8 +16,12 @@ import '@testing-library/jest-dom';
 jest.mock('@console/internal/components/utils', () => ({
   SidebarSectionHeading: 'SidebarSectionHeading',
   useAccessReview: jest.fn(),
+  withHandlePromise: () => (Component: React.ComponentType) => Component,
   Kebab: {
-    factory: jest.fn(),
+    factory: {
+      common: [],
+    },
+    getExtensionsActionsForKind: jest.fn(() => []),
   },
 }));
 
@@ -39,10 +43,7 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
   }),
-}));
-
-jest.mock('../../modals', () => ({
-  setTrafficDistributionModal: jest.fn(),
+  withTranslation: () => (Component: React.ComponentType) => Component,
 }));
 
 describe('RevisionsOverviewList', () => {
@@ -124,7 +125,10 @@ describe('RevisionsOverviewList', () => {
   });
 
   it('should call setTrafficDistributionModal on click', () => {
-    const spySetTrafficDistributionModal = jest.spyOn(modal, 'setTrafficDistributionModal');
+    const trafficSplitModalLauncherMock = jest.fn();
+    jest
+      .spyOn(TrafficSplittingController, 'useTrafficSplittingModalLauncher')
+      .mockImplementation(() => trafficSplitModalLauncherMock);
     const { container } = render(
       <RevisionsOverviewList
         revisions={MockKnativeResources.revisions.data}
@@ -134,7 +138,7 @@ describe('RevisionsOverviewList', () => {
     const button = container.querySelector('Button');
     expect(button).toBeInTheDocument();
     fireEvent.click(button);
-    expect(spySetTrafficDistributionModal).toHaveBeenCalled();
+    expect(trafficSplitModalLauncherMock).toHaveBeenCalled();
   });
 
   it('should not show button for traffic distribution if access is not there', () => {
