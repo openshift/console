@@ -6,7 +6,7 @@ import { consoleFetch } from '@console/dynamic-plugin-sdk/src/lib-core';
  * See pkg/usage/ for more information.
  */
 const trackUsage = (data: { event: string; perspective: string }) => {
-  return consoleFetch('/metrics/usage', {
+  return consoleFetch('/api/metrics/usage', {
     method: 'POST',
     body: JSON.stringify(data),
   })
