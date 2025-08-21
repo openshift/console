@@ -100,10 +100,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
 
   const catalogToolbarRef = React.useRef<HTMLInputElement>();
 
-  const itemsSorter = React.useCallback(
-    (itemsToSort) => _.orderBy(itemsToSort, ({ name }) => name.toLowerCase(), [sortOrder]),
-    [sortOrder],
-  );
+  // Removed itemsSorter - now using enhanced sorting from keywordCompare function
 
   const clearFilters = React.useCallback(() => {
     const params = new URLSearchParams();
@@ -180,7 +177,11 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     const typeCounts = getCatalogTypeCounts(filteredBySearchItems, catalogTypes);
     setCatalogTypeCounts(typeCounts);
 
-    return itemsSorter(filteredByAttributes);
+    // Always use filteredByAttributes since keywordCompare handles both cases:
+    // - With search terms: relevance scoring + Red Hat prioritization + filtering
+    // - Without search terms: Red Hat prioritization + alphabetical sorting (no filtering)
+    // The keywordCompare function is called by filterBySearchKeyword regardless of search term presence
+    return filteredByAttributes;
   }, [
     activeCategoryId,
     activeFilters,
@@ -189,7 +190,6 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     categorizedIds,
     filterGroups,
     items,
-    itemsSorter,
   ]);
 
   const totalItems = filteredItems.length;

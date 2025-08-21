@@ -58,6 +58,10 @@ const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKi
   );
 
 export const useOperatorCatalogItems = () => {
+  // Debug log to confirm this hook is being used
+  // eslint-disable-next-line no-console
+  console.log('🎯 useOperatorCatalogItems hook called - NEW CATALOG SYSTEM');
+
   const { t } = useTranslation('olm');
   const [namespace] = useActiveNamespace();
   const [operatorGroups, operatorGroupsLoaded, operatorGroupsLoadError] = useOperatorGroups();
@@ -279,6 +283,7 @@ export const useOperatorCatalogItems = () => {
             provider,
             source,
             validSubscription: validSubscriptionFilters,
+            metadataName: pkg.metadata.name, // Add metadata name for enhanced scoring
           },
           badges,
           creationTimestamp: createdAt,
