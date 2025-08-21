@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -24,12 +24,12 @@ const FuncSection = ({ builderImages }) => {
     git: { url, type, ref, dir, secretResource },
     image,
   } = values;
-  const [runtimeImage, setRuntimeImage] = React.useState<BuilderImage>();
-  const [loaded, setLoaded] = React.useState<boolean>(false);
+  const [runtimeImage, setRuntimeImage] = useState<BuilderImage>();
+  const [loaded, setLoaded] = useState<boolean>(false);
   const [, setResourceType] = useResourceType();
-  const [helpText, setHelpText] = React.useState<string>('');
+  const [helpText, setHelpText] = useState<string>('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     const gitService = url && getGitService(url, type, ref, dir, secretResource);
     gitService &&
       evaluateFunc(gitService)
@@ -73,7 +73,7 @@ const FuncSection = ({ builderImages }) => {
     t,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded && runtimeImage) {
       setFieldValue('image.tag', runtimeImage?.recentTag?.name);
       setFieldValue('image.selected', runtimeImage?.name);
@@ -81,7 +81,7 @@ const FuncSection = ({ builderImages }) => {
     }
   }, [runtimeImage, setFieldValue, loaded]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded && !runtimeImage) {
       setFieldError('ServerlessFunction', 'Unsupported Runtime detected');
     }

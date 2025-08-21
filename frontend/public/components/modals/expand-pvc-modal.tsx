@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,10 +19,10 @@ import { getRequestedPVCSize } from '@console/shared';
 const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
   const baseValue = convertToBaseValue(getRequestedPVCSize(props.resource));
   const defaultSize = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
-  const [requestSizeValue, setRequestSizeValue] = React.useState(defaultSize[0] || '');
-  const [requestSizeUnit, setRequestSizeUnit] = React.useState(defaultSize[1] || 'Gi');
-  const [errorMessage, setErrorMessage] = React.useState<string>();
-  const [inProgress, setInProgress] = React.useState(false);
+  const [requestSizeValue, setRequestSizeValue] = useState(defaultSize[0] || '');
+  const [requestSizeUnit, setRequestSizeUnit] = useState(defaultSize[1] || 'Gi');
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [inProgress, setInProgress] = useState(false);
 
   const { t } = useTranslation();
   const navigate = useNavigate();

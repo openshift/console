@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,17 +15,17 @@ import { IDPCAFileInput } from './idp-cafile-input';
 
 export const AddRequestHeaderPage = () => {
   const navigate = useNavigate();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('request-header');
-  const [challengeURL, setChallengeURL] = React.useState('');
-  const [loginURL, setLoginURL] = React.useState('');
-  const [clientCommonNames, setClientCommonNames] = React.useState([]);
-  const [headers, setHeaders] = React.useState([]);
-  const [preferredUsernameHeaders, setPreferredUsernameHeaders] = React.useState([]);
-  const [nameHeaders, setNameHeaders] = React.useState([]);
-  const [emailHeaders, setEmailHeaders] = React.useState([]);
-  const [caFileContent, setCaFileContent] = React.useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('request-header');
+  const [challengeURL, setChallengeURL] = useState('');
+  const [loginURL, setLoginURL] = useState('');
+  const [clientCommonNames, setClientCommonNames] = useState([]);
+  const [headers, setHeaders] = useState([]);
+  const [preferredUsernameHeaders, setPreferredUsernameHeaders] = useState([]);
+  const [nameHeaders, setNameHeaders] = useState([]);
+  const [emailHeaders, setEmailHeaders] = useState([]);
+  const [caFileContent, setCaFileContent] = useState('');
 
   const { t } = useTranslation();
 

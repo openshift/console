@@ -64,7 +64,7 @@ const ClusterConfigurationPage: React.FC = () => {
       clusterConfigurationItems,
     );
     const [tabs, tabContents] = populatedClusterCongigurationGroups.reduce(
-      (acc, currGroup) => {
+      (acc: [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]], currGroup) => {
         const { id, label, items } = currGroup;
         const ref = React.createRef<HTMLElement>();
         acc[0].push(
@@ -92,7 +92,7 @@ const ClusterConfigurationPage: React.FC = () => {
         );
         return acc;
       },
-      [[], []],
+      [[], []] as [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]],
     );
     return [tabs, tabContents];
   }, [activeTabId, clusterConfigurationGroups, clusterConfigurationItems]);

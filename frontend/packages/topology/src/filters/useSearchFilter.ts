@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { toLower } from 'lodash';
 import { useQueryParams } from '@console/shared/src';
@@ -15,15 +15,12 @@ const useSearchFilter = (
   const searchQuery = queryParams.get('searchQuery');
   const labelsQuery = queryParams.get('labels')?.split(',') ?? EMPTY_QUERY_PARAMS;
 
-  const labelsMatched = React.useMemo(() => {
+  const labelsMatched = useMemo(() => {
     const labelsString = Object.entries(labels).map((label) => label.join('='));
     return labelsQuery.every((label) => labelsString.includes(label));
   }, [labels, labelsQuery]);
 
-  const filtered = React.useMemo(() => fuzzyCaseInsensitive(searchQuery, name), [
-    searchQuery,
-    name,
-  ]);
+  const filtered = useMemo(() => fuzzyCaseInsensitive(searchQuery, name), [searchQuery, name]);
 
   return [(filtered && !!searchQuery) || (labelsMatched && labelsQuery.length > 0), searchQuery];
 };

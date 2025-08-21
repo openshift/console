@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useContext, useEffect } from 'react';
 import {
   ThemeContext,
   THEME_DARK,
@@ -64,11 +64,11 @@ export const getBrandingDetails = () => {
  * @returns Returns logoURL blob URL and the loading state of the API request.
  */
 export const useCustomLogoURL = (type: CUSTOM_LOGO): { logoUrl: string; loading: Boolean } => {
-  const [logoUrl, setLogoUrl] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
-  const theme = React.useContext(ThemeContext);
+  const [logoUrl, setLogoUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+  const theme = useContext(ThemeContext);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // return when requested custom logo type is not configured
     if (
       (type === MASTHEAD_TYPE && !window.SERVER_FLAGS.customLogosConfigured) ||

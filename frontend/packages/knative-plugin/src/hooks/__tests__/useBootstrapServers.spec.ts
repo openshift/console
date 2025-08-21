@@ -1,5 +1,5 @@
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { testHook } from '../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { Kafkas } from '../../utils/__tests__/knative-serving-data';
 import { useBootstrapServers } from '../useBootstrapServers';
 

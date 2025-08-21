@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import {
@@ -33,7 +33,7 @@ const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataT
     isList: true,
   });
 
-  const revisionIds = React.useMemo(() => {
+  const revisionIds = useMemo(() => {
     if (resource.kind === RevisionModel.kind) {
       return resource.metadata.uid;
     }
@@ -47,7 +47,7 @@ const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataT
   }, [revisionLoaded, revisionErrorLoad, rev, resource.kind, resource.metadata]);
 
   const { pods } = usePodsForRevisions(revisionIds, resource.metadata.namespace);
-  const servicePods = React.useMemo(() => {
+  const servicePods = useMemo(() => {
     return pods.reduce((acc, pod) => {
       if (pod.pods) {
         acc.push(...pod.pods.filter((p) => podPhase(p as PodKind) !== AllPodStatus.AutoScaledTo0));
@@ -62,7 +62,7 @@ const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataT
     `serving.knative.dev/${resource.kind.toLowerCase()}=${resource.metadata.name}`,
   )}`;
 
-  return React.useMemo(
+  return useMemo(
     () => ({
       pods: servicePods,
       loaded: revisionLoaded,

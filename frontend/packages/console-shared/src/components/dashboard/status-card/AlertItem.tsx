@@ -95,7 +95,6 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, documentationLink }) => {
       [alert],
     ),
   );
-  const navigate = useNavigate();
   const alertName = getAlertName(alert);
   const actionObj = getAlertActions(actionExtensions, navigate).get(alert.rule.name);
   const { text, action } = actionObj || {};

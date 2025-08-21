@@ -32,12 +32,13 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
           src={icon}
           alt={label}
           aria-hidden="true"
+          data-test="add-card-icon"
         />
       );
     }
     if (typeof icon !== 'string' && React.isValidElement(icon)) {
       return (
-        <span className="odc-add-card-item__icon" aria-hidden="true">
+        <span className="odc-add-card-item__icon" aria-hidden="true" data-test="add-card-icon">
           {icon}
         </span>
       );

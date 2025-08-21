@@ -1,11 +1,26 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  memo,
+  Suspense,
+} from 'react';
 import { render } from 'react-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
 import { Provider, useSelector, useDispatch } from 'react-redux';
-import { useParams, useLocation, HistoryRouter, Routes, Route } from 'react-router-dom';
+import {
+  useParams,
+  useLocation,
+  unstable_HistoryRouter as HistoryRouter,
+  Routes,
+  Route,
+} from 'react-router-dom';
 import store, { applyReduxExtensions, RootState } from '../redux';
 import { useTranslation } from 'react-i18next';
 import { appInternalFetch } from '../co-fetch';
@@ -102,16 +117,16 @@ const App = (props) => {
     return window.innerWidth < PF_BREAKPOINT_MD;
   };
 
-  const [prevLocation, setPrevLocation] = React.useState(location);
-  const [prevParams, setPrevParams] = React.useState(params);
+  const [prevLocation, setPrevLocation] = useState(location);
+  const [prevParams, setPrevParams] = useState(params);
 
-  const [isMastheadStacked, setIsMastheadStacked] = React.useState(isMobile());
-  const [isNavOpen, setIsNavOpen] = React.useState(isDesktop());
+  const [isMastheadStacked, setIsMastheadStacked] = useState(isMobile());
+  const [isNavOpen, setIsNavOpen] = useState(isDesktop());
 
-  const previousDesktopState = React.useRef(isDesktop());
-  const previousMobileState = React.useRef(isMobile());
+  const previousDesktopState = useRef(isDesktop());
+  const previousMobileState = useRef(isMobile());
 
-  const onResize = React.useCallback(() => {
+  const onResize = useCallback(() => {
     const desktop = isDesktop();
     const mobile = isMobile();
     if (previousDesktopState.current !== desktop) {
@@ -127,14 +142,14 @@ const App = (props) => {
   useCSPViolationDetector();
   useNotificationPoller();
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('resize', onResize);
     };
   }, [onResize]);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)
     const oldLocation = _.omit(prevLocation, ['key']);
     const newLocation = _.omit(location, ['key']);
@@ -153,7 +168,7 @@ const App = (props) => {
     'openshift-marketplace',
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const lightspeedButtonCapability = window.SERVER_FLAGS?.capabilities?.find(
       (capability) => capability.name === 'LightspeedButton',
     );
@@ -212,7 +227,7 @@ const App = (props) => {
     ({ UI }: RootState) => !!UI.getIn(['notifications', 'isExpanded']),
   );
 
-  const drawerRef = React.useRef<HTMLElement | null>(null);
+  const drawerRef = useRef<HTMLElement | null>(null);
 
   const focusDrawer = () => {
     if (drawerRef.current === null) {
@@ -324,7 +339,7 @@ render(<LoadingBox />, document.getElementById('app'));
 const AppRouter = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
 
-  const standaloneRoutes = React.useMemo(
+  const standaloneRoutes = useMemo(
     () =>
       _.flatten(
         standaloneRouteExtensions.map(({ uid, properties: { path, exact, component } }) =>
@@ -355,24 +370,24 @@ const AppRouter = () => {
   );
 };
 
-const CaptureTelemetry = React.memo(function CaptureTelemetry() {
+const CaptureTelemetry = memo(function CaptureTelemetry() {
   const [perspective] = useActivePerspective();
   const fireTelemetryEvent = useTelemetry();
-  const [debounceTime, setDebounceTime] = React.useState(5000);
-  const [titleOnLoad, setTitleOnLoad] = React.useState('');
+  const [debounceTime, setDebounceTime] = useState(5000);
+  const [titleOnLoad, setTitleOnLoad] = useState('');
   // notify of identity change
   const user = useSelector(getUser);
   const telemetryTitle = getTelemetryTitle();
   const location = useLocation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     setTimeout(() => {
       setTitleOnLoad(telemetryTitle);
       setDebounceTime(500);
     }, 5000);
   }, [telemetryTitle]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user?.uid || user?.username) {
       fireTelemetryEvent('identify', { perspective, user });
     }
@@ -390,7 +405,7 @@ const CaptureTelemetry = React.memo(function CaptureTelemetry() {
       ...withoutSensitiveInformations(newLocation),
     });
   }, debounceTime);
-  React.useEffect(() => {
+  useEffect(() => {
     if (!titleOnLoad) {
       return;
     }
@@ -490,7 +505,7 @@ graphQLReady.onReady(() => {
   }
 
   render(
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
         <ThemeProvider>
           <AppInitSDK
@@ -508,7 +523,7 @@ graphQLReady.onReady(() => {
           </AppInitSDK>
         </ThemeProvider>
       </Provider>
-    </React.Suspense>,
+    </Suspense>,
     document.getElementById('app'),
   );
 });

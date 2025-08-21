@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
@@ -15,9 +15,10 @@ import {
 import { resourceLimitsModal } from '../../components/modals/resource-limits';
 import { DeploymentActionCreator, ActionObject } from './types';
 
-const restartRollout = (model: K8sModel, obj: K8sResourceKind) => {
-  const patch = [];
-  if (!('annotations' in obj.spec.template.metadata)) {
+const restartRollout = (model: K8sModel | undefined, obj: K8sResourceKind | undefined) => {
+  if (!model || !obj) return Promise.reject(new Error('Model or resource is undefined'));
+  const patch: { path: string; op: string; value?: any }[] = [];
+  if (!('annotations' in obj.spec?.template?.metadata)) {
     patch.push({
       path: '/spec/template/metadata/annotations',
       op: 'add',
@@ -41,13 +42,13 @@ const deploymentConfigRollout = (dc: K8sResourceKind): Promise<K8sResourceKind> 
   const req = {
     kind: 'DeploymentRequest',
     apiVersion: 'apps.openshift.io/v1',
-    name: dc.metadata.name,
+    name: dc.metadata?.name,
     latest: true,
     force: true,
   };
   const opts = {
-    name: dc.metadata.name,
-    ns: dc.metadata.namespace,
+    name: dc.metadata?.name,
+    ns: dc.metadata?.namespace,
     path: 'instantiate',
   };
   return k8sCreate(DeploymentConfigModel, req, opts);
@@ -76,48 +77,54 @@ const deploymentConfigRollout = (dc: K8sResourceKind): Promise<K8sResourceKind> 
  * };
  */
 export const useDeploymentActions = <T extends readonly DeploymentActionCreator[]>(
-  kind: K8sModel,
-  resource: K8sResourceKind,
+  kind: K8sModel | undefined,
+  resource: K8sResourceKind | undefined,
   filterActions?: T,
 ): [ActionObject<T>, boolean] => {
   const { t } = useTranslation();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
-  const factory = React.useMemo(
+  const factory = useMemo(
     () => ({
       [DeploymentActionCreator.EditDeployment]: (): Action => ({
         id: `edit-deployment`,
-        label: t('console-app~Edit {{kind}}', { kind: kind.kind }),
+        label: t('console-app~Edit {{kind}}', { kind: kind?.kind }),
         cta: {
-          href: `${resourceObjPath(resource, kind.crd ? referenceForModel(kind) : kind.kind)}/form`,
+          href: `${resourceObjPath(
+            resource as K8sResourceKind,
+            kind?.crd ? referenceForModel(kind as K8sModel) : (kind?.kind as string),
+          )}/form`,
         },
         // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
-        accessReview: asAccessReview(kind, resource, 'update'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'update'),
       }),
       [DeploymentActionCreator.UpdateStrategy]: (): Action => ({
         id: 'edit-update-strategy',
         label: t('console-app~Edit update strategy'),
         cta: () => configureUpdateStrategyModal({ deployment: resource }),
         accessReview: {
-          group: kind.apiGroup,
-          resource: kind.plural,
-          name: resource.metadata.name,
-          namespace: resource.metadata.namespace,
+          group: kind?.apiGroup,
+          resource: kind?.plural,
+          name: resource?.metadata?.name,
+          namespace: resource?.metadata?.namespace,
           verb: 'patch',
         },
       }),
       [DeploymentActionCreator.PauseRollout]: (): Action => ({
         id: 'pause-rollout',
-        label: resource.spec.paused
+        label: resource?.spec?.paused
           ? t('console-app~Resume rollouts')
           : t('console-app~Pause rollouts'),
-        cta: () => togglePaused(kind, resource).catch((err) => errorModal({ error: err.message })),
+        cta: () =>
+          togglePaused(kind as K8sModel, resource as K8sResourceKind).catch((err) =>
+            errorModal({ error: err.message }),
+          ),
         accessReview: {
-          group: kind.apiGroup,
-          resource: kind.plural,
-          name: resource.metadata.name,
-          namespace: resource.metadata.namespace,
+          group: kind?.apiGroup,
+          resource: kind?.plural,
+          name: resource?.metadata?.name,
+          namespace: resource?.metadata?.namespace,
           verb: 'patch',
         },
       }),
@@ -126,13 +133,13 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
         label: t('console-app~Restart rollout'),
         cta: () =>
           restartRollout(kind, resource).catch((err) => errorModal({ error: err.message })),
-        disabled: resource.spec.paused || false,
+        disabled: resource?.spec?.paused || false,
         disabledTooltip: 'The deployment is paused and cannot be restarted.',
         accessReview: {
-          group: kind.apiGroup,
-          resource: kind.plural,
-          name: resource.metadata.name,
-          namespace: resource.metadata.namespace,
+          group: kind?.apiGroup,
+          resource: kind?.plural,
+          name: resource?.metadata?.name,
+          namespace: resource?.metadata?.namespace,
           verb: 'patch',
         },
       }),
@@ -140,16 +147,16 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
         id: 'start-rollout',
         label: t('console-app~Start rollout'),
         cta: () =>
-          deploymentConfigRollout(resource).catch((err) => {
+          deploymentConfigRollout(resource as K8sResourceKind).catch((err) => {
             const error = err.message;
             errorModal({ error });
           }),
         accessReview: {
-          group: kind.apiGroup,
-          resource: kind.plural,
+          group: kind?.apiGroup,
+          resource: kind?.plural,
           subresource: 'instantiate',
-          name: resource.metadata.name,
-          namespace: resource.metadata.namespace,
+          name: resource?.metadata?.name,
+          namespace: resource?.metadata?.namespace,
           verb: 'create',
         },
       }),
@@ -162,10 +169,10 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
             resource,
           }),
         accessReview: {
-          group: kind.apiGroup,
-          resource: kind.plural,
-          name: resource.metadata.name,
-          namespace: resource.metadata.namespace,
+          group: kind?.apiGroup,
+          resource: kind?.plural,
+          name: resource?.metadata?.name,
+          namespace: resource?.metadata?.namespace,
           verb: 'patch',
         },
       }),
@@ -173,7 +180,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
     [t, resource, kind],
   );
 
-  return React.useMemo((): [ActionObject<T>, boolean] => {
+  return useMemo((): [ActionObject<T>, boolean] => {
     const actions = {} as ActionObject<T>;
 
     if (!kind || !resource) {

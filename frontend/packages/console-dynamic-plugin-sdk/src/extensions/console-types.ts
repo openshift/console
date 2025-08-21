@@ -677,7 +677,7 @@ export type CodeEditorRef = {
 };
 
 export type ResourceYAMLEditorProps = {
-  initialResource: string | { [key: string]: any };
+  initialResource: K8sResourceKind;
   header?: string;
   onSave?: (content: string) => void;
   readOnly?: boolean;

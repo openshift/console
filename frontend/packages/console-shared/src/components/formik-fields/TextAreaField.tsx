@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { forwardRef } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -7,11 +7,10 @@ import {
   TextArea,
 } from '@patternfly/react-core';
 import { useField } from 'formik';
-import { RedExclamationCircleIcon } from '../status';
 import { TextAreaProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
+const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ label, helpText, required, onChange, ...props }, ref) => {
     const [field, { touched, error }] = useField(props.name);
     const fieldId = getFieldId(props.name, 'input');
@@ -38,9 +37,7 @@ const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
         <FormHelperText>
           <HelperText>
             {!isValid ? (
-              <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-                {errorMessage}
-              </HelperTextItem>
+              <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
             ) : (
               <HelperTextItem>{helpText}</HelperTextItem>
             )}

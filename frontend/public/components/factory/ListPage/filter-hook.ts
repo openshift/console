@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import * as _ from 'lodash';
 import { useLocation } from 'react-router-dom';
 import {
@@ -22,11 +22,11 @@ const filterData = <D>(
 };
 
 export const useListPageFilter: UseListPageFilter = (data, rowFilters, staticFilters) => {
-  const [filter, setFilter] = React.useState<{ [key: string]: FilterValue }>();
+  const [filter, setFilter] = useState<{ [key: string]: FilterValue }>();
   const [isExactSearch] = useExactSearch();
   const location = useLocation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     const name = params.get('name');
     if (!_.isNil(name) && name !== filter?.name?.selected?.[0]) {
@@ -34,12 +34,12 @@ export const useListPageFilter: UseListPageFilter = (data, rowFilters, staticFil
     }
   }, [filter, location]);
 
-  const onFilterChange = React.useCallback(
+  const onFilterChange = useCallback(
     (type, value) => setFilter((state) => ({ ...state, [type]: value })),
     [],
   );
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     const tableFilters = getAllTableFilters(rowFilters, isExactSearch);
 
     const staticData = filterData(data, staticFilters, tableFilters);

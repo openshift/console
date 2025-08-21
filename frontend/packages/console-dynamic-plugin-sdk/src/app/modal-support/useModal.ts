@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { LaunchModal, ModalContext } from './ModalProvider';
 
 type UseModalLauncher = () => LaunchModal;
@@ -26,6 +26,6 @@ type UseModalLauncher = () => LaunchModal;
  * ```
  */
 export const useModal: UseModalLauncher = () => {
-  const { launchModal } = React.useContext(ModalContext);
+  const { launchModal } = useContext(ModalContext);
   return launchModal;
 };

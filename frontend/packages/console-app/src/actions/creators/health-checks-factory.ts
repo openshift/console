@@ -13,10 +13,7 @@ const healthChecksAdded = (resource: K8sResourceKind): boolean => {
 };
 
 const healthChecksUrl = (model: K8sKind, obj: K8sResourceKind): string => {
-  const {
-    kind,
-    metadata: { name, namespace },
-  } = obj;
+  const { kind, metadata: { name = '', namespace = '' } = {} } = obj;
   const resourceKind = model.crd ? referenceFor(obj) : kind;
   const containers = obj?.spec?.template?.spec?.containers;
   const containerName = containers?.[0]?.name;
@@ -31,8 +28,8 @@ export const HealthChecksActionFactory: ResourceActionFactory = {
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
+      name: obj.metadata?.name,
+      namespace: obj.metadata?.namespace,
       verb: 'update',
     },
   }),
@@ -44,8 +41,8 @@ export const HealthChecksActionFactory: ResourceActionFactory = {
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
+      name: obj.metadata?.name,
+      namespace: obj.metadata?.namespace,
       verb: 'update',
     },
   }),

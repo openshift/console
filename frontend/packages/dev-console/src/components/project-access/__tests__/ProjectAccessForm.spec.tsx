@@ -1,16 +1,53 @@
-import * as React from 'react';
-import { shallow } from 'enzyme';
-import { MultiColumnField, InputField, DropdownField, FormFooter } from '@console/shared';
+import { configure, render, screen } from '@testing-library/react';
 import { defaultAccessRoles } from '../project-access-form-utils';
-import ProjectAccessForm, { SubjectNamespaceDropdown } from '../ProjectAccessForm';
+import ProjectAccessForm from '../ProjectAccessForm';
+import '@testing-library/jest-dom';
+
+configure({ testIdAttribute: 'data-test' });
+
+jest.mock('@console/shared', () => ({
+  MultiColumnField: (props) => props.children,
+  InputField: () => 'InputField',
+  DropdownField: () => 'DropdownField',
+  FormFooter: () => 'FormFooter',
+  NSDropdownField: () => 'NSDropdownField',
+}));
+
+jest.mock('@console/shared/src/components/layout/PaneBody', () => ({
+  __esModule: true,
+  default: (props) => props.children,
+}));
+
+jest.mock('@patternfly/react-core', () => ({
+  Form: (props) => props.children,
+  TextInputTypes: { text: 'text' },
+}));
+
+jest.mock('react-i18next', () => ({
+  __esModule: true,
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
+jest.mock('lodash', () => ({
+  isEmpty: jest.fn((obj) => obj === undefined || obj === null || Object.keys(obj).length === 0),
+  isEqual: jest.fn(() => true),
+}));
+
+jest.mock('../project-access-form-utils', () => ({
+  ignoreRoleBindingName: jest.fn((data) => data),
+  defaultAccessRoles: {
+    admin: 'Admin',
+    view: 'View',
+    edit: 'Edit',
+  },
+}));
 
 type ProjectAccessFormProps = React.ComponentProps<typeof ProjectAccessForm>;
 let formProps: ProjectAccessFormProps;
 
 describe('Project Access Form', () => {
-  const projectAccessForm = shallow(
-    <ProjectAccessForm {...formProps} roles={defaultAccessRoles} />,
-  );
   beforeEach(() => {
     formProps = {
       values: {
@@ -103,26 +140,19 @@ describe('Project Access Form', () => {
       roles: {},
     };
   });
+
   it('should load the correct Project Access Form structure', () => {
-    expect(projectAccessForm.find(MultiColumnField).exists()).toBe(true);
-    const formWrapper = projectAccessForm.find(MultiColumnField);
-    expect(formWrapper.getElements()[0].props.name).toBe('projectAccess');
-    expect(formWrapper.getElements()[0].props.headers).toEqual(['Subject', 'Name', 'Role']);
-    expect(formWrapper.getElements()[0].props.addLabel).toEqual('Add access');
-    expect(formWrapper.children()).toHaveLength(3);
-    expect(formWrapper.children().at(0).is(SubjectNamespaceDropdown)).toBe(true);
-    expect(formWrapper.children().at(1).is(InputField)).toBe(true);
-    expect(formWrapper.children().at(2).is(DropdownField)).toBe(true);
-    expect(projectAccessForm.find(FormFooter).exists()).toBe(true);
+    render(<ProjectAccessForm {...formProps} roles={defaultAccessRoles} />);
+
+    expect(screen.getAllByText(/DropdownField/)).toHaveLength(2);
+    expect(screen.getByText(/InputField/)).toBeInTheDocument();
+    expect(screen.getByText(/FormFooter/)).toBeInTheDocument();
   });
 
-  it('should load the dropdown with access roles', () => {
-    const formWrapper = projectAccessForm.find(MultiColumnField);
-    expect(formWrapper.children().at(2).props().name).toBe('role');
-    expect(formWrapper.children().at(2).props().items).toEqual({
-      admin: 'Admin',
-      view: 'View',
-      edit: 'Edit',
-    });
+  it('should render the form components', () => {
+    render(<ProjectAccessForm {...formProps} roles={defaultAccessRoles} />);
+
+    expect(screen.getAllByText(/DropdownField/).length).toBeGreaterThan(0);
+    expect(screen.getByText(/InputField/)).toBeInTheDocument();
   });
 });

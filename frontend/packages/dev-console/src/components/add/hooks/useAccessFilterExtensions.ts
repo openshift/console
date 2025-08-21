@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import {
   AddAccessReviewResults,
@@ -14,7 +14,7 @@ export const useAccessFilterExtensions = (
     namespace,
     addActionExtensions,
   );
-  const loaded = React.useMemo(
+  const loaded = useMemo(
     () =>
       !Object.values(accessReviewResults).some(
         (reviewStatus) => reviewStatus === AccessReviewStatus.LOADING,
@@ -22,7 +22,7 @@ export const useAccessFilterExtensions = (
     [accessReviewResults],
   );
 
-  return React.useMemo(
+  return useMemo(
     () =>
       loaded
         ? [

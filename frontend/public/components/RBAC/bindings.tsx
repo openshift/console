@@ -1,26 +1,41 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { connect } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import { css } from '@patternfly/react-styles';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import {
+  ActionGroup,
+  Button,
+  Form,
+  FormGroup,
+  FormSection,
+  Radio,
+  TextInput,
+} from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { FLAGS } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { LazyActionMenu, useFlag } from '@console/shared';
 import { ClusterRoleBindingModel } from '../../models';
-import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
-import * as UIActions from '../../actions/ui';
-import { Table, TableData } from '../factory';
+import {
+  ClusterRoleBindingKind,
+  getQN,
+  k8sCreate,
+  k8sPatch,
+  referenceFor,
+  RoleBindingKind,
+  Subject,
+} from '../../module/k8s';
+import { MultiListPageProps, RowFunctionArgs, Table, TableData } from '../factory';
 import ListPageFilter from '../factory/ListPage/ListPageFilter';
 import ListPageHeader from '../factory/ListPage/ListPageHeader';
 import { useListPageFilter } from '../factory/ListPage/filter-hook';
 import { ListPageCreateLink } from '../factory/ListPage/ListPageCreate';
-import { RadioGroup } from '../radio';
-import { confirmModal } from '../modals';
 import {
   ButtonBar,
   Firehose,
@@ -30,24 +45,18 @@ import {
   ListDropdown,
   ConsoleEmptyState,
   NsDropdown,
-  ResourceKebab,
   ResourceLink,
   ResourceName,
   resourceObjPath,
   StatusBox,
   useAccessReview,
+  ListDropdownProps,
 } from '../utils';
-import { connectToFlags } from '../../reducers/connectToFlags';
 import { flagPending } from '../../reducers/features';
-import { useTranslation, withTranslation } from 'react-i18next';
-import i18next from 'i18next';
 import { useK8sWatchResources } from '../utils/k8s-watch-hook';
 
-const bindingKind = (binding) =>
-  binding.metadata.namespace ? 'RoleBinding' : 'ClusterRoleBinding';
-
 // Split each binding into one row per subject
-export const flatten = (resources) =>
+export const flatten = (resources): BindingKind[] =>
   _.flatMap(resources, (resource) => {
     const ret = [];
 
@@ -74,95 +83,6 @@ export const flatten = (resources) =>
 
     return ret;
   });
-
-const getKindLabel = (kind) => (kind.labelKey ? i18next.t(kind.labelKey) : kind.label);
-
-const menuActions = ({ subjectIndex, subjects }, startImpersonate, navigate) => {
-  const subject = subjects[subjectIndex];
-
-  const actions = [
-    (kind, obj) => ({
-      label: i18next.t('public~Duplicate {{kindLabel}}', {
-        kindLabel: getKindLabel(kind),
-      }),
-      href: `${decodeURIComponent(
-        resourceObjPath(obj, kind.kind),
-      )}/copy?subjectIndex=${subjectIndex}`,
-      // Only perform access checks when duplicating cluster role bindings.
-      // It's not practical to check namespace role bindings since we don't know what namespace the user will pick in the form.
-      accessReview: _.get(obj, 'metadata.namespace')
-        ? null
-        : {
-            group: kind.apiGroup,
-            resource: kind.plural,
-            verb: 'create',
-          },
-    }),
-    (kind, obj) => ({
-      label: i18next.t('public~Edit {{kindLabel}} subject', {
-        kindLabel: getKindLabel(kind),
-      }),
-      href: `${decodeURIComponent(
-        resourceObjPath(obj, kind.kind),
-      )}/edit?subjectIndex=${subjectIndex}`,
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        name: obj.metadata.name,
-        namespace: obj.metadata.namespace,
-        verb: 'update',
-      },
-    }),
-    subjects.length === 1
-      ? Kebab.factory.Delete
-      : (kind, binding) => ({
-          label: i18next.t('public~Delete {{label}} subject', kind),
-          callback: () =>
-            confirmModal({
-              title: i18next.t('public~Delete {{label}} subject', kind),
-              message: i18next.t(
-                'public~Are you sure you want to delete subject {{name}} of type {{kind}}?',
-                subject,
-              ),
-              btnText: i18next.t('public~Delete subject'),
-              executeFn: () =>
-                k8sPatch(kind, binding, [
-                  {
-                    op: 'remove',
-                    path: `/subjects/${subjectIndex}`,
-                  },
-                ]),
-            }),
-          accessReview: {
-            group: kind.apiGroup,
-            resource: kind.plural,
-            name: binding.metadata.name,
-            namespace: binding.metadata.namespace,
-            verb: 'patch',
-          },
-        }),
-  ];
-
-  if (subject.kind === 'User' || subject.kind === 'Group') {
-    actions.unshift(() => ({
-      label: i18next.t('public~Impersonate {{kind}} "{{name}}"', subject),
-      callback: () => {
-        startImpersonate(subject.kind, subject.name);
-        navigate(window.SERVER_FLAGS.basePath);
-      },
-      // Must use API group authorization.k8s.io, NOT user.openshift.io
-      // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
-      accessReview: {
-        group: 'authorization.k8s.io',
-        resource: subject.kind === 'Group' ? 'groups' : 'users',
-        name: subject.name,
-        verb: 'impersonate',
-      },
-    }));
-  }
-
-  return actions;
-};
 
 const tableColumnClasses = [
   '',
@@ -211,30 +131,27 @@ const RoleBindingsTableHeader = () => {
     },
   ];
 };
-RoleBindingsTableHeader.displayName = 'RoleBindingsTableHeader';
 
-export const BindingName = ({ binding }) => (
+export const BindingName: React.FCC<BindingProps> = ({ binding }) => (
   <ResourceLink
-    kind={bindingKind(binding)}
+    kind={binding.kind}
     name={binding.metadata.name}
     namespace={binding.metadata.namespace}
   />
 );
 
-export const BindingKebab = connect(null, {
-  startImpersonate: UIActions.startImpersonate,
-})(({ binding, startImpersonate }) => {
-  const navigate = useNavigate();
-  return binding.subjects ? (
-    <ResourceKebab
-      actions={menuActions(binding, startImpersonate, navigate)}
-      kind={bindingKind(binding)}
-      resource={binding}
-    />
-  ) : null;
-});
+export const BindingKebab: React.FCC<BindingProps> = ({ binding }) => {
+  const context = {
+    [referenceFor(binding)]: binding,
+  };
 
-export const RoleLink = ({ binding }) => {
+  return binding.subjects ? (
+    // key ensures that the action menu is re-rendered when the binding changes
+    <LazyActionMenu context={context} key={binding.metadata?.uid || binding.metadata?.name} />
+  ) : null;
+};
+
+export const RoleLink: React.FCC<BindingProps> = ({ binding }) => {
   const kind = binding.roleRef.kind;
 
   // Cluster Roles have no namespace and for Roles, the Role's namespace matches the Role Binding's namespace
@@ -242,7 +159,7 @@ export const RoleLink = ({ binding }) => {
   return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
 };
 
-const RoleBindingsTableRow = ({ obj: binding }) => {
+const RoleBindingsTableRow: React.FCC<RowFunctionArgs<BindingKind>> = ({ obj: binding }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -271,7 +188,7 @@ const RoleBindingsTableRow = ({ obj: binding }) => {
   );
 };
 
-const EmptyMsg = () => {
+const EmptyMsg: React.FCC = () => {
   const { t } = useTranslation();
   return (
     <ConsoleEmptyState title={t('public~No RoleBindings found')}>
@@ -282,7 +199,7 @@ const EmptyMsg = () => {
   );
 };
 
-export const BindingsList = (props) => {
+export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
   const { t } = useTranslation();
   return (
     <Table
@@ -296,7 +213,7 @@ export const BindingsList = (props) => {
   );
 };
 
-export const bindingType = (binding) => {
+export const bindingType = (binding: BindingKind) => {
   if (!binding) {
     return undefined;
   }
@@ -306,7 +223,7 @@ export const bindingType = (binding) => {
   return binding.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-export const RoleBindingsPage = ({
+export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
   namespace = undefined,
   showTitle = true,
   mock = false,
@@ -342,7 +259,8 @@ export const RoleBindingsPage = ({
     .every((r) => r.loaded);
 
   const hasCRBindings =
-    resources.ClusterRoleBinding.data?.length > 0 &&
+    Array.isArray(resources.ClusterRoleBinding.data) &&
+    resources.ClusterRoleBinding.data.length > 0 &&
     resources.ClusterRoleBinding.loaded &&
     !resources.ClusterRoleBinding.loadError;
 
@@ -406,8 +324,10 @@ export const RoleBindingsPage = ({
   );
 };
 
-const NsRoleDropdown_ = (props) => {
-  const openshiftFlag = props.flags[FLAGS.OPENSHIFT];
+const NsRoleDropdown: React.FCC<RoleDropdownProps> = (props) => {
+  const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
+  const { t } = useTranslation();
+
   if (flagPending(openshiftFlag)) {
     return null;
   }
@@ -422,7 +342,6 @@ const NsRoleDropdown_ = (props) => {
   }
   const resourceForKind = (kind) => ({ kind, namespace: kind === 'Role' ? props.namespace : null });
   const resources = _.map(kinds, resourceForKind);
-  const { t } = props;
 
   return (
     <ListDropdown
@@ -434,9 +353,7 @@ const NsRoleDropdown_ = (props) => {
   );
 };
 
-const NsRoleDropdown = connectToFlags(FLAGS.OPENSHIFT)(withTranslation()(NsRoleDropdown_));
-
-const ClusterRoleDropdown = (props) => {
+const ClusterRoleDropdown: React.FCC<RoleDropdownProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ListDropdown
@@ -448,32 +365,22 @@ const ClusterRoleDropdown = (props) => {
   );
 };
 
-const Section = ({ label, children }) => (
-  <div>
-    <div className="co-form-section__label">{label}</div>
-    <div className="co-form-subsection">{children}</div>
-  </div>
-);
-
-const BaseEditRoleBinding = (props) => {
+const BaseEditRoleBinding: React.FCC<BaseEditRoleBindingProps> = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { fixed, saveButtonText } = props;
 
-  const [data, setData] = React.useState({});
+  const [data, setData] = React.useState({} as any);
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState('');
 
   const subjectIndex = props.subjectIndex || 0;
 
-  const existingData = _.pick(props.obj, [
-    'metadata.name',
-    'metadata.namespace',
-    'roleRef',
-    'subjects',
-  ]);
-  existingData.kind = props.kind;
+  const existingData = {
+    ..._.pick(props.obj, ['metadata.name', 'metadata.namespace', 'roleRef', 'subjects']),
+    kind: props.kind,
+  };
 
   const { subjectKind, subjectName } = fixed.subjectRef || {};
 
@@ -507,7 +414,10 @@ const BaseEditRoleBinding = (props) => {
 
   const setSubject = (patch) => {
     const { kind, name, namespace } = Object.assign({}, getSubject(), patch);
-    const obj = Object.assign({}, data);
+    const obj = Object.assign({}, data) as any;
+    if (!obj.subjects) {
+      obj.subjects = [];
+    }
     obj.subjects[subjectIndex] =
       kind === 'ServiceAccount'
         ? { kind, name, namespace }
@@ -546,7 +456,7 @@ const BaseEditRoleBinding = (props) => {
 
   const setKind = (e) => {
     const kind = e.target.value;
-    const patch = { kind };
+    const patch: any = { kind };
     if (kind === 'ClusterRoleBinding') {
       patch.metadata = { namespace: null };
     }
@@ -558,7 +468,7 @@ const BaseEditRoleBinding = (props) => {
   const save = (e) => {
     e.preventDefault();
 
-    const { kind, metadata, roleRef } = data;
+    const { kind, metadata, roleRef } = data as any;
 
     if (
       !kind ||
@@ -601,7 +511,8 @@ const BaseEditRoleBinding = (props) => {
     );
   };
 
-  const RoleDropdown = data.kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
+  const RoleDropdown: React.FCC<RoleDropdownProps> =
+    data.kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
 
   const title = `${props.titleVerbAndKind}`;
 
@@ -639,141 +550,141 @@ const BaseEditRoleBinding = (props) => {
   return (
     <>
       <DocumentTitle>{title}</DocumentTitle>
-      <div className="co-m-pane__form">
-        <PageHeading
-          title={<div data-test="title">{title}</div>}
-          helpText={t(
-            'public~Associate a user/group to the selected role to define the type of access and resources that are allowed.',
-          )}
-        />
-        <PaneBody>
-          <form onSubmit={save}>
-            {!_.get(fixed, 'kind') && (
-              <Section label={t('public~Binding type')}>
-                <RadioGroup currentValue={data?.kind} items={bindingKinds} onChange={setKind} />
-              </Section>
-            )}
-
-            <div className="co-form-section__separator" />
-
-            <Section label={t('public~RoleBinding')}>
-              <div className="form-group">
-                <label htmlFor="role-binding-name" className="co-required">
-                  {t('public~Name')}
-                </label>
-                {_.get(fixed, 'metadata.name') ? (
-                  <ResourceName kind={data?.kind} name={data?.metadata?.name} />
-                ) : (
-                  <span className="pf-v6-c-form-control">
-                    <input
-                      type="text"
-                      onChange={changeName}
-                      placeholder={t('public~RoleBinding name')}
-                      value={data?.metadata?.name}
-                      required
-                      id="role-binding-name"
-                      data-test="role-binding-name"
+      <PageHeading
+        title={<div data-test="title">{title}</div>}
+        helpText={t(
+          'public~Associate a user/group to the selected role to define the type of access and resources that are allowed.',
+        )}
+      />
+      <PaneBody>
+        <Form onSubmit={save} isWidthLimited>
+          {!_.get(fixed, 'kind') && (
+            <FormSection title={t('public~Binding type')} titleElement="h2">
+              <FormGroup role="radiogroup" fieldId="binding-type-radio-group" isStack>
+                {bindingKinds.map(({ label, value, name, description }) => {
+                  const checked = value === data?.kind;
+                  return (
+                    <Radio
+                      key={value}
+                      id={value}
+                      name={name}
+                      value={value}
+                      label={label}
+                      description={description}
+                      onChange={setKind}
+                      isChecked={checked}
+                      data-checked-state={checked}
+                      data-test={`${label}-radio-input`}
                     />
-                  </span>
-                )}
-              </div>
-              {data?.kind === 'RoleBinding' && (
-                <div className="form-group" data-test="namespace-dropdown">
-                  <label htmlFor="ns-dropdown" className="co-required">
-                    {t('public~Namespace')}
-                  </label>
-                  <NsDropdown
-                    fixed={!!_.get(fixed, 'metadata.namespace')}
-                    selectedKey={data?.metadata?.namespace}
-                    onChange={changeNamespace}
-                    id="ns-dropdown"
-                  />
-                </div>
-              )}
-            </Section>
+                  );
+                })}
+              </FormGroup>
+            </FormSection>
+          )}
 
-            <div className="co-form-section__separator" />
-
-            <Section label={t('public~Role')}>
-              <div className="form-group" data-test="role-dropdown">
-                <label htmlFor="role-dropdown" className="co-required">
-                  {t('public~Role name')}
-                </label>
-                <RoleDropdown
-                  fixed={!!_.get(fixed, 'roleRef.name')}
-                  namespace={data?.metadata?.namespace}
-                  onChange={changeRoleRef}
-                  selectedKey={_.get(fixed, 'roleRef.name') || data?.roleRef?.name}
-                  selectedKeyKind={_.get(fixed, 'roleRef.kind') || data?.roleRef?.kind}
-                  id="role-dropdown"
+          <FormSection title={t('public~RoleBinding')} titleElement="h2">
+            <FormGroup label={t('public~Name')} isRequired>
+              {_.get(fixed, 'metadata.name') ? (
+                <ResourceName kind={data?.kind} name={data?.metadata?.name} />
+              ) : (
+                <TextInput
+                  isRequired
+                  type="text"
+                  id="role-binding-name"
+                  name="role-binding-name"
+                  value={data?.metadata?.name ?? ''}
+                  onChange={changeName}
+                  placeholder={t('public~RoleBinding name')}
+                  data-test="role-binding-name"
                 />
-              </div>
-            </Section>
-
-            <div className="co-form-section__separator" />
-
-            <Section label={t('public~Subject')}>
-              <div className="form-group">
-                <RadioGroup
-                  currentValue={subject?.kind}
-                  items={subjectKinds.map((obj) => ({
-                    ...obj,
-                    disabled: isSubjectDisabled,
-                  }))}
-                  onChange={changeSubjectKind}
-                />
-              </div>
-              {subject?.kind === 'ServiceAccount' && (
-                <div className="form-group">
-                  <label htmlFor="subject-namespace" className="co-required">
-                    {t('public~Subject namespace')}
-                  </label>
-                  <NsDropdown
-                    id="subject-namespace"
-                    selectedKey={subject?.namespace}
-                    onChange={changeSubjectNamespace}
-                  />
-                </div>
               )}
-              <div className="form-group">
-                <label htmlFor="subject-name" className="co-required">
-                  {t('public~Subject name')}
-                </label>
-                <span className={css('pf-v6-c-form-control', { disabled: isSubjectDisabled })}>
-                  <input
-                    type="text"
-                    onChange={changeSubjectName}
-                    placeholder={t('public~Subject name')}
-                    value={subject?.name}
-                    required
-                    id="subject-name"
-                    disabled={isSubjectDisabled}
-                    data-test="subject-name"
+            </FormGroup>
+            {data?.kind === 'RoleBinding' && (
+              <FormGroup label={t('public~Namespace')} isRequired data-test="namespace-dropdown">
+                <NsDropdown
+                  fixed={!!_.get(fixed, 'metadata.namespace')}
+                  selectedKey={data?.metadata?.namespace}
+                  onChange={changeNamespace}
+                  id="ns-dropdown"
+                />
+              </FormGroup>
+            )}
+          </FormSection>
+
+          <FormSection title={t('public~Role')} titleElement="h2">
+            <FormGroup label={t('public~Role name')} isRequired data-test="role-dropdown">
+              <RoleDropdown
+                fixed={!!_.get(fixed, 'roleRef.name')}
+                namespace={data?.metadata?.namespace}
+                onChange={changeRoleRef}
+                selectedKey={_.get(fixed, 'roleRef.name') || data?.roleRef?.name}
+                selectedKeyKind={_.get(fixed, 'roleRef.kind') || data?.roleRef?.kind}
+                id="role-dropdown"
+              />
+            </FormGroup>
+          </FormSection>
+
+          <FormSection title={t('public~Subject')} titleElement="h2">
+            <FormGroup role="radiogroup" fieldId="subject-radio-group" isStack>
+              {subjectKinds.map(({ label, value, name }) => {
+                const checked = value === subject?.kind;
+                return (
+                  <Radio
+                    key={value}
+                    id={value}
+                    name={name}
+                    value={value}
+                    label={label}
+                    onChange={changeSubjectKind}
+                    isChecked={checked}
+                    isDisabled={isSubjectDisabled}
+                    data-checked-state={checked}
+                    data-test={`${label}-radio-input`}
                   />
-                </span>
-              </div>
-            </Section>
+                );
+              })}
+            </FormGroup>
+            {subject?.kind === 'ServiceAccount' && (
+              <FormGroup label={t('public~Subject namespace')} isRequired>
+                <NsDropdown
+                  id="subject-namespace"
+                  selectedKey={subject?.namespace}
+                  onChange={changeSubjectNamespace}
+                />
+              </FormGroup>
+            )}
+            <FormGroup label={t('public~Subject name')} isRequired>
+              <TextInput
+                isRequired
+                type="text"
+                id="subject-name"
+                name="subject-name"
+                value={subject?.name ?? ''}
+                onChange={changeSubjectName}
+                placeholder={t('public~Subject name')}
+                isDisabled={isSubjectDisabled}
+                data-test="subject-name"
+              />
+            </FormGroup>
+          </FormSection>
 
-            <div className="co-form-section__separator" />
-
-            <ButtonBar errorMessage={error} inProgress={inProgress}>
-              <ActionGroup className="pf-v6-c-form">
-                <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
-                  {saveButtonText || t('public~Create')}
-                </Button>
-                <Button onClick={() => navigate(-1)} id="cancel" variant="secondary">
-                  {t('public~Cancel')}
-                </Button>
-              </ActionGroup>
-            </ButtonBar>
-          </form>
-        </PaneBody>
-      </div>
+          <ButtonBar errorMessage={error} inProgress={inProgress}>
+            <ActionGroup className="pf-v6-c-form">
+              <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
+                {saveButtonText || t('public~Create')}
+              </Button>
+              <Button onClick={() => navigate(-1)} id="cancel" variant="secondary">
+                {t('public~Cancel')}
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </Form>
+      </PaneBody>
     </>
   );
 };
 
-export const CreateRoleBinding = () => {
+export const CreateRoleBinding: React.FCC = () => {
   const params = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -797,8 +708,8 @@ export const CreateRoleBinding = () => {
   const { t } = useTranslation();
   return (
     <BaseEditRoleBinding
-      metadata={metadata}
       setActiveNamespace={setActiveNamespace}
+      metadata={metadata}
       fixed={fixed}
       isCreate={true}
       titleVerbAndKind={t('public~Create RoleBinding')}
@@ -811,23 +722,23 @@ const getSubjectIndex = () => {
   return parseInt(subjectIndex, 10);
 };
 
-const BindingLoadingWrapper = (props) => {
+const BindingLoadingWrapper: React.FCC<BindingLoadingWrapperProps> = (props) => {
   const [, setActiveNamespace] = useActiveNamespace();
-  const fixed = {};
+  const fixed: { [key: string]: any } = {};
   _.each(props.fixedKeys, (k) => (fixed[k] = _.get(props.obj.data, k)));
   return (
     <StatusBox {...props.obj}>
       <BaseEditRoleBinding
         {...props}
-        obj={props.obj.data}
         setActiveNamespace={setActiveNamespace}
         fixed={fixed}
+        obj={props.obj.data}
       />
     </StatusBox>
   );
 };
 
-export const EditRoleBinding = ({ kind }) => {
+export const EditRoleBinding: React.FCC<EditRoleBindingProps> = ({ kind }) => {
   const { t } = useTranslation();
   const params = useParams();
   return (
@@ -844,7 +755,7 @@ export const EditRoleBinding = ({ kind }) => {
   );
 };
 
-export const CopyRoleBinding = ({ kind }) => {
+export const CopyRoleBinding: React.FCC<EditRoleBindingProps> = ({ kind }) => {
   const { t } = useTranslation();
   const params = useParams();
   return (
@@ -852,11 +763,65 @@ export const CopyRoleBinding = ({ kind }) => {
       resources={[{ kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj' }]}
     >
       <BindingLoadingWrapper
-        isCreate={true}
         fixedKeys={['kind']}
         subjectIndex={getSubjectIndex()}
+        isCreate={true}
         titleVerbAndKind={t('public~Duplicate RoleBinding')}
       />
     </Firehose>
   );
+};
+
+type BindingKind = (RoleBindingKind | ClusterRoleBindingKind) & { subject: Subject };
+
+type BindingProps = {
+  binding: BindingKind;
+};
+
+type BindingsListTableProps = {
+  data: BindingKind[];
+  loaded: boolean;
+  loadError: string;
+  mock?: boolean;
+};
+
+type RoleBindingsPageProps = {
+  mock?: boolean;
+  staticFilters?: any;
+  name?: string;
+  kind?: string;
+  createPath?: string;
+} & Omit<Partial<MultiListPageProps>, 'staticFilters'>;
+
+type RoleDropdownProps = {
+  namespace?: string;
+} & ListDropdownProps;
+
+type BaseEditRoleBindingProps = {
+  setActiveNamespace: (ns: string) => void;
+  metadata?: { namespace: string };
+  fixed?: {
+    [key: string]: any;
+  };
+  isCreate?: boolean;
+  titleVerbAndKind?: string;
+  saveButtonText?: string;
+  subjectIndex?: number;
+  obj?: RoleBindingKind | ClusterRoleBindingKind;
+  kind?: string;
+};
+
+type BindingLoadingWrapperProps = {
+  fixedKeys: string[];
+  subjectIndex: number;
+  titleVerbAndKind: string;
+  saveButtonText?: string;
+  isCreate?: boolean;
+  obj?: {
+    data: RoleBindingKind | ClusterRoleBindingKind;
+  };
+};
+
+type EditRoleBindingProps = {
+  kind: string;
 };

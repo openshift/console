@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -14,12 +14,12 @@ import { IDPNameInput } from './idp-name-input';
 
 export const AddGooglePage = () => {
   const navigate = useNavigate();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('google');
-  const [clientID, setClientID] = React.useState('');
-  const [clientSecret, setClientSecret] = React.useState('');
-  const [hostedDomain, setHostedDomain] = React.useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('google');
+  const [clientID, setClientID] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+  const [hostedDomain, setHostedDomain] = useState('');
 
   const { t } = useTranslation();
 

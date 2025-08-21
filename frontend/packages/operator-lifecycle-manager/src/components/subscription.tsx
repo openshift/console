@@ -22,7 +22,10 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import {
+  getGroupVersionKindForModel,
+  K8sResourceKind,
+} from '@console/dynamic-plugin-sdk/src/lib-core';
 import { Conditions } from '@console/internal/components/conditions';
 import {
   DetailsPage,
@@ -32,12 +35,10 @@ import {
   RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
-  KebabAction,
   Kebab,
   LoadingInline,
   ConsoleEmptyState,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   resourcePathFromModel,
   ResourceSummary,
@@ -45,13 +46,15 @@ import {
 } from '@console/internal/components/utils';
 import { removeQueryArgument } from '@console/internal/components/utils/router';
 import {
-  referenceForModel,
   k8sGet,
-  k8sPatch,
   k8sKill,
-  k8sUpdate,
-  K8sResourceCommon,
   K8sKind,
+  K8sModel,
+  k8sPatch,
+  K8sResourceCommon,
+  k8sUpdate,
+  referenceFor,
+  referenceForModel,
 } from '@console/internal/module/k8s';
 import {
   BlueArrowCircleUpIcon,
@@ -59,6 +62,7 @@ import {
   getName,
   getNamespace,
   GreenCheckCircleIcon,
+  LazyActionMenu,
   RedExclamationCircleIcon,
   WarningStatus,
   YellowExclamationTriangleIcon,
@@ -93,7 +97,7 @@ import {
 } from './deprecated-operator-warnings/deprecated-operator-warnings';
 import { createInstallPlanApprovalModal } from './modals/installplan-approval-modal';
 import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
-import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
+import { useUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { requireOperatorGroup } from './operator-group';
 import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } from './index';
 
@@ -212,31 +216,6 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
   }
 };
 
-const menuActions: KebabAction[] = [
-  Kebab.factory.Edit,
-  (kind, obj) => ({
-    // t('olm~Remove Subscription')
-    labelKey: 'olm~Remove Subscription',
-    callback: () => createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: obj }),
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'delete',
-    },
-  }),
-  (_kind, obj) => {
-    const installedCSV = _.get(obj, 'status.installedCSV');
-    return {
-      // t('olm~View ClusterServiceVersion...')
-      labelKey: 'olm~View ClusterServiceVersion...',
-      href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${installedCSV}`,
-      hidden: !installedCSV,
-    };
-  },
-];
-
 export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
   return (
@@ -261,10 +240,10 @@ export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
         {obj.spec.installPlanApproval || t('olm~Automatic')}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab
-          actions={menuActions}
-          kind={referenceForModel(SubscriptionModel)}
-          resource={obj}
+        <LazyActionMenu
+          context={{
+            [referenceFor(obj)]: obj,
+          }}
         />
       </TableData>
     </>
@@ -345,7 +324,7 @@ export const SubscriptionsPage: React.FC<SubscriptionsPageProps> = (props) => {
       flatten={(resources) => _.get(resources.subscription, 'data', [])}
       title={t('olm~Subscriptions')}
       canCreate
-      createProps={{ to: '/operatorhub' }}
+      createProps={{ to: '/catalog?catalogType=operator' }}
       createButtonText={t('olm~Create Subscription')}
       ListComponent={SubscriptionsList}
       filterLabel={t('olm~Subscriptions by package')}
@@ -450,11 +429,17 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
   const installPlan = installPlanForSubscription(installPlans, obj);
   const pkg = packageForSubscription(packageManifests, obj);
+  const uninstallOperatorModal = useUninstallOperatorModal({
+    k8sKill,
+    k8sGet,
+    k8sPatch,
+    subscription: obj,
+  });
   if (new URLSearchParams(window.location.search).has('showDelete')) {
-    createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: obj })
-      .result.then(() => removeQueryArgument('showDelete'))
-      .catch(_.noop);
+    uninstallOperatorModal();
+    removeQueryArgument('showDelete');
   }
+
   const { deprecatedPackage, deprecatedChannel, deprecatedVersion } = findDeprecatedOperator(obj);
 
   return (
@@ -786,7 +771,9 @@ export const SubscriptionDetailsPage: React.FC<SubscriptionDetailsPageProps> = (
           prop: 'subscriptions',
         },
       ]}
-      menuActions={menuActions}
+      customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) => (
+        <LazyActionMenu context={{ [referenceFor(kindObj)]: obj }} />
+      )}
     />
   );
 };

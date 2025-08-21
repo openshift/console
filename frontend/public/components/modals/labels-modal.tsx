@@ -13,11 +13,9 @@ import {
   ModalComponentProps,
   ModalSubmitFooter,
   ModalTitle,
-  ModalWrapper,
 } from '../factory/modal';
 import { ResourceIcon, SelectorInput } from '../utils';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
-import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { Grid, GridItem } from '@patternfly/react-core';
 
 const LABELS_PATH = '/metadata/labels';
@@ -135,18 +133,7 @@ export const LabelsModal: React.FC<LabelsModalProps> = (props) => (
   <BaseLabelsModal path={LABELS_PATH} {...props} />
 );
 
-export const LabelsProviderModal: ModalComponent<LabelsProviderModalProps> = (props) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeModal}>
-      <BaseLabelsModal
-        close={props.closeModal}
-        path={LABELS_PATH}
-        cancel={props.closeModal}
-        {...props}
-      />
-    </ModalWrapper>
-  );
-};
+export const labelsModalLauncher = createModalLauncher<LabelsModalProps>(LabelsModal);
 
 export const podSelectorModal = createModalLauncher<PodSelectorModalProps>((props) => {
   const { t } = useTranslation();
@@ -181,8 +168,6 @@ type BaseLabelsModalProps = {
   path: string;
   resource: K8sResourceKind;
 } & ModalComponentProps;
-
-type LabelsProviderModalProps = BaseLabelsModalProps;
 
 export type LabelsModalProps = Omit<BaseLabelsModalProps, 'path'>;
 

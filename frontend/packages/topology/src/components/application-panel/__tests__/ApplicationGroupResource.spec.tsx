@@ -1,74 +1,79 @@
-import { shallow } from 'enzyme';
-import { Link } from 'react-router-dom';
+import * as React from 'react';
+import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import ApplicationGroupResource from '../ApplicationGroupResource';
-import TopologyApplicationResourceList from '../TopologyApplicationList';
+import '@testing-library/jest-dom';
 
-describe(ApplicationGroupResource.displayName, () => {
-  it('should component exists', () => {
-    const wrapper = shallow(
-      <ApplicationGroupResource
-        title="Deployments"
-        resourcesData={sampleDeployments.data}
-        group="a"
-      />,
-    );
-    expect(wrapper.isEmptyRender()).toBe(false);
+const renderComponent = (props: React.ComponentProps<typeof ApplicationGroupResource>) => {
+  return render(
+    <MemoryRouter>
+      <ApplicationGroupResource {...props} />
+    </MemoryRouter>,
+  );
+};
+
+describe('<ApplicationGroupResource />', () => {
+  it('should render component when resourcesData is present', () => {
+    renderComponent({
+      title: 'Deployments',
+      group: 'a',
+      resourcesData: [{ kind: 'Deployment', metadata: { name: 'test', uid: '1' } }],
+    });
+
+    expect(screen.getByText('Deployments')).toBeInTheDocument();
   });
 
-  it('should not exists when resourceData is an empty array', () => {
-    const wrapper = shallow(
-      <ApplicationGroupResource title="Deployments" resourcesData={[]} group="a" />,
-    );
-    expect(wrapper.isEmptyRender()).toBe(true);
+  it('should not render component when resourcesData is empty', () => {
+    const { container } = renderComponent({
+      title: 'Deployments',
+      group: 'a',
+      resourcesData: [],
+    });
+
+    expect(container.firstChild).toBeNull();
   });
 
-  it('should render view all link if resource is greater than MAX_RESOURCE', () => {
-    const resourcesData: K8sResourceKind[] = [
-      { kind: 'DeploymentConfig', metadata: { name: 'a', uid: '1' } },
-      { kind: 'DeploymentConfig', metadata: { name: 'b', uid: '2' } },
-      { kind: 'DeploymentConfig', metadata: { name: 'c', uid: '3' } },
-      { kind: 'DeploymentConfig', metadata: { name: 'd', uid: '4' } },
-      { kind: 'DeploymentConfig', metadata: { name: 'e', uid: '5' } },
-      { kind: 'DeploymentConfig', metadata: { name: 'f', uid: '6' } },
-      { kind: 'DeploymentConfig', metadata: { name: 'g', uid: '7' } },
+  it('should render "View all" link if resources exceed MAX_RESOURCES', () => {
+    const resources: K8sResourceKind[] = Array.from({ length: 6 }).map((_, i) => ({
+      kind: 'DeploymentConfig',
+      metadata: { name: `dc-${i}`, uid: `${i}` },
+    }));
+
+    renderComponent({
+      title: 'Deployment Config',
+      group: 'a',
+      resourcesData: resources,
+    });
+
+    expect(screen.getByText('View all 6')).toBeInTheDocument();
+  });
+
+  it('should not render "View all" link if resources are within MAX_RESOURCES', () => {
+    const resources: K8sResourceKind[] = [
+      { kind: 'DeploymentConfig', metadata: { name: 'dc', uid: '1' } },
     ];
-    const wrapper = shallow(
-      <ApplicationGroupResource
-        title="Deployment Config"
-        resourcesData={resourcesData}
-        group="a"
-      />,
-    );
-    expect(wrapper.find(Link).exists()).toBe(true);
+
+    renderComponent({
+      title: 'Deployment Config',
+      group: 'a',
+      resourcesData: resources,
+    });
+
+    expect(screen.queryByText(/View all/)).not.toBeInTheDocument();
   });
 
-  it('should not render `view all` link if resource is less than MAX_RESOURCE', () => {
-    const resourcesData: K8sResourceKind[] = [
-      { kind: 'DeploymentConfig', metadata: { name: 'a', uid: '1' } },
+  it('should render <TopologyApplicationResourceList /> if resources exist', () => {
+    const resources: K8sResourceKind[] = [
+      { kind: 'DeploymentConfig', metadata: { name: 'dc', uid: '1' } },
     ];
-    const wrapper = shallow(
-      <ApplicationGroupResource
-        title="Deployment Config"
-        resourcesData={resourcesData}
-        group="a"
-      />,
-    );
-    expect(wrapper.find(Link).exists()).toBe(false);
-  });
 
-  it('should render TopologyApplicationResourceList if resourceData is greater than 0', () => {
-    const resourcesData: K8sResourceKind[] = [
-      { kind: 'DeploymentConfig', metadata: { name: 'a', uid: '1' } },
-    ];
-    const wrapper = shallow(
-      <ApplicationGroupResource
-        title="Deployment Config"
-        resourcesData={resourcesData}
-        group="a"
-      />,
-    );
-    expect(wrapper.find(TopologyApplicationResourceList).exists()).toBe(true);
+    renderComponent({
+      title: 'Deployment Config',
+      group: 'a',
+      resourcesData: resources,
+    });
+
+    expect(screen.getByRole('link', { name: 'dc' })).toBeInTheDocument();
   });
 });

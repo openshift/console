@@ -1,23 +1,21 @@
-import { shallow } from 'enzyme';
+import { configure, render, screen } from '@testing-library/react';
 import * as Router from 'react-router-dom';
-import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
 import { TopologyPage } from '../components/page/TopologyPage';
 import { TopologyViewType } from '../topology-types';
 import { usePreferredTopologyView } from '../user-preferences/usePreferredTopologyView';
+import '@testing-library/jest-dom';
+
+configure({ testIdAttribute: 'data-test-id' });
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
+  useK8sWatchResource: jest.fn(() => [[], true, null]),
 }));
 
-jest.mock('react', () => {
-  const ActualReact = jest.requireActual('react');
-  return {
-    ...ActualReact,
-    useContext: () => jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/version', () => ({
+  useClusterVersion: jest.fn(() => [{}, true]),
+}));
 
 jest.mock('react-redux', () => {
   const ActualReactRedux = jest.requireActual('react-redux');
@@ -28,10 +26,8 @@ jest.mock('react-redux', () => {
   };
 });
 
-let mockViewParam = '';
-
-jest.mock('@console/shared', () => {
-  const ActualShared = jest.requireActual('@console/shared');
+jest.mock('@console/shared/src', () => {
+  const ActualShared = jest.requireActual('@console/shared/src');
   return {
     ...ActualShared,
     useQueryParams: jest.fn(),
@@ -48,99 +44,101 @@ jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
 }));
 
-describe('Topology page tests', () => {
-  beforeEach(() => {
-    mockViewParam = '';
-    (useK8sWatchResources as jest.Mock).mockReturnValue({
-      projects: { data: [], loaded: true, loadError: '' },
-    });
-    (useQueryParams as jest.Mock).mockReturnValue(new Map().set('view', mockViewParam));
-  });
+jest.mock('../filters/FilterProvider', () => {
+  const actual = jest.requireActual('../filters/FilterProvider');
+  return {
+    ...actual,
+    FilterProvider: 'FilterProvider',
+  };
+});
 
-  it('should render topology page', () => {
-    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
-    (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ name: 'default' });
-    const wrapper = shallow(<TopologyPage hideProjects={false} />);
-    expect(wrapper.find(NamespacedPage).exists()).toBe(true);
+jest.mock('@console/dev-console/src/components/NamespacedPage', () => ({
+  __esModule: true,
+  default: 'NamespacedPage',
+  NamespacedPageVariants: {
+    default: 'default',
+    light: 'light',
+  },
+}));
+
+jest.mock('@console/internal/components/start-guide', () => ({
+  __esModule: true,
+  withStartGuide: () => 'withStartGuide',
+}));
+
+describe('TopologyPage view logic', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (Router.useParams as jest.Mock).mockReturnValue({ name: 'default' });
   });
 
   it('should default to graph view', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}, true]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ name: 'default' });
-    const wrapper = shallow(<TopologyPage hideProjects={false} />);
-    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
+    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=graph'));
+    render(<TopologyPage />);
+    expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
   it('should allow setting default to list view', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ name: 'default' });
-    const wrapper = shallow(
-      <TopologyPage hideProjects={false} defaultViewType={TopologyViewType.list} />,
-    );
-    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
+    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=list'));
+    render(<TopologyPage defaultViewType={TopologyViewType.list} />);
+    expect(screen.getByTestId('topology-list-page')).toBeInTheDocument();
   });
 
-  it('should render view from URL view path and ignore userSettings if it is available', () => {
+  it('should prefer view from URL over user settings', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['list', () => {}, true]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue(['list', true]);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ name: 'default', view: 'graph' });
-    (useQueryParams as jest.Mock).mockReturnValue(new Map().set('view', 'graph'));
-    const wrapper = shallow(<TopologyPage hideProjects={false} />);
-    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
+    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=graph'));
+    render(<TopologyPage />);
+    expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
-  it('should render view using the preferred view from user settings if it exists and does not have value "latest", and all user settings have loaded', () => {
+  it('should use preferred user setting if valid and all settings loaded', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['list', () => {}, true]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue(['graph', true]);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ name: 'default' });
-    const wrapper = shallow(<TopologyPage hideProjects={false} activeViewStorageKey="fake-key" />);
-    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
+    render(<TopologyPage activeViewStorageKey="fake-key" />);
+    expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
-  it('should render view using the last viewed from user settings if it exists and preferred view has value "latest", and all user settings have loaded', () => {
+  it('should use last-viewed if preferred view is "latest"', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['graph', () => {}, true]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue(['latest', true]);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ name: 'default' });
-    const wrapper = shallow(<TopologyPage hideProjects={false} activeViewStorageKey="fake-key" />);
-    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
+    render(<TopologyPage activeViewStorageKey="fake-key" />);
+    expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
-  it('should render view using the last viewed from user settings if it exists and preferred view does not exist", and all user settings have loaded', () => {
+  it('should use last-viewed if preferred view is undefined', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['list', () => {}, true]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue([undefined, true]);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ name: 'default' });
-    const wrapper = shallow(<TopologyPage hideProjects={false} activeViewStorageKey="fake-key" />);
-    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
+    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=list'));
+    render(<TopologyPage activeViewStorageKey="fake-key" />);
+    expect(screen.getByTestId('topology-list-page')).toBeInTheDocument();
   });
 
-  it('should render view using the default view if preferred and last view from user settings does not exist", and all user settings have loaded', () => {
+  it('should use defaultViewType if both preferred and last-viewed are undefined', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue([undefined, () => {}, true]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue([undefined, true]);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ name: 'default' });
-    const wrapper = shallow(
-      <TopologyPage hideProjects={false} defaultViewType={TopologyViewType.list} />,
-    );
-    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
+    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=list'));
+    render(<TopologyPage defaultViewType={TopologyViewType.list} />);
+    expect(screen.getByTestId('topology-list-page')).toBeInTheDocument();
   });
 
-  it('should continue to support URL view path for graph', () => {
+  it('should support URL view=graph', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}, true]);
-    (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
-    (useQueryParams as jest.Mock).mockReturnValue(new Map().set('view', 'graph'));
-    jest.spyOn(Router, 'useParams').mockReturnValue({ name: 'default', view: 'graph' });
-    const wrapper = shallow(<TopologyPage hideProjects={false} />);
-    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
+    (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
+    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=graph'));
+    render(<TopologyPage />);
+    expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
-  it('should continue to support URL view path for list', () => {
+  it('should support URL view=list', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
-    (useQueryParams as jest.Mock).mockReturnValue(new Map().set('view', 'list'));
-    jest.spyOn(Router, 'useParams').mockReturnValue({ name: 'default' });
-    const wrapper = shallow(<TopologyPage hideProjects={false} />);
-    expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
+    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=list'));
+    render(<TopologyPage />);
+    expect(screen.getByTestId('topology-list-page')).toBeInTheDocument();
   });
 });

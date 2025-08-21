@@ -1,9 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Alert, Checkbox } from '@patternfly/react-core';
+import { Alert, Backdrop, Checkbox, Modal, ModalVariant } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { LinkProps, useNavigate } from 'react-router-dom';
-
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { resourceListPathFromModel, withHandlePromise, HandlePromiseProps } from '../utils';
 import {
@@ -12,7 +11,6 @@ import {
   referenceForOwnerRef,
   K8sResourceKind,
   K8sModel,
-  K8sResourceCommon,
   OwnerReference,
 } from '../../module/k8s/';
 import { YellowExclamationTriangleIcon } from '@console/shared';
@@ -156,11 +154,23 @@ export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePr
   );
 });
 
+export const DeleteOverlay: React.FC<DeleteModalProps> = (props) => {
+  const [isOpen, setIsOpen] = React.useState(true);
+  const closeModal = () => setIsOpen(false);
+  return isOpen ? (
+    <Backdrop>
+      <Modal variant={ModalVariant.small} isOpen>
+        <DeleteModal cancel={closeModal} close={closeModal} {...props} />
+      </Modal>
+    </Backdrop>
+  ) : null;
+};
+
 export const deleteModal = createModalLauncher(DeleteModal);
 
 export type DeleteModalProps = {
   kind: K8sModel;
-  resource: K8sResourceCommon;
+  resource: K8sResourceKind;
   close?: () => void;
   redirectTo?: LinkProps['to'];
   message?: JSX.Element;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { QuickStart, getDisabledQuickStarts } from '@patternfly/quickstarts';
 import { useTranslation } from 'react-i18next';
 import {
@@ -101,7 +101,7 @@ export const useQuickStarts = (filterDisabledQuickStarts = true): WatchK8sResult
     isList: true,
   });
 
-  const bestMatchQuickStarts = React.useMemo(() => {
+  const bestMatchQuickStarts = useMemo(() => {
     if (!quickStartsLoaded) {
       return [];
     }

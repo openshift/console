@@ -7,7 +7,6 @@ import {
   useQueryParams,
   CatalogQueryParams,
   CatalogServiceProvider,
-  useCatalogCategories,
   CatalogController,
   isCatalogTypeEnabled,
 } from '@console/shared';
@@ -19,7 +18,6 @@ const PageContents: React.FC = () => {
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
   const { ns: namespace } = useParams();
-  const categories = useCatalogCategories();
 
   return namespace ? (
     <CatalogServiceProvider namespace={namespace} catalogId="dev-catalog" catalogType={catalogType}>
@@ -27,7 +25,6 @@ const PageContents: React.FC = () => {
         <CatalogController
           {...service}
           enableDetailsPanel
-          categories={categories}
           title={t('devconsole~Software Catalog')}
           description={t(
             'devconsole~Add shared applications, services, event sources, or source-to-image builders to your Project from the software catalog. Cluster administrators can customize the content made available in the catalog.',

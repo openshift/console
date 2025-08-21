@@ -1,6 +1,16 @@
 import { ReactElement } from 'react';
 import { Form } from '@patternfly/react-core';
-import { render, RenderOptions } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import {
+  render,
+  RenderOptions,
+  screen,
+  fireEvent,
+  waitFor,
+  within,
+  BoundFunctions,
+  Queries,
+} from '@testing-library/react';
 import { Formik, FormikValues } from 'formik';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -59,3 +69,76 @@ export const mockFormikRenderer = (
     ),
     ...options,
   });
+
+// Helper function for verifying form input element visibility, type attribute, initial value and required status
+export const verifyFormElementBasics = (
+  element: HTMLElement,
+  expectedType?: string,
+  initialValue?: string,
+  isRequired?: boolean,
+) => {
+  expect(element).toBeVisible();
+  if (expectedType) {
+    expect(element).toHaveAttribute('type', expectedType);
+  }
+  if (initialValue) {
+    expect(element).toHaveValue(initialValue);
+  }
+  isRequired ? expect(element).toBeRequired() : expect(element).not.toBeRequired();
+};
+
+/**
+ * A reusable function to verify an input element with optional container scoping.
+ * @param inputLabel - The label text associated with the input element.
+ * @param inputType - The type of the input element (default is 'text').
+ * @param containerId - The ID of the container to scope the search (optional).
+ * @param initialValue - The initial value of the input element (optional).
+ * @param testValue - The value to enter for testing input functionality (optional).
+ * @param helpText - The expected help text associated with the input element (optional).
+ * @param isRequired - Whether the input element is required (default is false).
+ */
+export const verifyInputField = async ({
+  inputLabel,
+  inputType = 'text',
+  containerId,
+  initialValue = '',
+  testValue,
+  helpText = '',
+  isRequired = false,
+}: {
+  inputLabel: string;
+  inputType?: string;
+  containerId?: string;
+  initialValue?: string;
+  testValue?: string;
+  helpText?: string;
+  isRequired?: boolean;
+}) => {
+  // A query variable that scope the queries to that container, which defaults to the global 'screen' object if a container ID is provided.
+  let container: BoundFunctions<Queries> | typeof screen = screen;
+
+  if (containerId) {
+    const containerElement = screen.getByTestId(containerId);
+    expect(containerElement).toBeInTheDocument();
+    container = within(containerElement);
+  }
+
+  // Query the input element by its associated label text
+  const input = container.getByLabelText(inputLabel) as HTMLInputElement;
+
+  verifyFormElementBasics(input, inputType, initialValue, isRequired);
+
+  // Verify the help text is visible
+  if (helpText) {
+    expect(container.getByText(helpText)).toBeVisible();
+  }
+
+  // Simulate an input change if a new value is provided
+  // TODO: Use the 'userEvent' instead of 'fireEvent' after Jest and React Testing Libraries upgrade
+  if (testValue !== undefined) {
+    await (async () => {
+      fireEvent.change(input, { target: { value: testValue } });
+      await waitFor(() => expect(input).toHaveValue(testValue));
+    });
+  }
+};

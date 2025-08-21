@@ -94,7 +94,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
       />
       <Form onSubmit={!viewOnly ? handleSubmit : undefined}>
         <div className="odc-add-health-checks__body">
-          <p className="odc-add-health-checks__paragraph">
+          <p className="odc-add-health-checks__paragraph" data-test="health-checks-heading">
             <Trans t={t} ns="devconsole">
               Health checks for{' '}
               <ResourceLink

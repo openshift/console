@@ -1,8 +1,14 @@
-import { shallow } from 'enzyme';
-import SecretKeySelector from '../../SecretKeySelector';
+import { render } from '@testing-library/react';
 import KafkaSourceNetSection from '../KafkaSourceNetSection';
+import '@testing-library/jest-dom';
+
+jest.mock('../../SecretKeySelector', () => ({
+  __esModule: true,
+  default: 'SecretKeySelector',
+}));
 
 jest.mock('formik', () => ({
+  useField: jest.fn(() => [{}, {}]),
   useFormikContext: jest.fn(() => ({
     values: {
       formData: {
@@ -30,7 +36,8 @@ jest.mock('formik', () => ({
 
 describe('KafkaSourceNetSection', () => {
   it('should render SecretKeySelector field for tls and sasl when they are enabled', () => {
-    const wrapper = shallow(<KafkaSourceNetSection />);
-    expect(wrapper.find(SecretKeySelector)).toHaveLength(5);
+    const { container } = render(<KafkaSourceNetSection />);
+    const secretKeySelectors = container.querySelectorAll('SecretKeySelector');
+    expect(secretKeySelectors).toHaveLength(5);
   });
 });

@@ -45,7 +45,7 @@ import {
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { RedExclamationCircleIcon, isCephProvisioner } from '@console/shared';
+import { isCephProvisioner } from '@console/shared';
 import { getName, getRequestedPVCSize, onlyPvcSCs } from '@console/shared/src/selectors';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
 
@@ -184,7 +184,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
           {!validSize && (
             <FormHelperText>
               <HelperText>
-                <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+                <HelperTextItem variant="error">
                   {t('console-app~Size should be equal or greater than the requested size of PVC.')}
                 </HelperTextItem>
               </HelperText>

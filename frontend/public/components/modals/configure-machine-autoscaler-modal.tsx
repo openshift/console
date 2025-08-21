@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -16,8 +16,8 @@ import { k8sCreate, K8sResourceKind } from '../../module/k8s';
 const ConfigureMachineAutoscalerModal = withHandlePromise(
   (props: ConfigureMachineAutoscalerModalProps) => {
     const navigate = useNavigate();
-    const [minReplicas, setMinReplicas] = React.useState(1);
-    const [maxReplicas, setMaxReplicas] = React.useState(12);
+    const [minReplicas, setMinReplicas] = useState(1);
+    const [maxReplicas, setMaxReplicas] = useState(12);
 
     const changeMinReplicas = (event) => {
       setMinReplicas(_.toInteger(event.target.value));

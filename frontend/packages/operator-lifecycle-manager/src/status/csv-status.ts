@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import i18n from '@console/internal/i18n';
 import { getName } from '@console/shared/src/selectors/common';
 import { operatorNamespaceFor } from '../components/operator-group';
@@ -21,16 +20,20 @@ const pendingPhases = [
 export const subscriptionForCSV = (
   subscriptions: SubscriptionKind[],
   csv: ClusterServiceVersionKind,
-): SubscriptionKind =>
-  // TODO Replace _.find with Array.prototype.find
-  _.find<SubscriptionKind>(subscriptions, {
-    metadata: {
-      namespace: operatorNamespaceFor(csv),
-    },
-    status: {
-      installedCSV: getName(csv),
-    },
+): SubscriptionKind => {
+  const csvName = getName(csv);
+  const operatorNamespace = operatorNamespaceFor(csv);
+  return (subscriptions ?? []).find((subscription) => {
+    const subscriptionNamespace = subscription.metadata?.namespace || '';
+    const installedCSV = subscription.status?.installedCSV || '';
+    return (
+      operatorNamespace &&
+      csvName &&
+      subscriptionNamespace === operatorNamespace &&
+      installedCSV === csvName
+    );
   });
+};
 
 export const getCSVStatus = (
   csv: ClusterServiceVersionKind,

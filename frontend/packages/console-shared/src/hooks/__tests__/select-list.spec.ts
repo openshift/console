@@ -1,5 +1,5 @@
 import { act } from 'react-dom/test-utils';
-import { testHook } from '../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { data, visibleRows, onRowSelected } from '../__mocks__/select-list-data';
 import { useSelectList } from '../select-list';
 

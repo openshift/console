@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import { ExtensionHook, CatalogItem, WatchK8sResults } from '@console/dynamic-plugin-sdk';
@@ -19,10 +19,10 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
-  const [helmCharts, setHelmCharts] = React.useState<HelmChartEntries>();
-  const [loadedError, setLoadedError] = React.useState<APIError>();
+  const [helmCharts, setHelmCharts] = useState<HelmChartEntries>();
+  const [loadedError, setLoadedError] = useState<APIError>();
 
-  const resourceSelector = React.useMemo(
+  const resourceSelector = useMemo(
     () => ({
       hcrs: {
         isList: true,
@@ -45,7 +45,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
     Object.keys(chartRepositories).length > 0 &&
     Object.values(chartRepositories).some((value) => value.loaded || !!value.loadError);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let mounted = true;
     coFetch(`/api/helm/charts/index.yaml?namespace=${activeNamespace}`)
       .then(async (res) => {
@@ -66,7 +66,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
     };
   }, [activeNamespace]);
 
-  const normalizedHelmCharts: CatalogItem[] = React.useMemo(
+  const normalizedHelmCharts: CatalogItem[] = useMemo(
     () =>
       normalizeHelmCharts(
         helmCharts,

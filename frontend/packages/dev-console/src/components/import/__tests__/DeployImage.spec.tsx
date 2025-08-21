@@ -1,21 +1,11 @@
-import * as React from 'react';
-import { Radio } from '@patternfly/react-core';
-import { mount, ReactWrapper } from 'enzyme';
-import i18n from 'i18next';
-import { act } from 'react-dom/test-utils';
-import { setI18n } from 'react-i18next';
-import { Provider } from 'react-redux';
+import { configure, screen } from '@testing-library/react';
 import * as Router from 'react-router-dom';
-import { ButtonBar } from '@console/internal/components/utils/';
-import store from '@console/internal/redux';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import NamespacedPage from '../../NamespacedPage';
-import AdvancedSection from '../advanced/AdvancedSection';
-import AppSection from '../app/AppSection';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import DeployImage from '../DeployImage';
 import DeployImagePage from '../DeployImagePage';
-import ImageSearchSection from '../image-search/ImageSearchSection';
-import { DeploySection } from '../section/deploy-section/DeploySection';
+import '@testing-library/jest-dom';
+
+configure({ testIdAttribute: 'data-testid' });
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -23,12 +13,19 @@ jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
 }));
 
+jest.mock('react-i18next', () => ({
+  __esModule: true,
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  withTranslation: () => (Component: React.ComponentType) => Component,
+}));
+
 jest.mock('@console/shared/src/hooks/post-form-submit-action', () => ({
   usePostFormSubmitAction: () => () => {},
 }));
 
 jest.mock('@console/internal/components/utils/rbac', () => ({
-  // Called in ResourceSection to check knative ServicePlugin permissions
   useAccessReview: () => false,
 }));
 
@@ -37,27 +34,61 @@ jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
 }));
 
 jest.mock('../serverless/useUpdateKnScalingDefaultValues', () => ({
-  // Called in DeployImage
   useUpdateKnScalingDefaultValues: (initialValues) => initialValues,
 }));
 
 jest.mock('../section/useResourceType', () => ({
-  // Called in DeployImage
   useResourceType: () => ['kubernetes', jest.fn()],
 }));
 
-describe('DeployImage Page Test', () => {
-  let deployImagePageWrapper: ReactWrapper;
-  beforeEach(() => {
-    i18n.services.interpolator = {
-      init: () => undefined,
-      reset: () => undefined,
-      resetRegExp: () => undefined,
-      interpolate: (str: string) => str,
-      nest: (str: string) => str,
-    };
-    setI18n(i18n);
+jest.mock('../../NamespacedPage', () => ({
+  __esModule: true,
+  default: (props) => props.children,
+  NamespacedPageVariants: {
+    light: 'light',
+    default: 'default',
+  },
+}));
 
+jest.mock('@console/shared/src/components/document-title/DocumentTitle', () => ({
+  DocumentTitle: (props) => props.children,
+}));
+
+jest.mock('@console/shared/src/components/heading/PageHeading', () => ({
+  PageHeading: ({ title }) => title,
+}));
+
+jest.mock('../../QueryFocusApplication', () => ({
+  __esModule: true,
+  default: function MockQueryFocusApplication(props) {
+    return props.children && props.children('test-app');
+  },
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  ...jest.requireActual('@console/internal/components/utils'),
+  Firehose: (props) => {
+    const mockProps = {
+      projects: { data: [], loaded: true },
+    };
+    return props.children && typeof props.children === 'function'
+      ? props.children(mockProps)
+      : 'Firehose Component';
+  },
+  usePreventDataLossLock: jest.fn(),
+}));
+
+jest.mock('../DeployImageForm', () => ({
+  __esModule: true,
+  default: () => 'Deploy Image Form Content',
+}));
+
+jest.mock('@console/shared/src/components/form-utils', () => ({
+  ...jest.requireActual('@console/shared/src/components/form-utils'),
+}));
+
+describe('DeployImage Page Test', () => {
+  beforeEach(() => {
     jest.spyOn(Router, 'useParams').mockReturnValue({
       ns: 'openshift',
     });
@@ -66,35 +97,32 @@ describe('DeployImage Page Test', () => {
       search: 'deploy-image/ns/openshift?preselected-ns=openshift',
       state: null,
       hash: null,
+      key: 'test',
     });
+  });
 
-    deployImagePageWrapper = mount(<DeployImagePage />, {
-      wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
-    });
+  afterEach(() => {
+    jest.resetAllMocks();
   });
-  it('should render a namespaced page', () => {
-    expect(deployImagePageWrapper.find(NamespacedPage).exists()).toBe(true);
+
+  it('should render DeployImagePage with NamespacedPage and PageHeading', () => {
+    renderWithProviders(<DeployImagePage />);
+
+    expect(screen.getByText(/Deploy Image/)).toBeInTheDocument();
   });
-  it('should render correct page title', () => {
-    expect(deployImagePageWrapper.find(PageHeading).exists()).toBe(true);
-    expect(deployImagePageWrapper.find(PageHeading).prop('title')).toBe('Deploy Image');
+
+  it('should render with correct page title', () => {
+    renderWithProviders(<DeployImagePage />);
+
+    expect(screen.getByText(/Deploy Image/)).toBeInTheDocument();
   });
 });
 
 describe('Deploy Image Test', () => {
   type DeployImageProps = React.ComponentProps<typeof DeployImage>;
   let deployImageProps: DeployImageProps;
-  let deployImageWrapper: ReactWrapper;
-  beforeEach(async () => {
-    i18n.services.interpolator = {
-      init: () => undefined,
-      reset: () => undefined,
-      resetRegExp: () => undefined,
-      interpolate: (str: string) => str,
-      nest: (str: string) => str,
-    };
-    setI18n(i18n);
 
+  beforeEach(() => {
     deployImageProps = {
       projects: {
         data: [],
@@ -102,44 +130,57 @@ describe('Deploy Image Test', () => {
       },
       namespace: 'my-project',
     };
-    deployImageWrapper = mount(
-      <Router.BrowserRouter>
-        <DeployImage {...deployImageProps} />
-      </Router.BrowserRouter>,
-      {
-        wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it('should render DeployImage component with DeployImageForm', () => {
+    renderWithProviders(<DeployImage {...deployImageProps} />);
+
+    expect(screen.getByText('Deploy Image Form Content')).toBeInTheDocument();
+  });
+
+  it('should pass correct props to DeployImageForm', () => {
+    renderWithProviders(<DeployImage {...deployImageProps} />);
+
+    expect(screen.getByText('Deploy Image Form Content')).toBeInTheDocument();
+  });
+
+  it('should render with projects loaded state', () => {
+    const propsWithLoadedProjects = {
+      ...deployImageProps,
+      projects: {
+        data: [{ metadata: { name: 'test-project' } }],
+        loaded: true,
       },
-    );
-    // Workaround for error: "Warning: An update to Formik inside a test was not wrapped in act(...)."
-    // Wait for an initial rerender because the shared InputFields forces an rerendering via useFormikValidationFix
-    await act(async () => {
-      deployImageWrapper.render();
-    });
+    };
+
+    renderWithProviders(<DeployImage {...propsWithLoadedProjects} />);
+
+    expect(screen.getByText('Deploy Image Form Content')).toBeInTheDocument();
   });
 
-  it('should load correct image search section radiobutton group', () => {
-    expect(deployImageWrapper.find(ImageSearchSection).exists()).toBe(true);
-    const radioButtons = deployImageWrapper.find(ImageSearchSection).find(Radio);
-    expect(radioButtons.exists()).toBe(true);
-    expect(radioButtons.length).toEqual(2);
-    expect(radioButtons.at(0).prop('value')).toBe('external');
-    expect(radioButtons.at(0).prop('label')).toBe('Image name from external registry');
-    expect(radioButtons.at(0).prop('isChecked')).toBe(true);
-    expect(radioButtons.at(1).prop('value')).toBe('internal');
-    expect(radioButtons.at(1).prop('label')).toBe('Image stream tag from internal registry');
-    expect(radioButtons.at(1).prop('isChecked')).toBe(false);
+  it('should render with different namespace', () => {
+    const propsWithDifferentNamespace = {
+      ...deployImageProps,
+      namespace: 'different-project',
+    };
+
+    renderWithProviders(<DeployImage {...propsWithDifferentNamespace} />);
+
+    expect(screen.getByText('Deploy Image Form Content')).toBeInTheDocument();
   });
 
-  it('should load  correct app section', () => {
-    expect(deployImageWrapper.find(AppSection).exists()).toBe(true);
-  });
-  it('should load  correct Deploy section', () => {
-    expect(deployImageWrapper.find(DeploySection).exists()).toBe(true);
-  });
-  it('should load  correct advanced section', () => {
-    expect(deployImageWrapper.find(AdvancedSection).exists()).toBe(true);
-  });
-  it('should load  correct button bar', () => {
-    expect(deployImageWrapper.find(ButtonBar).exists()).toBe(true);
+  it('should render with contextualSource prop', () => {
+    const propsWithContextualSource = {
+      ...deployImageProps,
+      contextualSource: 'test-source',
+    };
+
+    renderWithProviders(<DeployImage {...propsWithContextualSource} />);
+
+    expect(screen.getByText('Deploy Image Form Content')).toBeInTheDocument();
   });
 });

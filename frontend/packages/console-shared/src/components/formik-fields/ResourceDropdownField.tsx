@@ -5,7 +5,6 @@ import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useFormikValidationFix } from '../../hooks';
 import { ResourceDropdown, ResourceDropdownItems } from '../dropdown/ResourceDropdown';
-import { RedExclamationCircleIcon } from '../status';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -70,9 +69,7 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
       <FormHelperText>
         <HelperText>
           {!isValid ? (
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {errorMessage}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
           ) : (
             <HelperTextItem>{helpText}</HelperTextItem>
           )}

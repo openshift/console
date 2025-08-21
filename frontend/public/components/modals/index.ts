@@ -14,6 +14,7 @@ export const configureReplicaCountModal = (props) =>
     m.configureReplicaCountModal(props),
   );
 
+/** @deprecated use `useWarningModal` instead */
 export const confirmModal = (props) =>
   import('./confirm-modal' /* webpackChunkName: "confirm-modal" */).then((m) =>
     m.confirmModal(props),
@@ -35,6 +36,11 @@ export const configureNamespacePullSecretModal = (props) =>
 export const podSelectorModal = (props) =>
   import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
     m.podSelectorModal(props),
+  );
+
+export const labelsModalLauncher = (props) =>
+  import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
+    m.labelsModalLauncher(props),
   );
 
 export const rollbackModal = (props) =>

@@ -22,10 +22,10 @@ const Detector: React.FC<DetectorProps> = ({
   detectors,
 }) => {
   const { pathname } = useLocation() ?? {};
-  let detectedPerspective: string;
+  let detectedPerspective: string | undefined;
   const defaultPerspective =
     perspectiveExtensions.find((p) => p.properties.default) || perspectiveExtensions[0];
-  const detectionResults = detectors.map((detector) => detector?.());
+  const detectionResults = detectors.map((detector) => (detector as any)?.());
 
   const detectionComplete = detectionResults.every((result, index) => {
     if (result) {

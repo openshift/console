@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,13 +15,13 @@ import { IDPCAFileInput } from './idp-cafile-input';
 
 export const AddGitLabPage = () => {
   const navigate = useNavigate();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('gitlab');
-  const [clientID, setClientID] = React.useState('');
-  const [clientSecret, setClientSecret] = React.useState('');
-  const [url, setUrl] = React.useState('');
-  const [caFileContent, setCaFileContent] = React.useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('gitlab');
+  const [clientID, setClientID] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+  const [url, setUrl] = useState('');
+  const [caFileContent, setCaFileContent] = useState('');
 
   const { t } = useTranslation();
 

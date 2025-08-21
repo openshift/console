@@ -36,7 +36,7 @@ const getLightspeedInstallationStatus = async () => {
 };
 
 export const lightspeedOperatorURL =
-  '/operatorhub/all-namespaces?keyword=lightspeed&details-item=lightspeed-operator-redhat-operators-openshift-marketplace';
+  '/catalog?catalogType=operator&keyword=lightspeed&selectedId=lightspeed-operator-redhat-operators-openshift-marketplace';
 
 const Lightspeed: React.FC = () => {
   const { t } = useTranslation();

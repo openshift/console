@@ -3,7 +3,6 @@ import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternf
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { NsDropdown } from '@console/internal/components/utils';
 import { useFormikValidationFix } from '../../hooks';
-import { RedExclamationCircleIcon } from '../status';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -37,9 +36,7 @@ const NSDropdownField: React.FC<DropdownFieldProps> = ({
       <FormHelperText>
         <HelperText>
           {!isValid ? (
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {errorMessage}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
           ) : (
             <HelperTextItem>{helpText}</HelperTextItem>
           )}

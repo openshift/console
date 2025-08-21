@@ -1,41 +1,177 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import * as React from 'react';
-import * as _ from 'lodash-es';
-import { NativeTypes } from 'react-dnd-html5-backend';
-import { DropTarget } from 'react-dnd';
+import { useState, useCallback } from 'react';
 import { ResourceYAMLEditorProps } from '@console/dynamic-plugin-sdk';
+import { isText } from 'istextorbinary';
 
 import { EditYAML } from './edit-yaml';
-import withDragDropContext from './utils/drag-drop-context';
-import { DropTargetMonitor } from 'react-dnd/lib/interfaces';
-import * as ITOB from 'istextorbinary';
+import {
+  DropEvent,
+  DropzoneErrorCode,
+  MultipleFileUpload,
+  MultipleFileUploadProps,
+} from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { units } from './utils';
 
 // Maximal file size, in bytes, that user can upload
 const maxFileUploadSize = 4000000;
-const fileSizeErrorMsg = 'Maximum file size exceeded. File limit is 4MB.';
-const fileTypeErrorMsg = 'Binary file detected. Edit text based YAML files only.';
 
-const boxTarget = {
-  drop(props, monitor) {
-    if (props.onDrop && monitor.isOver()) {
-      props.onDrop(props, monitor);
-    }
-  },
+export type DroppedFile = {
+  error?: string;
+  id: string;
+  name: string;
+  size: number;
 };
-
-const EditYAMLComponent = DropTarget(NativeTypes.FILE, boxTarget, (connectObj, monitor) => ({
-  connectDropTarget: connectObj.dropTarget(),
-  isOver: monitor.isOver(),
-  canDrop: monitor.canDrop(),
-}))(EditYAML as React.FC<EditYAMLProps>);
 
 type DroppableEditYAMLProps = ResourceYAMLEditorProps & {
   allowMultiple?: boolean;
   isCodeImportRedirect?: boolean;
 };
 
+const useDropErrorMessage = (): ((errorCode: DropzoneErrorCode, fileName: string) => string) => {
+  const { t } = useTranslation('public');
+
+  return useCallback(
+    (errorCode, fileName) => {
+      switch (errorCode) {
+        case 'file-too-large':
+          return t(
+            'Ignoring {{ fileName }}: Maximum file size exceeded. File limit is {{ size }}.',
+            {
+              fileName,
+              size: units.humanize(maxFileUploadSize, 'decimalBytes', true).string,
+            },
+          );
+        case 'too-many-files':
+          return t('Ignoring {{ fileName }}: Too many files. Maximum one file can be uploaded.', {
+            fileName,
+          });
+        case 'file-invalid-type':
+          return t(
+            'Ignoring {{ fileName }}: Invalid file type. Only text based YAML files are supported.',
+            {
+              fileName,
+            },
+          );
+        default:
+          return t('An error occurred while uploading {{ fileName }}.', {
+            fileName,
+          });
+      }
+    },
+    [t],
+  );
+};
+
+export const DroppableEditYAML: React.FCC<DroppableEditYAMLProps> = ({
+  allowMultiple,
+  initialResource,
+  create = false,
+  onChange = () => null,
+  hideHeader = false,
+  isCodeImportRedirect = false,
+  ...props
+}) => {
+  const { t } = useTranslation('public');
+  const getDropErrorMessage = useDropErrorMessage();
+
+  const [fileUpload, setFileUpload] = useState('');
+  const [errors, setErrors] = useState<string[]>([]);
+
+  const clearFileUpload = useCallback(() => {
+    setFileUpload('');
+    setErrors([]);
+  }, [setFileUpload, setErrors]);
+
+  const onFileDrop = useCallback(
+    (event: DropEvent, files: File[]) => {
+      event.preventDefault();
+      clearFileUpload();
+      const fileAcc = [];
+
+      files.forEach((yamlFile: File, i: number) => {
+        if (!yamlFile) {
+          return;
+        }
+        const lastFile = i === files.length - 1;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const arrayBuffer = ev.target.result as ArrayBuffer;
+          const buffer = Buffer.from(new Uint8Array(arrayBuffer));
+
+          if (isText(null, buffer)) {
+            fileAcc.push(buffer.toString().trim());
+
+            if (!lastFile) {
+              fileAcc.push('---');
+            } else {
+              setFileUpload(fileAcc.join('\n'));
+            }
+          }
+        };
+        reader.readAsArrayBuffer(yamlFile);
+      });
+    },
+    [clearFileUpload],
+  );
+
+  const onDropRejected: MultipleFileUploadProps['dropzoneProps']['onDropRejected'] = useCallback(
+    (rejections) => {
+      setErrors(
+        rejections.map((rejection) => {
+          return getDropErrorMessage(
+            rejection.errors[0].code as DropzoneErrorCode,
+            rejection.file.name,
+          );
+        }),
+      );
+    },
+    [getDropErrorMessage, maxFileUploadSize],
+  );
+
+  return (
+    <MultipleFileUpload
+      dropzoneProps={{
+        maxFiles: allowMultiple ? undefined : 1,
+        maxSize: maxFileUploadSize,
+        onDrop: (acceptedFiles, fileRejections, event) => {
+          clearFileUpload();
+
+          if (fileRejections.length > 0) {
+            onDropRejected(fileRejections, event);
+          }
+          if (acceptedFiles.length > 0) {
+            onFileDrop(event, acceptedFiles as File[]);
+          }
+        },
+        accept: {
+          'application/yaml': ['.yaml', '.yml'],
+        },
+      }}
+      style={{ display: 'contents' }}
+    >
+      <div className="co-file-dropzone co-file-dropzone__flex">
+        <div className="co-file-dropzone-container">
+          <p className="co-file-dropzone__drop-text">{t('Drop file here')}</p>
+        </div>
+        <EditYAML
+          {...props}
+          allowMultiple={allowMultiple}
+          obj={initialResource}
+          fileUpload={fileUpload}
+          error={errors.join('\n')}
+          clearFileUpload={clearFileUpload}
+          create={create}
+          onChange={onChange}
+          hideHeader={hideHeader}
+          isCodeImportRedirect={isCodeImportRedirect}
+        />
+      </div>
+    </MultipleFileUpload>
+  );
+};
+
 // Prevents SDK users from passing additional props
-export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = ({
+export const ResourceYAMLEditor: React.FCC<ResourceYAMLEditorProps> = ({
   initialResource,
   header,
   onSave,
@@ -54,127 +190,3 @@ export const ResourceYAMLEditor: React.FC<ResourceYAMLEditorProps> = ({
     hideHeader={hideHeader}
   />
 );
-
-export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
-  class DroppableEditYAML extends React.Component<DroppableEditYAMLProps, DroppableEditYAMLState> {
-    private fileUploadContents: string = '';
-    constructor(props) {
-      super(props);
-      this.state = {
-        fileUpload: '',
-        errors: [],
-      };
-      this.handleFileDrop = this.handleFileDrop.bind(this);
-      this.clearFileUpload = this.clearFileUpload.bind(this);
-    }
-
-    addDocument(newFileContent: string) {
-      this.fileUploadContents = _.isEmpty(this.fileUploadContents)
-        ? newFileContent
-        : `${this.fileUploadContents}\n---\n${newFileContent}`;
-    }
-
-    readFileContents(file, lastFile) {
-      // If unsupported file type is dropped into drop zone, file will be undefined
-      if (!file) {
-        return;
-      }
-      // limit size size uploading to 1 mb
-      if (file.size <= maxFileUploadSize) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          // The type is actually an ArrayBuffer (as we use readAsArrayBuffer), but TS doesn't know that
-          const buffer = Buffer.from(reader.result as ArrayBuffer);
-          if (ITOB.isBinary(null, buffer)) {
-            this.setState((previousState) => ({
-              errors: [...previousState.errors, `Ignoring ${file.name}: ${fileTypeErrorMsg}`],
-            }));
-          } else {
-            this.addDocument(buffer.toString().trim());
-            if (lastFile) {
-              this.setState({ fileUpload: this.fileUploadContents });
-            }
-          }
-        };
-        reader.readAsArrayBuffer(file);
-      } else {
-        this.setState((previousState) => ({
-          errors: [...previousState.errors, `Ignoring ${file.name}: ${fileSizeErrorMsg}`],
-        }));
-      }
-    }
-
-    handleFileDrop(item, monitor) {
-      const { allowMultiple } = this.props;
-      if (!monitor) {
-        return;
-      }
-      this.clearFileUpload();
-      if (allowMultiple) {
-        monitor.getItem().files.forEach((yamlFile, i) => {
-          this.readFileContents(yamlFile, i === monitor.getItem().files.length - 1);
-        });
-      } else {
-        const [file] = monitor.getItem().files;
-        this.readFileContents(file, true);
-      }
-    }
-
-    clearFileUpload() {
-      this.setState({ fileUpload: '', errors: [] });
-      this.fileUploadContents = '';
-    }
-
-    render() {
-      const {
-        allowMultiple,
-        initialResource,
-        create = false,
-        onChange = () => null,
-        hideHeader = false,
-        isCodeImportRedirect = false,
-      } = this.props;
-      const { errors, fileUpload } = this.state;
-      return (
-        <EditYAMLComponent
-          {...this.props}
-          allowMultiple={allowMultiple}
-          obj={initialResource}
-          fileUpload={fileUpload}
-          error={errors.join('\n')}
-          onDrop={this.handleFileDrop}
-          clearFileUpload={this.clearFileUpload}
-          create={create}
-          onChange={onChange}
-          hideHeader={hideHeader}
-          isCodeImportRedirect={isCodeImportRedirect}
-        />
-      );
-    }
-  },
-);
-
-type EditYAMLProps = {
-  allowMultiple?: boolean;
-  obj: ResourceYAMLEditorProps['initialResource'];
-  fileUpload: string;
-  error: string;
-  onDrop: (item: any, monitor: DropTargetMonitor) => void;
-  clearFileUpload: () => void;
-  create?: boolean;
-  onChange?: (content: string) => void;
-  hideHeader?: boolean;
-  isCodeImportRedirect?: boolean;
-};
-
-export type DroppedFile = {
-  error?: string;
-  id: string;
-  name: string;
-  size: number;
-};
-
-export type DroppableEditYAMLState = {
-  errors: string[];
-  fileUpload: string;
-};

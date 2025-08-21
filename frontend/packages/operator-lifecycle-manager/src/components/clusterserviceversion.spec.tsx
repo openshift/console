@@ -9,6 +9,7 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import * as ReactRouter from 'react-router-dom';
+import { ActionMenuVariant } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import {
   DetailsPage,
@@ -17,7 +18,6 @@ import {
   ComponentProps,
 } from '@console/internal/components/factory';
 import {
-  ResourceKebab,
   ScrollToTopOnMount,
   SectionHeading,
   resourceObjPath,
@@ -26,6 +26,7 @@ import {
 import operatorLogo from '@console/internal/imgs/operator.svg';
 import { referenceForModel } from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ErrorBoundary } from '@console/shared/src/components/error';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -107,11 +108,10 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   it('renders `ResourceKebab` with actions', () => {
     const col = wrapper;
 
-    expect(col.find(ResourceKebab).props().resource).toEqual(testClusterServiceVersion);
-    expect(col.find(ResourceKebab).props().kind).toEqual(
-      referenceForModel(ClusterServiceVersionModel),
-    );
-    expect(col.find(ResourceKebab).props().actions.length).toEqual(2);
+    expect(col.find(LazyActionMenu).props().context).toEqual({
+      'operator-actions': { resource: testClusterServiceVersion, subscription: testSubscription },
+    });
+    expect(col.find(LazyActionMenu).props().variant).toEqual(ActionMenuVariant.KEBAB);
   });
 
   it('renders clickable column for app logo and name', () => {

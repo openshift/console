@@ -11,8 +11,8 @@ import {
   ModalSubmitFooter,
 } from '../factory/modal';
 import { NumberSpinner, withHandlePromise, HandlePromiseProps } from '../utils';
-import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
-import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 
 export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModalProps) => {
   const {
@@ -96,10 +96,10 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
 
 export const configureCountModal = createModalLauncher(ConfigureCountModal);
 
-export const LabelsProviderModal: ModalComponent<ConfigureCountModalProps> = (props) => {
+export const ConfigureCountProviderModal: OverlayComponent<ConfigureCountModalProps> = (props) => {
   return (
-    <ModalWrapper blocking onClose={props.closeModal}>
-      <ConfigureCountModal close={props.closeModal} cancel={props.closeModal} {...props} />
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <ConfigureCountModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
     </ModalWrapper>
   );
 };
@@ -126,16 +126,15 @@ export const configureReplicaCountModal = (props) => {
   );
 };
 
-// todo refine
-export const useConfigureJobParallelismModalProvider = (props) => {
-  const launcher = useModal();
+export const useConfigureJobParallelismModal = (props) => {
+  const launcher = useOverlay();
   const { resourceKind, resource } = props;
 
   return React.useCallback(
     () =>
       resourceKind &&
       resource &&
-      launcher<ConfigureCountModalProps>(LabelsProviderModal, {
+      launcher<ConfigureCountModalProps>(ConfigureCountProviderModal, {
         ..._.defaults(
           {},
           {

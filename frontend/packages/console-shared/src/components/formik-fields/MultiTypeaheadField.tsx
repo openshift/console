@@ -22,7 +22,6 @@ import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useFormikValidationFix } from '../../hooks';
-import { RedExclamationCircleIcon } from '../status';
 import { MultiTypeaheadFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -366,9 +365,7 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
       <FormHelperText>
         <HelperText>
           {!isValid ? (
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {errorMessage}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
           ) : (
             <HelperTextItem>{helpText}</HelperTextItem>
           )}

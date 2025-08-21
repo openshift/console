@@ -1,15 +1,13 @@
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import * as Router from 'react-router-dom';
-import { LoadingBox } from '@console/internal/components/utils';
 import { useEventSinkStatus } from '../../../hooks/useEventSinkStatus';
 import {
   mockKameletSink,
   mockNormalizedKafkaSink,
   mockNormalizedSink,
 } from '../__mocks__/Kamelet-data';
-import EventSink from '../EventSink';
-import EventSinkAlert from '../EventSinkAlert';
 import EventSinkPage from '../EventSinkPage';
+import '@testing-library/jest-dom';
 
 jest.mock('../../../hooks/useEventSinkStatus', () => ({
   useEventSinkStatus: jest.fn(),
@@ -19,6 +17,49 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  LoadingBox: 'LoadingBox',
+}));
+
+jest.mock('@console/dev-console/src/components/NamespacedPage', () => ({
+  __esModule: true,
+  default: 'NamespacedPage',
+  NamespacedPageVariants: {
+    light: 'light',
+  },
+}));
+
+jest.mock('@console/shared/src/components/document-title/DocumentTitle', () => ({
+  DocumentTitle: 'DocumentTitle',
+}));
+
+jest.mock('@console/shared/src/components/heading/PageHeading', () => ({
+  PageHeading: 'PageHeading',
+}));
+
+jest.mock('@console/dev-console/src/const', () => ({
+  QUERY_PROPERTIES: {
+    APPLICATION: 'application',
+    CONTEXT_SOURCE: 'contextSource',
+  },
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
+jest.mock('../EventSink', () => ({
+  __esModule: true,
+  default: 'EventSink',
+}));
+
+jest.mock('../EventSinkAlert', () => ({
+  __esModule: true,
+  default: 'EventSinkAlert',
 }));
 
 const useEventSinkStatusMock = useEventSinkStatus as jest.Mock;
@@ -38,10 +79,10 @@ describe('EventSinkPage', () => {
 
   it('should show loading if resource is not loaded yet', () => {
     useEventSinkStatusMock.mockReturnValue({ isValidSink: false, loaded: false });
-    const wrapper = shallow(<EventSinkPage />);
-    expect(wrapper.find(LoadingBox).exists()).toBe(true);
-    expect(wrapper.find(EventSinkAlert).exists()).toBe(false);
-    expect(wrapper.find(EventSink).exists()).toBe(false);
+    const { container } = render(<EventSinkPage />);
+    expect(container.querySelector('LoadingBox')).toBeInTheDocument();
+    expect(container.querySelector('EventSinkAlert')).not.toBeInTheDocument();
+    expect(container.querySelector('EventSink')).not.toBeInTheDocument();
   });
 
   it('should render EventSink if resource is loaded and is valid', () => {
@@ -53,10 +94,10 @@ describe('EventSinkPage', () => {
       normalizedSink: mockNormalizedSink,
       kamelet: mockKameletSink,
     });
-    const wrapper = shallow(<EventSinkPage />);
-    expect(wrapper.find(EventSink).exists()).toBe(true);
-    expect(wrapper.find(EventSinkAlert).exists()).toBe(false);
-    expect(wrapper.find(LoadingBox).exists()).toBe(false);
+    const { container } = render(<EventSinkPage />);
+    expect(container.querySelector('EventSink')).toBeInTheDocument();
+    expect(container.querySelector('EventSinkAlert')).not.toBeInTheDocument();
+    expect(container.querySelector('LoadingBox')).not.toBeInTheDocument();
   });
 
   it('should render EventSinkAlert if resource is loaded but user doesnot have create access', () => {
@@ -68,10 +109,10 @@ describe('EventSinkPage', () => {
       normalizedSink: mockNormalizedSink,
       kamelet: mockKameletSink,
     });
-    const wrapper = shallow(<EventSinkPage />);
-    expect(wrapper.find(EventSinkAlert).exists()).toBe(true);
-    expect(wrapper.find(EventSink).exists()).toBe(false);
-    expect(wrapper.find(LoadingBox).exists()).toBe(false);
+    const { container } = render(<EventSinkPage />);
+    expect(container.querySelector('EventSinkAlert')).toBeInTheDocument();
+    expect(container.querySelector('EventSink')).not.toBeInTheDocument();
+    expect(container.querySelector('LoadingBox')).not.toBeInTheDocument();
   });
 
   it('should render EventSink if resource is loaded and is valid for kafka sink', () => {
@@ -92,15 +133,9 @@ describe('EventSinkPage', () => {
       state: null,
       hash: null,
     });
-    const wrapper = shallow(<EventSinkPage />);
-    expect(wrapper.find(EventSink).exists()).toBe(true);
-    expect(wrapper.find(EventSink).props().namespace).toEqual('my-app');
-    expect(wrapper.find(EventSink).props().kameletSink).toBeNull();
-    expect(wrapper.find(EventSinkAlert).exists()).toBe(false);
-    expect(wrapper.find(LoadingBox).exists()).toBe(false);
+    const { container } = render(<EventSinkPage />);
+    expect(container.querySelector('EventSink')).toBeInTheDocument();
+    expect(container.querySelector('EventSinkAlert')).not.toBeInTheDocument();
+    expect(container.querySelector('LoadingBox')).not.toBeInTheDocument();
   });
 });
-
-// describe('servicebinding', () => {
-//   it('', () => {});
-// });

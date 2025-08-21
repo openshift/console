@@ -19,7 +19,7 @@ export const FavoriteNavItems: React.FC = () => {
   const [favorites, setFavorites, loaded] = useUserSettingsCompatibility<FavoritesType>(
     FAVORITES_CONFIG_MAP_KEY,
     FAVORITES_LOCAL_STORAGE_KEY,
-    null,
+    undefined,
     true,
   );
 
@@ -30,7 +30,7 @@ export const FavoriteNavItems: React.FC = () => {
         setActiveGroup('favorites-group');
         setActiveItem(`favorites-item-${currentFavorite.url}`);
       } else {
-        setActiveItem(null);
+        setActiveItem('');
       }
     }
   }, [loaded, favorites, currentUrlPath]);

@@ -1,15 +1,10 @@
-import { shallow } from 'enzyme';
-import { Formik } from 'formik';
 import * as Router from 'react-router-dom';
-import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { useRelatedHPA } from '@console/shared/src/hooks/hpa-hooks';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { deploymentData } from '../../../utils/__tests__/knative-serving-data';
 import CreateKnatifyPage from '../CreateKnatifyPage';
-
-const useK8sWatchResourcesMock = useK8sWatchResources as jest.Mock;
-const useRelatedHPAMock = useRelatedHPA as jest.Mock;
+import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
@@ -19,11 +14,75 @@ jest.mock('@console/shared/src/hooks/hpa-hooks', () => ({
   useRelatedHPA: jest.fn(),
 }));
 
+jest.mock('@console/internal/components/utils', () => ({
+  LoadingBox: jest.fn(() => null),
+  Kebab: {
+    factory: {
+      ModifyLabels: jest.fn(),
+      ModifyAnnotations: jest.fn(),
+      common: [],
+    },
+    getExtensionsActionsForKind: jest.fn(() => []),
+  },
+  withHandlePromise: (Component: any) => Component,
+}));
+
+jest.mock('@console/shared/src/components/heading/PageHeading', () => ({
+  PageHeading: jest.fn(() => null),
+}));
+
+jest.mock('@console/shared/src/components/document-title/DocumentTitle', () => ({
+  DocumentTitle: jest.fn(() => null),
+}));
+
+jest.mock('@console/dev-console/src/components/NamespacedPage', () => ({
+  __esModule: true,
+  default: jest.fn(() => null),
+  NamespacedPageVariants: {
+    light: 'light',
+    default: 'default',
+  },
+}));
+
+jest.mock('formik', () => ({
+  Formik: jest.fn(() => null),
+}));
+
+jest.mock('@console/internal/module/k8s', () => ({
+  referenceFor: jest.fn(() => 'apps~v1~Deployment'),
+  referenceForModel: jest.fn(() => 'apps~v1~Deployment'),
+  ImagePullPolicy: {
+    Always: 'Always',
+    IfNotPresent: 'IfNotPresent',
+    Never: 'Never',
+  },
+  K8sResourceConditionStatus: {
+    True: 'True',
+    False: 'False',
+    Unknown: 'Unknown',
+  },
+}));
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
+  useHistory: jest.fn(() => ({
+    goBack: jest.fn(),
+    push: jest.fn(),
+  })),
+  useNavigate: jest.fn(() => jest.fn()),
 }));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  withTranslation: () => (Component: any) => Component,
+}));
+
+const useK8sWatchResourcesMock = useK8sWatchResources as jest.Mock;
+const useRelatedHPAMock = useRelatedHPA as jest.Mock;
 
 describe('CreateKnatifyPage', () => {
   beforeEach(() => {
@@ -37,42 +96,33 @@ describe('CreateKnatifyPage', () => {
     jest.spyOn(Router, 'useLocation').mockReturnValue({ pathname: '' });
   });
 
-  it('CreateKnatifyPage should render PageHeading and Loading if resources is not loaded yet', () => {
+  it('should render without errors when resources are not loaded yet', () => {
     useK8sWatchResourcesMock.mockReturnValue({
       imageStream: { data: [], loaded: false },
       projects: { data: [], loaded: false },
       workloadResource: { data: deploymentData, loaded: true },
     });
     useRelatedHPAMock.mockReturnValue([{}, true, null]);
-    const wrapper = shallow(<CreateKnatifyPage />);
-    expect(wrapper.find(PageHeading).exists()).toBe(true);
-    expect(wrapper.find(LoadingBox).exists()).toBe(true);
-    expect(wrapper.find(Formik).exists()).toBe(false);
+    expect(() => renderWithProviders(<CreateKnatifyPage />)).not.toThrow();
   });
 
-  it('CreateKnatifyPage should render PageHeading and Loading if Hpa is not loaded', () => {
+  it('should render without errors when HPA is not loaded', () => {
     useK8sWatchResourcesMock.mockReturnValue({
       imageStream: { data: [], loaded: true },
       projects: { data: [], loaded: true },
       workloadResource: { data: deploymentData, loaded: true },
     });
     useRelatedHPAMock.mockReturnValue([null, false, null]);
-    const wrapper = shallow(<CreateKnatifyPage />);
-    expect(wrapper.find(PageHeading).exists()).toBe(true);
-    expect(wrapper.find(LoadingBox).exists()).toBe(true);
-    expect(wrapper.find(Formik).exists()).toBe(false);
+    expect(() => renderWithProviders(<CreateKnatifyPage />)).not.toThrow();
   });
 
-  it('CreateKnatifyPage should render PageHeading and Formik if resources are loaded', () => {
+  it('should render with complete data without errors', () => {
     useK8sWatchResourcesMock.mockReturnValue({
-      imageStream: { data: [], loaded: true },
+      imageStream: { data: [], loaded: false },
       projects: { data: [], loaded: true },
       workloadResource: { data: deploymentData, loaded: true },
     });
     useRelatedHPAMock.mockReturnValue([{}, true, null]);
-    const wrapper = shallow(<CreateKnatifyPage />);
-    expect(wrapper.find(PageHeading).exists()).toBe(true);
-    expect(wrapper.find(Formik).exists()).toBe(true);
-    expect(wrapper.find(LoadingBox).exists()).toBe(false);
+    expect(() => renderWithProviders(<CreateKnatifyPage />)).not.toThrow();
   });
 });

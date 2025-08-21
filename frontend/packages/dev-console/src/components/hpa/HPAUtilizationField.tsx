@@ -12,7 +12,6 @@ import {
 import { PercentIcon } from '@patternfly/react-icons/dist/esm/icons/percent-icon';
 import { FormikErrors, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import { HorizontalPodAutoscalerKind, HPAMetric } from '@console/internal/module/k8s';
 import { getMetricByType } from './hpa-utils';
 import { HPAFormValues, SupportedMetricTypes } from './types';
@@ -62,9 +61,7 @@ const HPAUtilizationField: React.FC<HPAUtilizationFieldProps> = ({
       <FormHelperText>
         <HelperText>
           {error ? (
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {error}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{error}</HelperTextItem>
           ) : (
             <HelperTextItem>
               {t(

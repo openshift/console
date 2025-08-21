@@ -10,9 +10,13 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
 in [Console dynamic plugins README](./README.md).
 
+## 4.20.0-prerelease.1 - 2025-08-15
+
+- Add support for optional plugin dependencies ([CONSOLE-4623], [#15183])
+
 ## 4.19.0 - 2025-06-27
 
-> Release for OCP Console 4.19.
+> Initial release for OCP Console 4.19.
 
 ## 4.19.0-prerelease.2 - 2025-05-20
 
@@ -68,6 +72,7 @@ in [Console dynamic plugins README](./README.md).
 [CONSOLE-3853]: https://issues.redhat.com/browse/CONSOLE-3853
 [CONSOLE-4379]: https://issues.redhat.com/browse/CONSOLE-4379
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
+[CONSOLE-4623]: https://issues.redhat.com/browse/CONSOLE-4623
 [OCPBUGS-30762]: https://issues.redhat.com/browse/OCPBUGS-30762
 [OCPBUGS-30824]: https://issues.redhat.com/browse/OCPBUGS-30824
 [OCPBUGS-31901]: https://issues.redhat.com/browse/OCPBUGS-31901
@@ -93,3 +98,4 @@ in [Console dynamic plugins README](./README.md).
 [#14620]: https://github.com/openshift/console/pull/14620
 [#14861]: https://github.com/openshift/console/pull/14861
 [#14993]: https://github.com/openshift/console/pull/14993
+[#15183]: https://github.com/openshift/console/pull/15183

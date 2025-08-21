@@ -1,7 +1,10 @@
 import * as React from 'react';
+import { Language } from '@patternfly/react-code-editor';
+import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PageComponentProps, CopyToClipboard, EmptyBox } from '@console/internal/components/utils';
+import { PageComponentProps, EmptyBox } from '@console/internal/components/utils';
 import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
+import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj }) => {
@@ -14,10 +17,37 @@ export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj })
     pluginName,
   ]);
 
+  const manifestJson = React.useMemo(() => {
+    return pluginManifest ? JSON.stringify(pluginManifest, null, 2) : '';
+  }, [pluginManifest]);
+
   return (
-    <PaneBody>
+    <PaneBody fullHeight>
       {pluginManifest ? (
-        <CopyToClipboard value={JSON.stringify(pluginManifest, null, 2)} />
+        <BasicCodeEditor
+          code={manifestJson}
+          isFullHeight
+          isLanguageLabelVisible
+          language={Language.json}
+          // @ts-expect-error - headerMainContent expects string but we want to use a React element with Label
+          headerMainContent={
+            <div className="pf-v6-l-flex pf-m-align-items-center pf-m-gap-md">
+              <span>{t('console-app~console-extensions.json')}</span>
+              <Label color="grey" isCompact>
+                {t('console-app~Read only')}
+              </Label>
+            </div>
+          }
+          isReadOnly
+          isMinimapVisible={false}
+          isDownloadEnabled
+          isCopyEnabled
+          options={{
+            scrollBeyondLastLine: false,
+            wordWrap: 'on',
+            automaticLayout: true,
+          }}
+        />
       ) : (
         <EmptyBox label={t('console-app~Plugin manifest')} />
       )}

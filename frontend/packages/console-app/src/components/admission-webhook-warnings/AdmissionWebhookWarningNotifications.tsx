@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import { Map } from 'immutable';
 import { useTranslation } from 'react-i18next';
@@ -21,16 +21,16 @@ export const AdmissionWebhookWarningNotifications = () => {
   const toastContext = useToast();
   const dispatch = useDispatch();
   const admissionWebhookWarnings = useAdmissionWebhookWarnings();
-  React.useEffect(() => {
+  useEffect(() => {
     const docURL = getDocumentationURL(documentationURLs.admissionWebhookWarning);
     admissionWebhookWarnings.forEach((warning, id) => {
       toastContext.addToast({
         variant: AlertVariant.warning,
         title: t('public~Admission Webhook Warning'),
         content: t(`{{kind}} {{name}} violates policy {{warning}}`, {
-          kind: warning.kind,
-          name: warning.name,
-          warning: warning.warning,
+          kind: warning?.kind ?? '',
+          name: warning?.name ?? '',
+          warning: warning?.warning ?? '',
         }),
         actions: [
           {

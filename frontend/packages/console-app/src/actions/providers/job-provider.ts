@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { JobKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { usePDBActions } from '../creators/pdb-factory';
@@ -11,7 +11,7 @@ export const useJobActionsProvider = (resource: JobKind) => {
   const commonActions = useCommonResourceActions(kindObj, resource);
   const jobActions = useJobActions(resource);
 
-  const actions = React.useMemo(() => [...jobActions, ...pdbActions, ...commonActions], [
+  const actions = useMemo(() => [...jobActions, ...pdbActions, ...commonActions], [
     pdbActions,
     commonActions,
     jobActions,

@@ -35,7 +35,11 @@ export const getQueryArgument = (arg: string) =>
 export const setQueryArgument = (k: string, v: string) => {
   const params = new URLSearchParams(window.location.search);
   if (params.get(k) !== v) {
-    params.set(k, v);
+    if (v === '') {
+      params.delete(k);
+    } else {
+      params.set(k, v);
+    }
     const url = new URL(window.location.href);
     history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
   }

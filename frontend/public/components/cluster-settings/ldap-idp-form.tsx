@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
@@ -16,17 +16,17 @@ import { IDPCAFileInput } from './idp-cafile-input';
 
 export const AddLDAPPage = () => {
   const navigate = useNavigate();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('ldap');
-  const [url, setUrl] = React.useState('');
-  const [bindDN, setBindDN] = React.useState('');
-  const [bindPassword, setBindPassword] = React.useState('');
-  const [attributesID, setAttributesID] = React.useState(['dn']);
-  const [attributesPreferredUsername, setAttributesPreferredUsername] = React.useState(['uid']);
-  const [attributesName, setAttributesName] = React.useState(['cn']);
-  const [attributesEmail, setAttributesEmail] = React.useState([]);
-  const [caFileContent, setCaFileContent] = React.useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('ldap');
+  const [url, setUrl] = useState('');
+  const [bindDN, setBindDN] = useState('');
+  const [bindPassword, setBindPassword] = useState('');
+  const [attributesID, setAttributesID] = useState(['dn']);
+  const [attributesPreferredUsername, setAttributesPreferredUsername] = useState(['uid']);
+  const [attributesName, setAttributesName] = useState(['cn']);
+  const [attributesEmail, setAttributesEmail] = useState([]);
+  const [caFileContent, setCaFileContent] = useState('');
 
   const { t } = useTranslation();
 

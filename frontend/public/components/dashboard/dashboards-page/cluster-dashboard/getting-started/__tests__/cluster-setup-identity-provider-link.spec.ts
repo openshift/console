@@ -2,7 +2,7 @@ import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { OAuthKind } from '@console/internal/module/k8s';
 
-import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 
 import { useIdentityProviderLink } from '../cluster-setup-identity-provider-link';
 

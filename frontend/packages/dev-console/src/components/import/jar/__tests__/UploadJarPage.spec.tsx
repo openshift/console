@@ -1,14 +1,69 @@
-import { shallow } from 'enzyme';
+import { configure, render, screen } from '@testing-library/react';
 import * as Router from 'react-router-dom';
-import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import UploadJarPage from '../UploadJarPage';
+import '@testing-library/jest-dom';
 
-const useK8sWatchResourcesMock = useK8sWatchResources as jest.Mock;
+configure({ testIdAttribute: 'data-test' });
+
+jest.mock('@console/internal/components/utils', () => ({
+  LoadingBox: () => 'Loading...',
+}));
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/components/heading/PageHeading', () => ({
+  PageHeading: (props) => `PageHeading title="${props.title}" helpText="${props.helpText}"`,
+}));
+
+jest.mock('@console/shared/src/components/document-title/DocumentTitle', () => ({
+  DocumentTitle: (props) => props.children,
+}));
+
+jest.mock('../../../NamespacedPage', () => ({
+  __esModule: true,
+  default: (props) => props.children,
+  NamespacedPageVariants: {
+    light: 'light',
+  },
+}));
+
+jest.mock('../../../QueryFocusApplication', () => ({
+  __esModule: true,
+  default: (props) => props.children && props.children('test-app'),
+}));
+
+jest.mock('../UploadJar', () => ({
+  __esModule: true,
+  default: () => 'UploadJar',
+}));
+
+jest.mock('@console/shared/src/components/heading/PageHeading', () => ({
+  PageHeading: (props) => `PageHeading title="${props.title}" helpText="${props.helpText}"`,
+}));
+
+jest.mock('@console/shared/src/components/document-title/DocumentTitle', () => ({
+  DocumentTitle: (props) => props.children,
+}));
+
+jest.mock('../../../NamespacedPage', () => ({
+  __esModule: true,
+  default: (props) => props.children,
+  NamespacedPageVariants: {
+    light: 'light',
+  },
+}));
+
+jest.mock('../../../QueryFocusApplication', () => ({
+  __esModule: true,
+  default: (props) => props.children && props.children('test-app'),
+}));
+
+jest.mock('../UploadJar', () => ({
+  __esModule: true,
+  default: () => 'UploadJar',
 }));
 
 jest.mock('react-router-dom', () => ({
@@ -17,9 +72,38 @@ jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
 }));
 
+jest.mock('react-i18next', () => ({
+  __esModule: true,
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
+jest.mock('@console/internal/models', () => ({
+  ImageStreamModel: { kind: 'ImageStream' },
+  ProjectModel: { kind: 'Project' },
+}));
+
+jest.mock('../../../../const', () => ({
+  IMAGESTREAM_NAMESPACE: 'openshift',
+  JAVA_IMAGESTREAM_NAME: 'java',
+  QUERY_PROPERTIES: {
+    CONTEXT_SOURCE: 'contextSource',
+  },
+}));
+
+jest.mock('../../../../utils/imagestream-utils', () => ({
+  normalizeBuilderImages: jest.fn(() => ({
+    java: {
+      name: 'java',
+      title: 'Java',
+    },
+  })),
+}));
+
 describe('UploadJarPage', () => {
   beforeEach(() => {
-    useK8sWatchResourcesMock.mockClear();
+    (useK8sWatchResources as jest.Mock).mockClear();
     jest.spyOn(Router, 'useParams').mockReturnValue({
       ns: 'openshift',
     });
@@ -31,25 +115,37 @@ describe('UploadJarPage', () => {
     });
   });
 
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should render page not LoadingBox', () => {
-    useK8sWatchResourcesMock.mockReturnValue({
+    (useK8sWatchResources as jest.Mock).mockReturnValue({
       imagestream: { data: [], loaded: true },
       projects: { data: [], loaded: true },
     });
 
-    const wrapper = shallow(<UploadJarPage />);
-    expect(wrapper.find(PageHeading).exists()).toBe(true);
-    expect(wrapper.find(LoadingBox).exists()).toBe(false);
+    render(<UploadJarPage />);
+
+    expect(
+      screen.getByText(
+        /PageHeading title=".*Upload JAR file.*" helpText=".*Upload a JAR file from your local desktop to OpenShift.*"/,
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/Loading\.\.\./)).not.toBeInTheDocument();
+    expect(screen.getByText(/UploadJar/)).toBeInTheDocument();
   });
 
   it('should render LoadingBox not page', () => {
-    useK8sWatchResourcesMock.mockReturnValue({
+    (useK8sWatchResources as jest.Mock).mockReturnValue({
       imagestream: { data: [], loaded: false },
       projects: { data: [], loaded: false },
     });
 
-    const wrapper = shallow(<UploadJarPage />);
-    expect(wrapper.find(PageHeading).exists()).toBe(false);
-    expect(wrapper.find(LoadingBox).exists()).toBe(true);
+    render(<UploadJarPage />);
+
+    expect(screen.queryByText(/PageHeading/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Loading\.\.\./)).toBeInTheDocument();
+    expect(screen.queryByText(/UploadJar/)).not.toBeInTheDocument();
   });
 });

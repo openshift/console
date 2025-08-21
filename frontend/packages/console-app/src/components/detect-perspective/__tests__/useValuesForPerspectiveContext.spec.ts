@@ -52,7 +52,7 @@ describe('useValuesForPerspectiveContext', () => {
     usePerspectiveExtensionMock.mockReturnValue(acmPerspectiveExtension);
     useStateMock.mockReturnValue(['', jest.fn()]);
     const [perspective, ,] = useValuesForPerspectiveContext();
-    expect(perspective).toBeUndefined();
+    expect(perspective).toBe('');
   });
 
   it('should return undefined for PerspectiveType and false for loaded if preferred or last viewed perspective has not yet loaded', () => {
@@ -62,7 +62,7 @@ describe('useValuesForPerspectiveContext', () => {
     usePerspectiveExtensionMock.mockReturnValue(acmPerspectiveExtension);
     useStateMock.mockReturnValue(['', jest.fn()]);
     let [perspective, , loaded] = useValuesForPerspectiveContext();
-    expect(perspective).toBeUndefined();
+    expect(perspective).toBe('');
     expect(loaded).toBeFalsy();
 
     jest.resetAllMocks();
@@ -73,7 +73,7 @@ describe('useValuesForPerspectiveContext', () => {
     usePerspectiveExtensionMock.mockReturnValue(acmPerspectiveExtension);
     useStateMock.mockReturnValue(['', jest.fn()]);
     [perspective, , loaded] = useValuesForPerspectiveContext();
-    expect(perspective).toBeUndefined();
+    expect(perspective).toBe('');
     expect(loaded).toBeFalsy();
   });
 

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
@@ -22,7 +22,7 @@ const useBuildActions = (build: Build) => {
     CommonActionCreator.Delete,
   ] as const);
 
-  const actionsMenu = React.useMemo<Action[]>(() => {
+  const actionsMenu = useMemo<Action[]>(() => {
     if (!isReady) {
       return [];
     }

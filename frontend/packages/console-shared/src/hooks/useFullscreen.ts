@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect, useCallback, RefObject } from 'react';
+import { useRef, useState, useCallback, RefObject } from 'react';
+import { useEventListener } from '@console/shared/src/hooks/useEventListener';
 
 /**
  * Hook to determine if the browser is currently in fullscreen mode.
@@ -6,15 +7,9 @@ import { useRef, useState, useEffect, useCallback, RefObject } from 'react';
 export const useIsFullscreen = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
-  }, []);
+  useEventListener(document, 'fullscreenchange', () =>
+    setIsFullscreen(!!document.fullscreenElement),
+  );
 
   return isFullscreen;
 };
@@ -26,9 +21,9 @@ export const useIsFullscreen = () => {
  *
  * Adapted from https://www.timsanteford.com/posts/creating-a-reusable-fullscreen-hook-in-react/
  */
-export const useFullscreen = () => {
+export const useFullscreen = <T extends HTMLElement = HTMLDivElement>() => {
   /** The element that will be toggled to fullscreen */
-  const fullscreenRef = useRef<HTMLDivElement>(null);
+  const fullscreenRef = useRef<T>(null);
   /** Whether the browser supports fullscreen mode */
   const canUseFullScreen = document.fullscreenEnabled;
   /** Whether the currently displayed content is in fullscreen mode */
@@ -46,7 +41,7 @@ export const useFullscreen = () => {
   }, []);
 
   return [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] as [
-    RefObject<HTMLDivElement>,
+    RefObject<T>,
     () => void,
     boolean,
     boolean,

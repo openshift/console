@@ -1,13 +1,67 @@
-import * as React from 'react';
-import { shallow } from 'enzyme';
-import { FormFooter } from '@console/shared/src/components/form-utils';
+import { configure, screen } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import AdvancedSection from '../advanced/AdvancedSection';
-import AppSection from '../app/AppSection';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import DeployImageForm from '../DeployImageForm';
-import ImageSearchSection from '../image-search/ImageSearchSection';
-import { DeploySection } from '../section/deploy-section/DeploySection';
-import IconSection from '../section/IconSection';
+import '@testing-library/jest-dom';
+
+configure({ testIdAttribute: 'data-testid' });
+
+jest.mock('react-i18next', () => ({
+  __esModule: true,
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  withTranslation: () => (Component: React.ComponentType) => Component,
+}));
+
+jest.mock('../image-search/ImageSearchSection', () => ({
+  __esModule: true,
+  default: () => 'Image Search Section',
+}));
+
+jest.mock('../NamespaceSection', () => ({
+  __esModule: true,
+  default: () => 'Namespace Section',
+}));
+
+jest.mock('../section/IconSection', () => ({
+  __esModule: true,
+  default: () => 'Icon Section',
+}));
+
+jest.mock('../app/AppSection', () => ({
+  __esModule: true,
+  default: () => 'App Section',
+}));
+
+jest.mock('../section/deploy-section/DeploySection', () => ({
+  __esModule: true,
+  DeploySection: () => 'Deploy Section',
+}));
+
+jest.mock('../advanced/AdvancedSection', () => ({
+  __esModule: true,
+  default: () => 'Advanced Section',
+}));
+
+jest.mock('@console/shared/src/components/form-utils', () => ({
+  __esModule: true,
+  ...jest.requireActual('@console/shared/src/components/form-utils'),
+  FormFooter: () => 'Form Footer',
+  FlexForm: (props) => props.children,
+  FormBody: (props) => props.children,
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  __esModule: true,
+  ...jest.requireActual('@console/internal/components/utils'),
+  usePreventDataLossLock: jest.fn(),
+}));
+
+jest.mock('../../../utils/samples', () => ({
+  __esModule: true,
+  hasSampleQueryParameter: jest.fn(() => false), // Default to non-sample mode
+}));
 
 let deployImageFormProps: React.ComponentProps<typeof DeployImageForm>;
 
@@ -22,13 +76,18 @@ describe('DeployImageForm', () => {
     };
   });
 
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should render ImageSearchSection, IconSection, AppSection, AdvancedSection and FormFooter', () => {
-    const wrapper = shallow(<DeployImageForm {...deployImageFormProps} />);
-    expect(wrapper.find(ImageSearchSection).exists()).toBe(true);
-    expect(wrapper.find(IconSection).exists()).toBe(true);
-    expect(wrapper.find(AppSection).exists()).toBe(true);
-    expect(wrapper.find(DeploySection).exists()).toBe(true);
-    expect(wrapper.find(AdvancedSection).exists()).toBe(true);
-    expect(wrapper.find(FormFooter).exists()).toBe(true);
+    renderWithProviders(<DeployImageForm {...deployImageFormProps} />);
+    expect(screen.getByText(/Image Search Section/)).toBeInTheDocument();
+    expect(screen.getByText(/Namespace Section/)).toBeInTheDocument();
+    expect(screen.getByText(/Icon Section/)).toBeInTheDocument();
+    expect(screen.getByText(/App Section/)).toBeInTheDocument();
+    expect(screen.getByText(/Deploy Section/)).toBeInTheDocument();
+    expect(screen.getByText(/Advanced Section/)).toBeInTheDocument();
+    expect(screen.getByText(/Form Footer/)).toBeInTheDocument();
   });
 });

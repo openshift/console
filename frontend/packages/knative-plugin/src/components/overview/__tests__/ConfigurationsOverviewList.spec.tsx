@@ -1,18 +1,23 @@
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { sampleKnativeConfigurations } from '../../../topology/__tests__/topology-knative-test-data';
 import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
-import ConfigurationsOverviewListItem from '../ConfigurationsOverviewListItem';
+import '@testing-library/jest-dom';
+
+jest.mock('../ConfigurationsOverviewListItem', () => ({
+  __esModule: true,
+  default: 'ConfigurationsOverviewListItem',
+}));
 
 describe('ConfigurationsOverviewList', () => {
   it('should render error Message when configurations array is empty', () => {
-    const wrapper = shallow(<ConfigurationsOverviewList configurations={[]} />);
-    expect(wrapper.text().includes('No configurations found for this resource.')).toBe(true);
+    render(<ConfigurationsOverviewList configurations={[]} />);
+    expect(screen.getByText('No configurations found for this resource.')).toBeInTheDocument();
   });
 
   it('should render ConfigurationsOverviewListItem', () => {
-    const wrapper = shallow(
+    const { container } = render(
       <ConfigurationsOverviewList configurations={sampleKnativeConfigurations.data} />,
     );
-    expect(wrapper.find(ConfigurationsOverviewListItem)).toHaveLength(1);
+    expect(container.querySelector('ConfigurationsOverviewListItem')).toBeInTheDocument();
   });
 });

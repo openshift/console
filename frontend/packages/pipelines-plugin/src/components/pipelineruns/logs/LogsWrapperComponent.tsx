@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodKind, WatchK8sResource } from '@console/internal/module/k8s';
-import { useFullscreen } from '@console/shared';
+import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
 import { TaskRunKind } from '../../../types';
 import { MultiStreamLogs } from './MultiStreamLogs';
 import { TektonTaskRunLog } from './TektonTaskRunLog';
@@ -31,7 +31,7 @@ const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({
   const { t } = useTranslation();
   const resourceRef = React.useRef(null);
   const [obj, loaded, error] = useK8sWatchResource<PodKind>(resource);
-  const [isFullscreen, fullscreenRef, fullscreenToggle] = useFullscreen<HTMLDivElement>();
+  const [fullscreenRef, fullscreenToggle, isFullscreen] = useFullscreen();
   const [downloadAllStatus, setDownloadAllStatus] = React.useState(false);
   const currentLogGetterRef = React.useRef<() => string>();
 

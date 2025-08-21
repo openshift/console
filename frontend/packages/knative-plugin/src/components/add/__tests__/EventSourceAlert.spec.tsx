@@ -1,34 +1,38 @@
-import { Alert } from '@patternfly/react-core';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import EventSourceAlert from '../EventSourceAlert';
+import '@testing-library/jest-dom';
+
+jest.mock('@patternfly/react-core', () => ({
+  Alert: 'Alert',
+}));
 
 describe('EventSourceAlert', () => {
   it('should not alert if eventSources are there', () => {
-    const wrapper = shallow(
+    const { container } = render(
       <EventSourceAlert isValidSource createSourceAccessLoading={false} createSourceAccess />,
     );
-    expect(wrapper.find(Alert).exists()).toBe(false);
+    expect(container.querySelector('Alert')).not.toBeInTheDocument();
   });
 
   it('should show alert if eventSource is present but do not have create access', () => {
-    const wrapper = shallow(
+    const { container } = render(
       <EventSourceAlert
         isValidSource
         createSourceAccessLoading={false}
         createSourceAccess={false}
       />,
     );
-    expect(wrapper.find(Alert).exists()).toBe(true);
+    expect(container.querySelector('Alert')).toBeInTheDocument();
   });
 
   it('should show alert if eventSource is not present', () => {
-    const wrapper = shallow(
+    const { container } = render(
       <EventSourceAlert
         isValidSource={false}
         createSourceAccessLoading={false}
         createSourceAccess={false}
       />,
     );
-    expect(wrapper.find(Alert).exists()).toBe(true);
+    expect(container.querySelector('Alert')).toBeInTheDocument();
   });
 });

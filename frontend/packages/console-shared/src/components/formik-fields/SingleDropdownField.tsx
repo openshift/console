@@ -12,7 +12,6 @@ import {
 } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { useFormikValidationFix } from '../../hooks';
-import { RedExclamationCircleIcon } from '../status';
 import { SingleDropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -100,9 +99,7 @@ const SingleDropdownField: React.FC<SingleDropdownFieldProps> = ({
       <FormHelperText>
         <HelperText>
           {!isValid ? (
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {errorMessage}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
           ) : (
             <HelperTextItem>{helpText}</HelperTextItem>
           )}

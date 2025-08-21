@@ -1249,3 +1249,27 @@ type EndpointSlice = {
 export type EndpointSliceKind = {
   endpoints?: EndpointSlice[];
 } & K8sResourceCommon;
+
+export type RoleRef = {
+  kind: string;
+  name: string;
+  apiGroup: string;
+};
+
+export type Subject = {
+  kind: string;
+  name: string;
+  namespace?: string;
+};
+
+export type RoleBindingKind = {
+  subjectIndex: number;
+  subjects: Subject[];
+  roleRef: RoleRef;
+} & K8sResourceKind;
+
+export type ClusterRoleBindingKind = {
+  subjectIndex: number;
+  subjects: Subject[];
+  roleRef: RoleRef;
+} & K8sResourceKind;

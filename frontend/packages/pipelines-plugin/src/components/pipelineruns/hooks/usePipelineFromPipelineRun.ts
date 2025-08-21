@@ -1,12 +1,12 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { k8sGet } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
 import { PipelineKind, PipelineRunKind } from '../../../types';
 import { getPipelineFromPipelineRun } from '../../../utils/pipeline-augment';
 
 export const usePipelineFromPipelineRun = (pipelineRun: PipelineRunKind): PipelineKind => {
-  const [pipeline, setPipeline] = React.useState<PipelineKind>(null);
-  React.useEffect(() => {
+  const [pipeline, setPipeline] = useState<PipelineKind>(null);
+  useEffect(() => {
     const emptyPipeline: PipelineKind = { spec: { tasks: [] } };
     const pipelineFromPipelineRun = getPipelineFromPipelineRun(pipelineRun);
     if (pipelineFromPipelineRun) {

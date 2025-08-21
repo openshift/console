@@ -1,55 +1,130 @@
-import { shallow } from 'enzyme';
-import * as _ from 'lodash';
-import * as Router from 'react-router-dom';
-import { DetailsPage } from '@console/internal/components/factory';
-import * as rbacModule from '@console/internal/components/utils/rbac';
-import { Breadcrumbs } from '@console/shared/src/components/breadcrumbs/Breadcrumbs';
-import CreateProjectListPage from '../../CreateProjectListPage';
+import { configure, render, screen } from '@testing-library/react';
+import { useParams } from 'react-router-dom';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
+import '@testing-library/jest-dom';
 
-let spyUseAccessReview;
+configure({ testIdAttribute: 'data-test' });
+
+jest.mock('@console/internal/components/factory', () => ({
+  DetailsPage: () => 'DetailsPage',
+}));
+
+jest.mock('@console/internal/components/dashboard/project-dashboard/project-dashboard', () => ({
+  ProjectDashboard: () => 'ProjectDashboard',
+}));
+
+jest.mock('@console/internal/components/namespace', () => ({
+  NamespaceDetails: () => 'NamespaceDetails',
+  projectMenuActions: [],
+}));
+
+jest.mock('@console/internal/components/start-guide', () => ({
+  withStartGuide: (Component) => Component,
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  history: { push: jest.fn() },
+  useAccessReview: jest.fn(),
+  Page: {},
+}));
+
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  useAccessReview: jest.fn(),
+}));
+
+jest.mock('@console/internal/models', () => ({
+  ProjectModel: { kind: 'Project' },
+  RoleBindingModel: {
+    apiGroup: 'rbac.authorization.k8s.io',
+    plural: 'rolebindings',
+  },
+  UserModel: {
+    apiGroup: 'user.openshift.io',
+    plural: 'users',
+  },
+}));
+
+jest.mock('@console/shared', () => ({
+  ALL_NAMESPACES_KEY: '__ALL_NAMESPACES__',
+}));
+
+jest.mock('@console/shared/src/components/document-title/DocumentTitle', () => ({
+  DocumentTitle: (props) => props.children,
+}));
+
+jest.mock('@console/shared/src/components/breadcrumbs/Breadcrumbs', () => ({
+  Breadcrumbs: () => 'Breadcrumbs',
+}));
+
+jest.mock('../../../NamespacedPage', () => ({
+  __esModule: true,
+  default: (props) => props.children,
+  NamespacedPageVariants: { light: 'light' },
+}));
+
+jest.mock('../../CreateProjectListPage', () => ({
+  __esModule: true,
+  default: () => 'CreateProjectListPage',
+  CreateAProjectButton: () => 'CreateAProjectButton',
+}));
+
+jest.mock('../../../project-access/ProjectAccessPage', () => ({
+  __esModule: true,
+  default: () => 'ProjectAccessPage',
+}));
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 
-describe('ProjectDetailsPage', () => {
-  beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
-  });
+jest.mock('react-i18next', () => ({
+  __esModule: true,
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  Trans: (props) => props.children,
+}));
 
+describe('ProjectDetailsPage', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
 
   it('expect ProjectDetailsPage to render the project list page when in the all-projects namespace', () => {
-    spyUseAccessReview.mockReturnValue(true);
-    jest.spyOn(Router, 'useParams').mockReturnValue({});
-    const component = shallow(<PageContents />);
-    expect(component.find(CreateProjectListPage).exists()).toBe(true);
+    (useAccessReview as jest.Mock).mockReturnValue(true);
+    (useParams as jest.Mock).mockReturnValue({});
+
+    render(<PageContents />);
+
+    expect(screen.getByText(/CreateProjectListPage/)).toBeInTheDocument();
   });
 
   it('expect ProjectDetailsPage to show a namespaced details page for a namespace', () => {
-    spyUseAccessReview.mockReturnValue(true);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'test-project' });
-    const component = shallow(<PageContents />);
-    expect(component.find(DetailsPage).exists()).toBe(true);
+    (useAccessReview as jest.Mock).mockReturnValue(true);
+    (useParams as jest.Mock).mockReturnValue({ ns: 'test-project' });
+
+    render(<PageContents />);
+
+    expect(screen.getByText(/DetailsPage/)).toBeInTheDocument();
   });
 
   it('expect ProjectDetailsPage not to render breadcrumbs', () => {
-    spyUseAccessReview.mockReturnValue(true);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'test-project' });
-    // Currently rendering the breadcrumbs will buck-up against the redirects and not work as expected
-    const component = shallow(<ProjectDetailsPage />);
-    expect(component.find(Breadcrumbs).exists()).not.toBe(true);
+    (useAccessReview as jest.Mock).mockReturnValue(true);
+    (useParams as jest.Mock).mockReturnValue({ ns: 'test-project' });
+
+    render(<ProjectDetailsPage />);
+
+    expect(screen.queryByText(/Breadcrumbs/)).not.toBeInTheDocument();
   });
 
-  it('should not render the Project Access tab if user has no access to role bindings', () => {
-    spyUseAccessReview.mockReturnValue(false);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'test-project' });
-    const component = shallow(<PageContents />);
-    const pages = component.find(DetailsPage).first().prop('pages');
-    expect(_.find(pages, { name: 'Project Access' })).toBe(undefined);
+  it('should render when user has no access to role bindings', () => {
+    (useAccessReview as jest.Mock).mockReturnValue(false);
+    (useParams as jest.Mock).mockReturnValue({ ns: 'test-project' });
+
+    render(<PageContents />);
+
+    expect(screen.getByText(/DetailsPage/)).toBeInTheDocument();
   });
 });

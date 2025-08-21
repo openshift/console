@@ -7,10 +7,11 @@ import { getProjectResource, BuilderImagesNamespace } from '../../../utils/image
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamNsDropdown: React.FC<{ disabled?: boolean; formContextField?: string }> = ({
-  disabled = false,
-  formContextField,
-}) => {
+const ImageStreamNsDropdown: React.FCC<{
+  disabled?: boolean;
+  formContextField?: string;
+  className?: string;
+}> = ({ disabled = false, formContextField, className }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { imageStream } = _.get(values, formContextField) || values;
@@ -45,6 +46,7 @@ const ImageStreamNsDropdown: React.FC<{ disabled?: boolean; formContextField?: s
       onChange={onDropdownChange}
       appendItems={{ openshift: BuilderImagesNamespace.Openshift }}
       disabled={disabled}
+      className={className}
     />
   );
 };

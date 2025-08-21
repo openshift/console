@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { Alert, FormGroup, Stack, StackItem, TextInput } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import {
@@ -31,7 +31,7 @@ const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalPro
   const { nodeName, inProgress, errorMessage, handlePromise, close, cancel } = props;
   const [model] = useMaintenanceCapability();
 
-  const [reason, setReason] = React.useState('');
+  const [reason, setReason] = useState('');
 
   const submit = (event) => {
     event.preventDefault();

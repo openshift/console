@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
@@ -18,8 +18,10 @@ import { deleteHPAModal, isHelmResource, isOperatorBackedService } from '@consol
 import { doesHpaMatch } from '@console/shared/src/utils/hpa-utils';
 import { ResourceActionFactory } from './types';
 
-const hpaRoute = ({ metadata: { name, namespace } }: K8sResourceCommon, kind: K8sKind) =>
-  `/workload-hpa/ns/${namespace}/${referenceForModel(kind)}/${name}`;
+const hpaRoute = (
+  { metadata: { name = '', namespace = '' } = {} }: K8sResourceCommon,
+  kind: K8sKind,
+) => `/workload-hpa/ns/${namespace}/${referenceForModel(kind)}/${name}`;
 
 export const HpaActionFactory: ResourceActionFactory = {
   AddHorizontalPodAutoScaler: (kind: K8sKind, obj: K8sResourceKind) => ({
@@ -30,7 +32,7 @@ export const HpaActionFactory: ResourceActionFactory = {
     accessReview: {
       group: HorizontalPodAutoscalerModel.apiGroup,
       resource: HorizontalPodAutoscalerModel.plural,
-      namespace: obj.metadata.namespace,
+      namespace: obj.metadata?.namespace,
       verb: 'create',
     },
   }),
@@ -42,7 +44,7 @@ export const HpaActionFactory: ResourceActionFactory = {
     accessReview: {
       group: HorizontalPodAutoscalerModel.apiGroup,
       resource: HorizontalPodAutoscalerModel.plural,
-      namespace: obj.metadata.namespace,
+      namespace: obj.metadata?.namespace,
       verb: 'update',
     },
   }),
@@ -63,7 +65,7 @@ export const HpaActionFactory: ResourceActionFactory = {
     accessReview: {
       group: HorizontalPodAutoscalerModel.apiGroup,
       resource: HorizontalPodAutoscalerModel.plural,
-      namespace: obj.metadata.namespace,
+      namespace: obj.metadata?.namespace,
       verb: 'delete',
     },
   }),
@@ -75,10 +77,12 @@ export const getHpaActions = (
   relatedHPAs: K8sResourceKind[],
 ): Action[] => {
   if (relatedHPAs.length === 0) return [HpaActionFactory.AddHorizontalPodAutoScaler(kind, obj)];
-
+  const opts = {
+    relatedResource: relatedHPAs[0],
+  };
   return [
     HpaActionFactory.EditHorizontalPodAutoScaler(kind, obj),
-    HpaActionFactory.DeleteHorizontalPodAutoScaler(kind, obj, { relatedResource: relatedHPAs[0] }),
+    HpaActionFactory.DeleteHorizontalPodAutoScaler(kind, obj, opts),
   ];
 };
 
@@ -90,7 +94,7 @@ type DeploymentActionExtraResources = {
 export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
   const namespace = resource?.metadata?.namespace;
 
-  const watchedResources = React.useMemo(
+  const watchedResources = useMemo(
     () => ({
       hpas: {
         isList: true,
@@ -108,18 +112,18 @@ export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
     [namespace],
   );
   const extraResources = useK8sWatchResources<DeploymentActionExtraResources>(watchedResources);
-  const relatedHPAs = React.useMemo(() => extraResources.hpas.data.filter(doesHpaMatch(resource)), [
+  const relatedHPAs = useMemo(() => extraResources.hpas.data.filter(doesHpaMatch(resource)), [
     extraResources.hpas.data,
     resource,
   ]);
 
-  const supportsHPA = React.useMemo(
+  const supportsHPA = useMemo(
     () =>
       !(isHelmResource(resource) || isOperatorBackedService(resource, extraResources.csvs.data)),
     [extraResources.csvs.data, resource],
   );
 
-  const result = React.useMemo<[Action[], HorizontalPodAutoscalerKind[]]>(() => {
+  const result = useMemo<[Action[], HorizontalPodAutoscalerKind[]]>(() => {
     return [supportsHPA ? getHpaActions(kindObj, resource, relatedHPAs) : [], relatedHPAs];
   }, [kindObj, relatedHPAs, resource, supportsHPA]);
 

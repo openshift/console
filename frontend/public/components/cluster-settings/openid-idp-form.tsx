@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,19 +15,17 @@ import { IDPCAFileInput } from './idp-cafile-input';
 
 export const AddOpenIDIDPPage = () => {
   const navigate = useNavigate();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('openid');
-  const [clientID, setClientID] = React.useState('');
-  const [clientSecret, setClientSecret] = React.useState('');
-  const [claimPreferredUsernames, setClaimPreferredUsernames] = React.useState([
-    'preferred_username',
-  ]);
-  const [claimNames, setClaimNames] = React.useState(['name']);
-  const [claimEmails, setClaimEmails] = React.useState(['email']);
-  const [issuer, setIssuer] = React.useState('');
-  const [caFileContent, setCaFileContent] = React.useState('');
-  const [extraScopes, setExtraScopes] = React.useState([]);
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('openid');
+  const [clientID, setClientID] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+  const [claimPreferredUsernames, setClaimPreferredUsernames] = useState(['preferred_username']);
+  const [claimNames, setClaimNames] = useState(['name']);
+  const [claimEmails, setClaimEmails] = useState(['email']);
+  const [issuer, setIssuer] = useState('');
+  const [caFileContent, setCaFileContent] = useState('');
+  const [extraScopes, setExtraScopes] = useState([]);
 
   const { t } = useTranslation();
 

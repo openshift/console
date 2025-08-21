@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo } from 'react';
 import { Label } from '@patternfly/react-core';
 import i18next from 'i18next';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
@@ -55,7 +55,7 @@ const normalizeTektonHubTasks = (
 const useTektonHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, string] => {
-  const [normalizedTektonHubTasks, setNormalizedTektonHubTasks] = React.useState<
+  const [normalizedTektonHubTasks, setNormalizedTektonHubTasks] = useState<
     CatalogItem<TektonHubTask>[]
   >([]);
 
@@ -81,7 +81,7 @@ const useTektonHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
     canCreateTask && canUpdateTask && integrationEnabled && baseURLLoaded,
   );
 
-  React.useMemo(
+  useMemo(
     () => setNormalizedTektonHubTasks(normalizeTektonHubTasks(tektonHubTasks, apiURL, uiURL)),
     [apiURL, tektonHubTasks, uiURL],
   );

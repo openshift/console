@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import * as _ from 'lodash';
 
 const isFresh = ({ timestamp }: Timestamped, expiration: number): boolean =>
@@ -9,7 +9,7 @@ export const useLocalStorageCache = <T = any>(
   expiration?: number,
   comparator?: (a: T, b: T) => boolean,
 ): [Getter<T>, Setter<T>] => {
-  const refreshCache = React.useCallback(() => {
+  const refreshCache = useCallback(() => {
     try {
       const serializedCache = window.localStorage.getItem(key);
       const records = serializedCache ? JSON.parse(serializedCache) : [];
@@ -21,7 +21,7 @@ export const useLocalStorageCache = <T = any>(
     }
   }, [expiration, key]);
 
-  const recordExists = React.useCallback(
+  const recordExists = useCallback(
     (newRecord: T, records: T[]): boolean =>
       records.some((existingRecord) =>
         (comparator ?? _.isEqual)(
@@ -32,7 +32,7 @@ export const useLocalStorageCache = <T = any>(
     [comparator],
   );
 
-  const getNewSerializedRecords = React.useCallback(
+  const getNewSerializedRecords = useCallback(
     (newRecord: T): [string, boolean] => {
       const currentRecords = refreshCache();
       if (recordExists(newRecord, currentRecords)) {
@@ -43,7 +43,7 @@ export const useLocalStorageCache = <T = any>(
     [recordExists, refreshCache],
   );
 
-  const addRecord = React.useCallback(
+  const addRecord = useCallback(
     (newRecord: T) => {
       const currentSerializedRecords = window.localStorage.getItem(key);
       const [updatedSerializedRecords, recordAdded] = getNewSerializedRecords({
@@ -64,10 +64,9 @@ export const useLocalStorageCache = <T = any>(
     [getNewSerializedRecords, key],
   );
 
-  const getRecords = React.useCallback(
-    (): T[] => refreshCache().map(({ timestamp, ...rest }) => rest),
-    [refreshCache],
-  );
+  const getRecords = useCallback((): T[] => refreshCache().map(({ timestamp, ...rest }) => rest), [
+    refreshCache,
+  ]);
 
   return [getRecords, addRecord];
 };

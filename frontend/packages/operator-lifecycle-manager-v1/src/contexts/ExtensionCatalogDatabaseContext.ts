@@ -1,8 +1,8 @@
-import * as React from 'react';
+import { createContext } from 'react';
 import { ExtensionCatalogDatabaseContextValues } from './types';
 
-export const ExtensionCatalogDatabaseContext = React.createContext<
-  ExtensionCatalogDatabaseContextValues
->({ done: false, error: null });
+export const ExtensionCatalogDatabaseContext = createContext<ExtensionCatalogDatabaseContextValues>(
+  { done: false, error: null },
+);
 
 export default ExtensionCatalogDatabaseContext.Provider;

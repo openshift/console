@@ -26,7 +26,7 @@ const ResourceLimitSection: React.FC<ResourceLimitSectionProps> = ({ hideTitle }
       fullWidth
     >
       {container && (
-        <span>
+        <span data-testid="ResourceLimitSection-container-heading">
           {t('devconsole~Container')} &nbsp;
           <ResourceIcon kind={ContainerModel.kind} /> {container}
         </span>

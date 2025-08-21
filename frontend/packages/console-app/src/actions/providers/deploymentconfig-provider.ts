@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { DeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
 import { DeploymentConfigKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
@@ -32,7 +32,7 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
 
   const isReady = commonActionsReady || deploymentActionsReady;
 
-  const deploymentConfigActions = React.useMemo(
+  const deploymentConfigActions = useMemo(
     () =>
       isReady
         ? [
@@ -48,7 +48,7 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
             commonActions.ModifyLabels,
             commonActions.ModifyAnnotations,
             deploymentActions.EditDeployment,
-            ...(resource.metadata.annotations?.['openshift.io/generated-by'] ===
+            ...(resource.metadata?.annotations?.['openshift.io/generated-by'] ===
             'OpenShiftWebConsole'
               ? [DeleteResourceAction(kindObj, resource)]
               : [commonActions.Delete]),

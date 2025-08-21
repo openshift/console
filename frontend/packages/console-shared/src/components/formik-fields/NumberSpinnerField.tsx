@@ -4,7 +4,6 @@ import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { NumberSpinner } from '@console/internal/components/utils';
 import { useFormikValidationFix } from '../../hooks';
-import { RedExclamationCircleIcon } from '../status';
 import { FieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -58,9 +57,7 @@ const NumberSpinnerField: React.FC<NumberSpinnerFieldProps> = ({
       <FormHelperText>
         <HelperText>
           {!isValid ? (
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {errorMessage}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
           ) : (
             <HelperTextItem>{helpText}</HelperTextItem>
           )}

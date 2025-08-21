@@ -1,11 +1,9 @@
 import '@testing-library/jest-dom';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
+  renderWithProviders,
   verifyInputField,
-  verifyIDPAddAndCancelButtons,
-  verifyPageTitleAndSubtitle,
-  mockData,
-} from './test-utils';
+} from '@console/shared/src/test-utils/unit-test-utils';
+import { verifyIDPAddAndCancelButtons, verifyPageTitleAndSubtitle, mockData } from './test-utils';
 import { AddGooglePage } from '../../cluster-settings/google-idp-form';
 
 describe('Add Identity Provider: Google', () => {

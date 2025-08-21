@@ -4,7 +4,7 @@ import {
   AccessReviewResourceAttributes,
   SelfSubjectAccessReviewKind,
 } from '@console/internal/module/k8s';
-import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { addActionExtensions } from '../../__tests__/add-page-test-data';
 import { useAddActionsAccessReviews, AccessReviewStatus } from '../useAddActionsAccessReviews';
 

@@ -1,22 +1,112 @@
-import { shallow } from 'enzyme';
+import { configure, render, screen } from '@testing-library/react';
+import { useFormikContext } from 'formik';
 import * as shipwrightHooks from '@console/dev-console/src/utils/shipwright-build-hook';
-import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
-import { SingleDropdownField, SingleDropdownFieldProps } from '@console/shared';
+import { useAccessReview } from '@console/internal/components/utils';
+import { useFlag } from '@console/shared';
+import { isPreferredStrategyAvailable } from '../../../../../utils/shipwright-build-hook';
 import { BuildOption as NamedBuildOption } from '../BuildOptions';
 import * as BuildOption from '../BuildOptions';
+import '@testing-library/jest-dom';
+
+configure({ testIdAttribute: 'data-test' });
 
 const spySWClusterBuildStrategy = jest.spyOn(shipwrightHooks, 'useClusterBuildStrategy');
 const spyShipwrightBuilds = jest.spyOn(shipwrightHooks, 'useShipwrightBuilds');
-const spyUseFlag = jest.spyOn(flagsModule, 'useFlag');
+
+const spyUseFlag = useFlag as jest.Mock;
 const spyUsePipelineAccessReview = jest.spyOn(BuildOption, 'usePipelineAccessReview');
 
+jest.mock('@console/shared', () => ({
+  SingleDropdownField: (props) => `SingleDropdownField options=${JSON.stringify(props.options)}`,
+  SelectInputOption: {},
+  useFlag: jest.fn(),
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  LoadingInline: () => 'Loading...',
+  useAccessReview: jest.fn(),
+}));
+
+jest.mock('@console/internal/actions/ui', () => ({
+  getActiveNamespace: jest.fn(() => 'test-namespace'),
+}));
+
+jest.mock('@console/pipelines-plugin/src/const', () => ({
+  CLUSTER_PIPELINE_NS: 'openshift-pipelines',
+  FLAG_OPENSHIFT_PIPELINE: 'OPENSHIFT_PIPELINE',
+}));
+
+jest.mock('@console/pipelines-plugin/src/models', () => ({
+  PipelineModel: {
+    apiGroup: 'tekton.dev',
+    plural: 'pipelines',
+  },
+}));
+
+jest.mock('@console/git-service/src/types', () => ({
+  ImportStrategy: {
+    DEVFILE: 'DEVFILE',
+  },
+}));
+
+jest.mock('../../../../../const', () => ({
+  FLAG_OPENSHIFT_BUILDCONFIG: 'OPENSHIFT_BUILDCONFIG',
+}));
+
+jest.mock('../../../../../utils/shipwright-build-hook', () => ({
+  isPreferredStrategyAvailable: jest.fn(() => true),
+  useClusterBuildStrategy: jest.fn(),
+  useShipwrightBuilds: jest.fn(),
+}));
+
+jest.mock('../../../import-types', () => ({
+  BuildOptions: {
+    SHIPWRIGHT_BUILD: 'SHIPWRIGHT_BUILD',
+    BUILDS: 'BUILDS',
+    PIPELINES: 'PIPELINES',
+  },
+  ReadableBuildOptions: {
+    SHIPWRIGHT_BUILD: 'Builds for OpenShift (Shipwright)',
+    BUILDS: 'BuildConfig',
+    PIPELINES: 'Build using pipelines',
+  },
+}));
+
+jest.mock('react-i18next', () => ({
+  __esModule: true,
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+  Trans: (props) => props.children,
+}));
+
 jest.mock('formik', () => ({
-  useFormikContext: jest.fn(() => ({
-    setFieldValue: jest.fn(),
-  })),
+  useFormikContext: jest.fn(),
 }));
 
 describe('BuildOptions', () => {
+  const defaultProps = {
+    isDisabled: false,
+    importStrategy: 0,
+  };
+
+  beforeEach(() => {
+    (useFormikContext as jest.Mock).mockReturnValue({
+      setFieldValue: jest.fn(),
+    });
+
+    spyShipwrightBuilds.mockReset();
+    spySWClusterBuildStrategy.mockReset();
+    spyUsePipelineAccessReview.mockReset();
+
+    (useAccessReview as jest.Mock).mockReturnValue(true);
+    (isPreferredStrategyAvailable as jest.Mock).mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should show all if Shipwright, BuildConfig & Pipelines are installed)', () => {
     spyUseFlag.mockImplementation((arg) => {
       if (arg === 'OPENSHIFT_BUILDCONFIG') {
@@ -30,33 +120,46 @@ describe('BuildOptions', () => {
     spyShipwrightBuilds.mockReturnValue(true);
     spySWClusterBuildStrategy.mockReturnValue([{ s2i: true }, true]);
     spyUsePipelineAccessReview.mockReturnValue(true);
-    const component = shallow(<NamedBuildOption isDisabled={false} importStrategy={0} />);
-    expect(component.find(SingleDropdownField).exists()).toBe(true);
+
+    render(<NamedBuildOption {...defaultProps} />);
+
+    expect(screen.getByText(/SingleDropdownField/)).toBeInTheDocument();
+
+    const dropdownText = screen.getByText(/SingleDropdownField options=/);
+    const optionsMatch = dropdownText.textContent.match(/options=(.+)/);
+    const options = JSON.parse(optionsMatch[1]);
+
+    expect(options).toHaveLength(3);
+
+    // Check for Shipwright option
     expect(
-      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
-    ).toHaveLength(3);
+      options.some(
+        (option) =>
+          option.value === 'SHIPWRIGHT_BUILD' &&
+          option.label === 'Builds for OpenShift (Shipwright)' &&
+          option.description.includes('Shipwright is an extensible framework'),
+      ),
+    ).toBe(true);
+
+    // Check for BuildConfig option
     expect(
-      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
-    ).toEqual([
-      {
-        description:
-          'Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
-        label: 'Builds for OpenShift (Shipwright)',
-        value: 'SHIPWRIGHT_BUILD',
-      },
-      {
-        description:
-          'Build configuration describes build definitions used for transforming source code into a runnable container image.',
-        label: 'BuildConfig',
-        value: 'BUILDS',
-      },
-      {
-        description:
-          'Build using pipeline describes a process for transforming source code into a runnable container image. Pipelines support can be added using Red Hat OpenShift Pipelines Operator.',
-        label: 'Build using pipelines',
-        value: 'PIPELINES',
-      },
-    ]);
+      options.some(
+        (option) =>
+          option.value === 'BUILDS' &&
+          option.label === 'BuildConfig' &&
+          option.description.includes('Build configuration describes build definitions'),
+      ),
+    ).toBe(true);
+
+    // Check for Pipelines option
+    expect(
+      options.some(
+        (option) =>
+          option.value === 'PIPELINES' &&
+          option.label === 'Build using pipelines' &&
+          option.description.includes('Build using pipeline describes a process'),
+      ),
+    ).toBe(true);
   });
 
   it('should not show BuildConfig if it is not installed (SW & Pipelines Installed)', () => {
@@ -69,35 +172,23 @@ describe('BuildOptions', () => {
     spyShipwrightBuilds.mockReturnValue(true);
     spySWClusterBuildStrategy.mockReturnValue([{ s2i: true }, true]);
     spyUsePipelineAccessReview.mockReturnValue(true);
-    const component = shallow(<NamedBuildOption isDisabled={false} importStrategy={0} />);
-    expect(component.find(SingleDropdownField).exists()).toBe(true);
-    expect(
-      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
-    ).toHaveLength(2);
-    expect(
-      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
-    ).not.toContainEqual({
-      description:
-        'Build configuration describes build definitions used for transforming source code into a runnable container image.',
-      label: 'BuildConfig',
-      value: 'BUILDS',
-    });
-    expect(
-      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
-    ).toEqual([
-      {
-        description:
-          'Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
-        label: 'Builds for OpenShift (Shipwright)',
-        value: 'SHIPWRIGHT_BUILD',
-      },
-      {
-        description:
-          'Build using pipeline describes a process for transforming source code into a runnable container image. Pipelines support can be added using Red Hat OpenShift Pipelines Operator.',
-        label: 'Build using pipelines',
-        value: 'PIPELINES',
-      },
-    ]);
+
+    render(<NamedBuildOption {...defaultProps} />);
+
+    expect(screen.getByText(/SingleDropdownField/)).toBeInTheDocument();
+
+    const dropdownText = screen.getByText(/SingleDropdownField options=/);
+    const optionsMatch = dropdownText.textContent.match(/options=(.+)/);
+    const options = JSON.parse(optionsMatch[1]);
+
+    expect(options).toHaveLength(2);
+
+    // Should NOT have BuildConfig
+    expect(options.some((option) => option.value === 'BUILDS')).toBe(false);
+
+    // Should have Shipwright and Pipelines
+    expect(options.some((option) => option.value === 'SHIPWRIGHT_BUILD')).toBe(true);
+    expect(options.some((option) => option.value === 'PIPELINES')).toBe(true);
   });
 
   it('should not show Shipwright if it is not installed (BuildConfig Installed, Pipelines Not Installed)', () => {
@@ -113,28 +204,33 @@ describe('BuildOptions', () => {
     spyShipwrightBuilds.mockReturnValue(false);
     spySWClusterBuildStrategy.mockReturnValue([{ s2i: false }, true]);
     spyUsePipelineAccessReview.mockReturnValue(false);
-    const component = shallow(<NamedBuildOption isDisabled={false} importStrategy={0} />);
-    expect(component.find(SingleDropdownField).exists()).toBe(true);
-    expect(
-      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
-    ).toHaveLength(1);
-    expect(
-      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
-    ).not.toContainEqual({
-      description:
-        'Shipwright is an extensible framework for building container images on OpenShift Container Platform cluster.',
-      label: 'Builds for OpenShift (Shipwright)',
-      value: 'SHIPWRIGHT_BUILD',
-    });
-    expect(
-      (component.find(SingleDropdownField).props() as SingleDropdownFieldProps).options,
-    ).toEqual([
-      {
-        description:
-          'Build configuration describes build definitions used for transforming source code into a runnable container image.',
-        label: 'BuildConfig',
-        value: 'BUILDS',
-      },
-    ]);
+
+    render(<NamedBuildOption {...defaultProps} />);
+
+    expect(screen.getByText(/SingleDropdownField/)).toBeInTheDocument();
+
+    const dropdownText = screen.getByText(/SingleDropdownField options=/);
+    const optionsMatch = dropdownText.textContent.match(/options=(.+)/);
+    const options = JSON.parse(optionsMatch[1]);
+
+    expect(options).toHaveLength(1);
+
+    // Should NOT have Shipwright
+    expect(options.some((option) => option.value === 'SHIPWRIGHT_BUILD')).toBe(false);
+
+    // Should only have BuildConfig
+    expect(options.some((option) => option.value === 'BUILDS')).toBe(true);
+  });
+
+  it('should show LoadingInline when strategy is not loaded', () => {
+    spyUseFlag.mockReturnValue(true);
+    spyShipwrightBuilds.mockReturnValue(true);
+    spySWClusterBuildStrategy.mockReturnValue([{ s2i: true }, false]); // strategyLoaded = false
+    spyUsePipelineAccessReview.mockReturnValue(true);
+
+    render(<NamedBuildOption {...defaultProps} />);
+
+    expect(screen.getByText(/Loading\.\.\./)).toBeInTheDocument();
+    expect(screen.queryByText(/SingleDropdownField/)).not.toBeInTheDocument();
   });
 });
