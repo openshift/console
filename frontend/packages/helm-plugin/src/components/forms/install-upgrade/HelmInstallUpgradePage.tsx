@@ -47,7 +47,12 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const initialReleaseName = params.releaseName || '';
   const helmChartName = searchParams.get('chartName');
   const helmChartRepoName = searchParams.get('chartRepoName');
-  const helmActionOrigin = searchParams.get('actionOrigin') as HelmActionOrigins;
+  const helmActionOriginParam = searchParams.get('actionOrigin');
+  const helmActionOrigin =
+    helmActionOriginParam &&
+    Object.values(HelmActionOrigins).includes(helmActionOriginParam as HelmActionOrigins)
+      ? (helmActionOriginParam as HelmActionOrigins)
+      : undefined;
 
   const { t } = useTranslation();
   const [chartData, setChartData] = React.useState<HelmChart | null>(null);
@@ -126,7 +131,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
     chartVersion,
     chartReadme,
     yamlData: initialYamlData,
-    formData: initialFormData,
+    formData: initialFormData as Record<string, unknown>,
     formSchema: initialFormSchema || {},
     editorType: initialFormSchema ? EditorType.Form : EditorType.YAML,
   };
@@ -190,7 +195,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
         } catch (err) {
           console.error('Could not fetch the helm release', err); // eslint-disable-line no-console
         }
-        const resources = loadHelmManifestResources(helmRelease as HelmRelease);
+        const resources = helmRelease ? loadHelmManifestResources(helmRelease) : [];
         if (isGoingToTopology(resources)) {
           const secretId = res?.metadata?.uid;
           redirect = helmRelease?.info?.notes
@@ -223,7 +228,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const annotatedName = chartData?.metadata?.annotations?.[CHART_NAME_ANNOTATION] ?? '';
   const providerName = chartData?.metadata?.annotations?.[PROVIDER_NAME_ANNOTATION] ?? '';
 
-  const chartMetaDescription = <HelmChartMetaDescription chart={chartData as HelmChart} />;
+  const chartMetaDescription = chartData ? <HelmChartMetaDescription chart={chartData} /> : null;
 
   return (
     <NamespacedPage

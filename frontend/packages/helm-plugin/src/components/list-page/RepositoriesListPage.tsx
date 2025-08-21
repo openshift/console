@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
-import { MultiListPage } from '@console/internal/components/factory';
+import { Flatten, MultiListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
@@ -52,7 +52,13 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({
   });
 
   const resources = React.useMemo(() => {
-    let res: any[] = [];
+    let res: {
+      prop: string;
+      kind: string;
+      namespaced: boolean;
+      isList: boolean;
+      namespace?: string;
+    }[] = [];
     if (
       projectHelmChartListAccess &&
       projectHelmChartEditAccess &&
@@ -103,7 +109,7 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({
     namespace,
   ]);
 
-  const flatten = (resourceLists: any) => {
+  const flatten = (resourceLists: Record<string, { data?: unknown[] }>) => {
     const projectHelmChartRepositoryData = _.get(
       resourceLists?.projectHelmChartRepository,
       'data',
@@ -119,7 +125,7 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({
       <DocumentTitle>{t('helm-plugin~Helm Repositories')}</DocumentTitle>
       <MultiListPage
         namespace={namespace}
-        flatten={flatten}
+        flatten={flatten as Flatten}
         resources={resources}
         label={t('helm-plugin~Repositories')}
         ListComponent={RepositoriesList}

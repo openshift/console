@@ -10,7 +10,7 @@ import HelmChartSummary from './HelmChartSummary';
 
 export interface HelmReleaseOverviewProps {
   obj: K8sResourceKind;
-  customData: HelmRelease;
+  customData?: HelmRelease;
 }
 
 const HelmReleaseOverview: React.FC<HelmReleaseOverviewProps> = ({ obj, customData }) => {
@@ -20,10 +20,7 @@ const HelmReleaseOverview: React.FC<HelmReleaseOverviewProps> = ({ obj, customDa
       <SectionHeading text={t('helm-plugin~Helm Release details')} />
       <Grid hasGutter>
         <GridItem sm={6}>
-          <ResourceSummary
-            resource={obj as K8sResourceKind}
-            customPathName={'metadata.labels.name'}
-          />
+          <ResourceSummary resource={obj} customPathName={'metadata.labels.name'} />
         </GridItem>
         <GridItem sm={6}>
           <HelmChartSummary helmRelease={customData} obj={obj} />
