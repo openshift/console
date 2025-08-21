@@ -160,27 +160,12 @@ export const keywordCompare = (filterString: string, items: CatalogItem[]): Cata
       return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
     });
 
-    // Console table for debugging (only for operators) - no search term
+    // Reduced logging - detailed logging now happens in CatalogView after all filtering
     if (sortedItems.length > 0 && sortedItems[0]?.type === 'operator') {
-      const tableData = sortedItems.map((item) => ({
-        Title: item.name || 'N/A',
-        'Search Relevance Score': 'N/A (No search)',
-        'Is Red Hat Provider (Priority)':
-          getRedHatPriority(item) === REDHAT_PRIORITY.EXACT_MATCH
-            ? `Exact Match (${REDHAT_PRIORITY.EXACT_MATCH})`
-            : getRedHatPriority(item) === REDHAT_PRIORITY.CONTAINS_REDHAT
-            ? `Contains Red Hat (${REDHAT_PRIORITY.CONTAINS_REDHAT})`
-            : `Non-Red Hat (${REDHAT_PRIORITY.NON_REDHAT})`,
-        Provider: item.attributes?.provider || item.provider || 'N/A',
-        Type: item.type || 'N/A',
-      }));
-
       // eslint-disable-next-line no-console
       console.log(
-        `\n📂 Enhanced Catalog Results (No Search) - Red Hat Priority Sorting (${sortedItems.length} items)`,
+        `📂 keywordCompare (No Search) - Red Hat Priority Sorting (${sortedItems.length} items)`,
       );
-      // eslint-disable-next-line no-console
-      console.table(tableData);
     }
 
     return sortedItems;
@@ -222,27 +207,12 @@ export const keywordCompare = (filterString: string, items: CatalogItem[]): Cata
     return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
   });
 
-  // Console table for debugging (only for operators)
+  // Reduced logging - detailed logging now happens in CatalogView after all filtering
   if (sortedItems.length > 0 && sortedItems[0]?.type === 'operator') {
-    const tableData = sortedItems.map((item) => ({
-      Title: item.name || 'N/A',
-      'Search Relevance Score': item.relevanceScore || 0,
-      'Is Red Hat Provider (Priority)':
-        item.redHatPriority === REDHAT_PRIORITY.EXACT_MATCH
-          ? `Exact Match (${REDHAT_PRIORITY.EXACT_MATCH})`
-          : item.redHatPriority === REDHAT_PRIORITY.CONTAINS_REDHAT
-          ? `Contains Red Hat (${REDHAT_PRIORITY.CONTAINS_REDHAT})`
-          : `Non-Red Hat (${REDHAT_PRIORITY.NON_REDHAT})`,
-      Provider: item.attributes?.provider || item.provider || 'N/A',
-      Type: item.type || 'N/A',
-    }));
-
     // eslint-disable-next-line no-console
     console.log(
-      `\n🔍 Enhanced Catalog Search Results for "${filterString}" (${sortedItems.length} matches)`,
+      `🔍 keywordCompare (Search: "${filterString}") - Relevance Scoring (${sortedItems.length} matches)`,
     );
-    // eslint-disable-next-line no-console
-    console.table(tableData);
   }
 
   // Remove the added properties before returning
