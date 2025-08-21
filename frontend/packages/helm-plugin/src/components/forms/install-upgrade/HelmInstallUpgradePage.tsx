@@ -20,7 +20,6 @@ import {
   HelmActionType,
   HelmChart,
   HelmRelease,
-  HelmActionConfigType,
   HelmActionOrigins,
 } from '../../../types/helm-types';
 import {
@@ -237,7 +236,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
       onNamespaceChange={handleNamespaceChange}
       hideApplications
     >
-      <DocumentTitle>{config?.title || ''}</DocumentTitle>
+      {config?.title && <DocumentTitle>{config.title}</DocumentTitle>}
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
@@ -249,9 +248,9 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
             {...formikProps}
             chartHasValues={chartHasValues}
             chartMetaDescription={chartMetaDescription}
-            helmActionConfig={config as HelmActionConfigType}
+            helmActionConfig={config}
             onVersionChange={setChartData}
-            chartError={chartError as Error}
+            chartError={chartError}
             namespace={namespace || ''}
             chartIndexEntry={indexEntry || ''}
             annotatedName={annotatedName}

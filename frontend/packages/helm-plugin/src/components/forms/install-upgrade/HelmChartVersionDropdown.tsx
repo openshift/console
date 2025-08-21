@@ -33,7 +33,7 @@ import {
 export type HelmChartVersionDropdownProps = {
   chartVersion: string;
   chartName: string;
-  helmAction: string;
+  helmAction: string | undefined;
   onVersionChange: (chart: HelmChart) => void;
   namespace: string;
   chartIndexEntry: string;
