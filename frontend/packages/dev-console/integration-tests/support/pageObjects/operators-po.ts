@@ -2,7 +2,7 @@ export const operatorsPO = {
   search: '[data-test="search-operatorhub"] input[aria-label="Filter by keyword..."]',
   nav: {
     ecosystem: '[data-quickstart-id="qs-nav-ecosystem"]',
-    operatorHub: 'a[data-test="nav"][href="/operatorhub"]',
+    operatorHub: 'a[data-test="nav"][href="/catalog"]',
     installedOperators:
       'a[data-test="nav"][href$="/operators.coreos.com~v1alpha1~ClusterServiceVersion"]',
     link: '[data-test="nav"]',

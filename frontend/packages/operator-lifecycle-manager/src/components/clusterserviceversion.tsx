@@ -569,7 +569,8 @@ const CSVListNoDataEmptyMsg = () => {
       {hasOperatorHubAccess && (
         <div>
           <Trans ns="olm">
-            Discover and install Operators from the <Link to="/operatorhub">OperatorHub</Link>.
+            Discover and install Operators from the{' '}
+            <Link to="/catalog?catalogType=operator">Software Catalog</Link>.
           </Trans>
         </div>
       )}

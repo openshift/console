@@ -18,7 +18,11 @@
       "install": "src/components/operator-install-page.tsx",
       "subscriptionProvider": "src/actions/providers/subscription-provider.ts",
       "useOperatorActions": "src/actions/useOperatorActions.ts",
-      "useDefaultOperandActions": "src/actions/useDefaultOperandActions.ts"
+      "useDefaultOperandActions": "src/actions/useDefaultOperandActions.ts",
+      "useOperatorCatalogItems": "src/hooks/useOperatorCatalogItems.tsx",
+      "useOperatorCatalogCategories": "src/hooks/useOperatorCatalogCategories.ts",
+      "filters": "src/utils/filters.ts",
+      "CatalogRedirect": "src/components/catalog-redirect.tsx"
     }
   }
 }

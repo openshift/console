@@ -170,7 +170,9 @@ describe('SubscriptionsPage', () => {
     expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(SubscriptionsList);
     expect(wrapper.find(MultiListPage).props().title).toEqual('Subscriptions');
     expect(wrapper.find(MultiListPage).props().canCreate).toBe(true);
-    expect(wrapper.find(MultiListPage).props().createProps).toEqual({ to: '/operatorhub' });
+    expect(wrapper.find(MultiListPage).props().createProps).toEqual({
+      to: '/catalog?catalogType=operator',
+    });
     expect(wrapper.find(MultiListPage).props().createButtonText).toEqual('Create Subscription');
     expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Subscriptions by package');
     expect(wrapper.find(MultiListPage).props().resources).toEqual([

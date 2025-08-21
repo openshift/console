@@ -1,5 +1,5 @@
 import { useQueryParams } from '../../../../hooks/useQueryParams';
-import useCtaLink from '../useCtaLink';
+import { useCtaLink } from '../useCtaLink';
 
 jest.mock('../../../../hooks/useQueryParams', () => ({
   useQueryParams: jest.fn(),

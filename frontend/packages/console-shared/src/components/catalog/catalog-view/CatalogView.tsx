@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { isModalOpen } from '@console/internal/components/modals';
 import { useQueryParams } from '../../../hooks/useQueryParams';
@@ -22,7 +23,6 @@ import {
   getFilterSearchParam,
 } from '../utils/filter-utils';
 import {
-  CatalogCategory,
   CatalogFilterCounts,
   CatalogFilterGroupMap,
   CatalogFilters as FiltersType,
@@ -53,6 +53,7 @@ type CatalogViewProps = {
   groupings: CatalogStringMap;
   renderTile: (item: CatalogItem) => React.ReactNode;
   hideSidebar?: boolean;
+  sortFilterGroups: boolean;
 };
 
 const CatalogView: React.FC<CatalogViewProps> = ({
@@ -66,6 +67,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   groupings,
   renderTile,
   hideSidebar,
+  sortFilterGroups,
 }) => {
   const { t } = useTranslation();
   const queryParams = useQueryParams();
@@ -251,6 +253,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
                 filterGroupsShowAll={filterGroupsShowAll}
                 onShowAllToggle={handleShowAllToggle}
                 onFilterChange={handleFilterChange}
+                sortFilterGroups={sortFilterGroups}
               />
             )}
           </CatalogPageTabs>

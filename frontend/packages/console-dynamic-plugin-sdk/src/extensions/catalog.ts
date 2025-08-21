@@ -15,6 +15,8 @@ export type CatalogItemType = ExtensionDeclaration<
     catalogDescription?: string | CodeRef<React.ReactNode>;
     /** Description for the catalog item type. */
     typeDescription?: string;
+    /** Determine if filter groups should be sorted alphabetically. Defaults to true. */
+    sortFilterGroups?: boolean;
     /** Custom filters specific to the catalog item.  */
     filters?: CatalogItemAttribute[];
     /** Custom groupings specific to the catalog item. */
@@ -84,12 +86,26 @@ export type CatalogItemMetadataProvider = ExtensionDeclaration<
   }
 >;
 
+/** This extension allows plugins to contribute a set of categories for a specific catalog item type. */
+export type CatalogCategoriesProvider = ExtensionDeclaration<
+  'console.catalog/categories-provider',
+  {
+    /** The catalog ID the categories are for. If not specified, the categories will be available for all catalogs. */
+    catalogId?: string;
+    /** The catalog item type for these categories. If not specified, the categories will be available for all types. */
+    type?: string;
+    /** A hook that returns categories. */
+    provider: CodeRef<ExtensionHook<CatalogCategory[]>>;
+  }
+>;
+
 export type SupportedCatalogExtensions =
   | CatalogItemType
   | CatalogItemTypeMetadata
   | CatalogItemProvider
   | CatalogItemFilter
-  | CatalogItemMetadataProvider;
+  | CatalogItemMetadataProvider
+  | CatalogCategoriesProvider;
 
 // Type guards
 
@@ -111,6 +127,10 @@ export const isCatalogItemFilter = (e: Extension): e is CatalogItemFilter => {
 
 export const isCatalogItemMetadataProvider = (e: Extension): e is CatalogItemMetadataProvider => {
   return e.type === 'console.catalog/item-metadata';
+};
+
+export const isCatalogCategoriesProvider = (e: Extension): e is CatalogCategoriesProvider => {
+  return e.type === 'console.catalog/categories-provider';
 };
 
 // Support types
@@ -161,6 +181,19 @@ export type CatalogItem<T extends any = any> = {
   data?: T;
 };
 
+export type CatalogCategory = {
+  id: string;
+  label: string;
+  tags?: string[];
+  subcategories?: CatalogSubcategory[];
+};
+
+export type CatalogSubcategory = {
+  id: string;
+  label: string;
+  tags?: string[];
+};
+
 export type CatalogItemDetails = {
   properties?: CatalogItemDetailsProperty[];
   descriptions?: CatalogItemDetailsDescription[];
@@ -186,6 +219,7 @@ export type CatalogItemAttribute = {
 
 export type CatalogItemBadge = {
   text: string;
+  tooltip?: string;
   color?: 'blue' | 'teal' | 'green' | 'orange' | 'purple' | 'red' | 'grey';
   icon?: React.ReactNode;
   variant?: 'outline' | 'filled';

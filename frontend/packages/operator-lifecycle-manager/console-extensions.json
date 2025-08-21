@@ -100,5 +100,81 @@
       },
       "provider": { "$codeRef": "subscriptionProvider.useSubscriptionActionsProvider" }
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/operatorhub",
+      "exact": true,
+      "component": {
+        "$codeRef": "CatalogRedirect"
+      }
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "operator",
+      "provider": { "$codeRef": "useOperatorCatalogItems" }
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "operator",
+      "title": "%olm~Operators%",
+      "catalogDescription": "%olm~Browse for Operators provided by Operator Lifecycle Manager.%",
+      "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
+      "sortFilterGroups": false,
+      "filters": [
+        {
+          "label": "%olm~Source%",
+          "attribute": "source",
+          "comparator": {
+            "$codeRef": "filters.sourceComparator"
+          }
+        },
+        {
+          "label": "%olm~Installed%",
+          "attribute": "installState"
+        },
+        {
+          "label": "%olm~Provider%",
+          "attribute": "provider",
+          "comparator": {
+            "$codeRef": "filters.providerComparator"
+          }
+        },
+        {
+          "label": "%olm~Capability level%",
+          "attribute": "capabilities",
+          "comparator": {
+            "$codeRef": "filters.capabilityLevelComparator"
+          }
+        },
+        {
+          "label": "%olm~Infrastructure features%",
+          "attribute": "infrastructureFeatures",
+          "comparator": {
+            "$codeRef": "filters.infrastructureFeatureComparator"
+          }
+        },
+        {
+          "label": "%olm~Valid subscription%",
+          "attribute": "validSubscription",
+          "comparator": {
+            "$codeRef": "filters.validSubscriptionComparator"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "console.catalog/categories-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "provider": { "$codeRef": "useOperatorCatalogCategories" }
+    }
   }
 ]
