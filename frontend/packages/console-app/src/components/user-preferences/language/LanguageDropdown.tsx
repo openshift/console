@@ -52,7 +52,7 @@ const LanguageDropdown: React.FC = () => {
       value: checked,
     });
     if (checked) {
-      setPreferredLanguage(null);
+      setPreferredLanguage('');
     }
   };
 

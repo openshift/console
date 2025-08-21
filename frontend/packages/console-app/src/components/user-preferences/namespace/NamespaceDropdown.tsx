@@ -64,8 +64,8 @@ const NamespaceDropdown: React.FC = () => {
       return [];
     }
     const items: OptionItem[] = options.map((item) => {
-      const { name } = item.metadata;
-      return { title: name, key: name };
+      const { name } = item.metadata || {};
+      return { title: name || '', key: name || '' };
     });
     items.sort((a, b) => alphanumericCompare(a.title, b.title));
     return items;
@@ -88,10 +88,10 @@ const NamespaceDropdown: React.FC = () => {
   const onCreateNamespace = React.useCallback(() => {
     createNamespaceOrProjectModal({
       onSubmit: (newProject) => {
-        setPreferredNamespace(newProject.metadata.name);
+        setPreferredNamespace(newProject?.metadata?.name || '');
         fireTelemetryEvent('User Preference Changed', {
           property: PREFERRED_NAMESPACE_USER_SETTING_KEY,
-          value: newProject.metadata.name,
+          value: newProject?.metadata?.name || '',
         });
       },
     });
@@ -100,7 +100,7 @@ const NamespaceDropdown: React.FC = () => {
   const loadErrorDescription: string = isProject
     ? t('console-app~Projects failed to load. Check your connection and reload the page.')
     : t('console-app~Namespaces failed to load. Check your connection and reload the page.');
-  const loadErrorState: JSX.Element = optionsLoadError ? (
+  const loadErrorState: JSX.Element | null = optionsLoadError ? (
     <EmptyState
       headingLevel="h4"
       icon={ExclamationCircleIcon}
@@ -111,7 +111,7 @@ const NamespaceDropdown: React.FC = () => {
     </EmptyState>
   ) : null;
 
-  const emptyState: JSX.Element =
+  const emptyState: JSX.Element | null =
     !optionsLoadError && filteredOptions.length === 0 ? (
       <NoResults
         isProjects={isProject}
@@ -119,14 +119,14 @@ const NamespaceDropdown: React.FC = () => {
           event.preventDefault();
           event.stopPropagation();
           setFilterText('');
-          filterRef.current?.focus();
+          (filterRef.current as any)?.focus();
         }}
       />
     ) : null;
 
   const getDropdownLabelForValue = (): string => preferredNamespace || lastViewedOption.title;
   const getDropdownValueForLabel = (selectedLabel: string): string =>
-    selectedLabel === lastViewedOption.key ? null : selectedLabel;
+    selectedLabel === lastViewedOption.key ? '' : selectedLabel;
   const onToggle = (isOpen: boolean) => setDropdownOpen(isOpen);
   const onSelect = (_, selection: string) => {
     const selectedValue = getDropdownValueForLabel(selection);
