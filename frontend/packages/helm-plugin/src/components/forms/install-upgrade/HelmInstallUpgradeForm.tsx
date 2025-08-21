@@ -40,10 +40,10 @@ export type HelmInstallUpgradeFormData = {
 
 export interface HelmInstallUpgradeFormProps {
   chartHasValues: boolean;
-  helmActionConfig: HelmActionConfigType;
+  helmActionConfig: HelmActionConfigType | undefined;
   chartMetaDescription: React.ReactNode;
   onVersionChange: (chart: HelmChart) => void;
-  chartError: Error;
+  chartError: Error | null;
   namespace: string;
   chartIndexEntry?: string;
   annotatedName?: string;
@@ -73,7 +73,7 @@ const HelmInstallUpgradeForm: React.FC<
   const { t } = useTranslation();
   const theme = React.useContext(ThemeContext);
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
-  const { type: helmAction, title, subTitle } = helmActionConfig;
+  const { type: helmAction, title, subTitle } = helmActionConfig || {};
   const helmReadmeModalLauncher = useHelmReadmeModalLauncher({
     readme: chartReadme,
     theme,
@@ -193,7 +193,7 @@ const HelmInstallUpgradeForm: React.FC<
         handleReset={handleReset}
         errorMessage={status?.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={helmActionString(t)[helmAction]}
+        submitLabel={helmActionString(t)[helmAction || '']}
         disableSubmit={isSubmitDisabled}
         resetLabel={t('helm-plugin~Cancel')}
         sticky

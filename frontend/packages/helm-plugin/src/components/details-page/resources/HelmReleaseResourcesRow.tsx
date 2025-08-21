@@ -46,7 +46,7 @@ const HelmReleaseResourcesRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ o
         <HelmReleaseResourceStatus resource={resource} />
       </TableData>
       <TableData className={tableColumnClasses.created}>
-        <Timestamp timestamp={resource.metadata?.creationTimestamp || ''} />
+        <Timestamp timestamp={resource.metadata?.creationTimestamp ?? null} />
       </TableData>
     </>
   );
