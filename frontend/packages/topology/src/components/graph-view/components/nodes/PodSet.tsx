@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { PodSetProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { RevisionModel } from '@console/knative-plugin/src/models';
 import {
   PodRCData,
@@ -10,14 +11,6 @@ import {
   usePodRingLabel,
   useRelatedHPA,
 } from '@console/shared';
-
-interface PodSetProps {
-  size: number;
-  data: PodRCData;
-  showPodCount?: boolean;
-  x?: number;
-  y?: number;
-}
 
 interface InnerPodStatusRadius {
   innerPodStatusOuterRadius: number;

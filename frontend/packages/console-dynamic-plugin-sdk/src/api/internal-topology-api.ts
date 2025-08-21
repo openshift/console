@@ -19,6 +19,11 @@ import {
   ContextMenuActions,
   CreateConnectorProps,
   OdcBaseNodeConstructor,
+  WorkloadNodeProps,
+  PodSetProps,
+  BaseNodeProps,
+  WithContextMenu,
+  WithCreateConnector,
 } from '../extensions/topology-types';
 
 export const CpuCellComponent: React.FC<CpuCellComponentProps> = require('@console/topology/src/components/list-view/cells/CpuCell')
@@ -77,3 +82,18 @@ export const createConnectorCallback = require('@console/topology/src/components
 
 export const OdcBaseNode: OdcBaseNodeConstructor = require('@console/topology/src/elements')
   .OdcBaseNode;
+
+export const WorkloadNode: React.FC<WorkloadNodeProps> = require('@console/topology/src/components/graph-view')
+  .WorkloadNode;
+
+export const PodSet: React.FC<PodSetProps> = require('@console/topology/src/components/graph-view')
+  .PodSet;
+
+export const BaseNode: React.FC<BaseNodeProps> = require('@console/topology/src/components/graph-view')
+  .BaseNode;
+
+export const withContextMenu: WithContextMenu = require('@console/topology/src/components/graph-view')
+  .withContextMenu;
+
+export const withCreateConnector: WithCreateConnector = require('@console/topology/src/behavior')
+  .withCreateConnector;

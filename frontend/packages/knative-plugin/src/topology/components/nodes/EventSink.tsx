@@ -16,10 +16,10 @@ import {
   ScaleDetailsLevel,
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { DeploymentModel } from '@console/internal/models';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '@console/shared';
-import { WithCreateConnectorProps } from '@console/topology/src/behavior';
 import { PodSet } from '@console/topology/src/components/graph-view';
 import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
 import { KafkaSinkModel } from '../../../models';

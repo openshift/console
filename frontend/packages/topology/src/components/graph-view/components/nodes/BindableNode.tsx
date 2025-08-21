@@ -8,9 +8,9 @@ import {
   WithSelectionProps,
   GraphElement,
 } from '@patternfly/react-topology';
+import { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import openshiftImg from '@console/internal/imgs/logos/openshift.svg';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { WithCreateConnectorProps } from '@console/topology/src/behavior';
 import { getTopologyResourceObject } from '../../../../utils';
 import { getRelationshipProvider } from '../../../../utils/relationship-provider-utils';
 import BaseNode from './BaseNode';
