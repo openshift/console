@@ -7,9 +7,9 @@ import { ConsolePluginCSPStatus } from './ConsoleOperatorConfig';
 
 const ConsolePluginCSPStatusDetail: React.FC<DetailsItemComponentProps> = ({ obj }) => {
   const pluginStore = usePluginStore();
-  const pluginName = React.useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
+  const pluginName = React.useMemo(() => obj?.metadata?.name ?? 'unknown', [obj?.metadata?.name]);
 
-  const pluginInfo = React.useMemo(() => pluginStore.findDynamicPluginInfo(pluginName ?? ''), [
+  const pluginInfo = React.useMemo(() => pluginStore.findDynamicPluginInfo(pluginName), [
     pluginStore,
     pluginName,
   ]);
