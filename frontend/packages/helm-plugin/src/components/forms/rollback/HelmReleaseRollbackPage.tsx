@@ -23,7 +23,12 @@ type HelmRollbackFormData = {
 const HelmReleaseRollbackPage: React.FC = () => {
   const { t } = useTranslation();
   const { releaseName, ns: namespace } = useParams();
-  const actionOrigin = getQueryArgument('actionOrigin') as HelmActionOrigins;
+  const actionOriginParam = getQueryArgument('actionOrigin');
+  const actionOrigin =
+    actionOriginParam &&
+    Object.values(HelmActionOrigins).includes(actionOriginParam as HelmActionOrigins)
+      ? (actionOriginParam as HelmActionOrigins)
+      : undefined;
   const [releaseHistory, setReleaseHistory] = React.useState<HelmRelease[] | null>(null);
 
   const config = React.useMemo(

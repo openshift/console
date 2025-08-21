@@ -19,7 +19,7 @@ const HelmReleaseStatusDecorator: React.FC<HelmReleaseStatusDecoratorProps> = ({
   x,
   y,
 }) => {
-  const ref = React.useRef();
+  const ref = React.useRef<SVGGElement>(null);
   const { t } = useTranslation();
   const { data } = element.getData();
 
@@ -31,7 +31,7 @@ const HelmReleaseStatusDecorator: React.FC<HelmReleaseStatusDecoratorProps> = ({
 
   return (
     <Tooltip triggerRef={ref} content={label} position={TooltipPosition.left}>
-      <g ref={(ref as unknown) as React.RefObject<SVGGElement>}>
+      <g ref={ref}>
         <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={label}>
           <Status status={status} iconOnly noTooltip />
         </BuildDecoratorBubble>

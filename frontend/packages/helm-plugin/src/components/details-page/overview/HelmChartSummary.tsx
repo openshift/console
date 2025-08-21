@@ -14,7 +14,7 @@ import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-util
 
 interface HelmChartSummaryProps {
   obj: K8sResourceKind;
-  helmRelease: HelmRelease;
+  helmRelease?: HelmRelease;
 }
 
 const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease }) => {

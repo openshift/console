@@ -39,7 +39,7 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
         if (!destroyed) {
           setLoadError(undefined);
           setRevisionsLoaded(true);
-          setRevisions(items as HelmRelease[]);
+          setRevisions(items);
         }
       })
       .catch((err) => {

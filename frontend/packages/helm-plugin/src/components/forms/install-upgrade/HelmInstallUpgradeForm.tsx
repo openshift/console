@@ -33,7 +33,7 @@ export type HelmInstallUpgradeFormData = {
   chartReadme: string;
   appVersion: string;
   yamlData: string;
-  formData: any;
+  formData: Record<string, unknown>;
   formSchema: JSONSchema7;
   editorType: EditorType;
 };

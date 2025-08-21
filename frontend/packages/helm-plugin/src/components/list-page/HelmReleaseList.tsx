@@ -75,7 +75,7 @@ const HelmReleaseList: React.FC = () => {
         fetchHelmReleases(namespace || '', true)
           .then((helmReleases) => {
             if (!destroyed) {
-              setReleases((helmReleases as unknown) as HelmRelease[]);
+              setReleases(helmReleases);
               setReleasesLoaded(true);
               setLoadError(undefined);
             }

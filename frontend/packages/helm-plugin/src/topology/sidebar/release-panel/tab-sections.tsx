@@ -6,7 +6,6 @@ import { StatusBox } from '@console/internal/components/utils/status-box';
 import TopologyGroupResourcesPanel from '@console/topology/src/components/side-bar/TopologyGroupResourcesPanel';
 import { getResource } from '@console/topology/src/utils';
 import HelmReleaseOverview from '../../../components/details-page/overview/HelmReleaseOverview';
-import { HelmRelease } from '../../../types/helm-types';
 import { TYPE_HELM_RELEASE } from '../../components/const';
 import TopologyHelmReleaseNotesPanel from '../../TopologyHelmReleaseNotesPanel';
 
@@ -26,7 +25,7 @@ const HelmReleasePanelDetailsTabSection: React.FC<{ element: GraphElement }> = (
       <p>Status Box</p>
     </>
   ) : (
-    <HelmReleaseOverview obj={secret} customData={(undefined as unknown) as HelmRelease} />
+    <HelmReleaseOverview obj={secret} customData={undefined} />
   );
 };
 
@@ -57,7 +56,7 @@ export const useHelmReleasePanelResourceTabSection: DetailsTabSectionExtensionHo
     <div className="overview__sidebar-pane-body">
       <TopologyGroupResourcesPanel
         manifestResources={manifestResources}
-        releaseNamespace={namespace as string}
+        releaseNamespace={namespace || ''}
       />
     </div>
   );
