@@ -59,20 +59,20 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   const footer = (
     <StepFooter
       primaryButton={{
-        name: nextButtonText,
+        name: nextButtonText || '',
         onClick: () => {
           onNext && onNext();
         },
       }}
       secondaryButton={{
-        name: backButtonText,
+        name: backButtonText || '',
         onClick: () => {
           onBack && onBack();
         },
       }}
       step={step}
     >
-      {showStepBadge ? <StepBadge stepNumber={step} totalSteps={totalSteps} /> : null}
+      {showStepBadge ? <StepBadge stepNumber={step ?? 0} totalSteps={totalSteps ?? 0} /> : null}
     </StepFooter>
   );
   const stepContent = <StepContent>{content}</StepContent>;
@@ -89,7 +89,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
         open
         onClose={handleClose}
         trigger={selector}
-        uniqueId={step.toString()}
+        uniqueId={step?.toString() || ''}
         id="guided-tour-popover"
       >
         {stepContent}
