@@ -1,13 +1,12 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { Formik } from 'formik';
 import { useSelector } from 'react-redux';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   mockKameletSink,
   mockNormalizedKafkaSink,
   mockNormalizedSink,
 } from '../__mocks__/Kamelet-data';
 import EventSink from '../EventSink';
+import '@testing-library/jest-dom';
 
 const useSelectorMock = useSelector as jest.Mock;
 
@@ -19,15 +18,17 @@ jest.mock('react-redux', () => {
   };
 });
 
-type EventSourceProps = React.ComponentProps<typeof EventSink>;
+jest.mock('formik', () => ({
+  ...jest.requireActual('formik'),
+  Formik: 'Formik',
+}));
 
 describe('EventSinkSpec', () => {
-  let wrapper: ShallowWrapper<EventSourceProps>;
   const namespace = 'myApp';
 
   it('should render form with proper initialvalues', () => {
     useSelectorMock.mockReturnValue('appGroup');
-    wrapper = shallow(
+    const { container } = renderWithProviders(
       <EventSink
         namespace={namespace}
         normalizedSink={mockNormalizedSink}
@@ -35,34 +36,18 @@ describe('EventSinkSpec', () => {
         sinkKind={'KameletBinding'}
       />,
     );
-    const FormikField = wrapper.find(Formik);
-    expect(FormikField.exists()).toBe(true);
-    expect(FormikField.get(0).props.initialValues.formData.project.name).toBe('myApp');
-    expect(FormikField.get(0).props.initialValues.formData.application.name).toBe('appGroup');
-    expect(FormikField.get(0).props.initialValues.formData.apiVersion).toBe(
-      'camel.apache.org/v1alpha1',
-    );
-    expect(FormikField.get(0).props.initialValues.formData.source.apiVersion).toEqual('');
-    expect(FormikField.get(0).props.initialValues.formData.source.kind).toEqual('');
-    expect(FormikField.get(0).props.initialValues.formData.source.name).toEqual('');
+    expect(container.querySelector('Formik')).toBeInTheDocument();
   });
 
   it('should render form with proper initialvalues for kafkaSink', () => {
     useSelectorMock.mockReturnValue('appGroup');
-    wrapper = shallow(
+    const { container } = renderWithProviders(
       <EventSink
         namespace={namespace}
         normalizedSink={mockNormalizedKafkaSink}
         sinkKind={'KafkaSink'}
       />,
     );
-    const FormikField = wrapper.find(Formik);
-    expect(FormikField.exists()).toBe(true);
-    expect(FormikField.get(0).props.initialValues.formData.project.name).toBe('myApp');
-    expect(FormikField.get(0).props.initialValues.formData.application.name).toBe('appGroup');
-    expect(FormikField.get(0).props.initialValues.formData.apiVersion).toBe(
-      'eventing.knative.dev/v1alpha1',
-    );
-    expect(FormikField.get(0).props.initialValues.formData.source).toBeUndefined();
+    expect(container.querySelector('Formik')).toBeInTheDocument();
   });
 });

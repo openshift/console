@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import { TFunction } from 'i18next';
 import { Namespace, useTranslation, UseTranslationOptions } from 'react-i18next';
 import { isTranslatableString, getTranslationKey } from './extension-i18n';
@@ -11,7 +11,7 @@ import { isTranslatableString, getTranslationKey } from './extension-i18n';
 const useTranslationExt = (ns?: Namespace, options?: UseTranslationOptions) => {
   const result = useTranslation(ns, options);
   const { t } = result;
-  const cb: TFunction = React.useCallback(
+  const cb: TFunction = useCallback(
     (value: string) => (isTranslatableString(value) ? t(getTranslationKey(value)) : value),
     [t],
   );

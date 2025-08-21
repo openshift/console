@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CatalogItem,
@@ -18,7 +18,7 @@ const useBindableItemMetadataProvider: ExtensionHook<CatalogItemMetadataProvider
 
   const [t] = useTranslation();
 
-  const bindableMetadata = React.useRef<ReturnType<CatalogItemMetadataProviderFunction>>({
+  const bindableMetadata = useRef<ReturnType<CatalogItemMetadataProviderFunction>>({
     tags: ['bindable'],
     badges: [{ text: t('devconsole~Bindable') }],
     attributes: {
@@ -26,7 +26,7 @@ const useBindableItemMetadataProvider: ExtensionHook<CatalogItemMetadataProvider
     },
   });
 
-  const provider = React.useCallback<CatalogItemMetadataProviderFunction>(
+  const provider = useCallback<CatalogItemMetadataProviderFunction>(
     (item: CatalogItem) => {
       if (!loaded || !Array.isArray(bindableKinds?.status)) {
         return undefined;

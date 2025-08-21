@@ -60,7 +60,8 @@
       "SearchPage": "src/components/SearchPage.tsx",
       "ProjectSelectPage": "src/components/ProjectSelectPage.tsx",
       "NamespaceRedirect": "src/components/NamespaceRedirect.tsx",
-      "HPAPage": "src/components/hpa/HPAPage.tsx"
+      "HPAPage": "src/components/hpa/HPAPage.tsx",
+      "useDeveloperCatalogCategories": "src/components/catalog/providers/useDeveloperCatalogCategories.ts"
     }
   }
 }

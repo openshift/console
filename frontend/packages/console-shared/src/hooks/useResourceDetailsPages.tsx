@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import {
   ResourceDetailsPage as DynamicResourceDetailsPage,
   isResourceDetailsPage as isDynamicResourceDetailsPage,
@@ -11,7 +11,7 @@ export const useResourceDetailsPages = () => {
   const dynamicResourceDetailsPageExtensions = useExtensions<DynamicResourceDetailsPage>(
     isDynamicResourceDetailsPage,
   );
-  return React.useMemo(
+  return useMemo(
     () =>
       getResourceDetailsPages(resourceDetailsPageExtensions, dynamicResourceDetailsPageExtensions),
     [resourceDetailsPageExtensions, dynamicResourceDetailsPageExtensions],

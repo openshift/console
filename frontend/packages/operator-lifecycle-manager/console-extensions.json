@@ -52,7 +52,9 @@
     "properties": {
       "id": "operator-backed-panel-tab-section-details",
       "tab": "topology-side-bar-tab-details",
-      "provider": { "$codeRef": "topologySidebarDetailsSections.useOperatorBackedPanelDetailsSection" }
+      "provider": {
+        "$codeRef": "topologySidebarDetailsSections.useOperatorBackedPanelDetailsSection"
+      }
     }
   },
   {
@@ -60,14 +62,23 @@
     "properties": {
       "id": "operator-backed-panel-tab-section-resource",
       "tab": "topology-side-bar-tab-resource",
-      "provider": { "$codeRef": "topologySidebarResourceSections.useOperatorBackedPanelResourceSection" }
+      "provider": {
+        "$codeRef": "topologySidebarResourceSections.useOperatorBackedPanelResourceSection"
+      }
     }
   },
   {
     "type": "console.action/provider",
     "properties": {
-      "contextId": "csv-actions",
-      "provider": { "$codeRef": "csvActionsProvider.useDefaultCSVActions" }
+      "contextId": "operator-actions",
+      "provider": { "$codeRef": "useOperatorActions" }
+    }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "operand-actions",
+      "provider": { "$codeRef": "useDefaultOperandActions" }
     }
   },
   {
@@ -77,6 +88,93 @@
       "component": {
         "$codeRef": "install.OperatorInstallStatusPage"
       }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1alpha1",
+        "kind": "Subscription",
+        "group": "operators.coreos.com"
+      },
+      "provider": { "$codeRef": "subscriptionProvider.useSubscriptionActionsProvider" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/operatorhub",
+      "exact": true,
+      "component": {
+        "$codeRef": "CatalogRedirect"
+      }
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "operator",
+      "provider": { "$codeRef": "useOperatorCatalogItems" }
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "operator",
+      "title": "%olm~Operators%",
+      "catalogDescription": "%olm~Browse for Operators provided by Operator Lifecycle Manager.%",
+      "typeDescription": "%olm~**Operators** are software extensions to OpenShift that make use of custom resources to manage applications and their components. They are managed by Operator Lifecycle Manager.%",
+      "sortFilterGroups": false,
+      "filters": [
+        {
+          "label": "%olm~Source%",
+          "attribute": "source",
+          "comparator": {
+            "$codeRef": "filters.sourceComparator"
+          }
+        },
+        {
+          "label": "%olm~Installed%",
+          "attribute": "installState"
+        },
+        {
+          "label": "%olm~Provider%",
+          "attribute": "provider",
+          "comparator": {
+            "$codeRef": "filters.providerComparator"
+          }
+        },
+        {
+          "label": "%olm~Capability level%",
+          "attribute": "capabilities",
+          "comparator": {
+            "$codeRef": "filters.capabilityLevelComparator"
+          }
+        },
+        {
+          "label": "%olm~Infrastructure features%",
+          "attribute": "infrastructureFeatures",
+          "comparator": {
+            "$codeRef": "filters.infrastructureFeatureComparator"
+          }
+        },
+        {
+          "label": "%olm~Valid subscription%",
+          "attribute": "validSubscription",
+          "comparator": {
+            "$codeRef": "filters.validSubscriptionComparator"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "console.catalog/categories-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "provider": { "$codeRef": "useOperatorCatalogCategories" }
     }
   }
 ]

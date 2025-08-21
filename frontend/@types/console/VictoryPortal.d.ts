@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Component } from 'react';
 import { VictoryPortal } from 'victory-core';
 
 /**
@@ -6,5 +6,5 @@ import { VictoryPortal } from 'victory-core';
  * which is not compatible with the `./frontend` tsconfig
  **/
 declare module 'victory-core' {
-  export declare class VictoryPortal extends React.Component<VictoryPortalProps> {}
+  export declare class VictoryPortal extends Component<VictoryPortalProps> {}
 }

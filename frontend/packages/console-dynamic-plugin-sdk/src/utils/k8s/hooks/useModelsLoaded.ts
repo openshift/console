@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { K8sModel } from '../../../api/common-types';
 import { OpenShiftReduxRootState } from './k8s-watch-types';
@@ -10,7 +10,7 @@ import { OpenShiftReduxRootState } from './k8s-watch-types';
  * that uses this hook is mounted, this hook waits until this is resolved, too.
  */
 export const useModelsLoaded = (): boolean => {
-  const ref = React.useRef(false);
+  const ref = useRef(false);
   const loaded = useSelector<OpenShiftReduxRootState, K8sModel>(({ k8s }) =>
     k8s.getIn(['RESOURCES', 'loaded']),
   );

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import uniqBy from 'lodash-es/uniqBy';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
@@ -6,11 +6,11 @@ import { CAMEL_K_OPERATOR_NS, GLOBAL_OPERATOR_NS } from '../const';
 import { CamelKameletModel } from '../models';
 
 export const useKameletsData = (namespace: string): [K8sResourceKind[], boolean, any] => {
-  const [kamelets, setKamelets] = React.useState<K8sResourceKind[]>([]);
-  const [kameletsLoaded, setKameletsLoaded] = React.useState(false);
-  const [kameletsLoadError, setKameletsLoadError] = React.useState(null);
+  const [kamelets, setKamelets] = useState<K8sResourceKind[]>([]);
+  const [kameletsLoaded, setKameletsLoaded] = useState(false);
+  const [kameletsLoadError, setKameletsLoadError] = useState(null);
 
-  const watchedResources = React.useMemo(
+  const watchedResources = useMemo(
     () => ({
       kamelets: {
         isList: true,
@@ -38,7 +38,7 @@ export const useKameletsData = (namespace: string): [K8sResourceKind[], boolean,
     [key: string]: K8sResourceKind[];
   }>(watchedResources);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const resDataLoaded = Object.keys(extraResources).some((key) => extraResources[key].loaded);
     const resDataloadError = Object.keys(extraResources).every(
       (key) => extraResources[key].loadError,

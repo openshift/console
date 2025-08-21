@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useSelector } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
@@ -88,7 +88,7 @@ export const useTableData = ({
 
   const [isExactSearch] = useExactSearch();
 
-  const tableSelectorCreator = React.useMemo(
+  const tableSelectorCreator = useMemo(
     () =>
       createSelectorCreator(
         defaultMemoize as any,
@@ -99,7 +99,7 @@ export const useTableData = ({
 
   const listId = reduxIDs ? reduxIDs.join(',') : reduxID;
 
-  const sortSelector = React.useMemo(
+  const sortSelector = useMemo(
     () =>
       tableSelectorCreator(
         (state: RootState) => state.UI.getIn(['listSorts', listId]),
@@ -116,7 +116,7 @@ export const useTableData = ({
     sortSelector,
   );
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
     const data = getFilteredRows(allFilters, rowFilters, propData, isExactSearch);
 

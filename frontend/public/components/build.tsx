@@ -262,7 +262,7 @@ export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
   );
 };
 
-export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => {
+export const BuildsDetails: React.FCC<BuildsDetailsProps> = ({ obj: build }) => {
   const { logSnippet, message, startTimestamp, completionTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
   const hasPipeline = build.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
@@ -404,7 +404,7 @@ export const BuildEnvironmentComponent = (props) => {
   );
 };
 
-export const BuildsDetailsPage: React.SFC = (props) => {
+export const BuildsDetailsPage: React.FCC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
   return (
     <DetailsPage
@@ -461,7 +461,7 @@ const BuildsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => 
   );
 };
 
-export const BuildsList: React.SFC = (props) => {
+export const BuildsList: React.FCC = (props) => {
   const { t } = useTranslation();
   const BuildsTableHeader = () => {
     return [
@@ -521,7 +521,7 @@ export const buildPhase = (build) => build.status.phase;
 
 export const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
 
-export const BuildsPage: React.SFC<BuildsPageProps> = (props) => {
+export const BuildsPage: React.FCC<BuildsPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ListPage

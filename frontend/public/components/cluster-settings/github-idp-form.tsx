@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -15,15 +15,15 @@ import { IDPCAFileInput } from './idp-cafile-input';
 
 export const AddGitHubPage = () => {
   const navigate = useNavigate();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('github');
-  const [clientID, setClientID] = React.useState('');
-  const [clientSecret, setClientSecret] = React.useState('');
-  const [hostname, setHostname] = React.useState('');
-  const [organizations, setOrganizations] = React.useState([]);
-  const [teams, setTeams] = React.useState([]);
-  const [caFileContent, setCaFileContent] = React.useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('github');
+  const [clientID, setClientID] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+  const [hostname, setHostname] = useState('');
+  const [organizations, setOrganizations] = useState([]);
+  const [teams, setTeams] = useState([]);
+  const [caFileContent, setCaFileContent] = useState('');
 
   const { t } = useTranslation();
 

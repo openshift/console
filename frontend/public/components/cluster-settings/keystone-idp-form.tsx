@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -22,14 +22,14 @@ export const DroppableFileInput = (props: any) => (
 
 export const AddKeystonePage = () => {
   const navigate = useNavigate();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('keystone');
-  const [domainName, setDomainName] = React.useState('');
-  const [url, setUrl] = React.useState('');
-  const [caFileContent, setCaFileContent] = React.useState('');
-  const [certFileContent, setCertFileContent] = React.useState('');
-  const [keyFileContent, setKeyFileContent] = React.useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('keystone');
+  const [domainName, setDomainName] = useState('');
+  const [url, setUrl] = useState('');
+  const [caFileContent, setCaFileContent] = useState('');
+  const [certFileContent, setCertFileContent] = useState('');
+  const [keyFileContent, setKeyFileContent] = useState('');
 
   const { t } = useTranslation();
 

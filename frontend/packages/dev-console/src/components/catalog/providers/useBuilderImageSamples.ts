@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -67,7 +67,7 @@ const useBuilderImageSamples: ExtensionHook<CatalogItem[]> = ({ namespace }) => 
     resourceSelector,
   );
 
-  const normalizedBuilderImages = React.useMemo<CatalogItem[]>(() => {
+  const normalizedBuilderImages = useMemo<CatalogItem[]>(() => {
     const filteredImageStreams = imageStreams.filter((imageStream) => {
       const recentTag = getMostRecentBuilderTag(imageStream);
       const sampleRepo = recentTag?.annotations?.sampleRepo;

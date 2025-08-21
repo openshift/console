@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { isModalOpen } from '@console/internal/components/modals';
 import { KEYBOARD_SHORTCUTS } from '../constants/common';
 
@@ -20,8 +20,8 @@ const textInputKeyHandler = {
 export const useDocumentListener = <T extends HTMLElement>(
   keyEventMap: KeyEventMap = textInputKeyHandler,
 ) => {
-  const [visible, setVisible] = React.useState(true);
-  const ref = React.useRef<T>(null);
+  const [visible, setVisible] = useState(true);
+  const ref = useRef<T>(null);
 
   const handleEvent = (e) => {
     if (!ref?.current?.contains(e.target)) {
@@ -56,7 +56,7 @@ export const useDocumentListener = <T extends HTMLElement>(
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.addEventListener('click', handleEvent, true);
     document.addEventListener('keydown', handleKeyEvents, true);
     return () => {

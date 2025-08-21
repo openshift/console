@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
@@ -24,7 +24,7 @@ export const useStorageClassActions = (
     isList: true,
   });
 
-  const existingDefaultStorageClass = React.useMemo(
+  const existingDefaultStorageClass = useMemo(
     () =>
       storageClasses.find((sc) => sc.metadata?.annotations?.[defaultClassAnnotation] === 'true'),
     [storageClasses],
@@ -33,7 +33,7 @@ export const useStorageClassActions = (
   const isDefaultStorageClass =
     storageClass.metadata?.annotations?.[defaultClassAnnotation] === 'true';
 
-  const storageClassActions: Action[] = React.useMemo(
+  const storageClassActions: Action[] = useMemo(
     () => [
       {
         accessReview: asAccessReview(storageClassModel, storageClass, 'patch'),

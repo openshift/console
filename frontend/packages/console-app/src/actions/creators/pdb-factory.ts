@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { Action } from '@console/dynamic-plugin-sdk';
@@ -72,7 +72,7 @@ const getPDBActions = (
 export const usePDBActions = (kindObj: K8sKind, resource: K8sPodControllerKind) => {
   const namespace = resource?.metadata?.namespace;
 
-  const watchedResource = React.useMemo(
+  const watchedResource = useMemo(
     () => ({
       isList: true,
       groupVersionKind: {
@@ -90,7 +90,7 @@ export const usePDBActions = (kindObj: K8sKind, resource: K8sPodControllerKind) 
 
   const matchedPDB = getPDBResource(pdbResources, resource);
 
-  const result = React.useMemo(() => {
+  const result = useMemo(() => {
     return [getPDBActions(kindObj, resource, matchedPDB)];
   }, [kindObj, matchedPDB, resource]);
 

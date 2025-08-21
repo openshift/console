@@ -1,15 +1,25 @@
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import { FormikValues } from 'formik';
-import AppSection from '@console/dev-console/src/components/import/app/AppSection';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getDefaultEventingData } from '../../../../utils/__tests__/knative-serving-data';
 import { EventSources } from '../../import-types';
 import EventSourceSection from '../EventSourceSection';
-import SinkSection from '../SinkSection';
+import '@testing-library/jest-dom';
 
 const mockEventingData = getDefaultEventingData(EventSources.PingSource);
 
+jest.mock('@console/dev-console/src/components/import/app/AppSection', () => ({
+  __esModule: true,
+  default: 'AppSection',
+}));
+
+jest.mock('../SinkSection', () => ({
+  __esModule: true,
+  default: 'SinkSection',
+}));
+
 jest.mock('formik', () => ({
+  useField: jest.fn(() => [{}, {}]),
   useFormikContext: jest.fn(() => ({
     setFieldValue: jest.fn(),
     setFieldTouched: jest.fn(),
@@ -26,8 +36,8 @@ describe('EventSource Section', () => {
 
   it('should render SinkSection, AppSection for CronjobSource', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
-    const eventSourceSection = shallow(<EventSourceSection namespace={namespace} />);
-    expect(eventSourceSection.find(SinkSection)).toHaveLength(1);
-    expect(eventSourceSection.find(AppSection)).toHaveLength(1);
+    const { container } = render(<EventSourceSection namespace={namespace} />);
+    expect(container.querySelector('SinkSection')).toBeInTheDocument();
+    expect(container.querySelector('AppSection')).toBeInTheDocument();
   });
 });

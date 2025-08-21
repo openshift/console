@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback, useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -37,7 +37,7 @@ export const useBindingActions = (
   const { t } = useTranslation();
   const [model] = useK8sModel(referenceFor(obj));
   const dispatch = useDispatch();
-  const startImpersonate = React.useCallback(
+  const startImpersonate = useCallback(
     (kind, name) => dispatch(UIActions.startImpersonate(kind, name)),
     [dispatch],
   );
@@ -74,7 +74,7 @@ export const useBindingActions = (
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
-  const factory = React.useMemo(
+  const factory = useMemo(
     () => ({
       [BindingActionCreator.ImpersonateBindingSubject]: () => ({
         id: 'impersonate-binding',
@@ -135,7 +135,7 @@ export const useBindingActions = (
   );
 
   // filter and initialize requested actions or construct list of all BindingActions
-  const actions = React.useMemo<Action[]>(() => {
+  const actions = useMemo<Action[]>(() => {
     if (memoizedFilterActions) {
       return memoizedFilterActions.map((creator) => factory[creator]());
     }

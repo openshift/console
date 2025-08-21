@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import * as _ from 'lodash';
 import useMirroredLocalState, { UseMirroredLocalStateReturn } from './useMirroredLocalState';
 import { setOrRemoveQueryArgument } from './utils';
@@ -17,7 +17,7 @@ const useRowFilterFix = (
   filterKeys: { [key: string]: string },
   defaultSelections: string[],
 ): UseMirroredLocalStateReturn<string[]> => {
-  const syncRowFilterParams = React.useCallback(
+  const syncRowFilterParams = useCallback(
     (selected) => {
       _.forIn(filters, (value, key) => {
         const recognized = _.filter(selected, (item) => value.includes(item));

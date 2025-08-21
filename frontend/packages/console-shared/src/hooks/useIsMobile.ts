@@ -1,12 +1,12 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 
 const MAX_MOBILE_WIDTH = 767;
 const MOBILE_MEDIA_QUERY = `(max-width: ${MAX_MOBILE_WIDTH}px)`;
 
 export const useIsMobile = () => {
-  const [isMobile, setIsMobile] = React.useState<boolean>(window.innerWidth <= MAX_MOBILE_WIDTH);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= MAX_MOBILE_WIDTH);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const mobileResolutionMatch = window.matchMedia(MOBILE_MEDIA_QUERY);
 
     const updateIsMobile = (e) => {

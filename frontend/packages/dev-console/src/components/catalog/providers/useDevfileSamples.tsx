@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
@@ -49,10 +49,10 @@ const normalizeDevfileSamples = (
 const useDevfileSamples: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
-  const [devfileSamples, setDevfileSamples] = React.useState<DevfileSample[]>();
-  const [loadedError, setLoadedError] = React.useState<APIError>();
+  const [devfileSamples, setDevfileSamples] = useState<DevfileSample[]>();
+  const [loadedError, setLoadedError] = useState<APIError>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     let mounted = true;
     coFetchJSON('/api/devfile/samples/?registry=https://registry.devfile.io')
       .then((res) => {
@@ -67,7 +67,7 @@ const useDevfileSamples: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], bool
     };
   }, []);
 
-  const normalizedDevfileSamples = React.useMemo(
+  const normalizedDevfileSamples = useMemo(
     () => normalizeDevfileSamples(devfileSamples || [], activeNamespace, t),
     [activeNamespace, devfileSamples, t],
   );

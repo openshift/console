@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import {
   ALL_NAMESPACES_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
@@ -25,7 +25,7 @@ export const useActiveColumns = <D = any>({
   );
   const [namespace] = useActiveNamespace();
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     const activeColumnIDs: Set<string> =
       tableColumns?.[columnManagementID]?.length > 0
         ? new Set(tableColumns[columnManagementID])

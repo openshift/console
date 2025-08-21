@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback } from 'react';
 
 const isHTMLElement = (n: Node): n is HTMLElement => {
   return n.nodeType === Node.ELEMENT_NODE;
@@ -22,8 +22,8 @@ export const getParentScrollableElement = (node: HTMLElement) => {
 };
 
 export const useScrollContainer = (): [HTMLElement, (node: HTMLElement) => void] => {
-  const [scrollContainer, setScrollContainer] = React.useState<HTMLElement>(null);
-  const elementRef = React.useCallback((node: HTMLElement) => {
+  const [scrollContainer, setScrollContainer] = useState<HTMLElement>(null);
+  const elementRef = useCallback((node: HTMLElement) => {
     if (node === null) {
       setScrollContainer(null);
     }

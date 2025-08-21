@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
@@ -92,7 +92,7 @@ type DeploymentActionExtraResources = {
 export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
   const namespace = resource?.metadata?.namespace;
 
-  const watchedResources = React.useMemo(
+  const watchedResources = useMemo(
     () => ({
       hpas: {
         isList: true,
@@ -110,18 +110,18 @@ export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
     [namespace],
   );
   const extraResources = useK8sWatchResources<DeploymentActionExtraResources>(watchedResources);
-  const relatedHPAs = React.useMemo(() => extraResources.hpas.data.filter(doesHpaMatch(resource)), [
+  const relatedHPAs = useMemo(() => extraResources.hpas.data.filter(doesHpaMatch(resource)), [
     extraResources.hpas.data,
     resource,
   ]);
 
-  const supportsHPA = React.useMemo(
+  const supportsHPA = useMemo(
     () =>
       !(isHelmResource(resource) || isOperatorBackedService(resource, extraResources.csvs.data)),
     [extraResources.csvs.data, resource],
   );
 
-  const result = React.useMemo<[Action[], HorizontalPodAutoscalerKind[]]>(() => {
+  const result = useMemo<[Action[], HorizontalPodAutoscalerKind[]]>(() => {
     return [supportsHPA ? getHpaActions(kindObj, resource, relatedHPAs) : [], relatedHPAs];
   }, [kindObj, relatedHPAs, resource, supportsHPA]);
 

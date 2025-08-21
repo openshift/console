@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback } from 'react';
 import { Button, Alert, ContentVariants, Content } from '@patternfly/react-core';
 import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
@@ -30,12 +30,12 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('');
-  const [displayName, setDisplayName] = React.useState('');
-  const [description, setDescription] = React.useState('');
-  const hideStartGuide = React.useCallback(
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [description, setDescription] = useState('');
+  const hideStartGuide = useCallback(
     () => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, false)),
     [dispatch],
   );

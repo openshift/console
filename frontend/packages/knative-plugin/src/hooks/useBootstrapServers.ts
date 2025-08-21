@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
@@ -9,14 +9,12 @@ import { kafkaBootStrapServerResourcesWatcher } from '../utils/get-knative-resou
 
 export const useBootstrapServers = (namespace: string): [SelectInputOption[], string] => {
   const { t } = useTranslation();
-  const memoResources = React.useMemo(() => kafkaBootStrapServerResourcesWatcher(namespace), [
-    namespace,
-  ]);
+  const memoResources = useMemo(() => kafkaBootStrapServerResourcesWatcher(namespace), [namespace]);
   const { kafkas, kafkaconnections } = useK8sWatchResources<{
     [key: string]: K8sResourceKind[];
   }>(memoResources);
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     let bootstrapServersOptions: SelectInputOption[] = [];
     let placeholder: string = '';
     const isKafkasLoaded =

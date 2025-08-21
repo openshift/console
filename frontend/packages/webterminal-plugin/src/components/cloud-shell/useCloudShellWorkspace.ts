@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useMemo } from 'react';
 import { WatchK8sResource, WatchK8sResult, useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -34,7 +34,7 @@ const useCloudShellWorkspace = (
   const [noNamespaceFound, setNoNamespaceFound] = useSafetyFirst<boolean>(false);
 
   // sync defaultNamespace to namespace
-  React.useEffect(() => {
+  useEffect(() => {
     setNamespace(defaultNamespace);
     // a new namespace means we can start a new search
     defaultNamespace && setNoNamespaceFound(false);
@@ -49,7 +49,7 @@ const useCloudShellWorkspace = (
   const uid = user?.uid;
   const username = user?.username;
   const isKubeAdmin = !uid && username === 'kube:admin';
-  const resource = React.useMemo<WatchK8sResource>(() => {
+  const resource = useMemo<WatchK8sResource>(() => {
     if (loadingAccessReview || (!canListWorkspaces && !namespace)) {
       return undefined;
     }
@@ -100,7 +100,7 @@ const useCloudShellWorkspace = (
       !noNamespaceFound);
 
   // FIXME need to use a service account on the backend to find the workspace instead of inefficiently looping through namespaces
-  React.useEffect(() => {
+  useEffect(() => {
     let unmounted = false;
     if (searchNamespaces) {
       (async () => {

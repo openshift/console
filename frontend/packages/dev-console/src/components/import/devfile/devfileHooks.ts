@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON } from '@console/internal/co-fetch';
@@ -16,7 +16,6 @@ export const useDevfileServer = (
   const { t } = useTranslation();
   const [devfileParseError, setDevfileParseError] = React.useState<string | null>(null);
   const [parsingDevfile, setParsingDevfile] = React.useState<boolean>(false);
-
   const {
     name,
     git: { url, ref, dir, type, secretResource },
@@ -26,7 +25,7 @@ export const useDevfileServer = (
 
   const { devfileContent, devfilePath } = devfile || {};
 
-  const devfileDataPromise = React.useMemo(async () => {
+  const devfileDataPromise = useMemo(async () => {
     if (!name || !url || !devfileContent) {
       return null;
     }
@@ -47,7 +46,7 @@ export const useDevfileServer = (
     };
   }, [name, url, devfileContent, ref, dir, type, secretResource, smartSlashDir, devfilePath]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const setError = (msg) => {
       setDevfileParseError(msg);
       setFieldValue('devfile.devfileHasError', true);
@@ -129,7 +128,7 @@ export const useDevfileSource = () => {
     devfile,
   } = values;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (devfileSourceUrl && !devfile.devfileContent) {
       setFieldValue('devfile.devfileSourceUrl', devfileSourceUrl);
       setFieldValue('devfile.devfilePath', recommendedStrategy?.detectedFiles?.[0]);
@@ -156,9 +155,9 @@ export const useDevfileSource = () => {
 export const useSelectedDevfileSample = () => {
   const searchParams = new URLSearchParams(window.location.search);
   const devfileName = searchParams.get('devfileName');
-  const [devfileSamples, setDevfileSamples] = React.useState<DevfileSample[]>();
+  const [devfileSamples, setDevfileSamples] = useState<DevfileSample[]>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     let mounted = true;
     coFetchJSON('/api/devfile/samples/?registry=https://registry.devfile.io')
       .then((samples: DevfileSample[]) => {
@@ -173,7 +172,7 @@ export const useSelectedDevfileSample = () => {
     };
   }, []);
 
-  return React.useMemo(() => devfileSamples?.find((sample) => sample.name === devfileName), [
+  return useMemo(() => devfileSamples?.find((sample) => sample.name === devfileName), [
     devfileSamples,
     devfileName,
   ]);

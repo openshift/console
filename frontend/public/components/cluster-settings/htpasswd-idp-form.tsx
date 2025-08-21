@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -21,10 +21,10 @@ export const DroppableFileInput = (props: any) => (
 
 export const AddHTPasswdPage = () => {
   const navigate = useNavigate();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('htpasswd');
-  const [htpasswdFileContent, setHtpasswdFileContent] = React.useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('htpasswd');
+  const [htpasswdFileContent, setHtpasswdFileContent] = useState('');
 
   const { t } = useTranslation();
 

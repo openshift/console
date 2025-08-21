@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -66,18 +66,18 @@ const useTemplates: ExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
-  const [templates, setTemplates] = React.useState<PartialObjectMetadata[]>([]);
-  const [templatesLoaded, setTemplatesLoaded] = React.useState<boolean>(false);
-  const [templatesError, setTemplatesError] = React.useState<APIError>();
+  const [templates, setTemplates] = useState<PartialObjectMetadata[]>([]);
+  const [templatesLoaded, setTemplatesLoaded] = useState<boolean>(false);
+  const [templatesError, setTemplatesError] = useState<APIError>();
 
-  const [projectTemplates, setProjectTemplates] = React.useState<PartialObjectMetadata[]>([]);
-  const [projectTemplatesLoaded, setProjectTemplatesLoaded] = React.useState<boolean>(false);
-  const [projectTemplatesError, setProjectTemplatesError] = React.useState<APIError>();
+  const [projectTemplates, setProjectTemplates] = useState<PartialObjectMetadata[]>([]);
+  const [projectTemplatesLoaded, setProjectTemplatesLoaded] = useState<boolean>(false);
+  const [projectTemplatesError, setProjectTemplatesError] = useState<APIError>();
 
   // Load templates from the shared `openshift` namespace. Don't use Firehose
   // for templates so that we can request only metadata. This keeps the request
   // much smaller.
-  React.useEffect(() => {
+  useEffect(() => {
     k8sListPartialMetadata(TemplateModel, { ns: 'openshift' })
       .then((metadata) => {
         setTemplates(metadata ?? []);
@@ -88,7 +88,7 @@ const useTemplates: ExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
   }, []);
 
   // Load templates for the current project.
-  React.useEffect(() => {
+  useEffect(() => {
     // Don't load templates from the `openshift` namespace twice if it's the current namespace
     if (!namespace || namespace === 'openshift') {
       setProjectTemplates([]);
@@ -109,7 +109,7 @@ const useTemplates: ExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
 
   const error = templatesError || projectTemplatesError;
 
-  const normalizedTemplates = React.useMemo(
+  const normalizedTemplates = useMemo(
     () => normalizeTemplates([...templates, ...projectTemplates], namespace, t),
     [namespace, projectTemplates, t, templates],
   );

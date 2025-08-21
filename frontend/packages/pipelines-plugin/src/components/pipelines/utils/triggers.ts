@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { flatten, mapValues } from 'lodash';
 import {
   WatchK8sResource,
@@ -44,7 +44,7 @@ const useEventListenerRoutes = (
   namespace: string,
   eventListenerResources: EventListenerKind[],
 ): RouteMap => {
-  const memoResources: WatchK8sResources<RouteMap> = React.useMemo(() => {
+  const memoResources: WatchK8sResources<RouteMap> = useMemo(() => {
     return (eventListenerResources || []).map(getEventListenerGeneratedName).reduce(
       (acc, generatedName) => ({
         ...acc,
@@ -65,7 +65,7 @@ const useEventListenerRoutes = (
 };
 
 const useAllEventListeners = (namespace: string) => {
-  const eventListenerResource: WatchK8sResource = React.useMemo(
+  const eventListenerResource: WatchK8sResource = useMemo(
     () => ({
       kind: referenceForModel(EventListenerModel),
       isList: true,
@@ -91,7 +91,7 @@ export const usePipelineTriggerTemplateNames = (
 ): RouteTemplate[] | null => {
   const eventListenerResources = useAllEventListeners(namespace);
 
-  const triggerTemplateResources: WatchK8sResources<TriggerTemplateMapping> = React.useMemo(() => {
+  const triggerTemplateResources: WatchK8sResources<TriggerTemplateMapping> = useMemo(() => {
     if (!eventListenerResources) {
       return {};
     }

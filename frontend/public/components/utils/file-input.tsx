@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Component } from 'react';
 import { css } from '@patternfly/react-styles';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { DropTarget } from 'react-dnd';
@@ -13,7 +13,7 @@ import withDragDropContext from './drag-drop-context';
 // Maximal file size, in bytes, that user can upload
 const maxFileUploadSize = 4000000;
 
-class FileInputWithTranslation extends React.Component<FileInputProps, FileInputState> {
+class FileInputWithTranslation extends Component<FileInputProps, FileInputState> {
   constructor(props) {
     super(props);
     this.onDataChange = this.onDataChange.bind(this);
@@ -151,10 +151,7 @@ const FileInputComponent = DropTarget(NativeTypes.FILE, boxTarget, (connect, mon
 }))(FileInput);
 
 const DroppableFileInputWithTranslation = withDragDropContext(
-  class DroppableFileInput extends React.Component<
-    DroppableFileInputProps,
-    DroppableFileInputState
-  > {
+  class DroppableFileInput extends Component<DroppableFileInputProps, DroppableFileInputState> {
     constructor(props) {
       super(props);
       this.state = {

@@ -25,7 +25,9 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
   const channels = React.useMemo(() => packageManifest?.status.channels ?? [], [packageManifest]);
   const [isChannelSelectOpen, setIsChannelSelectOpen] = React.useState(false);
   const { setDeprecatedChannel } = useDeprecatedOperatorWarnings();
-  channels.sort((a, b) => -alphanumericCompare(a.name, b.name));
+
+  const selectedChannel =
+    selectedUpdateChannel || packageManifest?.status.defaultChannel || channels[0]?.name;
 
   const getChannelLabel = (ch) => (
     <>
@@ -39,26 +41,28 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
     </>
   );
 
-  const channelSelectOptions = channels.map((ch) => (
-    <SelectOption
-      key={ch.name}
-      id={ch.name}
-      value={ch.name}
-      data-test={`channel-option-${ch.name}`}
-    >
-      {getChannelLabel(ch)}
-    </SelectOption>
-  ));
+  const channelSelectOptions = channels
+    .sort((a, b) => -alphanumericCompare(a.name, b.name))
+    .map((ch) => (
+      <SelectOption
+        key={ch.name}
+        id={ch.name}
+        value={ch.name}
+        data-test={`channel-option-${ch.name}`}
+      >
+        {getChannelLabel(ch)}
+      </SelectOption>
+    ));
 
   React.useEffect(() => {
-    setQueryArgument('channel', selectedUpdateChannel);
+    setQueryArgument('channel', selectedChannel);
     setDeprecatedChannel(
       _.pick(
-        channels.find((f) => f.deprecation && f.name === selectedUpdateChannel),
+        channels.find((f) => f.deprecation && f.name === selectedChannel),
         'deprecation',
       ),
     );
-  }, [selectedUpdateChannel, channels, setDeprecatedChannel]);
+  }, [selectedChannel, channels, setDeprecatedChannel]);
 
   return (
     <>
@@ -82,7 +86,7 @@ export const OperatorChannelSelect: React.FC<OperatorChannelSelectProps> = ({
           setIsChannelSelectOpen(false);
           setUpdateVersion('');
         }}
-        selected={selectedUpdateChannel || '-'}
+        selected={selectedChannel || '-'}
         onOpenChange={(isOpen) => setIsChannelSelectOpen(isOpen)}
         isOpen={isChannelSelectOpen}
         isScrollable
