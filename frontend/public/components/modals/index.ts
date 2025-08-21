@@ -87,11 +87,6 @@ export const expandPVCModal = (props) =>
     m.expandPVCModal(props),
   );
 
-export const clonePVCModal = (props) =>
-  import(
-    '@console/app/src/components/modals/clone/clone-pvc-modal' /* webpackChunkName: "clone-pvc-modal" */
-  ).then((m) => m.default(props));
-
 export const removeVolumeModal = (props) =>
   import('./remove-volume-modal' /* webpackChunkName: "remove-volume-modal" */).then((m) =>
     m.removeVolumeModal(props),
@@ -126,11 +121,6 @@ export const removeUserModal = (props) =>
   import('./remove-user-modal' /* webpackChunkName: "remove-user-modal" */).then((m) =>
     m.removeUserModal(props),
   );
-
-export const restorePVCModal = (props) =>
-  import(
-    '@console/app/src/components/modals/restore-pvc/restore-pvc-modal' /* webpackChunkName: "restore-pvc-modal" */
-  ).then((m) => m.default(props));
 
 export const managedResourceSaveModal = (props) =>
   import(

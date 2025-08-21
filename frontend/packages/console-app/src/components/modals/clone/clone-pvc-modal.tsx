@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FormEvent, useCallback, useState } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -8,12 +8,14 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
   ModalBody,
   ModalComponentProps,
   ModalSubmitFooter,
   ModalTitle,
-  createModalLauncher,
+  ModalWrapper,
 } from '@console/internal/components/factory';
 import { DataPoint } from '@console/internal/components/graphs';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
@@ -48,7 +50,6 @@ import {
 import { isCephProvisioner } from '@console/shared';
 import { getName, getRequestedPVCSize, onlyPvcSCs } from '@console/shared/src/selectors';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
-
 import './_clone-pvc-modal.scss';
 
 const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
@@ -60,14 +61,14 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const defaultSize: string[] = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
   const pvcRequestedSize = humanizeBinaryBytes(baseValue).string;
 
-  const [clonePVCName, setClonePVCName] = React.useState(`${pvcName}-clone`);
-  const [requestedSize, setRequestedSize] = React.useState(defaultSize[0] || '');
-  const [cloneAccessMode, setCloneAccessMode] = React.useState(resource?.spec?.accessModes?.[0]);
-  const [requestedUnit, setRequestedUnit] = React.useState(defaultSize[1] || 'Ti');
-  const [validSize, setValidSize] = React.useState(true);
+  const [clonePVCName, setClonePVCName] = useState(`${pvcName}-clone`);
+  const [requestedSize, setRequestedSize] = useState(defaultSize[0] || '');
+  const [cloneAccessMode, setCloneAccessMode] = useState(resource?.spec?.accessModes?.[0]);
+  const [requestedUnit, setRequestedUnit] = useState(defaultSize[1] || 'Ti');
+  const [validSize, setValidSize] = useState(true);
   const pvcAccessMode = getPVCAccessModes(resource, 'title');
-  const [pvcSC, setPVCStorageClass] = React.useState('');
-  const [updatedProvisioner, setUpdatedProvisioner] = React.useState('');
+  const [pvcSC, setPVCStorageClass] = useState('');
+  const [updatedProvisioner, setUpdatedProvisioner] = useState('');
   const handleStorageClass = (updatedStorageClass: StorageClassResourceKind) => {
     setPVCStorageClass(getName(updatedStorageClass) || '');
     setUpdatedProvisioner(updatedStorageClass?.provisioner);
@@ -99,7 +100,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
     setValidSize(isValid);
   };
 
-  const submit = (event: React.FormEvent<EventTarget>) => {
+  const submit = (event: FormEvent<EventTarget>) => {
     event.preventDefault();
 
     const pvcCloneObj: PersistentVolumeClaimKind = {
@@ -274,4 +275,21 @@ export type ClonePVCModalProps = {
 } & HandlePromiseProps &
   ModalComponentProps;
 
-export default createModalLauncher(ClonePVCModal);
+export const ClonePVCModalProvider: OverlayComponent<ClonePVCModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <ClonePVCModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
+    </ModalWrapper>
+  );
+};
+
+export const useClonePVCModal = (props) => {
+  const launcher = useOverlay();
+  const { resourceKind, resource } = props;
+
+  return useCallback(
+    () => resourceKind && resource && launcher<ClonePVCModalProps>(ClonePVCModalProvider, props),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [launcher, resourceKind, resource],
+  );
+};
