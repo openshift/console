@@ -95,7 +95,7 @@ const getMachineConfigPoolUpdateStatus = (mcp: MachineConfigPoolKind) => {
   return null;
 };
 
-const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristicsProps> = ({
+const MachineConfigPoolCharacteristics: React.FCC<MachineConfigPoolCharacteristicsProps> = ({
   obj,
 }) => {
   const configuration = _.get(obj, 'status.configuration');
@@ -148,7 +148,7 @@ const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristi
   );
 };
 
-const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj }) => {
+const MachineConfigPoolCounts: React.FCC<MachineConfigPoolCountsProps> = ({ obj }) => {
   const { t } = useTranslation();
 
   return (
@@ -213,7 +213,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
   );
 };
 
-const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({ obj }) => {
+const MachineConfigPoolSummary: React.FCC<MachineConfigPoolSummaryProps> = ({ obj }) => {
   const machineConfigSelector = _.get(obj, 'spec.machineConfigSelector');
   const { t } = useTranslation();
   return (
@@ -228,7 +228,7 @@ const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({ ob
   );
 };
 
-const MachineConfigList: React.SFC<MachineConfigListProps> = ({ obj }) => (
+const MachineConfigList: React.FCC<MachineConfigListProps> = ({ obj }) => (
   <MachineConfigPage
     canCreate={false}
     showTitle={false}
@@ -236,7 +236,7 @@ const MachineConfigList: React.SFC<MachineConfigListProps> = ({ obj }) => (
   />
 );
 
-const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({ obj }) => {
+const MachineConfigPoolDetails: React.FCC<MachineConfigPoolDetailsProps> = ({ obj }) => {
   const paused = _.get(obj, 'spec.paused');
   const { t } = useTranslation();
   return (
@@ -292,7 +292,7 @@ const MachineConfigPoolUpdateStatus: React.FC<MachineConfigPoolUpdateStatusProps
   }
 };
 
-export const MachineConfigPoolDetailsPage: React.SFC<any> = (props) => (
+export const MachineConfigPoolDetailsPage: React.FCC<any> = (props) => (
   <DetailsPage
     {...props}
     kind={machineConfigPoolReference}
@@ -309,7 +309,7 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const MachineConfigPoolList: React.SFC<any> = (props) => {
+const MachineConfigPoolList: React.FCC<any> = (props) => {
   const { t } = useTranslation();
   const MachineConfigPoolTableHeader = () => {
     return [
@@ -388,7 +388,7 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
   );
 };
 
-export const MachineConfigPoolPage: React.SFC<any> = (props) => (
+export const MachineConfigPoolPage: React.FCC<any> = (props) => (
   <ListPage
     {...props}
     ListComponent={MachineConfigPoolList}

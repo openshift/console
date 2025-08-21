@@ -14,7 +14,7 @@ type Props = {
 const warning = 'perform a React state update on an unmounted component.';
 
 describe('When calling setter from `useState()` hook in an unsafe React component', () => {
-  const Unsafe: React.SFC<Props> = (props) => {
+  const Unsafe: React.FCC<Props> = (props) => {
     const [inFlight, setInFlight] = React.useState(true);
 
     const onClick = () => props.loader().then(() => setInFlight(false));
@@ -53,7 +53,7 @@ describe('useSafetyFirst', () => {
   let wrapper: ReactWrapper<Props>;
   let consoleErrorSpy: Spy;
 
-  const Safe: React.SFC<Props> = (props) => {
+  const Safe: React.FCC<Props> = (props) => {
     const [inFlight, setInFlight] = useSafetyFirst(true);
 
     const onClick = () => props.loader().then(() => setInFlight(false));

@@ -10,7 +10,7 @@ import { kindToAbbr } from '../../module/k8s/get-resources';
 
 const MEMO = {};
 
-export const ResourceIcon: React.SFC<ResourceIconProps> = ({
+export const ResourceIcon: React.FCC<ResourceIconProps> = ({
   className,
   groupVersionKind,
   kind,
@@ -50,7 +50,7 @@ export type ResourceNameProps = {
   name: string;
 };
 
-export const ResourceName: React.SFC<ResourceNameProps> = (props) => (
+export const ResourceName: React.FCC<ResourceNameProps> = (props) => (
   <span className="co-resource-item">
     <ResourceIcon kind={props.kind} />{' '}
     <span className="co-resource-item__resource-name">{props.name}</span>
