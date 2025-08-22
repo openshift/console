@@ -1,6 +1,6 @@
 import { forwardRef, useRef, useEffect, useCallback, useImperativeHandle } from 'react';
-import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
+import { FitAddon } from '@xterm/addon-fit';
+import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
 
 import './Terminal.scss';
 
@@ -8,8 +8,6 @@ const terminalOptions: ITerminalOptions = {
   fontFamily: 'Red Hat Mono, monospace',
   fontSize: 16,
   cursorBlink: false,
-  cols: 80,
-  rows: 25,
 };
 
 type TerminalProps = {
@@ -31,6 +29,9 @@ const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(({ onData, on
 
   useEffect(() => {
     const term: XTerminal = new XTerminal(terminalOptions);
+
+    term.resize(80, 25);
+
     const fitAddon = new FitAddon();
     term.open(terminalRef.current);
     term.loadAddon(fitAddon);
@@ -78,7 +79,7 @@ const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(({ onData, on
       if (!terminal.current) return;
       terminal.current.reset();
       terminal.current.clear();
-      terminal.current.setOption('disableStdin', false);
+      terminal.current.options.disableStdin = false;
     },
     onDataReceived: (data) => {
       terminal.current && terminal.current.write(data);
@@ -86,7 +87,7 @@ const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(({ onData, on
     onConnectionClosed: (msg) => {
       if (!terminal.current) return;
       terminal.current.write(`\x1b[31m${msg || 'disconnected'}\x1b[m\r\n`);
-      terminal.current.setOption('disableStdin', true);
+      terminal.current.options.disableStdin = true;
     },
     loadAttachAddon: (addOn: ITerminalAddon) => {
       if (!terminal.current) return;

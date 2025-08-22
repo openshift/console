@@ -8,11 +8,6 @@ export const webTerminalPage = {
 
   verifyWebTerminalWindow: () => cy.get(webTerminalPO.terminalWindow).should('be.visible'),
 
-  verifyConnectionRediness: () =>
-    cy
-      .get(webTerminalPO.terminalWindowWithEnabledMouseEvent, { timeout: 200000 })
-      .should('be.visible'),
-
   verifyOpenInNewTabButton: () => {
     cy.get(webTerminalPO.terminalOpenInNewTabBtn).should('be.visible');
   },
