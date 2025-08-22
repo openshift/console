@@ -8,14 +8,11 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory';
-import {
-  withHandlePromise,
-  HandlePromiseProps,
-  LoadingBox,
-} from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import {
   NODE_STATUS_UNDER_MAINTENANCE,
   HOST_STATUS_READY,
@@ -34,7 +31,7 @@ type PowerOffWarning = {
   restart?: boolean;
 };
 
-export const PowerOffWarning: React.FC<PowerOffWarning> = ({ restart }) => {
+export const PowerOffWarning = ({ restart }: PowerOffWarning) => {
   const { t } = useTranslation();
   return (
     <Alert
@@ -170,65 +167,68 @@ export type PowerOffHostModalProps = {
   close?: () => void;
 };
 
-const PowerOffHostModal = withHandlePromise<PowerOffHostModalProps & HandlePromiseProps>(
-  ({ host, nodeName, status, inProgress, errorMessage, handlePromise, close, cancel }) => {
-    const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>({
-      kind: PodModel.kind,
-      namespaced: false,
-      isList: true,
-      fieldSelector: `spec.nodeName=${nodeName}`,
-    });
-    const { t } = useTranslation();
-    const [maintenanceModel] = useMaintenanceCapability();
-    const [forceOff, setForceOff] = React.useState(false);
+const PowerOffHostModal = ({ host, nodeName, status, close, cancel }: PowerOffHostModalProps) => {
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
+  const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>({
+    kind: PodModel.kind,
+    namespaced: false,
+    isList: true,
+    fieldSelector: `spec.nodeName=${nodeName}`,
+  });
+  const { t } = useTranslation();
+  const [maintenanceModel] = useMaintenanceCapability();
+  const [forceOff, setForceOff] = React.useState(false);
 
-    const submit = (event) => {
-      event.preventDefault();
-      const promise = powerOffHost(host);
-      return handlePromise(promise, close);
-    };
+  const submit = (event): void => {
+    event.preventDefault();
+    const promise = powerOffHost(host);
+    handlePromise(promise)
+      .then(() => {
+        close();
+      })
+      .catch(() => {});
+  };
 
-    const canPowerOffSafely = !loadError && isPowerOffSafe(status.status);
+  const canPowerOffSafely = !loadError && isPowerOffSafe(status.status);
 
-    const isUnderMaintenance = status.status === NODE_STATUS_UNDER_MAINTENANCE;
-    return (
-      <form onSubmit={submit} name="form" className="modal-content">
-        <ModalTitle>{t('metal3-plugin~Power Off Host')}</ModalTitle>
-        <ModalBody>
-          {!loaded ? (
-            <LoadingBox />
-          ) : canPowerOffSafely ? (
-            isUnderMaintenance ? (
-              t(
-                'metal3-plugin~Host is ready to be gracefully powered off. The host is currently under maintenance and {{message}}',
-                { message: getPowerOffMessage(t, pods) },
-              )
-            ) : (
-              t('metal3-plugin~Host is ready to be gracefully powered off.')
+  const isUnderMaintenance = status.status === NODE_STATUS_UNDER_MAINTENANCE;
+  return (
+    <form onSubmit={submit} name="form" className="modal-content">
+      <ModalTitle>{t('metal3-plugin~Power Off Host')}</ModalTitle>
+      <ModalBody>
+        {!loaded ? (
+          <LoadingBox />
+        ) : canPowerOffSafely ? (
+          isUnderMaintenance ? (
+            t(
+              'metal3-plugin~Host is ready to be gracefully powered off. The host is currently under maintenance and {{message}}',
+              { message: getPowerOffMessage(t, pods) },
             )
           ) : (
-            <ForcePowerOffDialog
-              forceOff={forceOff}
-              setForceOff={setForceOff}
-              canStartMaintenance={!isUnderMaintenance && nodeName && !!maintenanceModel}
-              nodeName={nodeName}
-              status={status}
-              pods={pods}
-              loadError={loadError}
-              cancel={cancel}
-            />
-          )}
-        </ModalBody>
-        <ModalSubmitFooter
-          cancel={cancel}
-          errorMessage={errorMessage}
-          inProgress={inProgress}
-          submitDisabled={!canPowerOffSafely && !forceOff}
-          submitText={t('metal3-plugin~Power Off')}
-        />
-      </form>
-    );
-  },
-);
+            t('metal3-plugin~Host is ready to be gracefully powered off.')
+          )
+        ) : (
+          <ForcePowerOffDialog
+            forceOff={forceOff}
+            setForceOff={setForceOff}
+            canStartMaintenance={!isUnderMaintenance && nodeName && !!maintenanceModel}
+            nodeName={nodeName}
+            status={status}
+            pods={pods}
+            loadError={loadError}
+            cancel={cancel}
+          />
+        )}
+      </ModalBody>
+      <ModalSubmitFooter
+        cancel={cancel}
+        errorMessage={errorMessage}
+        inProgress={inProgress}
+        submitDisabled={!canPowerOffSafely && !forceOff}
+        submitText={t('metal3-plugin~Power Off')}
+      />
+    </form>
+  );
+};
 
 export const powerOffHostModal = createModalLauncher(PowerOffHostModal);
