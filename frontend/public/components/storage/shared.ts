@@ -149,8 +149,9 @@ export const getVolumeModeRadios = () => [
   },
 ];
 
+// Link to the Kubernetes documentation for supported units in PVC resource request storage:
+// https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
 export const dropdownUnits = {
-  i: 'B',
   Ki: 'KiB',
   Mi: 'MiB',
   Gi: 'GiB',
