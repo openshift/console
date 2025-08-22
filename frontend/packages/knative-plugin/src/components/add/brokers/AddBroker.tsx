@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
@@ -24,6 +25,7 @@ const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication })
   const perspectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const initialValues: AddBrokerFormYamlValues = addBrokerInitialValues(
     namespace,
     selectedApplication,
@@ -56,7 +58,7 @@ const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication })
   ) => {
     return createResources(values, actions)
       .then(() => {
-        handleRedirect(values.formData.project.name, perspective, perspectiveExtension);
+        handleRedirect(values.formData.project.name, perspective, perspectiveExtension, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -67,7 +69,7 @@ const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication })
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validationSchema={brokerValidationSchema(t)}
     >
       {(formikProps) => <AddBrokerForm {...formikProps} namespace={namespace} />}

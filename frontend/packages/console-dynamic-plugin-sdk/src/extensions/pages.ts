@@ -16,24 +16,30 @@ type ResourcePageProperties = {
 };
 
 type RoutePageProperties = {
-  /** The perspective to which this page belongs to. If not specified, contributes to all perspectives. */
+  /** The perspective to which this page belongs to. If not specified, applies to all perspectives. */
   perspective?: string;
   /** The component to be rendered when the route matches. */
   component: CodeRef<React.ComponentType>;
-  /** Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. */
+  /** Valid URL path or array of paths. Note that React Router v6 does not use path-to-regexp. */
   path: string | string[];
-  /** When true, will only match if the path matches the `location.pathname` exactly. */
+  /** When true, will only match if the path matches the URL exactly. */
   exact?: boolean;
 };
 
 /**
- * Adds new page to Console router.
+ * Adds new page to Console router. Under the hood we use React Router v6.
  *
- * Under the hood we use React Router.
- * See https://v5.reactrouter.com/
+ * Note that React Router v6 no longer supports passing a string array to the Route `path` prop.
+ * In Console, we retain this functionality by rendering multiple Route instances. Make sure to
+ * use `exact: true` or sort your Route path values from most specific to least specific.
  *
- * Note: This extension should not be used for resource list and details page. For adding both list and details page for a resource use the
- * [console.navigation/resource-ns](#consolenavigationresource-ns) extension, instead, which renders elementary fields.
+ * Also note that React Router v6 no longer supports Route `exact` prop - all paths are matched
+ * exactly by default. In Console, we retain the original behavior for backwards compatibility,
+ * i.e. use `exact: true` unless you want to match more of the URL.
+ *
+ * This extension should not be used for resource list and details page. For adding both list
+ * and details page for a resource use the `console.navigation/resource-ns` extension instead,
+ * which renders elementary fields.
  */
 export type RoutePage = ExtensionDeclaration<'console.page/route', RoutePageProperties>;
 

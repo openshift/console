@@ -2,11 +2,12 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { clonePVCModal, expandPVCModal } from '@console/internal/components/modals';
+import { expandPVCModal } from '@console/internal/components/modals';
 import deletePVCModal from '@console/internal/components/modals/delete-pvc-modal';
 import { asAccessReview } from '@console/internal/components/utils';
 import { VolumeSnapshotModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { useClonePVCModal } from '../../components/modals/clone/clone-pvc-modal';
 import { PVCActionCreator } from './types';
 
 /**
@@ -34,7 +35,9 @@ export const usePVCActions = (
   filterActions?: PVCActionCreator[],
 ): Action[] => {
   const { t } = useTranslation();
-
+  const clonePVCModalLauncher = useClonePVCModal({
+    resource: obj,
+  });
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
   const factory = useMemo(
@@ -64,11 +67,7 @@ export const usePVCActions = (
         label: t('console-app~Clone PVC'),
         disabled: obj?.status?.phase !== 'Bound',
         tooltip: obj?.status?.phase !== 'Bound' ? t('console-app~PVC is not Bound') : '',
-        cta: () =>
-          clonePVCModal({
-            kind: PersistentVolumeClaimModel,
-            resource: obj,
-          }),
+        cta: () => clonePVCModalLauncher(),
         accessReview: asAccessReview(PersistentVolumeClaimModel, obj, 'create'),
       }),
       [PVCActionCreator.DeletePVC]: () => ({
@@ -81,7 +80,7 @@ export const usePVCActions = (
         accessReview: asAccessReview(PersistentVolumeClaimModel, obj, 'delete'),
       }),
     }),
-    [t, obj],
+    [t, obj, clonePVCModalLauncher],
   );
 
   // filter and initialize requested actions or construct list of all PVCActions

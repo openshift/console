@@ -8,7 +8,7 @@ import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import {
   FLAGS,
   ALL_NAMESPACES_KEY,

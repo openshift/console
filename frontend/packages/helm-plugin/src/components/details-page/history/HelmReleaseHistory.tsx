@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import { StatusBox } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { CustomResourceList, useDeepCompareMemoize } from '@console/shared';

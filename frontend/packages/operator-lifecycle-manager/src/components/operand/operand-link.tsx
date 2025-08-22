@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '../../models';

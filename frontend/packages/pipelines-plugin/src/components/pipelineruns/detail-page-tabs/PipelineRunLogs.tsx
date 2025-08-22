@@ -3,7 +3,7 @@ import { Nav, NavItem, NavItemSeparator, NavList } from '@patternfly/react-core'
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom-v5-compat';
+import { Link, useLocation } from 'react-router-dom';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { PipelineRunModel } from '../../../models';

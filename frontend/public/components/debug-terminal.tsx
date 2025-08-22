@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router-dom';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LoadingBox, ConnectedPageHeading } from '@console/internal/components/utils';

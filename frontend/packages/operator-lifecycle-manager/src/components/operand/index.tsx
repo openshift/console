@@ -6,7 +6,7 @@ import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { ListPageBody, K8sModel } from '@console/dynamic-plugin-sdk';
 import { getResources } from '@console/internal/actions/k8s';
 import { Conditions } from '@console/internal/components/conditions';

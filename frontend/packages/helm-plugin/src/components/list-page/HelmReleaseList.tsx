@@ -7,7 +7,7 @@ import {
 } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router-dom';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';

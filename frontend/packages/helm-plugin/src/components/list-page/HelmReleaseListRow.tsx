@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceIcon, ResourceLink } from '@console/internal/components/utils';
 import { LazyActionMenu, Status } from '@console/shared';

@@ -2,7 +2,7 @@ import { Alert, Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { safeDump } from 'js-yaml';
 import * as _ from 'lodash';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
@@ -29,8 +29,8 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

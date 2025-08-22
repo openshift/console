@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { useEventSinkStatus } from '../../../hooks/useEventSinkStatus';
 import {
   mockKameletSink,
@@ -13,8 +13,8 @@ jest.mock('../../../hooks/useEventSinkStatus', () => ({
   useEventSinkStatus: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

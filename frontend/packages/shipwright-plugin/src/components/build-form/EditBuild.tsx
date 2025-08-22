@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { history, resourcePathFromModel } from '@console/internal/components/utils';
+import { useNavigate } from 'react-router-dom';
+import { resourcePathFromModel } from '@console/internal/components/utils';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
@@ -29,6 +30,7 @@ const EditBuild: React.FC<EditBuildProps> = ({ heading, build: watchedBuild, nam
     values.formReloadCount = 0;
     return values;
   });
+  const navigate = useNavigate();
 
   const handleSubmit = async (
     values: BuildFormikValues,
@@ -64,7 +66,7 @@ const EditBuild: React.FC<EditBuildProps> = ({ heading, build: watchedBuild, nam
         ? await k8sCreate<Build>(BuildModel, changedBuild)
         : await k8sUpdate<Build>(BuildModel, changedBuild, namespace, name);
 
-      history.push(
+      navigate(
         resourcePathFromModel(
           BuildModel,
           updatedBuildConfig.metadata.name,
@@ -76,7 +78,7 @@ const EditBuild: React.FC<EditBuildProps> = ({ heading, build: watchedBuild, nam
     }
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => navigate(-1);
 
   return (
     <Formik

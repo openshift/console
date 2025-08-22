@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { restorePVCModal } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils';
 import { VolumeSnapshotModel } from '@console/internal/models';
 import { VolumeSnapshotKind } from '@console/internal/module/k8s';
+import { useRestorePVCModal } from '../../components/modals/restore-pvc/restore-pvc-modal';
 import { VolumeSnapshotActionCreator } from './types';
 
 /**
@@ -32,6 +32,9 @@ export const useVolumeSnapshotActions = (
   filterActions?: VolumeSnapshotActionCreator[],
 ): Action[] => {
   const { t } = useTranslation();
+  const restorePVCModalLauncher = useRestorePVCModal({
+    resource,
+  });
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
@@ -42,15 +45,11 @@ export const useVolumeSnapshotActions = (
         label: t('console-app~Restore as new PVC'),
         disabled: !resource?.status?.readyToUse,
         tooltip: !resource?.status?.readyToUse ? t('console-app~Volume Snapshot is not Ready') : '',
-        cta: () =>
-          restorePVCModal({
-            kind: VolumeSnapshotModel,
-            resource,
-          }),
+        cta: () => restorePVCModalLauncher(),
         accessReview: asAccessReview(VolumeSnapshotModel, resource, 'create'),
       }),
     }),
-    [t, resource],
+    [t, resource, restorePVCModalLauncher],
   );
 
   const actions = useMemo<Action[]>(() => {

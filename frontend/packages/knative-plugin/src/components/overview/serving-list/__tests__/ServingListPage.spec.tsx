@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import ServingListPage from '../ServingListsPage';
 import '@testing-library/jest-dom';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

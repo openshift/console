@@ -1,5 +1,5 @@
 import { configure, render, screen } from '@testing-library/react';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import UploadJarPage from '../UploadJarPage';
 import '@testing-library/jest-dom';
@@ -40,8 +40,34 @@ jest.mock('../UploadJar', () => ({
   default: () => 'UploadJar',
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('@console/shared/src/components/heading/PageHeading', () => ({
+  PageHeading: (props) => `PageHeading title="${props.title}" helpText="${props.helpText}"`,
+}));
+
+jest.mock('@console/shared/src/components/document-title/DocumentTitle', () => ({
+  DocumentTitle: (props) => props.children,
+}));
+
+jest.mock('../../../NamespacedPage', () => ({
+  __esModule: true,
+  default: (props) => props.children,
+  NamespacedPageVariants: {
+    light: 'light',
+  },
+}));
+
+jest.mock('../../../QueryFocusApplication', () => ({
+  __esModule: true,
+  default: (props) => props.children && props.children('test-app'),
+}));
+
+jest.mock('../UploadJar', () => ({
+  __esModule: true,
+  default: () => 'UploadJar',
+}));
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

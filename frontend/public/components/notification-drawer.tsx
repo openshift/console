@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useDispatch } from 'react-redux';
-import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import {
   isNotLoadedDynamicPluginInfo,
   useDynamicPluginInfo,
@@ -249,6 +249,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
   const launchModal = useModal();
+  const navigate = useNavigate();
   const alertIds = React.useMemo(() => alerts?.map((alert) => alert.rule.name) || [], [alerts]);
   const [alertActionExtensions] = useResolvedExtensions<AlertAction>(
     React.useCallback(
@@ -260,7 +261,6 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   const toggleNotificationDrawer = () => {
     dispatch(UIActions.notificationDrawerToggleExpanded());
   };
-  const navigate = useNavigate();
   const itemOnClick = (location: string) => {
     toggleNotificationDrawer();
     navigate(location);

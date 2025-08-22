@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { screen, render, configure } from '@testing-library/react';
+import * as Router from 'react-router-dom';
 import { BrowserRouter } from 'react-router-dom';
-import * as Router from 'react-router-dom-v5-compat';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { mockHelmReleases } from '../../__tests__/helm-release-mock-data';
 import HelmReleaseDetails, { LoadedHelmReleaseDetails } from '../HelmReleaseDetails';
@@ -11,8 +11,8 @@ let loadedHelmReleaseDetailsProps: React.ComponentProps<typeof LoadedHelmRelease
 
 configure({ testIdAttribute: 'data-test' });
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(() => ({ pathname: '', location: '' })),
   useNavigate: jest.fn(),

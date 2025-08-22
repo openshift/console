@@ -33,7 +33,7 @@ const PacForm: React.FC<{ namespace: string }> = ({ namespace }) => {
       <Formik
         initialValues={{ applicationName: PAC_GH_APP_NAME, manifestData }}
         onSubmit={() => {}}
-        onReset={history.goBack}
+        onReset={() => history.go(-1)}
         validateOnBlur={false}
         validateOnChange={false}
         validationSchema={pacValidationSchema(t)}

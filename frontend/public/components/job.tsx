@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -61,6 +61,7 @@ const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
   const resourceKind = referenceFor(job);
   const context = { [resourceKind]: job };
   const { t } = useTranslation();
+
   return (
     <>
       <TableData className={tableColumnClasses[0]}>

@@ -13,8 +13,7 @@ import {
   Tr,
 } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { Link, useLocation } from 'react-router-dom';
 import { useAccessReview, WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import {
   getGroupVersionKindForModel,

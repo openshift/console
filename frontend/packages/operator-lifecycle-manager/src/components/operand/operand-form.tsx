@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   history,
@@ -30,6 +30,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
 }) => {
   const [errors, setErrors] = React.useState<string[]>([]);
   const params = useParams();
+  const navigate = useNavigate();
   const postFormCallback = usePostFormSubmitAction<K8sResourceKind>();
   const processFormData = ({ metadata, ...rest }) => {
     const data = {
@@ -45,7 +46,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
   const handleSubmit = ({ formData: submitFormData }) => {
     k8sCreate(model, processFormData(submitFormData))
       .then((res) => postFormCallback(res))
-      .then(() => next && history.push(next))
+      .then(() => next && navigate(next))
       .catch((e) => setErrors([e.message]));
   };
 
@@ -59,7 +60,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
         ),
       );
     } else {
-      history.goBack();
+      history.go(-1);
     }
   };
 

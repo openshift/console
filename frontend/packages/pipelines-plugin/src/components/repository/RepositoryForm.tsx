@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { history } from '@console/internal/components/utils';
+import { useNavigate } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { FormFooter, FlexForm, FormBody, useActiveNamespace } from '@console/shared';
 import { RepositoryModel } from '../../models';
@@ -24,10 +24,11 @@ export const RepositoryForm: React.FC<RepositoryFormProps> = ({
   errors,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [namespace] = useActiveNamespace();
   const { showOverviewPage } = values;
   const onClose = () => {
-    history.push(`/k8s/ns/${namespace}/${referenceForModel(RepositoryModel)}/${values.name}`);
+    navigate(`/k8s/ns/${namespace}/${referenceForModel(RepositoryModel)}/${values.name}`);
   };
   return (
     <FlexForm onSubmit={handleSubmit} className="opp-repository-form">

@@ -11,7 +11,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link, LinkProps } from 'react-router-dom-v5-compat';
+import { useParams, Link, LinkProps } from 'react-router-dom';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';

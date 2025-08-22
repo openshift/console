@@ -44,7 +44,7 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
     return k8sUpdate(modelFor(referenceFor(resource.data)), updatedResource)
       .then(() => {
         actions.setStatus({ error: '' });
-        history.goBack();
+        history.go(-1);
       })
       .catch((err) => {
         actions.setStatus({ errors: err });
@@ -67,7 +67,7 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
         healthChecks: healthChecksProbesValidationSchema(t),
       })}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
     >
       {(formikProps) => (
         <AddHealthChecks

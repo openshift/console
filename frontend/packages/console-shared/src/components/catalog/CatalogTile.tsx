@@ -6,8 +6,8 @@ import {
 import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { history } from '@console/internal/components/utils';
 import { isModifiedEvent } from '../../utils';
 import CatalogBadges from './CatalogBadges';
 import { getIconProps } from './utils/catalog-utils';
@@ -24,6 +24,7 @@ type CatalogTileProps = {
 
 const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { uid, name, title, provider, description, type, typeLabel, badges } = item;
   const vendor = provider ? t('console-shared~Provided by {{provider}}', { provider }) : null;
   const catalogType = _.find(catalogTypes, ['value', type]);
@@ -45,7 +46,7 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, 
         if (onClick) {
           onClick(item);
         } else if (href) {
-          history.push(href);
+          navigate(href);
         }
       }}
       href={href}

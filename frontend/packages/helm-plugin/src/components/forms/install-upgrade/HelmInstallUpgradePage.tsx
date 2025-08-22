@@ -4,7 +4,7 @@ import { safeDump, safeLoad } from 'js-yaml';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -57,6 +57,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const [chartReadme, setChartReadme] = React.useState<string>('');
   const [chartHasValues, setChartHasValues] = React.useState<boolean>(false);
   const [chartError, setChartError] = React.useState<Error>(null);
+  const navigate = useNavigate();
 
   const [initialYamlData, setInitialYamlData] = React.useState<string>('');
   const [initialFormData, setInitialFormData] = React.useState<object>();
@@ -202,7 +203,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
           redirect = `/helm-releases/ns/${namespace}/release/${releaseName}`;
         }
 
-        history.push(redirect);
+        navigate(redirect);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -236,7 +237,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={() => history.go(-1)}
         validationSchema={getHelmActionValidationSchema(helmAction, t)}
       >
         {(formikProps) => (

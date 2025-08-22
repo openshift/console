@@ -19,7 +19,7 @@ import {
 import { getPipelineRunData } from '../components/pipelines/modals/common/utils';
 import { getTaskRunsOfPipelineRun } from '../components/taskruns/useTaskRuns';
 import { RESOURCE_LOADED_FROM_RESULTS_ANNOTATION } from '../const';
-import { EventListenerModel, PipelineModel, PipelineRunModel, TaskRunModel } from '../models';
+import { EventListenerModel, PipelineModel, PipelineRunModel } from '../models';
 import { PipelineKind, PipelineRunKind, TaskRunKind } from '../types';
 import {
   shouldHidePipelineRunStop,
@@ -28,9 +28,9 @@ import {
   shouldHidePipelineRunStopForTaskRunStatus,
   shouldHidePipelineRunCancelForTaskRunStatus,
 } from './pipeline-augment';
-import { getSbomTaskRun, returnValidPipelineRunModel } from './pipeline-utils';
+import { returnValidPipelineRunModel } from './pipeline-utils';
 
-export const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
+const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
   history.push(
     resourcePathFromModel(
       PipelineRunModel,
@@ -384,26 +384,27 @@ export const cancelPipelineRunFinallyForTaskRunStatus: KebabAction = (
   };
 };
 
-export const viewPipelineRunSBOM: KebabAction = (
-  kind: K8sKind,
-  pipelineRun: PipelineRunKind,
-  taskRuns: TaskRunKind[],
-) => {
-  const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, pipelineRun?.metadata?.name);
-  const sbomTaskRun = getSbomTaskRun(PLRTasks);
+// COMMENTED OUT - DEAD CODE
+// export const viewPipelineRunSBOM: KebabAction = (
+//   kind: K8sKind,
+//   pipelineRun: PipelineRunKind,
+//   taskRuns: TaskRunKind[],
+// ) => {
+//   const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, pipelineRun?.metadata?.name);
+//   const sbomTaskRun = getSbomTaskRun(PLRTasks);
 
-  return {
-    labelKey: 'pipelines-plugin~View SBOM',
-    callback: () => {
-      history.push(
-        `/k8s/ns/${sbomTaskRun.metadata.namespace}/${referenceForModel(TaskRunModel)}/${
-          sbomTaskRun.metadata.name
-        }/logs`,
-      );
-    },
-    hidden: !sbomTaskRun,
-  };
-};
+//   return {
+//     labelKey: 'pipelines-plugin~View SBOM',
+//     callback: () => {
+//       history.push(
+//         `/k8s/ns/${sbomTaskRun.metadata.namespace}/${referenceForModel(TaskRunModel)}/${
+//           sbomTaskRun.metadata.name
+//         }/logs`,
+//       );
+//     },
+//     hidden: !sbomTaskRun,
+//   };
+// };
 
 const addTrigger: KebabAction = (kind: K8sKind, pipeline: PipelineKind) => ({
   // t('pipelines-plugin~Add Trigger')

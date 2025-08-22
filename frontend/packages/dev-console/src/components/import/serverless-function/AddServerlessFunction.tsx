@@ -3,6 +3,7 @@ import { ValidatedOptions } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   useActivePerspective,
   WatchK8sResults,
@@ -52,6 +53,7 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
   const fireTelemetryEvent = useTelemetry();
+  const navigate = useNavigate();
   const application = forApplication || '';
   const activeApplication = application !== ALL_APPLICATIONS_KEY ? application : '';
   const initialBaseValues: BaseFormData = getBaseInitialValues(namespace, activeApplication);
@@ -171,6 +173,7 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
           projectName,
           perspective,
           perspectiveExtensions,
+          navigate,
           new URLSearchParams({ selectId }),
         );
       })
@@ -184,7 +187,7 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
     <Formik
       initialValues={initialVals}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validationSchema={validationSchema(t)}
     >
       {(formikProps) => (

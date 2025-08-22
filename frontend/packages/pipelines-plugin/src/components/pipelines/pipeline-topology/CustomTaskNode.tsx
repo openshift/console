@@ -6,7 +6,7 @@ import { t_color_gray_50 as customTaskColor } from '@patternfly/react-tokens';
 import { observer, Node, NodeModel, useHover, createSvgIdUrl } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import {
   K8sResourceKind,
   WatchK8sResults,

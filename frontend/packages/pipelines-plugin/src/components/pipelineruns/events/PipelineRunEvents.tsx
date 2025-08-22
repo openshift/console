@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import { ResourcesEventStream } from '@console/internal/components/events';
 import { PipelineRunKind } from '../../../types';
 import { usePipelineRunFilters } from './event-utils';

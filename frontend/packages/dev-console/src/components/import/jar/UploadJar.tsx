@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { WatchK8sResultsObject, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -40,6 +41,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
+  const navigate = useNavigate();
   const application = forApplication || '';
   const activeApplication = application !== ALL_APPLICATIONS_KEY ? application : '';
   const { name: imageName, recentTag: tag } = builderImage || {};
@@ -89,6 +91,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
           projectName,
           perspective,
           perspectiveExtensions,
+          navigate,
           new URLSearchParams({
             selectId: filterDeployedResources(resp)[0]?.metadata?.uid,
           }),
@@ -103,7 +106,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validationSchema={validationSchema(t)}
     >
       {(formikProps) => (

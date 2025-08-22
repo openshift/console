@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
-import { history } from '@console/internal/components/utils';
+import { useNavigate, useParams } from 'react-router-dom';
 import { defaultRepositoryFormValues } from './consts';
 import { usePacInfo } from './hooks/pac-hook';
 import {
@@ -15,6 +14,7 @@ import { RepositoryFormValues } from './types';
 
 const RepositoryFormPage: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [pac, loaded] = usePacInfo();
 
   const { ns } = useParams();
@@ -41,7 +41,7 @@ const RepositoryFormPage: React.FC = () => {
     <Formik
       initialValues={defaultRepositoryFormValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => navigate(-1)}
       validationSchema={repositoryValidationSchema(t)}
     >
       {(formikProps) => <RepositoryForm {...formikProps} />}

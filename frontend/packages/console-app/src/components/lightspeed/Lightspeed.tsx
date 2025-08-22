@@ -11,9 +11,9 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useHideLightspeed } from '@console/app/src/components/user-preferences/lightspeed/useHideLightspeed';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { history } from '@console/internal/components/utils';
 import { ConsolePluginModel } from '@console/internal/models';
 import { FLAGS, useTelemetry } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -40,6 +40,7 @@ export const lightspeedOperatorURL =
 
 const Lightspeed: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [hideLightspeed] = useHideLightspeed();
   const [isReady, setIsReady] = React.useState(false);
   const [lightspeedIsInstalled, setLightspeedIsInstalled] = React.useState(false);
@@ -65,12 +66,12 @@ const Lightspeed: React.FC = () => {
   };
   const onInstallClick = () => {
     setIsOpen(false);
-    history.push(lightspeedOperatorURL);
+    navigate(lightspeedOperatorURL);
     fireTelemetryEvent('Console capability LightspeedButton Get started button clicked');
   };
   const onDismissClick = () => {
     setIsOpen(false);
-    history.push(
+    navigate(
       '/user-preferences/general?spotlight=[data-test="console.hideLightspeedButton%20field"]',
     );
   };

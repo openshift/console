@@ -2,8 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
-import { NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
-
+import { NavigateFunction, useNavigate } from 'react-router-dom';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import * as UIActions from '../actions/ui';
 import { GroupModel, UserModel } from '../models';

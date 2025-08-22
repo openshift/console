@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { Alert } from '@console/dynamic-plugin-sdk';
 import { sortEvents } from '@console/internal/components/events';
 import { FirehoseResult, LoadingBox } from '@console/internal/components/utils';

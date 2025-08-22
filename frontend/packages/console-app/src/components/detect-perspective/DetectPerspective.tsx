@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 import { Perspective, PerspectiveContext } from '@console/dynamic-plugin-sdk';
 import { usePerspectives } from '@console/shared/src';
 import PerspectiveDetector from './PerspectiveDetector';

@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux';
-import { Link, BrowserRouter } from 'react-router-dom-v5-compat';
+import { Link, BrowserRouter } from 'react-router-dom';
 import { mount, shallow } from 'enzyme';
 
 import { FLAGS } from '@console/shared';

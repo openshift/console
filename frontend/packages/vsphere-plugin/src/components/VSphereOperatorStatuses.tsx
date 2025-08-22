@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-tokens';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import {
   StatusPopupItem,
   StatusPopupSection,

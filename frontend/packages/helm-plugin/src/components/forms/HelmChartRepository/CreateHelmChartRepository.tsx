@@ -3,10 +3,11 @@ import { Formik, FormikHelpers } from 'formik';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { HELM_CHART_CATALOG_TYPE_ID } from '@console/helm-plugin/src/const';
 import { ErrorPage404 } from '@console/internal/components/error';
-import { history, StatusBox } from '@console/internal/components/utils';
+import { StatusBox, history } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   K8sResourceKindReference,
@@ -45,6 +46,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
   const [namespace] = useActiveNamespace();
   const fireTelemetryEvent = useTelemetry();
   const isHelmEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
+  const navigate = useNavigate();
   const [hcr, hcrLoaded, hcrLoadError] = useK8sWatchResource<HelmChartRepositoryType>(
     isEditForm
       ? {
@@ -146,7 +148,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
             hcr: HelmChartRepositoryRes.kind,
           }),
         });
-        history.push(redirectURL);
+        navigate(redirectURL);
       })
       .catch((err) => {
         actions.setStatus({
@@ -156,7 +158,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
       });
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => history.go(-1);
 
   if (isEditForm && hcrLoaded && !hcr) {
     return <ErrorPage404 />;

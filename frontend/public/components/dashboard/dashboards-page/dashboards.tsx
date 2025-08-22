@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';

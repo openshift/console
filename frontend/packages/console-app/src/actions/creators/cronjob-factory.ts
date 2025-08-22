@@ -1,5 +1,6 @@
 import i18next from 'i18next';
-import { history, resourceObjPath } from '@console/internal/components/utils';
+import { NavigateFunction } from 'react-router';
+import { resourceObjPath } from '@console/internal/components/utils';
 import { JobModel } from '@console/internal/models';
 import {
   K8sKind,
@@ -8,6 +9,7 @@ import {
   JobKind,
   referenceFor,
   K8sResourceCommon,
+  K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { ResourceActionFactory } from './types';
 
@@ -38,17 +40,20 @@ const startJob = (obj: CronJobKind): Promise<JobKind> => {
 };
 
 export const CronJobActionFactory: ResourceActionFactory = {
-  StartJob: (kind: K8sKind, obj: CronJobKind) => ({
+  StartJob: (
+    kind: K8sKind,
+    obj: CronJobKind,
+    opts?: {
+      message?: JSX.Element;
+      navigate?: NavigateFunction;
+      relatedResource?: K8sResourceKind;
+    },
+  ) => ({
     id: 'start-job',
     label: i18next.t('console-app~Start Job'),
     cta: () => {
       startJob(obj)
-        .then((job) => {
-          const path = resourceObjPath(job, referenceFor(job));
-          if (path) {
-            history.push(path);
-          }
-        })
+        .then((job) => opts?.navigate?.(resourceObjPath(job, referenceFor(job))))
         .catch((error) => {
           // TODO: Show error in notification in the follow on tech-debt.
           // eslint-disable-next-line no-console

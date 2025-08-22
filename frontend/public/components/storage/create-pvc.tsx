@@ -1,8 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
-
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { isObjectSC } from '@console/shared/src/utils';

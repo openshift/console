@@ -2,7 +2,7 @@ import { configure, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ConnectedPageHeading } from '../../../public/components/utils/headings';
 import { testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
-import { MemoryRouter } from 'react-router-dom-v5-compat';
+import { MemoryRouter } from 'react-router-dom';
 
 configure({ testIdAttribute: 'data-test' });
 

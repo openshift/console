@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
@@ -27,7 +28,6 @@ import {
   ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import {
-  history,
   LinkifyExternal,
   ResourceLink,
   resourceListPathFromModel,
@@ -71,6 +71,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   subscription,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [
     handleOperatorUninstallPromise,
     operatorUninstallInProgress,
@@ -239,9 +240,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       window.location.pathname.split('/').includes(subscription.metadata.name) ||
       window.location.pathname.split('/').includes(subscription?.status?.installedCSV)
     ) {
-      history.push(resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()));
+      navigate(resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()));
     }
-  }, [close, subscription]);
+  }, [close, subscription, navigate]);
 
   React.useEffect(() => {
     if (isSubmitFinished && !hasSubmitErrors) {

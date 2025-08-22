@@ -132,6 +132,7 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
 export const LabelsModal: React.FC<LabelsModalProps> = (props) => (
   <BaseLabelsModal path={LABELS_PATH} {...props} />
 );
+
 export const labelsModalLauncher = createModalLauncher<LabelsModalProps>(LabelsModal);
 
 export const podSelectorModal = createModalLauncher<PodSelectorModalProps>((props) => {
@@ -167,7 +168,9 @@ type BaseLabelsModalProps = {
   path: string;
   resource: K8sResourceKind;
 } & ModalComponentProps;
+
 export type LabelsModalProps = Omit<BaseLabelsModalProps, 'path'>;
+
 type PodSelectorModalProps = Omit<
   BaseLabelsModalProps,
   'descriptionKey' | 'isPodSelector' | 'labelClassName' | 'messageKey' | 'messageVariables' | 'path'

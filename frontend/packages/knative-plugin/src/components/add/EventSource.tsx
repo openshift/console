@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
 import {
@@ -67,6 +68,7 @@ export const EventSource: React.FC<Props> = ({
   const perpectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   let sourceData = {};
   let selApiVersion = '';
   let selSourceName = '';
@@ -161,7 +163,7 @@ export const EventSource: React.FC<Props> = ({
 
     return eventSrcRequest
       .then(() => {
-        handleRedirect(projectName, perspective, perpectiveExtension);
+        handleRedirect(projectName, perspective, perpectiveExtension, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -172,7 +174,7 @@ export const EventSource: React.FC<Props> = ({
     <Formik
       initialValues={catalogInitialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validateOnBlur={false}
       validateOnChange={false}
       validationSchema={eventSourceValidationSchema(t)}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
+import { NavigateFunction } from 'react-router-dom';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import NamespaceBarApplicationSelector from '@console/topology/src/components/dropdowns/NamespaceBarApplicationSelector';
 
@@ -14,7 +15,7 @@ export interface NamespacedPageProps {
   disabled?: boolean;
   hideProjects?: boolean;
   hideApplications?: boolean;
-  onNamespaceChange?: (newNamespace: string) => void;
+  onNamespaceChange?: (newNamespace: string, navigate: NavigateFunction) => void;
   variant?: NamespacedPageVariants;
   toolbar?: React.ReactNode;
 }

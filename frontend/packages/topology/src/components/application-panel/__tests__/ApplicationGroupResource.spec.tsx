@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom-v5-compat';
+import { MemoryRouter } from 'react-router-dom';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import ApplicationGroupResource from '../ApplicationGroupResource';
 import '@testing-library/jest-dom';

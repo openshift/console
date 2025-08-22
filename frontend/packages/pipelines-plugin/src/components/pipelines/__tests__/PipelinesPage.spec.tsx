@@ -1,11 +1,11 @@
 import { shallow } from 'enzyme';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { PipelinesPage } from '../PipelinesPage';
 import PipelinesResourceList from '../PipelinesResourceList';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

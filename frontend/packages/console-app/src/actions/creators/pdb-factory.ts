@@ -41,7 +41,7 @@ const PodDisruptionBudgetActionFactory: ResourceActionFactory = {
   DeletePDB: (
     kindObj: K8sKind,
     obj: K8sPodControllerKind,
-    matchedPDB: PodDisruptionBudgetKind,
+    opts: { relatedResource: PodDisruptionBudgetKind },
   ): Action => ({
     id: 'delete-pdb',
     label: i18next.t('console-app~Remove PodDisruptionBudget'),
@@ -49,7 +49,7 @@ const PodDisruptionBudgetActionFactory: ResourceActionFactory = {
     cta: () => {
       deletePDBModal({
         workloadName: obj.metadata?.name || '',
-        pdb: matchedPDB,
+        pdb: opts.relatedResource,
       });
     },
     accessReview: asAccessReview(kindObj, obj, 'delete'),
@@ -62,10 +62,10 @@ const getPDBActions = (
   matchedPDB: PodDisruptionBudgetKind,
 ): Action[] => {
   if (_.isEmpty(matchedPDB)) return [PodDisruptionBudgetActionFactory.AddPDB(kind, obj)];
-
+  const opts = { relatedResource: matchedPDB };
   return [
     PodDisruptionBudgetActionFactory.EditPDB(kind, obj),
-    PodDisruptionBudgetActionFactory.DeletePDB(kind, obj, matchedPDB),
+    PodDisruptionBudgetActionFactory.DeletePDB(kind, obj, opts),
   ];
 };
 

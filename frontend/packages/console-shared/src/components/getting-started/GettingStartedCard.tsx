@@ -13,7 +13,7 @@ import {
   Icon,
 } from '@patternfly/react-core';
 import { ArrowRightIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';

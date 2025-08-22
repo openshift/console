@@ -1,5 +1,5 @@
 import { shallow } from 'enzyme';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 import { usePerspectives } from '@console/shared/src';
 import DetectPerspective from '../DetectPerspective';
 import PerspectiveDetector from '../PerspectiveDetector';
@@ -15,7 +15,7 @@ jest.mock('@console/shared/src', () => ({
   usePerspectives: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
+jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
 }));
 

@@ -9,7 +9,7 @@ import { StatusBox } from '..';
 
 configure({ testIdAttribute: 'data-test' });
 
-jest.mock('react-router-dom-v5-compat', () => ({
+jest.mock('react-router-dom', () => ({
   useNavigate: jest.fn(),
 }));
 

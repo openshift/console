@@ -4,14 +4,7 @@ import * as _ from 'lodash-es';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import {
-  Routes,
-  Route,
-  useParams,
-  Navigate,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom-v5-compat';
+import { Routes, Route, useParams, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import {
   HorizontalNavTab as DynamicResourceNavTab,
   isHorizontalNavTab as DynamicIsResourceNavTab,
