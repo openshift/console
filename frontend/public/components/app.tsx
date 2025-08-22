@@ -154,10 +154,10 @@ const App = (props) => {
   );
 
   useEffect(() => {
-    const lightspeedButtonCapability = window.SERVER_FLAGS?.capabilities?.find(
+    const lightspeedButtonCapability = window.SERVER_FLAGS.capabilities?.find(
       (capability) => capability.name === 'LightspeedButton',
     );
-    const gettingStartedBannerCapability = window.SERVER_FLAGS?.capabilities?.find(
+    const gettingStartedBannerCapability = window.SERVER_FLAGS.capabilities?.find(
       (capability) => capability.name === 'GettingStartedBanner',
     );
     dispatch(
