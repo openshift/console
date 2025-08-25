@@ -61,7 +61,7 @@ const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
       </ModalBody>
       <ModalSubmitFooter
         submitText={t('public~Disable')}
-        cancel={cancel}
+        cancel={cancel as any}
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitDanger

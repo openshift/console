@@ -104,7 +104,7 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
           errorMessage={errorMessage}
           inProgress={inProgress}
           submitText={t('public~Save')}
-          cancel={cancel}
+          cancel={cancel as any}
         />
       </div>
     </Form>
