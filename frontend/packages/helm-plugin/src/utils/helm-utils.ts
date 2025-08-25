@@ -105,17 +105,17 @@ export const getChartURL = (
   chartVersion: string,
   chartRepoName: string,
 ): string => {
-  const chartData: HelmChartMetaData = helmChartData.find(
+  const chartData: HelmChartMetaData | undefined = helmChartData.find(
     (obj) => obj.version === chartVersion && obj.repoName === chartRepoName,
   );
-  return chartData?.urls[0];
+  return chartData?.urls[0] as string;
 };
 
 export const getChartRepositoryTitle = (
   chartRepositories: K8sResourceKind[],
   chartRepoName: string,
 ) => {
-  const chartRepository = chartRepositories?.find((repo) => repo.metadata.name === chartRepoName);
+  const chartRepository = chartRepositories?.find((repo) => repo.metadata?.name === chartRepoName);
   if (chartRepository?.spec?.name) {
     return chartRepository.spec.name;
   }
@@ -146,10 +146,13 @@ export const getChartEntriesByName = (
   providerName?: string,
 ): HelmChartMetaData[] => {
   if (chartName && chartRepoName) {
-    const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
+    const chartRepositoryTitle = getChartRepositoryTitle(
+      chartRepositories as K8sResourceKind[],
+      chartRepoName,
+    );
     const indexEntry = getChartIndexEntry(chartEntries, chartName, chartRepoName);
     return (
-      chartEntries?.[indexEntry]?.map((e) => ({
+      chartEntries?.[indexEntry as string]?.map((e) => ({
         ...e,
         repoName: chartRepositoryTitle,
       })) ?? []
@@ -159,7 +162,10 @@ export const getChartEntriesByName = (
     chartEntries,
     (acc, charts, key) => {
       const repoName = key.split('--').pop();
-      const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, repoName);
+      const chartRepositoryTitle = getChartRepositoryTitle(
+        chartRepositories as K8sResourceKind[],
+        repoName as string,
+      );
       charts.forEach((chart: HelmChartMetaData) => {
         if (
           chart.name === chartName ||
@@ -168,12 +174,12 @@ export const getChartEntriesByName = (
             chart?.annotations?.[CHART_NAME_ANNOTATION] === annotatedName &&
             chart?.annotations?.[PROVIDER_NAME_ANNOTATION] === providerName)
         ) {
-          acc.push({ ...chart, repoName: chartRepositoryTitle });
+          acc.push({ ...chart, repoName: chartRepositoryTitle as string });
         }
       });
       return acc;
     },
-    [],
+    [] as HelmChartMetaData[],
   );
   return entries;
 };
@@ -202,7 +208,7 @@ export const getChartVersions = (chartEntries: HelmChartMetaData[], t: TFunction
     (obj, chart) => {
       obj[`${chart.version}--${chart.repoName}`] = concatVersions(
         chart.version,
-        chart.appVersion,
+        chart.appVersion as string,
         t,
         chart.repoName,
       );
@@ -253,8 +259,8 @@ export const getHelmActionConfig = (
           ),
         },
         helmReleaseApi: `/api/helm/chart?url=${encodeURIComponent(
-          chartURL,
-        )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartIndexEntry)}`,
+          chartURL as string,
+        )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartIndexEntry as string)}`,
         fetch: coFetchJSON.post,
         redirectURL: getOriginRedirectURL(HelmActionOrigins.topology, namespace, releaseName),
       };
@@ -272,7 +278,7 @@ export const getHelmActionConfig = (
         },
         helmReleaseApi: `/api/helm/release?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.put,
-        redirectURL: getOriginRedirectURL(actionOrigin, namespace, releaseName),
+        redirectURL: getOriginRedirectURL(actionOrigin as string, namespace, releaseName),
       };
 
     case HelmActionType.Rollback:
@@ -282,7 +288,7 @@ export const getHelmActionConfig = (
         subTitle: ``,
         helmReleaseApi: `/api/helm/release/history?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.patch,
-        redirectURL: getOriginRedirectURL(actionOrigin, namespace, releaseName),
+        redirectURL: getOriginRedirectURL(actionOrigin as string, namespace, releaseName),
       };
     default:
       return undefined;
@@ -292,10 +298,10 @@ export const getHelmActionConfig = (
 export const flattenReleaseResources: Flatten = (resources) =>
   Object.keys(resources).reduce((acc, kind) => {
     if (!_.isEmpty(resources[kind].data)) {
-      acc.push(resources[kind].data);
+      acc.push((resources[kind].data as unknown) as K8sResourceKind);
     }
     return acc;
-  }, []);
+  }, [] as K8sResourceKind[]);
 
 export const getChartValuesYAML = (chart: HelmChart): string => {
   const orderedValuesFile = chart?.files?.find((file) => file.name === 'ordered-values.yaml');

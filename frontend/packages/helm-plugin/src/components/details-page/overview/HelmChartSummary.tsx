@@ -14,7 +14,7 @@ import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-util
 
 interface HelmChartSummaryProps {
   obj: K8sResourceKind;
-  helmRelease: HelmRelease;
+  helmRelease?: HelmRelease;
 }
 
 const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease }) => {
@@ -28,11 +28,7 @@ const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease })
     info: { last_deployed: updated },
   } = helmRelease;
 
-  const {
-    metadata: {
-      labels: { version: revision },
-    },
-  } = obj;
+  const revision = obj?.metadata?.labels?.version;
 
   return (
     <DescriptionList>

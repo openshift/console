@@ -48,7 +48,7 @@ export const useHelmReleasePanelResourceTabSection: DetailsTabSectionExtensionHo
   const { manifestResources } = element.getData().data;
   const resource = getResource(element);
   if (!manifestResources || !resource?.metadata) {
-    return [null, true, undefined];
+    return [undefined, true, undefined];
   }
   const { namespace } = resource.metadata;
 
@@ -56,7 +56,7 @@ export const useHelmReleasePanelResourceTabSection: DetailsTabSectionExtensionHo
     <div className="overview__sidebar-pane-body">
       <TopologyGroupResourcesPanel
         manifestResources={manifestResources}
-        releaseNamespace={namespace}
+        releaseNamespace={namespace || ''}
       />
     </div>
   );

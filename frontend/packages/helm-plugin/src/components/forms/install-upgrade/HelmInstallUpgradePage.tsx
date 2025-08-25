@@ -20,7 +20,6 @@ import {
   HelmActionType,
   HelmChart,
   HelmRelease,
-  HelmActionConfigType,
   HelmActionOrigins,
 } from '../../../types/helm-types';
 import {
@@ -47,16 +46,21 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const initialReleaseName = params.releaseName || '';
   const helmChartName = searchParams.get('chartName');
   const helmChartRepoName = searchParams.get('chartRepoName');
-  const helmActionOrigin = searchParams.get('actionOrigin') as HelmActionOrigins;
+  const helmActionOriginParam = searchParams.get('actionOrigin');
+  const helmActionOrigin =
+    helmActionOriginParam &&
+    Object.values(HelmActionOrigins).includes(helmActionOriginParam as HelmActionOrigins)
+      ? (helmActionOriginParam as HelmActionOrigins)
+      : undefined;
 
   const { t } = useTranslation();
-  const [chartData, setChartData] = React.useState<HelmChart>(null);
+  const [chartData, setChartData] = React.useState<HelmChart | null>(null);
   const [chartName, setChartName] = React.useState<string>('');
   const [chartVersion, setChartVersion] = React.useState<string>('');
   const [appVersion, setAppVersion] = React.useState<string>('');
   const [chartReadme, setChartReadme] = React.useState<string>('');
   const [chartHasValues, setChartHasValues] = React.useState<boolean>(false);
-  const [chartError, setChartError] = React.useState<Error>(null);
+  const [chartError, setChartError] = React.useState<Error | null>(null);
 
   const [initialYamlData, setInitialYamlData] = React.useState<string>('');
   const [initialFormData, setInitialFormData] = React.useState<object>();
@@ -65,16 +69,16 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
     ? HelmActionType.Create
     : HelmActionType.Upgrade;
 
-  const config = React.useMemo<HelmActionConfigType>(
+  const config = React.useMemo(
     () =>
       getHelmActionConfig(
         helmAction,
         initialReleaseName,
-        namespace,
+        namespace || '',
         t,
         helmActionOrigin,
-        initialChartURL,
-        indexEntry,
+        initialChartURL || '',
+        indexEntry || '',
       ),
     [helmAction, helmActionOrigin, indexEntry, initialChartURL, initialReleaseName, namespace, t],
   );
@@ -84,9 +88,9 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
 
     const fetchHelmChart = async () => {
       let res;
-      let error: Error = null;
+      let error: Error | null = null;
       try {
-        res = await coFetchJSON(config.helmReleaseApi);
+        res = await coFetchJSON(config?.helmReleaseApi || '');
       } catch (e) {
         error = e;
       }
@@ -102,7 +106,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
       setInitialFormSchema(valuesSchema);
       setChartName(chart?.metadata.name);
       setChartVersion(chart?.metadata.version);
-      setAppVersion(chart?.metadata.appVersion);
+      setAppVersion(chart?.metadata.appVersion || '');
       setChartReadme(getChartReadme(chart));
       setChartHasValues(!!valuesYAML);
       setChartData(chart);
@@ -114,20 +118,20 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
     return () => {
       ignore = true;
     };
-  }, [config.helmReleaseApi, helmAction]);
+  }, [config?.helmReleaseApi, helmAction]);
 
   const initialValues: HelmInstallUpgradeFormData = {
     releaseName: initialReleaseName || helmChartName || '',
-    chartURL: initialChartURL,
-    chartIndexEntry: indexEntry,
+    chartURL: initialChartURL || '',
+    chartIndexEntry: indexEntry || '',
     chartName,
     chartRepoName: helmChartRepoName || '',
     appVersion,
     chartVersion,
     chartReadme,
     yamlData: initialYamlData,
-    formData: initialFormData,
-    formSchema: initialFormSchema,
+    formData: initialFormData as Record<string, unknown>,
+    formSchema: initialFormSchema || {},
     editorType: initialFormSchema ? EditorType.Form : EditorType.YAML,
   };
 
@@ -181,16 +185,16 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
     };
 
     return config
-      .fetch('/api/helm/release/async', payload, null, -1)
+      ?.fetch('/api/helm/release/async', payload, undefined, -1)
       .then(async (res?: { metadata?: { uid?: string } }) => {
-        let redirect = config.redirectURL;
-        let helmRelease: HelmRelease;
+        let redirect = config?.redirectURL || '';
+        let helmRelease: HelmRelease | null = null;
         try {
-          helmRelease = await fetchHelmRelease(namespace, releaseName);
+          helmRelease = await fetchHelmRelease(namespace || '', releaseName || '');
         } catch (err) {
           console.error('Could not fetch the helm release', err); // eslint-disable-line no-console
         }
-        const resources = loadHelmManifestResources(helmRelease);
+        const resources = helmRelease ? loadHelmManifestResources(helmRelease) : [];
         if (isGoingToTopology(resources)) {
           const secretId = res?.metadata?.uid;
           redirect = helmRelease?.info?.notes
@@ -223,7 +227,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const annotatedName = chartData?.metadata?.annotations?.[CHART_NAME_ANNOTATION] ?? '';
   const providerName = chartData?.metadata?.annotations?.[PROVIDER_NAME_ANNOTATION] ?? '';
 
-  const chartMetaDescription = <HelmChartMetaDescription chart={chartData} />;
+  const chartMetaDescription = chartData ? <HelmChartMetaDescription chart={chartData} /> : null;
 
   return (
     <NamespacedPage
@@ -232,7 +236,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
       onNamespaceChange={handleNamespaceChange}
       hideApplications
     >
-      <DocumentTitle>{config.title}</DocumentTitle>
+      {config?.title && <DocumentTitle>{config.title}</DocumentTitle>}
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
@@ -247,8 +251,8 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
             helmActionConfig={config}
             onVersionChange={setChartData}
             chartError={chartError}
-            namespace={namespace}
-            chartIndexEntry={indexEntry}
+            namespace={namespace || ''}
+            chartIndexEntry={indexEntry || ''}
             annotatedName={annotatedName}
             providerName={providerName}
           />

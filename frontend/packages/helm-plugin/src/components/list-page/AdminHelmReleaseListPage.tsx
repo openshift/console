@@ -50,7 +50,7 @@ const AdminHelmReleaseListPage: React.FC = () => {
   const { ns } = useParams();
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-      <PageContentsWithStartGuide namespace={ns} />
+      <PageContentsWithStartGuide namespace={ns || ''} />
     </NamespacedPage>
   );
 };

@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
-import { MultiListPage } from '@console/internal/components/factory';
+import { Flatten, MultiListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
@@ -51,50 +51,65 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({
     verb: 'update',
   });
 
-  let resources = [];
-  if (
-    projectHelmChartListAccess &&
-    projectHelmChartEditAccess &&
-    helmChartListAccess &&
-    helmChartEditAccess
-  ) {
-    resources = [
-      {
-        prop: 'helmChartRepository',
-        kind: referenceForModel(HelmChartRepositoryModel),
-        namespaced: false,
-        isList: true,
-      },
-      {
-        prop: 'projectHelmChartRepository',
-        kind: referenceForModel(ProjectHelmChartRepositoryModel),
-        namespaced: true,
-        namespace,
-        isList: true,
-      },
-    ];
-  } else if (projectHelmChartListAccess && projectHelmChartEditAccess) {
-    resources = [
-      {
-        prop: 'projectHelmChartRepository',
-        kind: referenceForModel(ProjectHelmChartRepositoryModel),
-        namespaced: true,
-        namespace,
-        isList: true,
-      },
-    ];
-  } else if (helmChartListAccess && helmChartEditAccess) {
-    resources = [
-      {
-        prop: 'helmChartRepository',
-        kind: referenceForModel(HelmChartRepositoryModel),
-        namespaced: false,
-        isList: true,
-      },
-    ];
-  }
+  const resources = React.useMemo(() => {
+    let res: {
+      prop: string;
+      kind: string;
+      namespaced: boolean;
+      isList: boolean;
+      namespace?: string;
+    }[] = [];
+    if (
+      projectHelmChartListAccess &&
+      projectHelmChartEditAccess &&
+      helmChartListAccess &&
+      helmChartEditAccess
+    ) {
+      res = [
+        {
+          prop: 'helmChartRepository',
+          kind: referenceForModel(HelmChartRepositoryModel),
+          namespaced: false,
+          isList: true,
+        },
+        {
+          prop: 'projectHelmChartRepository',
+          kind: referenceForModel(ProjectHelmChartRepositoryModel),
+          namespaced: true,
+          namespace,
+          isList: true,
+        },
+      ];
+    } else if (projectHelmChartListAccess && projectHelmChartEditAccess) {
+      res = [
+        {
+          prop: 'projectHelmChartRepository',
+          kind: referenceForModel(ProjectHelmChartRepositoryModel),
+          namespaced: true,
+          namespace,
+          isList: true,
+        },
+      ];
+    } else if (helmChartListAccess && helmChartEditAccess) {
+      res = [
+        {
+          prop: 'helmChartRepository',
+          kind: referenceForModel(HelmChartRepositoryModel),
+          namespaced: false,
+          isList: true,
+        },
+      ];
+    }
+    return res;
+  }, [
+    projectHelmChartListAccess,
+    projectHelmChartEditAccess,
+    helmChartListAccess,
+    helmChartEditAccess,
+    namespace,
+  ]);
 
-  const flatten = (resourceLists) => {
+  const flatten = (resourceLists: Record<string, { data?: unknown[] }>) => {
     const projectHelmChartRepositoryData = _.get(
       resourceLists?.projectHelmChartRepository,
       'data',
@@ -110,7 +125,7 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({
       <DocumentTitle>{t('helm-plugin~Helm Repositories')}</DocumentTitle>
       <MultiListPage
         namespace={namespace}
-        flatten={flatten}
+        flatten={flatten as Flatten}
         resources={resources}
         label={t('helm-plugin~Repositories')}
         ListComponent={RepositoriesList}
