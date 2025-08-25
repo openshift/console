@@ -700,49 +700,53 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
       ref={resourceLogRef}
       className={css('co-resource-log', { 'co-fullscreen pf-v6-u-p-sm': isFullscreen })}
     >
-      <div className={css('co-resource-log__alert-wrapper')}>
-        {error && (
-          <Alert
-            isInline
-            className="co-alert co-alert--margin-bottom-sm"
-            variant="danger"
-            title={t('An error occurred while retrieving the requested logs.')}
-            actionLinks={
-              <AlertActionLink onClick={() => setError(false)}>{t('Retry')}</AlertActionLink>
-            }
-          />
-        )}
-        {stale && (
-          <Alert
-            isInline
-            className="co-alert co-alert--margin-bottom-sm"
-            variant="info"
-            title={t('The logs for this {{resourceKind}} may be stale.', {
-              resourceKind: resource.kind,
-            })}
-            actionLinks={
-              <AlertActionLink onClick={() => setStale(false)}>{t('Refresh')}</AlertActionLink>
-            }
-          />
-        )}
-        {hasTruncated && (
-          <Alert
-            isInline
-            className="co-alert co-alert--margin-bottom-sm"
-            variant="warning"
-            title={t('Some lines have been abridged because they are exceptionally long.')}
-          >
-            <Trans ns="public" t={t}>
-              To view unabridged log content, you can either{' '}
-              <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
-              <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
-                download it
-              </a>
-              .
-            </Trans>
-          </Alert>
-        )}
-      </div>
+      {error ||
+        stale ||
+        (hasTruncated && (
+          <div className="co-resource-log__alert-wrapper">
+            {error && (
+              <Alert
+                isInline
+                className="co-alert co-alert--margin-bottom-sm"
+                variant="danger"
+                title={t('An error occurred while retrieving the requested logs.')}
+                actionLinks={
+                  <AlertActionLink onClick={() => setError(false)}>{t('Retry')}</AlertActionLink>
+                }
+              />
+            )}
+            {stale && (
+              <Alert
+                isInline
+                className="co-alert co-alert--margin-bottom-sm"
+                variant="info"
+                title={t('The logs for this {{resourceKind}} may be stale.', {
+                  resourceKind: resource.kind,
+                })}
+                actionLinks={
+                  <AlertActionLink onClick={() => setStale(false)}>{t('Refresh')}</AlertActionLink>
+                }
+              />
+            )}
+            {hasTruncated && (
+              <Alert
+                isInline
+                className="co-alert co-alert--margin-bottom-sm"
+                variant="warning"
+                title={t('Some lines have been abridged because they are exceptionally long.')}
+              >
+                <Trans ns="public" t={t}>
+                  To view unabridged log content, you can either{' '}
+                  <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
+                  <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
+                    download it
+                  </a>
+                  .
+                </Trans>
+              </Alert>
+            )}
+          </div>
+        ))}
       <div>
         <LogViewer
           header={
