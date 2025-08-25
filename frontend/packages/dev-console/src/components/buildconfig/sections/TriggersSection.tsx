@@ -46,7 +46,7 @@ const TriggersSection: React.FC<{ namespace: string }> = ({ namespace }) => {
     {
       isList: true,
       kind: SecretModel.kind,
-      prop: SecretModel.id,
+      prop: SecretModel.id as string,
       namespace,
     },
   ];

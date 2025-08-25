@@ -97,7 +97,7 @@ describe('EditDeploymentForm', () => {
         }),
       ).not.toBeNull();
       expect(
-        screen.queryByRole('radio', { name: /form view/i }).hasAttribute('checked'),
+        screen.queryByRole('radio', { name: /form view/i })?.hasAttribute('checked'),
       ).toBeTruthy();
     });
   });

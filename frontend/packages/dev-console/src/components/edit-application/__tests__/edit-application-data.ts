@@ -237,92 +237,94 @@ export const appResources: AppResources = {
   buildConfig: {
     loaded: true,
     loadError: '',
-    data: {
-      kind: 'BuildConfig',
-      apiVersion: 'build.openshift.io/v1',
-      metadata: {
-        name: 'nationalparks-py',
-        namespace: 'div',
-        uid: '8319b0c9-3674-4eb6-b0bb-3bcfc7211435',
-        resourceVersion: '329844',
-        creationTimestamp: '2020-01-13T10:33:05Z',
-        labels: {
-          app: 'nationalparks-py',
-          'app.kubernetes.io/component': 'nationalparks-py',
-          'app.kubernetes.io/instance': 'nationalparks-py',
-          'app.kubernetes.io/name': 'python',
-          'app.openshift.io/runtime': 'python',
-          'app.openshift.io/runtime-version': '3.6',
-        },
-        annotations: {
-          'app.openshift.io/vcs-ref': 'master',
-          'app.openshift.io/vcs-uri': 'https://github.com/divyanshiGupta/nationalparks-py',
-          jarFileName: 'demo-app.jar',
-        },
-      },
-      spec: {
-        nodeSelector: null,
-        output: {
-          to: {
-            kind: 'ImageStreamTag',
-            name: 'nationalparks-py:latest',
+    data: [
+      {
+        kind: 'BuildConfig',
+        apiVersion: 'build.openshift.io/v1',
+        metadata: {
+          name: 'nationalparks-py',
+          namespace: 'div',
+          uid: '8319b0c9-3674-4eb6-b0bb-3bcfc7211435',
+          resourceVersion: '329844',
+          creationTimestamp: '2020-01-13T10:33:05Z',
+          labels: {
+            app: 'nationalparks-py',
+            'app.kubernetes.io/component': 'nationalparks-py',
+            'app.kubernetes.io/instance': 'nationalparks-py',
+            'app.kubernetes.io/name': 'python',
+            'app.openshift.io/runtime': 'python',
+            'app.openshift.io/runtime-version': '3.6',
+          },
+          annotations: {
+            'app.openshift.io/vcs-ref': 'master',
+            'app.openshift.io/vcs-uri': 'https://github.com/divyanshiGupta/nationalparks-py',
+            jarFileName: 'demo-app.jar',
           },
         },
-        resources: {},
-        successfulBuildsHistoryLimit: 5,
-        failedBuildsHistoryLimit: 5,
-        strategy: {
-          type: 'Source',
-          sourceStrategy: {
-            from: {
+        spec: {
+          nodeSelector: null,
+          output: {
+            to: {
               kind: 'ImageStreamTag',
-              namespace: 'openshift',
-              name: 'python:3.6',
+              name: 'nationalparks-py:latest',
             },
           },
-        },
-        postCommit: {},
-        source: {
-          type: 'Git',
-          git: {
-            uri: 'https://github.com/divyanshiGupta/nationalparks-py',
-          },
-          contextDir: '/',
-        },
-        triggers: [
-          {
-            type: 'Generic',
-            generic: {
-              secretReference: {
-                name: 'nationalparks-py-generic-webhook-secret',
+          resources: {},
+          successfulBuildsHistoryLimit: 5,
+          failedBuildsHistoryLimit: 5,
+          strategy: {
+            type: 'Source',
+            sourceStrategy: {
+              from: {
+                kind: 'ImageStreamTag',
+                namespace: 'openshift',
+                name: 'python:3.6',
               },
             },
           },
-          {
-            type: 'GitHub',
-            github: {
-              secretReference: {
-                name: 'nationalparks-py-github-webhook-secret',
+          postCommit: {},
+          source: {
+            type: 'Git',
+            git: {
+              uri: 'https://github.com/divyanshiGupta/nationalparks-py',
+            },
+            contextDir: '/',
+          },
+          triggers: [
+            {
+              type: 'Generic',
+              generic: {
+                secretReference: {
+                  name: 'nationalparks-py-generic-webhook-secret',
+                },
               },
             },
-          },
-          {
-            type: 'ImageChange',
-            imageChange: {
-              lastTriggeredImageID:
-                'image-registry.openshift-image-registry.svc:5000/openshift/python@sha256:dde8883b3033d9b3d0e88b8c74304fba4b23cd5c07a164e71ee352b899a7803e',
+            {
+              type: 'GitHub',
+              github: {
+                secretReference: {
+                  name: 'nationalparks-py-github-webhook-secret',
+                },
+              },
             },
-          },
-          {
-            type: 'ConfigChange',
-          },
-        ],
-        runPolicy: 'Serial',
+            {
+              type: 'ImageChange',
+              imageChange: {
+                lastTriggeredImageID:
+                  'image-registry.openshift-image-registry.svc:5000/openshift/python@sha256:dde8883b3033d9b3d0e88b8c74304fba4b23cd5c07a164e71ee352b899a7803e',
+              },
+            },
+            {
+              type: 'ConfigChange',
+            },
+          ],
+          runPolicy: 'Serial',
+        },
+        status: {
+          lastVersion: 3,
+        },
       },
-      status: {
-        lastVersion: 3,
-      },
-    },
+    ],
   },
   pipeline: {
     loaded: true,
@@ -506,8 +508,8 @@ export const gitImportInitialValues: GitImportFormData = {
     hostname: 'nationalparks-py-div.apps.rorai-cluster34.devcluster.openshift.com',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: null as any,
+      insecureEdgeTerminationPolicy: null as any,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -592,7 +594,7 @@ export const externalImageValues: DeployImageFormData = {
   name: 'nationalparks-py',
   application: { name: '', selectedKey: UNASSIGNED_KEY },
   project: { name: 'div' },
-  customIcon: null,
+  customIcon: null as any,
   runtimeIcon: 'python',
   route: {
     disable: true,
@@ -604,8 +606,8 @@ export const externalImageValues: DeployImageFormData = {
     hostname: 'nationalparks-py-div.apps.rorai-cluster34.devcluster.openshift.com',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: null as any,
+      insecureEdgeTerminationPolicy: null as any,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -642,7 +644,7 @@ export const externalImageValues: DeployImageFormData = {
       defaultLimitUnit: 'Mi',
     },
   },
-  searchTerm: undefined,
+  searchTerm: '',
   registry: 'external',
   allowInsecureRegistry: false,
   imageStream: { image: '', tag: '', namespace: '' },
@@ -679,7 +681,7 @@ export const internalImageValues: DeployImageFormData = {
   name: 'nationalparks-py',
   application: { name: '', selectedKey: UNASSIGNED_KEY },
   project: { name: 'div' },
-  customIcon: null,
+  customIcon: null as any,
   runtimeIcon: 'python',
   route: {
     disable: true,
@@ -691,8 +693,8 @@ export const internalImageValues: DeployImageFormData = {
     hostname: 'nationalparks-py-div.apps.rorai-cluster34.devcluster.openshift.com',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: null as any,
+      insecureEdgeTerminationPolicy: null as any,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -770,12 +772,12 @@ export const knAppResources: AppResources = {
   route: {
     loaded: false,
     loadError: 'routes.route.openshift.io "greeter" not found',
-    data: {},
+    data: [] as any,
   },
   buildConfig: {
     loaded: false,
     loadError: 'Error: buildconfigs.build.openshift.io "greeter" not found',
-    data: {},
+    data: [] as any,
   },
   imageStream: {
     loaded: true,
@@ -821,8 +823,8 @@ export const knExternalImageValues: DeployImageFormData = {
     },
   },
   project: { name: 'div' },
-  customIcon: null,
-  runtimeIcon: null,
+  customIcon: null as any,
+  runtimeIcon: null as any,
   registry: 'external',
   resources: Resources.KnativeService,
   route: {
@@ -837,9 +839,9 @@ export const knExternalImageValues: DeployImageFormData = {
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
-      insecureEdgeTerminationPolicy: null,
+      insecureEdgeTerminationPolicy: null as any,
       key: '',
-      termination: null,
+      termination: null as any,
     },
     unknownTargetPort: '',
     labels: {},

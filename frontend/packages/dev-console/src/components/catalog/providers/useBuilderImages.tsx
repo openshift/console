@@ -28,7 +28,7 @@ const normalizeBuilderImages = (
   t: TFunction,
 ): CatalogItem[] => {
   const normalizedBuilderImages = _.map(builderImageStreams, (imageStream) => {
-    const { uid, name, namespace, annotations } = imageStream.metadata;
+    const { uid, name, namespace, annotations } = imageStream.metadata ?? {};
     const tag = getMostRecentBuilderTag(imageStream);
     const displayName = annotations?.[ANNOTATIONS.displayName] ?? name;
     const icon = getImageStreamIcon(tag);
@@ -99,9 +99,9 @@ const normalizeBuilderImages = (
     ];
 
     const item: CatalogItem = {
-      uid,
+      uid: uid ?? '',
       type: 'BuilderImage',
-      name: displayName,
+      name: displayName ?? '',
       provider,
       description,
       tags,
@@ -111,8 +111,8 @@ const normalizeBuilderImages = (
         href,
       },
       icon: {
-        url: imgUrl,
-        class: iconClass,
+        url: imgUrl ?? '',
+        class: iconClass ?? '',
       },
       details: {
         properties: detailsProperties,

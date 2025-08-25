@@ -29,7 +29,7 @@ const useBindableItemMetadataProvider: ExtensionHook<CatalogItemMetadataProvider
   const provider = useCallback<CatalogItemMetadataProviderFunction>(
     (item: CatalogItem) => {
       if (!loaded || !Array.isArray(bindableKinds?.status)) {
-        return null;
+        return undefined;
       }
       if (
         bindableKinds.status.some(
@@ -41,7 +41,7 @@ const useBindableItemMetadataProvider: ExtensionHook<CatalogItemMetadataProvider
       ) {
         return bindableMetadata.current;
       }
-      return null;
+      return undefined;
     },
     [bindableKinds, loaded],
   );

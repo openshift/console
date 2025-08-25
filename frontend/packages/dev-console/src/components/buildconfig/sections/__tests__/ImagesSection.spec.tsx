@@ -158,8 +158,8 @@ describe('ImagesSection', () => {
     // Assert options
     const menuList = document.querySelector('[data-test="console-select-menu-list"]');
     expect(menuList).not.toBeNull();
-    const options = menuList.querySelectorAll('li button');
-    expect(Object.values(options).map((option) => option.textContent)).toEqual([
+    const options = menuList?.querySelectorAll('li button');
+    expect(Object.values(options ?? {}).map((option) => option.textContent)).toEqual([
       'Image Stream Tag',
       'Image Stream Image',
       'External container image',
@@ -188,8 +188,8 @@ describe('ImagesSection', () => {
     // Assert options
     const menuList = document.querySelector('[data-test="console-select-menu-list"]');
     expect(menuList).not.toBeNull();
-    const options = menuList.querySelectorAll('li button');
-    expect(Object.values(options).map((option) => option.textContent)).toEqual([
+    const options = menuList?.querySelectorAll('li button');
+    expect(Object.values(options ?? {}).map((option) => option.textContent)).toEqual([
       'None',
       'Image Stream Tag',
       'Image Stream Image',
@@ -218,8 +218,8 @@ describe('ImagesSection', () => {
     // Assert options
     const menuList = document.querySelector('[data-test="console-select-menu-list"]');
     expect(menuList).not.toBeNull();
-    const options = menuList.querySelectorAll('li button');
-    expect(Object.values(options).map((option) => option.textContent)).toEqual([
+    const options = menuList?.querySelectorAll('li button');
+    expect(Object.values(options ?? {}).map((option) => option.textContent)).toEqual([
       'None',
       'Image Stream Tag',
       'External container image',

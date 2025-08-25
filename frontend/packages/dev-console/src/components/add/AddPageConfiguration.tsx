@@ -116,7 +116,7 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
   const save = useDebounceCallback(() => {
     fireTelemetryEvent('Console cluster configuration changed', {
       customize: 'Add page actions',
-      disabledActions: disabled?.length > 0 ? disabled : null,
+      disabledActions: disabled?.length && disabled.length > 0 ? disabled : undefined,
     });
     setSaveStatus({ status: 'in-progress' });
 
@@ -124,7 +124,8 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
       spec: {
         customization: {
           addPage: {
-            disabledActions: disabled?.length > 0 ? disabled : null,
+            disabledActions:
+              disabled?.length && disabled.length > 0 ? disabled : (undefined as any),
           },
         },
       },
@@ -171,7 +172,7 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
       />
 
       <LoadError error={consoleConfigError} />
-      <SaveStatus {...saveStatus} />
+      <SaveStatus {...(saveStatus as SaveStatusProps)} />
     </FormSection>
   );
 };

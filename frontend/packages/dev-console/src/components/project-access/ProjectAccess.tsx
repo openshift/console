@@ -43,12 +43,12 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
   fullFormView,
 }) => {
   const { t } = useTranslation();
-  if ((!roleBindings.loaded && _.isEmpty(roleBindings.loadError)) || !roles.loaded) {
+  if ((!roleBindings?.loaded && _.isEmpty(roleBindings?.loadError)) || !roles.loaded) {
     return <LoadingBox />;
   }
 
   const userRoleBindings: UserRoleBinding[] = getUserRoleBindings(
-    roleBindings.data,
+    roleBindings?.data ?? [],
     Object.keys(roles.data),
     namespace,
   );
@@ -56,12 +56,18 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
   const rbacURL = getDocumentationURL(documentationURLs.usingRBAC);
 
   const initialValues = {
-    projectAccess: roleBindings.loaded && userRoleBindings,
+    projectAccess: roleBindings?.loaded && userRoleBindings,
   };
 
   const handleSubmit = (values, actions) => {
-    let newRoles = getNewRoles(initialValues.projectAccess, values.projectAccess);
-    let removeRoles = getRemovedRoles(initialValues.projectAccess, values.projectAccess);
+    let newRoles = getNewRoles(
+      initialValues.projectAccess as UserRoleBinding[],
+      values.projectAccess,
+    );
+    let removeRoles = getRemovedRoles(
+      initialValues.projectAccess as UserRoleBinding[],
+      values.projectAccess,
+    );
     const updateRoles = getRolesToUpdate(newRoles, removeRoles);
 
     const { updateRolesWithMultipleSubjects, removeRoleSubjectFlag } = getRolesWithMultipleSubjects(
@@ -79,7 +85,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
       );
     }
     updateRoles.push(...updateRolesWithMultipleSubjects);
-    const roleBindingRequests = [];
+    const roleBindingRequests: Promise<any>[] = [];
     if (updateRoles.length > 0) {
       roleBindingRequests.push(
         ...sendRoleBindingRequest(Verb.Patch, updateRoles, namespace, removeRoleSubjectFlag),
@@ -117,7 +123,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
   const projectAccessForm = (
     <>
       <PageHeading
-        title={fullFormView ? t('devconsole~Project access') : null}
+        title={fullFormView ? t('devconsole~Project access') : undefined}
         data-test="project-access-page"
         helpText={
           <>
@@ -143,8 +149,8 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
           </>
         }
       />
-      {roleBindings.loadError ? (
-        <StatusBox loaded={roleBindings.loaded} loadError={roleBindings.loadError} />
+      {roleBindings?.loadError ? (
+        <StatusBox loaded={roleBindings?.loaded} loadError={roleBindings?.loadError} />
       ) : (
         <Formik
           initialValues={initialValues}
@@ -156,8 +162,8 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
             <ProjectAccessForm
               {...formikProps}
               roles={roles.data}
-              roleBindings={initialValues}
-              onCancel={fullFormView ? history.goBack : null}
+              roleBindings={initialValues as any}
+              onCancel={fullFormView ? history.goBack : undefined}
             />
           )}
         </Formik>

@@ -19,10 +19,10 @@ const normalizeBuilderImages = (
   t: TFunction,
 ): CatalogItem[] => {
   const normalizedBuilderImages = _.map(builderImageStreams, (imageStream) => {
-    const { uid, name, namespace: imageStreamNS, annotations } = imageStream.metadata;
+    const { uid, name, namespace: imageStreamNS, annotations } = imageStream.metadata ?? {};
     const tag = getMostRecentBuilderTag(imageStream);
     const displayName = annotations?.[ANNOTATIONS.displayName] ?? name;
-    const title = displayName && displayName.length < 14 ? displayName : prettifyName(name);
+    const title = displayName && displayName.length < 14 ? displayName : prettifyName(name ?? '');
     const icon = getImageStreamIcon(tag);
     const imgUrl = getImageForIconClass(icon);
     const iconClass = imgUrl ? null : icon;
@@ -42,8 +42,8 @@ const normalizeBuilderImages = (
       description,
       creationTimestamp,
       icon: {
-        url: imgUrl,
-        class: iconClass,
+        url: imgUrl ?? '',
+        class: iconClass ?? '',
       },
       cta: {
         label: createLabel,
