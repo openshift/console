@@ -29,6 +29,12 @@ const SelectorCard: React.FC<SelectorCardProps> = ({
       className={classes}
       onClick={() => onChange(name)}
       data-test={`card ${name}`}
+      aria-label={`Select ${title}`}
+      isClickable
+      isSelectable
+      {...({
+        selectableActions: { selectableActionAriaLabel: `Select ${title}` },
+      } as any)}
     >
       <CardTitle>
         <img className="odc-selector-card__icon" src={iconUrl} alt="" />
