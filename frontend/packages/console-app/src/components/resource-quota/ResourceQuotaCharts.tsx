@@ -12,10 +12,14 @@ type ResourceQuotaChartsProps = {
 const ResourceQuotaCharts = ({ resourceQuota }: ResourceQuotaChartsProps): JSX.Element => {
   const { t } = useTranslation();
   const charts = Object.keys(resourceQuota.status?.hard ?? {}).map((resourceName) => {
-    const hard = resourceQuota.status.hard[resourceName];
-    const used = resourceQuota.status.used?.[resourceName];
+    const hard = resourceQuota.status?.hard?.[resourceName || ''] ?? '';
+    const used = resourceQuota.status?.used?.[resourceName || ''] ?? '';
 
-    const { label, percent } = getLabelAndUsage({ resourceName, used, hard });
+    const { label, percent } = getLabelAndUsage({
+      resourceName,
+      used,
+      hard,
+    });
     return (
       <div
         key={resourceName}

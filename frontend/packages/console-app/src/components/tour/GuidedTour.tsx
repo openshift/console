@@ -8,13 +8,14 @@ const GuidedTour: React.FC = () => {
   const { t } = useTranslation();
   if (!tour) return null;
   const { intro, steps, end } = tour;
-  const { stepNumber, startTour, completedTour } = tourState;
+  const { stepNumber, startTour, completedTour } = tourState || {};
+  const currentStepNumber = stepNumber || 0;
 
   if (completedTour) {
-    onComplete();
+    onComplete?.();
     return null;
   }
-  if (startTour || stepNumber === 0)
+  if (startTour || currentStepNumber === 0)
     return (
       <StepComponent
         {...intro}
@@ -23,7 +24,7 @@ const GuidedTour: React.FC = () => {
         backButtonText={t('console-app~Skip tour')}
       />
     );
-  if (stepNumber > totalSteps)
+  if (currentStepNumber && totalSteps && currentStepNumber > totalSteps)
     return (
       <StepComponent
         {...end}
@@ -32,7 +33,7 @@ const GuidedTour: React.FC = () => {
         backButtonText={t('console-app~Back')}
       />
     );
-  const step = steps[stepNumber - 1];
+  const step = steps?.[currentStepNumber - 1];
   return (
     <StepComponent
       {...step}
