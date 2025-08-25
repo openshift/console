@@ -113,7 +113,7 @@ const SubscribeForm: React.FC<Props> = ({
         handleCancel={handleCancel}
         errorMessage={status.error}
         handleDownload={
-          values.editorType === EditorType.YAML && (() => downloadYaml(values.yamlData))
+          values.editorType === EditorType.YAML ? () => downloadYaml(values.yamlData) : undefined
         }
         sticky
       />

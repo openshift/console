@@ -29,26 +29,26 @@ const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataT
   const { t } = useTranslation();
   const [rev, revisionLoaded, revisionErrorLoad] = useK8sWatchResource<RevisionKind[]>({
     kind: referenceForModel(RevisionModel),
-    namespace: resource.metadata.namespace,
+    namespace: resource.metadata?.namespace ?? '',
     isList: true,
   });
 
   const revisionIds = useMemo(() => {
     if (resource.kind === RevisionModel.kind) {
-      return resource.metadata.uid;
+      return resource.metadata?.uid ?? '';
     }
     if (revisionLoaded && !revisionErrorLoad && rev.length > 0) {
       const resouceRevisions = rev.filter(
-        (r) => r.metadata.ownerReferences[0].name === resource.metadata.name,
+        (r) => r.metadata?.ownerReferences?.[0]?.name === resource.metadata?.name,
       );
-      return resouceRevisions.map((r) => r.metadata.uid).sort((a, b) => a.localeCompare(b));
+      return resouceRevisions.map((r) => r.metadata?.uid ?? '').sort((a, b) => a.localeCompare(b));
     }
     return [];
   }, [revisionLoaded, revisionErrorLoad, rev, resource.kind, resource.metadata]);
 
-  const { pods } = usePodsForRevisions(revisionIds, resource.metadata.namespace);
+  const { pods } = usePodsForRevisions(revisionIds, resource.metadata?.namespace ?? '');
   const servicePods = useMemo(() => {
-    return pods.reduce((acc, pod) => {
+    return pods.reduce<any[]>((acc, pod) => {
       if (pod.pods) {
         acc.push(...pod.pods.filter((p) => podPhase(p as PodKind) !== AllPodStatus.AutoScaledTo0));
       }
@@ -56,10 +56,10 @@ const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataT
     }, []);
   }, [pods]);
 
-  const linkUrl = `/search/ns/${resource.metadata.namespace}?kind=${
+  const linkUrl = `/search/ns/${resource.metadata?.namespace}?kind=${
     PodModel.kind
   }&q=${encodeURIComponent(
-    `serving.knative.dev/${resource.kind.toLowerCase()}=${resource.metadata.name}`,
+    `serving.knative.dev/${resource.kind?.toLowerCase()}=${resource.metadata?.name}`,
   )}`;
 
   return useMemo(
@@ -76,7 +76,7 @@ const usePodsAdapterForKnative = (resource: K8sResourceCommon): PodsAdapterDataT
 
 export const getKnativeSidepanelPodsAdapterSection = (
   element: GraphElement,
-): AdapterDataType<PodsAdapterDataType> => {
+): AdapterDataType<PodsAdapterDataType> | undefined => {
   if (element.getType() === NodeType.KnService || element.getType() === NodeType.Revision) {
     const resource = getResource(element);
     return { resource, provider: usePodsAdapterForKnative };

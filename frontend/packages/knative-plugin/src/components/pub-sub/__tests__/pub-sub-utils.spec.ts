@@ -38,23 +38,25 @@ describe('pub-sub-utils', () => {
 
   describe('getSinkableResourceOrder', () => {
     it('sort order should 1 if knative service is passed', () => {
-      expect(getSinkableResourceOrder(knativeServiceObj.apiVersion)).toBe(1);
+      expect(getSinkableResourceOrder(knativeServiceObj.apiVersion ?? '')).toBe(1);
     });
 
     it('sort order should 2 if channel is passed', async () => {
-      expect(getSinkableResourceOrder(EventIMCObj.apiVersion)).toBe(2);
+      expect(getSinkableResourceOrder(EventIMCObj.apiVersion ?? '')).toBe(2);
     });
 
     it('sort order should 3 if broker is passed', () => {
-      expect(getSinkableResourceOrder(EventBrokerObj.apiVersion)).toBe(3);
+      expect(getSinkableResourceOrder(EventBrokerObj.apiVersion ?? '')).toBe(3);
     });
 
     it('sort order should 4 if k8s service is passed', () => {
-      expect(getSinkableResourceOrder(service.apiVersion)).toBe(4);
+      expect(getSinkableResourceOrder(service.apiVersion ?? '')).toBe(4);
     });
 
     it('sort order should 4 for any unknown or non-knative resources', () => {
-      expect(getSinkableResourceOrder(sampleDeploymentsCamelConnector.data[0].apiVersion)).toBe(4);
+      expect(
+        getSinkableResourceOrder(sampleDeploymentsCamelConnector.data[0].apiVersion ?? ''),
+      ).toBe(4);
     });
   });
 
@@ -69,8 +71,8 @@ describe('pub-sub-utils', () => {
 
     it('should return empty string if invalid argument is passed', () => {
       expect(getResourceNameFromKey('')).toBe('');
-      expect(getResourceNameFromKey(null)).toBe('');
-      expect(getResourceNameFromKey(undefined)).toBe('');
+      expect(getResourceNameFromKey(null as any)).toBe('');
+      expect(getResourceNameFromKey(undefined as any)).toBe('');
     });
   });
 });

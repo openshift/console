@@ -48,7 +48,7 @@ describe('KSRouteSplitListItem', () => {
         url: undefined,
         traffic: [
           {
-            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
+            ...MockKnativeResources.ksroutes.data[0].status?.traffic?.[0],
             percent: undefined,
             url: undefined,
           },
@@ -68,7 +68,7 @@ describe('KSRouteSplitListItem', () => {
         url: undefined,
         traffic: [
           {
-            ...MockKnativeResources.ksroutes.data[0].status.traffic[0],
+            ...MockKnativeResources.ksroutes.data[0].status?.traffic?.[0],
             percent: undefined,
             url: undefined,
           },

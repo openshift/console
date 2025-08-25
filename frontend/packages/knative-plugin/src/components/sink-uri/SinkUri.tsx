@@ -29,7 +29,7 @@ const SinkUri: React.FC<SinkUriProps> = ({ source, eventSourceList, cancel, clos
     return Promise.race(requests)
       .then(() => {
         action.setStatus({ error: '' });
-        close();
+        close?.();
       })
       .catch((err) => {
         const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');

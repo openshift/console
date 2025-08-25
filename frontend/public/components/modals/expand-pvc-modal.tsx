@@ -30,6 +30,8 @@ const ExpandPVCModal = (props: ExpandPVCModalProps) => {
     setRequestSizeUnit(obj.unit);
   };
 
+  const { kind, close } = props;
+
   const submit = useCallback(
     (e) => {
       e.preventDefault();
@@ -41,23 +43,13 @@ const ExpandPVCModal = (props: ExpandPVCModalProps) => {
         },
       ];
 
-      handlePromise(k8sPatch(props.kind, props.resource, patch)).then((resource) => {
-        props.close();
+      handlePromise(k8sPatch(kind, props.resource, patch)).then((resource) => {
+        close();
         navigate(resourceObjPath(resource, referenceFor(resource)));
       });
     },
-    [
-      requestSizeValue,
-      requestSizeUnit,
-      props.kind,
-      props.resource,
-      props.close,
-      handlePromise,
-      navigate,
-    ],
+    [requestSizeValue, requestSizeUnit, kind, close, handlePromise, navigate],
   );
-
-  const { kind, resource } = props;
 
   const dropdownUnits = {
     Mi: 'MiB',
@@ -72,7 +64,9 @@ const ExpandPVCModal = (props: ExpandPVCModalProps) => {
         <p>
           <Trans t={t} ns="public">
             Increase the capacity of PVC{' '}
-            <strong className="co-break-word">{{ resourceName: resource.metadata.name }}.</strong>{' '}
+            <strong className="co-break-word">
+              {{ resourceName: props.resource.metadata.name }}.
+            </strong>{' '}
             Note that capacity can't be less than the current PVC size. This can be a time-consuming
             process.
           </Trans>

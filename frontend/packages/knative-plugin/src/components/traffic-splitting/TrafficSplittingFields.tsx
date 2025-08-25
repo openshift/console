@@ -33,13 +33,13 @@ const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
       tooltipDeleteRow={
         values.trafficSplitting.length === 1
           ? t('knative-plugin~Service must have at least one assigned revision')
-          : undefined /* default */
+          : undefined
       }
       disableAddRow={values.trafficSplitting.length === size(revisionItems)}
       tooltipAddRow={
         values.trafficSplitting.length === size(revisionItems)
           ? t('knative-plugin~All revisions are already set to receive traffic')
-          : null /* no tooltip */
+          : undefined
       }
       spans={[2, 3, 7]}
     >
@@ -52,7 +52,7 @@ const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
       <InputField name="tag" type={TextInputTypes.text} />
       <TrafficModalRevisionsDropdownField
         name="revisionName"
-        revisionItems={items}
+        revisionItems={items as RevisionItems}
         title={t('knative-plugin~Select a Revision')}
       />
     </MultiColumnField>

@@ -184,7 +184,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
 
       setExpanded(false);
     },
-    [onChange, props.items, actionItems],
+    [onChange, actionItems],
   );
 
   const applyTextFilter = React.useCallback(
@@ -200,22 +200,24 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   );
 
   // Update state when props change
-  React.useEffect(() => {
-    if (props.selectedKey && props.selectedKey !== selectedKey) {
-      setSelectedKey(props.selectedKey);
-    }
-  }, [props.selectedKey, selectedKey]);
+  const { selectedKey: propsSelectedKey, items: propsItems } = props;
 
   React.useEffect(() => {
-    applyTextFilter(autocompleteText, props.items);
-  }, [props.items, applyTextFilter, autocompleteText]);
+    if (propsSelectedKey && propsSelectedKey !== selectedKey) {
+      setSelectedKey(propsSelectedKey);
+    }
+  }, [propsSelectedKey, selectedKey]);
+
+  React.useEffect(() => {
+    applyTextFilter(autocompleteText, propsItems);
+  }, [propsItems, applyTextFilter, autocompleteText]);
 
   // Clear filter when opening dropdown
   React.useEffect(() => {
     if (expanded) {
-      applyTextFilter('', props.items);
+      applyTextFilter('', propsItems);
     }
-  }, [expanded, applyTextFilter]);
+  }, [expanded, applyTextFilter, propsItems]);
 
   /* Menu content */
   const renderedActionItems = React.useMemo(() => {
@@ -236,7 +238,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
         <Divider component="li" />
       </>
     );
-  }, [actionItems, onClick, selectedKey]);
+  }, [actionItems, selectedKey]);
 
   const { rows, bookmarkRows } = React.useMemo(() => {
     const accRows: React.ReactNode[] = [];
@@ -282,16 +284,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
     });
 
     return { rows: accRows, bookmarkRows: accBookmarkRows };
-  }, [
-    bookmarks,
-    enableBookmarks,
-    headerBefore,
-    items,
-    onClick,
-    selectedKey,
-    spacerBefore,
-    storageKey,
-  ]);
+  }, [bookmarks, enableBookmarks, headerBefore, items, selectedKey, spacerBefore]);
 
   return (
     <div className={className} ref={dropdownWrapperRef}>

@@ -148,18 +148,23 @@ describe('RoutesOverviewListItem', () => {
     expect(percentElement).toHaveTextContent('50%');
   });
 
-  it('should not show route url when no data available', () => {
-    mockGetKnativeRoutesLinks.mockReturnValue([
-      {
-        url: '',
-        name: 'overlayimage',
-        namespace: 'knativeapps',
-        percent: '',
+  it('should not show the route url and traffic percentage section, if there are not available', () => {
+    const mockRouteData = {
+      ...MockKnativeResources.ksroutes.data[0],
+      status: {
+        ...MockKnativeResources.ksroutes.data[0].status,
+        url: undefined,
+        traffic: [
+          {
+            ...MockKnativeResources.ksroutes.data[0].status?.traffic?.[0],
+            percent: undefined,
+            url: undefined,
+          },
+        ],
       },
-    ]);
-
+    };
     const [routeLink] = getKnativeRoutesLinks(
-      MockKnativeResources.ksroutes.data[0],
+      mockRouteData,
       MockKnativeResources.revisions.data[0],
     );
     const { container } = render(<RoutesOverviewListItem routeLink={routeLink} />);

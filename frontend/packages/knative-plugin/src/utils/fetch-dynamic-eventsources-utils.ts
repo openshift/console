@@ -63,9 +63,9 @@ export const fetchEventSourcesCrd = async () => {
           const sourceIndex = _.findIndex(accumulator, ['kind', kind]);
           // added check as some sources has multiple entries with deprecated APIgroups
           if (sourceIndex === -1) {
-            accumulator.push(sourceModel);
+            accumulator.push(sourceModel as never);
           } else if (!labels?.['eventing.knative.dev/deprecated'] === true) {
-            accumulator.splice(sourceIndex, 1, sourceModel);
+            accumulator.splice(sourceIndex, 1, sourceModel as never);
           }
         }
         return accumulator;
@@ -90,15 +90,21 @@ export const useEventSourceModels = (): EventSourcetData => {
     if (eventSourceData.eventSourceModels.length === 0) {
       fetchEventSourcesCrd()
         .then((data) => {
-          setModelsData({ loaded: true, eventSourceModels: data });
+          setModelsData({ loaded: true, eventSourceModels: data as never[] });
         })
         .catch((err) => {
-          setModelsData({ loaded: true, eventSourceModels: eventSourceData.eventSourceModels });
+          setModelsData({
+            loaded: true,
+            eventSourceModels: eventSourceData.eventSourceModels as never[],
+          });
           // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic event sources', err);
         });
     } else {
-      setModelsData({ loaded: true, eventSourceModels: eventSourceData.eventSourceModels });
+      setModelsData({
+        loaded: true,
+        eventSourceModels: eventSourceData.eventSourceModels as never[],
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -107,7 +113,7 @@ export const useEventSourceModels = (): EventSourcetData => {
 
 export const getEventSourceModels = (): K8sKind[] => eventSourceData.eventSourceModels;
 
-export const getChannelModels = (): K8sKind[] => eventSourceData.eventSourceChannels;
+export const getChannelModels = (): K8sKind[] => eventSourceData.eventSourceChannels ?? [];
 export const getDynamicEventSourcesResourceList = (namespace: string, limit?: number) => {
   return eventSourceData.eventSourceModels.map((model) => {
     return {
@@ -133,9 +139,11 @@ export const getDynamicEventSourcesWatchers = (namespace: string) => {
   }, {});
 };
 
-export const getDynamicEventSourceModel = (resourceRef: string): K8sKind => {
-  return eventSourceData.eventSourceModels.find(
-    (model: K8sKind) => referenceForModel(model) === resourceRef,
+export const getDynamicEventSourceModel = (resourceRef: string): K8sKind | null => {
+  return (
+    eventSourceData.eventSourceModels?.find(
+      (model: K8sKind) => referenceForModel(model) === resourceRef,
+    ) ?? null
   );
 };
 
@@ -187,7 +195,7 @@ export const fetchChannelsCrd = async () => {
           crd: true,
           color: knativeEventingColor.value,
         };
-        accumulator.push(sourceModel);
+        accumulator.push(sourceModel as never);
         return accumulator;
       },
       [],
@@ -203,18 +211,24 @@ export const fetchChannelsCrd = async () => {
 export const useChannelModels = () => {
   const [modelsData, setModelsData] = useSafetyFirst({ loaded: false, eventSourceChannels: [] });
   useEffect(() => {
-    if (eventSourceData.eventSourceChannels.length === 0) {
+    if (eventSourceData.eventSourceChannels?.length === 0) {
       fetchChannelsCrd()
         .then((data) => {
-          setModelsData({ loaded: true, eventSourceChannels: data });
+          setModelsData({ loaded: true, eventSourceChannels: data as never[] });
         })
         .catch((err) => {
-          setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
+          setModelsData({
+            loaded: true,
+            eventSourceChannels: eventSourceData.eventSourceChannels as never[],
+          });
           // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic event sources', err);
         });
     } else {
-      setModelsData({ loaded: true, eventSourceChannels: eventSourceData.eventSourceChannels });
+      setModelsData({
+        loaded: true,
+        eventSourceChannels: eventSourceData.eventSourceChannels as never[],
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -222,7 +236,7 @@ export const useChannelModels = () => {
 };
 
 export const getDynamicChannelResourceList = (namespace: string, limit?: number) => {
-  return eventSourceData.eventSourceChannels.map((model) => {
+  return eventSourceData.eventSourceChannels?.map((model) => {
     return {
       isList: true,
       kind: referenceForModel(model),
@@ -235,7 +249,7 @@ export const getDynamicChannelResourceList = (namespace: string, limit?: number)
 };
 
 export const getDynamicEventingChannelWatchers = (namespace: string) => {
-  return eventSourceData.eventSourceChannels.reduce((acc, model) => {
+  return eventSourceData.eventSourceChannels?.reduce((acc, model) => {
     acc[referenceForModel(model)] = {
       isList: true,
       kind: referenceForModel(model),
@@ -251,7 +265,7 @@ export const useChannelResourcesList = (): EventChannelData => {
     loaded: false,
   });
   useEffect(() => {
-    if (eventSourceData.eventSourceChannels.length === 0) {
+    if (eventSourceData.eventSourceChannels?.length === 0) {
       fetchChannelsCrd()
         .then((data) => {
           setModelRefs({
@@ -266,9 +280,9 @@ export const useChannelResourcesList = (): EventChannelData => {
         });
     } else {
       setModelRefs({
-        channels: eventSourceData.eventSourceChannels.map((model: K8sKind) =>
-          referenceForModel(model),
-        ),
+        channels:
+          eventSourceData.eventSourceChannels?.map((model: K8sKind) => referenceForModel(model)) ??
+          [],
         loaded: true,
       });
     }
@@ -277,16 +291,20 @@ export const useChannelResourcesList = (): EventChannelData => {
 };
 
 export const getDynamicChannelModelRefs = (): string[] => {
-  return eventSourceData.eventSourceChannels.map((model: K8sKind) => referenceForModel(model));
+  return (
+    eventSourceData.eventSourceChannels?.map((model: K8sKind) => referenceForModel(model)) ?? []
+  );
 };
-export const getDynamicChannelModel = (resourceRef: string): K8sKind => {
-  return eventSourceData.eventSourceChannels.find(
-    (model: K8sKind) => referenceForModel(model) === resourceRef,
+export const getDynamicChannelModel = (resourceRef: string): K8sKind | null => {
+  return (
+    eventSourceData.eventSourceChannels?.find(
+      (model: K8sKind) => referenceForModel(model) === resourceRef,
+    ) ?? null
   );
 };
 
 export const isEventingChannelResourceKind = (resourceRef: string): boolean => {
-  const index = eventSourceData.eventSourceChannels.findIndex(
+  const index = eventSourceData.eventSourceChannels?.findIndex(
     (model: K8sKind) => referenceForModel(model) === resourceRef,
   );
   return index !== -1;

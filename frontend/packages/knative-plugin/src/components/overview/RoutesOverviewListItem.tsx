@@ -32,7 +32,7 @@ const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({
         )}
       </Grid>
       {url.length > 0 && <RoutesUrlLink urls={[url]} title={t('knative-plugin~Location')} />}
-      {uniqueRoutes?.length > 0 && (
+      {uniqueRoutes?.length && uniqueRoutes?.length > 0 && (
         <RoutesUrlLink urls={uniqueRoutes} title={t('knative-plugin~Unique Route')} />
       )}
     </ListItem>

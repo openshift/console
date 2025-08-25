@@ -26,12 +26,12 @@ const ServiceRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={serviceReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj?.metadata?.name ?? ''}
+          namespace={obj?.metadata?.namespace ?? ''}
         />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={obj?.metadata?.namespace ?? ''} />
       </TableData>
       <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
         {(obj.status && obj.status.url && (
@@ -51,9 +51,9 @@ const ServiceRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
         )) ||
           '-'}
       </TableData>
-      <TableData className={tableColumnClasses[6]}>{obj.metadata.generation || '-'}</TableData>
+      <TableData className={tableColumnClasses[6]}>{obj?.metadata?.generation || '-'}</TableData>
       <TableData className={tableColumnClasses[7]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj?.metadata?.creationTimestamp ?? ''} />
       </TableData>
       <TableData className={tableColumnClasses[8]}>
         <LazyActionMenu context={context} />
