@@ -20,7 +20,7 @@ import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluraliz
 import { configureReplicaCountModal } from './modals';
 import { AlertmanagerModel } from '../models';
 
-const Details: React.SFC<DetailsProps> = (props) => {
+const Details: React.FCC<DetailsProps> = (props) => {
   const alertManager = props.obj;
   const { metadata, spec } = alertManager;
 

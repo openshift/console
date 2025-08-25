@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"sort"
 	"strings"
 
 	operatorv1 "github.com/openshift/api/operator/v1"
@@ -288,6 +289,19 @@ func main() {
 		err = json.Unmarshal([]byte(*fCapabilities), &capabilities)
 		if err != nil {
 			klog.Fatalf("Error unmarshaling capabilities JSON: %v", err)
+		}
+	}
+
+	if len(telemetryFlags) > 0 {
+		keys := make([]string, 0, len(telemetryFlags))
+		for name := range telemetryFlags {
+			keys = append(keys, name)
+		}
+		sort.Strings(keys)
+
+		klog.Infoln("Console telemetry options:")
+		for _, k := range keys {
+			klog.Infof(" - %s %s", k, telemetryFlags[k])
 		}
 	}
 

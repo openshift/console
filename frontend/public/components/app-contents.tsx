@@ -251,8 +251,6 @@ const AppContents: React.FC<{}> = () => {
         }
       />
 
-      <Route path="/operatorhub" element={<NamespaceRedirect />} />
-
       <Route
         path="/catalog/instantiate-template"
         element={

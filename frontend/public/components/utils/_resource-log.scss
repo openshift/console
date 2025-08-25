@@ -1,21 +1,19 @@
-.resource-log {
+.co-resource-log {
   height: 100%;
   width: 100%;
   display: grid;
   grid-template-rows: max-content auto;
 }
 
-.resource-log--fullscreen {
-  .resource-log__log-viewer-wrapper {
-    overflow: auto;
-  }
-  .resource-log__toolbar {
-    background-color: var(--pf-t--global--background--color--primary--default);
-    padding: var(--pf-t--global--spacer--xs) var(--pf-t--global--spacer--sm);
-  }
+.co-resource-log__loading {
+  // match the styles of _toggle-play.scss to reduce layout shift
+  display: block;
+  height: 37px;
+  padding: 0;
+  width: 37px;
 }
 
-.resource-log__alert-wrapper {
+.co-resource-log__alert-wrapper {
   display: grid;
   grid-template-rows: max-content;
 }

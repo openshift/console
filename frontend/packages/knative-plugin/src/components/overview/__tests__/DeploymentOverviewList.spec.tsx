@@ -1,11 +1,13 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
+import { render } from '@testing-library/react';
 import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 import DeploymentOverviewList from '../DeploymentOverviewList';
+import '@testing-library/jest-dom';
 
-type DeploymentOverviewListProps = React.ComponentProps<typeof DeploymentOverviewList>;
+jest.mock('@console/internal/components/utils', () => ({
+  ResourceLink: 'ResourceLink',
+  SidebarSectionHeading: 'SidebarSectionHeading',
+}));
 
 jest.mock('../../../utils/usePodsForRevisions', () => ({
   usePodsForRevisions: jest.fn(),
@@ -46,10 +48,10 @@ describe('DeploymentOverviewList', () => {
       },
     ],
   });
-  let wrapper: ShallowWrapper<DeploymentOverviewListProps>;
+
   it('should render DeploymentOverviewList with ResourceLink', () => {
-    wrapper = shallow(<DeploymentOverviewList resource={revisionObj} />);
-    expect(wrapper.find(SidebarSectionHeading)).toHaveLength(1);
-    expect(wrapper.find(ResourceLink)).toHaveLength(1);
+    const { container } = render(<DeploymentOverviewList resource={revisionObj} />);
+    expect(container.querySelector('SidebarSectionHeading')).toBeInTheDocument();
+    expect(container.querySelector('ResourceLink')).toBeInTheDocument();
   });
 });

@@ -12,7 +12,6 @@ import {
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { history } from '@console/internal/components/utils';
 import catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
-import { keywordFilter } from '../../../utils/keyword-filter';
 import { CatalogType, CatalogTypeCounts } from './types';
 
 enum CatalogVisibilityState {
@@ -20,21 +19,204 @@ enum CatalogVisibilityState {
   Disabled = 'Disabled',
 }
 
-const catalogItemCompare = (keyword: string, item: CatalogItem): boolean => {
-  if (!item) {
-    return false;
+// Enhanced scoring constants for operator relevance calculation
+const SCORE = {
+  // Title/Name matches (highest priority)
+  TITLE_CONTAINS: 100,
+  TITLE_EXACT_BONUS: 50,
+  TITLE_STARTS_BONUS: 25,
+
+  // Metadata name matches (high priority)
+  METADATA_CONTAINS: 80,
+  METADATA_EXACT_BONUS: 40,
+  METADATA_STARTS_BONUS: 20,
+
+  // Keywords/tags matches (medium priority)
+  KEYWORD_MATCH: 60,
+
+  // Description matches (low priority)
+  DESCRIPTION_CONTAINS: 20,
+  DESCRIPTION_STARTS_BONUS: 5,
+} as const;
+
+// Red Hat priority constants
+const REDHAT_PRIORITY = {
+  EXACT_MATCH: 2,
+  CONTAINS_REDHAT: 1,
+  NON_REDHAT: 0,
+} as const;
+
+// Sorting thresholds
+const SORTING_THRESHOLDS = {
+  REDHAT_PRIORITY_DELTA: 100, // Score difference threshold for Red Hat prioritization
+} as const;
+
+// Enhanced relevance scoring for catalog items (especially operators)
+export const calculateCatalogItemRelevanceScore = (
+  filterString: string,
+  item: CatalogItem,
+): number => {
+  if (!filterString || !item) {
+    return 0;
   }
-  return (
-    item.name.toLowerCase().includes(keyword) ||
-    (typeof item.description === 'string' && item.description.toLowerCase().includes(keyword)) ||
-    item.type.toLowerCase().includes(keyword) ||
-    item.tags?.some((tag) => tag.includes(keyword)) ||
-    item.cta?.label.toLowerCase().includes(keyword)
-  );
+
+  const searchTerm = filterString.toLowerCase();
+  let score = 0;
+
+  // Title/Name matches get highest weight
+  if (item.name && typeof item.name === 'string') {
+    const itemName = item.name.toLowerCase();
+    if (itemName.includes(searchTerm)) {
+      score += SCORE.TITLE_CONTAINS;
+      // Exact title match gets bonus points
+      if (itemName === searchTerm) {
+        score += SCORE.TITLE_EXACT_BONUS;
+      }
+      // Title starts with search term gets bonus points
+      if (itemName.startsWith(searchTerm)) {
+        score += SCORE.TITLE_STARTS_BONUS;
+      }
+    }
+  }
+
+  // Check for operator-specific metadata name (if available in attributes)
+  const metadataName = item.attributes?.metadataName;
+  if (metadataName && typeof metadataName === 'string') {
+    const metadataNameLower = metadataName.toLowerCase();
+    if (metadataNameLower.includes(searchTerm)) {
+      score += SCORE.METADATA_CONTAINS;
+      if (metadataNameLower === searchTerm) {
+        score += SCORE.METADATA_EXACT_BONUS;
+      }
+      if (metadataNameLower.startsWith(searchTerm)) {
+        score += SCORE.METADATA_STARTS_BONUS;
+      }
+    }
+  }
+
+  // Keywords/tags matches get medium weight
+  if (item.tags && Array.isArray(item.tags)) {
+    const keywords = item.tags.map((k) => k.toLowerCase());
+    if (keywords.includes(searchTerm)) {
+      score += SCORE.KEYWORD_MATCH;
+    }
+  }
+
+  // Description matches get lowest weight
+  if (item.description && typeof item.description === 'string') {
+    const descriptionLower = item.description.toLowerCase();
+    if (descriptionLower.includes(searchTerm)) {
+      score += SCORE.DESCRIPTION_CONTAINS;
+      // Description starts with search term gets small bonus
+      if (descriptionLower.startsWith(searchTerm)) {
+        score += SCORE.DESCRIPTION_STARTS_BONUS;
+      }
+    }
+  }
+
+  return score;
 };
 
+// Determine Red Hat priority for catalog items
+export const getRedHatPriority = (item: CatalogItem): number => {
+  // Check provider attribute for operators
+  const provider = item.attributes?.provider || item.provider;
+  if (provider) {
+    const providerLower = provider.toLowerCase();
+    if (/^red hat(,?\s?inc\.?)?$/.test(providerLower)) {
+      return REDHAT_PRIORITY.EXACT_MATCH; // Highest priority for exact matches
+    }
+    if (providerLower.includes('red hat')) {
+      return REDHAT_PRIORITY.CONTAINS_REDHAT; // Medium priority for contains 'red hat'
+    }
+  }
+
+  return REDHAT_PRIORITY.NON_REDHAT; // Not Red Hat
+};
+
+// Removed catalogItemCompare - using enhanced scoring instead
+
+// Enhanced keyword comparison with relevance scoring and Red Hat prioritization
 export const keywordCompare = (filterString: string, items: CatalogItem[]): CatalogItem[] => {
-  return keywordFilter(filterString, items, catalogItemCompare);
+  // eslint-disable-next-line no-console
+  console.log('🔍 Enhanced keywordCompare called:', {
+    filterString,
+    itemCount: items.length,
+    catalogType: items[0]?.type || 'unknown',
+  });
+
+  if (!filterString) {
+    // No search term - sort by Red Hat priority and then alphabetically
+    const sortedItems = [...items].sort((a, b) => {
+      const aPriority = getRedHatPriority(a);
+      const bPriority = getRedHatPriority(b);
+
+      // Primary sort by Red Hat priority
+      if (aPriority !== bPriority) {
+        return bPriority - aPriority;
+      }
+
+      // Secondary sort by name (alphabetical)
+      return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+    });
+
+    // Reduced logging - detailed logging now happens in CatalogView after all filtering
+    if (sortedItems.length > 0 && sortedItems[0]?.type === 'operator') {
+      // eslint-disable-next-line no-console
+      console.log(
+        `📂 keywordCompare (No Search) - Red Hat Priority Sorting (${sortedItems.length} items)`,
+      );
+    }
+
+    return sortedItems;
+  }
+
+  // With search term - use relevance scoring
+  const itemsWithScores = items.map((item) => ({
+    ...item,
+    relevanceScore: calculateCatalogItemRelevanceScore(filterString, item),
+    redHatPriority: getRedHatPriority(item),
+  }));
+
+  // Filter items that have relevance score > 0
+  const matchingItems = itemsWithScores.filter((item) => item.relevanceScore > 0);
+
+  // Sort by relevance score and Red Hat priority
+  const sortedItems = matchingItems.sort((a, b) => {
+    const scoreDiff = Math.abs(b.relevanceScore - a.relevanceScore);
+
+    // For items with similar relevance scores (within threshold),
+    // prioritize Red Hat first to ensure consistent ordering
+    if (scoreDiff <= SORTING_THRESHOLDS.REDHAT_PRIORITY_DELTA) {
+      if (a.redHatPriority !== b.redHatPriority) {
+        return b.redHatPriority - a.redHatPriority;
+      }
+    }
+
+    // Primary sort by relevance score (descending)
+    if (b.relevanceScore !== a.relevanceScore) {
+      return b.relevanceScore - a.relevanceScore;
+    }
+
+    // Secondary sort by Red Hat priority when scores are exactly equal
+    if (a.redHatPriority !== b.redHatPriority) {
+      return b.redHatPriority - a.redHatPriority;
+    }
+
+    // Tertiary sort by name (alphabetical)
+    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+  });
+
+  // Reduced logging - detailed logging now happens in CatalogView after all filtering
+  if (sortedItems.length > 0 && sortedItems[0]?.type === 'operator') {
+    // eslint-disable-next-line no-console
+    console.log(
+      `🔍 keywordCompare (Search: "${filterString}") - Relevance Scoring (${sortedItems.length} matches)`,
+    );
+  }
+
+  // Remove the added properties before returning
+  return sortedItems.map(({ relevanceScore, redHatPriority, ...item }) => item);
 };
 
 export const getIconProps = (item: CatalogItem) => {

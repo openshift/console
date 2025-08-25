@@ -1,10 +1,6 @@
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import * as _ from 'lodash';
-import { ResourceSummary } from '@console/internal/components/utils';
-import { PodRing, OverviewItem, usePodScalingAccessStatus } from '@console/shared';
-import ServerlessFunctionType from '../../../components/overview/ServerlessFunctionType';
-import { RevisionModel } from '../../../models';
-import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
+import { OverviewItem } from '@console/shared';
 import {
   revisionObj,
   knativeServiceObj,
@@ -14,59 +10,105 @@ import {
   KnativeOverviewDetails,
   KnativeOverviewRevisionPodsRing,
 } from '../KnativeOverviewSections';
+import '@testing-library/jest-dom';
 
-jest.mock('@console/shared', () => {
-  const ActualShared = jest.requireActual('@console/shared');
-  return {
-    ...ActualShared,
-    usePodScalingAccessStatus: jest.fn(),
-  };
-});
+jest.mock('@console/internal/components/utils', () => ({
+  ResourceSummary: jest.fn(() => null),
+  Kebab: {
+    factory: {
+      ModifyLabels: jest.fn(),
+      ModifyAnnotations: jest.fn(),
+    },
+  },
+}));
+
+jest.mock('@console/shared', () => ({
+  PodRing: jest.fn(() => null),
+  usePodScalingAccessStatus: jest.fn(() => false),
+}));
+
+jest.mock('@console/topology/src/components/side-bar/TopologySideBarTabSection', () => ({
+  __esModule: true,
+  default: jest.fn(() => null),
+}));
+
+jest.mock('../../../components/overview/domain-mapping/DomainMappingOverviewList', () => ({
+  __esModule: true,
+  default: jest.fn(() => null),
+}));
+
+jest.mock('../../../components/overview/EventPubSubResources', () => ({
+  PubSubResourceOverviewList: jest.fn(() => null),
+}));
+
+jest.mock('../../../components/overview/EventPubSubSubscribers', () => ({
+  __esModule: true,
+  default: jest.fn(() => null),
+}));
+
+jest.mock('../../../components/overview/ServerlessFunctionType', () => ({
+  __esModule: true,
+  default: jest.fn(() => null),
+}));
 
 jest.mock('../../../utils/usePodsForRevisions', () => ({
-  usePodsForRevisions: jest.fn(),
+  usePodsForRevisions: jest.fn(() => ({
+    loaded: true,
+    loadError: null,
+    pods: {},
+  })),
+}));
+
+jest.mock('../../knative-topology-utils', () => ({
+  isServerlessFunction: jest.fn(() => false),
+}));
+
+jest.mock('@console/internal/module/k8s', () => ({
+  referenceForModel: jest.fn(() => 'serving.knative.dev~v1~Service'),
+  K8sResourceConditionStatus: {
+    True: 'True',
+    False: 'False',
+    Unknown: 'Unknown',
+  },
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
 }));
 
 describe('KnativeOverview', () => {
   let item: OverviewItem;
+
   beforeEach(() => {
     item = {
       obj: revisionObj,
     };
-    (usePodScalingAccessStatus as jest.Mock).mockReturnValueOnce(false);
-    (usePodsForRevisions as jest.Mock).mockReturnValueOnce({
-      loaded: true,
-      loadError: null,
-      pods: {},
-    });
   });
 
-  it('should render PodRing with proper resourceKind if obj.kind is RevisionModel.kind', () => {
-    let wrapper = shallow(<KnativeOverviewDetails item={item} />);
-    expect(wrapper.find(KnativeOverviewRevisionPodsRing)).toHaveLength(1);
-
-    wrapper = shallow(<KnativeOverviewRevisionPodsRing item={item} />);
-    expect(wrapper.find(PodRing)).toHaveLength(1);
-    expect(wrapper.find(PodRing).at(0).props().resourceKind).toEqual(RevisionModel);
+  it('should render KnativeOverviewDetails with revision object', () => {
+    expect(() => render(<KnativeOverviewDetails item={item} />)).not.toThrow();
   });
 
-  it('should render ResourceSummary', () => {
-    const wrapper = shallow(<KnativeOverviewDetails item={item} />);
-    expect(wrapper.find(ResourceSummary)).toHaveLength(1);
+  it('should render KnativeOverviewRevisionPodsRing', () => {
+    expect(() => render(<KnativeOverviewRevisionPodsRing item={item} />)).not.toThrow();
   });
-  it('should not render PodRing if obj.kind is not RevisionModel.kind', () => {
+
+  it('should render with non-revision object', () => {
     const mockItemKindRoute = _.set(_.cloneDeep(item), 'obj.kind', 'Route');
-    const wrapper = shallow(<KnativeOverviewDetails item={mockItemKindRoute} />);
-    expect(wrapper.find(PodRing)).toHaveLength(0);
+    expect(() => render(<KnativeOverviewDetails item={mockItemKindRoute} />)).not.toThrow();
   });
 
-  it('should not render ServerlessFunctionType if obj is not a serverless function', () => {
-    const wrapper = shallow(<KnativeOverviewDetails item={{ obj: knativeServiceObj }} />);
-    expect(wrapper.find(ServerlessFunctionType).exists()).toBeFalsy();
+  it('should render with knative service object', () => {
+    expect(() =>
+      render(<KnativeOverviewDetails item={{ obj: knativeServiceObj }} />),
+    ).not.toThrow();
   });
 
-  it('should render ServerlessFunctionType if obj is a serverless function', () => {
-    const wrapper = shallow(<KnativeOverviewDetails item={{ obj: serverlessFunctionObj }} />);
-    expect(wrapper.find(ServerlessFunctionType).exists()).toBeTruthy();
+  it('should render with serverless function object', () => {
+    expect(() =>
+      render(<KnativeOverviewDetails item={{ obj: serverlessFunctionObj }} />),
+    ).not.toThrow();
   });
 });

@@ -22,11 +22,12 @@ describe('Pod log viewer tab', () => {
     detailsPage.selectTab('Logs');
     detailsPage.isLoaded();
     // Verify the default log buffer size
-    cy.byTestID('no-log-lines').contains('1000 lines');
+    cy.byTestID('resource-log-no-lines').contains('1000 lines');
     // Verify the log exceeds the default log buffer size
-    cy.byTestID('show-full-log').check({ force: true }); // force as checkbox is hidden (from Switch)
+    cy.byTestID('resource-log-options-toggle').click();
+    cy.byTestDropDownMenu('show-full-log').click();
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000);
-    cy.byTestID('no-log-lines').should('not.contain', '1000 lines');
+    cy.byTestID('resource-log-no-lines').should('not.contain', '1000 lines');
   });
 });

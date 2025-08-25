@@ -68,6 +68,21 @@ Feature: Create the different workloads from Add page
                   | image_stream | runtime_icon | name           |
                   | golang       | fedora       | hello-internal |
 
+        @regression @odc-7803
+        Scenario Outline: Deploy image with custom icon
+            Given user is at Deploy Image page
+             When user enters Image name from external registry as "<image_name>"
+              And user selects a custom icon with URL "<custom_icon>"
+              And user enters Name as "<name>"
+              And user selects resource type as "deployment"
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user will see the deployed image "<name>" with "<custom_icon>" icon
+
+        Examples:
+                  | image_name                                  | custom_icon                      | name                |
+                  | ghcr.io/logonoff/fortune-cowsay-motd:latest | https://i.imgur.com/cxiObse.jpeg | fortune-cowsay-motd |
+
         @broken-test
         Scenario: Edit Runtime Icon while Editing Image: A-02-TC05
             Given user has deployed container Image "openshift/hello-openshift" from external registry

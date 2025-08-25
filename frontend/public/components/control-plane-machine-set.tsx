@@ -144,7 +144,7 @@ const ControlPlaneMachineSetCounts: React.FC<ControlPlaneMachineSetCountsProps> 
   );
 };
 
-const ControlPlaneMachineSetDetails: React.SFC<ControlPlaneMachineSetDetailsProps> = ({ obj }) => {
+const ControlPlaneMachineSetDetails: React.FCC<ControlPlaneMachineSetDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>

@@ -57,6 +57,6 @@ export const contextMenuActions: ContextMenuActions = (element) => {
   return {
     'topology-actions': element,
     ...(resource ? { [referenceFor(resource)]: resource } : {}),
-    ...(csvName ? { 'csv-actions': { csvName, resource } } : {}),
+    ...(csvName ? { 'operand-actions': { csvName, resource } } : {}),
   };
 };

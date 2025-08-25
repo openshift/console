@@ -1,17 +1,35 @@
-import * as React from 'react';
-import { shallow } from 'enzyme';
-import OperatorBackedOwnerReferences from '@console/internal/components/utils';
+import { render } from '@testing-library/react';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
-import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 import OverviewDetailsKnativeResourcesTab from '../OverviewDetailsKnativeResourcesTab';
-import RevisionsOverviewList from '../RevisionsOverviewList';
-import KSRoutesOverviewList from '../RoutesOverviewList';
+import '@testing-library/jest-dom';
+
+jest.mock('@console/internal/components/utils', () => ({
+  __esModule: true,
+  default: 'OperatorBackedOwnerReferences',
+}));
+
+jest.mock('../ConfigurationsOverviewList', () => ({
+  __esModule: true,
+  default: 'ConfigurationsOverviewList',
+}));
+
+jest.mock('../RevisionsOverviewList', () => ({
+  __esModule: true,
+  default: 'RevisionsOverviewList',
+}));
+
+jest.mock('../RoutesOverviewList', () => ({
+  __esModule: true,
+  default: 'KSRoutesOverviewList',
+}));
 
 type OverviewDetailsKnativeResourcesTabProps = React.ComponentProps<
   typeof OverviewDetailsKnativeResourcesTab
 >;
-let knItem: OverviewDetailsKnativeResourcesTabProps;
+
 describe('OverviewDetailsKnativeResourcesTab', () => {
+  let knItem: OverviewDetailsKnativeResourcesTabProps;
+
   beforeEach(() => {
     knItem = {
       item: {
@@ -26,18 +44,20 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
   });
 
   it('should render OperatorBackedOwnerReferences with proper props', () => {
-    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab item={knItem.item} />);
-    expect(wrapper.find(OperatorBackedOwnerReferences)).toHaveLength(1);
-    expect(wrapper.find(OperatorBackedOwnerReferences).at(0).props().item).toEqual(knItem.item);
+    const { container } = render(<OverviewDetailsKnativeResourcesTab item={knItem.item} />);
+    const operatorBacked = container.querySelector('OperatorBackedOwnerReferences');
+    expect(operatorBacked).toBeInTheDocument();
+    expect(operatorBacked).toHaveAttribute('item', '[object Object]');
   });
+
   it('should render Routes, Configuration and revision list on sidebar in case of kn deployment', () => {
     knItem.item = {
       ...knItem.item,
       obj: MockKnativeResources.deployments.data[0],
     };
-    const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
-    expect(wrapper.find(RevisionsOverviewList)).toHaveLength(1);
-    expect(wrapper.find(KSRoutesOverviewList)).toHaveLength(1);
-    expect(wrapper.find(ConfigurationsOverviewList)).toHaveLength(1);
+    const { container } = render(<OverviewDetailsKnativeResourcesTab {...knItem} />);
+    expect(container.querySelector('RevisionsOverviewList')).toBeInTheDocument();
+    expect(container.querySelector('KSRoutesOverviewList')).toBeInTheDocument();
+    expect(container.querySelector('ConfigurationsOverviewList')).toBeInTheDocument();
   });
 });

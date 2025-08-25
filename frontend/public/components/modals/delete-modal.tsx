@@ -1,18 +1,16 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Alert, Checkbox } from '@patternfly/react-core';
+import { Alert, Backdrop, Checkbox, Modal, ModalVariant } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { resourceListPathFromModel, withHandlePromise, HandlePromiseProps } from '../utils';
+import { resourceListPathFromModel } from '../utils';
 import {
   k8sKill,
   k8sList,
   referenceForOwnerRef,
   K8sResourceKind,
   K8sModel,
-  K8sResourceCommon,
   OwnerReference,
 } from '../../module/k8s/';
 import { YellowExclamationTriangleIcon } from '@console/shared';
@@ -20,43 +18,48 @@ import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/
 import { findOwner } from '../../module/k8s/managed-by';
 import { ResourceLink } from '../utils/resource-link';
 import { LocationDescriptor } from 'history';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
-export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePromiseProps) => {
+export const DeleteModal = (props: DeleteModalProps) => {
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = React.useState(true);
   const [isDeleteOtherResourcesChecked, setIsDeleteOtherResourcesChecked] = React.useState(true);
   const [owner, setOwner] = React.useState<OwnerReference>(undefined);
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const { t } = useTranslation();
 
-  const submit = (event) => {
-    event.preventDefault();
-    const { kind, resource, deleteAllResources } = props;
+  const submit = React.useCallback(
+    (event) => {
+      event.preventDefault();
+      const { kind, resource, deleteAllResources } = props;
 
-    //https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/
-    const propagationPolicy = isChecked && kind ? kind.propagationPolicy : 'Orphan';
-    const json = propagationPolicy
-      ? { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
-      : undefined;
+      //https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/
+      const propagationPolicy = isChecked && kind ? kind.propagationPolicy : 'Orphan';
+      const json = propagationPolicy
+        ? { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
+        : undefined;
 
-    props.handlePromise(k8sKill(kind, resource, {}, {}, json), () => {
-      props?.close && props.close();
+      handlePromise(k8sKill(kind, resource, {}, {}, json)).then(() => {
+        props?.close && props.close();
 
-      if (deleteAllResources && isDeleteOtherResourcesChecked) {
-        deleteAllResources();
-      }
+        if (deleteAllResources && isDeleteOtherResourcesChecked) {
+          deleteAllResources();
+        }
 
-      // If we are currently on the deleted resource's page, redirect to the resource list page
-      const re = new RegExp(`/${resource?.metadata?.name}(/|$)`);
-      if (re.test(window.location.pathname)) {
-        const listPath = props.redirectTo
-          ? props.redirectTo
-          : resourceListPathFromModel(kind, _.get(resource, 'metadata.namespace'));
-        navigate(listPath);
-      }
-    });
-  };
+        // If we are currently on the deleted resource's page, redirect to the resource list page
+        const re = new RegExp(`/${resource?.metadata?.name}(/|$)`);
+        if (re.test(window.location.pathname)) {
+          const listPath = props.redirectTo
+            ? props.redirectTo
+            : resourceListPathFromModel(kind, _.get(resource, 'metadata.namespace'));
+          navigate(listPath);
+        }
+      });
+    },
+    [isChecked, isDeleteOtherResourcesChecked, props, handlePromise, navigate],
+  );
 
   React.useEffect(() => {
     const { resource } = props;
@@ -75,7 +78,7 @@ export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePr
       });
   });
 
-  const { kind, resource, message, errorMessage } = props;
+  const { kind, resource, message } = props;
   return (
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>
@@ -148,20 +151,32 @@ export const DeleteModal = withHandlePromise((props: DeleteModalProps & HandlePr
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
-        inProgress={false}
+        inProgress={inProgress}
         submitDanger
         submitText={props.btnText || t('public~Delete')}
         cancel={props.cancel}
       />
     </form>
   );
-});
+};
+
+export const DeleteOverlay: React.FC<DeleteModalProps> = (props) => {
+  const [isOpen, setIsOpen] = React.useState(true);
+  const closeModal = () => setIsOpen(false);
+  return isOpen ? (
+    <Backdrop>
+      <Modal variant={ModalVariant.small} isOpen>
+        <DeleteModal cancel={closeModal} close={closeModal} {...props} />
+      </Modal>
+    </Backdrop>
+  ) : null;
+};
 
 export const deleteModal = createModalLauncher(DeleteModal);
 
 export type DeleteModalProps = {
   kind: K8sModel;
-  resource: K8sResourceCommon;
+  resource: K8sResourceKind;
   close?: () => void;
   redirectTo?: LocationDescriptor;
   message?: JSX.Element;

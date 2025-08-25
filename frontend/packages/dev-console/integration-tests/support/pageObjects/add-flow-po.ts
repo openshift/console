@@ -269,6 +269,11 @@ export const containerImagePO = {
     externalRegistryImageCheckBox: '#form-radiobutton-registry-external-field',
     internalRegistryImageCheckBox: '#form-radiobutton-registry-internal-field',
     runTimeIconDropdown: '.odc-icon-dropdown button',
+    addCustomIcon: '[data-test="add-custom-icon"]',
+    customIconModal: {
+      url: '[data-test="import-custom-icon-url-input"]',
+      confirmButton: '[data-test="import-custom-icon-confirm"]',
+    },
     externalRegistry: {
       allowImageFromInsecureRegistry: '#form-checkbox-allowInsecureRegistry-field',
       imageName: '#form-input-searchTerm-field',

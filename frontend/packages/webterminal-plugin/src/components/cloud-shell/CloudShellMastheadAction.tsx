@@ -2,24 +2,15 @@ import * as React from 'react';
 import { Split, SplitItem } from '@patternfly/react-core';
 import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
-import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
-import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
-import useCloudShellAvailable from './useCloudShellAvailable';
+import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dispatchers';
+import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
+import { useCloudShellAvailable } from './useCloudShellAvailable';
 
-type DispatchProps = {
-  onClick: () => void;
-};
-
-type StateProps = {
-  open?: boolean;
-};
-
-type Props = StateProps & DispatchProps & { className?: string };
-
-const ClouldShellMastheadAction: React.FCC<Props> = ({ onClick, className, open }) => {
+export const CloudShellMastheadAction: React.FCC<{ className?: string }> = ({ className }) => {
   const terminalAvailable = useCloudShellAvailable();
+  const toggleCloudShellExpanded = useToggleCloudShellExpanded();
+  const open = useIsCloudShellExpanded();
+
   const { t } = useTranslation();
   if (!terminalAvailable) {
     return null;
@@ -28,7 +19,7 @@ const ClouldShellMastheadAction: React.FCC<Props> = ({ onClick, className, open 
     <button
       className={className}
       type="button"
-      onClick={onClick}
+      onClick={toggleCloudShellExpanded}
       data-tour-id="tour-cloud-shell-button"
       data-quickstart-id="qs-masthead-cloudshell"
     >
@@ -51,16 +42,3 @@ const ClouldShellMastheadAction: React.FCC<Props> = ({ onClick, className, open 
     </button>
   );
 };
-
-const stateToProps = (state: RootState): StateProps => ({
-  open: isCloudShellExpanded(state),
-});
-
-const dispatchToProps = (dispatch): DispatchProps => ({
-  onClick: () => dispatch(toggleCloudShellExpanded()),
-});
-
-export default connect<StateProps, DispatchProps>(
-  stateToProps,
-  dispatchToProps,
-)(ClouldShellMastheadAction);

@@ -114,7 +114,7 @@ const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj, activeColumnIDs
   );
 };
 
-const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
+const MachineDetails: React.FCC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
   const nodeName = getMachineNodeName(obj);
   const machineRole = getMachineRole(obj);
   const instanceType = getMachineInstanceType(obj);
@@ -331,7 +331,7 @@ export const MachinePage: React.FC<MachinePageProps> = ({
   );
 };
 
-export const MachineDetailsPage: React.SFC = (props) => (
+export const MachineDetailsPage: React.FCC = (props) => (
   <DetailsPage
     {...props}
     kind={machineReference}

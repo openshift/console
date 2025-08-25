@@ -351,6 +351,20 @@ export const validSubscriptionSort = (validSubscription: string): number => {
   }
 };
 
+export const getSupportWorkflowUrl = (marketplaceSupportWorkflow: string): string => {
+  if (marketplaceSupportWorkflow) {
+    try {
+      const url = new URL(marketplaceSupportWorkflow);
+      url.searchParams.set('utm_source', 'openshift_console');
+      return url.toString();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error while parsing support workflow URL', error.message);
+    }
+  }
+  return '';
+};
+
 type AnnotationParserOptions = {
   onError?: (e: any) => void;
 };

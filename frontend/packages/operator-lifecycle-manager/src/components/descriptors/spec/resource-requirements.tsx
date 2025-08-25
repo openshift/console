@@ -10,9 +10,9 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { withHandlePromise } from '@console/internal/components/utils';
 import { k8sUpdate, referenceFor, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props) => {
   const { t } = useTranslation();
@@ -81,55 +81,56 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
   );
 };
 
-export const ResourceRequirementsModal = withHandlePromise(
-  (props: ResourceRequirementsModalProps) => {
-    const { t } = useTranslation();
-    const { obj, path, type, model, close, handlePromise } = props;
-    const [cpu, setCPU] = React.useState<string>(_.get(obj.spec, `${path}.${type}.cpu`, ''));
-    const [memory, setMemory] = React.useState<string>(
-      _.get(obj.spec, `${path}.${type}.memory`, ''),
-    );
-    const [storage, setStorage] = React.useState<string>(
-      _.get(obj.spec, `${path}.${type}.ephemeral-storage`, ''),
-    );
+export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps) => {
+  const { t } = useTranslation();
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
+  const { obj, path, type, model, close } = props;
+  const [cpu, setCPU] = React.useState<string>(_.get(obj.spec, `${path}.${type}.cpu`, ''));
+  const [memory, setMemory] = React.useState<string>(_.get(obj.spec, `${path}.${type}.memory`, ''));
+  const [storage, setStorage] = React.useState<string>(
+    _.get(obj.spec, `${path}.${type}.ephemeral-storage`, ''),
+  );
 
-    const submit = (e) => {
-      e.preventDefault();
-      const newObj = _.set(_.cloneDeep(obj), `spec.${path}.${type}`, {
-        ...(cpu && { cpu }),
-        ...(memory && { memory }),
-        ...(storage && { 'ephemeral-storage': storage }),
-      });
-      return handlePromise(k8sUpdate(model, newObj), close);
-    };
+  const submit = (e) => {
+    e.preventDefault();
+    const newObj = _.set(_.cloneDeep(obj), `spec.${path}.${type}`, {
+      ...(cpu && { cpu }),
+      ...(memory && { memory }),
+      ...(storage && { 'ephemeral-storage': storage }),
+    });
+    handlePromise(k8sUpdate(model, newObj))
+      .then(() => {
+        close();
+      })
+      .catch(() => {});
+  };
 
-    return (
-      <form onSubmit={(e) => submit(e)} className="modal-content">
-        <ModalTitle>{props.title}</ModalTitle>
-        <ModalBody>
-          <Grid hasGutter>
-            <GridItem>{props.description}</GridItem>
-            <ResourceRequirements
-              cpu={cpu}
-              memory={memory}
-              storage={storage}
-              onChangeCPU={setCPU}
-              onChangeMemory={setMemory}
-              onChangeStorage={setStorage}
-              path={path}
-            />
-          </Grid>
-        </ModalBody>
-        <ModalSubmitFooter
-          errorMessage={props.errorMessage}
-          inProgress={props.inProgress}
-          submitText={t('public~Save')}
-          cancel={props.cancel}
-        />
-      </form>
-    );
-  },
-);
+  return (
+    <form onSubmit={(e) => submit(e)} className="modal-content">
+      <ModalTitle>{props.title}</ModalTitle>
+      <ModalBody>
+        <Grid hasGutter>
+          <GridItem>{props.description}</GridItem>
+          <ResourceRequirements
+            cpu={cpu}
+            memory={memory}
+            storage={storage}
+            onChangeCPU={setCPU}
+            onChangeMemory={setMemory}
+            onChangeStorage={setStorage}
+            path={path}
+          />
+        </Grid>
+      </ModalBody>
+      <ModalSubmitFooter
+        errorMessage={errorMessage}
+        inProgress={inProgress}
+        submitText={t('public~Save')}
+        cancel={props.cancel}
+      />
+    </form>
+  );
+};
 
 const stateToProps = ({ k8s }: RootState, { obj }) => ({
   model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) as K8sKind,
@@ -183,13 +184,6 @@ export type ResourceRequirementsModalProps = {
   model: K8sKind;
   type: 'requests' | 'limits';
   path: string;
-  handlePromise: <T>(
-    promise: Promise<T>,
-    onFulfill?: (res) => void,
-    onError?: (errorMsg: string) => void,
-  ) => void;
-  inProgress: boolean;
-  errorMessage: string;
   cancel?: () => void;
   close?: () => void;
 };

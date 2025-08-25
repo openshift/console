@@ -1,7 +1,7 @@
 import { useQueryParams } from '../../../hooks/useQueryParams';
 import { CatalogQueryParams } from '../utils/types';
 
-const useCtaLink = (cta: { label: string; href?: string }): [string, string] => {
+export const useCtaLink = (cta: { label: string; href?: string }): [string, string] => {
   const queryParams = useQueryParams();
 
   if (!cta) {
@@ -24,5 +24,3 @@ const useCtaLink = (cta: { label: string; href?: string }): [string, string] => 
 
   return [to, label];
 };
-
-export default useCtaLink;

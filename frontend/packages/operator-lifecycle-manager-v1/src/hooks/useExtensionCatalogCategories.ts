@@ -1,34 +1,21 @@
-import { useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import * as React from 'react';
+import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import { usePoll } from '@console/internal/components/utils';
-import { CatalogCategory } from '@console/shared/src/components/catalog/utils/types';
 import { ExtensionCatalogDatabaseContext } from '../contexts/ExtensionCatalogDatabaseContext';
 import { getUniqueIndexKeys, openDatabase } from '../database/indexeddb';
 
-export const useExtensionCatalogCategories = (): [CatalogCategory[], boolean, Error] => {
-  const { done: initDone, error: initError } = useContext(ExtensionCatalogDatabaseContext);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(!initDone);
-  const [error, setError] = useState<Error>(initError);
+export const useExtensionCatalogCategories = (): CatalogCategory[] => {
+  const { done: initDone, error: initError } = React.useContext(ExtensionCatalogDatabaseContext);
+  const [categories, setCategories] = React.useState([]);
 
-  useEffect(() => {
-    if (!initDone || initError) {
-      setLoading(!initDone);
-      setError(initError);
-    }
-  }, [initDone, initError]);
-
-  const tick = useCallback(() => {
+  const tick = React.useCallback(() => {
     if (initDone && !initError) {
       openDatabase('olm')
         .then((database) => getUniqueIndexKeys(database, 'extension-catalog', 'categories'))
         .then((c) => {
-          setLoading(false);
-          setError(null);
           setCategories(c);
         })
-        .catch((e) => {
-          setLoading(false);
-          setError(e);
+        .catch(() => {
           setCategories([]);
         });
     }
@@ -36,9 +23,11 @@ export const useExtensionCatalogCategories = (): [CatalogCategory[], boolean, Er
 
   // Poll IndexedDB (IDB) every 10 seconds
   usePoll(tick, 10000);
-  const catalogCategories = useMemo<CatalogCategory[]>(
+  const catalogCategories = React.useMemo<CatalogCategory[]>(
     () => categories.map((c) => ({ id: c, label: c, tags: [c] })),
     [categories],
   );
-  return [catalogCategories, loading, error];
+  return catalogCategories;
 };
+
+export default useExtensionCatalogCategories;

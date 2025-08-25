@@ -10,11 +10,13 @@ import {
   ModalTitle,
   createModalLauncher,
 } from '../factory/modal';
-import { ListInput, HandlePromiseProps, withHandlePromise } from '../utils';
+import { ListInput } from '../utils';
 import { useTranslation } from 'react-i18next';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-export const AddUsersModal = withHandlePromise((props: AddUsersModalProps) => {
+export const AddUsersModal = (props: AddUsersModalProps) => {
   const [values, setValues] = React.useState(['']);
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ export const AddUsersModal = withHandlePromise((props: AddUsersModalProps) => {
     const patch = props.group.users
       ? _.map(values, (value: string) => ({ op: 'add', path: '/users/-', value }))
       : [{ op: 'add', path: '/users', value: values }];
-    return props.handlePromise(k8sPatch(GroupModel, props.group, patch), props.close);
+    handlePromise(k8sPatch(GroupModel, props.group, patch)).then(() => props.close());
   };
   const { t } = useTranslation();
 
@@ -34,18 +36,17 @@ export const AddUsersModal = withHandlePromise((props: AddUsersModalProps) => {
         <ListInput label={t('public~Users')} required initialValues={values} onChange={setValues} />
       </ModalBody>
       <ModalSubmitFooter
-        errorMessage={props.errorMessage}
-        inProgress={props.inProgress}
+        errorMessage={errorMessage}
+        inProgress={inProgress}
         submitText={t('public~Save')}
         cancel={props.cancel}
       />
     </form>
   );
-});
+};
 
 export const addUsersModal = createModalLauncher(AddUsersModal);
 
 export type AddUsersModalProps = {
   group: GroupKind;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;

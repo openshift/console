@@ -41,7 +41,7 @@ const machineConfigMenuActions = [
   ...Kebab.factory.common,
 ];
 
-const MachineConfigSummary: React.SFC<MachineConfigSummaryProps> = ({ obj, t }) => (
+const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>
     <DescriptionListGroup>
       <DescriptionListTerm>{t('public~OS image URL')}</DescriptionListTerm>
@@ -50,7 +50,7 @@ const MachineConfigSummary: React.SFC<MachineConfigSummaryProps> = ({ obj, t }) 
   </ResourceSummary>
 );
 
-const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({ obj }) => {
+const MachineConfigDetails: React.FCC<MachineConfigDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const files = obj.spec.config?.storage?.files;
 
@@ -125,7 +125,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const MachineConfigDetailsPage: React.SFC<any> = (props) => {
+export const MachineConfigDetailsPage: React.FCC<any> = (props) => {
   return (
     <DetailsPage
       {...props}
@@ -182,7 +182,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
   );
 };
 
-const MachineConfigList: React.SFC<any> = (props) => {
+const MachineConfigList: React.FCC<any> = (props) => {
   const { t } = useTranslation();
   const MachineConfigTableHeader = () => {
     return [
@@ -235,7 +235,7 @@ const MachineConfigList: React.SFC<any> = (props) => {
   );
 };
 
-export const MachineConfigPage: React.SFC<any> = ({ canCreate = true, ...rest }) => (
+export const MachineConfigPage: React.FCC<any> = ({ canCreate = true, ...rest }) => (
   <ListPage
     {...rest}
     canCreate={canCreate}

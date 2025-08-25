@@ -1,24 +1,17 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/connectToFlags';
-import { RootState } from '@console/internal/redux';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAG_DEVWORKSPACE } from '../../const';
-import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
-import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
-import CloudShellDrawer from './CloudShellDrawer';
+import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dispatchers';
+import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
+import { CloudShellDrawer } from './CloudShellDrawer';
 
-type StateProps = {
-  open: boolean;
-};
+type CloudShellProps = React.PropsWithChildren<{}>;
 
-type DispatchProps = {
-  onClose: () => void;
-};
+const CloudShell: React.FCC<CloudShellProps> = ({ children }) => {
+  const onClose = useToggleCloudShellExpanded();
+  const open = useIsCloudShellExpanded();
+  const devWorkspaceAvailable = useFlag(FLAG_DEVWORKSPACE);
 
-type CloudShellProps = React.PropsWithChildren<WithFlagsProps & StateProps & DispatchProps>;
-
-const CloudShell: React.FCC<CloudShellProps> = ({ flags, open, onClose, children }) => {
-  if (!flags[FLAG_DEVWORKSPACE]) {
+  if (!devWorkspaceAvailable) {
     return <>{children}</>;
   }
   return (
@@ -28,15 +21,4 @@ const CloudShell: React.FCC<CloudShellProps> = ({ flags, open, onClose, children
   );
 };
 
-const stateToProps = (state: RootState): StateProps => ({
-  open: isCloudShellExpanded(state),
-});
-
-const dispatchToProps = (dispatch): DispatchProps => ({
-  onClose: () => dispatch(toggleCloudShellExpanded()),
-});
-
-export default connect<StateProps, DispatchProps>(
-  stateToProps,
-  dispatchToProps,
-)(connectToFlags(FLAG_DEVWORKSPACE)(CloudShell));
+export default CloudShell;

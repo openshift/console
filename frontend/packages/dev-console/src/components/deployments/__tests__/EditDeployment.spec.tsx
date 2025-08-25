@@ -44,7 +44,6 @@ jest.mock('@console/internal/components/utils', () => ({
       common: [],
     },
   },
-  withHandlePromise: jest.fn((Component) => Component),
   useNavigate: jest.fn(() => jest.fn()),
   navFactory: {
     details: jest.fn(),
