@@ -144,7 +144,7 @@
     "@patternfly/react-console": "^6.0.0",
     "@patternfly/react-core": "^6.2.2",
     "@patternfly/react-icons": "^6.2.2",
-    "@patternfly/react-log-viewer": "^6.1.0",
+    "@patternfly/react-log-viewer": "6.3.0-prerelease.2",
     "@patternfly/react-styles": "^6.2.2",
     "@patternfly/react-table": "^6.2.2",
     "@patternfly/react-templates": "^6.2.2",
