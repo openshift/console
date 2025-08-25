@@ -175,10 +175,35 @@ Component for displaying a blue info circle icon.
 
 ### Summary 
 
-Documentation is not available, please refer to the implementation.
+Component that adds word break opportunities in camelCase and PascalCase strings for better text wrapping.<br/><br/>This utility component is essential for displaying Kubernetes resource names and identifiers<br/>that often use camelCase naming conventions. It prevents layout issues by allowing long<br/>names to wrap at appropriate word boundaries.<br/><br/>**Common use cases:**<br/>- Displaying resource names in tables and lists<br/>- Rendering property names in forms and detail views<br/>- Status text that might contain long concatenated words<br/>- Custom resource names and field identifiers<br/><br/>**Breaking algorithm:**<br/>- Splits text at capital letters that start new words<br/>- Preserves consecutive capital letters as single units (e.g., "XMLParser" → "XML", "Parser")<br/>- Inserts word break opportunities (`<wbr>`) between words<br/>- Handles mixed case and acronym patterns intelligently<br/><br/>**Performance optimizations:**<br/>- Results are memoized to avoid repeated processing<br/>- Efficient regex-based word boundary detection<br/>- Minimal DOM overhead with semantic HTML elements<br/>- Cache persists across component re-renders<br/><br/>**Edge cases:**<br/>- Empty or null values render as dash (-)<br/>- Single words without case changes remain unchanged<br/>- Numbers and special characters are preserved in place<br/>- Non-string values are handled gracefully
+
+
+### Example
+
+```tsx
+// Basic camelCase wrapping
+const ResourceName: React.FC<{name: string}> = ({name}) => {
+  return (
+    <div className="resource-name">
+      <CamelCaseWrap value={name} dataTest="resource-name" />
+    </div>
+  );
+};
+
+// Examples of text transformation:
+// "containerImagePullBackOff" → "container<wbr>Image<wbr>Pull<wbr>Back<wbr>Off"
+// "XMLHttpRequest" → "XML<wbr>Http<wbr>Request"
+// "simpleString" → "simple<wbr>String"
+```
 
 
 
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `value` | The string to process for word breaking. Should be a camelCase, PascalCase, or mixed-case string |
+| `dataTest` | Optional test identifier attribute for automated testing and debugging |
 
 
 
@@ -193,8 +218,35 @@ Documentation is not available, please refer to the implementation.
 
 ### Summary 
 
-Provides information about user access to a given resource.
+Performs a Kubernetes access review to determine if the current user has permission for a specific resource operation.<br/><br/>**Note:** For React components, use the `useAccessReview` hook instead of calling this function directly.<br/>This function is primarily intended for non-React contexts and programmatic permission checks.<br/><br/>**Common use cases:**<br/>- Permission checks in utility functions and services<br/>- Conditional logic outside of React components<br/>- One-time permission validation in event handlers<br/>- Server-side or non-React permission checks<br/><br/>**Access review process:**<br/>- Creates SelfSubjectAccessReview API request<br/>- Handles impersonation context automatically<br/>- Returns cached results for identical requests<br/>- Follows Kubernetes RBAC evaluation rules
 
+
+### Example
+
+```tsx
+// Non-React permission check
+const validateUserAction = async (namespace: string) => {
+  const result = await checkAccess({
+    group: '',
+    resource: 'pods',
+    verb: 'create',
+    namespace
+  });
+  return result.status.allowed;
+};
+
+// For React components, use useAccessReview instead:
+const MyComponent: React.FC = () => {
+  const [canCreate] = useAccessReview({
+    group: '',
+    resource: 'pods',
+    verb: 'create',
+    namespace: 'default'
+  });
+
+  return canCreate ? <CreateButton /> : null;
+};
+```
 
 
 
@@ -202,14 +254,14 @@ Provides information about user access to a given resource.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `resourceAttributes` | resource attributes for access review |
-| `impersonate` | impersonation details |
+| `resourceAttributes` | Object containing resource details for the access review |
+| `impersonate` | Optional impersonation context for the permission check |
 
 
 
 ### Returns
 
-Object with resource access information.
+Promise resolving to SelfSubjectAccessReview response containing permission status
 
 
 ### Source
@@ -283,8 +335,16 @@ Documentation is not available, please refer to the implementation.
 
 ### Summary 
 
-A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.<br/>It also validates the response status code and throws an appropriate error or logs out the user if required.
+A custom wrapper around `fetch` that adds Console-specific headers and provides timeout functionality.<br/><br/>This is the base fetch function used throughout the Console for all HTTP requests.<br/>It provides consistent behavior for authentication, CSRF protection, and error handling.<br/><br/>**Common use cases:**<br/>- Making API requests to Kubernetes API server through Console proxy<br/>- Fetching data from Console backend services<br/>- Custom plugin API requests that need Console authentication<br/><br/>**Features provided:**<br/>- Automatic timeout handling with configurable duration<br/>- Console-specific headers (CSRF, impersonation, etc.)<br/>- Integration with Console's authentication system<br/>- Error handling for common HTTP status codes<br/><br/>**Timeout behavior:**<br/>- Default timeout of 60 seconds for all requests<br/>- Set timeout to 0 or negative value to disable timeout<br/>- Throws TimeoutError when timeout is exceeded<br/>- Uses Promise.race to implement timeout functionality<br/><br/>**Edge cases:**<br/>- Timeout of 0 or negative disables timeout completely<br/>- May throw TimeoutError for slow network conditions<br/>- Response validation is handled by higher-level wrapper functions
 
+
+### Example
+
+```tsx
+// Basic fetch with default timeout
+const response = await consoleFetch('/api/kubernetes/api/v1/pods');
+const pods = await response.json();
+```
 
 
 
@@ -292,15 +352,15 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `url` | The URL to fetch |
-| `options` | The options to pass to fetch |
-| `timeout` | The timeout in milliseconds |
+| `url` | The URL to fetch, can be relative or absolute |
+| `options` | Standard fetch options (method, headers, body, etc.) |
+| `timeout` | Timeout duration in milliseconds (default: 60000). Set to 0 to disable timeout |
 
 
 
 ### Returns
 
-A promise that resolves to the response.
+Promise that resolves to the Response object or rejects with TimeoutError
 
 
 ### Source
@@ -313,8 +373,16 @@ A promise that resolves to the response.
 
 ### Summary 
 
-A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.<br/>It also validates the response status code and throws an appropriate error or logs out the user if required.<br/>It returns the response as a JSON object.<br/>Uses consoleFetch internally.
+A wrapper around `consoleFetch` that automatically parses JSON responses and handles Console-specific behavior.<br/><br/>This is the preferred method for making JSON API requests in Console plugins.<br/>It automatically handles JSON parsing, error responses, and Console-specific features.<br/><br/>**Common use cases:**<br/>- API requests to Kubernetes API server<br/>- Fetching configuration data from Console backend<br/>- CRUD operations on Kubernetes resources<br/>- Plugin API calls that expect JSON responses<br/><br/>**Response handling:**<br/>- Automatically sets Accept: application/json header<br/>- Parses JSON responses automatically<br/>- Handles empty responses gracefully<br/>- Processes warning headers for admission webhook feedback<br/><br/>**Error behavior:**<br/>- Throws errors for HTTP error status codes<br/>- Preserves original error information<br/>- Handles network timeouts appropriately<br/>- Logs admission webhook warnings to Redux store<br/><br/>**Content type handling:**<br/>- JSON responses are automatically parsed<br/>- Plain text responses are returned as strings<br/>- Empty responses return empty object or string based on content type
 
+
+### Example
+
+```tsx
+// GET request for resource list
+const pods = await consoleFetchJSON('/api/kubernetes/api/v1/namespaces/default/pods');
+console.log('Pod count:', pods.items.length);
+```
 
 
 
@@ -322,16 +390,16 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `url` | The URL to fetch |
-| `method` | The HTTP method to use. Defaults to GET |
-| `options` | The options to pass to fetch |
-| `timeout` | The timeout in milliseconds |
+| `url` | The URL to fetch, typically a Kubernetes API endpoint |
+| `method` | HTTP method to use (GET, POST, PUT, PATCH, DELETE). Defaults to GET |
+| `options` | Additional fetch options (headers, body, etc.) |
+| `timeout` | Timeout in milliseconds (default: 60000) |
 
 
 
 ### Returns
 
-A promise that resolves to the response as text or JSON object.
+Promise that resolves to parsed JSON response or string for plain text
 
 
 ### Source
@@ -344,8 +412,18 @@ A promise that resolves to the response as text or JSON object.
 
 ### Summary 
 
-A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.<br/>It also validates the response status code and throws an appropriate error or logs out the user if required.<br/>It returns the response as a text.<br/>Uses `consoleFetch` internally.
+A wrapper around `consoleFetch` specifically for text responses.<br/><br/>This function is optimized for fetching plain text content such as logs,<br/>configuration files, or other non-JSON resources.<br/><br/>**Common use cases:**<br/>- Fetching container logs from Kubernetes API<br/>- Downloading configuration files or manifests as text<br/>- Retrieving plain text API responses<br/>- Accessing raw content that shouldn't be JSON parsed<br/><br/>**Response handling:**<br/>- Always returns response as plain text<br/>- Preserves original text formatting and encoding<br/>- Handles empty responses appropriately<br/>- No automatic JSON parsing unlike consoleFetchJSON<br/><br/>**Use cases over consoleFetchJSON:**<br/>- When you specifically need text content<br/>- For responses that might not be valid JSON<br/>- When dealing with large text files or logs<br/>- For endpoints that return mixed content types
 
+
+### Example
+
+```tsx
+// Fetch container logs
+const logs = await consoleFetchText(
+  '/api/kubernetes/api/v1/namespaces/default/pods/my-pod/log?container=app'
+);
+console.log(logs);  // Raw log text
+```
 
 
 
@@ -353,15 +431,15 @@ A custom wrapper around `fetch` that adds console-specific headers and allows fo
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `url` | The URL to fetch |
-| `options` | The options to pass to fetch |
-| `timeout` | The timeout in milliseconds |
+| `url` | The URL to fetch text content from |
+| `options` | Additional fetch options (headers, etc.) |
+| `timeout` | Timeout in milliseconds (default: 60000) |
 
 
 
 ### Returns
 
-A promise that resolves to the response as text or JSON object.
+Promise that resolves to the response as plain text
 
 
 ### Source
@@ -607,13 +685,22 @@ Documentation is not available, please refer to the implementation.
 
 ### Summary 
 
-Component for a generic status popover
+Component for displaying a generic status with customizable icon and optional popover content.<br/><br/>This is a foundational component for building status displays throughout the Console.<br/>It provides a flexible way to show status information with consistent styling and<br/>behavior patterns, including tooltips and popover content.<br/><br/>**Common use cases:**<br/>- Custom status indicators for application-specific states<br/>- Building status components for custom resources<br/>- Status displays with additional context in popovers<br/>- Reusable status patterns across different plugin interfaces<br/><br/>**Visual behavior:**<br/>- Shows icon with optional text label<br/>- Provides tooltip on hover (unless disabled)<br/>- Opens popover with additional content when children provided<br/>- Supports icon-only mode for compact displays<br/><br/>**Popover integration:**<br/>- When children are provided, component becomes clickable<br/>- Popover displays additional status details or actions<br/>- Popover title can be customized or defaults to main title<br/>- Consistent popover styling throughout Console<br/><br/>**Accessibility features:**<br/>- Proper ARIA labels and descriptions<br/>- Keyboard navigation support for popover triggers<br/>- Screen reader friendly status announcements<br/>- Focus management for popover interactions<br/><br/>**Edge cases:**<br/>- Gracefully handles missing or invalid icons<br/>- Empty children array doesn't trigger popover mode<br/>- Works with both functional and class components as icons<br/>- Handles dynamic title and children updates
 
 
 ### Example
 
 ```tsx
-<GenericStatus Icon={CircleIcon} />
+// Basic status with icon and text
+const CustomStatus: React.FC<{state: string}> = ({state}) => {
+  return (
+    <GenericStatus
+      Icon={CheckCircleIcon}
+      title={`Application ${state}`}
+      className="custom-status"
+    />
+  );
+};
 ```
 
 
@@ -622,13 +709,13 @@ Component for a generic status popover
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `title` | (optional) status text |
-| `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, tooltip won't be displayed |
-| `className` | (optional) additional class name for the component |
-| `popoverTitle` | (optional) title for popover |
-| `Icon` | icon to be displayed |
-| `children` | (optional) children for the component |
+| `Icon` | React component type that renders the status icon. Should accept optional title prop for accessibility |
+| `title` | Optional status text displayed next to icon and used for tooltip content |
+| `iconOnly` | Optional boolean to show only the icon without text label (default: false) |
+| `noTooltip` | Optional boolean to disable tooltip display (default: false) |
+| `className` | Optional additional CSS class name for custom styling |
+| `popoverTitle` | Optional title for the popover header, defaults to main title if not provided |
+| `children` | Optional React elements to display in popover. When provided, component becomes clickable and shows popover on interaction |
 
 
 
@@ -759,20 +846,40 @@ Component for displaying a green check mark circle icon.
 
 ### Summary 
 
-A component that creates a Navigation bar for a page.<br/>Routing is handled as part of the component.<br/>`console.tab/horizontalNav` can be used to add additional content to any horizontal nav.
+A component that creates a Navigation bar for a page with automatic routing and extension support.<br/><br/>This component provides a standard tabbed navigation pattern used throughout the OpenShift Console.<br/>It automatically handles routing between tabs and integrates with the plugin extension system.<br/><br/>**Common use cases:**<br/>- Resource detail pages (Pod details, Deployment details, etc.)<br/>- Multi-step workflows with distinct pages<br/>- Plugin pages that need consistent navigation patterns<br/><br/>**Extension integration:**<br/>- Other plugins can contribute tabs via `console.tab/horizontalNav` extensions<br/>- Extensions are automatically resolved and integrated into the navigation<br/>- Custom data is passed to all tab components for context sharing<br/><br/>**Routing behavior:**<br/>- URL fragments automatically sync with active tab<br/>- Navigation preserves query parameters and namespace context<br/>- Supports nested routing within individual tabs<br/><br/>**Edge cases:**<br/>- If no pages are provided, renders empty navigation<br/>- Invalid hrefs in pages array may cause routing issues<br/>- Resource prop should match the type expected by tab components
 
 
 ### Example
 
-```ts
-const HomePage: React.FC = (props) => {
-    const page = {
-      href: '/home',
-      name: 'Home',
-      component: ({customData}) => <>{customData.color} Home</>
+```tsx
+// Basic resource detail navigation
+const PodDetailsPage: React.FC<{pod: PodKind}> = ({pod}) => {
+  const pages = [
+    {
+      href: '',
+      name: 'Details',
+      component: PodDetails
+    },
+    {
+      href: 'yaml',
+      name: 'YAML',
+      component: PodYAML
+    },
+    {
+      href: 'logs',
+      name: 'Logs',
+      component: PodLogs
     }
-    return <HorizontalNav pages={[page]} customData={ color: 'Red'} />
-}
+  ];
+
+  return (
+    <HorizontalNav
+      resource={pod}
+      pages={pages}
+      customData={{theme: 'dark', showAdvanced: true}}
+    />
+  );
+};
 ```
 
 
@@ -781,9 +888,9 @@ const HomePage: React.FC = (props) => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `resource` | (optional) the resource associated with this Navigation, an object of K8sResourceCommon type |
-| `pages` | an array of page objects |
-| `customData` | (optional) custom data to be shared between the pages in the navigation. |
+| `resource` | Optional K8sResourceCommon object representing the resource being viewed. Passed to all tab components as props. Should match the expected type for the page components. |
+| `pages` | Array of page configuration objects. Each page must have `href` (URL fragment), `name` (display text), and `component` (React component to render) |
+| `customData` | Optional object containing custom data passed to all tab components. Useful for sharing configuration, theme settings, or computed values between tabs |
 
 
 
@@ -1292,10 +1399,43 @@ Documentation is not available, please refer to the implementation.
 
 ### Summary 
 
-Documentation is not available, please refer to the implementation.
+Container component that provides the main body layout for list pages.<br/><br/>This component wraps the main content area of list pages with consistent styling<br/>and layout patterns used throughout the Console. It provides proper spacing,<br/>responsive behavior, and integration with the Console's page layout system.<br/><br/>**Common use cases:**<br/>- Wrapping table components in resource list pages<br/>- Container for filtered list views with toolbars<br/>- Main content area for custom list implementations<br/><br/>**Layout behavior:**<br/>- Provides consistent padding and spacing for list content<br/>- Integrates with Console's responsive grid system<br/>- Handles overflow and scrolling for large lists<br/>- Maintains proper focus management for accessibility<br/><br/>**Styling integration:**<br/>- Uses PatternFly design tokens for consistent theming<br/>- Inherits Console's standard page layout patterns<br/>- Supports both light and dark theme modes<br/>- Responsive design adapts to different screen sizes<br/><br/>**Edge cases:**<br/>- Handles empty content gracefully<br/>- Works with dynamic content that changes size<br/>- Supports nested scrollable areas when needed
+
+
+### Example
+
+```tsx
+// Basic list page structure
+const PodListPage: React.FC = () => {
+  const [pods, loaded, error] = useK8sWatchResource({
+    kind: 'Pod',
+    isList: true
+  });
+
+  return (
+    <>
+      <ListPageHeader title="Pods" />
+      <ListPageBody>
+        <VirtualizedTable
+          data={pods}
+          loaded={loaded}
+          loadError={error}
+          columns={podColumns}
+          Row={PodRow}
+        />
+      </ListPageBody>
+    </>
+  );
+};
+```
 
 
 
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `children` | React elements to render within the list page body container. Typically includes tables, filters, pagination, and other list-related components |
 
 
 
@@ -1432,20 +1572,27 @@ const exampleList: React.FC<MyProps> = () => {
 
 ### Summary 
 
-Component for creating a stylized link.
+Component for creating a stylized link with built-in access control validation.<br/><br/>This component provides a consistent way to create navigation links that automatically<br/>check user permissions before rendering, ensuring users only see links they can actually use.<br/><br/>**Common use cases:**<br/>- Create buttons that navigate to resource creation forms<br/>- Action links in list page headers<br/>- Navigation links that require specific permissions<br/><br/>**Access control:**<br/>- Automatically validates user permissions using provided access review<br/>- Hides or disables link if user lacks required permissions<br/>- Supports both resource-level and namespace-level access checks<br/><br/>**Styling:**<br/>- Applies consistent Console link styling<br/>- Integrates with PatternFly button and link components<br/>- Supports various visual states (normal, disabled, loading)<br/><br/>**Edge cases:**<br/>- If no access review provided, link is always visible<br/>- Invalid 'to' prop may cause navigation issues<br/>- Access review failures result in hidden/disabled link
 
 
 ### Example
 
-```ts
-const exampleList: React.FC<MyProps> = () => {
- return (
-  <>
-   <ListPageHeader title="Example Pod List Page"/>
-      <ListPageCreateLink to={'/link/to/my/page'}>Create Item</ListPageCreateLink>
-   </ListPageHeader>
-  </>
- );
+```tsx
+// Basic create link with access control
+const CreatePodLink: React.FC<{namespace: string}> = ({namespace}) => {
+  return (
+    <ListPageCreateLink
+      to={`/k8s/ns/${namespace}/pods/~new`}
+      createAccessReview={{
+        group: '',
+        resource: 'pods',
+        verb: 'create',
+        namespace
+      }}
+    >
+      Create Pod
+    </ListPageCreateLink>
+  );
 };
 ```
 
@@ -1455,9 +1602,9 @@ const exampleList: React.FC<MyProps> = () => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `to` | string location where link should direct |
-| `createAccessReview` | (optional) object with namespace and kind used to determine access |
-| `children` | (optional) children for the component |
+| `to` | String URL path where the link should navigate. Can be relative or absolute path |
+| `createAccessReview` | Optional access review object specifying the permissions required to show this link. Contains group, resource, verb, and optionally namespace |
+| `children` | Optional React children to render inside the link component |
 
 
 
@@ -1585,22 +1732,33 @@ Documentation is not available, please refer to the implementation.
 
 ### Summary 
 
-A component that renders a horizontal toolbar with a namespace dropdown menu in the leftmost position. Additional components can be passed in as children and will be rendered to the right of the namespace dropdown. This component is designed to be used at the top of the page. It should be used on pages where the user needs to be able to change the active namespace, such as on pages with k8s resources.
+A component that renders a horizontal toolbar with a namespace dropdown menu for namespace-aware pages.<br/><br/>This component provides the standard namespace selection interface used throughout the Console<br/>on pages that need to operate within a specific namespace context.<br/><br/>**Common use cases:**<br/>- Resource list pages that filter by namespace<br/>- Dashboard pages showing namespace-specific metrics<br/>- Forms that create resources in a selected namespace<br/><br/>**Layout behavior:**<br/>- Namespace dropdown is positioned on the left side<br/>- Additional toolbar components render to the right<br/>- Maintains consistent spacing and alignment<br/>- Integrates with Console's standard page layout<br/><br/>**Namespace management:**<br/>- Automatically syncs with global namespace context<br/>- Updates URL parameters when namespace changes<br/>- Preserves other URL state during namespace switches<br/>- Handles permissions and namespace access validation<br/><br/>**Dropdown options:**<br/>- Shows all accessible namespaces for the current user<br/>- Includes "All Namespaces" option for cluster-wide views<br/>- Filters namespaces based on RBAC permissions<br/>- Sorts namespaces alphabetically for easy navigation<br/><br/>**Edge cases:**<br/>- Disabled state prevents namespace changes<br/>- Invalid namespaces are filtered from dropdown<br/>- Network errors may temporarily disable dropdown<br/>- Some pages may not support "All Namespaces" view
 
 
 ### Example
 
 ```tsx
-   const logNamespaceChange = (namespace) => console.log(`New namespace: ${namespace}`);
+// Basic namespace bar for resource listing page
+const ResourceListPage: React.FC = () => {
+  const handleNamespaceChange = (newNamespace: string) => {
+    // Additional logic when namespace changes
+    console.log(`Switched to namespace: ${newNamespace}`);
+    // Clear any search/filter state that's namespace-specific
+    setSearchTerm('');
+  };
 
-   ...
-
-   <NamespaceBar onNamespaceChange={logNamespaceChange}>
-     <NamespaceBarApplicationSelector />
-   </NamespaceBar>
-   <Page>
-
-     ...
+  return (
+    <>
+      <NamespaceBar onNamespaceChange={handleNamespaceChange}>
+        <Button variant="primary">Create Resource</Button>
+        <RefreshButton />
+      </NamespaceBar>
+      <PageBody>
+        <ResourceTable />
+      </PageBody>
+    </>
+  );
+};
 ```
 
 
@@ -1609,9 +1767,9 @@ A component that renders a horizontal toolbar with a namespace dropdown menu in 
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `onNamespaceChange` | (optional) A function that is executed when a namespace option is selected. It accepts the new namespace in the form of a string as its only argument. The active namespace is updated automatically when an option is selected, but additional logic can be applied through this function. When the namespace is changed, the namespace parameter in the URL will be changed from the previous namespace to the newly selected namespace. |
-| `isDisabled` | (optional) A boolean flag that disables the namespace dropdown if set to true. This option only applies to the namespace dropdown and has no effect on child components. |
-| `children` | (optional) Additional elements to be rendered inside the toolbar to the right of the namespace dropdown. |
+| `onNamespaceChange` | Optional callback function executed when namespace selection changes. Receives the new namespace string as argument. Useful for clearing filters or triggering data refreshes |
+| `isDisabled` | Optional boolean to disable the namespace dropdown while keeping the toolbar layout. Child components remain functional |
+| `children` | Optional React elements to render in the toolbar to the right of the namespace dropdown. Common elements include buttons, selectors, and breadcrumbs |
 
 
 
@@ -1747,15 +1905,38 @@ Documentation is not available, please refer to the implementation.
 
 ### Summary 
 
-Component for creating a status popover item
+Component for creating interactive status displays with popover content.<br/><br/>This component wraps status indicators to make them clickable and display additional<br/>information in a popover. It's commonly used throughout the Console to provide detailed<br/>status information without cluttering the main interface.<br/><br/>**Common use cases:**<br/>- Detailed error messages for failed resources<br/>- Additional metrics and information for status indicators<br/>- Rich content displays for complex status states<br/>- Action buttons and links related to specific statuses<br/><br/>**Interaction behavior:**<br/>- Status element becomes clickable button trigger<br/>- Popover appears on click with detailed content<br/>- Supports both controlled and uncontrolled popover visibility<br/>- Proper keyboard navigation and focus management<br/><br/>**Layout features:**<br/>- Configurable popover positioning (defaults to right)<br/>- Optional header with title display<br/>- Responsive design adapts to screen size<br/>- Consistent styling with Console design system<br/><br/>**Accessibility:**<br/>- Proper ARIA labels and descriptions<br/>- Keyboard navigation support<br/>- Screen reader compatible status announcements<br/>- Focus management for popover interactions<br/><br/>**Edge cases:**<br/>- Handles empty or missing content gracefully<br/>- Works with dynamic content that changes size<br/>- Supports controlled visibility for programmatic control<br/>- Manages multiple popover instances appropriately
 
 
 ### Example
 
 ```tsx
-<PopoverStatus title={title} statusBody={statusBody}>
-  {children}
-</PopoverStatus>
+// Error status with detailed error information
+const ErrorStatusWithDetails: React.FC<{error: Error}> = ({error}) => {
+  const statusBody = (
+    <StatusIconAndText
+      icon={<ExclamationCircleIcon />}
+      title="Error"
+      className="status-error"
+    />
+  );
+
+  return (
+    <PopoverStatus
+      title="Error Details"
+      statusBody={statusBody}
+    >
+      <div>
+        <p><strong>Error:</strong> {error.message}</p>
+        <p><strong>Code:</strong> {error.code}</p>
+        <p><strong>Timestamp:</strong> {new Date().toLocaleString()}</p>
+        <Button variant="link" onClick={() => retryAction()}>
+          Retry Operation
+        </Button>
+      </div>
+    </PopoverStatus>
+  );
+};
 ```
 
 
@@ -1764,14 +1945,15 @@ Component for creating a status popover item
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `statusBody` | content displayed within the popover. |
-| `onHide` | (optional) function invoked when popover begins to transition out |
-| `onShow` | (optional) function invoked when popover begins to appear |
-| `title` | (optional) title for the popover |
-| `hideHeader` | (optional) when true, header text is hidden |
-| `isVisible` | (optional) when true, the popover is displayed |
-| `shouldClose` | (optional) callback function invoked when the popover is closed only if isVisible is also controlled |
-| `children` | (optional) children for the component |
+| `statusBody` | React element that serves as the clickable trigger for the popover. Usually a status component with icon and text |
+| `title` | Optional title text displayed in the popover header. Also used for accessibility labels |
+| `hideHeader` | Optional boolean to hide the popover header completely (default: false) |
+| `isVisible` | Optional boolean for controlled popover visibility. When provided, component operates in controlled mode |
+| `shouldClose` | Optional callback function for controlled mode, invoked when popover should close |
+| `shouldOpen` | Optional callback function that determines if popover should open on trigger interaction |
+| `onShow` | Optional callback invoked when popover begins to appear, useful for analytics or state management |
+| `onHide` | Optional callback invoked when popover begins to hide, useful for cleanup or state management |
+| `children` | React elements to display in the popover body. Can include any content: text, buttons, forms, charts, etc. |
 
 
 
@@ -2065,13 +2247,21 @@ return <ResourceEventStream resource={resource} />
 
 ### Summary 
 
-Component that creates an icon badge for a specific resource type.
+Component that creates an icon badge for a specific resource type.<br/><br/>This component provides visual identification for Kubernetes resource types throughout<br/>the Console interface, helping users quickly identify different kinds of resources.<br/><br/>**Common use cases:**<br/>- Table columns showing resource type icons<br/>- Legend components for multi-resource views<br/>- Resource type indicators in forms and selectors<br/><br/>**Icon system:**<br/>- Uses Console's built-in icon mapping for standard Kubernetes resources<br/>- Falls back to generic icons for unknown or custom resource types<br/>- Supports both legacy kind strings and modern groupVersionKind objects<br/>- Icons are SVG-based and scale appropriately<br/><br/>**Visual consistency:**<br/>- Maintains consistent sizing and spacing<br/>- Integrates with PatternFly design system<br/>- Supports custom CSS classes for styling overrides<br/><br/>**Edge cases:**<br/>- Unknown resource kinds display a generic resource icon<br/>- Missing kind parameter shows a default placeholder icon<br/>- Custom resources may not have specific icons
 
 
 ### Example
 
 ```tsx
-<ResourceIcon kind="Pod"/>
+// Basic resource icon
+const ResourceTypeIndicator: React.FC<{resourceKind: string}> = ({resourceKind}) => {
+  return (
+    <div className="resource-type-indicator">
+      <ResourceIcon kind={resourceKind} />
+      <span>{resourceKind}</span>
+    </div>
+  );
+};
 ```
 
 
@@ -2080,9 +2270,9 @@ Component that creates an icon badge for a specific resource type.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `kind` | (optional) the kind of resource such as Pod, Deployment, Namespace |
-| `groupVersionKind` | (optional) object with group, version, and kind |
-| `className` | (optional) class style for component |
+| `kind` | Optional legacy resource kind reference string (deprecated, use groupVersionKind instead) |
+| `groupVersionKind` | Optional object with group, version, and kind properties for the resource type |
+| `className` | Optional CSS class name to apply to the icon component |
 
 
 
@@ -2097,17 +2287,23 @@ Component that creates an icon badge for a specific resource type.
 
 ### Summary 
 
-Component that creates a link to a specific resource type with an icon badge.
+Component that creates a link to a specific resource type with an icon badge.<br/><br/>This is one of the most commonly used components in the Console, providing a consistent<br/>way to display and link to Kubernetes resources throughout the interface.<br/><br/>**Common use cases:**<br/>- Displaying resource references in tables and detail views<br/>- Creating navigation between related resources<br/>- Showing resource relationships and dependencies<br/><br/>**Visual appearance:**<br/>- Automatically displays appropriate icon for the resource type<br/>- Shows resource name as clickable link (when linkTo=true)<br/>- Supports custom display names and truncation for long names<br/>- Integrates with Console's resource icon system<br/><br/>**Navigation behavior:**<br/>- Links to standard resource detail pages by default<br/>- Respects current namespace context for namespaced resources<br/>- Handles both cluster-scoped and namespaced resources<br/>- Supports custom click handlers for non-standard navigation<br/><br/>**Edge cases:**<br/>- Missing resource names display as "(none)" or similar placeholder<br/>- Invalid resource kinds may show generic icons<br/>- Cluster-scoped resources ignore namespace parameter<br/>- Non-existent resources still render links (404 handled by target page)
 
 
 ### Example
 
 ```tsx
-  <ResourceLink
+// Basic resource link
+const PodReference: React.FC<{pod: PodKind}> = ({pod}) => {
+  return (
+    <ResourceLink
       kind="Pod"
-      name="testPod"
-      title={metadata.uid}
-  />
+      name={pod.metadata.name}
+      namespace={pod.metadata.namespace}
+      title={pod.metadata.uid}
+    />
+  );
+};
 ```
 
 
@@ -2116,19 +2312,19 @@ Component that creates a link to a specific resource type with an icon badge.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `kind` | (optional) the kind of resource such as Pod, Deployment, Namespace |
-| `groupVersionKind` | (optional) object with group, version, and kind |
-| `className` | (optional) class style for component |
-| `displayName` | (optional) display name for component, overwrites the resource name if set |
-| `inline` | (optional) flag to create icon badge and name inline with children |
-| `linkTo` | (optional) flag to create a Link object, defaults to true |
-| `name` | (optional) name of resource |
-| `namespace` | (optional) specific namespace for the kind resource to link to |
-| `hideIcon` | (optional) flag to hide the icon badge |
-| `title` | (optional) title for the link object (not displayed) |
-| `dataTest` | (optional) identifier for testing |
-| `onClick` | (optional) callback function for when component is clicked |
-| `truncate` | (optional) flag to truncate the link if too long |
+| `kind` | Optional legacy resource kind reference string (deprecated, use groupVersionKind instead) |
+| `groupVersionKind` | Optional object with group, version, and kind properties for the resource type |
+| `className` | Optional CSS class name to apply to the component |
+| `displayName` | Optional custom display name that overrides the resource name |
+| `inline` | Optional boolean to render icon and name inline with children (default: false) |
+| `linkTo` | Optional boolean to create a navigable link (default: true) |
+| `name` | Optional name of the resource instance |
+| `namespace` | Optional namespace for namespaced resources |
+| `hideIcon` | Optional boolean to hide the resource type icon (default: false) |
+| `title` | Optional title attribute for the link element (not visually displayed) |
+| `dataTest` | Optional test identifier for automated testing |
+| `onClick` | Optional click handler function, overrides default navigation when provided |
+| `truncate` | Optional boolean to truncate long resource names (default: false) |
 
 
 
@@ -2143,20 +2339,31 @@ Component that creates a link to a specific resource type with an icon badge.
 
 ### Summary 
 
-Component for displaying resource status badge.<br/>Use this component to display status of given resource.<br/>It accepts child element to be rendered inside the badge.<br/>@component ResourceStatus
+Component that wraps status indicators with a styled badge container for consistent resource status displays.<br/><br/>This component provides a standardized visual container for resource status information<br/>throughout the Console. It creates a consistent badge appearance with proper spacing<br/>and styling that integrates with the overall design system.<br/><br/>**Common use cases:**<br/>- Wrapping status components in resource tables<br/>- Displaying resource health indicators in lists<br/>- Creating consistent status badges in cards and detail views<br/>- Standardizing status appearance across different contexts<br/><br/>**Visual appearance:**<br/>- Creates a rounded badge container with consistent styling<br/>- Provides proper padding and spacing for status content<br/>- Integrates with PatternFly design system colors and typography<br/>- Supports both standard and alternative styling variants<br/><br/>**Layout behavior:**<br/>- Maintains consistent badge sizing across different status types<br/>- Provides proper alignment within parent containers<br/>- Handles text overflow and wrapping appropriately<br/>- Responsive design adapts to container constraints<br/><br/>**Accessibility features:**<br/>- Includes data-test attributes for automated testing<br/>- Maintains semantic HTML structure<br/>- Preserves screen reader compatibility of child content<br/>- Supports keyboard navigation patterns<br/><br/>**Edge cases:**<br/>- Handles empty or missing child content gracefully<br/>- Works with various status component types<br/>- Supports dynamic content updates<br/>- Maintains visual consistency with different badge variants
 
 
 ### Example
 
-```ts
-return (
- <ResourceStatus>
-   <Status status={resourceStatus} />
- </ResourceStatus>
-)
+```tsx
+// Basic resource status badge
+const PodStatusBadge: React.FC<{pod: PodKind}> = ({pod}) => {
+  return (
+    <ResourceStatus>
+      <Status status={pod.status?.phase || 'Unknown'} />
+    </ResourceStatus>
+  );
+};
 ```
 
 
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `children` | React elements to render inside the badge container. Typically status components like Status, GenericStatus, or StatusIconAndText |
+| `additionalClassNames` | Optional additional CSS class names for custom styling and theming |
+| `badgeAlt` | Optional boolean to use alternative badge styling variant for different visual contexts |
 
 
 
@@ -2303,13 +2510,24 @@ Documentation is not available, please refer to the implementation.
 
 ### Summary 
 
-Component for displaying a status message
+Component for displaying standardized status indicators with predefined styles and icons.<br/><br/>This component provides a comprehensive set of predefined status types commonly used<br/>throughout Kubernetes and OpenShift environments. It automatically maps status strings<br/>to appropriate icons and colors, ensuring consistent status representation across the Console.<br/><br/>**Common use cases:**<br/>- Displaying Pod phase status (Running, Pending, Failed, etc.)<br/>- Showing deployment rollout status (Progressing, Complete, Failed)<br/>- Resource health indicators (Ready, Not Ready, Warning)<br/>- Installation and upgrade status displays<br/><br/>**Status categories:**<br/>- **Progress states**: New, Pending, Installing, Updating, In Progress<br/>- **Success states**: Complete, Ready, Active, Bound, Succeeded<br/>- **Warning states**: Warning, RequiresApproval<br/>- **Error states**: Failed, Error, CrashLoopBackOff, ImagePullBackOff<br/>- **Cancelled states**: Cancelled, Deleting, Terminating, Superseded<br/><br/>**Icon mapping:**<br/>- Each status type has a predefined icon for visual consistency<br/>- Colors follow PatternFly design system conventions<br/>- Icons are semantically meaningful and accessible<br/>- Fallback behavior for unknown status values<br/><br/>**Extensibility:**<br/>- Supports children content for additional status details<br/>- Can be used with popover content for more information<br/>- Allows custom styling through className prop<br/>- Works with existing tooltip and accessibility systems<br/><br/>**Edge cases:**<br/>- Unknown status values render as plain text or dash<br/>- Empty/null status values display as dash (—)<br/>- Children content triggers enhanced status display modes<br/>- Handles case-sensitive status matching
 
 
 ### Example
 
 ```tsx
-<Status status='Warning' />
+// Basic pod status display
+const PodStatusBadge: React.FC<{pod: PodKind}> = ({pod}) => {
+  const phase = pod.status?.phase || 'Unknown';
+
+  return (
+    <Status
+      status={phase}
+      title={`Pod is ${phase.toLowerCase()}`}
+      className="pod-status"
+    />
+  );
+};
 ```
 
 
@@ -2318,13 +2536,12 @@ Component for displaying a status message
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `status` | type of status to be displayed |
-| `title` | (optional) status text |
-| `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, tooltip won't be displayed |
-| `className` | (optional) additional class name for the component |
-| `popoverTitle` | (optional) title for popover |
-| `children` | (optional) children for the component |
+| `status` | The status string that determines which icon and color to display. Common values include: 'Running', 'Pending', 'Failed', 'Complete', 'Warning', 'Error', etc. |
+| `title` | Optional custom text to display next to the icon. If not provided, defaults to the status value |
+| `iconOnly` | Optional boolean to show only the icon without text label (default: false) |
+| `noTooltip` | Optional boolean to disable tooltip display (default: false) |
+| `className` | Optional additional CSS class name for custom styling |
+| `children` | Optional React elements to display in enhanced status mode, typically used for detailed status information or error messages |
 
 
 
@@ -2339,13 +2556,22 @@ Component for displaying a status message
 
 ### Summary 
 
-Component for displaying a status icon and text
+Foundational component for displaying status information with icon and text combinations.<br/><br/>This is a low-level building block used throughout the Console status system to create<br/>consistent visual representations of status information. It handles the layout, spacing,<br/>and interaction between icons and text labels.<br/><br/>**Common use cases:**<br/>- Building blocks for higher-level status components<br/>- Custom status indicators with specific icons<br/>- Status displays in tables and lists<br/>- Progress indicators with spinning animations<br/><br/>**Layout behavior:**<br/>- Icon and text are properly aligned and spaced<br/>- Responsive design adapts to different container sizes<br/>- Consistent styling follows Console design patterns<br/>- Supports both horizontal and compact layouts<br/><br/>**Icon features:**<br/>- Optional spinning animation for progress states<br/>- Automatic icon sizing and color inheritance<br/>- Proper alignment with text content<br/>- Supports both PatternFly and custom icons<br/><br/>**Text handling:**<br/>- Automatic camelCase to space formatting<br/>- Tooltip support for icon-only displays<br/>- Fallback to dash (—) for empty content<br/>- Proper text wrapping and truncation<br/><br/>**Accessibility:**<br/>- Proper ARIA labels and descriptions<br/>- Tooltip text for icon-only displays<br/>- Screen reader compatible content<br/>- Keyboard navigation support<br/><br/>**Edge cases:**<br/>- Missing title renders as dash placeholder<br/>- Icon-only mode provides tooltip with title<br/>- Handles dynamic icon and title updates<br/>- Works with various icon component types
 
 
 ### Example
 
 ```tsx
-<StatusIconAndText title={title} icon={renderIcon} />
+// Basic status with icon and text
+const BasicStatus: React.FC<{isReady: boolean}> = ({isReady}) => {
+  return (
+    <StatusIconAndText
+      icon={isReady ? <CheckCircleIcon /> : <ExclamationTriangleIcon />}
+      title={isReady ? "Ready" : "Not Ready"}
+      className="resource-status"
+    />
+  );
+};
 ```
 
 
@@ -2354,12 +2580,12 @@ Component for displaying a status icon and text
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `title` | (optional) status text |
-| `iconOnly` | (optional) if true, only displays icon |
-| `noTooltip` | (optional) if true, tooltip won't be displayed |
-| `className` | (optional) additional class name for the component |
-| `icon` | (optional) icon to be displayed |
-| `spin` | (optional) if true, icon rotates |
+| `icon` | Optional React element to display as the status icon. Can be any PatternFly icon or custom component |
+| `title` | Optional status text to display. If empty, component renders as dash (—). Text is automatically formatted from camelCase |
+| `iconOnly` | Optional boolean to show only the icon without text label (default: false) |
+| `noTooltip` | Optional boolean to disable tooltip display for icon-only mode (default: false) |
+| `spin` | Optional boolean to add rotating animation to the icon, useful for progress states (default: false) |
+| `className` | Optional additional CSS class name for custom styling |
 
 
 
@@ -2539,8 +2765,22 @@ const PodRow: React.FC<RowProps<K8sResourceCommon>> = ({ obj, activeColumnIDs })
 
 ### Summary 
 
-A component to render timestamp.<br/>The timestamps are synchronized between individual instances of the Timestamp component.<br/>The provided timestamp is formatted according to user locale.
+A component to render timestamp with consistent formatting and user locale support.<br/><br/>This component provides a standardized way to display timestamps throughout the Console<br/>with automatic formatting, tooltips, and relative time updates.<br/><br/>**Common use cases:**<br/>- Displaying resource creation and modification times<br/>- Showing event timestamps in chronological views<br/>- Formatting dates in tables and detail views<br/><br/>**Formatting behavior:**<br/>- Automatically formats according to user's browser locale<br/>- Shows relative time ("2 minutes ago") with absolute time in tooltip<br/>- Updates relative times automatically as time passes<br/>- Handles various input formats gracefully<br/><br/>**Synchronization:**<br/>- All timestamp instances update simultaneously for consistency<br/>- Uses shared timer to minimize performance impact<br/>- Maintains accurate relative times across the application<br/><br/>**Input format support:**<br/>- ISO 8601 strings (standard Kubernetes format)<br/>- Unix epoch timestamps (numbers)<br/>- JavaScript Date objects<br/>- RFC 3339 formatted strings<br/><br/>**Edge cases:**<br/>- Invalid timestamps display as "Unknown"<br/>- Future timestamps show as "in X time"<br/>- Very old timestamps may show absolute dates instead of relative<br/>- null/undefined timestamps render nothing
 
+
+### Example
+
+```tsx
+// Basic timestamp for resource creation time
+const ResourceAge: React.FC<{resource: K8sResourceKind}> = ({resource}) => {
+  return (
+    <div>
+      <span>Created: </span>
+      <Timestamp timestamp={resource.metadata.creationTimestamp} />
+    </div>
+  );
+};
+```
 
 
 
@@ -2548,10 +2788,10 @@ A component to render timestamp.<br/>The timestamps are synchronized between ind
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `timestamp` | the timestamp to render. Format is expected to be ISO 8601 (used by Kubernetes), epoch timestamp, or an instance of a Date. |
-| `simple` | render simple version of the component omitting icon and tooltip. |
-| `omitSuffix` | formats the date ommiting the suffix. |
-| `className` | additional class name for the component. |
+| `timestamp` | The timestamp to render. Accepts ISO 8601 strings (Kubernetes standard), Unix epoch numbers, or Date objects |
+| `simple` | Optional boolean to render simple version without icon and tooltip (default: false) |
+| `omitSuffix` | Optional boolean to format date without "ago" suffix for relative times (default: false) |
+| `className` | Optional additional CSS class name for styling the component |
 
 
 
@@ -2566,8 +2806,34 @@ A component to render timestamp.<br/>The timestamps are synchronized between ind
 
 ### Summary 
 
-Hook that provides information about user access to a given resource.
+React hook that provides user permission status for specific Kubernetes resource operations.<br/><br/>This is the recommended way to check user permissions in React components. It handles<br/>loading states, caching, and error conditions automatically while providing a clean<br/>React-friendly API.<br/><br/>**Common use cases:**<br/>- Conditionally rendering create/edit/delete buttons<br/>- Showing/hiding menu items based on permissions<br/>- Disabling form fields for read-only users<br/>- Implementing fine-grained access control in UIs<br/><br/>**Hook behavior:**<br/>- Starts with loading=true, isAllowed=false<br/>- Performs async access review on mount and when dependencies change<br/>- Updates state when permission check completes<br/>- Defaults to allowing access if permission check fails (fail-open)<br/><br/>**Error handling:**<br/>- Network failures default to allowing access (server enforces final permissions)<br/>- Logs errors to console for debugging<br/>- Never blocks UI indefinitely due to permission check failures<br/>- Graceful degradation ensures functional UI even with RBAC issues<br/><br/>**Performance considerations:**<br/>- Results are cached to avoid redundant API calls<br/>- Prevents state updates on unmounted components<br/>- Efficiently handles dependency changes without excessive re-renders
 
+
+### Example
+
+```tsx
+// Basic permission-based rendering
+const CreatePodButton: React.FC<{namespace: string}> = ({namespace}) => {
+  const [canCreate, loading] = useAccessReview({
+    group: '',
+    resource: 'pods',
+    verb: 'create',
+    namespace
+  });
+
+  if (loading) {
+    return <Spinner size="sm" />;
+  }
+
+  return canCreate ? (
+    <Button variant="primary">Create Pod</Button>
+  ) : (
+    <Tooltip content="You don't have permission to create pods">
+      <Button variant="primary" isDisabled>Create Pod</Button>
+    </Tooltip>
+  );
+};
+```
 
 
 
@@ -2575,14 +2841,15 @@ Hook that provides information about user access to a given resource.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `resourceAttributes` | resource attributes for access review |
-| `impersonate` | impersonation details |
+| `resourceAttributes` | Object containing resource details for the access review |
+| `impersonate` | Optional impersonation context for the permission check |
+| `noCheckForEmptyGroupAndResource` | Optional flag to skip check when group and resource are empty |
 
 
 
 ### Returns
 
-Array with `isAllowed` and `loading` values.
+Tuple containing [isAllowed: boolean, loading: boolean] - isAllowed indicates if user has permission, loading indicates if check is in progress
 
 
 ### Source
@@ -2595,19 +2862,34 @@ Array with `isAllowed` and `loading` values.
 
 ### Summary 
 
-A hook that provides a list of user-selected active TableColumns.
+A hook that provides a list of user-selected active TableColumns with persistent column management.<br/><br/>This hook integrates with the Console's column management system, allowing users to show/hide<br/>table columns with their preferences saved across sessions.<br/><br/>**Common use cases:**<br/>- Resource list tables that need customizable column visibility<br/>- Complex tables with many optional columns<br/>- Tables that need namespace column conditional visibility<br/><br/>**Persistence behavior:**<br/>- Column selections are saved to user settings (ConfigMap or localStorage)<br/>- Settings persist across browser sessions and page reloads<br/>- Each table can have independent column management via columnManagementID<br/><br/>**Column management integration:**<br/>- Works with the standard "Manage Columns" modal in table headers<br/>- Supports default column visibility via the `additional` property<br/>- Automatically handles system columns that can't be hidden<br/><br/>**Namespace column logic:**<br/>- Automatically hides namespace column when viewing single namespace<br/>- Shows namespace column when viewing "All Namespaces"<br/>- `showNamespaceOverride` can force namespace column visibility<br/><br/>**Edge cases:**<br/>- Returns all non-additional columns if no user settings exist<br/>- Filters out invalid column IDs from saved settings<br/>- Handles missing columnManagementID gracefully<br/>- Always includes columns with empty title (system columns)
 
 
 ### Example
 
 ```tsx
-  // See implementation for more details on TableColumn type
+// Basic table with column management
+const ResourceTable: React.FC<{data: K8sResourceKind[]}> = ({data}) => {
+  const columns: TableColumn<K8sResourceKind>[] = [
+    {id: 'name', title: 'Name', sort: 'metadata.name'},
+    {id: 'namespace', title: 'Namespace', sort: 'metadata.namespace'},
+    {id: 'status', title: 'Status', additional: true}, // hidden by default
+    {id: 'created', title: 'Created', sort: 'metadata.creationTimestamp'},
+    {id: '', title: '', props: {className: 'dropdown-kebab-pf'}} // always visible
+  ];
+
   const [activeColumns, userSettingsLoaded] = useActiveColumns({
     columns,
-    showNamespaceOverride: false,
-    columnManagementID,
+    columnManagementID: 'core~v1~Pod', // unique ID for this table
+    showNamespaceOverride: false
   });
-  return userSettingsAreLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
+
+  if (!userSettingsLoaded) {
+    return <TableSkeleton columns={columns} />;
+  }
+
+  return <VirtualizedTable columns={activeColumns} data={data} />;
+};
 ```
 
 
@@ -2616,16 +2898,16 @@ A hook that provides a list of user-selected active TableColumns.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `options` | Which are passed as a key-value in the map |
-| `` | options.columns - An array of all available TableColumns |
-| `` | options.showNamespaceOverride - (optional) If true, a namespace column will be included, regardless of column management selections |
-| `` | options.columnManagementID - (optional) A unique id used to persist and retrieve column management selections to and from user settings. Usually a `group~version~kind` string for a resource. |
+| `options` | Configuration object for column management |
+| `` | options.columns Array of all available TableColumn objects that define the table structure |
+| `` | options.showNamespaceOverride Optional boolean to force namespace column visibility regardless of current namespace context |
+| `` | options.columnManagementID Optional unique identifier for persisting column preferences. Should be in format "group~version~kind" for resources |
 
 
 
 ### Returns
 
-A tuple containing the current user-selected active columns (a subset of options.columns), and a boolean flag indicating whether user settings have been loaded.
+Tuple containing:<br/>  - `activeColumns`: Filtered array of columns that should be displayed based on user preferences<br/>  - `userSettingsLoaded`: Boolean indicating if user settings have been loaded from storage
 
 
 ### Source
@@ -2638,23 +2920,25 @@ A tuple containing the current user-selected active columns (a subset of options
 
 ### Summary 
 
-Hook that provides the currently active namespace and a callback for setting the active namespace.
+Hook that provides the currently active namespace and a callback for setting the active namespace.<br/><br/>This hook integrates with the Console's global namespace context, which affects resource listings,<br/>routing, and access control throughout the application.<br/><br/>**Common use cases:**<br/>- Building namespace-aware components that filter resources<br/>- Creating custom namespace selectors<br/>- Implementing namespace-scoped operations<br/><br/>**Special values:**<br/>- Returns `undefined` when no namespace is selected (cluster-scoped view)<br/>- Returns `"#ALL_NS#"` constant when "All Namespaces" is selected<br/>- For namespaced resources, always returns a specific namespace string<br/><br/>**Routing integration:**<br/>- Changing namespace automatically updates URL parameters<br/>- Namespace changes trigger navigation to maintain consistency<br/>- Preserves other URL state (filters, search terms, etc.)<br/><br/>**Edge cases:**<br/>- Initial value may be `undefined` during app bootstrap<br/>- Setting an invalid namespace name may cause access issues<br/>- Some pages may override namespace behavior (e.g., cluster settings)
 
 
 ### Example
 
 ```tsx
-const Component: React.FC = (props) => {
-   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
-   return <select
-     value={activeNamespace}
-     onChange={(e) => setActiveNamespace(e.target.value)}
-   >
-     {
-       // ...namespace options
-     }
-   </select>
-}
+// Basic namespace-aware resource listing
+const ResourceList: React.FC = () => {
+  const [activeNamespace] = useActiveNamespace();
+  const [resources] = useK8sWatchResources({
+    pods: {
+      kind: 'Pod',
+      namespace: activeNamespace, // automatically filters by namespace
+      isList: true
+    }
+  });
+
+  return <PodsList data={resources.pods.data} />;
+};
 ```
 
 
@@ -2663,7 +2947,7 @@ const Component: React.FC = (props) => {
 
 ### Returns
 
-A tuple containing the current active namespace and setter callback.
+Tuple containing:<br/>  - `activeNamespace`: Currently selected namespace string, `undefined` for all namespaces, or special constant for cluster-wide view<br/>  - `setActiveNamespace`: Function to change the active namespace, accepts namespace string or `undefined` for all namespaces
 
 
 ### Source
@@ -2714,17 +2998,27 @@ A tuple containing the current active perspective and setter callback.
 
 ### Summary 
 
-A hook that provides a callback to launch a modal for editing Kubernetes resource annotations.
+A hook that provides a callback to launch a modal for editing Kubernetes resource annotations.<br/><br/>This hook creates a standardized annotations editor that allows users to add, edit, and remove<br/>annotations on any Kubernetes resource with proper validation and access control.<br/><br/>**Common use cases:**<br/>- Adding edit actions to resource detail pages<br/>- Implementing annotation management in kebab menus<br/>- Creating annotation-based workflows (e.g., setting deployment annotations)<br/><br/>**Annotation handling:**<br/>- Preserves existing annotations while allowing edits<br/>- Validates annotation keys according to Kubernetes standards<br/>- Handles special annotations (like finalizers) appropriately<br/>- Supports both user-defined and system annotations<br/><br/>**Access control:**<br/>- Automatically validates user permissions to update the resource<br/>- Handles RBAC for patch operations on the specific resource type<br/>- Shows appropriate errors for insufficient permissions<br/><br/>**Edge cases:**<br/>- Returns no-op function if resource is undefined/null<br/>- Handles read-only resources gracefully<br/>- Preserves annotation formatting and encoding<br/>- Validates annotation key/value constraints (length, characters, etc.)
 
 
 ### Example
 
 ```tsx
-const PodAnnotationsButton = ({ pod }) => {
+// Basic annotations editor button
+const EditAnnotationsButton: React.FC<{resource: K8sResourceCommon}> = ({resource}) => {
+  const launchAnnotationsModal = useAnnotationsModal(resource);
   const { t } = useTranslation();
-  const launchAnnotationsModal = useAnnotationsModal(pod);
-  return <button onClick={launchAnnotationsModal}>{t('Edit Pod Annotations')}</button>
-}
+
+  return (
+    <Button
+      variant="secondary"
+      onClick={launchAnnotationsModal}
+      isDisabled={!resource?.metadata}
+    >
+      {t('Edit Annotations')}
+    </Button>
+  );
+};
 ```
 
 
@@ -2733,13 +3027,13 @@ const PodAnnotationsButton = ({ pod }) => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `resource` | The resource to edit annotations for, an object of K8sResourceCommon type. |
+| `resource` | The Kubernetes resource to edit annotations for. Must be a valid K8sResourceCommon object with metadata |
 
 
 
 ### Returns
 
-A function which will launch a modal for editing a resource's annotations.
+Function that when called, opens the annotations editor modal. Returns no-op if resource is invalid
 
 
 ### Source
@@ -2752,17 +3046,27 @@ A function which will launch a modal for editing a resource's annotations.
 
 ### Summary 
 
-A hook that provides a callback to launch a modal for deleting a resource.
+A hook that provides a callback to launch a modal for deleting Kubernetes resources.<br/><br/>This hook creates a standardized delete confirmation modal that handles resource deletion<br/>with proper validation, access control, and user feedback.<br/><br/>**Common use cases:**<br/>- Adding delete buttons to resource rows in tables<br/>- Implementing delete actions in kebab menus<br/>- Creating bulk delete operations<br/><br/>**Access control:**<br/>- Modal automatically checks user permissions before allowing deletion<br/>- Handles RBAC validation for the specific resource and namespace<br/>- Shows appropriate error messages for insufficient permissions<br/><br/>**Deletion behavior:**<br/>- Performs proper Kubernetes API calls with error handling<br/>- Shows loading states during deletion process<br/>- Handles finalizers and graceful deletion timeouts<br/>- Automatically updates resource watches after successful deletion<br/><br/>**Edge cases:**<br/>- Returns no-op function if resource is undefined/null<br/>- Handles resources with protection finalizers<br/>- Gracefully fails if resource no longer exists<br/>- Supports cascade deletion for resources with dependents
 
 
 ### Example
 
 ```tsx
-const DeletePodButton = ({ pod }) => {
-  const { t } = useTranslation();
+// Basic delete button for a single resource
+const DeletePodButton: React.FC<{pod: PodKind}> = ({pod}) => {
   const launchDeleteModal = useDeleteModal(pod);
-  return <button onClick={launchDeleteModal}>{t('Delete Pod')}</button>
-}
+  const { t } = useTranslation();
+
+  return (
+    <Button
+      variant="danger"
+      onClick={launchDeleteModal}
+      isDisabled={!pod}
+    >
+      {t('Delete Pod')}
+    </Button>
+  );
+};
 ```
 
 
@@ -2771,17 +3075,17 @@ const DeletePodButton = ({ pod }) => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `resource` | The resource to delete. |
-| `redirectTo` | (optional) A location to redirect to after deleting the resource. |
-| `message` | (optional) A message to display in the modal. |
-| `btnText` | (optional) The text to display on the delete button. |
-| `deleteAllResources` | (optional) A function to delete all resources of the same kind. |
+| `resource` | The Kubernetes resource to delete. Must be a valid K8sResourceCommon object with metadata |
+| `redirectTo` | Optional URL to navigate to after successful deletion. Can be string path or LocationDescriptor object |
+| `message` | Optional custom message to display in the confirmation modal. Defaults to standard deletion warning |
+| `btnText` | Optional text for the delete button. Defaults to "Delete" |
+| `deleteAllResources` | Optional custom function to handle deletion. If provided, overrides default deletion behavior. Useful for bulk operations or custom cleanup logic |
 
 
 
 ### Returns
 
-A function which will launch a modal for deleting a resource.
+Function that when called, opens the delete confirmation modal. Returns no-op if resource is invalid
 
 
 ### Source
@@ -2822,16 +3126,35 @@ the boolean value of the requested feature flag or undefined
 
 ### Summary 
 
-Hook that retrieves the k8s model for provided K8sGroupVersionKind from redux.
+Hook that retrieves the Kubernetes model definition for a specific resource type.<br/><br/>K8s models contain essential metadata about resource types including API paths,<br/>namespacing behavior, and display properties. This hook is fundamental for any<br/>component that needs to interact with Kubernetes resources.<br/><br/>**Common use cases:**<br/>- Validating if a resource type exists before making API calls<br/>- Getting API group/version information for resource operations<br/>- Determining if a resource is namespaced or cluster-scoped<br/>- Building dynamic UIs that work with multiple resource types<br/><br/>**Model discovery:**<br/>- Models are loaded from API server discovery endpoints<br/>- Custom Resource models are dynamically registered<br/>- Static models for core Kubernetes resources are pre-loaded<br/>- Plugin-defined models are automatically integrated<br/><br/>**Performance considerations:**<br/>- Models are cached in Redux store for efficient access<br/>- Hook returns immediately with cached data when available<br/>- Model loading is a one-time operation per resource type<br/>- Uses selectors to minimize re-renders<br/><br/>**Model properties:**<br/>- `apiGroup`, `apiVersion`: API endpoint information<br/>- `kind`, `plural`: Resource type identifiers<br/>- `namespaced`: Boolean indicating namespace scoping<br/>- `verbs`: Available operations (get, list, create, etc.)<br/>- `crd`: Boolean indicating if this is a Custom Resource<br/><br/>**Edge cases:**<br/>- Returns undefined model for unknown resource types<br/>- inFlight is true during initial API discovery<br/>- Legacy string references are supported but deprecated<br/>- Model may be undefined until discovery completes
 
 
 ### Example
 
-```ts
-const Component: React.FC = () => {
-  const [model, inFlight] = useK8sModel({ group: 'app'; version: 'v1'; kind: 'Deployment' });
-  return ...
-}
+```tsx
+// Basic model lookup for API operations
+const ResourceActions: React.FC<{groupVersionKind: K8sGroupVersionKind}> = ({groupVersionKind}) => {
+  const [model, inFlight] = useK8sModel(groupVersionKind);
+
+  if (inFlight) {
+    return <Spinner size="sm" />;
+  }
+
+  if (!model) {
+    return <Alert variant="warning">Unknown resource type</Alert>;
+  }
+
+  const canCreate = model.verbs?.includes('create');
+  const isNamespaced = model.namespaced;
+
+  return (
+    <div>
+      <h3>{model.kind} ({model.apiVersion})</h3>
+      <p>Namespaced: {isNamespaced ? 'Yes' : 'No'}</p>
+      {canCreate && <Button>Create {model.kind}</Button>}
+    </div>
+  );
+};
 ```
 
 
@@ -2840,13 +3163,13 @@ const Component: React.FC = () => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `groupVersionKind` | group, version, kind of k8s resource `K8sGroupVersionKind` is preferred alternatively can pass reference for group, version, kind which is deprecated i.e `group~version~kind` `K8sResourceKindReference`. |
+| `groupVersionKind` | Resource type identifier. Preferred format is `K8sGroupVersionKind` object with `group`, `version`, and `kind` properties. Legacy string format `group~version~kind` is deprecated but supported |
 
 
 
 ### Returns
 
-An array with the first item as k8s model and second item as inFlight status
+Tuple containing:<br/>  - `model`: K8sModel object with resource metadata, undefined if resource type unknown<br/>  - `inFlight`: Boolean indicating if API discovery is in progress
 
 
 ### Source
@@ -2890,19 +3213,36 @@ An array with the first item as the list of k8s model and second item as inFligh
 
 ### Summary 
 
-Hook that retrieves the Kubernetes resource along with their respective status for loaded and error.
+Hook that retrieves a single Kubernetes resource with live updates and loading states.<br/><br/>This is one of the most important hooks for plugin developers, providing real-time access<br/>to Kubernetes resources with automatic updates, error handling, and loading states.<br/><br/>**Common use cases:**<br/>- Watching a specific resource instance (Pod, Deployment, ConfigMap, etc.)<br/>- Building resource detail pages that stay in sync with cluster state<br/>- Implementing forms that need current resource data<br/><br/>**Watch behavior:**<br/>- Establishes WebSocket connection to Kubernetes API server<br/>- Automatically reconnects on connection failures<br/>- Provides live updates when resource changes in cluster<br/>- Manages resource lifecycle (creation, updates, deletion)<br/><br/>**Performance considerations:**<br/>- Uses Redux for efficient state management and caching<br/>- Automatically deduplicates identical watch requests<br/>- Cleans up WebSocket connections when component unmounts<br/>- Deep compares watch parameters to prevent unnecessary re-subscriptions<br/><br/>**Error handling:**<br/>- Returns loading state during initial fetch<br/>- Provides detailed error objects for network/permission issues<br/>- Handles 404 errors for deleted resources gracefully<br/>- Supports retry logic for transient failures<br/><br/>**Edge cases:**<br/>- Returns empty object/array during initial load<br/>- Handles undefined resource parameter gracefully<br/>- Manages permission errors (403/401) appropriately<br/>- Supports both namespaced and cluster-scoped resources
 
 
 ### Example
 
-```ts
-const Component: React.FC = () => {
-  const watchRes = {
-        ...
-      }
-  const [data, loaded, error] = useK8sWatchResource(watchRes)
-  return ...
-}
+```tsx
+// Watch a specific Pod
+const PodDetails: React.FC<{podName: string, namespace: string}> = ({podName, namespace}) => {
+  const [pod, loaded, error] = useK8sWatchResource({
+    groupVersionKind: {kind: 'Pod', version: 'v1'},
+    name: podName,
+    namespace,
+  });
+
+  if (error) {
+    return <Alert variant="danger">Failed to load pod: {error.message}</Alert>;
+  }
+
+  if (!loaded) {
+    return <Skeleton />;
+  }
+
+  return (
+    <div>
+      <h1>{pod.metadata.name}</h1>
+      <p>Status: {pod.status.phase}</p>
+      <p>Node: {pod.spec.nodeName}</p>
+    </div>
+  );
+};
 ```
 
 
@@ -2911,13 +3251,16 @@ const Component: React.FC = () => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `initResource` | resources need to be watched as key-value pair, wherein key will be unique to resource and value will be options needed to watch for the respective resource. |
+| `initResource` | Watch resource configuration object or null/undefined to disable watching. Contains:  - `groupVersionKind` or `kind`: Resource type identifier
+  - `name`: Specific resource name to watch
+  - `namespace`: Namespace for namespaced resources (omit for cluster-scoped)
+  - `isList`: Should be false/undefined for single resource watching |
 
 
 
 ### Returns
 
-An array with first item as resource(s), second item as loaded status and third item as error state if any.
+Tuple containing:<br/>  - `resource`: The Kubernetes resource object, empty object during loading, undefined if watching disabled<br/>  - `loaded`: Boolean indicating if initial load completed (true when data available or error occurred)<br/>  - `error`: Error object if watch failed, undefined if successful or still loading
 
 
 ### Source
@@ -2930,21 +3273,53 @@ An array with first item as resource(s), second item as loaded status and third 
 
 ### Summary 
 
-Hook that retrieves the Kubernetes resources along with their respective status for loaded and error.
+Hook that retrieves multiple Kubernetes resources simultaneously with live updates and loading states.<br/><br/>This hook is essential for building complex UIs that need to watch multiple related resources<br/>at once, such as dashboards, list pages, and relationship views.<br/><br/>**Common use cases:**<br/>- Dashboard pages showing multiple resource types (Pods, Services, Deployments)<br/>- Resource relationship views (Deployment + ReplicaSets + Pods)<br/>- List pages with related resources (Pods with their owning controllers)<br/>- Overview pages displaying cluster-wide resource counts<br/><br/>**Performance benefits:**<br/>- Efficiently manages multiple WebSocket connections<br/>- Deduplicates identical resource watches across components<br/>- Uses optimized Redux selectors to minimize re-renders<br/>- Batches updates for related resource changes<br/><br/>**Watch behavior:**<br/>- All resources are watched independently with their own lifecycle<br/>- Each resource has its own loading and error states<br/>- Resources can be added/removed dynamically by changing the input object<br/>- Automatically handles model loading and validation<br/><br/>**Memory management:**<br/>- Cleans up all WebSocket connections when component unmounts<br/>- Automatically stops watching resources removed from input<br/>- Uses immutable data structures for efficient change detection<br/><br/>**Error handling:**<br/>- Each resource has independent error handling<br/>- Missing models result in NoModelError for specific resources<br/>- Network errors don't affect other resource watches<br/>- Gracefully handles permission errors per resource<br/><br/>**Edge cases:**<br/>- Empty input object returns empty results immediately<br/>- Invalid resource definitions are skipped with appropriate errors<br/>- Handles mixed namespaced and cluster-scoped resources<br/>- Supports dynamic resource lists that change over time
 
 
 ### Example
 
-```ts
-const Component: React.FC = () => {
+```tsx
+// Dashboard showing multiple resource types
+const ClusterOverview: React.FC = () => {
   const watchResources = {
-        'deployment': {...},
-        'pod': {...}
-        ...
-      }
-  const {deployment, pod} = useK8sWatchResources(watchResources)
-  return ...
-}
+    pods: {
+      kind: 'Pod',
+      isList: true,
+      namespace: 'default'
+    },
+    services: {
+      kind: 'Service',
+      isList: true,
+      namespace: 'default'
+    },
+    deployments: {
+      groupVersionKind: {group: 'apps', version: 'v1', kind: 'Deployment'},
+      isList: true,
+      namespace: 'default'
+    }
+  };
+
+  const {pods, services, deployments} = useK8sWatchResources(watchResources);
+
+  const allLoaded = pods.loaded && services.loaded && deployments.loaded;
+  const hasErrors = pods.loadError || services.loadError || deployments.loadError;
+
+  if (hasErrors) {
+    return <ErrorAlert errors={[pods.loadError, services.loadError, deployments.loadError]} />;
+  }
+
+  if (!allLoaded) {
+    return <DashboardSkeleton />;
+  }
+
+  return (
+    <div className="cluster-overview">
+      <ResourceCard title="Pods" count={pods.data.length} resources={pods.data} />
+      <ResourceCard title="Services" count={services.data.length} resources={services.data} />
+      <ResourceCard title="Deployments" count={deployments.data.length} resources={deployments.data} />
+    </div>
+  );
+};
 ```
 
 
@@ -2953,13 +3328,17 @@ const Component: React.FC = () => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `initResources` | resources need to be watched as key-value pair, wherein key will be unique to resource and value will be options needed to watch for the respective resource. |
+| `initResources` | Object where keys are unique identifiers and values are watch resource configurations. Each value contains:  - `groupVersionKind` or `kind`: Resource type identifier
+  - `isList`: Boolean indicating if watching a list or single resource
+  - `namespace`: Namespace for namespaced resources (omit for cluster-scoped)
+  - `name`: Specific resource name (for single resource watches)
+  - `selector`: Label selector for filtering list results |
 
 
 
 ### Returns
 
-A map where keys are as provided in initResouces and value has three properties data, loaded and error.
+Object with same keys as input, where each value contains:<br/>  - `data`: The Kubernetes resource(s), empty array/object during loading<br/>  - `loaded`: Boolean indicating if initial load completed for this resource<br/>  - `loadError`: Error object if this specific resource watch failed, undefined if successful
 
 
 ### Source
@@ -2972,17 +3351,27 @@ A map where keys are as provided in initResouces and value has three properties 
 
 ### Summary 
 
-A hook that provides a callback to launch a modal for editing Kubernetes resource labels.
+A hook that provides a callback to launch a modal for editing Kubernetes resource labels.<br/><br/>This hook creates a standardized labels editor that allows users to add, edit, and remove<br/>labels on any Kubernetes resource with proper validation and access control.<br/><br/>**Common use cases:**<br/>- Adding edit actions to resource detail pages<br/>- Implementing label management in kebab menus<br/>- Creating label-based workflows (e.g., setting service selectors)<br/><br/>**Label handling:**<br/>- Preserves existing labels while allowing edits<br/>- Validates label keys and values according to Kubernetes standards<br/>- Handles both user-defined and system labels appropriately<br/>- Supports label selectors and matching logic<br/><br/>**Access control:**<br/>- Automatically validates user permissions to update the resource<br/>- Handles RBAC for patch operations on the specific resource type<br/>- Shows appropriate errors for insufficient permissions<br/><br/>**Validation:**<br/>- Enforces Kubernetes label key/value format rules<br/>- Prevents invalid characters and length violations<br/>- Validates DNS subdomain and name requirements<br/>- Warns about system/reserved label prefixes<br/><br/>**Edge cases:**<br/>- Returns no-op function if resource is undefined/null<br/>- Handles read-only resources gracefully<br/>- Preserves label formatting and encoding<br/>- Prevents editing of protected system labels
 
 
 ### Example
 
 ```tsx
-const PodLabelsButton = ({ pod }) => {
+// Basic labels editor button
+const EditLabelsButton: React.FC<{resource: K8sResourceCommon}> = ({resource}) => {
+  const launchLabelsModal = useLabelsModal(resource);
   const { t } = useTranslation();
-  const launchLabelsModal = useLabelsModal(pod);
-  return <button onClick={launchLabelsModal}>{t('Edit Pod Labels')}</button>
-}
+
+  return (
+    <Button
+      variant="secondary"
+      onClick={launchLabelsModal}
+      isDisabled={!resource?.metadata}
+    >
+      {t('Edit Labels')}
+    </Button>
+  );
+};
 ```
 
 
@@ -2991,13 +3380,13 @@ const PodLabelsButton = ({ pod }) => {
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `resource` | The resource to edit labels for, an object of K8sResourceCommon type. |
+| `resource` | The Kubernetes resource to edit labels for. Must be a valid K8sResourceCommon object with metadata |
 
 
 
 ### Returns
 
-A function which will launch a modal for editing a resource's labels.
+Function that when called, opens the labels editor modal. Returns no-op if resource is invalid
 
 
 ### Source
@@ -3062,8 +3451,32 @@ const AppPage: React.FC = () => {
 
 ### Summary 
 
-Sets up a poll to Prometheus for a single query.
+Sets up a poll to Prometheus for a single query with automatic refresh and error handling.<br/><br/>This hook provides a convenient way to execute Prometheus queries with built-in polling,<br/>error handling, and loading states for building monitoring dashboards and metrics views.<br/><br/>**Common use cases:**<br/>- Building custom monitoring dashboards<br/>- Displaying resource metrics (CPU, memory, network)<br/>- Creating alerting and health status indicators<br/><br/>**Polling behavior:**<br/>- Automatically refreshes data at specified intervals<br/>- Pauses polling when component unmounts or query becomes empty<br/>- Handles network errors and retries appropriately<br/>- Optimizes requests to avoid unnecessary API calls<br/><br/>**Query types:**<br/>- `QUERY`: Instant vector queries for current values<br/>- `QUERY_RANGE`: Range vector queries for time series data<br/>- `LABEL`: Label value queries for dynamic filtering<br/>- `RULES`: Recording and alerting rule queries<br/><br/>**Error handling:**<br/>- Network errors are caught and returned in error state<br/>- Invalid PromQL syntax errors are handled gracefully<br/>- Rate limiting and timeout errors trigger exponential backoff<br/><br/>**Edge cases:**<br/>- Empty or undefined query disables polling<br/>- Invalid endpoint types default to QUERY<br/>- Large result sets may be truncated by Prometheus<br/>- Time range queries require appropriate time boundaries
 
+
+### Example
+
+```tsx
+// Basic CPU usage metric
+const CPUUsageChart: React.FC<{podName: string}> = ({podName}) => {
+  const [response, loaded, error] = usePrometheusPoll({
+    endpoint: PrometheusEndpoint.QUERY,
+    query: `rate(container_cpu_usage_seconds_total{pod="${podName}"}[5m])`,
+    delay: 30000 // poll every 30 seconds
+  });
+
+  if (error) {
+    return <Alert variant="danger">Failed to load CPU metrics: {error.message}</Alert>;
+  }
+
+  if (!loaded) {
+    return <ChartSkeleton />;
+  }
+
+  const cpuValue = response?.data?.result?.[0]?.value?.[1];
+  return <MetricChart value={cpuValue} title="CPU Usage" />;
+};
+```
 
 
 
@@ -3071,20 +3484,21 @@ Sets up a poll to Prometheus for a single query.
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `endpoint` | one of the PrometheusEndpoint (label, query, range, rules, targets) |
-| `query` | (optional) Prometheus query string. If empty or undefined, polling is not started. |
-| `delay` | (optional) polling delay interval (ms) |
-| `endTime` | (optional) for QUERY_RANGE enpoint, end of the query range |
-| `samples` | (optional) for QUERY_RANGE enpoint |
-| `timespan` | (optional) for QUERY_RANGE enpoint |
-| `namespace` | (optional) a search param to append |
-| `timeout` | (optional) a search param to append |
+| `options` | Configuration object for Prometheus polling |
+| `` | options.endpoint The Prometheus API endpoint type (QUERY, QUERY_RANGE, LABEL, etc.) |
+| `` | options.query Optional Prometheus query string. If empty/undefined, polling is disabled |
+| `` | options.delay Optional polling interval in milliseconds. Defaults to 30000 (30 seconds) |
+| `` | options.endTime Optional end time for QUERY_RANGE endpoint (Unix timestamp) |
+| `` | options.samples Optional number of samples for QUERY_RANGE endpoint |
+| `` | options.timespan Optional time range duration for QUERY_RANGE endpoint in milliseconds |
+| `` | options.namespace Optional namespace parameter to append to query |
+| `` | options.timeout Optional request timeout parameter |
 
 
 
 ### Returns
 
-A tuple containing the query response, a boolean flag indicating whether the response has completed, and any errors encountered during the request or post-processing of the request
+Tuple containing:<br/>  - `response`: Prometheus query response object with data and metadata<br/>  - `loaded`: Boolean indicating if the query has completed (true when data is available or error occurred)<br/>  - `error`: Error object if query failed, null otherwise
 
 
 ### Source
@@ -3097,18 +3511,30 @@ A tuple containing the query response, a boolean flag indicating whether the res
 
 ### Summary 
 
-Hook that provides the current quick start context values. This allows plugins to interop with Console<br/>quick start functionality.
+Hook that provides the current quick start context values for plugin integration with Console quick starts.<br/><br/>Quick starts are guided tutorials that help users learn Console features and workflows.<br/>This hook allows plugins to integrate with the quick start system programmatically.<br/><br/>**Common use cases:**<br/>- Launching quick starts from custom UI elements<br/>- Tracking quick start progress for analytics<br/>- Creating contextual help that opens relevant quick starts<br/><br/>**Context values provided:**<br/>- `activeQuickStartID`: Currently active quick start identifier<br/>- `setActiveQuickStart`: Function to programmatically start a quick start<br/>- `allQuickStartStates`: Map of all quick start states and progress<br/>- `setQuickStartState`: Function to update quick start completion state<br/><br/>**Quick start lifecycle:**<br/>- Quick starts can be in progress, completed, or not started<br/>- Users can pause and resume quick starts<br/>- Progress is persisted across sessions<br/><br/>**Edge cases:**<br/>- Setting invalid quick start ID fails silently<br/>- Quick starts may not be available in all Console configurations<br/>- Context values may be undefined during initial load
 
 
 ### Example
 
 ```tsx
-const OpenQuickStartButton = ({ quickStartId }) => {
-   const { setActiveQuickStart } = useQuickStartContext();
-   const onClick = React.useCallback(() => {
-       setActiveQuickStart(quickStartId);
-   }, [quickStartId]);
-   return <button onClick={onClick}>{t('Open Quick Start')}</button>
+// Button to launch a specific quick start
+const LaunchTutorialButton: React.FC<{quickStartId: string, title: string}> = ({quickStartId, title}) => {
+  const { setActiveQuickStart, allQuickStartStates } = useQuickStartContext();
+  const quickStartState = allQuickStartStates[quickStartId];
+
+  const handleClick = React.useCallback(() => {
+    setActiveQuickStart(quickStartId);
+  }, [quickStartId, setActiveQuickStart]);
+
+  const isCompleted = quickStartState?.status === 'Complete';
+  const buttonText = isCompleted ? `Review ${title}` : `Start ${title}`;
+
+  return (
+    <Button variant={isCompleted ? 'secondary' : 'primary'} onClick={handleClick}>
+      {buttonText}
+      {isCompleted && <CheckCircleIcon className="ml-2" />}
+    </Button>
+  );
 };
 ```
 
@@ -3118,7 +3544,7 @@ const OpenQuickStartButton = ({ quickStartId }) => {
 
 ### Returns
 
-Quick start context values object.
+QuickStartContextValues object containing:<br/>  - `activeQuickStartID`: String ID of currently active quick start, null if none active<br/>  - `setActiveQuickStart`: Function to start a quick start by ID<br/>  - `allQuickStartStates`: Object mapping quick start IDs to their current state and progress<br/>  - `setQuickStartState`: Function to programmatically update quick start state<br/>  - Additional context values for advanced quick start management
 
 
 ### Source
@@ -3131,14 +3557,30 @@ Quick start context values object.
 
 ### Summary 
 
-React hook for consuming Console extensions with resolved `CodeRef` properties.<br/>This hook accepts the same argument(s) as `useExtensions` hook and returns an adapted list of extension instances, resolving all code references within each extension's properties.<br/>Initially, the hook returns an empty array. Once the resolution is complete, the React component is re-rendered with the hook returning an adapted list of extensions.<br/>When the list of matching extensions changes, the resolution is restarted. The hook will continue to return the previous result until the resolution completes.<br/>The hook's result elements are guaranteed to be referentially stable across re-renders.
+React hook for consuming Console extensions with resolved `CodeRef` properties.<br/><br/>This hook is essential for plugin development as it resolves dynamic imports (CodeRefs) that point to<br/>remote module components. It's commonly used when building extension points that need to load components<br/>from different plugins.<br/><br/>**Common use cases:**<br/>- Building navigation extensions that load components from multiple plugins<br/>- Creating action extensions that reference components in other modules<br/>- Implementing dashboard cards that come from various plugins<br/><br/>**Performance considerations:**<br/>- The hook uses async resolution, so components should handle loading states<br/>- Results are memoized and referentially stable across re-renders<br/>- Failed resolutions are logged to console and returned in the errors array<br/><br/>**Edge cases:**<br/>- Returns empty array initially until resolution completes<br/>- If CodeRef resolution fails, those extensions are excluded from results<br/>- When extension list changes, previous results are returned until new resolution completes
 
 
 ### Example
 
-```ts
-const [navItemExtensions, navItemsResolved] = useResolvedExtensions<NavItem>(isNavItem);
-// process adapted extensions and render your component
+```tsx
+// Basic usage for nav item extensions
+const [navItemExtensions, navItemsResolved, errors] = useResolvedExtensions<NavItem>(isNavItem);
+
+if (!navItemsResolved) {
+  return <LoadingSpinner />;
+}
+
+if (errors.length > 0) {
+  console.warn('Some extensions failed to load:', errors);
+}
+
+return (
+  <nav>
+    {navItemExtensions.map(ext => (
+      <ext.properties.component key={ext.uid} />
+    ))}
+  </nav>
+);
 ```
 
 
@@ -3147,13 +3589,13 @@ const [navItemExtensions, navItemsResolved] = useResolvedExtensions<NavItem>(isN
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `typeGuards` | A list of callbacks that each accept a dynamic plugin extension as an argument and return a boolean flag indicating whether or not the extension meets desired type constraints |
+| `typeGuards` | A list of type guard functions that filter extensions. Each function receives an extension and returns boolean indicating type match. Common guards: `isNavItem`, `isResourceAction`, `isDashboardCard` |
 
 
 
 ### Returns
 
-Tuple containing a list of adapted extension instances with resolved code references, a boolean flag indicating whether the resolution is complete, and a list of errors detected during the resolution.
+Tuple containing:<br/>  - `extensions`: Array of resolved extension instances with CodeRefs converted to actual components<br/>  - `resolved`: Boolean indicating if async resolution is complete (false during initial load)<br/>  - `errors`: Array of errors from failed CodeRef resolutions (useful for debugging)
 
 
 ### Source
@@ -3166,21 +3608,34 @@ Tuple containing a list of adapted extension instances with resolved code refere
 
 ### Summary 
 
-Hook that provides a user setting value and a callback for setting the user setting value.
+Hook that provides a user setting value and a callback for setting the user setting value.<br/><br/>This hook integrates with the Console's user settings system, allowing plugins to store<br/>and retrieve user preferences that persist across sessions.<br/><br/>**Common use cases:**<br/>- Storing user interface preferences (theme, layout, default values)<br/>- Persisting form state and user selections<br/>- Managing feature flags and user-specific configurations<br/><br/>**Storage behavior:**<br/>- Settings are stored in user's ConfigMap or localStorage fallback<br/>- Values persist across browser sessions and page reloads<br/>- Settings are user-specific and don't affect other users<br/><br/>**Setting key format:**<br/>- Use dot notation for hierarchical settings (e.g., 'plugin.feature.option')<br/>- Plugin settings should be prefixed with plugin name<br/>- System settings use reserved prefixes<br/><br/>**Edge cases:**<br/>- Returns default value if setting hasn't been set yet<br/>- May return stale value briefly during async loading<br/>- Setting undefined values removes the setting<br/>- Complex objects are JSON serialized/deserialized
 
 
 ### Example
 
 ```tsx
-const Component: React.FC = (props) => {
-   const [state, setState, loaded] = useUserSettings(
-     'devconsole.addPage.showDetails',
-     true,
-     true,
-   );
-   return loaded ? (
-      <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
-    ) : null;
+// Basic preference storage
+const PreferenceComponent: React.FC = () => {
+  const [showAdvanced, setShowAdvanced, loaded] = useUserSettings(
+    'myPlugin.showAdvancedOptions',
+    false, // default value
+    true   // sync immediately
+  );
+
+  if (!loaded) {
+    return <Loading />;
+  }
+
+  return (
+    <>
+      <Checkbox
+        isChecked={showAdvanced}
+        onChange={setShowAdvanced}
+        label="Show advanced options"
+      />
+      {showAdvanced && <AdvancedOptionsPanel />}
+    </>
+  );
 };
 ```
 
@@ -3190,7 +3645,7 @@ const Component: React.FC = (props) => {
 
 ### Returns
 
-A tuple containing the user setting value, a setter callback, and a loaded boolean.
+Tuple containing:<br/>  - `value`: Current setting value, or default value if not set<br/>  - `setValue`: Function to update the setting value, accepts new value or function that receives current value<br/>  - `loaded`: Boolean indicating if the setting has been loaded from storage
 
 
 ### Source
