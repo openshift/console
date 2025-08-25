@@ -1,7 +1,8 @@
 import { render } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import * as Router from 'react-router-dom-v5-compat';
 import ServingListPage from '../ServingListsPage';
-import '@testing-library/jest-dom';
+
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
@@ -11,8 +12,9 @@ jest.mock('@console/internal/components/namespace-bar', () => ({
   NamespaceBar: 'NamespaceBar',
 }));
 
+const mockMultiTabListPage = jest.fn();
 jest.mock('@console/shared', () => ({
-  MultiTabListPage: 'MultiTabListPage',
+  MultiTabListPage: mockMultiTabListPage,
 }));
 
 jest.mock('react-i18next', () => ({

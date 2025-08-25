@@ -1,10 +1,9 @@
 import { render } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ConfigurationModel } from '../../../models';
 import { sampleKnativeConfigurations } from '../../../topology/__tests__/topology-knative-test-data';
 import ConfigurationsOverviewListItem from '../ConfigurationsOverviewListItem';
-import '@testing-library/jest-dom';
-import { shallow } from 'enzyme';
 
 jest.mock('@patternfly/react-core', () => ({
   ListItem: 'ListItem',
@@ -32,22 +31,22 @@ describe('ConfigurationsOverviewListItem', () => {
   });
 
   it('should display latestCreatedRevisionName and latestReadyRevisionName', () => {
-    const wrapper = shallow(
+    const { container } = render(
       <ConfigurationsOverviewListItem configuration={sampleKnativeConfigurations.data[0]} />,
     );
     expect(
-      wrapper
-        .find('span')
-        .at(1)
-        .text()
-        .includes(sampleKnativeConfigurations.data[0].status?.latestCreatedRevisionName ?? ''),
+      container
+        .querySelector('span')
+        ?.textContent.includes(
+          sampleKnativeConfigurations.data[0].status?.latestCreatedRevisionName ?? '',
+        ),
     ).toBe(true);
     expect(
-      wrapper
-        .find('span')
-        .at(3)
-        .text()
-        .includes(sampleKnativeConfigurations.data[0].status?.latestReadyRevisionName ?? ''),
+      container
+        .querySelector('span')
+        ?.textContent.includes(
+          sampleKnativeConfigurations.data[0].status?.latestReadyRevisionName ?? '',
+        ),
     ).toBe(true);
   });
 });
