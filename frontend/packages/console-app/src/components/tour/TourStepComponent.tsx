@@ -42,8 +42,8 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   selector,
   expandableSelector,
   showStepBadge,
-  step,
-  totalSteps,
+  step = 0,
+  totalSteps = 0,
   introBannerLight,
   introBannerDark,
   modalVariant,
@@ -72,7 +72,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
       }}
       step={step}
     >
-      {showStepBadge ? <StepBadge stepNumber={step ?? 0} totalSteps={totalSteps ?? 0} /> : null}
+      {showStepBadge ? <StepBadge stepNumber={step} totalSteps={totalSteps} /> : null}
     </StepFooter>
   );
   const stepContent = <StepContent>{content}</StepContent>;
