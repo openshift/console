@@ -35,7 +35,7 @@ import {
   NodeMaintenanceKubevirtAlphaModel,
   NodeMaintenanceKubevirtBetaModel,
 } from './models';
-import { getHostPowerStatus, hasPowerManagement } from './selectors';
+import { getHostPowerStatus, hasPowerManagement, isDetached } from './selectors';
 import { BareMetalHostKind } from './types';
 
 type ConsumedExtensions =
@@ -301,7 +301,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       isActivity: (resource: BareMetalHostKind) =>
         [HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON].includes(
           getHostPowerStatus(resource),
-        ) && hasPowerManagement(resource),
+        ) &&
+        hasPowerManagement(resource) &&
+        !isDetached(resource),
       loader: () =>
         import(
           './components/baremetal-hosts/dashboard/BareMetalStatusActivity' /* webpackChunkName: "metal3-powering" */

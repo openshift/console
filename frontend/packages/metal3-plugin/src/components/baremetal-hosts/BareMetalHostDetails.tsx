@@ -1,4 +1,9 @@
 import * as React from 'react';
+import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { RebootingIcon } from '@patternfly/react-icons/dist/esm/icons/rebooting-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -45,12 +50,37 @@ import {
   getHostBootMACAddress,
   isHostScheduledForRestart,
   hasPowerManagement,
+  isDetached,
 } from '../../selectors';
 import { getHostStatus } from '../../status/host-status';
 import { BareMetalHostKind } from '../../types';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
 import MachineLink from './MachineLink';
+
+const PowerStatus = ({ host }: { host: BareMetalHostKind }) => {
+  const { t } = useTranslation();
+  if (isDetached(host)) {
+    return <SecondaryStatus status={t('metal3-plugin~Detached')} />;
+  }
+
+  if (!hasPowerManagement(host)) {
+    return <SecondaryStatus status={t('metal3-plugin~No power management')} />;
+  }
+
+  const powerStatus = getHostPowerStatus(host);
+  return (
+    <>
+      <StatusIconAndText
+        title={powerStatus}
+        icon={<BareMetalHostPowerStatusIcon powerStatus={powerStatus} />}
+      />
+      {isHostScheduledForRestart(host) && (
+        <StatusIconAndText title={t('metal3-plugin~Restart pending')} icon={<RebootingIcon />} />
+      )}
+    </>
+  );
+};
 
 type BareMetalHostDetailsProps = {
   obj: BareMetalHostKind;
@@ -80,7 +110,6 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
   const hostStorage = getHostTotalStorageCapacity(host);
   const totalStorageCapacity = hostStorage ? humanizeDecimalBytes(hostStorage).string : DASH;
   const description = getHostDescription(host);
-  const powerStatus = getHostPowerStatus(host);
   const provisioningState = getHostProvisioningState(host);
   const { count: CPUCount, model: CPUModel } = getHostCPU(host);
   const { manufacturer, productName, serialNumber } = getHostVendorInfo(host);
@@ -150,27 +179,12 @@ const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
             </dd>
             {/* power status is not available until host registration/inspection is finished */}
             {!HOST_REGISTERING_STATES.includes(provisioningState) && (
-              <>
-                <dt>{t('metal3-plugin~Power Status')}</dt>
-                <dd>
-                  {!hasPowerManagement(host) ? (
-                    <SecondaryStatus status={t('metal3-plugin~No power management')} />
-                  ) : (
-                    <>
-                      <StatusIconAndText
-                        title={powerStatus}
-                        icon={<BareMetalHostPowerStatusIcon powerStatus={powerStatus} />}
-                      />
-                      {isHostScheduledForRestart(host) && (
-                        <StatusIconAndText
-                          title={t('metal3-plugin~Restart pending')}
-                          icon={<RebootingIcon />}
-                        />
-                      )}
-                    </>
-                  )}
-                </dd>
-              </>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('metal3-plugin~Power Status')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  <PowerStatus host={host} />
+                </DescriptionListDescription>
+              </DescriptionListGroup>
             )}
             {role && (
               <>
