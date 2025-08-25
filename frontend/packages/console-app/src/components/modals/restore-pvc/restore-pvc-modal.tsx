@@ -93,10 +93,10 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
     setRequestedUnit(unit);
   };
 
-  const handleStorageClass = (updatedStorageClass: StorageClassResourceKind) => {
-    setPVCStorageClass(updatedStorageClass?.metadata.name || '');
-    setUpdatedProvisioner(updatedStorageClass?.provisioner);
-  };
+    const handleStorageClass = (updatedStorageClass: StorageClassResourceKind) => {
+      setPVCStorageClass(updatedStorageClass?.metadata?.name || '');
+      setUpdatedProvisioner(updatedStorageClass?.provisioner);
+    };
 
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
@@ -214,48 +214,52 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
           ) : (
             <div className="skeleton-text" />
           )}
-
-          {!validSize && (
-            <FormHelperText>
-              <HelperText>
-                <HelperTextItem variant="error">
-                  {t(
-                    'console-app~Size should be equal or greater than the restore size of snapshot.',
-                  )}
-                </HelperTextItem>
-              </HelperText>
-            </FormHelperText>
-          )}
-        </FormGroup>
-        <div className="co-restore-pvc-modal__details-section">
-          <p className="pf-v6-u-text-color-subtle">
-            {t('console-app~{{resourceKind}} details', {
-              resourceKind: VolumeSnapshotModel.label,
-            })}
-          </p>
-          <Grid hasGutter>
-            <GridItem span={6}>
-              <div className="co-restore-pvc-modal__pvc-details">
-                <strong>{t('console-app~Created at')}</strong>
-                <span>
-                  <Timestamp timestamp={resource?.metadata?.creationTimestamp} />
-                </span>
-              </div>
-              <div className="co-restore-pvc-modal__pvc-details">
-                <strong>{t('console-app~Status')}</strong>
-                <Status status={resource?.status?.readyToUse ? 'Ready' : 'Not Ready'} />
-              </div>
-              <div className="co-restore-pvc-modal__pvc-details">
-                <strong>{t('console-app~Size')}</strong>
-                <p>{humanizeBinaryBytes(snapshotBaseSize).string}</p>
-              </div>
-            </GridItem>
-            <GridItem span={6}>
-              <div className="co-restore-pvc-modal__pvc-details">
-                <strong>{t('console-app~Namespace')}</strong>
-                <div>
-                  <ResourceIcon kind={NamespaceModel.kind} />
-                  <span>{namespace}</span>
+            {!validSize && (
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem variant="error">
+                    {t(
+                      'console-app~Size should be equal or greater than the restore size of snapshot.',
+                    )}
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            )}
+          </FormGroup>
+          <div className="co-restore-pvc-modal__details-section">
+            <p className="pf-v6-u-text-color-subtle">
+              {t('console-app~{{resourceKind}} details', {
+                resourceKind: VolumeSnapshotModel.label,
+              })}
+            </p>
+            <Grid hasGutter>
+              <GridItem span={6}>
+                <div className="co-restore-pvc-modal__pvc-details">
+                  <strong>{t('console-app~Created at')}</strong>
+                  <span>
+                    <Timestamp timestamp={resource?.metadata?.creationTimestamp || ''} />
+                  </span>
+                </div>
+                <div className="co-restore-pvc-modal__pvc-details">
+                  <strong>{t('console-app~Status')}</strong>
+                  <Status status={resource?.status?.readyToUse ? 'Ready' : 'Not Ready'} />
+                </div>
+                <div className="co-restore-pvc-modal__pvc-details">
+                  <strong>{t('console-app~Size')}</strong>
+                  <p>{humanizeBinaryBytes(snapshotBaseSize).string}</p>
+                </div>
+              </GridItem>
+              <GridItem span={6}>
+                <div className="co-restore-pvc-modal__pvc-details">
+                  <strong>{t('console-app~Namespace')}</strong>
+                  <div>
+                    <ResourceIcon kind={NamespaceModel.kind} />
+                    <span>{namespace}</span>
+                  </div>
+                </div>
+                <div className="co-restore-pvc-modal__pvc-details">
+                  <strong>{t('console-app~API version')}</strong>
+                  <p>{resource?.apiVersion}</p>
                 </div>
               </div>
               <div className="co-restore-pvc-modal__pvc-details">

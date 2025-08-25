@@ -111,7 +111,12 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
           </MenuToggle>
         )}
         popperProps={{
-          appendTo: () => document.querySelector("[data-test-id='perspective-switcher-toggle']"),
+          appendTo: () => {
+            const element = document.querySelector<HTMLElement>(
+              "[data-test-id='perspective-switcher-toggle']",
+            );
+            return element || document.body;
+          },
         }}
       >
         <SelectList>{perspectiveDropdownItems}</SelectList>
