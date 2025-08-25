@@ -2,6 +2,7 @@ package server
 
 import (
 	"compress/gzip"
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -19,16 +20,6 @@ type HandlerWithUser func(*auth.User, http.ResponseWriter, *http.Request)
 // Middleware generates a middleware wrapper for request handlers.
 // Responds with 401 for requests with missing/invalid/incomplete token with verified email address.
 func authMiddleware(authenticator auth.Authenticator, csrfVerifier *csrfverifier.CSRFVerifier, h http.HandlerFunc) http.HandlerFunc {
-	return authMiddlewareWithUser(
-		authenticator,
-		csrfVerifier,
-		func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			h.ServeHTTP(w, r)
-		},
-	)
-}
-
-func authMiddlewareWithUser(authenticator auth.Authenticator, csrfVerifier *csrfverifier.CSRFVerifier, h HandlerWithUser) http.HandlerFunc {
 	return csrfVerifier.WithCSRFVerification(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			user, err := authenticator.Authenticate(w, r)
@@ -38,7 +29,8 @@ func authMiddlewareWithUser(authenticator auth.Authenticator, csrfVerifier *csrf
 				return
 			}
 			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-			h(user, w, r)
+			ctx := context.WithValue(r.Context(), auth.UserContextKey, user)
+			h.ServeHTTP(w, r.WithContext(ctx))
 		}),
 	)
 }
