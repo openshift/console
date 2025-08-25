@@ -16,10 +16,10 @@ import { getPDBResource } from '../../components/pdb/utils/get-pdb-resources';
 import { PodDisruptionBudgetModel } from '../../models';
 import { ResourceActionFactory } from './types';
 
-const pdbRoute = (
-  { metadata: { name = '', namespace = '' } = {} }: K8sResourceCommon,
-  kindObj: K8sKind,
-) => `/k8s/ns/${namespace}/${referenceForModel(kindObj)}/form?name=${name}`;
+const pdbRoute = ({ metadata }: K8sResourceCommon, kindObj: K8sKind) =>
+  `/k8s/ns/${metadata?.namespace || ''}/${referenceForModel(kindObj)}/form?name=${
+    metadata?.name || ''
+  }`;
 
 const PodDisruptionBudgetActionFactory: ResourceActionFactory = {
   AddPDB: (kindObj: K8sKind, obj: K8sPodControllerKind): Action => ({
@@ -50,6 +50,7 @@ const PodDisruptionBudgetActionFactory: ResourceActionFactory = {
       deletePDBModal({
         workloadName: obj.metadata?.name || '',
         pdb: matchedPDB,
+        close: () => {},
       });
     },
     accessReview: asAccessReview(kindObj, obj, 'delete'),
