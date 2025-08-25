@@ -82,6 +82,22 @@ const streamStatusMessages = {
   [STREAM_ACTIVE]: 'public~Log streaming...',
 };
 
+// Handle UTF-8 encoding in raw pod logs to support multi-language characters.
+const handleRawLogs = (logURL: string) => {
+  return (e: React.MouseEvent) => {
+    e.preventDefault();
+    fetch(logURL)
+      .then((response) => response.arrayBuffer())
+      .then((arrayBuffer) => {
+        const text = new TextDecoder('utf-8').decode(arrayBuffer);
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      })
+      .catch(() => window.open(logURL, '_blank'));
+  };
+};
+
 const replaceVariables = (template: string, values: any): string => {
   return _.reduce(
     values,
@@ -456,9 +472,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
                 >
                   {wrapLines}
                 </DropdownItem>
-                <DropdownItem to={currentLogURL} isExternalLink>
-                  {raw}
-                </DropdownItem>
+                <DropdownItem onClick={handleRawLogs(currentLogURL)}>{raw}</DropdownItem>
                 <DropdownItem
                   to={currentLogURL}
                   isExternalLink
@@ -487,7 +501,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
                 default: 'vertical',
               }}
             />
-            <ExternalLink href={currentLogURL} icon={undefined}>
+            <ExternalLink href="#" onClick={handleRawLogs(currentLogURL)}>
               {raw}
             </ExternalLink>
             <Divider
@@ -801,7 +815,10 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
             >
               <Trans ns="public" t={t}>
                 To view unabridged log content, you can either{' '}
-                <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
+                <ExternalLink href="#" onClick={handleRawLogs(linkURL)}>
+                  open the raw file in another window
+                </ExternalLink>{' '}
+                or{' '}
                 <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
                   download it
                 </a>
