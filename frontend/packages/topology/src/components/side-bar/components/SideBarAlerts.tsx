@@ -7,7 +7,10 @@ import {
   isDetailsResourceAlert,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
-import { USERSETTINGS_PREFIX, useUserSettings } from '@console/shared';
+import { USERSETTINGS_PREFIX } from '@console/shared';
+import { useGetUserSettingConfigMap } from '@console/shared/src/hooks/useGetUserSettingConfigMap';
+import { useUserSettingsLocalStorage } from '@console/shared/src/hooks/useUserSettingsLocalStorage';
+import { deseralizeData } from '@console/shared/src/utils/user-settings';
 
 const SIDEBAR_ALERTS = 'sideBarAlerts';
 
@@ -16,14 +19,28 @@ const ResolveResourceAlerts: React.FC<{
   useResourceAlertsContent?: (element: GraphElement) => DetailsResourceAlertContent;
   element: GraphElement;
 }> = observer(function ResolveResourceAlerts({ id, useResourceAlertsContent, element }) {
-  const [showAlert, setShowAlert, loaded] = useUserSettings(
-    `${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`,
-    true,
+  const [cfData, cfLoaded, cfLoadError] = useGetUserSettingConfigMap();
+  const [showAlert, setShowAlert] = useUserSettingsLocalStorage(
+    `${USERSETTINGS_PREFIX}/${SIDEBAR_ALERTS}/${id}`,
+    `${element.getId()}`,
+    deseralizeData(
+      cfData?.data?.[`${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
+    ) || true,
   );
+
+  React.useEffect(() => {
+    if (cfData && cfLoaded && !cfLoadError) {
+      const alertSetting = deseralizeData(
+        cfData?.data?.[`${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
+      );
+      setShowAlert(alertSetting);
+    }
+  }, [setShowAlert, cfData, cfLoaded, cfLoadError, id, element]);
+
   const alertConfigs = useResourceAlertsContent(element);
   if (!alertConfigs) return null;
   const { variant, content, actionLinks, dismissible, title } = alertConfigs;
-  return loaded && showAlert ? (
+  return showAlert ? (
     <Alert
       isInline
       variant={variant}
