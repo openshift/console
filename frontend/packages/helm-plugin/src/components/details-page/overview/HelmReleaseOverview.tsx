@@ -13,7 +13,7 @@ export interface HelmReleaseOverviewProps {
   customData?: HelmRelease;
 }
 
-const HelmReleaseOverview: React.FC<HelmReleaseOverviewProps> = ({ obj, customData }) => {
+const HelmReleaseOverview: React.FCC<HelmReleaseOverviewProps> = ({ obj, customData }) => {
   const { t } = useTranslation();
   return (
     <PaneBody>
