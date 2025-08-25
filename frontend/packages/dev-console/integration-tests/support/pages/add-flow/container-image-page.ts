@@ -36,6 +36,11 @@ export const containerImagePage = {
       runTimeIcon,
     );
   },
+  selectCustomIcon: (url: string) => {
+    cy.get(containerImagePO.imageSection.addCustomIcon).click();
+    cy.get(containerImagePO.imageSection.customIconModal.url).type(url);
+    cy.get(containerImagePO.imageSection.customIconModal.confirmButton).click();
+  },
   selectOrCreateApplication: (appName: string) => {
     gitPage.enterAppName(appName);
   },

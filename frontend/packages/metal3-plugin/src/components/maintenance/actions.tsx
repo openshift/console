@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action, ExtensionHook, K8sResourceCommon } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -22,7 +22,7 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
     namespaced: false,
   });
 
-  const actions = React.useMemo(() => {
+  const actions = useMemo(() => {
     const nodeMaintenance = findNodeMaintenance(maintenances, resource.metadata.name);
 
     let action: Action = {

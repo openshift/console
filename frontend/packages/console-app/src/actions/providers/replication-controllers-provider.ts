@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { ReplicationControllerKind, referenceFor } from '@console/internal/module/k8s';
@@ -26,7 +26,7 @@ export const useReplicationControllerActionsProvider = (resource: ReplicationCon
   ]);
   const isReady = commonActionsReady && rcActionsReady;
 
-  const actions = React.useMemo(
+  const actions = useMemo(
     () =>
       !isReady
         ? []

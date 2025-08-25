@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -35,11 +35,11 @@ export const useNotificationPoller = () => {
 
   // Update alert count.
   const alertCount = alerts?.length ?? 0;
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(setAlertCount(alertCount));
   }, [alertCount, dispatch]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const pollerTimeouts = {};
     const pollers = {};
 

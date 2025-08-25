@@ -1,5 +1,7 @@
 import { configure, render } from '@testing-library/react';
-import CloudShellDrawer from '../CloudShellDrawer';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { useIsCloudShellExpanded } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
+import { CloudShellDrawer } from '../CloudShellDrawer';
 import '@testing-library/jest-dom';
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
@@ -10,12 +12,30 @@ jest.mock('@console/webterminal-plugin/src/components/cloud-shell/MultiTabbedTer
   MultiTabbedTerminal: () => 'Terminal content',
 }));
 
+jest.mock('@console/shared/src/hooks/flag', () => ({
+  useFlag: jest.fn(),
+}));
+
+jest.mock('@console/webterminal-plugin/src/redux/actions/cloud-shell-dispatchers', () => ({
+  useToggleCloudShellExpanded: () => jest.fn(),
+}));
+
+jest.mock('@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors', () => ({
+  useIsCloudShellExpanded: jest.fn(() => true),
+}));
+
+const mockUseFlag = useFlag as jest.Mock;
+const mockUseIsCloudShellExpanded = useIsCloudShellExpanded as jest.Mock;
+
 configure({ testIdAttribute: 'data-test' });
 
-describe('CloudShellDrawerComponent', () => {
+describe('CloudShellDrawer', () => {
   it('should render children as Drawer children when present', () => {
+    mockUseFlag.mockReturnValue(true);
+    mockUseIsCloudShellExpanded.mockReturnValue(true);
+
     const wrapper = render(
-      <CloudShellDrawer onClose={() => null}>
+      <CloudShellDrawer>
         <p>Console webapp</p>
       </CloudShellDrawer>,
     );
@@ -24,12 +44,28 @@ describe('CloudShellDrawerComponent', () => {
   });
 
   it('should still render children when the Drawer is closed', () => {
+    mockUseFlag.mockReturnValue(true);
+    mockUseIsCloudShellExpanded.mockReturnValue(false);
+
     const wrapper = render(
-      <CloudShellDrawer onClose={() => null} open={false}>
+      <CloudShellDrawer open={false}>
         <p data-test="body">Console webapp</p>
       </CloudShellDrawer>,
     );
     expect(wrapper.getByTestId('body').innerHTML).toEqual('Console webapp');
+    expect(wrapper.queryByText('Terminal content')).not.toBeInTheDocument();
+  });
+
+  it('should render children even if web terminal is not available', () => {
+    mockUseFlag.mockReturnValue(false);
+    mockUseIsCloudShellExpanded.mockReturnValue(true);
+
+    const wrapper = render(
+      <CloudShellDrawer open={false}>
+        <p>Console webapp</p>
+      </CloudShellDrawer>,
+    );
+    expect(wrapper.getByText('Console webapp')).toBeInTheDocument();
     expect(wrapper.queryByText('Terminal content')).not.toBeInTheDocument();
   });
 });

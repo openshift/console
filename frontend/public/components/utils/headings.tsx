@@ -190,7 +190,7 @@ export const ConnectedPageHeading = connectToModel(
   },
 );
 
-export const SectionHeading: React.SFC<SectionHeadingProps> = ({
+export const SectionHeading: React.FCC<SectionHeadingProps> = ({
   text,
   children,
   style,
@@ -209,7 +209,7 @@ export const SectionHeading: React.SFC<SectionHeadingProps> = ({
   </SecondaryHeading>
 );
 
-export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
+export const SidebarSectionHeading: React.FCC<SidebarSectionHeadingProps> = ({
   text,
   children,
   style,

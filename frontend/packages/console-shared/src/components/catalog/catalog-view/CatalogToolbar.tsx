@@ -1,11 +1,11 @@
-import * as React from 'react';
+import { forwardRef } from 'react';
 import { Flex, FlexItem, SearchInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useDebounceCallback } from '@console/shared';
 import { NO_GROUPING } from '../utils/category-utils';
-import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
+import { /* CatalogSortOrder, */ CatalogStringMap } from '../utils/types';
 import CatalogPageHeader from './CatalogPageHeader';
 import CatalogPageHeading from './CatalogPageHeading';
 import CatalogPageNumItems from './CatalogPageNumItems';
@@ -15,35 +15,36 @@ type CatalogToolbarProps = {
   title: string;
   totalItems: number;
   searchKeyword: string;
-  sortOrder: CatalogSortOrder;
+  // sortOrder: CatalogSortOrder;
   groupings: CatalogStringMap;
   activeGrouping: string;
   onGroupingChange: (grouping: string) => void;
   onSearchKeywordChange: (searchKeyword: string) => void;
-  onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
+  // onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
 };
 
-const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
+const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
   (
     {
       title,
       totalItems,
       searchKeyword,
-      sortOrder,
+      // sortOrder,
       groupings,
       activeGrouping,
       onGroupingChange,
       onSearchKeywordChange,
-      onSortOrderChange,
+      // onSortOrderChange,
     },
     inputRef,
   ) => {
     const { t } = useTranslation();
 
-    const catalogSortItems = {
-      [CatalogSortOrder.ASC]: t('console-shared~A-Z'),
-      [CatalogSortOrder.DESC]: t('console-shared~Z-A'),
-    };
+    // TODO: Add sort order back in with a new sort by "Relevance" selection, that is the default sort order
+    // const catalogSortItems = {
+    //   [CatalogSortOrder.ASC]: t('console-shared~A-Z'),
+    //   [CatalogSortOrder.DESC]: t('console-shared~Z-A'),
+    // };
 
     const showGrouping = !_.isEmpty(groupings);
 
@@ -71,7 +72,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
                 aria-label={t('console-shared~Filter by keyword...')}
               />
             </FlexItem>
-            <FlexItem>
+            {/* <FlexItem>
               <ConsoleSelect
                 className="co-catalog-page__sort"
                 items={catalogSortItems}
@@ -79,7 +80,7 @@ const CatalogToolbar = React.forwardRef<HTMLInputElement, CatalogToolbarProps>(
                 alwaysShowTitle
                 onChange={onSortOrderChange}
               />
-            </FlexItem>
+            </FlexItem> */}
             {showGrouping && (
               <FlexItem>
                 <ConsoleSelect

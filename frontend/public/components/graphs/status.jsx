@@ -1,6 +1,6 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { Component } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Link } from 'react-router-dom-v5-compat';
 import { Title } from '@patternfly/react-core';
@@ -40,7 +40,7 @@ const fetchQuery = (q, long, namespace) => {
 };
 
 /** @augments {React.Component<{fetch?: () => Promise<any>, query?: string, title: string, href?: string, rel?: string, target?: string}}>} */
-export class Status extends React.Component {
+export class Status extends Component {
   constructor(props) {
     super(props);
     this.interval = null;

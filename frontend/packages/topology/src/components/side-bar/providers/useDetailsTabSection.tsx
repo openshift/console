@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import {
   DetailsTabSection,
   isDetailsTabSection,
@@ -12,7 +12,7 @@ export const useDetailsTabSection = (): [
   boolean,
 ] => {
   const [extensions, resolved] = useResolvedExtensions<DetailsTabSection>(isDetailsTabSection);
-  const ordered = React.useMemo<ResolvedExtension<DetailsTabSection>['properties'][]>(
+  const ordered = useMemo<ResolvedExtension<DetailsTabSection>['properties'][]>(
     () =>
       resolved
         ? orderExtensionBasedOnInsertBeforeAndAfter<

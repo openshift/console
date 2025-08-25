@@ -16,7 +16,7 @@ const TopologyActions: React.FC<TopologyActionsProps> = ({ element }) => {
       'topology-actions': element,
       'topology-context-actions': { element },
       ...(resource ? { [referenceFor(resource)]: resource } : {}),
-      ...(csvName ? { 'csv-actions': { csvName, resource } } : {}),
+      ...(csvName ? { 'operand-actions': { csvName, resource } } : {}),
     };
   }, [element, resource]);
   return (

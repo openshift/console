@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
+import { forwardRef, useRef, useEffect, useCallback, useImperativeHandle } from 'react';
+import { FitAddon } from '@xterm/addon-fit';
+import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
 
 import './Terminal.scss';
 
@@ -8,8 +8,6 @@ const terminalOptions: ITerminalOptions = {
   fontFamily: 'Red Hat Mono, monospace',
   fontSize: 16,
   cursorBlink: false,
-  cols: 80,
-  rows: 25,
 };
 
 type TerminalProps = {
@@ -25,78 +23,79 @@ export type ImperativeTerminalType = {
   loadAttachAddon: (addOn: ITerminalAddon) => void;
 };
 
-const Terminal = React.forwardRef<ImperativeTerminalType, TerminalProps>(
-  ({ onData, onResize }, ref) => {
-    const terminal = React.useRef<XTerminal>();
-    const terminalRef = React.useRef<HTMLDivElement>();
+const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(({ onData, onResize }, ref) => {
+  const terminal = useRef<XTerminal>();
+  const terminalRef = useRef<HTMLDivElement>();
 
-    React.useEffect(() => {
-      const term: XTerminal = new XTerminal(terminalOptions);
-      const fitAddon = new FitAddon();
-      term.open(terminalRef.current);
-      term.loadAddon(fitAddon);
-      term.focus();
+  useEffect(() => {
+    const term: XTerminal = new XTerminal(terminalOptions);
 
-      const resizeObserver: ResizeObserver = new ResizeObserver(() => {
-        window.requestAnimationFrame(() => fitAddon.fit());
-      });
+    term.resize(80, 25);
 
-      resizeObserver.observe(terminalRef.current);
+    const fitAddon = new FitAddon();
+    term.open(terminalRef.current);
+    term.loadAddon(fitAddon);
+    term.focus();
 
-      if (terminal.current !== term) {
-        terminal.current && terminal.current.dispose();
-        terminal.current = term;
-      }
+    const resizeObserver: ResizeObserver = new ResizeObserver(() => {
+      window.requestAnimationFrame(() => fitAddon.fit());
+    });
 
-      return () => {
-        term.dispose();
-        resizeObserver.disconnect();
-      };
-    }, []);
+    resizeObserver.observe(terminalRef.current);
 
-    const handleResize = React.useCallback(
-      ({ cols, rows }: { cols: number; rows: number }) => {
-        onResize(cols, rows);
-      },
-      [onResize],
-    );
+    if (terminal.current !== term) {
+      terminal.current && terminal.current.dispose();
+      terminal.current = term;
+    }
 
-    React.useEffect(() => {
-      const term = terminal.current;
-      const data = term.onData(onData);
-      const resize = term.onResize(handleResize);
-      return () => {
-        data.dispose();
-        resize.dispose();
-      };
-    }, [onData, handleResize]);
+    return () => {
+      term.dispose();
+      resizeObserver.disconnect();
+    };
+  }, []);
 
-    React.useImperativeHandle(ref, () => ({
-      focus: () => {
-        terminal.current && terminal.current.focus();
-      },
-      reset: () => {
-        if (!terminal.current) return;
-        terminal.current.reset();
-        terminal.current.clear();
-        terminal.current.setOption('disableStdin', false);
-      },
-      onDataReceived: (data) => {
-        terminal.current && terminal.current.write(data);
-      },
-      onConnectionClosed: (msg) => {
-        if (!terminal.current) return;
-        terminal.current.write(`\x1b[31m${msg || 'disconnected'}\x1b[m\r\n`);
-        terminal.current.setOption('disableStdin', true);
-      },
-      loadAttachAddon: (addOn: ITerminalAddon) => {
-        if (!terminal.current) return;
-        terminal.current.loadAddon(addOn);
-      },
-    }));
+  const handleResize = useCallback(
+    ({ cols, rows }: { cols: number; rows: number }) => {
+      onResize(cols, rows);
+    },
+    [onResize],
+  );
 
-    return <div className="co-terminal" ref={terminalRef} />;
-  },
-);
+  useEffect(() => {
+    const term = terminal.current;
+    const data = term.onData(onData);
+    const resize = term.onResize(handleResize);
+    return () => {
+      data.dispose();
+      resize.dispose();
+    };
+  }, [onData, handleResize]);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      terminal.current && terminal.current.focus();
+    },
+    reset: () => {
+      if (!terminal.current) return;
+      terminal.current.reset();
+      terminal.current.clear();
+      terminal.current.options.disableStdin = false;
+    },
+    onDataReceived: (data) => {
+      terminal.current && terminal.current.write(data);
+    },
+    onConnectionClosed: (msg) => {
+      if (!terminal.current) return;
+      terminal.current.write(`\x1b[31m${msg || 'disconnected'}\x1b[m\r\n`);
+      terminal.current.options.disableStdin = true;
+    },
+    loadAttachAddon: (addOn: ITerminalAddon) => {
+      if (!terminal.current) return;
+      terminal.current.loadAddon(addOn);
+    },
+  }));
+
+  return <div className="co-terminal" ref={terminalRef} />;
+});
 
 export default Terminal;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { useForceRender } from '@console/shared/src/hooks/useForceRender';
 import { DynamicPluginInfo } from '../store';
 import { subscribeToDynamicPlugins } from './pluginSubscriptionService';
@@ -25,12 +25,12 @@ import { subscribeToDynamicPlugins } from './pluginSubscriptionService';
 export const useDynamicPluginInfo = (): [DynamicPluginInfo[], boolean] => {
   const forceRender = useForceRender();
 
-  const isMountedRef = React.useRef(true);
-  const unsubscribeRef = React.useRef<VoidFunction>(null);
-  const pluginInfoEntriesRef = React.useRef<DynamicPluginInfo[]>([]);
-  const allPluginsProcessedRef = React.useRef<boolean>(false);
+  const isMountedRef = useRef(true);
+  const unsubscribeRef = useRef<VoidFunction>(null);
+  const pluginInfoEntriesRef = useRef<DynamicPluginInfo[]>([]);
+  const allPluginsProcessedRef = useRef<boolean>(false);
 
-  const trySubscribe = React.useCallback(() => {
+  const trySubscribe = useCallback(() => {
     if (unsubscribeRef.current === null) {
       unsubscribeRef.current = subscribeToDynamicPlugins((pluginInfoEntries) => {
         pluginInfoEntriesRef.current = pluginInfoEntries;
@@ -40,7 +40,7 @@ export const useDynamicPluginInfo = (): [DynamicPluginInfo[], boolean] => {
     }
   }, [forceRender]);
 
-  const tryUnsubscribe = React.useCallback(() => {
+  const tryUnsubscribe = useCallback(() => {
     if (unsubscribeRef.current !== null) {
       unsubscribeRef.current();
       unsubscribeRef.current = null;
@@ -49,7 +49,7 @@ export const useDynamicPluginInfo = (): [DynamicPluginInfo[], boolean] => {
 
   trySubscribe();
 
-  React.useEffect(
+  useEffect(
     () => () => {
       isMountedRef.current = false;
       tryUnsubscribe();

@@ -301,7 +301,6 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
         onOpenChangeKeys={autocompleteFilter ? ['Escape'] : ['Escape', 'Tab']} // tab is used to access the search input
         onSelect={onClick}
         selected={selectedKey}
-        maxMenuHeight="60vh"
         shouldFocusToggleOnSelect
         toggle={(toggleRef: React.RefObject<MenuToggleElement>) => (
           <MenuToggle

@@ -157,6 +157,7 @@ export const CustomIconModal: React.FCC<CustomIconModalProps> = ({
                 <TextInput
                   id="co-import-custom-icon-modal-url-input"
                   type="url"
+                  data-test="import-custom-icon-url-input"
                   validated={uploadError || !validUrl ? ValidatedOptions.error : undefined}
                   value={url}
                   onChange={(_, value) => setUrl(value)}
@@ -207,6 +208,7 @@ export const CustomIconModal: React.FCC<CustomIconModalProps> = ({
         <Button
           key="create"
           variant="primary"
+          data-test="import-custom-icon-confirm"
           form="co-import-custom-icon-modal-form"
           onClick={() => {
             onCustomIconChanged(url);

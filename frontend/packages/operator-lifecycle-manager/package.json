@@ -15,9 +15,14 @@
       "topologySidebarResourceLink": "src/components/topology/sidebar/resource-link.tsx",
       "topologySidebarDetailsSections": "src/components/topology/sidebar/details-sections.tsx",
       "topologySidebarResourceSections": "src/components/topology/sidebar/resource-sections.tsx",
-      "csvActionsProvider": "src/actions/csv-actions-provider.ts",
       "install": "src/components/operator-install-page.tsx",
-      "subscriptionProvider": "src/actions/providers/subscription-provider.ts"
+      "subscriptionProvider": "src/actions/providers/subscription-provider.ts",
+      "useOperatorActions": "src/actions/useOperatorActions.ts",
+      "useDefaultOperandActions": "src/actions/useDefaultOperandActions.ts",
+      "useOperatorCatalogItems": "src/hooks/useOperatorCatalogItems.tsx",
+      "useOperatorCatalogCategories": "src/hooks/useOperatorCatalogCategories.ts",
+      "filters": "src/utils/filters.ts",
+      "CatalogRedirect": "src/components/catalog-redirect.tsx"
     }
   }
 }

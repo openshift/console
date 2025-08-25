@@ -691,6 +691,7 @@
       "name": "%devconsole~Software Catalog%",
       "href": "/catalog",
       "namespaced": true,
+      "startsWith": ["catalog", "operatorhub"],
       "dataAttributes": {
         "data-test-id": "developer-catalog-header",
         "data-tour-id": "tour-software-catalog-nav"
@@ -1224,6 +1225,15 @@
       "exact": true,
       "path": ["/search-page/all-namespaces", "/search-page/ns/:ns"],
       "component": { "$codeRef": "SearchPage" }
+    }
+  },
+  {
+    "type": "console.catalog/categories-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "provider": {
+        "$codeRef": "useDeveloperCatalogCategories"
+      }
     }
   }
 ]

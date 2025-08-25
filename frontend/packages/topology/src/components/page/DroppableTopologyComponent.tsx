@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { Model } from '@patternfly/react-topology';
 import { DropTarget, DropTargetConnector } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -33,9 +33,7 @@ const DroppableTopology = DropTarget(
 
 export const DroppableTopologyComponent = withDragDropContext<DroppableTopologyComponentProps>(
   (props) => {
-    const { setFileUpload, extensions } = React.useContext<FileUploadContextType>(
-      FileUploadContext,
-    );
+    const { setFileUpload, extensions } = useContext<FileUploadContextType>(FileUploadContext);
 
     const handleFileDrop = (monitor: DropTargetMonitor) => {
       if (!monitor) {

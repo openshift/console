@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import {
@@ -42,7 +42,7 @@ export const getChannelKind = (ref: string): string => {
 export const useChannelList = (namespace: string): ChannelListProps => {
   const [accessData, setAccessData] = useSafetyFirst({ loaded: false, channelList: [] });
   const { channels, loaded: channelsLoaded } = useChannelResourcesList();
-  React.useEffect(() => {
+  useEffect(() => {
     const accessList = [];
     if (channelsLoaded) {
       _.forIn(channels, (channelRef: string) => {

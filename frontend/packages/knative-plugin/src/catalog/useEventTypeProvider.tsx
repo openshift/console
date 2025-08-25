@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook, useAccessReview } from '@console/dynamic-plugin-sdk';
@@ -98,7 +98,7 @@ const useEventTypeProvider: ExtensionHook<CatalogItem[]> = ({
 
   const [eventTypes, eventTypesLoaded, eventTypesLoadError] = useEventTypesData(namespace);
 
-  const normalized = React.useMemo(() => {
+  const normalized = useMemo(() => {
     if (!eventTypesLoaded || !canGetEventType || !canListEventType || !canWatchEventType) return [];
 
     return eventTypes.map((et) => normalizeEventType(et, t));

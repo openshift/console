@@ -1,12 +1,12 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAG_DEVWORKSPACE } from '../../const';
 import { checkTerminalAvailable } from './cloud-shell-utils';
 
-const useCloudShellAvailable = () => {
-  const [terminalAvailable, setTerminalAvailable] = React.useState(false);
+export const useCloudShellAvailable = () => {
+  const [terminalAvailable, setTerminalAvailable] = useState(false);
   const flagEnabled = useFlag(FLAG_DEVWORKSPACE);
-  React.useEffect(() => {
+  useEffect(() => {
     let mounted = true;
     if (flagEnabled) {
       checkTerminalAvailable()
@@ -30,5 +30,3 @@ const useCloudShellAvailable = () => {
 
   return flagEnabled && terminalAvailable;
 };
-
-export default useCloudShellAvailable;

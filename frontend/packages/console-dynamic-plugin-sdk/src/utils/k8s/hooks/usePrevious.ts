@@ -1,8 +1,8 @@
-import * as React from 'react';
+import { useRef, useEffect } from 'react';
 
 export const usePrevious = <P = any>(value: P, deps?: any[]): P => {
-  const ref = React.useRef<P>();
-  React.useEffect(() => {
+  const ref = useRef<P>();
+  useEffect(() => {
     ref.current = value;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps || [value]);

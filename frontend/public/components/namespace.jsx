@@ -1,6 +1,6 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
@@ -424,7 +424,7 @@ export const NamespacesList = (props) => {
   );
 
   // TODO Utilize usePoll hook
-  React.useEffect(() => {
+  useEffect(() => {
     const updateMetrics = () =>
       fetchNamespaceMetrics().then((result) => dispatch(UIActions.setNamespaceMetrics(result)));
     updateMetrics();
@@ -436,7 +436,7 @@ export const NamespacesList = (props) => {
       ? new Set(tableColumns[NamespacesColumnManagementID])
       : null;
 
-  const customData = React.useMemo(
+  const customData = useMemo(
     () => ({
       tableColumns: tableColumns?.[NamespacesColumnManagementID],
     }),
@@ -743,7 +743,7 @@ ProjectTableRow.displayName = 'ProjectTableRow';
 
 export const ProjectsTable = (props) => {
   const { t } = useTranslation();
-  const customData = React.useMemo(
+  const customData = useMemo(
     () => ({
       ProjectLinkComponent: ProjectLink,
       actionsEnabled: false,
@@ -787,7 +787,7 @@ export const ProjectList = ({ data, ...tableProps }) => {
   );
   const isPrometheusAvailable = usePrometheusGate();
   const showMetrics = isPrometheusAvailable && canGetNS && window.screen.width >= 1200;
-  const customData = React.useMemo(
+  const customData = useMemo(
     () => ({
       showMetrics,
       tableColumns: tableColumns?.[projectColumnManagementID],
@@ -796,7 +796,7 @@ export const ProjectList = ({ data, ...tableProps }) => {
   );
 
   // TODO Utilize usePoll hook
-  React.useEffect(() => {
+  useEffect(() => {
     if (showMetrics) {
       const updateMetrics = () =>
         fetchNamespaceMetrics().then((result) => dispatch(UIActions.setNamespaceMetrics(result)));
@@ -875,15 +875,15 @@ export const ProjectsPage = (props) => {
   );
 };
 
-/** @type {React.SFC<{namespace: K8sResourceKind}>} */
+/** @type {React.FCC<{namespace: K8sResourceKind}>} */
 export const PullSecret = (props) => {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [data, setData] = React.useState([]);
-  const [error, setError] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const [error, setError] = useState(false);
   const { t } = useTranslation();
   const { namespace, canViewSecrets } = props;
 
-  React.useEffect(() => {
+  useEffect(() => {
     k8sGet(ServiceAccountModel, 'default', namespace.metadata.name, {})
       .then((serviceAccount) => {
         setIsLoading(false);

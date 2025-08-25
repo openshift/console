@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   checkAccess,
   ClusterConfigurationItem,
@@ -14,16 +14,16 @@ const useClusterConfigurationItems = (): [ResolvedClusterConfigurationItem[], bo
   );
 
   // Sort
-  const sortedItems = React.useMemo(() => {
+  const sortedItems = useMemo(() => {
     return orderExtensionBasedOnInsertBeforeAndAfter(
       resolvedExtensions.map((resolvedExtension) => resolvedExtension.properties),
     );
   }, [resolvedExtensions]);
 
   // Filter based on permission checks
-  const [canRead, updateCanRead] = React.useState<Record<string, boolean>>({});
-  const [canWrite, updateCanWrite] = React.useState<Record<string, boolean>>({});
-  React.useEffect(() => {
+  const [canRead, updateCanRead] = useState<Record<string, boolean>>({});
+  const [canWrite, updateCanWrite] = useState<Record<string, boolean>>({});
+  useEffect(() => {
     sortedItems.forEach((item) => {
       if (item.readAccessReview?.length && item.readAccessReview.length > 0) {
         Promise.all(item.readAccessReview.map((accessReview) => checkAccess(accessReview)))
@@ -51,7 +51,7 @@ const useClusterConfigurationItems = (): [ResolvedClusterConfigurationItem[], bo
     });
   }, [sortedItems]);
 
-  const filteredItems = React.useMemo<ResolvedClusterConfigurationItem[]>(() => {
+  const filteredItems = useMemo<ResolvedClusterConfigurationItem[]>(() => {
     return sortedItems
       .filter((item) =>
         item.readAccessReview?.length && item.readAccessReview.length > 0 ? canRead[item.id] : true,

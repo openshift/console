@@ -158,6 +158,7 @@ export const loadingCatalogService: CatalogService = {
 export const loadedCatalogService: CatalogService = {
   type: '',
   searchCatalog: () => [],
+  categories: [],
   items: [
     {
       uid: 'Sample-7755a465-a923-4393-a102-9876c110dbb4',

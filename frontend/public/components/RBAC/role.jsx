@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { Component } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import { RoleModel, RoleBindingModel, ClusterRoleBindingModel } from '../../models';
@@ -87,7 +87,7 @@ const RolesTableRow = ({ obj: role }) => {
   );
 };
 
-class Details extends React.Component {
+class Details extends Component {
   constructor(props) {
     super(props);
     this.state = {};

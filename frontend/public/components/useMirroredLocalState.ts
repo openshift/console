@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 
 export type UseMirroredLocalStateReturn<S> = [S, (state: S) => void, boolean];
@@ -17,9 +17,9 @@ const useMirroredLocalState = <S>({
   externalChangeHandler: (state: S) => void;
   defaultState: S;
 }): UseMirroredLocalStateReturn<S> => {
-  const [localState, setLocalState] = React.useState<S>(null);
+  const [localState, setLocalState] = useState<S>(null);
 
-  const onExternalChange = React.useCallback(
+  const onExternalChange = useCallback(
     (state: S) => {
       setLocalState(state);
       externalChangeHandler(state);
@@ -27,7 +27,7 @@ const useMirroredLocalState = <S>({
     [externalChangeHandler],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (localState === null) {
       // We don't have local data, fresh mount
       if (_.isEmpty(externalState)) {

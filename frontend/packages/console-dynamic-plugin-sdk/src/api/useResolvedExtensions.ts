@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { resolveExtension } from '../coderefs/coderef-resolver';
 import { UseResolvedExtensions } from '../extensions/console-types';
@@ -10,11 +10,11 @@ export const useResolvedExtensions: UseResolvedExtensions = <E extends Extension
 ): [ResolvedExtension<E>[], boolean, any[]] => {
   const extensions = useExtensions<E>(...typeGuards);
 
-  const [resolvedExtensions, setResolvedExtensions] = React.useState<ResolvedExtension<E>[]>([]);
-  const [resolved, setResolved] = React.useState<boolean>(false);
-  const [errors, setErrors] = React.useState<any[]>([]);
+  const [resolvedExtensions, setResolvedExtensions] = useState<ResolvedExtension<E>[]>([]);
+  const [resolved, setResolved] = useState<boolean>(false);
+  const [errors, setErrors] = useState<any[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let disposed = false;
 
     // eslint-disable-next-line promise/catch-or-return

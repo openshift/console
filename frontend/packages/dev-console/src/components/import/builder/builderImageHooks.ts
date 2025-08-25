@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import {
   ImageEnvironment,
   ImportEnvironment,
@@ -14,7 +14,7 @@ export const useBuilderImageEnvironments = (
     isImportEnvironment,
   );
 
-  const filteredExtensions = React.useMemo(
+  const filteredExtensions = useMemo(
     () =>
       resolved
         ? environmentExtensions

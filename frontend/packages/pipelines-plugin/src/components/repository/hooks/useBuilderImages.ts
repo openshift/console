@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import * as _ from 'lodash';
 import {
   normalizeBuilderImages,
@@ -19,11 +19,9 @@ export const useBuilderImages = (): [NormalizedBuilderImages, boolean, any] => {
     resourceSelector,
   );
 
-  const builderImageStreams = React.useMemo(() => _.filter(imageStreams, isBuilder), [
-    imageStreams,
-  ]);
+  const builderImageStreams = useMemo(() => _.filter(imageStreams, isBuilder), [imageStreams]);
 
-  const normalizedBuilderImages = React.useMemo(() => normalizeBuilderImages(builderImageStreams), [
+  const normalizedBuilderImages = useMemo(() => normalizeBuilderImages(builderImageStreams), [
     builderImageStreams,
   ]);
 

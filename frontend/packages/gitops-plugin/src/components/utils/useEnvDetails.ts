@@ -1,13 +1,13 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { fetchAppGroups } from './gitops-utils';
 
 const useEnvDetails = (appName, manifestURL, pipelinesBaseURI) => {
   const { t } = useTranslation();
-  const [envs, setEnvs] = React.useState<string[]>(null);
-  const [emptyStateMsg, setEmptyStateMsg] = React.useState(null);
-  React.useEffect(() => {
+  const [envs, setEnvs] = useState<string[]>(null);
+  const [emptyStateMsg, setEmptyStateMsg] = useState(null);
+  useEffect(() => {
     let ignore = false;
 
     if (pipelinesBaseURI) {

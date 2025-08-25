@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo } from 'react';
 import { useStore } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore, compose, Store } from 'redux';
 import thunk from 'redux-thunk';
@@ -22,8 +22,8 @@ const composeEnhancers =
  */
 export const useReduxStore = (): { store: Store<any>; storeContextPresent: boolean } => {
   const storeContext = useStore();
-  const [storeContextPresent, setStoreContextPresent] = React.useState(false);
-  const store = React.useMemo(() => {
+  const [storeContextPresent, setStoreContextPresent] = useState(false);
+  const store = useMemo(() => {
     // check if store exists and if not create it
     if (storeContext) {
       setStoreContextPresent(true);

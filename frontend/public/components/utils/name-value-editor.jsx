@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as React from 'react';
+import { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
 import { css } from '@patternfly/react-styles';
@@ -25,7 +25,7 @@ import { ValueFromPair } from './value-from-pair';
 import withDragDropContext from './drag-drop-context';
 
 const NameValueEditor_ = withDragDropContext(
-  class NameValueEditor extends React.Component {
+  class NameValueEditor extends Component {
     constructor(props) {
       super(props);
       this._append = this._append.bind(this);
@@ -227,7 +227,7 @@ NameValueEditor.defaultProps = {
 NameValueEditor.displayName = 'Name Value Editor';
 
 const EnvFromEditor_ = withDragDropContext(
-  class EnvFromEditor extends React.Component {
+  class EnvFromEditor extends Component {
     constructor(props) {
       super(props);
       this._append = this._append.bind(this);
@@ -451,7 +451,7 @@ const PairElement_ = DragSource(
     itemTarget,
     collectTargetPair,
   )(
-    class PairElement extends React.Component {
+    class PairElement extends Component {
       constructor(props) {
         super(props);
 
@@ -617,7 +617,7 @@ const EnvFromPairElement_ = DragSource(
     itemTarget,
     collectTargetPair,
   )(
-    class EnvFromPairElement extends React.Component {
+    class EnvFromPairElement extends Component {
       constructor(props) {
         super(props);
         this._onRemove = this._onRemove.bind(this);

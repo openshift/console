@@ -1,30 +1,34 @@
-import { Alert } from '@patternfly/react-core';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import EventSinkAlert from '../EventSinkAlert';
+import '@testing-library/jest-dom';
+
+jest.mock('@patternfly/react-core', () => ({
+  Alert: 'Alert',
+}));
 
 describe('EventSinkAlert', () => {
   it('should not alert if eventSinks are there', () => {
-    const wrapper = shallow(
+    const { container } = render(
       <EventSinkAlert isValidSink createSinkAccessLoading={false} createSinkAccess />,
     );
-    expect(wrapper.find(Alert).exists()).toBe(false);
+    expect(container.querySelector('Alert')).not.toBeInTheDocument();
   });
 
   it('should show alert if eventSink is present but do not have create access', () => {
-    const wrapper = shallow(
+    const { container } = render(
       <EventSinkAlert isValidSink createSinkAccessLoading={false} createSinkAccess={false} />,
     );
-    expect(wrapper.find(Alert).exists()).toBe(true);
+    expect(container.querySelector('Alert')).toBeInTheDocument();
   });
 
   it('should show alert if eventSink is not present', () => {
-    const wrapper = shallow(
+    const { container } = render(
       <EventSinkAlert
         isValidSink={false}
         createSinkAccessLoading={false}
         createSinkAccess={false}
       />,
     );
-    expect(wrapper.find(Alert).exists()).toBe(true);
+    expect(container.querySelector('Alert')).toBeInTheDocument();
   });
 });

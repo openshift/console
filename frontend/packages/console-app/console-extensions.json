@@ -853,25 +853,12 @@
     }
   },
   {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "operatorhub",
-      "section": "ecosystem",
-      "name": "%console-app~OperatorHub%",
-      "href": "/operatorhub",
-      "insertAfter": "developer-catalog"
-    },
-    "flags": {
-      "required": ["CAN_LIST_PACKAGE_MANIFEST", "CAN_LIST_OPERATOR_GROUP"]
-    }
-  },
-  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "id": "operators",
       "section": "ecosystem",
       "name": "%console-app~Installed Operators%",
-      "insertAfter": "operatorhub",
+      "insertAfter": "developer-catalog",
       "model": {
         "kind": "ClusterServiceVersion",
         "version": "v1alpha1",

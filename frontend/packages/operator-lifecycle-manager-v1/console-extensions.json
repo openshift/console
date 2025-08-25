@@ -130,5 +130,13 @@
     "flags": {
       "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
     }
+  },
+  {
+    "type": "console.catalog/categories-provider",
+    "properties": {
+      "catalogId": "olm-extension-catalog",
+      "type": "ExtensionCatalogItem",
+      "provider": { "$codeRef": "useExtensionCatalogCategories" }
+    }
   }
 ]

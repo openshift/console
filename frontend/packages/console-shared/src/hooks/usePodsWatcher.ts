@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -22,14 +22,14 @@ export const usePodsWatcher = (
   const [podData, setPodData] = useSafetyFirst<PodRCData>(undefined);
   const watchKind = kind || resource?.kind;
   const watchNS = namespace || resource?.metadata.namespace;
-  const watchedResources = React.useMemo(
+  const watchedResources = useMemo(
     () => (watchKind ? getResourcesToWatchForPods(watchKind, watchNS) : {}),
     [watchKind, watchNS],
   );
 
   const resources = useK8sWatchResources(watchedResources);
 
-  const updateResults = React.useCallback(
+  const updateResults = useCallback(
     (watchedResource, updatedResources) => {
       const errorKey = Object.keys(updatedResources).find((key) => updatedResources[key].loadError);
       if (errorKey) {
@@ -51,7 +51,7 @@ export const usePodsWatcher = (
 
   const debouncedUpdateResources = useDebounceCallback(updateResults, 250);
 
-  React.useEffect(() => {
+  useEffect(() => {
     debouncedUpdateResources(resource, resources);
   }, [debouncedUpdateResources, resources, resource]);
 

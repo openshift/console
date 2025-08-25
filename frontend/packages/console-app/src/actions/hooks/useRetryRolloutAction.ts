@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action, K8sResourceCommon } from '@console/dynamic-plugin-sdk';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
@@ -72,7 +72,7 @@ export const useRetryRolloutAction = (resource: DeploymentConfigKind): Action =>
     rc?.metadata?.annotations?.['openshift.io/deployment.phase'] === 'Failed' &&
     resource.status?.latestVersion !== 0;
 
-  return React.useMemo<Action>(
+  return useMemo<Action>(
     () => ({
       id: 'retry-rollout',
       label: t('console-app~Retry rollout'),

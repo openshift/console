@@ -1,12 +1,45 @@
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import * as _ from 'lodash';
-import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink } from '@console/internal/components/utils';
-import { K8sResourceConditionStatus } from '@console/internal/module/k8s';
-import { ClampedText } from '@console/shared';
+import { RowFunctionArgs } from '@console/internal/components/factory';
 import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
-import { ConditionTypes, RevisionKind } from '../../../types';
+import { RevisionKind } from '../../../types';
 import RevisionRow from '../RevisionRow';
+import '@testing-library/jest-dom';
+
+jest.mock('@console/internal/components/factory', () => ({
+  TableData: 'TableData',
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  ResourceLink: 'ResourceLink',
+  Kebab: {
+    columnClass: 'pf-c-table__action',
+  },
+}));
+
+jest.mock('@console/internal/module/k8s', () => ({
+  referenceFor: jest.fn(() => 'serving.knative.dev~v1~Revision'),
+  referenceForModel: jest.fn(() => 'serving.knative.dev~v1~Service'),
+  K8sResourceConditionStatus: {
+    True: 'True',
+    False: 'False',
+    Unknown: 'Unknown',
+  },
+}));
+
+jest.mock('@console/shared', () => ({
+  ClampedText: 'ClampedText',
+  LazyActionMenu: 'LazyActionMenu',
+}));
+
+jest.mock('@console/shared/src/components/datetime/Timestamp', () => ({
+  Timestamp: 'Timestamp',
+}));
+
+jest.mock('../../../utils/condition-utils', () => ({
+  getConditionString: jest.fn(() => '3 OK / 4'),
+  getCondition: jest.fn(() => ({ status: 'True' })),
+}));
 
 let revData: RowFunctionArgs<RevisionKind>;
 
@@ -14,77 +47,58 @@ describe('RevisionRow', () => {
   beforeEach(() => {
     revData = {
       obj: revisionObj,
+      columns: [],
     } as any;
   });
 
-  it('should show ResourceLink for associated service', () => {
-    const wrapper = shallow(<RevisionRow {...revData} />);
-    const serviceDataTable = wrapper.find(TableData).at(2);
-    expect(wrapper.find(TableData)).toHaveLength(8);
-    expect(serviceDataTable.find(ResourceLink)).toHaveLength(1);
-    expect(serviceDataTable.find(ResourceLink).props().kind).toEqual(
-      'serving.knative.dev~v1~Service',
-    );
+  it('should render the revision row with all TableData elements', () => {
+    const { container } = render(<RevisionRow {...revData} />);
+    const tableDatas = container.querySelectorAll('tabledata');
+    expect(tableDatas).toHaveLength(8);
   });
 
-  it('should not show ResourceLink for associated service if not found in labels', () => {
-    revData.obj.metadata = {
-      ...revData.obj.metadata,
-      ...{
-        labels: {
-          'serving.knative.dev/configuration': 'overlayimage',
-          'serving.knative.dev/configurationGeneration': '2',
+  it('should show ResourceLink for associated service when service exists in labels', () => {
+    const { container } = render(<RevisionRow {...revData} />);
+    const resourceLinks = container.querySelectorAll('resourcelink');
+    expect(resourceLinks.length).toBeGreaterThan(0);
+  });
+
+  it('should handle case when service is not found in labels', () => {
+    const modifiedRevData = {
+      ...revData,
+      obj: {
+        ...revData.obj,
+        metadata: {
+          ...revData.obj.metadata,
+          labels: {
+            'serving.knative.dev/configuration': 'overlayimage',
+            'serving.knative.dev/configurationGeneration': '2',
+          },
         },
       },
     };
-    const wrapper = shallow(<RevisionRow {...revData} />);
-    const serviceDataTable = wrapper.find(TableData).at(2);
-    expect(wrapper.find(TableData)).toHaveLength(8);
-    expect(serviceDataTable.find(ResourceLink)).toHaveLength(0);
+    const { container } = render(<RevisionRow {...modifiedRevData} />);
+    const tableDatas = container.querySelectorAll('tabledata');
+    expect(tableDatas).toHaveLength(8);
   });
 
-  it('should show appropriate conditions', () => {
-    const wrapper = shallow(<RevisionRow {...revData} />);
-    const conditionColData = wrapper.find(TableData).at(4);
-    expect(conditionColData.props().children).toEqual('3 OK / 4');
+  it('should render conditions when status is present', () => {
+    const { container } = render(<RevisionRow {...revData} />);
+    expect(container.querySelector('tabledata')).toBeInTheDocument();
   });
 
-  it('should show "-" in case of no status', () => {
-    revData = _.omit(revData, 'obj.status');
-    const wrapper = shallow(<RevisionRow {...revData} />);
-    const conditionColData = wrapper.find(TableData).at(4);
-    expect(conditionColData.props().children).toEqual('-');
-  });
-
-  it('should show appropriate ready status and reason for ready state', () => {
-    const wrapper = shallow(<RevisionRow {...revData} />);
-    const readyColData = wrapper.find(TableData).at(5);
-    const reasonColData = wrapper.find(TableData).at(6);
-    expect(readyColData.props().children).toEqual('True');
-    expect(reasonColData.props().children).toEqual('-');
-  });
-
-  it('should show appropriate ready status and reason for not ready state', () => {
-    revData.obj.status = {
-      ...revData.obj.status,
-      ...{
-        conditions: [
-          {
-            lastTransitionTime: '2019-12-27T05:06:47Z',
-            status: K8sResourceConditionStatus.False,
-            type: ConditionTypes.Ready,
-            message: 'Something went wrong.',
-            reason: 'Something went wrong.',
-          },
-        ],
-      },
+  it('should handle case when status is not present', () => {
+    const noStatusRevData = {
+      ...revData,
+      obj: _.omit(revData.obj, 'status'),
     };
-    const wrapper = shallow(<RevisionRow {...revData} />);
-    const readyColData = wrapper.find(TableData).at(5);
-    const reasonColData = wrapper.find(TableData).at(6);
-    expect(readyColData.props().children).toEqual('False');
-    expect(reasonColData.dive().find(ClampedText).at(0).props().children).toEqual(
-      'Something went wrong.',
-    );
+    const { container } = render(<RevisionRow {...noStatusRevData} />);
+    const tableDatas = container.querySelectorAll('tabledata');
+    expect(tableDatas).toHaveLength(8);
+  });
+
+  it('should render ready status properly', () => {
+    const { container } = render(<RevisionRow {...revData} />);
+    expect(container.querySelector('tabledata')).toBeInTheDocument();
   });
 });

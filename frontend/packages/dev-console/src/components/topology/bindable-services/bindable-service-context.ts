@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { fetchBindableServices } from './fetch-bindable-services-utils';
 import { BindableServiceGVK } from './types';
 
@@ -7,7 +7,7 @@ export type ServiceBindingContextType = {
   loaded: boolean;
 };
 
-export const ServiceBindingContext = React.createContext<ServiceBindingContextType>({
+export const ServiceBindingContext = createContext<ServiceBindingContextType>({
   bindableServices: [],
   loaded: false,
 });
@@ -15,9 +15,9 @@ export const ServiceBindingContext = React.createContext<ServiceBindingContextTy
 export const ServiceBindingContextProvider = ServiceBindingContext.Provider;
 
 export const useValuesServiceBindingContext = (): ServiceBindingContextType => {
-  const [bindableServices, setBindableServices] = React.useState([]);
-  const [loaded, setLoaded] = React.useState(false);
-  React.useEffect(() => {
+  const [bindableServices, setBindableServices] = useState([]);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
     fetchBindableServices()
       .then((resp) => {
         setBindableServices(resp);

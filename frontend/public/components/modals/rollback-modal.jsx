@@ -1,9 +1,10 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
 import { getDeploymentConfigVersion, getOwnerNameByKind } from '@console/shared/src';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { LoadingInline, withHandlePromise } from '../utils';
+import { LoadingInline } from '../utils';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { DeploymentConfigModel, DeploymentModel, ReplicationControllerModel } from '../../models';
 import { k8sCreate, k8sPatch, k8sUpdate } from '../../module/k8s';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
@@ -18,16 +19,17 @@ const ANNOTATIONS_TO_SKIP = [
   'deprecated.deployment.rollback.to',
 ];
 
-const BaseRollbackModal = withHandlePromise((props) => {
+const BaseRollbackModal = (props) => {
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { t } = useTranslation();
   const isDCRollback = props.resource.kind === ReplicationControllerModel.kind;
   const dName = getOwnerNameByKind(
     props.resource,
     isDCRollback ? DeploymentConfigModel : DeploymentModel,
   );
-  const [changeScaleSettings, setChangeScaleSettings] = React.useState(false);
-  const [changeStrategy, setChangeStrategy] = React.useState(false);
-  const [changeTriggers, setChangeTriggers] = React.useState(false);
+  const [changeScaleSettings, setChangeScaleSettings] = useState(false);
+  const [changeStrategy, setChangeStrategy] = useState(false);
+  const [changeTriggers, setChangeTriggers] = useState(false);
   const deploymentResource = {
     kind: isDCRollback ? DeploymentConfigModel.kind : DeploymentModel.kind,
     isList: false,
@@ -35,7 +37,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
     namespace: props.resource.metadata.namespace,
   };
   const [deployment, loaded, loadError] = useK8sWatchResource(deploymentResource);
-  const [deploymentError, setDeploymentError] = React.useState();
+  const [deploymentError, setDeploymentError] = useState();
 
   const submitDCRollback = () => {
     const dcVersion = getDeploymentConfigVersion(props.resource);
@@ -62,14 +64,17 @@ const BaseRollbackModal = withHandlePromise((props) => {
       path: 'rollback',
     };
 
-    return props.handlePromise(
+    handlePromise(
       // create the deployment config rollback
       k8sCreate(DeploymentConfigModel, req, opts).then((updatedDC) => {
         // update the deployment config based on the one returned by the rollback
         return k8sUpdate(DeploymentConfigModel, updatedDC);
       }),
-      props.close,
-    );
+    )
+      .then(() => {
+        props.close();
+      })
+      .catch(() => {});
   };
 
   const submitDeploymentRollback = () => {
@@ -98,7 +103,9 @@ const BaseRollbackModal = withHandlePromise((props) => {
       { op: 'replace', path: '/metadata/annotations', value: annotations },
     ];
 
-    return props.handlePromise(k8sPatch(DeploymentModel, deployment, patch), props.close);
+    handlePromise(k8sPatch(DeploymentModel, deployment, patch)).then(() => {
+      props.close();
+    });
   };
 
   const submit = (e) => {
@@ -109,7 +116,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
     return submitDeploymentRollback();
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded && !loadError && deployment) {
       if (deployment.spec.paused) {
         setDeploymentError(
@@ -194,14 +201,14 @@ const BaseRollbackModal = withHandlePromise((props) => {
         )}
       </ModalBody>
       <ModalSubmitFooter
-        errorMessage={props.errorMessage}
-        inProgress={false}
+        errorMessage={errorMessage}
+        inProgress={inProgress}
         submitText={t('public~Rollback')}
         cancel={props.cancel}
         submitDisabled={loadError?.message || deploymentError}
       />
     </form>
   );
-});
+};
 
 export const rollbackModal = createModalLauncher((props) => <BaseRollbackModal {...props} />);

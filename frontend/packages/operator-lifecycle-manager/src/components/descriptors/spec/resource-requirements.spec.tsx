@@ -18,6 +18,7 @@ describe(ResourceRequirementsModal.name, () => {
   const title = 'TestResource Resource Requests';
   const description = 'Define the resource requests for this TestResource instance.';
   const cancel = jasmine.createSpy('cancelSpy');
+  const close = jasmine.createSpy('closeSpy');
 
   const spyAndExpect = (spy: Spy) => (returnValue: any) =>
     new Promise((resolve) =>
@@ -37,7 +38,7 @@ describe(ResourceRequirementsModal.name, () => {
         type="requests"
         cancel={cancel}
         path="resources"
-        close={null}
+        close={close}
       />,
     );
   });
