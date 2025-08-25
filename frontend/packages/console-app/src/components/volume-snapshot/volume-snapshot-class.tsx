@@ -128,7 +128,7 @@ const VolumeSnapshotClassPage: React.FC<VolumeSnapshotClassPageProps> = ({
 
   return (
     <>
-      <ListPageHeader title={showTitle ? t(VolumeSnapshotClassModel.labelPluralKey) : undefined}>
+      <ListPageHeader title={showTitle ? t(VolumeSnapshotClassModel.labelPluralKey || '') : ''}>
         {canCreate && (
           <ListPageCreate groupVersionKind={resourceKind}>
             {t('console-app~Create VolumeSnapshotClass')}
@@ -159,6 +159,6 @@ type VolumeSnapshotClassTableProps = {
   data: VolumeSnapshotClassKind[];
   unfilteredData: VolumeSnapshotClassKind[];
   loaded: boolean;
-  loadError: any;
+  loadError: unknown;
 };
 export default VolumeSnapshotClassPage;

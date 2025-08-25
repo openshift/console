@@ -41,7 +41,7 @@ export type ObjectReference = {
 export type ObjectMetadata = {
   annotations?: { [key: string]: string };
   clusterName?: string;
-  creationTimestamp?: string;
+  creationTimestamp?: string | number | Date;
   deletionGracePeriodSeconds?: number;
   deletionTimestamp?: string;
   finalizers?: string[];
@@ -697,7 +697,7 @@ export type ResourceEventStreamProps = {
 };
 
 export type TimestampProps = {
-  timestamp: string | number | Date;
+  timestamp: string | number | Date | null;
   simple?: boolean;
   omitSuffix?: boolean;
   className?: string;

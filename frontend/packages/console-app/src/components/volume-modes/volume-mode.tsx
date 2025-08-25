@@ -24,8 +24,8 @@ export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => 
 
   const { t } = useTranslation();
   const pvcInitialVolumeMode: string = pvcResource
-    ? pvcResource?.spec?.volumeMode
-    : availableVolumeMode ?? initialVolumeModes[0];
+    ? pvcResource?.spec?.volumeMode || ''
+    : availableVolumeMode || initialVolumeModes[0];
 
   const [volumeMode, setVolumeMode] = React.useState<string>();
   const allowedVolumeModes: string[] = React.useMemo(
@@ -49,7 +49,7 @@ export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => 
     if (!volumeMode && allowedVolumeModes.includes(pvcInitialVolumeMode)) {
       // To view the same volume mode value of pvc
       changeVolumeMode(pvcInitialVolumeMode);
-    } else if (!allowedVolumeModes.includes(volumeMode)) {
+    } else if (!allowedVolumeModes.includes(volumeMode || '')) {
       // Old volume mode will be disabled
       changeVolumeMode(allowedVolumeModes[0]);
     }
