@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { ModalComponentProps, ModalWrapper } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getKnativeRevisionsData } from '../../topology/knative-topology-utils';
@@ -40,6 +42,22 @@ const TrafficSplittingController: React.FC<TrafficSplittingControllerProps> = (p
 
 type Props = TrafficSplittingControllerProps & ModalComponentProps;
 
-export const trafficModalLauncher = createModalLauncher<Props>(TrafficSplittingController);
+const TrafficSplittingModalProvider: OverlayComponent<Props> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <TrafficSplittingController
+        cancel={props.closeOverlay}
+        close={props.closeOverlay}
+        {...props}
+      />
+    </ModalWrapper>
+  );
+};
 
-export default TrafficSplittingController;
+export const useTrafficSplittingModalLauncher = (props: Props) => {
+  const launcher = useOverlay();
+  return React.useCallback(() => launcher<Props>(TrafficSplittingModalProvider, props), [
+    launcher,
+    props,
+  ]);
+};
