@@ -1,6 +1,7 @@
-import * as React from 'react';
-import i18next from 'i18next';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk/src';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { usePubSubModalLauncher } from '../components/pub-sub/PubSubController';
 import { EventingSubscriptionModel } from '../models';
@@ -8,19 +9,14 @@ import { EventingSubscriptionModel } from '../models';
 export const SUBSCRIPTION_ACTION_ID = 'eventing-subscription-action';
 
 export const useAddSubscriptionAction = (source?: K8sResourceKind): Action => {
+  const { t } = useTranslation('knative-plugin');
   const pubSubModalLauncher = usePubSubModalLauncher({ source });
-  return React.useMemo(
+  return useMemo(
     () => ({
       id: SUBSCRIPTION_ACTION_ID,
-      label: i18next.t('knative-plugin~Add Subscription'),
+      label: t('Add Subscription'),
       cta: pubSubModalLauncher,
-      accessReview: {
-        group: EventingSubscriptionModel.apiGroup,
-        resource: EventingSubscriptionModel.plural,
-        name: source?.metadata?.name,
-        namespace: source?.metadata?.namespace,
-        verb: 'create',
-      },
+      accessReview: asAccessReview(EventingSubscriptionModel, source, 'create'),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [source],

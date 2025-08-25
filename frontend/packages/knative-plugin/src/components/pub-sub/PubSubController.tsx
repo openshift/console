@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { ModalComponentProps, ModalWrapper } from '@console/internal/components/factory';
+import {
+  createModalLauncher,
+  ModalComponentProps,
+  ModalWrapper,
+} from '@console/internal/components/factory/modal';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import PubSub from './PubSub';
 
@@ -28,3 +32,5 @@ export const usePubSubModalLauncher = (props) => {
   const launcher = useOverlay();
   return React.useCallback(() => launcher<Props>(PubSubModalProvider, props), [launcher, props]);
 };
+
+export const PubSubModalLauncher = createModalLauncher<Props>(PubSubController);

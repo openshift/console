@@ -2,8 +2,14 @@ import { Node } from '@patternfly/react-topology/src/types';
 import i18next from 'i18next';
 import { errorModal } from '@console/internal/components/modals';
 import { getResource } from '@console/topology/src/utils';
-import { usePubSubModalLauncher } from '../components/pub-sub/PubSubController';
+import { addPubSubConnectionModal } from '../components/pub-sub/PubSubModalLauncher';
 import { createEventSourceKafkaConnection } from './knative-topology-utils';
+
+const createPubSubConnector = (source: Node, target: Node) => {
+  return Promise.resolve(
+    addPubSubConnectionModal({ source: getResource(source), target: getResource(target) }),
+  ).then(() => null);
+};
 
 const createKafkaConnection = (source: Node, target: Node) =>
   createEventSourceKafkaConnection(source, target)
@@ -16,16 +22,12 @@ const createKafkaConnection = (source: Node, target: Node) =>
       });
     });
 
-export const useCreateConnector = (createHints: string, source: Node, target: Node) => {
-  const pubSubModalLauncher = usePubSubModalLauncher({
-    source: getResource(source),
-    target: getResource(target),
-  });
+export const getCreateConnector = (createHints: string[]) => {
   if (createHints.includes('createKafkaConnection')) {
     return createKafkaConnection;
   }
   if (createHints.includes('createTrigger') || createHints.includes('createSubscription')) {
-    return Promise.resolve(pubSubModalLauncher).then(() => null);
+    return createPubSubConnector;
   }
   return null;
 };

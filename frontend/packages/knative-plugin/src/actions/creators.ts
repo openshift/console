@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { deleteModal } from '@console/internal/components/modals';
@@ -18,21 +18,15 @@ import { ServiceTypeValue } from '../types';
 
 export const useSetTrafficDistributionAction = (kind: K8sKind, obj: K8sResourceKind): Action => {
   const trafficDistributionModalLauncher = useTrafficSplittingModalLauncher({ obj });
-  return React.useMemo<Action>(
+  return useMemo<Action>(
     () => ({
       id: 'set-traffic-distribution',
       label: i18next.t('knative-plugin~Set traffic distribution'),
       cta: trafficDistributionModalLauncher,
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        name: obj.metadata.name,
-        namespace: obj.metadata.namespace,
-        verb: 'update',
-      },
+      accessReview: asAccessReview(kind, obj, 'update'),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [kind.apiGroup, kind.plural, obj.metadata.name, obj.metadata.namespace],
+    [kind.apiGroup, kind.plural, obj?.metadata?.name, obj?.metadata?.namespace],
   );
 };
 
@@ -41,43 +35,31 @@ export const useMoveSinkPubsubAction = (model: K8sKind, source: K8sResourceKind)
     source,
     resourceType: model.labelKey ? i18next.t(model.labelKey) : model.label,
   });
-  return React.useMemo<Action>(
+  return useMemo<Action>(
     () => ({
       id: 'move-sink-pubsub',
       label: i18next.t('knative-plugin~Move {{kind}}', {
         kind: model.label,
       }),
       cta: sinkPubsubModalLauncher,
-      accessReview: {
-        group: model.apiGroup,
-        resource: model.plural,
-        name: source.metadata.name,
-        namespace: source.metadata.namespace,
-        verb: 'update',
-      },
+      accessReview: asAccessReview(model, source, 'update'),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [model.apiGroup, model.label, model.plural, source.metadata.name, source.metadata.namespace],
+    [model, source],
   );
 };
 
 export const useAddTriggerBrokerAction = (model: K8sKind, source: K8sResourceKind): Action => {
   const pubSubModalLauncher = usePubSubModalLauncher({ source });
-  return React.useMemo<Action>(
+  return useMemo<Action>(
     () => ({
       id: 'add-tigger-broker',
       label: i18next.t('knative-plugin~Add Trigger'),
       cta: pubSubModalLauncher,
-      accessReview: {
-        group: EventingTriggerModel.apiGroup,
-        resource: EventingTriggerModel.plural,
-        name: source.metadata.name,
-        namespace: source.metadata.namespace,
-        verb: 'create',
-      },
+      accessReview: asAccessReview(EventingTriggerModel, source, 'create'),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [source.metadata.name, source.metadata.namespace],
+    [source],
   );
 };
 
@@ -86,21 +68,15 @@ export const useAddSubscriptionChannelAction = (
   source: K8sResourceKind,
 ): Action => {
   const pubSubModalLauncher = usePubSubModalLauncher({ source });
-  return React.useMemo<Action>(
+  return useMemo<Action>(
     () => ({
       id: 'add-subscription-channel',
       label: i18next.t('knative-plugin~Add Subscription'),
       cta: pubSubModalLauncher,
-      accessReview: {
-        group: EventingSubscriptionModel.apiGroup,
-        resource: EventingSubscriptionModel.plural,
-        name: source.metadata.name,
-        namespace: source.metadata.namespace,
-        verb: 'create',
-      },
+      accessReview: asAccessReview(EventingSubscriptionModel, source, 'create'),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [source.metadata.name, source.metadata.namespace],
+    [source],
   );
 };
 
@@ -115,13 +91,7 @@ export const editKnativeService = (kind: K8sKind, obj: K8sResourceKind): Action 
     }`,
   },
   insertAfter: 'edit-resource-limits',
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: obj.metadata.name,
-    namespace: obj.metadata.namespace,
-    verb: 'update',
-  },
+  accessReview: asAccessReview(kind, obj, 'update'),
 });
 
 export const editKnativeServiceResource = (
@@ -142,13 +112,7 @@ export const editKnativeServiceResource = (
           : `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
     },
     insertAfter: 'edit-annotations',
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'update',
-    },
+    accessReview: asAccessReview(kind, obj, 'update'),
   };
 };
 
@@ -188,33 +152,21 @@ export const moveSinkSource = (
     id: 'move-sink-source',
     label: i18next.t('knative-plugin~Move sink'),
     cta: sinkSourceModalLauncher,
-    accessReview: {
-      group: model?.apiGroup,
-      resource: model?.plural,
-      name: source?.metadata.name,
-      namespace: source?.metadata.namespace,
-      verb: 'update',
-    },
+    accessReview: asAccessReview(model, source, 'update'),
   };
 };
 
 export const useDeleteRevisionAction = (model: K8sKind, revision: K8sResourceKind): Action => {
   const deleteRevisionModalLauncher = useDeleteRevisionModalLauncher({ revision });
-  return React.useMemo<Action>(
+  return useMemo<Action>(
     () => ({
       id: 'delete-revision',
       label: i18next.t('knative-plugin~Delete Revision'),
       cta: deleteRevisionModalLauncher,
-      accessReview: {
-        group: model.apiGroup,
-        resource: model.plural,
-        name: revision.metadata.name,
-        namespace: revision.metadata.namespace,
-        verb: 'delete',
-      },
+      accessReview: asAccessReview(model, revision, 'delete'),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [model.apiGroup, model.plural, revision.metadata.name, revision.metadata.namespace],
+    [model, revision],
   );
 };
 
@@ -224,7 +176,7 @@ export const useEditSinkUriAction = (
   resources: K8sResourceKind[],
 ): Action => {
   const editSinkUriModalLauncher = useSinkUriModalLauncher({ source, eventSourceList: resources });
-  return React.useMemo<Action>(
+  return useMemo<Action>(
     () => ({
       id: 'edit-sink-uri',
       label: i18next.t('knative-plugin~Edit URI'),
@@ -244,7 +196,7 @@ export const useEditSinkUriAction = (
 
 export const useTestServerlessFunctionAction = (model: K8sKind, obj: K8sResourceKind): Action => {
   const testServerlessFunctionLauncher = useTestFunctionModalLauncher({ obj });
-  return React.useMemo<Action>(
+  return useMemo<Action>(
     () => ({
       id: 'test-serverless-function',
       label: i18next.t('knative-plugin~Test Serverless Function'),
