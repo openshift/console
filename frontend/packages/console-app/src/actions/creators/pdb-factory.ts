@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { Action } from '@console/dynamic-plugin-sdk';
@@ -16,8 +16,10 @@ import { getPDBResource } from '../../components/pdb/utils/get-pdb-resources';
 import { PodDisruptionBudgetModel } from '../../models';
 import { ResourceActionFactory } from './types';
 
-const pdbRoute = ({ metadata: { name, namespace } }: K8sResourceCommon, kindObj: K8sKind) =>
-  `/k8s/ns/${namespace}/${referenceForModel(kindObj)}/form?name=${name}`;
+const pdbRoute = (
+  { metadata: { name = '', namespace = '' } = {} }: K8sResourceCommon,
+  kindObj: K8sKind,
+) => `/k8s/ns/${namespace}/${referenceForModel(kindObj)}/form?name=${name}`;
 
 const PodDisruptionBudgetActionFactory: ResourceActionFactory = {
   AddPDB: (kindObj: K8sKind, obj: K8sPodControllerKind): Action => ({
@@ -46,7 +48,7 @@ const PodDisruptionBudgetActionFactory: ResourceActionFactory = {
     insertBefore: 'edit-resource-limits',
     cta: () => {
       deletePDBModal({
-        workloadName: obj.metadata.name,
+        workloadName: obj.metadata?.name || '',
         pdb: matchedPDB,
       });
     },
@@ -70,7 +72,7 @@ const getPDBActions = (
 export const usePDBActions = (kindObj: K8sKind, resource: K8sPodControllerKind) => {
   const namespace = resource?.metadata?.namespace;
 
-  const watchedResource = React.useMemo(
+  const watchedResource = useMemo(
     () => ({
       isList: true,
       groupVersionKind: {
@@ -88,7 +90,7 @@ export const usePDBActions = (kindObj: K8sKind, resource: K8sPodControllerKind) 
 
   const matchedPDB = getPDBResource(pdbResources, resource);
 
-  const result = React.useMemo(() => {
+  const result = useMemo(() => {
     return [getPDBActions(kindObj, resource, matchedPDB)];
   }, [kindObj, matchedPDB, resource]);
 

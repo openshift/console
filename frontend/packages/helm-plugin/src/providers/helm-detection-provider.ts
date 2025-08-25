@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback } from 'react';
 import { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { usePoll } from '@console/internal/components/utils/poll-hook';
@@ -13,8 +13,8 @@ export const hasEnabledHelmCharts = (helmChartRepositories: K8sResourceKind[]): 
 
 export const useDetectHelmChartRepositories = (setFeatureFlag: SetFeatureFlag) => {
   const [namespace] = useActiveNamespace();
-  const [delay, setDelay] = React.useState<number>(10 * 1000);
-  const fetchHelmChartRepositories = React.useCallback(() => {
+  const [delay, setDelay] = useState<number>(10 * 1000);
+  const fetchHelmChartRepositories = useCallback(() => {
     const helmChartRepos: Promise<ListKind<K8sResourceKind>>[] = [
       fetchK8s<ListKind<K8sResourceKind>>(HelmChartRepositoryModel),
       fetchK8s<ListKind<K8sResourceKind>>(ProjectHelmChartRepositoryModel, null, namespace),

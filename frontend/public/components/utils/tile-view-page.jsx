@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import i18n from '@console/internal/i18n';
 import { useTranslation } from 'react-i18next';
@@ -97,30 +97,21 @@ const addItem = (item, category, subcategory = null) => {
   }
 };
 
-const isCategoryEmpty = ({ items }) => _.isEmpty(items);
+// Removed isCategoryEmpty and pruneCategoriesWithNoItems functions - no longer needed since we preserve
+// all categories for navigation purposes, even if they have 0 items
 
-const pruneCategoriesWithNoItems = (categories) => {
-  if (!categories) {
+const processSubCategories = (category, itemsSorter) => {
+  if (!category || !category.subcategories) {
     return;
   }
 
-  _.forOwn(categories, (category, key) => {
-    if (isCategoryEmpty(category)) {
-      delete categories[key];
-    } else {
-      pruneCategoriesWithNoItems(category.subcategories);
-    }
-  });
-};
-
-const processSubCategories = (category, itemsSorter) => {
   _.forOwn(category.subcategories, (subcategory) => {
-    if (subcategory.items) {
+    if (subcategory && subcategory.items) {
       subcategory.numItems = _.size(subcategory.items);
       subcategory.items = itemsSorter(subcategory.items);
       processSubCategories(subcategory, itemsSorter);
     }
-    if (category.subcategories) {
+    if (category.subcategories && category.items) {
       _.each(category.items, (item) => {
         const included = _.find(_.keys(category.subcategories), (subcat) =>
           _.includes(category.subcategories[subcat].items, item),
@@ -140,8 +131,12 @@ const processSubCategories = (category, itemsSorter) => {
 
 // calculate numItems per Category and subcategories, sort items
 const processCategories = (categories, itemsSorter) => {
+  if (!categories || !itemsSorter) {
+    return;
+  }
+
   _.forOwn(categories, (category) => {
-    if (category.items) {
+    if (category && category.items) {
       category.numItems = _.size(category.items);
       category.items = itemsSorter(category.items);
       processSubCategories(category, itemsSorter);
@@ -166,8 +161,19 @@ const categorize = (items, categories) => {
     }
   });
 
-  categories.all.numItems = _.size(items);
-  categories.all.items = items;
+  // Ensure categories.all exists before setting properties
+  if (categories.all) {
+    categories.all.numItems = _.size(items);
+    categories.all.items = items;
+  } else {
+    // Recreate the 'all' category if it was somehow deleted
+    categories.all = {
+      id: 'all',
+      label: i18n.t('public~All Items'),
+      numItems: _.size(items),
+      items,
+    };
+  }
 };
 
 /**
@@ -186,17 +192,27 @@ export const categorizeItems = (items, itemsSorter, initCategories) => {
   };
 
   categorize(items, categories);
-  pruneCategoriesWithNoItems(categories);
+  // Don't prune categories - preserve all categories for navigation
+  // Users should see all available categories even if they currently have 0 items
+  // pruneCategoriesWithNoItems(categories);
   processCategories(categories, itemsSorter);
 
   return categories;
 };
 
 const clearItemsFromCategories = (categories) => {
+  if (!categories) {
+    return;
+  }
+
   _.forOwn(categories, (category) => {
-    category.numItems = 0;
-    category.items = [];
-    clearItemsFromCategories(category.subcategories);
+    if (category) {
+      category.numItems = 0;
+      category.items = [];
+      if (category.subcategories) {
+        clearItemsFromCategories(category.subcategories);
+      }
+    }
   });
 };
 
@@ -207,6 +223,16 @@ const filterByKeyword = (items, filters, compFunction) => {
   }
 
   const filterString = keyword.value.toLowerCase();
+
+  if (compFunction.useScoring && window.location.pathname.includes('operatorhub')) {
+    return items
+      .map((item) => {
+        const result = compFunction(filterString, item);
+        return result.matches ? result.item : null;
+      })
+      .filter((item) => item !== null);
+  }
+
   return _.filter(items, (item) => compFunction(filterString, item));
 };
 
@@ -269,11 +295,25 @@ const filterItems = (items, filters, keywordCompare) => {
 const recategorizeItems = (items, itemsSorter, filters, keywordCompare, categories) => {
   const filteredItems = filterItems(items, filters, keywordCompare);
 
+  const searchTerm = filters?.keyword?.active ? filters.keyword.value : '';
+
   const newCategories = _.cloneDeep(categories);
   clearItemsFromCategories(newCategories);
 
   categorize(filteredItems, newCategories);
-  processCategories(newCategories, itemsSorter);
+
+  // Process the categories with search term for relevance sorting
+  processCategories(newCategories, (categoryItems) => {
+    // For OperatorHub, pass the search term to the sorter
+    if (itemsSorter.name === 'orderAndSortByRelevance') {
+      return itemsSorter(categoryItems, searchTerm);
+    }
+    return itemsSorter(categoryItems);
+  });
+
+  // Don't prune categories during filtering - preserve all categories for navigation
+  // Users should see all available categories even if they currently have 0 items
+  // pruneCategoriesWithNoItems(newCategories);
 
   return newCategories;
 };
@@ -493,16 +533,16 @@ export const TileViewPage = (props) => {
 
   const { t } = useTranslation();
   const [, setSearchParams] = useSearchParams();
-  const filterByKeywordInput = React.useRef();
-  const [prevProps, setPrevProps] = React.useState(props);
+  const filterByKeywordInput = useRef();
+  const [prevProps, setPrevProps] = useState(props);
 
-  const [categories, setCategories] = React.useState(
+  const [categories, setCategories] = useState(
     categorizeItems(items, itemsSorter, getAvailableCategories(items)),
   );
-  const [selectedCategoryId, setSelectedCategoryId] = React.useState('all');
-  const [activeFilters, setActiveFilters] = React.useState(defaultFilters);
-  const [filterCounts, setFilterCounts] = React.useState(null);
-  const [filterGroupsShowAll, setFilterGroupsShowAll] = React.useState({});
+  const [selectedCategoryId, setSelectedCategoryId] = useState('all');
+  const [activeFilters, setActiveFilters] = useState(defaultFilters);
+  const [filterCounts, setFilterCounts] = useState(null);
+  const [filterGroupsShowAll, setFilterGroupsShowAll] = useState({});
 
   const updateURLParams = (paramName, value) => {
     const params = new URLSearchParams(window.location.search);
@@ -525,7 +565,7 @@ export const TileViewPage = (props) => {
     setSearchParams(params);
   };
 
-  const getUpdatedState = React.useCallback((selectedCategories, categoryId, filters) => {
+  const getUpdatedState = useCallback((selectedCategories, categoryId, filters) => {
     if (!items) {
       return;
     }
@@ -574,9 +614,9 @@ export const TileViewPage = (props) => {
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  React.useEffect(initState, []);
+  useEffect(initState, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!_.isEqual(items, prevProps?.items)) {
       const availableFilters = getAvailableFilters(defaultFilters, items, filterGroups);
       const availableCategories = getAvailableCategories(items);
@@ -806,6 +846,17 @@ export const TileViewPage = (props) => {
   if (!activeCategory) {
     activeCategory = findActiveCategory('all', categories);
   }
+
+  if (!activeCategory) {
+    activeCategory = { id: 'all', label: 'All Items', numItems: 0, items: [] };
+  }
+  if (typeof activeCategory.numItems !== 'number') {
+    activeCategory.numItems = 0;
+  }
+  if (!Array.isArray(activeCategory.items)) {
+    activeCategory.items = [];
+  }
+
   const numItems = t('public~{{totalItems}} items', {
     totalItems: activeCategory.numItems,
   });

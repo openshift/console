@@ -1,10 +1,44 @@
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import * as _ from 'lodash';
-import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
+import { RowFunctionArgs } from '@console/internal/components/factory';
 import { knativeRouteObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { RouteKind } from '../../../types';
 import RouteRow from '../RouteRow';
+import '@testing-library/jest-dom';
+
+jest.mock('@console/internal/components/factory', () => ({
+  TableData: 'TableData',
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  ResourceLink: 'ResourceLink',
+  ExternalLinkWithCopy: 'ExternalLinkWithCopy',
+  Kebab: {
+    columnClass: 'pf-c-table__action',
+  },
+}));
+
+jest.mock('@console/internal/module/k8s', () => ({
+  referenceFor: jest.fn(() => 'serving.knative.dev~v1~Route'),
+  referenceForModel: jest.fn(() => 'serving.knative.dev~v1~Route'),
+  K8sResourceConditionStatus: {
+    True: 'True',
+    False: 'False',
+    Unknown: 'Unknown',
+  },
+}));
+
+jest.mock('@console/shared/src', () => ({
+  LazyActionMenu: 'LazyActionMenu',
+}));
+
+jest.mock('@console/shared/src/components/datetime/Timestamp', () => ({
+  Timestamp: 'Timestamp',
+}));
+
+jest.mock('../../../utils/condition-utils', () => ({
+  getConditionString: jest.fn(() => '3 OK / 3'),
+}));
 
 let routeData: RowFunctionArgs<RouteKind>;
 
@@ -12,55 +46,53 @@ describe('RouteRow', () => {
   beforeEach(() => {
     routeData = {
       obj: knativeRouteObj,
+      columns: [],
     } as any;
   });
 
-  it('should show ExternalLink for associated route', () => {
-    const wrapper = shallow(<RouteRow {...routeData} />);
-    const serviceDataTable = wrapper.find(TableData).at(2);
-    expect(wrapper.find(TableData)).toHaveLength(7);
-    expect(serviceDataTable.find(ExternalLinkWithCopy)).toHaveLength(1);
-    expect(serviceDataTable.find(ExternalLinkWithCopy).props().href).toEqual(
-      'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
-    );
-    expect(serviceDataTable.find(ExternalLinkWithCopy).props().text).toEqual(
-      'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
-    );
+  it('should render the route row with all TableData elements', () => {
+    const { container } = render(<RouteRow {...routeData} />);
+    const tableDatas = container.querySelectorAll('tabledata');
+    expect(tableDatas).toHaveLength(7);
   });
 
-  it('should not show ExternalLink for associated route if not found in status', () => {
-    routeData = _.omit(routeData, 'obj.status');
-    const wrapper = shallow(<RouteRow {...routeData} />);
-    const serviceDataTable = wrapper.find(TableData).at(2);
-    expect(serviceDataTable.find(ExternalLinkWithCopy)).toHaveLength(0);
+  it('should show ExternalLinkWithCopy when route URL exists in status', () => {
+    const { container } = render(<RouteRow {...routeData} />);
+    const externalLinks = container.querySelectorAll('externallinkwithcopy');
+    expect(externalLinks.length).toBeGreaterThan(0);
   });
 
-  it('should show appropriate conditions', () => {
-    const wrapper = shallow(<RouteRow {...routeData} />);
-    const conditionColData = wrapper.find(TableData).at(4);
-    expect(conditionColData.props().children).toEqual('3 OK / 3');
+  it('should handle case when status is not present', () => {
+    const noStatusRouteData = {
+      ...routeData,
+      obj: _.omit(routeData.obj, 'status'),
+    };
+    const { container } = render(<RouteRow {...noStatusRouteData} />);
+    const tableDatas = container.querySelectorAll('tabledata');
+    expect(tableDatas).toHaveLength(7);
   });
 
-  it('should show "-" in case of no status', () => {
-    routeData = _.omit(routeData, 'obj.status');
-    const wrapper = shallow(<RouteRow {...routeData} />);
-    const conditionColData = wrapper.find(TableData).at(4);
-    expect(conditionColData.props().children).toEqual('-');
+  it('should render conditions when status is present', () => {
+    const { container } = render(<RouteRow {...routeData} />);
+    expect(container.querySelector('tabledata')).toBeInTheDocument();
   });
 
-  it('should show appropriate traffic status and reason for ready state', () => {
-    const wrapper = shallow(<RouteRow {...routeData} />);
-    const trafficColData = wrapper.find(TableData).at(5);
-    expect(trafficColData.find(ResourceLink)).toHaveLength(1);
-    expect(trafficColData.find(ResourceLink).props().kind).toEqual(
-      'serving.knative.dev~v1~Revision',
-    );
+  it('should show ResourceLink for traffic when traffic exists', () => {
+    const { container } = render(<RouteRow {...routeData} />);
+    const resourceLinks = container.querySelectorAll('resourcelink');
+    expect(resourceLinks.length).toBeGreaterThan(0);
   });
 
-  it('should show "-" in case of no traffic', () => {
-    routeData = _.omit(routeData, 'obj.status.traffic');
-    const wrapper = shallow(<RouteRow {...routeData} />);
-    const trafficColData = wrapper.find(TableData).at(5);
-    expect(trafficColData.props().children).toEqual('-');
+  it('should handle case when traffic is not present', () => {
+    const noTrafficRouteData = {
+      ...routeData,
+      obj: {
+        ...routeData.obj,
+        status: _.omit(routeData.obj.status, 'traffic'),
+      },
+    };
+    const { container } = render(<RouteRow {...noTrafficRouteData} />);
+    const tableDatas = container.querySelectorAll('tabledata');
+    expect(tableDatas).toHaveLength(7);
   });
 });

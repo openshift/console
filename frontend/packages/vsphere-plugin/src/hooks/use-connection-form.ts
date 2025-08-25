@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { K8sModel, k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { ConnectionFormFormikValues } from '../components/types';
@@ -89,12 +89,12 @@ const initialLoad = async (
 
 export const useConnectionForm = () => {
   const { t } = useTranslation('vsphere-plugin');
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const [error, setError] = React.useState<{ title: string; message: string }>();
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<{ title: string; message: string }>();
   const { secretModel, infrastructureModel } = useConnectionModels();
-  const [result, setResult] = React.useState<ConnectionFormFormikValues>();
+  const [result, setResult] = useState<ConnectionFormFormikValues>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const doItAsync = async () => {
       if (isLoaded) {
         return;

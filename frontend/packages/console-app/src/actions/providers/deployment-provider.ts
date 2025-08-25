@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { DeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
 import { Action } from '@console/dynamic-plugin-sdk/src';
 import { DeploymentKind, referenceFor } from '@console/internal/module/k8s';
@@ -36,7 +36,7 @@ export const useDeploymentActionsProvider = (resource: DeploymentKind) => {
 
   const isReady = commonActionsReady || deploymentActionsReady;
 
-  const deploymentActions = React.useMemo<Action[]>(() => {
+  const deploymentActions = useMemo<Action[]>(() => {
     return !isReady
       ? []
       : [
@@ -52,7 +52,8 @@ export const useDeploymentActionsProvider = (resource: DeploymentKind) => {
           commonActions.ModifyLabels,
           commonActions.ModifyAnnotations,
           deploymentActionsObject.EditDeployment,
-          ...(resource.metadata.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole'
+          ...(resource.metadata?.annotations?.['openshift.io/generated-by'] ===
+          'OpenShiftWebConsole'
             ? [DeleteResourceAction(kindObj, resource)]
             : [commonActions.Delete]),
         ];

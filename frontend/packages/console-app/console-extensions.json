@@ -352,7 +352,28 @@
       "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
     }
   },
-
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "RoleBinding",
+        "group": "rbac.authorization.k8s.io"
+      },
+      "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "ClusterRoleBinding",
+        "group": "rbac.authorization.k8s.io"
+      },
+      "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
+    }
+  },
   {
     "type": "console.page/route",
     "properties": {
@@ -821,25 +842,12 @@
     }
   },
   {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "operatorhub",
-      "section": "ecosystem",
-      "name": "%console-app~OperatorHub%",
-      "href": "/operatorhub",
-      "insertAfter": "developer-catalog"
-    },
-    "flags": {
-      "required": ["CAN_LIST_PACKAGE_MANIFEST", "CAN_LIST_OPERATOR_GROUP"]
-    }
-  },
-  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "id": "operators",
       "section": "ecosystem",
       "name": "%console-app~Installed Operators%",
-      "insertAfter":"operatorhub",
+      "insertAfter": "developer-catalog",
       "model": {
         "kind": "ClusterServiceVersion",
         "version": "v1alpha1",

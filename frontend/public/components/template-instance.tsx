@@ -59,7 +59,7 @@ const TemplateInstanceTableRow: React.FC<RowFunctionArgs<TemplateInstanceKind>> 
   );
 };
 
-export const TemplateInstanceList: React.SFC = (props) => {
+export const TemplateInstanceList: React.FCC = (props) => {
   const { t } = useTranslation();
 
   const TemplateInstanceTableHeader = () => {
@@ -102,7 +102,7 @@ export const TemplateInstanceList: React.SFC = (props) => {
 
 const allStatuses = ['Ready', 'Not Ready', 'Failed'];
 
-export const TemplateInstancePage: React.SFC<TemplateInstancePageProps> = (props) => {
+export const TemplateInstancePage: React.FCC<TemplateInstancePageProps> = (props) => {
   const { t } = useTranslation();
 
   const filters = [
@@ -129,7 +129,7 @@ export const TemplateInstancePage: React.SFC<TemplateInstancePageProps> = (props
   );
 };
 
-const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj }) => {
+const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const status = getTemplateInstanceStatus(obj);
   const secretName = _.get(obj, 'spec.secret.name');
@@ -211,7 +211,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({ obj 
   );
 };
 
-export const TemplateInstanceDetailsPage: React.SFC = (props) => (
+export const TemplateInstanceDetailsPage: React.FCC = (props) => (
   <DetailsPage
     {...props}
     kind="TemplateInstance"

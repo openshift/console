@@ -10,7 +10,7 @@ import {
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { RedExclamationCircleIcon, nameValidationSchema } from '@console/shared';
+import { nameValidationSchema } from '@console/shared';
 import { STATUS_KEY_NAME_ERROR } from '../const';
 import { NameErrorStatus, PipelineBuilderFormikValues } from '../types';
 
@@ -97,9 +97,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
       {!isValid && (
         <FormHelperText>
           <HelperText>
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {errorMessage}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
           </HelperText>
         </FormHelperText>
       )}

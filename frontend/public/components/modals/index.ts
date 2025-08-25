@@ -19,6 +19,7 @@ export const configureJobParallelismModal = (props) =>
     m.configureJobParallelismModal(props),
   );
 
+/** @deprecated use `useWarningModal` instead */
 export const confirmModal = (props) =>
   import('./confirm-modal' /* webpackChunkName: "confirm-modal" */).then((m) =>
     m.confirmModal(props),
@@ -95,11 +96,6 @@ export const clonePVCModal = (props) =>
   import(
     '@console/app/src/components/modals/clone/clone-pvc-modal' /* webpackChunkName: "clone-pvc-modal" */
   ).then((m) => m.default(props));
-
-export const removeVolumeModal = (props) =>
-  import('./remove-volume-modal' /* webpackChunkName: "remove-volume-modal" */).then((m) =>
-    m.removeVolumeModal(props),
-  );
 
 export const configureClusterUpstreamModal = (props) =>
   import(

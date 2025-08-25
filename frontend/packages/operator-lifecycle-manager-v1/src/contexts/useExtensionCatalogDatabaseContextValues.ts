@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useRef, useEffect } from 'react';
 import * as _ from 'lodash';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
@@ -12,9 +12,9 @@ export const useExtensionCatalogDatabaseContextValues: UseExtensionCatalogDataba
     groupVersionKind: CLUSTER_CATALOG_GROUP_VERSION_KIND,
     isList: true,
   });
-  const [done, setDone] = React.useState(false);
-  const [error, setError] = React.useState<Error>();
-  const refresh = React.useRef(
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState<Error>();
+  const refresh = useRef(
     _.debounce((newCatalogs: K8sResourceCommon[]) => {
       setDone(false);
       setError(null);
@@ -31,7 +31,7 @@ export const useExtensionCatalogDatabaseContextValues: UseExtensionCatalogDataba
     }, 5000),
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const currentRefresh = refresh.current;
     currentRefresh(catalogs);
     return () => currentRefresh.cancel();

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   isPerspective,
   Perspective as PerspectiveExtension,
@@ -81,7 +81,7 @@ export const hasReviewAccess = async (accessReview: PerspectiveAccessReview) => 
 
 export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
   const perspectiveExtensions = useExtensions<PerspectiveExtension>(isPerspective);
-  const [results, setResults] = React.useState<Record<string, boolean>>(() => {
+  const [results, setResults] = useState<Record<string, boolean>>(() => {
     let obj: Record<string, boolean> = {};
     if (!window.SERVER_FLAGS.perspectives) {
       obj = perspectiveExtensions.reduce(
@@ -110,7 +110,7 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
     return obj;
   });
 
-  const handleResults = React.useCallback(
+  const handleResults = useCallback(
     (id: string, newState: boolean) => {
       setResults((oldResults: Record<string, boolean>) => {
         if (oldResults[id] === newState) {
@@ -124,7 +124,7 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
     },
     [setResults],
   );
-  React.useEffect(() => {
+  useEffect(() => {
     if (window.SERVER_FLAGS.perspectives) {
       const perspectives: Perspective[] = JSON.parse(window.SERVER_FLAGS.perspectives);
       perspectiveExtensions.forEach((perspectiveExtension) => {
@@ -156,7 +156,7 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
       });
     }
   }, [perspectiveExtensions, handleResults]);
-  const perspectives = React.useMemo(() => {
+  const perspectives = useMemo(() => {
     if (!window.SERVER_FLAGS.perspectives) {
       return perspectiveExtensions;
     }
@@ -173,7 +173,7 @@ export const usePerspectives = (): LoadedExtension<PerspectiveExtension>[] => {
 
 export const usePerspectiveExtension = (id: string): LoadedExtension<PerspectiveExtension> => {
   const perspectiveExtensions = usePerspectives();
-  return React.useMemo(() => perspectiveExtensions.find((e) => e.properties.id === id), [
+  return useMemo(() => perspectiveExtensions.find((e) => e.properties.id === id), [
     id,
     perspectiveExtensions,
   ]);

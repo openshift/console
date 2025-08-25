@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useContext } from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
@@ -63,7 +63,7 @@ const ProjectInventoryItem = withDashboardResources(
     additionalResources,
     additionalDynamicResources,
   }: ProjectInventoryItemProps) => {
-    React.useEffect(() => {
+    useEffect(() => {
       if (projectName) {
         const resource = createFirehoseResource(model, projectName);
         watchK8sResource(resource);
@@ -137,7 +137,7 @@ export const InventoryCard = () => {
     isProjectOverviewInventoryItem,
   );
 
-  const { obj } = React.useContext(ProjectDashboardContext);
+  const { obj } = useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const canListSecrets = useAccessReview({
     group: SecretModel.apiGroup,

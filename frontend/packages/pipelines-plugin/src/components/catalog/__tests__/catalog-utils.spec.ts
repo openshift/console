@@ -1,5 +1,5 @@
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { tekonHubPlatformTasks } from '../../../test-data/catalog-item-data';
 import {
   IntegrationTypes,

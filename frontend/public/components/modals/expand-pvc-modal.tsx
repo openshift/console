@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 
@@ -7,22 +7,20 @@ import {
   RequestSizeInput,
   resourceObjPath,
   validate,
-  withHandlePromise,
-  HandlePromiseProps,
   convertToBaseValue,
   humanizeBinaryBytesWithoutB,
 } from '../utils';
 import { k8sPatch, referenceFor, K8sKind, K8sResourceKind } from '../../module/k8s/';
 import { getRequestedPVCSize } from '@console/shared';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 // Modal for expanding persistent volume claims
-const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
+const ExpandPVCModal = (props: ExpandPVCModalProps) => {
   const baseValue = convertToBaseValue(getRequestedPVCSize(props.resource));
   const defaultSize = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
-  const [requestSizeValue, setRequestSizeValue] = React.useState(defaultSize[0] || '');
-  const [requestSizeUnit, setRequestSizeUnit] = React.useState(defaultSize[1] || 'Gi');
-  const [errorMessage, setErrorMessage] = React.useState<string>();
-  const [inProgress, setInProgress] = React.useState(false);
+  const [requestSizeValue, setRequestSizeValue] = useState(defaultSize[0] || '');
+  const [requestSizeUnit, setRequestSizeUnit] = useState(defaultSize[1] || 'Gi');
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -32,27 +30,32 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
     setRequestSizeUnit(obj.unit);
   };
 
-  const submit = (e) => {
-    e.preventDefault();
-    const patch = [
-      {
-        op: 'replace',
-        path: '/spec/resources/requests',
-        value: { storage: `${requestSizeValue}${requestSizeUnit}` },
-      },
-    ];
-    setInProgress(true);
-    k8sPatch(props.kind, props.resource, patch)
-      .then((resource) => {
-        setInProgress(false);
+  const submit = useCallback(
+    (e) => {
+      e.preventDefault();
+      const patch = [
+        {
+          op: 'replace',
+          path: '/spec/resources/requests',
+          value: { storage: `${requestSizeValue}${requestSizeUnit}` },
+        },
+      ];
+
+      handlePromise(k8sPatch(props.kind, props.resource, patch)).then((resource) => {
         props.close();
         navigate(resourceObjPath(resource, referenceFor(resource)));
-      })
-      .catch((err) => {
-        setErrorMessage(err.message);
-        setInProgress(false);
       });
-  };
+    },
+    [
+      requestSizeValue,
+      requestSizeUnit,
+      props.kind,
+      props.resource,
+      props.close,
+      handlePromise,
+      navigate,
+    ],
+  );
 
   const { kind, resource } = props;
 
@@ -94,7 +97,7 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
       />
     </form>
   );
-});
+};
 
 export const expandPVCModal = createModalLauncher(ExpandPVCModal);
 
@@ -103,4 +106,4 @@ export type ExpandPVCModalProps = {
   resource: K8sResourceKind;
   cancel?: () => void;
   close: () => void;
-} & HandlePromiseProps;
+};

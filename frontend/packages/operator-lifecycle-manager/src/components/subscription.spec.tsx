@@ -8,8 +8,9 @@ import {
   DetailsPage,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
-import { ResourceKebab, ResourceLink, Kebab } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { LazyActionMenu } from '@console/shared/src';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import {
   testSubscription,
@@ -79,34 +80,9 @@ describe('SubscriptionTableRow', () => {
   });
 
   it('renders actions kebab', () => {
-    const menuArgs = [ClusterServiceVersionModel, subscription];
-    expect(wrapper.find(ResourceKebab).props().kind).toEqual(referenceForModel(SubscriptionModel));
-    expect(wrapper.find(ResourceKebab).props().resource).toEqual(subscription);
-    expect(wrapper.find(ResourceKebab).props().actions[0]).toEqual(Kebab.factory.Edit);
-    expect(
-      wrapper
-        .find(ResourceKebab)
-        .props()
-        .actions[1](...menuArgs).labelKey,
-    ).toEqual('olm~Remove Subscription');
-    expect(
-      wrapper
-        .find(ResourceKebab)
-        .props()
-        .actions[1](...menuArgs).callback,
-    ).toBeDefined();
-    expect(
-      wrapper
-        .find(ResourceKebab)
-        .props()
-        .actions[2](...menuArgs).labelKey,
-    ).toEqual('olm~View ClusterServiceVersion...');
-    expect(
-      wrapper
-        .find(ResourceKebab)
-        .props()
-        .actions[2](...menuArgs).href,
-    ).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp.v1.0.0`);
+    expect(wrapper.find(LazyActionMenu).props().context).toEqual({
+      [referenceForModel(SubscriptionModel)]: subscription,
+    });
   });
 
   it('renders column for namespace name', () => {
@@ -194,7 +170,9 @@ describe('SubscriptionsPage', () => {
     expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(SubscriptionsList);
     expect(wrapper.find(MultiListPage).props().title).toEqual('Subscriptions');
     expect(wrapper.find(MultiListPage).props().canCreate).toBe(true);
-    expect(wrapper.find(MultiListPage).props().createProps).toEqual({ to: '/operatorhub' });
+    expect(wrapper.find(MultiListPage).props().createProps).toEqual({
+      to: '/catalog?catalogType=operator',
+    });
     expect(wrapper.find(MultiListPage).props().createButtonText).toEqual('Create Subscription');
     expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Subscriptions by package');
     expect(wrapper.find(MultiListPage).props().resources).toEqual([
@@ -318,25 +296,12 @@ describe('SubscriptionDetails', () => {
 
 describe('SubscriptionDetailsPage', () => {
   it('renders `DetailsPage` with correct props', () => {
-    const menuArgs = [ClusterServiceVersionModel, testSubscription];
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default', name: 'example-sub' });
     const wrapper = shallow(<SubscriptionDetailsPage namespace="default" />);
 
     expect(wrapper.find(DetailsPage).props().kind).toEqual(referenceForModel(SubscriptionModel));
     expect(wrapper.find(DetailsPage).props().pages.length).toEqual(2);
-    expect(wrapper.find(DetailsPage).props().menuActions[0]).toEqual(Kebab.factory.Edit);
-    expect(
-      wrapper
-        .find(DetailsPage)
-        .props()
-        .menuActions[1](...menuArgs).labelKey,
-    ).toEqual('olm~Remove Subscription');
-    expect(
-      wrapper
-        .find(DetailsPage)
-        .props()
-        .menuActions[2](...menuArgs).labelKey,
-    ).toEqual(`olm~View ClusterServiceVersion...`);
+    expect(wrapper.find(DetailsPage).props().customActionMenu).toBeDefined();
   });
 
   it('passes additional resources to watch', () => {

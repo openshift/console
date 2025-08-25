@@ -1,4 +1,4 @@
-import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import * as cloudShellUtils from '../cloud-shell-utils';
 import useActivityTick from '../useActivityTick';
 

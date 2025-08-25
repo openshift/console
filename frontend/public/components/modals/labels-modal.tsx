@@ -52,31 +52,36 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
     }
   }, [path, resource, watchedResource, watchedResourceLoaded]);
 
-  const submit = (e) => {
-    e.preventDefault();
-    const data = [
-      {
-        op: createPath ? 'add' : 'replace',
-        path,
-        value: SelectorInput.objectify(labels),
-      },
-    ];
+  const submit = React.useCallback(
+    (e): void => {
+      e.preventDefault();
+      const data = [
+        {
+          op: createPath ? 'add' : 'replace',
+          path,
+          value: SelectorInput.objectify(labels),
+        },
+      ];
 
-    // https://kubernetes.io/docs/user-guide/deployments/#selector
-    //   .spec.selector must match .spec.template.metadata.labels, or it will be rejected by the API
-    const updateTemplate =
-      isPodSelector && !_.isEmpty(_.get(resource, TEMPLATE_SELECTOR_PATH.split('/').slice(1)));
+      // https://kubernetes.io/docs/user-guide/deployments/#selector
+      //   .spec.selector must match .spec.template.metadata.labels, or it will be rejected by the API
+      const updateTemplate =
+        isPodSelector && !_.isEmpty(_.get(resource, TEMPLATE_SELECTOR_PATH.split('/').slice(1)));
 
-    if (updateTemplate) {
-      data.push({
-        path: TEMPLATE_SELECTOR_PATH,
-        op: 'replace',
-        value: SelectorInput.objectify(labels),
-      });
-    }
-    const promise = k8sPatchResource({ model: kind, resource, data });
-    handlePromise(promise).then(close);
-  };
+      if (updateTemplate) {
+        data.push({
+          path: TEMPLATE_SELECTOR_PATH,
+          op: 'replace',
+          value: SelectorInput.objectify(labels),
+        });
+      }
+      const promise = k8sPatchResource({ model: kind, resource, data });
+      handlePromise(promise)
+        .then(close)
+        .catch(() => {});
+    },
+    [createPath, path, labels, isPodSelector, resource, kind, handlePromise, close],
+  );
 
   return (
     <form onSubmit={submit} name="form" className="modal-content">

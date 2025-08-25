@@ -233,6 +233,26 @@ export type CatalogSourceKind = {
   };
 } & K8sResourceKind;
 
+export type CSVDescription = {
+  annotations?: {
+    [key: string]: string;
+  };
+  description?: string;
+  displayName: string;
+  icon: { mediatype: string; base64data: string }[];
+  keywords?: string[];
+  version: string;
+  provider: {
+    name: string;
+  };
+  installModes: { type: InstallModeType; supported: boolean }[];
+  customresourcedefinitions?: { owned?: CRDDescription[]; required?: CRDDescription[] };
+  apiservicedefinitions?: {
+    owned?: APIServiceDefinition[];
+    required?: APIServiceDefinition[];
+  };
+};
+
 export type PackageManifestKind = {
   apiVersion: 'packages.operators.coreos.com/v1';
   kind: 'PackageManifest';
@@ -251,23 +271,7 @@ export type PackageManifestKind = {
       name: string;
       currentCSV: string;
       deprecation?: { message: string };
-      currentCSVDesc: {
-        annotations?: any;
-        description?: string;
-        displayName: string;
-        icon: { mediatype: string; base64data: string }[];
-        keywords?: string[];
-        version: string;
-        provider: {
-          name: string;
-        };
-        installModes: { type: InstallModeType; supported: boolean }[];
-        customresourcedefinitions?: { owned?: CRDDescription[]; required?: CRDDescription[] };
-        apiservicedefinitions?: {
-          owned?: APIServiceDefinition[];
-          required?: APIServiceDefinition[];
-        };
-      };
+      currentCSVDesc: CSVDescription;
       entries?: {
         name: string;
         version: string;

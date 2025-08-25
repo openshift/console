@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { Content } from '@patternfly/react-core';
-import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { configure, screen } from '@testing-library/react';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import AddCardItem from '../AddCardItem';
 import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';
 import { addActionExtensions } from './add-page-test-data';
+import '@testing-library/jest-dom';
+
+configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
@@ -18,7 +20,6 @@ jest.mock('../hooks/useShowAddCardItemDetails', () => ({
 describe('AddCardItem', () => {
   type AddCardItemProps = React.ComponentProps<typeof AddCardItem>;
   let props: AddCardItemProps;
-  let wrapper: ShallowWrapper<AddCardItemProps>;
   const namespace = 'ns';
 
   describe('Icon', () => {
@@ -35,9 +36,9 @@ describe('AddCardItem', () => {
         action: addActionExtensions.find((action) => typeof action.properties.icon === 'string'),
         namespace,
       };
-      wrapper = shallow(<AddCardItem {...props} />);
+      renderWithProviders(<AddCardItem {...props} />);
 
-      expect(wrapper.find('img').exists()).toBe(true);
+      expect(screen.getByRole('img', { hidden: true })).toBeInTheDocument();
     });
 
     it('should render icon as a react element if icon is not a string and a valid react element', () => {
@@ -45,12 +46,12 @@ describe('AddCardItem', () => {
         action: addActionExtensions.find((action) => typeof action.properties.icon !== 'string'),
         namespace,
       };
-      wrapper = shallow(<AddCardItem {...props} />);
+      renderWithProviders(<AddCardItem {...props} />);
 
-      expect(wrapper.find(CatalogIcon).exists()).toBe(true);
+      expect(screen.getByTestId('add-card-icon')).toBeInTheDocument();
     });
 
-    it('should render not render icon if icon is neither a string nor a valid react element', () => {
+    it('should not render icon if icon is neither a string nor a valid react element', () => {
       const addAction: ResolvedExtension<AddAction> = addActionExtensions[0];
       const addActionWithoutValidIcon: ResolvedExtension<AddAction> = {
         ...addAction,
@@ -60,10 +61,10 @@ describe('AddCardItem', () => {
         action: addActionWithoutValidIcon,
         namespace,
       };
-      wrapper = shallow(<AddCardItem {...props} />);
+      renderWithProviders(<AddCardItem {...props} />);
 
-      expect(wrapper.find('img').exists()).toBe(false);
-      expect(wrapper.find(CatalogIcon).exists()).toBe(false);
+      expect(screen.queryByRole('img', { hidden: true })).not.toBeInTheDocument();
+      expect(screen.queryByTestId('add-card-icon')).not.toBeInTheDocument();
     });
   });
 
@@ -79,15 +80,15 @@ describe('AddCardItem', () => {
 
     it('should render description if showDetails is set to "show"', () => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true]);
-      wrapper = shallow(<AddCardItem {...props} />);
-      expect(wrapper.find(Content).exists()).toBe(true);
+      renderWithProviders(<AddCardItem {...props} />);
+      expect(screen.getByTestId('description')).toBeInTheDocument();
     });
 
-    it('should render description if showDetails is set to "hide"', () => {
+    it('should not render description if showDetails is set to "hide"', () => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([false]);
-      wrapper = shallow(<AddCardItem {...props} />);
+      renderWithProviders(<AddCardItem {...props} />);
 
-      expect(wrapper.find(Content).exists()).toBe(false);
+      expect(screen.queryByTestId('description')).not.toBeInTheDocument();
     });
   });
 });

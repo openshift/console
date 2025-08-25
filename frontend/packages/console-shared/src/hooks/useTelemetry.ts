@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useCallback } from 'react';
 import {
   useResolvedExtensions,
   isTelemetryListener,
@@ -39,19 +39,19 @@ let telemetryEvents: TelemetryEvent[] = [];
 
 export const getClusterProperties = () => {
   const clusterProperties: ClusterProperties = {};
-  clusterProperties.clusterId = window.SERVER_FLAGS?.telemetry?.CLUSTER_ID;
-  clusterProperties.clusterType = window.SERVER_FLAGS?.telemetry?.CLUSTER_TYPE;
+  clusterProperties.clusterId = window.SERVER_FLAGS.telemetry?.CLUSTER_ID;
+  clusterProperties.clusterType = window.SERVER_FLAGS.telemetry?.CLUSTER_TYPE;
   if (
-    window.SERVER_FLAGS?.telemetry?.CLUSTER_TYPE === 'OSD' &&
-    window.SERVER_FLAGS?.telemetry?.DEVSANDBOX === 'true'
+    window.SERVER_FLAGS.telemetry?.CLUSTER_TYPE === 'OSD' &&
+    window.SERVER_FLAGS.telemetry?.DEVSANDBOX === 'true'
   ) {
     clusterProperties.clusterType = 'DEVSANDBOX';
   }
   // Prefer to report the OCP version (releaseVersion) if available.
   clusterProperties.consoleVersion =
-    window.SERVER_FLAGS?.releaseVersion || window.SERVER_FLAGS?.consoleVersion;
-  clusterProperties.organizationId = window.SERVER_FLAGS?.telemetry?.ORGANIZATION_ID;
-  clusterProperties.accountMail = window.SERVER_FLAGS?.telemetry?.ACCOUNT_MAIL;
+    window.SERVER_FLAGS.releaseVersion || window.SERVER_FLAGS.consoleVersion;
+  clusterProperties.organizationId = window.SERVER_FLAGS.telemetry?.ORGANIZATION_ID;
+  clusterProperties.accountMail = window.SERVER_FLAGS.telemetry?.ACCOUNT_MAIL;
   return clusterProperties;
 };
 
@@ -85,7 +85,7 @@ export const useTelemetry = () => {
 
   const [extensions] = useResolvedExtensions<TelemetryListener>(isTelemetryListener);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       userIsOptedInToTelemetry(currentUserPreferenceTelemetryValue) &&
       clusterIsOptedInToTelemetry() &&
@@ -100,7 +100,7 @@ export const useTelemetry = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUserPreferenceTelemetryValue, userResourceIsLoaded]);
 
-  return React.useCallback<TelemetryEventListener>(
+  return useCallback<TelemetryEventListener>(
     (eventType, properties: Record<string, any>) => {
       if (isOptedOutFromTelemetry(currentUserPreferenceTelemetryValue)) return;
 

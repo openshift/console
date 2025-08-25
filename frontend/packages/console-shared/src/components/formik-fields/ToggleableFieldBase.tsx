@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField } from 'formik';
-import { RedExclamationCircleIcon } from '../status';
 import { CheckboxFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -45,9 +44,7 @@ const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
       <FormHelperText>
         <HelperText>
           {!isValid ? (
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {errorMessage}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
           ) : (
             <HelperTextItem>{helpText}</HelperTextItem>
           )}

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { forwardRef, useState, useCallback, useImperativeHandle, useMemo, useEffect } from 'react';
 import { EditorDidMount, Language } from '@patternfly/react-code-editor';
 import { getResizeObserver } from '@patternfly/react-core';
 import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
@@ -8,16 +8,16 @@ import { useShortcutPopover } from './ShortcutsPopover';
 import { registerYAMLinMonaco, registerAutoFold, defaultEditorOptions } from './yaml-editor-utils';
 import './CodeEditor.scss';
 
-const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref) => {
+const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref) => {
   const { value, minHeight, showShortcuts, toolbarLinks, onSave, onEditorDidMount } = props;
 
-  const [editorRef, setEditorRef] = React.useState<CodeEditorRef['editor'] | null>(null);
-  const [monacoRef, setMonacoRef] = React.useState<CodeEditorRef['monaco'] | null>(null);
-  const [usesValue] = React.useState<boolean>(value !== undefined);
+  const [editorRef, setEditorRef] = useState<CodeEditorRef['editor'] | null>(null);
+  const [monacoRef, setMonacoRef] = useState<CodeEditorRef['monaco'] | null>(null);
+  const [usesValue] = useState<boolean>(value !== undefined);
 
   const shortcutPopover = useShortcutPopover(props.shortcutsPopoverProps);
 
-  const editorDidMount: EditorDidMount = React.useCallback(
+  const editorDidMount: EditorDidMount = useCallback(
     (editor, monaco) => {
       setEditorRef(editor);
       setMonacoRef(monaco);
@@ -43,7 +43,7 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
   );
 
   // expose the editor instance to the parent component via ref
-  React.useImperativeHandle(
+  useImperativeHandle(
     ref,
     () => ({
       editor: editorRef,
@@ -53,26 +53,26 @@ const CodeEditor = React.forwardRef<CodeEditorRef, CodeEditorProps>((props, ref)
   );
 
   // do not render toolbar if the component is null
-  const ToolbarLinks = React.useMemo(() => {
+  const ToolbarLinks = useMemo(() => {
     return showShortcuts || toolbarLinks?.length ? (
       <CodeEditorToolbar toolbarLinks={toolbarLinks} />
     ) : undefined;
   }, [toolbarLinks, showShortcuts]);
 
   // recalculate bounds when viewport is changed
-  const handleResize = React.useCallback(() => {
+  const handleResize = useCallback(() => {
     monacoRef?.editor?.getEditors()?.forEach((editor) => {
       editor.layout({ width: 0, height: 0 });
       editor.layout();
     });
   }, [monacoRef]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const observer = getResizeObserver(undefined, handleResize, true);
     return () => observer();
   }, [handleResize]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     handleResize();
   }, [handleResize, minHeight, ToolbarLinks]);
 

@@ -1,9 +1,9 @@
-import * as React from 'react';
+import { useRef, useEffect } from 'react';
 import { LineBuffer } from './line-buffer';
 
 const useToggleLineBuffer = (bufferSize: number | null) => {
-  const buffer = React.useRef(null);
-  React.useEffect(() => {
+  const buffer = useRef(null);
+  useEffect(() => {
     buffer.current = new LineBuffer(bufferSize);
   }, [bufferSize]);
 

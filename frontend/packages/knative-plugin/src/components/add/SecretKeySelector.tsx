@@ -8,7 +8,7 @@ import { SecretModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { RedExclamationCircleIcon, getFieldId, useFormikValidationFix } from '@console/shared';
+import { getFieldId, useFormikValidationFix } from '@console/shared';
 
 interface SecretKeySelectorProps {
   name: string;
@@ -72,9 +72,7 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
       {!isValid && (
         <FormHelperText>
           <HelperText>
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {errorMessage}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
           </HelperText>
         </FormHelperText>
       )}

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook, useAccessReview } from '@console/dynamic-plugin-sdk';
@@ -45,7 +45,7 @@ const useKafkaSinkProvider: ExtensionHook<CatalogItem[]> = ({
     namespace,
   });
 
-  const normalizedKafkaSink = React.useMemo(() => {
+  const normalizedKafkaSink = useMemo(() => {
     if (!canCreateKameletSink) return [];
     return normalizeKafkaSink(namespace, t);
   }, [canCreateKameletSink, namespace, t]);

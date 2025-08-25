@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { memo, useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON } from '../co-fetch';
 import { usePoll, useSafeFetch } from './utils';
@@ -16,32 +16,30 @@ interface CheckUpdatesApiResult {
   contentSecurityPolicy?: string;
 }
 
-export const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
+export const PollConsoleUpdates = memo(function PollConsoleUpdates() {
   const toastContext = useToast();
   const { t } = useTranslation();
 
-  const [isToastOpen, setToastOpen] = React.useState(false);
-  const [pluginsChanged, setPluginsChanged] = React.useState(false);
-  const [pluginVersionsChanged, setPluginVersionsChanged] = React.useState(false);
-  const [consoleChanged, setConsoleChanged] = React.useState(false);
-  const [isFetchingPluginEndpoints, setIsFetchingPluginEndpoints] = React.useState(false);
-  const [allPluginEndpointsReady, setAllPluginEndpointsReady] = React.useState(false);
+  const [isToastOpen, setToastOpen] = useState(false);
+  const [pluginsChanged, setPluginsChanged] = useState(false);
+  const [pluginVersionsChanged, setPluginVersionsChanged] = useState(false);
+  const [consoleChanged, setConsoleChanged] = useState(false);
+  const [isFetchingPluginEndpoints, setIsFetchingPluginEndpoints] = useState(false);
+  const [allPluginEndpointsReady, setAllPluginEndpointsReady] = useState(false);
 
-  const [updateData, setUpdateData] = React.useState<CheckUpdatesApiResult>();
-  const [updateError, setUpdateError] = React.useState<Error>();
-  const [newPlugins, setNewPlugins] = React.useState<CheckUpdatesApiResult['plugins']>(null);
-  const [pluginManifestsData, setPluginManifestsData] = React.useState<
-    ConsolePluginManifestJSON[]
-  >();
+  const [updateData, setUpdateData] = useState<CheckUpdatesApiResult>();
+  const [updateError, setUpdateError] = useState<Error>();
+  const [newPlugins, setNewPlugins] = useState<CheckUpdatesApiResult['plugins']>(null);
+  const [pluginManifestsData, setPluginManifestsData] = useState<ConsolePluginManifestJSON[]>();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const safeFetch = React.useCallback(useSafeFetch(), []);
+  const safeFetch = useCallback(useSafeFetch(), []);
   const fetchPluginManifest = (pluginName: string): Promise<ConsolePluginManifestJSON> =>
     coFetchJSON(
       `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/plugin-manifest.json`,
       'get',
       { cache: 'no-cache' },
     );
-  const tick = React.useCallback(() => {
+  const tick = useCallback(() => {
     safeFetch(`${window.SERVER_FLAGS.basePath}api/check-updates`)
       .then((response) => {
         setUpdateData(response);
@@ -59,9 +57,9 @@ export const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
   }, [safeFetch]);
   usePoll(tick, URL_POLL_DEFAULT_DELAY);
 
-  const prevUpdateDataRef = React.useRef<CheckUpdatesApiResult>();
-  const prevPluginManifestsDataRef = React.useRef<ConsolePluginManifestJSON[]>();
-  React.useEffect(() => {
+  const prevUpdateDataRef = useRef<CheckUpdatesApiResult>();
+  const prevPluginManifestsDataRef = useRef<ConsolePluginManifestJSON[]>();
+  useEffect(() => {
     prevUpdateDataRef.current = updateData;
     prevPluginManifestsDataRef.current = pluginManifestsData;
   });
@@ -174,7 +172,7 @@ export const PollConsoleUpdates = React.memo(function PollConsoleUpdates() {
         label: t('public~Refresh web console'),
         callback: () => {
           if (window.location.pathname.includes('/operatorhub/subscribe')) {
-            window.location.href = '/operatorhub';
+            window.location.href = '/catalog?catalogType=operator';
           } else {
             window.location.reload();
           }

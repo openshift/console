@@ -17,7 +17,6 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
 import { useDebounceCallback } from '../../../hooks/debounce';
-import { RedExclamationCircleIcon } from '../../status';
 import { getFieldId } from '../field-utils';
 import SelectorCard from './SelectorCard';
 import './ItemSelectorField.scss';
@@ -196,9 +195,7 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
       {!isValid && (
         <FormHelperText>
           <HelperText>
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {errorMessage}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
           </HelperText>
         </FormHelperText>
       )}

@@ -88,6 +88,7 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
           <Tooltip content={t('Add custom icon')}>
             <Button
               aria-label={t('Add custom icon')}
+              data-test="add-custom-icon"
               className="pf-v6-u-align-items-center pf-v6-u-h-100"
               icon={<UploadIcon />}
               onClick={() => setCustomIconModalOpen(true)}

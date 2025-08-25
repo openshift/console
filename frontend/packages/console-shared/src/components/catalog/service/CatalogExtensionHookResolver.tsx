@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import { ExtensionHook } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { CatalogExtensionHookOptions } from '@console/dynamic-plugin-sdk/src/extensions';
 
@@ -19,13 +19,13 @@ const CatalogExtensionHookResolver = function <T>({
 }: CatalogExtensionHookResolverProps<T>) {
   const [value, loaded, loadError] = useValue(options);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded) onValueResolved(value, id);
     // unnecessary to run effect again if the onValueResolved callback changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, loaded, value]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loadError && onValueError) onValueError(loadError, id);
     // unnecessary to run effect again if the onValueError callback changes
     // eslint-disable-next-line react-hooks/exhaustive-deps

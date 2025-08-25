@@ -3,7 +3,7 @@ import { DeploymentModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/__moc
 import { ConfigMapModel } from '@console/internal/models';
 import { useModelFinder } from '@console/internal/module/k8s/k8s-models';
 import { usePerspectives } from '@console/shared/src';
-import { testHook } from '../../../../../__tests__/utils/hooks-utils';
+import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { usePinnedResources } from '../usePinnedResources';
 import { useUserSettingsCompatibility } from '../useUserSettingsCompatibility';
 

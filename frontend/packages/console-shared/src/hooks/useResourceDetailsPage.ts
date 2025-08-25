@@ -1,7 +1,7 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useResourceDetailsPages } from './useResourceDetailsPages';
 
 export const useResourceDetailsPage = (key: string) => {
   const detailsPages = useResourceDetailsPages();
-  return React.useMemo(() => detailsPages.get(key), [detailsPages, key]);
+  return useMemo(() => detailsPages.get(key), [detailsPages, key]);
 };

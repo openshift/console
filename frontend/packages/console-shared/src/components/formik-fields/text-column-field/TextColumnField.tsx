@@ -2,7 +2,6 @@ import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FieldArray, useField } from 'formik';
 import { useFormikValidationFix } from '../../../hooks/formik-validation-fix';
-import { RedExclamationCircleIcon } from '../../status';
 import { getFieldId } from '../field-utils';
 import MultiColumnFieldFooter from '../multi-column-field/MultiColumnFieldFooter';
 import { TextColumnFieldProps, TextColumnItemProps } from './text-column-types';
@@ -79,9 +78,7 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
             <FormHelperText>
               <HelperText>
                 {!isValid ? (
-                  <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-                    {error}
-                  </HelperTextItem>
+                  <HelperTextItem>{error}</HelperTextItem>
                 ) : (
                   <HelperTextItem>{helpText}</HelperTextItem>
                 )}

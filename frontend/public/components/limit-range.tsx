@@ -92,7 +92,7 @@ export const LimitRangeListPage: React.FC<LimitRangeListPageProps> = (props) => 
   <ListPage {...props} kind={LimitRangeReference} ListComponent={LimitRangeList} canCreate={true} />
 );
 
-export const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({
+export const LimitRangeDetailsRow: React.FCC<LimitRangeDetailsRowProps> = ({
   limitType,
   resource,
   limit,
@@ -110,7 +110,7 @@ export const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({
   );
 };
 
-const LimitRangeDetailsRows: React.SFC<LimitRangeDetailsRowsProps> = ({ limit }) => {
+const LimitRangeDetailsRows: React.FCC<LimitRangeDetailsRowsProps> = ({ limit }) => {
   const properties = ['max', 'min', 'default', 'defaultRequest', 'maxLimitRequestRatio'];
   const resources = {};
   _.each(properties, (property) => {

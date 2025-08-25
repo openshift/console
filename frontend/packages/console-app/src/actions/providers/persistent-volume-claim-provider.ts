@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { usePVCActions } from '@console/app/src/actions/hooks/usePVCActions';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { referenceFor, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
@@ -16,9 +16,9 @@ export const usePVCActionsProvider = (
     CommonActionCreator.ModifyAnnotations,
     CommonActionCreator.Edit,
   ]);
-  const actions = React.useMemo(() => [...actionsPVC, ...Object.values(commonActions)], [
+  const actions = useMemo(() => [...actionsPVC, ...Object.values(commonActions)], [
     actionsPVC,
     commonActions,
   ]);
-  return [actions, !inFlight, undefined];
+  return [actions, !inFlight, false];
 };

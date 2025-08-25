@@ -1,5 +1,5 @@
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
-import { checkErrors, create } from '../../../integration-tests-cypress/support';
+import { checkErrors, create, testName } from '../../../integration-tests-cypress/support';
 import { testDeprecatedCatalogSource, testDeprecatedSubscription } from '../mocks';
 import { operator } from '../views/operator.view';
 
@@ -25,17 +25,30 @@ describe('Deprecated operator warnings', () => {
   before(() => {
     cy.login();
     guidedTour.close();
-    create(testDeprecatedCatalogSource);
+    // Make test idempotent for local testing by deleting test resources if they exist
+    cy.exec(
+      `oc delete subscription ${testDeprecatedSubscription.metadata.name} -n ${testDeprecatedSubscription.metadata.namespace}`,
+      { failOnNonZeroExit: false },
+    );
+    cy.exec(
+      `oc delete clusterserviceversion ${testDeprecatedSubscription.spec.startingCSV} -n ${testDeprecatedSubscription.metadata.namespace}`,
+      { failOnNonZeroExit: false },
+    );
+    // eslint-disable-next-line promise/catch-or-return
+    cy.exec(
+      `oc delete ${testDeprecatedCatalogSource.kind} ${testDeprecatedCatalogSource.metadata.name} -n ${testDeprecatedCatalogSource.metadata.namespace}`,
+      { failOnNonZeroExit: false },
+    ).then(({ stderr }) => {
+      if (stderr && !stderr.includes('not found')) {
+        throw new Error(stderr);
+      }
+      return create(testDeprecatedCatalogSource);
+    });
   });
 
   after(() => {
     cy.visit('/');
-    cy.exec(
-      `oc delete subscription ${testDeprecatedSubscription.metadata.name} -n ${testDeprecatedSubscription.metadata.namespace}`,
-    );
-    cy.exec(
-      `oc delete clusterserviceversion ${testDeprecatedSubscription.spec.startingCSV} -n ${testDeprecatedSubscription.metadata.namespace}`,
-    );
+    operator.uninstall(testOperator.name);
     cy.exec(
       `oc delete ${testDeprecatedCatalogSource.kind} ${testDeprecatedCatalogSource.metadata.name} -n ${testDeprecatedCatalogSource.metadata.namespace}`,
     );
@@ -49,25 +62,26 @@ describe('Deprecated operator warnings', () => {
     cy.log('verify the test-community-operator-deprecation CatalogSource is in "READY" status');
     cy.byTestSelector('details-item-value__Status', TIMEOUT).should('have.text', 'READY');
 
-    cy.log('visit OperatorHub');
-    cy.visit('/operatorhub/all-namespaces');
+    cy.log('visit Software Catalog');
+    cy.visit(`/catalog/ns/${testName}`);
+    cy.byTestID('tab operator').click();
 
     cy.log('filter by the group name');
     cy.byTestID('source-community-operators-for-testing-deprecation').click();
 
     cy.log('filter by the operator name');
-    cy.byTestID('search-operatorhub').type(testOperatorName);
+    cy.byTestID('search-catalog').type(testOperatorName);
     cy.get('.co-catalog-tile', TIMEOUT).its('length').should('eq', 1);
 
     cy.log('verify the Deprecated badge on Kiali Community Operator tile');
-    cy.byTestID(DEPRECATED_OPERATOR_WARNING_BADGE_ID).contains(deprecatedBadge).should('exist');
+    cy.byTestID('Deprecated-badge').contains(deprecatedBadge).should('exist');
   });
   it('verify deprecated operator warnings in the OperatorHub details panel', () => {
     cy.visit(
-      '/operatorhub/all-namespaces?keyword=kia&details-item=kiali-test-community-operator-deprecation-openshift-marketplace&channel=stable&version=1.83.0',
+      `/catalog/ns/${testName}?catalogType=operator&keyword=kia&selectedId=kiali-test-community-operator-deprecation-openshift-marketplace&channel=stable&version=1.83.0`,
     );
     cy.log('verify the deprecated operator badge exists');
-    cy.byTestID(DEPRECATED_OPERATOR_WARNING_BADGE_ID).contains(deprecatedBadge).should('exist');
+    cy.byTestID('Deprecated-badge').contains(deprecatedBadge).should('exist');
 
     cy.log('verify the package deprecation warning exists when viewing a deprecated operator');
     cy.byTestID('deprecated-operator-warning-package')
@@ -77,7 +91,7 @@ describe('Deprecated operator warnings', () => {
 
   it('verify deprecated channel warnings in the OperatorHub details panel', () => {
     cy.visit(
-      '/operatorhub/all-namespaces?keyword=kia&details-item=kiali-test-community-operator-deprecation-openshift-marketplace&channel=stable&version=1.83.0',
+      `/catalog/ns/${testName}?catalogType=operator&keyword=kia&selectedId=kiali-test-community-operator-deprecation-openshift-marketplace&channel=stable&version=1.83.0`,
     );
 
     cy.log('verify the channel deprecation warnings do not exist yet');
@@ -102,7 +116,7 @@ describe('Deprecated operator warnings', () => {
 
   it('verify deprectaed version warnings in the OperatorHub details panel', () => {
     cy.visit(
-      '/operatorhub/all-namespaces?keyword=kia&details-item=kiali-test-community-operator-deprecation-openshift-marketplace&channel=stable&version=1.83.0',
+      `/catalog/ns/${testName}?catalogType=operator&keyword=kia&selectedId=kiali-test-community-operator-deprecation-openshift-marketplace&channel=stable&version=1.83.0`,
     );
 
     cy.log('verify the version deprecation warnings do not exist yet');

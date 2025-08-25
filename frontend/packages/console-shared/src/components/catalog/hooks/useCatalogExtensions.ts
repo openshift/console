@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback, useMemo } from 'react';
 import * as _ from 'lodash';
 import { useResolvedExtensions, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import {
@@ -12,6 +12,8 @@ import {
   isCatalogItemType,
   isCatalogItemTypeMetadata,
   isCatalogItemMetadataProvider,
+  isCatalogCategoriesProvider,
+  CatalogCategoriesProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 
 const useCatalogExtensions = (
@@ -22,10 +24,11 @@ const useCatalogExtensions = (
   ResolvedExtension<CatalogItemProvider>[],
   ResolvedExtension<CatalogItemFilter>[],
   ResolvedExtension<CatalogItemMetadataProvider>[],
+  ResolvedExtension<CatalogCategoriesProvider>[],
   boolean,
 ] => {
   const [itemTypeExtensions, itemTypesResolved] = useResolvedExtensions<CatalogItemType>(
-    React.useCallback(
+    useCallback(
       (e): e is CatalogItemType =>
         isCatalogItemType(e) && (!catalogType || e.properties.type === catalogType),
       [catalogType],
@@ -35,7 +38,7 @@ const useCatalogExtensions = (
   const [typeMetadataExtensions, itemTypeMetadataResolved] = useResolvedExtensions<
     CatalogItemTypeMetadata
   >(
-    React.useCallback(
+    useCallback(
       (e): e is CatalogItemTypeMetadata =>
         isCatalogItemTypeMetadata(e) && (!catalogType || e.properties.type === catalogType),
       [catalogType],
@@ -43,7 +46,7 @@ const useCatalogExtensions = (
   );
 
   const [catalogProviderExtensions, providersResolved] = useResolvedExtensions<CatalogItemProvider>(
-    React.useCallback(
+    useCallback(
       (e): e is CatalogItemProvider =>
         isCatalogItemProvider(e) &&
         _.castArray(e.properties.catalogId).includes(catalogId) &&
@@ -53,7 +56,7 @@ const useCatalogExtensions = (
   );
 
   const [itemFilterExtensions, filtersResolved] = useResolvedExtensions<CatalogItemFilter>(
-    React.useCallback(
+    useCallback(
       (e): e is CatalogItemFilter =>
         isCatalogItemFilter(e) &&
         _.castArray(e.properties.catalogId).includes(catalogId) &&
@@ -62,10 +65,24 @@ const useCatalogExtensions = (
     ),
   );
 
+  const [categoryProviderExtensions, categoryProvidersResolved] = useResolvedExtensions<
+    CatalogCategoriesProvider
+  >(
+    useCallback(
+      (e): e is CatalogCategoriesProvider =>
+        isCatalogCategoriesProvider(e) &&
+        (!e.properties.catalogId ||
+          e.properties.catalogId === catalogId ||
+          !e.properties.type ||
+          e.properties.type === catalogType),
+      [catalogId, catalogType],
+    ),
+  );
+
   const [metadataProviderExtensions, metadataProvidersResolved] = useResolvedExtensions<
     CatalogItemMetadataProvider
   >(
-    React.useCallback(
+    useCallback(
       (e): e is CatalogItemMetadataProvider =>
         isCatalogItemMetadataProvider(e) &&
         _.castArray(e.properties.catalogId).includes(catalogId) &&
@@ -74,7 +91,7 @@ const useCatalogExtensions = (
     ),
   );
 
-  const catalogTypeExtensions = React.useMemo<ResolvedExtension<CatalogItemType>[]>(
+  const catalogTypeExtensions = useMemo<ResolvedExtension<CatalogItemType>[]>(
     () =>
       (catalogType
         ? itemTypeExtensions.filter((e) => e.properties.type === catalogType)
@@ -122,11 +139,13 @@ const useCatalogExtensions = (
     catalogProviderExtensions,
     catalogFilterExtensions,
     catalogMetadataProviderExtensions,
+    categoryProviderExtensions,
     providersResolved &&
       filtersResolved &&
       itemTypesResolved &&
       itemTypeMetadataResolved &&
-      metadataProvidersResolved,
+      metadataProvidersResolved &&
+      categoryProvidersResolved,
   ];
 };
 

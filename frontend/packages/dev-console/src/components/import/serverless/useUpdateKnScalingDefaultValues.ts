@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { getAutoscaleWindow } from './serverless-utils';
 import { useGetAutoscalerConfig } from './useGetAutoscalerConfig';
 
@@ -26,8 +26,8 @@ export const setKnScalingDefaultValue = (initialValues, knScalingConfig) => {
 export const useUpdateKnScalingDefaultValues = (initialValues) => {
   const knScalingConfig = useGetAutoscalerConfig();
   // TODO: We should not expect that overridding the formik initialValues in a hook works fine.
-  const [initialValuesState, setInitialValuesState] = React.useState(initialValues);
-  React.useEffect(() => {
+  const [initialValuesState, setInitialValuesState] = useState(initialValues);
+  useEffect(() => {
     if (knScalingConfig) {
       setInitialValuesState((previousValues) =>
         setKnScalingDefaultValue(previousValues, knScalingConfig),

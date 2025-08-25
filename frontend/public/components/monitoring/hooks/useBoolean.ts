@@ -1,11 +1,11 @@
-import * as React from 'react';
+import { useState, useCallback } from 'react';
 
 export const useBoolean = (
   initialValue: boolean,
 ): [boolean, () => void, () => void, () => void] => {
-  const [value, setValue] = React.useState(initialValue);
-  const toggle = React.useCallback(() => setValue((v) => !v), []);
-  const setTrue = React.useCallback(() => setValue(true), []);
-  const setFalse = React.useCallback(() => setValue(false), []);
+  const [value, setValue] = useState(initialValue);
+  const toggle = useCallback(() => setValue((v) => !v), []);
+  const setTrue = useCallback(() => setValue(true), []);
+  const setFalse = useCallback(() => setValue(false), []);
   return [value, toggle, setTrue, setFalse];
 };

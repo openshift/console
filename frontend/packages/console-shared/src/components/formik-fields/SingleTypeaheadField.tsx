@@ -4,7 +4,6 @@ import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { SingleTypeaheadDropdown } from '@console/internal/components/utils/single-typeahead-dropdown';
 import { useFormikValidationFix } from '../../hooks';
-import { RedExclamationCircleIcon } from '../status';
 import { SingleTypeaheadFieldProps, SelectInputOption } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -95,9 +94,7 @@ const SingleTypeaheadField: React.FC<SingleTypeaheadFieldProps> = ({
       <FormHelperText>
         <HelperText>
           {!isValid ? (
-            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
-              {errorMessage}
-            </HelperTextItem>
+            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
           ) : (
             <HelperTextItem>{helpText}</HelperTextItem>
           )}

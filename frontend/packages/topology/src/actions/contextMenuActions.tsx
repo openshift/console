@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Fragment } from 'react';
 import { Title } from '@patternfly/react-core';
 import { Node, ContextSubMenuItem, ContextMenuItem, Graph } from '@patternfly/react-topology';
 import {
@@ -26,14 +26,14 @@ export const createContextMenuItems = (actions: MenuOption[]) => {
         );
       case MenuOptionType.GROUP_MENU:
         return (
-          <React.Fragment key={option.id}>
+          <Fragment key={option.id}>
             {option.label && (
               <Title headingLevel="h1" className="pf-v6-c-dropdown__group-title">
                 {option.label}
               </Title>
             )}
             {createContextMenuItems((option as GroupedMenuOption).children)}
-          </React.Fragment>
+          </Fragment>
         );
       default:
         return (
@@ -57,6 +57,6 @@ export const contextMenuActions: ContextMenuActions = (element) => {
   return {
     'topology-actions': element,
     ...(resource ? { [referenceFor(resource)]: resource } : {}),
-    ...(csvName ? { 'csv-actions': { csvName, resource } } : {}),
+    ...(csvName ? { 'operand-actions': { csvName, resource } } : {}),
   };
 };

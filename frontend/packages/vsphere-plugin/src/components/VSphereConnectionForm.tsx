@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useEffect } from 'react';
 import { Form, FormGroup } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
@@ -10,10 +10,10 @@ import './VSphereConnectionForm.css';
 
 export const VSphereConnectionForm = () => {
   const { t } = useTranslation('vsphere-plugin');
-  const vcenterRef = React.useRef<HTMLInputElement>(null);
+  const vcenterRef = useRef<HTMLInputElement>(null);
   const { setFieldTouched } = useFormikContext<ConnectionFormFormikValues>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     vcenterRef?.current?.focus();
   }, []);
 
