@@ -60,7 +60,6 @@ import { displayDurationInWords } from './utils/build-utils';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
-
 export enum BuildStrategyType {
   Docker = 'Docker',
   Devfile = 'Devfile',
