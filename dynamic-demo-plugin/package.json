@@ -44,6 +44,9 @@
     "webpack": "^5.75.0",
     "webpack-cli": "5.0.x"
   },
+  "resolutions": {
+    "@types/d3-dispatch": "3.0.6"
+  },
   "consolePlugin": {
     "name": "console-demo-plugin",
     "version": "0.0.0",
