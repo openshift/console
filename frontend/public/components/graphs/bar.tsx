@@ -49,32 +49,34 @@ export const BarChart: React.FC<BarChartProps> = ({
     <PrometheusGraph ref={containerRef} title={title} className={titleClassName}>
       <PrometheusGraphLink query={noLink ? undefined : query}>
         {data.length ? (
-          data.map((datum, index) => (
-            <React.Fragment key={index}>
-              <div className="graph-bar__label">
-                {LabelComponent ? (
-                  <LabelComponent title={datum.x} metric={datum.metric} />
-                ) : (
-                  datum.x
-                )}
-              </div>
-              <div className="graph-bar__chart">
-                <ChartBar
-                  barWidth={barWidth}
-                  data={[datum]}
-                  horizontal
-                  labelComponent={
-                    <ChartLabel x={width} textAnchor={theme.bar?.style?.labels?.textAnchor} />
-                  }
-                  theme={theme}
-                  height={barWidth + padding.bottom}
-                  width={width}
-                  domain={{ y: [0, data[0].y] }}
-                  padding={padding}
-                />
-              </div>
-            </React.Fragment>
-          ))
+          <div data-test="bar-chart" role="img" aria-label={title}>
+            {data.map((datum, index) => (
+              <React.Fragment key={index}>
+                <div className="graph-bar__label" data-test={`bar-label-${index}`}>
+                  {LabelComponent ? (
+                    <LabelComponent title={datum.x} metric={datum.metric} />
+                  ) : (
+                    datum.x
+                  )}
+                </div>
+                <div className="graph-bar__chart" data-test={`bar-chart-${index}`}>
+                  <ChartBar
+                    barWidth={barWidth}
+                    data={[datum]}
+                    horizontal
+                    labelComponent={
+                      <ChartLabel x={width} textAnchor={theme.bar?.style?.labels?.textAnchor} />
+                    }
+                    theme={theme}
+                    height={barWidth + padding.bottom}
+                    width={width}
+                    domain={{ y: [0, data[0].y] }}
+                    padding={padding}
+                  />
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
         ) : (
           <GraphEmpty loading={loading} />
         )}

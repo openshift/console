@@ -60,6 +60,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
           padding={0}
           width={width}
           y="value"
+          data-test="gauge-chart"
         >
           <ChartDonutUtilization
             labels={labels}
