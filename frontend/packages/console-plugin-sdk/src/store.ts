@@ -25,12 +25,13 @@ export const augmentExtension = <E extends Extension>(
   });
 
 export const isExtensionInUse = (e: Extension, flags: FlagsObject): boolean =>
-  e.flags.required.every((f) => flags[f]) && e.flags.disallowed.every((f) => !flags[f]);
+  (e.flags?.required?.every((f) => flags[f]) ?? true) &&
+  (e.flags?.disallowed?.every((f) => !flags[f]) ?? true);
 
 export const getGatingFlagNames = (extensions: Extension[]): string[] =>
   _.uniq([
-    ..._.flatMap(extensions.map((e) => e.flags.required)),
-    ..._.flatMap(extensions.map((e) => e.flags.disallowed)),
+    ..._.flatMap(extensions.map((e) => e.flags?.required ?? [])),
+    ..._.flatMap(extensions.map((e) => e.flags?.disallowed ?? [])),
   ]);
 
 /**
@@ -185,7 +186,7 @@ export class PluginStore {
 
     const plugin = this.loadedDynamicPlugins.get(pluginID);
 
-    if (plugin.enabled !== enabled) {
+    if (plugin && plugin.enabled !== enabled) {
       plugin.enabled = enabled;
 
       this.updateExtensions();
@@ -195,13 +196,13 @@ export class PluginStore {
     }
   }
 
-  private getLoadedDynamicPlugin(pluginName: string) {
+  private getLoadedDynamicPlugin(pluginName?: string) {
     return Array.from(this.loadedDynamicPlugins.values()).find(
       (plugin) => plugin.manifest.name === pluginName,
     );
   }
 
-  private isDynamicPluginLoaded(pluginName: string) {
+  private isDynamicPluginLoaded(pluginName?: string) {
     return this.getLoadedDynamicPlugin(pluginName) !== undefined;
   }
 
@@ -267,7 +268,7 @@ export class PluginStore {
     return [...loadedPluginEntries, ...failedPluginEntries, ...pendingPluginEntries];
   }
 
-  getDynamicPluginManifest(pluginName: string): DynamicPluginManifest {
+  getDynamicPluginManifest(pluginName?: string): DynamicPluginManifest | undefined {
     return this.getLoadedDynamicPlugin(pluginName)?.manifest;
   }
 

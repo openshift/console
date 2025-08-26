@@ -97,7 +97,7 @@ export const getControlPlaneHealth: PrometheusHealthHandler = (
   infrastructure,
 ) => {
   if (!t) {
-    return { state: HealthState.NOT_AVAILABLE };
+    return { state: HealthState.UNKNOWN };
   }
 
   const componentsHealth = responses.map(({ response, error }) =>

@@ -200,8 +200,8 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({ obj, rows }) => {
 
   const compare = useCallback<Comparator<ConsolePluginTableRow>>(
     (a, b) => {
-      const { index, direction } = sortBy;
-      const { id } = columns[index ?? 0];
+      const { index = 0, direction } = sortBy;
+      const { id } = columns[index];
       const desc = direction === SortByDirection.desc;
       const left = (desc ? b : a)[id];
       const right = (desc ? a : b)[id];
@@ -331,7 +331,7 @@ const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
       return [];
     }
     return consolePlugins.map((plugin) => {
-      const pluginName = plugin?.metadata?.name ?? 'unknown';
+      const pluginName = plugin?.metadata?.name;
       const enabled = enabledPlugins.includes(pluginName);
       const loadedPluginInfo = pluginInfo
         .filter((p) => p.status === 'loaded')
@@ -412,7 +412,7 @@ export const ConsoleOperatorConfigDetailsPage: FC<ComponentProps<typeof DetailsP
 };
 
 export type ConsolePluginTableRow = {
-  name: string;
+  name?: string;
   version?: string;
   description?: string;
   status: PluginInfoEntry['status'];
@@ -437,7 +437,7 @@ type ConsolePluginStatusProps = {
 };
 
 type ConsolePluginEnabledStatusProps = {
-  pluginName: string;
+  pluginName?: string;
   enabled: boolean;
 };
 
