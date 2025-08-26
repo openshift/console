@@ -18,6 +18,7 @@ import {
   isResourceTabPage as isDynamicResourceTabPage,
 } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { ModelBadge } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   isDetailPageBreadCrumbs as isDynamicDetailPageBreadCrumbs,
   DetailPageBreadCrumbs as DynamicDetailPageBreadCrumbs,
@@ -176,7 +177,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           resourceKeys={resourceKeys}
           getResourceStatus={props.getResourceStatus}
           customData={props.customData}
-          badge={props.badge || getBadgeFromType(kindObj?.badge)}
+          badge={props.badge || getBadgeFromType(kindObj?.badge as ModelBadge)}
           OverrideTitle={props.OverrideTitle}
           helpText={props.helpText}
           helpAlert={props.helpAlert}
