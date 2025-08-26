@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   useState,
   useEffect,
@@ -91,6 +92,26 @@ const streamStatusMessages = {
   [STREAM_PAUSED]: 'Log stream paused.',
   // t('Log streaming...')
   [STREAM_ACTIVE]: 'Log streaming...',
+};
+
+// Handle UTF-8 encoding in raw pod logs to support multi-language characters.
+const handleRawLogs = (logURL: string) => {
+  return (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.preventDefault();
+
+    fetch(logURL)
+      .then((response) => response.arrayBuffer())
+      .then((arrayBuffer) => {
+        const text = new TextDecoder('utf-8').decode(arrayBuffer);
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch and decode log file with UTF-8:', err);
+      });
+  };
 };
 
 const replaceVariables = (template: string, values: any): string => {
@@ -433,9 +454,10 @@ const LogControls: React.FCC<LogControlsProps> = ({
             <ToolbarGroup variant="action-group-plain">
               <ToolbarItem>
                 <Tooltip content={t('View raw logs')}>
-                  <ExternalLinkButton
+                  <Button
                     variant="plain"
-                    href={currentLogURL}
+                    onClick={handleRawLogs(currentLogURL)}
+                    aria-label={t('Open raw log file in new window')}
                     icon={<OutlinedWindowRestoreIcon />}
                   />
                 </Tooltip>
@@ -749,7 +771,10 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
               >
                 <Trans ns="public" t={t}>
                   To view unabridged log content, you can either{' '}
-                  <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
+                  <a href="#" onClick={handleRawLogs(linkURL)}>
+                    open the raw file in another window
+                  </a>{' '}
+                  or{' '}
                   <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
                     download it
                   </a>
