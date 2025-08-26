@@ -329,7 +329,19 @@ const AppRouter = () => {
     <Router history={history}>
       <CompatRouter>
         <Routes>
-          <Route path={LOGIN_ERROR_PATH} Component={AuthenticationErrorPage} />
+          {/* Auth error page needs HelmetProvider context, so wrap it */}
+          <Route
+            path={LOGIN_ERROR_PATH}
+            element={
+              <HelmetProvider>
+                <Helmet
+                  titleTemplate={`%s · ${getBrandingDetails().productName}`}
+                  defaultTitle={getBrandingDetails().productName}
+                />
+                <AuthenticationErrorPage />
+              </HelmetProvider>
+            }
+          />
           {standaloneRouteExtensions.map((e) => (
             <Route
               key={e.uid}
