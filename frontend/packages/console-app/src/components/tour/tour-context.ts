@@ -152,7 +152,7 @@ export const useTourValuesForContext = (): TourContextType => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePerspective, loaded]);
 
-  if (!tour || !loaded) return { tour: undefined };
+  if (!tour || !loaded) return { tour: null };
   const {
     properties: {
       tour: { intro, steps: unfilteredSteps, end },
