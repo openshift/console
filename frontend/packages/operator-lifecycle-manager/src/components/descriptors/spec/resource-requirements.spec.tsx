@@ -78,19 +78,12 @@ describe(ResourceRequirementsModalLink.displayName || '', () => {
 
   beforeEach(() => {
     obj = _.cloneDeep(testResourceInstance);
-    if (obj.spec) {
-      obj.spec.resources = {
+    obj.spec = {
+      resources: {
         limits: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
         requests: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
-      };
-    } else {
-      obj.spec = {
-        resources: {
-          limits: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
-          requests: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
-        },
-      };
-    }
+      },
+    };
     wrapper = shallow(
       <ResourceRequirementsModalLink.WrappedComponent
         obj={obj}
@@ -118,11 +111,7 @@ describe(ResourceRequirementsModalLink.displayName || '', () => {
   });
 
   it('renders default values if undefined', () => {
-    if (obj.spec) {
-      obj.spec.resources = {} as any;
-    } else {
-      obj.spec = { resources: {} as any };
-    }
+    obj.spec = { resources: {} as any };
     wrapper.setProps({ obj });
 
     expect(wrapper.find(Button).render().text()).toEqual('CPU: None, Memory: None, Storage: None');
