@@ -14,12 +14,13 @@ import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   Alert,
+  AlertActionCloseButton,
   AlertActionLink,
+  AlertGroup,
   Banner,
   BannerStatus,
   Button,
   Flex,
-  FlexItem,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -489,7 +490,7 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
   const [showFullLogCheckbox, setShowFullLogCheckbox] = useState(showFullLog);
   const buffer = useToggleLineBuffer(showFullLogCheckbox ? null : bufferSize);
   const ws = useRef<any>(); // TODO Make this a hook
-  const [resourceLogRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
+  const [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
   const logViewerRef = useRef(null);
   const externalLogLinkFlag = useFlag(FLAGS.CONSOLE_EXTERNAL_LOG_LINK);
   const [error, setError] = useState(false);
@@ -502,6 +503,10 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
   const [namespaceUID, setNamespaceUID] = useState('');
   const [podLogLinks, setPodLogLinks] = useState();
   const [content, setContent] = useState('');
+
+  const [showErrorAlert, setShowErrorAlert] = useState(true);
+  const [showStaleAlert, setShowStaleAlert] = useState(true);
+  const [showTruncatedAlert, setShowTruncatedAlert] = useState(true);
 
   const [logType, setLogType] = useState<LogTypeStatus>(LOG_TYPE_CURRENT);
   const [hasPreviousLogs, setPreviousLogs] = useState(false);
@@ -693,6 +698,7 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
       variant="danger"
       title={t('An error occurred while retrieving the requested logs.')}
       actionLinks={<AlertActionLink onClick={() => setError(false)}>{t('Retry')}</AlertActionLink>}
+      actionClose={<AlertActionCloseButton onClose={() => setShowErrorAlert(false)} />}
     />
   );
 
@@ -708,6 +714,7 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
       actionLinks={
         <AlertActionLink onClick={() => setStale(false)}>{t('Refresh')}</AlertActionLink>
       }
+      actionClose={<AlertActionCloseButton onClose={() => setShowStaleAlert(false)} />}
     />
   );
 
@@ -718,6 +725,7 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
       className="co-alert co-alert--margin-bottom-sm"
       variant="warning"
       title={t('Some lines have been abridged because they are exceptionally long.')}
+      actionClose={<AlertActionCloseButton onClose={() => setShowTruncatedAlert(false)} />}
     >
       <Trans ns="public" t={t}>
         To view unabridged log content, you can either{' '}
@@ -754,54 +762,55 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
     />
   );
 
-  // trigger resize event to prevent double scrollbar
   useEffect(() => {
-    if (error || stale || hasTruncated) {
-      window.dispatchEvent(new Event('resize'));
-    }
-  }, [error, stale, hasTruncated]);
+    window.dispatchEvent(new Event('resize'));
+    // trigger resize event to prevent double scrollbar
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstRender, error, stale, hasTruncated, isFullscreen]);
 
   return (
-    <div ref={resourceLogRef} style={{ display: 'contents' }}>
-      <Flex
-        className={css('co-resource-log', { 'co-fullscreen pf-v6-u-p-sm': isFullscreen })}
-        grow={{ default: 'grow' }}
-        direction={{ default: 'column' }}
-      >
-        {(error || stale || hasTruncated) && (
-          <FlexItem className="co-resource-log__alert-wrapper" shrink={{ default: 'shrink' }}>
-            {error && errorAlert}
-            {stale && staleAlert}
-            {hasTruncated && truncatedAlert}
-          </FlexItem>
-        )}
-        <FlexItem grow={{ default: 'grow' }}>
-          <LogViewer
-            header={
-              <div className="log-window__header" data-test="resource-log-no-lines">
-                <HeaderBanner lines={lines} status={status} />
-              </div>
-            }
-            theme={theme}
-            data={content}
-            ref={logViewerRef}
-            height="100%"
-            isTextWrapped={wrapLinesCheckbox}
-            toolbar={logControls}
-            footer={
-              <FooterButton
-                className={css('log-window__footer', {
-                  'log-window__footer--hidden': status !== STREAM_PAUSED,
-                })}
-                setStatus={setStatus}
-                linesBehind={linesBehind}
-              />
-            }
-            onScroll={onScroll}
-            initialIndexWidth={7}
+    <div
+      className={css('co-resource-log', { 'co-fullscreen pf-v6-u-p-sm': isFullscreen })}
+      ref={fullscreenRef}
+      style={{ display: 'contents' }}
+    >
+      <LogViewer
+        header={
+          <Flex
+            gap={{ default: 'gapNone' }}
+            direction={{ default: 'column' }}
+            fullWidth={{ default: 'fullWidth' }}
+            className="log-window__header"
+            data-test="resource-log-no-lines"
+          >
+            {(error || stale || hasTruncated) && (
+              <AlertGroup className="co-resource-log__alert-wrapper">
+                {showErrorAlert && error && errorAlert}
+                {showStaleAlert && stale && staleAlert}
+                {showTruncatedAlert && hasTruncated && truncatedAlert}
+              </AlertGroup>
+            )}
+            <HeaderBanner lines={lines} status={status} />
+          </Flex>
+        }
+        theme={theme}
+        data={content}
+        ref={logViewerRef}
+        height="100%"
+        isTextWrapped={wrapLinesCheckbox}
+        toolbar={logControls}
+        footer={
+          <FooterButton
+            className={css('log-window__footer', {
+              'log-window__footer--hidden': status !== STREAM_PAUSED,
+            })}
+            setStatus={setStatus}
+            linesBehind={linesBehind}
           />
-        </FlexItem>
-      </Flex>
+        }
+        onScroll={onScroll}
+        initialIndexWidth={7}
+      />
     </div>
   );
 };

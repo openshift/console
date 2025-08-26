@@ -1,6 +1,10 @@
 .co-resource-log {
-  height: calc(100% - 1px); // 1px fixes a double scrollbar issue
-  width: 100%;
+  height: 100%;
+
+  // instead of relying on PF's ResizeObserver, we use flexbox to fill available space
+  .pf-v6-c-log-viewer__scroll-container {
+    height: 100% !important;
+  }
 }
 
 .co-resource-log__loading {
