@@ -186,8 +186,8 @@ const NodeAlerts: React.FC = ({ children }) => {
             totalKey={NodeQueries.CPU_TOTAL}
             limitKey={NodeQueries.POD_RESOURCE_LIMIT_CPU}
             requestedKey={NodeQueries.POD_RESOURCE_REQUEST_CPU}
-            limitState={cpuLimit?.limit || LIMIT_STATE.OK}
-            requestedState={cpuLimit?.requested || LIMIT_STATE.OK}
+            limitState={cpuLimit?.limit ?? (cpuLimit ? LIMIT_STATE.WARN : LIMIT_STATE.OK)}
+            requestedState={cpuLimit?.requested ?? (cpuLimit ? LIMIT_STATE.WARN : LIMIT_STATE.OK)}
             Popover={CPUPopover}
           />
         </StatusItem>
@@ -203,8 +203,10 @@ const NodeAlerts: React.FC = ({ children }) => {
             totalKey={NodeQueries.MEMORY_TOTAL}
             limitKey={NodeQueries.POD_RESOURCE_LIMIT_MEMORY}
             requestedKey={NodeQueries.POD_RESOURCE_REQUEST_MEMORY}
-            limitState={memoryLimit?.limit || LIMIT_STATE.OK}
-            requestedState={memoryLimit?.requested || LIMIT_STATE.OK}
+            limitState={memoryLimit?.limit ?? (memoryLimit ? LIMIT_STATE.WARN : LIMIT_STATE.OK)}
+            requestedState={
+              memoryLimit?.requested ?? (memoryLimit ? LIMIT_STATE.WARN : LIMIT_STATE.OK)
+            }
             Popover={MemoryPopover}
           />
         </StatusItem>
