@@ -1,5 +1,5 @@
-import { createHash } from 'crypto';
 import { useMemo } from 'react';
+import { createHash } from 'crypto-browserify';
 import { useSelector } from 'react-redux';
 import { getImpersonate, getUser, K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
