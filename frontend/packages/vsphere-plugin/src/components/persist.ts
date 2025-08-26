@@ -160,12 +160,26 @@ const updateYamlFormat = (
   return dump(cmCfg);
 };
 
-const findAndReplace = (str: string, init: string, replacement: string): string | undefined => {
-  if (!str || !str.includes(init)) {
-    return undefined;
+type UpdateConfigMapResult = {
+  config: string;
+  expectedValues: string[];
+};
+
+const getUpdatedConfig = (
+  result: UpdateConfigMapResult,
+  init: string,
+  replacement: string,
+): UpdateConfigMapResult | undefined => {
+  const cfg = result.config;
+  if (!cfg || !cfg.includes(init)) {
+    result.expectedValues.push(init);
+    return result;
   }
 
-  return str.replace(init, replacement);
+  return {
+    config: cfg.replace(init, replacement),
+    expectedValues: result.expectedValues,
+  };
 };
 
 const updateIniFormat = (
@@ -174,7 +188,7 @@ const updateIniFormat = (
   initValues: ConnectionFormFormikValues,
   cloudProviderConfig: ConfigMap,
 ): string => {
-  let cfg = cloudProviderConfig.data.config;
+  const cfg = cloudProviderConfig.data.config;
 
   const initVCenter = initValues.vcenter || 'vcenterplaceholder';
   const initVCenterCluster = initValues.vCenterCluster || 'clusterplaceholder';
@@ -183,43 +197,49 @@ const updateIniFormat = (
     initValues.defaultDatastore || '/datacenterplaceholder/datastore/defaultdatastoreplaceholder';
   const initFolder = initValues.folder || '/datacenterplaceholder/vm/folderplaceholder';
 
-  cfg = findAndReplace(
-    cfg,
+  let result: UpdateConfigMapResult = { config: cfg, expectedValues: [] };
+
+  result = getUpdatedConfig(
+    result,
     `[VirtualCenter "${initVCenter}"]`,
     `[VirtualCenter "${values.vcenter}"]`,
   );
 
-  cfg = findAndReplace(cfg, `server = "${initVCenter}"`, `server = "${values.vcenter}"`);
-  cfg = findAndReplace(
-    cfg,
+  result = getUpdatedConfig(result, `server = "${initVCenter}"`, `server = "${values.vcenter}"`);
+  result = getUpdatedConfig(
+    result,
     `datacenters = "${initDatacenter}"`,
     `datacenters = "${values.datacenter}"`,
   );
-  cfg = findAndReplace(
-    cfg,
+  result = getUpdatedConfig(
+    result,
     `datacenter = "${initDatacenter}"`,
     `datacenter = "${values.datacenter}"`,
   );
-  cfg = findAndReplace(
-    cfg,
+  result = getUpdatedConfig(
+    result,
     `default-datastore = "${initDatastore}"`,
     `default-datastore = "${values.defaultDatastore}"`,
   );
-  cfg = findAndReplace(cfg, `folder = "${initFolder}"`, `folder = "${values.folder}"`);
-  cfg = findAndReplace(
-    cfg,
+  result = getUpdatedConfig(result, `folder = "${initFolder}"`, `folder = "${values.folder}"`);
+  result = getUpdatedConfig(
+    result,
     `resourcepool-path = "/${initDatacenter}/host/${initVCenterCluster}/Resources"`,
     `resourcepool-path = "/${values.datacenter}/host/${values.vCenterCluster}/Resources"`,
   );
 
-  if (!cfg) {
+  if (result.expectedValues.length > 0) {
     throw new PersistError(
-      t('Failed to parse cloud provider config {{cm}}', { cm: cloudProviderConfig.metadata.name }),
-      t('Unknown format'),
+      t('Failed to parse cloud provider config {{cm}}. ', {
+        cm: cloudProviderConfig.metadata.name,
+      }),
+      t('The following content was expected to be defined in the configMap: {{ expectedValues }}', {
+        expectedValues: result.expectedValues.join(', '),
+      }),
     );
   }
 
-  return cfg;
+  return result.config;
 };
 
 // https://issues.redhat.com/browse/OCPBUGS-54434
