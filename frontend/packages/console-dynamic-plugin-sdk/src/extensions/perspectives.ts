@@ -14,7 +14,7 @@ export type Perspective = ExtensionDeclaration<
     /** The perspective display name. */
     name: string;
     /** The perspective display icon. */
-    icon: CodeRef<LazyComponent>;
+    icon: CodeRef<LazyComponent> | null;
     /** Whether the perspective is the default. There can only be one default. */
     default?: boolean;
     /** Default pinned resources on the nav */

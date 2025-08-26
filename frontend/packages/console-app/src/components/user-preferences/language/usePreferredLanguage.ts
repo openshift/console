@@ -12,6 +12,6 @@ export const usePreferredLanguage = (): [
   useUserSettingsCompatibility<string>(
     PREFERRED_LANGUAGE_USER_SETTING_KEY,
     PREFERRED_LANGUAGE_LOCAL_STORAGE_KEY,
-    null,
+    '',
     true,
   );

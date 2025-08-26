@@ -114,7 +114,8 @@ const normalizeClusterServiceVersions = (
         description,
         provider,
         tags: desc.csv.spec.keywords,
-        creationTimestamp,
+        creationTimestamp:
+          typeof creationTimestamp === 'string' ? creationTimestamp : creationTimestamp.toString(),
         supportUrl,
         documentationUrl,
         attributes: {

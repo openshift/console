@@ -67,7 +67,17 @@ const useRuns = <Kind extends K8sResourceCommon>(
           ...differenceBy(etcdRunsRef.current, etcdRuns, (plr) => plr.metadata.name),
         ]
       : [...etcdRuns];
-    value.sort((a, b) => b.metadata.creationTimestamp.localeCompare(a.metadata.creationTimestamp));
+    value.sort((a, b) => {
+      const aTimestamp =
+        typeof a.metadata.creationTimestamp === 'string'
+          ? a.metadata.creationTimestamp
+          : a.metadata.creationTimestamp.toString();
+      const bTimestamp =
+        typeof b.metadata.creationTimestamp === 'string'
+          ? b.metadata.creationTimestamp
+          : b.metadata.creationTimestamp.toString();
+      return bTimestamp.localeCompare(aTimestamp);
+    });
     if (limit && limit < value.length) {
       value = value.slice(0, limit);
     }

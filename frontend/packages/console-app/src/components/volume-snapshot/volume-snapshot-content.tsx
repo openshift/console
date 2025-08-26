@@ -71,7 +71,7 @@ const Row: React.FC<RowProps<VolumeSnapshotContentKind>> = ({ obj }) => {
         />
       </TableData>
       <TableData {...tableColumnInfo[5]}>
-        <Timestamp timestamp={creationTimestamp} />
+        <Timestamp timestamp={creationTimestamp ?? null} />
       </TableData>
       <TableData {...tableColumnInfo[6]}>
         <ResourceKebab
@@ -166,7 +166,7 @@ const VolumeSnapshotContentPage: React.FC<VolumeSnapshotContentPageProps> = ({
   const resourceKind = referenceForModel(VolumeSnapshotContentModel);
   return (
     <>
-      <ListPageHeader title={showTitle ? t(VolumeSnapshotContentModel.labelPluralKey) : undefined}>
+      <ListPageHeader title={showTitle ? t(VolumeSnapshotContentModel.labelPluralKey || '') : ''}>
         {canCreate && (
           <ListPageCreate groupVersionKind={resourceKind}>
             {t('console-app~Create VolumeSnapshotContent')}
@@ -199,7 +199,7 @@ type VolumeSnapshotContentTableProps = {
   data: VolumeSnapshotContentKind[];
   unfilteredData: VolumeSnapshotContentKind[];
   loaded: boolean;
-  loadError: any;
+  loadError: unknown;
 };
 
 export default VolumeSnapshotContentPage;

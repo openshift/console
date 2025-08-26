@@ -29,7 +29,8 @@ const normalizeKamelets = (
       name: spec?.definition?.title || name,
       description: spec?.definition?.description || '',
       provider,
-      creationTimestamp,
+      creationTimestamp:
+        typeof creationTimestamp === 'string' ? creationTimestamp : creationTimestamp.toString(),
       cta: { label: t('knative-plugin~Create Event Sink'), href },
       type: 'EventSink',
       icon: { url: iconUrl },

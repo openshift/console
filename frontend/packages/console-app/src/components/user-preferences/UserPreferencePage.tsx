@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useState, useEffect, createRef } from 'react';
 import {
   Tabs,
   Tab,
@@ -58,19 +58,21 @@ const UserPreferencePage: React.FC = () => {
   const initialTabId =
     sortedUserPreferenceGroups.find((extension) => extension.id === groupIdFromUrl)?.id ||
     sortedUserPreferenceGroups[0]?.id;
-  const [activeTabId, setActiveTabId] = React.useState<string>(initialTabId);
+  const [activeTabId, setActiveTabId] = useState<string>(initialTabId);
 
-  const [userPreferenceTabs, userPreferenceTabContents] = React.useMemo<
+  const [userPreferenceTabs, userPreferenceTabContents] = useMemo<
     [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]]
   >(() => {
     const populatedUserPreferenceGroups: UserPreferenceTabGroup[] = getUserPreferenceGroups(
       sortedUserPreferenceGroups,
       sortedUserPreferenceItems,
     );
-    const [tabs, tabContents] = populatedUserPreferenceGroups.reduce(
+    const [tabs, tabContents] = populatedUserPreferenceGroups.reduce<
+      [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]]
+    >(
       (acc, currGroup) => {
         const { id, label, items } = currGroup;
-        const ref = React.createRef<HTMLElement>();
+        const ref = createRef<HTMLElement>();
         acc[0].push(
           <Tab
             key={id}
@@ -102,13 +104,16 @@ const UserPreferencePage: React.FC = () => {
   }, [activeTabId, sortedUserPreferenceGroups, sortedUserPreferenceItems]);
 
   const queryParams = useQueryParams();
-  const spotlight = decodeURIComponent(queryParams.get('spotlight'));
-  const [spotlightElement, setSpotlightElement] = React.useState<Element>(null);
+  const spotlightParam = queryParams.get('spotlight');
+  const spotlight = spotlightParam ? decodeURIComponent(spotlightParam) : '';
+  const [spotlightElement, setSpotlightElement] = useState<Element | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setActiveTabId(groupIdFromUrl ?? 'general');
-    const element = document.querySelector(spotlight);
-    setSpotlightElement(element);
+    if (spotlight) {
+      const element = document.querySelector(spotlight);
+      setSpotlightElement(element);
+    }
   }, [groupIdFromUrl, spotlight, userPreferenceItemResolved, userPreferenceTabContents]);
 
   // utils and callbacks

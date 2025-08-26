@@ -40,7 +40,8 @@ const normalizeBuilderImages = (
       secondaryLabel: 'Samples',
       provider,
       description,
-      creationTimestamp,
+      creationTimestamp:
+        typeof creationTimestamp === 'string' ? creationTimestamp : creationTimestamp.toString(),
       icon: {
         url: imgUrl,
         class: iconClass,

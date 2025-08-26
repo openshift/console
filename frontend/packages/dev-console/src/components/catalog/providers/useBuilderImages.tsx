@@ -105,7 +105,8 @@ const normalizeBuilderImages = (
       provider,
       description,
       tags,
-      creationTimestamp,
+      creationTimestamp:
+        typeof creationTimestamp === 'string' ? creationTimestamp : creationTimestamp.toString(),
       cta: {
         label: createLabel,
         href,
