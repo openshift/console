@@ -131,30 +131,28 @@ export const AuthenticationErrorPage: React.FC = () => {
   const { t } = useTranslation();
   const title = t('public~Authentication error');
 
-  // Set document title manually to avoid Helmet issues
-  React.useEffect(() => {
-    document.title = title;
-  }, [title]);
-
   return (
-    <PfErrorState
-      headingLevel="h1"
-      titleText={title}
-      bodyText={
-        <Stack>
-          <StackItem>
-            <LoginErrorMessage />
-          </StackItem>
-          <StackItem>
-            <ErrorStateMessage />
-          </StackItem>
-        </Stack>
-      }
-      customFooter={
-        <ButtonLink variant="primary" href="/logout">
-          {t('public~Try again')}
-        </ButtonLink>
-      }
-    />
+    <>
+      <DocumentTitle>{title}</DocumentTitle>
+      <PfErrorState
+        headingLevel="h1"
+        titleText={title}
+        bodyText={
+          <Stack>
+            <StackItem>
+              <LoginErrorMessage />
+            </StackItem>
+            <StackItem>
+              <ErrorStateMessage />
+            </StackItem>
+          </Stack>
+        }
+        customFooter={
+          <ButtonLink variant="primary" href="/logout">
+            {t('public~Try again')}
+          </ButtonLink>
+        }
+      />
+    </>
   );
 };
