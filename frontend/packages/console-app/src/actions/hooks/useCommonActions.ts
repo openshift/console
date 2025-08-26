@@ -48,8 +48,6 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
     if (editPath) {
       return editPath;
     }
-    // snapshot.storage.k8s.io~v1~VolumeSnapshot forModel
-    //
     const reference = kind?.crd ? referenceFor(resource) : kind?.kind;
     return `${resourceObjPath(resource, reference)}/yaml`;
   }, [kind, resource, editPath]);
@@ -65,7 +63,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             message,
           }),
-        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'delete'),
+        accessReview: asAccessReview(kind, resource, 'delete'),
       }),
       [CommonActionCreator.Edit]: (): Action => {
         return {
@@ -86,7 +84,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
+        accessReview: asAccessReview(kind, resource, 'patch'),
       }),
       [CommonActionCreator.ModifyAnnotations]: (): Action => ({
         id: 'edit-annotations',
@@ -97,7 +95,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
+        accessReview: asAccessReview(kind, resource, 'patch'),
       }),
       [CommonActionCreator.ModifyCount]: (): Action => ({
         id: 'edit-pod-count',
@@ -107,12 +105,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resourceKind: kind,
             resource,
           }),
-        accessReview: asAccessReview(
-          kind as K8sModel,
-          resource as K8sResourceKind,
-          'patch',
-          'scale',
-        ),
+        accessReview: asAccessReview(kind, resource, 'patch', 'scale'),
       }),
       [CommonActionCreator.ModifyPodSelector]: (): Action => ({
         id: 'edit-pod-selector',
@@ -123,7 +116,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
+        accessReview: asAccessReview(kind, resource, 'patch'),
       }),
       [CommonActionCreator.ModifyTolerations]: (): Action => ({
         id: 'edit-toleration',
@@ -134,7 +127,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             modalClassName: 'modal-lg',
           }),
-        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
+        accessReview: asAccessReview(kind, resource, 'patch'),
       }),
       [CommonActionCreator.AddStorage]: (): Action => ({
         id: 'add-storage',
@@ -145,7 +138,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             kind.crd ? referenceFor(kind) : kind.kind,
           )}/attach-storage`,
         },
-        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
+        accessReview: asAccessReview(kind, resource, 'patch'),
       }),
     }),
     [kind, resource, t, message, actualEditPath],
