@@ -15,6 +15,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import {
   Alert,
   AlertActionLink,
+  Banner,
+  BannerStatus,
   Button,
   MenuToggle,
   MenuToggleElement,
@@ -126,11 +128,17 @@ const getResourceLogURL = (
   });
 };
 
-const HeaderBanner = ({ lines }) => {
+const HeaderBanner = ({ lines, status }: { lines: string[]; status: string }) => {
   const { t } = useTranslation('public');
   const count = lines[lines.length - 1] || lines.length === 0 ? lines.length : lines.length - 1;
   const headerText = t('{{count}} line', { count });
-  return <>{headerText}</>;
+  const isEOF = status === STREAM_EOF;
+  return (
+    <Banner status={(isEOF ? 'info' : undefined) as BannerStatus}>
+      {headerText}
+      {isEOF && ` - ${t('Log stream ended.')}`}
+    </Banner>
+  );
 };
 
 const FooterButton = ({ setStatus, linesBehind, className }) => {
@@ -215,6 +223,8 @@ const LogControls: React.FCC<LogControlsProps> = ({
               />
             </Tooltip>
           );
+        case STREAM_EOF:
+          return null; // we show this in the line number area
         default:
           return t(streamStatusMessages[status]);
       }
@@ -393,7 +403,9 @@ const LogControls: React.FCC<LogControlsProps> = ({
         <ToolbarGroup className="pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-flex-direction-row-on-md pf-v6-u-w-100">
           <ToolbarGroup align={{ default: 'alignStart' }}>
             {/* orphaned `co-toolbar__item used in https://github.com/openshift/verification-tests */}
-            <ToolbarItem className="co-toolbar__item">{playPauseButton}</ToolbarItem>
+            {playPauseButton && (
+              <ToolbarItem className="co-toolbar__item">{playPauseButton}</ToolbarItem>
+            )}
             {dropdown && <ToolbarItem>{dropdown}</ToolbarItem>}
             {debugAction && <ToolbarItem>{debugAction}</ToolbarItem>}
             <ToolbarItem>{options}</ToolbarItem>
@@ -700,54 +712,58 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
       ref={resourceLogRef}
       className={css('co-resource-log', { 'co-fullscreen pf-v6-u-p-sm': isFullscreen })}
     >
-      <div className={css('co-resource-log__alert-wrapper')}>
-        {error && (
-          <Alert
-            isInline
-            className="co-alert co-alert--margin-bottom-sm"
-            variant="danger"
-            title={t('An error occurred while retrieving the requested logs.')}
-            actionLinks={
-              <AlertActionLink onClick={() => setError(false)}>{t('Retry')}</AlertActionLink>
-            }
-          />
-        )}
-        {stale && (
-          <Alert
-            isInline
-            className="co-alert co-alert--margin-bottom-sm"
-            variant="info"
-            title={t('The logs for this {{resourceKind}} may be stale.', {
-              resourceKind: resource.kind,
-            })}
-            actionLinks={
-              <AlertActionLink onClick={() => setStale(false)}>{t('Refresh')}</AlertActionLink>
-            }
-          />
-        )}
-        {hasTruncated && (
-          <Alert
-            isInline
-            className="co-alert co-alert--margin-bottom-sm"
-            variant="warning"
-            title={t('Some lines have been abridged because they are exceptionally long.')}
-          >
-            <Trans ns="public" t={t}>
-              To view unabridged log content, you can either{' '}
-              <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
-              <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
-                download it
-              </a>
-              .
-            </Trans>
-          </Alert>
-        )}
-      </div>
+      {error ||
+        stale ||
+        (hasTruncated && (
+          <div className="co-resource-log__alert-wrapper">
+            {error && (
+              <Alert
+                isInline
+                className="co-alert co-alert--margin-bottom-sm"
+                variant="danger"
+                title={t('An error occurred while retrieving the requested logs.')}
+                actionLinks={
+                  <AlertActionLink onClick={() => setError(false)}>{t('Retry')}</AlertActionLink>
+                }
+              />
+            )}
+            {stale && (
+              <Alert
+                isInline
+                className="co-alert co-alert--margin-bottom-sm"
+                variant="info"
+                title={t('The logs for this {{resourceKind}} may be stale.', {
+                  resourceKind: resource.kind,
+                })}
+                actionLinks={
+                  <AlertActionLink onClick={() => setStale(false)}>{t('Refresh')}</AlertActionLink>
+                }
+              />
+            )}
+            {hasTruncated && (
+              <Alert
+                isInline
+                className="co-alert co-alert--margin-bottom-sm"
+                variant="warning"
+                title={t('Some lines have been abridged because they are exceptionally long.')}
+              >
+                <Trans ns="public" t={t}>
+                  To view unabridged log content, you can either{' '}
+                  <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
+                  <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
+                    download it
+                  </a>
+                  .
+                </Trans>
+              </Alert>
+            )}
+          </div>
+        ))}
       <div>
         <LogViewer
           header={
             <div className="log-window__header" data-test="resource-log-no-lines">
-              <HeaderBanner lines={lines} />
+              <HeaderBanner lines={lines} status={status} />
             </div>
           }
           theme={theme}
