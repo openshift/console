@@ -1,8 +1,6 @@
 .co-resource-log {
   height: calc(100% - 1px); // 1px fixes a double scrollbar issue
   width: 100%;
-  display: grid;
-  grid-template-rows: max-content auto;
 }
 
 .co-resource-log__loading {
