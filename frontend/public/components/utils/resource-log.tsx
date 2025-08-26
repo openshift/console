@@ -754,6 +754,13 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
     />
   );
 
+  // trigger resize event to prevent double scrollbar
+  useEffect(() => {
+    if (error || stale || hasTruncated) {
+      window.dispatchEvent(new Event('resize'));
+    }
+  }, [error, stale, hasTruncated]);
+
   return (
     <div ref={resourceLogRef} style={{ display: 'contents' }}>
       <Flex
