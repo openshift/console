@@ -207,8 +207,8 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
 
   const compare = React.useCallback<Comparator<ConsolePluginTableRow>>(
     (a, b) => {
-      const { index, direction } = sortBy;
-      const { id } = columns[index ?? 0];
+      const { index = 0, direction } = sortBy;
+      const { id } = columns[index];
       const desc = direction === SortByDirection.desc;
       const left = (desc ? b : a)[id];
       const right = (desc ? a : b)[id];
@@ -333,7 +333,7 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
       return [];
     }
     return consolePlugins.map((plugin) => {
-      const pluginName = plugin?.metadata?.name ?? 'unknown';
+      const pluginName = plugin?.metadata?.name;
       const enabled = enabledPlugins.includes(pluginName);
       const loadedPluginInfo = pluginInfo
         .filter(isLoadedDynamicPluginInfo)
@@ -416,7 +416,7 @@ export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
 };
 
 export type ConsolePluginTableRow = {
-  name: string;
+  name?: string;
   version?: string;
   description?: string;
   status: DynamicPluginInfo['status'];
@@ -442,7 +442,7 @@ type ConsolePluginStatusProps = {
 };
 
 type ConsolePluginEnabledStatusProps = {
-  pluginName: string;
+  pluginName?: string;
   enabled: boolean;
 };
 
