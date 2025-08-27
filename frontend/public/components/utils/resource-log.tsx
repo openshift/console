@@ -1,12 +1,12 @@
 import {
-  useState,
-  useEffect,
-  useRef,
+  ReactNode,
+  Ref,
   useCallback,
   useContext,
-  ReactNode,
+  useEffect,
   useMemo,
-  Ref,
+  useRef,
+  useState,
 } from 'react';
 import { useSelector } from 'react-redux';
 import { Base64 } from 'js-base64';
@@ -35,14 +35,13 @@ import {
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import {
-  CompressIcon,
-  ExpandIcon,
-  DownloadIcon,
-  OutlinedWindowRestoreIcon,
-  OutlinedPlayCircleIcon,
-  CogIcon,
-  SearchIcon,
   BugIcon,
+  CogIcon,
+  CompressIcon,
+  DownloadIcon,
+  ExpandIcon,
+  OutlinedPlayCircleIcon,
+  SearchIcon,
 } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import {
@@ -129,6 +128,12 @@ const getResourceLogURL = (
       ...(previous && { previous: `${previous}` }),
     },
   });
+};
+
+/** get a filename for log download */
+const getLogDownloadFilename = (resource: K8sResourceKind, containerName?: string) => {
+  const parts = [resource?.metadata?.name, containerName].filter(Boolean);
+  return `${parts.join('-')}.log`;
 };
 
 const HeaderBanner = ({ lines, status }: { lines: string[]; status: string }) => {
@@ -436,11 +441,7 @@ const LogControls: React.FCC<LogControlsProps> = ({
             <ToolbarGroup variant="action-group-plain">
               <ToolbarItem>
                 <Tooltip content={t('View raw logs')}>
-                  <ExternalLinkButton
-                    variant="plain"
-                    href={currentLogURL}
-                    icon={<OutlinedWindowRestoreIcon />}
-                  />
+                  <ExternalLinkButton href={currentLogURL} variant="plain" />
                 </Tooltip>
               </ToolbarItem>
               <ToolbarItem>
@@ -448,7 +449,7 @@ const LogControls: React.FCC<LogControlsProps> = ({
                   <ExternalLinkButton
                     variant="plain"
                     href={currentLogURL}
-                    download={`${resource.metadata.name}-${containerName}.log`}
+                    download={getLogDownloadFilename(resource, containerName)}
                     icon={<DownloadIcon />}
                   />
                 </Tooltip>
@@ -730,7 +731,7 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
       <Trans ns="public" t={t}>
         To view unabridged log content, you can either{' '}
         <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
-        <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
+        <a href={linkURL} download={getLogDownloadFilename(resource, containerName)}>
           download it
         </a>
         .
