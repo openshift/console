@@ -18,8 +18,9 @@ import {
   getInitializationResource,
   getValidSubscription,
   getInfrastructureFeatures,
+  operatorHubItemToCatalogItem,
 } from './operator-hub-utils';
-import { InfrastructureFeature, OLMAnnotation, ValidSubscriptionValue } from '.';
+import { InfrastructureFeature, OLMAnnotation, OperatorHubItem, ValidSubscriptionValue } from '.';
 
 describe('getPackageSource', () => {
   it('should handle undefined argument', () => {
@@ -644,5 +645,167 @@ describe('getInfrastructureFeatures', () => {
   it('returns an empty array when annotations are undefined', () => {
     const result = getInfrastructureFeatures(undefined);
     expect(result).toEqual([]);
+  });
+});
+
+describe('operatorHubItemToCatalogItem', () => {
+  const createMockOperatorHubItem = (
+    overrides: Partial<OperatorHubItem> = {},
+  ): OperatorHubItem => ({
+    uid: 'test-operator-uid',
+    name: 'Test Operator',
+    description: 'Test operator description',
+    provider: 'Test Provider',
+    tags: ['tag1', 'tag2'],
+    obj: {
+      metadata: {
+        name: 'test-operator-metadata',
+      },
+    } as PackageManifestKind,
+    // Required OperatorHubItem properties with defaults
+    authentication: {} as any,
+    catalogSource: 'test-catalog',
+    catalogSourceNamespace: 'test-namespace',
+    categories: [],
+    cloudCredentials: {} as any,
+    infraFeatures: [],
+    infrastructure: {} as any,
+    installed: false,
+    kind: 'PackageManifest',
+    longDescription: 'Long description',
+    source: 'test-source',
+    validSubscription: [],
+    ...overrides,
+  });
+
+  describe('error handling', () => {
+    it('should throw error when item is null', () => {
+      expect(() => operatorHubItemToCatalogItem(null as any)).toThrow(
+        'operatorHubItemToCatalogItem: item is required',
+      );
+    });
+
+    it('should throw error when item is undefined', () => {
+      expect(() => operatorHubItemToCatalogItem(undefined as any)).toThrow(
+        'operatorHubItemToCatalogItem: item is required',
+      );
+    });
+
+    it('should throw error when item.uid is missing', () => {
+      const item = createMockOperatorHubItem({ uid: '' });
+      expect(() => operatorHubItemToCatalogItem(item)).toThrow(
+        'operatorHubItemToCatalogItem: item.uid is required',
+      );
+    });
+
+    it('should throw error when item.name is missing', () => {
+      const item = createMockOperatorHubItem({ name: '' });
+      expect(() => operatorHubItemToCatalogItem(item)).toThrow(
+        'operatorHubItemToCatalogItem: item.name is required',
+      );
+    });
+  });
+
+  describe('fallback handling', () => {
+    it('should provide fallback for missing description', () => {
+      const item = createMockOperatorHubItem({ description: undefined as any });
+      const result = operatorHubItemToCatalogItem(item);
+      expect(result.description).toBe('');
+    });
+
+    it('should provide fallback for missing provider', () => {
+      const item = createMockOperatorHubItem({ provider: undefined as any });
+      const result = operatorHubItemToCatalogItem(item);
+      expect(result.provider).toBe('Unknown Provider');
+      expect(result.attributes?.provider).toBe('Unknown Provider');
+    });
+
+    it('should provide fallback for missing tags', () => {
+      const item = createMockOperatorHubItem({ tags: undefined as any });
+      const result = operatorHubItemToCatalogItem(item);
+      expect(result.tags).toEqual([]);
+    });
+
+    it('should handle non-array tags', () => {
+      const item = createMockOperatorHubItem({ tags: 'not-an-array' as any });
+      const result = operatorHubItemToCatalogItem(item);
+      expect(result.tags).toEqual([]);
+    });
+
+    it('should provide fallback for missing keywords', () => {
+      const item = createMockOperatorHubItem();
+      const result = operatorHubItemToCatalogItem(item);
+      expect(result.attributes?.keywords).toEqual([]);
+    });
+
+    it('should filter invalid keywords', () => {
+      const item = createMockOperatorHubItem();
+      (item as any).keywords = ['valid-keyword', '', '   ', null, undefined, 123, 'another-valid'];
+      const result = operatorHubItemToCatalogItem(item);
+      expect(result.attributes?.keywords).toEqual(['valid-keyword', 'another-valid']);
+    });
+
+    it('should handle missing metadata gracefully', () => {
+      const item = createMockOperatorHubItem({ obj: undefined as any });
+      const result = operatorHubItemToCatalogItem(item);
+      expect(result.attributes?.metadataName).toBeUndefined();
+    });
+
+    it('should handle missing obj.metadata gracefully', () => {
+      const item = createMockOperatorHubItem({
+        obj: { metadata: undefined } as any,
+      });
+      const result = operatorHubItemToCatalogItem(item);
+      expect(result.attributes?.metadataName).toBeUndefined();
+    });
+
+    it('should handle non-string metadata name gracefully', () => {
+      const item = createMockOperatorHubItem({
+        obj: { metadata: { name: 123 } } as any,
+      });
+      const result = operatorHubItemToCatalogItem(item);
+      expect(result.attributes?.metadataName).toBeUndefined();
+    });
+  });
+
+  describe('successful conversion', () => {
+    it('should convert valid OperatorHubItem to CatalogItem', () => {
+      const item = createMockOperatorHubItem();
+      (item as any).keywords = ['keyword1', 'keyword2'];
+
+      const result = operatorHubItemToCatalogItem(item);
+
+      expect(result).toEqual({
+        uid: 'test-operator-uid',
+        name: 'Test Operator',
+        title: 'Test Operator',
+        type: 'operator',
+        description: 'Test operator description',
+        provider: 'Test Provider',
+        tags: ['tag1', 'tag2'],
+        attributes: {
+          keywords: ['keyword1', 'keyword2'],
+          provider: 'Test Provider',
+          metadataName: 'test-operator-metadata',
+        },
+      });
+    });
+
+    it('should handle minimal valid item', () => {
+      const minimalItem = {
+        uid: 'minimal-uid',
+        name: 'Minimal Operator',
+      } as OperatorHubItem;
+
+      const result = operatorHubItemToCatalogItem(minimalItem);
+
+      expect(result.uid).toBe('minimal-uid');
+      expect(result.name).toBe('Minimal Operator');
+      expect(result.description).toBe('');
+      expect(result.provider).toBe('Unknown Provider');
+      expect(result.tags).toEqual([]);
+      expect(result.attributes?.keywords).toEqual([]);
+      expect(result.attributes?.metadataName).toBeUndefined();
+    });
   });
 });

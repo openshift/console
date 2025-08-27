@@ -113,10 +113,30 @@ describe('determineCategories', () => {
 describe('orderAndSortByRelevance', () => {
   it('sorts Red Hat items before non-Red Hat items', () => {
     const items = [
-      { name: 'B Operator', obj: { metadata: { labels: { provider: 'Other Company' } } } },
-      { name: 'A Operator', obj: { metadata: { labels: { provider: 'Red Hat' } } } },
-      { name: 'C Operator', obj: { metadata: { labels: { provider: 'Red Hat Marketplace' } } } },
-      { name: 'D Operator', obj: { metadata: { labels: { provider: 'Another Company' } } } },
+      {
+        uid: '1',
+        name: 'B Operator',
+        provider: 'Other Company',
+        obj: { metadata: { labels: { provider: 'Other Company' } } },
+      },
+      {
+        uid: '2',
+        name: 'A Operator',
+        provider: 'Red Hat',
+        obj: { metadata: { labels: { provider: 'Red Hat' } } },
+      },
+      {
+        uid: '3',
+        name: 'C Operator',
+        provider: 'Red Hat Marketplace',
+        obj: { metadata: { labels: { provider: 'Red Hat Marketplace' } } },
+      },
+      {
+        uid: '4',
+        name: 'D Operator',
+        provider: 'Another Company',
+        obj: { metadata: { labels: { provider: 'Another Company' } } },
+      },
     ];
     const sortedItems = orderAndSortByRelevance((items as unknown) as OperatorHubItem[]);
     expect(sortedItems[0].obj.metadata.labels.provider).toBe('Red Hat');
@@ -127,10 +147,30 @@ describe('orderAndSortByRelevance', () => {
 
   it('sorts items alphabetically within each provider group', () => {
     const items = [
-      { name: 'Z Operator', obj: { metadata: { labels: { provider: 'Other Company' } } } },
-      { name: 'B Operator', obj: { metadata: { labels: { provider: 'Red Hat' } } } },
-      { name: 'A Operator', obj: { metadata: { labels: { provider: 'Red Hat Marketplace' } } } },
-      { name: 'Y Operator', obj: { metadata: { labels: { provider: 'Another Company' } } } },
+      {
+        uid: '1',
+        name: 'Z Operator',
+        provider: 'Other Company',
+        obj: { metadata: { labels: { provider: 'Other Company' } } },
+      },
+      {
+        uid: '2',
+        name: 'B Operator',
+        provider: 'Red Hat',
+        obj: { metadata: { labels: { provider: 'Red Hat' } } },
+      },
+      {
+        uid: '3',
+        name: 'A Operator',
+        provider: 'Red Hat Marketplace',
+        obj: { metadata: { labels: { provider: 'Red Hat Marketplace' } } },
+      },
+      {
+        uid: '4',
+        name: 'Y Operator',
+        provider: 'Another Company',
+        obj: { metadata: { labels: { provider: 'Another Company' } } },
+      },
     ];
     const sortedItems = orderAndSortByRelevance((items as unknown) as OperatorHubItem[]);
     expect(sortedItems[0].name).toBe('B Operator');
@@ -142,6 +182,7 @@ describe('orderAndSortByRelevance', () => {
   it('prioritizes Red Hat providers when searching', () => {
     const items = [
       {
+        uid: '1',
         name: 'gitops-primer',
         provider: 'Community',
         obj: { metadata: { labels: { provider: 'Konveyor' } } },
@@ -149,6 +190,7 @@ describe('orderAndSortByRelevance', () => {
         keywords: ['gitops', 'primer'],
       },
       {
+        uid: '2',
         name: 'Red Hat OpenShift GitOps',
         provider: 'Red Hat',
         obj: { metadata: { labels: { provider: 'Red Hat Inc' } } },
@@ -182,13 +224,16 @@ describe('orderAndSortByRelevance', () => {
     it('handles items with missing or malformed properties', () => {
       const items = [
         {
+          uid: '1',
           name: 'Complete Operator',
           provider: 'Red Hat',
           obj: { metadata: { labels: { provider: 'Red Hat' } } },
           description: 'A complete operator',
         },
         {
+          uid: '2',
           name: 'Operator with minimal data',
+          provider: 'Unknown Provider',
           // Missing other properties
         },
       ];

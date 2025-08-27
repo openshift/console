@@ -23,7 +23,14 @@ import {
   COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
   useUserSettingsCompatibility,
 } from '@console/shared';
-import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
+import {
+  getURLWithParams,
+  keywordCompare,
+  calculateCatalogItemRelevanceScore,
+  getRedHatPriority as getRedHatPriorityFromCatalog,
+  REDHAT_PRIORITY,
+  SORTING_THRESHOLDS,
+} from '@console/shared/src/components/catalog/utils';
 import { isModifiedEvent } from '@console/shared/src/utils';
 import { DefaultCatalogSource } from '../../const';
 import { SubscriptionModel } from '../../models';
@@ -37,43 +44,45 @@ import {
   isAWSSTSCluster,
   isAzureWIFCluster,
   isGCPWIFCluster,
+  operatorHubItemToCatalogItem,
   providerSort,
   sourceSort,
   validSubscriptionSort,
 } from './operator-hub-utils';
 import { InfrastructureFeature, OperatorHubItem } from './index';
 
-// Scoring constants for relevance calculation
-const SCORE = {
-  // Title/Name matches (highest priority)
-  TITLE_CONTAINS: 100,
-  TITLE_EXACT_BONUS: 50,
-  TITLE_STARTS_BONUS: 25,
+// Enhanced keywordCompare adapter for TileViewPage compatibility
+const enhancedKeywordCompareAdapter = (filterString: string, item: OperatorHubItem) => {
+  // Convert single item to array for enhanced keywordCompare
+  const catalogItem = operatorHubItemToCatalogItem(item);
+  const results = keywordCompare(filterString, [catalogItem]);
 
-  // Metadata name matches (high priority)
-  METADATA_CONTAINS: 80,
-  METADATA_EXACT_BONUS: 40,
-  METADATA_STARTS_BONUS: 20,
+  // Return TileViewPage expected format
+  const matches = results.length > 0;
+  return {
+    matches,
+    score: matches ? (results[0] as any).relevanceScore || 0 : 0,
+    item: matches ? { ...item, relevanceScore: (results[0] as any).relevanceScore || 0 } : item,
+  };
+};
 
-  // Keyword matches (medium priority)
-  KEYWORD_MATCH: 60,
+// Add useScoring flag for TileViewPage
+enhancedKeywordCompareAdapter.useScoring = true;
 
-  // Description matches (low priority)
-  DESCRIPTION_CONTAINS: 20,
-  DESCRIPTION_STARTS_BONUS: 5,
-} as const;
+// Calculate relevance score for OperatorHubItem using enhanced scoring
+const calculateRelevanceScoreForOperator = (
+  filterString: string,
+  item: OperatorHubItem,
+): number => {
+  const catalogItem = operatorHubItemToCatalogItem(item);
+  return calculateCatalogItemRelevanceScore(filterString, catalogItem);
+};
 
-// Red Hat priority constants
-const REDHAT_PRIORITY = {
-  EXACT_MATCH: 2,
-  CONTAINS_REDHAT: 1,
-  NON_REDHAT: 0,
-} as const;
-
-// Sorting thresholds
-const SORTING_THRESHOLDS = {
-  REDHAT_PRIORITY_DELTA: 100, // Score difference threshold for Red Hat prioritization
-} as const;
+// Get Red Hat priority for OperatorHubItem
+const getRedHatPriorityForOperator = (item: OperatorHubItem): number => {
+  const catalogItem = operatorHubItemToCatalogItem(item);
+  return getRedHatPriorityFromCatalog(catalogItem);
+};
 
 // Performance optimization types for precomputed scoring
 type ScoringData = {
@@ -305,126 +314,11 @@ const determineAvailableFilters = (
   return filters;
 };
 
-export const keywordCompare = (filterString: string, item: OperatorHubItem): boolean => {
-  if (!filterString) {
-    return true;
-  }
-  if (!item) {
-    return false;
-  }
-  const keywords = item.keywords?.map((k) => k.toLowerCase()) ?? [];
-
-  return (
-    item.name.toLowerCase().includes(filterString) ||
-    _.get(item, 'obj.metadata.name', '').toLowerCase().includes(filterString) ||
-    (item.description && item.description.toLowerCase().includes(filterString)) ||
-    keywords.includes(filterString)
-  );
-};
-
-// Calculate relevance score for an operator based on search term matches
-export const calculateRelevanceScore = (filterString: string, item: OperatorHubItem): number => {
-  if (!filterString || !item) {
-    return 0;
-  }
-
-  const searchTerm = filterString.toLowerCase();
-  const keywords = item.keywords?.map((k) => k.toLowerCase()) ?? [];
-  let score = 0;
-
-  // Title/Name matches get highest weight
-  if (item.name && typeof item.name === 'string') {
-    const itemName = item.name.toLowerCase();
-    if (itemName.includes(searchTerm)) {
-      score += SCORE.TITLE_CONTAINS;
-      // Exact title match gets bonus points
-      if (itemName === searchTerm) {
-        score += SCORE.TITLE_EXACT_BONUS;
-      }
-      // Title starts with search term gets bonus points
-      if (itemName.startsWith(searchTerm)) {
-        score += SCORE.TITLE_STARTS_BONUS;
-      }
-    }
-  }
-
-  // Metadata name matches get high weight
-  const metadataName = item?.obj?.metadata?.name ?? '';
-  if (metadataName && typeof metadataName === 'string') {
-    const metadataNameLower = metadataName.toLowerCase();
-    if (metadataNameLower.includes(searchTerm)) {
-      score += SCORE.METADATA_CONTAINS;
-      if (metadataNameLower === searchTerm) {
-        score += SCORE.METADATA_EXACT_BONUS;
-      }
-      if (metadataNameLower.startsWith(searchTerm)) {
-        score += SCORE.METADATA_STARTS_BONUS;
-      }
-    }
-  }
-
-  // Keywords matches get medium weight
-  if (keywords.includes(searchTerm)) {
-    score += SCORE.KEYWORD_MATCH;
-  }
-
-  // Description matches get lowest weight
-  if (item.description && typeof item.description === 'string') {
-    const descriptionLower = item.description.toLowerCase();
-    if (descriptionLower.includes(searchTerm)) {
-      score += SCORE.DESCRIPTION_CONTAINS;
-      // Description starts with search term gets small bonus
-      if (descriptionLower.startsWith(searchTerm)) {
-        score += SCORE.DESCRIPTION_STARTS_BONUS;
-      }
-    }
-  }
-
-  return score;
-};
-
-type KeywordCompareResult = {
-  matches: boolean;
-  score: number;
-  item: OperatorHubItem & { relevanceScore: number };
-};
-
-export const keywordCompareWithScore = (
-  filterString: string,
-  item: OperatorHubItem,
-): KeywordCompareResult => {
-  const score = calculateRelevanceScore(filterString, item);
-  return {
-    matches: score > 0,
-    score,
-    item: { ...item, relevanceScore: score },
-  };
-};
-
-// Flag to indicate this function uses scoring
-keywordCompareWithScore.useScoring = true;
-
 const setURLParams = (params: URLSearchParams): void => {
   const url = new URL(window.location.href);
   const searchParams = `?${params.toString()}${url.hash}`;
 
   history.replace(`${url.pathname}${searchParams}`);
-};
-
-const getRedHatPriority = (item: OperatorHubItem): number => {
-  // Check metadata.labels.provider
-  const metadataProvider = _.get(item, 'obj.metadata.labels.provider', '');
-  if (metadataProvider) {
-    const provider = metadataProvider.toLowerCase();
-    if (/^red hat(,?\s?inc\.?)?$/.test(provider)) {
-      return REDHAT_PRIORITY.EXACT_MATCH; // Highest priority for exact matches of 'red hat', 'red hat, inc.', 'red hat inc.', 'red hat inc'
-    }
-    if (provider.includes('red hat')) {
-      return REDHAT_PRIORITY.CONTAINS_REDHAT; // Medium priority for contains 'red hat'
-    }
-  }
-
-  return REDHAT_PRIORITY.NON_REDHAT; // Not Red Hat
 };
 
 // Performance optimization: Precompute all scoring data upfront
@@ -438,8 +332,8 @@ const precomputeItemScoring = (items: OperatorHubItem[], searchTerm = ''): ItemW
     .map((item) => ({
       ...item,
       _scoringData: {
-        relevanceScore: searchTerm ? calculateRelevanceScore(searchTerm, item) : 0,
-        redHatPriority: getRedHatPriority(item),
+        relevanceScore: searchTerm ? calculateRelevanceScoreForOperator(searchTerm, item) : 0,
+        redHatPriority: getRedHatPriorityForOperator(item),
         nameLower: (item.name || '').toLowerCase(),
       },
     }));
@@ -882,7 +776,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       const searchFilteredForDisplay = sortedItems
         .map((item) => ({
           ...item,
-          relevanceScore: calculateRelevanceScore(searchTerm, item),
+          relevanceScore: calculateRelevanceScoreForOperator(searchTerm, item),
         }))
         .filter((item) => item.relevanceScore > 0);
       const searchSortedForDisplay = orderAndSortByRelevance(searchFilteredForDisplay, searchTerm);
@@ -910,7 +804,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     const searchFilteredItems = sortedItems
       .map((item) => ({
         ...item,
-        relevanceScore: calculateRelevanceScore(searchTerm, item),
+        relevanceScore: calculateRelevanceScoreForOperator(searchTerm, item),
       }))
       .filter((item) => item.relevanceScore > 0);
     
@@ -920,8 +814,8 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     const tableData = searchSortedItems.map((item, index) => ({
         Title: item.name || 'N/A',
         'Search Relevance Score': item.relevanceScore || 0,
-        'Is Red Hat Provider (Priority)': getRedHatPriority(item) === REDHAT_PRIORITY.EXACT_MATCH ? `Exact Match (${REDHAT_PRIORITY.EXACT_MATCH})` : 
-                            getRedHatPriority(item) === REDHAT_PRIORITY.CONTAINS_REDHAT ? `Contains Red Hat (${REDHAT_PRIORITY.CONTAINS_REDHAT})` : `Non-Red Hat (${REDHAT_PRIORITY.NON_REDHAT})`,
+        'Is Red Hat Provider (Priority)': getRedHatPriorityForOperator(item) === REDHAT_PRIORITY.EXACT_MATCH ? `Exact Match (${REDHAT_PRIORITY.EXACT_MATCH})` : 
+                            getRedHatPriorityForOperator(item) === REDHAT_PRIORITY.CONTAINS_REDHAT ? `Contains Red Hat (${REDHAT_PRIORITY.CONTAINS_REDHAT})` : `Non-Red Hat (${REDHAT_PRIORITY.NON_REDHAT})`,
         // Source: item.source || 'N/A',
         'Metadata Provider': _.get(item, 'obj.metadata.labels.provider', 'N/A'),
         'Capability Level': (() => {
@@ -952,8 +846,8 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       // Console table for filtered results without search term (category/filter-based) - using memoized data
       const tableData = sortedItems.map((item, index) => ({
         Title: item.name || 'N/A',
-        'Is Red Hat Provider (Priority)': getRedHatPriority(item) === REDHAT_PRIORITY.EXACT_MATCH ? `Exact Match (${REDHAT_PRIORITY.EXACT_MATCH})` : 
-                            getRedHatPriority(item) === REDHAT_PRIORITY.CONTAINS_REDHAT ? `Contains Red Hat (${REDHAT_PRIORITY.CONTAINS_REDHAT})` : `Non-Red Hat (${REDHAT_PRIORITY.NON_REDHAT})`,
+        'Is Red Hat Provider (Priority)': getRedHatPriorityForOperator(item) === REDHAT_PRIORITY.EXACT_MATCH ? `Exact Match (${REDHAT_PRIORITY.EXACT_MATCH})` : 
+                            getRedHatPriorityForOperator(item) === REDHAT_PRIORITY.CONTAINS_REDHAT ? `Contains Red Hat (${REDHAT_PRIORITY.CONTAINS_REDHAT})` : `Non-Red Hat (${REDHAT_PRIORITY.NON_REDHAT})`,
         // Source: item.source || 'N/A',
         'Metadata Provider': _.get(item, 'obj.metadata.labels.provider', 'N/A'),
         'Capability Level': (() => {
@@ -993,7 +887,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         getAvailableFilters={getAvailableFiltersFromAllItems}
         filterGroups={operatorHubFilterGroups}
         filterGroupNameMap={filterGroupNameMap}
-        keywordCompare={keywordCompareWithScore}
+        keywordCompare={enhancedKeywordCompareAdapter}
         renderTile={renderTile}
         emptyStateTitle={t('olm~No Results Match the Filter Criteria')}
         emptyStateInfo={t(
