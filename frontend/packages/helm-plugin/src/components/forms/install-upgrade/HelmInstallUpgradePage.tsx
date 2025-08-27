@@ -63,7 +63,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const [chartError, setChartError] = React.useState<Error | null>(null);
 
   const [initialYamlData, setInitialYamlData] = React.useState<string>('');
-  const [initialFormData, setInitialFormData] = React.useState<object>();
+  const [initialFormData, setInitialFormData] = React.useState<object | undefined>();
   const [initialFormSchema, setInitialFormSchema] = React.useState<JSONSchema7>();
   const helmAction: HelmActionType = initialChartURL
     ? HelmActionType.Create
@@ -130,7 +130,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
     chartVersion,
     chartReadme,
     yamlData: initialYamlData,
-    formData: initialFormData as Record<string, unknown>,
+    formData: initialFormData,
     formSchema: initialFormSchema || {},
     editorType: initialFormSchema ? EditorType.Form : EditorType.YAML,
   };

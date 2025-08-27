@@ -21,7 +21,6 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { HelmActionType, HelmChart, HelmActionConfigType } from '../../../types/helm-types';
 import { helmActionString } from '../../../utils/helm-utils';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';
-import { useHelmReadmeModalLauncher } from './HelmReadmeModal';
 
 export type HelmInstallUpgradeFormData = {
   releaseName: string;
@@ -33,7 +32,7 @@ export type HelmInstallUpgradeFormData = {
   chartReadme: string;
   appVersion: string;
   yamlData: string;
-  formData: Record<string, unknown>;
+  formData: any;
   formSchema: JSONSchema7;
   editorType: EditorType;
 };
@@ -74,10 +73,14 @@ const HelmInstallUpgradeForm: React.FC<
   const theme = React.useContext(ThemeContext);
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig || {};
-  const helmReadmeModalLauncher = useHelmReadmeModalLauncher({
-    readme: chartReadme,
-    theme,
-  });
+  const helmReadmeModalLauncher = React.useMemo(
+    () =>
+      helmReadmeModalLauncher({
+        readme: chartReadme,
+        theme,
+      }),
+    [chartReadme, theme],
+  );
   const isSubmitDisabled =
     (helmAction === HelmActionType.Upgrade && !dirty) ||
     isSubmitting ||
