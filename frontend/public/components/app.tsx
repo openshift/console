@@ -436,6 +436,7 @@ const initApiDiscovery = (storeInstance) => {
 };
 
 graphQLReady.onReady(() => {
+  const { productName } = getBrandingDetails();
   store.dispatch<any>(detectFeatures());
 
   // Global timer to ensure all <Timestamp> components update in sync
@@ -492,10 +493,7 @@ graphQLReady.onReady(() => {
       <Provider store={store}>
         <ThemeProvider>
           <HelmetProvider>
-            <Helmet
-              titleTemplate={`%s · ${getBrandingDetails().productName}`}
-              defaultTitle={getBrandingDetails().productName}
-            />
+            <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
             <AppInitSDK
               configurations={{
                 appFetch: appInternalFetch,
