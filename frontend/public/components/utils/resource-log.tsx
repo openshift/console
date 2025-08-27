@@ -1,4 +1,6 @@
 import {
+  MouseEventHandler,
+  PropsWithChildren,
   ReactNode,
   Ref,
   useCallback,
@@ -12,6 +14,7 @@ import { useSelector } from 'react-redux';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
+import { detect } from 'chardet';
 import {
   Alert,
   AlertActionCloseButton,
@@ -134,6 +137,27 @@ const getResourceLogURL = (
 const getLogDownloadFilename = (resource: K8sResourceKind, containerName?: string) => {
   const parts = [resource?.metadata?.name, containerName].filter(Boolean);
   return `${parts.join('-')}.log`;
+};
+
+/** detect encoding in raw pod logs to support multi-language characters */
+const handleRawLogs = (logURL: string): MouseEventHandler<HTMLButtonElement> => {
+  return (e) => {
+    e.preventDefault();
+
+    fetch(logURL)
+      .then((response) => response.arrayBuffer())
+      .then((arrayBuffer) => {
+        const encoding = detect(new Uint8Array(arrayBuffer));
+        const text = new TextDecoder(encoding).decode(arrayBuffer);
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch and decode log file:', err);
+      });
+  };
 };
 
 const HeaderBanner = ({ lines, status }: { lines: string[]; status: string }) => {
@@ -441,7 +465,11 @@ const LogControls: React.FCC<LogControlsProps> = ({
             <ToolbarGroup variant="action-group-plain">
               <ToolbarItem>
                 <Tooltip content={t('View raw logs')}>
-                  <ExternalLinkButton href={currentLogURL} variant="plain" />
+                  <ExternalLinkButton
+                    component="button"
+                    onClick={handleRawLogs(currentLogURL)}
+                    variant="plain"
+                  />
                 </Tooltip>
               </ToolbarItem>
               <ToolbarItem>
@@ -472,6 +500,13 @@ const LogControls: React.FCC<LogControlsProps> = ({
     </Toolbar>
   );
 };
+
+/** helper for opening a new window with raw logs. this is so we don't mess with the previous i18n string */
+const LogLink: React.FCC<PropsWithChildren<{ href: string }>> = ({ children, href }) => (
+  <ExternalLink component="button" onClick={handleRawLogs(href)}>
+    {children}
+  </ExternalLink>
+);
 
 // Resource agnostic log component
 export const ResourceLog: React.FCC<ResourceLogProps> = ({
@@ -730,7 +765,7 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
     >
       <Trans ns="public" t={t}>
         To view unabridged log content, you can either{' '}
-        <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
+        <LogLink href={linkURL}>open the raw file in another window</LogLink> or{' '}
         <a href={linkURL} download={getLogDownloadFilename(resource, containerName)}>
           download it
         </a>
