@@ -217,7 +217,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         concatVersions(
           chartVersion,
           appVersion,
-          t,
+          t('helm-plugin~Chart version'),
           getChartRepositoryTitle(chartRepositories, chartRepoName),
         );
 

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Location } from 'react-router-dom-v5-compat';
+import { Location, Params } from 'react-router-dom-v5-compat';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { K8sKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
@@ -11,9 +11,9 @@ import { ALL_NAMESPACES_KEY } from '../constants/common';
 export const useTabbedTableBreadcrumbsFor = (
   kindObj: K8sKind,
   location: Location,
-  params: { [key: string]: string },
+  params: Required<Params<string>>,
   navOption: string,
-  subTab: string = null,
+  subTab: string | null = null,
   customBreadcrumbName?: string,
   customBreadcrumbURLRequired?: boolean,
   customBreadCrumbDetailsPrefix?: string,
