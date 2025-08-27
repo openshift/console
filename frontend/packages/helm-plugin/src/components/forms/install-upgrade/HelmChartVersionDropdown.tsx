@@ -8,6 +8,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
+import { ModalCallback } from '@console/internal/components/modals/types';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { DropdownField } from '@console/shared';
@@ -40,7 +41,6 @@ export type HelmChartVersionDropdownProps = {
   annotatedName?: string;
   providerName?: string;
 };
-type ModalCallback = () => void;
 
 const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdownProps> = ({
   chartVersion,

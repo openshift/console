@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { WarningModal, WarningModalProps } from '@patternfly/react-component-groups';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-
-type ModalCallback = () => void;
+import { ModalCallback } from '@console/internal/components/modals/types';
 
 /**
  * ControlledWarningModal is a wrapper around WarningModal that manages its open state.

@@ -20,7 +20,7 @@ import { useAddSecretToWorkloadModalLauncher } from './modals/add-secret-to-work
 import { DetailsItem } from './utils/details-item';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ActionMenuVariant, LazyActionMenu } from '@console/shared';
+import { ActionMenuVariant, LazyActionMenu } from '@console/shared/src/components/actions';
 
 const tableColumnClasses = [
   '',
@@ -39,15 +39,15 @@ const SecretTableRow: React.FCC<{ obj: SecretKind }> = ({ obj }) => {
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind="Secret" name={obj.metadata.name} namespace={obj.metadata.namespace} />
+        <ResourceLink kind="Secret" name={obj.metadata?.name} namespace={obj.metadata?.namespace} />
       </TableData>
       <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={obj.metadata?.namespace} />
       </TableData>
       <TableData className={css(tableColumnClasses[2], 'co-break-word')}>{obj.type}</TableData>
       <TableData className={tableColumnClasses[3]}>{data}</TableData>
       <TableData className={tableColumnClasses[4]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata?.creationTimestamp || ''} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <LazyActionMenu context={context} />
@@ -77,7 +77,7 @@ const SecretDetails: React.FCC<{ obj: SecretKind }> = ({ obj }) => {
         </Grid>
       </PaneBody>
       <PaneBody>
-        <SecretData data={data} />
+        <SecretData data={data || {}} />
       </PaneBody>
     </>
   );
