@@ -286,15 +286,10 @@ export const useAddSecretToWorkloadModalLauncher = (
   props: AddSecretToWorkloadModalProps,
 ): ModalCallback => {
   const launcher = useOverlay();
-  const { secretName, namespace } = props;
 
   return React.useCallback(
-    () =>
-      secretName &&
-      namespace &&
-      launcher<AddSecretToWorkloadModalProps>(AddSecretToWorkloadModalProvider, props),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [launcher, secretName, namespace],
+    () => launcher<AddSecretToWorkloadModalProps>(AddSecretToWorkloadModalProvider, props),
+    [launcher, props],
   );
 };
 

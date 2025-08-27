@@ -17,18 +17,18 @@ import { CommonActionCreator, ActionObject } from './types';
 /**
  * A React hook for retrieving common actions related to Kubernetes resources.
  *
- * @param {K8sModel | undefined} kind - The K8s model for the resource.
- * @param {K8sResourceKind | undefined} resource - The specific resource instance for which to generate actions.
+ * @param kind - The K8s model for the resource.
+ * @param resource - The specific resource instance for which to generate actions.
  * @param [filterActions] - Optional. If provided, the returned object will contain only the specified actions.
  * Specify which actions to include using CommonActionCreator enum values.
  * If omitted, it will contain all common actions.
- * @param {string} editPath - Optional URL path used for editing the resource.
- * @param {JSX.Element} [message] - Optional message to display in the delete modal.
+ * @param  editPath - Optional URL path used for editing the resource.
+ * @param [message] - Optional message to display in the delete modal.
  *
  * This hook is robust to inline arrays/objects for the `filterActions` argument, so you do not need to memoize or define
  * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
  *
- * @returns {[ActionObject<T>, boolean]} A tuple containing the actions object and a boolean indicating if actions are ready to use.
+ * @returns A tuple containing the actions object and a boolean indicating if actions are ready to use.
  * When isReady is false, do not access properties on the actions object.
  * When isReady is true, all requested actions are guaranteed to exist on the actions object.
  *
@@ -48,7 +48,10 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
     if (editPath) {
       return editPath;
     }
-    const reference = kind?.crd ? referenceFor(resource) : kind?.kind;
+    if (!kind || !resource) {
+      return '';
+    }
+    const reference = kind.crd ? referenceFor(resource) : kind.kind;
     return `${resourceObjPath(resource, reference)}/yaml`;
   }, [kind, resource, editPath]);
 
@@ -56,23 +59,23 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
     () => ({
       [CommonActionCreator.Delete]: (): Action => ({
         id: 'delete-resource',
-        label: t('console-app~Delete {{kind}}', { kind: kind.kind }),
+        label: t('console-app~Delete {{kind}}', { kind: kind?.kind }),
         cta: () =>
           deleteModal({
             kind,
             resource,
             message,
           }),
-        accessReview: asAccessReview(kind, resource, 'delete'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'delete'),
       }),
       [CommonActionCreator.Edit]: (): Action => {
         return {
           id: 'edit-resource',
-          label: t('console-app~Edit {{kind}}', { kind: kind.kind }),
+          label: t('console-app~Edit {{kind}}', { kind: kind?.kind }),
           cta: {
             href: actualEditPath,
           },
-          accessReview: asAccessReview(kind, resource, 'update'),
+          accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'update'),
         };
       },
       [CommonActionCreator.ModifyLabels]: (): Action => ({
@@ -84,7 +87,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind, resource, 'patch'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
       [CommonActionCreator.ModifyAnnotations]: (): Action => ({
         id: 'edit-annotations',
@@ -95,7 +98,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind, resource, 'patch'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
       [CommonActionCreator.ModifyCount]: (): Action => ({
         id: 'edit-pod-count',
@@ -105,7 +108,12 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resourceKind: kind,
             resource,
           }),
-        accessReview: asAccessReview(kind, resource, 'patch', 'scale'),
+        accessReview: asAccessReview(
+          kind as K8sModel,
+          resource as K8sResourceKind,
+          'patch',
+          'scale',
+        ),
       }),
       [CommonActionCreator.ModifyPodSelector]: (): Action => ({
         id: 'edit-pod-selector',
@@ -116,7 +124,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             blocking: true,
           }),
-        accessReview: asAccessReview(kind, resource, 'patch'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
       [CommonActionCreator.ModifyTolerations]: (): Action => ({
         id: 'edit-toleration',
@@ -127,18 +135,18 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resource,
             modalClassName: 'modal-lg',
           }),
-        accessReview: asAccessReview(kind, resource, 'patch'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
       [CommonActionCreator.AddStorage]: (): Action => ({
         id: 'add-storage',
         label: t('console-app~Add storage'),
         cta: {
           href: `${resourceObjPath(
-            resource,
-            kind.crd ? referenceFor(kind) : kind.kind,
+            resource as K8sResourceKind,
+            kind?.crd ? referenceFor(resource as K8sModel) : (kind?.kind as string),
           )}/attach-storage`,
         },
-        accessReview: asAccessReview(kind, resource, 'patch'),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
     [kind, resource, t, message, actualEditPath],
