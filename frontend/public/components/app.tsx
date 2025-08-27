@@ -326,7 +326,6 @@ const AppRouter = () => {
     <Router history={history}>
       <CompatRouter>
         <Routes>
-          {/* Auth error page uses shared Helmet context */}
           <Route path={LOGIN_ERROR_PATH} element={<AuthenticationErrorPage />} />
           {standaloneRouteExtensions.map((e) => (
             <Route
