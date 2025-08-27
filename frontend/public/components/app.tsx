@@ -206,8 +206,6 @@ const App = (props) => {
     }
   };
 
-  const { productName } = getBrandingDetails();
-
   const isNotificationDrawerExpanded = useSelector(
     ({ UI }: RootState) => !!UI.getIn(['notifications', 'isExpanded']),
   );
@@ -224,7 +222,6 @@ const App = (props) => {
 
   const content = (
     <>
-      <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
         <CloudShellDrawer>
@@ -329,19 +326,8 @@ const AppRouter = () => {
     <Router history={history}>
       <CompatRouter>
         <Routes>
-          {/* Auth error page uses shared HelmetProvider context */}
-          <Route
-            path={LOGIN_ERROR_PATH}
-            element={
-              <>
-                <Helmet
-                  titleTemplate={`%s · ${getBrandingDetails().productName}`}
-                  defaultTitle={getBrandingDetails().productName}
-                />
-                <AuthenticationErrorPage />
-              </>
-            }
-          />
+          {/* Auth error page uses shared Helmet context */}
+          <Route path={LOGIN_ERROR_PATH} element={<AuthenticationErrorPage />} />
           {standaloneRouteExtensions.map((e) => (
             <Route
               key={e.uid}
@@ -507,6 +493,10 @@ graphQLReady.onReady(() => {
       <Provider store={store}>
         <ThemeProvider>
           <HelmetProvider>
+            <Helmet
+              titleTemplate={`%s · ${getBrandingDetails().productName}`}
+              defaultTitle={getBrandingDetails().productName}
+            />
             <AppInitSDK
               configurations={{
                 appFetch: appInternalFetch,
