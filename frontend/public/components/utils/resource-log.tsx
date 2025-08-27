@@ -14,10 +14,13 @@ import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   Alert,
+  AlertActionCloseButton,
   AlertActionLink,
+  AlertGroup,
   Banner,
   BannerStatus,
   Button,
+  Flex,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -224,7 +227,7 @@ const LogControls: React.FCC<LogControlsProps> = ({
             </Tooltip>
           );
         case STREAM_EOF:
-          return null; // we show this in the line number area
+          return null; // we show this in the HeaderBanner instead
         default:
           return t(streamStatusMessages[status]);
       }
@@ -487,7 +490,7 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
   const [showFullLogCheckbox, setShowFullLogCheckbox] = useState(showFullLog);
   const buffer = useToggleLineBuffer(showFullLogCheckbox ? null : bufferSize);
   const ws = useRef<any>(); // TODO Make this a hook
-  const [resourceLogRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
+  const [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
   const logViewerRef = useRef(null);
   const externalLogLinkFlag = useFlag(FLAGS.CONSOLE_EXTERNAL_LOG_LINK);
   const [error, setError] = useState(false);
@@ -500,6 +503,10 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
   const [namespaceUID, setNamespaceUID] = useState('');
   const [podLogLinks, setPodLogLinks] = useState();
   const [content, setContent] = useState('');
+
+  const [showErrorAlert, setShowErrorAlert] = useState(true);
+  const [showStaleAlert, setShowStaleAlert] = useState(true);
+  const [showTruncatedAlert, setShowTruncatedAlert] = useState(true);
 
   const [logType, setLogType] = useState<LogTypeStatus>(LOG_TYPE_CURRENT);
   const [hasPreviousLogs, setPreviousLogs] = useState(false);
@@ -683,6 +690,54 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
     }
   };
 
+  const errorAlert = (
+    <Alert
+      isInline
+      key="error"
+      className="co-alert co-alert--margin-bottom-sm"
+      variant="danger"
+      title={t('An error occurred while retrieving the requested logs.')}
+      actionLinks={<AlertActionLink onClick={() => setError(false)}>{t('Retry')}</AlertActionLink>}
+      actionClose={<AlertActionCloseButton onClose={() => setShowErrorAlert(false)} />}
+    />
+  );
+
+  const staleAlert = (
+    <Alert
+      isInline
+      key="stale"
+      className="co-alert co-alert--margin-bottom-sm"
+      variant="info"
+      title={t('The logs for this {{resourceKind}} may be stale.', {
+        resourceKind: resource.kind,
+      })}
+      actionLinks={
+        <AlertActionLink onClick={() => setStale(false)}>{t('Refresh')}</AlertActionLink>
+      }
+      actionClose={<AlertActionCloseButton onClose={() => setShowStaleAlert(false)} />}
+    />
+  );
+
+  const truncatedAlert = (
+    <Alert
+      isInline
+      key="truncated"
+      className="co-alert co-alert--margin-bottom-sm"
+      variant="warning"
+      title={t('Some lines have been abridged because they are exceptionally long.')}
+      actionClose={<AlertActionCloseButton onClose={() => setShowTruncatedAlert(false)} />}
+    >
+      <Trans ns="public" t={t}>
+        To view unabridged log content, you can either{' '}
+        <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
+        <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
+          download it
+        </a>
+        .
+      </Trans>
+    </Alert>
+  );
+
   const logControls = (
     <LogControls
       currentLogURL={linkURL}
@@ -707,84 +762,55 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
     />
   );
 
+  useEffect(() => {
+    window.dispatchEvent(new Event('resize'));
+    // trigger resize event to prevent double scrollbar
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstRender, error, stale, hasTruncated, isFullscreen]);
+
   return (
     <div
-      ref={resourceLogRef}
       className={css('co-resource-log', { 'co-fullscreen pf-v6-u-p-sm': isFullscreen })}
+      ref={fullscreenRef}
+      style={{ display: 'contents' }}
     >
-      {error ||
-        stale ||
-        (hasTruncated && (
-          <div className="co-resource-log__alert-wrapper">
-            {error && (
-              <Alert
-                isInline
-                className="co-alert co-alert--margin-bottom-sm"
-                variant="danger"
-                title={t('An error occurred while retrieving the requested logs.')}
-                actionLinks={
-                  <AlertActionLink onClick={() => setError(false)}>{t('Retry')}</AlertActionLink>
-                }
-              />
+      <LogViewer
+        header={
+          <Flex
+            gap={{ default: 'gapNone' }}
+            direction={{ default: 'column' }}
+            fullWidth={{ default: 'fullWidth' }}
+            className="log-window__header"
+            data-test="resource-log-no-lines"
+          >
+            {(error || stale || hasTruncated) && (
+              <AlertGroup className="co-resource-log__alert-wrapper">
+                {showErrorAlert && error && errorAlert}
+                {showStaleAlert && stale && staleAlert}
+                {showTruncatedAlert && hasTruncated && truncatedAlert}
+              </AlertGroup>
             )}
-            {stale && (
-              <Alert
-                isInline
-                className="co-alert co-alert--margin-bottom-sm"
-                variant="info"
-                title={t('The logs for this {{resourceKind}} may be stale.', {
-                  resourceKind: resource.kind,
-                })}
-                actionLinks={
-                  <AlertActionLink onClick={() => setStale(false)}>{t('Refresh')}</AlertActionLink>
-                }
-              />
-            )}
-            {hasTruncated && (
-              <Alert
-                isInline
-                className="co-alert co-alert--margin-bottom-sm"
-                variant="warning"
-                title={t('Some lines have been abridged because they are exceptionally long.')}
-              >
-                <Trans ns="public" t={t}>
-                  To view unabridged log content, you can either{' '}
-                  <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
-                  <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
-                    download it
-                  </a>
-                  .
-                </Trans>
-              </Alert>
-            )}
-          </div>
-        ))}
-      <div>
-        <LogViewer
-          header={
-            <div className="log-window__header" data-test="resource-log-no-lines">
-              <HeaderBanner lines={lines} status={status} />
-            </div>
-          }
-          theme={theme}
-          data={content}
-          ref={logViewerRef}
-          height="100%"
-          isTextWrapped={wrapLinesCheckbox}
-          toolbar={logControls}
-          footer={
-            <FooterButton
-              className={css('log-window__footer', {
-                'log-window__footer--hidden': status !== STREAM_PAUSED,
-              })}
-              setStatus={setStatus}
-              linesBehind={linesBehind}
-            />
-          }
-          onScroll={onScroll}
-          initialIndexWidth={7}
-        />
-      </div>
+            <HeaderBanner lines={lines} status={status} />
+          </Flex>
+        }
+        theme={theme}
+        data={content}
+        ref={logViewerRef}
+        height="100%"
+        isTextWrapped={wrapLinesCheckbox}
+        toolbar={logControls}
+        footer={
+          <FooterButton
+            className={css('log-window__footer', {
+              'log-window__footer--hidden': status !== STREAM_PAUSED,
+            })}
+            setStatus={setStatus}
+            linesBehind={linesBehind}
+          />
+        }
+        onScroll={onScroll}
+        initialIndexWidth={7}
+      />
     </div>
   );
 };
