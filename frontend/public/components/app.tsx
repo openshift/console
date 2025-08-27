@@ -223,7 +223,7 @@ const App = (props) => {
   };
 
   const content = (
-    <HelmetProvider>
+    <>
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
@@ -280,7 +280,7 @@ const App = (props) => {
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />
       <FeatureFlagExtensionLoader />
-    </HelmetProvider>
+    </>
   );
 
   return (
@@ -329,17 +329,17 @@ const AppRouter = () => {
     <Router history={history}>
       <CompatRouter>
         <Routes>
-          {/* Auth error page needs HelmetProvider context, so wrap it */}
+          {/* Auth error page uses shared HelmetProvider context */}
           <Route
             path={LOGIN_ERROR_PATH}
             element={
-              <HelmetProvider>
+              <>
                 <Helmet
                   titleTemplate={`%s · ${getBrandingDetails().productName}`}
                   defaultTitle={getBrandingDetails().productName}
                 />
                 <AuthenticationErrorPage />
-              </HelmetProvider>
+              </>
             }
           />
           {standaloneRouteExtensions.map((e) => (
@@ -506,19 +506,21 @@ graphQLReady.onReady(() => {
     <Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
         <ThemeProvider>
-          <AppInitSDK
-            configurations={{
-              appFetch: appInternalFetch,
-              apiDiscovery: initApiDiscovery,
-              initPlugins,
-            }}
-          >
-            <ToastProvider>
-              <PollConsoleUpdates />
-              <AdmissionWebhookWarningNotifications />
-              <AppRouter />
-            </ToastProvider>
-          </AppInitSDK>
+          <HelmetProvider>
+            <AppInitSDK
+              configurations={{
+                appFetch: appInternalFetch,
+                apiDiscovery: initApiDiscovery,
+                initPlugins,
+              }}
+            >
+              <ToastProvider>
+                <PollConsoleUpdates />
+                <AdmissionWebhookWarningNotifications />
+                <AppRouter />
+              </ToastProvider>
+            </AppInitSDK>
+          </HelmetProvider>
         </ThemeProvider>
       </Provider>
     </Suspense>,
