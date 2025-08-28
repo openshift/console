@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom-v5-compat';
 import { TopologyDataObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { Firehose, ResourceIcon, StatusBox } from '@console/internal/components/utils';
 import {
+  FirehoseResource,
   GroupVersionKind,
+  K8sResourceCommon,
   K8sResourceKind,
   modelFor,
   referenceFor,
@@ -15,6 +17,7 @@ import {
   ClusterServiceVersionKind,
   ClusterServiceVersionModel,
   CRDDescription,
+  ProvidedAPI,
   providedAPIForReference,
 } from '@console/operator-lifecycle-manager/src';
 import {
@@ -44,7 +47,7 @@ const OperatorResources: React.FC<OperatorResourcesProps> = ({
   linkForResource,
 }) => {
   const { t } = useTranslation();
-  const manifestResources = flatten(resources);
+  const manifestResources = flatten(resources || {});
   return (
     <StatusBox
       data={manifestResources}
@@ -76,7 +79,7 @@ const OperatorResourcesGetter: React.FC<OperatorResourcesGetterProps> = ({
 }) => {
   const providedAPI = providedAPIForReference(csv, modelReference);
   const linkForResource = (obj: K8sResourceKind) => {
-    return linkForCsvResource(obj, providedAPI, csv.metadata.name);
+    return linkForCsvResource(obj, providedAPI as ProvidedAPI, csv.metadata?.name || '');
   };
   const defaultResources = [
     'Deployment',
@@ -93,7 +96,7 @@ const OperatorResourcesGetter: React.FC<OperatorResourcesGetterProps> = ({
       kind,
     })) as CRDDescription['resources']);
 
-  const firehoseResources = resourcesToGet.reduce((acc, descriptor) => {
+  const firehoseResources = resourcesToGet?.reduce((acc, descriptor) => {
     const { name, kind, version } = descriptor;
     const group = name ? name.substring(name.indexOf('.') + 1) : '';
     const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
@@ -107,7 +110,7 @@ const OperatorResourcesGetter: React.FC<OperatorResourcesGetterProps> = ({
       optional: true,
     });
     return acc;
-  }, []);
+  }, [] as FirehoseResource[]);
 
   return (
     <Firehose resources={firehoseResources}>
@@ -131,13 +134,13 @@ const TopologyOperatorBackedResources: React.FC<TopologyOperatorBackedResourcesP
 }) => {
   const { t } = useTranslation();
   const { resource } = item;
-  const { namespace } = resource.metadata;
-  const reference = referenceFor(resource);
-  const flatten = flattenCsvResources(resource);
+  const { namespace } = resource?.metadata || {};
+  const reference = referenceFor(resource as K8sResourceCommon);
+  const flatten = flattenCsvResources(resource as K8sResourceCommon);
   const getManagedByCSVResourceLink = () => {
     const model = modelFor(referenceFor(csv));
-    const { name } = csv.metadata;
-    const { kind } = model;
+    const { name } = csv.metadata || {};
+    const { kind } = model || {};
 
     const link = `/k8s/ns/${namespace}/${referenceForModel(ClusterServiceVersionModel)}/${name}`;
 
@@ -165,7 +168,7 @@ const TopologyOperatorBackedResources: React.FC<TopologyOperatorBackedResourcesP
       <OperatorResourcesGetter
         csv={csv}
         flatten={flatten}
-        namespace={namespace}
+        namespace={namespace || ''}
         modelReference={reference}
       />
     </div>

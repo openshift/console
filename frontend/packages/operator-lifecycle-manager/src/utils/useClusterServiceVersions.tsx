@@ -61,14 +61,14 @@ const normalizeClusterServiceVersions = (
       [],
     )
     .map<CatalogItem>((desc) => {
-      const { creationTimestamp } = desc.csv.metadata;
-      const uid = `${desc.csv.metadata.uid}-${desc.displayName}`;
+      const { creationTimestamp } = desc.csv.metadata || {};
+      const uid = `${desc.csv.metadata?.uid || ''}-${desc.displayName}`;
       const { description } = desc;
       const provider = desc.csv.spec.provider?.name;
       const operatorName = desc.csv.spec.displayName;
       const supportUrl =
-        desc.csv.metadata.annotations?.['marketplace.openshift.io/support-workflow'];
-      const markdownDescription = formatTileDescription(desc.csv.spec.description);
+        desc.csv.metadata?.annotations?.['marketplace.openshift.io/support-workflow'];
+      const markdownDescription = formatTileDescription(desc.csv.spec.description || '');
       const longDescription = t(
         'olm~This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.',
         { operatorName },
@@ -121,13 +121,13 @@ const normalizeClusterServiceVersions = (
           operatorName,
         },
         icon: {
-          class: null,
+          class: undefined,
           url: getImageForCSVIcon(desc.csv.spec.icon?.[0]),
         },
         cta: {
           label: t('public~Create'),
           href: `/k8s/ns/${namespace}/clusterserviceversions/${
-            desc.csv.metadata.name
+            desc.csv.metadata?.name || ''
           }/${referenceForProvidedAPI(desc)}/~new`,
         },
         details: {

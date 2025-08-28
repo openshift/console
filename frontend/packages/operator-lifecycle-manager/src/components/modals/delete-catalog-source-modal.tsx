@@ -21,7 +21,7 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
   const { t } = useTranslation();
   const [confirmed, setConfirmed] = React.useState<boolean>(false);
   const isConfirmed = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    setConfirmed(e.currentTarget.value === resource.metadata.name);
+    setConfirmed(e.currentTarget.value === resource?.metadata?.name);
   };
 
   const submit = React.useCallback(
@@ -51,7 +51,7 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
         <p>
           <Trans ns="olm">
             Confirm deletion by typing{' '}
-            <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
+            <strong className="co-break-word">{{ name: resource?.metadata?.name }}</strong> below:
           </Trans>
         </p>
         <span className="pf-v6-c-form-control">
@@ -66,7 +66,7 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
       <ModalSubmitFooter
         submitText={t('public~Delete')}
         submitDisabled={!confirmed}
-        cancel={cancel}
+        cancel={cancel as any}
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitDanger
