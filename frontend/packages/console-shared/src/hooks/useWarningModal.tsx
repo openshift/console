@@ -1,8 +1,7 @@
 import { useState, useCallback } from 'react';
 import { WarningModal, WarningModalProps } from '@patternfly/react-component-groups';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-
-type ModalCallback = () => void;
+import { ModalCallback } from '@console/internal/components/modals/types';
 
 /**
  * ControlledWarningModal is a wrapper around WarningModal that manages its open state.
@@ -31,4 +30,18 @@ export const useWarningModal = (props: Omit<WarningModalProps, 'isOpen'>): Modal
   return useCallback(() => {
     launcher<WarningModalProps>(ControlledWarningModal, props);
   }, [launcher, props]);
+};
+
+/**
+ * useWarningModalWithProps returns a WarningModal launcher that accepts override props
+ */
+export type WarningModalCallbackWithProps = (overrides: Omit<WarningModalProps, 'isOpen'>) => void;
+
+export const useWarningModalWithProps = (
+  props?: Partial<Omit<WarningModalProps, 'isOpen'>>,
+): WarningModalCallbackWithProps => {
+  const launcher = useOverlay();
+  return (overrides) => {
+    launcher<WarningModalProps>(ControlledWarningModal, { ...(props || {}), ...overrides });
+  };
 };
