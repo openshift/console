@@ -10,13 +10,8 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
-import { ResourceDataViewColumn, ResourceDataViewRow } from './types';
+import { ResourceDataViewColumn, GetDataViewRows } from './types';
 import { useResourceDataViewSort } from './useResourceDataViewSort';
-
-export type GetDataViewRows<TData, TCustomRowData> = (
-  data: RowProps<TData, TCustomRowData>[],
-  columns: ResourceDataViewColumn<TData>[],
-) => ResourceDataViewRow[];
 
 const isDataViewConfigurableColumn = (
   column: DataViewTh,
