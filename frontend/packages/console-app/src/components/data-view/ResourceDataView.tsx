@@ -20,16 +20,20 @@ import {
   ColumnLayout,
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
+import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { createColumnManagementModal } from '@console/internal/components/modals';
 import { TableColumn } from '@console/internal/module/k8s';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
-import { ResourceFilters } from './types';
-import { useResourceDataViewData, GetDataViewRows } from './useResourceDataViewData';
+import { ResourceFilters, GetDataViewRows } from './types';
+import { useResourceDataViewData } from './useResourceDataViewData';
 import { useResourceDataViewFilters } from './useResourceDataViewFilters';
 
 export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
+  label?: string;
   data: TData[];
   loaded: boolean;
+  loadError?: any;
   columns: TableColumn<TData>[];
   columnLayout?: ColumnLayout;
   columnManagementID?: string;
@@ -42,6 +46,7 @@ export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
   hideColumnManagement?: boolean;
+  mock?: boolean;
 };
 
 /**
@@ -52,8 +57,10 @@ export const ResourceDataView = <
   TCustomRowData = any,
   TFilters extends ResourceFilters = ResourceFilters
 >({
+  label,
   data,
   loaded,
+  loadError,
   columns,
   columnLayout,
   columnManagementID,
@@ -66,6 +73,7 @@ export const ResourceDataView = <
   hideNameLabelFilters,
   hideLabelFilter,
   hideColumnManagement,
+  mock,
 }: ResourceDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation();
 
@@ -136,48 +144,59 @@ export const ResourceDataView = <
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [additionalFilterNodes, t]);
 
-  return (
-    <DataView activeState={activeState}>
-      <DataViewToolbar
-        filters={
-          <DataViewFilters values={filters} onChange={(_e, values) => onSetFilters(values)}>
-            {dataViewFiltersNodes}
-          </DataViewFilters>
-        }
-        clearAllFilters={clearAllFilters}
-        actions={
-          !hideColumnManagement && (
-            <ResponsiveActions breakpoint="lg">
-              <ResponsiveAction
-                isPersistent
-                variant="plain"
-                onClick={() =>
-                  createColumnManagementModal({
-                    columnLayout,
-                    noLimit: true,
-                  })
-                }
-                aria-label={t('public~Column management')}
-                data-test="manage-columns"
-              >
-                <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
-                  <ColumnsIcon />
-                </Tooltip>
-              </ResponsiveAction>
-            </ResponsiveActions>
-          )
-        }
-        pagination={<Pagination itemCount={filteredData.length} {...pagination} />}
-      />
-      <InnerScrollContainer>
-        <DataViewTable
-          columns={dataViewColumns}
-          rows={dataViewRows}
-          bodyStates={{ empty: bodyEmpty, loading: bodyLoading }}
-          gridBreakPoint=""
-          variant="compact"
+  return mock ? (
+    <EmptyBox label={label} />
+  ) : (
+    <StatusBox
+      label={label}
+      data={filteredData}
+      unfilteredData={data}
+      loaded={loaded}
+      loadError={loadError}
+      skeleton={<div className="loading-skeleton--table" />}
+    >
+      <DataView activeState={activeState}>
+        <DataViewToolbar
+          filters={
+            <DataViewFilters values={filters} onChange={(_e, values) => onSetFilters(values)}>
+              {dataViewFiltersNodes}
+            </DataViewFilters>
+          }
+          clearAllFilters={clearAllFilters}
+          actions={
+            !hideColumnManagement && (
+              <ResponsiveActions breakpoint="lg">
+                <ResponsiveAction
+                  isPersistent
+                  variant="plain"
+                  onClick={() =>
+                    createColumnManagementModal({
+                      columnLayout,
+                      noLimit: true,
+                    })
+                  }
+                  aria-label={t('public~Column management')}
+                  data-test="manage-columns"
+                >
+                  <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
+                    <ColumnsIcon />
+                  </Tooltip>
+                </ResponsiveAction>
+              </ResponsiveActions>
+            )
+          }
+          pagination={<Pagination itemCount={filteredData.length} {...pagination} />}
         />
-      </InnerScrollContainer>
-    </DataView>
+        <InnerScrollContainer>
+          <DataViewTable
+            columns={dataViewColumns}
+            rows={dataViewRows}
+            bodyStates={{ empty: bodyEmpty, loading: bodyLoading }}
+            gridBreakPoint=""
+            variant="compact"
+          />
+        </InnerScrollContainer>
+      </DataView>
+    </StatusBox>
   );
 };
