@@ -45,7 +45,6 @@ import {
   CertificateSigningRequestKind,
   referenceFor,
   Selector,
-  Selector,
 } from '@console/internal/module/k8s';
 import {
   getName,
