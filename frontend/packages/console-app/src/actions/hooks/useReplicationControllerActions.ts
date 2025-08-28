@@ -1,12 +1,14 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { rollbackModal, confirmModal } from '@console/internal/components/modals';
+import { rollbackModal } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
-import { ReplicationControllerKind, K8sKind, k8sPatch } from '@console/internal/module/k8s';
+import { ReplicationControllerKind, K8sModel } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { ReplicationControllerActionCreator, ActionObject } from './types';
 
 const INACTIVE_STATUSES = ['New', 'Pending', 'Running'];
@@ -14,34 +16,52 @@ const INACTIVE_STATUSES = ['New', 'Pending', 'Running'];
 /**
  * A React hook for retrieving actions related to a ReplicationController resource.
  *
- * @param {K8sKind} kind - The K8s kind model for the ReplicationController.
- * @param {ReplicationControllerKind} obj - The specific ReplicationController resource instance for which to generate actions.
- * @param {ReplicationControllerActionCreator[]} [filterActions] - Optional. If provided, the returned object will contain only the specified actions.
+ * @param kind - The K8s kind model for the ReplicationController.
+ * @param obj - The specific ReplicationController resource instance for which to generate actions.
+ * @param [filterActions] - Optional. If provided, the returned object will contain only the specified actions.
  * Specify which actions to include using ReplicationControllerActionCreator enum values.
  * If omitted, it will contain all ReplicationController actions.
  *
  * This hook is robust to inline arrays/objects for the `filterActions` argument, so you do not need to memoize or define
  * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
  *
- * @returns {[ActionObject<T>, boolean]} A tuple containing the actions object and a boolean indicating if actions are ready to use.
+ * @returns A tuple containing the actions object and a boolean indicating if actions are ready to use.
  * When isReady is false, do not access properties on the actions object.
  * When isReady is true, all requested actions are guaranteed to exist on the actions object.
  *
- * @example
- * // Getting all actions for ReplicationController resource
- * const MyReplicationControllerComponent = ({ kind, obj }) => {
- *   const [actions, isReady] = useReplicationControllerActions(kind, obj);
- *   return <Kebab actions={Object.values(actions)} />;
- * };
  */
 export const useReplicationControllerActions = <
   T extends readonly ReplicationControllerActionCreator[]
 >(
-  kind: K8sKind,
+  kind: K8sModel,
   obj: ReplicationControllerKind,
   filterActions?: T,
 ): [ActionObject<T>, boolean] => {
   const { t } = useTranslation();
+  const openCancelRolloutConfirm = useWarningModal({
+    title: t('console-app~Cancel rollout'),
+    children: t('console-app~Are you sure you want to cancel this rollout?'),
+    confirmButtonLabel: t('console-app~Yes, cancel'),
+    cancelButtonLabel: t("console-app~No, don't cancel"),
+    onConfirm: () => {
+      return k8sPatchResource({
+        model: kind,
+        resource: obj,
+        data: [
+          {
+            op: 'add',
+            path: '/metadata/annotations/openshift.io~1deployment.cancelled',
+            value: 'true',
+          },
+          {
+            op: 'add',
+            path: '/metadata/annotations/openshift.io~1deployment.status-reason',
+            value: 'cancelled by the user',
+          },
+        ],
+      });
+    },
+  });
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
@@ -69,29 +89,12 @@ export const useReplicationControllerActions = <
       [ReplicationControllerActionCreator.CancelRollout]: (): Action => ({
         id: 'cancel-rollout',
         label: t('console-app~Cancel rollout'),
-        cta: () =>
-          confirmModal({
-            title: t('console-app~Cancel rollout'),
-            message: t('console-app~Are you sure you want to cancel this rollout?'),
-            btnText: t('console-app~Yes, cancel'),
-            cancelText: t("console-app~No, don't cancel"),
-            executeFn: () =>
-              k8sPatch(kind, obj, [
-                {
-                  op: 'add',
-                  path: '/metadata/annotations/openshift.io~1deployment.cancelled',
-                  value: 'true',
-                },
-                {
-                  op: 'add',
-                  path: '/metadata/annotations/openshift.io~1deployment.status-reason',
-                  value: 'cancelled by the user',
-                },
-              ]),
-          }),
+        cta: () => openCancelRolloutConfirm(),
         accessReview: asAccessReview(kind, obj, 'patch'),
       }),
     }),
+    // missing openCancelRolloutConfirm dependency, that causes max depth exceeded error
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [t, kind, obj],
   );
 
