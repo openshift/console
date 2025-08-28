@@ -36,7 +36,7 @@ export type HelmChartVersionDropdownProps = {
   helmAction: string | undefined;
   onVersionChange: (chart: HelmChart) => void;
   namespace: string;
-  chartIndexEntry: string;
+  chartIndexEntry: string | undefined;
   annotatedName?: string;
   providerName?: string;
 };
@@ -137,10 +137,10 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       if (!chartIndexEntry) {
         setFieldValue(
           'chartIndexEntry',
-          getChartIndexEntry(json?.entries || {}, chartName, chartEntries[0]?.repoName || ''),
+          getChartIndexEntry(json?.entries ?? {}, chartName, chartEntries[0]?.repoName ?? ''),
         );
       }
-      setHelmChartRepos(json?.entries || {});
+      setHelmChartRepos(json?.entries ?? {});
       setHelmChartEntries(chartEntries);
       setHelmChartVersions(getChartVersions(chartEntries, t));
     };

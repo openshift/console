@@ -63,7 +63,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   const { t } = useTranslation();
   const metrics = mapMetrics(metricsResponse);
   const conditions = mapConditions(operatorStatusResponse);
-  const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID || '';
+  const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID ?? '';
   const riskEntries = Object.entries(metrics).sort(
     ([k1], [k2]) => riskSorting[k2] - riskSorting[k1],
   );
@@ -86,7 +86,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   };
 
   const lastRefreshTime =
-    parseInt(lastGatherResponse?.data?.result?.[0]?.value?.[1] || '0', 10) * 1000;
+    parseInt(lastGatherResponse?.data?.result?.[0]?.value?.[1] ?? '0', 10) * 1000;
 
   return errorUpload(conditions) ? (
     <ErrorState />

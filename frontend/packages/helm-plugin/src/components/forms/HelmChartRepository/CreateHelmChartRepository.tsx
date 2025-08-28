@@ -30,7 +30,7 @@ import { validationSchema } from './helmchartrepository-validation-utils';
 
 interface CreateHelmChartRepositoryProps {
   showScopeType: boolean;
-  existingRepoName: string;
+  existingRepoName: string | undefined;
 }
 
 const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
@@ -38,7 +38,8 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
   existingRepoName,
 }) => {
   const queryParams = useQueryParams();
-  const resourceKind: K8sResourceKindReference = queryParams.get('kind') || '';
+  const resourceKindParam = queryParams.get('kind');
+  const resourceKind: K8sResourceKindReference | undefined = resourceKindParam ?? undefined;
   const isEditForm = !!existingRepoName;
   const actionOrigin = queryParams.get('actionOrigin');
   const { t } = useTranslation();
