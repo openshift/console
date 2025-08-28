@@ -42,15 +42,21 @@ export type CustomIconModalProps = {
 
 /**
  * 262144 bytes is the maximum length of all annotations in one Kubernetes resource.
- * We subtract 1 KiB as an arbitrary buffer to ensure other annotations can still be added.
+ *
+ * We subtract 2 KiB as an arbitrary buffer to ensure other annotations can still be added.
  */
-const MAX_ANNOTATION_LENGTH = 262144 - 1024;
+const MAX_ANNOTATION_LENGTH = 262144 - 2048;
 
 /**
  * Maximum upload size for the custom icon.
- * 4/3 ratio gets the length of base64 string: https://stackoverflow.com/a/17864767
+ *
+ * We compute the estimated decoded bytes from the maximum annotation length.
+ *
+ * We subtract an arbitrary 700 bytes to account for the data URL prefix.
+ *
+ * https://stackoverflow.com/a/17864767
  */
-const MAX_UPLOAD_SIZE = 4 * Math.ceil(MAX_ANNOTATION_LENGTH / 3);
+const MAX_UPLOAD_SIZE = Math.floor((3 * (MAX_ANNOTATION_LENGTH - 700)) / 4);
 
 export const CustomIconModal: React.FCC<CustomIconModalProps> = ({
   isModalOpen,

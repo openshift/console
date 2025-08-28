@@ -184,7 +184,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
 
       setExpanded(false);
     },
-    [onChange, props.items, actionItems],
+    [onChange, actionItems],
   );
 
   const applyTextFilter = React.useCallback(
@@ -215,7 +215,9 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
     if (expanded) {
       applyTextFilter('', props.items);
     }
-  }, [expanded, applyTextFilter]);
+    // only want to run when `expanded` changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expanded]);
 
   /* Menu content */
   const renderedActionItems = React.useMemo(() => {
@@ -236,7 +238,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
         <Divider component="li" />
       </>
     );
-  }, [actionItems, onClick, selectedKey]);
+  }, [actionItems, selectedKey]);
 
   const { rows, bookmarkRows } = React.useMemo(() => {
     const accRows: React.ReactNode[] = [];
@@ -282,16 +284,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
     });
 
     return { rows: accRows, bookmarkRows: accBookmarkRows };
-  }, [
-    bookmarks,
-    enableBookmarks,
-    headerBefore,
-    items,
-    onClick,
-    selectedKey,
-    spacerBefore,
-    storageKey,
-  ]);
+  }, [bookmarks, enableBookmarks, headerBefore, items, selectedKey, spacerBefore]);
 
   return (
     <div className={className} ref={dropdownWrapperRef}>
