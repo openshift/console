@@ -8,9 +8,9 @@ import { useDrag, useDrop } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
 import { K8sModel, modelFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import confirmNavUnpinModal from './confirmNavUnpinModal';
 import './PinnedResource.scss';
 import { NavItemResource } from './NavItemResource';
+import useConfirmNavUnpinModal from './useConfirmNavUnpinModal';
 
 type PinnedResourceProps = {
   resourceRef?: string;
@@ -54,10 +54,11 @@ const DraggableButton: React.FC<DraggableButtonProps> = ({ dragRef }) => {
 
 const RemoveButton: React.FC<RemoveButtonProps> = ({ resourceRef, navResources, onChange }) => {
   const { t } = useTranslation();
+  const confirmNavUnpinModal = useConfirmNavUnpinModal(navResources, onChange);
   const unPin = (e: React.MouseEvent<HTMLButtonElement>, navItem: string) => {
     e.preventDefault();
     e.stopPropagation();
-    confirmNavUnpinModal(navItem, navResources, onChange);
+    confirmNavUnpinModal(navItem);
   };
   return (
     <Button
