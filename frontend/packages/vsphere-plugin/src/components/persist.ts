@@ -230,7 +230,7 @@ const updateIniFormat = (
 
   if (result.expectedValues.length > 0) {
     throw new PersistError(
-      t('Failed to parse cloud provider config {{cm}}. ', {
+      t('Failed to parse cloud provider config {{cm}}', {
         cm: cloudProviderConfig.metadata.name,
       }),
       t('The following content was expected to be defined in the configMap: {{ expectedValues }}', {
