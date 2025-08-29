@@ -3,10 +3,7 @@ import Spy = jasmine.Spy;
 import * as fileSaver from 'file-saver';
 import { Button } from '@patternfly/react-core';
 
-import {
-  DownloadButton,
-  DownloadButtonProps,
-} from '../../../public/components/utils/download-button';
+import { DownloadButton, DownloadButtonProps } from '../../../components/utils/download-button';
 import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
 
 describe(DownloadButton.displayName, () => {

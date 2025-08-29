@@ -1,13 +1,13 @@
 import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
-import { resourcePathFromModel } from '../../../public/components/utils/resource-link';
-import { K8sKind } from '../../../public/module/k8s';
+import { resourcePathFromModel } from '../../../components/utils/resource-link';
+import { K8sKind } from '../../../module/k8s';
 import {
   ClusterOperatorModel,
   ClusterRoleModel,
   MachineModel,
   PodModel,
   UserModel,
-} from '../../../public/models';
+} from '../../../models';
 
 describe('resourcePathFromModel', () => {
   beforeEach(() => {

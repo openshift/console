@@ -2,7 +2,7 @@ import {
   formatPrometheusDuration,
   parsePrometheusDuration,
 } from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import { getDuration, isValid } from '../../../public/components/utils/datetime';
+import { getDuration, isValid } from '../../../components/utils/datetime';
 
 describe('isValid', () => {
   it('rejects non-dates', () => {

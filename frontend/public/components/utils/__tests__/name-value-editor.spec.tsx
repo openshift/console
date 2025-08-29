@@ -1,37 +1,46 @@
-import { shallow } from 'enzyme';
-import { NameValueEditor } from '../../../public/components/utils/name-value-editor';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { NameValueEditor } from '../../../components/utils/name-value-editor';
+
+// Mock i18n
+jest.mock('react-i18next', () => ({
+  withTranslation: () => (component) => component,
+  useTranslation: () => ({
+    t: (key) => key.split('~')[1] || key,
+  }),
+}));
 
 describe('Name Value Editor', () => {
   describe('When supplied with attributes nameString and valueString', () => {
     it('renders header correctly', () => {
-      const wrapper = shallow(
+      render(
         <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           nameString={'foo'}
           valueString={'bar'}
         />,
-      ).dive();
+      );
 
-      expect(wrapper.html()).toContain('foo');
-      expect(wrapper.html()).toContain('bar');
+      expect(screen.getByText('foo')).toBeInTheDocument();
+      expect(screen.getByText('bar')).toBeInTheDocument();
     });
   });
 
   describe('When supplied with nameValuePairs', () => {
     it('renders PairElement correctly', () => {
-      const wrapper = shallow(
+      render(
         <NameValueEditor nameValuePairs={[['name', 'value', 0]]} updateParentData={() => {}} />,
       );
 
-      expect(wrapper.html()).toContain('value="name"');
-      expect(wrapper.html()).toContain('value="value"');
+      expect(screen.getByDisplayValue('name')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('value')).toBeInTheDocument();
     });
   });
 
   describe('When readOnly attribute is "true"', () => {
     it('does not render add button', () => {
-      const wrapper = shallow(
+      render(
         <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
@@ -39,25 +48,25 @@ describe('Name Value Editor', () => {
         />,
       );
 
-      expect(wrapper.html()).not.toContain('pairs-list__add-icon');
+      expect(screen.queryByTestId('add-button')).not.toBeInTheDocument();
     });
 
     it('does not render PairElement buttons', () => {
-      const wrapper = shallow(
+      render(
         <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           readOnly={true}
         />,
       );
-      expect(wrapper.html()).not.toContain('pairs-list__delete-icon');
-      expect(wrapper.html()).not.toContain('pairs-list__action-icon--reorder');
+      expect(screen.queryByTestId('delete-button')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Drag to reorder')).not.toBeInTheDocument();
     });
   });
 
   describe('When readOnly attribute is "false"', () => {
     it('renders add button', () => {
-      const wrapper = shallow(
+      render(
         <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
@@ -66,13 +75,13 @@ describe('Name Value Editor', () => {
         />,
       );
 
-      expect(wrapper.html()).toContain('pairs-list__add-icon');
+      expect(screen.getByTestId('add-button')).toBeInTheDocument();
     });
   });
 
   describe('When readOnly attribute is "false" and allowSorting is "true"', () => {
     it('renders PairElement buttons correctly', () => {
-      const wrapper = shallow(
+      render(
         <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
@@ -81,22 +90,22 @@ describe('Name Value Editor', () => {
         />,
       );
 
-      expect(wrapper.html()).toContain('pairs-list__delete-icon');
-      expect(wrapper.html()).toContain('pairs-list__action-icon--reorder');
+      expect(screen.getByTestId('delete-button')).toBeInTheDocument();
+      expect(screen.getByLabelText('Drag to reorder')).toBeInTheDocument();
     });
   });
 
   describe('When allowSorting attribute is "false"', () => {
     it('renders PairElement buttons correctly', () => {
-      const wrapper = shallow(
+      render(
         <NameValueEditor
           nameValuePairs={[['name', 'value', 0]]}
           updateParentData={() => {}}
           allowSorting={false}
         />,
       );
-      expect(wrapper.html()).toContain('pairs-list__delete-icon');
-      expect(wrapper.html()).not.toContain('pairs-list__action-icon--reorder');
+      expect(screen.getByTestId('delete-button')).toBeInTheDocument();
+      expect(screen.queryByLabelText('Drag to reorder')).not.toBeInTheDocument();
     });
   });
 });
