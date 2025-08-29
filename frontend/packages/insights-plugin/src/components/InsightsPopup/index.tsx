@@ -26,14 +26,14 @@ import {
 } from './mappers';
 
 const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
-  const Icon = riskIcons[datum.id];
-  return <Icon x={x} y={y - 5} fill={legendColorScale[datum.id]} />;
+  const Icon = riskIcons[datum?.id as string];
+  return <Icon x={x} y={y ? y - 5 : 0} fill={legendColorScale[datum?.id as string]} />;
 };
 
 const LabelComponent = ({ clusterID, ...props }) => (
   <ExternalLink
     href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}?total_risk=${
-      riskSorting[props.datum.id] + 1
+      riskSorting[props.datum?.id as string] + 1
     }`}
   >
     <ChartLabel
@@ -63,7 +63,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   const { t } = useTranslation();
   const metrics = mapMetrics(metricsResponse);
   const conditions = mapConditions(operatorStatusResponse);
-  const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID || '';
+  const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID ?? '';
   const riskEntries = Object.entries(metrics).sort(
     ([k1], [k2]) => riskSorting[k2] - riskSorting[k1],
   );
@@ -86,7 +86,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   };
 
   const lastRefreshTime =
-    parseInt(lastGatherResponse?.data?.result?.[0]?.value?.[1] || '0', 10) * 1000;
+    parseInt(lastGatherResponse?.data?.result?.[0]?.value?.[1] ?? '0', 10) * 1000;
 
   return errorUpload(conditions) ? (
     <ErrorState />

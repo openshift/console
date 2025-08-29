@@ -31,8 +31,8 @@ const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
     group: resourceModel?.apiGroup,
     verb: 'patch',
     resource: resourceModel?.plural,
-    name: secretObj?.metadata.name,
-    namespace: secretObj?.metadata.namespace,
+    name: secretObj?.metadata?.name,
+    namespace: secretObj?.metadata?.namespace,
   });
   const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation('HelmRelease');
   const badgeClassName = css('odc-resource-icon', {
@@ -43,7 +43,7 @@ const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
     return (
       <GroupNode
         {...props}
-        onContextMenu={editAccess ? props.onContextMenu : null}
+        onContextMenu={editAccess ? props.onContextMenu : undefined}
         bgClassName="odc-helm-release__bg"
         badge={kindAbbr}
         badgeColor={kindColor}

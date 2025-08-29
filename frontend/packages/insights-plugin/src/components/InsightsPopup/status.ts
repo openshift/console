@@ -60,7 +60,7 @@ const getClusterInsightsComponentStatus = (
     issuesNumber === 1
       ? i18next.t('insights-plugin~{{issuesNumber}} issue found', { issuesNumber })
       : i18next.t('insights-plugin~{{issuesNumber}} issues found', { issuesNumber });
-  if (values.critical > 0) {
+  if (values.critical && values.critical > 0) {
     return { state: HealthState.ERROR, message: issueStr };
   }
   if (issuesNumber > 0) {

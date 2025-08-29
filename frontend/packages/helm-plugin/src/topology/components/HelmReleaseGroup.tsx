@@ -53,10 +53,10 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
   dragging,
   dragNodeRef,
 }) => {
-  const [hover, hoverRef] = useHover();
-  const [innerHover, innerHoverRef] = useHover();
+  const [hover, hoverRef] = useHover<SVGGElement>();
+  const [innerHover, innerHoverRef] = useHover<SVGGElement>();
   const [{ dragging: labelDragging }, dragLabelRef] = useDragNode(noRegroupDragSourceSpec);
-  const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
+  const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef || null);
   const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
   const showLabel = useShowLabel(hover);
   const hasChildren = element.getChildren()?.length > 0;
@@ -78,7 +78,7 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
     <g
       ref={hoverRef}
       onClick={onSelect}
-      onContextMenu={editAccess ? onContextMenu : null}
+      onContextMenu={editAccess ? onContextMenu : undefined}
       className={css('pf-topology__group odc-helm-release', {
         'pf-m-dragging': dragging || labelDragging,
         'is-filtered': filtered,

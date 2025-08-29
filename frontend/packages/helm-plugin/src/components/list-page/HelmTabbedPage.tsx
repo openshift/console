@@ -58,12 +58,14 @@ export const PageContents: React.FC = () => {
 
   const menuActions: MenuActions = {
     helmRelease: {
-      label: isHelmVisible ? t('helm-plugin~Helm Release') : null,
+      label: isHelmVisible ? t('helm-plugin~Helm Release') : undefined,
       onSelection: () => `/catalog/ns/${namespace}?catalogType=HelmChart`,
     },
     projectHelmChartRepository: {
       label:
-        projectHelmChartCreateAccess || helmChartCreateAccess ? t('helm-plugin~Repository') : null,
+        projectHelmChartCreateAccess || helmChartCreateAccess
+          ? t('helm-plugin~Repository')
+          : undefined,
       onSelection: () => `/helm-repositories/ns/${namespace}/~new/form`,
     },
   };

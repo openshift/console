@@ -49,21 +49,25 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   if (helmRelease.loadError) {
     return <StatusBox loadError={helmRelease.loadError} />;
   }
-  if (helmRelease.loaded && secrets.loadError) {
+  if (helmRelease.loaded && secrets?.loadError) {
     return <StatusBox loadError={secrets.loadError} />;
   }
-  if (!helmRelease.loaded || !secrets.loaded) {
+  if (!helmRelease.loaded || !secrets?.loaded) {
     return <LoadingBox />;
   }
-  if (!helmRelease.data || _.isEmpty(secrets.data)) {
+  if (!helmRelease.data || _.isEmpty(secrets?.data)) {
     return <ErrorPage404 />;
   }
 
-  const sortedSecrets = _.orderBy(secrets.data, (o) => Number(o.metadata.labels.version), 'desc');
+  const sortedSecrets = _.orderBy(
+    secrets?.data,
+    (o) => Number(o.metadata?.labels?.version),
+    'desc',
+  );
 
   const releaseName = helmRelease.data?.name;
   const latestReleaseSecret = sortedSecrets[0];
-  const latestSecretName = latestReleaseSecret?.metadata.name;
+  const latestSecretName = latestReleaseSecret?.metadata?.name;
   const latestSecretStatus = latestReleaseSecret?.metadata?.labels?.status;
 
   const title = (
@@ -74,8 +78,8 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
         style={{ verticalAlign: 'middle', marginLeft: 'var(--pf-t--global--spacer--md)' }}
       >
         <Status
-          status={releaseStatus(latestSecretStatus)}
-          title={HelmReleaseStatusLabels[latestSecretStatus]}
+          status={releaseStatus(latestSecretStatus || '')}
+          title={HelmReleaseStatusLabels[latestSecretStatus || '']}
         />
       </Badge>
     </>
@@ -173,7 +177,7 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = () => {
 
     const getHelmRelease = async () => {
       try {
-        const helmRelease = await fetchHelmRelease(namespace, helmReleaseName);
+        const helmRelease = await fetchHelmRelease(namespace || '', helmReleaseName || '');
         if (mounted) {
           setHelmReleaseData(helmRelease);
         }
@@ -213,7 +217,12 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = () => {
     data: secrets,
   };
 
-  return <LoadedHelmReleaseDetails helmRelease={helmRelease} secrets={secretsFirehoseResult} />;
+  return (
+    <LoadedHelmReleaseDetails
+      helmRelease={helmRelease as LoadedHelmReleaseDetailsProps['helmRelease']}
+      secrets={secretsFirehoseResult}
+    />
+  );
 };
 
 export default HelmReleaseDetails;

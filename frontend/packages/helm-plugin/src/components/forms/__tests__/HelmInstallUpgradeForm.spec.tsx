@@ -20,7 +20,7 @@ jest.mock('@console/shared', () => ({
   ...jest.requireActual('@console/shared'),
   CodeEditorField: () => 'CodeEditorField',
   DynamicFormField: () => 'DynamicFormField',
-  FlexForm: ({ children }: any) => children,
+  FlexForm: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 // Mock HelmChartVersionDropdown
@@ -36,7 +36,7 @@ jest.mock('@openshift-console/plugin-shared/src/hooks/useResizeObserver', () => 
 // Mock FormSection
 jest.mock('@console/dev-console/src/components/import/section/FormSection', () => ({
   __esModule: true,
-  default: ({ children }: any) => children,
+  default: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 jest.mock('@console/shared/src/components/synced-editor/useEditorType', () => ({
@@ -110,7 +110,7 @@ const componentProps = {
   helmActionConfig: helmConfig,
   onVersionChange: jest.fn(),
   chartMetaDescription: <p>Some chart meta</p>,
-  chartError: null,
+  chartError: new Error('Chart not reachable'),
 };
 
 const props: React.ComponentProps<typeof HelmInstallUpgradeForm> = {
@@ -159,7 +159,7 @@ describe('HelmInstallUpgradeForm', () => {
 
   it('should not render readme button in help text if there is no readme', () => {
     const newProps = _.cloneDeep(props);
-    newProps.values.chartReadme = null;
+    newProps.values.chartReadme = '';
     renderWithProviders(<HelmInstallUpgradeForm {...newProps} />);
     expect(screen.queryByText(/readme/i)).toBeFalsy();
   });
