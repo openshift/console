@@ -7,11 +7,11 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
-import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { DropdownField } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { useWarningModalWithProps } from '@console/shared/src/hooks/useWarningModal';
 import { HelmChartRepositoryModel } from '../../../models';
 import {
   HelmChartMetaData,
@@ -69,40 +69,45 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   };
   const [chartRepositories] = useK8sWatchResource<K8sResourceKind[]>(resourceSelector);
 
+  const warningModalLauncher = useWarningModalWithProps({
+    title: t('helm-plugin~Change chart version?'),
+  });
+
   const warnOnChartVersionChange = (
     onAccept: ModalCallback,
     currentVersion: string,
     newVersion: string,
   ) => {
-    confirmModal({
-      title: t('helm-plugin~Change chart version?'),
-      message: (
-        <>
-          <p>
-            <Trans t={t} ns="helm-plugin">
-              Are you sure you want to change the chart version from{' '}
-              <strong>{{ currentVersion }}</strong> to <strong>{{ newVersion }}</strong>?{' '}
-            </Trans>
-          </p>
-          <p>
-            <InfoCircleIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
-            <Trans t={t} ns="helm-plugin">
-              All data entered for version <strong>{{ currentVersion }}</strong> will be reset
-            </Trans>
-          </p>
-        </>
-      ),
-      submitDanger: false,
-      btnText: t('helm-plugin~Proceed'),
-      cancelText: t('helm-plugin~Cancel'),
-      executeFn: () => {
+    const message = (
+      <>
+        <p>
+          <Trans t={t} ns="helm-plugin">
+            Are you sure you want to change the chart version from{' '}
+            <strong>{{ currentVersion }}</strong> to <strong>{{ newVersion }}</strong>?{' '}
+          </Trans>
+        </p>
+        <p>
+          <InfoCircleIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
+          <Trans t={t} ns="helm-plugin">
+            All data entered for version <strong>{{ currentVersion }}</strong> will be reset
+          </Trans>
+        </p>
+      </>
+    );
+
+    warningModalLauncher({
+      children: message,
+      confirmButtonLabel: t('helm-plugin~Proceed'),
+      cancelButtonLabel: t('helm-plugin~Cancel'),
+      onConfirm: () => {
         onAccept();
         return Promise.resolve();
       },
-      cancel: () => {
+      onClose: () => {
         setFieldValue('chartVersion', currentVersion);
         setFieldTouched('chartVersion', false);
       },
+      ouiaId: 'HelmChangeChartVersionConfirmation',
     });
   };
 

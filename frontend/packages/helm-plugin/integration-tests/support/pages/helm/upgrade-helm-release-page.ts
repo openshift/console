@@ -9,14 +9,10 @@ export const upgradeHelmRelease = {
     const count = Cypress.$('[data-test="console-select"]').length;
     const randNum = Math.floor(Math.random() * count);
     cy.byTestID('console-select-item').eq(randNum).click();
-    cy.get('body').then(($body) => {
-      if ($body.find('form.modal-content').length) {
-        cy.log('Change Chart version popup is displayed, so clicking on the proceed button');
-        cy.get('form.modal-content').within(() => {
-          cy.byLegacyTestID('modal-title').should('contain.text', 'Change chart version?');
-          cy.get('button[type=submit]').click({ force: true });
-        });
-      }
+    cy.get('body').then(() => {
+      cy.get('[data-ouia-component-id="HelmChangeChartVersionConfirmation"]').within(() => {
+        cy.contains('button', 'Proceed').click({ force: true });
+      });
     });
   },
   clickOnUpgrade: () => {
