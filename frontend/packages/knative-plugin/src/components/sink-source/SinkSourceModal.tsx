@@ -52,7 +52,7 @@ const SinkSourceModal: React.FC<Props> = ({
         submitText={t('knative-plugin~Save')}
         submitDisabled={!dirty || !_.isEmpty(errors)}
         cancelText={t('knative-plugin~Cancel')}
-        cancel={cancel}
+        cancel={cancel ?? (() => {})}
         errorMessage={status.error}
       />
     </form>

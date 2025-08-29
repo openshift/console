@@ -40,11 +40,12 @@ const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication })
       try {
         broker = safeLoad(formValues.yamlData);
         if (!broker.metadata?.namespace) {
+          broker.metadata = broker.metadata || {};
           broker.metadata.namespace = formValues.formData.project.name;
         }
       } catch (err) {
         actions.setStatus({ submitError: `Invalid YAML - ${err}` });
-        return null;
+        return Promise.reject(err);
       }
     }
     return k8sCreate(EventingBrokerModel, broker);

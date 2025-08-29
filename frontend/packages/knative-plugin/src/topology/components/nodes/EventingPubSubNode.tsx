@@ -49,7 +49,7 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   useAnchor(RectAnchor, AnchorEnd.target, TYPE_AGGREGATE_EDGE);
   useAnchor(EventSinkSourceAnchor, AnchorEnd.source, TYPE_EVENT_SINK_LINK);
 
-  const ref = React.useRef();
+  const ref = React.useRef<SVGGElement | null>(null);
   const { t } = useTranslation();
   const { data } = element.getData();
   const { width } = element.getBounds();

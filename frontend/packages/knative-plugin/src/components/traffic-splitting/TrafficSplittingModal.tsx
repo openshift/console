@@ -33,7 +33,7 @@ const TrafficSplittingModal: React.FC<Props> = (props) => {
         submitDisabled={isSubmitting}
         submitText={t('knative-plugin~Save')}
         cancelText={t('knative-plugin~Cancel')}
-        cancel={cancel}
+        cancel={cancel ?? (() => {})}
         errorMessage={status.error}
       />
     </form>

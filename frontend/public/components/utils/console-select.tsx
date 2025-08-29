@@ -200,24 +200,24 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   );
 
   // Update state when props change
-  React.useEffect(() => {
-    if (props.selectedKey && props.selectedKey !== selectedKey) {
-      setSelectedKey(props.selectedKey);
-    }
-  }, [props.selectedKey, selectedKey]);
+  const { selectedKey: propsSelectedKey, items: propsItems } = props;
 
   React.useEffect(() => {
-    applyTextFilter(autocompleteText, props.items);
-  }, [props.items, applyTextFilter, autocompleteText]);
+    if (propsSelectedKey && propsSelectedKey !== selectedKey) {
+      setSelectedKey(propsSelectedKey);
+    }
+  }, [propsSelectedKey, selectedKey]);
+
+  React.useEffect(() => {
+    applyTextFilter(autocompleteText, propsItems);
+  }, [propsItems, applyTextFilter, autocompleteText]);
 
   // Clear filter when opening dropdown
   React.useEffect(() => {
     if (expanded) {
-      applyTextFilter('', props.items);
+      applyTextFilter('', propsItems);
     }
-    // only want to run when `expanded` changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expanded]);
+  }, [expanded, applyTextFilter, propsItems]);
 
   /* Menu content */
   const renderedActionItems = React.useMemo(() => {

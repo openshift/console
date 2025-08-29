@@ -29,16 +29,16 @@ const RoutesOverviewList: React.FC<RoutesOverviewListProps> = ({ ksroutes, resou
           {_.map(ksroutes, (route) => {
             const routeLinks: routeLinkProps[] = getKnativeRoutesLinks(route, resource);
             if (resource.kind === ServiceModel.kind) {
-              return <KSRoutes key={route.metadata.uid} route={route} />;
+              return <KSRoutes key={route?.metadata?.uid ?? ''} route={route} />;
             }
-            if (routeLinks.length > 0) {
+            if (routeLinks?.length && routeLinks?.length > 0) {
               const { urls: uniqueRoutes, percent: totalPercentage } = groupTrafficByRevision(
                 route,
                 resource,
               );
               return (
                 <RoutesOverviewListItem
-                  key={route.metadata.uid}
+                  key={route?.metadata?.uid ?? ''}
                   uniqueRoutes={uniqueRoutes}
                   totalPercent={totalPercentage}
                   routeLink={routeLinks[0]}

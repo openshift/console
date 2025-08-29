@@ -48,7 +48,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'DetailPageBreadCrumbs',
     properties: {
       getModels: eventSourceModelsProviderForBreadcrumbs,
-      breadcrumbsProvider: eventSourceBreadcrumbsProvider,
+      breadcrumbsProvider: eventSourceBreadcrumbsProvider as any,
     },
     flags: {
       required: [FLAG_KNATIVE_EVENTING],
@@ -58,7 +58,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'DetailPageBreadCrumbs',
     properties: {
       getModels: channelModelsProviderForBreadcrumbs,
-      breadcrumbsProvider: channelBreadcrumbsProvider,
+      breadcrumbsProvider: channelBreadcrumbsProvider as any,
     },
     flags: {
       required: [FLAG_KNATIVE_EVENTING],
@@ -68,7 +68,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'DetailPageBreadCrumbs',
     properties: {
       getModels: brokerModelProviderForBreadcrumbs,
-      breadcrumbsProvider: brokerBreadcrumbsProvider,
+      breadcrumbsProvider: brokerBreadcrumbsProvider as any,
     },
     flags: {
       required: [FLAG_KNATIVE_EVENTING],

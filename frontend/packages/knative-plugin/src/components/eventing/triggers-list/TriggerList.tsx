@@ -7,7 +7,7 @@ import TriggerRow from './TriggerRow';
 const TriggerList: React.FC<TableProps> = (props) => {
   const { t } = useTranslation();
   const triggerData = props.customData?.broker
-    ? props.data.filter((obj) => obj.spec.broker === props.customData.broker)
+    ? props.data?.filter((obj) => obj.spec.broker === props.customData.broker)
     : props.data;
 
   return (

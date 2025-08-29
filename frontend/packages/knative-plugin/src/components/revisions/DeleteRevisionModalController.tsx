@@ -22,8 +22,10 @@ import {
   k8sPatch,
   K8sResourceKind,
   referenceForModel,
+  WatchK8sResults,
 } from '@console/internal/module/k8s';
 import { RedExclamationCircleIcon } from '@console/shared';
+import { TopologyResourcesObject } from '@console/topology/src/topology-types';
 import { KNATIVE_SERVING_LABEL } from '../../const';
 import { RevisionModel, ServiceModel } from '../../models';
 import { getKnativeRevisionsData } from '../../topology/knative-topology-utils';
@@ -53,13 +55,14 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
   if (!loaded) {
     return null;
   }
-  const service = resources.services.data.find((s: K8sResourceKind) => {
-    return revision.metadata.labels[KNATIVE_SERVING_LABEL] === s.metadata.name;
+  const service = resources?.services.data.find((s: K8sResourceKind) => {
+    return revision?.metadata?.labels?.[KNATIVE_SERVING_LABEL] === s?.metadata?.name;
   });
 
-  const revisions = getKnativeRevisionsData(service, resources).filter(
-    (r) => revision.metadata.uid !== r.metadata.uid,
-  );
+  const revisions = getKnativeRevisionsData(
+    service ?? ({} as K8sResourceKind),
+    resources ?? ({} as WatchK8sResults<TopologyResourcesObject>),
+  ).filter((r) => revision?.metadata?.uid !== r?.metadata?.uid);
 
   if (revisions.length === 0) {
     return (
@@ -95,11 +98,11 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
   const revisionItems = getRevisionItems(revisions);
 
   const traffic = service?.spec?.traffic ?? [{ percent: 0, tag: '', revisionName: '' }];
-  const deleteTraffic = traffic.find((tr) => tr.revisionName === revision.metadata.name);
+  const deleteTraffic = traffic.find((tr) => tr.revisionName === revision?.metadata?.name);
 
   const initialValues: TrafficSplittingType = {
     trafficSplitting: traffic.reduce((acc: Traffic[], tr) => {
-      if (!tr.revisionName || revisions.find((r) => r.metadata.name === tr.revisionName)) {
+      if (!tr.revisionName || revisions.find((r) => r?.metadata?.name === tr.revisionName)) {
         const trafficIndex = acc.findIndex((val) => val.revisionName === tr.revisionName);
         if (trafficIndex >= 0) {
           acc[trafficIndex].percent += tr.percent;
@@ -119,18 +122,20 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
     initialValues.trafficSplitting.push({
       percent: 0,
       tag: '',
-      revisionName: revisions[0].metadata.name,
+      revisionName: revisions[0]?.metadata?.name ?? '',
     });
   }
 
   const deleteRevision = (action: FormikHelpers<FormikValues>) => {
-    return k8sKill(RevisionModel, revision)
+    return k8sKill(RevisionModel, revision ?? ({} as K8sResourceKind))
       .then(() => {
-        close();
+        close?.();
         // If we are currently on the deleted revision's page, redirect to the list page
-        const re = new RegExp(`/${revision.metadata.name}(/|$)`);
+        const re = new RegExp(`/${revision?.metadata?.name}(/|$)`);
         if (re.test(window.location.pathname)) {
-          history.push(resourceListPathFromModel(RevisionModel, revision.metadata.namespace));
+          history.push(
+            resourceListPathFromModel(RevisionModel, revision?.metadata?.namespace ?? ''),
+          );
         }
       })
       .catch((err) => {
@@ -140,12 +145,15 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
   };
 
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
-    const ksvcPatch = trafficDataForPatch(values.trafficSplitting, service);
+    const ksvcPatch = trafficDataForPatch(
+      values.trafficSplitting,
+      service ?? ({} as K8sResourceKind),
+    );
     if (!deleteTraffic || deleteTraffic.percent === 0) {
       return deleteRevision(action);
     }
 
-    return k8sPatch(ServiceModel, service, ksvcPatch)
+    return k8sPatch(ServiceModel, service ?? ({} as K8sResourceKind), ksvcPatch)
       .then(() => {
         deleteRevision(action);
       })
@@ -166,9 +174,9 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
         <DeleteRevisionModal
           {...modalProps}
           revisionItems={revisionItems}
-          deleteRevision={revision}
+          deleteRevision={revision ?? ({} as K8sResourceKind)}
           showTraffic={deleteTraffic?.percent > 0}
-          cancel={cancel}
+          cancel={cancel ?? (() => {})}
         />
       )}
     </Formik>
@@ -180,14 +188,12 @@ type DeleteRevisionModalControllerProps = {
 };
 
 const DeleteRevisionModalController: React.FC<DeleteRevisionModalControllerProps> = (props) => {
-  const {
-    metadata: { namespace },
-  } = props.revision;
-  const resources = knativeServingResourcesTrafficSplitting(namespace);
+  const { metadata: { namespace } = { namespace: '' } } = props.revision ?? {};
+  const resources = knativeServingResourcesTrafficSplitting(namespace ?? '');
   resources.push({
     isList: true,
     kind: referenceForModel(ServiceModel),
-    namespace,
+    namespace: namespace ?? '',
     prop: 'services',
   });
 

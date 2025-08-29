@@ -38,7 +38,7 @@ const ChannelListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (p
   const getModelId = React.useCallback((obj: K8sResourceCommon) => {
     const reference = referenceFor(obj);
     const model = getDynamicChannelModel(reference);
-    return model.id;
+    return model?.id ?? '';
   }, []);
 
   const channelRowFilter = React.useMemo<RowFilter<K8sResourceCommon>[]>(

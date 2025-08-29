@@ -26,16 +26,16 @@ export const isKnativeResource = (resource: K8sResourceKind, model: Model): bool
     .map((n) => (n as OdcNodeModel).resource);
 
   const isEventSourceSinkKind = (uid: string): boolean =>
-    uid &&
+    Boolean(uid) &&
     !!eventResources?.find(
       (eventSource) =>
-        eventSource.metadata?.uid === uid ||
+        eventSource?.metadata?.uid === uid ||
         resource.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(
-          eventSource.metadata?.name,
+          eventSource?.metadata?.name ?? '',
         ),
     );
 
-  if (isEventSourceSinkKind(resource.metadata?.ownerReferences?.[0].uid)) {
+  if (isEventSourceSinkKind(resource.metadata?.ownerReferences?.[0]?.uid ?? '')) {
     return true;
   }
 

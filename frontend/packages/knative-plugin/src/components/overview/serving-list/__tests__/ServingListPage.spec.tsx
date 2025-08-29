@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import * as Router from 'react-router-dom-v5-compat';
 import ServingListPage from '../ServingListsPage';
-import '@testing-library/jest-dom';
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
@@ -12,8 +12,9 @@ jest.mock('@console/internal/components/namespace-bar', () => ({
   NamespaceBar: 'NamespaceBar',
 }));
 
+const mockMultiTabListPage = jest.fn();
 jest.mock('@console/shared', () => ({
-  MultiTabListPage: 'MultiTabListPage',
+  MultiTabListPage: mockMultiTabListPage,
 }));
 
 jest.mock('react-i18next', () => ({
@@ -54,9 +55,32 @@ describe('ServingListPage', () => {
     expect(container.querySelector('multitablistpage')).toBeInTheDocument();
   });
 
-  it('should render the main components without errors', () => {
-    const { container } = render(<ServingListPage />);
-    expect(container.querySelector('namespacebar')).toBeInTheDocument();
-    expect(container.querySelector('multitablistpage')).toBeInTheDocument();
+  it('should render MultiTabListPage with all pages and menuActions', () => {
+    render(<ServingListPage />);
+
+    expect(mockMultiTabListPage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'knative-plugin~Serving',
+        pages: expect.arrayContaining([
+          expect.objectContaining({
+            component: expect.any(String),
+            nameKey: expect.any(String),
+            pageData: expect.objectContaining({
+              namespace: 'my-project',
+              canCreate: false,
+              showTitle: false,
+            }),
+          }),
+        ]),
+        menuActions: expect.objectContaining({
+          service: expect.objectContaining({
+            label: 'knative-plugin~Service',
+            onSelection: expect.any(Function),
+          }),
+        }),
+        telemetryPrefix: 'Serving',
+      }),
+      expect.anything(),
+    );
   });
 });

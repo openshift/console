@@ -40,6 +40,6 @@ export const knativeListViewNodeComponentFactory = (
     case TYPE_EVENT_SOURCE_KAFKA:
       return NoStatusListViewNode;
     default:
-      return null;
+      return undefined;
   }
 };
