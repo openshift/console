@@ -4,18 +4,15 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage } from '@console/internal/components/factory';
 import {
-  Kebab,
   ResourceSummary,
   SectionHeading,
   navFactory,
   DetailsItem,
 } from '@console/internal/components/utils';
+import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { LazyActionMenu, ActionMenuVariant } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { PodDisruptionBudgetModel } from '../../models';
 import { PodDisruptionBudgetKind } from './types';
-
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(PodDisruptionBudgetModel), ...common];
 
 const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
@@ -55,18 +52,25 @@ const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({
 
 export const PodDisruptionBudgetDetailsPage: React.FC<PodDisruptionBudgetDetailsPageProps> = (
   props,
-) => (
-  <DetailsPage
-    {...props}
-    kind={props.kind}
-    menuActions={menuActions}
-    pages={[
-      navFactory.details(PodDisruptionBudgetDetails),
-      navFactory.editYaml(),
-      navFactory.pods(),
-    ]}
-  />
-);
+) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={props.kind}
+      customActionMenu={(_kindObj: K8sModel, obj: K8sResourceKind) => (
+        <LazyActionMenu
+          context={{ [referenceFor(obj)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
+      pages={[
+        navFactory.details(PodDisruptionBudgetDetails),
+        navFactory.editYaml(),
+        navFactory.pods(),
+      ]}
+    />
+  );
+};
 
 export type PodDisruptionBudgetDetailsPageProps = {
   match: any;
