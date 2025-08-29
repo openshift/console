@@ -38,7 +38,7 @@ describe('groupConsoleSamplesByName', () => {
 
 describe('getBestMatch', () => {
   it('should return null for null', () => {
-    expect(getBestMatch(null, '')).toBe(null);
+    expect(getBestMatch(null as any, '')).toBe(null);
   });
 
   it('should return null for an empty array', () => {

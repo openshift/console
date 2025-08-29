@@ -20,7 +20,7 @@ const MonitoringOverviewEvents: React.FC<MonitoringOverviewEventsProps> = ({ eve
       {!_.isEmpty(events) ? (
         _.map(events, (e: EventKind) => {
           return (
-            <div className="odc-monitoring-events__event-item" key={e.metadata.uid}>
+            <div className="odc-monitoring-events__event-item" key={e.metadata?.uid ?? ''}>
               <Flex alignSelf={{ default: 'alignSelfBaseline' }}>
                 <FlexItem title={e.lastTimestamp} className="pf-v6-u-text-color-subtle">
                   {timeFormatter.format(new Date(getLastTime(e)))}

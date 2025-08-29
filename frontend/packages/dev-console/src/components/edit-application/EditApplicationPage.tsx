@@ -46,7 +46,7 @@ const EditApplicationPage: React.FunctionComponent = () => {
 
   const [editResData, isEditResDataLoaded, editResDataLoadError] = useK8sWatchResource<
     K8sResourceKind
-  >(watchedEditResource);
+  >(watchedEditResource as any);
 
   const watchedResources = React.useMemo(() => {
     const nameLabel =
@@ -83,7 +83,7 @@ const EditApplicationPage: React.FunctionComponent = () => {
         name: nameLabel,
         optional: true,
       },
-      [PipelineModel.id]: {
+      [PipelineModel.id as string]: {
         kind: referenceForModel(PipelineModel),
         isList: true,
         namespace,
@@ -107,7 +107,7 @@ const EditApplicationPage: React.FunctionComponent = () => {
   }, [namespace, appName, editResData, isEditResDataLoaded, editResDataLoadError]);
 
   const resources: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>(
-    watchedResources,
+    watchedResources as any,
   );
 
   const isResourcesLoaded =
@@ -120,8 +120,8 @@ const EditApplicationPage: React.FunctionComponent = () => {
       <DocumentTitle>{t('devconsole~Edit')}</DocumentTitle>
       <StatusBox loaded={isResourcesLoaded} data={editResData}>
         <EditApplicationComponent
-          namespace={namespace}
-          appName={appName}
+          namespace={namespace ?? ''}
+          appName={appName ?? ''}
           resources={{
             ...resources,
             editAppResource: {

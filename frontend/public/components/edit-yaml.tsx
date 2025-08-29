@@ -37,6 +37,7 @@ import {
   getImpersonate,
   YAMLTemplate,
   K8sResourceKind,
+  ModelBadge,
 } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
@@ -849,7 +850,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
       {(header || create) && !props.hideHeader && (
         <PageHeading
           title={header}
-          badge={getBadgeFromType(model && model.badge)}
+          badge={getBadgeFromType(model?.badge as ModelBadge)}
           helpText={
             create &&
             (allowMultiple ? (

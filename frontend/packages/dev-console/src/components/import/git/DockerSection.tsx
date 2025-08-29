@@ -15,7 +15,11 @@ const DockerSection: React.FC = () => {
     FormikValues & GitImportFormData
   >();
   const {
-    import: { showEditImportStrategy, strategies, recommendedStrategy },
+    import: { showEditImportStrategy, strategies, recommendedStrategy } = {
+      showEditImportStrategy: false,
+      strategies: [],
+      recommendedStrategy: undefined,
+    },
     git: { url, type, ref, dir, secretResource },
     image: { ports },
     docker,
@@ -30,7 +34,7 @@ const DockerSection: React.FC = () => {
       ref,
       dir,
       secretResource,
-      null,
+      undefined,
       docker.dockerfilePath,
     );
     const isDockerFilePresent = gitService && (await gitService.isDockerfilePresent());
@@ -57,7 +61,7 @@ const DockerSection: React.FC = () => {
 
   React.useEffect(() => {
     if (recommendedStrategy && recommendedStrategy.type !== ImportStrategy.DOCKERFILE) {
-      const dockerfileStrategy = strategies.find((s) => s.type === ImportStrategy.DOCKERFILE);
+      const dockerfileStrategy = strategies?.find((s) => s?.type === ImportStrategy.DOCKERFILE);
       if (dockerfileStrategy) {
         setFieldValue('import.selectedStrategy.detectedFiles', dockerfileStrategy.detectedFiles);
         setFieldValue('docker.dockerfilePath', dockerfileStrategy.detectedFiles?.[0]);
@@ -73,7 +77,7 @@ const DockerSection: React.FC = () => {
 
   React.useEffect(() => {
     const gitService =
-      url && getGitService(url, type, ref, dir, secretResource, null, docker.dockerfilePath);
+      url && getGitService(url, type, ref, dir, secretResource, undefined, docker.dockerfilePath);
     gitService &&
       gitService.getDockerfileContent().then((dockerfileContent) => {
         if (dockerfileContent) {

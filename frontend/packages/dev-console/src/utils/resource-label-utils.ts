@@ -111,42 +111,50 @@ export const mergeData = (originalResource: K8sResourceKind, newResource: K8sRes
 
   const mergedData = _.merge({}, originalResource || {}, newResource);
   const isDevfileResource = originalResource?.metadata?.annotations?.isFromDevfile;
+  if (!mergedData.metadata) {
+    mergedData.metadata = {};
+  }
   mergedData.metadata.labels = {
-    ...newResource.metadata.labels,
+    ...newResource?.metadata?.labels,
     ...(isDevfileResource ? originalResource?.metadata?.labels : {}),
   };
   if (mergedData.metadata.annotations) {
     mergedData.metadata.annotations = {
       ...(isDevfileResource
         ? originalResource?.metadata?.annotations
-        : getUserAnnotations(originalResource?.metadata?.annotations)),
-      ...newResource.metadata.annotations,
+        : getUserAnnotations(originalResource?.metadata?.annotations ?? {})),
+      ...newResource?.metadata?.annotations,
     };
   }
   if (mergedData.spec?.template?.metadata?.labels) {
-    mergedData.spec.template.metadata.labels = newResource.spec?.template?.metadata?.labels;
+    mergedData.spec.template.metadata.labels = newResource?.spec?.template?.metadata?.labels;
   }
-  if (!_.isEmpty(originalResource.spec?.template?.spec?.containers)) {
-    mergedData.spec.template.spec.containers = originalResource.spec.template.spec.containers;
-    const index = _.findIndex(originalResource.spec.template.spec.containers, {
-      name: originalResource.metadata.name,
+  if (
+    mergedData?.spec?.template?.spec &&
+    !_.isEmpty(originalResource?.spec?.template?.spec?.containers)
+  ) {
+    mergedData.spec.template.spec.containers = originalResource?.spec?.template?.spec?.containers;
+    const index = _.findIndex(originalResource?.spec?.template?.spec?.containers, {
+      name: originalResource?.metadata?.name,
     });
     if (index >= 0) {
       mergedData.spec.template.spec.containers[index] = {
-        ...originalResource.spec.template.spec.containers[index],
-        ...newResource.spec.template.spec.containers[0],
+        ...originalResource?.spec?.template?.spec?.containers[index],
+        ...newResource?.spec?.template?.spec?.containers[0],
         // Keep the volumeMounts as is since we do not give an option to edit these currently
-        volumeMounts: originalResource.spec.template.spec.containers[index].volumeMounts,
+        volumeMounts: originalResource?.spec?.template?.spec?.containers[index]?.volumeMounts,
       };
     } else {
-      mergedData.spec.template.spec.containers.push(newResource.spec.template.spec.containers[0]);
+      mergedData.spec.template.spec.containers.push(
+        newResource?.spec?.template?.spec?.containers[0],
+      );
     }
   }
   if (mergedData?.spec?.hasOwnProperty('strategy')) {
-    mergedData.spec.strategy = newResource.spec?.strategy ?? originalResource.spec?.strategy;
+    mergedData.spec.strategy = newResource?.spec?.strategy ?? originalResource?.spec?.strategy;
   }
   if (mergedData.spec?.triggers) {
-    mergedData.spec.triggers = newResource.spec.triggers;
+    mergedData.spec.triggers = newResource?.spec?.triggers;
   }
   if (!newResource.spec?.source?.sourceSecret) {
     delete mergedData?.spec?.source?.sourceSecret;

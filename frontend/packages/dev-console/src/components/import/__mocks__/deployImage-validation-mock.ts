@@ -1,5 +1,10 @@
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
-import { DeployImageFormData, Resources } from '../import-types';
+import {
+  DeployImageFormData,
+  InsecureTrafficType,
+  Resources,
+  TerminationType,
+} from '../import-types';
 import { serverlessInitialValues } from './serverless-mock';
 
 export const mockDeployImageFormData: DeployImageFormData = {
@@ -14,7 +19,7 @@ export const mockDeployImageFormData: DeployImageFormData = {
     selectedKey: 'mock-app',
   },
   name: 'test-app',
-  runtimeIcon: null,
+  runtimeIcon: undefined,
   searchTerm: 'test-app',
   registry: 'external',
   allowInsecureRegistry: false,
@@ -87,8 +92,8 @@ export const mockDeployImageFormData: DeployImageFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: 'None' as TerminationType,
+      insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -116,18 +121,18 @@ export const mockDeployImageFormData: DeployImageFormData = {
   env: {},
   limits: {
     cpu: {
-      request: null,
+      request: '',
       requestUnit: 'm',
       defaultRequestUnit: 'm',
-      limit: null,
+      limit: '',
       limitUnit: 'm',
       defaultLimitUnit: 'm',
     },
     memory: {
-      request: null,
+      request: '',
       requestUnit: 'Mi',
       defaultRequestUnit: 'Mi',
-      limit: null,
+      limit: '',
       limitUnit: 'Mi',
       defaultLimitUnit: 'Mi',
     },

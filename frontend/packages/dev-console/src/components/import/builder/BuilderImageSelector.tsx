@@ -51,7 +51,7 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
 
   const changedPipelineWarning = pipeline.template
     ? pipeline.template.metadata?.labels[PIPELINE_RUNTIME_LABEL] !==
-        existingPipeline?.metadata?.labels[PIPELINE_RUNTIME_LABEL] &&
+        existingPipeline?.metadata?.labels?.[PIPELINE_RUNTIME_LABEL] &&
       PipelineChangeAlert(
         t(
           'devconsole~Changing to this builder image will update your associated Pipeline and remove any customization you may have applied.',

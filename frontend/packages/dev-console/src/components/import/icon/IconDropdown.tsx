@@ -78,8 +78,8 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
             className="odc-icon-dropdown"
             onChange={(value: string) => {
               // runtime icon and custom icon are mutually exclusive
-              onRuntimeIconChanged(value);
-              onCustomIconChanged('');
+              onRuntimeIconChanged?.(value);
+              onCustomIconChanged?.('');
             }}
             selectedKey={runtimeIcon || 'openshift'}
           />
@@ -100,11 +100,11 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
       <CustomIconModal
         isModalOpen={customIconModalIsOpen}
         setModalOpen={setCustomIconModalOpen}
-        customIcon={customIcon}
+        customIcon={customIcon ?? ''}
         onCustomIconChanged={(value) => {
           // runtime icon and custom icon are mutually exclusive
-          onRuntimeIconChanged('');
-          onCustomIconChanged(value);
+          onRuntimeIconChanged?.('');
+          onCustomIconChanged?.(value);
         }}
       />
     </>

@@ -10,17 +10,17 @@ describe('add-resources', () => {
     );
   });
   it('should return resolved URL with application param as UNASSIGNED when application is null', () => {
-    expect(resolvedURLWithParams('/import/ns/:namespace', 'xyz', null, 'nodejs')).toEqual(
+    expect(resolvedURLWithParams('/import/ns/:namespace', 'xyz', undefined, 'nodejs')).toEqual(
       '/import/ns/xyz?application=%23UNASSIGNED_APP%23&action=%7B%22type%22%3A%22connectsTo%22%2C%22payload%22%3A%22nodejs%22%7D',
     );
   });
   it('should return resolved URL when contextSource is null', () => {
-    expect(resolvedURLWithParams('/import/ns/:namespace', 'xyz', 'my-app', null)).toEqual(
+    expect(resolvedURLWithParams('/import/ns/:namespace', 'xyz', 'my-app', undefined)).toEqual(
       '/import/ns/xyz?application=my-app',
     );
   });
   it('should return resolved URL when both application and contextSource is null', () => {
-    expect(resolvedURLWithParams('/samples/ns/:namespace', 'xyz', null, null)).toEqual(
+    expect(resolvedURLWithParams('/samples/ns/:namespace', 'xyz', undefined, undefined)).toEqual(
       '/samples/ns/xyz',
     );
   });

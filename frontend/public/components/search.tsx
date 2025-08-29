@@ -48,7 +48,7 @@ import {
   isResourceListPage as isDynamicResourceListPage,
   useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
-import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ModelBadge, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
   const { plural } = useParams();
@@ -78,7 +78,7 @@ const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
       hideTextFilter
       autoFocus={false}
       mock={mock}
-      badge={getBadgeFromType(kindObj.badge)}
+      badge={getBadgeFromType(kindObj.badge as ModelBadge)}
       hideNameLabelFilters
       hideColumnManagement
     />

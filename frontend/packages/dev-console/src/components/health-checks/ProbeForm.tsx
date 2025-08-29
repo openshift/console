@@ -110,7 +110,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
         />
       </FormSection>
       <ActionGroupWithIcons
-        onSubmit={!viewOnly ? onSubmit : undefined}
+        onSubmit={!viewOnly ? onSubmit : () => {}}
         onClose={onClose}
         isDisabled={!_.isEmpty(errors?.healthChecks?.[probeType])}
       />

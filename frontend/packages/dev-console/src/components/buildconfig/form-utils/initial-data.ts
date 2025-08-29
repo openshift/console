@@ -39,7 +39,7 @@ export const getInitialBuildConfigFormikValues = (): BuildConfigFormikValues => 
             strategy: BuildStrategyType.Source,
           },
           project: {
-            name: undefined,
+            name: '',
           },
         },
         dockerfile: '',
@@ -121,7 +121,7 @@ export const getInitialBuildConfigFormikValues = (): BuildConfigFormikValues => 
       secrets: [],
 
       policy: {
-        runPolicy: null,
+        runPolicy: undefined,
       },
 
       hooks: {
