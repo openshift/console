@@ -26,11 +26,6 @@ const SCORE = {
   TITLE_EXACT_BONUS: 50,
   TITLE_STARTS_BONUS: 25,
 
-  // Metadata name matches (high priority)
-  METADATA_CONTAINS: 80,
-  METADATA_EXACT_BONUS: 40,
-  METADATA_STARTS_BONUS: 20,
-
   // Keywords/tags matches (medium priority)
   KEYWORD_MATCH: 60,
 
@@ -40,14 +35,14 @@ const SCORE = {
 } as const;
 
 // Red Hat priority constants
-const REDHAT_PRIORITY = {
+export const REDHAT_PRIORITY = {
   EXACT_MATCH: 2,
   CONTAINS_REDHAT: 1,
   NON_REDHAT: 0,
 } as const;
 
 // Sorting thresholds
-const SORTING_THRESHOLDS = {
+export const SORTING_THRESHOLDS = {
   REDHAT_PRIORITY_DELTA: 100, // Score difference threshold for Red Hat prioritization
 } as const;
 
@@ -79,25 +74,20 @@ export const calculateCatalogItemRelevanceScore = (
     }
   }
 
-  // Check for operator-specific metadata name (if available in attributes)
-  const metadataName = item.attributes?.metadataName;
-  if (metadataName && typeof metadataName === 'string') {
-    const metadataNameLower = metadataName.toLowerCase();
-    if (metadataNameLower.includes(searchTerm)) {
-      score += SCORE.METADATA_CONTAINS;
-      if (metadataNameLower === searchTerm) {
-        score += SCORE.METADATA_EXACT_BONUS;
-      }
-      if (metadataNameLower.startsWith(searchTerm)) {
-        score += SCORE.METADATA_STARTS_BONUS;
-      }
-    }
-  }
+  // Keywords and tags get medium weight
 
-  // Keywords/tags matches get medium weight
+  // Check tags array (for software types other than operators)
   if (item.tags && Array.isArray(item.tags)) {
     const keywords = item.tags.map((k) => k.toLowerCase());
     if (keywords.includes(searchTerm)) {
+      score += SCORE.KEYWORD_MATCH;
+    }
+  }
+
+  // Check keywords array (for operators)
+  if (item.attributes?.keywords && Array.isArray(item.attributes.keywords)) {
+    const attributeKeywords = item.attributes.keywords.map((k) => k.toLowerCase());
+    if (attributeKeywords.includes(searchTerm)) {
       score += SCORE.KEYWORD_MATCH;
     }
   }
@@ -138,6 +128,7 @@ export const getRedHatPriority = (item: CatalogItem): number => {
 
 // Enhanced keyword comparison with relevance scoring and Red Hat prioritization
 export const keywordCompare = (filterString: string, items: CatalogItem[]): CatalogItem[] => {
+  // Test logging for keyword comparison calls
   // eslint-disable-next-line no-console
   console.log('🔍 Enhanced keywordCompare called:', {
     filterString,

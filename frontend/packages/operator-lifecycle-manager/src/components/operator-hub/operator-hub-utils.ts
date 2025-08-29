@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
   CloudCredentialKind,
   InfrastructureKind,
@@ -14,6 +15,7 @@ import {
   InfrastructureFeature,
   InstalledState,
   OLMAnnotation,
+  OperatorHubItem,
   ValidSubscriptionValue,
 } from './index';
 
@@ -379,3 +381,78 @@ type AnnotationParser<
   Result = any,
   Options extends AnnotationParserOptions = AnnotationParserOptions
 > = (annotations: ObjectMetadata['annotations'], options?: Options) => Result;
+
+/**
+ * Converts an OperatorHubItem to a CatalogItem for use with the unified catalog search.
+ * Provides a shared utility to avoid duplication between operator-hub-items.tsx and tests.
+ *
+ * @param item - The OperatorHubItem to convert
+ * @returns A CatalogItem with safe fallbacks for missing properties
+ * @throws Error if the item is null/undefined or missing critical properties
+ */
+export const operatorHubItemToCatalogItem = (item: OperatorHubItem): CatalogItem => {
+  // Validate required input
+  if (!item) {
+    throw new Error('operatorHubItemToCatalogItem: item is required');
+  }
+
+  // Validate critical properties that are required for catalog functionality
+  if (!item.uid) {
+    throw new Error('operatorHubItemToCatalogItem: item.uid is required');
+  }
+
+  if (!item.name) {
+    throw new Error('operatorHubItemToCatalogItem: item.name is required');
+  }
+
+  // Safe property access with fallbacks
+  const safeDescription = item.description || '';
+  const safeProvider = item.provider || 'Unknown Provider';
+  const safeTags = Array.isArray(item.tags) ? item.tags : [];
+
+  // Safely extract keywords with type checking
+  let safeKeywords: string[] = [];
+  try {
+    const itemKeywords = (item as any).keywords;
+    if (Array.isArray(itemKeywords)) {
+      safeKeywords = itemKeywords.filter(
+        (keyword) => typeof keyword === 'string' && keyword.trim().length > 0,
+      );
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('Failed to extract keywords from OperatorHubItem:', error);
+  }
+
+  // Safely extract metadata name with nested property validation
+  let safeMetadataName: string | undefined;
+  try {
+    if (
+      item.obj &&
+      typeof item.obj === 'object' &&
+      item.obj.metadata &&
+      typeof item.obj.metadata === 'object' &&
+      typeof item.obj.metadata.name === 'string'
+    ) {
+      safeMetadataName = item.obj.metadata.name;
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('Failed to extract metadata name from OperatorHubItem:', error);
+  }
+
+  return {
+    uid: item.uid,
+    name: item.name,
+    title: item.name,
+    type: 'operator' as const,
+    description: safeDescription,
+    provider: safeProvider,
+    tags: safeTags,
+    attributes: {
+      keywords: safeKeywords,
+      provider: safeProvider,
+      metadataName: safeMetadataName,
+    },
+  };
+};

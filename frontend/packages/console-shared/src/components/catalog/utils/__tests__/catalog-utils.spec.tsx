@@ -47,19 +47,6 @@ describe('calculateCatalogItemRelevanceScore', () => {
     expect(score).toBe(145);
   });
 
-  it('assigns correct points for metadata name matches', () => {
-    const item = createMockCatalogItem({
-      name: 'Storage Tool',
-      attributes: {
-        metadataName: 'database',
-      },
-    });
-
-    const score = calculateCatalogItemRelevanceScore('database', item);
-    // Metadata exact (80) + exact bonus (40) + starts bonus (20) = 140
-    expect(score).toBe(140);
-  });
-
   it('assigns correct points for keyword matches', () => {
     const item = createMockCatalogItem({
       name: 'Storage Operator',
@@ -87,13 +74,9 @@ describe('calculateCatalogItemRelevanceScore', () => {
       name: 'database-operator', // Title: 100 + 25 = 125
       description: 'database management solution', // Description: 20 + 5 = 25
       tags: ['database', 'operator'], // Keywords: 60
-      attributes: {
-        metadataName: 'db-operator', // No metadata match: 0
-      },
     });
 
     const score = calculateCatalogItemRelevanceScore('database', item);
-    // Total: 125 + 25 + 60 + 0 = 210
     expect(score).toBe(210);
   });
 

@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import store from '@console/internal/redux';
+import { keywordCompare } from '@console/shared/src/components/catalog/utils';
 import {
   operatorHubListPageProps,
   operatorHubTileViewPageProps,
@@ -24,10 +25,18 @@ import { OperatorHubItemDetails, OperatorHubItemDetailsProps } from './operator-
 import {
   OperatorHubTileView,
   getProviderValue,
-  keywordCompare,
   OperatorHubTileViewProps,
 } from './operator-hub-items';
 import { OperatorHubList, OperatorHubListProps } from './operator-hub-page';
+import { operatorHubItemToCatalogItem } from './operator-hub-utils';
+
+// Test helper function that mimics old keywordCompare behavior
+const testKeywordCompare = (filterString: string, item: any): boolean => {
+  if (!filterString) return true;
+  const catalogItem = operatorHubItemToCatalogItem(item);
+  const results = keywordCompare(filterString, [catalogItem]);
+  return results.length > 0;
+};
 
 xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () => {
   let wrapper: ReactWrapper<OperatorHubListProps>;
@@ -170,7 +179,7 @@ xdescribe(`[https://issues.redhat.com/browse/CONSOLE-2136] ${OperatorHubTileView
       const results = _.reduce(
         operatorHubTileViewPageProps.items,
         (matches, item) => {
-          if (keywordCompare(filter, item)) {
+          if (testKeywordCompare(filter, item)) {
             matches.push(item);
           }
           return matches;
