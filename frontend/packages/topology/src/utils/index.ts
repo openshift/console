@@ -2,7 +2,6 @@ export * from './application-utils';
 export * from './topology-utils';
 export * from './connector-utils';
 export * from './createConnection';
-export * from './removeConnection';
 export * from './moveNodeToGroup';
 export * from './useOverviewMetrics';
 export * from './useMetricStats';
