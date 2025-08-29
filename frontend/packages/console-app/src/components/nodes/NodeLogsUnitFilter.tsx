@@ -6,7 +6,6 @@ import { getQueryArgument } from '@console/internal/components/utils';
 
 type NodeLogsUnitFilterProps = {
   onChangeUnit: (value: string) => void;
-  unit: string;
 };
 
 const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit }) => {
@@ -25,9 +24,13 @@ const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit })
         event.currentTarget.value = '';
       }
     };
-    input.addEventListener('keydown', listener);
+    if (input) {
+      input.addEventListener('keydown', listener);
+    }
     return () => {
-      input.removeEventListener('keydown', listener);
+      if (input) {
+        input.removeEventListener('keydown', listener);
+      }
     };
   }, [onChangeUnit]);
 
@@ -65,7 +68,7 @@ const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit })
           id="log-unit"
           name="log-unit"
           aria-label={label}
-          ref={inputRef}
+          ref={inputRef as React.RefObject<HTMLInputElement>}
           placeholder={label}
         />
       </FlexItem>
