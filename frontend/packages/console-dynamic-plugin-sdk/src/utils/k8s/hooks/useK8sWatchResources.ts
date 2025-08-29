@@ -18,21 +18,178 @@ import { useModelsLoaded } from './useModelsLoaded';
 import { usePrevious } from './usePrevious';
 
 /**
- * Hook that retrieves the Kubernetes resources along with their respective status for loaded and error.
- * @param initResources resources need to be watched as key-value pair, wherein key will be unique to resource and value will be options needed to watch for the respective resource.
- * @returns A map where keys are as provided in initResouces and value has three properties data, loaded and error.
+ * Hook that retrieves multiple Kubernetes resources simultaneously with live updates and loading states.
+ *
+ * This hook is essential for building complex UIs that need to watch multiple related resources
+ * at once, such as dashboards, list pages, and relationship views.
+ *
+ * **Common use cases:**
+ * - Dashboard pages showing multiple resource types (Pods, Services, Deployments)
+ * - Resource relationship views (Deployment + ReplicaSets + Pods)
+ * - List pages with related resources (Pods with their owning controllers)
+ * - Overview pages displaying cluster-wide resource counts
+ *
+ * **Performance benefits:**
+ * - Efficiently manages multiple WebSocket connections
+ * - Deduplicates identical resource watches across components
+ * - Uses optimized Redux selectors to minimize re-renders
+ * - Batches updates for related resource changes
+ *
+ * **Watch behavior:**
+ * - All resources are watched independently with their own lifecycle
+ * - Each resource has its own loading and error states
+ * - Resources can be added/removed dynamically by changing the input object
+ * - Automatically handles model loading and validation
+ *
+ * **Memory management:**
+ * - Cleans up all WebSocket connections when component unmounts
+ * - Automatically stops watching resources removed from input
+ * - Uses immutable data structures for efficient change detection
+ *
+ * **Error handling:**
+ * - Each resource has independent error handling
+ * - Missing models result in NoModelError for specific resources
+ * - Network errors don't affect other resource watches
+ * - Gracefully handles permission errors per resource
+ *
+ * **Edge cases:**
+ * - Empty input object returns empty results immediately
+ * - Invalid resource definitions are skipped with appropriate errors
+ * - Handles mixed namespaced and cluster-scoped resources
+ * - Supports dynamic resource lists that change over time
+ *
  * @example
- * ```ts
- * const Component: React.FC = () => {
+ * ```tsx
+ * // Dashboard showing multiple resource types
+ * const ClusterOverview: React.FC = () => {
  *   const watchResources = {
-        'deployment': {...},
-        'pod': {...}
-        ...
-      }
- *   const {deployment, pod} = useK8sWatchResources(watchResources)
- *   return ...
- * }
+ *     pods: {
+ *       kind: 'Pod',
+ *       isList: true,
+ *       namespace: 'default'
+ *     },
+ *     services: {
+ *       kind: 'Service',
+ *       isList: true,
+ *       namespace: 'default'
+ *     },
+ *     deployments: {
+ *       groupVersionKind: {group: 'apps', version: 'v1', kind: 'Deployment'},
+ *       isList: true,
+ *       namespace: 'default'
+ *     }
+ *   };
+ *
+ *   const {pods, services, deployments} = useK8sWatchResources(watchResources);
+ *
+ *   const allLoaded = pods.loaded && services.loaded && deployments.loaded;
+ *   const hasErrors = pods.loadError || services.loadError || deployments.loadError;
+ *
+ *   if (hasErrors) {
+ *     return <ErrorAlert errors={[pods.loadError, services.loadError, deployments.loadError]} />;
+ *   }
+ *
+ *   if (!allLoaded) {
+ *     return <DashboardSkeleton />;
+ *   }
+ *
+ *   return (
+ *     <div className="cluster-overview">
+ *       <ResourceCard title="Pods" count={pods.data.length} resources={pods.data} />
+ *       <ResourceCard title="Services" count={services.data.length} resources={services.data} />
+ *       <ResourceCard title="Deployments" count={deployments.data.length} resources={deployments.data} />
+ *     </div>
+ *   );
+ * };
  * ```
+ *
+ * @example
+ * ```tsx
+ * // Resource relationships - Deployment with its Pods
+ * const DeploymentDetails: React.FC<{deployment: DeploymentKind}> = ({deployment}) => {
+ *   const watchResources = {
+ *     replicaSets: {
+ *       kind: 'ReplicaSet',
+ *       isList: true,
+ *       namespace: deployment.metadata.namespace,
+ *       selector: deployment.spec.selector
+ *     },
+ *     pods: {
+ *       kind: 'Pod',
+ *       isList: true,
+ *       namespace: deployment.metadata.namespace,
+ *       selector: deployment.spec.selector
+ *     }
+ *   };
+ *
+ *   const {replicaSets, pods} = useK8sWatchResources(watchResources);
+ *
+ *   return (
+ *     <>
+ *       <DeploymentOverview deployment={deployment} />
+ *       <ReplicaSetsList
+ *         replicaSets={replicaSets.data}
+ *         loaded={replicaSets.loaded}
+ *         error={replicaSets.loadError}
+ *       />
+ *       <PodsList
+ *         pods={pods.data}
+ *         loaded={pods.loaded}
+ *         error={pods.loadError}
+ *       />
+ *     </>
+ *   );
+ * };
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Dynamic resource watching based on user selection
+ * const ResourceExplorer: React.FC<{selectedNamespaces: string[]}> = ({selectedNamespaces}) => {
+ *   const watchResources = React.useMemo(() => {
+ *     const resources = {};
+ *     selectedNamespaces.forEach(ns => {
+ *       resources[`pods-${ns}`] = {
+ *         kind: 'Pod',
+ *         isList: true,
+ *         namespace: ns
+ *       };
+ *       resources[`services-${ns}`] = {
+ *         kind: 'Service',
+ *         isList: true,
+ *         namespace: ns
+ *       };
+ *     });
+ *     return resources;
+ *   }, [selectedNamespaces]);
+ *
+ *   const results = useK8sWatchResources(watchResources);
+ *
+ *   return (
+ *     <div>
+ *       {selectedNamespaces.map(ns => (
+ *         <NamespaceCard
+ *           key={ns}
+ *           namespace={ns}
+ *           pods={results[`pods-${ns}`]}
+ *           services={results[`services-${ns}`]}
+ *         />
+ *       ))}
+ *     </div>
+ *   );
+ * };
+ * ```
+ *
+ * @param initResources Object where keys are unique identifiers and values are watch resource configurations. Each value contains:
+ *   - `groupVersionKind` or `kind`: Resource type identifier
+ *   - `isList`: Boolean indicating if watching a list or single resource
+ *   - `namespace`: Namespace for namespaced resources (omit for cluster-scoped)
+ *   - `name`: Specific resource name (for single resource watches)
+ *   - `selector`: Label selector for filtering list results
+ * @returns Object with same keys as input, where each value contains:
+ *   - `data`: The Kubernetes resource(s), empty array/object during loading
+ *   - `loaded`: Boolean indicating if initial load completed for this resource
+ *   - `loadError`: Error object if this specific resource watch failed, undefined if successful
  */
 export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const resources = useDeepCompareMemoize(initResources, true);

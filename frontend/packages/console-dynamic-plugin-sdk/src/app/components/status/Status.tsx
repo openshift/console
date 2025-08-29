@@ -20,18 +20,133 @@ export type StatusProps = StatusComponentProps & {
 };
 
 /**
- * Component for displaying a status message
- * @param {string} status - type of status to be displayed
- * @param {string} [title] - (optional) status text
- * @param {boolean} [iconOnly] - (optional) if true, only displays icon
- * @param {boolean} [noTooltip] - (optional) if true, tooltip won't be displayed
- * @param {string} [className] - (optional) additional class name for the component
- * @param {string} [popoverTitle] - (optional) title for popover
- * @param {ReactNode} [children] - (optional) children for the component
+ * Component for displaying standardized status indicators with predefined styles and icons.
+ *
+ * This component provides a comprehensive set of predefined status types commonly used
+ * throughout Kubernetes and OpenShift environments. It automatically maps status strings
+ * to appropriate icons and colors, ensuring consistent status representation across the Console.
+ *
+ * **Common use cases:**
+ * - Displaying Pod phase status (Running, Pending, Failed, etc.)
+ * - Showing deployment rollout status (Progressing, Complete, Failed)
+ * - Resource health indicators (Ready, Not Ready, Warning)
+ * - Installation and upgrade status displays
+ *
+ * **Status categories:**
+ * - **Progress states**: New, Pending, Installing, Updating, In Progress
+ * - **Success states**: Complete, Ready, Active, Bound, Succeeded
+ * - **Warning states**: Warning, RequiresApproval
+ * - **Error states**: Failed, Error, CrashLoopBackOff, ImagePullBackOff
+ * - **Cancelled states**: Cancelled, Deleting, Terminating, Superseded
+ *
+ * **Icon mapping:**
+ * - Each status type has a predefined icon for visual consistency
+ * - Colors follow PatternFly design system conventions
+ * - Icons are semantically meaningful and accessible
+ * - Fallback behavior for unknown status values
+ *
+ * **Extensibility:**
+ * - Supports children content for additional status details
+ * - Can be used with popover content for more information
+ * - Allows custom styling through className prop
+ * - Works with existing tooltip and accessibility systems
+ *
+ * **Edge cases:**
+ * - Unknown status values render as plain text or dash
+ * - Empty/null status values display as dash (—)
+ * - Children content triggers enhanced status display modes
+ * - Handles case-sensitive status matching
+ *
  * @example
  * ```tsx
- * <Status status='Warning' />
+ * // Basic pod status display
+ * const PodStatusBadge: React.FC<{pod: PodKind}> = ({pod}) => {
+ *   const phase = pod.status?.phase || 'Unknown';
+ *
+ *   return (
+ *     <Status
+ *       status={phase}
+ *       title={`Pod is ${phase.toLowerCase()}`}
+ *       className="pod-status"
+ *     />
+ *   );
+ * };
  * ```
+ *
+ * @example
+ * ```tsx
+ * // Deployment rollout status with additional info
+ * const DeploymentStatus: React.FC<{deployment: DeploymentKind}> = ({deployment}) => {
+ *   const condition = deployment.status?.conditions?.find(c => c.type === 'Progressing');
+ *   const status = condition?.status === 'True' ? 'Progressing' : 'Complete';
+ *
+ *   return (
+ *     <Status status={status} iconOnly={true}>
+ *       {condition && (
+ *         <div>
+ *           <p>Reason: {condition.reason}</p>
+ *           <p>Message: {condition.message}</p>
+ *           <p>Last Update: {condition.lastUpdateTime}</p>
+ *         </div>
+ *       )}
+ *     </Status>
+ *   );
+ * };
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Custom resource installation status
+ * const OperatorStatus: React.FC<{csv: ClusterServiceVersionKind}> = ({csv}) => {
+ *   const phase = csv.status?.phase || 'Unknown';
+ *
+ *   return (
+ *     <div className="operator-status">
+ *       <Status status={phase} />
+ *       {phase === 'Failed' && (
+ *         <Status status="Error">
+ *           <Alert variant="danger">
+ *             Installation failed. Check operator logs for details.
+ *           </Alert>
+ *         </Status>
+ *       )}
+ *     </div>
+ *   );
+ * };
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Status list for multiple conditions
+ * const ResourceConditions: React.FC<{conditions: K8sCondition[]}> = ({conditions}) => {
+ *   return (
+ *     <div className="conditions-list">
+ *       {conditions.map(condition => {
+ *         const status = condition.status === 'True' ? 'Ready' :
+ *                       condition.status === 'False' ? 'Not Ready' : 'Unknown';
+ *
+ *         return (
+ *           <div key={condition.type} className="condition-item">
+ *             <span>{condition.type}:</span>
+ *             <Status
+ *               status={status}
+ *               title={`${condition.type}: ${condition.status}`}
+ *               noTooltip={false}
+ *             />
+ *           </div>
+ *         );
+ *       })}
+ *     </div>
+ *   );
+ * };
+ * ```
+ *
+ * @param status The status string that determines which icon and color to display. Common values include: 'Running', 'Pending', 'Failed', 'Complete', 'Warning', 'Error', etc.
+ * @param title Optional custom text to display next to the icon. If not provided, defaults to the status value
+ * @param iconOnly Optional boolean to show only the icon without text label (default: false)
+ * @param noTooltip Optional boolean to disable tooltip display (default: false)
+ * @param className Optional additional CSS class name for custom styling
+ * @param children Optional React elements to display in enhanced status mode, typically used for detailed status information or error messages
  */
 const Status: React.FC<StatusProps> = ({
   status,
