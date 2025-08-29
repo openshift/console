@@ -12,11 +12,13 @@ import { Edge, Node } from '@patternfly/react-topology';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import { PromiseComponent, ResourceIcon } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -188,6 +190,18 @@ class MoveConnectionModal extends PromiseComponent<
   }
 }
 
-export const moveConnectionModal = createModalLauncher((props: MoveConnectionModalProps) => (
-  <MoveConnectionModal {...props} />
-));
+const MoveConnectionModalProvider: OverlayComponent<MoveConnectionModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <MoveConnectionModal cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
+    </ModalWrapper>
+  );
+};
+
+export const useMoveConnectionModalLauncher = (props: MoveConnectionModalProps) => {
+  const launcher = useOverlay();
+  return React.useCallback(
+    () => launcher<MoveConnectionModalProps>(MoveConnectionModalProvider, props),
+    [launcher, props],
+  );
+};

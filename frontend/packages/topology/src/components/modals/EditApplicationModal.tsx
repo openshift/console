@@ -3,11 +3,13 @@ import { Title } from '@patternfly/react-core';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import { PromiseComponent } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
@@ -105,6 +107,18 @@ class EditApplicationModal extends PromiseComponent<
   }
 }
 
-export const editApplicationModal = createModalLauncher((props: EditApplicationModalProps) => (
-  <EditApplicationModal {...props} />
-));
+const EditApplicationModalProvider: OverlayComponent<EditApplicationModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <EditApplicationModal cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
+    </ModalWrapper>
+  );
+};
+
+export const useEditApplicationModalLauncher = (props) => {
+  const launcher = useOverlay();
+  return React.useCallback(
+    () => launcher<EditApplicationModalProps>(EditApplicationModalProvider, props),
+    [launcher, props],
+  );
+};
