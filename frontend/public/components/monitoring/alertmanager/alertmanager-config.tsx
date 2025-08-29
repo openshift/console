@@ -23,6 +23,7 @@ import {
   ToolbarItem,
   Grid,
   GridItem,
+  ButtonVariant,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -33,7 +34,9 @@ import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config
 
 import { K8sResourceKind } from '../../../module/k8s';
 import { Table, TableData, TextFilter, RowFunctionArgs } from '../../factory';
-import { confirmModal, createAlertRoutingModal } from '../../modals';
+import { createAlertRoutingModal } from '../../modals';
+
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { Firehose, ConsoleEmptyState, Kebab, SectionHeading, StatusBox } from '../../utils';
 import {
   getAlertmanagerConfig,
@@ -287,6 +290,18 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
   // Receivers can be deleted if it has a simple route and not the default receiver
   const canDelete = !isDefaultReceiver && receiverHasSimpleRoute;
 
+  const openDeleteReceiverConfirm = useWarningModal({
+    title: t('public~Delete Receiver'),
+    children: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
+      receiverName: receiver?.name,
+    }),
+    confirmButtonLabel: t('public~Delete Receiver'),
+    cancelButtonLabel: t('public~Cancel'),
+    confirmButtonVariant: ButtonVariant.danger,
+    onConfirm: () => deleteReceiver(secret, config, receiver?.name, navigate),
+    ouiaId: 'AlertmanagerDeleteReceiverConfirmation',
+  });
+
   const receiverMenuItems = (receiverName: string) => [
     {
       label: t('public~Edit Receiver'),
@@ -303,15 +318,7 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
       tooltip: !canDelete
         ? t('public~Cannot delete the default receiver, or a receiver which has a sub-route')
         : '',
-      callback: () =>
-        confirmModal({
-          title: t('public~Delete Receiver'),
-          message: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
-            receiverName,
-          }),
-          btnText: t('public~Delete Receiver'),
-          executeFn: () => deleteReceiver(secret, config, receiverName, navigate),
-        }),
+      callback: () => openDeleteReceiverConfirm(),
     },
   ];
 
