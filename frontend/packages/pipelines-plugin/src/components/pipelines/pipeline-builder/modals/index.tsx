@@ -3,9 +3,8 @@ import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/
 import { t_global_icon_color_status_warning_default as warningColor } from '@patternfly/react-tokens';
 import i18next from 'i18next';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
+import { ModalCallback } from '@console/internal/components/modals/types';
 import ModalContent from './ModalContent';
-
-type ModalCallback = () => void;
 
 export const removeTaskModal = (taskName: string, onRemove: ModalCallback) => {
   confirmModal({
