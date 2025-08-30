@@ -1,17 +1,20 @@
 import {
-  useState,
-  useEffect,
-  useRef,
+  MouseEventHandler,
+  PropsWithChildren,
+  ReactNode,
+  Ref,
   useCallback,
   useContext,
-  ReactNode,
+  useEffect,
   useMemo,
-  Ref,
+  useRef,
+  useState,
 } from 'react';
 import { useSelector } from 'react-redux';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
+import { detect } from 'chardet';
 import {
   Alert,
   AlertActionCloseButton,
@@ -35,14 +38,13 @@ import {
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import {
-  CompressIcon,
-  ExpandIcon,
-  DownloadIcon,
-  OutlinedWindowRestoreIcon,
-  OutlinedPlayCircleIcon,
-  CogIcon,
-  SearchIcon,
   BugIcon,
+  CogIcon,
+  CompressIcon,
+  DownloadIcon,
+  ExpandIcon,
+  OutlinedPlayCircleIcon,
+  SearchIcon,
 } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import {
@@ -129,6 +131,33 @@ const getResourceLogURL = (
       ...(previous && { previous: `${previous}` }),
     },
   });
+};
+
+/** get a filename for log download */
+const getLogDownloadFilename = (resource: K8sResourceKind, containerName?: string) => {
+  const parts = [resource?.metadata?.name, containerName].filter(Boolean);
+  return `${parts.join('-')}.log`;
+};
+
+/** detect encoding in raw pod logs to support multi-language characters */
+const handleRawLogs = (logURL: string): MouseEventHandler<HTMLButtonElement> => {
+  return (e) => {
+    e.preventDefault();
+
+    fetch(logURL)
+      .then((response) => response.arrayBuffer())
+      .then((arrayBuffer) => {
+        const encoding = detect(new Uint8Array(arrayBuffer));
+        const text = new TextDecoder(encoding).decode(arrayBuffer);
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch and decode log file:', err);
+      });
+  };
 };
 
 const HeaderBanner = ({ lines, status }: { lines: string[]; status: string }) => {
@@ -437,9 +466,9 @@ const LogControls: React.FCC<LogControlsProps> = ({
               <ToolbarItem>
                 <Tooltip content={t('View raw logs')}>
                   <ExternalLinkButton
+                    component="button"
+                    onClick={handleRawLogs(currentLogURL)}
                     variant="plain"
-                    href={currentLogURL}
-                    icon={<OutlinedWindowRestoreIcon />}
                   />
                 </Tooltip>
               </ToolbarItem>
@@ -448,7 +477,7 @@ const LogControls: React.FCC<LogControlsProps> = ({
                   <ExternalLinkButton
                     variant="plain"
                     href={currentLogURL}
-                    download={`${resource.metadata.name}-${containerName}.log`}
+                    download={getLogDownloadFilename(resource, containerName)}
                     icon={<DownloadIcon />}
                   />
                 </Tooltip>
@@ -471,6 +500,13 @@ const LogControls: React.FCC<LogControlsProps> = ({
     </Toolbar>
   );
 };
+
+/** helper for opening a new window with raw logs. this is so we don't mess with the previous i18n string */
+const LogLink: React.FCC<PropsWithChildren<{ href: string }>> = ({ children, href }) => (
+  <ExternalLink component="button" onClick={handleRawLogs(href)}>
+    {children}
+  </ExternalLink>
+);
 
 // Resource agnostic log component
 export const ResourceLog: React.FCC<ResourceLogProps> = ({
@@ -729,8 +765,8 @@ export const ResourceLog: React.FCC<ResourceLogProps> = ({
     >
       <Trans ns="public" t={t}>
         To view unabridged log content, you can either{' '}
-        <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
-        <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
+        <LogLink href={linkURL}>open the raw file in another window</LogLink> or{' '}
+        <a href={linkURL} download={getLogDownloadFilename(resource, containerName)}>
           download it
         </a>
         .

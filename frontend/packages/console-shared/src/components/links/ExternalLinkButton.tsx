@@ -3,7 +3,7 @@ import type { SVGIconProps } from '@patternfly/react-icons/dist/esm/createIcon';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { useTranslation } from 'react-i18next';
 
-type ExternalLinkButtonProps = ButtonProps & {
+export type ExternalLinkButtonProps = ButtonProps & {
   iconProps?: SVGIconProps;
 };
 

@@ -1,11 +1,13 @@
 import * as React from 'react';
-import type { ButtonProps } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
+import {
+  ExternalLinkButton,
+  ExternalLinkButtonProps,
+} from '@console/shared/src/components/links/ExternalLinkButton';
 
-type ExternalLinkProps = ButtonProps & {
+type ExternalLinkProps = ExternalLinkButtonProps & {
   /** The URL to link to */
-  href: HTMLAnchorElement['href'];
+  href?: HTMLAnchorElement['href'];
   /** @deprecated Use `children` instead */
   text?: React.ReactNode;
   /** `data-test-id` */
