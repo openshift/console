@@ -44,6 +44,7 @@ import {
   referenceForModel,
   CertificateSigningRequestKind,
   referenceFor,
+  Selector,
 } from '@console/internal/module/k8s';
 import {
   getName,
@@ -655,7 +656,7 @@ const useWatchCSRs = (): [CertificateSigningRequestKind[], boolean, unknown] => 
   return [csrs, !checkIsLoading && loaded, error];
 };
 
-const NodesPage = () => {
+const NodesPage: React.FCC<NodesPageProps> = ({ selector }) => {
   const dispatch = useDispatch();
 
   const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
@@ -671,6 +672,7 @@ const NodesPage = () => {
       version: 'v1',
     },
     isList: true,
+    selector,
   });
 
   const [csrs, csrsLoaded, csrsLoadError] = useWatchCSRs();
@@ -740,6 +742,10 @@ const NodesPage = () => {
       </>
     )
   );
+};
+
+type NodesPageProps = {
+  selector?: Selector;
 };
 
 export default NodesPage;
