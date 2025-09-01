@@ -29,7 +29,7 @@ export const useTopologyVisualConnectorActionProvider = (element: Edge) => {
   const resource = getResource(element.getSource?.());
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource ?? {}));
   const moveConnectionAction = useMoveConnectorAction(kindObj, element);
-  const deleteConnectorAction = useDeleteConnectorAction(kindObj, element);
+  const deleteConnectorAction = useDeleteConnectorAction(kindObj, element, resource);
   const actions = useMemo(() => {
     if (!kindObj || element.getType() !== TYPE_CONNECTS_TO) return undefined;
     return [moveConnectionAction, deleteConnectorAction];

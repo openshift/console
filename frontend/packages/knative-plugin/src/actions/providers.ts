@@ -405,7 +405,7 @@ export const useKnativeConnectorActionProvider = (element: Edge) => {
   const moveConnectorAction = useMoveConnectorAction(sourceModel, element);
   const actions = useMemo(() => {
     const isEventSourceConnector = element.getType() === TYPE_EVENT_SOURCE_LINK;
-    if (isEdge(element) && element.getSource()?.getData()) {
+    if (resource) {
       if (isEventSourceConnector) {
         return [moveSinkSource(sourceModel, resource, sinkSourceModalLauncher)];
       }

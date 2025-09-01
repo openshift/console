@@ -8,7 +8,7 @@
   "List": "List",
   "Move connector": "Move connector",
   "Delete Connector?": "Delete Connector?",
-  "messageKey": "messageKey",
+  "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?",
   "Delete": "Delete",
   "Delete connector": "Delete connector",
   "Edit application grouping": "Edit application grouping",
