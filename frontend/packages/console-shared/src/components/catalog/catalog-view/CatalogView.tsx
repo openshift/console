@@ -154,7 +154,8 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   const catalogCategories = React.useMemo<CatalogCategory[]>(() => {
     const allCategory = { id: ALL_CATEGORY, label: t('console-shared~All items') };
     const otherCategory = { id: OTHER_CATEGORY, label: t('console-shared~Other') };
-    return [allCategory, ...(categories ?? []), otherCategory];
+    const sortedCategories = [...(categories ?? [])].sort((a, b) => a.label.localeCompare(b.label));
+    return [allCategory, ...sortedCategories, otherCategory];
   }, [categories, t]);
 
   const categorizedIds = React.useMemo(() => categorize(items, catalogCategories), [
