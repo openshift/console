@@ -27,17 +27,22 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
   const namespace = params.ns;
   const helmReleaseName = params.name;
   const [revisionsLoaded, setRevisionsLoaded] = React.useState<boolean>(false);
-  const [loadError, setLoadError] = React.useState<string>();
+  const [loadError, setLoadError] = React.useState<string | null>(null);
   const [revisions, setRevisions] = React.useState<HelmRelease[]>([]);
   const memoizedObj = useDeepCompareMemoize(obj);
   const { t } = useTranslation();
 
   React.useEffect(() => {
     let destroyed = false;
-    fetchHelmReleaseHistory(helmReleaseName || '', namespace || '')
+    if (!namespace || !helmReleaseName) {
+      return () => {
+        destroyed = true;
+      };
+    }
+    fetchHelmReleaseHistory(helmReleaseName, namespace)
       .then((items) => {
         if (!destroyed) {
-          setLoadError(undefined);
+          setLoadError(null);
           setRevisionsLoaded(true);
           setRevisions(items);
         }

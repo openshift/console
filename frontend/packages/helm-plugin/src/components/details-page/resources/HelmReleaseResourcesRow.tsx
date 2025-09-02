@@ -18,9 +18,14 @@ export const HelmReleaseResourceStatus: React.FC<HelmReleaseResourceStatusProps>
 }) => {
   const { t } = useTranslation();
   const kind = referenceFor(resource);
+
+  if (!resource.metadata?.name || !resource.metadata?.namespace) {
+    return <Status status="Unknown" />;
+  }
+
   return resource.status?.replicas ? (
     <Link
-      to={`${resourcePath(kind, resource.metadata?.name, resource.metadata?.namespace)}/pods`}
+      to={`${resourcePath(kind, resource.metadata.name, resource.metadata.namespace)}/pods`}
       title={t('helm-plugin~Pods')}
     >
       {resource.status?.replicas || 0} of {resource.spec?.replicas} pods
@@ -32,13 +37,29 @@ export const HelmReleaseResourceStatus: React.FC<HelmReleaseResourceStatusProps>
 
 const HelmReleaseResourcesRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj: resource }) => {
   const kind = referenceFor(resource);
+
+  if (!resource.metadata?.name) {
+    return (
+      <>
+        <TableData className={tableColumnClasses.name}>Unknown Resource</TableData>
+        <TableData className={tableColumnClasses.type}>{resource.kind || 'Unknown'}</TableData>
+        <TableData className={tableColumnClasses.status}>
+          <Status status="Unknown" />
+        </TableData>
+        <TableData className={tableColumnClasses.created}>
+          <Timestamp timestamp={resource.metadata?.creationTimestamp} />
+        </TableData>
+      </>
+    );
+  }
+
   return (
     <>
       <TableData className={tableColumnClasses.name}>
         <ResourceLink
           kind={kind}
-          name={resource.metadata?.name}
-          namespace={resource.metadata?.namespace}
+          name={resource.metadata.name}
+          namespace={resource.metadata.namespace}
         />
       </TableData>
       <TableData className={tableColumnClasses.type}>{resource.kind}</TableData>
@@ -46,7 +67,7 @@ const HelmReleaseResourcesRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ o
         <HelmReleaseResourceStatus resource={resource} />
       </TableData>
       <TableData className={tableColumnClasses.created}>
-        <Timestamp timestamp={resource.metadata?.creationTimestamp ?? null} />
+        <Timestamp timestamp={resource.metadata.creationTimestamp} />
       </TableData>
     </>
   );

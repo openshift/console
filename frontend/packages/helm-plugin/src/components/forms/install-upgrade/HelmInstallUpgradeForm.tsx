@@ -165,7 +165,7 @@ const HelmInstallUpgradeForm: React.FC<
                 helmAction={helmAction}
                 onVersionChange={onVersionChange}
                 namespace={namespace}
-                chartIndexEntry={chartIndexEntry || ''}
+                chartIndexEntry={chartIndexEntry}
                 annotatedName={annotatedName}
                 providerName={providerName}
               />
@@ -196,7 +196,7 @@ const HelmInstallUpgradeForm: React.FC<
         handleReset={handleReset}
         errorMessage={status?.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={helmActionString(t)[helmAction || '']}
+        submitLabel={helmActionString(t)[helmAction ?? '']}
         disableSubmit={isSubmitDisabled}
         resetLabel={t('helm-plugin~Cancel')}
         sticky

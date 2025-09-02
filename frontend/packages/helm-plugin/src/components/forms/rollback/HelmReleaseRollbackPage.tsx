@@ -35,8 +35,8 @@ const HelmReleaseRollbackPage: React.FC = () => {
     () =>
       getHelmActionConfig(
         HelmActionType.Rollback,
-        releaseName || '',
-        namespace || '',
+        releaseName ?? '',
+        namespace ?? '',
         t,
         actionOrigin,
       ),
@@ -49,7 +49,7 @@ const HelmReleaseRollbackPage: React.FC = () => {
     const getReleaseHistory = async () => {
       let res: HelmRelease[] | null = null;
       try {
-        res = await fetchHelmReleaseHistory(releaseName || '', namespace || '');
+        res = await fetchHelmReleaseHistory(releaseName ?? '', namespace ?? '');
       } catch {} // eslint-disable-line no-empty
       if (ignore) return;
 
@@ -79,7 +79,7 @@ const HelmReleaseRollbackPage: React.FC = () => {
     return config
       ?.fetch('/api/helm/release', payload, undefined, -1)
       .then(() => {
-        history.push(config?.redirectURL || '');
+        history.push(config?.redirectURL ?? '');
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -88,12 +88,12 @@ const HelmReleaseRollbackPage: React.FC = () => {
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-      <DocumentTitle>{config?.title || ''}</DocumentTitle>
+      <DocumentTitle>{config?.title ?? ''}</DocumentTitle>
       <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={history.goBack}>
         {(props) => (
           <HelmReleaseRollbackForm
             {...props}
-            releaseName={releaseName || ''}
+            releaseName={releaseName ?? ''}
             releaseHistory={releaseHistory || []}
             helmActionConfig={config as HelmActionConfigType}
           />
