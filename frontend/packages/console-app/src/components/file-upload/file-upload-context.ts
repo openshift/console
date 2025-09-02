@@ -9,7 +9,7 @@ import { getRequiredFileUploadExtension } from './file-upload-utils';
 
 export type FileUploadContextType = {
   extensions: string[];
-  fileUpload: File;
+  fileUpload: File | undefined;
   setFileUpload: (file: File) => void;
 };
 
@@ -26,7 +26,7 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
   const [fileUploadExtensions, resolved] = useResolvedExtensions<FileUpload>(isFileUpload);
   const toastContext = useToast();
   const [namespace] = useActiveNamespace();
-  const [file, setFile] = useState<File>(undefined);
+  const [file, setFile] = useState<File | undefined>(undefined);
   const fileExtensions = useMemo(
     () =>
       resolved
