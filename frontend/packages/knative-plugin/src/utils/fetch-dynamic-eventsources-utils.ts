@@ -171,9 +171,9 @@ export const fetchChannelsCrd = async () => {
     const res = await coFetch(url);
     const resolvedRes = await res.json();
 
-    const allChannelModels = _.reduce(
+    const allChannelModels: K8sKind[] = _.reduce(
       resolvedRes?.items,
-      (accumulator, crd) => {
+      (accumulator: K8sKind[], crd) => {
         const {
           spec: {
             group,
@@ -182,7 +182,7 @@ export const fetchChannelsCrd = async () => {
         } = crd;
         const crdLatestVersion = getLatestVersionForCRD(crd);
         const labelPlural = getLabelPlural(kind, plural);
-        const sourceModel = {
+        const sourceModel: K8sKind = {
           apiGroup: group,
           apiVersion: crdLatestVersion,
           kind,
@@ -195,7 +195,7 @@ export const fetchChannelsCrd = async () => {
           crd: true,
           color: knativeEventingColor.value,
         };
-        accumulator.push(sourceModel as never);
+        accumulator.push(sourceModel);
         return accumulator;
       },
       [],

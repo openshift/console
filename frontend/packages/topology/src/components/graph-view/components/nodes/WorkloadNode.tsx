@@ -206,7 +206,7 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
                   pipelineStatus,
                   workloadRqAlertVariant,
                 )
-              : (undefined as any)
+              : undefined
           }
           attachments={nodeDecorators}
           contextMenuOpen={contextMenuOpen}

@@ -35,7 +35,7 @@ const BrokerRow: React.FC<RowFunctionArgs<EventBrokerKind>> = ({ obj }) => {
         {obj.status ? getConditionString(obj.status.conditions) : '-'}
       </TableData>
       <TableData>
-        <Timestamp timestamp={creationTimestamp ?? ''} />
+        <Timestamp timestamp={creationTimestamp} />
       </TableData>
       <TableData className={Kebab.columnClass}>
         <LazyActionMenu context={context} />;
