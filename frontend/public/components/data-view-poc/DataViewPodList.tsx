@@ -37,14 +37,8 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux';
 import { css } from '@patternfly/react-styles';
-import {
-  formatBytesAsMiB,
-  formatCores,
-  Kebab,
-  LabelList,
-  OwnerReferences,
-  ResourceLink,
-} from '../utils';
+import { formatBytesAsMiB, formatCores, LabelList, OwnerReferences, ResourceLink } from '../utils';
+
 import { PodTraffic } from '../pod-traffic';
 import { getLabelsAsString, LazyActionMenu } from '@console/shared';
 import { PodStatus } from '../pod';
@@ -162,7 +156,6 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     props: {
       className: podColumnInfo.name.classes,
       isStickyColumn: true,
-      hasRightBorder: true,
     },
   },
   {
@@ -259,13 +252,12 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     additional: true,
   },
   {
-    title: t('public~Actions'),
+    title: '',
     id: 'actions',
     props: {
       isStickyColumn: true,
-      hasLeftBorder: true,
+      stickyMinWidth: '69px', // TODO: make this value a constant
       isActionCell: true,
-      stickyMinWidth: '0',
     },
   },
 ];
@@ -382,11 +374,10 @@ function useDataViewPodRow(
     const actionsRow: DataViewTd = {
       id: '',
       props: {
-        className: Kebab.columnClass,
         isStickyColumn: true,
+        stickyMinWidth: '0',
         hasLeftBorder: true,
         isActionCell: true,
-        stickyMinWidth: '0',
       },
       cell: <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />,
     };
@@ -515,17 +506,25 @@ function useDataViewData({
     title: t(column.title),
     props: {
       className: column.props.classes,
-      sort: {
-        columnIndex: index,
-        sortBy: {
-          defaultDirection: SortByDirection.asc,
-          direction: SortByDirection.asc,
-          index: 0,
+      ...(column.sort && {
+        sort: {
+          columnIndex: index,
+          sortBy: {
+            defaultDirection: SortByDirection.asc,
+            direction: SortByDirection.asc,
+            index: 0,
+          },
         },
-      },
+      }),
       isStickyColumn: column.props.isStickyColumn,
+      stickyMinWidth: column.props.stickyMinWidth,
+      isActionCell: column.props.isActionCell,
     } as ThProps,
-    cell: <span>{t(column.title)}</span>,
+    cell: column.title ? (
+      <span>{t(column.title)}</span>
+    ) : (
+      <span className="pf-v6-u-screen-reader">{t('public~Actions')}</span>
+    ),
   }));
 
   const { sortBy, onSort } = useDataViewSort({
@@ -583,7 +582,7 @@ function useDataViewData({
    * Once the data structure is adopted, should done in one go
    */
   dataViewColumns.forEach((column) => {
-    if (isDataViewConfigurableColumn(column)) {
+    if (isDataViewConfigurableColumn(column) && column.sortFunction !== undefined) {
       column.props.sort.sortBy.index = sortBy.index;
       column.props.sort.sortBy.direction = sortBy.direction;
       column.props.sort.onSort = onSort;
