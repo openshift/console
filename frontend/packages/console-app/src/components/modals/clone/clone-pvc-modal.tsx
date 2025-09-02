@@ -127,10 +127,15 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
       },
     };
 
-    return handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj)).then((cloneResource) => {
-      close?.();
-      history.push(resourceObjPath(cloneResource, referenceFor(cloneResource)));
-    });
+    return handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj)).then(
+      (cloneResource) => {
+        close?.();
+        const resourcePath = resourceObjPath(cloneResource, referenceFor(cloneResource));
+        if (resourcePath) {
+          history.push(resourcePath);
+        }
+      },
+    );
   };
 
   return (
