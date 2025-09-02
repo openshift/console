@@ -41,8 +41,7 @@ const normalizeTemplates = (
         description,
         provider,
         tags,
-        creationTimestamp:
-          typeof creationTimestamp === 'string' ? creationTimestamp : creationTimestamp.toString(),
+        creationTimestamp,
         supportUrl,
         documentationUrl,
         icon: {

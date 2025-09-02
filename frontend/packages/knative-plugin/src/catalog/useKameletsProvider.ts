@@ -18,9 +18,10 @@ const normalizeKamelets = (
   const normalizedKamelets = kamelets.map((k) => {
     const {
       kind,
-      metadata: { uid, name, creationTimestamp, annotations },
+      metadata: { uid, name, annotations },
       spec,
     } = k;
+    const creationTimestamp = k.metadata?.creationTimestamp;
     const provider = annotations?.[CAMEL_K_PROVIDER_ANNOTATION] || '';
     const iconUrl = getEventSourceIcon(kind, k) as string;
     const href = `/catalog/ns/${namespace}/eventsource?sourceKind=${CamelKameletBindingModel.kind}&name=${name}`;
@@ -29,8 +30,7 @@ const normalizeKamelets = (
       name: spec?.definition?.title || name,
       description: spec?.definition?.description || '',
       provider,
-      creationTimestamp:
-        typeof creationTimestamp === 'string' ? creationTimestamp : creationTimestamp.toString(),
+      creationTimestamp: creationTimestamp || undefined,
       cta: { label: t('knative-plugin~Create Event Source'), href },
       type: 'EventSource',
       icon: { url: iconUrl },

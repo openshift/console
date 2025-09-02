@@ -71,11 +71,11 @@ const useRuns = <Kind extends K8sResourceCommon>(
       const aTimestamp =
         typeof a.metadata.creationTimestamp === 'string'
           ? a.metadata.creationTimestamp
-          : a.metadata.creationTimestamp.toString();
+          : a.metadata.creationTimestamp;
       const bTimestamp =
         typeof b.metadata.creationTimestamp === 'string'
           ? b.metadata.creationTimestamp
-          : b.metadata.creationTimestamp.toString();
+          : b.metadata.creationTimestamp;
       return bTimestamp.localeCompare(aTimestamp);
     });
     if (limit && limit < value.length) {

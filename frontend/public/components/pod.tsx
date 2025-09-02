@@ -1192,11 +1192,11 @@ type ContainerLinkProps = {
 };
 
 type ContainerRunningSinceProps = {
-  startedAt?: string | number | Date;
+  startedAt?: string;
 };
 
 type ContainerTerminatedAtProps = {
-  finishedAt?: string | number | Date;
+  finishedAt?: string;
 };
 
 type ContainerTerminatedExitCodeProps = {

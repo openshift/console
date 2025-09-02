@@ -39,8 +39,7 @@ const normalizeTektonTasks = (tektonTasks: TaskKind[]): CatalogItem<TaskKind>[] 
         description,
         provider,
         tags,
-        creationTimestamp:
-          typeof creationTimestamp === 'string' ? creationTimestamp : creationTimestamp.toString(),
+        creationTimestamp,
         icon: {
           node: <ResourceIcon kind={getModelReferenceFromTaskKind(task.kind)} />,
         },

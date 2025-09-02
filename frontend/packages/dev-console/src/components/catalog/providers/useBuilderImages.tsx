@@ -18,7 +18,7 @@ import {
   isBuilder,
 } from '@console/internal/components/image-stream';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
 import { ANNOTATIONS } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
@@ -28,7 +28,7 @@ const normalizeBuilderImages = (
   t: TFunction,
 ): CatalogItem[] => {
   const normalizedBuilderImages = _.map(builderImageStreams, (imageStream) => {
-    const { uid, name, namespace, annotations } = imageStream.metadata;
+    const { uid, name, namespace, annotations } = imageStream.metadata as ObjectMetadata;
     const tag = getMostRecentBuilderTag(imageStream);
     const displayName = annotations?.[ANNOTATIONS.displayName] ?? name;
     const icon = getImageStreamIcon(tag);
@@ -105,15 +105,14 @@ const normalizeBuilderImages = (
       provider,
       description,
       tags,
-      creationTimestamp:
-        typeof creationTimestamp === 'string' ? creationTimestamp : creationTimestamp.toString(),
+      creationTimestamp,
       cta: {
         label: createLabel,
         href,
       },
       icon: {
         url: imgUrl,
-        class: iconClass,
+        class: iconClass || undefined,
       },
       details: {
         properties: detailsProperties,

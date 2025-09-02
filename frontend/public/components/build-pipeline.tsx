@@ -55,7 +55,7 @@ export const BuildPipelineLogLink: React.FCC<BuildPipelineLogLinkProps> = ({ obj
   ) : null;
 };
 
-const StagesNotStarted: React.FCC = () => {
+const StagesNotStarted: React.FCC<{}> = () => {
   const { t } = useTranslation();
   return (
     <div className="build-pipeline__stage build-pipeline__stage--none">
@@ -66,7 +66,7 @@ const StagesNotStarted: React.FCC = () => {
 
 const BuildSummaryTimestamp: React.FCC<BuildSummaryTimestampProps> = ({ timestamp }) => (
   <span className="build-pipeline__timestamp pf-v6-u-text-color-subtle">
-    {fromNow(typeof timestamp === 'string' ? timestamp : timestamp.toString())}
+    {fromNow(typeof timestamp === 'string' ? timestamp : timestamp)}
   </span>
 );
 
@@ -120,7 +120,7 @@ const JenkinsInputUrl: React.FCC<JenkinsInputUrlProps> = ({ obj, stage }) => {
 
 const BuildStageTimestamp: React.FCC<BuildStageTimestampProps> = ({ timestamp }) => (
   <div className="build-pipeline__stage-time pf-v6-u-text-color-subtle">
-    {fromNow(typeof timestamp === 'string' ? timestamp : timestamp.toString())}
+    {fromNow(typeof timestamp === 'string' ? timestamp : timestamp)}
   </div>
 );
 
@@ -186,7 +186,7 @@ export type BuildSummaryStatusIconProps = {
 };
 
 export type BuildStageTimestampProps = {
-  timestamp: string | number | Date;
+  timestamp: string | undefined;
 };
 
 export type BuildPipelineLogLinkProps = {
@@ -199,7 +199,7 @@ export type BuildPipelineLinkProps = {
 };
 
 export type BuildSummaryTimestampProps = {
-  timestamp: string | number | Date;
+  timestamp: string | undefined;
 };
 
 export type BuildStageNameProps = {

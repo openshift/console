@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { StackItem, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { HealthState } from '@console/dynamic-plugin-sdk';
 import {
+  HealthState,
   PrometheusHealthPopupProps,
   PrometheusHealthHandler,
-} from '@console/dynamic-plugin-sdk/dist/core/lib/lib-core';
+} from '@console/dynamic-plugin-sdk';
 import { ConfigMap } from '../../resources';
 import { getVSphereHealth } from '../getVSphereHealth';
 import { VSphereConnectionModal } from '../VSphereConnectionModal';

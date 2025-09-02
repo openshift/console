@@ -71,7 +71,7 @@ const Row: React.FC<RowProps<VolumeSnapshotContentKind>> = ({ obj }) => {
         />
       </TableData>
       <TableData {...tableColumnInfo[5]}>
-        <Timestamp timestamp={creationTimestamp ?? null} />
+        <Timestamp timestamp={creationTimestamp} />
       </TableData>
       <TableData {...tableColumnInfo[6]}>
         <ResourceKebab
