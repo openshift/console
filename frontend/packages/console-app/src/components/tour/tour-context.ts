@@ -27,9 +27,9 @@ export const tourReducer = (state: TourState, action: TourStateAction) => {
   switch (action.type) {
     case TourActions.initialize:
       return {
-        completedTour: action.payload.completed,
+        completedTour: action.payload?.completed ?? false,
         stepNumber: 0,
-        startTour: !action.payload.completed,
+        startTour: !action.payload?.completed,
       };
     case TourActions.start:
       return { startTour: true, completedTour: false, stepNumber: 0 };
