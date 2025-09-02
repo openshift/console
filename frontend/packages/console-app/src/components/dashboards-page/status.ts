@@ -51,8 +51,11 @@ export const getK8sHealthState: URLHealthHandler<string> = (k8sHealth, error, re
 export const getControlPlaneComponentHealth = (
   response: PrometheusResponse,
   error,
-  t: TFunction,
+  t?: TFunction,
 ): SubsystemHealth => {
+  if (!t) {
+    return { state: HealthState.NOT_AVAILABLE };
+  }
   if (error) {
     return {
       state: HealthState.NOT_AVAILABLE,
@@ -92,14 +95,12 @@ export const getWorstStatus = (
 
 export const getControlPlaneHealth: PrometheusHealthHandler = (
   responses,
-  t,
-  resource,
-  infrastructure,
+  t?: TFunction,
+  infrastructure?,
 ) => {
   if (!t) {
-    return { state: HealthState.UNKNOWN };
+    return { state: HealthState.NOT_AVAILABLE };
   }
-
   const componentsHealth = responses.map(({ response, error }) =>
     getControlPlaneComponentHealth(response, error, t),
   );
