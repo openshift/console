@@ -122,7 +122,7 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
       spec: {
         customization: {
           quickStarts: {
-            disabled,
+            disabled: disabled || [],
           },
         },
       },
@@ -169,7 +169,7 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
       />
 
       <LoadError error={consoleConfigError} />
-      <SaveStatus {...saveStatus} />
+      {saveStatus && <SaveStatus {...saveStatus} />}
     </FormSection>
   );
 };
