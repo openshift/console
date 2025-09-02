@@ -23,7 +23,7 @@ type PinnedResourceProps = {
 };
 
 type DraggableButtonProps = {
-  dragRef?: (node) => void | null;
+  dragRef?: React.RefCallback<HTMLElement>;
 };
 
 type RemoveButtonProps = {
@@ -152,7 +152,7 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
         'oc-pinned-resource--dragging': draggable && isOver,
       })}
     >
-      {draggable ? <DraggableButton dragRef={drag as any} /> : null}
+      {draggable ? <DraggableButton dragRef={drag} /> : null}
       {label}
       <RemoveButton onChange={onChange} navResources={navResources} resourceRef={resourceRef} />
     </NavItemResource>
