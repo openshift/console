@@ -156,6 +156,7 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     props: {
       className: podColumnInfo.name.classes,
       isStickyColumn: true,
+      modifier: 'nowrap',
     },
   },
   {
@@ -163,14 +164,14 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     id: podColumnInfo.namespace.id,
     sort: 'metadata.namespace',
     transforms: [sortable],
-    props: { className: podColumnInfo.namespace.classes },
+    props: { className: podColumnInfo.namespace.classes, modifier: 'nowrap' },
   },
   {
     title: t(podColumnInfo.status.title),
     id: podColumnInfo.status.id,
     sort: (data, direction) => data.sort(sortResourceByValue<PodKind>(direction, podPhase)),
     transforms: [sortable],
-    props: { className: podColumnInfo.status.classes },
+    props: { className: podColumnInfo.status.classes, modifier: 'nowrap' },
   },
   {
     title: t(podColumnInfo.ready.title),
@@ -178,21 +179,21 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     sort: (data, direction) =>
       data.sort(sortResourceByValue<PodKind>(direction, (obj) => podReadiness(obj).readyCount)),
     transforms: [sortable],
-    props: { className: podColumnInfo.ready.classes },
+    props: { className: podColumnInfo.ready.classes, modifier: 'nowrap' },
   },
   {
     title: t(podColumnInfo.restarts.title),
     id: podColumnInfo.restarts.id,
     sort: (data, direction) => data.sort(sortResourceByValue<PodKind>(direction, podRestarts)),
     transforms: [sortable],
-    props: { className: podColumnInfo.restarts.classes },
+    props: { className: podColumnInfo.restarts.classes, modifier: 'nowrap' },
   },
   {
     title: showNodes ? t(podColumnInfo.node.title) : t(podColumnInfo.owner.title),
     id: podColumnInfo.owner.id,
     sort: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
     transforms: [sortable],
-    props: { className: podColumnInfo.owner.classes },
+    props: { className: podColumnInfo.owner.classes, modifier: 'nowrap' },
   },
   {
     title: t(podColumnInfo.memory.title),
@@ -202,7 +203,7 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
         sortResourceByValue<PodKind>(direction, (obj) => UIActions.getPodMetric(obj, 'memory')),
       ),
     transforms: [sortable],
-    props: { className: podColumnInfo.memory.classes },
+    props: { className: podColumnInfo.memory.classes, modifier: 'nowrap' },
   },
   {
     title: t(podColumnInfo.cpu.title),
@@ -212,21 +213,21 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
         sortResourceByValue<PodKind>(direction, (obj) => UIActions.getPodMetric(obj, 'cpu')),
       ),
     transforms: [sortable],
-    props: { className: podColumnInfo.cpu.classes },
+    props: { className: podColumnInfo.cpu.classes, modifier: 'nowrap' },
   },
   {
     title: t(podColumnInfo.created.title),
     id: podColumnInfo.created.id,
     sort: 'metadata.creationTimestamp',
     transforms: [sortable],
-    props: { className: podColumnInfo.created.classes },
+    props: { className: podColumnInfo.created.classes, modifier: 'nowrap' },
   },
   {
     title: t(podColumnInfo.node.title),
     id: podColumnInfo.node.id,
     sort: 'spec.nodeName',
     transforms: [sortable],
-    props: { className: podColumnInfo.node.classes },
+    props: { className: podColumnInfo.node.classes, modifier: 'nowrap' },
     additional: true,
   },
   {
@@ -234,7 +235,7 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     id: podColumnInfo.labels.id,
     sort: 'metadata.labels',
     transforms: [sortable],
-    props: { className: podColumnInfo.labels.classes },
+    props: { className: podColumnInfo.labels.classes, modifier: 'nowrap' },
     additional: true,
   },
   {
@@ -242,13 +243,13 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
     id: podColumnInfo.ipaddress.id,
     sort: 'status.podIP',
     transforms: [sortable],
-    props: { className: podColumnInfo.ipaddress.classes },
+    props: { className: podColumnInfo.ipaddress.classes, modifier: 'nowrap' },
     additional: true,
   },
   {
     title: t(podColumnInfo.traffic.title),
     id: podColumnInfo.traffic.id,
-    props: { className: podColumnInfo.traffic.classes },
+    props: { className: podColumnInfo.traffic.classes, modifier: 'nowrap' },
     additional: true,
   },
   {
@@ -519,6 +520,7 @@ function useDataViewData({
       isStickyColumn: column.props.isStickyColumn,
       stickyMinWidth: column.props.stickyMinWidth,
       isActionCell: column.props.isActionCell,
+      modifier: column.props.modifier,
     } as ThProps,
     cell: column.title ? (
       <span>{t(column.title)}</span>
