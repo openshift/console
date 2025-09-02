@@ -1,4 +1,4 @@
-import { SubsystemHealth } from '@console/dynamic-plugin-sdk';
+import { QueryParams, SubsystemHealth } from '@console/dynamic-plugin-sdk';
 import { ConfigMap } from '../resources';
 
 export type ConnectionFormFormikValues = {
@@ -16,3 +16,5 @@ export type VSphereConnectionProps = {
   cloudProviderConfig?: ConfigMap;
   health: SubsystemHealth;
 };
+
+export type PersistOp = (queryParams?: QueryParams) => Promise<any>;
