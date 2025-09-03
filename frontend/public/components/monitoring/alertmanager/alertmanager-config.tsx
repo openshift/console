@@ -296,9 +296,8 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
       receiverName: receiver?.name,
     }),
     confirmButtonLabel: t('public~Delete Receiver'),
-    cancelButtonLabel: t('public~Cancel'),
     confirmButtonVariant: ButtonVariant.danger,
-    onConfirm: () => deleteReceiver(secret, config, receiver?.name, navigate),
+    onConfirm: () => deleteReceiver(secret, config, receiver.name, navigate),
     ouiaId: 'AlertmanagerDeleteReceiverConfirmation',
   });
 
