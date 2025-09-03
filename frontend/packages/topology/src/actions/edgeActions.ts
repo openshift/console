@@ -115,6 +115,7 @@ export const useDeleteConnectorAction = (
       cta: () => openConfirm(),
       accessReview: asAccessReview(kindObj, resource, 'delete'),
     }),
+    // missing openConfirm dependency, that causes max depth exceeded error
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [kindObj, resource, t],
   );
