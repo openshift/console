@@ -1149,6 +1149,33 @@ export type PersistentVolumeClaimKind = K8sResourceCommon & {
   };
 };
 
+export type PersistentVolumeKind = K8sResourceCommon & {
+  spec: {
+    storageClassName?: string;
+    claimRef?: {
+      namespace: string;
+      name: string;
+    };
+    capacity: { storage: string };
+    storage: string;
+    accessModes: string[];
+    persistentVolumeReclaimPolicy: string;
+    volumeMode?: string;
+    csi?: {
+      driver: string;
+      volumeHandle: string;
+      fsType?: string;
+      readOnly?: boolean;
+      volumeAttributes?: { [key: string]: string };
+      nodeStageSecretRef?: { name: string; namespace: string };
+      nodePublishSecretRef?: { name: string; namespace: string };
+    };
+  };
+  status: {
+    phase: string;
+  };
+};
+
 export type ConsolePluginKind = K8sResourceCommon & {
   spec: {
     displayName: string;
