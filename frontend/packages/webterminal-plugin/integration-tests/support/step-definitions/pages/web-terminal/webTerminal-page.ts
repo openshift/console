@@ -1,3 +1,4 @@
+import { warningModal } from '@console/cypress-integration-tests/views/warning-modal';
 import { messages } from '@console/dev-console/integration-tests/support/constants/webTerminal';
 import { webTerminalPO } from '@console/dev-console/integration-tests/support/pageObjects/webterminal-po';
 
@@ -30,10 +31,8 @@ export const webTerminalPage = {
 
   closeCurrentTerminalSession: () => {
     cy.get(webTerminalPO.terminalCloseWindowBtn).click();
-    cy.get('[data-ouia-component-id="WebTerminalCloseConfirmation"] h1')
-      .should('be.visible')
-      .and('contain.text', 'Close terminal?');
-    cy.get('[data-ouia-component-id="WebTerminalCloseConfirmation-confirm-button"]').click();
+    warningModal.shouldBeOpened('WebTerminalCloseConfirmation');
+    warningModal.confirm('WebTerminalCloseConfirmation');
   },
 
   deleteTerminalInstanceActionMenu: () => {

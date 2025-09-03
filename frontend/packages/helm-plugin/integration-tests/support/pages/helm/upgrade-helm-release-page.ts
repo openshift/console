@@ -1,3 +1,4 @@
+import { warningModal } from '@console/cypress-integration-tests/views/warning-modal';
 import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects/helm-po';
 
 export const upgradeHelmRelease = {
@@ -9,11 +10,7 @@ export const upgradeHelmRelease = {
     const count = Cypress.$('[data-test="console-select"]').length;
     const randNum = Math.floor(Math.random() * count);
     cy.byTestID('console-select-item').eq(randNum).click();
-    cy.get('body').then(() => {
-      cy.get('[data-ouia-component-id="HelmChangeChartVersionConfirmation"]').within(() => {
-        cy.contains('button', 'Proceed').click({ force: true });
-      });
-    });
+    warningModal.confirm('HelmChangeChartVersionConfirmation');
   },
   clickOnUpgrade: () => {
     cy.get(helmPO.upgradeHelmRelease.upgrade).click();
