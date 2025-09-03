@@ -1,7 +1,22 @@
 # Changelog for `@openshift-console/dynamic-plugin-sdk`
 
-Refer to [Console dynamic plugins README](./README.md) for OpenShift Console version vs SDK package
-version and PatternFly version compatibility.
+Console plugin SDK packages follow a semver scheme where the major and minor version number indicates
+the earliest supported OCP Console version, and the patch version number indicates the release of that
+particular package.
+
+For released (GA) versions of Console, use `4.x.z` packages.
+For current development version of Console, use `4.x.0-prerelease.n` packages.
+
+For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
+in [Console dynamic plugins README](./README.md).
+
+## 4.18.0 - 2025-09-04
+
+> Initial release for OCP Console 4.18.
+
+- Fix `href` handling bug for extension type `console.tab/horizontalNav` ([OCPBUGS-58258], [#15231])
+- Improve `useModal` hook to support multiple modals and prop pass-through ([OCPBUGS-49709], [#15139])
+- Allow custom popover description in extension type `console.resource/details-item` ([CONSOLE-4269], [#14487])
 
 ## 1.8.0 - 2024-11-04
 
@@ -63,6 +78,7 @@ version and PatternFly version compatibility.
 [CONSOLE-4097]: https://issues.redhat.com/browse/CONSOLE-4097
 [CONSOLE-4185]: https://issues.redhat.com/browse/CONSOLE-4185
 [CONSOLE-4263]: https://issues.redhat.com/browse/CONSOLE-4263
+[CONSOLE-4269]: https://issues.redhat.com/browse/CONSOLE-4269
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -74,6 +90,8 @@ version and PatternFly version compatibility.
 [OCPBUGS-37426]: https://issues.redhat.com/browse/OCPBUGS-37426
 [OCPBUGS-43538]: https://issues.redhat.com/browse/OCPBUGS-43538
 [OCPBUGS-43998]: https://issues.redhat.com/browse/OCPBUGS-43998
+[OCPBUGS-49709]: https://issues.redhat.com/browse/OCPBUGS-49709
+[OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -96,3 +114,6 @@ version and PatternFly version compatibility.
 [#14156]: https://github.com/openshift/console/pull/14156
 [#14421]: https://github.com/openshift/console/pull/14421
 [#14447]: https://github.com/openshift/console/pull/14447
+[#14487]: https://github.com/openshift/console/pull/14487
+[#15139]: https://github.com/openshift/console/pull/15139
+[#15231]: https://github.com/openshift/console/pull/15231

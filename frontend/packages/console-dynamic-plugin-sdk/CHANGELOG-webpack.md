@@ -1,7 +1,20 @@
 # Changelog for `@openshift-console/dynamic-plugin-sdk-webpack`
 
-Refer to [Console dynamic plugins README](./README.md) for OpenShift Console version vs SDK package
-version and PatternFly version compatibility.
+Console plugin SDK packages follow a semver scheme where the major and minor version number indicates
+the earliest supported OCP Console version, and the patch version number indicates the release of that
+particular package.
+
+For released (GA) versions of Console, use `4.x.z` packages.
+For current development version of Console, use `4.x.0-prerelease.n` packages.
+
+For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
+in [Console dynamic plugins README](./README.md).
+
+## 4.18.0 - 2025-09-04
+
+> Initial release for OCP Console 4.18.
+
+- Add `@patternfly/react-topology` to Console provided shared modules ([OCPBUGS-55323], [#14993])
 
 ## 1.3.0 - 2024-10-31
 
@@ -47,6 +60,7 @@ version and PatternFly version compatibility.
 [OCPBUGS-35928]: https://issues.redhat.com/browse/OCPBUGS-35928
 [OCPBUGS-38734]: https://issues.redhat.com/browse/OCPBUGS-38734
 [OCPBUGS-42985]: https://issues.redhat.com/browse/OCPBUGS-42985
+[OCPBUGS-55323]: https://issues.redhat.com/browse/OCPBUGS-55323
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -58,3 +72,4 @@ version and PatternFly version compatibility.
 [#13992]: https://github.com/openshift/console/pull/13992
 [#14167]: https://github.com/openshift/console/pull/14167
 [#14300]: https://github.com/openshift/console/pull/14300
+[#14993]: https://github.com/openshift/console/pull/14993
