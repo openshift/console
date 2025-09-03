@@ -117,11 +117,7 @@ const idFromPath = (path) => `DEPRECATED_root_${path.split('.').join('_')}`;
  * both prefix and suffix are provided, this will return true only if the field has a capability
  * that matches the concatenation of prefix + suffix.
  */
-const hasDescriptor = (
-  field: OperandField,
-  prefix: string,
-  suffix: string | null = null,
-): boolean => {
+const hasDescriptor = (field: OperandField, prefix: string, suffix: string = ''): boolean => {
   return suffix
     ? _.includes(field.capabilities, `${prefix}${suffix}`)
     : _.some(field.capabilities, (capability) => capability.startsWith(prefix));

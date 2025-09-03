@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { pluralize } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link, To } from 'react-router-dom-v5-compat';
 import {
   resourcePathFromModel,
   resourcePath,
@@ -18,7 +18,7 @@ const ClusterServiceVersionRow: React.FC<OperatorRowProps<ClusterServiceVersionK
 }) => {
   const { name, namespace } = operatorStatus.operators[0]?.metadata || {};
   const { displayName } = operatorStatus.operators[0]?.spec || {};
-  const to =
+  const to: To =
     operatorStatus.operators.length > 1
       ? `${resourcePathFromModel(ClusterServiceVersionModel)}?name=${name}`
       : resourcePath(referenceForModel(ClusterServiceVersionModel), name, namespace);
@@ -28,7 +28,7 @@ const ClusterServiceVersionRow: React.FC<OperatorRowProps<ClusterServiceVersionK
   )} ${operatorStatus.status.title.toLowerCase()}`;
   return (
     <Status value={value} icon={operatorStatus.status.icon}>
-      <Link className="csv-operator-status__title" to={to as any}>
+      <Link className="csv-operator-status__title" to={to}>
         {displayName || name}
       </Link>
     </Status>

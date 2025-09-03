@@ -121,7 +121,7 @@ const normalizeClusterServiceVersions = (
           operatorName,
         },
         icon: {
-          class: undefined,
+          class: '',
           url: getImageForCSVIcon(desc.csv.spec.icon?.[0]),
         },
         cta: {

@@ -248,13 +248,25 @@ describe(ClusterServiceVersionList.displayName || '', () => {
 });
 
 describe(CRDCard.displayName || '', () => {
-  const crd = testClusterServiceVersion.spec.customresourcedefinitions?.owned?.[0];
+  const testCRD = {
+    name: 'test.example.com',
+    kind: 'Test',
+    version: 'v1',
+    displayName: 'Test Resource',
+  };
+
+  const testCSVWithCRD = {
+    ...testClusterServiceVersion,
+    spec: {
+      ...testClusterServiceVersion.spec,
+      customresourcedefinitions: {
+        owned: [testCRD],
+      },
+    },
+  };
 
   it('renders a card with title, body, and footer', () => {
-    if (!crd) {
-      throw new Error('Test CRD is undefined');
-    }
-    const wrapper = shallow(<CRDCard canCreate crd={crd} csv={testClusterServiceVersion} />);
+    const wrapper = shallow(<CRDCard canCreate crd={testCRD} csv={testCSVWithCRD} />);
 
     expect(wrapper.find(CardTitle).exists()).toBe(true);
     expect(wrapper.find(CardBody).exists()).toBe(true);
@@ -262,26 +274,17 @@ describe(CRDCard.displayName || '', () => {
   });
 
   it('renders a link to create a new instance', () => {
-    // Ensure crd is defined before passing to CRDCard to avoid type errors
-    if (!crd) {
-      throw new Error('Test CRD is undefined');
-    }
-    const wrapper = shallow(<CRDCard canCreate crd={crd} csv={testClusterServiceVersion} />);
+    const wrapper = shallow(<CRDCard canCreate crd={testCRD} csv={testCSVWithCRD} />);
 
     expect(wrapper.find(CardFooter).find(ReactRouter.Link).props().to).toEqual(
-      `/k8s/ns/${testClusterServiceVersion.metadata?.namespace}/${
-        ClusterServiceVersionModel.plural
-      }/${testClusterServiceVersion.metadata?.name}/${referenceForProvidedAPI(crd)}/~new`,
+      `/k8s/ns/${testCSVWithCRD.metadata?.namespace}/${ClusterServiceVersionModel.plural}/${
+        testCSVWithCRD.metadata?.name
+      }/${referenceForProvidedAPI(testCRD)}/~new`,
     );
   });
 
   it('does not render link to create new instance if `props.canCreate` is false', () => {
-    if (!crd) {
-      throw new Error('Test CRD is undefined');
-    }
-    const wrapper = shallow(
-      <CRDCard canCreate={false} crd={crd} csv={testClusterServiceVersion} />,
-    );
+    const wrapper = shallow(<CRDCard canCreate={false} crd={testCRD} csv={testCSVWithCRD} />);
 
     expect(wrapper.find(CardFooter).find(ReactRouter.Link).exists()).toBe(false);
   });

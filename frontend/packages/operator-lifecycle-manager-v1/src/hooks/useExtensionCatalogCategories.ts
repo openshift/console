@@ -4,16 +4,16 @@ import { usePoll } from '@console/internal/components/utils';
 import { ExtensionCatalogDatabaseContext } from '../contexts/ExtensionCatalogDatabaseContext';
 import { getUniqueIndexKeys, openDatabase } from '../database/indexeddb';
 
-export const useExtensionCatalogCategories = (): [CatalogCategory[], boolean, Error] => {
+export const useExtensionCatalogCategories = (): [CatalogCategory[], boolean, string] => {
   const { done: initDone, error: initError } = React.useContext(ExtensionCatalogDatabaseContext);
   const [categories, setCategories] = React.useState<IDBValidKey[]>([]);
   const [loading, setLoading] = React.useState(!initDone);
-  const [error, setError] = React.useState<Error | null>(initError ?? null);
+  const [error, setError] = React.useState(initError.toString() || '');
 
   React.useEffect(() => {
     if (!initDone || initError) {
       setLoading(!initDone);
-      setError(initError);
+      setError(initError.toString() || '');
     }
   }, [initDone, initError]);
 
@@ -36,7 +36,7 @@ export const useExtensionCatalogCategories = (): [CatalogCategory[], boolean, Er
     () => categories.map((c) => ({ id: c as string, label: c as string, tags: [c as string] })),
     [categories],
   );
-  return [catalogCategories, loading, error ?? new Error('Unknown error')];
+  return [catalogCategories, loading, error];
 };
 
 export default useExtensionCatalogCategories;

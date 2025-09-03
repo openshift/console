@@ -129,7 +129,9 @@ const Row: React.FC<RowProps<VolumeSnapshotKind, VolumeSnapshotRowProsCustomData
   obj,
   rowData: { customData },
 }) => {
-  const { name, namespace, creationTimestamp } = obj?.metadata || {};
+  const name = obj?.metadata?.name || '';
+  const namespace = obj?.metadata?.namespace || '';
+  const creationTimestamp = obj?.metadata?.creationTimestamp || '';
   const size = obj?.status?.restoreSize;
   const sizeBase = convertToBaseValue(size);
   const sizeMetrics = size ? humanizeBinaryBytes(sizeBase).string : '-';

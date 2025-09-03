@@ -40,7 +40,6 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () 
           {...operatorHubListPageProps}
           marketplacePackageManifests={null as any}
           subscriptions={{ loaded: false, data: [] }}
-          loadError={undefined}
           clusterServiceVersions={{ loaded: false, data: [] }}
         />
       </MemoryRouter>,
@@ -172,13 +171,13 @@ xdescribe(`[https://issues.redhat.com/browse/CONSOLE-2136] ${OperatorHubTileView
       const { filter, resultLength } = filterTest;
       const results = _.reduce(
         operatorHubTileViewPageProps.items,
-        (matches: OperatorHubItem[], item) => {
+        (matches: OperatorHubItem[], item: OperatorHubItem) => {
           if (keywordCompare(filter, item)) {
             matches.push(item);
           }
           return matches;
         },
-        [],
+        [] as OperatorHubItem[],
       );
 
       expect(results.length).toBe(resultLength);

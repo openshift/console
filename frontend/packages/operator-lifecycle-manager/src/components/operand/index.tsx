@@ -147,12 +147,11 @@ const hasAllNamespaces = (csv: ClusterServiceVersionKind) => {
 };
 
 export const OperandStatus: React.FC<OperandStatusProps> = ({ operand }) => {
-  const status: OperandStatusType | null = getOperandStatus(operand);
-  if (!status) {
+  const { type, value }: OperandStatusType = getOperandStatus(operand);
+  if (!type || !value) {
     return <>-</>;
   }
 
-  const { type, value } = status;
   return (
     <span className="co-icon-and-text">
       {type}

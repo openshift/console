@@ -18,19 +18,16 @@ import {
   LabelList,
   LabelListProps,
 } from '@console/internal/components/utils';
-import {
-  K8sKind,
-  K8sResourceKind,
-  k8sPatch,
-  k8sUpdate,
-  Selector as SelectorType,
-} from '@console/internal/module/k8s';
+import { k8sPatch, k8sUpdate, Selector as SelectorType } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { DefaultCapability, K8sResourceLinkCapability, SecretCapability } from '../common';
-import { CapabilityProps, Descriptor, SpecCapability, Error } from '../types';
+import { CapabilityProps, SpecCapability, Error } from '../types';
 import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
-import { configureSizeModal } from './configure-size';
-import { configureUpdateStrategyModal } from './configure-update-strategy';
+import { configureSizeModal, ConfigureSizeModalProps } from './configure-size';
+import {
+  configureUpdateStrategyModal,
+  ConfigureUpdateStrategyModalProps,
+} from './configure-update-strategy';
 import { EndpointList, EndpointListProps } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 
@@ -42,24 +39,29 @@ const PodCount: React.FC<SpecCapabilityProps<number>> = ({
   obj,
   fullPath,
   value,
-}) => (
-  <DetailsItem
-    description={description}
-    label={label || ''}
-    obj={obj}
-    path={fullPath}
-    onEdit={() =>
-      configureSizeModal({
-        kindObj: model as K8sKind,
-        resource: obj as K8sResourceKind,
-        specDescriptor: descriptor as Descriptor,
-        specValue: value,
-      })
-    }
-  >
-    {_.isNil(value) ? '-' : `${value} pods`}
-  </DetailsItem>
-);
+}) => {
+  const sizeModalProps = React.useMemo<ConfigureSizeModalProps>(
+    () => ({
+      kindObj: model,
+      resource: obj,
+      specDescriptor: descriptor,
+      specValue: value,
+    }),
+    [model, obj, descriptor, value],
+  );
+
+  return (
+    <DetailsItem
+      description={description}
+      label={label || ''}
+      obj={obj}
+      path={fullPath}
+      onEdit={() => configureSizeModal(sizeModalProps)}
+    >
+      {_.isNil(value) ? '-' : `${value} pods`}
+    </DetailsItem>
+  );
+};
 
 const Endpoints: React.FC<SpecCapabilityProps<EndpointListProps['endpoints']>> = ({
   description,
@@ -133,21 +135,13 @@ const ResourceRequirements: React.FC<SpecCapabilityProps> = ({
         <DescriptionListGroup>
           <DescriptionListTerm>{t('olm~Resource limits')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <ResourceRequirementsModalLink
-              type="limits"
-              obj={obj as K8sResourceKind}
-              path={descriptor.path}
-            />
+            <ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} />
           </DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
           <DescriptionListTerm>{t('olm~Resource requests')}</DescriptionListTerm>
           <DescriptionListDescription>
-            <ResourceRequirementsModalLink
-              type="requests"
-              obj={obj as K8sResourceKind}
-              path={descriptor.path}
-            />
+            <ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} />
           </DescriptionListDescription>
         </DescriptionListGroup>
       </DescriptionList>
@@ -189,7 +183,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
   const { t } = useTranslation();
   const [checked, setChecked] = React.useState(Boolean(value));
   const [confirmed, setConfirmed] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = React.useState('');
 
   const errorCb = (err: Error): void => {
     setConfirmed(false);
@@ -200,22 +194,20 @@ const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
 
   const update = (): void => {
     setConfirmed(true);
-    setErrorMessage(null);
+    setErrorMessage('');
 
     if (_.has(obj, `spec.${descriptor.path}`)) {
       const patchFor = (val: boolean) => [
         { op: 'add', path: `/spec/${getPatchPathFromDescriptor(descriptor)}`, value: val },
       ];
-      k8sPatch(model as K8sKind, obj as K8sResourceKind, patchFor(checked)).catch((err) =>
-        errorCb(err),
-      );
+      k8sPatch(model, obj, patchFor(checked)).catch((err) => errorCb(err));
       return;
     }
 
     const newObj = _.cloneDeep(obj);
     if (newObj) {
       _.set(newObj, `spec.${descriptor.path}`, checked);
-      k8sUpdate(model as K8sKind, newObj as K8sResourceKind).catch((err) => errorCb(err));
+      k8sUpdate(model, newObj).catch((err) => errorCb(err));
     }
   };
 
@@ -233,7 +225,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
           onChange={(_event, val): void => {
             setChecked(val);
             setConfirmed(false);
-            setErrorMessage(null);
+            setErrorMessage('');
           }}
           label={t('public~True')}
         />
@@ -276,7 +268,7 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps<boolean>> = ({
   ];
   const update = (): void => {
     setConfirmed(true);
-    k8sPatch(model as K8sKind, obj as K8sResourceKind, patchFor(checked));
+    k8sPatch(model, obj, patchFor(checked));
   };
 
   return (
@@ -325,19 +317,22 @@ const UpdateStrategy: React.FC<SpecCapabilityProps> = ({
   value,
 }) => {
   const { t } = useTranslation();
+  const updateStrategyModalProps = React.useMemo<ConfigureUpdateStrategyModalProps>(
+    () => ({
+      kindObj: model,
+      resource: obj,
+      specDescriptor: descriptor,
+      specValue: value,
+    }),
+    [model, obj, descriptor, value],
+  );
+
   return (
     <DetailsItem
       description={description}
       label={label || ''}
       obj={obj}
-      onEdit={() =>
-        configureUpdateStrategyModal({
-          kindObj: model as K8sKind,
-          resource: obj as K8sResourceKind,
-          specDescriptor: descriptor as Descriptor,
-          specValue: value,
-        })
-      }
+      onEdit={() => configureUpdateStrategyModal(updateStrategyModalProps)}
       path={fullPath}
     >
       {value?.type ?? t('public~None')}

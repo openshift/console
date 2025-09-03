@@ -571,14 +571,14 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
 
 export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) => {
   const { t } = useTranslation();
-  const [detailsItem, setDetailsItem] = React.useState<OperatorHubItem | null>(null);
+  const [detailsItem, setDetailsItem] = React.useState<OperatorHubItem>();
   const [showDetails, setShowDetails] = React.useState(false);
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
     boolean
   >(userSettingsKey, storeKey, false);
   const [updateChannel, setUpdateChannel] = React.useState('');
   const [updateVersion, setUpdateVersion] = React.useState('');
-  const [tokenizedAuth, setTokenizedAuth] = React.useState<string | null>(null);
+  const [tokenizedAuth, setTokenizedAuth] = React.useState('');
   const installVersion = getQueryArgument('version');
   const filteredItems = filterByArchAndOS(props.items);
 
@@ -813,10 +813,13 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   const installLink =
     detailsItem && detailsItem.obj && `/operatorhub/subscribe?${installParamsURL}`;
 
-  const uninstallLink = () =>
-    detailsItem &&
-    detailsItem.subscription &&
-    `/k8s/ns/${detailsItem.subscription.metadata?.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata?.name}?showDelete=true`;
+  const uninstallLink = () => {
+    const subscriptionName = detailsItem?.subscription?.metadata?.name;
+    const subscriptionNamespace = detailsItem?.subscription?.metadata?.namespace;
+    return subscriptionName && subscriptionNamespace
+      ? `/k8s/ns/${subscriptionNamespace}/${SubscriptionModel.plural}/${subscriptionName}?showDelete=true`
+      : '';
+  };
 
   if (_.isEmpty(filteredItems)) {
     return (
