@@ -9,7 +9,7 @@ import {
 } from '@console/internal/components/catalog/catalog-item-icon';
 import { getMostRecentBuilderTag, isBuilder } from '@console/internal/components/image-stream';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ANNOTATIONS } from '@console/shared';
 import { prettifyName } from '../../../utils/imagestream-utils';
 
@@ -19,12 +19,10 @@ const normalizeBuilderImages = (
   t: TFunction,
 ): CatalogItem[] => {
   const normalizedBuilderImages = _.map(builderImageStreams, (imageStream) => {
-    const {
-      uid,
-      name,
-      namespace: imageStreamNS,
-      annotations,
-    } = imageStream.metadata as ObjectMetadata;
+    const uid = imageStream.metadata?.uid || '';
+    const name = imageStream.metadata?.name || '';
+    const imageStreamNS = imageStream.metadata?.namespace || '';
+    const annotations = imageStream.metadata?.annotations;
     const tag = getMostRecentBuilderTag(imageStream);
     const displayName = annotations?.[ANNOTATIONS.displayName] ?? name;
     const title = displayName && displayName.length < 14 ? displayName : prettifyName(name || '');

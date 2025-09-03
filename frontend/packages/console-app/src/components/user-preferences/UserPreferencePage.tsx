@@ -57,7 +57,8 @@ const UserPreferencePage: React.FC = () => {
   const { group: groupIdFromUrl } = useParams();
   const initialTabId =
     sortedUserPreferenceGroups.find((extension) => extension.id === groupIdFromUrl)?.id ||
-    sortedUserPreferenceGroups[0]?.id;
+    sortedUserPreferenceGroups[0]?.id ||
+    'general';
   const [activeTabId, setActiveTabId] = useState<string>(initialTabId);
 
   const [userPreferenceTabs, userPreferenceTabContents] = useMemo<

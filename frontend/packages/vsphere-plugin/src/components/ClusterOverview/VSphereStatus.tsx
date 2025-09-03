@@ -54,7 +54,7 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ hide, responses, 
 };
 
 export const healthHandler: PrometheusHealthHandler = (responses, t, additionalResource) => {
-  const health = getVSphereHealth(t, responses, additionalResource);
+  const health = getVSphereHealth(t || (() => ''), responses, additionalResource);
   const { state } = health;
 
   let message: string | undefined;
@@ -63,7 +63,7 @@ export const healthHandler: PrometheusHealthHandler = (responses, t, additionalR
       message = health.message;
       break;
     case HealthState.OK:
-      message = t('vsphere-plugin~No errors reported');
+      message = t?.('vsphere-plugin~No errors reported') || 'No errors reported';
       break;
     default:
       break;

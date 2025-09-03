@@ -57,7 +57,7 @@ const NamespaceDropdown: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [filterText, setFilterText] = React.useState('');
   const menuRef = React.useRef(null);
-  const filterRef = React.useRef(null);
+  const filterRef = React.useRef<HTMLInputElement>(null);
 
   const optionItems: OptionItem[] = React.useMemo(() => {
     if (!optionsLoaded) {
@@ -119,7 +119,7 @@ const NamespaceDropdown: React.FC = () => {
           event.preventDefault();
           event.stopPropagation();
           setFilterText('');
-          (filterRef.current as any)?.focus();
+          filterRef.current?.focus();
         }}
       />
     ) : null;

@@ -13,7 +13,14 @@ import { K8sResourceKind } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
 import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
 
-const getStages = (status): any[] => (status && status.stages) || [];
+type BuildStageData = {
+  id: string;
+  name: string;
+  status: string;
+  startTimeMillis: number;
+};
+
+const getStages = (status): BuildStageData[] => (status && status.stages) || [];
 const getJenkinsStatus = (resource: K8sResourceKind) => {
   const json = _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-status-json']);
   if (!json) {
@@ -139,7 +146,7 @@ const BuildStage: React.FCC<BuildStageProps> = ({ obj, stage }) => {
         <BuildStageName name={stage.name} />
         <BuildAnimation status={stage.status} />
         <JenkinsInputUrl obj={obj} stage={stage} />
-        <BuildStageTimestamp timestamp={stage.startTimeMillis} />
+        <BuildStageTimestamp timestamp={stage.startTimeMillis.toString()} />
       </div>
     </div>
   );
@@ -170,7 +177,7 @@ export type BuildPipelineProps = {
 
 export type BuildStageProps = {
   obj: K8sResourceKind;
-  stage: any;
+  stage: BuildStageData;
 };
 
 export type BuildAnimationProps = {

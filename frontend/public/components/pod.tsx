@@ -156,12 +156,12 @@ const fetchPodMetrics = (namespace: string): Promise<UIActions.PodMetrics> => {
       });
     },
   );
-  return Promise.all(promises).then((data: any[]) => _.assign({}, ...data));
+  return Promise.all(promises).then((data: unknown[]) => _.assign({}, ...data));
 };
 
 export const menuActions = [
-  ...Kebab.getExtensionsActionsForKind(PodModel),
-  ...Kebab.factory.common,
+  ...(Kebab.getExtensionsActionsForKind(PodModel) || []),
+  ...(Kebab.factory.common || []),
 ];
 
 // t('public~Name')
@@ -365,11 +365,11 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
   const { name, namespace, creationTimestamp, labels } = pod.metadata;
   const bytes = useSelector<RootState, number>(({ UI }) => {
     const metrics = UI.getIn(['metrics', 'pod']);
-    return metrics?.memory?.[namespace]?.[name];
+    return metrics?.memory?.[namespace || '']?.[name || ''];
   });
   const cores = useSelector<RootState, number>(({ UI }) => {
     const metrics = UI.getIn(['metrics', 'pod']);
-    return metrics?.cpu?.[namespace]?.[name];
+    return metrics?.cpu?.[namespace || '']?.[name || ''];
   });
   const { readyCount, totalContainers } = podReadiness(pod);
   const phase = podPhase(pod);
@@ -457,7 +457,7 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
         activeColumnIDs={activeColumnIDs}
         id={podColumnInfo.labels.id}
       >
-        <LabelList kind={kind} labels={labels} />
+        <LabelList kind={kind} labels={labels || {}} />
       </TableData>
       <TableData
         className={podColumnInfo.ipaddress.classes}
@@ -471,7 +471,7 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
         activeColumnIDs={activeColumnIDs}
         id={podColumnInfo.traffic.id}
       >
-        <PodTraffic podName={name} namespace={namespace} />
+        <PodTraffic podName={name || ''} namespace={namespace || ''} />
       </TableData>
       <TableData className={Kebab.columnClass} activeColumnIDs={activeColumnIDs} id="">
         <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />
@@ -601,7 +601,7 @@ export const PodContainerTable: React.FC<PodContainerTableProps> = ({
           </Tr>
         </Thead>
         <Tbody>
-          {containers.map((c: any, i: number) => (
+          {containers.map((c: ContainerSpec, i: number) => (
             <ContainerRow key={i} pod={pod} container={c} />
           ))}
         </Tbody>
@@ -736,7 +736,7 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
   if (status === 'Pending' && unschedulableCondition) {
     return (
       <PodStatusPopover
-        bodyContent={unschedulableCondition.message}
+        bodyContent={unschedulableCondition.message || ''}
         headerContent={t('public~Pod unschedulable')}
         status={status}
       />
@@ -796,7 +796,7 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
     return (
       <PodStatusPopover
         headerContent={headerTitle}
-        bodyContent={containerStatusStateWaiting.state.waiting.message}
+        bodyContent={containerStatusStateWaiting.state?.waiting?.message || ''}
         footerContent={footerLinks}
         status={status}
       />
@@ -836,8 +836,8 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
         path={moreThanOnePodIPs ? 'status.podIPs' : 'status.podIP'}
       >
         {moreThanOnePodIPs
-          ? pod.status.podIPs.map((podIP) => podIP.ip).join(', ')
-          : pod.status.podIP}
+          ? pod.status?.podIPs?.map((podIP) => podIP.ip).join(', ') || ''
+          : pod.status?.podIP || ''}
       </DetailsItem>
       <DetailsItem
         label={moreThanOneHostIPs ? t('public~Host IPs') : t('public~Host IP')}
@@ -845,11 +845,11 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
         path={moreThanOneHostIPs ? 'status.hostIPs' : 'status.hostIP'}
       >
         {moreThanOneHostIPs
-          ? pod.status.hostIPs.map((hostIP) => hostIP.ip).join(', ')
-          : pod.status.hostIP}
+          ? pod.status?.hostIPs?.map((hostIP) => hostIP.ip).join(', ') || ''
+          : pod.status?.hostIP || ''}
       </DetailsItem>
       <DetailsItem label={t('public~Node')} obj={pod} path="spec.nodeName" hideEmpty>
-        <NodeLink name={pod.spec.nodeName} />
+        <NodeLink name={pod.spec.nodeName || ''} />
       </DetailsItem>
       {pod.spec.imagePullSecrets && (
         <DetailsItem label={t('public~Image pull secret')} obj={pod} path="spec.imagePullSecrets">
@@ -857,8 +857,8 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
             <ResourceLink
               key={imagePullSecret.name}
               kind="Secret"
-              name={imagePullSecret.name}
-              namespace={pod.metadata.namespace}
+              name={imagePullSecret.name || ''}
+              namespace={pod.metadata.namespace || ''}
             />
           ))}
         </DetailsItem>
@@ -866,7 +866,7 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
       <RuntimeClass obj={pod} path="spec.runtimeClassName" />
       <PodDisruptionBudgetField obj={pod} />
       <DetailsItem label={t('public~Receiving Traffic')} obj={pod}>
-        <PodTraffic podName={pod.metadata.name} namespace={pod.metadata.namespace} />
+        <PodTraffic podName={pod.metadata.name || ''} namespace={pod.metadata.namespace || ''} />
       </DetailsItem>
     </DescriptionList>
   );
@@ -944,22 +944,22 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
       </PaneBody>
       <PaneBody>
         <SectionHeading text={t('public~Conditions')} />
-        <Conditions conditions={pod.status.conditions} />
+        <Conditions conditions={pod.status?.conditions || []} />
       </PaneBody>
     </>
   );
 };
 
-const EnvironmentPage = (props: any) => (
+const EnvironmentPage = (props: { obj: PodKind; envPath: string[]; readOnly: boolean }) => (
   <AsyncComponent
     loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
-    {...props}
+    {...(props as Record<string, unknown>)}
   />
 );
 
 const envPath = ['spec', 'containers'];
-const PodEnvironmentComponent = (props) => (
-  <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
+const PodEnvironmentComponent = (props: { obj: PodKind }) => (
+  <EnvironmentPage obj={props.obj} envPath={envPath} readOnly={true} />
 );
 
 export const PodConnectLoader: React.FC<PodConnectLoaderProps> = ({
@@ -1022,7 +1022,7 @@ PodsDetailsPage.displayName = 'PodsDetailsPage';
 
 export const PodList: React.FC<PodListProps> = ({ showNamespaceOverride, showNodes, ...props }) => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => getColumns(showNodes, t), [showNodes, t]);
+  const columns = React.useMemo(() => getColumns(showNodes || false, t), [showNodes, t]);
   const [activeColumns, userSettingsLoaded] = useActiveColumns({
     columns,
     showNamespaceOverride,
@@ -1034,17 +1034,19 @@ export const PodList: React.FC<PodListProps> = ({ showNamespaceOverride, showNod
     }),
     [showNodes],
   );
+  if (!userSettingsLoaded) {
+    return null;
+  }
+
   return (
-    userSettingsLoaded && (
-      <VirtualizedTable<PodKind, PodRowData>
-        {...props}
-        aria-label={t('public~Pods')}
-        label={t('public~Pods')}
-        columns={activeColumns}
-        Row={PodTableRow}
-        rowData={rowData}
-      />
-    )
+    <VirtualizedTable<PodKind, PodRowData>
+      {...props}
+      aria-label={t('public~Pods')}
+      label={t('public~Pods')}
+      columns={activeColumns}
+      Row={PodTableRow}
+      rowData={rowData}
+    />
   );
 };
 PodList.displayName = 'PodList';
@@ -1102,7 +1104,7 @@ export const PodsPage: React.FC<PodPageProps> = ({
   React.useEffect(() => {
     if (showMetrics) {
       const updateMetrics = () =>
-        fetchPodMetrics(namespace)
+        fetchPodMetrics(namespace || '')
           .then((result) => dispatch(UIActions.setPodMetrics(result)))
           .catch((e) => {
             // Just log the error here. Showing a warning alert could be more annoying
@@ -1131,58 +1133,60 @@ export const PodsPage: React.FC<PodPageProps> = ({
   const filters = React.useMemo(() => getFilters(t), [t]);
 
   const [data, filteredData, onFilterChange] = useListPageFilter(pods, filters, {
-    name: { selected: [nameFilter] },
+    name: { selected: [nameFilter || ''] },
   });
   const resourceKind = referenceForModel(PodModel);
   const accessReview = {
     groupVersionKind: resourceKind,
     namespace: namespace || 'default',
   };
+  if (!userSettingsLoaded) {
+    return null;
+  }
+
   return (
-    userSettingsLoaded && (
-      <>
-        <ListPageHeader title={showTitle ? t('public~Pods') : undefined}>
-          {canCreate && (
-            <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
-              {t('public~Create Pod')}
-            </ListPageCreate>
-          )}
-        </ListPageHeader>
-        <ListPageBody>
-          <ListPageFilter
-            data={data}
-            loaded={loaded}
-            rowFilters={filters}
-            onFilterChange={onFilterChange}
-            columnLayout={{
-              columns: getColumns(showNodes, t).map((column) =>
-                _.pick(column, ['title', 'additional', 'id']),
-              ),
-              id: columnManagementID,
-              selectedColumns:
-                tableColumns?.[columnManagementID]?.length > 0
-                  ? new Set(tableColumns[columnManagementID])
-                  : null,
-              showNamespaceOverride,
-              type: t('public~Pod'),
-            }}
-            hideNameLabelFilters={hideNameLabelFilters}
-            hideLabelFilter={hideLabelFilter}
-            hideColumnManagement={hideColumnManagement}
-          />
-          <PodList
-            data={filteredData}
-            unfilteredData={pods}
-            loaded={loaded}
-            loadError={loadError}
-            showNamespaceOverride={showNamespaceOverride}
-            showNodes={showNodes}
-            namespace={namespace}
-            mock={mock}
-          />
-        </ListPageBody>
-      </>
-    )
+    <>
+      <ListPageHeader title={showTitle ? t('public~Pods') : ''}>
+        {canCreate && (
+          <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
+            {t('public~Create Pod')}
+          </ListPageCreate>
+        )}
+      </ListPageHeader>
+      <ListPageBody>
+        <ListPageFilter
+          data={data}
+          loaded={loaded}
+          rowFilters={filters}
+          onFilterChange={onFilterChange}
+          columnLayout={{
+            columns: getColumns(showNodes || false, t).map((column) =>
+              _.pick(column, ['title', 'additional', 'id']),
+            ),
+            id: columnManagementID,
+            selectedColumns:
+              tableColumns?.[columnManagementID]?.length > 0
+                ? new Set(tableColumns[columnManagementID])
+                : new Set(),
+            showNamespaceOverride,
+            type: t('public~Pod'),
+          }}
+          hideNameLabelFilters={hideNameLabelFilters}
+          hideLabelFilter={hideLabelFilter}
+          hideColumnManagement={hideColumnManagement}
+        />
+        <PodList
+          data={filteredData}
+          unfilteredData={pods}
+          loaded={loaded}
+          loadError={loadError}
+          showNamespaceOverride={showNamespaceOverride}
+          showNodes={showNodes}
+          namespace={namespace}
+          mock={mock}
+        />
+      </ListPageBody>
+    </>
   );
 };
 
@@ -1265,7 +1269,7 @@ type PodListProps = {
   data: PodKind[];
   unfilteredData: PodKind[];
   loaded: boolean;
-  loadError: any;
+  loadError: unknown;
   showNodes?: boolean;
   showNamespaceOverride?: boolean;
   namespace?: string;

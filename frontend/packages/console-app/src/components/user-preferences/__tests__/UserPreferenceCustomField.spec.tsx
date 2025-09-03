@@ -1,4 +1,3 @@
-import { ComponentType } from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
 import UserPreferenceCustomField from '../UserPreferenceCustomField';
@@ -14,9 +13,7 @@ describe('UserPreferenceCustomField', () => {
   let wrapper: ShallowWrapper<UserPreferenceCustomFieldProps>;
 
   it('should render null if component does not exist', () => {
-    wrapper = shallow(
-      <UserPreferenceCustomField {...props} component={(null as unknown) as ComponentType} />,
-    );
+    wrapper = shallow(<UserPreferenceCustomField {...props} component={undefined} />);
     expect(wrapper.isEmptyRender()).toBe(true);
     expect(wrapper.find('[data-test="test custom component"]').exists()).toBeFalsy();
   });
