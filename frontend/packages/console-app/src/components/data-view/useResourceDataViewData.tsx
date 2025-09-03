@@ -57,38 +57,40 @@ export const useResourceDataViewData = <
     () =>
       activeColumns.map(
         (
-          {
-            id,
-            title,
-            sort,
-            props: { classes, isStickyColumn, stickyMinWidth, isActionCell, modifier },
-          },
+          { id, title, sort, props: { classes, isStickyColumn, stickyMinWidth, modifier } },
           index,
-        ) => ({
-          id,
-          title,
-          sortFunction: sort,
-          props: {
+        ) => {
+          const headerProps: ThProps = {
             className: classes,
-            sort: {
+            // isActionCell,
+            isStickyColumn,
+            stickyMinWidth,
+            modifier,
+          };
+
+          if (sort) {
+            headerProps.sort = {
               columnIndex: index,
               sortBy: {
                 defaultDirection: SortByDirection.asc,
                 direction: SortByDirection.asc,
                 index: 0,
               },
-            },
-            isStickyColumn,
-            stickyMinWidth,
-            isActionCell,
-            modifier,
-          } as ThProps,
-          cell: title ? (
-            <span>{title}</span>
-          ) : (
-            <span className="pf-v6-u-screen-reader">{t('public~Actions')}</span>
-          ),
-        }),
+            };
+          }
+
+          return {
+            id,
+            title,
+            sortFunction: sort,
+            props: headerProps,
+            cell: title ? (
+              <span>{title}</span>
+            ) : (
+              <span className="pf-v6-u-screen-reader">{t('public~Actions')}</span>
+            ),
+          };
+        },
       ),
     [activeColumns, t],
   );
@@ -143,7 +145,7 @@ export const useResourceDataViewData = <
 
   // We have to tack sort information to the columns once all data is available
   dataViewColumns.forEach((column) => {
-    if (isDataViewConfigurableColumn(column)) {
+    if (isDataViewConfigurableColumn(column) && column.sortFunction !== undefined) {
       column.props.sort.sortBy.index = sortBy.index;
       column.props.sort.sortBy.direction = sortBy.direction;
       column.props.sort.onSort = onSort;
