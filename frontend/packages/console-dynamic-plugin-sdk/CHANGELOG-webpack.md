@@ -30,6 +30,12 @@ in [Console dynamic plugins README](./README.md).
 - Remove Console provided PatternFly 4 shared modules ([CONSOLE-4379], [#14615])
 - Change generated JS build target from `es2016` to `es2021` ([CONSOLE-4400], [#14620])
 
+## 4.18.0 - 2025-09-04
+
+> Initial release for OCP Console 4.18.
+
+- Add `@patternfly/react-topology` to Console provided shared modules ([OCPBUGS-55323], [#14993])
+
 ## 1.3.0 - 2024-10-31
 
 - Expose `EncodedExtension` type ([OCPBUGS-38734], [#14167])

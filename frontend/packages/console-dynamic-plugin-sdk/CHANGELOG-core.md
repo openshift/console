@@ -19,7 +19,7 @@ in [Console dynamic plugins README](./README.md).
 > Initial release for OCP Console 4.19.
 
 - Improve `useModal` hook to support multiple modals and prop pass-through ([OCPBUGS-57755], [#15189])
-- Add `noCheckForEmptyGroupAndResource` parameter to `useAccessReview` hook ([OCPBUGS-56413], [#15067])
+- Add `noCheckForEmptyGroupAndResource` parameter to `useAccessReview` hook ([OCPBUGS-55368], [#15017])
 
 ## 4.19.0-prerelease.2 - 2025-05-20
 
@@ -39,6 +39,14 @@ in [Console dynamic plugins README](./README.md).
 - Add `customData` prop to `HorizontalNav` component ([OCPBUGS-45319], [#14575])
 - Allow custom popover description in extension type `console.resource/details-item` ([CONSOLE-4269], [#14487])
 - Change generated JS build target from `es2016` to `es2021` ([CONSOLE-4400], [#14620])
+
+## 4.18.0 - 2025-09-04
+
+> Initial release for OCP Console 4.18.
+
+- Fix `href` handling bug for extension type `console.tab/horizontalNav` ([OCPBUGS-58258], [#15231])
+- Improve `useModal` hook to support multiple modals and prop pass-through ([OCPBUGS-49709], [#15139])
+- Allow custom popover description in extension type `console.resource/details-item` ([CONSOLE-4269], [#14487])
 
 ## 1.8.0 - 2024-11-04
 
@@ -116,10 +124,12 @@ in [Console dynamic plugins README](./README.md).
 [OCPBUGS-43538]: https://issues.redhat.com/browse/OCPBUGS-43538
 [OCPBUGS-43998]: https://issues.redhat.com/browse/OCPBUGS-43998
 [OCPBUGS-45319]: https://issues.redhat.com/browse/OCPBUGS-45319
+[OCPBUGS-49709]: https://issues.redhat.com/browse/OCPBUGS-49709
 [OCPBUGS-52589]: https://issues.redhat.com/browse/OCPBUGS-52589
 [OCPBUGS-52948]: https://issues.redhat.com/browse/OCPBUGS-52948
-[OCPBUGS-56413]: https://issues.redhat.com/browse/OCPBUGS-56413
+[OCPBUGS-55368]: https://issues.redhat.com/browse/OCPBUGS-55368
 [OCPBUGS-57755]: https://issues.redhat.com/browse/OCPBUGS-57755
+[OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [OCPBUGS-58375]: https://issues.redhat.com/browse/OCPBUGS-58375
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
@@ -150,6 +160,8 @@ in [Console dynamic plugins README](./README.md).
 [#14863]: https://github.com/openshift/console/pull/14863
 [#14864]: https://github.com/openshift/console/pull/14864
 [#14876]: https://github.com/openshift/console/pull/14876
-[#15067]: https://github.com/openshift/console/pull/15067
+[#15017]: https://github.com/openshift/console/pull/15017
+[#15139]: https://github.com/openshift/console/pull/15139
 [#15189]: https://github.com/openshift/console/pull/15189
+[#15231]: https://github.com/openshift/console/pull/15231
 [#15239]: https://github.com/openshift/console/pull/15239
