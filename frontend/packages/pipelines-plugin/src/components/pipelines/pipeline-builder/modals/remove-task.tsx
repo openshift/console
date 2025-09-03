@@ -3,14 +3,14 @@ import { Icon, ButtonVariant } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { t_global_icon_color_status_warning_default as warningColor } from '@patternfly/react-tokens';
 import { useTranslation } from 'react-i18next';
-import { useWarningModalWithProps } from '@console/shared/src/hooks/useWarningModal';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import ModalContent from './ModalContent';
 
 type ModalCallback = () => void;
 
 export const useRemoveTaskModal = () => {
   const { t } = useTranslation();
-  const openConfirm = useWarningModalWithProps({
+  const openConfirm = useWarningModal({
     title: t('pipelines-plugin~Remove task'),
     confirmButtonLabel: t('pipelines-plugin~Remove'),
     cancelButtonLabel: t('public~Cancel'),

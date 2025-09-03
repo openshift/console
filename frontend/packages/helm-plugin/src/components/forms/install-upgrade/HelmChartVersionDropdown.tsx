@@ -11,7 +11,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { DropdownField } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { useWarningModalWithProps } from '@console/shared/src/hooks/useWarningModal';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { HelmChartRepositoryModel } from '../../../models';
 import {
   HelmChartMetaData,
@@ -69,7 +69,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   };
   const [chartRepositories] = useK8sWatchResource<K8sResourceKind[]>(resourceSelector);
 
-  const warningModalLauncher = useWarningModalWithProps({
+  const warningModalLauncher = useWarningModal({
     title: t('helm-plugin~Change chart version?'),
   });
 

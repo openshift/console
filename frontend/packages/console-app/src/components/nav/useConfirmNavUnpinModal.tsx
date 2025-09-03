@@ -2,12 +2,12 @@ import { useCallback } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { modelFor } from '@console/internal/module/k8s';
-import { useWarningModalWithProps } from '@console/shared/src/hooks/useWarningModal';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 
 const useConfirmNavUnpinModal = (pinnedResources: string[], updatePinsFn) => {
   const { t } = useTranslation();
 
-  const confirmModalLauncher = useWarningModalWithProps({
+  const confirmModalLauncher = useWarningModal({
     title: t('console-app~Remove from navigation?'),
     cancelButtonLabel: t('console-app~Cancel'),
     confirmButtonLabel: t('console-app~Remove'),
