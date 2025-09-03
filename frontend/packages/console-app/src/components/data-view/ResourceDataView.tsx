@@ -20,10 +20,10 @@ import {
   ColumnLayout,
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
-import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { createColumnManagementModal } from '@console/internal/components/modals';
 import { TableColumn } from '@console/internal/module/k8s';
+import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
+import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
 import { ResourceFilters, GetDataViewRows } from './types';
 import { useResourceDataViewData } from './useResourceDataViewData';

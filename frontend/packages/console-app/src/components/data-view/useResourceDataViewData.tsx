@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useDataViewPagination, DataViewTh } from '@patternfly/react-data-view';
 import { SortByDirection, ThProps } from '@patternfly/react-table';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom-v5-compat';
 import {
   K8sResourceCommon,
@@ -37,6 +38,7 @@ export const useResourceDataViewData = <
   columnManagementID?: string;
   customRowData?: TCustomRowData;
 }) => {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const pagination = useDataViewPagination({
@@ -53,25 +55,42 @@ export const useResourceDataViewData = <
 
   const dataViewColumns = React.useMemo<ResourceDataViewColumn<TData>[]>(
     () =>
-      activeColumns.map(({ id, title, sort, props }, index) => ({
-        id,
-        title,
-        sortFunction: sort,
-        props: {
-          className: props.classes,
-          sort: {
-            columnIndex: index,
-            sortBy: {
-              defaultDirection: SortByDirection.asc,
-              direction: SortByDirection.asc,
-              index: 0,
-            },
+      activeColumns.map(
+        (
+          {
+            id,
+            title,
+            sort,
+            props: { classes, isStickyColumn, stickyMinWidth, isActionCell, modifier },
           },
-          isStickyColumn: props.isStickyColumn,
-        } as ThProps,
-        cell: <span>{title}</span>,
-      })),
-    [activeColumns],
+          index,
+        ) => ({
+          id,
+          title,
+          sortFunction: sort,
+          props: {
+            className: classes,
+            sort: {
+              columnIndex: index,
+              sortBy: {
+                defaultDirection: SortByDirection.asc,
+                direction: SortByDirection.asc,
+                index: 0,
+              },
+            },
+            isStickyColumn,
+            stickyMinWidth,
+            isActionCell,
+            modifier,
+          } as ThProps,
+          cell: title ? (
+            <span>{title}</span>
+          ) : (
+            <span className="pf-v6-u-screen-reader">{t('public~Actions')}</span>
+          ),
+        }),
+      ),
+    [activeColumns, t],
   );
 
   const { sortBy, onSort } = useResourceDataViewSort<TData>({
