@@ -1716,6 +1716,7 @@
   "Filter by label": "Filter by label",
   "No {{label}} found": "No {{label}} found",
   "None found": "None found",
+  "{{label}} table": "{{label}} table",
   "Are you sure you want to remove <1>{{label}}</1> from navigation?": "Are you sure you want to remove <1>{{label}}</1> from navigation?",
   "Select a path": "Select a path",
   "Select a log file": "Select a log file",

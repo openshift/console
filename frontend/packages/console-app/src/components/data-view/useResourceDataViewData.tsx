@@ -11,7 +11,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
-import { ResourceDataViewColumn, GetDataViewRows } from './types';
+import { ResourceDataViewColumn, GetDataViewRows, ResourceFilters } from './types';
 import { useResourceDataViewSort, getSortByDirection } from './useResourceDataViewSort';
 
 const isDataViewConfigurableColumn = (
@@ -22,10 +22,12 @@ const isDataViewConfigurableColumn = (
 
 export const useResourceDataViewData = <
   TData extends K8sResourceCommon = K8sResourceCommon,
-  TCustomRowData = any
+  TCustomRowData = any,
+  TFilters extends ResourceFilters = ResourceFilters
 >({
   columns,
   filteredData,
+  filters,
   getDataViewRows,
   showNamespaceOverride,
   columnManagementID,
@@ -33,6 +35,7 @@ export const useResourceDataViewData = <
 }: {
   columns: TableColumn<TData>[];
   filteredData: TData[];
+  filters: TFilters;
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
   showNamespaceOverride?: boolean;
   columnManagementID?: string;
@@ -40,12 +43,30 @@ export const useResourceDataViewData = <
 }) => {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const prevFiltersRef = React.useRef(filters);
 
   const pagination = useDataViewPagination({
     perPage: 50,
     searchParams,
     setSearchParams,
   });
+
+  // Reset pagination to page 1 when filters change
+  React.useEffect(() => {
+    const currentFilters = filters;
+    const prevFilters = prevFiltersRef.current;
+    const filtersChanged = !_.isEqual(currentFilters, prevFilters);
+
+    if (filtersChanged && pagination.page > 1) {
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set('page', '1');
+        return newParams;
+      });
+    }
+
+    prevFiltersRef.current = currentFilters;
+  }, [filters, pagination.page, setSearchParams]);
 
   const [activeColumns] = useActiveColumns({
     columns,

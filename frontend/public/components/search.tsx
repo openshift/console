@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -92,6 +93,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   const [labelFilter, setLabelFilter] = React.useState([]);
   const [labelFilterInput, setLabelFilterInput] = React.useState('');
   const [typeaheadNameFilter, setTypeaheadNameFilter] = React.useState('');
+  const [debouncedNameFilter, setDebouncedNameFilter] = React.useState('');
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const { noProjectsAvailable } = props;
   const { t } = useTranslation();
@@ -117,6 +119,14 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     setLabelFilter(validTags);
     setTypeaheadNameFilter(name || '');
   }, []);
+
+  const debouncedNameFilterCallback = useDebounceCallback((nameFilter: string) => {
+    setDebouncedNameFilter(nameFilter);
+  }, 300);
+
+  React.useEffect(() => {
+    debouncedNameFilterCallback(typeaheadNameFilter);
+  }, [typeaheadNameFilter, debouncedNameFilterCallback]);
 
   const updateSelectedItems = (selection: string) => {
     const updateItems = selectedItems;
@@ -326,7 +336,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
                       nameFilter={typeaheadNameFilter}
                       namespace={namespace}
                       mock={noProjectsAvailable}
-                      key={resource}
+                      key={`${resource}-${labelFilter.join(',')}-${debouncedNameFilter}`}
                     />
                   )}
                 </AccordionContent>
