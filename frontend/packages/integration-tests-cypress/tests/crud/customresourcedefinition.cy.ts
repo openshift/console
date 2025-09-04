@@ -4,6 +4,7 @@ import { CustomResourceDefinitionKind } from '@console/internal/module/k8s';
 import { checkErrors, testName } from '../../support';
 import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
+import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
 
 describe('CustomResourceDefinitions', () => {
@@ -85,36 +86,37 @@ describe('CustomResourceDefinitions', () => {
   });
 
   it('creates, displays, and deletes `CustomResourceDefinitions` and creates a new custom resource instance', () => {
-    it('displays a YAML editor for creating a new custom resource definition', () => {
-      cy.visit('/k8s/cluster/customresourcedefinitions');
-      listPage.rows.shouldBeLoaded();
-      listPage.clickCreateYAMLbutton();
-      yamlEditor.isLoaded();
-      yamlEditor.getEditorContent().then((content) => {
-        const newContent = _.defaultsDeep({}, crd, safeLoad(content));
-        yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
-          yamlEditor.clickSaveCreateButton();
-          cy.byTestID('yaml-error').should('not.exist');
-        });
+    cy.visit('/k8s/cluster/customresourcedefinitions');
+    listPage.dvRows.shouldBeLoaded();
+    listPage.clickCreateYAMLbutton();
+    yamlEditor.isLoaded();
+    yamlEditor.getEditorContent().then((content) => {
+      const newContent = _.defaultsDeep({}, crd, safeLoad(content));
+      yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
+        yamlEditor.clickSaveCreateButton();
+        cy.byTestID('yaml-error').should('not.exist');
       });
-      cy.visit(`/k8s/cluster/customresourcedefinitions?name=${name}`);
-      listPage.isCreateButtonVisible();
-      listPage.rows.shouldBeLoaded();
-      listPage.rows.clickKebabAction(`CRD${testName}`, 'View instances');
-      listPage.clickCreateYAMLbutton();
-      yamlEditor.isLoaded();
-      yamlEditor.getEditorContent().then((content) => {
-        const newContent = _.defaultsDeep({}, customResource, safeLoad(content));
-        yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
-          yamlEditor.clickSaveCreateButton();
-          cy.byTestID('yaml-error').should('not.exist');
-        });
-      });
-      cy.visit(`/k8s/cluster/customresourcedefinitions?name=${name}`);
-      listPage.isCreateButtonVisible();
-      listPage.rows.shouldBeLoaded();
-      listPage.rows.clickKebabAction(`CRD${testName}`, 'Delete CustomResourceDefinition');
-      cy.resourceShouldBeDeleted(testName, 'CustomResourceDefinition', `CRD${testName}`);
     });
+    cy.visit(`/k8s/cluster/customresourcedefinitions?name=${name}`);
+    listPage.isCreateButtonVisible();
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickKebabAction(`CRD${testName}`, 'View instances');
+    listPage.clickCreateYAMLbutton();
+    yamlEditor.isLoaded();
+    yamlEditor.getEditorContent().then((content) => {
+      const newContent = _.defaultsDeep({}, customResource, safeLoad(content));
+      yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
+        yamlEditor.clickSaveCreateButton();
+        cy.byTestID('yaml-error').should('not.exist');
+      });
+    });
+    cy.visit(`/k8s/cluster/customresourcedefinitions?name=${name}`);
+    listPage.isCreateButtonVisible();
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickKebabAction(`CRD${testName}`, 'Delete CustomResourceDefinition');
+    modal.shouldBeOpened();
+    modal.submit();
+    modal.shouldBeClosed();
+    cy.resourceShouldBeDeleted(testName, 'CustomResourceDefinition', `CRD${testName}`);
   });
 });
