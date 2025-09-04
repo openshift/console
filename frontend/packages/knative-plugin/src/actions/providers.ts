@@ -16,8 +16,8 @@ import {
 } from '@console/internal/module/k8s';
 import { isCatalogTypeEnabled, useActiveNamespace } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { MoveConnectorAction } from '@console/topology/src/actions/edgeActions';
-import { getModifyApplicationAction } from '@console/topology/src/actions/modify-application';
+import { useMoveConnectorAction } from '@console/topology/src/actions/edgeActions';
+import { useGetModifyApplicationAction } from '@console/topology/src/actions/modify-application';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import { useKnativeEventingEnabled } from '../catalog/useEventSourceProvider';
 import { KnativeServiceTypeContext } from '../components/functions/ServiceTypeContext';
@@ -347,6 +347,14 @@ export const useEventSourcesActionsProviderForTopology = (element: GraphElement)
 };
 
 export const useModifyApplicationActionProvider = (element: GraphElement) => {
+  const resource = element.getData()?.resources?.obj;
+  const k8sKind = resource ? modelFor(referenceFor(resource)) : null;
+  const getModifyApplicationAction = useGetModifyApplicationAction(k8sKind, resource, [
+    'set-traffic-distribution',
+    'add-tigger-broker',
+    'add-subscription-channel',
+    'move-sink-source',
+  ]);
   const actions = useMemo(() => {
     if (
       ![
@@ -357,16 +365,8 @@ export const useModifyApplicationActionProvider = (element: GraphElement) => {
       ].includes(element.getType())
     )
       return undefined;
-    const resource = element.getData().resources.obj;
-    const k8sKind = modelFor(referenceFor(resource));
-    return [
-      getModifyApplicationAction(k8sKind, resource, [
-        'set-traffic-distribution',
-        'add-tigger-broker',
-        'add-subscription-channel',
-        'move-sink-source',
-      ]),
-    ];
+    return [getModifyApplicationAction];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [element]);
 
   return useMemo(() => {
@@ -402,6 +402,7 @@ export const useKnativeConnectorActionProvider = (element: Edge) => {
     isEdge(element) && element.getSource()?.getData() && element.getSource().getData();
   const sourceModel = resource ? modelFor(referenceFor(resource)) : null;
   const sinkSourceModalLauncher = useSinkSourceModalLauncher({ source: resource });
+  const moveConnectorAction = useMoveConnectorAction(sourceModel, element);
   const actions = useMemo(() => {
     const isEventSourceConnector = element.getType() === TYPE_EVENT_SOURCE_LINK;
     if (isEdge(element) && element.getSource()?.getData()) {
@@ -409,12 +410,12 @@ export const useKnativeConnectorActionProvider = (element: Edge) => {
         return [moveSinkSource(sourceModel, resource, sinkSourceModalLauncher)];
       }
       if ([TYPE_REVISION_TRAFFIC, TYPE_KAFKA_CONNECTION_LINK].includes(element.getType())) {
-        return [MoveConnectorAction(sourceModel, element)];
+        return [moveConnectorAction];
       }
     }
     return null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [element, resource, sourceModel]);
+  }, [element, moveConnectorAction, resource, sourceModel]);
   return useMemo(() => {
     if (!actions) {
       return [[], true, undefined];
@@ -445,13 +446,12 @@ export const useKnativeEventSinkActionProvider = (element: Node) => {
   const resource = useMemo(() => element.getData()?.resources?.obj || {}, [element]);
   const [k8sModel] = useK8sModel(referenceFor(resource));
   const commonActions = useCommonResourceActions(k8sModel, resource);
+  const getModifyApplicationAction = useGetModifyApplicationAction(k8sModel, resource);
   const actions = useMemo(() => {
     const type = element.getType();
     if ((type !== TYPE_EVENT_SINK && type !== TYPE_KAFKA_SINK) || !k8sModel) return undefined;
-    return k8sModel && resource
-      ? [getModifyApplicationAction(k8sModel, resource), ...commonActions]
-      : undefined;
-  }, [element, k8sModel, resource, commonActions]);
+    return k8sModel && resource ? [getModifyApplicationAction, ...commonActions] : undefined;
+  }, [element, k8sModel, resource, getModifyApplicationAction, commonActions]);
 
   return useMemo(() => {
     if (!actions) {
