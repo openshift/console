@@ -1,5 +1,16 @@
 [
   {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "Group"
+      },
+      "provider": { "$codeRef": "groupProvider.useGroupActionsProvider" }
+    }
+  },
+  {
     "type": "console.perspective",
     "properties": {
       "id": "admin",
@@ -363,17 +374,28 @@
       "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
     }
   },
-  {
-    "type": "console.action/resource-provider",
-    "properties": {
-      "model": {
-        "version": "v1",
-        "kind": "ClusterRoleBinding",
-        "group": "rbac.authorization.k8s.io"
-      },
-      "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
-    }
-  },
+      {
+      "type": "console.action/resource-provider",
+      "properties": {
+        "model": {
+          "version": "v1",
+          "kind": "ClusterRoleBinding",
+          "group": "rbac.authorization.k8s.io"
+        },
+        "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
+      }
+    },
+    {
+      "type": "console.action/resource-provider",
+      "properties": {
+        "model": {
+          "version": "v1",
+          "kind": "Build",
+          "group": "build.openshift.io"
+        },
+        "provider": { "$codeRef": "buildProvider.useBuildActionsProvider" }
+      }
+    },
   {
     "type": "console.page/route",
     "properties": {
