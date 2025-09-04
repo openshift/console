@@ -62,7 +62,6 @@ export const useResourceDataViewData = <
         ) => {
           const headerProps: ThProps = {
             className: classes,
-            // isActionCell,
             isStickyColumn,
             stickyMinWidth,
             modifier,
@@ -143,14 +142,32 @@ export const useResourceDataViewData = <
 
   const dataViewRows = getDataViewRows(transformedData, dataViewColumns);
 
-  // We have to tack sort information to the columns once all data is available
-  dataViewColumns.forEach((column) => {
-    if (isDataViewConfigurableColumn(column) && column.sortFunction !== undefined) {
-      column.props.sort.sortBy.index = sortBy.index;
-      column.props.sort.sortBy.direction = sortBy.direction;
-      column.props.sort.onSort = onSort;
-    }
-  });
+  const dataViewColumnsWithSort = React.useMemo(() => {
+    return dataViewColumns.map((column) => {
+      if (
+        isDataViewConfigurableColumn(column) &&
+        column.sortFunction !== undefined &&
+        column.props.sort
+      ) {
+        return {
+          ...column,
+          props: {
+            ...column.props,
+            sort: {
+              ...column.props.sort,
+              sortBy: {
+                ...column.props.sort.sortBy,
+                index: sortBy.index,
+                direction: sortBy.direction,
+              },
+              onSort,
+            },
+          },
+        };
+      }
+      return column;
+    });
+  }, [dataViewColumns, sortBy.index, sortBy.direction, onSort]);
 
-  return { dataViewRows, dataViewColumns, pagination };
+  return { dataViewRows, dataViewColumns: dataViewColumnsWithSort, pagination };
 };
