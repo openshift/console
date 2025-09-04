@@ -26,7 +26,7 @@ export const getCSRFToken = () => {
  * @returns an object containing the appropriate impersonation requst headers, based on redux state
  */
 export const getConsoleRequestHeaders = (): ConsoleRequestHeaders => {
-  const store = storeHandler.getStore();
+  const store = (window as any).consoleStore || storeHandler.getStore();
 
   const headers: ConsoleRequestHeaders = {
     'X-CSRFToken': getCSRFToken(),
