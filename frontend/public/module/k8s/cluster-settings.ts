@@ -371,15 +371,9 @@ export const isMCPWorker = (mcp: MachineConfigPoolKind) => mcp.metadata.name ===
 export const isMCPPaused = (mcp: MachineConfigPoolKind) => mcp.spec?.paused;
 
 export const sortMCPsByCreationTimestamp = (a: MachineConfigPoolKind, b: MachineConfigPoolKind) => {
-  const aTimestamp =
-    typeof a.metadata.creationTimestamp === 'string'
-      ? a.metadata.creationTimestamp
-      : a.metadata.creationTimestamp;
-  const bTimestamp =
-    typeof b.metadata.creationTimestamp === 'string'
-      ? b.metadata.creationTimestamp
-      : b.metadata.creationTimestamp;
-  return aTimestamp?.localeCompare(bTimestamp);
+  const aTimestamp = a.metadata?.creationTimestamp || '';
+  const bTimestamp = b.metadata?.creationTimestamp || '';
+  return aTimestamp.localeCompare(bTimestamp);
 };
 
 export const clusterIsUpToDateOrUpdateAvailable = (status: ClusterUpdateStatus) =>
