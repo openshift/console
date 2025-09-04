@@ -126,15 +126,18 @@ export const ResourceDataView = <
     return undefined;
   }, [filteredData.length, loaded]);
 
-  const dataViewFiltersNodes = React.useMemo<React.ReactNode[]>(() => {
-    const basicFilters = [
-      !hideNameLabelFilters && (
-        <DataViewTextFilter key="name" filterId="name" title={t('public~Name')} />
-      ),
-      !hideNameLabelFilters && hideLabelFilter !== true && (
-        <DataViewLabelFilter key="labels" filterId="label" title={t('public~Label')} data={data} />
-      ),
-    ];
+  const dataViewFilterNodes = React.useMemo<React.ReactNode[]>(() => {
+    const basicFilters: React.ReactNode[] = [];
+
+    if (!hideNameLabelFilters) {
+      basicFilters.push(<DataViewTextFilter key="name" filterId="name" title={t('public~Name')} />);
+    }
+
+    if (!hideNameLabelFilters && !hideLabelFilter) {
+      basicFilters.push(
+        <DataViewLabelFilter key="labels" filterId="label" title={t('public~Label')} data={data} />,
+      );
+    }
 
     return additionalFilterNodes?.length > 0
       ? [...additionalFilterNodes, ...basicFilters]
@@ -158,9 +161,11 @@ export const ResourceDataView = <
       <DataView activeState={activeState}>
         <DataViewToolbar
           filters={
-            <DataViewFilters values={filters} onChange={(_e, values) => onSetFilters(values)}>
-              {dataViewFiltersNodes}
-            </DataViewFilters>
+            dataViewFilterNodes.length > 0 && (
+              <DataViewFilters values={filters} onChange={(_e, values) => onSetFilters(values)}>
+                {dataViewFilterNodes}
+              </DataViewFilters>
+            )
           }
           clearAllFilters={clearAllFilters}
           actions={

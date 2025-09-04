@@ -12,7 +12,7 @@ import {
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { ResourceDataViewColumn, GetDataViewRows } from './types';
-import { useResourceDataViewSort } from './useResourceDataViewSort';
+import { useResourceDataViewSort, getSortByDirection } from './useResourceDataViewSort';
 
 const isDataViewConfigurableColumn = (
   column: DataViewTh,
@@ -62,7 +62,6 @@ export const useResourceDataViewData = <
         ) => {
           const headerProps: ThProps = {
             className: classes,
-            // isActionCell,
             isStickyColumn,
             stickyMinWidth,
             modifier,
@@ -72,9 +71,9 @@ export const useResourceDataViewData = <
             headerProps.sort = {
               columnIndex: index,
               sortBy: {
-                defaultDirection: SortByDirection.asc,
-                direction: SortByDirection.asc,
                 index: 0,
+                direction: SortByDirection.asc,
+                defaultDirection: SortByDirection.asc,
               },
             };
           }
@@ -101,6 +100,7 @@ export const useResourceDataViewData = <
 
   const sortedData = React.useMemo(() => {
     const sortColumn = dataViewColumns[sortBy.index];
+    const sortDirection = getSortByDirection(sortBy.direction);
 
     if (!isDataViewConfigurableColumn(sortColumn)) {
       return filteredData;
@@ -108,7 +108,7 @@ export const useResourceDataViewData = <
 
     if (typeof sortColumn.props.sort === 'string') {
       return filteredData.sort(
-        sortResourceByValue(sortBy.direction, (obj) =>
+        sortResourceByValue(sortDirection, (obj) =>
           _.get(obj, (sortColumn.props.sort as unknown) as string, ''),
         ),
       );
@@ -116,14 +116,12 @@ export const useResourceDataViewData = <
 
     if (typeof sortColumn.sortFunction === 'string') {
       return filteredData.sort(
-        sortResourceByValue(sortBy.direction, (obj) =>
-          _.get(obj, sortColumn.sortFunction as string),
-        ),
+        sortResourceByValue(sortDirection, (obj) => _.get(obj, sortColumn.sortFunction as string)),
       );
     }
 
     if (typeof sortColumn.sortFunction === 'function') {
-      return sortColumn.sortFunction(filteredData, sortBy.direction);
+      return sortColumn.sortFunction(filteredData, sortDirection);
     }
 
     return filteredData;
@@ -143,14 +141,35 @@ export const useResourceDataViewData = <
 
   const dataViewRows = getDataViewRows(transformedData, dataViewColumns);
 
-  // We have to tack sort information to the columns once all data is available
-  dataViewColumns.forEach((column) => {
-    if (isDataViewConfigurableColumn(column) && column.sortFunction !== undefined) {
-      column.props.sort.sortBy.index = sortBy.index;
-      column.props.sort.sortBy.direction = sortBy.direction;
-      column.props.sort.onSort = onSort;
-    }
-  });
+  // This code fixes a sorting issue but should be revisited to add more clarity
+  const dataViewColumnsWithSortApplied = React.useMemo(
+    () =>
+      dataViewColumns.map((column) => {
+        const shouldApplySort =
+          isDataViewConfigurableColumn(column) &&
+          column.sortFunction !== undefined &&
+          column.props.sort;
 
-  return { dataViewRows, dataViewColumns, pagination };
+        return shouldApplySort
+          ? {
+              ...column,
+              props: {
+                ...column.props,
+                sort: {
+                  ...column.props.sort,
+                  sortBy: {
+                    ...column.props.sort.sortBy,
+                    index: sortBy.index,
+                    direction: sortBy.direction,
+                  },
+                  onSort,
+                },
+              },
+            }
+          : column;
+      }),
+    [dataViewColumns, sortBy.index, sortBy.direction, onSort],
+  );
+
+  return { dataViewRows, dataViewColumns: dataViewColumnsWithSortApplied, pagination };
 };
