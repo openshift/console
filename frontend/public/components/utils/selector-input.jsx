@@ -24,9 +24,14 @@ export class SelectorInput extends Component {
     };
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (!_.isEqual(prevProps.tags, this.props.tags)) {
       this.setState({ tags: this.props.tags });
+    }
+
+    // Call onValidationChange callback when isInputValid changes
+    if (prevState.isInputValid !== this.state.isInputValid && this.props.onValidationChange) {
+      this.notifyValidationChange(this.state.isInputValid);
     }
   }
   static arrayify(obj) {
@@ -70,6 +75,12 @@ export class SelectorInput extends Component {
     return !!(requirement && (!this.isBasic || requirement.operator === 'Equals'));
   }
 
+  notifyValidationChange = (isValid) => {
+    if (this.props.onValidationChange) {
+      this.props.onValidationChange(isValid);
+    }
+  };
+
   handleInputChange(e) {
     // We track the input field value in state so we can retain the input value when an invalid tag is entered.
     // Otherwise, the default behaviour of TagsInput is to clear the input field.
@@ -81,7 +92,8 @@ export class SelectorInput extends Component {
       return;
     }
 
-    this.setState({ inputValue, isInputValid: this.isTagValid(inputValue) });
+    const isValid = this.isTagValid(inputValue);
+    this.setState({ inputValue, isInputValid: isValid });
   }
 
   handleChange(tags, changed) {
