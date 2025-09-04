@@ -30,7 +30,7 @@ export const useNodeStatusExtensions = () => {
     nodeStatusExtensions.forEach(({ properties, uid }) => {
       if (properties.resources) {
         Object.keys(properties.resources).forEach((key) => {
-          resources[`${uid}-${key}`] = properties.resources[key];
+          resources[`${uid}-${key}`] = properties.resources?.[key] ?? {};
         });
       }
     });

@@ -50,6 +50,7 @@ const PodDisruptionBudgetActionFactory: ResourceActionFactory = {
       deletePDBModal({
         workloadName: obj.metadata?.name || '',
         pdb: matchedPDB,
+        close: () => {},
       });
     },
     accessReview: asAccessReview(kindObj, obj, 'delete'),

@@ -13,7 +13,8 @@ import { PodDisruptionBudgetKind } from './types';
 import { isDisruptionViolated } from './utils/get-pdb-resources';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(PodDisruptionBudgetModel), ...common];
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const menuActions = [...Kebab.getExtensionsActionsForKind(PodDisruptionBudgetModel), ...common!];
 
 const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> = ({
   obj,
@@ -26,15 +27,15 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
       <TableData {...tableColumnInfo[0]} activeColumnIDs={activeColumnIDs}>
         <ResourceLink
           kind={referenceForModel(PodDisruptionBudgetModel)}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
+          name={obj.metadata?.name || ''}
+          namespace={obj.metadata?.namespace || ''}
         />
       </TableData>
       <TableData {...tableColumnInfo[1]} activeColumnIDs={activeColumnIDs}>
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={obj.metadata?.namespace || ''} />
       </TableData>
       <TableData {...tableColumnInfo[2]} activeColumnIDs={activeColumnIDs}>
-        <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />
+        <Selector selector={obj.spec?.selector || {}} namespace={obj.metadata?.namespace || ''} />
       </TableData>
       <TableData {...tableColumnInfo[3]} activeColumnIDs={activeColumnIDs}>
         {_.isNil(obj.spec.maxUnavailable) && _.isNil(obj.spec.minAvailable)
@@ -45,7 +46,7 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
       </TableData>
       <TableData {...tableColumnInfo[4]} activeColumnIDs={activeColumnIDs}>
         <>
-          {obj.status.disruptionsAllowed}{' '}
+          {obj.status?.disruptionsAllowed}{' '}
           {isPDBViolated && (
             <Tooltip content={t('console-app~Disruption not allowed')}>
               <YellowExclamationTriangleIcon />
@@ -54,7 +55,7 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
         </>
       </TableData>
       <TableData {...tableColumnInfo[5]} activeColumnIDs={activeColumnIDs}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata?.creationTimestamp} />
       </TableData>
       <TableData {...tableColumnInfo[6]} activeColumnIDs={activeColumnIDs}>
         <ResourceKebab actions={menuActions} kind={obj.kind} resource={obj} />
