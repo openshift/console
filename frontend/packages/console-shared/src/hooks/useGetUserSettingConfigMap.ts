@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import { createHash } from 'crypto-browserify';
+import { useMemo, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { getImpersonate, getUser, K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -8,7 +7,9 @@ import { RootState } from '@console/internal/redux';
 import { USER_SETTING_CONFIGMAP_NAMESPACE } from '../utils/user-settings';
 
 export const useGetUserSettingConfigMap = () => {
-  const hashNameOrKubeadmin = (name: string): string | null => {
+  const [hashedUsername, setHashedUsername] = useState<string | null>(null);
+
+  const hashNameOrKubeadmin = async (name: string): Promise<string | null> => {
     if (!name) {
       return null;
     }
@@ -16,17 +17,36 @@ export const useGetUserSettingConfigMap = () => {
     if (name === 'kube:admin') {
       return 'kubeadmin';
     }
-    const hash = createHash('sha256');
-    hash.update(name);
-    return hash.digest('hex');
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(name);
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
   };
-  // User and impersonate
-  const userUid = useSelector((state: RootState) => {
+
+  // User and impersonate info
+  const userInfo = useSelector((state: RootState) => {
     const impersonateName = getImpersonate(state)?.name;
     const { uid, username } = getUser(state) ?? {};
-    const hashName = hashNameOrKubeadmin(username);
-    return impersonateName || uid || hashName || '';
+    return { impersonateName, uid, username };
   });
+
+  // Hash the username asynchronously
+  useEffect(() => {
+    if (userInfo.username) {
+      hashNameOrKubeadmin(userInfo.username)
+        .then(setHashedUsername)
+        .catch(() => {
+          setHashedUsername(null);
+        });
+    } else {
+      setHashedUsername(null);
+    }
+  }, [userInfo.username]);
+
+  // Compute the final user UID
+  const userUid = userInfo.impersonateName || userInfo.uid || hashedUsername || '';
 
   const configMapResource = useMemo(
     () =>
