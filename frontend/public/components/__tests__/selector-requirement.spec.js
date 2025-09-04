@@ -1,4 +1,4 @@
-import { requirementFromString } from '../public/module/k8s/selector-requirement';
+import { requirementFromString } from '../../module/k8s/selector-requirement';
 
 describe('k8sSelectorRequirement', () => {
   describe('#requirementFromString', () => {

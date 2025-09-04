@@ -3,7 +3,7 @@ import * as Immutable from 'immutable';
 import * as _ from 'lodash-es';
 
 import { setFlag } from '@console/internal/actions/flags';
-import { receivedResources } from '../../public/actions/k8s';
+import { receivedResources } from '../../actions/k8s';
 import { FLAGS } from '@console/shared/src/constants';
 import {
   featureReducer,
@@ -11,9 +11,9 @@ import {
   defaults,
   getFlagsObject,
   FeatureState,
-} from '../../public/reducers/features';
-import { connectToFlags, stateToFlagsObject } from '../../public/reducers/connectToFlags';
-import { RootState } from '../../public/redux';
+} from '../features';
+import { connectToFlags, stateToFlagsObject } from '../connectToFlags';
+import { RootState } from '../../redux';
 
 describe('featureReducer', () => {
   it('returns default values if state is uninitialized', () => {

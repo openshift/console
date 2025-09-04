@@ -1,9 +1,9 @@
 import * as _ from 'lodash-es';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
-import '../../__mocks__/localStorage';
-import store from '../../public/redux';
-import * as UIActions from '../../public/actions/ui';
+import '../../../__mocks__/localStorage';
+import store from '../../redux';
+import * as UIActions from '../../actions/ui';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 
 const setActiveNamespace = (ns) => store.dispatch(UIActions.setActiveNamespace(ns));

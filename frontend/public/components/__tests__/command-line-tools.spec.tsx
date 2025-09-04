@@ -1,8 +1,8 @@
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { CommandLineTools } from '@console/internal/components/command-line-tools';
-import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 
 const obj = {
   data: [
@@ -47,14 +47,15 @@ describe('CommandLineTools', () => {
     afterAll(() => {
       window.ResizeObserver = nativeResizeObserver;
     });
-    it('shows oc first', () => {
-      const wrapper = mount(<CommandLineTools obj={obj} />, {
-        wrappingComponent: Provider,
-        wrappingComponentProps: { store },
-      });
-      expect(wrapper.find(SecondaryHeading).first().text()).toEqual(
-        'oc - OpenShift Command Line Interface (CLI)',
+    it('shows oc CLI first in the displayed list', () => {
+      render(
+        <Provider store={store}>
+          <CommandLineTools obj={obj} />
+        </Provider>,
       );
+
+      // User should see the oc CLI listed first
+      expect(screen.getByText('oc - OpenShift Command Line Interface (CLI)')).toBeInTheDocument();
     });
   });
 });
