@@ -38,8 +38,8 @@ describe('TopologyHelmReleaseNotesPanel', () => {
   it('should render markdown when release notes are given', () => {
     mockUserSettings.mockReturnValue(['light', jest.fn(), true]);
     renderWithProviders(<TopologyHelmReleaseNotesPanel releaseNotes={releaseNotes} />);
-    // Check that the markdown iframe is rendered
-    expect(screen.getByTitle('markdown-view1')).toBeTruthy();
+    // Check that the markdown iframe is rendered with the correct accessibility attributes
+    expect(screen.getByRole('document', { name: 'Markdown content viewer' })).toBeInTheDocument();
   });
 
   it('should render empty state when release notes are not given', () => {

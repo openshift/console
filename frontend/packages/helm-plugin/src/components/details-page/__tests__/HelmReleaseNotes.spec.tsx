@@ -21,8 +21,8 @@ describe('HelmReleaseNotes', () => {
     mockUserSettings.mockReturnValue(['light', jest.fn(), true]);
     renderWithProviders(<HelmReleaseNotes customData={mockHelmReleases[0]} />);
 
-    // Check if markdown content is rendered (SyncMarkdownView renders markdown content)
-    expect(screen.getByTitle('markdown-view1')).toBeTruthy();
+    // Check if markdown content is rendered (SyncMarkdownView renders an iframe with proper accessibility)
+    expect(screen.getByRole('document', { name: 'Markdown content viewer' })).toBeInTheDocument();
   });
 
   it('should render empty state when release notes are not given', () => {
