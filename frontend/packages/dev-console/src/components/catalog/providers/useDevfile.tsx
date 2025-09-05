@@ -15,11 +15,11 @@ import { DevfileSample } from '../../import/devfile/devfile-types';
 const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): CatalogItem[] => {
   const normalizedDevfileSamples = devfileSamples?.map((sample) => {
     const { name: uid, displayName, description, tags, git, icon, provider } = sample;
-    const gitRepositoryUrl = Object.values(git.remotes)[0];
+    const gitRepositoryUrl = Object.values(git?.remotes ?? {})[0];
 
     const searchParams = new URLSearchParams();
     searchParams.set('importType', 'devfile');
-    searchParams.set('devfileName', uid);
+    searchParams.set('devfileName', uid ?? '');
     searchParams.set('git.repository', gitRepositoryUrl);
 
     const href = `/import?${searchParams}`;

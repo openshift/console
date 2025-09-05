@@ -42,7 +42,7 @@ const PageContentsWithStartGuide = withStartGuide(PageContents);
 const AddPage: React.FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
-  const nsVariant = namespace ? null : NamespacedPageVariants.light;
+  const nsVariant = namespace ? undefined : NamespacedPageVariants.light;
 
   return (
     <>

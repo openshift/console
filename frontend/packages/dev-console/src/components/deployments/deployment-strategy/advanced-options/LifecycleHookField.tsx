@@ -77,14 +77,14 @@ const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
     initialValues.formData.deploymentStrategy[dataAttribute][lifecycleHookName] =
       data[dataAttribute][lifecycleHookName];
     initialValues.formData.deploymentStrategy.imageStreamData[lifecycleHookName] =
-      data.imageStreamData[lifecycleHookName];
+      data.imageStreamData?.[lifecycleHookName];
     setFieldValue(
       `formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}`,
       data[dataAttribute][lifecycleHookName],
     );
     setFieldValue(
       `formData.deploymentStrategy.imageStreamData.${lifecycleHookName}`,
-      data.imageStreamData[lifecycleHookName],
+      data.imageStreamData?.[lifecycleHookName],
     );
   }, [
     dataAttribute,

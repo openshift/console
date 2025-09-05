@@ -3,6 +3,7 @@ import { Flex, FlexItem, TextInputTypes, Title } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { ModelBadge } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { getGitService, ImportStrategy } from '@console/git-service/src';
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
 import { FormHeader, getBadgeFromType, InputField, useDebounceCallback } from '@console/shared';
@@ -62,7 +63,7 @@ const RepositoryFormSection = () => {
       <FlexItem grow={{ default: 'grow' }}>
         <Title headingLevel="h1">{t('pipelines-plugin~Add Git Repository')}</Title>
       </FlexItem>
-      <FlexItem>{getBadgeFromType(RepositoryModel.badge)}</FlexItem>
+      <FlexItem>{getBadgeFromType(RepositoryModel.badge as ModelBadge)}</FlexItem>
     </Flex>
   );
 

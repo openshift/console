@@ -3,7 +3,7 @@ import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { ModelBadge, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   StatusBox,
   resourcePathFromModel,
@@ -128,7 +128,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
     <StatusBox loaded={loaded} loadError={loadError} data={csv}>
       <PageHeading
         title={t('olm~Create {{item}}', { item: model.label })}
-        badge={getBadgeFromType(model.badge)}
+        badge={getBadgeFromType(model.badge as ModelBadge)}
         helpText={helpText}
       />
       <SyncedEditor

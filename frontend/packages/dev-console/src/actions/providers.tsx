@@ -42,7 +42,7 @@ import { EditImportApplication } from './creators';
 type TopologyActionProvider = (data: {
   element: GraphElement;
   connectorSource?: Node;
-}) => [Action[], boolean, Error];
+}) => [Action[], boolean, Error | undefined];
 
 export const useEditImportActionProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
@@ -130,7 +130,7 @@ export const useTopologyGraphActionProvider: TopologyActionProvider = ({
     );
     if (isOperatorBackedServiceEnabled) {
       actionsWithSourceRef.push(
-        AddActions.OperatorBacked(namespace, undefined, sourceReference, '', null),
+        AddActions.OperatorBacked(namespace, undefined, sourceReference, '', undefined),
       );
     }
     if (isJavaImageStreamEnabled) {

@@ -5,5 +5,5 @@ export const isServiceBindable = (resource: K8sResourceKind, model: Model): bool
   if (!model?.nodes?.length) {
     return false;
   }
-  return resource.metadata.labels?.['app.kubernetes.io/component'] === 'external-service';
+  return resource?.metadata?.labels?.['app.kubernetes.io/component'] === 'external-service';
 };

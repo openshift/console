@@ -60,7 +60,7 @@ describe('getInitialValues', () => {
       },
       build: {
         ...gitImportInitialValues.build,
-        source: { type: undefined },
+        source: { type: '' },
         triggers: { config: false, image: false, webhook: false },
         option: BuildOptions.PIPELINES,
       },
@@ -95,27 +95,29 @@ describe('getInitialValues', () => {
 
   it('should return health checks data based on the resources', () => {
     const { buildConfig, route, editAppResource } = appResources;
-    editAppResource.data.spec.template.spec.containers[0].readinessProbe = {
-      failureThreshold: 3,
-      httpGet: {
-        scheme: 'HTTP',
-        path: '/',
-        port: 8080,
-        httpHeaders: [{ name: 'header', value: 'val' }],
-      },
-      initialDelaySeconds: 0,
-      periodSeconds: 10,
-      timeoutSeconds: 1,
-      successThreshold: 1,
-    };
-    editAppResource.data.spec.template.spec.containers[0].livenessProbe = {
-      failureThreshold: 3,
-      exec: { command: ['cat', '/tmp/healthy'] },
-      initialDelaySeconds: 0,
-      periodSeconds: 10,
-      timeoutSeconds: 1,
-      successThreshold: 1,
-    };
+    if (editAppResource?.data?.spec?.template?.spec?.containers?.[0]) {
+      editAppResource.data.spec.template.spec.containers[0].readinessProbe = {
+        failureThreshold: 3,
+        httpGet: {
+          scheme: 'HTTP',
+          path: '/',
+          port: 8080,
+          httpHeaders: [{ name: 'header', value: 'val' }],
+        },
+        initialDelaySeconds: 0,
+        periodSeconds: 10,
+        timeoutSeconds: 1,
+        successThreshold: 1,
+      };
+      editAppResource.data.spec.template.spec.containers[0].livenessProbe = {
+        failureThreshold: 3,
+        exec: { command: ['cat', '/tmp/healthy'] },
+        initialDelaySeconds: 0,
+        periodSeconds: 10,
+        timeoutSeconds: 1,
+        successThreshold: 1,
+      };
+    }
     expect(
       getInitialValues({ editAppResource, buildConfig, route }, 'nationalparks-py', 'div'),
     ).toEqual(gitImportInitialValuesWithHealthChecksEnabled);
@@ -125,7 +127,12 @@ describe('getInitialValues', () => {
 describe('getFileUploadValues', () => {
   it('should get correct data for fileupload values', () => {
     const { buildConfig, editAppResource } = appResources;
-    expect(getFileUploadValues(editAppResource.data, buildConfig.data)).toEqual({
+    expect(
+      getFileUploadValues(
+        editAppResource?.data as K8sResourceKind,
+        buildConfig?.data?.[0] as K8sResourceKind,
+      ),
+    ).toEqual({
       fileUpload: { name: 'demo-app.jar', value: '', javaArgs: '' },
       customIcon: null,
       runtimeIcon: 'python',
@@ -245,7 +252,7 @@ describe('getKsvcRouteData', () => {
           spec: {
             containers: [
               {
-                ...knativeService.spec.template.spec.containers[0],
+                ...knativeService?.spec?.template?.spec?.containers[0],
                 ports: [
                   {
                     containerPort: 8080,

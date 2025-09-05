@@ -43,9 +43,9 @@ const EditDeploymentForm: React.FC<
 }) => {
   const { t } = useTranslation();
   const resourceType = getResourcesType(resource);
-  const isNew = !resource.metadata.name;
+  const isNew = !resource.metadata?.name;
 
-  const isStale = !isNew && resource.metadata.resourceVersion !== formData.resourceVersion;
+  const isStale = !isNew && resource.metadata?.resourceVersion !== formData.resourceVersion;
 
   const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'devconsole.editDeploymentForm.editor.lastView';
 
@@ -78,7 +78,7 @@ const EditDeploymentForm: React.FC<
     if (editorType === EditorType.Form) {
       setFieldValue('formData', convertDeploymentToEditForm(resource));
     }
-    setFieldValue('formData.resourceVersion', resource.metadata.resourceVersion);
+    setFieldValue('formData.resourceVersion', resource.metadata?.resourceVersion ?? '');
     setFieldValue('yamlData', safeJSToYAML(resource, 'yamlData', { skipInvalid: true }));
     setFieldValue('formReloadCount', formReloadCount + 1);
   }, [setStatus, setErrors, editorType, setFieldValue, resource, formReloadCount]);
@@ -104,7 +104,7 @@ const EditDeploymentForm: React.FC<
         />
       </FormBody>
       <FormFooter
-        handleReset={isNew ? null : onReload}
+        handleReset={isNew ? undefined : onReload}
         errorMessage={status?.submitError}
         successMessage={status?.submitSuccess}
         showAlert={isStale}
@@ -116,7 +116,7 @@ const EditDeploymentForm: React.FC<
           (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) || isSubmitting
         }
         handleCancel={handleCancel}
-        handleDownload={editorType === EditorType.YAML && (() => downloadYaml(yamlData))}
+        handleDownload={editorType === EditorType.YAML ? () => downloadYaml(yamlData) : undefined}
         sticky
       />
     </FlexForm>

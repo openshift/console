@@ -58,7 +58,7 @@ const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
   const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
   const openProjectModal = React.useCallback(() => {
     const handleSubmit = (project: K8sResourceKind) => {
-      setActiveNamespace(project.metadata?.name);
+      setActiveNamespace(project.metadata?.name ?? '');
       onCreate && onCreate(project);
     };
     createNamespaceOrProjectModal({ onSubmit: handleSubmit });

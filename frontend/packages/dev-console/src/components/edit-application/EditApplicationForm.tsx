@@ -53,7 +53,7 @@ const EditApplicationForm: React.FC<
           )}
           {flowType === ApplicationFlowType.Git && (
             <BuilderSection
-              builderImages={builderImages}
+              builderImages={builderImages as NormalizedBuilderImages}
               existingPipeline={appResources?.pipeline?.data}
             />
           )}
@@ -77,7 +77,7 @@ const EditApplicationForm: React.FC<
           {flowType !== ApplicationFlowType.Container &&
             flowType !== ApplicationFlowType.JarUpload && (
               <PipelineSection
-                builderImages={builderImages}
+                builderImages={builderImages as NormalizedBuilderImages}
                 existingPipeline={appResources?.pipeline?.data}
               />
             )}

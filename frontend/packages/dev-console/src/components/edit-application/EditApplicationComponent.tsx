@@ -32,10 +32,10 @@ const EditApplicationComponent: React.FunctionComponent<EditApplicationComponent
 
   const filterAssociatedResource = (obj: K8sResourceKind) => {
     return (
-      obj.metadata.name === appName ||
-      obj.metadata.name === appLabel ||
-      (appLabel && obj.metadata.labels?.[NAME_LABEL] === appLabel) ||
-      (appLabel && obj.metadata.labels?.[INSTANCE_LABEL] === appLabel)
+      obj.metadata?.name === appName ||
+      obj.metadata?.name === appLabel ||
+      (appLabel && obj.metadata?.labels?.[NAME_LABEL] === appLabel) ||
+      (appLabel && obj.metadata?.labels?.[INSTANCE_LABEL] === appLabel)
     );
   };
 
@@ -43,7 +43,7 @@ const EditApplicationComponent: React.FunctionComponent<EditApplicationComponent
     const associatedRes = resourcesObj.data?.find(filterAssociatedResource);
     return {
       ...resourcesObj,
-      data: associatedRes,
+      data: associatedRes ? [associatedRes] : [],
     };
   };
 
@@ -60,10 +60,21 @@ const EditApplicationComponent: React.FunctionComponent<EditApplicationComponent
       {...props}
       resources={{
         ...resources,
-        pipeline: getAssociatedResource(resources.pipeline) as WatchK8sResultsObject<PipelineKind>,
-        buildConfig: getAssociatedResource(resources.buildConfig),
-        shipwrightBuild: getAssociatedResource(resources.shipwrightBuild),
-        imageStream: getAssociatedImageStream(resources.imageStream),
+        pipeline: {
+          ...resources.pipeline,
+          data: resources.pipeline?.data?.find(filterAssociatedResource),
+        } as WatchK8sResultsObject<PipelineKind>,
+        buildConfig: getAssociatedResource(
+          resources.buildConfig as WatchK8sResultsObject<K8sResourceKind[]>,
+        ),
+        shipwrightBuild: getAssociatedResource(
+          resources.shipwrightBuild as WatchK8sResultsObject<K8sResourceKind[]>,
+        ),
+        imageStream: resources.imageStream
+          ? getAssociatedImageStream(
+              resources.imageStream as WatchK8sResultsObject<K8sResourceKind[]>,
+            )
+          : { data: [], loaded: false, loadError: null },
       }}
     />
   );

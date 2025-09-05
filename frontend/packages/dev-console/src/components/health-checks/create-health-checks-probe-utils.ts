@@ -22,13 +22,13 @@ export const constructProbeData = (
     ...(data.requestType === RequestType.HTTPGET && {
       httpGet: {
         ...data[data.requestType],
-        scheme: data[data.requestType]?.scheme ? data[data.requestType].scheme[0] : 'HTTP',
-        port: resourceType === Resources.KnativeService ? 0 : _.toInteger(data.httpGet.port),
+        scheme: data[data.requestType]?.scheme ? data[data.requestType]?.scheme[0] : 'HTTP',
+        port: resourceType === Resources.KnativeService ? 0 : _.toInteger(data.httpGet?.port),
       },
     }),
     ...(data.requestType === RequestType.TCPSocket && {
       tcpSocket: {
-        port: resourceType === Resources.KnativeService ? 0 : _.toInteger(data.tcpSocket.port),
+        port: resourceType === Resources.KnativeService ? 0 : _.toInteger(data.tcpSocket?.port),
       },
     }),
     ...(data.initialDelaySeconds && {
@@ -37,7 +37,7 @@ export const constructProbeData = (
     ...(data.periodSeconds && { periodSeconds: _.toInteger(data.periodSeconds) }),
     ...(data.timeoutSeconds && { timeoutSeconds: _.toInteger(data.timeoutSeconds) }),
   };
-  return probeData;
+  return probeData as HealthCheckProbeData;
 };
 
 export const getRequestType = (data: HealthCheckProbeData) => {
@@ -68,7 +68,7 @@ export const convertResourceDataToFormData = (
     ...(resourceData.tcpSocket && {
       tcpSocket: { port: resourceData.tcpSocket.port?.toString() || '' },
     }),
-  };
+  } as HealthCheckFormProbeData;
 };
 
 export const getHealthChecksData = (

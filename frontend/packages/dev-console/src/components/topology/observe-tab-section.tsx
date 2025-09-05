@@ -20,7 +20,7 @@ export const useObserveSideBarTabSection: DetailsTabSectionExtensionHook = (
       DeploymentModel.kind,
       StatefulSetModel.kind,
       DaemonSetModel.kind,
-    ].includes(resource.kind)
+    ].includes(resource.kind ?? '')
   ) {
     return [undefined, true, undefined];
   }

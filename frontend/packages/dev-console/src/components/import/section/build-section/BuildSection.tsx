@@ -6,7 +6,7 @@ import { ImportStrategy, getGitService } from '@console/git-service/src';
 import { getStrategyType } from '@console/internal/components/build';
 import { LoadingBox } from '@console/internal/components/utils';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
-import { EnvironmentField, useDebounceCallback, useFlag } from '@console/shared/src';
+import { NameValuePair, EnvironmentField, useDebounceCallback, useFlag } from '@console/shared';
 import {
   isPreferredStrategyAvailable,
   useClusterBuildStrategy,
@@ -30,8 +30,10 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     project: { name: namespace },
     build: { option: buildOption, env: buildEnv },
     image: { selected: selectedImage, tag: selectedTag },
-    import: { selectedStrategy, knativeFuncLoaded: funcLoaded },
+    import: importData,
   } = values;
+  const selectedStrategy = importData?.selectedStrategy || ImportStrategy.S2I;
+  const funcLoaded = importData?.knativeFuncLoaded || false;
   const { setFieldValue } = useFormikContext<FormikValues>();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const [strategy] = useClusterBuildStrategy();
@@ -39,29 +41,35 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
   const [environments, envsLoaded] = useBuilderImageEnvironments(selectedImage, selectedTag);
 
   const envs = React.useMemo(() => {
-    if (selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION) {
+    if (
+      selectedStrategy &&
+      typeof selectedStrategy === 'object' &&
+      selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION
+    ) {
       return buildEnv;
     }
 
     if (buildOption === BuildOptions.BUILDS) {
-      const strategyType = getStrategyType(appResources?.buildConfig?.data?.spec?.strategy?.type);
-      const buildConfigObj = appResources?.buildConfig?.data || {
+      const strategyType = getStrategyType(
+        appResources?.buildConfig?.data?.[0]?.spec?.strategy?.type,
+      );
+      const buildConfigObj = appResources?.buildConfig?.data?.[0] || {
         metadata: {
           namespace,
         },
       };
-      return (buildConfigObj.spec?.strategy?.[strategyType]?.env || []).filter(
+      return (buildConfigObj.spec?.strategy?.[strategyType || '']?.env || []).filter(
         (e) => !environments.some((env) => env.key === e.name),
       );
     }
 
     if (buildOption === BuildOptions.SHIPWRIGHT_BUILD) {
-      const swBuildObj = appResources?.shipwrightBuild?.data || {
+      const swBuildObj = appResources?.shipwrightBuild?.data?.[0] || {
         metadata: {
           namespace,
         },
       };
-      return (swBuildObj.spec?.env || []).filter(
+      return (swBuildObj.spec?.env || ([] as NameValuePair[])).filter(
         (e) => !environments.some((env) => env.key === e.name),
       );
     }
@@ -74,7 +82,7 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     buildOption,
     environments,
     namespace,
-    selectedStrategy.type,
+    selectedStrategy,
   ]);
 
   /* Auto-select Pipelines as Build option for PAC Repositories */
@@ -131,7 +139,10 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     if (values?.formType !== 'edit') {
       if (
         values?.import?.selectedStrategy?.type === ImportStrategy.DEVFILE ||
-        !isPreferredStrategyAvailable(values?.import?.selectedStrategy?.type, strategy)
+        !isPreferredStrategyAvailable(
+          values?.import?.selectedStrategy?.type || ImportStrategy.S2I,
+          strategy,
+        )
       ) {
         setFieldValue('build.option', BuildOptions.BUILDS);
       } else {
@@ -144,13 +155,13 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     <FormSection title={t('devconsole~Build')}>
       <BuildOption
         isDisabled={values?.formType === 'edit'}
-        importStrategy={values?.import?.selectedStrategy?.type}
+        importStrategy={values?.import?.selectedStrategy?.type || ImportStrategy.S2I}
       />
 
       {values.build?.option === BuildOptions.SHIPWRIGHT_BUILD && (
         <BuildStrategySelector
-          formType={values?.formType}
-          importStrategy={values?.import?.selectedStrategy?.type}
+          formType={values?.formType || ''}
+          importStrategy={values?.import?.selectedStrategy?.type || ImportStrategy.S2I}
         />
       )}
       {values.isi || values.pipeline?.enabled ? null : (
@@ -159,6 +170,8 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
             <BuildConfigSection showHeader={false} />
           )}
           {(
+            selectedStrategy &&
+            typeof selectedStrategy === 'object' &&
             selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION
               ? funcLoaded ?? false
               : envsLoaded

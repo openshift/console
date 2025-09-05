@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { appResources } from '../../edit-application/__tests__/edit-application-data';
 import { Resources } from '../../import/import-types';
 import {
@@ -17,36 +18,41 @@ import {
 
 describe('Create Health Check probe Utils', () => {
   const { editAppResource } = appResources;
-  editAppResource.data.spec.template.spec.containers[0].readinessProbe = {
-    failureThreshold: 3,
-    httpGet: {
-      scheme: 'HTTP',
-      path: '/',
-      port: 8080,
-      httpHeaders: [{ name: 'header', value: 'val' }],
-    },
-    initialDelaySeconds: 0,
-    periodSeconds: 10,
-    timeoutSeconds: 1,
-    successThreshold: 1,
-  };
-  editAppResource.data.spec.template.spec.containers[0].livenessProbe = {
-    failureThreshold: 3,
-    exec: { command: ['cat', '/tmp/healthy'] },
-    initialDelaySeconds: 0,
-    periodSeconds: 10,
-    timeoutSeconds: 1,
-    successThreshold: 1,
-  };
+
+  if (editAppResource?.data?.spec?.template?.spec?.containers?.[0]) {
+    editAppResource.data.spec.template.spec.containers[0].readinessProbe = {
+      failureThreshold: 3,
+      httpGet: {
+        scheme: 'HTTP',
+        path: '/',
+        port: 8080,
+        httpHeaders: [{ name: 'header', value: 'val' }],
+      },
+      initialDelaySeconds: 0,
+      periodSeconds: 10,
+      timeoutSeconds: 1,
+      successThreshold: 1,
+    };
+    editAppResource.data.spec.template.spec.containers[0].livenessProbe = {
+      failureThreshold: 3,
+      exec: { command: ['cat', '/tmp/healthy'] },
+      initialDelaySeconds: 0,
+      periodSeconds: 10,
+      timeoutSeconds: 1,
+      successThreshold: 1,
+    };
+  }
+
   it('getHealthChecksData should return health checks probe data based on the appresources', () => {
-    expect(getHealthChecksData(editAppResource.data)).toEqual(healthChecksData);
+    expect(getHealthChecksData(editAppResource?.data as K8sResourceKind)).toEqual(healthChecksData);
   });
+
   it('getRequestType should return the proper request type from the health check probe data', () => {
     expect(
-      getRequestType(editAppResource.data.spec.template.spec.containers[0].readinessProbe),
+      getRequestType(editAppResource?.data?.spec?.template?.spec?.containers?.[0]?.readinessProbe),
     ).toEqual('httpGet');
     expect(
-      getRequestType(editAppResource.data.spec.template.spec.containers[0].livenessProbe),
+      getRequestType(editAppResource?.data?.spec?.template?.spec?.containers?.[0]?.livenessProbe),
     ).toEqual('command');
   });
   it('constructProbeData should return the proper health check object from the health checks input data', () => {
