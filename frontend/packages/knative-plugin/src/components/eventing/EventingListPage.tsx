@@ -16,11 +16,11 @@ const EventingListPage: React.FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const [showTitle, canCreate] = [false, false];
-  const nsSelected = namespace || 'default';
+  const nsSelected = namespace ?? 'default';
   const isEventSourceTypeEnabled = isCatalogTypeEnabled(EVENT_SOURCE_CATALOG_TYPE_ID);
   const menuActions: MenuActions = {
     eventSource: {
-      label: isEventSourceTypeEnabled ? t('knative-plugin~Event Source') : null,
+      label: isEventSourceTypeEnabled ? t('knative-plugin~Event Source') : '',
       onSelection: () => `/catalog/ns/${nsSelected}?catalogType=EventSource&provider=["Red+Hat"]`,
     },
     brokers: {

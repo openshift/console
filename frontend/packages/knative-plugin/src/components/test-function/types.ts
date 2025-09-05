@@ -22,7 +22,7 @@ export type TestFunctionFormikValues = {
   };
   response: {
     status: string;
-    statusCode: number;
+    statusCode: number | null;
     header: Record<string, string[]>;
     body: string;
   };

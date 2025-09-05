@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ResourceDropdownField, getFieldId } from '@console/shared';
+import { getFieldId, ResourceDropdownField } from '@console/shared';
 import { getSinkableResources } from '../../../utils/get-knative-resources';
 import { craftResourceKey } from '../pub-sub-utils';
 
@@ -90,8 +90,10 @@ const PubSubSubscriber: React.FC<PubSubSubscriberProps> = ({ autoSelect = true, 
         showBadge
         autocompleteFilter={autocompleteFilter}
         onChange={onSubscriberChange}
-        customResourceKey={craftResourceKey}
-        disabled={resourceAlert}
+        customResourceKey={(key, resource) =>
+          craftResourceKey(key ?? '', resource ?? ({} as K8sResourceKind)) ?? ''
+        }
+        disabled={!!resourceAlert}
         resourceFilter={resourceFilter}
         onLoad={handleOnLoad}
         autoSelect={autoSelect}

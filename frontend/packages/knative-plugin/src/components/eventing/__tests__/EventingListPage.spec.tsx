@@ -60,12 +60,12 @@ describe('EventingListPage', () => {
   });
 
   it('should render NamespaceBar and MultiTabListPage', () => {
-    const { container } = render(<EventingListPage />);
-    expect(container.querySelector('NamespaceBar')).toBeInTheDocument();
-    expect(container.textContent).toContain('MultiTabListPage');
+    const wrapper = render(<EventingListPage />);
+    expect(wrapper.getByText('NamespaceBar')).toBeInTheDocument();
+    expect(wrapper.getByText('MultiTabListPage')).toBeInTheDocument();
   });
 
-  it('should render MultiTabListPage with correct props', () => {
+  it('should render MultiTabListPage with all pages and menuActions', () => {
     render(<EventingListPage />);
 
     expect(mockMultiTabListPage).toHaveBeenCalledWith(
@@ -102,12 +102,19 @@ describe('EventingListPage', () => {
     );
   });
 
-  it('should call MultiTabListPage with 5 pages and 3 menu actions', () => {
+  it('should show correct url for creation for valid namespace', () => {
     render(<EventingListPage />);
 
     const callArgs = mockMultiTabListPage.mock.calls[0][0];
-    expect(callArgs.pages).toHaveLength(5);
-    expect(Object.keys(callArgs.menuActions)).toHaveLength(3);
+    expect(Object.keys(callArgs.menuActions ?? {})).toHaveLength(3);
+    expect(callArgs.menuActions?.eventSource).toBeDefined();
+    expect(
+      callArgs.menuActions?.eventSource?.onSelection?.(
+        'eventSource',
+        { label: 'Event Source' },
+        '',
+      ),
+    ).toEqual('/catalog/ns/my-project?catalogType=EventSource&provider=["Red+Hat"]');
   });
 
   it('should generate correct URL for event source creation with valid namespace', () => {
@@ -129,18 +136,17 @@ describe('EventingListPage', () => {
     jest.spyOn(Router, 'useParams').mockReturnValue({
       ns: undefined,
     });
-
     render(<EventingListPage />);
 
     const callArgs = mockMultiTabListPage.mock.calls[0][0];
-    const eventSourceUrl = callArgs.menuActions.eventSource.onSelection(
-      'eventSource',
-      { label: 'Event Source' },
-      undefined,
-    );
-
-    expect(eventSourceUrl).toEqual(
-      '/catalog/ns/default?catalogType=EventSource&provider=["Red+Hat"]',
-    );
+    expect(Object.keys(callArgs.menuActions)).toHaveLength(3);
+    expect(callArgs.menuActions.eventSource).toBeDefined();
+    expect(
+      callArgs.menuActions.eventSource.onSelection(
+        'eventSource',
+        { label: 'Event Source' },
+        undefined,
+      ),
+    ).toEqual('/catalog/ns/default?catalogType=EventSource&provider=["Red+Hat"]');
   });
 });

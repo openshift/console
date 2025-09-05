@@ -28,7 +28,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({
   const canSetTrafficDistribution = useAccessReview({
     group: ServiceModel.apiGroup,
     resource: ServiceModel.plural,
-    namespace: service.metadata.namespace,
+    namespace: service.metadata?.namespace ?? '',
     verb: 'update',
   });
 
@@ -89,7 +89,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({
         <List isPlain isBordered>
           {_.map(filteredRevisions, (revision) => (
             <RevisionsOverviewListItem
-              key={revision.metadata.uid}
+              key={revision?.metadata?.uid ?? ''}
               revision={revision}
               service={service}
             />

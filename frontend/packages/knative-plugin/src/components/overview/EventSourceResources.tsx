@@ -25,11 +25,7 @@ type OwnedEventSourcesProps = {
 
 export const EventSourceTarget: React.FC<EventSourceTargetProps> = ({ obj }) => {
   const { t } = useTranslation();
-  const {
-    metadata: { namespace },
-    spec,
-    status,
-  } = obj;
+  const { metadata: { namespace } = { namespace: '' }, spec, status } = obj;
   const { name: sinkName, kind: sinkKind, apiVersion: sinkApiversion } =
     spec?.sink?.ref || spec?.sink || {};
   const sinkUri = spec?.sink?.uri || status?.sinkUri;
@@ -81,8 +77,8 @@ export const EventSourceDeployments: React.FC<EventSourceDeploymentsProps> = ({
             <ListItem>
               <ResourceLink
                 kind={deploymentObj.kind}
-                name={deploymentObj.metadata.name}
-                namespace={deploymentObj.metadata.namespace}
+                name={deploymentObj.metadata?.name ?? ''}
+                namespace={deploymentObj.metadata?.namespace ?? ''}
               />
             </ListItem>
           </List>
@@ -96,7 +92,7 @@ export const OwnedEventSources: React.FC<OwnedEventSourcesProps> = ({ eventSourc
   <>
     {eventSources?.length > 0
       ? eventSources.map((source) => (
-          <EventSourceOwnedList key={source.metadata.uid} source={source} />
+          <EventSourceOwnedList key={source.metadata?.uid ?? ''} source={source} />
         ))
       : null}
   </>

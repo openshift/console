@@ -15,10 +15,7 @@ export interface SinkPubsubProps {
 
 const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, resourceType, cancel, close }) => {
   const { t } = useTranslation();
-  const {
-    metadata: { namespace, name },
-    spec,
-  } = source;
+  const { metadata: { namespace, name } = { namespace: '', name: '' } as any, spec } = source;
   const isSinkRef = !!spec?.subscriber?.ref;
   const { name: sinkName = '', apiVersion = '', kind = '' } = isSinkRef
     ? spec?.subscriber?.ref
@@ -41,7 +38,7 @@ const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, resourceType, cancel, c
     return k8sUpdate(modelFor(referenceFor(source)), updatePayload)
       .then(() => {
         action.setStatus({ error: '' });
-        close();
+        close?.();
       })
       .catch((err) => {
         const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');

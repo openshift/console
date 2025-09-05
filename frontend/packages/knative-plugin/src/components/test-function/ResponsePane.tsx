@@ -23,7 +23,7 @@ const ResponsePane: React.FC<FormikProps<FormikValues & ResponsePaneFormikValues
   values,
 }) => {
   const { t } = useTranslation();
-  const { statusCode, header } = values.response;
+  const { statusCode, header } = values?.response ?? { statusCode: null, header: {} };
 
   return (
     <>

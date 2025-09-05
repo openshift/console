@@ -20,9 +20,9 @@ export const getTopologyFilters = () => {
 
 export const applyKnativeDisplayOptions = (model: Model, filters: DisplayFilters): string[] => {
   const expandServices = isExpanded(EXPAND_KNATIVE_SERVICES_FILTER_ID, filters);
-  const appliedFilters = [];
+  const appliedFilters: string[] = [];
   let serviceFound = false;
-  model.nodes.forEach((d) => {
+  model.nodes?.forEach((d) => {
     if (d.type === TYPE_KNATIVE_SERVICE) {
       if (!serviceFound) {
         serviceFound = true;

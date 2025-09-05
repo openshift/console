@@ -57,7 +57,7 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({
       />
     </>
   );
-  let EventSource: React.ReactElement;
+  let EventSource: React.ReactElement | null = null;
   const sectionTitle = values.formData.data?.itemData?.title ?? values.formData.type;
   switch (values.formData.type) {
     case EventSources.SinkBinding:
@@ -78,7 +78,7 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({
       EventSource = <PingSourceSection title={sectionTitle} fullWidth={fullWidth} />;
       break;
     case EventSources.KameletBinding:
-      EventSource = kameletSource && (
+      EventSource = kameletSource ? (
         <>
           <Content component={ContentVariants.h2}>{kameletSource.spec?.definition?.title}</Content>
           <DynamicFormField
@@ -88,7 +88,7 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({
             showAlert={false}
           />
         </>
-      );
+      ) : null;
       break;
     default:
       EventSource = null;

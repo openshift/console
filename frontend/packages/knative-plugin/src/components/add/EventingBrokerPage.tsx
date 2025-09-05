@@ -27,9 +27,9 @@ const EventingBrokerPage: React.FC = () => {
       <QueryFocusApplication>
         {(selectedApplication) => (
           <AddBroker
-            namespace={namespace}
-            selectedApplication={selectedApplication}
-            contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
+            namespace={namespace ?? ''}
+            selectedApplication={selectedApplication ?? ''}
+            contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE) ?? ''}
           />
         )}
       </QueryFocusApplication>
