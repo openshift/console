@@ -2,59 +2,23 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
-import { consoleProxyFetchJSON } from '@console/shared/src/utils/proxy';
-import { ARTIFACTHUB_API_BASE_URL } from '../../../const';
+import { GITHUB_BASE_URL } from '../../../const';
 import { TaskModel, TaskModelV1Beta1 } from '../../../models';
 import { TektonTaskAnnotation } from '../../pipelines/const';
 import { ARTIFACTHUB } from '../../quicksearch/const';
 import { ApiResult } from '../hooks/useApiResponse';
-
-export type ArtifactHubRepository = {
-  name: string;
-  kind: number;
-  url: string;
-  display_name: string;
-  repository_id: string;
-  organization_name: string;
-  organization_display_name: string;
-};
-
-export type ArtifactHubVersion = {
-  version: string;
-  contains_security_update: boolean;
-  prerelease: boolean;
-  ts: number;
-};
-
-export type ArtifactHubTask = {
-  package_id: string;
-  name: string;
-  description: string;
-  version: string;
-  display_name: string;
-  repository: ArtifactHubRepository;
-};
-
-export type ArtifactHubTaskDetails = {
-  package_id: string;
-  name: string;
-  description: string;
-  display_name: string;
-  keywords: string[];
-  platforms: string[];
-  version: ArtifactHubVersion[];
-  available_versions: [];
-  content_url: string;
-  repository: ArtifactHubRepository;
-};
-
-const ARTIFACRHUB_TASKS_SEARCH_URL = `${ARTIFACTHUB_API_BASE_URL}/packages/search?offset=0&limit=60&facets=false&kind=7&deprecated=false&sort=relevance`;
+import {
+  ArtifactHubTask,
+  ArtifactHubTaskDetails,
+  getTaskDetails,
+  getTaskYAMLFromGithub,
+  searchTasks,
+} from './utils';
 
 export const getArtifactHubTaskDetails = async (
   item: CatalogItem,
   v?: string,
 ): Promise<ArtifactHubTaskDetails> => {
-  const API_BASE_URL = `${ARTIFACTHUB_API_BASE_URL}/packages/tekton-task`;
   const { name, data } = item;
   const {
     task: {
@@ -62,8 +26,8 @@ export const getArtifactHubTaskDetails = async (
       repository: { name: repoName },
     },
   } = data;
-  const url = `${API_BASE_URL}/${repoName}/${name}/${v || version}`;
-  return consoleProxyFetchJSON({ url, method: 'GET' });
+
+  return getTaskDetails({ repoName, name, version: v || version });
 };
 
 export const useGetArtifactHubTasks = (hasPermission: boolean): ApiResult<ArtifactHubTask[]> => {
@@ -74,11 +38,8 @@ export const useGetArtifactHubTasks = (hasPermission: boolean): ApiResult<Artifa
   React.useEffect(() => {
     let mounted = true;
     if (hasPermission) {
-      consoleProxyFetchJSON<{ packages: ArtifactHubTask[] }>({
-        url: ARTIFACRHUB_TASKS_SEARCH_URL,
-        method: 'GET',
-      })
-        .then(({ packages }) => {
+      searchTasks()
+        .then((packages) => {
           if (mounted) {
             setLoaded(true);
             setResult(packages);
@@ -101,7 +62,12 @@ export const useGetArtifactHubTasks = (hasPermission: boolean): ApiResult<Artifa
 };
 
 export const createArtifactHubTask = (url: string, namespace: string, version: string) => {
-  return consoleProxyFetchJSON({ url, method: 'GET' })
+  const yamlPath = url.startsWith(GITHUB_BASE_URL) ? url.slice(GITHUB_BASE_URL.length) : null;
+  if (!yamlPath) {
+    throw new Error('Not a valid GitHub URL');
+  }
+
+  return getTaskYAMLFromGithub({ yamlPath })
     .then((task: K8sResourceKind) => {
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
@@ -125,7 +91,12 @@ export const updateArtifactHubTask = async (
   name: string,
   version: string,
 ) => {
-  return consoleProxyFetchJSON({ url, method: 'GET' })
+  const yamlPath = url.startsWith(GITHUB_BASE_URL) ? url.slice(GITHUB_BASE_URL.length) : null;
+  if (!yamlPath) {
+    throw new Error('Not a valid GitHub raw URL');
+  }
+
+  return getTaskYAMLFromGithub({ yamlPath })
     .then((task: K8sResourceKind) => {
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
