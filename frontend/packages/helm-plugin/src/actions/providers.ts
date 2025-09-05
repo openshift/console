@@ -24,7 +24,7 @@ import {
 } from './creators';
 import { HelmActionsScope } from './types';
 
-export const useHelmActionProvider = (scope: HelmActionsScope) => {
+export const useHelmActionProvider = (scope: HelmActionsScope | undefined) => {
   const { t } = useTranslation();
   const result = useMemo(() => {
     if (!scope) return [[], true, undefined];
@@ -51,15 +51,12 @@ export const useHelmActionProvider = (scope: HelmActionsScope) => {
 export const useHelmActionProviderForTopology = (element: GraphElement) => {
   const resource = getResource(element);
   const data = element.getData();
-  const scope = useMemo(() => {
+  const scope = useMemo((): HelmActionsScope | undefined => {
     const nodeType = element.getType();
     if (nodeType !== TYPE_HELM_RELEASE) return undefined;
     const releaseName = element.getLabel();
-    if (!resource?.metadata) return null;
-    const {
-      namespace,
-      labels: { version },
-    } = resource.metadata;
+    if (!resource?.metadata?.namespace) return undefined;
+    const { namespace, labels: { version } = {} } = resource.metadata;
     return {
       release: {
         name: releaseName,

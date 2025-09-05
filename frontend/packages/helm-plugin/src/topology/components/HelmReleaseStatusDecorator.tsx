@@ -19,7 +19,7 @@ const HelmReleaseStatusDecorator: React.FC<HelmReleaseStatusDecoratorProps> = ({
   x,
   y,
 }) => {
-  const ref = React.useRef();
+  const ref = React.useRef<SVGGElement>(null);
   const { t } = useTranslation();
   const { data } = element.getData();
 

@@ -78,7 +78,7 @@ describe('useDetectHelmChartRepositories', () => {
     testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     expect(fetchK8sSpy).toHaveBeenCalledTimes(2);
     expect(fetchK8sSpy.mock.calls[0]).toEqual([HelmChartRepositoryModel]);
-    expect(fetchK8sSpy.mock.calls[1]).toEqual([ProjectHelmChartRepositoryModel, null, ns]);
+    expect(fetchK8sSpy.mock.calls[1]).toEqual([ProjectHelmChartRepositoryModel, undefined, ns]);
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if only cluster scoped helm chart repository is available', async () => {
@@ -160,7 +160,7 @@ describe('useDetectHelmChartRepositories', () => {
     expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, false]);
   });
 
-  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and undefined if fetchK8s returns rejected promise for both cluster and project scoped helm chart repositories with none of them being error 404', async () => {
+  it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if fetchK8s returns rejected promise for both cluster and project scoped helm chart repositories with none of them being error 404', async () => {
     const error200 = new HttpError('200', 200, {
       status: 200,
     } as Response);
@@ -171,7 +171,7 @@ describe('useDetectHelmChartRepositories', () => {
       rerender();
     });
     expect(setFeatureFlag).toHaveBeenCalledTimes(2);
-    expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, undefined]);
+    expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, false]);
   });
 
   it('should call fetchK8s every 10 seconds', async () => {

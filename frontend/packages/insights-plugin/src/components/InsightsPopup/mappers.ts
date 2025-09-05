@@ -55,7 +55,7 @@ export const mapMetrics = (response: PrometheusResponse): Metrics => {
   for (let i = 0; i < response?.data.result.length; i++) {
     const value = response.data?.result?.[i]?.value?.[1];
     if (_.isNil(value)) {
-      return null;
+      return {};
     }
     const metricName = response.data?.result?.[i]?.metric?.metric;
     if (values[metricName] === -1 || values[metricName] === undefined) {
