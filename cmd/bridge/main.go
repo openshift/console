@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"runtime"
+	"time"
 
 	"io/ioutil"
 	"net/http"
@@ -21,14 +22,19 @@ import (
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/controllers"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
+	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
+	"github.com/patrickmn/go-cache"
+	kruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
@@ -36,8 +42,6 @@ import (
 const (
 	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-
-	catalogdHost = "catalogd-service.openshift-catalogd.svc:443"
 
 	// Well-known location of the tenant aware Thanos service for OpenShift exposing the query and query_range endpoints. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
@@ -426,11 +430,6 @@ func main() {
 				},
 			}
 
-			srv.CatalogdProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				Endpoint:        &url.URL{Scheme: "https", Host: catalogdHost},
-			}
-
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: srv.ProxyHeaderDenyList,
@@ -571,6 +570,31 @@ func main() {
 	default:
 		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: in-cluster, off-cluster"))
 	}
+
+	cache := cache.New(5*time.Minute, 30*time.Minute)
+	catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, cache)
+	srv.CatalogService = catalogService
+
+	// catalogService.UpdateCatalog("openshift-certified-operators", "https://localhost:8443/catalogs/openshift-certified-operators/")
+	// catalogService.UpdateCatalog("openshift-community-operators", "https://localhost:8443/catalogs/openshift-community-operators/")
+	// catalogService.UpdateCatalog("openshift-redhat-marketplace", "https://localhost:8443/catalogs/openshift-redhat-marketplace/")
+	// catalogService.UpdateCatalog("openshift-redhat-operators", "https://localhost:8443/catalogs/openshift-redhat-operators/")
+
+	mgr, err := ctrl.NewManager(srv.InternalProxiedK8SClientConfig, ctrl.Options{
+		Scheme: kruntime.NewScheme(),
+	})
+
+	if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {
+		klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
+	}
+
+	klog.Info("starting manager")
+	mgrContext := ctrl.SetupSignalHandler()
+	go func() {
+		if err := mgr.Start(mgrContext); err != nil {
+			klog.Errorf("problem running manager: %v", err)
+		}
+	}()
 
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
