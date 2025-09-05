@@ -162,12 +162,12 @@ const parseArrayPath = (
  */
 const modifyArrayFieldPathIndex = (
   path: string,
-  operation: (index?: number) => string | number,
+  operation: (index: number) => string | number,
 ): string => {
   const { regexMatch, index, pathBeforeIndex, pathAfterIndex } = parseArrayPath(path);
   return !regexMatch
     ? path
-    : `${pathBeforeIndex}[${operation(index)}]${pathAfterIndex && `.${pathAfterIndex}`}`;
+    : `${pathBeforeIndex}[${operation(index || 0)}]${pathAfterIndex && `.${pathAfterIndex}`}`;
 };
 
 // Accepts a SpecCapbability[] array and returns an appropriate default value for that field
@@ -268,7 +268,7 @@ const flattenNestedProperties = (
   property: JSONSchema6,
   name: string,
   providedAPI: ProvidedAPI,
-  obj: K8sResourceKind,
+  obj: K8sResourceKind | Record<string, unknown>,
   {
     currentCapabilities = [],
     currentPath = [],
@@ -392,7 +392,7 @@ const getPropertyDepth = (property: JSONSchema6, depth: number = 0): number => {
 const fieldsForOpenAPI = (
   schema: JSONSchema6,
   providedAPI: ProvidedAPI,
-  obj: K8sResourceKind,
+  obj: K8sResourceKind | Record<string, unknown>,
   depth: number = MAX_DEPTH,
 ): OperandField[] => {
   return _.reduce(
@@ -418,7 +418,7 @@ const fieldsForOpenAPI = (
  */
 const specDescriptorToFields = (
   { description, displayName, path, 'x-descriptors': capabilities = [] }: Descriptor,
-  obj: K8sResourceKind,
+  obj: K8sResourceKind | Record<string, unknown>,
 ): OperandField[] => {
   // Use regex to check path for an array index, and parse out the parts of the path before
   // and after the array index.
@@ -435,8 +435,8 @@ const specDescriptorToFields = (
         displayName,
         description,
         capabilities,
-        type: null as any,
-        required: null as any,
+        type: 'string' as JSONSchema6TypeName,
+        required: false,
       })),
     );
   }
@@ -445,8 +445,8 @@ const specDescriptorToFields = (
       path: `spec.${path}`,
       displayName,
       description,
-      type: null as any,
-      required: null as any,
+      type: 'string' as JSONSchema6TypeName,
+      required: false,
       capabilities,
     },
   ];
@@ -514,7 +514,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   const { t } = useTranslation();
   const params = useParams();
   const immutableFormData = Immutable.fromJS(formData);
-  const handleFormDataUpdate = (path: string, value: any): void => {
+  const handleFormDataUpdate = (path: string, value: unknown): void => {
     const { regexMatch, index, pathBeforeIndex, pathAfterIndex } = parseArrayPath(path);
 
     // Immutable will not initialize a deep path as a List if it includes an integer, so we need to manually
@@ -538,7 +538,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     const schemaFields = fieldsForOpenAPI(
       schema?.properties?.spec as JSONSchema6,
       providedAPI,
-      formData as K8sResourceKind,
+      formData || {},
     );
 
     // Get fields from providedAPI that do not exist in the OpenAPI spec.
@@ -553,7 +553,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
         // Add the field if it doesn't exist
         return [
           ...providedAPIFieldsAccumulator,
-          ...specDescriptorToFields(specDescriptor, formData as K8sResourceKind),
+          ...specDescriptorToFields(specDescriptor, formData || {}),
         ];
       },
       [],
@@ -641,9 +641,9 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     // of the appropriate fields, grouped by index.
     return _.map(groupedByName, (fieldsInGroup, groupName: string) => ({
       groupName,
-      fieldLists: _.reduce(
+      fieldLists: _.reduce<OperandField, OperandField[][]>(
         fieldsInGroup,
-        (fieldListsAccumulator: OperandField[][], field) => {
+        (fieldListsAccumulator, field) => {
           const { index, regexMatch } = parseArrayPath(field.path);
           if (regexMatch) {
             fieldListsAccumulator[index || 0] = [
@@ -653,7 +653,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           }
           return fieldListsAccumulator;
         },
-        [] as OperandField[][],
+        [],
       ),
     }));
   }, [arrayFields]);
@@ -816,7 +816,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           desc={displayName}
           placeholder={t('olm~Select {{item}}', { item: kindForReference(groupVersionKind) })}
           onChange={(value) => handleFormDataUpdate(path, value)}
-          selectedKey={currentValue ? `${currentValue}-${k8sModel?.kind}` : undefined}
+          selectedKey={currentValue ? `${currentValue}-${k8sModel?.kind}` : ''}
         />
       ) : null;
     }
@@ -985,7 +985,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     const leftShiftedFields = _.reduce(
       fieldsToLeftShift,
       (fieldAccumulator, field) => {
-        const path = modifyArrayFieldPathIndex(field.path, (index) => (index || 1) - 1);
+        const path = modifyArrayFieldPathIndex(field.path, (index) => Math.max(0, index - 1));
         return [...fieldAccumulator, { ...field, path }];
       },
       [],
@@ -1018,7 +1018,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       const isExpanded = !_.some(fieldLists, (fieldList: OperandField[]) =>
         _.some(
           fieldList,
-          (f) => hasDescriptor(f as OperandField, SpecCapability.advanced) && !f.required,
+          (f: OperandField) => hasDescriptor(f, SpecCapability.advanced) && !f.required,
         ),
       );
 
@@ -1041,11 +1041,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
                 </div>
               )}
               {_.map(fieldList, (field) => (
-                <OperandFormInputGroup
-                  key={field.path}
-                  field={field as OperandField}
-                  input={inputFor(field as OperandField) as any}
-                />
+                <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
               ))}
             </React.Fragment>
           ))}
@@ -1076,7 +1072,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       return (
         <FieldGroup key={id} id={id} isExpanded={isExpanded} label={_.startCase(groupName)}>
           {_.map(fieldList, (field) => (
-            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field) as any} />
+            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
           ))}
         </FieldGroup>
       );
@@ -1084,7 +1080,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
 
   const renderNormalFields = () =>
     _.map(normalFields, (field) => (
-      <OperandFormInputGroup key={field.path} field={field} input={inputFor(field) as any} />
+      <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
     )).filter(Boolean);
 
   const renderAdvancedFields = () =>
@@ -1095,7 +1091,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
           textCollapsed={t('olm~Advanced configuration')}
         >
           {_.map(advancedFields, (field) => (
-            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field) as any} />
+            <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
           )).filter(Boolean)}
         </ExpandCollapse>
       </div>
@@ -1221,7 +1217,7 @@ type FlattenNestedPropertiesAccumulator = {
 
 type OperandFormInputGroupProps = {
   field: OperandField;
-  input: JSX.Element;
+  input: JSX.Element | null;
 };
 
 type FieldGroupProps = {

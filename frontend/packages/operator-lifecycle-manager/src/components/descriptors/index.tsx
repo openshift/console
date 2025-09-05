@@ -60,10 +60,9 @@ const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps>
   const { arrayGroupPath, elementDescriptor, descriptor, nested } = group;
   const arrayGroupSchema = getSchemaAtPath(schema, `${type}.${arrayGroupPath}`);
   const description = descriptor?.description || arrayGroupSchema?.description;
-  const label =
-    descriptor?.displayName ||
-    arrayGroupSchema?.title ||
-    _.startCase(_.last(arrayGroupPath?.split('.') || []));
+  const arrayGroupPathArray = arrayGroupPath?.split('.') || [];
+  const lastPathSegment = _.last(arrayGroupPathArray);
+  const label = descriptor?.displayName || arrayGroupSchema?.title || _.startCase(lastPathSegment);
   const arrayElementDescriptors = nested ?? [elementDescriptor];
   const value = _.get(obj, [type, ..._.toPath(arrayGroupPath)], []);
   return (
@@ -108,26 +107,34 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
   const { descriptor, nested } = group;
   const groupSchema = getSchemaAtPath(schema, `${type}.${groupPath}`);
   const description = descriptor?.description || groupSchema?.description;
-  const label = descriptor?.displayName || groupSchema?.title || _.startCase(groupPath);
+  const groupDisplayName = descriptor?.displayName || groupSchema?.title;
+  const label = groupDisplayName || _.startCase(groupPath);
   const arrayGroups = _.pickBy(nested, 'isArrayGroup');
   const primitives = _.omitBy(nested, 'isArrayGroup');
-  const span = _.isEmpty(arrayGroups) || _.isEmpty(primitives) ? 6 : 12;
+  const hasOnlyArrayGroups = _.isEmpty(primitives);
+  const hasOnlyPrimitives = _.isEmpty(arrayGroups);
+  const span = hasOnlyArrayGroups || hasOnlyPrimitives ? 6 : 12;
   return (
     <GridItem sm={span}>
       <DetailsItem description={description} label={label} obj={obj} path={`${type}.${groupPath}`}>
         <DescriptionList className="olm-descriptors__group co-editable-label-group">
           {!_.isEmpty(primitives) &&
-            _.map(primitives, ({ descriptor: primitiveDescriptor }: DescriptorGroup) => (
-              <DescriptorDetailsItem
-                descriptor={primitiveDescriptor as Descriptor}
-                key={`${type}.${primitiveDescriptor?.path}`}
-                model={model}
-                obj={obj}
-                onError={onError}
-                schema={schema}
-                type={type}
-              />
-            ))}
+            _.map(primitives, ({ descriptor: primitiveDescriptor }: DescriptorGroup) => {
+              if (!primitiveDescriptor) {
+                return null;
+              }
+              return (
+                <DescriptorDetailsItem
+                  descriptor={primitiveDescriptor}
+                  key={`${type}.${primitiveDescriptor.path}`}
+                  model={model}
+                  obj={obj}
+                  onError={onError}
+                  schema={schema}
+                  type={type}
+                />
+              );
+            })}
           {!_.isEmpty(arrayGroups) &&
             _.map(arrayGroups, (arrayGroup: DescriptorGroup) => (
               <DescriptorDetailsItemArrayGroup
@@ -196,11 +203,15 @@ export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps>
           );
         }
 
+        if (!descriptor) {
+          return null;
+        }
+
         return (
           <DescriptorDetailsItem
             key={`${type}.${groupPath}`}
             className={itemClassName}
-            descriptor={descriptor as Descriptor}
+            descriptor={descriptor}
             {...commonProps}
           />
         );

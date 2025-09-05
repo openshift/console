@@ -128,7 +128,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
     <StatusBox loaded={loaded} loadError={loadError} data={csv}>
       <PageHeading
         title={t('olm~Create {{item}}', { item: model.label })}
-        badge={getBadgeFromType(model.badge as any)}
+        badge={model.badge ? getBadgeFromType(model.badge) : undefined}
         helpText={helpText}
       />
       <SyncedEditor
@@ -189,5 +189,5 @@ export type CreateOperandProps = {
   initialEditorType: EditorType;
   csv: ClusterServiceVersionKind;
   loaded: boolean;
-  loadError: any;
+  loadError: unknown;
 };

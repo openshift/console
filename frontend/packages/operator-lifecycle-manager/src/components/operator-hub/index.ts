@@ -46,23 +46,28 @@ export type OperatorHubItem = {
   catalogSourceNamespace: string;
   categories: string[];
   cloudCredentials: CloudCredentialKind;
+  capabilityLevel?: string | string[];
   createdAt?: string;
   description: string;
   infraFeatures: InfrastructureFeature[];
   infrastructure: InfrastructureKind;
   installed: boolean;
   installState?: InstalledState;
+  isInstalling: boolean;
   kind: string;
   longDescription: string;
+  marketplaceSupportWorkflow?: string;
   name: string;
   obj: PackageManifestKind;
   provider: string;
+  repository?: string;
   source?: string;
   subscription?: SubscriptionKind;
   tags: string[];
   uid: string;
   validSubscription: string[];
-  [key: string]: any;
+  version: string;
+  [key: string]: unknown;
 };
 
 export enum OLMAnnotation {

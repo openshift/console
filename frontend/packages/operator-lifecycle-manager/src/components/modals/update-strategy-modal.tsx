@@ -77,7 +77,7 @@ export const UpdateStrategyModal: React.FC<UpdateStrategyModalProps> = ({
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitText={t('public~Save')}
-        cancel={cancel as any}
+        cancel={cancel}
       />
     </form>
   );
@@ -88,7 +88,7 @@ export const updateStrategyModal = createModalLauncher(UpdateStrategyModal);
 UpdateStrategyModal.displayName = 'UpdateStrategyModal';
 
 export type UpdateStrategyModalProps = {
-  defaultValue: any;
+  defaultValue;
   path: string;
   resource: K8sResourceKind;
   resourceKind: K8sKind;

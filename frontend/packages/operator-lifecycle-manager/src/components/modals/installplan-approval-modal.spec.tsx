@@ -70,7 +70,10 @@ describe(InstallPlanApprovalModal.name, () => {
       .find(Radio)
       .at(1)
       .props()
-      .onChange?.({ target: { value: InstallPlanApproval.Manual } } as any, true);
+      .onChange?.(
+        { target: { value: InstallPlanApproval.Manual } } as React.ChangeEvent<HTMLInputElement>,
+        true,
+      );
     wrapper.find('form').simulate('submit', new Event('submit'));
   });
 
@@ -87,7 +90,10 @@ describe(InstallPlanApprovalModal.name, () => {
       .find(Radio)
       .at(1)
       .props()
-      .onChange?.({ target: { value: InstallPlanApproval.Manual } } as any, true);
+      .onChange?.(
+        { target: { value: InstallPlanApproval.Manual } } as React.ChangeEvent<HTMLInputElement>,
+        true,
+      );
     wrapper.find('form').simulate('submit', new Event('submit'));
   });
 

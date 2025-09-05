@@ -38,7 +38,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () 
       <MemoryRouter>
         <OperatorHubList
           {...operatorHubListPageProps}
-          marketplacePackageManifests={null as any}
+          marketplacePackageManifests={null}
           subscriptions={{ loaded: false, data: [] }}
           clusterServiceVersions={{ loaded: false, data: [] }}
         />
@@ -144,7 +144,13 @@ xdescribe(`[https://issues.redhat.com/browse/CONSOLE-2136] ${OperatorHubTileView
   });
 
   it('updates filter counts on item changes', () => {
-    wrapper.setProps(operatorHubTileViewPagePropsWithDummy as any);
+    // Ensure the test data matches the expected OperatorHubItem[] type
+    // This prevents type errors due to missing required properties
+    wrapper.setProps({
+      ...operatorHubTileViewPageProps,
+      ...operatorHubTileViewPagePropsWithDummy,
+      items: operatorHubTileViewPagePropsWithDummy.items as OperatorHubItem[],
+    });
     wrapper.update();
     const filterItemsChanged = wrapper.find(FilterSidePanelCategoryItem);
 
@@ -213,7 +219,7 @@ describe(OperatorHubItemDetails.displayName || '', () => {
 
     expect(noMarkdown.exists()).toBe(false);
 
-    wrapper.setProps({ item: itemWithLongDescription as any });
+    wrapper.setProps({ item: itemWithLongDescription });
     wrapper.update();
     const markdown = wrapper.find(MarkdownView);
 

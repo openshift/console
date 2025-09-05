@@ -1,3 +1,4 @@
+// This file will be removed as part of https://issues.redhat.com//browse/CONSOLE-4668
 import { useEffect, useRef, useState } from 'react';
 import * as _ from 'lodash';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';

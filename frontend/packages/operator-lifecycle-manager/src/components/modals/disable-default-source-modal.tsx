@@ -41,7 +41,7 @@ const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
       ];
       handlePromise(k8sPatch(kind, operatorHub, patch))
         .then(() => {
-          close();
+          close?.();
         })
         .catch(() => {});
     },
@@ -61,7 +61,7 @@ const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
       </ModalBody>
       <ModalSubmitFooter
         submitText={t('public~Disable')}
-        cancel={cancel as any}
+        cancel={cancel}
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitDanger

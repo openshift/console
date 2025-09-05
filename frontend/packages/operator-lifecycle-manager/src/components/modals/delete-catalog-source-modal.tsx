@@ -29,7 +29,7 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
       event.preventDefault();
       handlePromise(k8sKill(kind, resource))
         .then(() => {
-          close();
+          close?.();
         })
         .catch(() => {});
     },
@@ -66,7 +66,7 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
       <ModalSubmitFooter
         submitText={t('public~Delete')}
         submitDisabled={!confirmed}
-        cancel={cancel as any}
+        cancel={cancel}
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitDanger

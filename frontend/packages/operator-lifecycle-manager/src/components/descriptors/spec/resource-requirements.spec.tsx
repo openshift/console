@@ -19,7 +19,7 @@ describe(ResourceRequirementsModal.name, () => {
   const description = 'Define the resource requests for this TestResource instance.';
   const cancel = jasmine.createSpy('cancelSpy');
 
-  const spyAndExpect = (spy: Spy) => (returnValue: any) =>
+  const spyAndExpect = (spy: Spy) => (returnValue: unknown) =>
     new Promise((resolve) =>
       spy.and.callFake((...args) => {
         resolve(args);
@@ -111,7 +111,7 @@ describe(ResourceRequirementsModalLink.displayName || '', () => {
   });
 
   it('renders default values if undefined', () => {
-    obj.spec = { resources: {} as any };
+    obj.spec = { resources: {} };
     wrapper.setProps({ obj });
 
     expect(wrapper.find(Button).render().text()).toEqual('CPU: None, Memory: None, Storage: None');

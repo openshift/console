@@ -41,7 +41,7 @@ describe('PackageManifestTableRow', () => {
   beforeEach(() => {
     jest.spyOn(UIActions, 'getActiveNamespace').mockReturnValue('default');
 
-    const columns: any[] = [];
+    const columns: unknown[] = [];
     wrapper = shallow(
       <PackageManifestTableRow
         obj={testPackageManifest}
@@ -75,12 +75,12 @@ describe('PackageManifestTableRow', () => {
   // This is to verify cataloSource column gets rendered on the Search page for PackageManifest resource
   it('renders column for catalog source for a package when no catalog source is defined', () => {
     const catalogSourceName = testPackageManifest.status.catalogSource;
-    const columns: any[] = [];
+    const columns: unknown[] = [];
 
     wrapper = shallow(
       <PackageManifestTableRow
         obj={testPackageManifest}
-        customData={{ catalogSource: undefined as any }}
+        customData={{ catalogSource: undefined }}
         columns={columns}
       />,
     );

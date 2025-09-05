@@ -1,3 +1,4 @@
+// This file will be removed as part of https://issues.redhat.com//browse/CONSOLE-4668
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { CapabilityLevel } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-item-details';

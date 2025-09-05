@@ -23,5 +23,5 @@ export type ConfigureUpdateStrategyModalProps = {
   kindObj: K8sKind;
   resource: K8sResourceKind;
   specDescriptor: Descriptor;
-  specValue: any;
+  specValue: unknown;
 };

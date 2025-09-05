@@ -53,7 +53,8 @@ describe('SubscriptionTableRow', () => {
   const updateWrapper = () => {
     const rowArgs: RowFunctionArgs<SubscriptionKind> = {
       obj: subscription,
-    } as any;
+      columns: [],
+    };
 
     wrapper = shallow(<SubscriptionTableRow {...rowArgs} />);
     return wrapper;

@@ -1,3 +1,4 @@
+// This file will be removed as part of https://issues.redhat.com//browse/CONSOLE-4668
 /* eslint-disable no-console */
 import { defaultClusterCatalogSourceMap } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
 import { PackageSource } from '@console/operator-lifecycle-manager/src/const';

@@ -50,7 +50,7 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
       ];
       handlePromise(k8sPatch(OperatorHubModel, operatorHub, patch))
         .then(() => {
-          close();
+          close?.();
         })
         .catch(() => {});
     },
@@ -104,7 +104,7 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
           errorMessage={errorMessage}
           inProgress={inProgress}
           submitText={t('public~Save')}
-          cancel={cancel as any}
+          cancel={cancel}
         />
       </div>
     </Form>

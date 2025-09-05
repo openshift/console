@@ -1,3 +1,4 @@
+// This file will be removed as part of https://issues.redhat.com//browse/CONSOLE-4668
 /* eslint-disable no-console */
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { bundleHasProperty } from '../fbc/bundles';

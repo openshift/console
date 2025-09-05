@@ -147,10 +147,11 @@ const hasAllNamespaces = (csv: ClusterServiceVersionKind) => {
 };
 
 export const OperandStatus: React.FC<OperandStatusProps> = ({ operand }) => {
-  const { type, value }: OperandStatusType = getOperandStatus(operand);
-  if (!type || !value) {
+  const status = getOperandStatus(operand);
+  if (!status) {
     return <>-</>;
   }
+  const { type, value } = status;
 
   return (
     <span className="co-icon-and-text">
@@ -284,9 +285,12 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
           return obj;
         }
         const reference = props.kinds?.[0];
+        if (!reference) {
+          return obj; // Return original object if no reference available
+        }
         return {
-          apiVersion: apiVersionForReference(reference as any),
-          kind: kindForReference(reference as any),
+          apiVersion: apiVersionForReference(reference),
+          kind: kindForReference(reference),
           ...obj,
         };
       }) ?? [],
@@ -298,7 +302,7 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
       {...props}
       customSorts={{
         operandStatus: getOperandStatusText,
-        getOperandNamespace: getOperandNamespace as (obj: any) => string,
+        getOperandNamespace: getOperandNamespace as (obj: K8sResourceKind) => string,
       }}
       data={data}
       EmptyMsg={() =>
@@ -445,7 +449,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const [staticData, filteredData, onFilterChange] = useListPageFilter(data, rowFilters);
   const loaded = Object.values(resources).every((r) => r.loaded);
   // only pass the first loadError as StatusBox can only display one
-  const loadError: Record<string, any> = Object.values(resources).find((r) => r.loadError)
+  const loadError: Record<string, unknown> = Object.values(resources).find((r) => r.loadError)
     ?.loadError;
 
   return inFlight ? null : (
@@ -624,12 +628,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     crd?.spec?.versions?.find((v) => v.name === version)?.schema?.openAPIV3Schema ??
     (definitionFor(kindObj) as JSONSchema7);
 
-  const {
-    podStatuses,
-    mainStatusDescriptor,
-    conditionsStatusDescriptors,
-    otherStatusDescriptors,
-  } = (statusDescriptors ?? []).reduce((acc, descriptor) => {
+  const statusDescriptorGroups = (statusDescriptors ?? []).reduce((acc, descriptor) => {
     if (isMainStatusDescriptor(descriptor)) {
       return {
         ...acc,
@@ -659,6 +658,13 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
       otherStatusDescriptors: [...(acc.otherStatusDescriptors ?? []), descriptor],
     };
   }, {} as any);
+
+  const {
+    podStatuses = [],
+    mainStatusDescriptor,
+    conditionsStatusDescriptors = [],
+    otherStatusDescriptors = [],
+  } = statusDescriptorGroups;
 
   return (
     <div className="co-operand-details co-m-pane">
@@ -782,7 +788,9 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
           path: location.pathname.slice(0, location.pathname.lastIndexOf('/')),
         },
         {
-          name: t('olm~{{item}} details', { item: kindForReference(params.plural as any) }), // Use url param in case model doesn't exist
+          name: t('olm~{{item}} details', {
+            item: params.plural ? kindForReference(params.plural) : '',
+          }), // Use url param in case model doesn't exist
           path: `${location.pathname}`,
         },
       ]}
@@ -803,8 +811,8 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
 
 export const OperandDetailsPage = (props) => {
   const { plural, ns, name } = useParams<OperandDetailsPageRouteParams>();
-  const resourceDetailsPage = useResourceDetailsPage(plural as any);
-  const [k8sModel, inFlight] = useK8sModel(plural);
+  const resourceDetailsPage = useResourceDetailsPage(plural || '');
+  const [k8sModel, inFlight] = useK8sModel(plural || '');
   if (inFlight && !k8sModel) {
     return null;
   }
@@ -840,9 +848,9 @@ export type OperandListProps = {
   filters?: Filter[];
   reduxID?: string;
   reduxIDs?: string[];
-  rowSplitter?: any;
-  staticFilters?: any;
-  loadError?: Record<string, any>;
+  rowSplitter?: unknown;
+  staticFilters?: Filter[];
+  loadError?: Record<string, unknown>;
   noAPIsFound?: boolean;
   showNamespace?: boolean;
 };
@@ -894,7 +902,7 @@ export type OperandDetailsProps = {
   crd: CustomResourceDefinitionKind;
 };
 
-type DefaultOperandDetailsPageProps = { customData: any; k8sModel: K8sModel };
+type DefaultOperandDetailsPageProps = { customData: unknown; k8sModel: K8sModel };
 
 export type OperandResourceDetailsProps = {
   csv?: { data: ClusterServiceVersionKind };
@@ -907,7 +915,7 @@ type Header = {
   title: string;
   sortField?: string;
   sortFunc?: string;
-  transforms?: any;
+  transforms?: unknown;
   props: { className: string };
 };
 

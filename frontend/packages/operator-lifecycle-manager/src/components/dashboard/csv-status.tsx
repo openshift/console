@@ -16,8 +16,9 @@ import './csv-status.scss';
 const ClusterServiceVersionRow: React.FC<OperatorRowProps<ClusterServiceVersionKind>> = ({
   operatorStatus,
 }) => {
-  const { name, namespace } = operatorStatus.operators[0]?.metadata || {};
-  const { displayName } = operatorStatus.operators[0]?.spec || {};
+  const name = operatorStatus.operators[0]?.metadata?.name || '';
+  const namespace = operatorStatus.operators[0]?.metadata?.namespace || '';
+  const displayName = operatorStatus.operators[0]?.spec?.displayName;
   const to: To =
     operatorStatus.operators.length > 1
       ? `${resourcePathFromModel(ClusterServiceVersionModel)}?name=${name}`

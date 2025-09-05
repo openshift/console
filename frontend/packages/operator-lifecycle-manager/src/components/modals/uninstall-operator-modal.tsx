@@ -177,8 +177,8 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
             ),
           ]
         : []),
-      ...(removePlugins
-        ? [k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, [patch as any])]
+      ...(removePlugins && patch
+        ? [k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, [patch])]
         : []),
     ];
 
@@ -343,7 +343,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
             operands={operands}
             loaded={operandsLoaded}
             csvName={csvName || ''}
-            cancel={cancel as any} // for breadcrumbs & cancel modal when clicking on operand links
+            cancel={cancel} // for breadcrumbs & cancel modal when clicking on operand links
           />
         </span>
         <Checkbox
@@ -360,7 +360,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     <OperandDeletionErrorAlert
       operandDeletionErrors={operandDeletionErrors}
       csvName={csvName || ''}
-      cancel={cancel as any}
+      cancel={cancel}
     />
   ) : operandDeletionVerificationError ? (
     <OperandsLoadedErrorAlert
@@ -427,7 +427,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitInProgress}
-        cancel={cancel as any}
+        cancel={cancel}
         submitDanger={!isSubmitFinished} // if submit finished show a non-danger 'OK'
         submitText={t(isSubmitFinished ? 'olm~OK' : 'olm~Uninstall')}
         submitDisabled={isSubmitInProgress}
@@ -611,7 +611,7 @@ const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName
             .map((operand) => (
               <tr className="pf-v6-c-table__tr" key={operand.metadata?.uid || ''}>
                 <td className="pf-v6-c-table__td">
-                  <OperandLink obj={operand} csvName={csvName || ''} onClick={cancel as any} />
+                  <OperandLink obj={operand} csvName={csvName || ''} onClick={cancel} />
                 </td>
                 <td
                   className="pf-v6-c-table__td pf-m-break-word"
@@ -647,7 +647,7 @@ const OperandErrorList: React.FC<OperandErrorListProps> = ({ operandErrors, csvN
           key={operandError.operand.metadata?.uid || ''}
           className="pf-v6-c-list pf-m-plain co-operator-uninstall-alert__list-item"
         >
-          <OperandLink obj={operandError.operand} csvName={csvName || ''} onClick={cancel as any} />{' '}
+          <OperandLink obj={operandError.operand} csvName={csvName || ''} onClick={cancel} />{' '}
           {operandError.operand.kind}
           {'  '}
           {t('olm~Error: {{error}}', {
@@ -684,13 +684,18 @@ type UninstallOperatorModalProviderProps = UninstallOperatorModalProps & ModalCo
 export type UninstallOperatorModalProps = {
   cancel?: () => void;
   close?: () => void;
-  k8sKill: (kind: K8sKind, resource: K8sResourceKind, options: any, json: any) => Promise<any>;
+  k8sKill: (
+    kind: K8sKind,
+    resource: K8sResourceKind,
+    options: unknown,
+    json: unknown,
+  ) => Promise<unknown>;
   k8sGet: (kind: K8sKind, name: string, namespace: string) => Promise<K8sResourceKind>;
   k8sPatch: (
     kind: K8sKind,
     resource: K8sResourceKind,
-    data: { op: string; path: string; value: any }[],
-  ) => Promise<any>;
+    data: { op: string; path: string; value: unknown }[],
+  ) => Promise<unknown>;
   subscription: K8sResourceKind;
   csv?: K8sResourceKind;
   blocking?: boolean;

@@ -89,7 +89,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
             formContext={{ namespace: params.ns }}
             uiSchema={uiSchema}
             formData={formData}
-            onChange={onChange}
+            onChange={onChange as any}
             onError={setErrors}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
@@ -105,11 +105,11 @@ type ProvidedAPI = CRDDescription | APIServiceDefinition;
 
 export type OperandFormProps = {
   formData?: K8sResourceKind;
-  onChange?: (formData?: any) => void;
+  onChange?: (formData?: K8sResourceKind) => void;
   next?: string;
   csv: ClusterServiceVersionKind;
   model: K8sKind;
   providedAPI: ProvidedAPI;
-  prune?: (data: any) => any;
+  prune?: (data: K8sResourceKind) => K8sResourceKind;
   schema: JSONSchema7;
 };

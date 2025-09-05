@@ -23,7 +23,7 @@ import { InfrastructureFeature, OLMAnnotation, ValidSubscriptionValue } from '.'
 
 describe('getPackageSource', () => {
   it('should handle undefined argument', () => {
-    const source = getPackageSource(undefined as any);
+    const source = getPackageSource(undefined);
     expect(source).toBeUndefined();
   });
   it('should return correct default Red Hat operator sources', () => {
@@ -53,7 +53,7 @@ describe('getPackageSource', () => {
 
 describe('isAWSSTSCluster', () => {
   it('should handle undefined arguments', () => {
-    const result = isAWSSTSCluster(undefined as any, undefined as any, undefined as any);
+    const result = isAWSSTSCluster(undefined, undefined, undefined);
     expect(result).toEqual(false);
   });
   it('should return true', () => {
@@ -88,7 +88,7 @@ describe('isAWSSTSCluster', () => {
 
 describe('isAzureWIFCluster', () => {
   it('should handle undefined arguments', () => {
-    const result = isAzureWIFCluster(undefined as any, undefined as any, undefined as any);
+    const result = isAzureWIFCluster(undefined, undefined, undefined);
     expect(result).toEqual(false);
   });
   it('should return true', () => {
@@ -123,7 +123,7 @@ describe('isAzureWIFCluster', () => {
 
 describe('isGCPWIFCluster', () => {
   it('should handle undefined arguments', () => {
-    const result = isGCPWIFCluster(undefined as any, undefined as any, undefined as any);
+    const result = isGCPWIFCluster(undefined, undefined, undefined);
     expect(result).toEqual(false);
   });
   it('should return true', () => {
