@@ -9,7 +9,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 describe('Timestamp', () => {
   it("should say 'Just now'", () => {
     store.dispatch(updateTimestamps(Date.now()));
-    const timestamp = new Date();
+    const timestamp = new Date().toISOString();
     render(<Timestamp timestamp={timestamp} />, {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
@@ -17,7 +17,7 @@ describe('Timestamp', () => {
   });
   it("should say '1 minute ago'", () => {
     store.dispatch(updateTimestamps(Date.now()));
-    const timestamp = new Date(Date.now() - ONE_MINUTE);
+    const timestamp = new Date(Date.now() - ONE_MINUTE).toISOString();
     render(<Timestamp timestamp={timestamp} />, {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
@@ -25,7 +25,7 @@ describe('Timestamp', () => {
   });
   it("should say '10 minutes ago'", () => {
     store.dispatch(updateTimestamps(Date.now()));
-    const timestamp = new Date(Date.now() - 10 * ONE_MINUTE);
+    const timestamp = new Date(Date.now() - 10 * ONE_MINUTE).toISOString();
     render(<Timestamp timestamp={timestamp} />, {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
@@ -33,11 +33,11 @@ describe('Timestamp', () => {
   });
   it('should show formatted date', () => {
     store.dispatch(updateTimestamps(Date.now()));
-    const timestamp = new Date(Date.now() - 11 * ONE_MINUTE);
+    const timestamp = new Date(Date.now() - 11 * ONE_MINUTE).toISOString();
     render(<Timestamp timestamp={timestamp} />, {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
-    const formattedDate = dateTimeFormatter().format(timestamp);
+    const formattedDate = dateTimeFormatter().format(new Date(timestamp));
     expect(screen.getByText(formattedDate)).toBeDefined();
   });
 });

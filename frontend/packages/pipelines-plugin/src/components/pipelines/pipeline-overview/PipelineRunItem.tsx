@@ -41,7 +41,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
               <>
                 {' '}
                 <span className="odc-pipeline-run-item__time pf-v6-u-text-color-subtle">
-                  ({fromNow(lastUpdated)})
+                  ({fromNow(lastUpdated || '')})
                 </span>
               </>
             )}

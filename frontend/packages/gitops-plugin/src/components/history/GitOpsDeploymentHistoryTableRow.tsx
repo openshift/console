@@ -13,7 +13,7 @@ export const GitOpsDeploymentHistoryTableRow: React.FC<RowFunctionArgs<GitOpsHis
   return (
     <>
       <TableData className={GitOpsDeploymentHistoryTableColumnClasses[0]}>
-        <Timestamp timestamp={data.deployed_at} key={data.deployed_at} />
+        <Timestamp timestamp={new Date(data.deployed_at).toISOString()} key={data.deployed_at} />
       </TableData>
       <TableData
         className={css(GitOpsDeploymentHistoryTableColumnClasses[1], 'co-break-word')}

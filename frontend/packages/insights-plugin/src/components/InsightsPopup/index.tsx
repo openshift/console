@@ -93,7 +93,8 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   ) : (
     <Stack hasGutter>
       <StackItem>
-        {t('insights-plugin~Last refresh')}: <Timestamp timestamp={lastRefreshTime} simple />
+        {t('insights-plugin~Last refresh')}:{' '}
+        <Timestamp timestamp={new Date(lastRefreshTime).toISOString()} simple />
       </StackItem>
       <StackItem className="pf-v6-u-text-color-subtle">
         {t(

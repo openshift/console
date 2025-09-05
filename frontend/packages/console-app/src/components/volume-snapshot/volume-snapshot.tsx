@@ -129,7 +129,9 @@ const Row: React.FC<RowProps<VolumeSnapshotKind, VolumeSnapshotRowProsCustomData
   obj,
   rowData: { customData },
 }) => {
-  const { name, namespace, creationTimestamp } = obj?.metadata || {};
+  const name = obj?.metadata?.name || '';
+  const namespace = obj?.metadata?.namespace || '';
+  const creationTimestamp = obj?.metadata?.creationTimestamp || '';
   const size = obj?.status?.restoreSize;
   const sizeBase = convertToBaseValue(size);
   const sizeMetrics = size ? humanizeBinaryBytes(sizeBase).string : '-';
@@ -198,7 +200,7 @@ const Row: React.FC<RowProps<VolumeSnapshotKind, VolumeSnapshotRowProsCustomData
 const VolumeSnapshotTable: React.FC<VolumeSnapshotTableProps> = (props) => {
   const { t } = useTranslation();
 
-  const columns = getTableColumns(t, props.rowData.customData.disableItems);
+  const columns = getTableColumns(t, props.rowData?.customData?.disableItems || {});
 
   const [activeColumns] = useActiveColumns({ columns });
 
@@ -239,7 +241,7 @@ const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = ({
 
   return (
     <>
-      <ListPageHeader title={showTitle ? t(VolumeSnapshotModel.labelPluralKey) : undefined}>
+      <ListPageHeader title={showTitle ? t(VolumeSnapshotModel.labelPluralKey || '') : ''}>
         {canCreate && (
           <ListPageCreateLink to={createPath}>
             {t('console-app~Create VolumeSnapshot')}
@@ -279,7 +281,7 @@ const checkPVCSnapshot: CheckPVCSnapshot = (volumeSnapshots, pvc) =>
 const FilteredSnapshotTable: React.FC<FilteredSnapshotTable> = (props) => {
   const { t } = useTranslation();
   const { data, rowData } = props;
-  const columns = getTableColumns(t, props.rowData.customData.disableItems);
+  const columns = getTableColumns(t, props.rowData?.customData?.disableItems || {});
   const [activeColumns] = useActiveColumns({
     columns,
   });
@@ -350,9 +352,14 @@ type CheckPVCSnapshot = (
 type FilteredSnapshotTable = {
   data: VolumeSnapshotKind[];
   unfilteredData: VolumeSnapshotKind[];
-  rowData: { [key: string]: any };
+  rowData: {
+    customData: {
+      disableItems?: Record<string, boolean>;
+      pvc: PersistentVolumeClaimKind;
+    };
+  };
   loaded: boolean;
-  loadError: any;
+  loadError: unknown;
 };
 
 type VolumeSnapshotPVCPage = {
@@ -363,13 +370,20 @@ type VolumeSnapshotPVCPage = {
 type VolumeSnapshotTableProps = {
   data: VolumeSnapshotKind[];
   unfilteredData: VolumeSnapshotKind[];
-  rowData?: { [key: string]: any };
+  rowData?: {
+    customData?: {
+      disableItems?: Record<string, boolean>;
+    };
+  };
   loaded: boolean;
-  loadError: any;
+  loadError: unknown;
 };
 
 type VolumeSnapshotRowProsCustomData = {
-  customData?: { [key: string]: any };
+  customData?: {
+    disableItems?: Record<string, boolean>;
+    pvc?: PersistentVolumeClaimKind;
+  };
 };
 
 export default VolumeSnapshotPage;

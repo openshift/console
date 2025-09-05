@@ -34,7 +34,7 @@ export type UserPreferenceCheckboxField = {
 
 export type UserPreferenceCustomField = {
   type: UserPreferenceFieldType.custom;
-  component: CodeRef<React.ComponentType>;
+  component?: CodeRef<React.ComponentType>;
   props?: { [key: string]: JSONSchema7Type };
 };
 
