@@ -218,9 +218,13 @@ export const getInfrastructureFeatures: AnnotationParser<
     onError,
   });
   const azureTokenAuthIsSupported =
-    clusterIsAzureWIF && annotations[OLMAnnotation.TokenAuthAzure] !== 'false';
+    clusterIsAzureWIF &&
+    annotations[OLMAnnotation.TokenAuthAzure] !== undefined &&
+    annotations[OLMAnnotation.TokenAuthAzure] !== 'false';
   const awsTokenAuthIsSupported =
-    clusterIsAWSSTS && annotations[OLMAnnotation.TokenAuthAWS] !== 'false';
+    clusterIsAWSSTS &&
+    annotations[OLMAnnotation.TokenAuthAWS] !== undefined &&
+    annotations[OLMAnnotation.TokenAuthAWS] !== 'false';
   return [...parsedInfrastructureFeatures, ...Object.keys(annotations ?? {})].reduce(
     (supportedFeatures, key) => {
       const feature = infrastructureFeatureMap[key];
@@ -241,7 +245,14 @@ export const getInfrastructureFeatures: AnnotationParser<
       }
 
       const resolveTokenAuthFeature = () => {
-        const tokenAuthIsSupported = azureTokenAuthIsSupported || awsTokenAuthIsSupported;
+        // Handle legacy "tokenAuth"/"TokenAuth" from InfrastructureFeatures array
+        const legacyTokenAuthSupported =
+          (clusterIsAWSSTS || clusterIsAzureWIF) && (key === 'tokenAuth' || key === 'TokenAuth');
+
+        // Handle dedicated token auth annotations
+        const dedicatedTokenAuthSupported = azureTokenAuthIsSupported || awsTokenAuthIsSupported;
+
+        const tokenAuthIsSupported = legacyTokenAuthSupported || dedicatedTokenAuthSupported;
         return tokenAuthIsSupported ? includeFeature() : excludeFeature();
       };
       const resolveTokenAuthGCPFeature = () => {
