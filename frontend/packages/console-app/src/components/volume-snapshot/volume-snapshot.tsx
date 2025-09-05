@@ -214,13 +214,12 @@ const VolumeSnapshotTable: React.FC<VolumeSnapshotTableProps> = (props) => {
 const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = ({
   canCreate = true,
   showTitle = true,
-  namespace = 'default',
+  namespace,
 }) => {
   const { t } = useTranslation();
   const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
 
-  const createPath = `/k8s/ns/${namespace}/${VolumeSnapshotModel.plural}/~new/form`;
-
+  const createPath = `/k8s/ns/${namespace || 'default'}/${VolumeSnapshotModel.plural}/~new/form`;
   const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotKind[]>({
     groupVersionKind: {
       group: VolumeSnapshotModel.apiGroup,
