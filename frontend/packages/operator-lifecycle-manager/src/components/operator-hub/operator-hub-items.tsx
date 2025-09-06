@@ -43,7 +43,7 @@ import {
 } from './operator-hub-utils';
 import { InfrastructureFeature, OperatorHubItem } from './index';
 
-// Scoring constants for relevance calculation
+// Scoring and priority code no longer used and will be removed with Operator Hub catalog files cleanup effort
 const SCORE = {
   // Title/Name matches (highest priority)
   TITLE_CONTAINS: 100,

@@ -26,11 +26,6 @@ const SCORE = {
   TITLE_EXACT_BONUS: 50,
   TITLE_STARTS_BONUS: 25,
 
-  // Metadata name matches (high priority)
-  METADATA_CONTAINS: 80,
-  METADATA_EXACT_BONUS: 40,
-  METADATA_STARTS_BONUS: 20,
-
   // Keywords/tags matches (medium priority)
   KEYWORD_MATCH: 60,
 
@@ -79,25 +74,19 @@ export const calculateCatalogItemRelevanceScore = (
     }
   }
 
-  // Check for operator-specific metadata name (if available in attributes)
-  const metadataName = item.attributes?.metadataName;
-  if (metadataName && typeof metadataName === 'string') {
-    const metadataNameLower = metadataName.toLowerCase();
-    if (metadataNameLower.includes(searchTerm)) {
-      score += SCORE.METADATA_CONTAINS;
-      if (metadataNameLower === searchTerm) {
-        score += SCORE.METADATA_EXACT_BONUS;
-      }
-      if (metadataNameLower.startsWith(searchTerm)) {
-        score += SCORE.METADATA_STARTS_BONUS;
-      }
-    }
-  }
-
   // Keywords/tags matches get medium weight
+  // Check tags array (for software types other than operators)
   if (item.tags && Array.isArray(item.tags)) {
     const keywords = item.tags.map((k) => k.toLowerCase());
     if (keywords.includes(searchTerm)) {
+      score += SCORE.KEYWORD_MATCH;
+    }
+  }
+
+  // Check keywords array (for operators)
+  if (item.attributes?.keywords && Array.isArray(item.attributes.keywords)) {
+    const attributeKeywords = item.attributes.keywords.map((k) => k.toLowerCase());
+    if (attributeKeywords.includes(searchTerm)) {
       score += SCORE.KEYWORD_MATCH;
     }
   }
