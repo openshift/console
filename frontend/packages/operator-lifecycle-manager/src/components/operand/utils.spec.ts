@@ -96,26 +96,26 @@ describe('capabilitiesToUISchema', () => {
       `${SpecCapability.k8sResourcePrefix}ServiceAccount` as SpecCapability,
     ]);
     expect(uiSchema['ui:widget']).toEqual('K8sResourceWidget');
-    expect(uiSchema['ui:options'].model).toEqual(ServiceAccountModel);
-    expect(uiSchema['ui:options'].groupVersionKind).toEqual('ServiceAccount');
+    expect(uiSchema['ui:options']?.model).toEqual(ServiceAccountModel);
+    expect(uiSchema['ui:options']?.groupVersionKind).toEqual('ServiceAccount');
   });
   it('Handles SpecCapability.k8sResourcePrefix with equality-based label queries', () => {
     const uiSchema = capabilitiesToUISchema([
       `${SpecCapability.k8sResourcePrefix}ServiceAccount?label!=test,level=production` as SpecCapability,
     ]);
     expect(uiSchema['ui:widget']).toEqual('K8sResourceWidget');
-    expect(uiSchema['ui:options'].model).toEqual(ServiceAccountModel);
-    expect(uiSchema['ui:options'].groupVersionKind).toEqual('ServiceAccount');
-    expect(uiSchema['ui:options'].selector).toEqual('label!=test,level=production');
+    expect(uiSchema['ui:options']?.model).toEqual(ServiceAccountModel);
+    expect(uiSchema['ui:options']?.groupVersionKind).toEqual('ServiceAccount');
+    expect(uiSchema['ui:options']?.selector).toEqual('label!=test,level=production');
   });
   it('Handles SpecCapability.k8sResourcePrefix with set-based label queries', () => {
     const uiSchema = capabilitiesToUISchema([
       `${SpecCapability.k8sResourcePrefix}ServiceAccount?level in (production,qa)` as SpecCapability,
     ]);
     expect(uiSchema['ui:widget']).toEqual('K8sResourceWidget');
-    expect(uiSchema['ui:options'].model).toEqual(ServiceAccountModel);
-    expect(uiSchema['ui:options'].groupVersionKind).toEqual('ServiceAccount');
-    expect(uiSchema['ui:options'].selector).toEqual('level in (production,qa)');
+    expect(uiSchema['ui:options']?.model).toEqual(ServiceAccountModel);
+    expect(uiSchema['ui:options']?.groupVersionKind).toEqual('ServiceAccount');
+    expect(uiSchema['ui:options']?.selector).toEqual('level in (production,qa)');
   });
   it('Handles SpecCapablitiy.select', () => {
     const uiSchema = capabilitiesToUISchema([

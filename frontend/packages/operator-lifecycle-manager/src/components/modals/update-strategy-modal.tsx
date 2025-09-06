@@ -88,7 +88,7 @@ export const updateStrategyModal = createModalLauncher(UpdateStrategyModal);
 UpdateStrategyModal.displayName = 'UpdateStrategyModal';
 
 export type UpdateStrategyModalProps = {
-  defaultValue: any;
+  defaultValue;
   path: string;
   resource: K8sResourceKind;
   resourceKind: K8sKind;

@@ -50,7 +50,7 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
       ];
       handlePromise(k8sPatch(OperatorHubModel, operatorHub, patch))
         .then(() => {
-          close();
+          close?.();
         })
         .catch(() => {});
     },

@@ -1,3 +1,4 @@
+// This file will be removed as part of https://issues.redhat.com//browse/CONSOLE-4668
 /* eslint-disable no-console */
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { bundleHasProperty } from '../fbc/bundles';
@@ -22,7 +23,7 @@ const streamFBCObjectsToIndexedDB = (
 ): Promise<number> =>
   reader.read().then(async ({ done, value }) => {
     if (done) {
-      return count;
+      return count ?? 0;
     }
     if (
       isFileBasedCatalogBundle(value) &&
@@ -43,13 +44,13 @@ const injestClusterCatalog = async (
   db: IDBDatabase,
   catalog: K8sResourceCommon,
 ): Promise<number> => {
-  const catalogName = catalog.metadata.name;
+  const catalogName = catalog.metadata?.name;
   console.log('[Extension Catalog Database] Injesting FBC from ClusterCatalog', catalogName);
   return fetchAndProcessJSONLines<FileBasedCatalogObject>(
     `/api/catalogd/catalogs/${catalogName}/api/v1/all`,
     { 'Content-Type': 'application/jsonl' },
   )
-    .then((reader) => streamFBCObjectsToIndexedDB(db, catalogName, reader))
+    .then((reader) => streamFBCObjectsToIndexedDB(db, catalogName || '', reader))
     .then((count) => {
       console.log(
         '[Extension Catalog Database] Successfully injested',

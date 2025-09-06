@@ -101,7 +101,7 @@ export const supports = (set: InstallModeSet) => (obj: OperatorGroupKind) => {
     return false;
   }
   if (namespaces.length === 1) {
-    if (namespaces[0] === obj.metadata.namespace) {
+    if (namespaces[0] === obj.metadata?.namespace) {
       return supportedModes.includes(InstallModeType.InstallModeTypeOwnNamespace);
     }
     if (namespaces[0] === '') {
@@ -117,7 +117,7 @@ export const supports = (set: InstallModeSet) => (obj: OperatorGroupKind) => {
   }
   if (namespaces.length > 1) {
     if (
-      namespaces.includes(obj.metadata.namespace) &&
+      namespaces.includes(obj.metadata?.namespace || '') &&
       !supportedModes.includes(InstallModeType.InstallModeTypeOwnNamespace)
     ) {
       return false;
@@ -152,7 +152,7 @@ export const subscriptionFor = (allSubscriptions: SubscriptionKind[] = []) => (
     .find((sub) =>
       allGroups.some(
         (og) =>
-          og.metadata.namespace === sub.metadata.namespace &&
+          og.metadata?.namespace === sub.metadata?.namespace &&
           (isGlobal(og) || og.status?.namespaces?.includes(ns)),
       ),
     );

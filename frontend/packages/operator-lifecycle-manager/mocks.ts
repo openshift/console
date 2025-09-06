@@ -47,7 +47,7 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
     name: 'testapp',
     uid: 'c02c0a8f-88e0-11e7-851b-080027b424ef',
     creationTimestamp: '2017-09-20T18:19:49Z',
-    deletionTimestamp: null,
+    deletionTimestamp: undefined,
     namespace: 'default',
   },
   spec: {
@@ -203,6 +203,10 @@ export const testResourceInstance: K8sResourceKind = {
     namespace: 'default',
     uid: 'c02c0a8f-88e0-12e7-851b-081027b424ef',
     creationTimestamp: '2017-06-20T18:19:49Z',
+    labels: {
+      app: 'testapp',
+      environment: 'test',
+    },
   },
   spec: {
     selector: {
@@ -250,10 +254,10 @@ export const testOwnedResourceInstance: K8sResourceKind = {
     creationTimestamp: '2005-02-20T18:13:42Z',
     ownerReferences: [
       {
-        name: testResourceInstance.metadata.name,
+        name: testResourceInstance.metadata?.name || '',
         kind: 'TestResource',
-        apiVersion: testResourceInstance.apiVersion,
-        uid: testResourceInstance.metadata.uid,
+        apiVersion: testResourceInstance.apiVersion || '',
+        uid: testResourceInstance.metadata?.uid || '',
       },
     ],
   },
@@ -359,14 +363,14 @@ export const testOperatorDeployment: K8sResourceKind = {
   apiVersion: 'apps/v1beta2',
   kind: 'Deployment',
   metadata: {
-    namespace: testClusterServiceVersion.metadata.namespace,
+    namespace: testClusterServiceVersion.metadata?.namespace || '',
     name: 'test-operator',
     ownerReferences: [
       {
-        name: testClusterServiceVersion.metadata.name,
-        uid: testClusterServiceVersion.metadata.uid,
+        name: testClusterServiceVersion.metadata?.name || '',
+        uid: testClusterServiceVersion.metadata?.uid || '',
         kind: testClusterServiceVersion.kind,
-        apiVersion: testClusterServiceVersion.apiVersion,
+        apiVersion: testClusterServiceVersion.apiVersion || '',
       },
     ],
   },
@@ -772,11 +776,12 @@ export const operatorHubListPageProps = {
 };
 
 export const operatorHubTileViewPageProps = {
-  items: [
+  items: ([
     {
       obj: amqPackageManifest,
       installState: 'Installed',
       installed: false,
+      isInstalling: false,
       kind: 'PackageManifest',
       name: 'amq-streams',
       uid: 'amq-streams/openshift-operator-lifecycle-manager',
@@ -808,6 +813,7 @@ export const operatorHubTileViewPageProps = {
       obj: etcdPackageManifest,
       installState: 'Not Installed',
       installed: false,
+      isInstalling: false,
       kind: 'PackageManifest',
       name: 'etcd',
       uid: 'etcd/openshift-operator-lifecycle-manager',
@@ -838,6 +844,7 @@ export const operatorHubTileViewPageProps = {
       obj: federationv2PackageManifest,
       installState: 'Not Installed',
       installed: false,
+      isInstalling: false,
       kind: 'PackageManifest',
       name: 'federationv2',
       uid: 'federationv2/openshift-operator-lifecycle-manager',
@@ -868,6 +875,7 @@ export const operatorHubTileViewPageProps = {
       obj: prometheusPackageManifest,
       installState: 'Not Installed',
       installed: false,
+      isInstalling: false,
       kind: 'PackageManifest',
       name: 'prometheus',
       uid: 'prometheus/openshift-operator-lifecycle-manager',
@@ -893,7 +901,7 @@ export const operatorHubTileViewPageProps = {
       infrastructure: infra,
       authentication: auth,
     },
-  ] as OperatorHubItem[],
+  ] as unknown) as OperatorHubItem[],
   openOverlay: null,
 };
 
@@ -907,6 +915,7 @@ export const operatorHubTileViewPagePropsWithDummy = {
     {
       obj: dummyPackageManifest,
       installed: false,
+      isInstalling: false,
       kind: 'PackageManifest',
       name: 'dummy',
       uid: 'dummy/openshift-operator-lifecycle-manager',
@@ -1028,6 +1037,7 @@ export const itemWithLongDescription = {
   obj: amqPackageManifest,
   kind: 'PackageManifest',
   installed: false,
+  isInstalling: false,
   name: 'amq-streams',
   uid: 'amq-streams/openshift-operator-lifecycle-manager',
   iconClass: null,

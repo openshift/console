@@ -43,8 +43,10 @@ export const tableColumnInfo = [
 ];
 
 const Row: React.FC<RowProps<VolumeSnapshotContentKind>> = ({ obj }) => {
-  const { name, creationTimestamp } = obj?.metadata || {};
-  const { name: snapshotName, namespace: snapshotNamespace } = obj?.spec?.volumeSnapshotRef || {};
+  const name = obj?.metadata?.name || '';
+  const creationTimestamp = obj?.metadata?.creationTimestamp || '';
+  const snapshotName = obj?.spec?.volumeSnapshotRef?.name || '';
+  const snapshotNamespace = obj?.spec?.volumeSnapshotRef?.namespace || '';
   const size = obj.status?.restoreSize;
   const sizeMetrics = size ? humanizeBinaryBytes(size).string : '-';
 

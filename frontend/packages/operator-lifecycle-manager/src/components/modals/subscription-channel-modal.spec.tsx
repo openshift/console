@@ -91,7 +91,7 @@ describe('SubscriptionChannelModal', () => {
       .find(Radio)
       .at(1)
       .props()
-      .onChange({ target: { value: 'nightly' } } as any, true);
+      .onChange?.({ target: { value: 'nightly' } } as React.ChangeEvent<HTMLInputElement>, true);
     wrapper.find('form').simulate('submit', new Event('submit'));
   });
 

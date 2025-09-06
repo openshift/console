@@ -406,7 +406,15 @@ export const OperatorHubItemDetails: React.FCC<OperatorHubItemDetailsProps> = ({
           />
           <PropertyItem
             label={t('olm~Capability level')}
-            value={capability ? <CapabilityLevel capability={capability} /> : notAvailable}
+            value={
+              capability ? (
+                <CapabilityLevel
+                  capability={typeof capability === 'string' ? capability : capability[0] || ''}
+                />
+              ) : (
+                notAvailable
+              )
+            }
           />
           <PropertyItem label={t('olm~Source')} value={source || notAvailable} />
           <PropertyItem label={t('olm~Provider')} value={provider || notAvailable} />

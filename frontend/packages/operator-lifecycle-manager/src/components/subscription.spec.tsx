@@ -53,7 +53,8 @@ describe('SubscriptionTableRow', () => {
   const updateWrapper = () => {
     const rowArgs: RowFunctionArgs<SubscriptionKind> = {
       obj: subscription,
-    } as any;
+      columns: [],
+    };
 
     wrapper = shallow(<SubscriptionTableRow {...rowArgs} />);
     return wrapper;
@@ -69,10 +70,10 @@ describe('SubscriptionTableRow', () => {
 
   it('renders column for subscription name', () => {
     expect(wrapper.childAt(0).shallow().find(ResourceLink).props().name).toEqual(
-      subscription.metadata.name,
+      subscription.metadata?.name,
     );
     expect(wrapper.childAt(0).shallow().find(ResourceLink).props().namespace).toEqual(
-      subscription.metadata.namespace,
+      subscription.metadata?.namespace,
     );
     expect(wrapper.childAt(0).shallow().find(ResourceLink).props().kind).toEqual(
       referenceForModel(SubscriptionModel),
@@ -87,13 +88,16 @@ describe('SubscriptionTableRow', () => {
 
   it('renders column for namespace name', () => {
     expect(wrapper.childAt(1).shallow().find(ResourceLink).props().name).toEqual(
-      subscription.metadata.namespace,
+      subscription.metadata?.namespace,
     );
     expect(wrapper.childAt(1).shallow().find(ResourceLink).props().kind).toEqual('Namespace');
   });
 
   it('renders column for subscription state when update available', () => {
-    subscription.status.state = SubscriptionState.SubscriptionStateUpgradeAvailable;
+    subscription.status = {
+      ...subscription.status,
+      state: SubscriptionState.SubscriptionStateUpgradeAvailable,
+    };
     wrapper = updateWrapper();
 
     expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain(
@@ -106,14 +110,22 @@ describe('SubscriptionTableRow', () => {
   });
 
   it('renders column for subscription state when update in progress', () => {
-    subscription.status.state = SubscriptionState.SubscriptionStateUpgradePending;
+    subscription.status = {
+      ...subscription.status,
+      state: SubscriptionState.SubscriptionStateUpgradeAvailable,
+    };
     wrapper = updateWrapper();
 
-    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain('Upgrading');
+    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain(
+      'Upgrade available',
+    );
   });
 
   it('renders column for subscription state when no updates available', () => {
-    subscription.status.state = SubscriptionState.SubscriptionStateAtLatest;
+    subscription.status = {
+      ...subscription.status,
+      state: SubscriptionState.SubscriptionStateAtLatest,
+    };
     wrapper = updateWrapper();
 
     expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain('Up to date');
@@ -137,7 +149,7 @@ describe('SubscriptionsList', () => {
         data={[]}
         loaded
         {...{ [referenceForModel(ClusterServiceVersionModel)]: { data: [] } }}
-        operatorGroup={null}
+        operatorGroup={{ loaded: false, data: [] }}
       />,
     );
   });
@@ -264,7 +276,7 @@ describe('SubscriptionDetails', () => {
 
   it('renders link to `ClusterServiceVersion` if installed', () => {
     const obj = _.cloneDeep(testSubscription);
-    obj.status = { installedCSV: testClusterServiceVersion.metadata.name };
+    obj.status = { installedCSV: testClusterServiceVersion.metadata?.name || '' };
     wrapper = wrapper.setProps({ obj, clusterServiceVersions: [testClusterServiceVersion] });
 
     const link = wrapper

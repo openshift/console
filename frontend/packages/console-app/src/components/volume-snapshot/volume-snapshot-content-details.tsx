@@ -28,7 +28,8 @@ const { editYaml, events } = navFactory;
 
 const Details: React.FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
-  const { deletionPolicy, driver } = obj?.spec;
+  const deletionPolicy = obj?.spec?.deletionPolicy || '';
+  const driver = obj?.spec?.driver || '';
   const { volumeHandle, snapshotHandle } = obj?.spec?.source || {};
   const { name: snapshotName, namespace: snapshotNamespace } = obj?.spec?.volumeSnapshotRef || {};
   const size = obj.status?.restoreSize;
