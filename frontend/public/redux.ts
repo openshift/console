@@ -40,6 +40,9 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk)),
 );
 
+// Make store globally available for dynamic plugins
+(window as any).consoleStore = store;
+
 export const applyReduxExtensions = (reducerExtensions: ResolvedExtension<ReduxReducer>[]) => {
   const pluginReducers: ReducersMapObject = {};
 

@@ -26,21 +26,24 @@ export const getCSRFToken = () => {
  * @returns an object containing the appropriate impersonation requst headers, based on redux state
  */
 export const getConsoleRequestHeaders = (): ConsoleRequestHeaders => {
-  const store = storeHandler.getStore();
-  if (!store) return undefined;
-  const state = store.getState();
+  const store = (window as any).consoleStore || storeHandler.getStore();
 
   const headers: ConsoleRequestHeaders = {
     'X-CSRFToken': getCSRFToken(),
   };
 
-  // Set impersonation headers
-  const { kind, name } = getImpersonate(state) || {};
-  if ((kind === 'User' || kind === 'Group') && name) {
-    // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
-    headers['Impersonate-User'] = name;
-    if (kind === 'Group') {
-      headers['Impersonate-Group'] = name;
+  // If store is available, add impersonation headers
+  if (store) {
+    const state = store.getState();
+
+    // Set impersonation headers
+    const { kind, name } = getImpersonate(state) || {};
+    if ((kind === 'User' || kind === 'Group') && name) {
+      // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
+      headers['Impersonate-User'] = name;
+      if (kind === 'Group') {
+        headers['Impersonate-Group'] = name;
+      }
     }
   }
 
