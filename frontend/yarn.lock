@@ -1797,7 +1797,7 @@
     react-dropzone "14.3.5"
     tslib "^2.8.1"
 
-"@patternfly/react-component-groups@6.2.0-prerelease.10":
+"@patternfly/react-component-groups@6.2.0-prerelease.10", "@patternfly/react-component-groups@^6.1.0":
   version "6.2.0-prerelease.10"
   resolved "https://registry.yarnpkg.com/@patternfly/react-component-groups/-/react-component-groups-6.2.0-prerelease.10.tgz#26fc16b00dc03927f550bb4138a3d5a0eec3a661"
   integrity sha512-L2NlFfGFceoKgXofN+yrbtyIlkCGdkuA/pbujFB5k8bOeKhVJl3eNZxergpKScFRLpMz2bAvBZhrhS1eoht2ag==
@@ -1833,6 +1833,18 @@
     focus-trap "7.6.4"
     react-dropzone "^14.3.5"
     tslib "^2.8.1"
+
+"@patternfly/react-data-view@^6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-data-view/-/react-data-view-6.2.0.tgz#4205638ea6604fcd9aa5627243b88156d8e1f647"
+  integrity sha512-d8o1MUD0+s87afV4kxF3dZlhYvCb7H3DZTmrk4Bj0UDLoo2DDi3El4P94ZtjLmUiaJ9dYGUrXSbgZUmz5TIyLg==
+  dependencies:
+    "@patternfly/react-component-groups" "^6.1.0"
+    "@patternfly/react-core" "^6.0.0"
+    "@patternfly/react-icons" "^6.0.0"
+    "@patternfly/react-table" "^6.0.0"
+    clsx "^2.1.1"
+    react-jss "^10.10.0"
 
 "@patternfly/react-icons@^6.0.0", "@patternfly/react-icons@^6.0.0-prerelease.7", "@patternfly/react-icons@^6.2.2":
   version "6.2.2"
