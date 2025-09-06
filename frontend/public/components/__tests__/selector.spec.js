@@ -1,4 +1,4 @@
-import { fromRequirements, selectorFromString } from '../public/module/k8s/selector';
+import { fromRequirements, selectorFromString } from '../../module/k8s/selector';
 import { selectorToString, toRequirements } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 describe('k8sSelector', () => {

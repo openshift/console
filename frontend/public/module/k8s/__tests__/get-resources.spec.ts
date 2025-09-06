@@ -1,6 +1,6 @@
 import { ModelMetadata } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/plugin-sdk';
-import { pluralizeKind, getModelExtensionMetadata } from '../../../public/module/k8s/get-resources';
+import { pluralizeKind, getModelExtensionMetadata } from '../get-resources';
 
 describe('pluralizeKind', () => {
   const testPluralizeKind = (kind: string, expected: string) => {

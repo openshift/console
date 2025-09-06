@@ -1,4 +1,4 @@
-import { podPhase, podReadiness, podRestarts } from '../../../public/module/k8s/pods';
+import { podPhase, podReadiness, podRestarts } from '../../k8s/pods';
 
 describe('podPhase', () => {
   let pod;

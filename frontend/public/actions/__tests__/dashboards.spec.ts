@@ -6,8 +6,8 @@ import {
   stopWatchURL,
   stopWatchPrometheusQuery,
   watchPrometheusQuery,
-} from '../../public/actions/dashboards';
-import { RESULTS_TYPE, defaults } from '../../public/reducers/dashboards';
+} from '../dashboards';
+import { RESULTS_TYPE, defaults } from '../../reducers/dashboards';
 
 const testStopWatch = (stopAction, type: RESULTS_TYPE, key: string) => {
   expect(stopAction(key)).toEqual({

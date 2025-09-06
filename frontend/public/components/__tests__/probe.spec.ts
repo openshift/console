@@ -1,4 +1,4 @@
-import { parseCmd, flattenCmd } from '../public/module/k8s/probe';
+import { parseCmd, flattenCmd } from '../../module/k8s/probe';
 
 describe('k8sProbe', () => {
   describe('#parseCmd', () => {

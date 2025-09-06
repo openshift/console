@@ -1,11 +1,6 @@
 import * as _ from 'lodash-es';
 
-import {
-  units,
-  validate,
-  convertToBaseValue,
-  humanizePercentage,
-} from '../public/components/utils/units';
+import { units, validate, convertToBaseValue, humanizePercentage } from '../utils/units';
 
 describe('units', () => {
   describe('round', () => {
