@@ -352,15 +352,15 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
 
   const showSearchFiltersDropdown = Object.keys(filterDropdownItems).length > 1;
   return (
-    <Toolbar
-      className="pf-m-toggle-group-container"
-      data-test="filter-toolbar"
-      id="filter-toolbar"
-      clearAllFilters={clearAll}
-      clearFiltersButtonText={t('public~Clear all filters')}
-    >
-      <ToolbarContent>
-        {(rowFilters?.length > 0 || !hideNameLabelFilters) && (
+    (rowFilters?.length > 0 || !hideNameLabelFilters) && (
+      <Toolbar
+        className="pf-m-toggle-group-container"
+        data-test="filter-toolbar"
+        id="filter-toolbar"
+        clearAllFilters={clearAll}
+        clearFiltersButtonText={t('public~Clear all filters')}
+      >
+        <ToolbarContent>
           <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
             {rowFilters?.length > 0 && (
               <ToolbarItem>
@@ -495,28 +495,28 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
               </ToolbarItem>
             )}
           </ToolbarToggleGroup>
-        )}
-        {columnLayout?.id && !hideColumnManagement && (
-          <ToolbarGroup>
-            <ToolbarItem>
-              <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
-                <Button
-                  icon={<ColumnsIcon />}
-                  variant="plain"
-                  onClick={() =>
-                    createColumnManagementModal({
-                      columnLayout,
-                    })
-                  }
-                  aria-label={t('public~Column management')}
-                  data-test="manage-columns"
-                />
-              </Tooltip>
-            </ToolbarItem>
-          </ToolbarGroup>
-        )}
-      </ToolbarContent>
-    </Toolbar>
+          {columnLayout?.id && !hideColumnManagement && (
+            <ToolbarGroup>
+              <ToolbarItem>
+                <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
+                  <Button
+                    icon={<ColumnsIcon />}
+                    variant="plain"
+                    onClick={() =>
+                      createColumnManagementModal({
+                        columnLayout,
+                      })
+                    }
+                    aria-label={t('public~Column management')}
+                    data-test="manage-columns"
+                  />
+                </Tooltip>
+              </ToolbarItem>
+            </ToolbarGroup>
+          )}
+        </ToolbarContent>
+      </Toolbar>
+    )
   );
 };
 

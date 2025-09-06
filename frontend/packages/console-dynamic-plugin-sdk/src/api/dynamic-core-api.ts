@@ -163,7 +163,7 @@ export const TableData: React.FC<TableDataProps> = require('@console/internal/co
  *     showNamespaceOverride: false,
  *     columnManagementID,
  *   });
- *   return userSettingsAreLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
+ *   return userSettingsLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
  * ```
  */
 export const useActiveColumns: UseActiveColumns = require('@console/internal/components/factory/Table/active-columns-hook')

@@ -2607,7 +2607,7 @@ A hook that provides a list of user-selected active TableColumns.
     showNamespaceOverride: false,
     columnManagementID,
   });
-  return userSettingsAreLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
+  return userSettingsLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
 ```
 
 
