@@ -19,8 +19,8 @@ const ClusterResourceQuotaCharts = ({
 
     const { label, percent } = getLabelAndUsage({
       resourceName,
-      used: clusterUsed ?? '',
-      hard: clusterHard ?? '',
+      used: clusterUsed,
+      hard: clusterHard,
     });
 
     return (

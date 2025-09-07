@@ -27,9 +27,9 @@ export const tourReducer = (state: TourState, action: TourStateAction) => {
   switch (action.type) {
     case TourActions.initialize:
       return {
-        completedTour: action.payload?.completed ?? false,
+        completedTour: action.payload?.completed,
         stepNumber: 0,
-        startTour: !action.payload?.completed,
+        startTour: action.payload?.completed,
       };
     case TourActions.start:
       return { startTour: true, completedTour: false, stepNumber: 0 };
@@ -63,8 +63,8 @@ type TourContextType = {
 
 export type TourState = {
   stepNumber: number;
-  startTour: boolean;
-  completedTour: boolean;
+  startTour?: boolean;
+  completedTour?: boolean;
 };
 
 export const TourContext = createContext<TourContextType>({});
@@ -152,7 +152,7 @@ export const useTourValuesForContext = (): TourContextType => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePerspective, loaded]);
 
-  if (!tour || !loaded) return { tour: null };
+  if (!tour || !loaded) return { tour: undefined };
   const {
     properties: {
       tour: { intro, steps: unfilteredSteps, end },
