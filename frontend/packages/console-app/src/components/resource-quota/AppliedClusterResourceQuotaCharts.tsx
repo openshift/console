@@ -20,9 +20,9 @@ const AppliedClusterResourceQuotaCharts = ({
   );
 
   const charts = Object.keys(nsQuotas?.status?.hard ?? {}).map((resourceName) => {
-    const clusterHard = appliedClusterResourceQuota.status?.total?.hard?.[resourceName] ?? '';
-    const clusterUsed = appliedClusterResourceQuota.status?.total?.used?.[resourceName] ?? '';
-    const nsUsed = nsQuotas?.status?.used?.[resourceName] ?? '';
+    const clusterHard = appliedClusterResourceQuota.status?.total?.hard?.[resourceName];
+    const clusterUsed = appliedClusterResourceQuota.status?.total?.used?.[resourceName];
+    const nsUsed = nsQuotas?.status?.used?.[resourceName];
     const clusterUsage = getUsedPercentage(clusterHard, clusterUsed);
     const unused = 100 - clusterUsage;
 
