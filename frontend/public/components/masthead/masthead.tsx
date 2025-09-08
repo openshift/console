@@ -18,7 +18,7 @@ import {
   getBrandingDetails,
   MASTHEAD_TYPE,
   useCustomLogoURL,
-} from './utils/branding';
+} from '../utils/branding';
 
 type MastheadProps = {
   isMastheadStacked: boolean;

@@ -1176,6 +1176,25 @@ export type PersistentVolumeKind = K8sResourceCommon & {
   };
 };
 
+export type ConsoleLinkKind = K8sResourceCommon & {
+  spec: {
+    applicationMenu?: {
+      imageURL?: string;
+      section: string;
+    };
+    href: string;
+    location: 'ApplicationMenu' | 'HelpMenu' | 'UserMenu' | 'NamespaceDashboard';
+    namespaceDashboard?: {
+      namespaceSelector?: {
+        matchExpressions?: { key?: string; operator?: string; values?: string[] }[];
+        matchLabels?: { [key: string]: string };
+      };
+      namespaces?: string[];
+    };
+    text: string;
+  };
+};
+
 export type ConsolePluginKind = K8sResourceCommon & {
   spec: {
     displayName: string;
