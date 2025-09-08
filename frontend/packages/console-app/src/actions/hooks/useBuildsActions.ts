@@ -26,13 +26,6 @@ import { useCommonActions } from './useCommonActions';
  * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
  *
  * @returns An array containing the generated action(s).
- *
- * @example
- * // Getting Build actions for Build resource
- * const MyBuildComponent = ({ obj }) => {
- *   const actions = useBuildsActions(obj);
- *   return <Kebab actions={actions} />;
- * };
  */
 export const useBuildsActions = (
   obj: K8sResourceKind,

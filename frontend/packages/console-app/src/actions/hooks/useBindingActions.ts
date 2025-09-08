@@ -21,8 +21,8 @@ import { useCommonActions } from './useCommonActions';
 /**
  * A React hook for retrieving actions related to a Binding resource.
  *
- * @param {BindingKind} obj - The specific RoleBinding or ClusterRoleBinding resource instance for which to generate actions.
- * @param {BindingActionCreator[]} [filterActions] - Optional. If provided, the returned `actions` array will contain
+ * @param obj - The specific RoleBinding or ClusterRoleBinding resource instance for which to generate actions.
+ * @param [filterActions] - Optional. If provided, the returned `actions` array will contain
  * only the specified actions. If omitted, it will contain all Binding actions. In case of invalid `actionCreators`
  * returned `actions` are an empty array.
  *

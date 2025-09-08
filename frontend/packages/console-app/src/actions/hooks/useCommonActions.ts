@@ -17,36 +17,18 @@ import { CommonActionCreator, ActionObject } from './types';
 /**
  * A React hook for retrieving common actions related to Kubernetes resources.
  *
- * @param {K8sModel | undefined} kind - The K8s model for the resource.
- * @param {K8sResourceKind | undefined} resource - The specific resource instance for which to generate actions.
+ * @param kind - The K8s model for the resource.
+ * @param resource - The specific resource instance for which to generate actions.
  * @param [filterActions] - Optional. If provided, the returned object will contain only the specified actions.
  * Specify which actions to include using CommonActionCreator enum values.
  * If omitted, it will contain all common actions.
- * @param {JSX.Element} [message] - Optional message to display in the delete modal.
+ * @param [message] - Optional message to display in the delete modal.
  *
  * This hook is robust to inline arrays/objects for the `filterActions` argument, so you do not need to memoize or define
  * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
  *
  * @returns An actions object.
  *
- * @example
- * // Getting Delete and Edit actions for a resource
- * const MyResourceComponent = ({ kind, resource }) => {
- *   const [actions] = useCommonActions(kind, resource, [CommonActionCreator.Delete, CommonActionCreator.Edit]);
- *   return <Kebab actions={ Object.values(actions) } />;
- * };
- *
- * @example
- * // Getting actions in specific order
- * const MyResourceComponent = ({ kind, resource }) => {
- *   const [commonActions, isReady] = useCommonActions(kind, resource, [CommonActionCreator.ModifyCount, CommonActionCreator.AddStorage]);
- *   const actions = [
- *     ...(isReady ? [commonActions.ModifyCount] : []),
- *     ...otherActions,
- *     ...(isReady ? [commonActions.AddStorage] : []),
- *   ];
- *   return <Kebab actions={actions} />;
- * };
  */
 export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   kind: K8sModel,

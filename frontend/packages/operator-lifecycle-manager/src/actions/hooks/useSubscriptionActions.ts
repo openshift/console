@@ -15,8 +15,8 @@ import { SubscriptionActionCreator } from './types';
 /**
  * A React hook for retrieving actions related to a Subscription resource.
  *
- * @param {SubscriptionKind} obj - The specific Subscription resource instance for which to generate actions.
- * @param {SubscriptionActionCreator[]} [filterActions] - Optional. If provided, the returned `actions` array will contain
+ * @param obj - The specific Subscription resource instance for which to generate actions.
+ * @param [filterActions] - Optional. If provided, the returned `actions` array will contain
  * only the specified actions. If omitted, it will contain all Subscription actions. In case of invalid `actionCreators`
  * returned `actions` are an empty array.
  *
