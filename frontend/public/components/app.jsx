@@ -75,7 +75,7 @@ import { withoutSensitiveInformations, getTelemetryTitle } from './utils/telemet
 import { graphQLReady } from '../graphql/client';
 import { AdmissionWebhookWarningNotifications } from '@console/app/src/components/admission-webhook-warnings/AdmissionWebhookWarningNotifications';
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
-import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPVioliationDetector';
+import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 
 initI18n();
 

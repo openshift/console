@@ -2,44 +2,34 @@ import * as React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
-import { ONE_DAY } from '@console/shared/src/constants/time';
 import {
-  newCSPViolationReport,
+  newPluginCSPViolationEvent,
   useCSPViolationDetector,
-} from '../../hooks/useCSPVioliationDetector';
+} from '../../hooks/useCSPViolationDetector';
 
-// Mock Date.now so that it returns a predictable value
-const now = Date.now();
-const mockNow = jest.spyOn(Date, 'now').mockReturnValue(now);
+jest.mock('@console/shared/src/constants/common', () => ({
+  ...require.requireActual('@console/shared/src/constants/common'),
+  IS_PRODUCTION: true,
+}));
 
-// Mock localStorage so that we can spy on calls and override return values.
-const mockGetItem = jest.fn();
-const mockSetItem = jest.fn();
-class LocalStorageMock {
-  store = {};
+const mockCacheEvent = jest.fn();
+jest.mock('@console/shared/src/hooks/useLocalStorageCache', () => ({
+  useLocalStorageCache: () => [undefined, mockCacheEvent],
+}));
 
-  length = 0;
-
-  clear = jest.fn();
-
-  getItem = mockGetItem;
-
-  setItem = mockSetItem;
-
-  removeItem = jest.fn();
-
-  key = jest.fn();
-}
-window.localStorage = new LocalStorageMock();
-
-// Mock fireTelemetry so that we can spy on calls
 const mockFireTelemetry = jest.fn();
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => mockFireTelemetry,
 }));
 
-// Mock class that extends SecurityPolicyViolationEvent to work around "SecurityPolicyViolationEvent
-// is not defined" error
+const mockPluginStore = {
+  findDynamicPluginInfo: jest.fn(),
+  setCustomDynamicPluginInfo: jest.fn(),
+};
+jest.mock('@console/plugin-sdk/src/api/usePluginStore', () => ({
+  usePluginStore: () => mockPluginStore,
+}));
+
 class MockSecurityPolicyViolationEvent extends Event {
   documentURI;
 
@@ -65,142 +55,93 @@ class MockSecurityPolicyViolationEvent extends Event {
 
   sample;
 
-  constructor(blockedURI?: string, sourceFile?: string) {
+  constructor(blockedURI?: string, sourceFile?: string, documentURI?: string) {
     super('securitypolicyviolation');
     this.blockedURI = blockedURI || 'http://blocked.com';
     this.sourceFile = sourceFile || 'http://example.com/test.js';
+    this.documentURI = documentURI || 'http://localhost:9000/test';
   }
 }
 const testEvent = new MockSecurityPolicyViolationEvent();
-const testReport = newCSPViolationReport(null, testEvent);
-const testRecord = {
-  ...testReport,
-  timestamp: now,
-};
-const existingRecord = {
-  ...testReport,
-  timestamp: now - ONE_DAY,
-};
-const expiredRecord = {
-  ...testReport,
-  timestamp: now - 2 * ONE_DAY,
-};
+const testPluginEvent = newPluginCSPViolationEvent(null, testEvent);
+
 const TestComponent = () => {
   useCSPViolationDetector();
   return <div>hello, world!</div>;
 };
 
 describe('useCSPViolationDetector', () => {
-  const originalNodeEnv = process.env.NODE_ENV;
-  beforeAll(() => {
-    process.env.NODE_ENV = 'production';
-  });
-  afterAll(() => {
-    process.env.NODE_ENV = originalNodeEnv;
-  });
   afterEach(() => {
-    mockGetItem.mockClear();
-    mockSetItem.mockClear();
     mockFireTelemetry.mockClear();
-    mockNow.mockClear();
+    mockPluginStore.findDynamicPluginInfo.mockClear();
+    mockPluginStore.setCustomDynamicPluginInfo.mockClear();
+    mockCacheEvent.mockClear();
   });
 
   it('records a new CSP violation', () => {
+    mockCacheEvent.mockReturnValue(true);
     render(
       <Provider store={store}>
         <TestComponent />
       </Provider>,
     );
-    mockGetItem.mockReturnValueOnce('[]');
     act(() => {
       fireEvent(document, testEvent);
     });
-    expect(mockSetItem).toHaveBeenCalledWith(
-      'console/csp_violations',
-      JSON.stringify([testRecord]),
-    );
-    expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', testRecord);
+    expect(mockCacheEvent).toHaveBeenCalledWith(testPluginEvent);
+    expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', testPluginEvent);
   });
 
-  it('updates existing events with new timestamp', () => {
+  it('does not update store when matching event exists', () => {
+    mockCacheEvent.mockReturnValue(false);
     render(
       <Provider store={store}>
         <TestComponent />
       </Provider>,
     );
 
-    mockGetItem.mockReturnValueOnce(JSON.stringify([existingRecord]));
-
     act(() => {
       fireEvent(document, testEvent);
     });
 
-    expect(mockSetItem).toBeCalledWith('console/csp_violations', JSON.stringify([testRecord]));
+    expect(mockCacheEvent).toHaveBeenCalledWith(testPluginEvent);
     expect(mockFireTelemetry).not.toBeCalled();
   });
-  it('fires a telemetry event when a matching CSP expires', () => {
-    render(
-      <Provider store={store}>
-        <TestComponent />
-      </Provider>,
-    );
 
-    mockGetItem.mockReturnValueOnce(JSON.stringify([expiredRecord]));
-
-    const origNodeEnv = process.env.NODE_ENV;
-    act(() => {
-      fireEvent(document, testEvent);
-    });
-    process.env.NODE_ENV = origNodeEnv;
-    expect(mockSetItem).toHaveBeenCalledWith(
-      'console/csp_violations',
-      JSON.stringify([testRecord]),
-    );
-    expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', testRecord);
-  });
   it('correctly parses plugin name from blockedURI', () => {
+    mockCacheEvent.mockReturnValue(true);
     const testEventWithPlugin = new MockSecurityPolicyViolationEvent(
       'http://localhost/api/plugins/foo',
     );
-    const report = newCSPViolationReport('foo', testEventWithPlugin);
-    const record = {
-      ...report,
-      timestamp: 999,
-    };
+    const expected = newPluginCSPViolationEvent('foo', testEventWithPlugin);
     render(
       <Provider store={store}>
         <TestComponent />
       </Provider>,
     );
-    mockNow.mockReturnValueOnce(999);
-    mockGetItem.mockReturnValueOnce('');
     act(() => {
       fireEvent(document, testEventWithPlugin);
     });
-    expect(mockSetItem).toHaveBeenCalledWith('console/csp_violations', JSON.stringify([record]));
-    expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', record);
+    expect(mockCacheEvent).toHaveBeenCalledWith(expected);
+    expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', expected);
   });
+
   it('correctly parses plugin name from sourceFile', () => {
+    mockCacheEvent.mockReturnValue(true);
     const testEventWithPlugin = new MockSecurityPolicyViolationEvent(
       'http://blocked.com',
       'http://localhost/api/plugins/foo',
     );
-    const report = newCSPViolationReport('foo', testEventWithPlugin);
-    const record = {
-      ...report,
-      timestamp: 999,
-    };
+    const expected = newPluginCSPViolationEvent('foo', testEventWithPlugin);
     render(
       <Provider store={store}>
         <TestComponent />
       </Provider>,
     );
-    mockNow.mockReturnValue(999);
-    mockGetItem.mockReturnValue('');
     act(() => {
       fireEvent(document, testEventWithPlugin);
     });
-    expect(mockSetItem).toHaveBeenCalledWith('console/csp_violations', JSON.stringify([record]));
-    expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', record);
+    expect(mockCacheEvent).toHaveBeenCalledWith(expected);
+    expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', expected);
   });
 });
