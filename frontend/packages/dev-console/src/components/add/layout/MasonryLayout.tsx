@@ -7,7 +7,7 @@ type MasonryLayoutProps = {
   columnWidth: number;
   children: React.ReactElement[];
   loading?: boolean;
-  LoadingComponent?: React.ComponentType<any>;
+  LoadingComponent?: React.ComponentType<Record<string, unknown>>;
   /**
    * This threshold ensures that the resize doesn't happen to often.
    * It is set to 30 pixels by default to ensure that the column count is not
@@ -18,7 +18,7 @@ type MasonryLayoutProps = {
   resizeThreshold?: number;
 };
 
-export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
+export const MasonryLayout: React.FCC<MasonryLayoutProps> = ({
   columnWidth,
   children,
   loading,
@@ -35,7 +35,7 @@ export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
       );
     }
   }, [resizeThreshold]);
-  const columnCount = React.useMemo(() => (width ? Math.floor(width / columnWidth) || 1 : null), [
+  const columnCount = React.useMemo(() => (width ? Math.floor(width / columnWidth) || 1 : 1), [
     columnWidth,
     width,
   ]);
@@ -44,18 +44,21 @@ export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
     handleResize();
 
     // change the column count if the window is resized
-    const observer = getResizeObserver(undefined as any, handleResize, true);
-    return () => observer();
+    if (measureRef.current) {
+      const observer = getResizeObserver(measureRef.current, handleResize, true);
+      return () => observer();
+    }
+    return undefined;
   }, [handleResize]);
 
   const columns: React.ReactElement[] =
     loading && LoadingComponent
-      ? Array.from({ length: columnCount ?? 0 }, (_, i) => <LoadingComponent key={i.toString()} />)
+      ? Array.from({ length: columnCount }, (_, i) => <LoadingComponent key={i.toString()} />)
       : children;
 
   return (
     <div className="odc-masonry-container" ref={measureRef}>
-      {columnCount ? <Masonry columnCount={columnCount}>{columns}</Masonry> : null}
+      <Masonry columnCount={columnCount}>{columns}</Masonry>
     </div>
   );
 };

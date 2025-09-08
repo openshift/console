@@ -17,7 +17,7 @@ const convertBuildConfigSourceToFormData = (
 ) => {
   // Always set the project name (namespace) so that the AdvancedGitOptions
   // modal can create a secret in the right namespace.
-  values.formData.source.git.project.name = buildConfig.metadata.namespace as string;
+  values.formData.source.git.project.name = buildConfig.metadata.namespace;
 
   if (buildConfig.spec.source?.type === 'Git') {
     values.formData.source.type = 'git';
@@ -98,7 +98,7 @@ const convertBuildConfigImagesToFormData = (
   convertImageReferenceToImageStreamFormData(
     from,
     values.formData.images.buildFrom,
-    buildConfig.metadata.namespace as string,
+    buildConfig.metadata.namespace,
   );
 
   // Output => Push to
@@ -106,7 +106,7 @@ const convertBuildConfigImagesToFormData = (
   convertImageReferenceToImageStreamFormData(
     to as ImageReference,
     values.formData.images.pushTo,
-    buildConfig.metadata.namespace as string,
+    buildConfig.metadata.namespace,
   );
 };
 

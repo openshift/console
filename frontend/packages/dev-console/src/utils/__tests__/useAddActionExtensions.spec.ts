@@ -62,7 +62,7 @@ describe('useAddActionExtensions', () => {
   };
 
   afterEach(() => {
-    delete window.SERVER_FLAGS.addPage;
+    delete (window.SERVER_FLAGS as any).addPage;
   });
 
   it('return all actions if SERVER_FLAGS.addPage is not defined', () => {
@@ -70,7 +70,7 @@ describe('useAddActionExtensions', () => {
       [addAction1, addAction2, addAction3, addAction4],
       true,
     ]);
-    delete window.SERVER_FLAGS.addPage;
+    delete (window.SERVER_FLAGS as any).addPage;
 
     testHook(() => {
       const [addActionExtensions, resolved] = useAddActionExtensions();

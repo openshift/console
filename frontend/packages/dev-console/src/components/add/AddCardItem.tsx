@@ -22,7 +22,7 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
   const [showDetails] = useShowAddCardItemDetails();
   const toast = useToast();
 
-  const actionIcon = (): JSX.Element => {
+  const actionIcon = (): JSX.Element | null => {
     if (typeof icon === 'string') {
       return (
         <img
@@ -41,7 +41,7 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
         </span>
       );
     }
-    return null as any;
+    return null;
   };
 
   return (

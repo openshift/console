@@ -124,8 +124,7 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
       spec: {
         customization: {
           addPage: {
-            disabledActions:
-              disabled?.length && disabled.length > 0 ? disabled : (undefined as any),
+            disabledActions: disabled?.length && disabled.length > 0 ? disabled : undefined,
           },
         },
       },

@@ -16,7 +16,7 @@ describe('convertBuildConfigToFormData', () => {
   });
 
   it('keeps all initial form data with null BuildConfig', () => {
-    const buildConfig = null as any;
+    const buildConfig = null;
 
     const expectedValues = getInitialBuildConfigFormikValues();
     expect(convertBuildConfigToFormData(buildConfig)).toEqual(expectedValues);

@@ -17,7 +17,7 @@ type AddCardProps = {
 
 const AddCard: React.FC<AddCardProps> = ({ id, title, items, namespace, icon }) => {
   const isTitleFromItem: boolean = items?.length === 1 && items[0].properties.label === title;
-  const actionIcon = (): JSX.Element => {
+  const actionIcon = (): JSX.Element | null => {
     if (typeof icon === 'string') {
       return (
         <img
@@ -35,7 +35,7 @@ const AddCard: React.FC<AddCardProps> = ({ id, title, items, namespace, icon }) 
         </span>
       );
     }
-    return null as any;
+    return null;
   };
   return items?.length > 0 ? (
     <Card key={title} className="odc-add-card" data-test={`card ${id}`}>
