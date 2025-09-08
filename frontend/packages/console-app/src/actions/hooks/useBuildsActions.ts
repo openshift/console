@@ -40,7 +40,7 @@ export const useBuildsActions = (
 ): Action[] => {
   const { t } = useTranslation();
   const [kindObj] = useK8sModel(referenceFor(obj));
-  const [commonActions, commonActionsReady] = useCommonActions(kindObj, obj, [
+  const commonActions = useCommonActions(kindObj, obj, [
     CommonActionCreator.ModifyLabels,
     CommonActionCreator.ModifyAnnotations,
     CommonActionCreator.Edit,
@@ -117,10 +117,6 @@ export const useBuildsActions = (
   );
 
   const actions = useMemo<Action[]>(() => {
-    if (!commonActionsReady) {
-      return [];
-    }
-
     // If filterActions is provided, only return the specified actions
     if (memoizedFilterActions) {
       return memoizedFilterActions.map((creator) => factory[creator]()).filter(Boolean);
@@ -143,7 +139,7 @@ export const useBuildsActions = (
     );
 
     return buildActions;
-  }, [factory, isCancellable, commonActions, commonActionsReady, memoizedFilterActions]);
+  }, [factory, isCancellable, commonActions, memoizedFilterActions]);
 
   return actions;
 };

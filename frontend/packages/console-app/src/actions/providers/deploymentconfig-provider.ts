@@ -22,7 +22,7 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
     DeploymentActionCreator.EditDeployment,
   ] as const);
 
-  const [commonActions, commonActionsReady] = useCommonActions(kindObj, resource, [
+  const commonActions = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyCount,
     CommonActionCreator.Delete,
     CommonActionCreator.ModifyLabels,
@@ -30,7 +30,7 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
     CommonActionCreator.AddStorage,
   ] as const);
 
-  const isReady = commonActionsReady || deploymentActionsReady;
+  const isReady = deploymentActionsReady;
 
   const deploymentConfigActions = useMemo(
     () =>

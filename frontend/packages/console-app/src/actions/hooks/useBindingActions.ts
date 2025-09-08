@@ -42,7 +42,7 @@ export const useBindingActions = (
     [dispatch],
   );
   const navigate = useNavigate();
-  const [commonActions] = useCommonActions(model, obj, [CommonActionCreator.Delete] as const);
+  const commonActions = useCommonActions(model, obj, [CommonActionCreator.Delete] as const);
 
   const { subjectIndex, subjects } = obj;
   const subject = subjects?.[subjectIndex];

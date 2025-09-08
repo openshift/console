@@ -25,11 +25,11 @@ import { useCommonActions } from './useCommonActions';
  * };
  */
 export const useCommonResourceActions = (
-  kind: K8sModel | undefined,
-  resource: K8sResourceKind | undefined,
+  kind: K8sModel,
+  resource: K8sResourceKind,
   message?: JSX.Element,
 ): Action[] => {
-  const [actions, isReady] = useCommonActions(
+  const actions = useCommonActions(
     kind,
     resource,
     [
@@ -40,5 +40,5 @@ export const useCommonResourceActions = (
     ] as const,
     message,
   );
-  return useMemo(() => (isReady ? Object.values(actions) : []), [actions, isReady]);
+  return useMemo(() => Object.values(actions), [actions]);
 };

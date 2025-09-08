@@ -10,7 +10,7 @@ import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 export const useDaemonSetActionsProvider = (resource: K8sResourceKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const [pdbActions] = usePDBActions(kindObj, resource);
-  const [addStorageAction] = useCommonActions(kindObj, resource, [
+  const addStorageAction = useCommonActions(kindObj, resource, [
     CommonActionCreator.AddStorage,
   ] as const);
   const commonResourceActions = useCommonResourceActions(kindObj, resource);

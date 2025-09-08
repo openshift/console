@@ -30,7 +30,7 @@ export const useSubscriptionActions = (
 ): Action[] => {
   const { t } = useTranslation();
   const [model] = useK8sModel(referenceFor(obj));
-  const [commonActions] = useCommonActions(model, obj, [CommonActionCreator.Edit]);
+  const commonActions = useCommonActions(model, obj, [CommonActionCreator.Edit]);
   const uninstallOperatorModal = useUninstallOperatorModal({
     k8sKill,
     k8sGet,

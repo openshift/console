@@ -99,12 +99,12 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
     DeploymentActionCreator.EditResourceLimits,
   ] as const);
 
-  const [commonActions, commonActionsReady] = useCommonActions(kindObj, resource, [
+  const commonActions = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyLabels,
     CommonActionCreator.ModifyAnnotations,
   ] as const);
 
-  const isReady = commonActionsReady || deploymentActionsReady;
+  const isReady = deploymentActionsReady;
 
   const knativeServiceActions = useMemo(
     () =>
