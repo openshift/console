@@ -24,13 +24,6 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   const version = parsed ? `${parsed.major}.${parsed.minor}` : '';
   const links: GettingStartedLink[] = React.useMemo(
     () => [
-      {
-        id: 'openshift-ai',
-        title: t('public~OpenShift AI'),
-        description: t('public~Build, deploy, and manage AI-enabled applications.'),
-        href:
-          '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
-      },
       ...(showLightSpeedLink
         ? [
             {
