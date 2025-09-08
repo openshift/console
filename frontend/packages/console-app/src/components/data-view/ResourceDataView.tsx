@@ -108,12 +108,14 @@ export const ResourceDataView = <
       <Tbody>
         <Tr>
           <Td colSpan={dataViewColumns.length}>
-            <Bullseye>{t('public~No Pods found')}</Bullseye>
+            <Bullseye>
+              {label ? t('public~No {{label}} found', { label }) : t('public~None found')}
+            </Bullseye>
           </Td>
         </Tr>
       </Tbody>
     ),
-    [t, dataViewColumns.length],
+    [t, dataViewColumns.length, label],
   );
 
   const activeState = React.useMemo(() => {
@@ -135,7 +137,7 @@ export const ResourceDataView = <
 
     if (!hideNameLabelFilters && !hideLabelFilter) {
       basicFilters.push(
-        <DataViewLabelFilter key="labels" filterId="label" title={t('public~Label')} data={data} />,
+        <DataViewLabelFilter key="label" filterId="label" title={t('public~Label')} data={data} />,
       );
     }
 
@@ -152,8 +154,7 @@ export const ResourceDataView = <
   ) : (
     <StatusBox
       label={label}
-      data={filteredData}
-      unfilteredData={data}
+      data={data}
       loaded={loaded}
       loadError={loadError}
       skeleton={<div className="loading-skeleton--table" />}

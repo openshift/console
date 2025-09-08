@@ -43,9 +43,9 @@ export const useResourceDataViewFilters = <
 
         // Filter by K8s resource labels
         const resourceLabels = getLabelsAsString(resource);
-        const filterLabelsArray = filters.labels?.split(',') ?? [];
+        const filterLabelsArray = filters.label?.split(',') ?? [];
         const matchesLabels =
-          !filters.labels || filterLabelsArray.every((label) => resourceLabels.includes(label));
+          !filters.label || filterLabelsArray.every((label) => resourceLabels.includes(label));
 
         return (
           matchesName && matchesLabels && (matchesAdditionalFilters?.(resource, filters) ?? true)

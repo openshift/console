@@ -7,7 +7,7 @@ import {
 
 export type ResourceFilters = {
   name: string;
-  labels: string;
+  label: string;
 };
 
 export type ResourceDataViewColumn<
