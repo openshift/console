@@ -46,10 +46,12 @@ const LimitLink: React.FC<LimitLinkProps> = ({
   Popover,
 }) => {
   const { obj } = React.useContext(NodeDashboardContext);
-  const nodeName = obj.metadata.name;
-  const nodeIP = getNodeAddresses(obj).find((addr) => addr.type === 'InternalIP')?.address;
+  const nodeName = obj?.metadata?.name || '';
+  const nodeIP = obj
+    ? getNodeAddresses(obj).find((addr) => addr.type === 'InternalIP')?.address
+    : undefined;
   const [queries, resourceQuotaQueries] = React.useMemo(
-    () => [getUtilizationQueries(nodeName, nodeIP), getResourceQutoaQueries(nodeName)],
+    () => [getUtilizationQueries(nodeName, nodeIP || ''), getResourceQutoaQueries(nodeName)],
     [nodeIP, nodeName],
   );
   const [current, currentError, currentValue] = usePrometheusQuery(queries[currentKey], humanize);
@@ -66,7 +68,7 @@ const LimitLink: React.FC<LimitLinkProps> = ({
       : t('console-app~Not available');
 
   return (
-    <NodeUtilizationContext.Provider value={{ nodeName, nodeIP }}>
+    <NodeUtilizationContext.Provider value={{ nodeName, nodeIP: nodeIP || '' }}>
       <Popover
         title={t('console-app~See breakdown')}
         current={currentError ? t('console-app~Not available') : current.string}
@@ -110,7 +112,7 @@ const getMessage: GetMessage = (
 
 const HealthChecksLink: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
-  const [name, namespace] = getNodeMachineNameAndNamespace(obj);
+  const [name, namespace] = obj ? getNodeMachineNameAndNamespace(obj) : [undefined, undefined];
 
   const machine = useK8sWatchResource<MachineKind>(
     name && namespace
@@ -119,10 +121,12 @@ const HealthChecksLink: React.FC = () => {
           name,
           namespace,
         }
-      : undefined,
+      : null,
   );
   const healthChecks = useK8sWatchResource<MachineHealthCheckKind[]>(machineHealthChecksResource);
-  const healthState = getMachineHealth(obj, machine, healthChecks);
+  const healthState = obj
+    ? getMachineHealth(obj, machine, healthChecks)
+    : { state: 'NOT_AVAILABLE' as const };
   const { t } = useTranslation();
   return (
     <PFPopover
@@ -130,8 +134,8 @@ const HealthChecksLink: React.FC = () => {
       headerContent={t('console-app~Health checks')}
       bodyContent={
         <HealthChecksPopup
-          conditions={healthState.conditions}
-          machineHealthChecks={healthState.matchingHC}
+          conditions={'conditions' in healthState ? healthState.conditions || [] : []}
+          machineHealthChecks={'matchingHC' in healthState ? healthState.matchingHC || [] : []}
         />
       }
       enableFlip
@@ -148,14 +152,14 @@ const NodeAlerts: React.FC = ({ children }) => {
   const { cpuLimit, memoryLimit, healthCheck } = React.useContext(NodeDashboardContext);
   const { t } = useTranslation();
 
-  const cpuMessage = getMessage(cpuLimit, {
+  const cpuMessage = getMessage(cpuLimit || ({} as LimitRequested), {
     limReqErr: msg.CPU_LIMIT_REQ_ERROR,
     limErr: msg.CPU_LIMIT_ERROR,
     limReqWarn: msg.CPU_LIMIT_REQ_WARN,
     limWarn: msg.CPU_LIMIT_WARN,
     reqWarn: msg.CPU_REQ_WARN,
   });
-  const memoryMessage = getMessage(memoryLimit, {
+  const memoryMessage = getMessage(memoryLimit || ({} as LimitRequested), {
     limReqErr: msg.MEM_LIMIT_REQ_ERROR,
     limErr: msg.MEM_LIMIT_ERROR,
     limReqWarn: msg.MEM_LIMIT_REQ_WARN,
@@ -184,8 +188,8 @@ const NodeAlerts: React.FC = ({ children }) => {
             totalKey={NodeQueries.CPU_TOTAL}
             limitKey={NodeQueries.POD_RESOURCE_LIMIT_CPU}
             requestedKey={NodeQueries.POD_RESOURCE_REQUEST_CPU}
-            limitState={cpuLimit?.limit}
-            requestedState={cpuLimit?.requested}
+            limitState={cpuLimit?.limit ?? (cpuLimit ? LIMIT_STATE.WARN : LIMIT_STATE.OK)}
+            requestedState={cpuLimit?.requested ?? (cpuLimit ? LIMIT_STATE.WARN : LIMIT_STATE.OK)}
             Popover={CPUPopover}
           />
         </StatusItem>
@@ -201,8 +205,10 @@ const NodeAlerts: React.FC = ({ children }) => {
             totalKey={NodeQueries.MEMORY_TOTAL}
             limitKey={NodeQueries.POD_RESOURCE_LIMIT_MEMORY}
             requestedKey={NodeQueries.POD_RESOURCE_REQUEST_MEMORY}
-            limitState={memoryLimit?.limit}
-            requestedState={memoryLimit?.requested}
+            limitState={memoryLimit?.limit ?? (memoryLimit ? LIMIT_STATE.WARN : LIMIT_STATE.OK)}
+            requestedState={
+              memoryLimit?.requested ?? (memoryLimit ? LIMIT_STATE.WARN : LIMIT_STATE.OK)
+            }
             Popover={MemoryPopover}
           />
         </StatusItem>
@@ -226,7 +232,7 @@ type GetMessage = (
 ) => {
   Icon: React.ComponentType;
   message: string;
-};
+} | null;
 
 type LimitLinkProps = {
   humanize: Humanize;

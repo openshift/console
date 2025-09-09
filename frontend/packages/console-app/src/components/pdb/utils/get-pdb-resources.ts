@@ -9,7 +9,7 @@ import { PDBCondition, PodDisruptionBudgetKind } from '../types';
 export const getPDBResource = (
   pdbResources: PodDisruptionBudgetKind[],
   resource: K8sPodControllerKind | PodKind,
-): PodDisruptionBudgetKind =>
+): PodDisruptionBudgetKind | undefined =>
   pdbResources.find((f) =>
     new LabelSelector(f.spec.selector).matchesLabels(
       resource?.spec?.template?.metadata?.labels || resource?.metadata?.labels || {},
@@ -25,19 +25,19 @@ export const isDisruptionViolated = (pdb: PodDisruptionBudgetKind): boolean => {
       condition.type === 'DisruptionAllowed' &&
       condition.status === K8sResourceConditionStatus.False,
   );
-  return !!disruptionNotAllowedCondition && status?.expectedPods > 0;
+  return !!disruptionNotAllowedCondition && (status?.expectedPods ?? 0) > 0;
 };
 
 export const checkPodDisruptionBudgets = (pdbArray: PodDisruptionBudgetKind[]) => {
   let count = 0;
-  let name = null;
+  let name: string | null = null;
 
   pdbArray.forEach((pdb) => {
     const isDisruptionViolatedForPDB = isDisruptionViolated(pdb);
     if (isDisruptionViolatedForPDB) {
       count++;
       if (count === 1) {
-        name = pdb.metadata.name;
+        name = pdb.metadata?.name || null;
       }
     }
   });

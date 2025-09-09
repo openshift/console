@@ -1716,6 +1716,7 @@
   "Are you sure you want to remove <1>{{label}}</1> from navigation?": "Are you sure you want to remove <1>{{label}}</1> from navigation?",
   "Select a path": "Select a path",
   "Select a log file": "Select a log file",
+  "Invalid log URL": "Invalid log URL",
   "Error fetching logs: {{message}}": "Error fetching logs: {{message}}",
   "Error fetching log filenames: {{message}}": "Error fetching log filenames: {{message}}",
   "The log is abridged due to length.": "The log is abridged due to length.",
