@@ -1,5 +1,4 @@
 {
-  "Ecosystem": "에코시스템",
   "Extension Catalog": "확장 카탈로그",
   "Installed Extensions": "설치된 확장 프로그램",
   "Extension Catalog Items": "확장 카탈로그 항목",
@@ -8,5 +7,5 @@
   "Capability level": "기능 수준",
   "Infrastructure features": "인프라 기능",
   "Valid subscription": "유효한 서브스크립션",
-  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can purchase commercial software through <2>Red Hat Marketplace</2>. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Red Hat에서 선별한 Kubernetes 커뮤니티 및 Red Hat 파트너의 Operator를 검색합니다. <2> Red Hat Marketplace</2>를 통해 상용 소프트웨어를 구입할 수 있습니다. 클러스터에 Operator를 설치하여 개발자에게 선택적 추가 옵션 및 공유 서비스를 제공할 수 있습니다."
+  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Red Hat에서 선별한 Kubernetes 커뮤니티 및 Red Hat 파트너의 Operator를 검색합니다. 클러스터에 Operator를 설치하여 개발자에게 선택적 추가 옵션 및 공유 서비스를 제공할 수 있습니다."
 }

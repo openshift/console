@@ -90,7 +90,6 @@
   "View all samples ({{itemCount, number}})": "查看所有示例（{{itemCount, number}}）",
   "Add to Project": "添加至项目",
   "Quick search button": "快速搜索按钮",
-  "Traffic connector": "流量连接器",
   "Connections": "连接",
   "Secret": "Secret",
   "Kiali link": "Kiali 链接",
