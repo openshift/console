@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
   createModalLauncher,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
-import { errorModal } from '@console/internal/components/modals';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { LoadingBox } from '@console/internal/components/utils';
 import { PipelineKind, PipelineRunKind } from '../../../../types';
 import { useUserAnnotationForManualStart } from '../../../pipelineruns/triggered-by';
@@ -27,6 +28,7 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
   onSubmit,
 }) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const userStartedAnnotation = useUserAnnotationForManualStart();
   const [pipelinePVC, pipelinePVCLoaded] = usePipelinePVC(
     pipeline.metadata?.name,
@@ -50,7 +52,7 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
-        errorModal({ error: err.message });
+        launchModal(ErrorModal, { error: err.message });
         close();
       });
   };

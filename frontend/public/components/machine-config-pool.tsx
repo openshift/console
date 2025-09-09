@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { useMemo } from 'react';
 import { sortable } from '@patternfly/react-table';
 import { css } from '@patternfly/react-styles';
 import {
@@ -17,12 +18,13 @@ import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-ci
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { Conditions } from './conditions';
-import { errorModal } from './modals';
 import { MachineConfigPoolModel } from '../models';
 import { machineConfigReference, MachineConfigPage } from './machine-config';
 import {
+  K8sModel,
   K8sResourceCondition,
   K8sResourceConditionStatus,
   MachineConfigPoolConditionType,
@@ -47,26 +49,41 @@ import {
 import { ResourceEventStream } from './events';
 import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-settings';
 import { UpToDateMessage } from './cluster-settings/cluster-status';
+import { ErrorModal } from './modals/error-modal';
 
-const pauseAction: KebabAction = (kind, obj) => ({
-  // t('public~Resume updates')
-  // t('public~Pause updates')
-  labelKey: obj.spec?.paused ? 'public~Resume updates' : 'public~Pause updates',
-  callback: () => togglePaused(kind, obj).catch((err) => errorModal({ error: err.message })),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: obj.metadata.name,
-    verb: 'patch',
-  },
-});
+const usePauseAction = (): KebabAction => {
+  const { t } = useTranslation();
+  const launchModal = useOverlay();
+  return useMemo(
+    () => (kind: K8sModel, obj: MachineConfigPoolKind) => ({
+      labelKey: obj.spec?.paused ? t('public~Resume updates') : t('public~Pause updates'),
+      callback: () =>
+        togglePaused(kind, obj).catch((err) => launchModal(ErrorModal, { error: err.message })),
+      accessReview: {
+        group: kind.apiGroup,
+        resource: kind.plural,
+        name: obj.metadata.name,
+        verb: 'patch',
+      },
+    }),
+    [launchModal, t],
+  );
+};
 
 const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
-const machineConfigPoolMenuActions = [
-  pauseAction,
-  ...Kebab.getExtensionsActionsForKind(MachineConfigPoolModel),
-  ...Kebab.factory.common,
-];
+
+const useMachineConfigPoolMenuActions = (): KebabAction[] => {
+  const pauseAction = usePauseAction();
+  return useMemo(
+    () => [
+      pauseAction,
+      ...Kebab.getExtensionsActionsForKind(MachineConfigPoolModel),
+      ...Kebab.factory.common,
+    ],
+    [pauseAction],
+  );
+};
+
 const getConditionStatus = (
   mcp: MachineConfigPoolKind,
   type: MachineConfigPoolConditionType,
@@ -292,14 +309,17 @@ const MachineConfigPoolUpdateStatus: React.FC<MachineConfigPoolUpdateStatusProps
   }
 };
 
-export const MachineConfigPoolDetailsPage: React.FCC<any> = (props) => (
-  <DetailsPage
-    {...props}
-    kind={machineConfigPoolReference}
-    menuActions={machineConfigPoolMenuActions}
-    pages={pages}
-  />
-);
+export const MachineConfigPoolDetailsPage: React.FCC<any> = (props) => {
+  const machineConfigPoolMenuActions = useMachineConfigPoolMenuActions();
+  return (
+    <DetailsPage
+      {...props}
+      kind={machineConfigPoolReference}
+      menuActions={machineConfigPoolMenuActions}
+      pages={pages}
+    />
+  );
+};
 
 const tableColumnClasses = [
   '',
@@ -311,6 +331,7 @@ const tableColumnClasses = [
 
 const MachineConfigPoolList: React.FCC<any> = (props) => {
   const { t } = useTranslation();
+  const machineConfigPoolMenuActions = useMachineConfigPoolMenuActions();
   const MachineConfigPoolTableHeader = () => {
     return [
       {

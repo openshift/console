@@ -40,7 +40,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
-import { errorModal, managedResourceSaveModal } from './modals';
+import { managedResourceSaveModal } from './modals';
 import ReplaceCodeModal from './modals/replace-code-modal';
 import {
   checkAccess,
@@ -75,6 +75,8 @@ import { ExpandIcon } from '@patternfly/react-icons/dist/js/icons/expand-icon';
 import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
 import { RootState } from '@console/internal/redux';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { ErrorModal } from './modals/error-modal';
 
 const generateObjToLoad = (
   templateExtensions: Parameters<typeof getYAMLTemplates>[0],
@@ -184,6 +186,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   const [resourceObjects, setResourceObjects] = React.useState();
   const [editorMounted, setEditorMounted] = React.useState(false);
   const [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
+  const launchModal = useOverlay();
 
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
     React.useCallback(
@@ -762,7 +765,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
       setSampleObj(s);
       return s;
     } catch (error) {
-      errorModal({
+      launchModal(ErrorModal, {
         title: t('public~Failed to parse YAML sample'),
         error: (
           <div className="co-pre-line">

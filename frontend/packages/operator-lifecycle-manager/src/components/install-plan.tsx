@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { getUser } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { Conditions } from '@console/internal/components/conditions';
 import {
   MultiListPage,
@@ -29,7 +30,7 @@ import {
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
-import { errorModal } from '@console/internal/components/modals';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import {
   SectionHeading,
   ConsoleEmptyState,
@@ -411,6 +412,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   hideApprovalBlock,
 }) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const [needsApproval, setNeedsApproval] = React.useState(
     obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false,
   );
@@ -429,7 +431,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   const approve = () =>
     k8sPatch(InstallPlanModel, obj, [{ op: 'replace', path: '/spec/approved', value: true }])
       .then(() => setNeedsApproval(false))
-      .catch((error) => errorModal({ error: error.toString() }));
+      .catch((error) => launchModal(ErrorModal, { error: error.toString() }));
 
   const stepStatus = (status: Step['status']) => (
     <>

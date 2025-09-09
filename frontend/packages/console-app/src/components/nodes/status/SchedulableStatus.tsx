@@ -7,7 +7,8 @@ import {
   StatusIconAndText,
   YellowExclamationTriangleIcon,
 } from '@console/dynamic-plugin-sdk';
-import { errorModal } from '@console/internal/components/modals';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { makeNodeSchedulable } from '../../../k8s/requests/nodes';
 
 type NodeStatusResources = {};
@@ -19,13 +20,16 @@ export const MarkAsSchedulablePopover: React.FC<NodePopoverContentProps<NodeStat
   node,
 }) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const [isExpanded, setExpanded] = React.useState(true);
 
   const onClickMarkAsSchedulable = async () => {
     try {
       await makeNodeSchedulable(node);
     } catch (err) {
-      errorModal({ error: err.message || t('console-app~An error occurred. Please try again') });
+      launchModal(ErrorModal, {
+        error: err.message || t('console-app~An error occurred. Please try again'),
+      });
     }
   };
 

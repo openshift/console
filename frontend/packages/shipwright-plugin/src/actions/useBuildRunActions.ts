@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { useCommonResourceActions } from '@console/app/src/actions//hooks/useCommonResourceActions';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
-import { errorModal } from '@console/internal/components/modals';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { resourceObjPath } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
@@ -14,6 +15,7 @@ import { BuildRun } from '../types';
 const useBuildRunActions = (buildRun: BuildRun) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const launchModal = useOverlay();
   const [kindObj, inFlight] = useK8sModel(referenceFor(buildRun));
   const commonActions = useCommonResourceActions(kindObj, buildRun);
 
@@ -28,7 +30,7 @@ const useBuildRunActions = (buildRun: BuildRun) => {
           })
           .catch((err) => {
             const error = err.message;
-            errorModal({ error });
+            launchModal(ErrorModal, { error });
           });
       },
       accessReview: {
@@ -40,7 +42,7 @@ const useBuildRunActions = (buildRun: BuildRun) => {
     };
 
     return [...(canRerunBuildRun(buildRun) ? [rerun] : []), ...commonActions];
-  }, [t, buildRun, navigate, commonActions]);
+  }, [t, buildRun, navigate, commonActions, launchModal]);
 
   return [actions, !inFlight, undefined];
 };
