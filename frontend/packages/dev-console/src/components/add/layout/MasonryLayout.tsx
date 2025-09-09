@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getResizeObserver } from '@patternfly/react-core';
+import { useEventListener } from '@console/shared/src/hooks/useEventListener';
 import { Masonry } from './Masonry';
 import './MasonryLayout.scss';
 
@@ -7,7 +7,7 @@ type MasonryLayoutProps = {
   columnWidth: number;
   children: React.ReactElement[];
   loading?: boolean;
-  LoadingComponent?: React.ComponentType<Record<string, unknown>>;
+  LoadingComponent?: React.FC;
   /**
    * This threshold ensures that the resize doesn't happen to often.
    * It is set to 30 pixels by default to ensure that the column count is not
@@ -42,14 +42,10 @@ export const MasonryLayout: React.FCC<MasonryLayoutProps> = ({
 
   React.useEffect(() => {
     handleResize();
-
-    // change the column count if the window is resized
-    if (measureRef.current) {
-      const observer = getResizeObserver(measureRef.current, handleResize, true);
-      return () => observer();
-    }
-    return undefined;
   }, [handleResize]);
+
+  // Listen for window resize events to update column count
+  useEventListener(window, 'resize', handleResize);
 
   const columns: React.ReactElement[] =
     loading && LoadingComponent

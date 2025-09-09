@@ -21,6 +21,10 @@ const BuildConfigFormPage: React.FC = () => {
           namespace,
         },
   );
+
+  if (!namespace || !name) {
+    return <StatusBox loadError={new Error('Namespace and name are required')} />;
+  }
   const buildConfig: BuildConfig = isNew
     ? {
         apiVersion: 'build.openshift.io/v1',
@@ -39,8 +43,8 @@ const BuildConfigFormPage: React.FC = () => {
       <StatusBox loaded={loaded} loadError={loadError} label={title} data={buildConfig}>
         <EditBuildConfig
           heading={title}
-          namespace={namespace as string}
-          name={name as string}
+          namespace={namespace}
+          name={name}
           buildConfig={buildConfig}
         />
       </StatusBox>

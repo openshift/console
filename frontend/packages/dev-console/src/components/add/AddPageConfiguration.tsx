@@ -171,7 +171,7 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
       />
 
       <LoadError error={consoleConfigError} />
-      <SaveStatus {...(saveStatus as SaveStatusProps)} />
+      {saveStatus && <SaveStatus {...saveStatus} />}
     </FormSection>
   );
 };

@@ -26,13 +26,17 @@ export const DeleteApplicationAction = (
         resourceType: ApplicationModel.label,
         onSubmit: () => {
           application.resources.forEach((resource) => {
-            reqs.push(cleanUpWorkload(resource.resource as K8sResourceKind));
+            if (resource.resource) {
+              reqs.push(cleanUpWorkload(resource.resource));
+            }
           });
           return Promise.all(reqs);
         },
       });
     },
-    accessReview: asAccessReview(resourceModel, primaryResource as K8sResourceKind, 'delete'),
+    accessReview: primaryResource
+      ? asAccessReview(resourceModel, primaryResource, 'delete')
+      : undefined,
   };
 };
 

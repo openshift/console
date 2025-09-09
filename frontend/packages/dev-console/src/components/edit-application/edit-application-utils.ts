@@ -669,11 +669,14 @@ export const getInitialValues = (
   let externalImageValues = {};
   let internalImageValues = {};
   if (_.isEmpty(gitDockerValues)) {
-    iconValues = getIconInitialValues(editAppResourceData as K8sResourceKind);
+    if (editAppResourceData) {
+      iconValues = getIconInitialValues(editAppResourceData as K8sResourceKind);
+    }
     externalImageValues = getExternalImageInitialValues(appResources);
-    internalImageValues = _.isEmpty(externalImageValues)
-      ? getInternalImageInitialValues(editAppResourceData as K8sResourceKind)
-      : {};
+    internalImageValues =
+      _.isEmpty(externalImageValues) && editAppResourceData
+        ? getInternalImageInitialValues(editAppResourceData as K8sResourceKind)
+        : {};
     if (
       _.isEmpty(externalImageValues) &&
       !_.get(internalImageValues, 'imageStream.tag') &&
@@ -684,11 +687,17 @@ export const getInitialValues = (
         externalImageValues = getExternalImageValues(editAppResourceData);
       }
     }
-  } else if (isFromJarUpload(getBuildSourceType(buildConfigData as K8sResourceKind))) {
-    fileUploadValues = getFileUploadValues(
-      editAppResourceData as K8sResourceKind,
-      buildConfigData as K8sResourceKind,
-    );
+  } else if (
+    buildConfigData &&
+    editAppResourceData &&
+    isFromJarUpload(getBuildSourceType(buildConfigData as K8sResourceKind))
+  ) {
+    if (editAppResourceData && buildConfigData) {
+      fileUploadValues = getFileUploadValues(
+        editAppResourceData as K8sResourceKind,
+        buildConfigData as K8sResourceKind,
+      );
+    }
   }
 
   return {
