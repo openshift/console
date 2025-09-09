@@ -81,6 +81,7 @@ type ClusterInfo struct {
 	NodeArchitectures    []string              `yaml:"nodeArchitectures,omitempty"`
 	NodeOperatingSystems []string              `yaml:"nodeOperatingSystems,omitempty"`
 	CopiedCSVsDisabled   bool                  `yaml:"copiedCSVsDisabled,omitempty"`
+	TechPreviewEnabled   bool                  `yaml:"techPreviewEnabled,omitempty"`
 }
 
 // Auth holds configuration for authenticating with OpenShift. The auth method is assumed to be "openshift".
