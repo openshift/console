@@ -5,8 +5,9 @@ import * as yaml from 'yaml-ast-parser';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
 import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';
 
-export const defaultEditorOptions: monaco.editor.IEditorOptions = {
+export const defaultEditorOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
   scrollBeyondLastLine: false,
+  tabSize: 2,
 };
 
 const findManagedMetadata = (model: monaco.editor.ITextModel) => {
