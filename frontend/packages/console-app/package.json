@@ -47,6 +47,7 @@
       "groupProvider": "src/actions/providers/group-provider.ts",
       "volumeSnapshotProvider": "src/actions/providers/volume-snaphot-provider.ts",
       "podProvider": "src/actions/providers/pod-provider.ts",
+      "podDisruptionBudgetProvider": "src/actions/providers/pdb-provider.ts",
       "perspectiveStateProvider": "src/actions/providers/perspective-state-provider.ts",
       "bindingProvider": "src/actions/providers/binding-provider.ts",
       "buildProvider": "src/actions/providers/build-provider.ts",
