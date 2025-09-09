@@ -92,6 +92,7 @@ export const usePDBActions = (
           deletePDBModal({
             workloadName: resource.metadata.name,
             pdb: matchedPDB,
+            close: () => {},
           });
         },
         accessReview: asAccessReview(kindObj, resource, 'delete'),

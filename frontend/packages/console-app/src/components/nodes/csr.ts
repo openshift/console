@@ -26,8 +26,8 @@ const getNodeCSRs = (
     )
     .sort(
       (a, b) =>
-        new Date(b.metadata?.creationTimestamp ?? new Date(0)).getTime() -
-        new Date(a.metadata?.creationTimestamp ?? new Date(0)).getTime(),
+        new Date(b.metadata?.creationTimestamp ?? 0).getTime() -
+        new Date(a.metadata?.creationTimestamp ?? 0).getTime(),
     );
 
 const isCSRPending = (csr: CertificateSigningRequestKind): boolean =>
@@ -64,7 +64,7 @@ export const getNodeClientCSRs = (
           metadata: {
             ...csr.metadata,
             name: commonName.value.valueBlock.value.replace('system:node:', ''),
-            originalName: csr.metadata?.name ?? '',
+            originalName: csr.metadata?.name || '',
           },
         };
       } catch (error) {
@@ -73,16 +73,16 @@ export const getNodeClientCSRs = (
           ...csr,
           metadata: {
             ...csr.metadata,
-            name: csr.metadata?.name ?? 'unknown',
-            originalName: csr.metadata?.name ?? '',
+            name: csr.metadata?.name || '',
+            originalName: csr.metadata?.name || '',
           },
         };
       }
     })
     .sort(
       (a, b) =>
-        new Date(b.metadata?.creationTimestamp ?? new Date(0)).getTime() -
-        new Date(a.metadata?.creationTimestamp ?? new Date(0)).getTime(),
+        new Date(b.metadata?.creationTimestamp ?? 0).getTime() -
+        new Date(a.metadata?.creationTimestamp ?? 0).getTime(),
     );
 
   const grouped = _.groupBy(nodeCSRs, (csr) => csr.metadata.name);

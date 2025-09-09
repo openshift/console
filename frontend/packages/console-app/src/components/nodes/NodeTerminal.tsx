@@ -162,8 +162,12 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
   const isWindows = node.status?.nodeInfo?.operatingSystem === 'windows';
 
   React.useEffect(() => {
+    if (!nodeName) {
+      setErrorMessage('Node name is required but not available');
+      return () => {};
+    }
     let namespace;
-    const name = `${nodeName?.replace(/\./g, '-')}-debug`;
+    const name = `${nodeName.replace(/\./g, '-')}-debug`;
     const deleteNamespace = async (ns) => {
       try {
         await k8sKillByName(NamespaceModel, ns);
@@ -193,12 +197,7 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
             },
           },
         });
-        const podToCreate = await getDebugPod(
-          name,
-          namespace.metadata.name,
-          nodeName || '',
-          isWindows,
-        );
+        const podToCreate = await getDebugPod(name, namespace.metadata.name, nodeName, isWindows);
         // wait for the namespace to be ready
         await new Promise((resolve) => setTimeout(resolve, 1000));
         const debugPod = await k8sCreate(PodModel, podToCreate);
@@ -213,6 +212,7 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
             },
           ]);
         }
+        return;
       } catch (e) {
         setErrorMessage(e.message);
         if (namespace) {

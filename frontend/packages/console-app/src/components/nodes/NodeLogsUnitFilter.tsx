@@ -10,7 +10,7 @@ type NodeLogsUnitFilterProps = {
 
 const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit }) => {
   const firstRender = React.useRef(true);
-  const inputRef = React.useRef<HTMLInputElement>();
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const [values, setValues] = React.useState<string[]>(getQueryArgument('unit')?.split(',') || []);
   const { t } = useTranslation();
 
@@ -68,7 +68,7 @@ const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit })
           id="log-unit"
           name="log-unit"
           aria-label={label}
-          ref={inputRef as React.RefObject<HTMLInputElement>}
+          ref={inputRef}
           placeholder={label}
         />
       </FlexItem>

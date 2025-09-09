@@ -178,6 +178,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       pathItems.push('openshift-apiserver', 'kube-apiserver', 'oauth-apiserver');
   const pathQueryArgument = 'path';
   const logQueryArgument = 'log';
+  const unitQueryArgument = 'unit';
 
   const [path, setPath] = React.useState(getQueryArgument(pathQueryArgument) || pathItems[0]);
   const [logURL, setLogURL] = React.useState('');
@@ -310,7 +311,9 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
   };
   const onTogglePath = () => setPathOpen(!isPathOpen);
   const onChangeUnit = (value: string) => {
-    value === '' ? removeQueryArgument('unit') : setQueryArgument('unit', value);
+    value === ''
+      ? removeQueryArgument(unitQueryArgument)
+      : setQueryArgument(unitQueryArgument, value);
   };
   const onChangeFilename = (event: React.MouseEvent<Element, MouseEvent>, newFilename: string) => {
     event.preventDefault();

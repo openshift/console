@@ -258,8 +258,8 @@ const NodesTableRow: React.FC<RowProps<NodeKind, GetNodeStatusExtensions>> = ({
   const metrics = useSelector<RootState, NodeMetrics>(({ UI }) => UI.getIn(['metrics', 'node']));
   const nodeName = node.metadata?.name || '';
   const nodeUID = node.metadata?.uid;
-  const usedMem = metrics?.usedMemory?.[nodeName || ''];
-  const totalMem = metrics?.totalMemory?.[nodeName || ''];
+  const usedMem = metrics?.usedMemory?.[nodeName];
+  const totalMem = metrics?.totalMemory?.[nodeName];
   const memory =
     Number.isFinite(usedMem) && Number.isFinite(totalMem)
       ? `${humanizeBinaryBytes(usedMem).string} / ${humanizeBinaryBytes(totalMem).string}`

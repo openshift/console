@@ -26,15 +26,15 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
       <TableData {...tableColumnInfo[0]} activeColumnIDs={activeColumnIDs}>
         <ResourceLink
           kind={referenceForModel(PodDisruptionBudgetModel)}
-          name={obj.metadata?.name || ''}
-          namespace={obj.metadata?.namespace || ''}
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
         />
       </TableData>
       <TableData {...tableColumnInfo[1]} activeColumnIDs={activeColumnIDs}>
-        <ResourceLink kind="Namespace" name={obj.metadata?.namespace || ''} />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData {...tableColumnInfo[2]} activeColumnIDs={activeColumnIDs}>
-        <Selector selector={obj.spec?.selector || {}} namespace={obj.metadata?.namespace || ''} />
+        <Selector selector={obj.spec?.selector || {}} namespace={obj.metadata.namespace} />
       </TableData>
       <TableData {...tableColumnInfo[3]} activeColumnIDs={activeColumnIDs}>
         {_.isNil(obj.spec.maxUnavailable) && _.isNil(obj.spec.minAvailable)

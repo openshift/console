@@ -19,4 +19,9 @@ export type PodDisruptionBudgetKind = {
     expectedPods?: number;
     observedGeneration?: number;
   };
-} & K8sResourceCommon;
+} & K8sResourceCommon & {
+    metadata: K8sResourceCommon['metadata'] & {
+      name: string;
+      namespace: string;
+    };
+  };
