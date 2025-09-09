@@ -26,7 +26,6 @@
   "​​**Event sinks** are resources that can receive incoming events from other resources.": "​​**이벤트 싱크**는 다른 리소스에서 들어오는 이벤트를 수신할 수 있는 리소스입니다.",
   "Serving": "제공",
   "Eventing": "이벤트",
-  "Create Service Binding": "서비스 바인딩 만들기",
   "Subscriptions": "서브스크립션",
   "Triggers": "트리거",
   "Configuration": "설정",
