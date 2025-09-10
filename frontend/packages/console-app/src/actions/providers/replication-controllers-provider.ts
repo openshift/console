@@ -15,7 +15,7 @@ export const useReplicationControllerActionsProvider = (resource: ReplicationCon
   const [pdbActions] = usePDBActions(kindObj, resource);
   const deploymentPhase = resource?.metadata?.annotations?.['openshift.io/deployment.phase'];
   const dcName = getOwnerNameByKind(resource, DeploymentConfigModel);
-  const [commonActions, commonActionsReady] = useCommonActions(kindObj, resource, [
+  const commonActions = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyCount,
     CommonActionCreator.AddStorage,
   ] as const);
@@ -24,7 +24,7 @@ export const useReplicationControllerActionsProvider = (resource: ReplicationCon
     ReplicationControllerActionCreator.CancelRollout,
     ReplicationControllerActionCreator.RollbackDeploymentConfig,
   ]);
-  const isReady = commonActionsReady && rcActionsReady;
+  const isReady = rcActionsReady;
 
   const actions = useMemo(
     () =>

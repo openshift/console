@@ -13,7 +13,7 @@ export const useReplicaSetActionsProvider = (resource: ReplicaSetKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const [pdbActions] = usePDBActions(kindObj, resource);
   const deploymentName = getOwnerNameByKind(resource, DeploymentModel);
-  const [commonActions, isReady] = useCommonActions(kindObj, resource, [
+  const commonActions = useCommonActions(kindObj, resource, [
     CommonActionCreator.ModifyCount,
     CommonActionCreator.AddStorage,
   ] as const);
@@ -21,27 +21,16 @@ export const useReplicaSetActionsProvider = (resource: ReplicaSetKind) => {
   const replicaSetActions = useReplicaSetActions(kindObj, resource);
 
   const actions = useMemo(
-    () =>
-      !isReady
+    () => [
+      commonActions.ModifyCount,
+      ...pdbActions,
+      commonActions.AddStorage,
+      ...commonResourceActions,
+      ...((resource?.status?.replicas && resource?.status?.replicas > 0) || !deploymentName
         ? []
-        : [
-            commonActions.ModifyCount,
-            ...pdbActions,
-            commonActions.AddStorage,
-            ...commonResourceActions,
-            ...((resource?.status?.replicas && resource?.status?.replicas > 0) || !deploymentName
-              ? []
-              : replicaSetActions),
-          ],
-    [
-      resource,
-      pdbActions,
-      deploymentName,
-      commonResourceActions,
-      commonActions,
-      isReady,
-      replicaSetActions,
+        : replicaSetActions),
     ],
+    [resource, pdbActions, deploymentName, commonResourceActions, commonActions, replicaSetActions],
   );
 
   return [actions, !inFlight, undefined];

@@ -26,13 +26,6 @@ import { useCommonActions } from './useCommonActions';
  * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
  *
  * @returns An array containing the generated action(s).
- *
- * @example
- * // Getting Build actions for Build resource
- * const MyBuildComponent = ({ obj }) => {
- *   const actions = useBuildsActions(obj);
- *   return <Kebab actions={actions} />;
- * };
  */
 export const useBuildsActions = (
   obj: K8sResourceKind,
@@ -40,7 +33,7 @@ export const useBuildsActions = (
 ): Action[] => {
   const { t } = useTranslation();
   const [kindObj] = useK8sModel(referenceFor(obj));
-  const [commonActions, commonActionsReady] = useCommonActions(kindObj, obj, [
+  const commonActions = useCommonActions(kindObj, obj, [
     CommonActionCreator.ModifyLabels,
     CommonActionCreator.ModifyAnnotations,
     CommonActionCreator.Edit,
@@ -117,10 +110,6 @@ export const useBuildsActions = (
   );
 
   const actions = useMemo<Action[]>(() => {
-    if (!commonActionsReady) {
-      return [];
-    }
-
     // If filterActions is provided, only return the specified actions
     if (memoizedFilterActions) {
       return memoizedFilterActions.map((creator) => factory[creator]()).filter(Boolean);
@@ -143,7 +132,7 @@ export const useBuildsActions = (
     );
 
     return buildActions;
-  }, [factory, isCancellable, commonActions, commonActionsReady, memoizedFilterActions]);
+  }, [factory, isCancellable, commonActions, memoizedFilterActions]);
 
   return actions;
 };

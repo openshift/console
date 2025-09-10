@@ -14,25 +14,18 @@ const INACTIVE_STATUSES = ['New', 'Pending', 'Running'];
 /**
  * A React hook for retrieving actions related to a ReplicationController resource.
  *
- * @param {K8sKind} kind - The K8s kind model for the ReplicationController.
- * @param {ReplicationControllerKind} obj - The specific ReplicationController resource instance for which to generate actions.
- * @param {ReplicationControllerActionCreator[]} [filterActions] - Optional. If provided, the returned object will contain only the specified actions.
+ * @param kind - The K8s kind model for the ReplicationController.
+ * @param obj - The specific ReplicationController resource instance for which to generate actions.
+ * @param [filterActions] - Optional. If provided, the returned object will contain only the specified actions.
  * Specify which actions to include using ReplicationControllerActionCreator enum values.
  * If omitted, it will contain all ReplicationController actions.
  *
  * This hook is robust to inline arrays/objects for the `filterActions` argument, so you do not need to memoize or define
  * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
  *
- * @returns {[ActionObject<T>, boolean]} A tuple containing the actions object and a boolean indicating if actions are ready to use.
+ * @returns A tuple containing the actions object and a boolean indicating if actions are ready to use.
  * When isReady is false, do not access properties on the actions object.
  * When isReady is true, all requested actions are guaranteed to exist on the actions object.
- *
- * @example
- * // Getting all actions for ReplicationController resource
- * const MyReplicationControllerComponent = ({ kind, obj }) => {
- *   const [actions, isReady] = useReplicationControllerActions(kind, obj);
- *   return <Kebab actions={Object.values(actions)} />;
- * };
  */
 export const useReplicationControllerActions = <
   T extends readonly ReplicationControllerActionCreator[]

@@ -11,10 +11,10 @@ import { ReplicaSetActionCreator } from './types';
 /**
  * A React hook for retrieving actions related to ReplicaSet resources.
  *
- * @param {K8sModel} kind - The K8s model for the resource.
- * @param {ReplicaSetKind} resource - The specific ReplicaSet resource instance.
- * @param {ReplicaSetActionCreator[]} [filterActions] - Optional. If provided, returns only specified actions.
- * @returns {Action[]} An array containing the generated actions.
+ * @param kind - The K8s model for the resource.
+ * @param resource - The specific ReplicaSet resource instance.
+ * @param [filterActions] - Optional. If provided, returns only specified actions.
+ * @returns An array containing the generated actions.
  */
 export const useReplicaSetActions = (
   kind: K8sModel,

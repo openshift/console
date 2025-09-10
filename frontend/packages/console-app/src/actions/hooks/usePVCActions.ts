@@ -12,22 +12,15 @@ import { PVCActionCreator } from './types';
 /**
  * A React hook for retrieving actions related to a PersistentVolumeClaim (PVC).
  *
- * @param {PersistentVolumeClaimKind} obj - The specific PVC resource instance for which to generate actions.
- * @param {PVCActionCreator[]} [filterActions] - Optional. If provided, the returned `actions` array will contain
+ * @param obj - The specific PVC resource instance for which to generate actions.
+ * @param [filterActions] - Optional. If provided, the returned `actions` array will contain
  * only the specified actions. If omitted, it will contain all PVC actions. In case of invalid `actionCreators`
  * returned `actions` are an empty array.
  *
  * This hook is robust to inline arrays/objects for the `filterActions` argument, so you do not need to memoize or define
  * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
  *
- * @returns {Action[]} An array containing the generated action(s).
- *
- * @example
- * // Getting ExpandPVC and PVCSnapshot actions for PVC resource
- * const MyPVCComponent = ({ obj }) => {
- *   const actions = usePVCActions(obj, [PVCActionCreator.ExpandPVC, PVCActionCreator.PVCSnapshot]);
- *   return <Kebab actions={actions} />;
- * };
+ * @returns An array containing the generated action(s).
  */
 export const usePVCActions = (
   obj: PersistentVolumeClaimKind,

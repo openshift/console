@@ -57,8 +57,8 @@ const deploymentConfigRollout = (dc: K8sResourceKind): Promise<K8sResourceKind> 
 /**
  * A React hook for retrieving actions related to a Deployment resources.
  *
- * @param {K8sModel | undefined} kind - The K8s model for the resource.
- * @param {K8sResourceKind | undefined} resource - The specific resource instance for which to generate Deployment actions.
+ * @param kind - The K8s model for the resource.
+ * @param resource - The specific resource instance for which to generate Deployment actions.
  * @param [filterActions] - Optional. Specify which actions to include using DeploymentActionCreator enum values.
  * If provided, the returned `actions` array will contain only the specified actions.
  * If omitted, it will contain all Deployment actions. In case of invalid `actionCreators` returns empty array.
@@ -66,15 +66,8 @@ const deploymentConfigRollout = (dc: K8sResourceKind): Promise<K8sResourceKind> 
  * This hook is robust to inline arrays/objects for the `filterActions` argument, so you do not need to memoize or define
  * the array outside your component. The actions will only update if the actual contents of `filterActions` change, not just the reference.
  *
- * @returns {[ActionObject<T> , boolean]} A tuple containing the generated actions, accessible by action creator name (e.g., actions.Delete),
+ * @returns A tuple containing the generated actions, accessible by action creator name (e.g., actions.Delete),
  *  and a boolean indicating if actions are ready to use..
- *
- * @example
- * // Getting EditDeployment and RestartRollout actions
- * const MyDeploymentComponent = ({ kind, obj }) => {
- *   const [actions, isReady] = useDeploymentActions(kind, obj, [DeploymentActionCreator.EditDeployment, DeploymentActionCreator.RestartRollout] as const);
- *   return <Kebab actions={ isReady ? actions : []} />;
- * };
  */
 export const useDeploymentActions = <T extends readonly DeploymentActionCreator[]>(
   kind: K8sModel | undefined,

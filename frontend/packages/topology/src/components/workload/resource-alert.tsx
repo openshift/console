@@ -97,9 +97,10 @@ export const useResourceQuotaAlert = (element: GraphElement): DetailsResourceAle
   );
   const name = resource?.metadata?.name;
   const namespace = resource?.metadata?.namespace;
-  const [commonActions, commonActionsReady] = useCommonActions(DeploymentModel, resource, [
+  const commonActions = useCommonActions(DeploymentModel, resource, [
     CommonActionCreator.ModifyCount,
   ] as const);
+  const commonActionsReady = true; // commonActions are always ready when returned
 
   const [canUseAlertAction, canUseAlertActionLoading] = useAccessReview({
     group: DeploymentModel.apiGroup,
