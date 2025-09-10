@@ -182,29 +182,70 @@ const getUpdatedConfig = (
   };
 };
 
+// Updates the configMap folder value if the following conditions are met:
+// 1 - The ConfigMap includes the entry for the "folder"
+// 2 - The infrastructure CRD either has no "folder" entry, or it has a "folder" entry that matches the "folder" entry in the ConfigMap
 const getUpdatedConfigMapFolder = (
   result: UpdateConfigMapResult,
   initFolder: string,
   newFolder: string,
 ): UpdateConfigMapResult | undefined => {
   const cfg = result.config;
-  // Supported cases:
-  // 1. initFolder in Infrastructure CRD matches ConfigMap folder -> update ConfigMap
-  // 2. initFolder in Infrastructure CRD is missing but present in the ConfigMap -> update ConfigMap
   const folderLineMatch = cfg.match(/folder\s*=\s*["']?([^"'\n\r]+)["']?/);
   if (folderLineMatch) {
-    const existingFolderLine = folderLineMatch[0];
-    const existingFolderValue = folderLineMatch[1].trim();
+    const folderLine = folderLineMatch[0];
+    const folderValue = folderLineMatch[1].trim();
 
-    if (!initFolder || initFolder === existingFolderValue) {
+    if (!initFolder || initFolder === folderValue) {
       return {
-        config: cfg.replace(existingFolderLine, `folder = "${newFolder}"`),
+        config: cfg.replace(folderLine, `folder = "${newFolder}"`),
         expectedValues: result.expectedValues,
       };
     }
   }
-  // In any other case, we may fail if we can't find the match in the original Infrastructure CRD
   return getUpdatedConfig(result, `folder = "${initFolder}"`, `folder = "${newFolder}"`);
+};
+
+// Updates the configMap resourcepool-path value if the following conditions are met:
+// 1 - The ConfigMap includes the entry for the "resourcepool-path"
+// 2 - The existing value for "resourcepool-path" in the ConfigMap starts with the pattern "/${datacenter}/host/${vCenterCluster}/Resources"
+// Additionally, the resourcepool-path may contain additional path segments after "/Resources", which will be preserved.
+const getUpdatedConfigMapResourcePool = (
+  result: UpdateConfigMapResult,
+  initDatacenter: string,
+  initVCenterCluster: string,
+  datacenter: string,
+  vCenterCluster: string,
+): UpdateConfigMapResult | undefined => {
+  const cfg = result.config;
+
+  // Find the starting pattern in the "resourcepool-path" entry in the ConfigMap
+  const resourcePoolMatch = cfg.match(/resourcepool-path\s*=\s*["']?([^"'\n\r]+)["']?/);
+  if (resourcePoolMatch) {
+    const resourcePoolPathLine = resourcePoolMatch[0];
+    const resourcePoolPathValue = resourcePoolMatch[1].trim();
+
+    // Check only the starting pattern, to prevent the additional path segments from breaking the exact match comparison
+    const poolPathStartingPattern = `/${initDatacenter}/host/${initVCenterCluster}/Resources`;
+    if (resourcePoolPathValue.startsWith(poolPathStartingPattern)) {
+      // Extract any additional path segments after /Resources to preserve them
+      const additionalSegments = resourcePoolPathValue.substring(poolPathStartingPattern.length);
+      const newResourcePoolPath = `/${datacenter}/host/${vCenterCluster}/Resources${additionalSegments}`;
+      return {
+        config: cfg.replace(resourcePoolPathLine, `resourcepool-path = "${newResourcePoolPath}"`),
+        expectedValues: result.expectedValues,
+      };
+    }
+  }
+
+  // As a fallback, only exact matches are supported (this would not preserve additional path segments)
+  const initResourcePoolPath = `/${initDatacenter}/host/${initVCenterCluster}/Resources`;
+  const newResourcePoolPath = `/${datacenter}/host/${vCenterCluster}/Resources`;
+  return getUpdatedConfig(
+    result,
+    `resourcepool-path = "${initResourcePoolPath}"`,
+    `resourcepool-path = "${newResourcePoolPath}"`,
+  );
 };
 
 const updateIniFormat = (
@@ -246,13 +287,16 @@ const updateIniFormat = (
     `default-datastore = "${values.defaultDatastore}"`,
   );
 
-  // We handle folder differently since sometimes it is missing from the "topology" section of the Infrastructure CRD.
+  // "folder" is handled differently, as it can be absent from the "topology" section of the Infrastructure CRD.
   result = getUpdatedConfigMapFolder(result, initValues.folder, values.folder);
 
-  result = getUpdatedConfig(
+  // "resourcepool-path" is handled differently, as it can take additional path segments that need to be preserved
+  result = getUpdatedConfigMapResourcePool(
     result,
-    `resourcepool-path = "/${initDatacenter}/host/${initVCenterCluster}/Resources"`,
-    `resourcepool-path = "/${values.datacenter}/host/${values.vCenterCluster}/Resources"`,
+    initDatacenter,
+    initVCenterCluster,
+    values.datacenter,
+    values.vCenterCluster,
   );
 
   if (result.expectedValues.length > 0) {
@@ -421,6 +465,27 @@ const getAddTaintsOps = async (nodesModel: K8sModel): Promise<PersistOp[]> => {
   return patchRequests;
 };
 
+// Gets the updated resource pool path for the infrastructure CRD in the format:
+// /{datacenter}/host/{vCenterCluster}/Resources/{additionalSegments}
+// Additional segments present in the value are respected.
+const getInfrastructureResourcePoolPath = (
+  values: ConnectionFormFormikValues,
+  initValues: ConnectionFormFormikValues,
+  originalResourcePool: string,
+): string => {
+  const initDatacenter = initValues.datacenter || 'datacenterplaceholder';
+  const initVCenterCluster = initValues.vCenterCluster || 'clusterplaceholder';
+  const expectedResourcePoolPattern = `/${initDatacenter}/host/${initVCenterCluster}/Resources`;
+
+  let newResourcePool = `/${values.datacenter}/host/${values.vCenterCluster}/Resources`;
+  if (originalResourcePool && originalResourcePool.startsWith(expectedResourcePoolPattern)) {
+    // Preserve additional path segments after /Resources
+    const additionalSegments = originalResourcePool.substring(expectedResourcePoolPattern.length);
+    newResourcePool = `/${values.datacenter}/host/${values.vCenterCluster}/Resources${additionalSegments}`;
+  }
+  return newResourcePool;
+};
+
 const getPersistInfrastructureOp = async (
   infrastructureModel: K8sModel,
   values: ConnectionFormFormikValues,
@@ -443,7 +508,13 @@ const getPersistInfrastructureOp = async (
   vCenterDomainCfg.topology.datastore = values.defaultDatastore;
   vCenterDomainCfg.topology.networks = values.network ? [values.network] : [];
   vCenterDomainCfg.topology.folder = values.folder;
-  vCenterDomainCfg.topology.resourcePool = `/${values.datacenter}/host/${values.vCenterCluster}/Resources`;
+
+  // Preserve additional path segments in resourcePool (e.g., /Resources/ipi-ci-clusters)
+  vCenterDomainCfg.topology.resourcePool = getInfrastructureResourcePoolPath(
+    values,
+    initValues,
+    vCenterDomainCfg.topology.resourcePool,
+  );
 
   const vCenterCfg = initValues.vcenter
     ? infrastructure.spec.platformSpec.vsphere.vcenters.find((c) => c.server === initValues.vcenter)
