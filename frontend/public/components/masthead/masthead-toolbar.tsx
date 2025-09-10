@@ -1,4 +1,4 @@
-import { useContext, useState, useRef, useCallback, createRef, useEffect } from 'react';
+import { Fragment, useContext, useState, useRef, useCallback, createRef, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -423,11 +423,15 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
     _.map(actions, (action, groupIndex) => {
       if ('isSection' in action && action.isSection) {
         const list = (
-          <DropdownList>
+          <DropdownList key={`dropdown-list-${groupIndex}`}>
             {_.map(action.actions, (sectionAction, itemIndex) => {
+              // Use label + index for key, fallback to index if label missing
+              const itemKey = sectionAction.label
+                ? `dropdown-item-${groupIndex}-${sectionAction.label}-${itemIndex}`
+                : `dropdown-item-${groupIndex}-${itemIndex}`;
               return (
                 <DropdownItem
-                  key={itemIndex}
+                  key={itemKey}
                   icon={sectionAction.image}
                   to={sectionAction.href}
                   isExternalLink={sectionAction.externalLink}
@@ -444,30 +448,25 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
           </DropdownList>
         );
         return (
-          <>
+          <Fragment key={`dropdown-group-fragment-${groupIndex}`}>
             {action.name ? (
-              <DropdownGroup key={groupIndex} label={action.name}>
+              <DropdownGroup key={`dropdown-group-${groupIndex}`} label={action.name}>
                 {list}
               </DropdownGroup>
             ) : (
-              <>{list}</>
+              list
             )}
-            <>
-              {Number(groupIndex) < actions.length - 1 && (
-                <Divider key={`separator-${groupIndex}`} />
-              )}
-            </>
-          </>
+            {Number(groupIndex) < actions.length - 1 && <Divider key={`separator-${groupIndex}`} />}
+          </Fragment>
         );
       }
 
-      return (
-        'label' in action &&
-        action.label && (
-          <>
-            <DropdownList>
+      if ('label' in action && action.label) {
+        return (
+          <Fragment key={`dropdown-list-fragment-${groupIndex}`}>
+            <DropdownList key={`dropdown-list-${groupIndex}`}>
               <DropdownItem
-                key={action.label}
+                key={`dropdown-item-${groupIndex}-${action.label}`}
                 icon={action.image}
                 to={action.href}
                 isExternalLink={action.externalLink}
@@ -480,9 +479,10 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
               </DropdownItem>
             </DropdownList>
             {Number(groupIndex) < actions.length - 1 && <Divider key={`separator-${groupIndex}`} />}
-          </>
-        )
-      );
+          </Fragment>
+        );
+      }
+      return null;
     });
 
   const renderMenu = (mobile: boolean) => {
