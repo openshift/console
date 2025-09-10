@@ -182,6 +182,31 @@ const getUpdatedConfig = (
   };
 };
 
+const getUpdatedConfigMapFolder = (
+  result: UpdateConfigMapResult,
+  initFolder: string,
+  newFolder: string,
+): UpdateConfigMapResult | undefined => {
+  const cfg = result.config;
+  // Supported cases:
+  // 1. initFolder in Infrastructure CRD matches ConfigMap folder -> update ConfigMap
+  // 2. initFolder in Infrastructure CRD is missing but present in the ConfigMap -> update ConfigMap
+  const folderLineMatch = cfg.match(/folder\s*=\s*["']?([^"'\n\r]+)["']?/);
+  if (folderLineMatch) {
+    const existingFolderLine = folderLineMatch[0];
+    const existingFolderValue = folderLineMatch[1].trim();
+
+    if (!initFolder || initFolder === existingFolderValue) {
+      return {
+        config: cfg.replace(existingFolderLine, `folder = "${newFolder}"`),
+        expectedValues: result.expectedValues,
+      };
+    }
+  }
+  // In any other case, we may fail if we can't find the match in the original Infrastructure CRD
+  return getUpdatedConfig(result, `folder = "${initFolder}"`, `folder = "${newFolder}"`);
+};
+
 const updateIniFormat = (
   t: TFunction<'vsphere-plugin'>,
   values: ConnectionFormFormikValues,
@@ -195,7 +220,6 @@ const updateIniFormat = (
   const initDatacenter = initValues.datacenter || 'datacenterplaceholder';
   const initDatastore =
     initValues.defaultDatastore || '/datacenterplaceholder/datastore/defaultdatastoreplaceholder';
-  const initFolder = initValues.folder || '/datacenterplaceholder/vm/folderplaceholder';
 
   let result: UpdateConfigMapResult = { config: cfg, expectedValues: [] };
 
@@ -221,7 +245,10 @@ const updateIniFormat = (
     `default-datastore = "${initDatastore}"`,
     `default-datastore = "${values.defaultDatastore}"`,
   );
-  result = getUpdatedConfig(result, `folder = "${initFolder}"`, `folder = "${values.folder}"`);
+
+  // We handle folder differently since sometimes it is missing from the "topology" section of the Infrastructure CRD.
+  result = getUpdatedConfigMapFolder(result, initValues.folder, values.folder);
+
   result = getUpdatedConfig(
     result,
     `resourcepool-path = "/${initDatacenter}/host/${initVCenterCluster}/Resources"`,
@@ -414,6 +441,7 @@ const getPersistInfrastructureOp = async (
   vCenterDomainCfg.topology.computeCluster = `/${values.datacenter}/host/${values.vCenterCluster}`;
   vCenterDomainCfg.topology.datacenter = values.datacenter;
   vCenterDomainCfg.topology.datastore = values.defaultDatastore;
+  vCenterDomainCfg.topology.networks = values.network ? [values.network] : [];
   vCenterDomainCfg.topology.folder = values.folder;
   vCenterDomainCfg.topology.resourcePool = `/${values.datacenter}/host/${values.vCenterCluster}/Resources`;
 

@@ -40,6 +40,7 @@ const initialLoad = async (
       username: '',
       vcenter: '',
       vCenterCluster: '',
+      network: '',
       isInit: vCenterServer === 'vcenterplaceholder',
     };
   }
@@ -51,6 +52,9 @@ const initialLoad = async (
   // Extract cluster name from computeCluster path (format: /{datacenter}/host/{cluster})
   const computeCluster = vSphereFailureDomain.topology?.computeCluster || '';
   const vCenterCluster = computeCluster.match(/\/.*?\/host\/(.+)/)?.[1] || '';
+
+  // Load the primary network (first network in the networks array)
+  const network = vSphereFailureDomain.topology?.networks?.[0] || '';
 
   let username = '';
   let password = '';
@@ -84,6 +88,7 @@ const initialLoad = async (
     folder,
     vcenter: vCenterServer,
     vCenterCluster,
+    network,
     password,
     username,
   };
