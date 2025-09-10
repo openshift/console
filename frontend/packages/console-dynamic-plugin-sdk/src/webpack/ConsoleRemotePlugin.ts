@@ -74,9 +74,10 @@ const getWebpackSharedModules = (pkg: ConsolePluginPackageJSON) => {
     const moduleConfig: WebpackSharedConfig = { singleton };
 
     // Console provides PatternFly 4 shared modules to its plugins for backwards compatibility.
-    // Plugins using PatternFly 5 and higher share the PatternFly code bits via dynamic modules.
-    // TODO(vojtech): remove this code when Console drops support for PatternFly 4
-    if (moduleName.startsWith('@patternfly/') && pfMajorVersion > 4) {
+    // Plugins using PatternFly 5 and higher share the PatternFly code bits via dynamic modules,
+    // *except* for modules where we explicitly disallow plugins to provide their own fallback
+    // version of that module (i.e. any singleton Console provided shared modules).
+    if (moduleName.startsWith('@patternfly/') && pfMajorVersion > 4 && allowFallback) {
       return acc;
     }
 
