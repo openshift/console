@@ -81,7 +81,7 @@ export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> =
               id="approval-strategy-manual"
               name="approval-strategy"
               value={InstallPlanApproval.Manual}
-              label={`${t(`olm~Manual`)} (${t('public~default')})`}
+              label={t('olm~Manual')}
               description={t(
                 'olm~New updates need to be manually approved before installation begins.',
               )}
