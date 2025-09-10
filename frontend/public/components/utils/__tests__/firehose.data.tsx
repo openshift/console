@@ -1,6 +1,6 @@
 import { Map as ImmutableMap } from 'immutable';
 
-export { PodModel, ServiceModel } from '../../../models';
+export { PodModel } from '../../../models';
 
 export const podData = {
   apiVersion: 'v1',
