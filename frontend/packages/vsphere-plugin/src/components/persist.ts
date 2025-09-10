@@ -506,10 +506,11 @@ const getPersistInfrastructureOp = async (
   vCenterDomainCfg.topology.computeCluster = `/${values.datacenter}/host/${values.vCenterCluster}`;
   vCenterDomainCfg.topology.datacenter = values.datacenter;
   vCenterDomainCfg.topology.datastore = values.defaultDatastore;
-  vCenterDomainCfg.topology.networks = values.network ? [values.network] : [];
+  if (values.network) {
+    vCenterDomainCfg.topology.networks = [values.network];
+  }
   vCenterDomainCfg.topology.folder = values.folder;
 
-  // Preserve additional path segments in resourcePool (e.g., /Resources/ipi-ci-clusters)
   vCenterDomainCfg.topology.resourcePool = getInfrastructureResourcePoolPath(
     values,
     initValues,

@@ -157,7 +157,6 @@ export const VSphereConnectionForm = () => {
             }
           />
         }
-        isRequired
         fieldId="connection-network"
       >
         <TextField name="network" />
