@@ -123,7 +123,7 @@ export type ClusterServiceVersionKind = {
           serviceAccountName: string;
           rules: { apiGroups: string[]; resources: string[]; verbs: string[] }[];
         }[];
-        deployments: { name: string; spec: any }[];
+        deployments: { name: string; spec: unknown }[];
       };
     };
     customresourcedefinitions?: { owned?: CRDDescription[]; required?: CRDDescription[] };

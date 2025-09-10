@@ -41,7 +41,7 @@ describe('PackageManifestTableRow', () => {
   beforeEach(() => {
     jest.spyOn(UIActions, 'getActiveNamespace').mockReturnValue('default');
 
-    const columns: any[] = [];
+    const columns: unknown[] = [];
     wrapper = shallow(
       <PackageManifestTableRow
         obj={testPackageManifest}
@@ -66,7 +66,7 @@ describe('PackageManifestTableRow', () => {
   });
 
   it('renders column for creation timestamp', () => {
-    const pkgManifestCreationTimestamp = testPackageManifest.metadata.creationTimestamp;
+    const pkgManifestCreationTimestamp = testPackageManifest.metadata?.creationTimestamp || '';
     expect(wrapper.childAt(2).dive().find(Timestamp).props().timestamp).toEqual(
       `${pkgManifestCreationTimestamp}`,
     );
@@ -75,12 +75,12 @@ describe('PackageManifestTableRow', () => {
   // This is to verify cataloSource column gets rendered on the Search page for PackageManifest resource
   it('renders column for catalog source for a package when no catalog source is defined', () => {
     const catalogSourceName = testPackageManifest.status.catalogSource;
-    const columns: any[] = [];
+    const columns: unknown[] = [];
 
     wrapper = shallow(
       <PackageManifestTableRow
         obj={testPackageManifest}
-        customData={{ catalogSource: null }}
+        customData={{ catalogSource: undefined }}
         columns={columns}
       />,
     );

@@ -41,7 +41,7 @@ const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
       ];
       handlePromise(k8sPatch(kind, operatorHub, patch))
         .then(() => {
-          close();
+          close?.();
         })
         .catch(() => {});
     },

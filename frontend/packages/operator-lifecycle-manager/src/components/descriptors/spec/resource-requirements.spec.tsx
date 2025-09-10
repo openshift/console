@@ -18,9 +18,8 @@ describe(ResourceRequirementsModal.name, () => {
   const title = 'TestResource Resource Requests';
   const description = 'Define the resource requests for this TestResource instance.';
   const cancel = jasmine.createSpy('cancelSpy');
-  const close = jasmine.createSpy('closeSpy');
 
-  const spyAndExpect = (spy: Spy) => (returnValue: any) =>
+  const spyAndExpect = (spy: Spy) => (returnValue: unknown) =>
     new Promise((resolve) =>
       spy.and.callFake((...args) => {
         resolve(args);
@@ -38,7 +37,7 @@ describe(ResourceRequirementsModal.name, () => {
         type="requests"
         cancel={cancel}
         path="resources"
-        close={close}
+        close={() => {}}
       />,
     );
   });
@@ -60,7 +59,7 @@ describe(ResourceRequirementsModal.name, () => {
     spyAndExpect(spyOn(k8sResourceModule, 'k8sUpdate'))(Promise.resolve())
       .then(([model, newObj]: [K8sKind, K8sResourceKind]) => {
         expect(model).toEqual(testModel);
-        expect(newObj.spec.resources.requests).toEqual({
+        expect(newObj?.spec?.resources?.requests).toEqual({
           cpu: '200m',
           memory: '20Mi',
           'ephemeral-storage': '50Mi',
@@ -73,15 +72,17 @@ describe(ResourceRequirementsModal.name, () => {
   });
 });
 
-describe(ResourceRequirementsModalLink.displayName, () => {
+describe(ResourceRequirementsModalLink.displayName || '', () => {
   let wrapper: ShallowWrapper<ResourceRequirementsModalLinkProps>;
   let obj: K8sResourceKind;
 
   beforeEach(() => {
     obj = _.cloneDeep(testResourceInstance);
-    obj.spec.resources = {
-      limits: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
-      requests: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
+    obj.spec = {
+      resources: {
+        limits: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
+        requests: { memory: '50Mi', cpu: '500m', 'ephemeral-storage': '50Mi' },
+      },
     };
     wrapper = shallow(
       <ResourceRequirementsModalLink.WrappedComponent
@@ -94,7 +95,7 @@ describe(ResourceRequirementsModalLink.displayName, () => {
   });
 
   it('renders a button link with the resource requests limits', () => {
-    const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.limits;
+    const { memory, cpu, 'ephemeral-storage': storage } = obj?.spec?.resources?.limits || {};
     wrapper = wrapper.setProps({ type: 'requests' });
 
     expect(wrapper.find(Button).render().text()).toEqual(
@@ -103,14 +104,14 @@ describe(ResourceRequirementsModalLink.displayName, () => {
   });
 
   it('renders a button link with the resource limits', () => {
-    const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.requests;
+    const { memory, cpu, 'ephemeral-storage': storage } = obj?.spec?.resources?.requests || {};
     expect(wrapper.find(Button).render().text()).toEqual(
       `CPU: ${cpu}, Memory: ${memory}, Storage: ${storage}`,
     );
   });
 
   it('renders default values if undefined', () => {
-    obj.spec.resources = undefined;
+    obj.spec = { resources: {} };
     wrapper.setProps({ obj });
 
     expect(wrapper.find(Button).render().text()).toEqual('CPU: None, Memory: None, Storage: None');

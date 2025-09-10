@@ -13,7 +13,7 @@ import { OperatorGroupData } from './types';
 
 const ResourceSection: React.FC<{ item: TopologyDataObject<OperatorGroupData> }> = ({ item }) => {
   const { resource, data } = item;
-  const { namespace } = resource.metadata;
+  const namespace = resource?.metadata?.namespace ?? '';
   const { csvName } = data;
 
   const resourcesList = React.useMemo(() => {

@@ -31,6 +31,7 @@ export const parseJSONLines = <ObjectType>() =>
     },
   });
 
+// This file will be removed as part of https://issues.redhat.com//browse/CONSOLE-4668
 // ObjectType is the expected shape of each JSON object (defaults to any).
 // HandlerResult is the expected value the handler will resolve when called with ObjectType as an argument
 export const fetchAndProcessJSONLines = <ObjectType = any>(
@@ -40,6 +41,9 @@ export const fetchAndProcessJSONLines = <ObjectType = any>(
   consoleFetch(url, options).then((response) => {
     if (!response.ok) {
       throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
+    }
+    if (!response.body) {
+      throw new Error(`Response body is null for ${url}`);
     }
     return response.body
       .pipeThrough(new TextDecoderStream())

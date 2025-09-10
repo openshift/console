@@ -22,7 +22,7 @@ import { MatchExpression, referenceForModel } from '@console/internal/module/k8s
 import { OPERATOR_HUB_LABEL } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
-import { PackageManifestKind, CatalogSourceKind } from '../types';
+import { PackageManifestKind, CatalogSourceKind, ClusterServiceVersionIcon } from '../types';
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
 import { visibilityLabel, iconFor, defaultChannelFor } from './index';
 
@@ -68,7 +68,7 @@ export const PackageManifestTableRow: React.FC<RowFunctionArgs<
 >> = ({ obj: packageManifest, customData }) => {
   const channel = defaultChannelFor(packageManifest);
 
-  const { displayName, version, provider } = channel?.currentCSVDesc;
+  const { displayName, version, provider } = channel?.currentCSVDesc || {};
 
   return (
     <>
@@ -76,24 +76,24 @@ export const PackageManifestTableRow: React.FC<RowFunctionArgs<
         <Link
           to={resourcePathFromModel(
             PackageManifestModel,
-            packageManifest.metadata.name,
-            packageManifest.metadata.namespace,
+            packageManifest.metadata?.name,
+            packageManifest.metadata?.namespace,
           )}
         >
           <ClusterServiceVersionLogo
-            displayName={displayName}
-            icon={iconFor(packageManifest)}
-            provider={provider.name}
+            displayName={displayName || ''}
+            icon={iconFor(packageManifest) as ClusterServiceVersionIcon | ''}
+            provider={provider?.name || ''}
           />
         </Link>
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        {version} ({channel.name})
+        {version} ({channel?.name})
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <Timestamp timestamp={packageManifest.metadata.creationTimestamp} />
+        <Timestamp timestamp={packageManifest.metadata?.creationTimestamp || ''} />
       </TableData>
-      {!customData.catalogSource && (
+      {!customData?.catalogSource && (
         <TableData className={tableColumnClasses[3]}>
           <ResourceLink
             kind={referenceForModel(CatalogSourceModel)}
@@ -119,7 +119,7 @@ export const PackageManifestList = (props: PackageManifestListProps) => {
   const { customData } = props;
 
   // If the CatalogSource is not present, display PackageManifests along with their CatalogSources (used in PackageManifest Search page)
-  const TableHeader = customData.catalogSource
+  const TableHeader = customData?.catalogSource
     ? PackageManifestTableHeader
     : PackageManifestTableHeaderWithCatalogSource;
 
@@ -183,12 +183,12 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
                     {
                       key: 'catalog',
                       operator: 'In',
-                      values: [catalogSource?.metadata.name],
+                      values: [catalogSource?.metadata?.name || ''],
                     },
                     {
                       key: 'catalog-namespace',
                       operator: 'In',
-                      values: [catalogSource?.metadata.namespace],
+                      values: [catalogSource?.metadata?.namespace || ''],
                     },
                   ]
                 : []) as MatchExpression[]),

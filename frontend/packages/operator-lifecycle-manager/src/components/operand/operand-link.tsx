@@ -15,7 +15,8 @@ export const csvNameFromWindow = () =>
     );
 
 export const OperandLink: React.FC<OperandLinkProps> = (props) => {
-  const { namespace, name } = props.obj.metadata;
+  const namespace = props.obj.metadata?.namespace || '';
+  const name = props.obj.metadata?.name || '';
   const csvName = props.csvName || csvNameFromWindow();
 
   const reference = referenceFor(props.obj);

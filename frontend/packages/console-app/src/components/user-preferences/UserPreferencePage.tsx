@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import {
   Tabs,
   Tab,
@@ -57,8 +58,9 @@ const UserPreferencePage: React.FC = () => {
   const { group: groupIdFromUrl } = useParams();
   const initialTabId =
     sortedUserPreferenceGroups.find((extension) => extension.id === groupIdFromUrl)?.id ||
-    sortedUserPreferenceGroups[0]?.id;
-  const [activeTabId, setActiveTabId] = React.useState<string>(initialTabId);
+    sortedUserPreferenceGroups[0]?.id ||
+    'general';
+  const [activeTabId, setActiveTabId] = useState<string>(initialTabId);
 
   const [userPreferenceTabs, userPreferenceTabContents] = React.useMemo<
     [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]]

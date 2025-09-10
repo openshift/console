@@ -24,9 +24,9 @@ export const configureSizeModal = ({
   });
 };
 
-type ConfigureSizeModalProps = {
+export type ConfigureSizeModalProps = {
   kindObj: K8sKind;
   resource: K8sResourceKind;
   specDescriptor: Descriptor;
-  specValue: any;
+  specValue: unknown;
 };

@@ -232,7 +232,7 @@ describe('getClusterServiceVersionPlugins', () => {
     expect(result).toEqual([]);
   });
   it('returns an empty array when annotations are null', () => {
-    const result = getClusterServiceVersionPlugins(null);
+    const result = getClusterServiceVersionPlugins(null as any);
     expect(result).toEqual([]);
   });
   it('returns an empty array when annotations are undefined', () => {
@@ -271,7 +271,7 @@ describe('getInternalObjects', () => {
     expect(result).toEqual([]);
   });
   it('returns an empty array when annotations are null', () => {
-    const result = getInternalObjects(null);
+    const result = getInternalObjects(null as any);
     expect(result).toEqual([]);
   });
   it('returns an empty array when annotations are undefined', () => {
@@ -310,7 +310,7 @@ describe('getSuggestedNamespaceTemplate', () => {
     expect(result).toBeNull();
   });
   it('returns null when annotations are null', () => {
-    const result = getSuggestedNamespaceTemplate(null);
+    const result = getSuggestedNamespaceTemplate(null as any);
     expect(result).toBeNull();
   });
   it('returns null when annotations are undefined', () => {
@@ -349,7 +349,7 @@ describe('getInitializationResource', () => {
     expect(result).toBeNull();
   });
   it('returns null when annotations are null', () => {
-    const result = getInitializationResource(null);
+    const result = getInitializationResource(null as any);
     expect(result).toBeNull();
   });
   it('returns null when annotations are undefined', () => {
@@ -440,7 +440,7 @@ describe('getValidSubscription', () => {
     expect(filters).toEqual([]);
   });
   it('returns an empty when annotations are null', () => {
-    const [subscriptions, filters] = getValidSubscription(null);
+    const [subscriptions, filters] = getValidSubscription(null as any);
     expect(subscriptions).toEqual([]);
     expect(filters).toEqual([]);
   });
@@ -638,7 +638,7 @@ describe('getInfrastructureFeatures', () => {
     expect(result).toEqual([]);
   });
   it('returns an empty array when annotations are null', () => {
-    const result = getInfrastructureFeatures(null);
+    const result = getInfrastructureFeatures(null as any);
     expect(result).toEqual([]);
   });
   it('returns an empty array when annotations are undefined', () => {

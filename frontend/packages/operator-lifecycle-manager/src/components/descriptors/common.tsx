@@ -38,7 +38,12 @@ export const DefaultCapability: React.FC<CommonCapabilityProps<string | number |
   }, [t, value]);
 
   return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <DetailsItem
+      description={description || ''}
+      label={label || ''}
+      obj={obj}
+      path={fullPath || ''}
+    >
       {detail}
     </DetailsItem>
   );
@@ -59,7 +64,7 @@ export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps<string>> 
       return <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>;
     }
 
-    const [, suffix] = capability.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
+    const [, suffix] = capability?.match(REGEXP_K8S_RESOURCE_SUFFIX) ?? [];
     const gvk = suffix?.replace(/:/g, '~');
     if (!_.isString(value)) {
       // eslint-disable-next-line no-console
@@ -70,10 +75,15 @@ export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps<string>> 
 
       return null;
     }
-    return <ResourceLink kind={gvk} name={value} namespace={obj.metadata.namespace} />;
-  }, [value, capability, obj.metadata.namespace, t, descriptor]);
+    return <ResourceLink kind={gvk} name={value} namespace={obj?.metadata?.namespace || ''} />;
+  }, [value, capability, obj?.metadata?.namespace, t, descriptor]);
   return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <DetailsItem
+      description={description || ''}
+      label={label || ''}
+      obj={obj}
+      path={fullPath || ''}
+    >
       {detail}
     </DetailsItem>
   );
@@ -90,7 +100,12 @@ export const SecretCapability: React.FC<CommonCapabilityProps<string>> = ({
   const [reveal, setReveal] = React.useState(false);
 
   return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    <DetailsItem
+      description={description || ''}
+      label={label || ''}
+      obj={obj}
+      path={fullPath || ''}
+    >
       <div className="co-toggle-reveal-value">
         <Button
           type="button"

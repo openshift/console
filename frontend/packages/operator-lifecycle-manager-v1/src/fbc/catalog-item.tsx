@@ -1,3 +1,4 @@
+// This file will be removed as part of https://issues.redhat.com//browse/CONSOLE-4668
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { CapabilityLevel } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-item-details';
@@ -29,7 +30,7 @@ export const normalizeExtensionCatalogItem: NormalizeExtensionCatalogItem = (pkg
     createdAt,
   } = pkg;
   const [validSubscriptions, validSubscriptionFilters] = validSubscriptionReducer(
-    validSubscription,
+    validSubscription ?? [],
   );
   return {
     attributes: {
@@ -50,7 +51,7 @@ export const normalizeExtensionCatalogItem: NormalizeExtensionCatalogItem = (pkg
       properties: [
         {
           label: 'Capability level',
-          value: <CapabilityLevel capability={capabilities} />,
+          value: <CapabilityLevel capability={capabilities ?? ''} />,
         },
         { label: 'Source', value: source || '-' },
         { label: 'Provider', value: provider || '-' },
@@ -77,7 +78,7 @@ export const normalizeExtensionCatalogItem: NormalizeExtensionCatalogItem = (pkg
       descriptions: [{ value: <SyncMarkdownView content={longDescription} /> }],
     },
     displayName,
-    icon: icon ? { url: `data:${icon.mediatype};base64,${icon.base64data}` } : null,
+    icon: icon ? { url: `data:${icon.mediatype};base64,${icon.base64data}` } : undefined,
     name: displayName || name,
     supportUrl: support,
     provider,

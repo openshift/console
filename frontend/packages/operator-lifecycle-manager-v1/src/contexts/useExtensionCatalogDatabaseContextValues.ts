@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
+// This file will be removed as part of https://issues.redhat.com//browse/CONSOLE-4668
+import { useEffect, useRef, useState } from 'react';
 import * as _ from 'lodash';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
@@ -13,7 +14,7 @@ export const useExtensionCatalogDatabaseContextValues: UseExtensionCatalogDataba
     isList: true,
   });
   const [done, setDone] = useState(false);
-  const [error, setError] = useState<Error>();
+  const [error, setError] = useState<Error | null>(null);
   const refresh = useRef(
     _.debounce((newCatalogs: K8sResourceCommon[]) => {
       setDone(false);

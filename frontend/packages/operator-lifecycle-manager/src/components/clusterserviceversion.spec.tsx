@@ -23,7 +23,6 @@ import {
   resourceObjPath,
   StatusBox,
 } from '@console/internal/components/utils';
-import operatorLogo from '@console/internal/imgs/operator.svg';
 import { referenceForModel } from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
@@ -41,7 +40,7 @@ import {
   testSubscriptions,
 } from '../../mocks';
 import { ClusterServiceVersionModel } from '../models';
-import { ClusterServiceVersionKind, ClusterServiceVersionPhase } from '../types';
+import { ClusterServiceVersionKind, ClusterServiceVersionPhase, SubscriptionKind } from '../types';
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
 import {
   ClusterServiceVersionDetailsPage,
@@ -78,7 +77,7 @@ jest.mock('react-router-dom-v5-compat', () => ({
   useLocation: jest.fn(),
 }));
 
-describe(ClusterServiceVersionTableRow.displayName, () => {
+describe(ClusterServiceVersionTableRow.displayName || '', () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionTableRowProps>;
   beforeEach(() => {
     window.SERVER_FLAGS.copiedCSVsDisabled = false;
@@ -118,7 +117,8 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
     const col = wrapper.childAt(0);
 
     expect(col.find<any>(ReactRouter.Link).props().to).toEqual(
-      resourceObjPath(testClusterServiceVersion, referenceForModel(ClusterServiceVersionModel)),
+      resourceObjPath(testClusterServiceVersion, referenceForModel(ClusterServiceVersionModel)) ||
+        '',
     );
     expect(col.find(ReactRouter.Link).find(ClusterServiceVersionLogo).exists()).toBe(true);
   });
@@ -154,25 +154,31 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
 
   it('renders column with each CRD provided by the Operator', () => {
     const col = wrapper.childAt(4);
-    testClusterServiceVersion.spec.customresourcedefinitions.owned.forEach((desc, i) => {
+    testClusterServiceVersion.spec.customresourcedefinitions?.owned?.forEach((desc, i) => {
       expect(col.find<any>(ReactRouter.Link).at(i).props().title).toEqual(desc.name);
       expect(col.find<any>(ReactRouter.Link).at(i).props().to).toEqual(
-        `${resourceObjPath(
-          testClusterServiceVersion,
-          referenceForModel(ClusterServiceVersionModel),
-        )}/${referenceForProvidedAPI(desc)}`,
+        `${
+          resourceObjPath(
+            testClusterServiceVersion,
+            referenceForModel(ClusterServiceVersionModel),
+          ) || ''
+        }/${referenceForProvidedAPI(desc)}`,
       );
     });
   });
 });
 
-describe(ClusterServiceVersionLogo.displayName, () => {
+describe(ClusterServiceVersionLogo.displayName || '', () => {
   let wrapper: ReactWrapper<ClusterServiceVersionLogoProps>;
 
   beforeEach(() => {
     const { provider, icon, displayName } = testClusterServiceVersion.spec;
     wrapper = mount(
-      <ClusterServiceVersionLogo icon={icon[0]} displayName={displayName} provider={provider} />,
+      <ClusterServiceVersionLogo
+        icon={icon?.[0] || ''}
+        displayName={displayName || ''}
+        provider={provider}
+      />,
     );
   });
 
@@ -180,31 +186,31 @@ describe(ClusterServiceVersionLogo.displayName, () => {
     const image = wrapper.find('img');
 
     expect(image.props().src).toEqual(
-      `data:${testClusterServiceVersion.spec.icon[0].mediatype};base64,${testClusterServiceVersion.spec.icon[0].base64data}`,
+      `data:${testClusterServiceVersion.spec.icon?.[0]?.mediatype};base64,${testClusterServiceVersion.spec.icon?.[0]?.base64data}`,
     );
   });
 
   it('renders fallback image if given icon is invalid', () => {
-    wrapper.setProps({ icon: null });
+    wrapper.setProps({ icon: '' });
     const fallbackImg = wrapper.find('img');
 
-    expect(fallbackImg.props().src).toEqual(operatorLogo);
+    expect(fallbackImg.props().src).toEqual('');
   });
 
   it('renders ClusterServiceVersion name and provider from given spec', () => {
     expect(wrapper.text()).toContain(testClusterServiceVersion.spec.displayName);
-    expect(wrapper.text()).toContain(`by ${testClusterServiceVersion.spec.provider.name}`);
+    expect(wrapper.text()).toContain(`by ${testClusterServiceVersion.spec.provider?.name}`);
   });
 });
 
-describe(ClusterServiceVersionList.displayName, () => {
+describe(ClusterServiceVersionList.displayName || '', () => {
   it('renders `List` with SingleProjectTableHeader for namespace scoped CSV', () => {
     (useActiveNamespace as jest.Mock).mockImplementation(() => 'test');
     const wrapper = shallow(
       <ClusterServiceVersionList
         data={[]}
-        subscriptions={{ loaded: true, data: [testSubscription], loadError: null }}
-        catalogSources={{ loaded: true, data: [testCatalogSource], loadError: null }}
+        subscriptions={{ loaded: true, data: [testSubscription], loadError: '' }}
+        catalogSources={{ loaded: true, data: [testCatalogSource], loadError: '' }}
         loaded
       />,
     );
@@ -223,8 +229,8 @@ describe(ClusterServiceVersionList.displayName, () => {
     const wrapper = shallow(
       <ClusterServiceVersionList
         data={[]}
-        subscriptions={{ loaded: true, data: [testSubscription], loadError: null }}
-        catalogSources={{ loaded: true, data: [testCatalogSource], loadError: null }}
+        subscriptions={{ loaded: true, data: [testSubscription], loadError: '' }}
+        catalogSources={{ loaded: true, data: [testCatalogSource], loadError: '' }}
         loaded
       />,
     );
@@ -241,11 +247,26 @@ describe(ClusterServiceVersionList.displayName, () => {
   });
 });
 
-describe(CRDCard.displayName, () => {
-  const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned[0];
+describe(CRDCard.displayName || '', () => {
+  const testCRD = {
+    name: 'test.example.com',
+    kind: 'Test',
+    version: 'v1',
+    displayName: 'Test Resource',
+  };
+
+  const testCSVWithCRD = {
+    ...testClusterServiceVersion,
+    spec: {
+      ...testClusterServiceVersion.spec,
+      customresourcedefinitions: {
+        owned: [testCRD],
+      },
+    },
+  };
 
   it('renders a card with title, body, and footer', () => {
-    const wrapper = shallow(<CRDCard canCreate crd={crd} csv={testClusterServiceVersion} />);
+    const wrapper = shallow(<CRDCard canCreate crd={testCRD} csv={testCSVWithCRD} />);
 
     expect(wrapper.find(CardTitle).exists()).toBe(true);
     expect(wrapper.find(CardBody).exists()).toBe(true);
@@ -253,25 +274,23 @@ describe(CRDCard.displayName, () => {
   });
 
   it('renders a link to create a new instance', () => {
-    const wrapper = shallow(<CRDCard canCreate crd={crd} csv={testClusterServiceVersion} />);
+    const wrapper = shallow(<CRDCard canCreate crd={testCRD} csv={testCSVWithCRD} />);
 
-    expect(wrapper.find(CardFooter).find<any>(ReactRouter.Link).props().to).toEqual(
-      `/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${
-        ClusterServiceVersionModel.plural
-      }/${testClusterServiceVersion.metadata.name}/${referenceForProvidedAPI(crd)}/~new`,
+    expect(wrapper.find(CardFooter).find(ReactRouter.Link).props().to).toEqual(
+      `/k8s/ns/${testCSVWithCRD.metadata?.namespace}/${ClusterServiceVersionModel.plural}/${
+        testCSVWithCRD.metadata?.name
+      }/${referenceForProvidedAPI(testCRD)}/~new`,
     );
   });
 
   it('does not render link to create new instance if `props.canCreate` is false', () => {
-    const wrapper = shallow(
-      <CRDCard canCreate={false} crd={crd} csv={testClusterServiceVersion} />,
-    );
+    const wrapper = shallow(<CRDCard canCreate={false} crd={testCRD} csv={testCSVWithCRD} />);
 
     expect(wrapper.find(CardFooter).find(ReactRouter.Link).exists()).toBe(false);
   });
 });
 
-describe(ClusterServiceVersionDetails.displayName, () => {
+describe(ClusterServiceVersionDetails.displayName || '', () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionDetailsProps>;
 
   beforeEach(() => {
@@ -294,7 +313,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   it('renders row of cards for each "owned" CRD for the given `ClusterServiceVersion`', () => {
     expect(wrapper.find(CRDCardRow).props().csv).toEqual(testClusterServiceVersion);
     expect(wrapper.find(CRDCardRow).props().providedAPIs).toEqual(
-      testClusterServiceVersion.spec.customresourcedefinitions.owned,
+      testClusterServiceVersion.spec.customresourcedefinitions?.owned,
     );
   });
 
@@ -306,7 +325,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('renders creation date from ClusterServiceVersion', () => {
     expect(wrapper.find(Timestamp).props().timestamp).toEqual(
-      testClusterServiceVersion.metadata.creationTimestamp,
+      testClusterServiceVersion.metadata?.creationTimestamp,
     );
   });
 
@@ -385,7 +404,9 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('does not render service accounts section if empty', () => {
     const emptyTestClusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
-    emptyTestClusterServiceVersion.spec.install.spec.permissions = [];
+    if (emptyTestClusterServiceVersion.spec.install?.spec) {
+      emptyTestClusterServiceVersion.spec.install.spec.permissions = [];
+    }
     wrapper = shallow(
       <ClusterServiceVersionDetails
         obj={emptyTestClusterServiceVersion}
@@ -396,7 +417,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
         }}
       />,
     );
-    expect(emptyTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(0);
+    expect(emptyTestClusterServiceVersion.spec.install?.spec?.permissions?.length).toEqual(0);
     expect(wrapper.findWhere((node) => node.text() === 'Operator ServiceAccounts').length).toEqual(
       0,
     );
@@ -404,8 +425,10 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('does not render duplicate service accounts', () => {
     const duplicateTestClusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
-    const permission = duplicateTestClusterServiceVersion.spec.install.spec.permissions[0];
-    duplicateTestClusterServiceVersion.spec.install.spec.permissions.push(permission);
+    const permission = duplicateTestClusterServiceVersion.spec.install?.spec?.permissions?.[0];
+    if (permission) {
+      duplicateTestClusterServiceVersion.spec.install?.spec?.permissions?.push(permission);
+    }
     wrapper = shallow(
       <ClusterServiceVersionDetails
         obj={duplicateTestClusterServiceVersion}
@@ -416,17 +439,17 @@ describe(ClusterServiceVersionDetails.displayName, () => {
         }}
       />,
     );
-    expect(duplicateTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(2);
+    expect(duplicateTestClusterServiceVersion.spec.install?.spec?.permissions?.length).toEqual(2);
     expect(wrapper.findWhere((node) => node.text() === 'Operator ServiceAccounts').length).toEqual(
       1,
     );
     expect(
-      wrapper.find(`[data-service-account-name="${permission.serviceAccountName}"]`).length,
+      wrapper.find(`[data-service-account-name="${permission?.serviceAccountName}"]`).length,
     ).toEqual(1);
   });
 });
 
-describe(CSVSubscription.displayName, () => {
+describe(CSVSubscription.displayName || '', () => {
   let wrapper: ShallowWrapper<CSVSubscriptionProps>;
 
   it('renders `StatusBox` with correct props when Operator subscription does not exist', () => {
@@ -435,7 +458,7 @@ describe(CSVSubscription.displayName, () => {
         obj={testClusterServiceVersion}
         customData={{
           subscriptions: [],
-          subscription: undefined,
+          subscription: {} as SubscriptionKind,
           subscriptionsLoaded: true,
         }}
         packageManifests={[]}
@@ -445,7 +468,7 @@ describe(CSVSubscription.displayName, () => {
 
     expect(wrapper.find(StatusBox).props().EmptyMsg).toBeDefined();
     expect(wrapper.find(StatusBox).props().loaded).toBe(true);
-    expect(wrapper.find(StatusBox).props().data).toBeUndefined();
+    expect(wrapper.find(StatusBox).props().data).toEqual({});
   });
 
   it('renders `SubscriptionDetails` with correct props when Operator subscription exists', () => {
@@ -453,7 +476,7 @@ describe(CSVSubscription.displayName, () => {
       'olm.operatorNamespace': 'default',
     });
     const subscription = _.set(_.cloneDeep(testSubscription), 'status', {
-      installedCSV: obj.metadata.name,
+      installedCSV: obj.metadata?.name,
     });
 
     wrapper = shallow(
@@ -484,7 +507,7 @@ describe(CSVSubscription.displayName, () => {
       'olm.operatorNamespace': 'default',
     });
     const subscription = _.set(_.cloneDeep(testSubscription), 'status', {
-      installedCSV: obj.metadata.name,
+      installedCSV: obj.metadata?.name,
     });
     const otherPkg = _.set(
       _.cloneDeep(testPackageManifest),
@@ -512,7 +535,7 @@ describe(CSVSubscription.displayName, () => {
   });
 });
 
-describe(ClusterServiceVersionDetailsPage.displayName, () => {
+describe(ClusterServiceVersionDetailsPage.displayName || '', () => {
   let wrapper: ReactWrapper;
   let spyUseAccessReview;
 
@@ -546,40 +569,44 @@ describe(ClusterServiceVersionDetailsPage.displayName, () => {
 
   it('renders a `DetailsPage` with the correct subpages', () => {
     const detailsPage = wrapper.find(DetailsPage);
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].nameKey).toEqual(
+    expect(detailsPage.props().pagesFor?.(testClusterServiceVersion)?.[0]?.nameKey).toEqual(
       'public~Details',
     );
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].href).toEqual('');
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].component).toEqual(
+    expect(detailsPage.props().pagesFor?.(testClusterServiceVersion)?.[0]?.href).toEqual('');
+    expect(detailsPage.props().pagesFor?.(testClusterServiceVersion)?.[0]?.component).toEqual(
       ClusterServiceVersionDetails,
     );
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].nameKey).toEqual(
+    expect(detailsPage.props().pagesFor?.(testClusterServiceVersion)?.[1]?.nameKey).toEqual(
       `public~YAML`,
     );
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].href).toEqual('yaml');
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].nameKey).toEqual(
+    expect(detailsPage.props().pagesFor?.(testClusterServiceVersion)?.[1]?.href).toEqual('yaml');
+    expect(detailsPage.props().pagesFor?.(testClusterServiceVersion)?.[2]?.nameKey).toEqual(
       'olm~Subscription',
     );
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].href).toEqual('subscription');
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[3].nameKey).toEqual(
+    expect(detailsPage.props().pagesFor?.(testClusterServiceVersion)?.[2]?.href).toEqual(
+      'subscription',
+    );
+    expect(detailsPage.props().pagesFor?.(testClusterServiceVersion)?.[3]?.nameKey).toEqual(
       `public~Events`,
     );
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[3].href).toEqual('events');
+    expect(detailsPage.props().pagesFor?.(testClusterServiceVersion)?.[3]?.href).toEqual('events');
   });
 
   it('includes tab for each "owned" CRD', () => {
     const detailsPage = wrapper.find(DetailsPage);
 
     const csv = _.cloneDeep(testClusterServiceVersion);
-    csv.spec.customresourcedefinitions.owned = csv.spec.customresourcedefinitions.owned.concat([
-      { name: 'e.example.com', kind: 'E', version: 'v1alpha1', displayName: 'E' },
-    ]);
+    csv.spec.customresourcedefinitions = csv.spec.customresourcedefinitions || { owned: [] };
+    csv.spec.customresourcedefinitions.owned = (
+      csv.spec.customresourcedefinitions.owned || []
+    ).concat([{ name: 'e.example.com', kind: 'E', version: 'v1alpha1', displayName: 'E' }]);
 
-    expect(detailsPage.props().pagesFor(csv)[4].nameKey).toEqual('olm~All instances');
-    expect(detailsPage.props().pagesFor(csv)[4].href).toEqual('instances');
-    csv.spec.customresourcedefinitions.owned.forEach((desc, i) => {
-      expect(detailsPage.props().pagesFor(csv)[5 + i].name).toEqual(desc.displayName);
-      expect(detailsPage.props().pagesFor(csv)[5 + i].href).toEqual(referenceForProvidedAPI(desc));
+    const pagesFor = detailsPage.props().pagesFor?.(csv);
+    expect(pagesFor?.[4]?.nameKey).toEqual('olm~All instances');
+    expect(pagesFor?.[4]?.href).toEqual('instances');
+    csv.spec.customresourcedefinitions?.owned?.forEach?.((desc, i) => {
+      expect(pagesFor?.[5 + i]?.name).toEqual(desc.displayName);
+      expect(pagesFor?.[5 + i]?.href).toEqual(referenceForProvidedAPI(desc));
     });
   });
 
@@ -589,8 +616,8 @@ describe(ClusterServiceVersionDetailsPage.displayName, () => {
     expect(
       detailsPage
         .props()
-        .pagesFor(testClusterServiceVersion)
-        .some((p) => p.name === 'All Instances'),
+        .pagesFor?.(testClusterServiceVersion)
+        ?.some((p) => p.name === 'All Instances'),
     ).toBe(false);
   });
 });

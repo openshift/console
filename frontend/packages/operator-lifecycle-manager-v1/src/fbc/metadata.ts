@@ -1,3 +1,4 @@
+// This file will be removed as part of https://issues.redhat.com//browse/CONSOLE-4668
 /* eslint-disable no-console */
 import * as _ from 'lodash';
 import {
@@ -139,7 +140,7 @@ const aggregateMetadata = (
   csvMetadata: CSVMetadata,
   packageMetadata?: PackageMetadata,
 ): PackageMetadata => {
-  if (!csvMetadata) return packageMetadata;
+  if (!csvMetadata) return packageMetadata ?? {};
   return Object.keys(csvMetadata)
     .sort() // ensure annotations are handled first
     .reduce((acc, key) => {
