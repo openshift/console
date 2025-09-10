@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import {
   Accordion,
   AccordionContent,
@@ -40,7 +40,7 @@ import {
   AsyncComponent,
 } from './utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import confirmNavUnpinModal from '@console/app/src/components/nav/confirmNavUnpinModal';
+import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {
@@ -51,7 +51,7 @@ import {
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
-  const { plural } = useParams();
+  const { plural } = useParams<{ plural?: string }>();
   const [kindObj] = useK8sModel(kind || plural);
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
@@ -95,7 +95,8 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const { noProjectsAvailable } = props;
   const { t } = useTranslation();
-  const { ns: namespace } = useParams();
+  const { ns: namespace } = useParams<{ ns?: string }>();
+  const confirmNavUnpinModal = useConfirmNavUnpinModal(pinnedResources, setPinnedResources);
   // Set state variables from the URL
   React.useEffect(() => {
     let kind: string, q: string, name: string;
@@ -157,7 +158,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     e.stopPropagation();
     const index = pinnedResources.indexOf(resource);
     if (index >= 0) {
-      confirmNavUnpinModal(resource, pinnedResources, setPinnedResources);
+      confirmNavUnpinModal(resource);
       return;
     }
     setPinnedResources([resource, ...pinnedResources]);

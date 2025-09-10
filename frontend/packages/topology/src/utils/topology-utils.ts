@@ -183,9 +183,13 @@ export const createTopologyResourceConnection = (
   return createResourceConnection(source, target, replaceTarget);
 };
 
-export const removeTopologyResourceConnection = (edge: Edge): Promise<any> => {
-  const source = getResource(edge.getSource());
-  const target = getResource(edge.getTarget());
+export const removeTopologyResourceConnection = (
+  edge: Edge,
+  sourceResource?: K8sResourceKind,
+  targetResource?: K8sResourceKind,
+): Promise<any> => {
+  const source = sourceResource || getResource(edge.getSource());
+  const target = targetResource || getResource(edge.getTarget());
 
   if (!source || !target) {
     return Promise.reject();
