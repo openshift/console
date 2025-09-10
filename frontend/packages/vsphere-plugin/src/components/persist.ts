@@ -414,7 +414,6 @@ const getPersistInfrastructureOp = async (
   vCenterDomainCfg.topology.computeCluster = `/${values.datacenter}/host/${values.vCenterCluster}`;
   vCenterDomainCfg.topology.datacenter = values.datacenter;
   vCenterDomainCfg.topology.datastore = values.defaultDatastore;
-  vCenterDomainCfg.topology.networks = [values.vCenterCluster];
   vCenterDomainCfg.topology.folder = values.folder;
   vCenterDomainCfg.topology.resourcePool = `/${values.datacenter}/host/${values.vCenterCluster}/Resources`;
 
