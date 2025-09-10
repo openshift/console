@@ -2,7 +2,7 @@ import {
   truncateMiddle,
   shouldTruncate,
   TruncateOptions,
-} from '../../../public/components/utils/truncate-middle';
+} from '../../../components/utils/truncate-middle';
 
 const testTruncateText = 'ThisTextShouldBeTruncatedByDefault';
 
