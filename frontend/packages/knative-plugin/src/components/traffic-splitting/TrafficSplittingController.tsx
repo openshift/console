@@ -32,8 +32,8 @@ type TrafficSplittingControllerProps = {
 };
 
 const TrafficSplittingController: React.FC<TrafficSplittingControllerProps> = (props) => {
-  const { metadata: { namespace } = { namespace: '' } as any } = props.obj;
-  const resources = knativeServingResourcesTrafficSplitting(namespace);
+  const { metadata: { namespace } = { namespace: '' } } = props.obj;
+  const resources = knativeServingResourcesTrafficSplitting(namespace ?? '');
 
   return (
     <Firehose resources={resources}>

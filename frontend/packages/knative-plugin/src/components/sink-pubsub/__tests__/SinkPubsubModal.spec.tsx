@@ -25,7 +25,7 @@ jest.mock('react-i18next', () => ({
 }));
 
 describe('SinkPubsubModal', () => {
-  let formProps: any;
+  let formProps;
   const formValues = {
     ref: {
       apiVersion: 'serving.knative.dev/v1',
@@ -48,7 +48,7 @@ describe('SinkPubsubModal', () => {
       isSubmitting: false,
       status: { error: null },
       cancel: jest.fn(),
-    } as undefined;
+    };
   });
 
   it('should render without crashing', () => {

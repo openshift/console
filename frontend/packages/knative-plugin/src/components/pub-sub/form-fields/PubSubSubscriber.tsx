@@ -90,9 +90,7 @@ const PubSubSubscriber: React.FC<PubSubSubscriberProps> = ({ autoSelect = true, 
         showBadge
         autocompleteFilter={autocompleteFilter}
         onChange={onSubscriberChange}
-        customResourceKey={(key, resource) =>
-          craftResourceKey(key ?? '', resource ?? ({} as K8sResourceKind)) ?? ''
-        }
+        customResourceKey={(key, resource) => craftResourceKey(key, resource)}
         disabled={!!resourceAlert}
         resourceFilter={resourceFilter}
         onLoad={handleOnLoad}

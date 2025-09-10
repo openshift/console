@@ -296,7 +296,7 @@ export const kafkaSourceCreateConnectorCallback = (
 ): Promise<React.ReactElement[] | null> => {
   const createConnectors = target.getGraph()?.getData()?.createConnectorExtensions;
   if (source === target || isGraph(target) || !createConnectors) {
-    return null as any;
+    return Promise.resolve(null);
   }
   const relationshipProviders = target.getGraph()?.getData()?.relationshipProviderExtensions;
   const curRelProvider = relationshipProviders?.find(({ uid }) => dropHints?.includes(uid ?? ''));
@@ -309,5 +309,5 @@ export const kafkaSourceCreateConnectorCallback = (
     return creator(dropHints, source, target)(source, target);
   }
 
-  return null as any;
+  return Promise.resolve(null);
 };

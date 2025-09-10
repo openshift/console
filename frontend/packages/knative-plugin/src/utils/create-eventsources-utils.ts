@@ -90,7 +90,7 @@ export const isSecretKeyRefPresent = (dataObj: {
   secretKeyRef: { name: string; key: string };
 }): boolean => !!(dataObj?.secretKeyRef?.name || dataObj?.secretKeyRef?.key);
 
-export const getKafkaSourceResource = (formData: any): K8sResourceKind => {
+export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
   const baseResource = getEventSourcesDepResource(formData);
   const { net } = baseResource.spec ?? {};
   if (baseResource.spec) {
@@ -332,7 +332,7 @@ export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {
         : []),
       ...(kafka?.status?.bootstrapServerHost ? [kafka.status.bootstrapServerHost] : []),
     ];
-    acc.push(...(listners as never[]));
+    acc.push(...listners);
     return acc;
   }, []);
   return servers;
@@ -403,7 +403,7 @@ export const sanitizeSourceToForm = (
     },
   };
   return formDataValues.type === EventSources.KafkaSource
-    ? sanitizeKafkaSourceResource((formData as unknown) as EventSourceFormData)
+    ? sanitizeKafkaSourceResource(formData)
     : formData;
 };
 

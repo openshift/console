@@ -95,6 +95,6 @@ export const useEventSourceStatus = (
     isValidSource: Boolean(sourceStatus.isValidSource),
     createSourceAccessLoading,
     createSourceAccess,
-    kamelet: kamelet as K8sResourceKind,
+    kamelet: kamelet || undefined,
   };
 };

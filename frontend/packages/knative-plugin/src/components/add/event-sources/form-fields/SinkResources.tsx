@@ -108,7 +108,7 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
         onChange={onChange}
         autocompleteFilter={autocompleteFilter}
         autoSelect
-        customResourceKey={craftResourceKey as any}
+        customResourceKey={craftResourceKey}
         resourceFilter={resourceFilter}
         onLoad={handleOnLoad}
       />

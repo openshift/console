@@ -132,7 +132,7 @@ export const knatifyResources = async (
   const domainMappingResources = await getDomainMappingRequests(
     formData,
     knDeploymentResource,
-    dryRun ?? false,
+    dryRun,
   );
 
   return Promise.all([

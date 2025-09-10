@@ -29,7 +29,7 @@ const TestFunction: React.FC<TestFunctionProps> = ({ service, cancel, close }) =
     },
     response: {
       status: '',
-      statusCode: 0,
+      statusCode: null,
       header: {},
       body: '',
     },

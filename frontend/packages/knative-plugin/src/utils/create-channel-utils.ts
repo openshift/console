@@ -70,7 +70,7 @@ export const useChannelList = (namespace: string): ChannelListProps => {
             return acc;
           }, []);
 
-          setAccessData({ loaded: true, channelList: channelList as never[] });
+          setAccessData({ loaded: true, channelList });
         })
         .catch((err) =>
           // eslint-disable-next-line no-console

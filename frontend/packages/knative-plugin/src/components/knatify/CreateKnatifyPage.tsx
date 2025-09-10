@@ -111,7 +111,7 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
       resourceActions
         .then(() => {
           helpers.setStatus({ submitError: '' });
-          handleRedirect(namespace ?? '', perspective ?? '', perspectiveExtensions ?? ([] as any));
+          handleRedirect(namespace ?? '', perspective ?? '', perspectiveExtensions ?? []);
         })
         .catch((err) => {
           helpers.setStatus({ submitError: err.message });

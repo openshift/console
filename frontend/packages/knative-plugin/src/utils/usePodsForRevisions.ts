@@ -56,7 +56,7 @@ export const usePodsForRevisions = (
         Object.keys(updatedResources).length > 0 &&
         Object.keys(updatedResources).every((key) => updatedResources[key].loaded)
       ) {
-        const revisionsPods = revisions.reduce((acc, uid) => {
+        const revisionsPods = revisions.reduce((acc: PodControllerOverviewItem[], uid) => {
           const associatedDeployment = _.filter(
             updatedResources?.deployments?.data,
             ({ metadata: { ownerReferences } }) =>
@@ -71,7 +71,7 @@ export const usePodsForRevisions = (
               apiVersion: apiVersionForModel(DeploymentModel),
               kind: DeploymentModel.kind,
             };
-            acc.push(...(getReplicaSetsForResource(depObj, updatedResources) as never[]));
+            acc.push(...getReplicaSetsForResource(depObj, updatedResources));
           }
           return acc;
         }, []);

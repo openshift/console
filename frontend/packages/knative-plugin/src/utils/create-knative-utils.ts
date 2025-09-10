@@ -77,7 +77,7 @@ export const getKnativeServiceDepResource = (
       limitUnit: memoryLimitUnit,
     },
   } = limits;
-  const defaultLabel = getAppLabels({
+  const { app, ...defaultLabel } = getAppLabels({
     name,
     applicationName,
     imageStreamName,
@@ -85,7 +85,6 @@ export const getKnativeServiceDepResource = (
     namespace: imageNamespace,
     runtimeIcon,
   });
-  delete (defaultLabel as any)?.app;
   if (fileUpload) {
     const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');
     if (jArgsIndex !== -1) {
@@ -300,7 +299,7 @@ export const getDomainMappingResources = (
 export const getDomainMappingRequests = async (
   formData: GitImportFormData | DeployImageFormData | UploadJarFormData,
   knativeSvcResource: K8sResourceKind,
-  dryRun: boolean,
+  dryRun: boolean = false,
 ): Promise<Promise<K8sResourceKind>[]> => {
   const {
     serverless: { domainMapping: selectedDomainMapping = [] } = { domainMapping: [] },

@@ -13,7 +13,7 @@ import {
 interface EventSourcetData {
   loaded: boolean;
   eventSourceModels: K8sKind[];
-  eventSourceChannels?: K8sKind[];
+  eventSourceChannels: K8sKind[];
 }
 
 const eventSourceData: EventSourcetData = {
@@ -36,7 +36,7 @@ export const fetchEventSourcesCrd = async () => {
     const resolvedRes = await res.json();
     const allModels = _.reduce(
       resolvedRes?.items,
-      (accumulator, crd) => {
+      (accumulator: K8sKind[], crd) => {
         const {
           metadata: { labels },
           spec: {
@@ -63,14 +63,14 @@ export const fetchEventSourcesCrd = async () => {
           const sourceIndex = _.findIndex(accumulator, ['kind', kind]);
           // added check as some sources has multiple entries with deprecated APIgroups
           if (sourceIndex === -1) {
-            accumulator.push(sourceModel as never);
+            accumulator.push(sourceModel);
           } else if (!labels?.['eventing.knative.dev/deprecated'] === true) {
-            accumulator.splice(sourceIndex, 1, sourceModel as never);
+            accumulator.splice(sourceIndex, 1, sourceModel);
           }
         }
         return accumulator;
       },
-      [],
+      [] as K8sKind[],
     );
 
     eventSourceData.eventSourceModels = allModels;
@@ -85,17 +85,22 @@ export const fetchEventSourcesCrd = async () => {
 };
 
 export const useEventSourceModels = (): EventSourcetData => {
-  const [modelsData, setModelsData] = useSafetyFirst({ loaded: false, eventSourceModels: [] });
+  const [modelsData, setModelsData] = useSafetyFirst<EventSourcetData>({
+    loaded: false,
+    eventSourceModels: [],
+    eventSourceChannels: [],
+  });
   useEffect(() => {
     if (eventSourceData.eventSourceModels.length === 0) {
       fetchEventSourcesCrd()
         .then((data) => {
-          setModelsData({ loaded: true, eventSourceModels: data as never[] });
+          setModelsData({ loaded: true, eventSourceModels: data, eventSourceChannels: [] });
         })
         .catch((err) => {
           setModelsData({
             loaded: true,
-            eventSourceModels: eventSourceData.eventSourceModels as never[],
+            eventSourceModels: eventSourceData.eventSourceModels,
+            eventSourceChannels: [],
           });
           // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic event sources', err);
@@ -103,7 +108,8 @@ export const useEventSourceModels = (): EventSourcetData => {
     } else {
       setModelsData({
         loaded: true,
-        eventSourceModels: eventSourceData.eventSourceModels as never[],
+        eventSourceModels: eventSourceData.eventSourceModels,
+        eventSourceChannels: [],
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -171,9 +177,9 @@ export const fetchChannelsCrd = async () => {
     const res = await coFetch(url);
     const resolvedRes = await res.json();
 
-    const allChannelModels = _.reduce(
+    const allChannelModels: K8sKind[] = _.reduce(
       resolvedRes?.items,
-      (accumulator, crd) => {
+      (accumulator: K8sKind[], crd) => {
         const {
           spec: {
             group,
@@ -182,7 +188,7 @@ export const fetchChannelsCrd = async () => {
         } = crd;
         const crdLatestVersion = getLatestVersionForCRD(crd);
         const labelPlural = getLabelPlural(kind, plural);
-        const sourceModel = {
+        const sourceModel: K8sKind = {
           apiGroup: group,
           apiVersion: crdLatestVersion,
           kind,
@@ -195,7 +201,7 @@ export const fetchChannelsCrd = async () => {
           crd: true,
           color: knativeEventingColor.value,
         };
-        accumulator.push(sourceModel as never);
+        accumulator.push(sourceModel);
         return accumulator;
       },
       [],
@@ -209,17 +215,22 @@ export const fetchChannelsCrd = async () => {
 };
 
 export const useChannelModels = () => {
-  const [modelsData, setModelsData] = useSafetyFirst({ loaded: false, eventSourceChannels: [] });
+  const [modelsData, setModelsData] = useSafetyFirst<EventSourcetData>({
+    loaded: false,
+    eventSourceModels: [],
+    eventSourceChannels: [],
+  });
   useEffect(() => {
     if (eventSourceData.eventSourceChannels?.length === 0) {
       fetchChannelsCrd()
         .then((data) => {
-          setModelsData({ loaded: true, eventSourceChannels: data as never[] });
+          setModelsData({ loaded: true, eventSourceModels: [], eventSourceChannels: data });
         })
         .catch((err) => {
           setModelsData({
             loaded: true,
-            eventSourceChannels: eventSourceData.eventSourceChannels as never[],
+            eventSourceModels: [],
+            eventSourceChannels: eventSourceData.eventSourceChannels ?? [],
           });
           // eslint-disable-next-line no-console
           console.warn('Error fetching CRDs for dynamic event sources', err);
@@ -227,7 +238,8 @@ export const useChannelModels = () => {
     } else {
       setModelsData({
         loaded: true,
-        eventSourceChannels: eventSourceData.eventSourceChannels as never[],
+        eventSourceModels: [],
+        eventSourceChannels: eventSourceData.eventSourceChannels ?? [],
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

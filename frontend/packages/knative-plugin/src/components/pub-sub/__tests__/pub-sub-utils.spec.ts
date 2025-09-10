@@ -16,12 +16,12 @@ describe('pub-sub-utils', () => {
   const service = { ...sampleServices.data[0], apiVersion: 'core/v1' };
 
   describe('craftResourceKey', () => {
-    it('should return undefined if the resource is not having kind or apiversion', () => {
-      expect(craftResourceKey('test', { metadata: { name: 'test' } })).toBeUndefined();
+    it('should return the key if the resource is not having kind or apiversion', () => {
+      expect(craftResourceKey('test', { metadata: { name: 'test' } })).toBe('test');
     });
 
-    it('should return undefined if the name is not passed', () => {
-      expect(craftResourceKey('', { ...service, metadata: { name: '' } })).toBeUndefined();
+    it('should return the key if the name is not passed', () => {
+      expect(craftResourceKey('', { ...service, metadata: { name: '' } })).toBe('');
     });
 
     it('should return a valid resource key', () => {
@@ -71,8 +71,8 @@ describe('pub-sub-utils', () => {
 
     it('should return empty string if invalid argument is passed', () => {
       expect(getResourceNameFromKey('')).toBe('');
-      expect(getResourceNameFromKey(null as any)).toBe('');
-      expect(getResourceNameFromKey(undefined as any)).toBe('');
+      expect(getResourceNameFromKey(null)).toBe('');
+      expect(getResourceNameFromKey(undefined)).toBe('');
     });
   });
 });

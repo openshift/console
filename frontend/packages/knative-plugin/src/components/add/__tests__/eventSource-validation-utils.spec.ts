@@ -25,7 +25,7 @@ describe('Event Source ValidationUtils', () => {
         key: '',
       };
       if (mockData.formData.data) {
-        mockData.formData.data.ApiServerSource.resources[0] = { apiVersion: '', kind: '' } as any;
+        mockData.formData.data.ApiServerSource.resources[0] = { apiVersion: '', kind: '' };
       }
       await eventSourceValidationSchema(t)
         .resolve({ value: mockData })
@@ -54,7 +54,7 @@ describe('Event Source ValidationUtils', () => {
       const defaultEventingData = getDefaultEventingData(EventSources.KafkaSource);
       const mockData = _.cloneDeep(defaultEventingData);
       if (mockData.formData.data) {
-        mockData.formData.data.KafkaSource.bootstrapServers = [] as any;
+        mockData.formData.data.KafkaSource.bootstrapServers = [];
       }
       await eventSourceValidationSchema(t)
         .resolve({ value: mockData })

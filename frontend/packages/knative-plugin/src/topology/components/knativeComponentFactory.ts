@@ -126,7 +126,7 @@ export const getKnativeEventingComponentFactory = (
         ),
       );
     case TYPE_EVENT_PUB_SUB:
-      return withCreateConnector(createConnectorCallback(), CreateConnector as any, '', {
+      return withCreateConnector(createConnectorCallback(), CreateConnector, '', {
         dragOperation,
       })(
         withEditReviewAccess('update')(
@@ -154,7 +154,7 @@ export const getKnativeEventingComponentFactory = (
     case TYPE_EVENT_SINK_LINK:
       return EventSinkLink;
     case TYPE_EVENT_SOURCE_KAFKA:
-      return withCreateConnector(kafkaSourceCreateConnectorCallback, CreateConnector as any, '', {
+      return withCreateConnector(kafkaSourceCreateConnectorCallback, CreateConnector, '', {
         dragOperation: dragOperationKafka,
       })(
         withEditReviewAccess('patch')(
@@ -168,7 +168,7 @@ export const getKnativeEventingComponentFactory = (
         ),
       );
     case TYPE_KAFKA_CONNECTION_LINK:
-      return withTargetDrag(eventSourceKafkaLinkDragSourceSpec())(BaseEdge as any);
+      return withTargetDrag(eventSourceKafkaLinkDragSourceSpec())(BaseEdge);
     case TYPE_EVENT_PUB_SUB_LINK:
       return withContextMenu(contextMenuActions)(
         withTargetDrag(eventingPubSubLinkDragSourceSpec())(EventingPubSubLink),

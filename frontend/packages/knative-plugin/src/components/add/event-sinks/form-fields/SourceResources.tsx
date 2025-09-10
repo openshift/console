@@ -90,7 +90,7 @@ const SourceResources: React.FC<SourceResourcesProps> = ({ namespace, isMoveSink
         onChange={onChange}
         autocompleteFilter={autocompleteFilter}
         autoSelect
-        customResourceKey={craftResourceKey as any}
+        customResourceKey={(key, resource) => craftResourceKey(key, resource)}
         resourceFilter={resourceFilter}
         onLoad={handleOnLoad}
       />

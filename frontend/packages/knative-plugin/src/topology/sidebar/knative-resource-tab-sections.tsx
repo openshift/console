@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { JSXElementConstructor, ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
@@ -59,22 +59,25 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
 
 export const useKnativeSidepanelEventSinkSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
-): ExtensionHookResult<ReactElement<any, string | JSXElementConstructor<any>> | undefined> => {
+): ExtensionHookResult<ReactElement | undefined> => {
   if (element.getType() === NodeType.EventSink) {
     const resource = getResource(element);
     const section = resource ? (
       <TopologySideBarTabSection>
         <EventSinkSourceSection resource={resource} />
       </TopologySideBarTabSection>
-    ) : null;
-    return [section, true, undefined] as ExtensionHookResult<
-      ReactElement<any, string | JSXElementConstructor<any>> | undefined
-    >;
+    ) : undefined;
+    return [section, true, undefined];
   }
   return [undefined, true, undefined];
 };
 
-export const usePodsForEventSink = (resource: K8sResourceKind, data: any) => {
+interface EventSinkData {
+  revisions?: K8sResourceKind[];
+  associatedDeployment?: K8sResourceKind;
+}
+
+export const usePodsForEventSink = (resource: K8sResourceKind, data: EventSinkData) => {
   const { t } = useTranslation();
   const { revisions, associatedDeployment } = data;
   const { pods, loaded, loadError } = usePodsForRevisions(
@@ -122,7 +125,11 @@ export const usePodsForEventSink = (resource: K8sResourceKind, data: any) => {
   ]);
 };
 
-export const usePodsForEventSource = (resource: K8sResourceKind, data) => {
+interface EventSourceData {
+  associatedDeployment?: K8sResourceKind;
+}
+
+export const usePodsForEventSource = (resource: K8sResourceKind, data: EventSourceData) => {
   const { associatedDeployment } = data;
   const {
     podData: podsDeployment,

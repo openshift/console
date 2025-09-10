@@ -55,8 +55,8 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
     group: resourceModel?.apiGroup,
     verb: 'patch',
     resource: resourceModel?.plural,
-    name: resourceObj?.metadata.name,
-    namespace: resourceObj?.metadata.namespace,
+    name: resourceObj?.metadata?.name,
+    namespace: resourceObj?.metadata?.namespace,
   });
 
   return (

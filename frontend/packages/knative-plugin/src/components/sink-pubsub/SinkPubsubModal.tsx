@@ -77,7 +77,7 @@ const SinkPubsubModal: React.FC<Props> = ({
             placeholder={t('knative-plugin~Select a sink')}
             showBadge
             autocompleteFilter={autocompleteFilter}
-            customResourceKey={(key, resource) => craftResourceKey(key, resource) ?? ''}
+            customResourceKey={(key, resource) => craftResourceKey(key, resource)}
             onChange={onSinkChange}
             autoSelect
             selectedKey={values?.ref?.name}

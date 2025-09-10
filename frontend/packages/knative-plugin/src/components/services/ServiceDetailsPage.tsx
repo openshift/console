@@ -112,7 +112,7 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
   const { t } = useTranslation();
   const serviceTypeValue = React.useContext(KnativeServiceTypeContext);
   const { kindObj } = props;
-  const params = useParams() as any;
+  const params = useParams() || {};
   const location = useLocation();
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const pages = [
@@ -161,7 +161,7 @@ const ServiceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
     kindObj ?? ({} as K8sModel),
     location,
     params,
-    serviceTypeValue === ServiceTypeValue.Function ? 'functions' : 'serving',
+    serviceTypeValue === ServiceTypeValue.Function ? 'functions' : ('serving' as string),
     serverlessTab(kindObj?.kind ?? '') || undefined,
     serviceTypeValue === ServiceTypeValue.Function ? t('knative-plugin~Functions') : undefined,
     serviceTypeValue === ServiceTypeValue.Function ? true : isAdminPerspective,
