@@ -3,10 +3,6 @@
   "Configure default timeout and image of web terminal operator.": "Configurez le délai d’expiration et l’image par défaut de l’opérateur du terminal Web.",
   "DevWorkspaceTemplate": "Modèle d’espace de travail de développement",
   "DevWorkspaceTemplates": "Modèles d’espace de travail de développement",
-  "Close terminal?": "Fermer le terminal ?",
-  "This will close the terminal session. Content in the terminal will not be restored on next session.": "Cette action aura pour effet de fermer la session du terminal. Le contenu du terminal ne sera pas restauré lors de la prochaine session.",
-  "Yes": "Oui",
-  "No": "Non",
   "OpenShift command line terminal": "Terminal de ligne de commande OpenShift",
   "Open terminal in new tab": "Ouvrir le terminal dans un nouvel onglet",
   "Minimize terminal": "Réduire le terminal",
@@ -20,9 +16,9 @@
   "OpenShift command line": "Ligne de commande OpenShift",
   "Command line terminal": "Terminal de ligne de commande",
   "Failed to connect to your OpenShift command line terminal": "Échec de la connexion à votre terminal de ligne de commande OpenShift",
-  "Terminal {{number}}": "Terminal {{number}}",
-  "Close terminal tab": "Fermer l’onglet du terminal",
   "Add new tab": "Ajouter un nouvel onglet",
+  "Close terminal tab": "Fermer l’onglet du terminal",
+  "Terminal {{number}}": "Terminal {{number}}",
   "Project": "Projet",
   "This Project will be used to initialize your command line terminal": "Ce projet sera utilisé pour initialiser votre terminal de ligne de commande.",
   "Initialize terminal": "Initialiser le terminal",
@@ -46,5 +42,9 @@
   "Number of {{sizeUnit}}": "Nombre de {{sizeUnit}}",
   "Mark the configuration resource as \"Unmanaged\" to keep the default timeout even after operator restart or update.": "Marquez la ressource de configuration comme étant « Non gérée » pour conserver le délai d’expiration par défaut même après le redémarrage ou la mise à jour de l’opérateur.",
   "Mark the configuration resource as \"Unmanaged\" to keep the default image even after operator restart or update.": "Marquez la ressource de configuration comme étant « Non gérée » pour conserver l’image par défaut même après le redémarrage ou la mise à jour de l’opérateur.",
-  "Save": "Enregistrer"
+  "Save": "Enregistrer",
+  "Close terminal?": "Fermer le terminal ?",
+  "This will close the terminal session. Content in the terminal will not be restored on next session.": "Cette action aura pour effet de fermer la session du terminal. Le contenu du terminal ne sera pas restauré lors de la prochaine session.",
+  "Yes": "Oui",
+  "No": "Non"
 }

@@ -90,7 +90,6 @@
   "View all samples ({{itemCount, number}})": "모든 샘플보기 ({{itemCount, number}})",
   "Add to Project": "프로젝트에 추가",
   "Quick search button": "빠른 검색 버튼",
-  "Traffic connector": "트래픽 커넥터",
   "Connections": "연결",
   "Secret": "시크릿",
   "Kiali link": "Kiali 링크",
