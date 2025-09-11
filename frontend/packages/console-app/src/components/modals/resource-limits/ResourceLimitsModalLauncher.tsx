@@ -46,7 +46,7 @@ const ResourceLimitsModalLauncher: FC<ResourceLimitsModalLauncherProps> = (props
 
   const currentValues = {
     limits: getLimitsDataFromResource(props.resource),
-    container: props.resource?.spec?.template?.spec?.containers?.[0]?.name,
+    container: props.resource?.spec?.template?.spec?.containers?.[0]?.name ?? '',
   };
 
   return (

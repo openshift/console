@@ -22,7 +22,7 @@ export const PluginNavItem: FC<PluginNavItemProps> = ({ extension }) => {
       <>
         <NavSection
           id={extension.properties.id}
-          name={extension.properties.name || ''}
+          name={extension.properties.name ?? ''}
           dataAttributes={extension.properties.dataAttributes}
         />
         {extension.properties.id === 'home' && activePerspective === 'admin' && (
