@@ -1,7 +1,7 @@
 {
   "Vulnerabilities": "취약점",
   "Image Manifest Vulnerabilities details": "이미지 매니페스트 취약점 정보",
-  "Registry": "레지스트리",
+  "Registry": "Registry",
   "Manifest": "매니페스트",
   "Affected Pods": "영향을 받는 Pod",
   "Image name": "이미지 이름",

@@ -3,10 +3,6 @@
   "Configure default timeout and image of web terminal operator.": "Configure el tiempo de espera predeterminado y la imagen del operador del terminal web.",
   "DevWorkspaceTemplate": "DevWorkspaceTemplate",
   "DevWorkspaceTemplates": "DevWorkspaceTemplates",
-  "Close terminal?": "¿Cerrar terminal?",
-  "This will close the terminal session. Content in the terminal will not be restored on next session.": "Esto cerrará la sesión del terminal. El contenido del terminal no se restaurará en la próxima sesión.",
-  "Yes": "Sí",
-  "No": "No",
   "OpenShift command line terminal": "Terminal de línea de comando OpenShift",
   "Open terminal in new tab": "Abrir terminal en una nueva pestaña",
   "Minimize terminal": "Minimizar terminal",
@@ -20,9 +16,9 @@
   "OpenShift command line": "Línea de comando OpenShift",
   "Command line terminal": "Terminal de línea de comando",
   "Failed to connect to your OpenShift command line terminal": "No se pudo conectar a su terminal de línea de comando OpenShift",
-  "Terminal {{number}}": "Terminal {{number}}",
-  "Close terminal tab": "Cerrar pestaña de terminal",
   "Add new tab": "Agregar nueva pestaña",
+  "Close terminal tab": "Cerrar pestaña de terminal",
+  "Terminal {{number}}": "Terminal {{number}}",
   "Project": "Proyecto",
   "This Project will be used to initialize your command line terminal": "Este proyecto se utilizará para inicializar su terminal de línea de comando",
   "Initialize terminal": "Inicializar terminal",
@@ -46,5 +42,9 @@
   "Number of {{sizeUnit}}": "Número de {{sizeUnit}}",
   "Mark the configuration resource as \"Unmanaged\" to keep the default timeout even after operator restart or update.": "Marque el recurso de configuración como \"No administrado\" para mantener el tiempo de espera predeterminado incluso después de reiniciar o actualizar el operador.",
   "Mark the configuration resource as \"Unmanaged\" to keep the default image even after operator restart or update.": "Marque el recurso de configuración como \"No administrado\" para mantener la imagen predeterminada incluso después de que el operador se reinicie o se actualice.",
-  "Save": "Guardar"
+  "Save": "Guardar",
+  "Close terminal?": "¿Cerrar terminal?",
+  "This will close the terminal session. Content in the terminal will not be restored on next session.": "Esto cerrará la sesión del terminal. El contenido del terminal no se restaurará en la próxima sesión.",
+  "Yes": "Sí",
+  "No": "No"
 }

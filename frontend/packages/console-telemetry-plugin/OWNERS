@@ -1,17 +1,2 @@
-reviewers:
-  - christoph-jerolimov
-  - lokanandaprabhu
-  - vikram-raj
-approvers:
-  - christoph-jerolimov
-  - debsmita1
-  - divyanshiGupta
-  - invincibleJai
-  - karthikjeeyar
-  - lokanandaprabhu
-  - lucifergene
-  - rohitkrai03
-  - sahil143
-  - vikram-raj
 labels:
   - component/telemetry

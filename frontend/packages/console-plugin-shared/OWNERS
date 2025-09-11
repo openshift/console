@@ -1,12 +1,2 @@
-reviewers:
-  - spadgett
-  - vojtechszocs
-  - mareklibra
-  - rawagner
-approvers:
-  - spadgett
-  - vojtechszocs
-  - mareklibra
-  - rawagner
 labels:
   component/plugin-shared

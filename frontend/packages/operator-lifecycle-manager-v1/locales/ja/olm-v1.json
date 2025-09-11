@@ -1,5 +1,4 @@
 {
-  "Ecosystem": "エコシステム",
   "Extension Catalog": "エクステンションカタログ",
   "Installed Extensions": "インストール済みエクステンション",
   "Extension Catalog Items": "エクステンションカタログ項目",
@@ -8,5 +7,5 @@
   "Capability level": "機能レベル",
   "Infrastructure features": "インフラストラクチャー機能",
   "Valid subscription": "有効なサブスクリプション",
-  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can purchase commercial software through <2>Red Hat Marketplace</2>. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Red Hat によってキュレーションされた、Kubernetes コミュニティーおよび Red Hat パートナーによる Operator をご覧ください。商用ソフトウェアの購入は、<2>Red Hat Marketplace</2> をご利用ください。クラスターに Operator をインストールして、開発者にオプションのアドオンと共有サービスを提供できます。"
+  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Kubernetes コミュニティーと Red Hat パートナーが提供する Operator を、Red Hat が厳選してご紹介しています。クラスターに Operator をインストールすることで、開発者にオプションのアドオンや共有サービスを提供できます。"
 }

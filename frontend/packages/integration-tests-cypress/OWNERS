@@ -1,12 +1,2 @@
-reviewers:
-  - rhamilto
-  - TheRealJon
-  - jhadvig
-  - cajieh
-approvers:
-  - rhamilto
-  - TheRealJon
-  - jhadvig
-  - cajieh
 labels:
   - kind/cypress

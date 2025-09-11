@@ -10,6 +10,7 @@ import { detailsPage } from '../../../views/details-page';
 import { listPage } from '../../../views/list-page';
 import { modal } from '../../../views/modal';
 import { nav } from '../../../views/nav';
+import { warningModal } from '../../../views/warning-modal';
 import * as yamlEditor from '../../../views/yaml-editor';
 
 describe('Alertmanager', () => {
@@ -75,8 +76,8 @@ describe('Alertmanager', () => {
     alertmanager.save();
     alertmanager.validateCreation(receiverName, receiverType, label);
     listPage.rows.clickKebabAction(receiverName, 'Delete Receiver');
-    modal.submit();
-    modal.shouldBeClosed();
+    warningModal.confirm('AlertmanagerDeleteReceiverConfirmation');
+    warningModal.shouldBeClosed('AlertmanagerDeleteReceiverConfirmation');
     listPage.rows.shouldNotExist(receiverName);
   });
 

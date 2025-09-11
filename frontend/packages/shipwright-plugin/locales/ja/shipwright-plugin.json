@@ -45,7 +45,7 @@
   "Select a Secret": "シークレットの選択",
   "Push Secret": "シークレットのプッシュ",
   "Create new Secret": "新規シークレットの作成",
-  "No Secret": "シークレットなし",
+  "No Secret": "シークレットがありません",
   "Secret with credentials for pushing build": "ビルドのプッシュに使用する認証情報を含むシークレット",
   "Select a PVC": "PVC の選択",
   "Required": "必須",

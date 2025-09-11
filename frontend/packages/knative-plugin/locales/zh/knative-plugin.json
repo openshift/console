@@ -26,7 +26,6 @@
   "​​**Event sinks** are resources that can receive incoming events from other resources.": "​​**事件接收器**是可以从其他资源接收传入事件的资源。",
   "Serving": "服务",
   "Eventing": "事件",
-  "Create Service Binding": "创建服务绑定",
   "Subscriptions": "订阅",
   "Triggers": "触发器",
   "Configuration": "配置",

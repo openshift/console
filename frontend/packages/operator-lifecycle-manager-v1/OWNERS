@@ -1,10 +1,2 @@
-reviewers:
-  - TheRealJon
-  - rhamilto
-  - jhadvig
-approvers:
-  - TheRealJon
-  - rhamilto
-  - jhadvig
 labels:
   - component/olm
