@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"runtime"
+	"time"
 
 	"io/ioutil"
 	"net/http"
@@ -31,6 +32,7 @@ import (
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 	ctrlmetrics "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
+	"github.com/patrickmn/go-cache"
 	kruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
@@ -42,8 +44,6 @@ import (
 const (
 	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-
-	catalogdHost = "catalogd-service.openshift-catalogd.svc:443"
 
 	// Well-known location of the tenant aware Thanos service for OpenShift exposing the query and query_range endpoints. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
@@ -437,11 +437,6 @@ func main() {
 				},
 			}
 
-			srv.CatalogdProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				Endpoint:        &url.URL{Scheme: "https", Host: catalogdHost},
-			}
-
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: srv.ProxyHeaderDenyList,
@@ -597,7 +592,10 @@ func main() {
 			klog.Errorf("problem creating controller manager: %v", err)
 		}
 
-		catalogService := olm.NewDummyCatalogService()
+		cache := cache.New(5*time.Minute, 30*time.Minute)
+		catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, cache)
+		srv.CatalogService = catalogService
+
 		if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {
 			klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
 		}
