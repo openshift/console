@@ -584,6 +584,9 @@ func main() {
 	mgr, err := ctrl.NewManager(srv.InternalProxiedK8SClientConfig, ctrl.Options{
 		Scheme: kruntime.NewScheme(),
 	})
+	if err != nil {
+		klog.Errorf("problem creating controller manager: %v", err)
+	}
 
 	catalogService := olm.NewDummyCatalogService()
 	if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {
