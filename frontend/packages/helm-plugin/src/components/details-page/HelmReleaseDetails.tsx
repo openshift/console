@@ -32,8 +32,8 @@ interface HelmReleaseDetailsProps {
 interface LoadedHelmReleaseDetailsProps extends HelmReleaseDetailsProps {
   helmRelease: {
     loaded: boolean;
-    loadError: Error;
-    data: HelmRelease;
+    loadError: Error | undefined;
+    data: HelmRelease | undefined;
   };
 }
 
@@ -176,8 +176,11 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = () => {
     let mounted = true;
 
     const getHelmRelease = async () => {
+      if (!namespace || !helmReleaseName) {
+        return;
+      }
       try {
-        const helmRelease = await fetchHelmRelease(namespace || '', helmReleaseName || '');
+        const helmRelease = await fetchHelmRelease(namespace, helmReleaseName);
         if (mounted) {
           setHelmReleaseData(helmRelease);
         }
@@ -205,7 +208,7 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = () => {
     // secretLoaded as dependency here since they are updated when a new release is created.
   }, [namespace, helmReleaseName, secrets, secretLoaded]);
 
-  const helmRelease = {
+  const helmRelease: LoadedHelmReleaseDetailsProps['helmRelease'] = {
     loaded: !!(helmReleaseData || helmReleaseError),
     loadError: helmReleaseError,
     data: helmReleaseData,
@@ -217,12 +220,7 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = () => {
     data: secrets,
   };
 
-  return (
-    <LoadedHelmReleaseDetails
-      helmRelease={helmRelease as LoadedHelmReleaseDetailsProps['helmRelease']}
-      secrets={secretsFirehoseResult}
-    />
-  );
+  return <LoadedHelmReleaseDetails helmRelease={helmRelease} secrets={secretsFirehoseResult} />;
 };
 
 export default HelmReleaseDetails;

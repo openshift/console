@@ -25,9 +25,8 @@ const CreateHelmChartRepositoryPage: React.FC = () => {
   const queryParams = useQueryParams();
   const [activePerspective] = useActivePerspective();
   const namespace = params.ns;
-  const resourceKind: K8sResourceKindReference = queryParams.get(
-    'kind',
-  ) as K8sResourceKindReference;
+  const resourceKindParam = queryParams.get('kind');
+  const resourceKind: K8sResourceKindReference | null = resourceKindParam;
   const existingRepo = params.name;
   const isEditForm = !!existingRepo;
   const hideNamespacedPage =
@@ -61,7 +60,7 @@ const CreateHelmChartRepositoryPage: React.FC = () => {
       </DocumentTitle>
       <CreateHelmChartRepository
         showScopeType={canCreateHCR && canCreatePHCR}
-        existingRepoName={params.name || ''}
+        existingRepoName={params.name}
       />
     </>
   );

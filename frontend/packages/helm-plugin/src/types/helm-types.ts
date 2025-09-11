@@ -1,5 +1,21 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
+// Type for Kubernetes resources with guaranteed metadata fields
+// This is useful when we know that metadata.name and kind are always present
+export type K8sResourceWithMetadata = Omit<K8sResourceKind, 'kind' | 'metadata'> & {
+  kind: string;
+  metadata: {
+    name: string;
+    namespace?: string;
+    creationTimestamp?: string;
+    labels?: { [key: string]: string };
+    annotations?: { [key: string]: string };
+    resourceVersion?: string;
+    uid?: string;
+    [key: string]: any;
+  };
+};
+
 export interface HelmRelease {
   name: string;
   namespace: string;

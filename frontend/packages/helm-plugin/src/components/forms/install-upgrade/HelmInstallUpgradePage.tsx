@@ -40,10 +40,10 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const searchParams = new URLSearchParams(location.search);
   const [activePerspective] = useActivePerspective();
 
-  const namespace = params.ns || searchParams.get('preselected-ns');
+  const namespace = params.ns ?? searchParams.get('preselected-ns');
   const initialChartURL = searchParams.get('chartURL');
   const indexEntry = searchParams.get('indexEntry');
-  const initialReleaseName = params.releaseName || '';
+  const initialReleaseName = params.releaseName ?? '';
   const helmChartName = searchParams.get('chartName');
   const helmChartRepoName = searchParams.get('chartRepoName');
   const helmActionOriginParam = searchParams.get('actionOrigin');
@@ -63,7 +63,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const [chartError, setChartError] = React.useState<Error | null>(null);
 
   const [initialYamlData, setInitialYamlData] = React.useState<string>('');
-  const [initialFormData, setInitialFormData] = React.useState<object>();
+  const [initialFormData, setInitialFormData] = React.useState<object | undefined>();
   const [initialFormSchema, setInitialFormSchema] = React.useState<JSONSchema7>();
   const helmAction: HelmActionType = initialChartURL
     ? HelmActionType.Create
@@ -71,15 +71,17 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
 
   const config = React.useMemo(
     () =>
-      getHelmActionConfig(
-        helmAction,
-        initialReleaseName,
-        namespace || '',
-        t,
-        helmActionOrigin,
-        initialChartURL || '',
-        indexEntry || '',
-      ),
+      namespace
+        ? getHelmActionConfig(
+            helmAction,
+            initialReleaseName,
+            namespace,
+            t,
+            helmActionOrigin,
+            initialChartURL ?? '',
+            indexEntry ?? '',
+          )
+        : null,
     [helmAction, helmActionOrigin, indexEntry, initialChartURL, initialReleaseName, namespace, t],
   );
 
@@ -89,8 +91,16 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
     const fetchHelmChart = async () => {
       let res;
       let error: Error | null = null;
+
+      if (!config?.helmReleaseApi) {
+        error = new Error('No valid API endpoint available');
+        if (ignore) return;
+        setChartError(error);
+        return;
+      }
+
       try {
-        res = await coFetchJSON(config?.helmReleaseApi || '');
+        res = await coFetchJSON(config.helmReleaseApi);
       } catch (e) {
         error = e;
       }
@@ -106,7 +116,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
       setInitialFormSchema(valuesSchema);
       setChartName(chart?.metadata.name);
       setChartVersion(chart?.metadata.version);
-      setAppVersion(chart?.metadata.appVersion || '');
+      setAppVersion(chart?.metadata.appVersion ?? '');
       setChartReadme(getChartReadme(chart));
       setChartHasValues(!!valuesYAML);
       setChartData(chart);
@@ -121,17 +131,17 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   }, [config?.helmReleaseApi, helmAction]);
 
   const initialValues: HelmInstallUpgradeFormData = {
-    releaseName: initialReleaseName || helmChartName || '',
-    chartURL: initialChartURL || '',
-    chartIndexEntry: indexEntry || '',
+    releaseName: initialReleaseName ?? helmChartName ?? '',
+    chartURL: initialChartURL ?? '',
+    chartIndexEntry: indexEntry ?? '',
     chartName,
-    chartRepoName: helmChartRepoName || '',
+    chartRepoName: helmChartRepoName ?? '',
     appVersion,
     chartVersion,
     chartReadme,
     yamlData: initialYamlData,
-    formData: initialFormData as Record<string, unknown>,
-    formSchema: initialFormSchema || {},
+    formData: initialFormData,
+    formSchema: initialFormSchema ?? {},
     editorType: initialFormSchema ? EditorType.Form : EditorType.YAML,
   };
 
@@ -187,10 +197,10 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
     return config
       ?.fetch('/api/helm/release/async', payload, undefined, -1)
       .then(async (res?: { metadata?: { uid?: string } }) => {
-        let redirect = config?.redirectURL || '';
+        let redirect = config?.redirectURL ?? '';
         let helmRelease: HelmRelease | null = null;
         try {
-          helmRelease = await fetchHelmRelease(namespace || '', releaseName || '');
+          helmRelease = await fetchHelmRelease(namespace ?? '', releaseName ?? '');
         } catch (err) {
           console.error('Could not fetch the helm release', err); // eslint-disable-line no-console
         }
@@ -248,11 +258,11 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
             {...formikProps}
             chartHasValues={chartHasValues}
             chartMetaDescription={chartMetaDescription}
-            helmActionConfig={config}
+            helmActionConfig={config ?? undefined}
             onVersionChange={setChartData}
             chartError={chartError}
-            namespace={namespace || ''}
-            chartIndexEntry={indexEntry || ''}
+            namespace={namespace ?? ''}
+            chartIndexEntry={indexEntry ?? ''}
             annotatedName={annotatedName}
             providerName={providerName}
           />

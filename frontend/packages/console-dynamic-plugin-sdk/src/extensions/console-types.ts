@@ -697,7 +697,7 @@ export type ResourceEventStreamProps = {
 };
 
 export type TimestampProps = {
-  timestamp: string | number | Date | null;
+  timestamp: string | number | Date | undefined;
   simple?: boolean;
   omitSuffix?: boolean;
   className?: string;

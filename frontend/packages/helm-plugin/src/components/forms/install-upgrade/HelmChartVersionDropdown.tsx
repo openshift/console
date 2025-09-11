@@ -36,7 +36,7 @@ export type HelmChartVersionDropdownProps = {
   helmAction: string | undefined;
   onVersionChange: (chart: HelmChart) => void;
   namespace: string;
-  chartIndexEntry: string;
+  chartIndexEntry: string | undefined;
   annotatedName?: string;
   providerName?: string;
 };
@@ -137,10 +137,10 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
       if (!chartIndexEntry) {
         setFieldValue(
           'chartIndexEntry',
-          getChartIndexEntry(json?.entries || {}, chartName, chartEntries[0]?.repoName || ''),
+          getChartIndexEntry(json?.entries ?? {}, chartName, chartEntries[0]?.repoName ?? ''),
         );
       }
-      setHelmChartRepos(json?.entries || {});
+      setHelmChartRepos(json?.entries ?? {});
       setHelmChartEntries(chartEntries);
       setHelmChartVersions(getChartVersions(chartEntries, t));
     };
@@ -165,12 +165,18 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     const chartURL = getChartURL(helmChartEntries, version, repoName);
     const chartRepoIndex = getChartIndexEntry(helmChartRepos, chartName, repoName);
 
+    if (!chartURL || !chartRepoIndex) {
+      // eslint-disable-next-line no-console
+      console.error('Missing chart URL or repository index for chart version change');
+      return;
+    }
+
     setFieldValue('chartVersion', value);
     setFieldValue('chartURL', chartURL);
     coFetchJSON(
       `/api/helm/chart?url=${encodeURIComponent(
         chartURL,
-      )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartRepoIndex || '')}`,
+      )}&namespace=${namespace}&indexEntry=${encodeURIComponent(chartRepoIndex)}`,
     )
       .then((res: HelmChart) => {
         onVersionChange(res);
@@ -217,7 +223,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         concatVersions(
           chartVersion,
           appVersion,
-          t,
+          t('helm-plugin~Chart version'),
           getChartRepositoryTitle(chartRepositories, chartRepoName),
         );
 

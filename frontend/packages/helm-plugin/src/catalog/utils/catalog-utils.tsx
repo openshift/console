@@ -70,7 +70,7 @@ export const normalizeHelmCharts = (
             </>
           ) : null;
 
-        const maintainers = chart.maintainers?.length && chart.maintainers?.length > 0 && (
+        const maintainers = chart.maintainers?.length && chart.maintainers.length > 0 && (
           <>
             {chart.maintainers?.map((maintainer, index) => (
               // eslint-disable-next-line react/no-array-index-key

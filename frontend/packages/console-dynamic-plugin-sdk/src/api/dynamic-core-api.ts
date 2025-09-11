@@ -712,7 +712,7 @@ export const usePrometheusPoll: UsePrometheusPoll = (options) => {
  * The timestamps are synchronized between individual instances of the Timestamp component.
  * The provided timestamp is formatted according to user locale.
  *
- * @param {TimestampProps['timestamp']} timestamp - the timestamp to render. Format is expected to be ISO 8601 (used by Kubernetes), epoch timestamp, or an instance of a Date.
+ * @param {TimestampProps['timestamp']} timestamp - the timestamp to render. Format is expected to be ISO 8601 (used by Kubernetes), epoch timestamp, or an instance of a Date.  If null is passed, the component will render a dash (-) indicating no value.
  * @param {TimestampProps['simple']} simple - render simple version of the component omitting icon and tooltip.
  * @param {TimestampProps['omitSuffix']} omitSuffix - formats the date ommiting the suffix.
  * @param {TimestampProps['className']} className - additional class name for the component.

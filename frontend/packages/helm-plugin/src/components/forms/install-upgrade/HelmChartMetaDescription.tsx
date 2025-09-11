@@ -11,7 +11,7 @@ type HelmChartMetaDescriptionProps = {
 
 const HelmChartMetaDescription: React.FC<HelmChartMetaDescriptionProps> = ({ chart }) => {
   const { t } = useTranslation();
-  const chartVersion = chart?.metadata?.version;
+  const chartVersion = chart?.metadata?.version ?? undefined;
   const displayName = _.startCase(chart?.metadata?.name);
   const imgSrc = chart?.metadata?.icon || getImageForIconClass('icon-helm');
   const provider = chart?.metadata?.maintainers?.[0]?.name;
@@ -38,7 +38,7 @@ const HelmChartMetaDescription: React.FC<HelmChartMetaDescriptionProps> = ({ cha
           {provider && (
             <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
               {t('helm-plugin~{{chartVersion}} provided by {{provider}}', {
-                chartVersion: chartVersion || '',
+                chartVersion,
                 provider,
               })}
             </span>

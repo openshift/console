@@ -25,7 +25,7 @@ export const getHelmDeleteAction = (
       onSubmit: () => {
         return coFetchJSON.delete(
           `/api/helm/release/async?name=${releaseName}&ns=${namespace}&version=${releaseVersion}`,
-          undefined,
+          null,
           undefined,
           -1,
         );

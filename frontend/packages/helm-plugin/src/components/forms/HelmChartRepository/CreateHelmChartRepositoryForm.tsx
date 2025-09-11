@@ -45,7 +45,7 @@ const CreateHelmChartRepositoryForm: React.FC<
   const formEditor = (
     <CreateHelmChartRepositoryFormEditor
       showScopeType={showScopeType}
-      existingRepo={existingRepo as HelmChartRepositoryType}
+      existingRepo={existingRepo ?? undefined}
     />
   );
 
@@ -122,7 +122,7 @@ const CreateHelmChartRepositoryForm: React.FC<
         }
         handleCancel={handleCancel}
         handleDownload={
-          editorType === EditorType.YAML ? () => downloadYaml(yamlData || '') : undefined
+          editorType === EditorType.YAML ? () => downloadYaml(yamlData ?? '') : undefined
         }
         sticky
       />
