@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -55,20 +56,20 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
   const { close, cancel, resource } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<PersistentVolumeClaimKind>();
   const { name: pvcName, namespace } = resource?.metadata;
-  const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
+  const baseValue = convertToBaseValue(resource ? getRequestedPVCSize(resource) : '0');
   const defaultSize: string[] = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
   const pvcRequestedSize = humanizeBinaryBytes(baseValue).string;
 
-  const [clonePVCName, setClonePVCName] = React.useState(`${pvcName}-clone`);
-  const [requestedSize, setRequestedSize] = React.useState(defaultSize[0] || '');
-  const [cloneAccessMode, setCloneAccessMode] = React.useState(resource?.spec?.accessModes?.[0]);
-  const [requestedUnit, setRequestedUnit] = React.useState(defaultSize[1] || 'Ti');
-  const [validSize, setValidSize] = React.useState(true);
-  const pvcAccessMode = getPVCAccessModes(resource as PersistentVolumeClaimKind, 'title');
-  const [pvcSC, setPVCStorageClass] = React.useState('');
-  const [updatedProvisioner, setUpdatedProvisioner] = React.useState('');
+  const [clonePVCName, setClonePVCName] = useState(`${pvcName}-clone`);
+  const [requestedSize, setRequestedSize] = useState(defaultSize[0] ?? '');
+  const [cloneAccessMode, setCloneAccessMode] = useState(resource?.spec?.accessModes?.[0]);
+  const [requestedUnit, setRequestedUnit] = useState(defaultSize[1] || 'Ti');
+  const [validSize, setValidSize] = useState(true);
+  const pvcAccessMode = resource ? getPVCAccessModes(resource, 'title') : [];
+  const [pvcSC, setPVCStorageClass] = useState('');
+  const [updatedProvisioner, setUpdatedProvisioner] = useState('');
   const handleStorageClass = (updatedStorageClass: StorageClassResourceKind) => {
-    setPVCStorageClass(getName(updatedStorageClass) || '');
+    setPVCStorageClass(getName(updatedStorageClass) ?? '');
     setUpdatedProvisioner(updatedStorageClass?.provisioner);
   };
 
@@ -93,9 +94,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
     setRequestedSize(value);
     setRequestedUnit(unit);
     const cloneSizeInBytes = convertToBaseValue(value + unit);
-    const pvcSizeInBytes = convertToBaseValue(
-      getRequestedPVCSize(resource as PersistentVolumeClaimKind),
-    );
+    const pvcSizeInBytes = convertToBaseValue(resource ? getRequestedPVCSize(resource) : '0');
     const isValid = cloneSizeInBytes >= pvcSizeInBytes;
     setValidSize(isValid);
   };
@@ -108,12 +107,12 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
       kind: PersistentVolumeClaimModel.kind,
       metadata: {
         name: clonePVCName,
-        namespace: resource?.metadata?.namespace,
+        namespace: resource?.metadata.namespace,
       },
       spec: {
         storageClassName: pvcSC,
         dataSource: {
-          name: pvcName || '',
+          name: pvcName ?? '',
           kind: PersistentVolumeClaimModel.kind,
           apiGroup: '',
         },
@@ -123,7 +122,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
           },
         },
         volumeMode: resource?.spec?.volumeMode,
-        accessModes: [cloneAccessMode || ''],
+        accessModes: [cloneAccessMode ?? ''],
       },
     };
 
@@ -160,7 +159,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
         <AccessModeSelector
           onChange={setCloneAccessMode}
           className="co-clone-pvc-modal__form--space"
-          pvcResource={resource as PersistentVolumeClaimKind}
+          pvcResource={resource}
           provisioner={updatedProvisioner}
           loaded={scResourceLoaded}
           loadError={scResourceLoadError}
@@ -224,7 +223,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
                 <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Namespace')}</p>
                 <p>
                   <ResourceIcon kind={NamespaceModel.kind} />
-                  {resource?.metadata?.namespace}
+                  {resource?.metadata.namespace}
                 </p>
               </div>
               <div>

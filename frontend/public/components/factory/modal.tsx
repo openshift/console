@@ -142,7 +142,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
       infoMessage={message}
       inProgress={inProgress}
     >
-      {children || null}
+      {children}
     </ButtonBar>
   );
 };

@@ -71,6 +71,9 @@ export type K8sResourceKind = K8sResourceCommon & {
   status?: { [key: string]: any };
   data?: { [key: string]: any };
 };
+export type K8sResourceWithMetadata = K8sResourceCommon & {
+  metadata: ObjectMetadata;
+};
 
 export type AccessReviewResourceAttributes = {
   group?: string;
@@ -697,7 +700,7 @@ export type ResourceEventStreamProps = {
 };
 
 export type TimestampProps = {
-  timestamp: string | number | Date;
+  timestamp: string | number | Date | undefined;
   simple?: boolean;
   omitSuffix?: boolean;
   className?: string;
