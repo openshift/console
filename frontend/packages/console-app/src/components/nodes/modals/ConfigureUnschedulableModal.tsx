@@ -12,7 +12,7 @@ import { makeNodeUnschedulable } from '../../../k8s/requests/nodes';
 
 type ConfigureUnschedulableModalProps = {
   resource: NodeKind;
-  cancel?: () => void;
+  cancel: () => void;
   close?: () => void;
 };
 
@@ -26,7 +26,7 @@ const ConfigureUnschedulableModal: React.FC<ConfigureUnschedulableModalProps> = 
   const handleSubmit = (event): void => {
     event.preventDefault();
     handlePromise(makeNodeUnschedulable(resource))
-      .then(() => close())
+      .then(() => close?.())
       .catch(() => {});
   };
   const { t } = useTranslation();

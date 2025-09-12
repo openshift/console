@@ -26,8 +26,8 @@ const getNodeCSRs = (
     )
     .sort(
       (a, b) =>
-        new Date(b.metadata.creationTimestamp).getTime() -
-        new Date(a.metadata.creationTimestamp).getTime(),
+        new Date(b.metadata?.creationTimestamp ?? 0).getTime() -
+        new Date(a.metadata?.creationTimestamp ?? 0).getTime(),
     );
 
 const isCSRPending = (csr: CertificateSigningRequestKind): boolean =>
@@ -42,30 +42,52 @@ export const getNodeClientCSRs = (
     true,
   )
     .map<NodeCertificateSigningRequestKind>((csr) => {
-      const request = Base64.decode(csr.spec.request);
-      const req = request.replace(/(-----(BEGIN|END) CERTIFICATE REQUEST-----|\n)/g, '');
-      const asn1 = fromBER(stringToArrayBuffer(fromBase64(req)));
-      const pkcs10 = new CertificationRequest({ schema: asn1.result });
-      // '2.5.4.3' is commonName code
-      const commonName = pkcs10.subject.typesAndValues.find(({ type }) => type === '2.5.4.3');
-      return {
-        ...csr,
-        metadata: {
-          ...csr.metadata,
-          name: commonName.value.valueBlock.value.replace('system:node:', ''),
-          originalName: csr.metadata.name,
-        },
-      };
+      try {
+        const request = Base64.decode(csr.spec.request);
+        const req = request.replace(/(-----(BEGIN|END) CERTIFICATE REQUEST-----|\n)/g, '');
+        const asn1 = fromBER(stringToArrayBuffer(fromBase64(req)));
+
+        if (asn1.offset === -1) {
+          throw new Error('Invalid ASN.1 structure');
+        }
+
+        const pkcs10 = new CertificationRequest({ schema: asn1.result });
+        // '2.5.4.3' is commonName code
+        const commonName = pkcs10.subject.typesAndValues.find(({ type }) => type === '2.5.4.3');
+
+        if (!commonName?.value?.valueBlock?.value) {
+          throw new Error('Invalid CSR: missing common name');
+        }
+
+        return {
+          ...csr,
+          metadata: {
+            ...csr.metadata,
+            name: commonName.value.valueBlock.value.replace('system:node:', ''),
+            originalName: csr.metadata?.name || '',
+          },
+        };
+      } catch (error) {
+        // Return a fallback structure for invalid CSRs
+        return {
+          ...csr,
+          metadata: {
+            ...csr.metadata,
+            name: csr.metadata?.name || '',
+            originalName: csr.metadata?.name || '',
+          },
+        };
+      }
     })
     .sort(
       (a, b) =>
-        new Date(b.metadata.creationTimestamp).getTime() -
-        new Date(a.metadata.creationTimestamp).getTime(),
+        new Date(b.metadata?.creationTimestamp ?? 0).getTime() -
+        new Date(a.metadata?.creationTimestamp ?? 0).getTime(),
     );
 
   const grouped = _.groupBy(nodeCSRs, (csr) => csr.metadata.name);
 
-  return Object.keys(grouped).reduce((acc, key) => {
+  return Object.keys(grouped).reduce<NodeCertificateSigningRequestKind[]>((acc, key) => {
     const csr = grouped[key][0];
     if (isCSRPending(csr)) {
       acc.push(csr);
@@ -76,8 +98,8 @@ export const getNodeClientCSRs = (
 export const getNodeServerCSR = (
   csrs: CertificateSigningRequestKind[] = [],
   node: NodeKind,
-): CertificateSigningRequestKind => {
-  const nodeCSRs = getNodeCSRs(csrs, `system:node:${node.metadata.name}`, false);
+): CertificateSigningRequestKind | null => {
+  const nodeCSRs = getNodeCSRs(csrs, `system:node:${node.metadata?.name ?? ''}`, false);
   if (!nodeCSRs.length || !isCSRPending(nodeCSRs[0])) {
     return null;
   }

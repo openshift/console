@@ -33,7 +33,7 @@ class TranslatedLabelList extends React.Component<LabelListProps> {
 
   render() {
     const { labels, kind, t, expand = true } = this.props;
-    const list = _.map(labels, (label, key) => (
+    const list = _.map(labels || {}, (label, key) => (
       <Label key={key} kind={kind} name={key} value={label} expand={expand} />
     ));
 
@@ -68,7 +68,7 @@ export type LabelProps = {
 };
 
 export type LabelListProps = WithTranslation & {
-  labels: { [key: string]: string };
+  labels?: { [key: string]: string };
   kind: K8sResourceKindReference;
   expand?: boolean;
 };

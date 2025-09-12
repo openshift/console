@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActionGroup,
   Button,
@@ -72,14 +73,16 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const initialFormValues = initialValuesFromK8sResource(formData);
-  const [formValues, setFormValues] = React.useState(initialFormValues);
-  const [error, setError] = React.useState('');
-  const [inProgress, setInProgress] = React.useState(false);
-  const [requirement, setRequirement] = React.useState('');
-  const [isDisabled, setDisabled] = React.useState(true);
-  const [labels, setLabels] = React.useState([]);
-  const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind>(null);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [formValues, setFormValues] = useState(initialFormValues);
+  const [error, setError] = useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [requirement, setRequirement] = useState<
+    'minAvailable' | 'maxUnavailable' | '' | undefined
+  >('');
+  const [isDisabled, setDisabled] = useState(true);
+  const [labels, setLabels] = useState<string[]>([]);
+  const [matchingSelector, setMatchingSelector] = useState<PodDisruptionBudgetKind | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const items: RequirementItems = React.useMemo(
     () => ({
       maxUnavailable: t('console-app~maxUnavailable'),
@@ -87,9 +90,9 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
     }),
     [t],
   );
-  const selectedRequirement = getSelectedRequirement(formValues.requirement, items);
+  const selectedRequirement = getSelectedRequirement(formValues.requirement || '', items);
 
-  const onFormValuesChange = React.useCallback(
+  const onFormValuesChange = useCallback(
     (values) => {
       setFormValues(values);
       onChange(pdbToK8sResource(values, existingResource));
@@ -97,8 +100,8 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
     [onChange, existingResource],
   );
 
-  React.useEffect(() => {
-    setRequirement(formValues.requirement);
+  useEffect(() => {
+    setRequirement(formValues.requirement as 'minAvailable' | 'maxUnavailable' | '' | undefined);
 
     if (formValues.requirement !== i18next.t('console-app~Requirement')) {
       setDisabled(false);
@@ -127,18 +130,19 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   };
 
   const handleAvailabilityRequirementKeyChange = (value: string) => {
-    setRequirement(value);
+    const typedValue = value as 'minAvailable' | 'maxUnavailable' | '' | undefined;
+    setRequirement(typedValue);
     setIsOpen(!isOpen);
     setDisabled(false);
     onFormValuesChange({
       ...formValues,
-      requirement: value,
+      requirement: typedValue,
       minAvailable: '',
       maxUnavailable: '',
     });
   };
   const handleAvailabilityRequirementValueChange = (_event, value: string | number) => {
-    onFormValuesChange({ ...formValues, [requirement]: value });
+    onFormValuesChange({ ...formValues, [requirement as string]: value });
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -198,8 +202,10 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
               <SelectorInput
                 onChange={(l) => handleSelectorChange(l)}
                 tags={[
-                  ...SelectorInput.arrayify(formValues.selector.matchLabels),
-                  ...SelectorInput.arrayObjectsToArrayStrings(formValues.selector.matchExpressions),
+                  ...SelectorInput.arrayify(formValues.selector?.matchLabels || []),
+                  ...SelectorInput.arrayObjectsToArrayStrings(
+                    formValues.selector?.matchExpressions || [],
+                  ),
                 ]}
                 labelClassName="labelClassName"
               />
