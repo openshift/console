@@ -22,7 +22,8 @@ import {
 import { HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON } from './constants';
 import {
   detectBaremetalPlatform,
-  BAREMETAL_FLAG,
+  // BAREMETAL_FLAG,
+  BMO_ENABLED_FLAG,
   NODE_MAINTENANCE_FLAG,
   detectBMOEnabled,
   NODE_MAINTENANCE_KV_BETA_FLAG,
@@ -135,7 +136,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG],
+      required: [METAL3_FLAG],
     },
   },
   {
@@ -149,7 +150,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG],
+      required: [BMO_ENABLED_FLAG, METAL3_FLAG],
     },
   },
   {
@@ -184,7 +185,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ),
     },
     flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG],
+      required: [BMO_ENABLED_FLAG, METAL3_FLAG],
     },
   },
   {
@@ -222,7 +223,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.getBMHStatusGroups),
     },
     flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG],
+      required: [BMO_ENABLED_FLAG, METAL3_FLAG],
     },
   },
   {
@@ -241,7 +242,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG, NODE_MAINTENANCE_FLAG],
+      required: [BMO_ENABLED_FLAG, METAL3_FLAG, NODE_MAINTENANCE_FLAG],
     },
   },
   {
@@ -260,7 +261,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG, NODE_MAINTENANCE_KV_ALPHA_FLAG],
+      required: [BMO_ENABLED_FLAG, METAL3_FLAG, NODE_MAINTENANCE_KV_ALPHA_FLAG],
     },
   },
   {
@@ -279,7 +280,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG, NODE_MAINTENANCE_KV_BETA_FLAG],
+      required: [BMO_ENABLED_FLAG, METAL3_FLAG, NODE_MAINTENANCE_KV_BETA_FLAG],
     },
   },
   {
@@ -309,7 +310,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG],
+      required: [BMO_ENABLED_FLAG, METAL3_FLAG],
     },
   },
 ];
