@@ -56,6 +56,11 @@ export const listPage = {
       cy.get('@filterDropdownToggleButton').click();
     },
   },
+  dvFilter: {
+    byName: (name: string) => {
+      cy.get('[aria-label="Name filter"]').clear().type(name); // this is not a great selector, but we're limited by data view
+    },
+  },
   rows: {
     getFirstElementName: () => cy.get('[data-test-rows="resource-row"] a').first(),
     shouldBeLoaded: () => {
@@ -112,6 +117,14 @@ export const listPage = {
           cy.get('[data-test-id="kebab-button"]').click();
         });
       cy.byTestActionID(actionName).click();
+    },
+    shouldExist: (resourceName: string) => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
+        .contains(resourceName)
+        .should('exist');
+    },
+    countShouldBe: (resourceName: string, count: number) => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).should('have.length', count);
     },
   },
 };
