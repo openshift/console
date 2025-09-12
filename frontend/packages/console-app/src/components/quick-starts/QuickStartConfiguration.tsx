@@ -25,7 +25,7 @@ type DisabledQuickStartsConsoleConfig = K8sResourceKind & {
   spec: {
     customization?: {
       quickStarts?: {
-        disabled: string[];
+        disabled: string[] | undefined;
       };
     };
   };
@@ -169,7 +169,7 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
       />
 
       <LoadError error={consoleConfigError} />
-      <SaveStatus {...saveStatus} />
+      {saveStatus && <SaveStatus {...saveStatus} />}
     </FormSection>
   );
 };
