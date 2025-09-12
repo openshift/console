@@ -31,7 +31,7 @@ export const SubjectNamespaceDropdown: React.FC<SubjectNamespaceDropdownProps> =
   values,
 }) => {
   const { t } = useTranslation();
-  const arr = name.split('.');
+  const arr = name?.split('.') ?? [];
   const showDropdown =
     arr.length > 2 && values?.projectAccess?.[arr?.[1]]?.subject?.kind === 'ServiceAccount';
   return (
@@ -114,8 +114,8 @@ const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
         showAlert={isStaleInfo || !disableSubmit}
         submitLabel={t('devconsole~Save')}
         resetLabel={t('devconsole~Reload')}
-        infoTitle={isStaleInfo && t('devconsole~This list has been updated.')}
-        infoMessage={isStaleInfo && t('devconsole~Click reload to see the new list.')}
+        infoTitle={isStaleInfo ? t('devconsole~This list has been updated.') : undefined}
+        infoMessage={isStaleInfo ? t('devconsole~Click reload to see the new list.') : undefined}
         handleCancel={onCancel}
       />
     </Form>

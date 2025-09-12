@@ -32,7 +32,7 @@ const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ ale
             : `/dev-monitoring/ns/${namespace}/alerts/${id}?${labelsToParams(alert.labels)}`;
         return (
           <Alert
-            variant={getAlertType(severity)}
+            variant={getAlertType(severity ?? '')}
             isInline
             title={<Link to={alertDetailsPageLink}>{name}</Link>}
             onClick={() => {
@@ -48,7 +48,7 @@ const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ ale
             {message}
             <div className="odc-monitoring-overview-alerts__timestamp">
               <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle">
-                {fromNow(activeAt)}
+                {fromNow(activeAt ?? new Date())}
               </span>
             </div>
           </Alert>

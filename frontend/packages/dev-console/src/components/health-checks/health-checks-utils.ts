@@ -22,10 +22,20 @@ export const updateHealthChecksProbe = (
     healthChecks,
   } = values;
   const updatedResource = _.cloneDeep(resource);
+
+  if (!updatedResource.spec?.template?.spec?.containers) {
+    return updatedResource;
+  }
+
   const containerIndex = _.findIndex(updatedResource.spec.template.spec.containers, [
     'name',
     containerName,
   ]);
+
+  if (containerIndex === -1) {
+    return updatedResource;
+  }
+
   updatedResource.spec.template.spec.containers[containerIndex] = {
     ...container,
     ...getProbesData(healthChecks, getResourcesType(resource)),
@@ -62,12 +72,12 @@ type HealthCheckContextType = {
 export const HealthCheckContext = createContext<HealthCheckContextType>({ viewOnly: false });
 
 export const useViewOnlyAccess = (resource: K8sResourceKind): boolean => {
-  const model = modelFor(referenceFor(resource));
+  const model = modelFor(referenceFor(resource as K8sResourceKind));
   const hasEditAccess = useAccessReview({
     group: model.apiGroup,
     resource: model.plural,
-    name: resource.metadata.name,
-    namespace: resource.metadata.namespace,
+    name: resource?.metadata?.name ?? '',
+    namespace: resource?.metadata?.namespace ?? '',
     verb: 'update',
   });
   return !hasEditAccess;

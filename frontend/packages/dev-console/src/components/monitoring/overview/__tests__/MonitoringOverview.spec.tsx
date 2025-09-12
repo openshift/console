@@ -87,7 +87,7 @@ describe('Monitoring Metric Section', () => {
       kind: 'Deployment',
     },
     pods: mockPods,
-    resourceEvents: mockResourceEvents,
+    resourceEvents: mockResourceEvents as any,
     monitoringAlerts: mockAlerts.data,
     ...mockPodEvents,
   };
@@ -164,7 +164,7 @@ describe('Monitoring Metric Section', () => {
   it('should render loading box when resource events are not loaded', () => {
     const loadingProps = {
       ...monitoringOverviewProps,
-      resourceEvents: { ...mockResourceEvents, loaded: false },
+      resourceEvents: { ...mockResourceEvents, loaded: false, data: [] as any },
     };
 
     render(<MonitoringOverview {...loadingProps} />);

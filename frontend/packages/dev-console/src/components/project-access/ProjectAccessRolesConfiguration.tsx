@@ -36,8 +36,8 @@ type SoftwareCatalogClusterRolesConfig = K8sResourceKind & {
 type ItemProps = { name: string; clusterRole?: K8sResourceCommon };
 
 const getDisplayName = (clusterRole?: K8sResourceCommon, name?: string) =>
-  clusterRole?.metadata.annotations?.['console.openshift.io/display-name'] ||
-  clusterRole?.metadata.name ||
+  clusterRole?.metadata?.annotations?.['console.openshift.io/display-name'] ??
+  clusterRole?.metadata?.name ??
   name;
 
 const Item: React.FC<ItemProps> = ({ name, clusterRole }) => (
@@ -65,7 +65,7 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
     clusterRoles.sort((clusterRoleA, clusterRoleB) => {
       const displayNameA = getDisplayName(clusterRoleA);
       const displayNameB = getDisplayName(clusterRoleB);
-      return displayNameA.localeCompare(displayNameB);
+      return displayNameA?.localeCompare(displayNameB ?? '') ?? 0;
     });
     return clusterRoles;
   }, [allClusterRoles]);
@@ -96,11 +96,11 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
     const hideClusterRoleNames =
       selectedClusterRoles.length === 0 ? defaultClusterRoleNames : selectedClusterRoles;
     return sortedClusterRoles
-      .filter((clusterRole) => !hideClusterRoleNames.includes(clusterRole.metadata.name))
+      .filter((clusterRole) => !hideClusterRoleNames.includes(clusterRole.metadata?.name ?? ''))
       .map((clusterRole) => (
         <Item
-          key={clusterRole.metadata.name}
-          name={clusterRole.metadata.name}
+          key={clusterRole.metadata?.name ?? ''}
+          name={clusterRole.metadata?.name ?? ''}
           clusterRole={clusterRole}
         />
       ));
@@ -117,7 +117,7 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
     }
     const allClusterRolesByName = allClusterRoles.reduce<Record<string, K8sResourceCommon>>(
       (acc, clusterRole) => {
-        acc[clusterRole.metadata.name] = clusterRole;
+        acc[clusterRole.metadata?.name ?? ''] = clusterRole;
         return acc;
       },
       {},
@@ -134,7 +134,10 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
   const save = useDebounceCallback(() => {
     fireTelemetryEvent('Console cluster configuration changed', {
       customize: 'Project Access cluster roles',
-      roles: selectedClusterRoles?.length > 0 ? selectedClusterRoles : null,
+      roles:
+        selectedClusterRoles?.length && selectedClusterRoles.length > 0
+          ? selectedClusterRoles
+          : null,
     });
     setSaveStatus({ status: 'in-progress' });
 
@@ -142,7 +145,10 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
       spec: {
         customization: {
           projectAccess: {
-            availableClusterRoles: selectedClusterRoles?.length > 0 ? selectedClusterRoles : null,
+            availableClusterRoles:
+              selectedClusterRoles?.length && selectedClusterRoles.length > 0
+                ? selectedClusterRoles
+                : undefined,
           },
         },
       },
@@ -165,7 +171,7 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
 
   const filterOption = (option: React.ReactElement<ItemProps>, input: string): boolean => {
     const displayName = getDisplayName(option.props.clusterRole, option.props.name);
-    return fuzzy(input.toLocaleLowerCase(), displayName.toLocaleLowerCase());
+    return fuzzy(input.toLocaleLowerCase(), displayName?.toLocaleLowerCase() ?? '');
   };
 
   return (
@@ -187,7 +193,7 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
       />
 
       <LoadError error={consoleConfigError} />
-      <SaveStatus {...saveStatus} />
+      <SaveStatus {...(saveStatus as SaveStatusProps)} />
     </FormSection>
   );
 };
