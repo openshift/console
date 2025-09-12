@@ -41,8 +41,8 @@ describe(`${crd} CRD`, () => {
   it(`creates, displays, and deletes a new ${crd} instance`, () => {
     cy.visit(`/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`);
     listPage.isCreateButtonVisible();
-    listPage.rows.shouldBeLoaded();
-    listPage.rows.clickKebabAction(crd, 'View instances');
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickKebabAction(crd, 'View instances');
     listPage.titleShouldHaveText(crd);
     listPage.clickCreateYAMLbutton();
     yamlEditor.isLoaded();
@@ -61,8 +61,8 @@ describe(`${crd} CRD`, () => {
     cy.get(`[data-test-id=${name}]`).should('contain', name);
 
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
-    listPage.rows.shouldBeLoaded();
-    listPage.rows.clickKebabAction(name, `Delete ${crd}`);
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickKebabAction(name, `Delete ${crd}`);
     modal.shouldBeOpened();
     modal.modalTitleShouldContain(`Delete ${crd}`);
     modal.submit();

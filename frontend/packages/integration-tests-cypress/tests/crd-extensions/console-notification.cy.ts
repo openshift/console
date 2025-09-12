@@ -32,8 +32,8 @@ describe(`${crd} CRD`, () => {
   it(`creates, displays, modifies, and deletes a new ${crd} instance`, () => {
     cy.visit(`/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`);
     listPage.isCreateButtonVisible();
-    listPage.rows.shouldBeLoaded();
-    listPage.rows.clickKebabAction(crd, 'View instances');
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickKebabAction(crd, 'View instances');
     listPage.titleShouldHaveText(crd);
     listPage.clickCreateYAMLbutton();
     yamlEditor.isLoaded();
@@ -50,7 +50,7 @@ describe(`${crd} CRD`, () => {
     });
 
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
     cy.log('Additional printer columns should exist.');
     cy.byTestID('has-additional-printer-columns').should('exist');
     cy.byTestID('additional-printer-column-header-Text').should('have.text', 'Text');
@@ -100,8 +100,8 @@ describe(`${crd} CRD`, () => {
     cy.get(altNotification).contains(altText).should('exist').and('be.visible');
 
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
-    listPage.rows.shouldBeLoaded();
-    listPage.rows.clickKebabAction(name, `Delete ${crd}`);
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickKebabAction(name, `Delete ${crd}`);
     modal.shouldBeOpened();
     modal.modalTitleShouldContain(`Delete ${crd}`);
     modal.submit();
