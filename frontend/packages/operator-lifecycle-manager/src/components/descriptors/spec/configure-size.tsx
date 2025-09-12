@@ -1,15 +1,16 @@
-import { configureCountModal } from '@console/internal/components/modals';
+import { useCallback } from 'react';
+import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { Descriptor } from '../types';
 import { getPatchPathFromDescriptor } from '../utils';
 
-export const configureSizeModal = ({
+export const useConfigureSizeModal = ({
   kindObj,
   resource,
   specDescriptor,
   specValue,
 }: ConfigureSizeModalProps) => {
-  return configureCountModal({
+  const launchConfigureCountModal = useConfigureCountModal({
     resourceKind: kindObj,
     resource,
     defaultValue: specValue || 0,
@@ -22,6 +23,10 @@ export const configureSizeModal = ({
     buttonTextKey: 'olm~Update {{item}}',
     buttonTextVariables: { item: specDescriptor.displayName },
   });
+
+  return useCallback(() => {
+    launchConfigureCountModal();
+  }, [launchConfigureCountModal]);
 };
 
 type ConfigureSizeModalProps = {

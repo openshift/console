@@ -419,6 +419,17 @@
       }
     }
   },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machine.openshift.io",
+        "version": "v1beta1",
+        "kind": "MachineSet"
+      },
+      "provider": { "$codeRef": "machineSetProvider.useMachineSetActionsProvider" }
+    }
+  },
 
   {
     "type": "console.page/route",

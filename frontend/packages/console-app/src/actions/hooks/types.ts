@@ -65,3 +65,8 @@ export enum PDBActionCreator {
   EditPDB = 'EditPDB',
   DeletePDB = 'DeletePDB',
 }
+
+export enum MachineSetActionCreator {
+  EditMachineCount = 'EditMachineCount',
+  CreateMachineAutoscaler = 'CreateMachineAutoscaler',
+}
