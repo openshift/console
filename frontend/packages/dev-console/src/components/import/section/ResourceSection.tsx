@@ -21,7 +21,7 @@ type ResourceSectionProps = {
   flags: FlagsObject;
 };
 
-const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
+const ResourceSection: React.FCC<ResourceSectionProps> = ({ flags }) => {
   const { t } = useTranslation();
   const [field] = useField<Resources[]>('resourceTypesNotValid');
   const fieldName = 'resources';
@@ -54,7 +54,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const onChange = React.useCallback(
     (selection: string) => {
       const value = _.findKey(ReadableResourcesNames, (name) => t(name) === selection);
-      setResourceType(value);
+      setResourceType(value as Resources);
       setFieldValue(fieldName, value);
     },
     [setFieldValue, setResourceType, t],

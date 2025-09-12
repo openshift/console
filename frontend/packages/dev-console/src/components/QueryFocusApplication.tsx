@@ -30,7 +30,7 @@ const QueryFocusApplication: React.FC<QueryFocusApplicationProps> = ({
 
   React.useEffect(() => {
     const originalApplication = originalApp.current;
-    const sanitizedApp = sanitizeApplicationValue(desiredApplication);
+    const sanitizedApp = sanitizeApplicationValue(desiredApplication ?? '');
     if (sanitizedApp && sanitizedApp !== originalApplication) {
       onSetApp(sanitizedApp);
     }
@@ -42,7 +42,7 @@ const QueryFocusApplication: React.FC<QueryFocusApplicationProps> = ({
     };
   }, [desiredApplication, onSetApp, originalApp, application]);
 
-  return <>{children(desiredApplication)}</>;
+  return <>{children(desiredApplication ?? '')}</>;
 };
 
 export default connect<StateProps, DispatchProps, OwnProps>(

@@ -47,7 +47,7 @@ const Wrapper: React.FC<FormikConfig<SourceSectionFormData>> = ({ children, ...f
 );
 
 const getPatternFlyInputForLabel = (label: string) =>
-  screen.getByText(label).parentElement.parentElement.parentElement.querySelector('input');
+  screen.getByText(label).parentElement?.parentElement?.parentElement?.querySelector('input');
 
 const initialValues: SourceSectionFormData = {
   formData: {
@@ -179,7 +179,7 @@ describe('SourceSection', () => {
     userEvent.click(renderResult.getByText('Show advanced Git options'));
 
     userEvent.type(
-      getPatternFlyInputForLabel('Git Repo URL'),
+      getPatternFlyInputForLabel('Git Repo URL') as Element,
       'https://github.com/openshift/console',
     );
     // TODO doesn't work at the moment?! userEvent.type(getPatternFlyInputForLabel('Git reference'), 'master');

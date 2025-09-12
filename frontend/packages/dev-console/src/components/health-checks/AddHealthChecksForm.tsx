@@ -21,16 +21,16 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
   currentContainer,
 }) => {
   const { t } = useTranslation();
-  if (!resource.loaded && _.isEmpty(resource.loadError)) {
+  if (!resource?.loaded && _.isEmpty(resource?.loadError)) {
     return <LoadingBox />;
   }
 
-  if (resource.loadError) {
-    return <StatusBox loaded={resource.loaded} loadError={resource.loadError} />;
+  if (resource?.loadError) {
+    return <StatusBox loaded={resource?.loaded} loadError={resource?.loadError} />;
   }
 
   const container = _.find(
-    resource.data.spec.template.spec.containers,
+    resource?.data?.spec?.template?.spec?.containers,
     (data) => data.name === currentContainer,
   );
 
@@ -39,9 +39,13 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
   }
 
   const handleSubmit = (values, actions) => {
-    const updatedResource = updateHealthChecksProbe(values, resource.data, container);
+    const updatedResource = updateHealthChecksProbe(
+      values,
+      resource?.data as K8sResourceKind,
+      container,
+    );
 
-    return k8sUpdate(modelFor(referenceFor(resource.data)), updatedResource)
+    return k8sUpdate(modelFor(referenceFor(resource?.data as K8sResourceKind)), updatedResource)
       .then(() => {
         actions.setStatus({ error: '' });
         history.goBack();
@@ -50,14 +54,14 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
         actions.setStatus({ errors: err });
       });
   };
-  const containerIndex = _.findIndex(resource.data.spec.template.spec.containers, [
+  const containerIndex = _.findIndex(resource?.data?.spec?.template?.spec?.containers, [
     'name',
     currentContainer,
   ]);
   const initialValues = {
-    healthChecks: getHealthChecksData(resource.data, containerIndex),
+    healthChecks: getHealthChecksData(resource?.data as K8sResourceKind, containerIndex),
     containerName: container.name,
-    resources: getResourcesType(resource.data),
+    resources: getResourcesType(resource?.data as K8sResourceKind),
   };
 
   return (
@@ -71,7 +75,7 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
     >
       {(formikProps) => (
         <AddHealthChecks
-          resource={resource.data}
+          resource={resource?.data as K8sResourceKind}
           currentContainer={currentContainer}
           {...formikProps}
         />

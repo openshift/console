@@ -14,8 +14,8 @@ const ImageStreamNsDropdown: React.FCC<{
 }> = ({ disabled = false, formContextField, className }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
-  const { imageStream } = _.get(values, formContextField) || values;
-  const { isi: initialIsi } = _.get(initialValues, formContextField) || initialValues;
+  const { imageStream } = _.get(values, formContextField || '') || values;
+  const { isi: initialIsi } = _.get(initialValues, formContextField || '') || initialValues;
   const { dispatch } = React.useContext(ImageStreamContext);
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const onDropdownChange = React.useCallback(

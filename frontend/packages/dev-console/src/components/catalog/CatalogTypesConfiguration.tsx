@@ -79,7 +79,7 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
       return [[], []];
     }
     if (!types?.state || types.state === 'Enabled') {
-      if (types?.enabled?.length > 0) {
+      if (types?.enabled?.length && types.enabled.length > 0) {
         return [
           [...types.enabled]
             .sort((typeA, typeB) => {
@@ -97,7 +97,7 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
               />
             )),
           sortedCatalogTypeExtensions
-            .filter((catalogItemType) => !types.enabled.includes(catalogItemType.properties.type))
+            .filter((catalogItemType) => !types.enabled?.includes(catalogItemType.properties.type))
             .map((catalogItemType) => (
               <Item
                 key={catalogItemType.properties.type}
@@ -119,10 +119,10 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
       ];
     }
     if (types?.state === 'Disabled') {
-      if (types.disabled?.length > 0) {
+      if (types.disabled?.length && types.disabled.length > 0) {
         return [
           sortedCatalogTypeExtensions
-            .filter((catalogItemType) => !types.disabled.includes(catalogItemType.properties.type))
+            .filter((catalogItemType) => !types.disabled?.includes(catalogItemType.properties.type))
             .map((catalogItemType) => (
               <Item
                 key={catalogItemType.properties.type}
@@ -186,10 +186,10 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
                 ? {
                     state: types.state,
                     // Force null (clear both lists) when they are undefined.
-                    enabled: types.enabled || null,
-                    disabled: types.disabled || null,
+                    enabled: types.enabled || undefined,
+                    disabled: types.disabled || undefined,
                   }
-                : null,
+                : undefined,
           },
         },
       },
@@ -260,7 +260,7 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
       />
 
       <LoadError error={consoleConfigError} />
-      <SaveStatus {...saveStatus} />
+      <SaveStatus {...(saveStatus as SaveStatusProps)} />
     </FormSection>
   );
 };

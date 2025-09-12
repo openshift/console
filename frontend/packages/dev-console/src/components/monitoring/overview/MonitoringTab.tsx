@@ -11,10 +11,7 @@ type MonitoringTabProps = {
 
 const MonitoringTab: React.FC<MonitoringTabProps> = ({ item }) => {
   const { monitoringAlerts } = item;
-  const {
-    kind,
-    metadata: { uid, name, namespace },
-  } = item.obj;
+  const { kind, metadata: { uid, name, namespace } = {} } = item.obj;
   const { podData, loadError, loaded } = usePodsWatcher(item.obj, item.obj.kind, namespace);
 
   const resources = React.useMemo(() => {
@@ -30,12 +27,14 @@ const MonitoringTab: React.FC<MonitoringTabProps> = ({ item }) => {
 
     if (loaded && !loadError && podData?.pods) {
       podData.pods.forEach((pod) => {
-        const fieldSelector = `involvedObject.uid=${pod.metadata.uid},involvedObject.name=${pod.metadata.name},involvedObject.kind=${PodModel.kind}`;
+        const fieldSelector = `involvedObject.uid=${pod.metadata?.uid ?? ''},involvedObject.name=${
+          pod.metadata?.name ?? ''
+        },involvedObject.kind=${PodModel.kind}`;
         res.push({
           isList: true,
           kind: 'Event',
-          namespace: pod.metadata.namespace,
-          prop: pod.metadata.uid,
+          namespace: pod.metadata?.namespace ?? '',
+          prop: pod.metadata?.uid ?? '',
           fieldSelector,
         });
       });
@@ -48,7 +47,7 @@ const MonitoringTab: React.FC<MonitoringTabProps> = ({ item }) => {
       <MonitoringOverview
         resource={item.obj}
         pods={(podData?.pods as PodKind[]) || []}
-        monitoringAlerts={monitoringAlerts}
+        monitoringAlerts={monitoringAlerts ?? []}
       />
     </Firehose>
   );

@@ -84,13 +84,13 @@ export const useDevfileServer = (
             const { imageStream, buildResource, deployResource, service, route } = value;
 
             if (deployResource.spec?.template?.spec?.containers?.length > 0) {
-              const buildGuidanceContainer = deployResource.spec.template.spec.containers[0];
+              const buildGuidanceContainer = deployResource.spec?.template?.spec?.containers?.[0];
 
               setFieldValue('image.ports', buildGuidanceContainer.ports || [], false);
               setFieldValue('deployment.env', buildGuidanceContainer.env || [], false);
               setFieldValue('limits', getLimitsDataFromResource(deployResource), false);
 
-              delete deployResource.spec.template.spec.containers;
+              delete deployResource.spec?.template?.spec?.containers;
             }
 
             setFieldValue('devfile.devfileSuggestedResources', {
@@ -115,7 +115,7 @@ export const useDevfileServer = (
     getDevfileResources();
   }, [devfileDataPromise, setFieldValue, t]);
 
-  return [parsingDevfile, devfileParseError];
+  return [parsingDevfile, devfileParseError ?? ''];
 };
 
 export const useDevfileSource = () => {
@@ -135,7 +135,7 @@ export const useDevfileSource = () => {
       setFieldValue('devfile.devfilePath', recommendedStrategy?.detectedFiles?.[0]);
       setFieldValue('docker.dockerfilePath', 'Dockerfile');
       if (formType === 'sample') {
-        setFieldValue('name', createComponentName(devfileName));
+        setFieldValue('name', createComponentName(devfileName ?? ''));
         setFieldValue('application.initial', SAMPLE_APPLICATION_GROUP);
         setFieldValue('application.name', SAMPLE_APPLICATION_GROUP);
         setFieldValue('application.selectedKey', SAMPLE_APPLICATION_GROUP);
@@ -165,7 +165,7 @@ export const useSelectedDevfileSample = () => {
         if (mounted) setDevfileSamples(samples);
       })
       .catch(() => {
-        if (mounted) setDevfileSamples(null);
+        if (mounted) setDevfileSamples(undefined);
       });
 
     return () => {

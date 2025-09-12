@@ -1,6 +1,6 @@
 import { configure, screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { Resources } from '../../import-types';
+import { InsecureTrafficType, Resources, TerminationType } from '../../import-types';
 import RouteSection from '../RouteSection';
 import '@testing-library/jest-dom';
 
@@ -63,9 +63,9 @@ describe('RouteSection', () => {
           caCertificate: '',
           certificate: '',
           destinationCACertificate: '',
-          insecureEdgeTerminationPolicy: null,
+          insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
           key: '',
-          termination: null,
+          termination: 'None' as TerminationType,
         },
         unknownTargetPort: '',
         labels: {},

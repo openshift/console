@@ -7,7 +7,7 @@ type MasonryProps = {
   children: React.ReactElement[];
 };
 
-export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
+export const Masonry: React.FCC<MasonryProps> = ({ columnCount, children }) => {
   const [heights, setHeights] = React.useState<Record<string, number>>({});
   const columns = columnCount || 1;
   const setHeight = (key: string, height: number) => {
@@ -24,9 +24,10 @@ export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
     const MeasuredItem = () => {
       const measureRef = React.useRef<HTMLDivElement>(null);
       React.useEffect(() => {
-        const newHeight = measureRef.current.getBoundingClientRect().height;
-        if (heights[item.key as string] !== newHeight) {
-          setHeight(item.key as string, newHeight);
+        const newHeight = measureRef.current?.getBoundingClientRect().height ?? 0;
+        const itemKey = item.key?.toString() ?? '';
+        if (itemKey && heights[itemKey] !== newHeight) {
+          setHeight(itemKey, newHeight);
         }
       }, []);
       return <div ref={measureRef}>{item}</div>;
@@ -36,7 +37,8 @@ export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
 
     // Fill first row directly
     if (itemIndex < columns) {
-      groupedColumns[itemIndex].height += heights[item.key as string] || 0;
+      const itemKey = item.key?.toString() ?? '';
+      groupedColumns[itemIndex].height += itemKey ? heights[itemKey] || 0 : 0;
       groupedColumns[itemIndex].items.push(measuredItem);
       return;
     }
@@ -48,8 +50,9 @@ export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
     );
 
     // Add column which height is already known
-    if (item.key && heights[item.key]) {
-      column.height += heights[item.key];
+    const itemKey = item.key?.toString() ?? '';
+    if (itemKey && heights[itemKey]) {
+      column.height += heights[itemKey];
       column.items.push(measuredItem);
       return;
     }

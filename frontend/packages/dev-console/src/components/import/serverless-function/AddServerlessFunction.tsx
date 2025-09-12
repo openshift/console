@@ -130,8 +130,7 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
 
   const { loaded: isLoaded, data: isData, loadError: isLoadError } = resourcesData.imageStreams;
 
-  const builderImages: NormalizedBuilderImages =
-    !isLoadError && isLoaded && isData && normalizeBuilderImages(isData);
+  const builderImages = !isLoadError && isLoaded && isData && normalizeBuilderImages(isData);
 
   const handleSubmit = (values, actions) => {
     const imageStream = builderImages && builderImages[values.image.selected]?.obj;
@@ -152,10 +151,10 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
     const resourceActions = createOrUpdateResources(
       t,
       updatedFormData,
-      imageStream,
+      imageStream as K8sResourceKind,
       createNewProject,
       true,
-    ).then(() => createOrUpdateResources(t, updatedFormData, imageStream));
+    ).then(() => createOrUpdateResources(t, updatedFormData, imageStream as K8sResourceKind));
 
     resourceActions
       .then((resources) => {
@@ -165,13 +164,13 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
     fireTelemetryEvent('Serverless Function being created');
     return resourceActions
       .then((res) => {
-        const selectId = filterDeployedResources(res)[0]?.metadata?.uid || undefined;
+        const selectId = filterDeployedResources(res)[0]?.metadata?.uid;
 
         handleRedirect(
           projectName,
           perspective,
           perspectiveExtensions,
-          new URLSearchParams({ selectId }),
+          new URLSearchParams({ selectId: selectId ?? '' }),
         );
       })
       .catch((err) => {
@@ -191,7 +190,7 @@ const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
         <AddServerlessFunctionForm
           {...formikProps}
           projects={resourcesData.projects as WatchK8sResultsObject<K8sResourceKind[]>}
-          builderImages={builderImages}
+          builderImages={builderImages as NormalizedBuilderImages}
         />
       )}
     </Formik>

@@ -16,7 +16,7 @@ describe('convertBuildConfigToFormData', () => {
   });
 
   it('keeps all initial form data with null BuildConfig', () => {
-    const buildConfig = null as BuildConfig;
+    const buildConfig = null;
 
     const expectedValues = getInitialBuildConfigFormikValues();
     expect(convertBuildConfigToFormData(buildConfig)).toEqual(expectedValues);
@@ -164,9 +164,11 @@ describe('convertBuildConfigToFormData', () => {
       expectedValues.formData.images.strategyType = BuildStrategyType.Source;
       expectedValues.formData.images.buildFrom.type = 'imageStreamTag';
       expectedValues.formData.images.buildFrom.imageStreamTag.fromImageStreamTag = true;
-      expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.namespace = 'openshift';
-      expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.image = 'ruby';
-      expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.tag = '2.7';
+      if (expectedValues.formData.images.buildFrom.imageStreamTag.imageStream) {
+        expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.namespace = 'openshift';
+        expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.image = 'ruby';
+        expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.tag = '2.7';
+      }
       expectedValues.formData.images.buildFrom.imageStreamTag.project.name = 'openshift';
       expect(convertBuildConfigToFormData(buildConfig)).toEqual(expectedValues);
     });
@@ -192,9 +194,11 @@ describe('convertBuildConfigToFormData', () => {
       expectedValues.formData.source.git.project.name = 'a-namespace';
       expectedValues.formData.images.pushTo.type = 'imageStreamTag';
       expectedValues.formData.images.pushTo.imageStreamTag.fromImageStreamTag = true;
-      expectedValues.formData.images.pushTo.imageStreamTag.imageStream.namespace = 'a-namespace';
-      expectedValues.formData.images.pushTo.imageStreamTag.imageStream.image = 'nodejs-ex-git';
-      expectedValues.formData.images.pushTo.imageStreamTag.imageStream.tag = 'latest';
+      if (expectedValues.formData.images.pushTo.imageStreamTag.imageStream) {
+        expectedValues.formData.images.pushTo.imageStreamTag.imageStream.namespace = 'a-namespace';
+        expectedValues.formData.images.pushTo.imageStreamTag.imageStream.image = 'nodejs-ex-git';
+        expectedValues.formData.images.pushTo.imageStreamTag.imageStream.tag = 'latest';
+      }
       expectedValues.formData.images.pushTo.imageStreamTag.project.name = 'a-namespace';
       expect(convertBuildConfigToFormData(buildConfig)).toEqual(expectedValues);
     });
@@ -228,9 +232,11 @@ describe('convertBuildConfigToFormData', () => {
       expectedValues.formData.images.strategyType = BuildStrategyType.Source;
       expectedValues.formData.images.buildFrom.type = 'imageStreamTag';
       expectedValues.formData.images.buildFrom.imageStreamTag.fromImageStreamTag = true;
-      expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.namespace = 'openshift';
-      expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.image = 'ruby';
-      expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.tag = '2.7';
+      if (expectedValues.formData.images.buildFrom.imageStreamTag.imageStream) {
+        expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.namespace = 'openshift';
+        expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.image = 'ruby';
+        expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.tag = '2.7';
+      }
       expectedValues.formData.images.buildFrom.imageStreamTag.project.name = 'openshift';
       expectedValues.formData.environmentVariables = [
         { name: 'env key 1', value: 'env value 1' },
@@ -299,9 +305,11 @@ describe('convertBuildConfigToFormData', () => {
       expectedValues.formData.images.strategyType = BuildStrategyType.Source;
       expectedValues.formData.images.buildFrom.type = 'imageStreamTag';
       expectedValues.formData.images.buildFrom.imageStreamTag.fromImageStreamTag = true;
-      expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.namespace = 'openshift';
-      expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.image = 'ruby';
-      expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.tag = '2.7';
+      if (expectedValues.formData.images.buildFrom.imageStreamTag.imageStream) {
+        expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.namespace = 'openshift';
+        expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.image = 'ruby';
+        expectedValues.formData.images.buildFrom.imageStreamTag.imageStream.tag = '2.7';
+      }
       expectedValues.formData.images.buildFrom.imageStreamTag.project.name = 'openshift';
       expectedValues.formData.environmentVariables = [
         { name: 'env key 1', value: 'env value 1' },
@@ -437,7 +445,7 @@ describe('convertBuildConfigToFormData', () => {
       };
 
       const expectedValues = getInitialBuildConfigFormikValues();
-      expectedValues.formData.policy.runPolicy = null;
+      expectedValues.formData.policy.runPolicy = undefined;
       expect(convertBuildConfigToFormData(buildConfig)).toEqual(expectedValues);
     });
 

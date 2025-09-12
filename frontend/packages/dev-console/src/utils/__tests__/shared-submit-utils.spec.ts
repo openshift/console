@@ -41,7 +41,7 @@ describe('Shared submit utils', () => {
       mockData.git.url = 'https://github.com/nodeshift-blog-examples/react-web-app';
       mockData.route.unknownTargetPort = '3000';
       const serviceObj = createService(mockData);
-      const { ports } = serviceObj.spec;
+      const ports = serviceObj?.spec?.ports;
 
       expect(ports).not.toEqual(
         expect.arrayContaining([
@@ -68,7 +68,7 @@ describe('Shared submit utils', () => {
       mockData.route.unknownTargetPort = '3000';
       serviceObj = createService(mockData);
 
-      const { ports } = serviceObj.spec;
+      const ports = serviceObj?.spec?.ports;
 
       expect(ports).not.toEqual(
         expect.arrayContaining([
@@ -110,7 +110,7 @@ describe('Shared submit utils', () => {
         'shared-label': 'a-shared-label-value',
       };
       const routeObj = createRoute(mockData);
-      expect(routeObj.metadata.labels).toEqual({
+      expect(routeObj?.metadata?.labels).toEqual({
         app: 'test-app',
         'app.kubernetes.io/component': 'test-app',
         'app.kubernetes.io/instance': 'test-app',

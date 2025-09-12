@@ -94,14 +94,15 @@ const AddServerlessFunctionForm: React.FC<
               setFieldValue('deployment.env', res?.values?.runtimeEnvs || []);
               setFieldValue(
                 'image.selected',
-                notSupportedRuntime.indexOf(res?.values?.runtime) === -1
-                  ? SupportedRuntime[res?.values?.runtime]
+                notSupportedRuntime.indexOf(res?.values?.runtime || '') === -1
+                  ? SupportedRuntime[res?.values?.runtime || '']
                   : res?.values?.runtime,
               );
               setFieldValue('import.showEditImportStrategy', true);
               setFieldValue(
                 'image.tag',
-                builderImages?.[SupportedRuntime[res?.values?.runtime]]?.recentTag?.name ?? '',
+                builderImages?.[SupportedRuntime[res?.values?.runtime || '']]?.recentTag?.name ??
+                  '',
               );
               if (res?.values?.builder && res?.values?.builder !== 's2i') {
                 setHelpText(
@@ -111,7 +112,7 @@ const AddServerlessFunctionForm: React.FC<
                 );
                 setStatus({ errors: 'Builder strategy not supported' });
               }
-              if (builderImages[SupportedRuntime[res?.values?.runtime]] === undefined) {
+              if (builderImages?.[SupportedRuntime[res?.values?.runtime || '']] === undefined) {
                 setHelpText(
                   t('devconsole~Support for {{runtime}} is not yet available.', {
                     runtime: res?.values?.runtime,
@@ -165,7 +166,7 @@ const AddServerlessFunctionForm: React.FC<
                   project={values.project}
                   noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
                 />
-                {showPipelineSection && <PipelineSection builderImages={builderImages} />}
+                {showPipelineSection && <PipelineSection builderImages={builderImages || {}} />}
                 <AdvancedSection values={values} />
               </>
             )}

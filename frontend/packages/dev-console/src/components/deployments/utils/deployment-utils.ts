@@ -278,8 +278,8 @@ export const getStrategy = (
       ...getStrategyData(
         type,
         strategy,
-        deployment.metadata.name,
-        deployment.metadata.namespace,
+        deployment.metadata?.name ?? '',
+        deployment.metadata?.namespace ?? '',
         resourceType,
       ),
     };
@@ -292,8 +292,8 @@ export const getStrategy = (
       ? getStrategyData(
           type,
           strategy,
-          deployment.metadata.name,
-          deployment.metadata.namespace,
+          deployment.metadata?.name ?? '',
+          deployment.metadata?.namespace ?? '',
           resourceType,
         )
       : {}),
@@ -343,10 +343,11 @@ export const getTriggersAndImageStreamValues = (
       imageStream: {
         image: imageName[0] ?? '',
         tag: imageName[1] ?? '',
-        namespace: imageTrigger?.imageChangeParams.from.namespace ?? deployment.metadata.namespace,
+        namespace:
+          imageTrigger?.imageChangeParams.from.namespace ?? deployment.metadata?.namespace ?? '',
       },
       project: {
-        name: deployment.metadata.namespace,
+        name: deployment.metadata?.namespace ?? '',
       },
     };
   }
@@ -368,10 +369,10 @@ export const getTriggersAndImageStreamValues = (
     imageStream: {
       image: imageName[0] ?? '',
       tag: imageName[1] ?? '',
-      namespace: imageTrigger?.from?.namespace ?? deployment.metadata.namespace,
+      namespace: imageTrigger?.from?.namespace ?? deployment.metadata?.namespace ?? '',
     },
     project: {
-      name: deployment.metadata.namespace,
+      name: deployment.metadata?.namespace ?? '',
     },
   };
 };
@@ -381,16 +382,16 @@ export const convertDeploymentToEditForm = (
 ): EditDeploymentFormData => {
   const resourceType = getResourcesType(deployment);
   return {
-    formType: deployment.metadata.name ? 'edit' : 'create',
-    name: deployment.metadata.name ?? '',
-    resourceVersion: deployment.metadata.resourceVersion ?? '',
+    formType: deployment.metadata?.name ? 'edit' : 'create',
+    name: deployment.metadata?.name ?? '',
+    resourceVersion: deployment.metadata?.resourceVersion ?? '',
     deploymentStrategy: getStrategy(deployment, resourceType),
-    containers: deployment.spec.template?.spec?.containers ?? [],
-    imageName: deployment.spec.template?.spec?.containers?.[0]?.image,
-    envs: deployment.spec.template?.spec?.containers?.[0]?.env ?? [],
-    imagePullSecret: deployment.spec.template?.spec?.imagePullSecrets?.[0]?.name ?? '',
-    paused: deployment.spec.paused ?? false,
-    replicas: deployment.spec.replicas,
+    containers: deployment.spec?.template?.spec?.containers ?? [],
+    imageName: deployment.spec?.template?.spec?.containers?.[0]?.image,
+    envs: deployment.spec?.template?.spec?.containers?.[0]?.env ?? [],
+    imagePullSecret: deployment.spec?.template?.spec?.imagePullSecrets?.[0]?.name ?? '',
+    paused: deployment.spec?.paused ?? false,
+    replicas: deployment.spec?.replicas,
     ...getTriggersAndImageStreamValues(deployment, resourceType),
   };
 };
@@ -421,31 +422,34 @@ export const getUpdatedLchData = (
 ) => {
   const getUpdatedTagImages = () => {
     const { containerName, to, imageStreamTag } = imageStreamData;
-    const { apiVersion, kind, metadata } = imageStreamTag;
-    lch.tagImages[0] = {
-      containerName,
-      to: !_.isEmpty(to)
-        ? to
-        : {
-            apiVersion,
-            kind,
-            name: metadata?.name,
-            namespace: metadata?.namespace,
-            resourceVersion: metadata?.resourceVersion,
-            uid: metadata?.uid,
-          },
-    };
-    return lch.tagImages;
+    const { apiVersion, kind, metadata } = imageStreamTag || {};
+    if (lch.tagImages && lch.tagImages.length > 0) {
+      lch.tagImages[0] = {
+        ...lch.tagImages[0],
+        containerName,
+        to: !_.isEmpty(to)
+          ? to
+          : {
+              apiVersion: apiVersion ?? '',
+              kind: kind ?? '',
+              name: metadata?.name ?? '',
+              namespace: metadata?.namespace ?? '',
+              resourceVersion: metadata?.resourceVersion ?? '',
+              uid: metadata?.uid ?? '',
+            },
+      };
+    }
+    return lch.tagImages ?? [];
   };
   return {
     [lchName]: {
       failurePolicy: lch.failurePolicy,
       ...(lcAction === LifecycleAction.execNewPod && {
         execNewPod: {
-          containerName: lch.execNewPod.containerName,
-          command: lch.execNewPod.command,
-          ...(!_.isEmpty(lch.execNewPod.env) ? { env: lch.execNewPod.env } : {}),
-          ...(lch.execNewPod.volumes ? { volumes: _.split(lch.execNewPod.volumes, ',') } : {}),
+          containerName: lch.execNewPod?.containerName,
+          command: lch.execNewPod?.command,
+          ...(!_.isEmpty(lch.execNewPod?.env) ? { env: lch.execNewPod?.env } : {}),
+          ...(lch.execNewPod?.volumes ? { volumes: _.split(lch.execNewPod?.volumes, ',') } : {}),
         },
       }),
       ...(lcAction === LifecycleAction.tagImages && {
@@ -467,21 +471,36 @@ export const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: s
   switch (type) {
     case DeploymentStrategyType.recreateParams: {
       const { mid: midHook, post: postHook, pre: preHook, timeoutSeconds } =
-        strategy.recreateParams ?? {};
+        strategy?.recreateParams ?? {};
       return {
         ...newStrategy,
         ...(resourceType === Resources.OpenShift
           ? {
               recreateParams: {
                 ...(timeoutSeconds ? { timeoutSeconds } : {}),
-                ...(preHook.exists
-                  ? getUpdatedLchData(preHook.lch, 'pre', preHook.action, imageStreamData.pre)
+                ...(preHook?.exists
+                  ? getUpdatedLchData(
+                      preHook.lch as LifecycleHookData,
+                      'pre',
+                      preHook.action,
+                      imageStreamData?.pre as LifecycleHookImagestreamData,
+                    )
                   : {}),
-                ...(midHook.exists
-                  ? getUpdatedLchData(midHook.lch, 'mid', midHook.action, imageStreamData.mid)
+                ...(midHook?.exists
+                  ? getUpdatedLchData(
+                      midHook.lch as LifecycleHookData,
+                      'mid',
+                      midHook.action,
+                      imageStreamData?.mid as LifecycleHookImagestreamData,
+                    )
                   : {}),
-                ...(postHook.exists
-                  ? getUpdatedLchData(postHook.lch, 'post', postHook.action, imageStreamData.post)
+                ...(postHook?.exists
+                  ? getUpdatedLchData(
+                      postHook.lch as LifecycleHookData,
+                      'post',
+                      postHook.action,
+                      imageStreamData?.post as LifecycleHookImagestreamData,
+                    )
                   : {}),
               },
             }
@@ -503,18 +522,28 @@ export const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: s
         timeoutSeconds,
         updatePeriodSeconds,
         intervalSeconds,
-      } = strategy.rollingParams;
+      } = strategy.rollingParams ?? {};
       return {
         ...newStrategy,
         rollingParams: {
           ...(timeoutSeconds ? { timeoutSeconds } : {}),
           ...(updatePeriodSeconds ? { updatePeriodSeconds } : {}),
           ...(intervalSeconds ? { intervalSeconds } : {}),
-          ...(preHook.exists
-            ? getUpdatedLchData(preHook.lch, 'pre', preHook.action, imageStreamData.pre)
+          ...(preHook?.exists
+            ? getUpdatedLchData(
+                preHook.lch as LifecycleHookData,
+                'pre',
+                preHook.action,
+                imageStreamData?.pre as LifecycleHookImagestreamData,
+              )
             : {}),
-          ...(postHook.exists
-            ? getUpdatedLchData(postHook.lch, 'post', postHook.action, imageStreamData.pre)
+          ...(postHook?.exists
+            ? getUpdatedLchData(
+                postHook.lch as LifecycleHookData,
+                'post',
+                postHook.action,
+                imageStreamData?.pre as LifecycleHookImagestreamData,
+              )
             : {}),
           ...(maxSurge
             ? { maxSurge: !_.endsWith(maxSurge, '%') ? parseInt(maxSurge, 10) : maxSurge }
@@ -530,7 +559,7 @@ export const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: s
       };
     }
     case DeploymentStrategyType.rollingUpdate: {
-      const { maxSurge, maxUnavailable } = strategy.rollingUpdate;
+      const { maxSurge, maxUnavailable } = strategy?.rollingUpdate ?? {};
       return {
         type,
         rollingUpdate: {
@@ -565,7 +594,7 @@ export const convertEditFormToDeployment = (
     imagePullSecret,
     paused,
     replicas,
-    imageStream: { image, tag, namespace: imgNs },
+    imageStream: { image, tag, namespace: imgNs } = { image: '', tag: '', namespace: '' },
     isi,
     triggers,
     fromImageStreamTag,
@@ -586,21 +615,27 @@ export const convertEditFormToDeployment = (
       replicas,
       strategy: getUpdatedStrategy(deploymentStrategy, resourceType),
       template: {
-        ...deployment.spec.template,
+        ...deployment.spec?.template,
         metadata: {
-          ...deployment.spec.template.metadata,
+          ...deployment.spec?.template?.metadata,
           labels: {
-            ...deployment.spec.template.metadata.labels,
-            ...(deployment.metadata.name ? {} : name ? { app: name } : {}),
+            ...deployment.spec?.template?.metadata?.labels,
+            ...(deployment.metadata?.name ? {} : name ? { app: name } : {}),
           },
         },
         spec: {
-          ...deployment.spec.template.spec,
-          containers: getUpdatedContainers(containers, fromImageStreamTag, isi, imageName, envs),
+          ...deployment.spec?.template?.spec,
+          containers: getUpdatedContainers(
+            containers,
+            fromImageStreamTag,
+            isi as ImageStreamImageData,
+            imageName,
+            envs,
+          ),
           imagePullSecrets: [
-            ...(deployment.spec.template.spec.imagePullSecrets ?? []),
+            ...(deployment.spec?.template?.spec?.imagePullSecrets ?? []),
             ...(imagePullSecret &&
-            !(deployment.spec.template.spec.imagePullSecrets ?? []).some(
+            !(deployment.spec?.template?.spec?.imagePullSecrets ?? []).some(
               (secret) => secret.name === imagePullSecret,
             )
               ? [{ name: imagePullSecret }]
@@ -617,11 +652,11 @@ export const convertEditFormToDeployment = (
       spec: {
         ...newDeployment.spec,
         selector: {
-          ...newDeployment.spec.selector,
-          ...(deployment.metadata.name
+          ...newDeployment.spec?.selector,
+          ...(deployment.metadata?.name
             ? {}
-            : newDeployment.metadata.name
-            ? { app: newDeployment.metadata.name }
+            : newDeployment.metadata?.name
+            ? { app: newDeployment.metadata?.name }
             : {}),
         },
         triggers: [
@@ -630,8 +665,8 @@ export const convertEditFormToDeployment = (
                 {
                   type: 'ImageChange',
                   imageChangeParams: {
-                    automatic: triggers.image,
-                    containerNames: [containers[0].name],
+                    automatic: triggers?.image,
+                    containerNames: [containers[0]?.name ?? ''],
                     from: {
                       kind: 'ImageStreamTag',
                       name: `${image}:${tag}`,
@@ -641,7 +676,7 @@ export const convertEditFormToDeployment = (
                 },
               ]
             : []),
-          ...(triggers.config ? [{ type: 'ConfigChange' }] : []),
+          ...(triggers?.config ? [{ type: 'ConfigChange' }] : []),
         ],
       },
     };
@@ -653,22 +688,28 @@ export const convertEditFormToDeployment = (
       metadata: {
         ...newDeployment.metadata,
         annotations: {
-          ...newDeployment.metadata.annotations,
+          ...newDeployment.metadata?.annotations,
           ...(fromImageStreamTag
-            ? getTriggerAnnotation(containers[0].name, image, imgNs, triggers.image, tag)
+            ? getTriggerAnnotation(
+                containers[0]?.name ?? '',
+                image ?? '',
+                imgNs ?? '',
+                triggers?.image ?? false,
+                tag ?? '',
+              )
             : {}),
         },
       },
       spec: {
         ...newDeployment.spec,
         selector: {
-          ...newDeployment.spec.selector,
+          ...newDeployment.spec?.selector,
           matchLabels: {
-            ...newDeployment.spec.selector.matchLabels,
-            ...(deployment.metadata.name
+            ...newDeployment.spec?.selector?.matchLabels,
+            ...(deployment.metadata?.name
               ? {}
-              : newDeployment.metadata.name
-              ? { app: newDeployment.metadata.name }
+              : newDeployment.metadata?.name
+              ? { app: newDeployment.metadata?.name }
               : {}),
           },
         },

@@ -89,8 +89,8 @@ const ImportPage: React.FunctionComponent = () => {
           <Firehose resources={resources}>
             <ImportForm
               forApplication={application}
-              contextualSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
-              namespace={namespace || preselectedNamespace}
+              contextualSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE) || undefined}
+              namespace={namespace || preselectedNamespace || ''}
               importData={importData}
             />
           </Firehose>

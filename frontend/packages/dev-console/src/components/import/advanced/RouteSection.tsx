@@ -16,7 +16,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ route, resources }) => {
 
   return (
     <>
-      <PortInputField defaultPort={defaultUnknownPort} />
+      <PortInputField defaultPort={defaultUnknownPort ?? 8080} />
       <CheckboxField
         name="route.create"
         label={t('devconsole~Create a route')}

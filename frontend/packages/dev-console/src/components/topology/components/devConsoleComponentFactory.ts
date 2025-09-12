@@ -20,7 +20,7 @@ export const getDevConsoleComponentFactory = (
     case TYPE_BINDABLE_NODE:
       return withCreateConnector(
         createConnectorCallback(),
-        CreateConnector,
+        CreateConnector as any,
       )(
         withEditReviewAccess('patch')(
           withDragNode(nodeDragSourceSpec(type))(

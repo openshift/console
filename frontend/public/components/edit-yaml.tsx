@@ -849,7 +849,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
       {(header || create) && !props.hideHeader && (
         <PageHeading
           title={header}
-          badge={getBadgeFromType(model && model.badge)}
+          badge={getBadgeFromType(model?.badge)}
           helpText={
             create &&
             (allowMultiple ? (

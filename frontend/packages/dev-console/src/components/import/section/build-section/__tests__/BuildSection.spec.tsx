@@ -92,14 +92,14 @@ jest.mock('react-i18next', () => ({
 }));
 
 describe('BuildSection', () => {
-  const baseValues = {
+  const baseValues = ({
     project: { name: 'my-app' },
     build: { option: BuildOptions.BUILDS, env: [] },
     image: { selected: 'nodejs-ex', tag: 'latest' },
     import: { selectedStrategy: { type: 0 } },
     formType: 'edit', // Prevent complex side effects
     git: { url: '' }, // Empty URL to prevent auto-selection
-  } as FormikValues & GitImportFormData;
+  } as unknown) as FormikValues & GitImportFormData;
 
   beforeEach(() => {
     (useFormikContext as jest.Mock).mockReturnValue({

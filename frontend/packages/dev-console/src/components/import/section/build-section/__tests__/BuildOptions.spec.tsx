@@ -126,8 +126,8 @@ describe('BuildOptions', () => {
     expect(screen.getByText(/SingleDropdownField/)).toBeInTheDocument();
 
     const dropdownText = screen.getByText(/SingleDropdownField options=/);
-    const optionsMatch = dropdownText.textContent.match(/options=(.+)/);
-    const options = JSON.parse(optionsMatch[1]);
+    const optionsMatch = dropdownText.textContent?.match(/options=(.+)/);
+    const options = JSON.parse(optionsMatch?.[1] || '');
 
     expect(options).toHaveLength(3);
 
@@ -178,8 +178,8 @@ describe('BuildOptions', () => {
     expect(screen.getByText(/SingleDropdownField/)).toBeInTheDocument();
 
     const dropdownText = screen.getByText(/SingleDropdownField options=/);
-    const optionsMatch = dropdownText.textContent.match(/options=(.+)/);
-    const options = JSON.parse(optionsMatch[1]);
+    const optionsMatch = dropdownText.textContent?.match(/options=(.+)/);
+    const options = JSON.parse(optionsMatch?.[1] || '');
 
     expect(options).toHaveLength(2);
 
@@ -210,8 +210,8 @@ describe('BuildOptions', () => {
     expect(screen.getByText(/SingleDropdownField/)).toBeInTheDocument();
 
     const dropdownText = screen.getByText(/SingleDropdownField options=/);
-    const optionsMatch = dropdownText.textContent.match(/options=(.+)/);
-    const options = JSON.parse(optionsMatch[1]);
+    const optionsMatch = dropdownText.textContent?.match(/options=(.+)/);
+    const options = JSON.parse(optionsMatch?.[1] || '');
 
     expect(options).toHaveLength(1);
 

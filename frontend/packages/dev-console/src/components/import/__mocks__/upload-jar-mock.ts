@@ -1,7 +1,12 @@
 import { ImportStrategy } from '@console/git-service/src';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
-import { Resources, UploadJarFormData } from '../import-types';
+import {
+  InsecureTrafficType,
+  Resources,
+  TerminationType,
+  UploadJarFormData,
+} from '../import-types';
 import { serverlessInitialValues } from './serverless-mock';
 
 export const uploadJarMockFormData: UploadJarFormData = {
@@ -65,8 +70,8 @@ export const uploadJarMockFormData: UploadJarFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: 'None' as TerminationType,
+      insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',

@@ -18,11 +18,11 @@ export const HPAOverview: React.FC<HPAOverviewProps> = ({ hpas }) => {
       <SidebarSectionHeading text={HorizontalPodAutoscalerModel.labelPlural} />
       <List isPlain isBordered>
         {hpas.map((hpa: HorizontalPodAutoscalerKind) => (
-          <ListItem key={hpa.metadata.name}>
+          <ListItem key={hpa.metadata?.name}>
             <ResourceLink
               kind={HorizontalPodAutoscalerModel.kind}
-              name={hpa.metadata.name}
-              namespace={hpa.metadata.namespace}
+              name={hpa.metadata?.name}
+              namespace={hpa.metadata?.namespace}
             />
           </ListItem>
         ))}

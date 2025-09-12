@@ -1,6 +1,7 @@
 import { BuildStrategyType } from '@console/dev-console/src/components/buildconfig/types';
 import { GitProvider } from '@console/git-service/src';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { ClusterBuildStrategyKind, BuildStrategyKind } from '../../types';
 import { BuildFormikValues } from './types';
 
 export const getInitialBuildFormikValues = (namespace?: string): BuildFormikValues => {
@@ -48,13 +49,15 @@ export const getInitialBuildFormikValues = (namespace?: string): BuildFormikValu
             strategy: BuildStrategyType.Source,
           },
           project: {
-            name: namespace,
+            name: namespace || '',
           },
         },
       },
       build: {
         strategy: '',
-        selectedBuildStrategy: undefined,
+        selectedBuildStrategy: (undefined as unknown) as
+          | ClusterBuildStrategyKind
+          | BuildStrategyKind,
         kind: '',
       },
       parameters: [],

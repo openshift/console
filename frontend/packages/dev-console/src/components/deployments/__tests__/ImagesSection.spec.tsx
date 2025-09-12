@@ -28,7 +28,7 @@ const mockedContainerField = ContainerField as jest.Mock<React.FC>;
 
 const handleSubmit = jest.fn();
 
-let renderResults: RenderResult = null;
+let renderResults: RenderResult | null = null;
 
 beforeAll(() => {
   mockedContainerField.mockImplementation(MockContainerField);
@@ -98,7 +98,7 @@ describe('ImagesSection', () => {
   });
 
   it('should have the required trigger checkbox fields based on resourceType', async () => {
-    renderResults.rerender(
+    renderResults?.rerender(
       <MockForm handleSubmit={handleSubmit}>
         {() => (
           <Provider store={store}>

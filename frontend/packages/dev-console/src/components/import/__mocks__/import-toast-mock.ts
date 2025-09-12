@@ -10,8 +10,17 @@ type DeployedResource = K8sResourceKind & {
 
 export const mockResources: { deployedResources: DeployedResource[]; route?: RouteKind }[] = [
   {
-    deployedResources: [{ kind: DeploymentModel.kind, spec: { selector: null, template: null } }],
-    route: { kind: RouteModel.kind, spec: { host: 'testURL', to: null } },
+    deployedResources: [{ kind: DeploymentModel.kind, spec: { selector: '', template: '' } }],
+    route: {
+      kind: RouteModel.kind,
+      spec: { host: 'testURL', to: { kind: 'Service', name: 'test-app', weight: 0 } },
+    },
   },
-  { deployedResources: [{ kind: DeploymentModel.kind, spec: { selector: null, template: null } }] },
+  {
+    deployedResources: [{ kind: DeploymentModel.kind, spec: { selector: '', template: '' } }],
+    route: {
+      kind: RouteModel.kind,
+      spec: { host: 'testURL', to: { kind: 'Service', name: 'test-app', weight: 0 } },
+    },
+  },
 ];

@@ -21,11 +21,11 @@ export const getFormDataFromRoleBinding = (
   namespace: string,
 ): UserRoleBinding[] =>
   user.subjects?.map((obj) => ({
-    roleBindingName: user.metadata.name,
-    subject: { ...obj, namespace: obj.kind !== 'ServiceAccount' ? namespace : obj.namespace },
-    role: user.roleRef.name,
-    subjects: user.subjects,
-  }));
+    roleBindingName: user.metadata?.name ?? '',
+    subject: { ...obj, namespace: obj.kind !== 'ServiceAccount' ? namespace : obj.namespace ?? '' },
+    role: user.roleRef?.name ?? '',
+    subjects: user.subjects ?? [],
+  })) ?? [];
 
 export const getUserRoleBindings = (
   roleBindings: RoleBinding[],
@@ -33,11 +33,15 @@ export const getUserRoleBindings = (
   namespace: string,
 ): UserRoleBinding[] =>
   roleBindings.reduce((acc, roleBinding: RoleBinding) => {
-    if (clusterRoleNames.includes(roleBinding.roleRef.name) && roleBinding.subjects?.length > 0) {
+    if (
+      clusterRoleNames.includes(roleBinding.roleRef?.name ?? '') &&
+      roleBinding.subjects?.length &&
+      roleBinding.subjects.length > 0
+    ) {
       acc.push(...getFormDataFromRoleBinding(roleBinding, namespace));
     }
     return acc;
-  }, []);
+  }, [] as UserRoleBinding[]);
 
 export const ignoreRoleBindingName = (roleBinding: UserRoleBinding[]) => {
   const res = roleBinding.map((obj) => ({

@@ -12,7 +12,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 
 describe('project-access hooks', () => {
   it('should return default access roles', () => {
-    window.SERVER_FLAGS.projectAccessClusterRoles = undefined;
+    window.SERVER_FLAGS.projectAccessClusterRoles = '';
     const expectedAccessRoles = {
       data: defaultAccessRoles,
       loaded: true,
