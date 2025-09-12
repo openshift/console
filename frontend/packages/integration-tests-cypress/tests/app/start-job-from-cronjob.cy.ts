@@ -68,7 +68,7 @@ describe('Start a Job from a CronJob', () => {
     cy.visit(`/k8s/ns/${testName}/cronjobs`);
     listPage.rows.shouldBeLoaded();
     cy.visit(`/k8s/ns/${testName}/cronjobs/${CRONJOB_NAME}/jobs`);
-    listPage.rows.countShouldBe(2);
+    listPage.dvRows.countShouldBe(2);
   });
 
   it('verify the number of events in CronJob > Events tab list page', () => {
