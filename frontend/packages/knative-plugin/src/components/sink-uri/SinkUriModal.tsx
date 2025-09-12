@@ -64,7 +64,7 @@ const SinkUriModal: React.FC<Props> = ({
           submitText={t('knative-plugin~Save')}
           submitDisabled={!dirty}
           cancelText={t('knative-plugin~Cancel')}
-          cancel={cancel}
+          cancel={cancel ?? (() => {})}
           errorMessage={status.error}
         />
       </div>

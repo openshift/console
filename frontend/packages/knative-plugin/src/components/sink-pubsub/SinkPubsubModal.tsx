@@ -77,7 +77,7 @@ const SinkPubsubModal: React.FC<Props> = ({
             placeholder={t('knative-plugin~Select a sink')}
             showBadge
             autocompleteFilter={autocompleteFilter}
-            customResourceKey={craftResourceKey}
+            customResourceKey={(key, resource) => craftResourceKey(key, resource)}
             onChange={onSinkChange}
             autoSelect
             selectedKey={values?.ref?.name}
@@ -89,7 +89,7 @@ const SinkPubsubModal: React.FC<Props> = ({
         submitText={t('knative-plugin~Save')}
         cancelText={t('knative-plugin~Cancel')}
         submitDisabled={!dirty}
-        cancel={cancel}
+        cancel={cancel ?? (() => {})}
         errorMessage={status.error}
       />
     </form>

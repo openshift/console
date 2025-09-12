@@ -42,7 +42,12 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
   const apiVersion = queryParams.get('apiversion');
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
-  const [hpa, hpaLoaded, hpaError] = useRelatedHPA(apiVersion, kind, appName, namespace);
+  const [hpa, hpaLoaded, hpaError] = useRelatedHPA(
+    apiVersion ?? '',
+    kind ?? '',
+    appName ?? '',
+    namespace ?? '',
+  );
 
   const watchedResources = React.useMemo(
     () => ({
@@ -55,7 +60,7 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
         isList: true,
         namespace,
         selector: {
-          matchLabels: { 'app.kubernetes.io/instance': appName },
+          matchLabels: { 'app.kubernetes.io/instance': appName ?? '' },
         },
         optional: true,
       },
@@ -64,7 +69,7 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
           workloadResource: {
             kind,
             name: appName,
-            namespace,
+            namespace: namespace ?? '',
             optional: true,
           },
         }),
@@ -73,7 +78,7 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
   );
 
   const resources: WatchK8sResults<watchResource> = useK8sWatchResources<watchResource>(
-    watchedResources,
+    watchedResources ?? {},
   );
 
   const isResourceLoaded =
@@ -99,14 +104,14 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
         });
       }
     } catch {
-      const resourceActions = knatifyResources(values, appName, true).then(() =>
-        knatifyResources(values, appName),
+      const resourceActions = knatifyResources(values, appName ?? '', true).then(() =>
+        knatifyResources(values, appName ?? ''),
       );
 
       resourceActions
         .then(() => {
           helpers.setStatus({ submitError: '' });
-          handleRedirect(namespace, perspective, perspectiveExtensions);
+          handleRedirect(namespace ?? '', perspective ?? '', perspectiveExtensions ?? []);
         })
         .catch((err) => {
           helpers.setStatus({ submitError: err.message });
@@ -128,7 +133,7 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
         <Formik
           initialValues={getInitialValuesKnatify(
             getKnatifyWorkloadData(resources?.workloadResource?.data as K8sResourceKind, hpa),
-            namespace,
+            namespace ?? '',
             resources?.imageStream?.data as K8sResourceKind[],
           )}
           validationSchema={deployValidationSchema(t)}

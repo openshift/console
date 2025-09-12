@@ -80,7 +80,7 @@ When('user will click on the Subscriber dropdown on the modal', () => {
 });
 
 When('user selects the auto populated name of subscription', () => {
-  cy.get(topologyPO.graph.subscriber.filter).should('be.visible');
+  cy.get(topologyPO.graph.subscriber.filterField).should('be.visible');
 });
 
 When('user selects the Subscriber {string}', (subscriberName: string) => {

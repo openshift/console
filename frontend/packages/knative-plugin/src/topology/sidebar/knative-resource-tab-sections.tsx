@@ -1,10 +1,17 @@
 import * as React from 'react';
+import { ReactElement } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceFor, PodKind, podPhase } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  referenceFor,
+  PodKind,
+  podPhase,
+  ExtensionHookResult,
+} from '@console/internal/module/k8s';
 import { AllPodStatus, usePodsWatcher } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
@@ -32,7 +39,7 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
               <ResourceLink
                 kind={reference}
                 name={target.name}
-                namespace={resource.metadata.namespace}
+                namespace={resource.metadata?.namespace ?? ''}
                 dataTest="event-sink-sb-res"
               />
             ) : (
@@ -52,25 +59,30 @@ export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = (
 
 export const useKnativeSidepanelEventSinkSection: DetailsTabSectionExtensionHook = (
   element: GraphElement,
-) => {
+): ExtensionHookResult<ReactElement | undefined> => {
   if (element.getType() === NodeType.EventSink) {
     const resource = getResource(element);
     const section = resource ? (
       <TopologySideBarTabSection>
         <EventSinkSourceSection resource={resource} />
       </TopologySideBarTabSection>
-    ) : null;
+    ) : undefined;
     return [section, true, undefined];
   }
   return [undefined, true, undefined];
 };
 
-export const usePodsForEventSink = (resource: K8sResourceKind, data) => {
+interface EventSinkData {
+  revisions?: K8sResourceKind[];
+  associatedDeployment?: K8sResourceKind;
+}
+
+export const usePodsForEventSink = (resource: K8sResourceKind, data: EventSinkData) => {
   const { t } = useTranslation();
   const { revisions, associatedDeployment } = data;
   const { pods, loaded, loadError } = usePodsForRevisions(
     revisions?.map((r) => r.metadata.uid) ?? '',
-    resource.metadata.namespace,
+    resource.metadata?.namespace ?? '',
   );
   const {
     podData: podsDeployment,
@@ -79,7 +91,7 @@ export const usePodsForEventSink = (resource: K8sResourceKind, data) => {
   } = usePodsWatcher(
     associatedDeployment,
     associatedDeployment?.kind ?? '',
-    associatedDeployment?.metadata?.namespace || resource.metadata?.namespace,
+    associatedDeployment?.metadata?.namespace ?? resource.metadata?.namespace,
   );
   return React.useMemo(() => {
     if (!revisions) {
@@ -113,7 +125,11 @@ export const usePodsForEventSink = (resource: K8sResourceKind, data) => {
   ]);
 };
 
-export const usePodsForEventSource = (resource: K8sResourceKind, data) => {
+interface EventSourceData {
+  associatedDeployment?: K8sResourceKind;
+}
+
+export const usePodsForEventSource = (resource: K8sResourceKind, data: EventSourceData) => {
   const { associatedDeployment } = data;
   const {
     podData: podsDeployment,
@@ -122,7 +138,7 @@ export const usePodsForEventSource = (resource: K8sResourceKind, data) => {
   } = usePodsWatcher(
     associatedDeployment,
     associatedDeployment?.kind ?? '',
-    associatedDeployment?.metadata?.namespace || resource.metadata?.namespace,
+    associatedDeployment?.metadata?.namespace ?? resource.metadata?.namespace,
   );
 
   return React.useMemo(

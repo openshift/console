@@ -27,7 +27,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetails> = ({ obj: subscription 
               <DynamicResourceLink
                 title={t('knative-plugin~Channel')}
                 name={subscription.spec.channel.name}
-                namespace={subscription.metadata.namespace}
+                namespace={subscription.metadata?.namespace ?? ''}
                 kind={referenceFor(subscription.spec.channel)}
               />
             )}
@@ -35,7 +35,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetails> = ({ obj: subscription 
               <DynamicResourceLink
                 title={t('knative-plugin~Subscriber')}
                 name={subscription.spec.subscriber.ref.name}
-                namespace={subscription.metadata.namespace}
+                namespace={subscription.metadata?.namespace ?? ''}
                 kind={referenceFor(subscription.spec.subscriber.ref)}
               />
             )}

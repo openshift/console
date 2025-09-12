@@ -3,7 +3,8 @@ import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-supp
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ModalComponentProps, ModalWrapper } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, WatchK8sResults } from '@console/internal/module/k8s';
+import { TopologyResourcesObject } from '@console/topology/src/topology-types';
 import { getKnativeRevisionsData } from '../../topology/knative-topology-utils';
 import { knativeServingResourcesTrafficSplitting } from '../../utils/traffic-splitting-utils';
 import TrafficSplitting from './TrafficSplitting';
@@ -19,7 +20,10 @@ type ControllerProps = {
 
 const Controller: React.FC<ControllerProps> = (props) => {
   const { loaded, obj, resources } = props;
-  const revisions = getKnativeRevisionsData(obj, resources);
+  const revisions = getKnativeRevisionsData(
+    obj,
+    resources ?? ({} as WatchK8sResults<TopologyResourcesObject>),
+  );
   return loaded ? <TrafficSplitting {...props} service={obj} revisions={revisions} /> : null;
 };
 
@@ -28,10 +32,8 @@ type TrafficSplittingControllerProps = {
 };
 
 const TrafficSplittingController: React.FC<TrafficSplittingControllerProps> = (props) => {
-  const {
-    metadata: { namespace },
-  } = props.obj;
-  const resources = knativeServingResourcesTrafficSplitting(namespace);
+  const { metadata: { namespace } = { namespace: '' } } = props.obj;
+  const resources = knativeServingResourcesTrafficSplitting(namespace ?? '');
 
   return (
     <Firehose resources={resources}>

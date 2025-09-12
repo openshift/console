@@ -7,7 +7,7 @@ import {
   EventingSubscriptionModel,
 } from '../models';
 
-export const serverlessTab = (kind: string) => {
+export const serverlessTab = (kind: string): string | null => {
   switch (kind) {
     case ServiceModel.kind:
     case 'EventSource':

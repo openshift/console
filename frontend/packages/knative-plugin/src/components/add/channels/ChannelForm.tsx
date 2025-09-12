@@ -62,7 +62,7 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
       setErrors({});
       setStatus({});
       const kind = getChannelKind(item);
-      let formData: AddChannelFormData;
+      let { formData } = values;
       if (isDefaultChannel(kind)) {
         const nameData = `formData.data.${kind.toLowerCase()}`;
         const sourceData = getChannelData(kind.toLowerCase());
@@ -88,7 +88,7 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
         validateForm();
       }, 0);
     },
-    [setErrors, setStatus, setFieldValue, setFieldTouched, values.formData, validateForm],
+    [setErrors, setStatus, setFieldValue, setFieldTouched, values, validateForm],
   );
 
   const sanitizeToYaml = () => {

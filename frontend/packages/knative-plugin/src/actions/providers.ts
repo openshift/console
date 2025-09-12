@@ -117,7 +117,7 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
             deploymentActions.EditResourceLimits,
             ...Object.values(commonActions),
             editKnativeServiceResource(kindObj, resource, serviceTypeValue),
-            ...(resource.metadata.annotations?.['openshift.io/generated-by'] ===
+            ...(resource.metadata?.annotations?.['openshift.io/generated-by'] ===
             'OpenShiftWebConsole'
               ? [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, true)]
               : [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, false)]),
@@ -147,11 +147,11 @@ export const useBrokerActionProvider = (resource: K8sResourceKind) => {
   const addTriggerBrokerAction = useAddTriggerBrokerAction(kindObj, resource);
   const actions = useMemo(() => {
     const addActions: Action[] = [];
-    const connectorSource = `${referenceFor(resource)}/${resource.metadata.name}`;
+    const connectorSource = `${referenceFor(resource)}/${resource.metadata?.name}`;
     addActions.push(addTriggerBrokerAction);
     if (isEventSinkTypeEnabled) {
       addActions.push(
-        AddEventSinkMenuAction(resource.metadata.namespace, undefined, connectorSource),
+        AddEventSinkMenuAction(resource.metadata?.namespace ?? '', undefined, connectorSource),
       );
     }
     addActions.push(...commonActions);
@@ -194,7 +194,7 @@ export const useChannelActionProvider = (resource: K8sResourceKind) => {
     addActions.push(addSubscriptionChannelAction);
     if (isEventSinkTypeEnabled) {
       addActions.push(
-        AddEventSinkMenuAction(resource.metadata.namespace, undefined, connectorSource),
+        AddEventSinkMenuAction(resource.metadata?.namespace ?? '', undefined, connectorSource),
       );
     }
     addActions.push(...commonActions);

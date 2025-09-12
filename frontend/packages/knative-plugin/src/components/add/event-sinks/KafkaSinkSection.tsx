@@ -25,7 +25,7 @@ const KafkaSinkSection: React.FC<KafkaSinkSectionProps> = ({ title, namespace, f
     {
       isList: true,
       kind: SecretModel.kind,
-      prop: SecretModel.id,
+      prop: SecretModel.id ?? '',
       namespace,
     },
   ];

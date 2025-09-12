@@ -76,7 +76,7 @@ export const getKnativeServingComponentFactory = (
     case TYPE_KNATIVE_SERVICE:
       return withCreateConnector(
         createConnectorCallback(),
-        CreateConnector,
+        CreateConnector as any,
       )(
         withDndDrop<
           any,

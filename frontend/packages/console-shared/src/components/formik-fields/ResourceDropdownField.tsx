@@ -22,7 +22,7 @@ export interface ResourceDropdownFieldProps extends DropdownFieldProps {
     actionKey: string;
   }[];
   appendItems?: ResourceDropdownItems;
-  customResourceKey?: (key: string, resource: K8sResourceKind) => string;
+  customResourceKey?: (key: string, resource: K8sResourceKind) => string | undefined;
   dataTest?: string;
   menuClassName?: string;
 }

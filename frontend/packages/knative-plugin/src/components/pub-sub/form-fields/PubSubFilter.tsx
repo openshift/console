@@ -7,7 +7,7 @@ import { NameValueEditor } from '@console/internal/components/utils/name-value-e
 import { getFieldId } from '@console/shared';
 
 const formatFilterData = (filters) => {
-  let filterPairs = [];
+  let filterPairs: [string, any][] = [];
   for (const key in filters) {
     if (filters.hasOwnProperty(key)) {
       filterPairs = [...filterPairs, [key, filters[key]]];

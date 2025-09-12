@@ -30,7 +30,7 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title, namespac
     if (kafkatopics.loaded && !kafkatopics.loadError) {
       topicsOptions = !_.isEmpty(kafkatopics.data)
         ? _.map(kafkatopics.data, (kt) => ({
-            value: kt?.metadata.name,
+            value: kt?.metadata?.name ?? '',
             disabled: false,
           }))
         : [

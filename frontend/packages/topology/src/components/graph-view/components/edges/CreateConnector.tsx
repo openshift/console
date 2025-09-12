@@ -6,9 +6,9 @@ import { CreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions
 const CreateConnector: React.FC<CreateConnectorProps> = ({
   startPoint,
   endPoint,
-  dragging,
-  hover,
-  hints,
+  dragging = false,
+  hover = false,
+  hints = [],
 }) => {
   const { t } = useTranslation();
   return (

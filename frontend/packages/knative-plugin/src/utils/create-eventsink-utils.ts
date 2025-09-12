@@ -31,7 +31,7 @@ export const getEventSinksDepResource = (formData: EventSinkFormData): K8sResour
   } = formData;
 
   const defaultLabel = getAppLabels({ name, applicationName });
-  const eventSrcData = data[type];
+  const eventSrcData = data?.[type];
   const { name: sourceName, kind: sourceKind, apiVersion: sourceApiVersion } = source ?? {};
   const eventSourceResource: K8sResourceKind = {
     apiVersion,
@@ -99,7 +99,7 @@ export const getKameletSinkData = (kameletData: K8sResourceKind) => ({
     ref: {
       apiVersion: kameletData.apiVersion,
       kind: kameletData.kind,
-      name: kameletData.metadata.name,
+      name: kameletData.metadata?.name,
     },
     properties: {},
   },
@@ -172,7 +172,7 @@ export const sanitizeSinkToForm = (
             ref: {
               apiVersion: kameletSink.apiVersion,
               kind: kameletSink.kind,
-              name: kameletSink.metadata.name,
+              name: kameletSink.metadata?.name,
             },
             properties: specData?.sink?.properties,
           },

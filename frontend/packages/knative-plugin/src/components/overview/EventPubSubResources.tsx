@@ -42,7 +42,7 @@ export const PubSubResourceOverviewList: React.FC<PubSubResourceOverviewListProp
       {items?.length > 0 ? (
         <List isPlain isBordered>
           {_.map(items, (itemData) => (
-            <ListItem key={itemData.metadata.uid}>
+            <ListItem key={itemData.metadata?.uid ?? ''}>
               <ResourceLink
                 kind={referenceFor(itemData)}
                 name={itemData.metadata?.name}

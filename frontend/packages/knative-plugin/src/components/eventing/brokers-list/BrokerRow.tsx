@@ -10,7 +10,12 @@ import { getCondition, getConditionString } from '../../../utils/condition-utils
 
 const BrokerRow: React.FC<RowFunctionArgs<EventBrokerKind>> = ({ obj }) => {
   const {
-    metadata: { name, namespace, creationTimestamp, uid },
+    metadata: { name, namespace, creationTimestamp, uid } = {
+      name: '',
+      namespace: '',
+      creationTimestamp: '',
+      uid: '',
+    },
   } = obj;
   const objReference = referenceFor(obj);
   const context = { [objReference]: obj };

@@ -36,7 +36,7 @@ export const getKnativeServiceDepResource = (
     application: { name: applicationName },
     project: { name: namespace },
     runtimeIcon,
-    serverless: { scaling },
+    serverless: { scaling } = {},
     limits,
     route: { unknownTargetPort, create, defaultUnknownPort },
     labels,
@@ -53,16 +53,16 @@ export const getKnativeServiceDepResource = (
   const { fileUpload } = formData as UploadJarFormData;
   const selectedStrategy = formData?.import?.selectedStrategy;
 
-  const contTargetPort = parseInt(unknownTargetPort, 10) || defaultUnknownPort;
+  const contTargetPort = parseInt(unknownTargetPort ?? '', 10) || defaultUnknownPort;
   const imgPullPolicy = imagePolicy ? ImagePullPolicy.Always : ImagePullPolicy.IfNotPresent;
   const {
     concurrencylimit,
     concurrencytarget,
     minpods,
     maxpods,
-    autoscale: { autoscalewindow, autoscalewindowUnit },
+    autoscale: { autoscalewindow, autoscalewindowUnit } = {},
     concurrencyutilization,
-  } = scaling;
+  } = scaling ?? {};
   const {
     cpu: {
       request: cpuRequest,
@@ -77,7 +77,7 @@ export const getKnativeServiceDepResource = (
       limitUnit: memoryLimitUnit,
     },
   } = limits;
-  const defaultLabel = getAppLabels({
+  const { app, ...defaultLabel } = getAppLabels({
     name,
     applicationName,
     imageStreamName,
@@ -85,17 +85,16 @@ export const getKnativeServiceDepResource = (
     namespace: imageNamespace,
     runtimeIcon,
   });
-  delete defaultLabel.app;
   if (fileUpload) {
     const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');
     if (jArgsIndex !== -1) {
       if (fileUpload.javaArgs !== '') {
-        (env[jArgsIndex] as NameValuePair).value = fileUpload.javaArgs;
+        (env[jArgsIndex] as NameValuePair).value = fileUpload.javaArgs ?? '';
       } else {
         env.splice(jArgsIndex, 1);
       }
     } else if (fileUpload.javaArgs !== '') {
-      env.push({ name: 'JAVA_ARGS', value: fileUpload.javaArgs });
+      env.push({ name: 'JAVA_ARGS', value: fileUpload.javaArgs ?? '' });
     }
   }
   const newKnativeDeployResource: K8sResourceKind = {
@@ -212,7 +211,7 @@ const getDomainMappingDeleteList = (
 ): DomainMappingResponse[] => {
   return allDomainMapping
     .filter((dmRes) => dmRes.spec?.ref?.name === ksvcName)
-    .filter((dmSvc) => !selDomainMappingNames?.includes(dmSvc.metadata.name))
+    .filter((dmSvc) => !selDomainMappingNames?.includes(dmSvc.metadata?.name ?? ''))
     .map((dmDel) => ({
       action: DomainMappingResponseAction.Delete,
       resource: dmDel,
@@ -224,11 +223,7 @@ const formDomainMappingStruct = (
   knativeSvcResource: K8sResourceKind,
   curDomainMapping?: K8sResourceKind,
 ): K8sResourceKind => {
-  const {
-    kind,
-    apiVersion,
-    metadata: { name: svcName, namespace },
-  } = knativeSvcResource;
+  const { kind, apiVersion, metadata: { name: svcName, namespace } = {} } = knativeSvcResource;
   return {
     ...(curDomainMapping
       ? { ...curDomainMapping }
@@ -254,11 +249,9 @@ export const getDomainMappingResources = (
   knativeSvcResource: K8sResourceKind,
   selectedDomainMapping: string[],
 ): Promise<DomainMappingResponse[]> => {
-  const {
-    metadata: { name, namespace },
-  } = knativeSvcResource;
-  const domainMappingResources = [];
-  return k8sGet(DomainMappingModel, null, namespace)
+  const { metadata: { name, namespace } = {} } = knativeSvcResource;
+  const domainMappingResources: DomainMappingResponse[] = [];
+  return k8sGet(DomainMappingModel, '', namespace ?? '')
     .then((res) => {
       const allDomainMappingList = res.items;
       if (!selectedDomainMapping?.length && !allDomainMappingList?.length) {
@@ -267,7 +260,7 @@ export const getDomainMappingResources = (
 
       // form domain mapping to be deleted
       const dmDeleteList = getDomainMappingDeleteList(
-        name,
+        name ?? '',
         allDomainMappingList,
         selectedDomainMapping,
       );
@@ -276,7 +269,7 @@ export const getDomainMappingResources = (
       // form domain mapping to be created or updated
       const dmCreateUpdateList = selectedDomainMapping.map((domainName) => {
         const curDomainMapping = allDomainMappingList.find(
-          (curDomain) => curDomain.metadata.name === domainName,
+          (curDomain) => curDomain.metadata?.name === domainName,
         );
         let domainMappingResourceData: DomainMappingResponse;
         if (curDomainMapping) {
@@ -306,10 +299,10 @@ export const getDomainMappingResources = (
 export const getDomainMappingRequests = async (
   formData: GitImportFormData | DeployImageFormData | UploadJarFormData,
   knativeSvcResource: K8sResourceKind,
-  dryRun: boolean,
+  dryRun: boolean = false,
 ): Promise<Promise<K8sResourceKind>[]> => {
   const {
-    serverless: { domainMapping: selectedDomainMapping = [] },
+    serverless: { domainMapping: selectedDomainMapping = [] } = { domainMapping: [] },
   } = formData;
   const domainMappingResources = await getDomainMappingResources(knativeSvcResource, [
     ...new Set(selectedDomainMapping.map((dm) => dm.replace(/ *\([^)]*\) */g, ''))),
@@ -322,7 +315,9 @@ export const getDomainMappingRequests = async (
           requests.push(k8sCreate(DomainMappingModel, dmRes, dryRun ? dryRunOpt : {}));
           break;
         case DomainMappingResponseAction.Update:
-          requests.push(k8sUpdate(DomainMappingModel, dmRes, null, null, dryRun ? dryRunOpt : {}));
+          requests.push(
+            k8sUpdate(DomainMappingModel, dmRes, undefined, undefined, dryRun ? dryRunOpt : {}),
+          );
           break;
         case DomainMappingResponseAction.Delete:
           requests.push(k8sKill(DomainMappingModel, dmRes, dryRun ? dryRunOpt : {}));

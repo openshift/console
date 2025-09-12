@@ -23,13 +23,13 @@ const ServiceAccountDropdown: React.FC<ServiceAccountDropdownProps & StateProps>
   namespace,
 }) => {
   const { t } = useTranslation();
-  const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
+  const autocompleteFilter = (strText: string, item): boolean => fuzzy(strText, item?.props?.name);
   const resources = [
     {
       isList: true,
       kind: ServiceAccountModel.kind,
       namespace,
-      prop: ServiceAccountModel.id,
+      prop: ServiceAccountModel.id ?? '',
       optional: true,
     },
   ];

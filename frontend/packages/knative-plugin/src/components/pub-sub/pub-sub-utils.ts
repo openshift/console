@@ -23,7 +23,7 @@ export const craftResourceKey = (key: string, resource: K8sResourceKind): string
     : undefined;
 };
 
-export const getResourceNameFromKey = (key: string): string =>
+export const getResourceNameFromKey = (key: string | null | undefined): string =>
   key?.split(RESOURCE_KEY_SEPERATOR).pop() ?? '';
 
 export const sanitizeResourceName = (values: FormikValues): FormikValues => {

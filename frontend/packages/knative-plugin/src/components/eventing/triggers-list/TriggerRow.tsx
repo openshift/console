@@ -17,14 +17,19 @@ const TriggerRow: React.FC<RowFunctionArgs<EventTriggerKind, TriggerRowType>> = 
   customData,
 }) => {
   const {
-    metadata: { name, namespace, creationTimestamp, uid },
+    metadata: { name, namespace, creationTimestamp, uid } = {
+      name: '',
+      namespace: '',
+      creationTimestamp: '',
+      uid: '',
+    },
     spec: { subscriber, filter, broker: connectedBroker },
   } = obj;
 
   const objReference = referenceFor(obj);
   const context = { [objReference]: obj };
   const readyCondition = obj.status
-    ? getCondition(obj.status.conditions, TriggerConditionTypes.Ready)
+    ? getCondition(obj.status.conditions ?? [], TriggerConditionTypes.Ready)
     : null;
   return (
     <>
@@ -38,7 +43,7 @@ const TriggerRow: React.FC<RowFunctionArgs<EventTriggerKind, TriggerRowType>> = 
         {(readyCondition && readyCondition.status) || '-'}
       </TableData>
       <TableData columnID="condition" className={tableColumnClasses[3]}>
-        {obj.status ? getConditionString(obj.status.conditions) : '-'}
+        {obj.status ? getConditionString(obj.status.conditions ?? []) : '-'}
       </TableData>
       <TableData columnID="filters" className={tableColumnClasses[4]}>
         {filter.attributes
@@ -64,7 +69,7 @@ const TriggerRow: React.FC<RowFunctionArgs<EventTriggerKind, TriggerRowType>> = 
         )}
       </TableData>
       <TableData columnID="created" className={tableColumnClasses[7]}>
-        <Timestamp timestamp={creationTimestamp} />
+        <Timestamp timestamp={creationTimestamp ?? ''} />
       </TableData>
       <TableData className={tableColumnClasses[8]}>
         <LazyActionMenu context={context} />

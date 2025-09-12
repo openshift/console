@@ -11,10 +11,13 @@ type DeploymentOverviewListProps = {
 
 const DeploymentOverviewList: React.FC<DeploymentOverviewListProps> = ({ resource }) => {
   const { t } = useTranslation();
-  const { pods } = usePodsForRevisions(resource.metadata.uid, resource.metadata.namespace);
+  const { pods } = usePodsForRevisions(
+    resource.metadata?.uid ?? '',
+    resource.metadata?.namespace ?? '',
+  );
   const { obj } = pods?.[0] || {};
   const namespace = obj?.metadata?.namespace;
-  const deploymentData = obj?.metadata?.ownerReferences[0];
+  const deploymentData = obj?.metadata?.ownerReferences?.[0];
   return (
     <>
       <SidebarSectionHeading text={t('knative-plugin~Deployment')} />
@@ -24,7 +27,7 @@ const DeploymentOverviewList: React.FC<DeploymentOverviewListProps> = ({ resourc
             <ResourceLink
               kind={deploymentData.kind}
               name={deploymentData.name}
-              namespace={namespace}
+              namespace={namespace ?? ''}
             />
           </ListItem>
         </List>

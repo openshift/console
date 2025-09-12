@@ -12,9 +12,9 @@ export const useBrokerDetailPageBreadcrumbs = (kindObj: K8sKind) => {
   return useTabbedTableBreadcrumbsFor(
     kindObj,
     location,
-    params,
+    params as any,
     'eventing',
-    serverlessTab(kindObj.kind),
+    serverlessTab(kindObj.kind) ?? '',
     undefined,
     isAdminPerspective,
   );

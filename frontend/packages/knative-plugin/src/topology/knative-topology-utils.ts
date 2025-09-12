@@ -144,9 +144,9 @@ export const getParentResource = (
     _.get(resource, ['metadata', 'ownerReferences'], []),
     (owner) => owner.uid,
   );
-  const [resourcesParent] = _.filter(resources, ({ metadata: { uid } }) =>
-    parentUids.includes(uid),
-  );
+  const [resourcesParent] = _.filter(resources, ({ metadata }) => {
+    return parentUids.includes(metadata?.uid ?? '');
+  });
   return resourcesParent;
 };
 
@@ -168,10 +168,10 @@ export const filterRevisionsByActiveApplication = (
     const hasTraffic =
       service &&
       service.status &&
-      _.find(service.status.traffic, { revisionName: revision.metadata.name });
+      _.find(service.status.traffic, { revisionName: revision.metadata?.name ?? '' });
     const isServicePartofGroup = filterBasedOnActiveApplication([service], application).length > 0;
     if (hasTraffic && isServicePartofGroup) {
-      filteredRevisions.push(revision);
+      filteredRevisions.push(revision as never);
     }
   });
   return filteredRevisions;
@@ -190,7 +190,7 @@ const isSubscriber = (
   const channelRef = relatedResource?.spec?.channel;
   if (
     channelRef &&
-    (mainResource.metadata.name !== channelRef.name ||
+    (mainResource.metadata?.name !== channelRef.name ||
       mainResource.kind !== channelRef.kind ||
       mainResource.apiVersion !== channelRef.apiVersion)
   ) {
@@ -199,7 +199,7 @@ const isSubscriber = (
   return (
     subscriberRef &&
     apiVersionForReference(referenceFor(resource)) === subscriberRef.apiVersion &&
-    resource.metadata.name === subscriberRef.name
+    resource.metadata?.name === subscriberRef.name
   );
 };
 
@@ -210,19 +210,19 @@ const isPublisher = (
 ): boolean => {
   const { name, kind, apiVersion } = relationshipResource.spec?.subscriber?.ref || {};
   if (
-    mainResource.metadata.name !== name ||
+    mainResource.metadata?.name !== name ||
     mainResource.kind !== kind ||
     mainResource.apiVersion !== apiVersion
   ) {
     return false;
   }
   if (relationshipResource.kind === EventingTriggerModel.kind) {
-    return relationshipResource.spec?.broker === relatedResource.metadata.name;
+    return relationshipResource.spec?.broker === relatedResource.metadata?.name;
   }
   const channel = relationshipResource.spec?.channel;
   return (
     channel &&
-    channel.name === relatedResource.metadata.name &&
+    channel.name === relatedResource.metadata?.name &&
     channel.kind === relatedResource.kind &&
     channel.apiVersion === relatedResource.apiVersion
   );
@@ -235,7 +235,7 @@ export const getTriggerFilters = (resource: K8sResourceKind) => {
   const attributes = resource?.spec?.filter?.attributes;
   if (attributes && !_.isEmpty(attributes)) {
     for (const [key, value] of Object.entries(attributes)) {
-      data.filters.push({ key, value });
+      data.filters.push({ key, value } as never);
     }
   }
   return data;
@@ -262,10 +262,10 @@ export const getSubscribedEventsources = (
       const sinkRes = evSrc?.spec?.sink?.ref || {};
       if (
         pubSubResource.kind === sinkRes.kind &&
-        pubSubResource.metadata.name === sinkRes.name &&
+        pubSubResource.metadata?.name === sinkRes.name &&
         pubSubResource.apiVersion === sinkRes.apiVersion
       ) {
-        acc.push(evSrc);
+        acc.push(evSrc as never);
       }
       return acc;
     },
@@ -336,8 +336,9 @@ export const getPubSubSubscribers = (
   });
 
   let subscribers = [];
-  if (relationShipMap[resource.kind] || relationShipMap[referenceFor(resource)]) {
-    const depicters = relationShipMap[resource.kind] || relationShipMap[referenceFor(resource)];
+  if (relationShipMap[resource.kind ?? ''] || relationShipMap[referenceFor(resource) ?? '']) {
+    const depicters =
+      relationShipMap[resource.kind ?? ''] || relationShipMap[referenceFor(resource) ?? ''];
     _.forEach(depicters, (depicter) => {
       const { relatedResource, relationshipResource, isRelatedResource } = depicter;
       if (resources[relatedResource] && resources[relatedResource].data?.length > 0) {
@@ -360,19 +361,19 @@ export const getPubSubSubscribers = (
               const relationShipData = relationshipResources.map((res) => {
                 return {
                   kind: referenceFor(res),
-                  name: res.metadata.name,
-                  namespace: res.metadata.namespace,
+                  name: res.metadata?.name,
+                  namespace: res.metadata?.namespace,
                   ...getTriggerFilters(res),
                 };
               });
               if (relationShipData.length > 0) {
                 const obj = {
                   kind: referenceFor(relRes),
-                  name: relRes.metadata.name,
-                  namespace: relRes.metadata.namespace,
+                  name: relRes.metadata?.name,
+                  namespace: relRes.metadata?.namespace,
                   data: relationShipData,
                 };
-                acc.push(obj);
+                acc.push(obj as never);
               }
               return acc;
             },
@@ -401,7 +402,7 @@ export const getSubscriberByType = (
  * return the dynamic channel reference
  * @param kind
  */
-const getChannelRef = (kind: string): string => {
+const getChannelRef = (kind: string): string | undefined => {
   const channelResourceProps = getDynamicChannelModelRefs();
   return _.find(channelResourceProps, (channel) => {
     return kind === kindForReference(channel);
@@ -427,7 +428,7 @@ export const getSubscribedPubSubNodes = (
           const subscriber = connectorRes.spec?.subscriber?.ref;
           if (subscriber) {
             const subscribedService =
-              ksvc.kind === subscriber.kind && ksvc.metadata.name === subscriber.name;
+              ksvc.kind === subscriber.kind && ksvc.metadata?.name === subscriber.name;
             if (subscribedService && connectorRes.kind === EventingTriggerModel.kind) {
               const broker = connectorRes.spec?.broker;
               if (!pubsubNodes.brokers.includes(broker)) {
@@ -455,10 +456,10 @@ export const getSubscribedPubSubNodes = (
   const pushEventSource = (evsrc: K8sResourceKind) => {
     const evsrcFound = _.find(eventSources, {
       kind: evsrc.kind,
-      metadata: { name: evsrc.metadata.name },
+      metadata: { name: evsrc.metadata?.name ?? '' },
     });
     if (!evsrcFound) {
-      eventSources.push(evsrc);
+      eventSources.push(evsrc as never);
     }
   };
   pubsubNodes.brokers.forEach((broker) => {
@@ -472,7 +473,7 @@ export const getSubscribedPubSubNodes = (
   });
   pubsubNodes.channels.forEach((channel) => {
     const channelKind = getChannelRef(channel.kind);
-    const channelResources = resources[channelKind];
+    const channelResources = resources[channelKind ?? ''];
     if (channelResources) {
       const eventingChannel = _.find(channelResources.data, {
         metadata: { name: channel.name },
@@ -536,7 +537,7 @@ export const getDeploymentsForKamelet = (
   resources: TopologyDataResources,
 ): K8sResourceKind[] => {
   if (
-    [EVENT_SOURCE_CAMEL_KIND, CamelKameletBindingModel.kind].includes(resource.kind) &&
+    [EVENT_SOURCE_CAMEL_KIND, CamelKameletBindingModel.kind].includes(resource.kind ?? '') &&
     resources.integrations
   ) {
     const integrationsOwnData = getOwnedResources(resource, resources.integrations.data);
@@ -594,11 +595,7 @@ export const createPubSubDataItems = (
   resource: K8sResourceKind,
   resources: TopologyDataResources,
 ): KnativeServiceOverviewItem => {
-  const {
-    kind: resKind,
-    metadata: { name },
-    spec,
-  } = resource;
+  const { kind: resKind, metadata: { name } = {}, spec } = resource;
   const channelProps = getDynamicChannelModelRefs();
   const depChannelResources = getOwnedResources(
     resource,
@@ -617,11 +614,11 @@ export const createPubSubDataItems = (
         return uid === subUid;
       });
       if (isSubscribableData !== -1) {
-        acc.eventingsubscription.push(subs);
+        acc.eventingsubscription.push(subs as never);
         const subscriptionSvc = _.get(subs, 'spec.subscriber.ref', null);
         _.forEach(resources?.ksservices?.data, (svc) => {
-          if (svc.kind === subscriptionSvc?.kind && svc.metadata.name === subscriptionSvc?.name) {
-            acc.ksservices.push(svc);
+          if (svc.kind === subscriptionSvc?.kind && svc.metadata?.name === subscriptionSvc?.name) {
+            acc.ksservices.push(svc as never);
           }
         });
       }
@@ -642,17 +639,24 @@ export const createPubSubDataItems = (
         });
         const knServiceAdded =
           knService &&
-          tData.ksservices?.filter((ksvc) => ksvc.metadata.name === knService.metadata.name)
+          tData.ksservices?.filter((ksvc) => ksvc.metadata?.name === knService.metadata?.name)
             .length > 0;
         if (name === brokerName) {
-          tData.triggers = [...tData.triggers, trigger];
+          tData.triggers = [...tData.triggers, trigger as never];
           tData.ksservices =
-            knService && !knServiceAdded ? [...tData.ksservices, knService] : tData.ksservices;
+            knService && !knServiceAdded
+              ? [...tData.ksservices, knService as never]
+              : tData.ksservices;
         }
 
         return tData;
       },
-      { ksservices: [], triggers: [], pods: [], deployments: [] },
+      {
+        ksservices: [] as K8sResourceKind[],
+        triggers: [] as K8sResourceKind[],
+        pods: [] as K8sResourceKind[],
+        deployments: [] as K8sResourceKind[],
+      },
     );
     [PodModel, DeploymentModel].forEach(({ kind, plural: resType }) => {
       triggersData[resType] = resources?.[resType]?.data
@@ -680,9 +684,9 @@ export const filterRevisionsBaseOnTrafficStatus = (
   resource: K8sResourceKind,
   revisions: K8sResourceKind[],
 ): K8sResourceKind[] => {
-  if (!_.get(resource, 'status.traffic', null)) return undefined;
-  return resource.status.traffic.reduce((acc, curr) => {
-    const el = revisions.find((rev) => curr.revisionName === rev.metadata.name);
+  if (!_.get(resource, 'status.traffic', null)) return [];
+  return resource.status?.traffic?.reduce((acc, curr) => {
+    const el = revisions.find((rev) => curr.revisionName === rev.metadata?.name);
     return el ? [...acc, el] : acc;
   }, []);
 };
@@ -696,7 +700,7 @@ export const getKnativeTopologyNodeItems = (
   data: TopologyDataObject,
   resources?: TopologyDataResources,
 ): NodeModel[] => {
-  const nodes = [];
+  const nodes: NodeModel[] = [];
   const children: string[] = [];
   if (type === NodeType.KnService && resources && resources.configurations) {
     const configurations = getOwnedResources(resource, resources.configurations.data);
@@ -707,8 +711,10 @@ export const getKnativeTopologyNodeItems = (
       },
     });
     _.forEach(filterRevisionsBaseOnTrafficStatus(resource, ChildData), (c) => {
-      const uidRev = c.metadata.uid;
-      children.push(uidRev);
+      const uidRev = c.metadata?.uid;
+      if (uidRev) {
+        children.push(uidRev);
+      }
       nodes.push(
         getTopologyNodeItem(c, NodeType.Revision, null, getKnNodeModelProps(NodeType.Revision)),
       );
@@ -732,7 +738,7 @@ export const getSinkUriTopologyNodeItems = (
     resourceKind: 'URI',
     data,
     ...(nodeProps || {}),
-  });
+  } as never);
   return nodes;
 };
 
@@ -750,7 +756,7 @@ export const getSinkUriTopologyEdgeItems = (
       label: i18next.t('knative-plugin~Event source connector'),
       source: uid,
       target: targetUid,
-    });
+    } as never);
   }
   return edges;
 };
@@ -770,7 +776,7 @@ const getEventSourcesData = (sinkUri: string, resources) => {
     (acc, evSrc) => {
       const evSrcSinkUri = evSrc.spec?.sink?.uri || '';
       if (sinkUri === evSrcSinkUri) {
-        acc.push(evSrc);
+        acc.push(evSrc as never);
       }
       return acc;
     },
@@ -831,7 +837,7 @@ export const getEventTopologyEdgeItems = (resource: K8sResourceKind, { data }): 
           label: i18next.t('knative-plugin~Event source connector'),
           source: uid,
           target: resUid,
-        });
+        } as never);
       }
     });
   }
@@ -843,15 +849,13 @@ export const getEventTopologyEdgeItems = (resource: K8sResourceKind, { data }): 
  * @param resources pass all the resources
  */
 export const getTriggerTopologyEdgeItems = (broker: K8sResourceKind, resources): EdgeModel[] => {
-  const {
-    metadata: { uid, name },
-  } = broker;
+  const { metadata: { uid, name } = {} } = broker;
   const { triggers, ksservices, kafkasinks } = resources;
   const possibleTargetResources = [
     ...(ksservices?.data.length > 0 ? ksservices.data : []),
     ...(kafkasinks?.data.length > 0 ? kafkasinks.data : []),
   ];
-  const edges = [];
+  const edges: EdgeModel[] = [];
   _.forEach(triggers?.data, (trigger) => {
     const brokerName = trigger?.spec?.broker;
     const connectedResource = trigger.spec?.subscriber?.ref;
@@ -864,9 +868,7 @@ export const getTriggerTopologyEdgeItems = (broker: K8sResourceKind, resources):
         getApiGroup(connectedResource.apiVersion) ===
           apiGroupForReference(referenceFor(targetResource))
       ) {
-        const {
-          metadata: { uid: targetUid },
-        } = targetResource;
+        const { metadata: { uid: targetUid } = {} } = targetResource;
         edges.push({
           id: `${uid}_${targetUid}`,
           type: EdgeType.EventPubSubLink,
@@ -892,16 +894,13 @@ export const getSubscriptionTopologyEdgeItems = (
   resource: K8sResourceKind,
   resources,
 ): EdgeModel[] => {
-  const {
-    kind,
-    metadata: { uid, name },
-  } = resource;
+  const { kind, metadata: { uid, name } = {} } = resource;
   const { eventingsubscription, ksservices, kafkasinks } = resources;
   const possibleTargetResources = [
     ...(ksservices?.data.length > 0 ? ksservices.data : []),
     ...(kafkasinks?.data.length > 0 ? kafkasinks.data : []),
   ];
-  const edges = [];
+  const edges: EdgeModel[] = [];
   _.forEach(eventingsubscription?.data, (subRes) => {
     const channelData = subRes?.spec?.channel;
     if (
@@ -912,9 +911,7 @@ export const getSubscriptionTopologyEdgeItems = (
       const svcData = subRes?.spec?.subscriber?.ref;
       svcData &&
         _.forEach(possibleTargetResources, (res) => {
-          const {
-            metadata: { uid: resUid, name: resName },
-          } = res;
+          const { metadata: { uid: resUid, name: resName } = {} } = res;
           if (
             resName === svcData.name &&
             groupVersionFor(svcData.apiVersion).group === apiGroupForReference(referenceFor(res))
@@ -969,7 +966,7 @@ export const getKnSourceKafkaTopologyEdgeItems = (
         label: i18next.t('knative-plugin~Kafka connector'),
         source: kafkaSource.metadata?.uid,
         target: kafkaConnection.metadata?.uid,
-      });
+      } as never);
     }
     return acc;
   }, []);
@@ -982,7 +979,7 @@ export const getKnSourceKafkaTopologyEdgeItems = (
 export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data }): EdgeModel[] => {
   const uid = _.get(resource, ['metadata', 'uid']);
   const trafficSvc = _.get(resource, ['status', 'traffic'], []);
-  const edges = [];
+  const edges: EdgeModel[] = [];
   _.forEach(trafficSvc, (res) => {
     const resname = _.get(res, ['revisionName']);
     const trafficPercent = _.get(res, ['percent']);
@@ -1049,13 +1046,11 @@ export const createTopologyPubSubNodeData = (
   type: string,
 ): TopologyDataObject => {
   const {
-    obj: {
-      metadata: { name, uid, labels },
-    },
+    obj: { metadata: { name, uid, labels } = {} },
   } = res;
   return {
-    id: uid,
-    name: name || labels?.['app.kubernetes.io/instance'],
+    id: uid ?? '',
+    name: name ?? labels?.['app.kubernetes.io/instance'] ?? '',
     type,
     resource,
     resources: { ...res },
@@ -1071,12 +1066,12 @@ export const createTopologyPubSubNodeData = (
  */
 export const getRoutesURL = (resource: K8sResourceKind, ksroutes: K8sResourceKind[]): string => {
   if (ksroutes && ksroutes.length > 0 && !_.isEmpty(ksroutes[0].status)) {
-    const trafficData: { [x: string]: any } = _.find(ksroutes[0].status.traffic, {
-      revisionName: resource.metadata.name,
+    const trafficData: { [x: string]: any } | undefined = _.find(ksroutes[0].status?.traffic, {
+      revisionName: resource.metadata?.name,
     });
-    return trafficData?.url;
+    return trafficData?.url ?? '';
   }
-  return null;
+  return '';
 };
 
 const getOwnedEventSourceData = (
@@ -1131,7 +1126,7 @@ const sinkURIDataModel = (
 ) => {
   // form node data for sink uri
   const sinkUri = resource.spec?.sink?.uri;
-  let sinkTargetUid = getSinkTargetUid(knDataModel.nodes, sinkUri);
+  let sinkTargetUid = getSinkTargetUid(knDataModel.nodes ?? [], sinkUri);
   if (sinkUri) {
     if (!sinkTargetUid) {
       sinkTargetUid = encodeURIComponent(sinkUri);
@@ -1139,7 +1134,7 @@ const sinkURIDataModel = (
       const sinkUriObj = {
         metadata: {
           uid: sinkTargetUid,
-          namespace: data.resources.obj.metadata.namespace || '',
+          namespace: data.resources.obj.metadata?.namespace || '',
         },
         spec: { sinkUri },
         kind: URI_KIND,
@@ -1152,21 +1147,21 @@ const sinkURIDataModel = (
         data: { ...data.data, sinkUri },
         resource: sinkUriObj,
       };
-      knDataModel.nodes.push(
+      knDataModel.nodes?.push(
         ...getSinkUriTopologyNodeItems(NodeType.SinkUri, sinkTargetUid, sinkData),
       );
     }
-    knDataModel.edges.push(...getSinkUriTopologyEdgeItems(resource, sinkTargetUid));
+    knDataModel.edges?.push(...getSinkUriTopologyEdgeItems(resource, sinkTargetUid));
   }
   // form connections for channels
   if (!isInternalResource(resource)) {
     const channelResourceProps = getDynamicChannelModelRefs();
     _.forEach(channelResourceProps, (currentProp) => {
       resources[currentProp] &&
-        knDataModel.edges.push(...getEventTopologyEdgeItems(resource, resources[currentProp]));
+        knDataModel.edges?.push(...getEventTopologyEdgeItems(resource, resources[currentProp]));
     });
   }
-  knDataModel.edges.push(...getEventTopologyEdgeItems(resource, resources.brokers));
+  knDataModel.edges?.push(...getEventTopologyEdgeItems(resource, resources.brokers));
 };
 
 export const createEventSinkTopologyNodeData = (
@@ -1178,7 +1173,7 @@ export const createEventSinkTopologyNodeData = (
   const dcUID = _.get(resource, 'metadata.uid');
   return {
     id: dcUID,
-    name: resource?.metadata.name,
+    name: resource?.metadata?.name ?? '',
     type,
     resource,
     resources: { ...overviewItem, isOperatorBackedService: operatorBackedService },
@@ -1204,10 +1199,12 @@ export const transformKnNodeData = (
       case NodeType.EventSink: {
         const data = createEventSinkTopologyNodeData(res, item, type);
         const itemData = getOwnedEventSinkData(res, data, resources);
-        knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
-        knDataModel.edges.push(...getEventSinkTopologyEdgeItems(res, resources));
+        knDataModel.nodes?.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
+        knDataModel.edges?.push(...getEventSinkTopologyEdgeItems(res, resources));
         const newGroup = getTopologyGroupItems(res);
-        mergeGroup(newGroup, knDataModel.nodes);
+        if (newGroup) {
+          mergeGroup(newGroup, knDataModel.nodes ?? []);
+        }
         break;
       }
       case NodeType.EventSource: {
@@ -1225,37 +1222,43 @@ export const transformKnNodeData = (
         }
         if (!(res.kind === EVENT_SOURCE_SINK_BINDING_KIND && res.metadata?.ownerReferences)) {
           const itemData = getOwnedEventSourceData(res, data, resources);
-          knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
-          knDataModel.edges.push(
+          knDataModel.nodes?.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
+          knDataModel.edges?.push(
             ...(resources.ksservices ? getEventTopologyEdgeItems(res, resources.ksservices) : []),
             ...(resources.kafkasinks ? getEventTopologyEdgeItems(res, resources.kafkasinks) : []),
           );
           sinkURIDataModel(res, resources, data, knDataModel);
           const newGroup = getTopologyGroupItems(res);
-          mergeGroup(newGroup, knDataModel.nodes);
+          if (newGroup) {
+            mergeGroup(newGroup, knDataModel.nodes ?? []);
+          }
         }
         break;
       }
       case NodeType.KnService: {
         const data = createTopologyServiceNodeData(res, item, type, resources);
-        knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, data, resources));
-        knDataModel.edges.push(...getTrafficTopologyEdgeItems(res, resources.revisions));
+        knDataModel.nodes?.push(...getKnativeTopologyNodeItems(res, type, data, resources));
+        knDataModel.edges?.push(...getTrafficTopologyEdgeItems(res, resources.revisions));
         const newGroup = getTopologyGroupItems(res);
-        mergeGroup(newGroup, knDataModel.nodes);
+        if (newGroup) {
+          mergeGroup(newGroup, knDataModel.nodes ?? []);
+        }
         break;
       }
       case NodeType.PubSub: {
         if (!isInternalResource(res)) {
           const itemData = createPubSubDataItems(res, resources);
           const data = createTopologyPubSubNodeData(res, itemData, type);
-          knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, data, resources));
+          knDataModel.nodes?.push(...getKnativeTopologyNodeItems(res, type, data, resources));
           if (res.kind === EventingBrokerModel.kind) {
-            knDataModel.edges.push(...getTriggerTopologyEdgeItems(res, resources));
+            knDataModel.edges?.push(...getTriggerTopologyEdgeItems(res, resources));
           } else {
-            knDataModel.edges.push(...getSubscriptionTopologyEdgeItems(res, resources));
+            knDataModel.edges?.push(...getSubscriptionTopologyEdgeItems(res, resources));
           }
           const newGroup = getTopologyGroupItems(res);
-          mergeGroup(newGroup, knDataModel.nodes);
+          if (newGroup) {
+            mergeGroup(newGroup, knDataModel.nodes ?? []);
+          }
         }
         break;
       }
@@ -1266,15 +1269,17 @@ export const transformKnNodeData = (
           type,
           getImageForIconClass(`icon-openshift`),
         );
-        knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, data, resources));
-        knDataModel.edges.push(
+        knDataModel.nodes?.push(...getKnativeTopologyNodeItems(res, type, data, resources));
+        knDataModel.edges?.push(
           ...getKnSourceKafkaTopologyEdgeItems(res, resources.kafkaConnections),
           ...getEventTopologyEdgeItems(res, resources.ksservices),
           ...getEventTopologyEdgeItems(res, resources.kafkasinks),
         );
         sinkURIDataModel(res, resources, data, knDataModel);
         const newGroup = getTopologyGroupItems(res);
-        mergeGroup(newGroup, knDataModel.nodes);
+        if (newGroup) {
+          mergeGroup(newGroup, knDataModel.nodes ?? []);
+        }
         break;
       }
       default:
@@ -1294,12 +1299,12 @@ export const getRevisionsData = (
   resources: TopologyDataResources,
   utils?: KnativeUtil[],
 ): RevisionDataMap => {
-  const revisionData = {};
+  const revisionData: RevisionDataMap = {};
 
   _.forEach(knResourcesData, (res) => {
-    const { uid } = res.metadata;
+    const { uid } = res.metadata ?? {};
     const item = createKnativeDeploymentItems(res, resources, utils);
-    revisionData[uid] = createTopologyNodeData(
+    revisionData[uid ?? ''] = createTopologyNodeData(
       res,
       item,
       NodeType.Revision,
@@ -1346,7 +1351,7 @@ export const isOperatorBackedKnResource = (
 ) => {
   const eventSourceProps = getDynamicEventSourcesModelRefs();
   return !!_.find(getKnativeDynamicResources(resources, eventSourceProps), (evsrc) =>
-    obj.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(evsrc.metadata.name),
+    obj.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(evsrc.metadata?.name ?? ''),
   );
 };
 
@@ -1357,16 +1362,16 @@ export const getKameletSinkAndSourceBindings = (resources) => {
       ? resources.kamelets.data
       : resources?.kameletGlobalNS?.data ?? [];
   const sinkCamelKameletResources: K8sResourceKind[] = camelKameletResources.filter(
-    (camelKamelet) => camelKamelet.metadata.labels['camel.apache.org/kamelet.type'] === 'sink',
+    (camelKamelet) => camelKamelet.metadata?.labels?.['camel.apache.org/kamelet.type'] === 'sink',
   );
   return camelKameletBindingResources.reduce(
     ({ camelSinkKameletBindings: sink, camelSourceKameletBindings: source }, binding) => {
       const sinkResource = binding?.spec?.sink?.ref?.name;
       sinkCamelKameletResources.findIndex(
-        (kameletSink) => kameletSink.metadata.name === sinkResource,
+        (kameletSink) => kameletSink.metadata?.name === sinkResource,
       ) > -1
-        ? sink.push(binding)
-        : source.push(binding);
+        ? sink.push(binding as never)
+        : source.push(binding as never);
       return { camelSinkKameletBindings: sink, camelSourceKameletBindings: source };
     },
     { camelSinkKameletBindings: [], camelSourceKameletBindings: [] },
@@ -1378,7 +1383,7 @@ export const isOperatorBackedKnSinkService = (
   knEventSinks: K8sResourceKind[],
 ) => {
   return !!_.find(knEventSinks, (evsrc) =>
-    obj.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(evsrc.metadata.name),
+    obj.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(evsrc.metadata?.name ?? ''),
   );
 };
 
@@ -1470,9 +1475,7 @@ export const isServerlessFunction = (element: K8sResourceKind): boolean => {
   if (!element) {
     return false;
   }
-  const {
-    metadata: { labels },
-  } = element;
+  const { metadata: { labels } = {} } = element;
 
   // TODO: remove check for the deprecated label for serverless function
   return !!(labels?.[SERVERLESS_FUNCTION_LABEL] || labels?.[SERVERLESS_FUNCTION_LABEL_DEPRECATED]);

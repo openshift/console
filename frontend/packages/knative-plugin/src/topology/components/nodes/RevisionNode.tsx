@@ -8,8 +8,8 @@ const RevisionNode: React.FC<React.ComponentProps<typeof WorkloadPodsNode>> = (p
   const { element } = props;
   const resource = getTopologyResourceObject(element.getData());
   const { loaded, loadError, pods } = usePodsForRevisions(
-    resource.metadata.uid,
-    resource.metadata.namespace,
+    resource.metadata?.uid ?? '',
+    resource.metadata?.namespace ?? '',
   );
   const donutStatus = React.useMemo(() => {
     if (loaded && !loadError) {
@@ -26,7 +26,10 @@ const RevisionNode: React.FC<React.ComponentProps<typeof WorkloadPodsNode>> = (p
     return null;
   }, [loaded, loadError, pods, resource]);
 
-  return <WorkloadPodsNode donutStatus={donutStatus?.current ? donutStatus : null} {...props} />;
+  const { donutStatus: _, ...otherProps } = props;
+  return (
+    <WorkloadPodsNode donutStatus={donutStatus?.current ? donutStatus : null} {...otherProps} />
+  );
 };
 
 export default observer(RevisionNode);

@@ -25,13 +25,13 @@ const PubSub: React.FC<PubSubProps> = ({
   const {
     apiVersion: sourceApiVersion,
     kind: sourceKind,
-    metadata: { namespace, name: sourceName },
-  } = source;
+    metadata: { namespace, name: sourceName } = { namespace: '', name: '' },
+  } = source ?? {};
   const {
     apiVersion: targetApiVersion = '',
     kind: targetKind = '',
-    metadata: { name: targetName },
-  } = target;
+    metadata: { name: targetName } = { name: '' },
+  } = target ?? {};
   const getResourceModel = () =>
     sourceKind === EventingBrokerModel.kind ? EventingTriggerModel : EventingSubscriptionModel;
   const { kind, apiVersion, apiGroup, labelKey } = getResourceModel();
@@ -61,7 +61,7 @@ const PubSub: React.FC<PubSubProps> = ({
           ref: {
             apiVersion: targetApiVersion,
             kind: targetKind,
-            name: craftResourceKey(targetName, target),
+            name: craftResourceKey(targetName ?? '', target ?? ({} as K8sResourceKind)),
           },
         },
       },
@@ -72,7 +72,7 @@ const PubSub: React.FC<PubSubProps> = ({
     return k8sCreate(getResourceModel(), sanitizeResourceName(values.formData))
       .then(() => {
         action.setStatus({ subscriberAvailable: true, error: '' });
-        close();
+        close?.();
       })
       .catch((err) => {
         const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
@@ -84,7 +84,7 @@ const PubSub: React.FC<PubSubProps> = ({
   };
 
   const labelTitle = t('knative-plugin~Add {{kind}}', {
-    kind: t(labelKey) || kind,
+    kind: t(labelKey ?? '') || kind,
   });
   return (
     <Formik

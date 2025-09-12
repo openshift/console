@@ -7,7 +7,7 @@ import SubscriptionRow from './SubscriptionRow';
 const SubscriptionList: React.FC<TableProps> = (props) => {
   const { t } = useTranslation();
   const subscriptionData = props.customData?.channel
-    ? props.data.filter((obj) => obj.spec.channel.name === props.customData.channel)
+    ? props.data?.filter((obj) => obj.spec.channel.name === props.customData.channel)
     : props.data;
 
   return (

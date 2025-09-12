@@ -61,7 +61,7 @@ const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (prop
       </CreateProjectListPage>
     )
   ) : (
-    <FunctionList namespace={ns} {...props} />
+    <FunctionList namespace={ns ?? ''} {...props} />
   );
 };
 

@@ -13,4 +13,4 @@ export const getEventSinkCatalogProviderData = (
       provider: 'Red Hat',
       support: t('knative-plugin~Supported'),
     },
-  }[ref]);
+  }[ref] ?? {});

@@ -24,9 +24,9 @@ const EventPubSubSubscribers: React.FC<EventPubSubSubscribersProps> = ({
   return (
     <>
       <SidebarSectionHeading text={title} />
-      {subscribers.length > 0 ? (
+      {subscribers?.length && subscribers?.length > 0 ? (
         <List isPlain isBordered className="kn-event-subscriber-list">
-          {subscribers.map((sub) => (
+          {subscribers?.map((sub) => (
             <ListItem className="kn-event-subscriber-list-item" key={sub.name}>
               <ResourceLink kind={referenceFor(sub)} name={sub.name} namespace={sub.namespace} />
               {sub.data.length > 0 &&

@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash';
 import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { K8sModel, referenceForModel } from '@console/internal/module/k8s';
 import { EVENTING_IMC_KIND } from '../../const';
 import { ServiceModel } from '../../models';
 import { mockChannelCRDData } from '../__mocks__/dynamic-channels-crd-mock';
@@ -79,12 +79,12 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
     await fetchEventSourcesCrd();
     const ref = 'sources.knative.dev~v1~ContainerSource';
     const resultModel = getDynamicEventSourceModel(ref);
-    expect(isEqual(referenceForModel(resultModel), ref)).toBe(true);
+    expect(isEqual(referenceForModel(resultModel as K8sModel), ref)).toBe(true);
   });
 
-  it('should return undefined if model is not found', () => {
+  it('should return null if model is not found', () => {
     const resultModel = getDynamicEventSourceModel(referenceForModel(ServiceModel));
-    expect(resultModel).toBe(undefined);
+    expect(resultModel).toBe(null);
   });
 
   it('should return limit if passed to getDynamicEventSourcesResourceList', async () => {
@@ -142,24 +142,24 @@ describe('fetch-dynamic-eventsources: Channels', () => {
   it('should return limit if passed to getDynamicChannelResourceList', async () => {
     await fetchChannelsCrd();
     const resultModel = getDynamicChannelResourceList('sample-app', 1);
-    expect(resultModel[0].limit).toBe(1);
+    expect(resultModel?.[0]?.limit).toBe(1);
   });
 
   it('should not return limit if not passed to getDynamicChannelResourceList', async () => {
     await fetchChannelsCrd();
     const resultModel = getDynamicChannelResourceList('sample-app');
-    expect(resultModel[0].limit).toBeUndefined();
+    expect(resultModel?.[0]?.limit).toBeUndefined();
   });
 
   it('should get model from reference', async () => {
     await fetchChannelsCrd();
     const resultModel = getDynamicChannelModel('messaging.knative.dev~v1~InMemoryChannel');
-    expect(resultModel.kind).toEqual(EVENTING_IMC_KIND);
+    expect(resultModel?.kind).toEqual(EVENTING_IMC_KIND);
   });
 
   it('should get model from reference', async () => {
     await fetchChannelsCrd();
     const resultModel = getDynamicChannelModel('ab~v1~r');
-    expect(resultModel).toEqual(undefined);
+    expect(resultModel).toEqual(null);
   });
 });

@@ -79,7 +79,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   onShowCreateConnector,
   createConnectorDrag,
 }) => {
-  const ref = React.useRef();
+  const ref = React.useRef<SVGGElement | null>(null);
   const { t } = useTranslation();
   const [hoverChange, setHoverChange] = React.useState<boolean>(false);
   const [hover, hoverRef] = useHover(200, 200, [hoverChange]);
@@ -89,7 +89,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
     dragSpec,
     dragProps,
   );
-  const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
+  const nodeRefs = useCombineRefs(innerHoverRef as any, dragNodeRef as any);
   const hasChildren = element.getChildren()?.length > 0;
   const { data } = element.getData();
   const hasDataUrl = !!data.url;
@@ -146,9 +146,9 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
       isVisible={dropTarget && canDrop}
       animationDuration={0}
     >
-      <g ref={ref}>
+      <g ref={ref as any}>
         <g
-          ref={hoverRef}
+          ref={hoverRef as any}
           onClick={onSelect}
           onContextMenu={onContextMenu}
           className={css('odc-knative-service', {

@@ -56,7 +56,7 @@ export const getKafkaSinkKnativeTopologyData = (
     addKnativeTopologyData(
       knativeTopologyGraphModel,
       KnResources,
-      type,
+      type ?? '',
       resources,
       getKnativeTopologyDataUtils(),
     );
@@ -77,7 +77,7 @@ export const getKnativeServingTopologyDataModel = (
     addKnativeTopologyData(
       knativeServingTopologyGraphModel,
       KnResources,
-      type,
+      type ?? '',
       resources,
       getKnativeTopologyDataUtils(),
     );
@@ -87,10 +87,10 @@ export const getKnativeServingTopologyDataModel = (
 
   const revisionData = getRevisionsData(knRevResources, resources, getKnativeTopologyDataUtils());
 
-  knativeServingTopologyGraphModel.nodes.forEach((n) => {
+  knativeServingTopologyGraphModel.nodes?.forEach((n) => {
     if (n.type === NodeType.KnService) {
       n.data.groupResources =
-        n.children?.map((id) => knativeServingTopologyGraphModel.nodes.find((c) => id === c.id)) ??
+        n.children?.map((id) => knativeServingTopologyGraphModel.nodes?.find((c) => id === c.id)) ??
         [];
     }
     if (n.type === NodeType.Revision) {
@@ -98,12 +98,12 @@ export const getKnativeServingTopologyDataModel = (
     }
   });
   // filter out knative services/revision that belong to a integration type created by kamelet sinks
-  const knativeGraphNodes = knativeServingTopologyGraphModel.nodes.filter((n: OdcNodeModel) => {
+  const knativeGraphNodes = knativeServingTopologyGraphModel.nodes?.filter((n: OdcNodeModel) => {
     if (n.type === NodeType.KnService) {
       if (
-        camelSinkKameletBindings.findIndex((binding) =>
-          n.resource.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(
-            binding.metadata?.name,
+        camelSinkKameletBindings.findIndex((binding: K8sResourceKind) =>
+          n.resource?.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(
+            binding.metadata?.name ?? '',
           ),
         ) > -1
       ) {
@@ -113,9 +113,9 @@ export const getKnativeServingTopologyDataModel = (
     }
     if (n.type === NodeType.Revision) {
       if (
-        camelSinkKameletBindings.findIndex((binding) =>
-          n.resource.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(
-            binding.metadata?.name,
+        camelSinkKameletBindings.findIndex((binding: K8sResourceKind) =>
+          n.resource?.metadata?.labels?.[CAMEL_SOURCE_INTEGRATION]?.startsWith(
+            binding.metadata?.name ?? '',
           ),
         ) > -1
       ) {
@@ -157,7 +157,7 @@ export const getKnativeEventingTopologyDataModel = (
     addKnativeTopologyData(
       knativeEventingTopologyGraphModel,
       KnResources,
-      type,
+      type ?? '',
       resources,
       getKnativeTopologyDataUtils(),
     );
@@ -179,7 +179,7 @@ export const getKnativeKameletsTopologyDataModel = (
     resources,
   );
   const addTopologyData = (KnResources: K8sResourceKind[], type?: string) => {
-    addKnativeTopologyData(knativeKameletsTopologyGraphModel, KnResources, type, resources);
+    addKnativeTopologyData(knativeKameletsTopologyGraphModel, KnResources, type ?? '', resources);
   };
 
   addTopologyData(camelSourceKameletBindings, NodeType.EventSource);

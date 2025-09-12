@@ -56,7 +56,7 @@ export const usePodsForRevisions = (
         Object.keys(updatedResources).length > 0 &&
         Object.keys(updatedResources).every((key) => updatedResources[key].loaded)
       ) {
-        const revisionsPods = revisions.reduce((acc, uid) => {
+        const revisionsPods = revisions.reduce((acc: PodControllerOverviewItem[], uid) => {
           const associatedDeployment = _.filter(
             updatedResources?.deployments?.data,
             ({ metadata: { ownerReferences } }) =>
@@ -76,7 +76,7 @@ export const usePodsForRevisions = (
           return acc;
         }, []);
         setLoaded(true);
-        setLoadError(null);
+        setLoadError('');
         setPods(revisionsPods);
       }
     },

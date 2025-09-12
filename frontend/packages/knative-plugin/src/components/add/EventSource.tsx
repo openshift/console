@@ -83,7 +83,7 @@ export const EventSource: React.FC<Props> = ({
         ? { [sourceKind]: getKameletSourceData(kameletSource) }
         : { [sourceKind]: getEventSourceData(sourceKind) }
       : {};
-    kameletSourceName = kameletSource && kameletSource.metadata.name;
+    kameletSourceName = kameletSource?.metadata?.name ?? '';
     selSourceName = kameletSourceName ? `kamelet-${kameletSourceName}` : _.kebabCase(sourceKind);
   }
   const [sinkGroupVersionKind = '', sinkName = ''] = contextSource?.split('/') ?? [];
@@ -111,10 +111,11 @@ export const EventSource: React.FC<Props> = ({
       apiVersion: sinkApiVersion,
       kind: sinkKind,
       name: sinkName,
-      key: craftResourceKey(sinkName, {
-        kind: sinkKind,
-        apiVersion: `${sinkGroup}/${sinkVersion}`,
-      }),
+      key:
+        craftResourceKey(sinkName, {
+          kind: sinkKind,
+          apiVersion: `${sinkGroup}/${sinkVersion}`,
+        }) ?? '',
       uri: '',
     },
     type: sourceKind,

@@ -19,8 +19,8 @@ export const getKnativeRoutesLinks = (
     return [];
   }
   const {
-    metadata: { name, namespace },
-    status: { url = '', traffic: trafficData = [{ revisionName: resource.metadata.name }] },
+    metadata: { name, namespace } = {},
+    status: { url = '', traffic: trafficData = [{ revisionName: resource.metadata?.name }] },
   } = route;
 
   return trafficData
@@ -44,7 +44,7 @@ export const groupTrafficByRevision = (route: K8sResourceKind, resource: K8sReso
     return [];
   }
   const {
-    status: { traffic: trafficData = [{ revisionName: resource.metadata.name }] },
+    status: { traffic: trafficData = [{ revisionName: resource.metadata?.name }] },
   } = route;
 
   const tData = trafficData.filter(filterTrafficBasedOnResource(resource)).reduce(

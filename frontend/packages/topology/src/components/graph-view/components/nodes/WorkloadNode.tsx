@@ -135,7 +135,7 @@ export const getAggregateStatus = (
 };
 
 type WorkloadPodsNodeProps = WorkloadNodeProps & {
-  donutStatus: PodRCData;
+  donutStatus: PodRCData | null;
 };
 
 const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function WorkloadPodsNode({
@@ -189,22 +189,24 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
       >
         <BaseNode
           className="odc-workload-node"
-          hoverRef={hoverRef}
-          innerRadius={podSetInnerRadius(size, donutStatus)}
+          hoverRef={hoverRef as any}
+          innerRadius={podSetInnerRadius(size, donutStatus as any)}
           icon={showDetails && !showPodCount ? iconImageUrl : undefined}
           kind={workloadData.kind}
           element={element}
           dropTarget={dropTarget}
           canDrop={canDrop}
           nodeStatus={
-            !showDetails &&
-            getAggregateStatus(
-              donutStatus,
-              severityAlertType,
-              buildStatus,
-              pipelineStatus,
-              workloadRqAlertVariant,
-            )
+            donutStatus
+              ? !showDetails &&
+                getAggregateStatus(
+                  donutStatus,
+                  severityAlertType,
+                  buildStatus,
+                  pipelineStatus,
+                  workloadRqAlertVariant,
+                )
+              : undefined
           }
           attachments={nodeDecorators}
           contextMenuOpen={contextMenuOpen}
@@ -229,7 +231,7 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = observer(function WorkloadNode
   const { podData, loadError, loaded } = usePodsWatcher(
     resource,
     resource.kind,
-    resource.metadata.namespace,
+    resource.metadata?.namespace ?? '',
   );
   return (
     <WorkloadPodsNode

@@ -6,6 +6,7 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { LoadingBox } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { useEventSinkStatus } from '../../hooks/useEventSinkStatus';
@@ -26,7 +27,7 @@ const EventSinkPage: React.FC = () => {
     loaded,
     normalizedSink,
     kamelet,
-  } = useEventSinkStatus(namespace, sinkKindProp, kameletName);
+  } = useEventSinkStatus(namespace ?? '', sinkKindProp ?? '', kameletName ?? '');
 
   if (!loaded) {
     return <LoadingBox />;
@@ -43,12 +44,12 @@ const EventSinkPage: React.FC = () => {
       />
       {loaded && isValidSink && !createSinkAccessLoading && createSinkAccess ? (
         <EventSink
-          namespace={namespace}
+          namespace={namespace ?? ''}
           normalizedSink={normalizedSink}
-          selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION)}
-          contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
-          sinkKind={sinkKindProp}
-          kameletSink={kamelet}
+          selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION) ?? ''}
+          contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE) ?? ''}
+          sinkKind={sinkKindProp ?? ''}
+          kameletSink={kamelet as K8sResourceKind}
         />
       ) : (
         <EventSinkAlert

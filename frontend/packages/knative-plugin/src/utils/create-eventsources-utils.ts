@@ -50,7 +50,7 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
   } = formData;
 
   const defaultLabel = getAppLabels({ name, applicationName });
-  const eventSrcData = data[type];
+  const eventSrcData = data?.[type];
   const { name: sinkName, kind: sinkKind, apiVersion: sinkApiVersion, uri: sinkUri } = sink;
   const eventSourceResource: K8sResourceKind = {
     apiVersion,
@@ -90,25 +90,27 @@ export const isSecretKeyRefPresent = (dataObj: {
   secretKeyRef: { name: string; key: string };
 }): boolean => !!(dataObj?.secretKeyRef?.name || dataObj?.secretKeyRef?.key);
 
-export const getKafkaSourceResource = (formData: any): K8sResourceKind => {
+export const getKafkaSourceResource = (formData: EventSourceFormData): K8sResourceKind => {
   const baseResource = getEventSourcesDepResource(formData);
-  const { net } = baseResource.spec;
-  baseResource.spec.net = {
-    ...net,
-    ...(!net.sasl?.enable && { sasl: { user: {}, password: {} } }),
-    ...(net.sasl?.enable &&
-      !isSecretKeyRefPresent(net.sasl?.user) &&
-      !isSecretKeyRefPresent(net.sasl?.password) && {
-        sasl: { enable: true, user: {}, password: {} },
-      }),
-    ...(!net.tls?.enable && { tls: { caCert: {}, cert: {}, key: {} } }),
-    ...(net.tls?.enable &&
-      !isSecretKeyRefPresent(net.tls?.caCert) &&
-      !isSecretKeyRefPresent(net.tls?.cert) &&
-      !isSecretKeyRefPresent(net.tls?.key) && {
-        tls: { enable: true, caCert: {}, cert: {}, key: {} },
-      }),
-  };
+  const { net } = baseResource.spec ?? {};
+  if (baseResource.spec) {
+    baseResource.spec.net = {
+      ...net,
+      ...(!net.sasl?.enable && { sasl: { user: {}, password: {} } }),
+      ...(net.sasl?.enable &&
+        !isSecretKeyRefPresent(net.sasl?.user) &&
+        !isSecretKeyRefPresent(net.sasl?.password) && {
+          sasl: { enable: true, user: {}, password: {} },
+        }),
+      ...(!net.tls?.enable && { tls: { caCert: {}, cert: {}, key: {} } }),
+      ...(net.tls?.enable &&
+        !isSecretKeyRefPresent(net.tls?.caCert) &&
+        !isSecretKeyRefPresent(net.tls?.cert) &&
+        !isSecretKeyRefPresent(net.tls?.key) && {
+          tls: { enable: true, caCert: {}, cert: {}, key: {} },
+        }),
+    };
+  }
   return baseResource;
 };
 
@@ -116,12 +118,10 @@ export const loadYamlData = <D extends { project?: { name: string } }>(
   formData: YamlFormSyncData<D>,
 ) => {
   const {
-    formData: {
-      project: { name: namespace },
-    },
+    formData: { project: { name: namespace } = { name: '' } },
     yamlData,
   } = formData;
-  let yamlDataObj = safeYAMLToJS(yamlData);
+  let yamlDataObj = safeYAMLToJS(yamlData ?? '');
   const modelData = yamlDataObj && modelFor(referenceFor(yamlDataObj));
   if (yamlDataObj?.metadata && modelData?.namespaced && !yamlDataObj.metadata?.namespace) {
     yamlDataObj = { ...yamlDataObj, metadata: { ...yamlDataObj.metadata, namespace } };
@@ -214,7 +214,7 @@ export const getKameletSourceData = (kameletData: K8sResourceKind) => ({
     ref: {
       apiVersion: kameletData.apiVersion,
       kind: kameletData.kind,
-      name: kameletData.metadata.name,
+      name: kameletData.metadata?.name,
     },
     properties: {},
   },
@@ -275,11 +275,7 @@ export const sanitizeKafkaSourceResource = (formData: EventSourceFormData): Even
 export const getKameletMetadata = (kamelet: K8sResourceKind): KnEventCatalogMetaData => {
   let normalizedKamelet = {};
   if (kamelet?.kind === CamelKameletModel.kind) {
-    const {
-      kind,
-      metadata: { name, annotations },
-      spec,
-    } = kamelet;
+    const { kind, metadata: { name, annotations } = {}, spec } = kamelet;
     const provider = annotations?.[CAMEL_K_PROVIDER_ANNOTATION] || '';
     const iconUrl = getEventSourceIcon(kind, kamelet);
     normalizedKamelet = {
@@ -310,7 +306,7 @@ export const getEventSourceMetadata = (eventSourceModel: K8sKind, t): KnEventCat
 export const getEventSourceModelsWithAccess = (
   namespace: string,
   eventSourceModels: K8sKind[],
-): Promise<K8sKind>[] => {
+): Promise<K8sKind | null>[] => {
   return eventSourceModels.map((model) => {
     const { apiGroup, plural } = model;
     return checkAccess({
@@ -319,7 +315,7 @@ export const getEventSourceModelsWithAccess = (
       namespace,
       verb: 'create',
     })
-      .then((result) => (result.status.allowed ? model : null))
+      .then((result) => (result.status?.allowed ? model : null))
       .catch((e) => {
         // eslint-disable-next-line no-console
         console.warn('Could not check access for event source models', e);
@@ -348,8 +344,10 @@ export const handleRedirect = async (
   perspectiveExtensions: Perspective[],
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
-  const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
-  history.push(redirectURL);
+  const redirectURL = (await perspectiveData?.properties?.importRedirectURL())?.(project ?? '');
+  if (redirectURL) {
+    history.push(redirectURL);
+  }
 };
 
 export const sanitizeSourceToForm = (
@@ -374,7 +372,7 @@ export const sanitizeSourceToForm = (
         selectedKey: UNASSIGNED_APPLICATIONS_KEY,
       }),
     },
-    name: newFormData.metadata?.name,
+    name: newFormData.metadata?.name ?? '',
     sinkType: sinkRef ? SinkType.Resource : SinkType.Uri,
     sink: {
       apiVersion: sinkRef?.apiVersion,
@@ -396,7 +394,7 @@ export const sanitizeSourceToForm = (
             ref: {
               apiVersion: kameletSource.apiVersion,
               kind: kameletSource.kind,
-              name: kameletSource.metadata.name,
+              name: kameletSource.metadata?.name,
             },
             properties: specData?.source?.properties,
           },
@@ -411,7 +409,7 @@ export const sanitizeSourceToForm = (
 
 export const formDescriptorData = (
   properties,
-  descriptorArr = [],
+  descriptorArr: Descriptor<SpecCapability>[] = [],
   path = '',
 ): Descriptor<SpecCapability>[] => {
   for (const k in properties) {

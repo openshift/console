@@ -24,11 +24,11 @@ const SubscribePage: React.FC = () => {
   const subscribeName = searchParams.get(SUBSCRIBE_PROVIDER_NAME_PARAM);
 
   const source: K8sResourceKind = {
-    kind: subscribeKind,
-    apiVersion: subscribeApiVersion,
+    kind: subscribeKind ?? '',
+    apiVersion: subscribeApiVersion ?? '',
     metadata: {
       namespace,
-      name: subscribeName,
+      name: subscribeName ?? '',
     },
   };
 

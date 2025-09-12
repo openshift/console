@@ -15,6 +15,27 @@ import {
   TYPE_EVENT_SINK_LINK,
 } from '../const';
 
+interface ConstraintOffset {
+  node: number;
+  offset: number;
+}
+
+interface AlignmentConstraint {
+  type: 'alignment';
+  axis: 'x' | 'y';
+  offsets: ConstraintOffset[];
+}
+
+interface PositionConstraint {
+  axis: 'x' | 'y';
+  left: number;
+  right: number;
+  gap: number;
+  equality: boolean;
+}
+
+type Constraint = AlignmentConstraint | PositionConstraint;
+
 const getNodeTimeStamp = (node: ColaNode): Date => {
   const data = node.element.getData();
   return new Date(_.get(data, 'resources.obj.metadata.creationTimestamp', 0));
@@ -30,8 +51,8 @@ const alignNodeConnector = (
   g: ColaGroup | ColaNode,
   options: LayoutOptions,
   filteredNode,
-): any[] => {
-  const constraints = [];
+): Constraint[] => {
+  const constraints: Constraint[] = [];
   const connectorLinks = edges
     .filter(
       (e) =>
@@ -52,7 +73,7 @@ const alignNodeConnector = (
         ? (filteredNode as ColaNode).radius + getGroupPadding(g.element)
         : (filteredNode as ColaNode).width / 2;
 
-    const linkNodeConstraint: any = {
+    const linkNodeConstraint: AlignmentConstraint = {
       type: 'alignment',
       axis: 'y',
       offsets: [{ node: connectorLinks[0].target.index, offset: 0 }],
@@ -103,8 +124,8 @@ export const layoutConstraints = (
   groups: ColaGroup[],
   edges: ColaLink[],
   options: LayoutOptions,
-): any[] => {
-  let constraints: any[] = [];
+): Constraint[] => {
+  let constraints: Constraint[] = [];
 
   [...groups, ...nodes]
     .filter((g) =>
@@ -115,7 +136,7 @@ export const layoutConstraints = (
         g instanceof ColaGroup && g.leaves.sort(nodeSorter).filter((n) => !n.isFixed);
       const filteredNode = (leafNodes && _.first(leafNodes)) || g;
       if (g.element.getType() === TYPE_KNATIVE_SERVICE) {
-        const serviceConstraint: any = {
+        const serviceConstraint: AlignmentConstraint = {
           type: 'alignment',
           axis: 'y',
           offsets: [],

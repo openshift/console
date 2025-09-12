@@ -6,6 +6,7 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { LoadingBox } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { useEventSourceStatus } from '../../hooks';
@@ -28,7 +29,7 @@ const EventSourcePage: React.FC = () => {
     loaded,
     normalizedSource,
     kamelet,
-  } = useEventSourceStatus(namespace, sourceKindProp, kameletName);
+  } = useEventSourceStatus(namespace ?? '', sourceKindProp ?? '', kameletName ?? '');
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
@@ -51,12 +52,12 @@ const EventSourcePage: React.FC = () => {
       )}
       {loaded && isValidSource && !createSourceAccessLoading && createSourceAccess && (
         <ConnectedEventSource
-          namespace={namespace}
+          namespace={namespace ?? ''}
           normalizedSource={normalizedSource}
-          selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION)}
-          contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
-          sourceKind={sourceKindProp}
-          kameletSource={isKameletSource && kamelet}
+          selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION) ?? ''}
+          contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE) ?? ''}
+          sourceKind={sourceKindProp ?? ''}
+          kameletSource={isKameletSource ? (kamelet as K8sResourceKind) : undefined}
         />
       )}
     </NamespacedPage>

@@ -13,8 +13,8 @@ export interface TestFunctionProps {
 }
 
 const TestFunction: React.FC<TestFunctionProps> = ({ service, cancel, close }) => {
-  const svcName = service.data.metadata.name;
-  const svcNamespace = service.data.metadata.namespace;
+  const svcName = service?.data?.metadata?.name ?? '';
+  const svcNamespace = service?.data?.metadata?.namespace ?? '';
   const initialValues: TestFunctionFormikValues = {
     request: {
       format: InvokeFormat.CloudEvent,

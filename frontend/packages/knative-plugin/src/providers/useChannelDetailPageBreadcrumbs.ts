@@ -15,7 +15,7 @@ export const useChannelDetailPageBreadcrumbs = (kindObj: K8sKind) => {
     location,
     params,
     'eventing',
-    serverlessTab('Channel'),
+    serverlessTab('Channel') ?? '',
     isAdminPerspective ? t('knative-plugin~Channels') : undefined,
     isAdminPerspective,
   );
