@@ -2548,7 +2548,7 @@ A component to render timestamp.<br/>The timestamps are synchronized between ind
 
 | Parameter Name | Description |
 | -------------- | ----------- |
-| `timestamp` | the timestamp to render. Format is expected to be ISO 8601 (used by Kubernetes), epoch timestamp, or an instance of a Date. |
+| `timestamp` | the timestamp to render. Format is expected to be ISO 8601 (used by Kubernetes), epoch timestamp, or an instance of a Date.  If null is passed, the component will render a dash (-) indicating no value. |
 | `simple` | render simple version of the component omitting icon and tooltip. |
 | `omitSuffix` | formats the date ommiting the suffix. |
 | `className` | additional class name for the component. |

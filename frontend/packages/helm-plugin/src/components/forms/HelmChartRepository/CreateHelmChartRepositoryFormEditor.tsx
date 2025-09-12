@@ -27,7 +27,7 @@ export type FormData = {
 
 type CreateHelmChartRepositoryFormEditorProps = {
   showScopeType: boolean;
-  existingRepo: HelmChartRepositoryType;
+  existingRepo: HelmChartRepositoryType | undefined;
 };
 
 const CreateHelmChartRepositoryFormEditor: React.FC<CreateHelmChartRepositoryFormEditorProps> = ({

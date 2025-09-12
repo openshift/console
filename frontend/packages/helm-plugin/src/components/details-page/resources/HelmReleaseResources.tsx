@@ -9,9 +9,14 @@ import {
   modelFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { HelmRelease } from '../../../types/helm-types';
+import { HelmRelease, K8sResourceWithMetadata } from '../../../types/helm-types';
 import { flattenReleaseResources, loadHelmManifestResources } from '../../../utils/helm-utils';
 import HelmReleaseResourcesList from './HelmReleaseResourcesList';
+
+// Type guard to check if a resource has required metadata fields
+const hasRequiredMetadata = (resource: K8sResourceKind): resource is K8sResourceWithMetadata => {
+  return !!(resource.metadata?.name && resource.kind);
+};
 
 export interface HelmReleaseResourcesProps {
   customData: HelmRelease;
@@ -22,20 +27,23 @@ const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ customData 
   const params = useParams();
   const namespace = params.ns;
   const helmManifestResources = loadHelmManifestResources(customData);
-  const firehoseResources: FirehoseResource[] = helmManifestResources.map(
-    (resource: K8sResourceKind) => {
+  const firehoseResources: FirehoseResource[] = helmManifestResources
+    .filter(hasRequiredMetadata)
+    .map((resource: K8sResourceWithMetadata) => {
       const resourceKind = referenceFor(resource);
       const model = modelFor(resourceKind);
+      const resourceName = resource.metadata.name;
+      const resourceKindLower = resource.kind.toLowerCase();
+
       return {
-        ...(model.namespaced ? { namespace } : {}),
+        ...(model.namespaced && namespace ? { namespace } : {}),
         kind: model.crd ? referenceForModel(model) : model.kind,
-        name: resource.metadata.name,
-        prop: `${resource.metadata.name}-${resource.kind.toLowerCase()}`,
+        name: resourceName,
+        prop: `${resourceName}-${resourceKindLower}`,
         isList: false,
         optional: true,
       };
-    },
-  );
+    });
   return (
     <MultiListPage
       filterLabel={t('helm-plugin~Resources by name')}

@@ -13,13 +13,15 @@ describe('helmReleaseResourcesRow', () => {
     rowArgs = {
       obj: {
         kind: 'Secret',
+        apiVersion: 'v1',
         metadata: {
           creationTimestamp: '2020-01-20T05:37:13Z',
           name: 'sh.helm.release.v1.helm-mysql.v1',
           namespace: 'deb',
         },
-      },
-    } as any;
+      } as K8sResourceKind,
+      columns: [],
+    };
   });
 
   it('should render the TableData component', () => {

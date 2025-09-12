@@ -28,7 +28,7 @@ const PageContents: React.FC<PageContentsProps> = ({ namespace }) => {
             variant="primary"
             id="yaml-create"
             data-test="item-create"
-            component={LinkTo(`/catalog/ns/${namespace || 'default'}?catalogType=HelmChart`)}
+            component={LinkTo(`/catalog/ns/${namespace ?? 'default'}?catalogType=HelmChart`)}
           >
             {t('helm-plugin~Create Helm Release')}
           </Button>
@@ -50,7 +50,7 @@ const AdminHelmReleaseListPage: React.FC = () => {
   const { ns } = useParams();
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-      <PageContentsWithStartGuide namespace={ns} />
+      <PageContentsWithStartGuide namespace={ns ?? ''} />
     </NamespacedPage>
   );
 };

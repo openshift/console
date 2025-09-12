@@ -10,10 +10,10 @@ import HelmChartSummary from './HelmChartSummary';
 
 export interface HelmReleaseOverviewProps {
   obj: K8sResourceKind;
-  customData: HelmRelease;
+  customData?: HelmRelease;
 }
 
-const HelmReleaseOverview: React.FC<HelmReleaseOverviewProps> = ({ obj, customData }) => {
+const HelmReleaseOverview: React.FCC<HelmReleaseOverviewProps> = ({ obj, customData }) => {
   const { t } = useTranslation();
   return (
     <PaneBody>

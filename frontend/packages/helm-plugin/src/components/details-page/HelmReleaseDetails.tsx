@@ -32,8 +32,8 @@ interface HelmReleaseDetailsProps {
 interface LoadedHelmReleaseDetailsProps extends HelmReleaseDetailsProps {
   helmRelease: {
     loaded: boolean;
-    loadError: Error;
-    data: HelmRelease;
+    loadError: Error | undefined;
+    data: HelmRelease | undefined;
   };
 }
 
@@ -49,21 +49,25 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   if (helmRelease.loadError) {
     return <StatusBox loadError={helmRelease.loadError} />;
   }
-  if (helmRelease.loaded && secrets.loadError) {
+  if (helmRelease.loaded && secrets?.loadError) {
     return <StatusBox loadError={secrets.loadError} />;
   }
-  if (!helmRelease.loaded || !secrets.loaded) {
+  if (!helmRelease.loaded || !secrets?.loaded) {
     return <LoadingBox />;
   }
-  if (!helmRelease.data || _.isEmpty(secrets.data)) {
+  if (!helmRelease.data || _.isEmpty(secrets?.data)) {
     return <ErrorPage404 />;
   }
 
-  const sortedSecrets = _.orderBy(secrets.data, (o) => Number(o.metadata.labels.version), 'desc');
+  const sortedSecrets = _.orderBy(
+    secrets?.data,
+    (o) => Number(o.metadata?.labels?.version),
+    'desc',
+  );
 
   const releaseName = helmRelease.data?.name;
   const latestReleaseSecret = sortedSecrets[0];
-  const latestSecretName = latestReleaseSecret?.metadata.name;
+  const latestSecretName = latestReleaseSecret?.metadata?.name;
   const latestSecretStatus = latestReleaseSecret?.metadata?.labels?.status;
 
   const title = (
@@ -74,8 +78,8 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
         style={{ verticalAlign: 'middle', marginLeft: 'var(--pf-t--global--spacer--md)' }}
       >
         <Status
-          status={releaseStatus(latestSecretStatus)}
-          title={HelmReleaseStatusLabels[latestSecretStatus]}
+          status={releaseStatus(latestSecretStatus || '')}
+          title={HelmReleaseStatusLabels[latestSecretStatus || '']}
         />
       </Badge>
     </>
@@ -172,6 +176,9 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = () => {
     let mounted = true;
 
     const getHelmRelease = async () => {
+      if (!namespace || !helmReleaseName) {
+        return;
+      }
       try {
         const helmRelease = await fetchHelmRelease(namespace, helmReleaseName);
         if (mounted) {
@@ -201,7 +208,7 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = () => {
     // secretLoaded as dependency here since they are updated when a new release is created.
   }, [namespace, helmReleaseName, secrets, secretLoaded]);
 
-  const helmRelease = {
+  const helmRelease: LoadedHelmReleaseDetailsProps['helmRelease'] = {
     loaded: !!(helmReleaseData || helmReleaseError),
     loadError: helmReleaseError,
     data: helmReleaseData,

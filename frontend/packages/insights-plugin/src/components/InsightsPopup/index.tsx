@@ -27,23 +27,8 @@ import {
 
 const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
   const Icon = riskIcons[datum.id];
-  return <Icon x={x} y={y - 5} fill={legendColorScale[datum.id]} />;
+  return <Icon x={x} y={y ? y - 5 : 0} fill={legendColorScale[datum.id]} />;
 };
-
-const LabelComponent = ({ clusterID, ...props }) => (
-  <ExternalLink
-    href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}?total_risk=${
-      riskSorting[props.datum.id] + 1
-    }`}
-  >
-    <ChartLabel
-      {...props}
-      style={{
-        fill: 'var(--pf-t--global--text--color--link--default)',
-      }}
-    />
-  </ExternalLink>
-);
 
 const SubTitleComponent = (props) => (
   <ChartLabel
@@ -63,7 +48,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   const { t } = useTranslation();
   const metrics = mapMetrics(metricsResponse);
   const conditions = mapConditions(operatorStatusResponse);
-  const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID || '';
+  const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID ?? '';
   const riskEntries = Object.entries(metrics).sort(
     ([k1], [k2]) => riskSorting[k2] - riskSorting[k1],
   );
@@ -73,6 +58,21 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   const disabled = !!conditions.Disabled;
 
   const insightsURL = getDocumentationURL(documentationURLs.usingInsights);
+
+  const LabelComponentWithClusterID = (props: { datum: { id: string } }) => (
+    <ExternalLink
+      href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}?total_risk=${
+        riskSorting[props.datum.id] + 1
+      }`}
+    >
+      <ChartLabel
+        {...props}
+        style={{
+          fill: 'var(--pf-t--global--text--color--link--default)',
+        }}
+      />
+    </ExternalLink>
+  );
 
   const riskKeys = {
     // t('insights-plugin~low')
@@ -86,7 +86,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   };
 
   const lastRefreshTime =
-    parseInt(lastGatherResponse?.data?.result?.[0]?.value?.[1] || '0', 10) * 1000;
+    parseInt(lastGatherResponse?.data?.result?.[0]?.value?.[1] ?? '0', 10) * 1000;
 
   return errorUpload(conditions) ? (
     <ErrorState />
@@ -143,8 +143,8 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
                     name: `${v} ${_.capitalize(t(riskKeys[k]))}`,
                     id: k,
                   }))}
-                  dataComponent={<DataComponent />}
-                  labelComponent={<LabelComponent clusterID={clusterID} />}
+                  dataComponent={<DataComponent x={0} y={0} datum={{ id: 'low' }} />}
+                  labelComponent={<LabelComponentWithClusterID datum={{ id: 'low' }} />}
                   x={-10}
                   rowGutter={-3}
                 />
@@ -155,7 +155,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
                 right: 10, // Adjusted to accommodate legend
                 top: 0,
               }}
-              labels={({ datum }) => `${datum.x}: ${datum.y}`}
+              labels={({ datum }: { datum: { x: string; y: number } }) => `${datum.x}: ${datum.y}`}
               padAngle={0}
             />
           </div>
@@ -189,7 +189,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
 export type DataComponentProps = {
   x?: number;
   y?: number;
-  datum?: {
+  datum: {
     id: string;
   };
 };

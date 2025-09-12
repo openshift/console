@@ -45,14 +45,14 @@ export const getTopologyHelmReleaseGroupItem = (
   const releaseName = helmResources?.releaseName;
   const releaseNotes = helmResources?.releaseNotes;
   const uid = obj?.metadata?.uid ?? null;
-  const returnData = [];
+  const returnData: OdcNodeModel[] = [];
 
   if (!releaseName) {
     return returnData;
   }
 
   const secret = secrets.find((nextSecret) => {
-    return nextSecret.metadata.labels?.name === releaseName;
+    return nextSecret?.metadata?.labels?.name === releaseName;
   });
 
   if (secret) {
@@ -70,12 +70,12 @@ export const getTopologyHelmReleaseGroupItem = (
 
   const { kind, apiVersion } = SecretModel;
   const helmGroup: OdcNodeModel = {
-    id: secret ? secret.metadata.uid : `${TYPE_HELM_RELEASE}:${releaseName}`,
+    id: secret?.metadata?.uid || `${TYPE_HELM_RELEASE}:${releaseName}`,
     type: TYPE_HELM_RELEASE,
     resourceKind: 'HelmRelease',
     group: true,
     label: releaseName,
-    children: [uid],
+    children: uid ? [uid] : [],
     width: HELM_GROUP_WIDTH,
     height: HELM_GROUP_HEIGHT,
     visible: true,
@@ -118,7 +118,7 @@ export const getHelmGraphModelFromMap = (
   WORKLOAD_TYPES.forEach((key) => {
     helmResources[key] = [];
     if (resources[key]?.data && resources[key].data.length) {
-      const typedDataModel: Model = {
+      const typedDataModel: Required<Omit<Model, 'graph'>> = {
         nodes: [],
         edges: [],
       };
@@ -146,10 +146,10 @@ export const getHelmGraphModelFromMap = (
     }
   });
 
-  helmDataModel.nodes.forEach((node) => {
+  helmDataModel.nodes?.forEach((node) => {
     if (node.type === TYPE_HELM_RELEASE) {
       node.data.groupResources =
-        node.children?.map((id) => helmDataModel.nodes.find((n) => id === n.id)) ?? [];
+        node.children?.map((id) => helmDataModel.nodes?.find((n) => id === n.id)) ?? [];
     }
   });
 
@@ -188,17 +188,15 @@ const getHelmReleaseMap = (namespace: string) => {
 export const getHelmTopologyDataModel = () => {
   let secretCount = -1;
   let mapNamespace = '';
-  let helmResourcesMap = {};
+  let helmResourcesMap: HelmReleaseResourcesMap = {};
 
   return (namespace: string, resources: TopologyDataResources): Promise<Model> => {
     const helmSecrets =
       resources?.secrets?.data?.filter((s) => s.metadata?.labels?.owner === 'helm') ?? [];
-    const helmReleaseCount = Object.keys(helmResourcesMap).reduce((acc, key) => {
-      if (!acc.includes(helmResourcesMap[key].releaseName)) {
-        acc.push(helmResourcesMap[key].releaseName);
-      }
-      return acc;
-    }, []).length;
+    const helmReleaseCount = Object.keys(helmResourcesMap)
+      .map((key) => helmResourcesMap[key]?.releaseName)
+      .filter((name): name is string => !!name)
+      .filter((name, index, arr) => arr.indexOf(name) === index).length;
     const count = helmSecrets.length;
     let retrieveNewReleaseMap = false;
     if (

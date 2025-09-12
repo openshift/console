@@ -15,7 +15,7 @@ const CreateConnector: React.FC<CreateConnectorProps> = ({
     <DefaultCreateConnector
       startPoint={startPoint}
       endPoint={endPoint}
-      dragging={dragging}
+      dragging={Boolean(dragging)}
       hints={hints}
       hover={hover}
       tipContents={hover && dragging ? t('topology~Add resources') : null}

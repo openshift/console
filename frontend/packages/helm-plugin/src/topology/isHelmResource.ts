@@ -7,7 +7,7 @@ export const isHelmResourceInModel = (resource: K8sResourceKind, model: Model): 
   if (!isHelmResource(resource)) {
     return false;
   }
-  return !!model.nodes.find((node) => {
+  return !!model.nodes?.find((node) => {
     return (node as OdcNodeModel).resource?.metadata?.uid === resource?.metadata?.uid;
   });
 };
