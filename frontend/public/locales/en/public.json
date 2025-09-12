@@ -642,7 +642,6 @@
   "Desired replicas": "Desired replicas",
   "Min pods": "Min pods",
   "Max pods": "Max pods",
-  "HorizontalPodAutoScalers": "HorizontalPodAutoScalers",
   "OS": "OS",
   "Architecture": "Architecture",
   "Identifier": "Identifier",
