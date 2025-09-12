@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/dist/core/lib/utils/k8s/hooks';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResources';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { PodModel, ReplicationControllerModel } from '@console/internal/models';
 import { K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import {
@@ -15,11 +15,11 @@ import { PodRCData } from './pod-utils';
 
 export const usePodsForVm = (
   vm: K8sResourceKind,
-): { loaded: boolean; loadError: string; podData: PodRCData } => {
+): { loaded: boolean; loadError: string | null; podData: PodRCData | undefined } => {
   const { namespace } = vm.metadata;
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [loadError, setLoadError] = useState<string>('');
-  const [podData, setPodData] = useState<PodRCData>();
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [podData, setPodData] = useState<PodRCData | undefined>();
   const vmName = vm.metadata.name;
   const vmRef = useRef<K8sResourceKind>(vm);
 
