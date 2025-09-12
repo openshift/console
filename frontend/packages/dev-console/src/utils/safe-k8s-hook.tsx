@@ -10,7 +10,7 @@ export const useSafeK8s = () => {
     controller.current = new AbortController();
     return () => {
       mounted.current = false;
-      controller.current.abort();
+      controller.current?.abort();
     };
   }, []);
 
@@ -21,7 +21,7 @@ export const useSafeK8s = () => {
     opts: Options = {},
   ): Promise<K8sResourceKind> => {
     return new Promise((resolve, reject) => {
-      k8sGet(kind, name, ns, opts, { signal: controller.current.signal as AbortSignal })
+      k8sGet(kind, name, ns, opts, { signal: controller.current?.signal as AbortSignal })
         .then((data) => mounted.current && resolve(data))
         .catch((error) => mounted.current && reject(error));
     });

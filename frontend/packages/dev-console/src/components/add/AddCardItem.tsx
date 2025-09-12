@@ -22,7 +22,7 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
   const [showDetails] = useShowAddCardItemDetails();
   const toast = useToast();
 
-  const actionIcon = (): JSX.Element => {
+  const actionIcon = (): JSX.Element | null => {
     if (typeof icon === 'string') {
       return (
         <img
@@ -50,7 +50,7 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
       componentProps={{
         'data-test': `item ${id}`,
       }}
-      href={href ? resolvedHref(href, namespace) : null}
+      href={href ? resolvedHref(href, namespace) : undefined}
       onClick={(e: React.SyntheticEvent) => {
         fireTelemetryEvent('Add Item Selected', {
           id,
@@ -58,7 +58,7 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
         });
         if (href) {
           navigateTo(e, resolvedHref(href, namespace));
-        } else if (callback) {
+        } else if (typeof callback === 'function') {
           callback({ namespace, toast });
         }
       }}

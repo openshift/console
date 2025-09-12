@@ -95,7 +95,7 @@ export const getResourcesType = (resource: K8sResourceKind): Resources => {
     case referenceFor(resource) === referenceForModel(ServiceModel) ? ServiceModel.kind : '':
       return Resources.KnativeService;
     default:
-      return null;
+      return null as any;
   }
 };
 
@@ -274,8 +274,8 @@ export const getBuildData = (
   gitType: string,
 ) => {
   const buildOption = getBuildOption(buildConfig, shipwrightBuild, pipeline);
-  let buildStrategyType: BuildStrategyType | string;
-  let shipwrightClusterBuildStrategyType: ClusterBuildStrategy;
+  let buildStrategyType: BuildStrategyType | string = '';
+  let shipwrightClusterBuildStrategyType: ClusterBuildStrategy | undefined;
   let buildStrategyData;
 
   if (buildOption === BuildOptions.BUILDS) {
@@ -319,7 +319,7 @@ export const getBuildData = (
       config: checkIfTriggerExists(triggers, 'ConfigChange'),
     },
     strategy:
-      buildStrategyType ||
+      buildStrategyType ??
       (isDockerPipeline(pipeline) ? BuildStrategyType.Docker : BuildStrategyType.Source),
     source: { type: getBuildSourceType(buildConfig) },
     option: buildOption,
@@ -345,11 +345,8 @@ export const getServerlessData = (resource: K8sResourceKind): ServerlessData => 
     domainMapping: [],
   };
   if (getResourcesType(resource) === Resources.KnativeService) {
-    const {
-      spec: {
-        template: { metadata, spec },
-      },
-    } = resource;
+    const metadata = resource?.spec?.template?.metadata;
+    const spec = resource?.spec?.template?.spec;
     const annotations = metadata?.annotations;
     const autoscalewindowAnnotation = annotations?.[KNATIVE_AUTOSCALEWINDOW_ANNOTATION] || '';
     const { autoscalewindow, autoscalewindowUnit, defaultAutoscalewindowUnit } = getAutoscaleWindow(
@@ -381,7 +378,9 @@ export const getDeploymentData = (resource: K8sResourceKind) => {
     triggers: { image: true, config: true },
   };
   const container = resource.spec?.template?.spec?.containers?.find((c) =>
-    [resource.metadata.name, resource.metadata.labels?.['app.kubernetes.io/name']].includes(c.name),
+    [resource.metadata?.name, resource.metadata?.labels?.['app.kubernetes.io/name']].includes(
+      c.name ?? '',
+    ),
   );
   const env = container?.env ?? [];
   switch (getResourcesType(resource)) {
@@ -626,7 +625,7 @@ export const getExternalImageValues = (appResource: K8sResourceKind) => {
 };
 
 export const getFileUploadValues = (resource: K8sResourceKind, buildConfig: K8sResourceKind) => {
-  const resourceName = resource.metadata.name;
+  const resourceName = resource.metadata?.name ?? '';
   const fileName = buildConfig.metadata?.annotations?.jarFileName ?? '';
   const javaArgs: string =
     resource.spec?.template?.spec?.containers
@@ -654,27 +653,30 @@ export const getInitialValues = (
   const pipelineData = appResources.pipeline?.data;
 
   const commonValues = getCommonInitialValues(
-    editAppResourceData,
-    routeData,
-    pipelineData,
+    editAppResourceData as K8sResourceKind,
+    routeData as K8sResourceKind,
+    pipelineData as PipelineKind,
     appName,
     namespace,
   );
   const gitDockerValues = getGitAndDockerfileInitialValues(
-    buildConfigData,
-    shipwrightBuildData,
-    pipelineData,
+    buildConfigData as K8sResourceKind,
+    shipwrightBuildData as K8sResourceKind,
+    pipelineData as PipelineKind,
   );
   let fileUploadValues = {};
   let iconValues = {};
   let externalImageValues = {};
   let internalImageValues = {};
   if (_.isEmpty(gitDockerValues)) {
-    iconValues = getIconInitialValues(editAppResourceData);
+    if (editAppResourceData) {
+      iconValues = getIconInitialValues(editAppResourceData as K8sResourceKind);
+    }
     externalImageValues = getExternalImageInitialValues(appResources);
-    internalImageValues = _.isEmpty(externalImageValues)
-      ? getInternalImageInitialValues(editAppResourceData)
-      : {};
+    internalImageValues =
+      _.isEmpty(externalImageValues) && editAppResourceData
+        ? getInternalImageInitialValues(editAppResourceData as K8sResourceKind)
+        : {};
     if (
       _.isEmpty(externalImageValues) &&
       !_.get(internalImageValues, 'imageStream.tag') &&
@@ -685,8 +687,17 @@ export const getInitialValues = (
         externalImageValues = getExternalImageValues(editAppResourceData);
       }
     }
-  } else if (isFromJarUpload(getBuildSourceType(buildConfigData))) {
-    fileUploadValues = getFileUploadValues(editAppResourceData, buildConfigData);
+  } else if (
+    buildConfigData &&
+    editAppResourceData &&
+    isFromJarUpload(getBuildSourceType(buildConfigData as K8sResourceKind))
+  ) {
+    if (editAppResourceData && buildConfigData) {
+      fileUploadValues = getFileUploadValues(
+        editAppResourceData as K8sResourceKind,
+        buildConfigData as K8sResourceKind,
+      );
+    }
   }
 
   return {
