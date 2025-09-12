@@ -46,7 +46,7 @@ const convertImageReferenceToImageStreamFormData = (
     const namespace = imageReference.namespace || buildConfigNamespace;
     const { name = '' } = imageReference;
     const image = name.includes(':') ? name.substring(0, name.indexOf(':')) : name;
-    const tag = name.includes(':') ? name.substring(name.indexOf(':') + 1) : null;
+    const tag = name.includes(':') ? name.substring(name.indexOf(':') + 1) : '';
     imageOptionFormData.type = 'imageStreamTag';
     imageOptionFormData.imageStreamTag = {
       fromImageStreamTag: true,
@@ -104,7 +104,7 @@ const convertBuildConfigImagesToFormData = (
   // Output => Push to
   const to = buildConfig.spec.output?.to;
   convertImageReferenceToImageStreamFormData(
-    to,
+    to as ImageReference,
     values.formData.images.pushTo,
     buildConfig.metadata.namespace,
   );
@@ -170,7 +170,7 @@ const convertBuildConfigPolicyToFormData = (
   values: BuildConfigFormikValues,
 ) => {
   // Use null instead of undefined to match initial values
-  values.formData.policy.runPolicy = buildConfig.spec.runPolicy || null;
+  values.formData.policy.runPolicy = buildConfig.spec.runPolicy || undefined;
 };
 
 const convertBuildConfigHooksToFormData = (

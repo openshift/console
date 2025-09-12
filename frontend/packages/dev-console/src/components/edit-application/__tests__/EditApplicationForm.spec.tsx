@@ -68,7 +68,7 @@ describe('EditApplicationForm', () => {
       values: {} as any,
       initialValues: {} as any,
       flowType: ApplicationFlowType.Git,
-      builderImages: null,
+      builderImages: undefined,
       appResources: {} as any,
     };
   });

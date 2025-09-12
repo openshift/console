@@ -15,7 +15,7 @@ import {
 } from '../import/import-submit-utils';
 import { useUploadJarFormToast } from '../import/jar/useUploadJarFormToast';
 import { createOrUpdateJarFile } from '../import/upload-jar-submit-utils';
-import { EditApplicationProps } from './edit-application-types';
+import { AppResources, EditApplicationProps } from './edit-application-types';
 import {
   getFlowType,
   getInitialValues,
@@ -37,7 +37,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
   const uploadJarFormToastCallback = useUploadJarFormToast();
-  const initialValues = getInitialValues(appResources, appName, namespace);
+  const initialValues = getInitialValues(appResources as AppResources, appName, namespace);
   const buildStrategy = _.get(initialValues, 'build.strategy', '');
   const buildSourceType = _.get(initialValues, 'build.source.type', undefined);
   const flowType = getFlowType(buildStrategy, buildSourceType);
@@ -45,13 +45,13 @@ const EditApplication: React.FC<EditApplicationProps> = ({
 
   const imageStreamsData = React.useMemo(
     () =>
-      appResources.imageStreams && appResources.imageStreams.loaded
-        ? appResources.imageStreams.data
+      appResources?.imageStreams && appResources?.imageStreams.loaded
+        ? appResources?.imageStreams.data
         : [],
     [appResources],
   );
 
-  const [builderImages, setBuilderImages] = React.useState<NormalizedBuilderImages>(null);
+  const [builderImages, setBuilderImages] = React.useState<NormalizedBuilderImages | null>(null);
 
   const updateResources = (values) => {
     if (values.build.strategy) {
@@ -61,7 +61,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
         const isNewFileUploaded = values.fileUpload.value !== '';
         return createOrUpdateJarFile(
           values,
-          imageStream,
+          imageStream as K8sResourceKind,
           false,
           false,
           'update',
@@ -76,7 +76,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
       return createOrUpdateGitResources(
         t,
         values,
-        imageStream,
+        imageStream as K8sResourceKind,
         false,
         false,
         'update',
@@ -104,15 +104,15 @@ const EditApplication: React.FC<EditApplicationProps> = ({
       let allBuilderImages: NormalizedBuilderImages = !_.isEmpty(imageStreamsData)
         ? normalizeBuilderImages(imageStreamsData)
         : {};
-      if (appResources.buildConfig.loaded && appResources.buildConfig.data) {
+      if (appResources?.buildConfig?.loaded && appResources?.buildConfig?.data) {
         const {
           name: imageName,
           namespace: imageNs,
-        } = appResources.buildConfig.data?.spec?.strategy.sourceStrategy.from;
+        } = appResources?.buildConfig.data?.[0]?.spec?.strategy.sourceStrategy.from;
         const selectedImage = imageName?.split(':')[0];
         const builderImageExists = imageNs === 'openshift' && allBuilderImages?.[selectedImage];
         if (!builderImageExists) {
-          let newImageStream: K8sResourceKind;
+          let newImageStream: K8sResourceKind | undefined;
           try {
             newImageStream = await k8sGet(ImageStreamModel, selectedImage, imageNs);
             // eslint-disable-next-line no-empty
@@ -120,7 +120,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
           if (ignore) return;
           allBuilderImages = {
             ...allBuilderImages,
-            ...(newImageStream ? normalizeBuilderImages(newImageStream) : {}),
+            ...(newImageStream ? normalizeBuilderImages(newImageStream as K8sResourceKind) : {}),
           };
         }
       }
@@ -134,15 +134,20 @@ const EditApplication: React.FC<EditApplicationProps> = ({
     return () => {
       ignore = true;
     };
-  }, [appResources.buildConfig.data, appResources.buildConfig.loaded, imageStreamsData, flowType]);
+  }, [
+    appResources?.buildConfig?.data,
+    appResources?.buildConfig?.loaded,
+    imageStreamsData,
+    flowType,
+  ]);
 
   const renderForm = (formikProps: FormikProps<any>) => (
     <EditApplicationForm
       {...formikProps}
-      appResources={appResources}
+      appResources={appResources as AppResources}
       enableReinitialize
       flowType={flowType}
-      builderImages={builderImages}
+      builderImages={builderImages as NormalizedBuilderImages | undefined}
     />
   );
 

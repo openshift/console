@@ -392,7 +392,7 @@ export const createOrUpdateJarFile = async (
     formData,
     imageStream,
     dryRun,
-    appResBuildConfig?.data,
+    appResBuildConfig?.data?.[0],
     verb,
     generatedImageStreamName,
   );

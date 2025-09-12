@@ -4,7 +4,7 @@ import { ImageOptionFormData } from '../sections/ImagesSection';
 import { BuildConfig, BuildConfigTrigger, ImageReference } from '../types';
 import { BuildConfigFormikValues } from './types';
 
-const deleteKeys = (object: Record<string, any>, ...keys: string[]) => {
+const deleteKeys = (object: Record<string, unknown>, ...keys: string[]) => {
   keys.forEach((key) => delete object[key]);
 };
 
@@ -44,10 +44,24 @@ const convertFormDataToBuildConfigSource = (
 
       // Set default 'Source' strategy if no strategy is defined yet.
       if (!buildConfig.spec.strategy?.type) {
-        buildConfig.spec.strategy = {
-          type: values.formData.images.strategyType || 'Source',
-          ...buildConfig.spec.strategy,
-        };
+        const { strategyType } = values.formData.images;
+        const validStrategyType =
+          strategyType === 'Source' || strategyType === 'Docker' ? strategyType : 'Source';
+        if (validStrategyType === 'Source') {
+          buildConfig.spec.strategy = {
+            type: 'Source',
+            sourceStrategy: {},
+          };
+        } else {
+          buildConfig.spec.strategy = {
+            type: 'Docker',
+            dockerStrategy: {
+              from: undefined,
+              dockerfilePath: undefined,
+              env: undefined,
+            },
+          };
+        }
       }
 
       // Updates both app.openshift.io/vcs-* annotations only if the url exists
@@ -73,10 +87,24 @@ const convertFormDataToBuildConfigSource = (
 
       // Set default 'Docker' strategy if no strategy is defined yet.
       if (!buildConfig.spec.strategy?.type) {
-        buildConfig.spec.strategy = {
-          type: values.formData.images.strategyType || 'Docker',
-          ...buildConfig.spec.strategy,
-        };
+        const { strategyType } = values.formData.images;
+        const validStrategyType =
+          strategyType === 'Source' || strategyType === 'Docker' ? strategyType : 'Docker';
+        if (validStrategyType === 'Source') {
+          buildConfig.spec.strategy = {
+            type: 'Source',
+            sourceStrategy: {},
+          };
+        } else {
+          buildConfig.spec.strategy = {
+            type: 'Docker',
+            dockerStrategy: {
+              from: undefined,
+              dockerfilePath: undefined,
+              env: undefined,
+            },
+          };
+        }
       }
       break;
     }
@@ -88,10 +116,24 @@ const convertFormDataToBuildConfigSource = (
 
       // Set default 'Source' strategy if no strategy is defined yet.
       if (!buildConfig.spec.strategy?.type) {
-        buildConfig.spec.strategy = {
-          type: values.formData.images.strategyType || 'Source',
-          ...buildConfig.spec.strategy,
-        };
+        const { strategyType } = values.formData.images;
+        const validStrategyType =
+          strategyType === 'Source' || strategyType === 'Docker' ? strategyType : 'Source';
+        if (validStrategyType === 'Source') {
+          buildConfig.spec.strategy = {
+            type: 'Source',
+            sourceStrategy: {},
+          };
+        } else {
+          buildConfig.spec.strategy = {
+            type: 'Docker',
+            dockerStrategy: {
+              from: undefined,
+              dockerfilePath: undefined,
+              env: undefined,
+            },
+          };
+        }
       }
       break;
     }
@@ -103,9 +145,11 @@ const convertFormDataToBuildConfigSource = (
 const convertImageOptionFormDataToImageReference = (
   imageOptionFormData: ImageOptionFormData,
   buildConfigNamespace: string,
-): ImageReference => {
+): ImageReference | null => {
   if (imageOptionFormData.type === 'imageStreamTag') {
-    const { namespace, image = '', tag } = imageOptionFormData.imageStreamTag.imageStream;
+    const imageStream = imageOptionFormData.imageStreamTag?.imageStream;
+    if (!imageStream) return null;
+    const { namespace, image = '', tag } = imageStream;
     const name = tag ? `${image}:${tag}` : image;
     return namespace === buildConfigNamespace
       ? {
@@ -146,23 +190,43 @@ const convertFormDataImagesToBuildConfig = (
   // Build from => Strategy
   const from = convertImageOptionFormDataToImageReference(
     values.formData.images.buildFrom,
-    buildConfig.metadata.namespace,
+    buildConfig.metadata.namespace || '',
   );
 
   // The strategy object is automatically created in convertFormDataToBuildConfigSource
   // if the source type is known. Fallback to Source strategy here if an image is selected
   // without any information about the strategy type.
   if (from && !buildConfig.spec.strategy?.type) {
-    buildConfig.spec.strategy = {
-      type: values.formData.images.strategyType || 'Source',
-      ...buildConfig.spec.strategy,
-    };
+    const { strategyType } = values.formData.images;
+    const validStrategyType =
+      strategyType === 'Source' || strategyType === 'Docker' ? strategyType : 'Source';
+    if (validStrategyType === 'Source') {
+      buildConfig.spec.strategy = {
+        type: 'Source',
+        sourceStrategy: {},
+      };
+    } else {
+      buildConfig.spec.strategy = {
+        type: 'Docker',
+        dockerStrategy: {
+          from: undefined,
+          dockerfilePath: undefined,
+          env: undefined,
+        },
+      };
+    }
   }
 
   const strategyKey = `${buildConfig.spec.strategy?.type?.toLowerCase()}Strategy`;
   if (from && !buildConfig.spec.strategy?.[strategyKey]) {
-    buildConfig.spec.strategy[strategyKey] = { from };
-  } else if (from) {
+    if (buildConfig.spec.strategy) {
+      buildConfig.spec.strategy[strategyKey] = { from };
+    }
+  } else if (
+    from &&
+    buildConfig.spec.strategy?.[strategyKey] &&
+    buildConfig.spec.strategy[strategyKey]
+  ) {
     buildConfig.spec.strategy[strategyKey].from = from;
   } else if (buildConfig.spec.strategy?.[strategyKey]) {
     delete buildConfig.spec.strategy[strategyKey].from;
@@ -171,11 +235,11 @@ const convertFormDataImagesToBuildConfig = (
   // Push to => Output
   const to = convertImageOptionFormDataToImageReference(
     values.formData.images.pushTo,
-    buildConfig.metadata.namespace,
+    buildConfig.metadata.namespace || '',
   );
   if (to && !buildConfig.spec.output) {
     buildConfig.spec.output = { to };
-  } else if (to) {
+  } else if (to && buildConfig.spec.output && buildConfig.spec.output) {
     buildConfig.spec.output.to = to;
   } else if (buildConfig.spec.output) {
     delete buildConfig.spec.output.to;
@@ -192,19 +256,43 @@ const convertFormDataEnvironmentVariablesToBuildConfig = (
   // if the source type is known. Fallback to Source strategy here if some
   // environment variables are defined.
   if (env.length > 0 && !buildConfig.spec.strategy?.type) {
-    buildConfig.spec.strategy = {
-      type: values.formData.images.strategyType || 'Source',
-      ...buildConfig.spec.strategy,
-    };
+    const { strategyType } = values.formData.images;
+    const validStrategyType =
+      strategyType === 'Source' || strategyType === 'Docker' ? strategyType : 'Source';
+    if (validStrategyType === 'Source') {
+      buildConfig.spec.strategy = {
+        type: 'Source',
+        sourceStrategy: {},
+      };
+    } else {
+      buildConfig.spec.strategy = {
+        type: 'Docker',
+        dockerStrategy: {
+          from: undefined,
+          dockerfilePath: undefined,
+          env: undefined,
+        },
+      };
+    }
   }
 
   const strategyKey = `${buildConfig.spec.strategy?.type?.toLowerCase()}Strategy`;
   if (env.length > 0 && !buildConfig.spec.strategy?.[strategyKey]) {
-    buildConfig.spec.strategy[strategyKey] = { env };
-  } else if (env.length > 0) {
-    buildConfig.spec.strategy[strategyKey].env = env;
+    if (buildConfig.spec.strategy) {
+      buildConfig.spec.strategy[strategyKey] = { env };
+    }
+  } else if (
+    env.length > 0 &&
+    buildConfig.spec.strategy?.[strategyKey] &&
+    buildConfig.spec.strategy[strategyKey]
+  ) {
+    if (buildConfig.spec.strategy[strategyKey]) {
+      buildConfig.spec.strategy[strategyKey].env = env;
+    }
   } else if (buildConfig.spec.strategy?.[strategyKey]) {
-    delete buildConfig.spec.strategy[strategyKey].env;
+    if (buildConfig.spec.strategy[strategyKey]) {
+      delete buildConfig.spec.strategy[strategyKey].env;
+    }
   }
 };
 
@@ -221,24 +309,46 @@ const convertFormDataTriggersToBuildConfig = (
     triggers.push({ type: 'ImageChange' });
   }
   if (values.formData.triggers?.otherTriggers) {
-    triggers.push(
-      ...values.formData.triggers.otherTriggers
-        .filter((trigger) => trigger.type && trigger.secret)
-        .map(
-          (trigger) =>
-            ({
-              type: trigger.type,
-              [trigger.type.toLowerCase()]: {
-                ...(trigger.data
-                  ? trigger.data.secretReference
-                    ? { secretReference: { name: trigger.secret } }
-                    : { secret: trigger.secret }
-                  : { secretReference: { name: trigger.secret } }),
-                ...(trigger.allowEnv ? { allowEnv: trigger.allowEnv } : {}),
-              },
-            } as BuildConfigTrigger),
-        ),
-    );
+    const otherTriggers = values.formData.triggers.otherTriggers
+      .filter((trigger) => trigger.type && trigger.secret)
+      .map((trigger) => {
+        const baseConfig = {
+          ...(trigger.data
+            ? trigger.data.secretReference
+              ? { secretReference: { name: trigger.secret } }
+              : { secret: trigger.secret }
+            : { secretReference: { name: trigger.secret } }),
+          ...(trigger.allowEnv ? { allowEnv: trigger.allowEnv } : {}),
+        };
+
+        switch (trigger.type) {
+          case 'Generic':
+            return {
+              type: 'Generic' as const,
+              generic: baseConfig,
+            };
+          case 'GitHub':
+            return {
+              type: 'GitHub' as const,
+              github: baseConfig,
+            };
+          case 'GitLab':
+            return {
+              type: 'GitLab' as const,
+              gitlab: baseConfig,
+            };
+          case 'Bitbucket':
+            return {
+              type: 'Bitbucket' as const,
+              bitbucket: baseConfig,
+            };
+          default:
+            return null;
+        }
+      })
+      .filter((trigger) => trigger !== null) as BuildConfigTrigger[];
+
+    triggers.push(...otherTriggers);
   }
 
   if (triggers.length > 0) {
@@ -258,19 +368,18 @@ const convertFormDataSecretsToBuildConfig = (
   }));
 
   // The source object is automatically created in convertFormDataToBuildConfigSource
-  // if the source type is known. Fallback to Source source here if some secrets are defined.
+  // if the source type is known. Fallback to Git source here if some secrets are defined.
   if (secrets.length > 0 && !buildConfig.spec.source?.type) {
     buildConfig.spec.source = {
-      type: 'Source',
-      ...buildConfig.spec.source,
+      type: 'Git',
+      git: { uri: 'https://github.com/example/repo.git' },
     };
   }
 
   if (secrets.length > 0) {
-    buildConfig.spec.source = {
-      ...buildConfig.spec.source,
-      secrets,
-    };
+    if (buildConfig.spec.source) {
+      buildConfig.spec.source.secrets = secrets;
+    }
   } else if (buildConfig.spec.source?.secrets) {
     delete buildConfig.spec.source.secrets;
   }

@@ -44,8 +44,10 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     }
 
     if (buildOption === BuildOptions.BUILDS) {
-      const strategyType = getStrategyType(appResources?.buildConfig?.data?.spec?.strategy?.type);
-      const buildConfigObj = appResources?.buildConfig?.data || {
+      const strategyType = getStrategyType(
+        appResources?.buildConfig?.data?.[0]?.spec?.strategy?.type,
+      );
+      const buildConfigObj = appResources?.buildConfig?.data?.[0] || {
         metadata: {
           namespace,
         },
@@ -56,7 +58,7 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     }
 
     if (buildOption === BuildOptions.SHIPWRIGHT_BUILD) {
-      const swBuildObj = appResources?.shipwrightBuild?.data || {
+      const swBuildObj = appResources?.shipwrightBuild?.data?.[0] || {
         metadata: {
           namespace,
         },

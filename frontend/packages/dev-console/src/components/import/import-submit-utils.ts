@@ -800,7 +800,7 @@ export const createOrUpdateResources = async (
   } = formData;
   const imageStreamName = _.get(imageStream, 'metadata.name');
   const originalRepository =
-    appResources?.buildConfig?.data?.spec?.source?.git?.uri ??
+    appResources?.buildConfig?.data?.[0]?.spec?.source?.git?.uri ??
     appResources?.pipeline?.data?.spec?.params?.find((param) => param?.name === 'GIT_REPO')
       ?.default;
   createNewProject && (await createProject(formData.project));
@@ -853,7 +853,7 @@ export const createOrUpdateResources = async (
         formData,
         imageStream,
         dryRun,
-        appResources?.buildConfig?.data,
+        appResources?.buildConfig?.data?.[0],
         generatedImageStreamName ? 'create' : verb,
         generatedImageStreamName,
       ),
@@ -864,7 +864,7 @@ export const createOrUpdateResources = async (
         formData,
         imageStream,
         dryRun,
-        appResources?.shipwrightBuild?.data,
+        appResources?.shipwrightBuild?.data?.[0],
         generatedImageStreamName ? 'create' : verb,
         generatedImageStreamName,
       ),

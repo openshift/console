@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getResizeObserver } from '@patternfly/react-core';
+import { useEventListener } from '@console/shared/src/hooks/useEventListener';
 import { Masonry } from './Masonry';
 import './MasonryLayout.scss';
 
@@ -7,7 +7,7 @@ type MasonryLayoutProps = {
   columnWidth: number;
   children: React.ReactElement[];
   loading?: boolean;
-  LoadingComponent?: React.ComponentType<any>;
+  LoadingComponent?: React.FC;
   /**
    * This threshold ensures that the resize doesn't happen to often.
    * It is set to 30 pixels by default to ensure that the column count is not
@@ -18,7 +18,7 @@ type MasonryLayoutProps = {
   resizeThreshold?: number;
 };
 
-export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
+export const MasonryLayout: React.FCC<MasonryLayoutProps> = ({
   columnWidth,
   children,
   loading,
@@ -28,25 +28,24 @@ export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
   const measureRef = React.useRef<HTMLDivElement>(null);
   const [width, setWidth] = React.useState<number>(0);
   const handleResize = React.useCallback(() => {
-    const newWidth = measureRef.current.getBoundingClientRect().width;
+    const newWidth = measureRef.current?.getBoundingClientRect().width ?? 0;
     if (newWidth) {
       setWidth((oldWidth) =>
         Math.abs(oldWidth - newWidth) < resizeThreshold ? oldWidth : newWidth,
       );
     }
   }, [resizeThreshold]);
-  const columnCount = React.useMemo(() => (width ? Math.floor(width / columnWidth) || 1 : null), [
+  const columnCount = React.useMemo(() => (width ? Math.floor(width / columnWidth) || 1 : 1), [
     columnWidth,
     width,
   ]);
 
   React.useEffect(() => {
     handleResize();
-
-    // change the column count if the window is resized
-    const observer = getResizeObserver(undefined, handleResize, true);
-    return () => observer();
   }, [handleResize]);
+
+  // Listen for window resize events to update column count
+  useEventListener(window, 'resize', handleResize);
 
   const columns: React.ReactElement[] =
     loading && LoadingComponent
@@ -55,7 +54,7 @@ export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
 
   return (
     <div className="odc-masonry-container" ref={measureRef}>
-      {columnCount ? <Masonry columnCount={columnCount}>{columns}</Masonry> : null}
+      <Masonry columnCount={columnCount}>{columns}</Masonry>
     </div>
   );
 };
