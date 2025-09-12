@@ -33,6 +33,11 @@ const i18nNamespaces = getI18nNamespaces();
 
 export const pluginStore = new PluginStore(activePlugins, dynamicPluginNames, i18nNamespaces);
 
+export const isDynamicPluginActive = (pluginName: string) =>
+  pluginStore.getAllowedDynamicPluginNames().includes(pluginName);
+
+export const isKubevirtPluginActive = () => isDynamicPluginActive('kubevirt-plugin');
+
 if (process.env.NODE_ENV !== 'production') {
   // Expose Console plugin store for debugging
   window.pluginStore = pluginStore;
