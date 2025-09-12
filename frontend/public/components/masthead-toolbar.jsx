@@ -1,4 +1,4 @@
-import { useContext, useState, useRef, useCallback, createRef, useEffect } from 'react';
+import { useContext, useState, useRef, useCallback, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -43,8 +43,9 @@ import { Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
+
 import redhatLogoImg from '../imgs/logos/redhat.svg';
-import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
+import { TourContext, TourActions } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
 import { FeedbackModal } from '@patternfly/react-user-feedback';
 import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
@@ -105,6 +106,7 @@ const SystemStatusButton = ({ statuspageData }) => {
 const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
+  const { tourDispatch, tour } = useContext(TourContext);
   const authEnabledFlag = useFlag(FLAGS.AUTH_ENABLED);
   const consoleCLIDownloadFlag = useFlag(FLAGS.CONSOLE_CLI_DOWNLOAD);
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
@@ -148,6 +150,11 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   const onAboutModal = (e) => {
     e.preventDefault();
     setshowAboutModal(true);
+  };
+
+  const handleGuidedTourClick = (e) => {
+    e.preventDefault();
+    tourDispatch({ type: TourActions.start });
   };
 
   const closeAboutModal = () => setshowAboutModal(false);
@@ -282,16 +289,18 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
 
   const getHelpActions = (additionalHelpActions) => {
     const helpActions = [];
-    const tourRef = createRef();
 
     helpActions.push({
       isSection: true,
       actions: [
-        {
-          component: () => (
-            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v6-c-menu__item" />
-          ),
-        },
+        ...(tour
+          ? [
+              {
+                label: t('public~Guided Tour'),
+                callback: handleGuidedTourClick,
+              },
+            ]
+          : []),
         ...(quickstartFlag
           ? [
               {
