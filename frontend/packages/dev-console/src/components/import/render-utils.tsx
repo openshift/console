@@ -26,7 +26,7 @@ export const routeDecoratorIcon = (
   switch (detectGitType(routeURL)) {
     case GitProvider.INVALID:
       // Not a valid url and thus not safe to use
-      return null;
+      return null as any;
     case GitProvider.GITHUB:
       return <GithubIcon style={{ fontSize: radius }} title={t('devconsole~Edit source code')} />;
     case GitProvider.BITBUCKET:

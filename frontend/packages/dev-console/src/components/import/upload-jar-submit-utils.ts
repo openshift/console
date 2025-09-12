@@ -59,7 +59,7 @@ export const createOrUpdateDeployment = (
     customIcon,
   } = formData;
 
-  const imageStreamName = imageStream && imageStream.metadata.name;
+  const imageStreamName = imageStream && imageStream.metadata?.name;
   const defaultLabels = getAppLabels({
     name,
     applicationName,
@@ -77,17 +77,17 @@ export const createOrUpdateDeployment = (
     [CUSTOM_ICON_ANNOTATION]: customIcon,
   };
   const podLabels = getPodLabels(Resources.Kubernetes, name);
-  const templateLabels = getTemplateLabels(originalDeployment);
+  const templateLabels = getTemplateLabels(originalDeployment || {});
 
   const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');
   if (jArgsIndex !== -1) {
     if (javaArgs !== '') {
-      (env[jArgsIndex] as NameValuePair).value = javaArgs;
+      (env[jArgsIndex] as NameValuePair).value = javaArgs || '';
     } else {
       env.splice(jArgsIndex, 1);
     }
   } else if (javaArgs !== '') {
-    env.push({ name: 'JAVA_ARGS', value: javaArgs });
+    env.push({ name: 'JAVA_ARGS', value: javaArgs || '' });
   }
 
   const newDeployment = {
@@ -125,7 +125,10 @@ export const createOrUpdateDeployment = (
       },
     },
   };
-  const deployment = mergeData(originalDeployment, newDeployment);
+  const deployment = mergeData(
+    originalDeployment || {},
+    newDeployment as K8sResourceKind,
+  ) as K8sResourceKind;
 
   return verb === 'update'
     ? k8sUpdate(DeploymentModel, deployment)
@@ -151,20 +154,20 @@ const createOrUpdateDeploymentConfig = (
     healthChecks,
   } = formData;
 
-  const imageStreamName = imageStream && imageStream.metadata.name;
+  const imageStreamName = imageStream && imageStream.metadata?.name;
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const podLabels = getPodLabels(Resources.OpenShift, name);
-  const templateLabels = getTemplateLabels(originalDeploymentConfig);
+  const templateLabels = getTemplateLabels(originalDeploymentConfig || {});
 
   const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');
   if (jArgsIndex !== -1) {
     if (javaArgs !== '') {
-      (env[jArgsIndex] as NameValuePair).value = javaArgs;
+      (env[jArgsIndex] as NameValuePair).value = javaArgs || '';
     } else {
       env.splice(jArgsIndex, 1);
     }
   } else if (javaArgs !== '') {
-    env.push({ name: 'JAVA_ARGS', value: javaArgs });
+    env.push({ name: 'JAVA_ARGS', value: javaArgs || '' });
   }
 
   const newDeploymentConfig = {
@@ -215,7 +218,10 @@ const createOrUpdateDeploymentConfig = (
       ],
     },
   };
-  const deploymentConfig = mergeData(originalDeploymentConfig, newDeploymentConfig);
+  const deploymentConfig = mergeData(
+    originalDeploymentConfig || {},
+    newDeploymentConfig as K8sResourceKind,
+  ) as K8sResourceKind;
 
   return verb === 'update'
     ? k8sUpdate(DeploymentConfigModel, deploymentConfig)
@@ -240,8 +246,8 @@ export const createOrUpdateBuildConfig = (
     labels: userLabels,
   } = formData;
 
-  const imageStreamName = imageStream && imageStream.metadata.name;
-  const imageStreamNamespace = imageStream && imageStream.metadata.namespace;
+  const imageStreamName = imageStream && imageStream.metadata?.name;
+  const imageStreamNamespace = imageStream && imageStream.metadata?.namespace;
 
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
   const defaultAnnotations = { ...getCommonAnnotations(), jarFileName };
@@ -292,7 +298,7 @@ export const createOrUpdateBuildConfig = (
     },
   };
 
-  const buildConfig = mergeData(originalBuildConfig, newBuildConfig);
+  const buildConfig = mergeData(originalBuildConfig || {}, newBuildConfig) as K8sResourceKind;
 
   return verb === 'update'
     ? k8sUpdate(BuildConfigModel, buildConfig)
@@ -313,7 +319,7 @@ export const instantiateBinaryBuild = (
   };
   window.addEventListener('beforeunload', onBeforeUnload);
   coFetch(
-    `/api/kubernetes/apis/build.openshift.io/v1/namespaces/${namespace}/buildconfigs/${buildConfigResponse.metadata.name}/instantiatebinary?asFile=${filename}`,
+    `/api/kubernetes/apis/build.openshift.io/v1/namespaces/${namespace}/buildconfigs/${buildConfigResponse.metadata?.name}/instantiatebinary?asFile=${filename}`,
     {
       method: 'POST',
       body: value,
@@ -361,11 +367,11 @@ export const createOrUpdateJarFile = async (
     route: appResRoute,
   } = appResources || {};
 
-  const imageStreamName = imageStream?.metadata.name;
+  const imageStreamName = imageStream?.metadata?.name;
 
   createNewProject && (await createProject(formData.project));
 
-  const responses = [];
+  const responses: K8sResourceKind[] = [];
   let generatedImageStreamName: string = '';
   const imageStreamList = appResImageStream?.data;
   if (
@@ -382,7 +388,7 @@ export const createOrUpdateJarFile = async (
     formData,
     imageStream,
     dryRun,
-    appResources,
+    appResources || {},
     generatedImageStreamName ? 'create' : verb,
     generatedImageStreamName,
   );
@@ -392,7 +398,7 @@ export const createOrUpdateJarFile = async (
     formData,
     imageStream,
     dryRun,
-    appResBuildConfig?.data,
+    appResBuildConfig?.data?.[0] || undefined,
     verb,
     generatedImageStreamName,
   );
@@ -409,7 +415,7 @@ export const createOrUpdateJarFile = async (
   }
 
   if (resources === Resources.KnativeService) {
-    const imageStreamURL = imageStreamResponse.status.dockerImageRepository;
+    const imageStreamURL = imageStreamResponse.status?.dockerImageRepository;
 
     const originalAnnotations = editAppResource?.data?.metadata?.annotations || {};
     const triggerAnnotations = getTriggerAnnotation(
@@ -445,12 +451,18 @@ export const createOrUpdateJarFile = async (
       dryRun,
     );
     responses.push(
-      ...[
+      ...([
         verb === 'update'
-          ? k8sUpdate(KnServiceModel, knDeploymentResource, null, null, dryRun ? dryRunOpt : {})
+          ? k8sUpdate(
+              KnServiceModel,
+              knDeploymentResource,
+              undefined,
+              undefined,
+              dryRun ? dryRunOpt : {},
+            )
           : k8sCreate(KnServiceModel, knDeploymentResource, dryRun ? dryRunOpt : {}),
         ...domainMappingResources,
-      ],
+      ] as K8sResourceKind[]),
     );
     return Promise.all(responses);
   }
