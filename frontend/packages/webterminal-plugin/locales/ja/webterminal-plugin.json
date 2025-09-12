@@ -3,10 +3,6 @@
   "Configure default timeout and image of web terminal operator.": "Web ターミナル Operator のデフォルトのタイムアウトおよびイメージを設定します。",
   "DevWorkspaceTemplate": "開発ワークスペーステンプレート",
   "DevWorkspaceTemplates": "DevWorkspace テンプレート",
-  "Close terminal?": "ターミナルを閉じますか?",
-  "This will close the terminal session. Content in the terminal will not be restored on next session.": "これでターミナルセッションが閉じます。ターミナルのコンテンツは、次のセッションでは復元されません。",
-  "Yes": "Yes",
-  "No": "No",
   "OpenShift command line terminal": "OpenShift コマンドラインターミナル",
   "Open terminal in new tab": "新規タブでターミナルを開く",
   "Minimize terminal": "ターミナルを最小化する",
@@ -20,9 +16,9 @@
   "OpenShift command line": "OpenShift コマンドライン",
   "Command line terminal": "コマンドラインターミナル",
   "Failed to connect to your OpenShift command line terminal": "OpenShift コマンドラインターミナルへの接続に失敗しました",
-  "Terminal {{number}}": "ターミナル {{number}}",
-  "Close terminal tab": "ターミナルのタブを閉じる",
   "Add new tab": "新規タブの追加",
+  "Close terminal tab": "ターミナルのタブを閉じる",
+  "Terminal {{number}}": "ターミナル {{number}}",
   "Project": "プロジェクト",
   "This Project will be used to initialize your command line terminal": "この Project は、コマンドラインターミナルを初期化するために使用されます",
   "Initialize terminal": "ターミナルの初期化",
@@ -46,5 +42,9 @@
   "Number of {{sizeUnit}}": "{{sizeUnit}} の数",
   "Mark the configuration resource as \"Unmanaged\" to keep the default timeout even after operator restart or update.": "設定リソースに Unmanaged のマークを付けて、Operator の再起動または更新後もデフォルトのタイムアウトを維持します。",
   "Mark the configuration resource as \"Unmanaged\" to keep the default image even after operator restart or update.": "設定リソースに Unmanaged のマークを付けて、Operator が再起動または更新してもデフォルトのイメージを維持します。",
-  "Save": "保存"
+  "Save": "保存",
+  "Close terminal?": "ターミナルを閉じますか?",
+  "This will close the terminal session. Content in the terminal will not be restored on next session.": "これでターミナルセッションが閉じます。ターミナルのコンテンツは、次のセッションでは復元されません。",
+  "Yes": "Yes",
+  "No": "No"
 }

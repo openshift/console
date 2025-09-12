@@ -1,5 +1,4 @@
 {
-  "Ecosystem": "生态系统",
   "Extension Catalog": "扩展目录",
   "Installed Extensions": "安装的扩展",
   "Extension Catalog Items": "扩展目录项",
@@ -8,5 +7,5 @@
   "Capability level": "能力级别",
   "Infrastructure features": "基础架构功能",
   "Valid subscription": "有效订阅",
-  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can purchase commercial software through <2>Red Hat Marketplace</2>. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "从 Kubernetes 社区及红帽合作伙伴处查找有红帽策展的 Operator。您可以通过 <2>Red Hat Marketplace</2> 购买商业软件。您可以在集群上安装 Operator，为您的开发人员提供可选的附加组件和共享服务。"
+  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "从 Kubernetes 社区及红帽合作伙伴处查找由红帽策展的 Operator。您可以在集群上安装 Operator，为您的开发人员提供可选的附加组件和共享服务。"
 }
