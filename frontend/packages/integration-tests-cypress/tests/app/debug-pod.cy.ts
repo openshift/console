@@ -54,7 +54,7 @@ describe('Debug pod', () => {
 
   it('Opens debug terminal page from Logs subsection', () => {
     cy.visit(`/k8s/ns/${testName}/pods`);
-    listPage.rows.shouldExist(POD_NAME);
+    listPage.dvRows.shouldExist(POD_NAME);
     cy.visit(`/k8s/ns/${testName}/pods/${POD_NAME}`);
     detailsPage.isLoaded();
     detailsPage.selectTab('Logs');
@@ -75,8 +75,8 @@ describe('Debug pod', () => {
 
   it('Opens debug terminal page from Pods Page - Status tool tip', () => {
     cy.visit(`/k8s/ns/${testName}/pods`);
-    listPage.rows.shouldExist(POD_NAME);
-    listPage.rows.clickStatusButton(POD_NAME);
+    listPage.dvRows.shouldExist(POD_NAME);
+    listPage.dvRows.clickStatusButton(POD_NAME);
     // Click on first debug link
     cy.byTestID(`popup-debug-container-link-${CONTAINER_NAME}`).click();
     listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
