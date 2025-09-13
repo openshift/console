@@ -1,8 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { css } from '@patternfly/react-styles';
 import {
-  sortable,
   SortByDirection,
   TableVariant,
   Table as PfTable,
@@ -15,7 +13,8 @@ import {
 import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
 import { useTranslation } from 'react-i18next';
 
-import { DetailsPage, ListPage, TableData, RowFunctionArgs, Table } from './factory';
+import { DetailsPage, ListPage } from './factory';
+import { sortResourceByValue } from './factory/Table/sort';
 import {
   AsyncComponent,
   DetailsItem,
@@ -36,12 +35,13 @@ import {
   getLatestVersionForCRD,
   K8sKind,
   referenceForCRD,
+  TableColumn,
 } from '../module/k8s';
 import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
 import { getResourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
-import { GreenCheckCircleIcon } from '@console/shared';
+import { GreenCheckCircleIcon, DASH } from '@console/shared';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {
   ResourceListPage as DynamicResourceListPage,
@@ -56,6 +56,14 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 
 const { common } = Kebab.factory;
 
@@ -74,15 +82,6 @@ const menuActions: KebabAction[] = [
   instances,
   ...Kebab.getExtensionsActionsForKind(CustomResourceDefinitionModel),
   ...common,
-];
-
-const tableColumnClasses = [
-  'pf-m-u-w-33-on-md pf-v6-u-w-25-on-lg',
-  'pf-m-u-w-33-on-md pf-v6-u-w-25-on-lg',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-xl',
-  Kebab.columnClass,
 ];
 
 const isEstablished = (conditions: any[]) => {
@@ -233,85 +232,152 @@ const Instances: React.FC<InstancesProps> = ({ obj, namespace }) => {
   );
 };
 
-export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsListProps> = (
-  props,
-) => {
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'group' },
+  { id: 'lastestVersion' },
+  { id: 'namespaced' },
+  { id: 'established' },
+  { id: '' },
+];
+
+const useCustomResourceDefinitionsColumns = () => {
   const { t } = useTranslation();
-  const CRDTableHeader = () => {
+  const columns: TableColumn<CustomResourceDefinitionKind>[] = React.useMemo(() => {
     return [
       {
         title: t('public~Name'),
-        sortField: 'spec.names.kind',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'spec.names.kind',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Group'),
-        sortField: 'spec.group',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
+        id: tableColumnInfo[1].id,
+        sort: 'spec.group',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Latest version'),
-        sortFunc: 'crdLatestVersion',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: (data, direction) =>
+          data.sort(
+            sortResourceByValue<CustomResourceDefinitionKind>(direction, getLatestVersionForCRD),
+          ),
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Namespaced'),
-        sortField: 'spec.scope',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        sort: 'spec.scope',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Established'),
-        props: { className: tableColumnClasses[4] },
+        id: tableColumnInfo[4].id,
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[5] },
+        id: tableColumnInfo[5].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
     ];
-  };
-  const CRDTableRow: React.FC<RowFunctionArgs<CustomResourceDefinitionKind>> = ({ obj: crd }) => {
-    return (
-      <>
-        <TableData className={tableColumnClasses[0]}>
+  }, [t]);
+  return columns;
+};
+
+const IsNamespaced: React.FCC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
+  const { t } = useTranslation();
+  return namespaced(obj) ? t('public~Yes') : t('public~No');
+};
+
+const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> = (
+  data,
+  columns,
+) => {
+  return data.map(({ obj }) => {
+    const { name, namespace } = obj.metadata;
+    const displayName = _.get(obj, 'spec.names.kind');
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
           <span className="co-resource-item">
             <ResourceLink
               kind="CustomResourceDefinition"
-              name={crd.metadata.name}
-              namespace={crd.metadata.namespace}
-              displayName={_.get(crd, 'spec.names.kind')}
+              name={name}
+              namespace={namespace}
+              displayName={displayName}
             />
           </span>
-        </TableData>
-        <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
-          {crd.spec.group}
-        </TableData>
-        <TableData className={tableColumnClasses[2]}>{getLatestVersionForCRD(crd)}</TableData>
-        <TableData className={tableColumnClasses[3]}>
-          {namespaced(crd) ? t('public~Yes') : t('public~No')}
-        </TableData>
-        <TableData className={tableColumnClasses[4]}>
-          <Established crd={crd} />
-        </TableData>
-        <TableData className={tableColumnClasses[5]}>
-          <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
-        </TableData>
-      </>
-    );
-  };
+        ),
+        props: getNameCellProps(displayName),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: obj.spec.group,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: getLatestVersionForCRD(obj),
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <IsNamespaced obj={obj} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <Established crd={obj} />,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: (
+          <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={obj} />
+        ),
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
+};
+
+export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsListProps> = ({
+  data,
+  loaded,
+  ...props
+}) => {
+  const columns = useCustomResourceDefinitionsColumns();
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <Table
+      <ResourceDataView
         {...props}
-        aria-label={CustomResourceDefinitionModel.label}
-        Header={CRDTableHeader}
-        Row={CRDTableRow}
-        defaultSortField="spec.names.kind"
-        virtualize
+        label={CustomResourceDefinitionModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
       />
     </React.Suspense>
   );
@@ -325,9 +391,10 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
     ListComponent={CustomResourceDefinitionsList}
     kind="CustomResourceDefinition"
     canCreate={true}
-    textFilter="custom-resource-definition-name"
+    omitFilterToolbar={true}
   />
 );
+
 export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
   return (
     <DetailsPage
@@ -348,7 +415,10 @@ export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
   );
 };
 
-export type CustomResourceDefinitionsListProps = {};
+export type CustomResourceDefinitionsListProps = {
+  data: CustomResourceDefinitionKind[];
+  loaded: boolean;
+};
 
 export type CustomResourceDefinitionsPageProps = {};
 
