@@ -159,6 +159,7 @@ type Server struct {
 	Branding                            string
 	Capabilities                        []operatorv1.Capability
 	CatalogdProxyConfig                 *proxy.Config
+	CatalogService                      *olm.CatalogService
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
@@ -212,6 +213,7 @@ type Server struct {
 	UserSettingsLocation                string
 	EnabledPlugins                      serverconfig.MultiKeyValue
 	EnabledPluginsOrder                 []string
+	OLMHandler                          *http.Handler
 }
 
 func disableDirectoryListing(handler http.Handler) http.Handler {
@@ -297,8 +299,19 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		return authMiddleware(authenticator, s.CSRFVerifier, h)
 	}
 
+	// Deprecated: Use authMiddleware and auth.GetUserFromContext instead so that we can make better
+	// use of the ServeHTTP function on the http.Handler interface, and make it easier to pass around
+	// handler functions with the correct signature.
 	authHandlerWithUser := func(h HandlerWithUser) http.HandlerFunc {
-		return authMiddlewareWithUser(authenticator, s.CSRFVerifier, h)
+		return authMiddleware(s.Authenticator, s.CSRFVerifier, func(w http.ResponseWriter, r *http.Request) {
+			user := auth.GetUserFromRequestContext(r)
+			if user == nil {
+				klog.Errorf("user not found in context")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			h(user, w, r)
+		})
 	}
 
 	// For requests where Authorization header with valid Bearer token is expected
@@ -459,25 +472,15 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		})),
 	)
 
-	// Handler for OLM related resources
-	olmHandler := &olm.OLMHandler{
-		APIServerURL: k8sProxyURL,
-		Client: &http.Client{
+	olmHandler := olm.NewOLMHandler(
+		k8sProxyURL,
+		&http.Client{
 			Transport: internalProxiedK8SRT,
 		},
-	}
+		s.CatalogService,
+	)
 
-	handle(packageManifestEndpoint, http.StripPrefix(
-		proxy.SingleJoiningSlash(s.BaseURL.Path, packageManifestEndpoint),
-		authHandler(olmHandler.CheckPackageManifest),
-	))
-
-	handle(operandsListEndpoint, http.StripPrefix(
-		proxy.SingleJoiningSlash(s.BaseURL.Path, operandsListEndpoint),
-		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			olmHandler.OperandsList(user, w, r)
-		}),
-	))
+	handle("/api/olm/", authHandler(olmHandler.ServeHTTP))
 
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	// Knative
