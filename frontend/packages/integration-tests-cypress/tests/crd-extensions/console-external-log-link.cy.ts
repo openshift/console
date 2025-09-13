@@ -31,8 +31,8 @@ describe(`${crd} CRD`, () => {
   });
 
   it(`creates, displays, modifies, and deletes a new ${crd} instance`, () => {
-    cy.visit(`/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`);
-    listPage.rows.shouldBeLoaded();
+    cy.visit(`/k8s/cluster/customresourcedefinitions?name=${crd}`);
+    listPage.dvRows.shouldBeLoaded();
     listPage.rows.clickRowByName(crd);
     detailsPage.titleShouldContain('consoleexternalloglinks.console.openshift.io');
     detailsPage.selectTab('Instances');

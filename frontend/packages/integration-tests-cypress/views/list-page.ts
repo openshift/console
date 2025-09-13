@@ -56,6 +56,11 @@ export const listPage = {
       cy.get('@filterDropdownToggleButton').click();
     },
   },
+  dvFilter: {
+    byName: (name: string) => {
+      cy.get('[aria-label="Name filter"]').clear().type(name); // this is not a great selector, but we're limited by data view
+    },
+  },
   rows: {
     getFirstElementName: () => cy.get('[data-test-rows="resource-row"] a').first(),
     shouldBeLoaded: () => {
@@ -99,6 +104,28 @@ export const listPage = {
       cy.get(`a[data-test-id="${resourceName}"]`).click({ force: true }), // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
     shouldNotExist: (resourceName: string) =>
       cy.get(`[data-test-id="${resourceName}"]`, { timeout: 90000 }).should('not.exist'),
+  },
+  dvRows: {
+    shouldBeLoaded: () => {
+      cy.get(`[data-test="data-view-table"]`).should('be.visible');
+    },
+    clickKebabAction: (resourceName: string, actionName: string) => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
+        .contains(resourceName)
+        .parents('tr')
+        .within(() => {
+          cy.get('[data-test-id="kebab-button"]').click();
+        });
+      cy.byTestActionID(actionName).click();
+    },
+    shouldExist: (resourceName: string) => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
+        .contains(resourceName)
+        .should('exist');
+    },
+    countShouldBe: (resourceName: string, count: number) => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).should('have.length', count);
+    },
   },
 };
 
