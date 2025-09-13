@@ -6,11 +6,14 @@ import { FormGroup, Radio } from '@patternfly/react-core';
 
 import { K8sKind, k8sList, k8sPatch, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { ModalTitle, ModalBody, ModalSubmitFooter, ModalWrapper } from '../factory/modal';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { ResourceIcon, ResourceName, resourcePathFromModel } from '../utils';
 /* eslint-disable import/named */
 import { Trans, useTranslation } from 'react-i18next';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalCallback } from './types';
 
 const workloadResourceModels = [DeploymentModel, DeploymentConfigModel, StatefulSetModel];
 const getContainers = (workload: K8sResourceKind) =>
@@ -269,9 +272,26 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
   );
 };
 
-export const configureAddSecretToWorkloadModal = createModalLauncher<AddSecretToWorkloadModalProps>(
-  AddSecretToWorkloadModal,
-);
+export const AddSecretToWorkloadModalProvider: OverlayComponent<AddSecretToWorkloadModalProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <AddSecretToWorkloadModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
+    </ModalWrapper>
+  );
+};
+
+export const useAddSecretToWorkloadModalLauncher = (
+  props: AddSecretToWorkloadModalProps,
+): ModalCallback => {
+  const launcher = useOverlay();
+
+  return React.useCallback(
+    () => launcher<AddSecretToWorkloadModalProps>(AddSecretToWorkloadModalProvider, props),
+    [launcher, props],
+  );
+};
 
 type WorkloadItem = {
   model: K8sKind;
@@ -279,10 +299,10 @@ type WorkloadItem = {
 };
 
 export type AddSecretToWorkloadModalProps = {
-  cancel: () => void;
-  close: () => void;
   secretName: string;
   namespace: string;
+  cancel?: () => void;
+  close?: () => void;
   blocking?: boolean;
 };
 
