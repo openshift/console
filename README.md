@@ -57,6 +57,14 @@ source ./contrib/oc-environment.sh
 
 The console will be running at [localhost:9000](http://localhost:9000).
 
+**Note for kube:admin logout in local development:** If you wish to logout locally while signed in with `kube:admin`, you may need to manually clear the `ssn` cookie from your browser to prevent automatic re-authentication. This is due to cross-origin limitations when the console runs on localhost while the OAuth server runs on the cluster domain. To clear the cookie:
+
+1. Open browser Developer Tools (F12)
+2. Go to Application → Cookies (Chrome) or Storage → Cookies (Firefox)
+3. Find the OAuth server domain (e.g., `oauth-openshift.apps.your-cluster.com`)
+4. Delete the `ssn` cookie
+5. Click "Logout" in the console
+
 If you don't have `kubeadmin` access, you can use any user's API token,
 although you will be limited to that user's access and might not be able to run
 the full integration test suite.
