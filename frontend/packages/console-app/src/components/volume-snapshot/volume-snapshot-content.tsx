@@ -43,8 +43,10 @@ export const tableColumnInfo = [
 ];
 
 const Row: React.FC<RowProps<VolumeSnapshotContentKind>> = ({ obj }) => {
-  const { name, creationTimestamp } = obj?.metadata || {};
-  const { name: snapshotName, namespace: snapshotNamespace } = obj?.spec?.volumeSnapshotRef || {};
+  const name = obj?.metadata?.name || '';
+  const creationTimestamp = obj?.metadata?.creationTimestamp || '';
+  const snapshotName = obj?.spec?.volumeSnapshotRef?.name || '';
+  const snapshotNamespace = obj?.spec?.volumeSnapshotRef?.namespace || '';
   const size = obj.status?.restoreSize;
   const sizeMetrics = size ? humanizeBinaryBytes(size).string : '-';
 
@@ -166,7 +168,7 @@ const VolumeSnapshotContentPage: React.FC<VolumeSnapshotContentPageProps> = ({
   const resourceKind = referenceForModel(VolumeSnapshotContentModel);
   return (
     <>
-      <ListPageHeader title={showTitle ? t(VolumeSnapshotContentModel.labelPluralKey) : undefined}>
+      <ListPageHeader title={showTitle ? t(VolumeSnapshotContentModel.labelPluralKey || '') : ''}>
         {canCreate && (
           <ListPageCreate groupVersionKind={resourceKind}>
             {t('console-app~Create VolumeSnapshotContent')}
@@ -199,7 +201,7 @@ type VolumeSnapshotContentTableProps = {
   data: VolumeSnapshotContentKind[];
   unfilteredData: VolumeSnapshotContentKind[];
   loaded: boolean;
-  loadError: any;
+  loadError: unknown;
 };
 
 export default VolumeSnapshotContentPage;

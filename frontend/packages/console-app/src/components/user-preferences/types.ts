@@ -15,4 +15,4 @@ export type UserPreferenceTabGroup = {
   items: ResolvedUserPreferenceItem[];
 };
 
-export type UserPreferenceFieldProps<T> = { id: string } & ResolvedCodeRefProperties<T>;
+export type UserPreferenceFieldProps<T extends {}> = { id: string } & ResolvedCodeRefProperties<T>;

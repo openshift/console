@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { StackItem, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { HealthState } from '@console/dynamic-plugin-sdk';
 import {
+  HealthState,
   PrometheusHealthPopupProps,
   PrometheusHealthHandler,
-} from '@console/dynamic-plugin-sdk/dist/core/lib/lib-core';
+} from '@console/dynamic-plugin-sdk';
 import { ConfigMap } from '../../resources';
 import { getVSphereHealth } from '../getVSphereHealth';
 import { VSphereConnectionModal } from '../VSphereConnectionModal';
@@ -54,7 +54,7 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ hide, responses, 
 };
 
 export const healthHandler: PrometheusHealthHandler = (responses, t, additionalResource) => {
-  const health = getVSphereHealth(t, responses, additionalResource);
+  const health = getVSphereHealth(t || (() => ''), responses, additionalResource);
   const { state } = health;
 
   let message: string | undefined;
@@ -63,7 +63,7 @@ export const healthHandler: PrometheusHealthHandler = (responses, t, additionalR
       message = health.message;
       break;
     case HealthState.OK:
-      message = t('vsphere-plugin~No errors reported');
+      message = t?.('vsphere-plugin~No errors reported') || 'No errors reported';
       break;
     default:
       break;

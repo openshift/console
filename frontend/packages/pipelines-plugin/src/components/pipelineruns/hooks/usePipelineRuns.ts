@@ -64,10 +64,14 @@ const useRuns = <Kind extends K8sResourceCommon>(
       ? [
           ...etcdRuns,
           // identify the runs that were removed
-          ...differenceBy(etcdRunsRef.current, etcdRuns, (plr) => plr.metadata.name),
+          ...differenceBy(etcdRunsRef.current, etcdRuns, (plr) => plr.metadata?.name),
         ]
       : [...etcdRuns];
-    value.sort((a, b) => b.metadata.creationTimestamp.localeCompare(a.metadata.creationTimestamp));
+    value.sort((a, b) => {
+      const aTimestamp = a.metadata?.creationTimestamp || '';
+      const bTimestamp = b.metadata?.creationTimestamp || '';
+      return bTimestamp.localeCompare(aTimestamp);
+    });
     if (limit && limit < value.length) {
       value = value.slice(0, limit);
     }
@@ -79,7 +83,9 @@ const useRuns = <Kind extends K8sResourceCommon>(
 
   // Query tekton results if there's no limit or we received less items from etcd than the current limit
   const queryTr =
-    !limit || (namespace && ((runs && loaded && optionsMemo.limit > runs.length) || error));
+    !limit ||
+    (namespace &&
+      ((runs && loaded && optionsMemo.limit && optionsMemo.limit > runs.length) || error));
 
   const trOptions: typeof optionsMemo = useMemo(() => {
     if (optionsMemo?.name) {
@@ -107,7 +113,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
   return useMemo(() => {
     const rResources =
       runs && trResources
-        ? uniqBy([...runs, ...trResources], (r) => r.metadata.uid)
+        ? uniqBy([...runs, ...trResources], (r) => r.metadata?.uid)
         : runs || trResources;
     return [
       rResources,

@@ -140,7 +140,7 @@ const PVCSummary: React.FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
         </DescriptionListGroup>
         <DescriptionListGroup>
           <DescriptionListTerm>{t('console-app~Access mode')}</DescriptionListTerm>
-          <DescriptionListDescription>{accessModes.title}</DescriptionListDescription>
+          <DescriptionListDescription>{accessModes?.title}</DescriptionListDescription>
         </DescriptionListGroup>
         <DescriptionListGroup>
           <DescriptionListTerm>{t('console-app~Volume mode')}</DescriptionListTerm>
@@ -163,7 +163,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
 
   const { t } = useTranslation();
   const [selectedPVCName, setSelectedPVCName] = React.useState(pvcName);
-  const [pvcObj, setPVCObj] = React.useState<PersistentVolumeClaimKind>(null);
+  const [pvcObj, setPVCObj] = React.useState<PersistentVolumeClaimKind | null>(null);
   const [snapshotName, setSnapshotName] = React.useState(`${pvcName || 'pvc'}-snapshot`);
   const [snapshotClassName, setSnapshotClassName] = React.useState('');
   const [vscObj, , vscErr] = useK8sGet<ListKind<VolumeSnapshotClassKind>>(VolumeSnapshotClassModel);
@@ -184,10 +184,11 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
 
   const [data, loaded, loadError] = useK8sWatchResource<PersistentVolumeClaimKind[]>(resourceWatch);
   const scList = scObjListLoaded ? scObjList.items : [];
-  const provisioner = scList.find((sc) => sc.metadata.name === pvcObj?.spec?.storageClassName)
+  const provisioner = scList.find((sc) => sc.metadata?.name === pvcObj?.spec?.storageClassName)
     ?.provisioner;
   const snapshotClassFilter = React.useCallback(
-    (snapshotClass: VolumeSnapshotClassKind) => provisioner?.includes(snapshotClass?.driver),
+    (snapshotClass: VolumeSnapshotClassKind) =>
+      provisioner?.includes(snapshotClass?.driver) ?? false,
     [provisioner],
   );
   const vscList = React.useMemo(() => vscObj?.items || [], [vscObj]);
@@ -203,8 +204,8 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
   );
 
   React.useEffect(() => {
-    const currentPVC = data.find((pvc) => pvc.metadata.name === selectedPVCName);
-    setPVCObj(currentPVC);
+    const currentPVC = data.find((pvc) => pvc.metadata?.name === selectedPVCName);
+    setPVCObj(currentPVC || null);
     setSnapshotClassName(getDefaultItem(snapshotClassFilter));
   }, [data, selectedPVCName, namespace, loadError, snapshotClassFilter, getDefaultItem]);
 
@@ -212,8 +213,8 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
     setSnapshotName(event.currentTarget.value);
 
   const handlePVCName = (name: string) => {
-    const currentPVC = data.find((pvc) => pvc.metadata.name === name);
-    setPVCObj(currentPVC);
+    const currentPVC = data.find((pvc) => pvc.metadata?.name === name);
+    setPVCObj(currentPVC || null);
     setSnapshotName(`${name}-snapshot`);
     setSelectedPVCName(name);
   };
@@ -225,11 +226,11 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
       kind: VolumeSnapshotModel.kind,
       metadata: {
         name: snapshotName,
-        namespace: getNamespace(pvcObj),
+        namespace: getNamespace(pvcObj || {}),
         annotations: {
-          [snapshotPVCAccessModeAnnotation]: pvcObj.spec.accessModes.join(','),
-          [snapshotPVCStorageClassAnnotation]: pvcObj.spec.storageClassName,
-          [snapshotPVCVolumeModeAnnotation]: pvcObj.spec.volumeMode,
+          [snapshotPVCAccessModeAnnotation]: pvcObj?.spec?.accessModes?.join(',') || '',
+          [snapshotPVCStorageClassAnnotation]: pvcObj?.spec?.storageClassName || '',
+          [snapshotPVCVolumeModeAnnotation]: pvcObj?.spec?.volumeMode || '',
         },
       },
       spec: {
@@ -283,7 +284,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
                   dataTest="pvc-dropdown"
                   namespace={namespace}
                   onChange={handlePVCName}
-                  selectedKey={selectedPVCName}
+                  selectedKey={selectedPVCName || ''}
                   dataFilter={isBound}
                   desc={t('console-app~PersistentVolumeClaim in {{namespace}} namespace', {
                     namespace,
@@ -357,7 +358,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
 export const VolumeSnapshot: React.FC = () => {
   const params = useParams();
   const { pvc } = getURLSearchParams();
-  return <CreateSnapshotForm namespace={params.ns} pvcName={pvc} />;
+  return <CreateSnapshotForm namespace={params.ns || ''} pvcName={pvc} />;
 };
 
 type SnapshotClassDropdownProps = {
