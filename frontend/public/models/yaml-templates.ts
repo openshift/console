@@ -775,9 +775,8 @@ spec:
       labels:
         foo: bar
     spec:
-      providerSpec: {}
-      versions:
-        kubelet: ""
+      providerSpec:
+        value: {}
 `,
   )
   .setIn(
