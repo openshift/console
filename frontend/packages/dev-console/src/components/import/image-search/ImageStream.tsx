@@ -63,7 +63,7 @@ const ImageStream: React.FC<{
   const [hasImageStreams, setHasImageStreams] = React.useState(false);
   const { loading, accessLoading, selectedImageStream } = state;
   const { imageStream, project, registry, isi, fromImageStreamTag } =
-    _.get(values, formContextField) || values;
+    _.get(values, formContextField || '') || values;
 
   const imageStreamTagList = getImageStreamTags(selectedImageStream as K8sResourceKind);
   const isNamespaceSelected = imageStream.namespace !== '' && !accessLoading;

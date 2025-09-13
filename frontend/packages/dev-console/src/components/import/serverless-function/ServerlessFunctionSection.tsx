@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
@@ -17,7 +18,7 @@ import { Resources } from '../import-types';
 import { useResourceType } from '../section/useResourceType';
 import './ServerlessFunctionSection.scss';
 
-const ServerlessFunctionSection = ({ builderImages }) => {
+const ServerlessFunctionSection: React.FCC<{ builderImages: any }> = ({ builderImages }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, setFieldError, errors } = useFormikContext<FormikValues>();
   const {
@@ -35,8 +36,10 @@ const ServerlessFunctionSection = ({ builderImages }) => {
       evaluateFunc(gitService)
         .then((res) => {
           setResourceType(Resources.KnativeService);
-          setRuntimeImage(getRuntimeImage(res.values.runtime as SupportedRuntime, builderImages));
-          if (notSupportedRuntime.includes(res.values.runtime)) {
+          setRuntimeImage(
+            getRuntimeImage(res.values.runtime as SupportedRuntime, builderImages) || undefined,
+          );
+          if (notSupportedRuntime.includes(res.values.runtime || '')) {
             setHelpText(
               t('devconsole~Support for {{runtime}} is not yet available.', {
                 runtime: res.values.runtime,
@@ -107,7 +110,12 @@ const ServerlessFunctionSection = ({ builderImages }) => {
 
   return loaded ? (
     <FormSection extraMargin>
-      <BuilderImageTagSelector selectedBuilderImage={runtimeImage} selectedImageTag={image.tag} />
+      {runtimeImage && (
+        <BuilderImageTagSelector
+          selectedBuilderImage={runtimeImage}
+          selectedImageTag={image.tag || ''}
+        />
+      )}
     </FormSection>
   ) : (
     <Loading />
