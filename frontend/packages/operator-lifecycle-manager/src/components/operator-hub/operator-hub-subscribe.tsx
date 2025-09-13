@@ -867,7 +867,11 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       />
       <PaneBody>
         {tokenizedAuth === 'AWS' && (
-          <DismissableAlert title={t('olm~Cluster in STS Mode')} variant={AlertVariant.warning}>
+          <DismissableAlert
+            className="pf-v6-u-mb-md"
+            title={t('olm~Cluster in STS Mode')}
+            variant={AlertVariant.warning}
+          >
             {t(
               'olm~This cluster is using AWS Security Token Service to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, you will need to provide a role ARN (with an attached policy) during installation. Manual subscriptions are highly recommended as steps should be taken prior to upgrade to ensure that the permissions required by the next version are properly accounted for in the role. Please see the operator description for more details.',
             )}
@@ -875,6 +879,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         )}
         {tokenizedAuth === 'Azure' && (
           <DismissableAlert
+            className="pf-v6-u-mb-md"
             title={t('olm~Cluster in Azure Workload Identity / Federated Identity Mode')}
             variant={AlertVariant.warning}
           >
@@ -882,11 +887,12 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               'olm~This cluster is using Azure Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Client ID, Tenant ID, and Subscription ID during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
             )}
           </DismissableAlert>
-        )}{' '}
+        )}
         {tokenizedAuth === 'GCP' && (
           <DismissableAlert
             title={t('olm~Cluster in GCP Workload Identity / Federated Identity Mode')}
             variant={AlertVariant.warning}
+            className="pf-v6-u-mb-md"
           >
             {t(
               'olm~This cluster is using GCP Workload Identity / Federated Identity to reach the cloud API. In order for this operator to take the actions it requires directly with the cloud API, provide the Pool ID, Provider ID, and Service Account Email during installation. Manual subscriptions are highly recommended as steps should be taken before upgrade to ensure that the permissions required by the next version are properly accounted for in the role. See the operator description for more details.',
