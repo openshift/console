@@ -288,6 +288,10 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 	if clusterInfo.CopiedCSVsDisabled {
 		fs.Set("copied-csvs-disabled", "true")
 	}
+
+	if clusterInfo.TechPreviewEnabled {
+		fs.Set("tech-preview", "true")
+	}
 }
 
 func addProviders(fs *flag.FlagSet, providers *Providers) {
