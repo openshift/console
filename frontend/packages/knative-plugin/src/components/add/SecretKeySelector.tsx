@@ -2,7 +2,8 @@ import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { connect } from 'react-redux';
-import { errorModal } from '@console/internal/components/modals/error-modal';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { ValueFromPair } from '@console/internal/components/utils/value-from-pair';
 import { SecretModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
@@ -29,6 +30,7 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [field, { touched, error }] = useField(name);
   const [secrets, setSecrets] = React.useState({});
+  const launchModal = useOverlay();
   const fieldId = getFieldId(name, 'secret-key-input');
   const isValid = !(touched && error);
 
@@ -52,10 +54,10 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
       })
       .catch((err) => {
         if (err?.response?.status !== 403) {
-          errorModal({ error: err?.message });
+          launchModal(ErrorModal, { error: err?.message });
         }
       });
-  }, [namespace]);
+  }, [namespace, launchModal]);
 
   return (
     <FormGroup fieldId={fieldId} label={label} isRequired={isRequired}>

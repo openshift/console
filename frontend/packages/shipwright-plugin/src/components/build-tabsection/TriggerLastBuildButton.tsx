@@ -3,7 +3,8 @@ import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { impersonateStateToProps, useAccessReview } from '@console/dynamic-plugin-sdk';
-import { errorModal } from '@console/internal/components/modals';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { AccessReviewResourceAttributes, K8sResourceKind } from '@console/internal/module/k8s';
 import { canRerunBuildRun, rerunBuildRun } from '../../api';
 import { BuildRunModel } from '../../models';
@@ -24,6 +25,7 @@ const TriggerLastBuildButton: React.FC<TriggerLastBuildButtonProps> = ({
   impersonate,
 }) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const defaultAccessReview: AccessReviewResourceAttributes = {
     group: BuildRunModel.apiGroup,
     resource: BuildRunModel.plural,
@@ -36,7 +38,7 @@ const TriggerLastBuildButton: React.FC<TriggerLastBuildButtonProps> = ({
   const onClick = () => {
     rerunBuildRun(latestBuildRun).catch((err) => {
       const error = err.message;
-      errorModal({ error });
+      launchModal(ErrorModal, { error });
     });
   };
 

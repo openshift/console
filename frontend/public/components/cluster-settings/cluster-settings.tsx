@@ -37,12 +37,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 
 import { ClusterOperatorPage } from './cluster-operator';
-import {
-  clusterChannelModal,
-  clusterMoreUpdatesModal,
-  clusterUpdateModal,
-  errorModal,
-} from '../modals';
+import { clusterChannelModal, clusterMoreUpdatesModal, clusterUpdateModal } from '../modals';
 import { GlobalConfigPage } from './global-config';
 import {
   ClusterAutoscalerModel,
@@ -128,6 +123,8 @@ import {
 } from '../utils/service-level';
 import { hasAvailableUpdates, hasNotRecommendedUpdates } from '../../module/k8s/cluster-settings';
 import { UpdateStatus } from './cluster-status';
+import { ErrorModal } from '../modals/error-modal';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 
 export const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
@@ -472,6 +469,7 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
   name,
   updateStartedTime,
 }) => {
+  const launchModal = useOverlay();
   const [machineConfigOperator, machineConfigOperatorLoaded] = useK8sWatchResource<ClusterOperator>(
     {
       kind: referenceForModel(ClusterOperatorModel),
@@ -546,7 +544,7 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
               className="pf-v6-u-mt-md"
               onClick={() =>
                 togglePaused(MachineConfigPoolModel, machineConfigPool).catch((err) =>
-                  errorModal({ error: err.message }),
+                  launchModal(ErrorModal, { error: err.message }),
                 )
               }
               data-test="mcp-paused-button"

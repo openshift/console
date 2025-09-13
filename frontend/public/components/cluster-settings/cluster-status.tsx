@@ -22,8 +22,9 @@ import {
   k8sPatch,
   K8sResourceConditionStatus,
 } from '../../module/k8s';
-import { errorModal } from '../modals';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { resourcePathFromModel, truncateMiddle } from '../utils';
+import { ErrorModal, ErrorModalProps } from '../modals/error-modal';
 
 export const ClusterVersionConditionsLink: React.FC<ClusterVersionConditionsLinkProps> = ({
   cv,
@@ -39,11 +40,14 @@ export const ClusterVersionConditionsLink: React.FC<ClusterVersionConditionsLink
   );
 };
 
-const cancelUpdate = (cv: ClusterVersionKind) => {
+const cancelUpdate = (
+  cv: ClusterVersionKind,
+  launchModal: (element: React.FC<ErrorModalProps>, props: ErrorModalProps) => void,
+) => {
   k8sPatch(ClusterVersionModel, cv, [{ path: '/spec/desiredUpdate', op: 'remove' }]).catch(
     (err) => {
       const error = err.message;
-      errorModal({ error });
+      launchModal(ErrorModal, { error });
     },
   );
 };
@@ -60,12 +64,17 @@ const StatusMessagePopover: React.FC<CVStatusMessagePopoverProps> = ({ bodyConte
 
 const InvalidMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   return (
     <div data-test="cv-update-status-invalid">
       <div>
         <RedExclamationCircleIcon /> {t('public~Invalid cluster version')}
       </div>
-      <Button onClick={() => cancelUpdate(cv)} variant="primary" className="pf-v6-u-mt-xs">
+      <Button
+        onClick={() => cancelUpdate(cv, launchModal)}
+        variant="primary"
+        className="pf-v6-u-mt-xs"
+      >
         {t('public~Cancel update')}
       </Button>
     </div>

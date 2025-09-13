@@ -3,9 +3,10 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { redirect } from 'react-router-dom-v5-compat';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { errorModal } from '@console/internal/components/modals';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { asAccessReview, resourceObjPath } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { cloneBuild } from '@console/internal/module/k8s/builds';
@@ -76,6 +77,7 @@ export const useBuildsActions = (
   );
 
   const cancelBuildModal = useWarningModal(warningModalProps);
+  const launchModal = useOverlay();
 
   const factory = useMemo(
     () => ({
@@ -89,7 +91,7 @@ export const useBuildsActions = (
             })
             .catch((err) => {
               const error = err.message;
-              errorModal({ error });
+              launchModal(ErrorModal, { error });
             }),
         accessReview: {
           group: kindObj.apiGroup,
@@ -107,7 +109,7 @@ export const useBuildsActions = (
         accessReview: asAccessReview(kindObj, obj, 'patch'),
       }),
     }),
-    [t, obj, kindObj, cancelBuildModal],
+    [t, kindObj, obj, launchModal, cancelBuildModal],
   );
 
   const buildPhase = obj.status?.phase;

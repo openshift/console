@@ -1,6 +1,17 @@
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { useCallback } from 'react';
+import {
+  ActionGroup,
+  Button,
+  ButtonVariant,
+  Modal,
+  ModalHeader,
+  ModalVariant,
+  ModalBody as PfModalBody,
+  ModalFooter as PfModalFooter,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
   createModalLauncher,
   ModalTitle,
@@ -31,9 +42,32 @@ export const ModalErrorContent = (props: ErrorModalProps) => {
   );
 };
 
+export const ErrorModal: OverlayComponent<ErrorModalProps> = (props) => {
+  const { t } = useTranslation();
+  const { error, title } = props;
+  const titleText = title || t('public~Error');
+  return (
+    <Modal isOpen onClose={props.closeOverlay} variant={ModalVariant.small}>
+      <ModalHeader title={titleText} titleIconVariant="warning" labelId="title-icon-modal-title" />
+      <PfModalBody>{error}</PfModalBody>
+      <PfModalFooter>
+        <Button key="cancel" variant={ButtonVariant.primary} onClick={props.closeOverlay}>
+          {t('public~OK')}
+        </Button>
+      </PfModalFooter>
+    </Modal>
+  );
+};
+
+export const useErrorModalLauncher = (props) => {
+  const launcher = useOverlay();
+  return useCallback(() => launcher<ErrorModalProps>(ErrorModal, props), [launcher, props]);
+};
+
+/** @deprecated Use useErrorModalLauncher hook instead */
 export const errorModal = createModalLauncher(ModalErrorContent);
 
 export type ErrorModalProps = {
-  error: string;
+  error: string | React.ReactNode;
   title?: string;
 } & ModalComponentProps;

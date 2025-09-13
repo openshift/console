@@ -30,6 +30,7 @@ export const deleteNamespaceModal = (props) =>
     m.deleteNamespaceModal(props),
   );
 
+/** @deprecated Use useErrorModalLauncher hook instead */
 export const errorModal = (props) =>
   import('./error-modal' /* webpackChunkName: "error-modal" */).then((m) => m.errorModal(props));
 

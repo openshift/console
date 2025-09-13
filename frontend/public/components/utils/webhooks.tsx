@@ -12,7 +12,8 @@ import { SectionHeading } from './headings';
 import { ResourceLink } from './resource-link';
 import { useAccessReview } from './rbac';
 import { SecretModel } from '../../models';
-import { errorModal } from '../modals/error-modal';
+import { ErrorModal } from '../modals/error-modal';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 
 const kubeAPIServerURL = window.SERVER_FLAGS.kubeAPIServerURL || 'https://<api-server>';
 enum TriggerTypes {
@@ -50,6 +51,7 @@ const getTableColumnClasses = (canGetSecret: boolean) => {
 
 export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const { resource } = props;
   const { name, namespace } = resource.metadata;
   const { triggers } = resource.spec;
@@ -96,6 +98,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
             (secret) => secret,
             (error) => {
               errors = [...errors, `Error: ${error.message}`];
+              launchModal(ErrorModal, { error: error.message });
               return null;
             },
           );
@@ -106,7 +109,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
       setWebhookSecrets(_.compact(secrets));
       setLoaded(true);
     });
-  }, [secretNames, isLoaded, canGetSecret, namespace]);
+  }, [secretNames, isLoaded, canGetSecret, namespace, launchModal]);
 
   if (_.isEmpty(webhookTriggers)) {
     return null;
@@ -153,7 +156,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
       (secret: K8sResourceKind) => secret.metadata.name === secretName,
     );
     if (!_.has(webhookSecret, 'data.WebHookSecretKey')) {
-      errorModal({
+      launchModal(ErrorModal, {
         error: t(
           'public~Secret referenced in the {{triggerProperty}} webhook trigger does not contain "WebHookSecretKey" key. Webhook trigger won’t work due to the invalid secret reference',
           { triggerProperty },

@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import { configureUpdateStrategyModal, errorModal } from '@console/internal/components/modals';
+import { configureUpdateStrategyModal } from '@console/internal/components/modals';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { togglePaused, asAccessReview, resourceObjPath } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
 import {
@@ -84,6 +86,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
   const { t } = useTranslation();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
+  const launchModal = useOverlay();
 
   const factory = useMemo(
     () => ({
@@ -118,7 +121,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
           : t('console-app~Pause rollouts'),
         cta: () =>
           togglePaused(kind as K8sModel, resource as K8sResourceKind).catch((err) =>
-            errorModal({ error: err.message }),
+            launchModal(ErrorModal, { error: err.message }),
           ),
         accessReview: {
           group: kind?.apiGroup,
@@ -132,7 +135,9 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
         id: 'restart-rollout',
         label: t('console-app~Restart rollout'),
         cta: () =>
-          restartRollout(kind, resource).catch((err) => errorModal({ error: err.message })),
+          restartRollout(kind, resource).catch((err) =>
+            launchModal(ErrorModal, { error: err.message }),
+          ),
         disabled: resource?.spec?.paused || false,
         disabledTooltip: 'The deployment is paused and cannot be restarted.',
         accessReview: {
@@ -149,7 +154,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
         cta: () =>
           deploymentConfigRollout(resource as K8sResourceKind).catch((err) => {
             const error = err.message;
-            errorModal({ error });
+            launchModal(ErrorModal, { error });
           }),
         accessReview: {
           group: kind?.apiGroup,
@@ -177,7 +182,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
         },
       }),
     }),
-    [t, resource, kind],
+    [t, resource, kind, launchModal],
   );
 
   return useMemo((): [ActionObject<T>, boolean] => {

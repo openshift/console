@@ -2,11 +2,12 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
   getGroupVersionKindForModel,
   k8sPatchResource,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { errorModal } from '@console/internal/components/modals';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { defaultClassAnnotation } from '@console/internal/components/storage-class';
 import { asAccessReview } from '@console/internal/components/utils';
 import { K8sResourceCommon, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
@@ -17,6 +18,7 @@ export const useStorageClassActions = (
   storageClass: K8sResourceKind,
 ): [Action[], boolean, boolean] => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const [storageClassModel, inFlight] = useK8sModel(referenceFor(storageClass));
   const commonActions = useCommonResourceActions(storageClassModel, storageClass);
   const [storageClasses] = useK8sWatchResource<K8sResourceCommon[]>({
@@ -77,7 +79,7 @@ export const useStorageClassActions = (
                 resource: existingDefaultStorageClass,
               });
           } catch (error) {
-            errorModal({ error });
+            launchModal(ErrorModal, { error: error.message });
           }
         },
         id: 'make-default-storageclass',
@@ -93,6 +95,7 @@ export const useStorageClassActions = (
       existingDefaultStorageClass,
       isDefaultStorageClass,
       commonActions,
+      launchModal,
     ],
   );
 
