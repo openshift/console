@@ -7,6 +7,7 @@ import {
   ActionMenuVariant,
   Status,
   usePrometheusGate,
+  DASH,
 } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 
@@ -20,7 +21,36 @@ import {
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
-import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage } from './factory';
+import { ResourceDataView } from '@console/app/src/components/data-view/ResourceDataView';
+
+const cellIsStickyProps = {
+  isStickyColumn: true,
+  stickyMinWidth: '0',
+};
+
+const nameCellProps = {
+  ...cellIsStickyProps,
+  hasRightBorder: true,
+};
+
+const getNameCellProps = (name: string) => {
+  return {
+    ...nameCellProps,
+    'data-test': `data-view-cell-${name}-name`,
+  };
+};
+
+const actionsCellProps = {
+  ...cellIsStickyProps,
+  hasLeftBorder: true,
+  isActionCell: true,
+};
+
+const initialFiltersDefault = {
+  name: '',
+  label: '',
+};
 import {
   AsyncComponent,
   DetailsItem,
@@ -30,12 +60,17 @@ import {
   SectionHeading,
   WorkloadPausedAlert,
   RuntimeClass,
+  ResourceLink,
+  LabelList,
+  Selector,
+  resourcePath,
 } from './utils';
 import { ReplicaSetsPage } from './replicaset';
-import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
+import { WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { VerticalPodAutoscalerRecommendations } from '@console/app/src/components/vpa/VerticalPodAutoscalerRecommendations';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -230,29 +265,134 @@ type DeploymentDetailsProps = {
   obj: DeploymentKind;
 };
 
-const kind = 'Deployment';
-
-const DeploymentTableRow: React.FC<RowFunctionArgs<DeploymentKind>> = ({ obj, ...props }) => {
-  const resourceKind = referenceFor(obj);
-  const context = { [resourceKind]: obj };
-  const customActionMenu = <LazyActionMenu context={context} />;
-  return <WorkloadTableRow obj={obj} customActionMenu={customActionMenu} kind={kind} {...props} />;
-};
-
 const DeploymentTableHeader = () => {
   return WorkloadTableHeader();
 };
 DeploymentTableHeader.displayName = 'DeploymentTableHeader';
 
-export const DeploymentsList: React.FC = (props) => {
+type DeploymentsListProps = {
+  data: any[];
+  loaded: boolean;
+  [key: string]: any;
+};
+
+const getDataViewRows = (dataRows, columns) => {
+  const cellConfigs = [
+    {
+      id: 'name',
+      getCell: (deployment, name, namespace) => (
+        <ResourceLink kind="Deployment" name={name} namespace={namespace} />
+      ),
+      getProps: (deployment, name) => getNameCellProps(name),
+    },
+    {
+      id: 'namespace',
+      getCell: (deployment, name, namespace) => <ResourceLink kind="Namespace" name={namespace} />,
+      getProps: () => undefined,
+    },
+    {
+      id: 'status',
+      getCell: (deployment, name, namespace) => (
+        <Link to={`${resourcePath('Deployment', name, namespace)}/pods`} title="pods">
+          {`${deployment.status.replicas || 0} of ${deployment.spec.replicas} pods`}
+        </Link>
+      ),
+      getProps: () => undefined,
+    },
+    {
+      id: 'labels',
+      getCell: (deployment) => <LabelList kind="Deployment" labels={deployment.metadata.labels} />,
+      getProps: () => undefined,
+    },
+    {
+      id: 'podSelector',
+      getCell: (deployment, name, namespace) => (
+        <Selector selector={deployment.spec.selector} namespace={namespace} />
+      ),
+      getProps: () => undefined,
+    },
+    {
+      id: 'actions',
+      getCell: (deployment) => {
+        const resourceKind = referenceFor(deployment);
+        const context = { [resourceKind]: deployment };
+        return <LazyActionMenu context={context} />;
+      },
+      getProps: () => actionsCellProps,
+    },
+  ];
+
+  return dataRows.map(({ obj: deployment }) => {
+    const { name, namespace } = deployment.metadata;
+
+    return columns.map(({ id }) => {
+      const config = cellConfigs.find((cfg) => cfg.id === id);
+      const cell = config ? config.getCell(deployment, name, namespace) : DASH;
+      const props = config ? config.getProps(deployment, name) : undefined;
+
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
+};
+
+export const DeploymentsList: React.FC<DeploymentsListProps> = (props) => {
   const { t } = useTranslation();
+  const { data, loaded } = props;
+
+  const columns = [
+    {
+      id: 'name',
+      title: t('public~Name'),
+      sort: 'metadata.name',
+      props: { ...cellIsStickyProps, modifier: 'nowrap' },
+    },
+    {
+      id: 'namespace',
+      title: t('public~Namespace'),
+      sort: 'metadata.namespace',
+      props: { modifier: 'nowrap' },
+    },
+    {
+      id: 'status',
+      title: t('public~Status'),
+      sort: (dataRows, direction) =>
+        dataRows.sort((a, b) => {
+          const aReplicas = a.obj.status.replicas || 0;
+          const bReplicas = b.obj.status.replicas || 0;
+          return direction === 'asc' ? aReplicas - bReplicas : bReplicas - aReplicas;
+        }),
+      props: { modifier: 'nowrap' },
+    },
+    {
+      id: 'labels',
+      title: t('public~Labels'),
+      sort: 'metadata.labels',
+      props: { modifier: 'nowrap' },
+    },
+    {
+      id: 'podSelector',
+      title: t('public~Pod selector'),
+      sort: 'spec.selector',
+      props: { modifier: 'nowrap' },
+    },
+    { id: 'actions', title: '', props: { ...cellIsStickyProps } },
+  ];
+
   return (
-    <Table
+    <ResourceDataView
       {...props}
-      aria-label={t('public~Deployments')}
-      Header={DeploymentTableHeader}
-      Row={DeploymentTableRow}
-      virtualize
+      label={t('public~Deployments')}
+      data={data}
+      loaded={loaded}
+      columns={columns}
+      getDataViewRows={getDataViewRows}
+      initialFilters={initialFiltersDefault}
+      hideColumnManagement={true}
+      data-test="data-view-table"
     />
   );
 };
@@ -268,6 +408,8 @@ export const DeploymentsPage: React.FC<DeploymentsPageProps> = (props) => {
       canCreate={true}
       createProps={createProps}
       ListComponent={DeploymentsList}
+      omitFilterToolbar={true}
+      hideColumnManagement={true}
       {...props}
     />
   );

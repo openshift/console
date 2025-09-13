@@ -1,11 +1,10 @@
 import * as _ from 'lodash-es';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage, Table, TableData } from './factory';
+import { DetailsPage, ListPage } from './factory';
 import { SecretData } from './configmap-and-secret-data';
+import { DASH } from '@console/shared';
 import {
   Kebab,
   SectionHeading,
@@ -21,6 +20,35 @@ import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-worklo
 import { DetailsItem } from './utils/details-item';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ResourceDataView } from '@console/app/src/components/data-view/ResourceDataView';
+
+const cellIsStickyProps = {
+  isStickyColumn: true,
+  stickyMinWidth: '0',
+};
+
+const nameCellProps = {
+  ...cellIsStickyProps,
+  hasRightBorder: true,
+};
+
+const getNameCellProps = (name) => {
+  return {
+    ...nameCellProps,
+    'data-test': `data-view-cell-${name}-name`,
+  };
+};
+
+const actionsCellProps = {
+  ...cellIsStickyProps,
+  hasLeftBorder: true,
+  isActionCell: true,
+};
+
+const initialFiltersDefault = {
+  name: '',
+  label: '',
+};
 
 export const addSecretToWorkload = (kindObj, secret) => {
   const { name: secretName, namespace } = secret.metadata;
@@ -55,39 +83,62 @@ const menuActions = [
 
 const kind = 'Secret';
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-8-on-xl',
-  'pf-m-hidden pf-m-visible-on-lg',
-  Kebab.columnClass,
+// Cell configuration definitions
+const cellConfigs = [
+  {
+    id: 'name',
+    getCell: (secret, dataSize, name, namespace) => (
+      <ResourceLink kind="Secret" name={name} namespace={namespace} />
+    ),
+    getProps: (secret, name) => getNameCellProps(name),
+  },
+  {
+    id: 'namespace',
+    getCell: (secret, dataSize, name, namespace) => (
+      <ResourceLink kind="Namespace" name={namespace} />
+    ),
+    getProps: () => undefined,
+  },
+  {
+    id: 'type',
+    getCell: (secret) => secret.type,
+    getProps: () => undefined,
+  },
+  {
+    id: 'size',
+    getCell: (secret, dataSize) => dataSize,
+    getProps: () => undefined,
+  },
+  {
+    id: 'created',
+    getCell: (secret) => <Timestamp timestamp={secret.metadata.creationTimestamp} />,
+    getProps: () => undefined,
+  },
+  {
+    id: 'actions',
+    getCell: (secret) => <ResourceKebab actions={menuActions} kind={kind} resource={secret} />,
+    getProps: () => actionsCellProps,
+  },
 ];
 
-const SecretTableRow = ({ obj: secret }) => {
-  const data = _.size(secret.data);
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind="Secret"
-          name={secret.metadata.name}
-          namespace={secret.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={secret.metadata.namespace} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>{secret.type}</TableData>
-      <TableData className={tableColumnClasses[3]}>{data}</TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <Timestamp timestamp={secret.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={secret} />
-      </TableData>
-    </>
-  );
+// Function to convert table rows to DataView format
+const getDataViewRows = (data, columns) => {
+  return data.map(({ obj: secret }) => {
+    const dataSize = _.size(secret.data);
+    const { name, namespace } = secret.metadata;
+
+    return columns.map(({ id }) => {
+      const config = cellConfigs.find((cfg) => cfg.id === id);
+      const cell = config ? config.getCell(secret, dataSize, name, namespace) : DASH;
+      const props = config ? config.getProps(secret, dataSize, name, namespace) : undefined;
+
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
 };
 
 const SecretDetails = ({ obj: secret }) => {
@@ -119,51 +170,76 @@ const SecretDetails = ({ obj: secret }) => {
 
 const SecretsList = (props) => {
   const { t } = useTranslation();
-  const SecretTableHeader = () => [
+  const { data, loaded } = props;
+
+  const columns = [
     {
+      id: 'name',
       title: t('public~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
+      sort: 'metadata.name',
+      props: {
+        ...cellIsStickyProps,
+        modifier: 'nowrap',
+      },
     },
     {
-      title: t('public~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
       id: 'namespace',
+      title: t('public~Namespace'),
+      sort: 'metadata.namespace',
+      props: {
+        modifier: 'nowrap',
+      },
     },
     {
+      id: 'type',
       title: t('public~Type'),
-      sortField: 'type',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
+      sort: 'type',
+      props: {
+        modifier: 'nowrap',
+      },
     },
     {
+      id: 'size',
       title: t('public~Size'),
-      sortFunc: 'dataSize',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
+      sort: (dataRows, direction) => {
+        return dataRows.sort((a, b) => {
+          const aSize = _.size(a.obj.data);
+          const bSize = _.size(b.obj.data);
+          return direction === 'asc' ? aSize - bSize : bSize - aSize;
+        });
+      },
+      props: {
+        modifier: 'nowrap',
+      },
     },
     {
+      id: 'created',
       title: t('public~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
+      sort: 'metadata.creationTimestamp',
+      props: {
+        modifier: 'nowrap',
+      },
     },
     {
+      id: 'actions',
       title: '',
-      props: { className: tableColumnClasses[5] },
+      props: {
+        ...cellIsStickyProps,
+      },
     },
   ];
 
   return (
-    <Table
+    <ResourceDataView
       {...props}
-      aria-label={t('public~Secrets')}
-      Header={SecretTableHeader}
-      Row={SecretTableRow}
-      virtualize
+      label={t('public~Secrets')}
+      data={data}
+      loaded={loaded}
+      columns={columns}
+      getDataViewRows={getDataViewRows}
+      initialFilters={initialFiltersDefault}
+      hideColumnManagement={true}
+      data-test="data-view-table"
     />
   );
 };
@@ -253,6 +329,8 @@ const SecretsPage = (props) => {
       rowFilters={filters}
       createButtonText={t('public~Create')}
       createProps={createProps}
+      omitFilterToolbar={true}
+      hideColumnManagement={true}
       {...props}
     />
   );
