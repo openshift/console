@@ -1,10 +1,34 @@
 import { Translation } from 'react-i18next';
-import * as PropTypes from 'prop-types';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
 
-class ConfirmModal extends PromiseComponent {
+interface ConfirmModalProps {
+  btnText: string | React.ReactNode;
+  btnTextKey: string;
+  cancel: () => void;
+  cancelText: string | React.ReactNode;
+  cancelTextKey: string;
+  close: () => void;
+  executeFn: (
+    e?: React.FormEvent<EventTarget>,
+    opts?: { supressNotifications: boolean },
+  ) => Promise<any>;
+  message: string | React.ReactNode;
+  messageKey: string;
+  title: string | React.ReactNode;
+  titleKey: string;
+  submitDanger: boolean;
+}
+
+interface ConfirmModalState {
+  inProgress: boolean;
+  errorMessage: string;
+}
+
+class ConfirmModal extends PromiseComponent<ConfirmModalProps, ConfirmModalState> {
+  _cancel: () => void;
+
   constructor(props) {
     super(props);
     this._submit = this._submit.bind(this);
@@ -54,20 +78,6 @@ class ConfirmModal extends PromiseComponent {
     );
   }
 }
-ConfirmModal.propTypes = {
-  btnText: PropTypes.node,
-  btnTextKey: PropTypes.string,
-  cancel: PropTypes.func.isRequired,
-  cancelText: PropTypes.node,
-  cancelTextKey: PropTypes.string,
-  close: PropTypes.func.isRequired,
-  executeFn: PropTypes.func.isRequired,
-  message: PropTypes.node,
-  messageKey: PropTypes.string,
-  title: PropTypes.node,
-  titleKey: PropTypes.string,
-  submitDanger: PropTypes.bool,
-};
 
 /** @deprecated use `useWarningModal` instead */
 export const confirmModal = createModalLauncher(ConfirmModal);

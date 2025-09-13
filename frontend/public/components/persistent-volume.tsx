@@ -4,7 +4,15 @@ import { Status } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage, Table, TableData } from './factory';
+import {
+  DetailsPage,
+  DetailsPageProps,
+  ListPage,
+  ListPageProps,
+  Table,
+  TableData,
+  TableProps,
+} from './factory';
 import {
   Kebab,
   LabelList,
@@ -24,11 +32,12 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { PersistentVolumeKind } from '@console/internal/module/k8s';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(PersistentVolumeModel), ...common];
 
-const PVStatus = ({ pv }) => (
+const PVStatus = ({ pv }: { pv: PersistentVolumeKind }) => (
   <Status status={pv.metadata.deletionTimestamp ? 'Terminating' : pv.status.phase} />
 );
 
@@ -42,9 +51,9 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const kind = 'PersistentVolume';
+const { kind } = PersistentVolumeModel;
 
-const PVTableRow = ({ obj }) => {
+const PVTableRow = ({ obj }: { obj: PersistentVolumeKind }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -89,16 +98,17 @@ const PVTableRow = ({ obj }) => {
   );
 };
 
-const Details = ({ obj: pv }) => {
+const Details = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
   const { t } = useTranslation();
-  const storageClassName = _.get(pv, 'spec.storageClassName');
-  const pvcName = _.get(pv, 'spec.claimRef.name');
-  const namespace = _.get(pv, 'spec.claimRef.namespace');
-  const storage = _.get(pv, 'spec.capacity.storage');
-  const accessModes = _.get(pv, 'spec.accessModes');
-  const volumeMode = _.get(pv, 'spec.volumeMode');
-  const reclaimPolicy = _.get(pv, 'spec.persistentVolumeReclaimPolicy');
-  const nfsExport = _.get(pv, 'spec.csi.volumeAttributes.share');
+  const storageClassName = pv.spec?.storageClassName;
+  const pvcName = pv.spec?.claimRef?.name;
+  const namespace = pv.spec?.claimRef?.namespace;
+  const storage = pv.spec?.capacity?.storage;
+  const accessModes = pv.spec?.accessModes;
+  const volumeMode = pv.spec?.volumeMode;
+  const reclaimPolicy = pv.spec?.persistentVolumeReclaimPolicy;
+  const nfsExport = pv.spec?.csi?.volumeAttributes?.share;
+
   return (
     <PaneBody>
       <SectionHeading text={t('public~PersistentVolume details')} />
@@ -168,7 +178,7 @@ const Details = ({ obj: pv }) => {
   );
 };
 
-export const PersistentVolumesList = (props) => {
+export const PersistentVolumesList = (props: Partial<TableProps>) => {
   const { t } = useTranslation();
   const PVTableHeader = () => {
     return [
@@ -225,10 +235,10 @@ export const PersistentVolumesList = (props) => {
   );
 };
 
-export const PersistentVolumesPage = (props) => (
+export const PersistentVolumesPage = (props: ListPageProps) => (
   <ListPage {...props} ListComponent={PersistentVolumesList} kind={kind} canCreate={true} />
 );
-export const PersistentVolumesDetailsPage = (props) => (
+export const PersistentVolumesDetailsPage = (props: DetailsPageProps) => (
   <DetailsPage
     {...props}
     menuActions={menuActions}

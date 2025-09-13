@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { forwardRef, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TourActions } from './const';
 import { TourContext } from './tour-context';
@@ -7,9 +7,9 @@ type GuidedTourMastheadTriggerProps = {
   className?: string;
 };
 
-const GuidedTourMastheadTrigger: React.FC<GuidedTourMastheadTriggerProps> = React.forwardRef(
-  ({ className }, ref: React.LegacyRef<HTMLButtonElement>) => {
-    const { tourDispatch, tour } = React.useContext(TourContext);
+const GuidedTourMastheadTrigger = forwardRef<HTMLButtonElement, GuidedTourMastheadTriggerProps>(
+  ({ className }, ref) => {
+    const { tourDispatch, tour } = useContext(TourContext);
     const { t } = useTranslation();
 
     if (!tour) return null;

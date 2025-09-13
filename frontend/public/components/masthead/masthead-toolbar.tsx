@@ -1,4 +1,4 @@
-import { useContext, useState, useRef, useCallback, createRef, useEffect } from 'react';
+import { Fragment, useContext, useState, useRef, useCallback, createRef, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -35,25 +35,26 @@ import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { CloudShellMastheadButton } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import { CloudShellMastheadAction } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
 import { getUser, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import * as UIActions from '../actions/ui';
-import { flagPending, featureReducerName } from '../reducers/features';
-import { authSvc } from '../module/auth';
-import { getOCMLink, referenceForModel } from '../module/k8s';
-import { Firehose } from './utils';
-import { openshiftHelpBase } from './utils/documentation';
-import { AboutModal } from './about-modal';
-import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
-import redhatLogoImg from '../imgs/logos/redhat.svg';
+import * as UIActions from '../../actions/ui';
+import { flagPending, featureReducerName } from '../../reducers/features';
+import { authSvc } from '../../module/auth';
+import { ClusterVersionKind, ConsoleLinkKind, getOCMLink } from '../../module/k8s';
+import { openshiftHelpBase } from '../utils/documentation';
+import { AboutModal } from '../about-modal';
+import { getReportBugLink } from '../../module/k8s/cluster-settings';
+import redhatLogoImg from '../../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
-import { ConsoleLinkModel } from '../models';
+import { ClusterVersionModel, ConsoleLinkModel } from '../../models';
+import { RootState } from '../../redux';
 import { FeedbackModal } from '@patternfly/react-user-feedback';
 import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useFeedbackLocal } from './feedback-local';
 import { action as reduxAction } from 'typesafe-actions';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
 import darkFeedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback-dark.svg';
-import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from './QuickCreate';
-import { ThemeContext, THEME_DARK } from './ThemeProvider';
+import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from '../QuickCreate';
+import { ThemeContext, THEME_DARK } from '../ThemeProvider';
+import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 
 const LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY = 'last-console-activity-timestamp';
 
@@ -72,7 +73,17 @@ const defaultHelpLinks = [
   },
 ];
 
-const FeedbackModalLocalized = ({ isOpen, onClose, reportBugLink }) => {
+interface FeedbackModalLocalizedProps {
+  isOpen: boolean;
+  onClose: () => void;
+  reportBugLink: ReturnType<typeof getReportBugLink>;
+}
+
+const FeedbackModalLocalized: React.FCC<FeedbackModalLocalizedProps> = ({
+  isOpen,
+  onClose,
+  reportBugLink,
+}) => {
   const feedbackLocales = useFeedbackLocal(reportBugLink);
   const theme = useContext(ThemeContext);
   return (
@@ -88,21 +99,54 @@ const FeedbackModalLocalized = ({ isOpen, onClose, reportBugLink }) => {
   );
 };
 
-const SystemStatusButton = ({ statuspageData }) => {
+interface StatusButtonProps {
+  statusPageData: {
+    incidents: any[];
+    page: { url: string };
+  };
+}
+
+const SystemStatusButton: React.FCC<StatusButtonProps> = ({ statusPageData }) => {
   const { t } = useTranslation();
-  return !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
+  return !_.isEmpty(_.get(statusPageData, 'incidents')) ? (
     <ExternalLinkButton
       variant="plain"
       className="co-masthead-button"
       aria-label={t('public~System status')}
       icon={<YellowExclamationTriangleIcon />}
-      href={statuspageData.page.url}
+      href={statusPageData.page.url}
     />
   ) : null;
 };
 
-// TODO migrate to TS, break this down into smaller components and hooks
-const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
+interface MastheadAction {
+  label: string;
+  href?: string;
+  callback?: (e) => void;
+  externalLink?: boolean;
+  image?: React.ReactNode;
+  component?: React.FC;
+  dataTest?: string;
+}
+
+interface MastheadSection {
+  name?: string;
+  isSection: boolean;
+  actions: MastheadAction[];
+}
+
+interface MastheadToolbarContentsProps {
+  consoleLinks: ConsoleLinkKind[];
+  cv: ClusterVersionKind;
+  isMastheadStacked: boolean;
+}
+
+// TODO break this down into smaller components and hooks
+const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
+  consoleLinks,
+  cv,
+  isMastheadStacked,
+}) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const authEnabledFlag = useFlag(FLAGS.AUTH_ENABLED);
@@ -117,7 +161,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     t('public~Login with this command'),
     externalLoginCommand,
   );
-  const { clusterID, user, alertCount, canAccessNS } = useSelector((state) => ({
+  const { clusterID, user, alertCount, canAccessNS } = useSelector((state: RootState) => ({
     clusterID: state.UI.get('clusterID'),
     user: getUser(state),
     alertCount: state.observe.getIn(['alertCount']),
@@ -127,14 +171,14 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isKebabDropdownOpen, setIsKebabDropdownOpen] = useState(false);
   const [isHelpDropdownOpen, setIsHelpDropdownOpen] = useState(false);
-  const [statusPageData, setStatusPageData] = useState(null);
-  const [showAboutModal, setshowAboutModal] = useState(false);
+  const [statusPageData, setstatusPageData] = useState(null);
+  const [showAboutModal, setShowAboutModal] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const applicationLauncherMenuRef = useRef(null);
   const helpMenuRef = useRef(null);
   const userMenuRef = useRef(null);
   const kebabMenuRef = useRef(null);
-  const reportBugLink = cv?.data ? getReportBugLink(cv.data, t) : null;
+  const reportBugLink = cv ? getReportBugLink(cv) : null;
   const userInactivityTimeout = useRef(null);
   const username = user?.username ?? '';
   const isKubeAdmin = username === 'kube:admin';
@@ -147,19 +191,22 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   const onFeedbackModal = () => setIsFeedbackModalOpen(true);
   const onAboutModal = (e) => {
     e.preventDefault();
-    setshowAboutModal(true);
+    setShowAboutModal(true);
   };
 
-  const closeAboutModal = () => setshowAboutModal(false);
+  const closeAboutModal = () => setShowAboutModal(false);
 
-  const getAdditionalLinks = (links, type) =>
+  const getAdditionalLinks = (
+    links: ConsoleLinkKind[],
+    type: ConsoleLinkKind['spec']['location'],
+  ) =>
     _.sortBy(
       // ACM link is being moved to the perspective switcher, so do not show in application launcher
       _.filter(links, (link) => link.spec.location === type && link.metadata.name !== ACM_LINK_ID),
       'spec.text',
     );
 
-  const getSectionLauncherItems = (launcherItems, sectionName) =>
+  const getSectionLauncherItems = (launcherItems: ConsoleLinkKind[], sectionName: string) =>
     _.sortBy(
       _.filter(
         launcherItems,
@@ -168,7 +215,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
       'spec.text',
     );
 
-  const sectionSort = (section) => {
+  const sectionSort = (section: MastheadSection) => {
     switch (section.name) {
       case 'Red Hat Applications':
         return 0;
@@ -189,9 +236,9 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     const isTroubleshootingPanelEnabled = Array.isArray(window.SERVER_FLAGS.consolePlugins)
       ? window.SERVER_FLAGS.consolePlugins.includes('troubleshooting-panel-console-plugin')
       : false;
-    const launcherItems = getAdditionalLinks(consoleLinks?.data, 'ApplicationMenu');
+    const launcherItems = getAdditionalLinks(consoleLinks, 'ApplicationMenu');
 
-    const sections = [];
+    const sections: MastheadSection[] = [];
     if (
       clusterID &&
       window.SERVER_FLAGS.branding !== 'okd' &&
@@ -280,9 +327,9 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     return sections;
   };
 
-  const getHelpActions = (additionalHelpActions) => {
+  const getHelpActions = (additionalHelpActions: MastheadSection) => {
     const helpActions = [];
-    const tourRef = createRef();
+    const tourRef = createRef<HTMLButtonElement>();
 
     helpActions.push({
       isSection: true,
@@ -326,7 +373,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
                 label: t('public~Share Feedback'),
                 callback: (e) => {
                   e.preventDefault();
-                  onFeedbackModal(reportBugLink);
+                  onFeedbackModal();
                 },
               },
             ]
@@ -335,18 +382,17 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     });
 
     // Add default help links to start of additional links from operator
-    additionalHelpActions.actions = defaultHelpLinks
-      .map((helpLink) => ({
+    additionalHelpActions.actions = [
+      ...defaultHelpLinks.map((helpLink) => ({
         ...helpLink,
         label: t(`public~${helpLink.label}`),
-      }))
-      .concat(
-        {
-          label: t('public~About'),
-          callback: onAboutModal,
-        },
-        ...additionalHelpActions.actions,
-      );
+      })),
+      {
+        label: t('public~About'),
+        callback: onAboutModal,
+      },
+      ...additionalHelpActions.actions,
+    ];
 
     if (!_.isEmpty(additionalHelpActions.actions)) {
       helpActions.push(additionalHelpActions);
@@ -355,7 +401,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     return helpActions;
   };
 
-  const getAdditionalActions = (links) => {
+  const getAdditionalActions = (links: ConsoleLinkKind[]): MastheadSection => {
     const actions = _.map(links, (link) => {
       return {
         label: link.spec.text,
@@ -370,17 +416,22 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     };
   };
 
-  const externalProps = (externalLink) => (externalLink ? { rel: 'noopener noreferrer' } : {});
+  const externalProps = (externalLink: boolean) =>
+    externalLink ? { rel: 'noopener noreferrer' } : {};
 
-  const renderApplicationItems = (actions) =>
+  const renderApplicationItems = (actions: (MastheadAction | MastheadSection)[]) =>
     _.map(actions, (action, groupIndex) => {
-      if (action.isSection) {
+      if ('isSection' in action && action.isSection) {
         const list = (
-          <DropdownList>
+          <DropdownList key={`dropdown-list-${groupIndex}`}>
             {_.map(action.actions, (sectionAction, itemIndex) => {
+              // Use label + index for key, fallback to index if label missing
+              const itemKey = sectionAction.label
+                ? `dropdown-item-${groupIndex}-${sectionAction.label}-${itemIndex}`
+                : `dropdown-item-${groupIndex}-${itemIndex}`;
               return (
                 <DropdownItem
-                  key={itemIndex}
+                  key={itemKey}
                   icon={sectionAction.image}
                   to={sectionAction.href}
                   isExternalLink={sectionAction.externalLink}
@@ -397,46 +448,49 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
           </DropdownList>
         );
         return (
-          <>
+          <Fragment key={`dropdown-group-fragment-${groupIndex}`}>
             {action.name ? (
-              <DropdownGroup key={groupIndex} label={action.name}>
+              <DropdownGroup key={`dropdown-group-${groupIndex}`} label={action.name}>
                 {list}
               </DropdownGroup>
             ) : (
-              <>{list}</>
+              list
             )}
-            <>{groupIndex < actions.length - 1 && <Divider key={`separator-${groupIndex}`} />}</>
-          </>
+            {Number(groupIndex) < actions.length - 1 && <Divider key={`separator-${groupIndex}`} />}
+          </Fragment>
         );
       }
 
-      return (
-        <>
-          <DropdownList>
-            <DropdownItem
-              key={action.label}
-              icon={action.image}
-              to={action.href}
-              isExternalLink={action.externalLink}
-              {...externalProps(action.externalLink)}
-              onClick={action.callback}
-              component={action.component}
-              value={action.label}
-            >
-              {action.label}
-            </DropdownItem>
-          </DropdownList>
-          {groupIndex < actions.length - 1 && <Divider key={`separator-${groupIndex}`} />}
-        </>
-      );
+      if ('label' in action && action.label) {
+        return (
+          <Fragment key={`dropdown-list-fragment-${groupIndex}`}>
+            <DropdownList key={`dropdown-list-${groupIndex}`}>
+              <DropdownItem
+                key={`dropdown-item-${groupIndex}-${action.label}`}
+                icon={action.image}
+                to={action.href}
+                isExternalLink={action.externalLink}
+                {...externalProps(action.externalLink)}
+                onClick={action.callback}
+                component={action.component}
+                value={action.label}
+              >
+                {action.label}
+              </DropdownItem>
+            </DropdownList>
+            {Number(groupIndex) < actions.length - 1 && <Divider key={`separator-${groupIndex}`} />}
+          </Fragment>
+        );
+      }
+      return null;
     });
 
-  const renderMenu = (mobile) => {
+  const renderMenu = (mobile: boolean) => {
     const additionalUserActions = getAdditionalActions(
-      getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
+      getAdditionalLinks(consoleLinks, 'UserMenu'),
     );
     const helpActions = getHelpActions(
-      getAdditionalActions(getAdditionalLinks(consoleLinks?.data, 'HelpMenu')),
+      getAdditionalActions(getAdditionalLinks(consoleLinks, 'HelpMenu')),
     );
     const launchActions = getLaunchActions();
 
@@ -445,7 +499,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     }
 
     const actions = [];
-    const userActions = [
+    const userActions: MastheadAction[] = [
       {
         label: t('public~User Preferences'),
         component: LinkTo('/user-preferences'),
@@ -592,9 +646,9 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
         headers: { Accept: 'application/json' },
       })
         .then((response) => response.json())
-        .then((newStatusPageData) => setStatusPageData(newStatusPageData));
+        .then((newstatusPageData) => setstatusPageData(newstatusPageData));
     }
-  }, [setStatusPageData]);
+  }, [setstatusPageData]);
 
   const setLastConsoleActivityTimestamp = () =>
     localStorage.setItem(LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY, Date.now().toString());
@@ -643,7 +697,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
             gap={{ default: 'gapNone', md: 'gapMd' }}
           >
             <ToolbarItem>
-              <SystemStatusButton statuspageData={statusPageData} />
+              <SystemStatusButton statusPageData={statusPageData} />
               {!_.isEmpty(launchActions) && (
                 <Dropdown
                   className="co-app-launcher"
@@ -673,6 +727,8 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
                 <NotificationBadge
                   aria-label={t('public~Notification drawer')}
                   onClick={drawerToggle}
+                  // @ts-expect-error this prop is accepted as a button variant (but not documented).
+                  // this usage of the undocumented variant was approved by UX
                   variant="plain"
                   count={alertCount || 0}
                   data-quickstart-id="qs-masthead-notifications"
@@ -706,7 +762,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               >
                 {renderApplicationItems(
                   getHelpActions(
-                    getAdditionalActions(getAdditionalLinks(consoleLinks?.data, 'HelpMenu')),
+                    getAdditionalActions(getAdditionalLinks(consoleLinks, 'HelpMenu')),
                   ),
                 )}
               </Dropdown>
@@ -718,11 +774,13 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
             gap={{ default: 'gapNone' }}
             visibility={{ default: isMastheadStacked ? 'visible' : 'hidden' }}
           >
-            <SystemStatusButton statuspageData={statusPageData} />
+            <SystemStatusButton statusPageData={statusPageData} />
             {alertAccess && alertCount > 0 && (
               <NotificationBadge
                 aria-label={t('public~Notification drawer')}
                 onClick={drawerToggle}
+                // @ts-expect-error this prop is accepted as a button variant (but not documented).
+                // this usage of the undocumented variant was approved by UX
                 variant="plain"
                 count={alertCount}
                 data-quickstart-id="qs-masthead-notifications"
@@ -746,29 +804,46 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   );
 };
 
-export const MastheadToolbar = ({ isMastheadStacked }) => {
-  const clusterVersionFlag = useFlag(FLAGS.CLUSTER_VERSION);
+interface MastheadToolbarProps {
+  isMastheadStacked: boolean;
+}
+
+export const MastheadToolbar: React.FCC<MastheadToolbarProps> = ({ isMastheadStacked }) => {
   const consoleLinkFlag = useFlag(FLAGS.CONSOLE_LINK);
-  const resources = [];
-  if (clusterVersionFlag) {
-    resources.push({
-      kind: clusterVersionReference,
-      name: 'version',
-      isList: false,
-      prop: 'cv',
-    });
-  }
-  if (consoleLinkFlag) {
-    resources.push({
-      kind: referenceForModel(ConsoleLinkModel),
-      isList: true,
-      prop: 'consoleLinks',
-    });
-  }
+  const clusterVersionFlag = useFlag(FLAGS.CLUSTER_VERSION);
+
+  const [consoleLinks] = useK8sWatchResource<ConsoleLinkKind[]>(
+    consoleLinkFlag
+      ? {
+          groupVersionKind: {
+            group: ConsoleLinkModel.apiGroup,
+            version: ConsoleLinkModel.apiVersion,
+            kind: ConsoleLinkModel.kind,
+          },
+          isList: true,
+        }
+      : {},
+  );
+
+  const [cv] = useK8sWatchResource<ClusterVersionKind>(
+    clusterVersionFlag
+      ? {
+          groupVersionKind: {
+            group: ClusterVersionModel.apiGroup,
+            version: ClusterVersionModel.apiVersion,
+            kind: ClusterVersionModel.kind,
+          },
+          name: 'version',
+          isList: false,
+        }
+      : {},
+  );
 
   return (
-    <Firehose resources={resources}>
-      <MastheadToolbarContents isMastheadStacked={isMastheadStacked} />
-    </Firehose>
+    <MastheadToolbarContents
+      isMastheadStacked={isMastheadStacked}
+      consoleLinks={consoleLinks}
+      cv={cv}
+    />
   );
 };

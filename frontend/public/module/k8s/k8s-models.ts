@@ -64,7 +64,7 @@ const getK8sModels = () => {
  * Provides a synchronous way to acquire a statically-defined Kubernetes model.
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
-export const modelFor = (ref: K8sResourceKindReference) => {
+export const modelFor = (ref: K8sResourceKindReference): K8sModel => {
   const metadataExtensions = pluginStore
     .getExtensionsInUse()
     .filter(isModelMetadata) as LoadedExtension<ModelMetadata>[];
