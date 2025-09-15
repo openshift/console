@@ -1233,7 +1233,6 @@
   "Are you sure you want to delete rule #{{ruleNumber}}?": "Are you sure you want to delete rule #{{ruleNumber}}?",
   "ReplicaSet details": "ReplicaSet details",
   "Deployment revision": "Deployment revision",
-  "{{count1}} of {{count2}} pods": "{{count1}} of {{count2}} pods",
   "ReplicationController details": "ReplicationController details",
   "{{statusReplicas}} of {{specReplicas}} pods": "{{statusReplicas}} of {{specReplicas}} pods",
   "Resources ({{total}})": "Resources ({{total}})",

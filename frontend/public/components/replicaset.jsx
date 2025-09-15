@@ -1,14 +1,11 @@
 // TODO file should be renamed replica-set.jsx to match convention
 
 import * as _ from 'lodash-es';
-import { css } from '@patternfly/react-styles';
-import { Link } from 'react-router-dom-v5-compat';
-import { sortable } from '@patternfly/react-table';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage, Table, TableData } from './factory';
+import { DetailsPage, ListPage, sorts } from './factory';
 import {
-  Kebab,
   ContainerTable,
   navFactory,
   SectionHeading,
@@ -16,11 +13,11 @@ import {
   ResourcePodCount,
   AsyncComponent,
   ResourceLink,
-  resourcePath,
   LabelList,
   OwnerReferences,
   PodsComponent,
   RuntimeClass,
+  LoadingBox,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
@@ -30,6 +27,7 @@ import {
   ActionServiceProvider,
   ActionMenu,
   ActionMenuVariant,
+  DASH,
 } from '@console/shared/src';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
@@ -42,6 +40,17 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { ReplicaSetModel } from '../models';
+import { sortResourceByValue } from './factory/Table/sort';
+import { ReplicasCount } from './workload-table';
 
 const Details = ({ obj: replicaSet }) => {
   const revision = _.get(replicaSet, [
@@ -135,117 +144,162 @@ const ReplicaSetsDetailsPage = (props) => {
   );
 };
 
-const kind = 'ReplicaSet';
-
-const tableColumnClasses = [
-  '',
-  '',
-  css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg'),
-  css('pf-m-hidden', 'pf-m-visible-on-lg'),
-  css('pf-m-hidden', 'pf-m-visible-on-lg'),
-  css('pf-m-hidden', 'pf-m-visible-on-xl'),
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'status' },
+  { id: 'labels' },
+  { id: 'owner' },
+  { id: 'created' },
+  { id: '' },
 ];
 
-const ReplicaSetTableRow = ({ obj }) => {
-  const { t } = useTranslation();
-  const resourceKind = referenceFor(obj);
-  const context = { [resourceKind]: obj };
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Link
-          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
-          title="pods"
-        >
-          {t('public~{{count1}} of {{count2}} pods', {
-            count1: obj.status.replicas || 0,
-            count2: obj.spec.replicas,
-          })}
-        </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <LabelList kind={kind} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <OwnerReferences resource={obj} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
+const getDataViewRows = (data, columns) => {
+  return data.map(({ obj }) => {
+    const { name, namespace } = obj.metadata;
+    const kind = referenceForModel(ReplicaSetModel);
+    const resourceKind = referenceFor(obj);
+    const context = { [resourceKind]: obj };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(ReplicaSetModel)}
+            name={name}
+            namespace={namespace}
+          />
+        ),
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <ReplicasCount obj={obj} kind={kind} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <LabelList kind={kind} labels={obj.metadata.labels} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <OwnerReferences resource={obj} />,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[6].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
-const ReplicaSetsList = (props) => {
+const useReplicaSetsColumns = () => {
   const { t } = useTranslation();
-  const ReplicaSetTableHeader = () => [
-    {
-      title: t('public~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: t('public~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: t('public~Status'),
-      sortFunc: 'numReplicas',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('public~Labels'),
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: t('public~Owner'),
-      sortField: 'metadata.ownerReferences[0].name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: t('public~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[6] },
-    },
-  ];
+  const columns = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Status'),
+        id: tableColumnInfo[2].id,
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.numReplicas)),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Labels'),
+        id: tableColumnInfo[3].id,
+        sort: 'metadata.labels',
+        props: {
+          modifier: 'nowrap',
+          width: 20,
+        },
+      },
+      {
+        title: t('public~Owner'),
+        id: tableColumnInfo[4].id,
+        sort: 'metadata.ownerReferences[0].name',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Created'),
+        id: tableColumnInfo[5].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[6].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
+};
+
+const ReplicaSetsList = ({ data, loaded, ...props }) => {
+  const columns = useReplicaSetsColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~ReplicaSets')}
-      Header={ReplicaSetTableHeader}
-      Row={ReplicaSetTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView
+        {...props}
+        label={ReplicaSetModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 const ReplicaSetsPage = (props) => {
   const { canCreate = true } = props;
   return (
-    <ListPage canCreate={canCreate} kind="ReplicaSet" ListComponent={ReplicaSetsList} {...props} />
+    <ListPage
+      {...props}
+      kind={referenceForModel(ReplicaSetModel)}
+      ListComponent={ReplicaSetsList}
+      canCreate={canCreate}
+      omitFilterToolbar={true}
+    />
   );
 };
 
