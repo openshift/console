@@ -134,7 +134,14 @@ export const ResourceDataView = <
     const basicFilters: React.ReactNode[] = [];
 
     if (!hideNameLabelFilters) {
-      basicFilters.push(<DataViewTextFilter key="name" filterId="name" title={t('public~Name')} />);
+      basicFilters.push(
+        <DataViewTextFilter
+          key="name"
+          filterId="name"
+          title={t('public~Name')}
+          placeholder={t('public~Filter by name')}
+        />,
+      );
     }
 
     if (!hideNameLabelFilters && !hideLabelFilter) {
