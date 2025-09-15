@@ -147,7 +147,8 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
   );
 };
 
-export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps> = ({
+/** Note: MUST be used inside a `<DescriptionList>` */
+export const DescriptorDetailsItems: React.FC<DescriptorDetailsItemsProps> = ({
   descriptors,
   model,
   obj,
@@ -160,7 +161,7 @@ export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps>
     descriptors,
   ]);
   return (
-    <DescriptionList className={`olm-descriptors olm-descriptors--${type}`}>
+    <>
       {_.map(groupedDescriptors, (group, groupPath) => {
         const groupProps = {
           group,
@@ -205,7 +206,7 @@ export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps>
           />
         );
       })}
-    </DescriptionList>
+    </>
   );
 };
 
@@ -225,14 +226,11 @@ type DescriptorDetailsItemGroupProps = Omit<DescriptorDetailsItemProps, 'descrip
   className?: string;
 };
 
-type DescriptorDetailsItemListProps = Omit<
-  DescriptorDetailsItemGroupProps,
-  'groupPath' | 'group'
-> & {
+type DescriptorDetailsItemsProps = Omit<DescriptorDetailsItemGroupProps, 'groupPath' | 'group'> & {
   descriptors: Descriptor[];
   itemClassName?: string;
 };
 
 DescriptorDetailsItem.displayName = 'DescriptorDetailsItem';
 DescriptorDetailsItemGroup.displayName = 'DescriptorDetailsItemGroup';
-DescriptorDetailsItemList.displayName = 'DescriptorDetailsItemList';
+DescriptorDetailsItems.displayName = 'DescriptorDetailsItems';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { JSONSchema7 } from 'json-schema';
@@ -77,7 +77,7 @@ import { RouteParams } from '@console/shared/src/types';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { useClusterServiceVersion } from '../../utils/useClusterServiceVersion';
-import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
+import { DescriptorDetailsItem, DescriptorDetailsItems } from '../descriptors';
 import { DescriptorConditions } from '../descriptors/status/conditions';
 import { DescriptorType, StatusCapability, StatusDescriptor } from '../descriptors/types';
 import { isMainStatusDescriptor } from '../descriptors/utils';
@@ -673,29 +673,31 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
             <GridItem sm={6}>
               <ResourceSummary resource={obj} />
             </GridItem>
-            {mainStatusDescriptor && (
+            {mainStatusDescriptor || otherStatusDescriptors?.length > 0 ? (
               <GridItem sm={6}>
-                <DescriptorDetailsItem
-                  key={mainStatusDescriptor.path}
-                  descriptor={mainStatusDescriptor}
-                  model={kindObj}
-                  obj={obj}
-                  schema={schema}
-                  type={DescriptorType.status}
-                />
+                <DescriptionList>
+                  {mainStatusDescriptor && (
+                    <DescriptorDetailsItem
+                      key={mainStatusDescriptor.path}
+                      descriptor={mainStatusDescriptor}
+                      model={kindObj}
+                      obj={obj}
+                      schema={schema}
+                      type={DescriptorType.status}
+                    />
+                  )}
+                  {otherStatusDescriptors?.length > 0 && (
+                    <DescriptorDetailsItems
+                      descriptors={otherStatusDescriptors}
+                      model={kindObj}
+                      obj={obj}
+                      schema={schema}
+                      type={DescriptorType.status}
+                    />
+                  )}
+                </DescriptionList>
               </GridItem>
-            )}
-            {otherStatusDescriptors?.length > 0 && (
-              <GridItem sm={6}>
-                <DescriptorDetailsItemList
-                  descriptors={otherStatusDescriptors}
-                  model={kindObj}
-                  obj={obj}
-                  schema={schema}
-                  type={DescriptorType.status}
-                />
-              </GridItem>
-            )}
+            ) : null}
           </Grid>
         </div>
       </PaneBody>
@@ -704,14 +706,16 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
           <div className="co-operand-details__section co-operand-details__section--info">
             <Grid hasGutter>
               <GridItem sm={6}>
-                <DescriptorDetailsItemList
-                  descriptors={specDescriptors}
-                  model={kindObj}
-                  obj={obj}
-                  onError={handleError}
-                  schema={schema}
-                  type={DescriptorType.spec}
-                />
+                <DescriptionList>
+                  <DescriptorDetailsItems
+                    descriptors={specDescriptors}
+                    model={kindObj}
+                    obj={obj}
+                    onError={handleError}
+                    schema={schema}
+                    type={DescriptorType.spec}
+                  />
+                </DescriptionList>
               </GridItem>
             </Grid>
           </div>
