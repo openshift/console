@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { DescriptionList } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import classNames from 'classnames';
 import { JSONSchema7 } from 'json-schema';
@@ -76,7 +77,7 @@ import { RouteParams } from '@console/shared/src/types';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { useClusterServiceVersion } from '../../utils/useClusterServiceVersion';
-import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
+import { DescriptorDetailsItem, DescriptorDetailsItems } from '../descriptors';
 import { DescriptorConditions } from '../descriptors/status/conditions';
 import { DescriptorType, StatusCapability, StatusDescriptor } from '../descriptors/types';
 import { isMainStatusDescriptor } from '../descriptors/utils';
@@ -674,26 +675,28 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
             <div className="col-sm-6">
               <ResourceSummary resource={obj} />
             </div>
-            {mainStatusDescriptor && (
-              <DescriptorDetailsItem
-                key={mainStatusDescriptor.path}
-                className="col-sm-6"
-                descriptor={mainStatusDescriptor}
-                model={kindObj}
-                obj={obj}
-                schema={schema}
-                type={DescriptorType.status}
-              />
-            )}
-            {otherStatusDescriptors?.length > 0 && (
-              <DescriptorDetailsItemList
-                descriptors={otherStatusDescriptors}
-                itemClassName="col-sm-6"
-                model={kindObj}
-                obj={obj}
-                schema={schema}
-                type={DescriptorType.status}
-              />
+            {(mainStatusDescriptor || otherStatusDescriptors?.length > 0) && (
+              <DescriptionList className="col-sm-6">
+                {mainStatusDescriptor && (
+                  <DescriptorDetailsItem
+                    key={mainStatusDescriptor.path}
+                    descriptor={mainStatusDescriptor}
+                    model={kindObj}
+                    obj={obj}
+                    schema={schema}
+                    type={DescriptorType.status}
+                  />
+                )}
+                {otherStatusDescriptors?.length > 0 && (
+                  <DescriptorDetailsItems
+                    descriptors={otherStatusDescriptors}
+                    model={kindObj}
+                    obj={obj}
+                    schema={schema}
+                    type={DescriptorType.status}
+                  />
+                )}
+              </DescriptionList>
             )}
           </div>
         </div>
@@ -702,15 +705,17 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
         <PaneBody>
           <div className="co-operand-details__section co-operand-details__section--info">
             <div className="row">
-              <DescriptorDetailsItemList
-                descriptors={specDescriptors}
-                itemClassName="col-sm-6"
-                model={kindObj}
-                obj={obj}
-                onError={handleError}
-                schema={schema}
-                type={DescriptorType.spec}
-              />
+              <DescriptionList>
+                <DescriptorDetailsItems
+                  descriptors={specDescriptors}
+                  itemClassName="col-sm-6"
+                  model={kindObj}
+                  obj={obj}
+                  onError={handleError}
+                  schema={schema}
+                  type={DescriptorType.spec}
+                />
+              </DescriptionList>
             </div>
           </div>
         </PaneBody>
