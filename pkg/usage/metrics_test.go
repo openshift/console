@@ -98,19 +98,19 @@ func TestUsersMetricsRunningTwice(t *testing.T) {
 			rolebindings: []*rbac.RoleBinding{
 				{
 					ObjectMeta: v1.ObjectMeta{
-						Name:      "user-settings-unknown-user-role-rolebinding",
+						Name:      "user-settings-developer-with-sar-failures-rolebinding",
 						Namespace: "openshift-console-user-settings",
 					},
 					Subjects: []rbac.Subject{
 						{
 							Kind: "User",
-							Name: "unknown-user-role",
+							Name: "developer-with-sar-failures",
 						},
 					},
 				},
 			},
 			expectedMetrics: `
-			console_usage_users{role="unknown"} 1
+			console_usage_users{role="developer"} 1
 			`,
 			sarHandler: func(action clienttesting.Action) (handled bool, ret runtime.Object, err error) {
 				return true, nil, fmt.Errorf("haha, I'm not working today!")
