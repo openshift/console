@@ -55,7 +55,7 @@ import { podPhase, podReadiness, podRestarts } from '../../module/k8s/pods';
 import { useTableData } from './table-data-hook';
 import TableHeader from './Table/TableHeader';
 
-const sorts = {
+export const sorts = {
   alertingRuleStateOrder,
   alertSeverityOrder,
   crdLatestVersion: (crd: CustomResourceDefinitionKind): string => getLatestVersionForCRD(crd),
