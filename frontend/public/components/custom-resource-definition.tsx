@@ -35,8 +35,10 @@ import {
   getLatestVersionForCRD,
   K8sKind,
   referenceForCRD,
+  referenceForModel,
   TableColumn,
 } from '../module/k8s';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
 import { getResourceListPages } from './resource-pages';
@@ -241,7 +243,7 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const useCustomResourceDefinitionsColumns = () => {
+const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefinitionKind>[] => {
   const { t } = useTranslation();
   const columns: TableColumn<CustomResourceDefinitionKind>[] = React.useMemo(() => {
     return [
@@ -318,7 +320,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> 
         cell: (
           <span className="co-resource-item">
             <ResourceLink
-              kind="CustomResourceDefinition"
+              groupVersionKind={getGroupVersionKindForModel(CustomResourceDefinitionModel)}
               name={name}
               namespace={namespace}
               displayName={displayName}
@@ -341,7 +343,11 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> 
       },
       [tableColumnInfo[5].id]: {
         cell: (
-          <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={obj} />
+          <ResourceKebab
+            actions={menuActions}
+            kind={CustomResourceDefinitionModel}
+            resource={obj}
+          />
         ),
         props: {
           ...actionsCellProps,
@@ -369,7 +375,7 @@ export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsL
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ResourceDataView<CustomResourceDefinitionKind>
         {...props}
         label={CustomResourceDefinitionModel.labelPlural}
         data={data}
@@ -389,7 +395,7 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
   <ListPage
     {...props}
     ListComponent={CustomResourceDefinitionsList}
-    kind="CustomResourceDefinition"
+    kind={referenceForModel(CustomResourceDefinitionModel)}
     canCreate={true}
     omitFilterToolbar={true}
   />
@@ -399,7 +405,7 @@ export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
   return (
     <DetailsPage
       {...props}
-      kind="CustomResourceDefinition"
+      kind={referenceForModel(CustomResourceDefinitionModel)}
       menuActions={menuActions}
       pages={[
         navFactory.details(Details),
