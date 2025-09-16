@@ -90,7 +90,6 @@
   "View all samples ({{itemCount, number}})": "Afficher tous les exemples ({{itemCount, number}})",
   "Add to Project": "Ajouter au projet",
   "Quick search button": "Bouton de recherche rapide",
-  "Traffic connector": "Connecteur de trafic",
   "Connections": "Connexions",
   "Secret": "Secret",
   "Kiali link": "Lien Kiali",

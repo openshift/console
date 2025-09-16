@@ -3,10 +3,6 @@
   "Configure default timeout and image of web terminal operator.": "配置 Web 终端 operator 的默认超时和镜像。",
   "DevWorkspaceTemplate": "DevWorkspaceTemplate",
   "DevWorkspaceTemplates": "DevWorkspaceTemplates",
-  "Close terminal?": "关闭终端？",
-  "This will close the terminal session. Content in the terminal will not be restored on next session.": "这将关闭终端会话。终端中的内容将不会在下一个会话中恢复。",
-  "Yes": "是",
-  "No": "否",
   "OpenShift command line terminal": "OpenShift 命令行终端",
   "Open terminal in new tab": "在新标签页中打开终端",
   "Minimize terminal": "最小化终端",
@@ -20,9 +16,9 @@
   "OpenShift command line": "OpenShift 命令行",
   "Command line terminal": "命令行工具",
   "Failed to connect to your OpenShift command line terminal": "无法连接到您的 OpenShift 命令行终端",
-  "Terminal {{number}}": "终端 {{number}}",
-  "Close terminal tab": "关闭终端标签页",
   "Add new tab": "添加新标签页",
+  "Close terminal tab": "关闭终端标签页",
+  "Terminal {{number}}": "终端 {{number}}",
   "Project": "项目",
   "This Project will be used to initialize your command line terminal": "该项目将用于初始化您的命令行终端",
   "Initialize terminal": "初始化终端",
@@ -46,5 +42,9 @@
   "Number of {{sizeUnit}}": "{{sizeUnit}} 数",
   "Mark the configuration resource as \"Unmanaged\" to keep the default timeout even after operator restart or update.": "将配置资源标记为\"Unmanaged\"，以便在 Operator 重启或更新后保持默认超时。",
   "Mark the configuration resource as \"Unmanaged\" to keep the default image even after operator restart or update.": "将配置资源标记为 \"Unmanaged\"，以便在 Operator 重启或更新后保留默认镜像。",
-  "Save": "保存"
+  "Save": "保存",
+  "Close terminal?": "关闭终端？",
+  "This will close the terminal session. Content in the terminal will not be restored on next session.": "这将关闭终端会话。终端中的内容将不会在下一个会话中恢复。",
+  "Yes": "是",
+  "No": "否"
 }

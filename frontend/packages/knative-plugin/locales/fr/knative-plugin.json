@@ -26,7 +26,6 @@
   "​​**Event sinks** are resources that can receive incoming events from other resources.": "Les ​​**récepteurs d’événements** sont des ressources qui peuvent recevoir des événements entrants provenant d’autres ressources.",
   "Serving": "Diffusion",
   "Eventing": "Gestion d’événements",
-  "Create Service Binding": "Créer une liaison de service",
   "Subscriptions": "Abonnements",
   "Triggers": "Déclencheurs",
   "Configuration": "Configuration",
