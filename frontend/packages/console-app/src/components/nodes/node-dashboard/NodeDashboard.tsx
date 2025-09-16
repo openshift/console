@@ -24,9 +24,9 @@ export enum ActionType {
 
 export const initialState = (obj: NodeKind): NodeDashboardState => ({
   obj,
-  cpuLimit: undefined,
-  memoryLimit: undefined,
-  healthCheck: undefined,
+  cpuLimit: {} as LimitRequested,
+  memoryLimit: {} as LimitRequested,
+  healthCheck: {} as HealthCheck,
 });
 
 export const reducer = (state: NodeDashboardState, action: NodeDashboardAction) => {

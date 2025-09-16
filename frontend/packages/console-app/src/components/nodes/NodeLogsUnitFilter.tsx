@@ -6,12 +6,11 @@ import { getQueryArgument } from '@console/internal/components/utils';
 
 type NodeLogsUnitFilterProps = {
   onChangeUnit: (value: string) => void;
-  unit: string;
 };
 
 const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit }) => {
   const firstRender = React.useRef(true);
-  const inputRef = React.useRef<HTMLInputElement>();
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const [values, setValues] = React.useState<string[]>(getQueryArgument('unit')?.split(',') || []);
   const { t } = useTranslation();
 
@@ -25,9 +24,13 @@ const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit })
         event.currentTarget.value = '';
       }
     };
-    input.addEventListener('keydown', listener);
+    if (input) {
+      input.addEventListener('keydown', listener);
+    }
     return () => {
-      input.removeEventListener('keydown', listener);
+      if (input) {
+        input.removeEventListener('keydown', listener);
+      }
     };
   }, [onChangeUnit]);
 

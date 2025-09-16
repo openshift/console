@@ -22,6 +22,7 @@ describe('checkPodDisruptionBudgets', () => {
         },
         metadata: {
           name: 'pdb1',
+          namespace: 'test-namespace',
         },
       },
       {
@@ -41,6 +42,7 @@ describe('checkPodDisruptionBudgets', () => {
         },
         metadata: {
           name: 'pdb2',
+          namespace: 'test-namespace',
         },
       },
     ];
@@ -69,6 +71,7 @@ describe('checkPodDisruptionBudgets', () => {
         },
         metadata: {
           name: 'pdb1',
+          namespace: 'test-namespace',
         },
       },
       {
@@ -89,6 +92,7 @@ describe('checkPodDisruptionBudgets', () => {
         },
         metadata: {
           name: 'pdb2',
+          namespace: 'test-namespace',
         },
       },
     ];
@@ -117,6 +121,7 @@ describe('checkPodDisruptionBudgets', () => {
         },
         metadata: {
           name: 'pdb1',
+          namespace: 'test-namespace',
         },
       },
       {
@@ -137,6 +142,7 @@ describe('checkPodDisruptionBudgets', () => {
         },
         metadata: {
           name: 'pdb2',
+          namespace: 'test-namespace',
         },
       },
     ];
@@ -170,6 +176,7 @@ describe('checkPodDisruptionBudgets', () => {
         },
         metadata: {
           name: 'pdb1',
+          namespace: 'test-namespace',
         },
       },
       {
@@ -190,6 +197,7 @@ describe('checkPodDisruptionBudgets', () => {
         },
         metadata: {
           name: 'pdb2',
+          namespace: 'test-namespace',
         },
       },
     ];
@@ -217,6 +225,7 @@ describe('checkPodDisruptionBudgets', () => {
         },
         metadata: {
           name: 'pdb1',
+          namespace: 'test-namespace',
         },
       },
       {
@@ -236,6 +245,7 @@ describe('checkPodDisruptionBudgets', () => {
         },
         metadata: {
           name: 'pdb2',
+          namespace: 'test-namespace',
         },
       },
     ];

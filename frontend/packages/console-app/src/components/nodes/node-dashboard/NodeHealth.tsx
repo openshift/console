@@ -84,11 +84,11 @@ export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
             )}
           >
             {machineHealthChecks.map(({ metadata }) => (
-              <Status key={metadata.uid}>
+              <Status key={metadata?.uid ?? ''}>
                 <ResourceLink
                   kind={referenceForModel(MachineHealthCheckModel)}
-                  name={metadata.name}
-                  namespace={metadata.namespace}
+                  name={metadata?.name ?? ''}
+                  namespace={metadata?.namespace ?? ''}
                   className="co-status-popup__title"
                 />
               </Status>
@@ -159,11 +159,13 @@ const isConditionFailing = (
   node: NodeKind,
   { type, status, timeout }: MachineHealthCondition,
 ): boolean => {
-  const nodeCondition = node.status.conditions.find((c) => c.type === type && c.status === status);
+  const nodeCondition = node.status?.conditions?.find(
+    (c) => c.type === type && c.status === status,
+  );
   if (!nodeCondition) {
     return false;
   }
-  const transitionTime = new Date(nodeCondition.lastTransitionTime).getTime();
+  const transitionTime = new Date(nodeCondition.lastTransitionTime ?? '').getTime();
   const currentTime = new Date().getTime();
   const withTO = transitionTime + 1000 * parseInt(timeout, 10);
   return withTO < currentTime;
@@ -241,21 +243,21 @@ type HealthChecksItemProps = {
 
 export const HealthChecksItem: React.FC<HealthChecksItemProps> = ({ disabledAlert }) => {
   const { obj, setHealthCheck } = React.useContext(NodeDashboardContext);
-  const [name, namespace] = getNodeMachineNameAndNamespace(obj);
+  const [name, namespace] = getNodeMachineNameAndNamespace(obj ?? ({} as NodeKind));
   const { t } = useTranslation();
   const machine = useK8sWatchResource<MachineKind>(
     name && namespace
       ? {
           groupVersionKind: getGroupVersionKindForModel(MachineModel),
-          name,
-          namespace,
+          name: name ?? '',
+          namespace: namespace ?? '',
         }
-      : undefined,
+      : null,
   );
   const healthChecks = useK8sWatchResource<MachineHealthCheckKind[]>(machineHealthChecksResource);
   const healthState = disabledAlert
     ? { state: HealthState.NOT_AVAILABLE }
-    : getMachineHealth(obj, machine, healthChecks);
+    : getMachineHealth(obj ?? ({} as NodeKind), machine, healthChecks);
 
   let failingHealthCheck = false;
   let reboot = false;
@@ -283,8 +285,8 @@ export const HealthChecksItem: React.FC<HealthChecksItemProps> = ({ disabledAler
       {...healthState}
     >
       <HealthChecksPopup
-        conditions={healthState.conditions}
-        machineHealthChecks={healthState.matchingHC}
+        conditions={healthState.conditions ?? []}
+        machineHealthChecks={healthState.matchingHC ?? []}
         disabledAlert={disabledAlert}
       />
     </HealthItem>
@@ -297,7 +299,7 @@ const NodeHealth: React.FC = () => {
     <HealthBody>
       <Gallery className="co-overview-status__health" hasGutter>
         <GalleryItem>
-          <NodeStatus className="co-node-health__status" node={obj} />
+          <NodeStatus className="co-node-health__status" node={obj ?? ({} as NodeKind)} />
         </GalleryItem>
         <GalleryItem>
           <HealthChecksItem />

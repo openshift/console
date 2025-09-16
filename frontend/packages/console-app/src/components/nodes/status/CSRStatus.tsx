@@ -46,15 +46,15 @@ export const CSRPopoverContent: React.FC<CSRPopoverContentProps> = ({
 }) => {
   const { t } = useTranslation();
   const [inProgress, setInProgress] = React.useState(false);
-  const [error, setError] = React.useState<string>();
+  const [error, setError] = React.useState<string | undefined>();
   const updateCSR = async (approve: boolean) => {
-    setError(null);
+    setError(undefined);
     setInProgress(true);
     try {
       await (approve ? approveCSR(csr) : denyCSR(csr));
       onPatch?.();
     } catch (err) {
-      setError(`${csr.metadata.name} ${approve ? 'approval' : 'denial'} failed - ${err}`);
+      setError(`${csr.metadata?.name ?? ''} ${approve ? 'approval' : 'denial'} failed - ${err}`);
     } finally {
       setInProgress(false);
     }
@@ -77,7 +77,7 @@ export const CSRPopoverContent: React.FC<CSRPopoverContentProps> = ({
         </div>
         <div>
           <ResourceLink
-            name={csr.metadata.name}
+            name={csr.metadata?.name ?? ''}
             groupVersionKind={{
               kind: CertificateSigningRequestModel.kind,
               version: CertificateSigningRequestModel.apiVersion,
@@ -91,7 +91,7 @@ export const CSRPopoverContent: React.FC<CSRPopoverContentProps> = ({
           <b>{t('console-app~Created')}</b>
         </div>
         <div>
-          <Timestamp timestamp={csr.metadata.creationTimestamp} />
+          <Timestamp timestamp={csr.metadata?.creationTimestamp ?? ''} />
         </div>
       </StackItem>
       <StackItem>
@@ -153,7 +153,7 @@ export const ServerCSRPopoverContent: React.FC<NodePopoverContentProps<NodeStatu
       onToggle={(_, expanded) => setExpanded(expanded)}
       toggleContent={<StatusTitle />}
     >
-      <CSRPopoverContent csr={serverCSR} serverCSR />
+      <CSRPopoverContent csr={serverCSR ?? ({} as CertificateSigningRequestKind)} serverCSR />
     </ExpandableSection>
   );
 };

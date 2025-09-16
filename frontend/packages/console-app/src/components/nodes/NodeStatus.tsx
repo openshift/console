@@ -74,7 +74,7 @@ export const NodeStatusWithExtensions: React.FC<NodeStatusWithExtensionsProps> =
           <ConsumerPopover
             title={_.startCase(item)}
             current={_.startCase(item)}
-            consumers={PressureQueries[item](node.metadata.name)}
+            consumers={PressureQueries[item](node.metadata?.name ?? '')}
             humanize={humanizeMap[item]}
             description={t(
               "console-app~This node's {{conditionDescription}}. Performance may be degraded.",
