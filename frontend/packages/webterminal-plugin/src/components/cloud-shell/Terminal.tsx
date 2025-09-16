@@ -5,7 +5,7 @@ import { FitAddon } from 'xterm-addon-fit';
 import './Terminal.scss';
 
 const terminalOptions: ITerminalOptions = {
-  fontFamily: 'monospace',
+  fontFamily: 'Red Hat Mono, monospace',
   fontSize: 16,
   cursorBlink: false,
   cols: 80,
