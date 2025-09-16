@@ -8,8 +8,8 @@ import {
 } from '../../public/components/storage-class-form';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),
 }));
 

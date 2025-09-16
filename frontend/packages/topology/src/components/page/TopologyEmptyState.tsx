@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-core';
 import { TopologyIcon } from '@patternfly/react-icons/dist/esm/icons/topology-icon';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 
 type TopologyEmptyStateProps = {
   setIsQuickSearchOpen: (isOpen: boolean) => void;

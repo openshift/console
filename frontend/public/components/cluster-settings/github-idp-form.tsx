@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation, Trans } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { ActionGroup, Button, Title } from '@patternfly/react-core';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

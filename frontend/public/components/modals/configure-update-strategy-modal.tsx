@@ -146,6 +146,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
 };
 
 export const ConfigureUpdateStrategyModal = (props: ConfigureUpdateStrategyModalProps) => {
+  const { deployment, close } = props;
   const [strategyType, setStrategyType] = React.useState(
     _.get(props.deployment.spec, 'strategy.type'),
   );
@@ -171,13 +172,13 @@ export const ConfigureUpdateStrategyModal = (props: ConfigureUpdateStrategyModal
         };
         patch.op = 'add';
       }
-      const promise = k8sPatch(DeploymentModel, props.deployment, [
+      const promise = k8sPatch(DeploymentModel, deployment, [
         patch,
         { path: '/spec/strategy/type', value: strategyType, op: 'replace' },
       ]);
-      handlePromise(promise).then(() => props.close());
+      handlePromise(promise).then(() => close());
     },
-    [strategyType, maxUnavailable, maxSurge, props.deployment, props.close, handlePromise],
+    [strategyType, maxUnavailable, maxSurge, deployment, close, handlePromise],
   );
 
   return (

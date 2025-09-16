@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { history } from '@console/internal/components/utils';
@@ -52,6 +53,7 @@ const EventSink: React.FC<EventSinkProps> = ({
   const perpectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const application = useSelector(getActiveApplication);
   const currentApp = selectedApplication || application;
 
@@ -149,7 +151,7 @@ const EventSink: React.FC<EventSinkProps> = ({
 
     return eventSinkRequest
       .then(() => {
-        handleRedirect(projectName, perspective, perpectiveExtension);
+        handleRedirect(projectName, perspective, perpectiveExtension, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -160,7 +162,7 @@ const EventSink: React.FC<EventSinkProps> = ({
     <Formik
       initialValues={catalogInitialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validateOnBlur={false}
       validateOnChange={false}
       validationSchema={eventSinkValidationSchema(t)}

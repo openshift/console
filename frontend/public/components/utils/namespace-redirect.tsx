@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Navigate, useLocation } from 'react-router-dom-v5-compat';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 

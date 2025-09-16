@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Tabs } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src';
@@ -12,8 +12,8 @@ import {
   mockUserPreferenceItemExtensions,
 } from './userPreferences.data';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

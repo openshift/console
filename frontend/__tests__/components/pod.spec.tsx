@@ -19,11 +19,11 @@ import {
 } from '@console/internal/components/utils';
 import { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
 import { t } from '../../__mocks__/i18next';
-import * as ReactRouter from 'react-router-dom-v5-compat';
+import * as ReactRouter from 'react-router-dom';
 import { PodKind } from '@console/internal/module/k8s';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

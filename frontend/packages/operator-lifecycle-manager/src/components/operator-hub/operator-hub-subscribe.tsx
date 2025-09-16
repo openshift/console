@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useLocation, Link, useNavigate } from 'react-router-dom-v5-compat';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
@@ -23,7 +23,6 @@ import {
   Firehose,
   getDocumentationURL,
   getURLSearchParams,
-  history,
   isManaged,
   ConsoleEmptyState,
   NsDropdown,
@@ -127,7 +126,6 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const { name: pkgName } = packageManifest?.metadata ?? {};
   const { provider, channels = [], packageName, catalogSource, catalogSourceNamespace } =
     packageManifest?.status ?? {};
-
   const { pathname: url } = useLocation();
   const [roleARNText, setRoleARNText] = React.useState('');
   const [azureTenantId, setAzureTenantId] = React.useState('');
@@ -340,11 +338,11 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
 
   const navigateToInstallPage = React.useCallback(
     (csvName: string) => {
-      history.push(
+      navigate(
         `/operatorhub/install/${catalogNamespace}/${catalog}/${pkg}/${csvName}/to/${selectedTargetNamespace}`,
       );
     },
-    [catalog, catalogNamespace, pkg, selectedTargetNamespace],
+    [catalog, catalogNamespace, pkg, selectedTargetNamespace, navigate],
   );
 
   if (!supportsSingle && !supportsGlobal) {
@@ -1180,7 +1178,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               >
                 {t('olm~Install')}
               </Button>
-              <Button variant="secondary" onClick={() => navigate(-1)}>
+              <Button variant="secondary" onClick={() => navigate('/operatorhub')}>
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>

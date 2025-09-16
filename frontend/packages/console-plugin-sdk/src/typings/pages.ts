@@ -1,4 +1,3 @@
-import { RouteComponentProps, RouteProps } from 'react-router-dom';
 import { PageComponentProps } from '@console/internal/components/utils';
 import {
   K8sKind,
@@ -16,7 +15,7 @@ namespace ExtensionProperties {
     loader: LazyLoader<T>;
   }
 
-  /** To add an additonal page to public components(ex: PVs, PVCs) via plugins */
+  /** To add an additional page to public components (ex: PVs, PVCs) via plugins */
   export type ResourceTabPage<R extends K8sResourceCommon> = ResourcePage<PageComponentProps<R>> & {
     /** The href for the resource page */
     href: string;
@@ -25,8 +24,6 @@ namespace ExtensionProperties {
   };
 
   export type ResourceListPage = ResourcePage<{
-    /** See https://reacttraining.com/react-router/web/api/match */
-    match: RouteComponentProps['match'];
     /** The resource kind scope. */
     kind: K8sResourceKindReference;
     /** Whether the page should assign focus when loaded. */
@@ -41,8 +38,6 @@ namespace ExtensionProperties {
   };
 
   export type ResourceDetailsPage = ResourcePage<{
-    /** See https://reacttraining.com/react-router/web/api/match */
-    match: RouteComponentProps['match'];
     /** The resource kind scope. */
     kind: K8sResourceKindReference;
     /** The namespace scope. */
@@ -54,15 +49,20 @@ namespace ExtensionProperties {
     modelParser?: (obj: K8sResourceKind) => string;
   };
 
-  // Maps to react-router#https://reacttraining.com/react-router/web/api/Route
-  // See https://reacttraining.com/react-router/web/api/Route
-  export type RoutePage = Omit<RouteProps, 'location'> & {
-    /** Loader for the corresponding React page component. */
-    loader?: LazyLoader<RouteComponentProps>;
-    /** Any valid URL path or array of paths that path-to-regexp@^1.7.0 understands. */
-    path: string | string[];
-    /** Perspective id to which this page belongs to. */
+  /**
+   * Adds new page to Console router.
+   *
+   * See dynamic `console.page/route` extension for API and implementation specifics.
+   */
+  export type RoutePage = {
+    /** The perspective to which this page belongs to. If not specified, applies to all perspectives. */
     perspective?: string;
+    /** Loader for the corresponding React page component. */
+    loader?: LazyLoader<any>;
+    /** Valid URL path or array of paths. Note that React Router v6 does not use path-to-regexp. */
+    path: string | string[];
+    /** When true, will only match if the path matches the URL exactly. */
+    exact?: boolean;
   };
 }
 

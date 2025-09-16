@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router-dom';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';

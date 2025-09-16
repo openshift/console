@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
-
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { GroupModel, UserModel } from '../models';
 import { referenceForModel, GroupKind } from '../module/k8s';

@@ -1,8 +1,8 @@
 import { Button, Hint } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom-v5-compat';
-import * as Router from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
+import * as Router from 'react-router-dom';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
   Table,
@@ -42,8 +42,8 @@ import Spy = jasmine.Spy;
 
 const i18nNS = 'public';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

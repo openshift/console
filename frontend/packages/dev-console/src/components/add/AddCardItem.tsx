@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { SimpleListItem, Title, Content } from '@patternfly/react-core';
+import { useNavigate } from 'react-router-dom';
 import { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { useToast } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { navigateTo, resolvedHref } from '../../utils/add-page-utils';
+import { resolvedHref } from '../../utils/add-page-utils';
 import { useShowAddCardItemDetails } from './hooks/useShowAddCardItemDetails';
 import './AddCardItem.scss';
 
@@ -21,6 +22,7 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
   const fireTelemetryEvent = useTelemetry();
   const [showDetails] = useShowAddCardItemDetails();
   const toast = useToast();
+  const navigate = useNavigate();
 
   const actionIcon = (): JSX.Element => {
     if (typeof icon === 'string') {
@@ -57,7 +59,8 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
           name: label,
         });
         if (href) {
-          navigateTo(e, resolvedHref(href, namespace));
+          navigate(resolvedHref(href, namespace));
+          e.preventDefault();
         } else if (callback) {
           callback({ namespace, toast });
         }

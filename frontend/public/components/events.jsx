@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as PropTypes from 'prop-types';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router-dom';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   Label,

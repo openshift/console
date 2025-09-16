@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router-dom';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import DevPreviewBadge from '@console/shared/src/components/badges/DevPreviewBadge';

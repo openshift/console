@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
+import { NavigateFunction } from 'react-router-dom';
 import {
   getAppLabels,
   getCommonAnnotations,
 } from '@console/dev-console/src/utils/resource-label-utils';
 import { Perspective } from '@console/dynamic-plugin-sdk';
-import { checkAccess, history } from '@console/internal/components/utils';
+import { checkAccess } from '@console/internal/components/utils';
 import {
   K8sResourceKind,
   referenceForModel,
@@ -346,10 +347,11 @@ export const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
+  navigate: NavigateFunction,
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
-  history.push(redirectURL);
+  navigate(redirectURL);
 };
 
 export const sanitizeSourceToForm = (

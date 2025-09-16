@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { K8sResourceKind, k8sCreate } from '@console/internal/module/k8s';
@@ -37,7 +37,7 @@ const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { na
   } = target;
   const getResourceModel = () =>
     sourceKind === EventingBrokerModel.kind ? EventingTriggerModel : EventingSubscriptionModel;
-
+  const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const eventTypeName = searchParams.get(EVENT_TYPE_NAME_PARAM);
@@ -118,7 +118,7 @@ const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { na
     return k8sCreate(getResourceModel(), sanitizeResourceName(values.formData))
       .then((resource) => {
         action.setStatus({ subscriberAvailable: true, error: '' });
-        history.push(`/topology/ns/${resource.metadata.namespace}`);
+        navigate(`/topology/ns/${resource.metadata.namespace}`);
       })
       .catch((err) => {
         const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
@@ -129,7 +129,7 @@ const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { na
       });
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = () => history.go(-1);
 
   return loaded ? (
     <Formik

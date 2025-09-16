@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import {
   DashboardItemProps,
   withDashboardResources,

@@ -22,7 +22,7 @@ import {
   FlexItem,
 } from '@patternfly/react-core';
 import { useDebounceCallback, getURLWithParams, VirtualizedGrid } from '@console/shared';
-import { Link, useSearchParams } from 'react-router-dom-v5-compat';
+import { Link, useSearchParams } from 'react-router-dom';
 import { isModifiedEvent } from '@console/shared/src/utils';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import CatalogPage from '@console/shared/src/components/catalog/catalog-view/CatalogPage';

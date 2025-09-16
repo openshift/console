@@ -13,7 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router-dom';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { useTelemetry } from '../../hooks';
@@ -51,6 +51,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
+  const navigate = useNavigate();
   const [itemsCount, setItemsCount] = React.useState<number>(limitItemCount || listItems.length);
   const listHeight = document.querySelector('.ocs-quick-search-list__list')?.clientHeight || 0;
 
@@ -107,7 +108,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                 'ocs-quick-search-list__item--highlight': item.uid === selectedItemId,
               })}
               onDoubleClick={(e: React.SyntheticEvent) => {
-                handleCta(e, item, closeModal, fireTelemetryEvent);
+                handleCta(e, item, navigate, closeModal, fireTelemetryEvent);
               }}
             >
               <DataListItemRow className="ocs-quick-search-list__item-row">

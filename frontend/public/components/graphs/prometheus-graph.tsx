@@ -2,7 +2,7 @@ import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { Title } from '@patternfly/react-core';
 
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';

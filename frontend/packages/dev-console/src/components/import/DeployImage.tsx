@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { ImportStrategy } from '@console/git-service/src/types';
 import { history } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -37,6 +38,8 @@ const DeployImage: React.FC<Props> = ({
 }) => {
   const postFormCallback = usePostFormSubmitAction();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const initialValues: DeployImageFormData = {
     project: {
       name: namespace || '',
@@ -185,7 +188,7 @@ const DeployImage: React.FC<Props> = ({
       .then((res) => {
         const selectId = filterDeployedResources(res)[0]?.metadata?.uid;
 
-        history.push(`/topology/ns/${projectName}${selectId ? `?selectId=${selectId}` : ''}`);
+        navigate(`/topology/ns/${projectName}${selectId ? `?selectId=${selectId}` : ''}`);
       })
       .catch((err) => {
         helpers.setStatus({ submitError: err.message });
@@ -196,7 +199,7 @@ const DeployImage: React.FC<Props> = ({
     <Formik
       initialValues={initialVals}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={() => history.go(-1)}
       validationSchema={deployValidationSchema(t)}
     >
       {(formikProps) => <DeployImageForm {...formikProps} projects={projects} />}

@@ -185,7 +185,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/quickstart/'],
+      path: '/quickstart/',
       loader: async () =>
         (
           await import(
@@ -201,7 +201,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: () =>
         import(
           './components/volume-snapshot/volume-snapshot-content' /* webpackChunkName: "volume-snapshot-content-page" */
-        ).then((m) => m.default),
+        ).then((m) => m.default as React.ComponentType),
     },
     flags: {
       required: [FLAGS.CAN_LIST_VSC],

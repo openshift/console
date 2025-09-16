@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { ResourcesEventStream } from '@console/internal/components/events';
 import {
   DataState,
@@ -17,8 +17,8 @@ const { taskRuns, pods } = pipeline;
 const spyUsePipelineRunRelatedResources = jest.spyOn(utils, 'usePipelineRunRelatedResources');
 type PipelineRunEventsProps = React.ComponentProps<typeof PipelineRunEvents>;
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

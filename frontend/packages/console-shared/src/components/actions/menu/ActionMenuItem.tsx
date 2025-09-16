@@ -3,8 +3,9 @@ import { DropdownItemProps, KeyTypes, MenuItem, Tooltip } from '@patternfly/reac
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Action, ImpersonateKind, impersonateStateToProps } from '@console/dynamic-plugin-sdk';
-import { useAccessReview, history } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils';
 
 export type ActionMenuItemProps = {
   action: Action;
@@ -23,7 +24,8 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   component,
 }) => {
   const { label, icon, disabled, cta } = action;
-  const { href, external } = cta as { href: string; external?: boolean };
+  const navigate = useNavigate();
+  const { href, external } = (cta ?? {}) as { href?: string; external?: boolean };
   const isDisabled = !isAllowed || disabled;
   const classes = css({ 'pf-m-disabled': isDisabled });
 
@@ -34,13 +36,13 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
         cta();
       } else if (_.isObject(cta)) {
         if (!cta.external) {
-          history.push(cta.href);
+          navigate(cta.href);
         }
       }
       onClick && onClick();
       event.stopPropagation();
     },
-    [cta, onClick],
+    [cta, onClick, navigate],
   );
 
   const handleKeyDown = (event) => {

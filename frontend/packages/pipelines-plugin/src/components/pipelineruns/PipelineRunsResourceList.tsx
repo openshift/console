@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';

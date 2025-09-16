@@ -108,7 +108,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       exact: true,
       path: '/test',
-      render: () => <h1>Test Page</h1>,
+      loader: () => Promise.resolve(() => <h1>Test Page</h1>),
     },
   },
   {

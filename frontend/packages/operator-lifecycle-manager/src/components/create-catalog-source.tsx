@@ -54,7 +54,7 @@ export const CreateCatalogSource = () => {
           },
         }),
       ).then(() => {
-        history.goBack();
+        history.go(-1);
       });
     },
     [availability, displayName, handlePromise, image, name, namespace, publisher],
@@ -175,7 +175,7 @@ export const CreateCatalogSource = () => {
               <Button type="submit" variant="primary" id="save-changes" data-test="save-changes">
                 {t('olm~Create')}
               </Button>
-              <Button type="button" variant="secondary" id="cancel" onClick={history.goBack}>
+              <Button type="button" variant="secondary" id="cancel" onClick={() => history.go(-1)}>
                 {t('olm~Cancel')}
               </Button>
             </ActionGroup>

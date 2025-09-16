@@ -1,7 +1,7 @@
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
-import * as ReactRouter from 'react-router-dom-v5-compat';
+import * as ReactRouter from 'react-router-dom';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { Table, DetailsPage, MultiListPage } from '@console/internal/components/factory';
 import {
@@ -48,8 +48,8 @@ import {
   OperandStatusProps,
 } from '.';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
@@ -114,8 +114,8 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

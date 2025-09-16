@@ -1,14 +1,14 @@
-import * as React from 'react';
+import { ReactNode, ComponentType } from 'react';
 import { configure, screen } from '@testing-library/react';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { PageContents as AddPage } from '../AddPage';
 import '@testing-library/jest-dom';
 
 configure({ testIdAttribute: 'data-test' });
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 
@@ -25,8 +25,8 @@ jest.mock('react-i18next', () => ({
     t: (key: string) => key,
     i18n: { language: 'en' },
   }),
-  Trans: ({ children }: { children: React.ReactNode }) => children,
-  withTranslation: () => (Component: React.ComponentType) => Component,
+  Trans: ({ children }: { children: ReactNode }) => children,
+  withTranslation: () => (Component: ComponentType) => Component,
 }));
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({

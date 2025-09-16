@@ -1,5 +1,5 @@
 import { configure, render, screen } from '@testing-library/react';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
 import { TopologyPage } from '../components/page/TopologyPage';
 import { TopologyViewType } from '../topology-types';
@@ -39,8 +39,8 @@ jest.mock('../user-preferences/usePreferredTopologyView', () => ({
   usePreferredTopologyView: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

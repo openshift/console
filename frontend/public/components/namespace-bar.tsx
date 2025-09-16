@@ -19,12 +19,13 @@ import { flagPending } from '../reducers/features';
 import { Firehose, FirehoseResult, removeQueryArgument } from './utils';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import { RootState } from '../redux';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 export type NamespaceBarDropdownsProps = {
   children: React.ReactNode;
   isDisabled: boolean;
   namespace?: FirehoseResult;
-  onNamespaceChange: (namespace: string) => void;
+  onNamespaceChange: (namespace: string, navigate: NavigateFunction) => void;
   useProjects: boolean;
 };
 
@@ -41,6 +42,7 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
   const dispatch = useDispatch();
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
   const activePerspective = useActivePerspective()[0];
+  const navigate = useNavigate();
   const [activeNamespaceError, setActiveNamespaceError] = React.useState(false);
   const canListNS = useFlag(FLAGS.CAN_LIST_NS);
   React.useEffect(() => {
@@ -75,7 +77,7 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
     <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
       <NamespaceDropdown
         onSelect={(event, newNamespace) => {
-          onNamespaceChange?.(newNamespace);
+          onNamespaceChange?.(newNamespace, navigate);
           setActiveNamespace(newNamespace);
           removeQueryArgument('project-name');
         }}

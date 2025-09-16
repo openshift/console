@@ -16,7 +16,7 @@ import {
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { css } from '@patternfly/react-styles';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DismissableAlert, RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';

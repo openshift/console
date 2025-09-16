@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { sortable, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';

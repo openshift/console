@@ -3,8 +3,16 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { k8sPatch, K8sResourceKind, K8sKind } from '../../module/k8s';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import {
+  createModalLauncher,
+  ModalWrapper,
+  ModalTitle,
+  ModalBody,
+  ModalSubmitFooter,
+} from '../factory/modal';
 import { NumberSpinner } from '../utils';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 export const ConfigureCountModal = (props: ConfigureCountModalProps) => {
@@ -89,6 +97,14 @@ export const ConfigureCountModal = (props: ConfigureCountModalProps) => {
 
 export const configureCountModal = createModalLauncher(ConfigureCountModal);
 
+export const ConfigureCountProviderModal: OverlayComponent<ConfigureCountModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <ConfigureCountModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
+    </ModalWrapper>
+  );
+};
+
 export const configureReplicaCountModal = (props) => {
   return configureCountModal(
     _.assign(
@@ -111,24 +127,34 @@ export const configureReplicaCountModal = (props) => {
   );
 };
 
-export const configureJobParallelismModal = (props) => {
-  return configureCountModal(
-    _.defaults(
-      {},
-      {
-        defaultValue: 1,
-        // t('public~Edit parallelism')
-        titleKey: 'public~Edit parallelism',
-        // t('public~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.', {resourceKind: props.resourceKind.labelPlural})
-        messageKey:
-          'public~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.',
-        messageVariables: { resourceKinds: props.resourceKind.labelPlural },
-        path: '/spec/parallelism',
-        // t('public~Save')
-        buttonTextKey: 'public~Save',
-      },
-      props,
-    ),
+export const useConfigureJobParallelismModal = (props) => {
+  const launcher = useOverlay();
+  const { resourceKind, resource } = props;
+
+  return React.useCallback(
+    () =>
+      resourceKind &&
+      resource &&
+      launcher<ConfigureCountModalProps>(ConfigureCountProviderModal, {
+        ..._.defaults(
+          {},
+          {
+            defaultValue: 1,
+            // t('public~Edit parallelism')
+            titleKey: 'public~Edit parallelism',
+            // t('public~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.', {resourceKind: props.resourceKind.labelPlural})
+            messageKey:
+              'public~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.',
+            messageVariables: { resourceKinds: resourceKind.labelPlural },
+            path: '/spec/parallelism',
+            // t('public~Save')
+            buttonTextKey: 'public~Save',
+          },
+          props,
+        ),
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [launcher, resourceKind, resource],
   );
 };
 

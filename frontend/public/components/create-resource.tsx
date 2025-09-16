@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { AsyncComponent } from './utils';

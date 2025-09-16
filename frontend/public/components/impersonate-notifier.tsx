@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { useTranslation, Trans } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { Banner, Flex, Button } from '@patternfly/react-core';
 import { getImpersonate, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 

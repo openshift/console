@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { act } from 'react-dom/test-utils';
 import { useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -15,8 +15,8 @@ jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),
   useNavigate: jest.fn(),
 }));

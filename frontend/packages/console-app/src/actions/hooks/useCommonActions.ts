@@ -5,13 +5,13 @@ import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s
 import {
   annotationsModalLauncher,
   deleteModal,
-  labelsModalLauncher,
   configureReplicaCountModal,
   podSelectorModal,
   tolerationsModal,
 } from '@console/internal/components/modals';
 import { resourceObjPath, asAccessReview } from '@console/internal/components/utils';
 import { referenceForModel, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
 import { CommonActionCreator, ActionObject } from './types';
 
 /**
@@ -57,6 +57,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   message?: JSX.Element,
 ): [ActionObject<T>, boolean] => {
   const { t } = useTranslation();
+  const labelsModalLauncher = useLabelsModal(resource);
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
@@ -88,12 +89,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       [CommonActionCreator.ModifyLabels]: (): Action => ({
         id: 'edit-labels',
         label: t('console-app~Edit labels'),
-        cta: () =>
-          labelsModalLauncher({
-            kind,
-            resource,
-            blocking: true,
-          }),
+        cta: () => labelsModalLauncher(),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
       [CommonActionCreator.ModifyAnnotations]: (): Action => ({
@@ -156,7 +152,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
-    [kind, resource, t, message],
+    [kind, resource, t, message, labelsModalLauncher],
   );
 
   const result = useMemo((): [ActionObject<T>, boolean] => {

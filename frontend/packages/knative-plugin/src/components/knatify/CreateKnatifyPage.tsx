@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
@@ -35,6 +35,7 @@ type watchResource = {
 const CreateKnatifyPage: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
+  const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const kind = queryParams.get('kind');
@@ -106,7 +107,7 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
       resourceActions
         .then(() => {
           helpers.setStatus({ submitError: '' });
-          handleRedirect(namespace, perspective, perspectiveExtensions);
+          handleRedirect(namespace, perspective, perspectiveExtensions, navigate);
         })
         .catch((err) => {
           helpers.setStatus({ submitError: err.message });
@@ -133,7 +134,7 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
           )}
           validationSchema={deployValidationSchema(t)}
           onSubmit={handleSubmit}
-          onReset={history.goBack}
+          onReset={() => history.go(-1)}
         >
           {(formikProps) => (
             <KnatifyForm

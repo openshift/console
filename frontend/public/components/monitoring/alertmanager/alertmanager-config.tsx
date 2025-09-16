@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { NavBar } from '@console/internal/components/utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,

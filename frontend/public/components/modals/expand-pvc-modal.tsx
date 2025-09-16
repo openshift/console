@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import {
@@ -30,6 +30,8 @@ const ExpandPVCModal = (props: ExpandPVCModalProps) => {
     setRequestSizeUnit(obj.unit);
   };
 
+  const { kind, resource, close } = props;
+
   const submit = useCallback(
     (e) => {
       e.preventDefault();
@@ -41,23 +43,13 @@ const ExpandPVCModal = (props: ExpandPVCModalProps) => {
         },
       ];
 
-      handlePromise(k8sPatch(props.kind, props.resource, patch)).then((resource) => {
-        props.close();
-        navigate(resourceObjPath(resource, referenceFor(resource)));
+      handlePromise(k8sPatch(kind, resource, patch)).then((resource_) => {
+        close();
+        navigate(resourceObjPath(resource_, referenceFor(resource_)));
       });
     },
-    [
-      requestSizeValue,
-      requestSizeUnit,
-      props.kind,
-      props.resource,
-      props.close,
-      handlePromise,
-      navigate,
-    ],
+    [requestSizeValue, requestSizeUnit, kind, resource, close, handlePromise, navigate],
   );
-
-  const { kind, resource } = props;
 
   const dropdownUnits = {
     Mi: 'MiB',

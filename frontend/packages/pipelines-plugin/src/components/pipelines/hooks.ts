@@ -1,4 +1,4 @@
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router-dom';
 import { WatchK8sResource, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';

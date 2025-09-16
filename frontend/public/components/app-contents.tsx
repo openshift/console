@@ -1,13 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import {
-  Route,
-  Routes,
-  Navigate,
-  useParams,
-  useLocation,
-  matchRoutes,
-} from 'react-router-dom-v5-compat';
+import { Route, Routes, Navigate, useParams, useLocation, matchRoutes } from 'react-router-dom';
 import { useActivePerspective, Perspective } from '@console/dynamic-plugin-sdk';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
 import { FLAGS, useUserSettings, getPerspectiveVisitedKey, usePerspectives } from '@console/shared';

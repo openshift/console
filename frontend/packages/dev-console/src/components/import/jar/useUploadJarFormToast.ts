@@ -1,8 +1,9 @@
 import { useMemo, useCallback } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
-import { history, resourcePathFromModel } from '@console/internal/components/utils';
+import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { BuildConfigModel, BuildModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -12,6 +13,8 @@ export const useUploadJarFormToast = () => {
   const toast = useToast();
   const { t } = useTranslation();
   const [namespace] = useActiveNamespace();
+  const navigate = useNavigate();
+
   const buildsResource: WatchK8sResource = useMemo(
     () => ({
       kind: BuildModel.kind,
@@ -42,11 +45,11 @@ export const useUploadJarFormToast = () => {
           {
             dismiss: true,
             label: t('devconsole~View build logs'),
-            callback: () => history.push(link),
+            callback: () => navigate(link),
           },
         ],
       });
     },
-    [builds, namespace, t, toast],
+    [builds, namespace, t, toast, navigate],
   );
 };

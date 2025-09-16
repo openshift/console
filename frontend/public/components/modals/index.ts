@@ -14,11 +14,6 @@ export const configureReplicaCountModal = (props) =>
     m.configureReplicaCountModal(props),
   );
 
-export const configureJobParallelismModal = (props) =>
-  import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */).then((m) =>
-    m.configureJobParallelismModal(props),
-  );
-
 /** @deprecated use `useWarningModal` instead */
 export const confirmModal = (props) =>
   import('./confirm-modal' /* webpackChunkName: "confirm-modal" */).then((m) =>
@@ -38,14 +33,14 @@ export const configureNamespacePullSecretModal = (props) =>
     './configure-ns-pull-secret-modal' /* webpackChunkName: "configure-ns-pull-secret-modal" */
   ).then((m) => m.configureNamespacePullSecretModal(props));
 
-export const labelsModalLauncher = (props) =>
-  import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
-    m.labelsModalLauncher(props),
-  );
-
 export const podSelectorModal = (props) =>
   import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
     m.podSelectorModal(props),
+  );
+
+export const labelsModalLauncher = (props) =>
+  import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
+    m.labelsModalLauncher(props),
   );
 
 export const rollbackModal = (props) =>
@@ -92,11 +87,6 @@ export const expandPVCModal = (props) =>
     m.expandPVCModal(props),
   );
 
-export const clonePVCModal = (props) =>
-  import(
-    '@console/app/src/components/modals/clone/clone-pvc-modal' /* webpackChunkName: "clone-pvc-modal" */
-  ).then((m) => m.default(props));
-
 export const configureClusterUpstreamModal = (props) =>
   import(
     './configure-cluster-upstream-modal' /* webpackChunkName: "configure-cluster-upstream-modal" */
@@ -121,11 +111,6 @@ export const removeUserModal = (props) =>
   import('./remove-user-modal' /* webpackChunkName: "remove-user-modal" */).then((m) =>
     m.removeUserModal(props),
   );
-
-export const restorePVCModal = (props) =>
-  import(
-    '@console/app/src/components/modals/restore-pvc/restore-pvc-modal' /* webpackChunkName: "restore-pvc-modal" */
-  ).then((m) => m.default(props));
 
 export const managedResourceSaveModal = (props) =>
   import(

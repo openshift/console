@@ -11,7 +11,7 @@ import {
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link, useSearchParams } from 'react-router-dom-v5-compat';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { getQueryArgument } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
@@ -571,6 +571,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
 
 export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [detailsItem, setDetailsItem] = React.useState(null);
   const [showDetails, setShowDetails] = React.useState(false);
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
@@ -862,19 +863,22 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   /* eslint-disable */
   // CONSOLE TABLE FOR TESTING - Using memoized sorted data for performance
   // Displays search results with 'Search Relevance Score' and 'Is Red Hat' provider priority values, used in determining display order of operators
-  
+
   const getActiveFiltersDescription = () => {
     const activeFilters = [];
     if (selectedCategory !== 'all') activeFilters.push(`Category: ${selectedCategory}`);
     if (selectedSource !== 'all') activeFilters.push(`Source: ${selectedSource}`);
     if (selectedProvider !== 'all') activeFilters.push(`Provider: ${selectedProvider}`);
-    if (selectedCapabilityLevel !== 'all') activeFilters.push(`Capability Level: ${selectedCapabilityLevel}`);
-    if (selectedInfraFeatures !== 'all') activeFilters.push(`Infrastructure Features: ${selectedInfraFeatures}`);
-    if (selectedValidSubscriptionFilters !== 'all') activeFilters.push(`Valid Subscription: ${selectedValidSubscriptionFilters}`);
-    
+    if (selectedCapabilityLevel !== 'all')
+      activeFilters.push(`Capability Level: ${selectedCapabilityLevel}`);
+    if (selectedInfraFeatures !== 'all')
+      activeFilters.push(`Infrastructure Features: ${selectedInfraFeatures}`);
+    if (selectedValidSubscriptionFilters !== 'all')
+      activeFilters.push(`Valid Subscription: ${selectedValidSubscriptionFilters}`);
+
     return activeFilters.length > 0 ? activeFilters.join(', ') : 'No filters applied';
   };
-  
+
   // Debug logging for non-production environments
   if (process.env.NODE_ENV !== 'production') {
     if (searchTerm) {
@@ -886,42 +890,52 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         }))
         .filter((item) => item.relevanceScore > 0);
       const searchSortedForDisplay = orderAndSortByRelevance(searchFilteredForDisplay, searchTerm);
-      console.log('📋 OperatorHub Items Array (Search Filtered & Sorted):', searchSortedForDisplay.map(item => item.name || 'N/A'));
+      console.log(
+        '📋 OperatorHub Items Array (Search Filtered & Sorted):',
+        searchSortedForDisplay.map((item) => item.name || 'N/A'),
+      );
     } else {
-      console.log('📋 OperatorHub Items Array:', sortedItems.map(item => item.name || 'N/A'));
+      console.log(
+        '📋 OperatorHub Items Array:',
+        sortedItems.map((item) => item.name || 'N/A'),
+      );
     }
-    
+
     // Debug: Log component state to identify race conditions
     console.log('🐛 Debug Info:', {
       searchTerm,
       filteredItemsCount: filteredItems?.length || 0,
       sortedItemsCount: sortedItems?.length || 0,
       hasSearchTerm: !!searchTerm,
-      isInitialLoad: (!filteredItems || filteredItems.length === 0)
+      isInitialLoad: !filteredItems || filteredItems.length === 0,
     });
-    
+
     console.log(`📌 Current Active Filters: ${getActiveFiltersDescription()}`);
     console.log(`🔍 Search Term: "${searchTerm || 'none'}"`);
     console.log(`📊 Sorted Items Count: ${sortedItems.length}`);
 
     // Use memoized sortedItems instead of recalculating
     if (searchTerm && sortedItems.length > 0) {
-    // For console display, filter items by search term since TileViewPage will do this later
-    const searchFilteredItems = sortedItems
-      .map((item) => ({
-        ...item,
-        relevanceScore: calculateRelevanceScore(searchTerm, item),
-      }))
-      .filter((item) => item.relevanceScore > 0);
-    
-    // Sort the filtered items the same way TileViewPage will sort them
-    const searchSortedItems = orderAndSortByRelevance(searchFilteredItems, searchTerm);
-    
-    const tableData = searchSortedItems.map((item, index) => ({
+      // For console display, filter items by search term since TileViewPage will do this later
+      const searchFilteredItems = sortedItems
+        .map((item) => ({
+          ...item,
+          relevanceScore: calculateRelevanceScore(searchTerm, item),
+        }))
+        .filter((item) => item.relevanceScore > 0);
+
+      // Sort the filtered items the same way TileViewPage will sort them
+      const searchSortedItems = orderAndSortByRelevance(searchFilteredItems, searchTerm);
+
+      const tableData = searchSortedItems.map((item, index) => ({
         Title: item.name || 'N/A',
         'Search Relevance Score': item.relevanceScore || 0,
-        'Is Red Hat Provider (Priority)': getRedHatPriority(item) === REDHAT_PRIORITY.EXACT_MATCH ? `Exact Match (${REDHAT_PRIORITY.EXACT_MATCH})` : 
-                            getRedHatPriority(item) === REDHAT_PRIORITY.CONTAINS_REDHAT ? `Contains Red Hat (${REDHAT_PRIORITY.CONTAINS_REDHAT})` : `Non-Red Hat (${REDHAT_PRIORITY.NON_REDHAT})`,
+        'Is Red Hat Provider (Priority)':
+          getRedHatPriority(item) === REDHAT_PRIORITY.EXACT_MATCH
+            ? `Exact Match (${REDHAT_PRIORITY.EXACT_MATCH})`
+            : getRedHatPriority(item) === REDHAT_PRIORITY.CONTAINS_REDHAT
+            ? `Contains Red Hat (${REDHAT_PRIORITY.CONTAINS_REDHAT})`
+            : `Non-Red Hat (${REDHAT_PRIORITY.NON_REDHAT})`,
         // Source: item.source || 'N/A',
         'Metadata Provider': _.get(item, 'obj.metadata.labels.provider', 'N/A'),
         'Capability Level': (() => {
@@ -933,27 +947,39 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
               return itemCapability;
             }
           }
-          
+
           const specCapability = _.get(item, 'obj.spec.capabilityLevel', '');
           if (specCapability) return specCapability;
-          
-          const metadataCapability = _.get(item, 'obj.metadata.annotations["operators.operatorframework.io/capability-level"]', '');
+
+          const metadataCapability = _.get(
+            item,
+            'obj.metadata.annotations["operators.operatorframework.io/capability-level"]',
+            '',
+          );
           if (metadataCapability) return metadataCapability;
-          
+
           return 'N/A';
         })(),
-        'Infrastructure Features': Array.isArray(item.infraFeatures) ? item.infraFeatures.join(', ') : 'N/A',
+        'Infrastructure Features': Array.isArray(item.infraFeatures)
+          ? item.infraFeatures.join(', ')
+          : 'N/A',
       }));
-      
-      console.log(`\n🔍 OperatorHub Search Results for "${searchTerm}" (${searchSortedItems.length} matches)`);
+
+      console.log(
+        `\n🔍 OperatorHub Search Results for "${searchTerm}" (${searchSortedItems.length} matches)`,
+      );
       console.log(`📌 Active Filters: ${getActiveFiltersDescription()}`);
       console.table(tableData);
     } else if (sortedItems.length > 0) {
       // Console table for filtered results without search term (category/filter-based) - using memoized data
       const tableData = sortedItems.map((item, index) => ({
         Title: item.name || 'N/A',
-        'Is Red Hat Provider (Priority)': getRedHatPriority(item) === REDHAT_PRIORITY.EXACT_MATCH ? `Exact Match (${REDHAT_PRIORITY.EXACT_MATCH})` : 
-                            getRedHatPriority(item) === REDHAT_PRIORITY.CONTAINS_REDHAT ? `Contains Red Hat (${REDHAT_PRIORITY.CONTAINS_REDHAT})` : `Non-Red Hat (${REDHAT_PRIORITY.NON_REDHAT})`,
+        'Is Red Hat Provider (Priority)':
+          getRedHatPriority(item) === REDHAT_PRIORITY.EXACT_MATCH
+            ? `Exact Match (${REDHAT_PRIORITY.EXACT_MATCH})`
+            : getRedHatPriority(item) === REDHAT_PRIORITY.CONTAINS_REDHAT
+            ? `Contains Red Hat (${REDHAT_PRIORITY.CONTAINS_REDHAT})`
+            : `Non-Red Hat (${REDHAT_PRIORITY.NON_REDHAT})`,
         // Source: item.source || 'N/A',
         'Metadata Provider': _.get(item, 'obj.metadata.labels.provider', 'N/A'),
         'Capability Level': (() => {
@@ -965,18 +991,24 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
               return itemCapability;
             }
           }
-          
+
           const specCapability = _.get(item, 'obj.spec.capabilityLevel', '');
           if (specCapability) return specCapability;
-          
-          const metadataCapability = _.get(item, 'obj.metadata.annotations["operators.operatorframework.io/capability-level"]', '');
+
+          const metadataCapability = _.get(
+            item,
+            'obj.metadata.annotations["operators.operatorframework.io/capability-level"]',
+            '',
+          );
           if (metadataCapability) return metadataCapability;
-          
+
           return 'N/A';
         })(),
-        'Infrastructure Features': Array.isArray(item.infraFeatures) ? item.infraFeatures.join(', ') : 'N/A',
+        'Infrastructure Features': Array.isArray(item.infraFeatures)
+          ? item.infraFeatures.join(', ')
+          : 'N/A',
       }));
-      
+
       console.log(`\n📂 OperatorHub Filtered Results (${tableData.length} items)`);
       console.log(`📌 Active Filters: ${getActiveFiltersDescription()}`);
       console.table(tableData);
@@ -1044,7 +1076,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                     className="co-catalog-page__overlay-action"
                     data-test-id="operator-uninstall-btn"
                     isDisabled={!detailsItem.installed}
-                    onClick={() => history.push(uninstallLink())}
+                    onClick={() => navigate(uninstallLink())}
                     variant="secondary"
                   >
                     {t('olm~Uninstall')}

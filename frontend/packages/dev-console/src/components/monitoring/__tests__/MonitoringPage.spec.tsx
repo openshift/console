@@ -1,5 +1,5 @@
 import { configure, render, screen } from '@testing-library/react';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router-dom';
 import * as rbacModule from '@console/internal/components/utils/rbac';
 import { PageContents } from '../MonitoringPage';
 import '@testing-library/jest-dom';
@@ -39,8 +39,8 @@ jest.mock('@console/internal/components/utils', () => ({
   useAccessReview: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
 }));
 

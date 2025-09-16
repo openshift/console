@@ -4,6 +4,7 @@ import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
@@ -84,7 +85,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   const toastContext = useToast();
   const [pac, loaded] = usePacInfo();
   const defaultBuildOption = useDefaultBuildOption();
-
+  const navigate = useNavigate();
   const initialBaseValues: BaseFormData = getBaseInitialValues(namespace, activeApplication);
   const initialValues: GitImportFormData = {
     ...initialBaseValues,
@@ -244,7 +245,13 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
 
         fireTelemetryEvent('Git Import', getTelemetryImport(values));
 
-        handleRedirect(projectName, perspective, perspectiveExtensions, redirectSearchParams);
+        handleRedirect(
+          projectName,
+          perspective,
+          perspectiveExtensions,
+          navigate,
+          redirectSearchParams,
+        );
       })
       .catch((err) => {
         // eslint-disable-next-line no-console
@@ -273,7 +280,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       <Formik
         initialValues={initialVals}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={() => history.go(-1)}
         validationSchema={validationSchema(t)}
       >
         {renderForm}

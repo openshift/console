@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { history, getQueryArgument } from '@console/internal/components/utils';
+import { getQueryArgument, history } from '@console/internal/components/utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { HelmRelease, HelmActionType, HelmActionOrigins } from '../../../types/helm-types';
 import { fetchHelmReleaseHistory, getHelmActionConfig } from '../../../utils/helm-utils';
@@ -20,6 +20,7 @@ const HelmReleaseRollbackPage: React.FC = () => {
   const { releaseName, ns: namespace } = useParams();
   const actionOrigin = getQueryArgument('actionOrigin') as HelmActionOrigins;
   const [releaseHistory, setReleaseHistory] = React.useState<HelmRelease[]>(null);
+  const navigate = useNavigate();
 
   const config = React.useMemo(
     () => getHelmActionConfig(HelmActionType.Rollback, releaseName, namespace, t, actionOrigin),
@@ -60,7 +61,7 @@ const HelmReleaseRollbackPage: React.FC = () => {
     return config
       .fetch('/api/helm/release', payload, null, -1)
       .then(() => {
-        history.push(config.redirectURL);
+        navigate(config.redirectURL);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -70,7 +71,7 @@ const HelmReleaseRollbackPage: React.FC = () => {
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
       <DocumentTitle>{config.title}</DocumentTitle>
-      <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={history.goBack}>
+      <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={() => history.go(-1)}>
         {(props) => (
           <HelmReleaseRollbackForm
             {...props}

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, ButtonVariant, Content, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { useTelemetry } from '../../hooks/useTelemetry';
 import CatalogBadges from '../catalog/CatalogBadges';
@@ -24,7 +25,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
-
+  const navigate = useNavigate();
   const defaultContentRenderer: DetailsRendererFunction = (
     props: QuickSearchDetailsProps,
   ): React.ReactNode => {
@@ -46,7 +47,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
           className="ocs-quick-search-details__form-button"
           data-test="create-quick-search"
           onClick={(e) => {
-            handleCta(e, props.selectedItem, props.closeModal, fireTelemetryEvent);
+            handleCta(e, props.selectedItem, navigate, props.closeModal, fireTelemetryEvent);
           }}
         >
           {props.selectedItem.cta.label}

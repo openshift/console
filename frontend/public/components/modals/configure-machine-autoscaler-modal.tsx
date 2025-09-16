@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation, Trans } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 
 import { MachineAutoscalerModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';

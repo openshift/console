@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { RootState } from '@console/internal/redux';
 import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {

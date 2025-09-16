@@ -2,7 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Grid, GridItem, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';

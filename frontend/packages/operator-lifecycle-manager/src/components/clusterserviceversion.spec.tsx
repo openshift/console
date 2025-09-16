@@ -8,7 +8,7 @@ import {
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
-import * as ReactRouter from 'react-router-dom-v5-compat';
+import * as ReactRouter from 'react-router-dom';
 import { ActionMenuVariant } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import {
@@ -72,8 +72,8 @@ jest.mock('@console/shared/src/hooks/redux-selectors', () => {
   };
 });
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

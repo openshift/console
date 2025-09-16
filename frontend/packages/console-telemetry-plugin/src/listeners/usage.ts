@@ -34,7 +34,7 @@ export const eventListener: TelemetryEventListener = async (
       break;
     }
     case 'page': {
-      // page URL changed, incl. history.push / react-router.push/replace ~= page_impression
+      // page URL changed, incl. react-router.push/replace ~= page_impression
       const perspective = properties?.perspective || 'unknown';
       trackUsage({ event: 'page_impression', perspective });
       break;

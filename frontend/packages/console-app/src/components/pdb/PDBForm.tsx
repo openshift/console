@@ -26,10 +26,10 @@ import {
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { MatchLabels } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import {
   ButtonBar,
-  history,
   SelectorInput,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
@@ -71,6 +71,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   replicasCount,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const initialFormValues = initialValuesFromK8sResource(formData);
   const [formValues, setFormValues] = React.useState(initialFormValues);
   const [error, setError] = React.useState('');
@@ -151,7 +152,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
     return response
       .then(() => {
         setInProgress(false);
-        history.push(
+        navigate(
           resourcePathFromModel(PodDisruptionBudgetModel, formValues.name, formValues.namespace),
         );
       })
@@ -302,7 +303,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
                 >
                   {existingResource ? t('console-app~Save') : t('console-app~Create')}
                 </Button>
-                <Button onClick={history.goBack} id="cancel" variant="secondary">
+                <Button onClick={() => navigate(-1)} id="cancel" variant="secondary">
                   {t('console-app~Cancel')}
                 </Button>
               </ActionGroup>
