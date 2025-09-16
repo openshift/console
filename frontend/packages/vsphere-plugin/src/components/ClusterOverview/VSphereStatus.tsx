@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { StackItem, Stack } from '@patternfly/react-core';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import {
   HealthState,
@@ -54,7 +55,7 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ hide, responses, 
 };
 
 export const healthHandler: PrometheusHealthHandler = (responses, t, additionalResource) => {
-  const health = getVSphereHealth(t || (() => ''), responses, additionalResource);
+  const health = getVSphereHealth(t || ((() => '') as TFunction), responses, additionalResource);
   const { state } = health;
 
   let message: string | undefined;

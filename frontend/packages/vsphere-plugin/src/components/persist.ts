@@ -1,5 +1,5 @@
+import { TFunction } from 'i18next';
 import { safeLoad, dump } from 'js-yaml';
-import { TFunction } from 'react-i18next';
 import {
   k8sCreate,
   k8sGet,

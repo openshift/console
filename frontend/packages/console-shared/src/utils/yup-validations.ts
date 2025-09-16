@@ -1,8 +1,7 @@
-import { TFunction } from 'i18next';
 import * as yup from 'yup';
 
 export const nameRegex = /^[a-z]([a-z0-9]-?)*[a-z0-9]$/;
-export const nameValidationSchema = (t: TFunction, maxLength = 263) =>
+export const nameValidationSchema = (t, maxLength = 263) =>
   yup
     .string()
     .matches(nameRegex, {

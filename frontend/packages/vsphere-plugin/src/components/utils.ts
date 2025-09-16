@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer';
-import { TFunction } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 export const parseKeyValue = (config: string, delimiter = '='): { [key: string]: string } => {
   const lines = config.split('\n');
