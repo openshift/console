@@ -254,6 +254,12 @@ export type UseResolvedExtensions = <E extends Extension>(
   ...typeGuards: ExtensionTypeGuard<E>[]
 ) => [ResolvedExtension<E>[], boolean, any[]];
 
+export type GetSegmentAnalytics = () => {
+  // TODO: use proper Segment Analytics API type
+  analytics: Record<string, (...args: any) => any>;
+  analyticsEnabled: boolean;
+};
+
 export type ConsoleFetch = (
   url: string,
   options?: RequestInit,

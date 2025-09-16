@@ -3,12 +3,14 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { Formik, FormikHelpers, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
-  createModalLauncher,
   ModalBody,
   ModalComponentProps,
   ModalFooter,
   ModalTitle,
+  ModalWrapper,
 } from '@console/internal/components/factory';
 import {
   Firehose,
@@ -199,6 +201,22 @@ const DeleteRevisionModalController: React.FC<DeleteRevisionModalControllerProps
 
 type Props = DeleteRevisionModalControllerProps & ModalComponentProps;
 
-export const deleteRevisionModalLauncher = createModalLauncher<Props>(
-  DeleteRevisionModalController,
-);
+const DeleteRevisionModalProvider: OverlayComponent<Props> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <DeleteRevisionModalController
+        cancel={props.closeOverlay}
+        close={props.closeOverlay}
+        {...props}
+      />
+    </ModalWrapper>
+  );
+};
+
+export const useDeleteRevisionModalLauncher = (props: Props) => {
+  const launcher = useOverlay();
+  return React.useCallback(() => launcher<Props>(DeleteRevisionModalProvider, props), [
+    launcher,
+    props,
+  ]);
+};

@@ -1,15 +1,2 @@
-reviewers:
-  - glekner
-  - rawagner
-  - spadgett
-  - vojtechszocs
-approvers:
-  - christoph-jerolimov
-  - invincibleJai
-  - jhadvig
-  - kyoto
-  - rawagner
-  - rhamilto
-  - rohitkrai03
-  - spadgett
-  - vojtechszocs
+labels:
+  - kind/demo-plugin

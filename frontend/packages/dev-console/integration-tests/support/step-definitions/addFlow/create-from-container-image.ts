@@ -69,6 +69,10 @@ When('user selects the {string} from Runtime Icon dropdown', (runTimeIcon: strin
   containerImagePage.selectRunTimeIcon(runTimeIcon);
 });
 
+When('user selects a custom icon with URL {string}', (runTimeIcon: string) => {
+  containerImagePage.selectCustomIcon(runTimeIcon);
+});
+
 When('user selects the application {string} from Application dropdown', (appName: string) => {
   containerImagePage.selectOrCreateApplication(appName);
 });

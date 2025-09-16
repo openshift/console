@@ -39,7 +39,7 @@ describe(ErrorBoundary.name, () => {
 });
 
 describe('withFallback', () => {
-  const Component: React.SFC<{ size: number }> = (props) => <span>childrens: {props.size}</span>;
+  const Component: React.FCC<{ size: number }> = (props) => <span>childrens: {props.size}</span>;
 
   it('returns the given component wrapped in an `ErrorBoundary`', () => {
     const WrappedComponent = withFallback(Component);

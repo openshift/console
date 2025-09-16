@@ -23,7 +23,7 @@ import {
 } from '@console/shared/src/constants/common';
 
 /**!
- * Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 6.7.2 - https://fontawesome.com
  * License - https://fontawesome.com/license/free
  * Copyright 2025 Fonticons, Inc.
  */
@@ -36,7 +36,7 @@ const IBeamCursorIcon = createIcon({
 });
 
 /**!
- * Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com
+ * Font Awesome Free 6.7.2 - https://fontawesome.com
  * License - https://fontawesome.com/license/free
  * Copyright 2025 Fonticons, Inc.
  */

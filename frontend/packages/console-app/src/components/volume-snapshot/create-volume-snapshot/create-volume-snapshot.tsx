@@ -26,8 +26,6 @@ import {
   ButtonBar,
   ResourceIcon,
   resourceObjPath,
-  HandlePromiseProps,
-  withHandlePromise,
   convertToBaseValue,
   humanizeBinaryBytes,
   getURLSearchParams,
@@ -58,6 +56,7 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (
@@ -73,7 +72,7 @@ const LoadingComponent: React.FC = () => (
   </Grid>
 );
 
-const SnapshotClassDropdown: React.FC<SnapshotClassDropdownProps> = (props) => {
+const SnapshotClassDropdown = (props: SnapshotClassDropdownProps) => {
   const { selectedKey, filter } = props;
   const kind = referenceForModel(VolumeSnapshotClassModel);
   const resources = [{ kind }];
@@ -157,9 +156,11 @@ const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
     defaultSnapshotClassAnnotation
   ] === 'true';
 
-const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
-  const { namespace, pvcName, handlePromise, inProgress, errorMessage } = props;
+const CreateSnapshotForm = (props: SnapshotResourceProps) => {
+  const { namespace, pvcName } = props;
   const navigate = useNavigate();
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler<VolumeSnapshotKind>();
+
   const { t } = useTranslation();
   const [selectedPVCName, setSelectedPVCName] = React.useState(pvcName);
   const [pvcObj, setPVCObj] = React.useState<PersistentVolumeClaimKind>(null);
@@ -217,7 +218,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
     setSelectedPVCName(name);
   };
 
-  const create = (event: React.FormEvent<EventTarget>) => {
+  const create = (event: React.FormEvent<EventTarget>): void => {
     event.preventDefault();
     const snapshotTemplate: VolumeSnapshotKind = {
       apiVersion: apiVersionForModel(VolumeSnapshotModel),
@@ -239,9 +240,11 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
       },
     };
 
-    handlePromise(k8sCreate(VolumeSnapshotModel, snapshotTemplate), (resource) => {
-      navigate(resourceObjPath(resource, referenceFor(resource)));
-    });
+    handlePromise(k8sCreate(VolumeSnapshotModel, snapshotTemplate))
+      .then((resource) => {
+        navigate(resourceObjPath(resource, referenceFor(resource)));
+      })
+      .catch(() => {});
   };
 
   const isBound = (pvc: PersistentVolumeClaimKind) => pvc?.status?.phase === 'Bound';
@@ -349,7 +352,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
       </PaneBody>
     </div>
   );
-});
+};
 
 export const VolumeSnapshot: React.FC = () => {
   const params = useParams();
@@ -365,7 +368,7 @@ type SnapshotClassDropdownProps = {
   dataTest?: string;
 };
 
-type SnapshotResourceProps = HandlePromiseProps & {
+type SnapshotResourceProps = {
   namespace: string;
   pvcName?: string;
 };

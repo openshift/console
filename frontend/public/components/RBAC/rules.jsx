@@ -2,11 +2,12 @@
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 
-import { Divider } from '@patternfly/react-core';
+import { Divider, ButtonVariant } from '@patternfly/react-core';
 import { k8sPatch } from '../../module/k8s';
 import { RoleModel, ClusterRoleModel } from '../../models';
 import { Kebab, EmptyBox, ResourceIcon } from '../utils';
-import { confirmModal } from '../modals';
+
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { useTranslation } from 'react-i18next';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
@@ -132,30 +133,31 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
 
 const RuleKebab = ({ name, namespace, i }) => {
   const { t } = useTranslation();
-  const DeleteRule = () => ({
-    label: t('public~Delete rule'),
-    callback: () =>
-      confirmModal({
-        title: t('public~Delete rule'),
-        message: t('public~Are you sure you want to delete rule #{{ruleNumber}}?', {
-          ruleNumber: i,
-        }),
-        btnText: t('public~Delete rule'),
-        executeFn: () => {
-          const kind = namespace ? RoleModel : ClusterRoleModel;
-          return k8sPatch(kind, { metadata: { name, namespace } }, [
-            {
-              op: 'remove',
-              path: `/rules/${i}`,
-            },
-          ]);
+  const openDeleteRuleConfirm = useWarningModal({
+    title: t('public~Delete rule'),
+    children: t('public~Are you sure you want to delete rule #{{ruleNumber}}?', {
+      ruleNumber: i,
+    }),
+    confirmButtonLabel: t('public~Delete rule'),
+    confirmButtonVariant: ButtonVariant.danger,
+    onConfirm: () => {
+      const kind = namespace ? RoleModel : ClusterRoleModel;
+      return k8sPatch(kind, { metadata: { name, namespace } }, [
+        {
+          op: 'remove',
+          path: `/rules/${i}`,
         },
-      }),
+      ]);
+    },
+    ouiaId: 'RBACDeleteRuleConfirmation',
   });
 
   const options = [
     // EditRule,
-    DeleteRule,
+    () => ({
+      label: t('public~Delete rule'),
+      callback: () => openDeleteRuleConfirm(),
+    }),
   ].map((f) => f(name, namespace, i));
   return <Kebab options={options} />;
 };

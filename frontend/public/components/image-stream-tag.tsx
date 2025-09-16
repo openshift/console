@@ -128,7 +128,7 @@ export const SupportedPlatformsTable = (props) => {
 
 SupportedPlatformsTable.displayName = 'SupportedPlatformsTable';
 
-export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
+export const ImageStreamTagsDetails: React.FCC<ImageStreamTagsDetailsProps> = ({
   obj: imageStreamTag,
   imageStream,
 }) => {
@@ -326,7 +326,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.history(ImageStreamTagHistory),
 ];
-export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPageProps> = (props) => {
+export const ImageStreamTagsDetailsPage: React.FCC<ImageStreamTagsDetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();

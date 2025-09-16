@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { HandlePromiseProps, withHandlePromise, resourceListPathFromModel } from '../utils';
+import { resourceListPathFromModel } from '../utils';
 import { getName, YellowExclamationTriangleIcon } from '@console/shared';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { isPVCDelete, PVCDelete } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
@@ -14,14 +14,16 @@ import {
 } from '../factory';
 import { k8sKill, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel } from '../../models';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
-  const { pvc, inProgress, errorMessage, handlePromise, close, cancel } = props;
+const DeletePVCModal = (props: DeletePVCModalProps) => {
+  const { pvc, close, cancel } = props;
   const [pvcDeleteExtensions] = useResolvedExtensions<PVCDelete>(isPVCDelete);
   const pvcName = getName(pvc);
   const { t } = useTranslation();
   const pvcMetadata = { metadata: { ...pvc?.metadata } };
   const navigate = useNavigate();
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const submit = (e) => {
     e.preventDefault();
@@ -32,7 +34,7 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
         predicate(pvcMetadata) && onPVCKill(pvcMetadata),
     );
 
-    handlePromise(Promise.all([promise, ...extensionPromises]), () => {
+    handlePromise(Promise.all([promise, ...extensionPromises])).then(() => {
       close();
       // Redirect to resourcce list page if the resouce is deleted.
       navigate(resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata.namespace));
@@ -74,11 +76,10 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
       />
     </form>
   );
-});
+};
 
 export type DeletePVCModalProps = {
   pvc: PersistentVolumeClaimKind;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;
 
 export default createModalLauncher(DeletePVCModal);

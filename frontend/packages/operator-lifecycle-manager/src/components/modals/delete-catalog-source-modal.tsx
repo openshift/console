@@ -7,19 +7,17 @@ import {
   ModalSubmitFooter,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
-import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
   kind,
   resource,
   close,
   cancel,
-  inProgress,
-  errorMessage,
-  handlePromise,
 }) => {
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { t } = useTranslation();
   const [confirmed, setConfirmed] = React.useState<boolean>(false);
   const isConfirmed = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -27,9 +25,13 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
   };
 
   const submit = React.useCallback(
-    (event: React.FormEvent<EventTarget>) => {
+    (event: React.FormEvent<EventTarget>): void => {
       event.preventDefault();
-      return handlePromise(k8sKill(kind, resource), close);
+      handlePromise(k8sKill(kind, resource))
+        .then(() => {
+          close();
+        })
+        .catch(() => {});
     },
     [close, handlePromise, kind, resource],
   );
@@ -76,9 +78,6 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
 type DeleteCatalogSourceModalProps = {
   kind: K8sKind;
   resource: K8sResourceKind;
-} & ModalComponentProps &
-  HandlePromiseProps;
+} & ModalComponentProps;
 
-export const deleteCatalogSourceModal = createModalLauncher(
-  withHandlePromise(DeleteCatalogSourceModal),
-);
+export const deleteCatalogSourceModal = createModalLauncher(DeleteCatalogSourceModal);

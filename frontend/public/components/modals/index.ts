@@ -87,11 +87,6 @@ export const expandPVCModal = (props) =>
     m.expandPVCModal(props),
   );
 
-export const removeVolumeModal = (props) =>
-  import('./remove-volume-modal' /* webpackChunkName: "remove-volume-modal" */).then((m) =>
-    m.removeVolumeModal(props),
-  );
-
 export const configureClusterUpstreamModal = (props) =>
   import(
     './configure-cluster-upstream-modal' /* webpackChunkName: "configure-cluster-upstream-modal" */
@@ -110,11 +105,6 @@ export const createAlertRoutingModal = (props) =>
 export const createColumnManagementModal = (props) =>
   import('./column-management-modal' /* webpackChunkName: "column-management-modal" */).then((m) =>
     m.createColumnManagementModal(props),
-  );
-
-export const addUsersModal = (props) =>
-  import('./add-users-modal' /* webpackChunkName: "add-users-modal" */).then((m) =>
-    m.addUsersModal(props),
   );
 
 export const removeUserModal = (props) =>

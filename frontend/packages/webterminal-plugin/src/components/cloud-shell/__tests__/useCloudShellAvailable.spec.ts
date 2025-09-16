@@ -1,7 +1,7 @@
 import { act } from 'react-dom/test-utils';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { checkTerminalAvailable } from '../cloud-shell-utils';
-import useCloudShellAvailable from '../useCloudShellAvailable';
+import { useCloudShellAvailable } from '../useCloudShellAvailable';
 // Need to import useFlag after useCloudShellAvailable for the mock to work correctly. FInd out why?
 // eslint-disable-next-line import/order
 import { useFlag } from '@console/shared/src/hooks/flag';

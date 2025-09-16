@@ -1,5 +1,4 @@
 {
-  "Ecosystem": "Écosystème",
   "Extension Catalog": "Catalogue d'extensions",
   "Installed Extensions": "Extensions installées",
   "Extension Catalog Items": "Articles du catalogue d'extension",
@@ -8,5 +7,5 @@
   "Capability level": "Niveau de capacité",
   "Infrastructure features": "Caractéristiques de l’infrastructure",
   "Valid subscription": "Abonnement valide",
-  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can purchase commercial software through <2>Red Hat Marketplace</2>. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Découvrez les opérateurs de la communauté Kubernetes et des partenaires Red Hat, sélectionnés par Red Hat. Vous pouvez acheter des logiciels commerciaux via<2> Place de marché Red Hat</2> Vous pouvez installer des opérateurs sur vos clusters pour fournir des modules complémentaires facultatifs et des services partagés à vos développeurs."
+  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Découvrez les opérateurs de la communauté Kubernetes et des partenaires Red Hat, sélectionnés par Red Hat. Vous pouvez installer des opérateurs sur vos clusters pour fournir des modules complémentaires et des services partagés à vos développeurs."
 }

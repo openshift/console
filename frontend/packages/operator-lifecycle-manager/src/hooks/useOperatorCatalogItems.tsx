@@ -279,6 +279,7 @@ export const useOperatorCatalogItems = () => {
             provider,
             source,
             validSubscription: validSubscriptionFilters,
+            metadataName: pkg.metadata.name, // Add metadata name for enhanced scoring
           },
           badges,
           creationTimestamp: createdAt,

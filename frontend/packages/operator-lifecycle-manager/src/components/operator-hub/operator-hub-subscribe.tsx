@@ -1219,7 +1219,7 @@ const OperatorHubSubscribe: React.FC<OperatorHubSubscribeFormProps> = (props) =>
   </StatusBox>
 );
 
-export const OperatorHubSubscribePage: React.SFC = (props) => {
+export const OperatorHubSubscribePage: React.FCC = (props) => {
   return (
     <Firehose
       resources={[

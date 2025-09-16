@@ -153,9 +153,23 @@ export const AreaChart: React.FC<AreaChartProps> = ({
             scale={{ x: 'time', y: 'linear' }}
             padding={padding}
             domain={domain}
+            data-test="area-chart"
           >
-            {xAxis && <ChartAxis tickCount={tickCount} tickFormat={xTickFormat} />}
-            {yAxis && <ChartAxis dependentAxis tickCount={tickCount} tickFormat={yTickFormat} />}
+            {xAxis && (
+              <ChartAxis
+                tickCount={tickCount}
+                tickFormat={xTickFormat}
+                data-test="area-chart-x-axis"
+              />
+            )}
+            {yAxis && (
+              <ChartAxis
+                dependentAxis
+                tickCount={tickCount}
+                tickFormat={yTickFormat}
+                data-test="area-chart-y-axis"
+              />
+            )}
             <ChartGroup>
               {processedData.map((datum, index) => (
                 <ChartArea

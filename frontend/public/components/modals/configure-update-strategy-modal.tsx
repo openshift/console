@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { k8sPatch, Patch, DeploymentUpdateStrategy, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { withHandlePromise, HandlePromiseProps } from '../utils';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 export const getNumberOrPercent = (value) => {
   if (typeof value === 'undefined') {
@@ -145,21 +145,23 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
   );
 };
 
-export const ConfigureUpdateStrategyModal = withHandlePromise(
-  (props: ConfigureUpdateStrategyModalProps) => {
-    const [strategyType, setStrategyType] = React.useState(
-      _.get(props.deployment.spec, 'strategy.type'),
-    );
-    const [maxUnavailable, setMaxUnavailable] = React.useState(
-      _.get(props.deployment.spec, 'strategy.rollingUpdate.maxUnavailable', '25%'),
-    );
-    const [maxSurge, setMaxSurge] = React.useState(
-      _.get(props.deployment.spec, 'strategy.rollingUpdate.maxSurge', '25%'),
-    );
+export const ConfigureUpdateStrategyModal = (props: ConfigureUpdateStrategyModalProps) => {
+  const { deployment, close } = props;
+  const [strategyType, setStrategyType] = React.useState(
+    _.get(props.deployment.spec, 'strategy.type'),
+  );
+  const [maxUnavailable, setMaxUnavailable] = React.useState(
+    _.get(props.deployment.spec, 'strategy.rollingUpdate.maxUnavailable', '25%'),
+  );
+  const [maxSurge, setMaxSurge] = React.useState(
+    _.get(props.deployment.spec, 'strategy.rollingUpdate.maxSurge', '25%'),
+  );
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-    const submit = (event) => {
+  const submit = React.useCallback(
+    (event) => {
       event.preventDefault();
 
       const patch: Patch = { path: '/spec/strategy/rollingUpdate', op: 'remove' };
@@ -170,37 +172,38 @@ export const ConfigureUpdateStrategyModal = withHandlePromise(
         };
         patch.op = 'add';
       }
-      const promise = k8sPatch(DeploymentModel, props.deployment, [
+      const promise = k8sPatch(DeploymentModel, deployment, [
         patch,
         { path: '/spec/strategy/type', value: strategyType, op: 'replace' },
       ]);
-      props.handlePromise(promise, props.close);
-    };
+      handlePromise(promise).then(() => close());
+    },
+    [strategyType, maxUnavailable, maxSurge, deployment, close, handlePromise],
+  );
 
-    return (
-      <form onSubmit={submit} name="form" className="modal-content">
-        <ModalTitle>{t('public~Edit update strategy')}</ModalTitle>
-        <ModalBody>
-          <ConfigureUpdateStrategy
-            strategyType={strategyType}
-            maxUnavailable={maxUnavailable}
-            maxSurge={maxSurge}
-            onChangeStrategyType={setStrategyType}
-            onChangeMaxUnavailable={setMaxUnavailable}
-            onChangeMaxSurge={setMaxSurge}
-            replicas={props.deployment.spec.replicas}
-          />
-        </ModalBody>
-        <ModalSubmitFooter
-          errorMessage={props.errorMessage}
-          inProgress={props.inProgress}
-          submitText={t('public~Save')}
-          cancel={props.cancel}
+  return (
+    <form onSubmit={submit} name="form" className="modal-content">
+      <ModalTitle>{t('public~Edit update strategy')}</ModalTitle>
+      <ModalBody>
+        <ConfigureUpdateStrategy
+          strategyType={strategyType}
+          maxUnavailable={maxUnavailable}
+          maxSurge={maxSurge}
+          onChangeStrategyType={setStrategyType}
+          onChangeMaxUnavailable={setMaxUnavailable}
+          onChangeMaxSurge={setMaxSurge}
+          replicas={props.deployment.spec.replicas}
         />
-      </form>
-    );
-  },
-);
+      </ModalBody>
+      <ModalSubmitFooter
+        errorMessage={errorMessage}
+        inProgress={inProgress}
+        submitText={t('public~Save')}
+        cancel={props.cancel}
+      />
+    </form>
+  );
+};
 
 export const configureUpdateStrategyModal = createModalLauncher(ConfigureUpdateStrategyModal);
 
@@ -218,11 +221,8 @@ export type ConfigureUpdateStrategyProps = {
 
 export type ConfigureUpdateStrategyModalProps = {
   deployment: K8sResourceKind;
-  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
-  inProgress: boolean;
-  errorMessage: string;
   cancel?: () => void;
   close?: () => void;
-} & HandlePromiseProps;
+};
 
 ConfigureUpdateStrategy.displayName = 'ConfigureUpdateStrategy';

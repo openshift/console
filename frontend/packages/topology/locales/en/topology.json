@@ -7,6 +7,9 @@
   "Graph": "Graph",
   "List": "List",
   "Move connector": "Move connector",
+  "Delete Connector?": "Delete Connector?",
+  "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?",
+  "Delete": "Delete",
   "Delete connector": "Delete connector",
   "Edit application grouping": "Edit application grouping",
   "View all {{size}}": "View all {{size}}",
@@ -90,7 +93,6 @@
   "View all samples ({{itemCount, number}})": "View all samples ({{itemCount, number}})",
   "Add to Project": "Add to Project",
   "Quick search button": "Quick search button",
-  "Traffic connector": "Traffic connector",
   "Connections": "Connections",
   "Secret": "Secret",
   "Kiali link": "Kiali link",
@@ -165,9 +167,6 @@
   "Are you sure you want to move <1>{{nodeLabel}}</1> from {{sourceLabel}} to {{targetLabel}}?": "Are you sure you want to move <1>{{nodeLabel}}</1> from {{sourceLabel}} to {{targetLabel}}?",
   "Are you sure you want to remove <1>{{nodeLabel}}</1> from {{sourceLabel}}?": "Are you sure you want to remove <1>{{nodeLabel}}</1> from {{sourceLabel}}?",
   "Remove": "Remove",
-  "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?",
-  "Delete Connector?": "Delete Connector?",
-  "Delete": "Delete",
   "Unable to update application, invalid resource type: {{kind}}": "Unable to update application, invalid resource type: {{kind}}",
   "Can not create a connection from a node to itself.": "Can not create a connection from a node to itself."
 }

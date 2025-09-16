@@ -23,7 +23,7 @@ import './CloudShellDrawer.scss';
 
 type CloudShellDrawerProps = React.PropsWithChildren<{
   open?: boolean;
-  onClose: () => void;
+  onClose?: () => void;
 }>;
 
 const getMastheadHeight = (): number => {
@@ -35,7 +35,11 @@ const getMastheadHeight = (): number => {
 
 const HEADER_HEIGHT = `calc(${pfSplitterHeight.var} + var(--co-cloud-shell-header-height))`;
 
-const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ open = true, onClose, children }) => {
+export const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({
+  open = true,
+  onClose = () => undefined,
+  children,
+}) => {
   const [expanded, setExpanded] = React.useState<boolean>(true);
   const [height, setHeight] = React.useState<number>(385);
   const { t } = useTranslation('webterminal-plugin');
@@ -54,9 +58,9 @@ const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ open = true, onClo
         'co-cloud-shell-drawer__body-collapsed': !expanded,
       })}
       isResizable
-      onResize={(_, w) => {
-        setExpanded(w > 47); // 47px is an arbitrary computed value of HEADER_HEIGHT.
-        setHeight(w);
+      onResize={(_, h) => {
+        setExpanded(h > 47); // 47px is an arbitrary computed value of HEADER_HEIGHT.
+        setHeight(h);
       }}
       defaultSize={expanded ? `${height}px` : '0px'}
       minSize={HEADER_HEIGHT}
@@ -108,5 +112,3 @@ const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({ open = true, onClo
     </Drawer>
   );
 };
-
-export default CloudShellDrawer;

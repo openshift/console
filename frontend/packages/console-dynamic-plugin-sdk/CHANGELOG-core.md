@@ -7,8 +7,8 @@ particular package.
 For released (GA) versions of Console, use `4.x.z` packages.
 For current development version of Console, use `4.x.0-prerelease.n` packages.
 
-For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
-in [Console dynamic plugins README](./README.md).
+For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
+table in [Console dynamic plugins README](./README.md).
 
 ## 4.20.0-prerelease.1 - 2025-08-15
 
@@ -48,6 +48,14 @@ in [Console dynamic plugins README](./README.md).
 - Add `customData` prop to `HorizontalNav` component ([OCPBUGS-45319], [#14575])
 - Allow custom popover description in extension type `console.resource/details-item` ([CONSOLE-4269], [#14487])
 - Change generated JS build target from `es2016` to `es2021` ([CONSOLE-4400], [#14620])
+
+## 4.18.0 - 2025-09-04
+
+> Initial release for OCP Console 4.18.
+
+- Fix `href` handling bug for extension type `console.tab/horizontalNav` ([OCPBUGS-58258], [#15231])
+- Improve `useModal` hook to support multiple modals and prop pass-through ([OCPBUGS-49709], [#15139])
+- Allow custom popover description in extension type `console.resource/details-item` ([CONSOLE-4269], [#14487])
 
 ## 1.8.0 - 2024-11-04
 

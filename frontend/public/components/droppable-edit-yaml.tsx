@@ -125,7 +125,7 @@ export const DroppableEditYAML: React.FCC<DroppableEditYAMLProps> = ({
         }),
       );
     },
-    [getDropErrorMessage, maxFileUploadSize],
+    [getDropErrorMessage],
   );
 
   return (

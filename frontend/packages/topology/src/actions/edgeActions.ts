@@ -1,9 +1,11 @@
+import { useMemo } from 'react';
+import { ButtonVariant } from '@patternfly/react-core';
 import { Edge, isNode, Node } from '@patternfly/react-topology';
 import i18next from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { Action, K8sModel } from '@console/dynamic-plugin-sdk';
+import { errorModal } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils';
-import { KebabOption } from '@console/internal/components/utils/kebab';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,
@@ -14,41 +16,23 @@ import {
   TYPE_KAFKA_CONNECTION_LINK,
   TYPE_MANAGED_KAFKA_CONNECTION,
 } from '@console/knative-plugin/src/topology/const';
-import { moveConnectionModal } from '../components/modals/MoveConnectionModal';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import { useMoveConnectionModalLauncher } from '../components/modals/MoveConnectionModal';
 import { TYPE_CONNECTS_TO, TYPE_TRAFFIC_CONNECTOR } from '../const';
-import { removeConnection } from '../utils';
-import { getResource } from '../utils/topology-utils';
-
-/**
- * @deprecated migrated to use new Action extension, use MoveConnectorAction
- */
-const moveConnection = (edge: Edge, availableTargets: Node[]) => {
-  const resourceObj = getResource(edge.getSource());
-  const resourceModel = modelFor(referenceFor(resourceObj));
-
-  return {
-    // t('topology~Move connector')
-    labelKey: 'topology~Move connector',
-    callback: () => {
-      moveConnectionModal({ edge, availableTargets });
-    },
-    isDisabled: availableTargets.length <= 1,
-    accessReview: asAccessReview(resourceModel, resourceObj, 'delete'),
-  };
-};
+import { removeTopologyResourceConnection, getResource } from '../utils/topology-utils';
 
 const getAvailableTargetForEdge = (edge: Edge, nodes: Node[]) => {
   const currentTargets = edge
-    .getSource()
-    .getSourceEdges()
-    .map((e) => e.getTarget().getId());
+    ?.getSource?.()
+    ?.getSourceEdges()
+    ?.map((e) => e?.getTarget()?.getId());
 
   return nodes
     .filter((n) => {
-      if (n.getId() === edge.getSource().getId()) {
+      if (n.getId() === edge?.getSource?.().getId()) {
         return false;
       }
-      if (n.getId() !== edge.getTarget().getId() && currentTargets.includes(n.getId())) {
+      if (n.getId() !== edge?.getTarget?.().getId() && currentTargets?.includes(n.getId())) {
         return false;
       }
       if (n.getType() === TYPE_EVENT_SOURCE) {
@@ -72,44 +56,67 @@ const getAvailableTargetForEdge = (edge: Edge, nodes: Node[]) => {
     .sort((n1, n2) => n1.getLabel().localeCompare(n2.getLabel()));
 };
 
-export const MoveConnectorAction = (kindObj: K8sModel, element: Edge): Action => {
-  const resourceObj = getResource(element.getSource());
+export const useMoveConnectorAction = (
+  kindObj: K8sModel,
+  element: Edge,
+  resourceObj?: any,
+): Action => {
+  const resource = resourceObj || getResource(element?.getSource?.());
 
   const nodes = element
     .getController()
     .getElements()
     .filter((e) => isNode(e) && !e.isGroup()) as Node[];
-  const availableTargets = getAvailableTargetForEdge(element, nodes);
-
-  return {
-    id: 'move-visual-connector',
-    label: i18next.t('topology~Move connector'),
-    cta: () => {
-      moveConnectionModal({ edge: element, availableTargets });
-    },
-    disabled: availableTargets.length <= 1,
-    accessReview: asAccessReview(kindObj, resourceObj, 'delete'),
-  };
+  const availableTargets = element && getAvailableTargetForEdge(element, nodes);
+  const moveConnectionModalLauncher = useMoveConnectionModalLauncher({
+    edge: element,
+    availableTargets,
+  });
+  return useMemo(
+    () => ({
+      id: 'move-visual-connector',
+      label: i18next.t('topology~Move connector'),
+      cta: moveConnectionModalLauncher,
+      disabled: availableTargets.length <= 1,
+      accessReview: asAccessReview(kindObj, resource, 'delete'),
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [availableTargets.length, kindObj, resource],
+  );
 };
 
-export const DeleteConnectorAction = (kindObj: K8sModel, element: Edge): Action => {
-  const resourceObj = getResource(element.getSource());
-  return {
-    id: 'delete-connector',
-    label: i18next.t('topology~Delete connector'),
-    cta: () => {
-      removeConnection(element);
-    },
-    accessReview: asAccessReview(kindObj, resourceObj, 'delete'),
-  };
-};
+export const useDeleteConnectorAction = (
+  kindObj: K8sModel,
+  element: Edge,
+  resourceObj?: any,
+): Action => {
+  const resource = resourceObj || getResource(element.getSource?.());
+  const { t } = useTranslation();
 
-/**
- * @deprecated remove this after migrating the Traffic connector side-panel to dynamic extensions
- */
-export const edgeActions = (edge: Edge, nodes: Node[]): KebabOption[] => {
-  const actions: KebabOption[] = [];
-  const availableTargets = getAvailableTargetForEdge(edge, nodes);
-  actions.push(moveConnection(edge, availableTargets));
-  return actions;
+  const openConfirm = useWarningModal({
+    title: t('topology~Delete Connector?'),
+    children: t(
+      'topology~Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?',
+    ),
+    confirmButtonLabel: t('topology~Delete'),
+    confirmButtonVariant: ButtonVariant.danger,
+    onConfirm: () => {
+      return removeTopologyResourceConnection(element, resource).catch((err) => {
+        err && errorModal({ error: err.message });
+      });
+    },
+    ouiaId: 'TopologyDeleteConnectorConfirmation',
+  });
+
+  return useMemo(
+    () => ({
+      id: 'delete-connector',
+      label: t('topology~Delete connector'),
+      cta: () => openConfirm(),
+      accessReview: asAccessReview(kindObj, resource, 'delete'),
+    }),
+    // missing openConfirm dependency, that causes max depth exceeded error
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [kindObj, resource, t],
+  );
 };

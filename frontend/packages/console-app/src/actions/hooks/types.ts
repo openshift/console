@@ -35,6 +35,11 @@ export enum VolumeSnapshotActionCreator {
   RestorePVC = 'RestorePVC',
 }
 
+export enum BuildActionCreator {
+  CloneBuild = 'CloneBuild',
+  CancelBuild = 'CancelBuild',
+}
+
 export enum ReplicaSetActionCreator {
   RollbackDeploymentAction = 'RollbackDeploymentAction',
 }
@@ -53,4 +58,10 @@ export enum BindingActionCreator {
   EditBindingSubject = 'EditBindingSubject',
   DeleteBindingSubject = 'DeleteBindingSubject',
   ImpersonateBindingSubject = 'ImpersonateBindingSubject',
+}
+
+export enum PDBActionCreator {
+  AddPDB = 'AddPDB',
+  EditPDB = 'EditPDB',
+  DeletePDB = 'DeletePDB',
 }

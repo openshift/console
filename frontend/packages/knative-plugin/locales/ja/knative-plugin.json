@@ -26,7 +26,6 @@
   "​​**Event sinks** are resources that can receive incoming events from other resources.": "​**Event シンク** は、他のリソースから受信イベントを受信できるリソースです。",
   "Serving": "Serving",
   "Eventing": "Eventing",
-  "Create Service Binding": "Service Binding の作成",
   "Subscriptions": "Subscriptions",
   "Triggers": "Triggers",
   "Configuration": "設定",

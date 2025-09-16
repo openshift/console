@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
 import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
@@ -41,7 +41,7 @@ export const useSubscriptionActions = (
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
   const installedCSV = obj.status?.installedCSV;
 
-  const factory = React.useMemo(
+  const factory = useMemo(
     () => ({
       [SubscriptionActionCreator.RemoveSubscription]: () => ({
         id: 'remove-subscription',
@@ -64,7 +64,7 @@ export const useSubscriptionActions = (
   );
 
   // filter and initialize requested actions or construct list of all SubscriptionActions
-  const actions = React.useMemo<Action[]>(() => {
+  const actions = useMemo<Action[]>(() => {
     if (memoizedFilterActions) {
       return memoizedFilterActions.map((creator) => factory[creator]());
     }

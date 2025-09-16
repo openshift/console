@@ -106,7 +106,7 @@ const getBuildConfigKebabActions = (latestBuild?: K8sResourceKind): KebabAction[
   ...Kebab.factory.common,
 ];
 
-export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {
+export const BuildConfigsDetails: React.FCC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {
   const hasPipeline = buildConfig.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
   const { t } = useTranslation();
   return (
@@ -250,7 +250,7 @@ const getBuildStatus = (buildConfig: BuildConfig) => {
   return buildConfig?.latestBuild?.status?.phase || 'Unknown';
 };
 
-export const BuildConfigsList: React.SFC<BuildConfigsListProps> = (props) => {
+export const BuildConfigsList: React.FCC<BuildConfigsListProps> = (props) => {
   const { t } = useTranslation();
   const BuildConfigsTableHeader = () => {
     return [

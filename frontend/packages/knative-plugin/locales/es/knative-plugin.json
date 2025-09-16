@@ -26,7 +26,6 @@
   "​​**Event sinks** are resources that can receive incoming events from other resources.": "​​**Sumideros de eventos** son recursos que pueden recibir eventos entrantes de otros recursos.",
   "Serving": "Prestación de servicio",
   "Eventing": "Eventos",
-  "Create Service Binding": "Crear enlace de servicio",
   "Subscriptions": "Suscripciones",
   "Triggers": "Desencadenantes",
   "Configuration": "Configuración",

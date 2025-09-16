@@ -1,35 +1,50 @@
-import * as React from 'react';
+import {
+  MouseEventHandler,
+  PropsWithChildren,
+  ReactNode,
+  Ref,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
+import { detect } from 'chardet';
 import {
   Alert,
+  AlertActionCloseButton,
   AlertActionLink,
+  AlertGroup,
+  Banner,
+  BannerStatus,
   Button,
-  Divider,
-  Dropdown,
-  DropdownGroup,
-  DropdownItem,
-  DropdownList,
   Flex,
-  FlexItem,
   MenuToggle,
   MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
-  Switch,
+  Toolbar,
+  ToolbarContent,
+  ToolbarGroup,
+  ToolbarItem,
+  ToolbarToggleGroup,
   Tooltip,
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import {
+  BugIcon,
+  CogIcon,
   CompressIcon,
-  EllipsisVIcon,
-  ExpandIcon,
   DownloadIcon,
-  OutlinedWindowRestoreIcon,
+  ExpandIcon,
   OutlinedPlayCircleIcon,
+  SearchIcon,
 } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import {
@@ -39,7 +54,9 @@ import {
 } from '@console/shared/src/constants';
 import { useUserSettings } from '@console/shared';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
-import { LoadingInline, TogglePlay } from './';
+import { Loading, TogglePlay } from './';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
+import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
@@ -47,9 +64,8 @@ import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
 import { RootState } from '@console/internal/redux';
 import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
-import { useFlag, useIsMobile } from '@console/shared/src/hooks';
+import { useFlag } from '@console/shared/src/hooks';
 import { usePrevious } from '@console/shared/src/hooks/previous';
-import { Link } from 'react-router-dom';
 import { resourcePath } from './resource-link';
 import { isWindowsPod } from '../../module/k8s/pods';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
@@ -72,14 +88,14 @@ const DEFAULT_BUFFER_SIZE = 1000;
 
 // Messages to display for corresponding log status
 const streamStatusMessages = {
-  // t('public~Log stream ended.')
-  [STREAM_EOF]: 'public~Log stream ended.',
-  // t('public~Loading log...')
-  [STREAM_LOADING]: 'public~Loading log...',
-  // t('public~Log stream paused.')
-  [STREAM_PAUSED]: 'public~Log stream paused.',
-  // t('public~Log streaming...')
-  [STREAM_ACTIVE]: 'public~Log streaming...',
+  // t('Log stream ended.')
+  [STREAM_EOF]: 'Log stream ended.',
+  // t('Loading log...')
+  [STREAM_LOADING]: 'Loading log...',
+  // t('Log stream paused.')
+  [STREAM_PAUSED]: 'Log stream paused.',
+  // t('Log streaming...')
+  [STREAM_ACTIVE]: 'Log streaming...',
 };
 
 const replaceVariables = (template: string, values: any): string => {
@@ -117,19 +133,52 @@ const getResourceLogURL = (
   });
 };
 
-const HeaderBanner = ({ lines }) => {
-  const { t } = useTranslation();
+/** get a filename for log download */
+const getLogDownloadFilename = (resource: K8sResourceKind, containerName?: string) => {
+  const parts = [resource?.metadata?.name, containerName].filter(Boolean);
+  return `${parts.join('-')}.log`;
+};
+
+/** detect encoding in raw pod logs to support multi-language characters */
+const handleRawLogs = (logURL: string): MouseEventHandler<HTMLButtonElement> => {
+  return (e) => {
+    e.preventDefault();
+
+    fetch(logURL)
+      .then((response) => response.arrayBuffer())
+      .then((arrayBuffer) => {
+        const encoding = detect(new Uint8Array(arrayBuffer));
+        const text = new TextDecoder(encoding).decode(arrayBuffer);
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch and decode log file:', err);
+      });
+  };
+};
+
+const HeaderBanner = ({ lines, status }: { lines: string[]; status: string }) => {
+  const { t } = useTranslation('public');
   const count = lines[lines.length - 1] || lines.length === 0 ? lines.length : lines.length - 1;
-  const headerText = t('public~{{count}} line', { count });
-  return <>{headerText}</>;
+  const headerText = t('{{count}} line', { count });
+  const isEOF = status === STREAM_EOF;
+  return (
+    <Banner status={(isEOF ? 'info' : undefined) as BannerStatus}>
+      {headerText}
+      {isEOF && ` - ${t('Log stream ended.')}`}
+    </Banner>
+  );
 };
 
 const FooterButton = ({ setStatus, linesBehind, className }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const resumeText =
     linesBehind > 0
-      ? t('public~Resume stream and show {{count}} new line', { count: linesBehind })
-      : t('public~Resume stream');
+      ? t('Resume stream and show {{count}} new line', { count: linesBehind })
+      : t('Resume stream');
   const handleClick = () => {
     setStatus(STREAM_ACTIVE);
   };
@@ -160,7 +209,7 @@ const showDebugAction = (pod: PodKind, containerName: string) => {
 };
 
 // Component for log stream controls
-export const LogControls: React.FC<LogControlsProps> = ({
+const LogControls: React.FCC<LogControlsProps> = ({
   dropdown,
   toggleFullscreen,
   currentLogURL,
@@ -181,51 +230,39 @@ export const LogControls: React.FC<LogControlsProps> = ({
   toggleShowFullLog,
   canUseFullScreen,
 }) => {
-  const { t } = useTranslation();
-  const [isLogTypeOpen, setIsLogTypeOpen] = React.useState(false);
-  const isMobile = useIsMobile();
-  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-
-  const onDropdownToggleClick = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const onDropdownSelect = () => {
-    setIsDropdownOpen(false);
-  };
+  const { t } = useTranslation('public');
+  const [isLogTypeOpen, setIsLogTypeOpen] = useState(false);
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
 
   const logTypes: Array<LogType> = [
-    { type: LOG_TYPE_CURRENT, text: t('public~Current log') },
-    { type: LOG_TYPE_PREVIOUS, text: t('public~Previous log') },
+    { type: LOG_TYPE_CURRENT, text: t('Current log') },
+    { type: LOG_TYPE_PREVIOUS, text: t('Previous log') },
   ];
 
-  const logOption = (log: LogType) => {
-    return (
-      <SelectOption key={log.type} value={log.type}>
-        {log.text}
-      </SelectOption>
-    );
-  };
-
-  const showStatus = () => {
+  const playPauseButton = useMemo(() => {
     if (logType !== LOG_TYPE_PREVIOUS) {
-      return (
-        <>
-          {status === STREAM_LOADING && (
-            <>
-              <LoadingInline />
-              &nbsp;
-            </>
-          )}
-          {[STREAM_ACTIVE, STREAM_PAUSED].includes(status) && (
-            <TogglePlay active={status === STREAM_ACTIVE} onClick={toggleStreaming} />
-          )}
-          {t(streamStatusMessages[status])}
-        </>
-      );
+      switch (status as keyof typeof streamStatusMessages) {
+        case STREAM_LOADING:
+          return <Loading className="co-resource-log__loading" />;
+        case STREAM_ACTIVE:
+        case STREAM_PAUSED:
+          return (
+            <Tooltip content={t(streamStatusMessages[status])}>
+              <TogglePlay
+                active={status === STREAM_ACTIVE}
+                onClick={toggleStreaming}
+                className="pf-v6-u-mr-0"
+              />
+            </Tooltip>
+          );
+        case STREAM_EOF:
+          return null; // we show this in the HeaderBanner instead
+        default:
+          return t(streamStatusMessages[status]);
+      }
     }
-    return <>{t(streamStatusMessages[STREAM_EOF])} </>;
-  };
+    return t(streamStatusMessages[STREAM_EOF]);
+  }, [status, toggleStreaming, logType, t]);
 
   const logTypeSelect = () => {
     if (!showLogTypeSelect) {
@@ -233,38 +270,43 @@ export const LogControls: React.FC<LogControlsProps> = ({
     }
 
     const select = (
-      <span>
-        <span id="logTypeSelect" hidden>
-          Log type
-        </span>
-        <Select
-          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-            <MenuToggle
-              ref={toggleRef}
-              onClick={(open) => setIsLogTypeOpen(open)}
-              isExpanded={isLogTypeOpen}
-              isDisabled={!hasPreviousLog}
-            >
-              {logTypes.find((lt) => lt.type === logType).text}
-            </MenuToggle>
-          )}
-          onSelect={(event: React.MouseEvent | React.ChangeEvent, value: LogTypeStatus) => {
-            changeLogType(value);
-            setIsLogTypeOpen(false);
-          }}
-          selected={logType}
-          onOpenChange={(isOpen) => setIsLogTypeOpen(isOpen)}
-          isOpen={isLogTypeOpen}
-          aria-labelledby="logTypeSelect"
-        >
-          <SelectList>{logTypes.map((log) => logOption(log))}</SelectList>
-        </Select>
-      </span>
+      <Select
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
+          <MenuToggle
+            ref={toggleRef}
+            onClick={() => setIsLogTypeOpen((isOpen) => !isOpen)}
+            isExpanded={isLogTypeOpen}
+            isDisabled={!hasPreviousLog}
+            aria-label={t('Log type')}
+          >
+            {logTypes.find((lt) => lt.type === logType).text}
+          </MenuToggle>
+        )}
+        onSelect={(_event, value: LogTypeStatus) => {
+          changeLogType(value);
+          setIsLogTypeOpen(false);
+        }}
+        selected={logType}
+        onOpenChange={(isOpen) => setIsLogTypeOpen(isOpen)}
+        isOpen={isLogTypeOpen}
+        popperProps={{
+          appendTo: 'inline', // needed for fullscreen
+        }}
+      >
+        <SelectList>
+          {logTypes.map((log) => (
+            <SelectOption key={log.type} value={log.type}>
+              {log.text}
+            </SelectOption>
+          ))}
+        </SelectList>
+      </Select>
     );
+
     return hasPreviousLog ? (
       select
     ) : (
-      <Tooltip content={t('public~Only the current log is available for this container.')}>
+      <Tooltip content={t('Only the current log is available for this container.')}>
         {select}
       </Tooltip>
     );
@@ -295,271 +337,222 @@ export const LogControls: React.FC<LogControlsProps> = ({
         podLabels: JSON.stringify(resource.metadata.labels),
       });
 
-      return isMobile ? (
-        <DropdownItem to={url} isExternalLink key={link.metadata.uid}>
-          {link.spec.text}
-        </DropdownItem>
-      ) : (
-        <React.Fragment key={link.metadata.uid}>
-          <ExternalLink href={url} text={link.spec.text} dataTestID={link.metadata.name} />
-          <Divider
-            orientation={{
-              default: 'vertical',
-            }}
-          />
-        </React.Fragment>
+      return (
+        <ExternalLink
+          key={link.metadata.uid}
+          href={url}
+          text={link.spec.text}
+          dataTestID={link.metadata.name}
+        />
       );
     });
 
-  const label = t('public~Debug container');
-
-  const fullLog = (
-    <div>
-      <Tooltip
-        content={t('public~Select to view the entire log. Default view is the last 1,000 lines.')}
-      >
-        <Switch
-          label={t('public~Show full log')}
-          id="showFullLog"
-          data-test="show-full-log"
-          isChecked={isShowFullLog}
-          data-checked-state={isShowFullLog}
-          onChange={(_event, checked: boolean) => {
-            toggleShowFullLog(checked);
-          }}
-        />
-      </Tooltip>
-    </div>
-  );
-
-  const wrapLines = (
-    <Switch
-      label={t('public~Wrap lines')}
-      id="wrapLogLines"
-      isChecked={isWrapLines}
-      data-checked-state={isWrapLines}
-      onChange={(_event, checked: boolean) => {
-        toggleWrapLines(checked);
+  const options = (
+    <Select
+      toggle={(toggleRef: Ref<MenuToggleElement>) => (
+        <MenuToggle
+          ref={toggleRef}
+          onClick={() => setIsOptionsOpen((isOpen) => !isOpen)}
+          isExpanded={isOptionsOpen}
+          icon={<CogIcon />}
+          data-test="resource-log-options-toggle"
+        >
+          <span className="pf-v6-u-display-none pf-v6-u-display-inline-on-lg">{t('Options')}</span>
+        </MenuToggle>
+      )}
+      onSelect={(_event, value: string) => {
+        switch (value) {
+          case 'fullLog':
+            toggleShowFullLog(!isShowFullLog);
+            break;
+          case 'wrapLines':
+            toggleWrapLines(!isWrapLines);
+            break;
+          default:
+        }
       }}
-    />
-  );
-
-  const raw = (
-    <>
-      <OutlinedWindowRestoreIcon className="co-icon-space-r" />
-      {t('public~Raw')}
-    </>
-  );
-
-  const download = (
-    <>
-      <DownloadIcon className="co-icon-space-r" />
-      {t('public~Download')}
-    </>
-  );
-
-  const fullscreen = isFullscreen ? (
-    <>
-      <CompressIcon className="co-icon-space-r" />
-      {t('public~Collapse')}
-    </>
-  ) : (
-    <>
-      <ExpandIcon className="co-icon-space-r" />
-      {t('public~Expand')}
-    </>
-  );
-
-  return (
-    <Flex
-      className="resource-log__toolbar"
-      flexWrap={{ default: 'nowrap', md: 'wrap' }}
-      justifyContent={{ default: 'justifyContentFlexStart', md: 'justifyContentSpaceBetween' }}
+      onOpenChange={setIsOptionsOpen}
+      isOpen={isOptionsOpen}
+      popperProps={{
+        appendTo: 'inline', // needed for fullscreen
+      }}
     >
-      <Flex>
-        {/* orphaned `co-toolbar__item used in https://github.com/openshift/verification-tests */}
-        <FlexItem className="co-toolbar__item">{showStatus()}</FlexItem>
-        {dropdown && <FlexItem>{dropdown}</FlexItem>}
-        <FlexItem>{logTypeSelect()}</FlexItem>
-        <FlexItem>
-          <LogViewerSearch
-            onFocus={() => {
-              if (status === STREAM_ACTIVE) {
-                toggleStreaming();
-              }
-            }}
-            placeholder="Search"
-            minSearchChars={0}
-          />
-        </FlexItem>
-        {showDebugAction(resource, containerName) && !isWindowsPod(resource) && (
-          <Link
-            to={`${resourcePath(
+      <SelectList>
+        <Tooltip
+          content={t('Select to view the entire log. Default view is the last 1,000 lines.')}
+          position="right"
+        >
+          <SelectOption
+            key="fullLog"
+            value="fullLog"
+            isSelected={isShowFullLog}
+            hasCheckbox
+            data-test-dropdown-menu="show-full-log"
+          >
+            {t('Show full log')}
+          </SelectOption>
+        </Tooltip>
+        <SelectOption
+          key="wrapLines"
+          value="wrapLines"
+          isSelected={isWrapLines}
+          hasCheckbox
+          data-test-dropdown-menu="wrap-lines"
+        >
+          {t('Wrap lines')}
+        </SelectOption>
+      </SelectList>
+    </Select>
+  );
+
+  const debugAction =
+    showDebugAction(resource, containerName) &&
+    (isWindowsPod(resource) ? (
+      <Tooltip content={t('Debug in terminal is not currently available for Windows containers.')}>
+        <Button variant="control" isDisabled icon={<BugIcon />} aria-label={t('Debug container')} />
+      </Tooltip>
+    ) : (
+      <Tooltip content={t('Debug container')}>
+        <Button
+          variant="control"
+          component={LinkTo(
+            `${resourcePath(
               'Pod',
               resource.metadata.name,
               resource.metadata.namespace,
-            )}/containers/${containerName}/debug`}
-            data-test="debug-container-link"
-          >
-            {label}
-          </Link>
-        )}
-        {showDebugAction(resource, containerName) && isWindowsPod(resource) && (
-          <Tooltip
-            content={t(
-              'public~Debug in terminal is not currently available for windows containers.',
+            )}/containers/${containerName}/debug`,
+          )}
+          icon={<BugIcon />}
+          aria-label={t('Debug container')}
+          data-test="debug-container-link"
+        />
+      </Tooltip>
+    ));
+
+  return (
+    <Toolbar data-test="resource-log-toolbar">
+      <ToolbarContent>
+        <ToolbarGroup className="pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-flex-direction-row-on-md pf-v6-u-w-100">
+          <ToolbarGroup align={{ default: 'alignStart' }}>
+            {/* orphaned `co-toolbar__item used in https://github.com/openshift/verification-tests */}
+            {playPauseButton && (
+              <ToolbarItem className="co-toolbar__item">{playPauseButton}</ToolbarItem>
             )}
-          >
-            <span className="pf-v6-u-text-color-subtle">{label}</span>
-          </Tooltip>
-        )}
-      </Flex>
-      <Flex data-test="log-links">
-        {isMobile ? (
-          <Dropdown
-            isOpen={isDropdownOpen}
-            onSelect={onDropdownSelect}
-            onOpenChange={(isOpen: boolean) => setIsDropdownOpen(isOpen)}
-            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-              <MenuToggle
-                ref={toggleRef}
-                onClick={onDropdownToggleClick}
-                isExpanded={isDropdownOpen}
-                variant="plain"
-                className="pf-v6-u-mt-xs"
-                aria-label={t('public~Dropdown toggle')}
-              >
-                <EllipsisVIcon />
-              </MenuToggle>
-            )}
-            shouldFocusToggleOnSelect
-            popperProps={{
-              position: 'right',
-            }}
-          >
-            <DropdownGroup label={t('public~Log actions')}>
-              <DropdownList>
-                {!_.isEmpty(podLogLinks) && renderPodLogLinks()}
-                <DropdownItem
-                  onClick={(e) => {
-                    e.preventDefault();
-                    toggleShowFullLog(!isShowFullLog);
-                  }}
-                >
-                  {fullLog}
-                </DropdownItem>
-                <DropdownItem
-                  onClick={(e) => {
-                    e.preventDefault();
-                    toggleWrapLines(!isWrapLines);
-                  }}
-                >
-                  {wrapLines}
-                </DropdownItem>
-                <DropdownItem to={currentLogURL} isExternalLink>
-                  {raw}
-                </DropdownItem>
-                <DropdownItem
-                  to={currentLogURL}
-                  isExternalLink
-                  download={`${resource.metadata.name}-${containerName}.log`}
-                >
-                  {download}
-                </DropdownItem>
-                {canUseFullScreen && (
-                  <DropdownItem onClick={toggleFullscreen}>{fullscreen}</DropdownItem>
-                )}
-              </DropdownList>
-            </DropdownGroup>
-          </Dropdown>
-        ) : (
-          <Flex>
+            {dropdown && <ToolbarItem>{dropdown}</ToolbarItem>}
+            {debugAction && <ToolbarItem>{debugAction}</ToolbarItem>}
+            <ToolbarItem>{options}</ToolbarItem>
+          </ToolbarGroup>
+
+          <ToolbarGroup align={{ default: 'alignEnd' }}>
             {!_.isEmpty(podLogLinks) && renderPodLogLinks()}
-            <div>{fullLog}</div>
-            <Divider
-              orientation={{
-                default: 'vertical',
-              }}
-            />
-            <div>{wrapLines}</div>
-            <Divider
-              orientation={{
-                default: 'vertical',
-              }}
-            />
-            <ExternalLink href={currentLogURL} icon={undefined}>
-              {raw}
-            </ExternalLink>
-            <Divider
-              orientation={{
-                default: 'vertical',
-              }}
-            />
-            <a href={currentLogURL} download={`${resource.metadata.name}-${containerName}.log`}>
-              {download}
-            </a>
-            {canUseFullScreen && (
-              <>
-                <Divider
-                  orientation={{
-                    default: 'vertical',
-                  }}
-                />
-                <Button variant="link" isInline onClick={toggleFullscreen}>
-                  {fullscreen}
-                </Button>
-              </>
-            )}
-          </Flex>
-        )}
-      </Flex>
-    </Flex>
+            <ToolbarGroup>
+              <ToolbarToggleGroup toggleIcon={<SearchIcon />} breakpoint="lg">
+                <ToolbarItem>
+                  <LogViewerSearch
+                    onFocus={() => {
+                      if (status === STREAM_ACTIVE) {
+                        toggleStreaming();
+                      }
+                    }}
+                    placeholder={t('Search logs')}
+                    minSearchChars={0}
+                  />
+                </ToolbarItem>
+              </ToolbarToggleGroup>
+              <ToolbarItem>{logTypeSelect()}</ToolbarItem>
+            </ToolbarGroup>
+
+            <ToolbarGroup variant="action-group-plain">
+              <ToolbarItem>
+                <Tooltip content={t('View raw logs')}>
+                  <ExternalLinkButton
+                    component="button"
+                    onClick={handleRawLogs(currentLogURL)}
+                    variant="plain"
+                  />
+                </Tooltip>
+              </ToolbarItem>
+              <ToolbarItem>
+                <Tooltip content={t('Download')}>
+                  <ExternalLinkButton
+                    variant="plain"
+                    href={currentLogURL}
+                    download={getLogDownloadFilename(resource, containerName)}
+                    icon={<DownloadIcon />}
+                  />
+                </Tooltip>
+              </ToolbarItem>
+              {canUseFullScreen && (
+                <ToolbarItem>
+                  <Tooltip content={isFullscreen ? t('Collapse') : t('Expand')}>
+                    <Button
+                      variant="plain"
+                      onClick={toggleFullscreen}
+                      icon={isFullscreen ? <CompressIcon /> : <ExpandIcon />}
+                    />
+                  </Tooltip>
+                </ToolbarItem>
+              )}
+            </ToolbarGroup>
+          </ToolbarGroup>
+        </ToolbarGroup>
+      </ToolbarContent>
+    </Toolbar>
   );
 };
 
+/** helper for opening a new window with raw logs. this is so we don't mess with the previous i18n string */
+const LogLink: React.FCC<PropsWithChildren<{ href: string }>> = ({ children, href }) => (
+  <ExternalLink component="button" onClick={handleRawLogs(href)}>
+    {children}
+  </ExternalLink>
+);
+
 // Resource agnostic log component
-export const ResourceLog: React.FC<ResourceLogProps> = ({
+export const ResourceLog: React.FCC<ResourceLogProps> = ({
   bufferSize = DEFAULT_BUFFER_SIZE,
   containerName,
   dropdown,
   resource,
   resourceStatus,
 }) => {
-  const { t } = useTranslation();
-  const theme = React.useContext(ThemeContext);
+  const { t } = useTranslation('public');
+  const theme = useContext(ThemeContext);
   const [showFullLog, setShowFullLog] = useUserSettings<boolean>(
     SHOW_FULL_LOG_USERSETTINGS_KEY,
     false,
     true,
   );
-  const [showFullLogCheckbox, setShowFullLogCheckbox] = React.useState(showFullLog);
+  const [showFullLogCheckbox, setShowFullLogCheckbox] = useState(showFullLog);
   const buffer = useToggleLineBuffer(showFullLogCheckbox ? null : bufferSize);
-  const ws = React.useRef<any>(); // TODO Make this a hook
-  const [resourceLogRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
-  const logViewerRef = React.useRef(null);
+  const ws = useRef<any>(); // TODO Make this a hook
+  const [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
+  const logViewerRef = useRef(null);
   const externalLogLinkFlag = useFlag(FLAGS.CONSOLE_EXTERNAL_LOG_LINK);
-  const [error, setError] = React.useState(false);
-  const [hasTruncated, setHasTruncated] = React.useState(false);
-  const [lines, setLines] = React.useState([]);
-  const [linesBehind, setLinesBehind] = React.useState(0);
-  const [totalLineCount, setTotalLineCount] = React.useState(0);
-  const [stale, setStale] = React.useState(false);
-  const [status, setStatus] = React.useState(STREAM_LOADING);
-  const [namespaceUID, setNamespaceUID] = React.useState('');
-  const [podLogLinks, setPodLogLinks] = React.useState();
-  const [content, setContent] = React.useState('');
+  const [error, setError] = useState(false);
+  const [hasTruncated, setHasTruncated] = useState(false);
+  const [lines, setLines] = useState([]);
+  const [linesBehind, setLinesBehind] = useState(0);
+  const [totalLineCount, setTotalLineCount] = useState(0);
+  const [stale, setStale] = useState(false);
+  const [status, setStatus] = useState(STREAM_LOADING);
+  const [namespaceUID, setNamespaceUID] = useState('');
+  const [podLogLinks, setPodLogLinks] = useState();
+  const [content, setContent] = useState('');
 
-  const [logType, setLogType] = React.useState<LogTypeStatus>(LOG_TYPE_CURRENT);
-  const [hasPreviousLogs, setPreviousLogs] = React.useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(true);
+  const [showStaleAlert, setShowStaleAlert] = useState(true);
+  const [showTruncatedAlert, setShowTruncatedAlert] = useState(true);
+
+  const [logType, setLogType] = useState<LogTypeStatus>(LOG_TYPE_CURRENT);
+  const [hasPreviousLogs, setPreviousLogs] = useState(false);
 
   const previousResourceStatus = usePrevious(resourceStatus);
   const previousTotalLineCount = usePrevious(totalLineCount);
   const linkURL = getResourceLogURL(resource, containerName, null, false, logType);
   const watchURL = getResourceLogURL(resource, containerName, null, true, logType);
   const imp = useSelector((state: RootState) => getImpersonate(state));
-  const subprotocols = React.useMemo(() => ['base64.binary.k8s.io', ...(imp?.subprotocols ?? [])], [
-    imp,
-  ]);
+  const subprotocols = useMemo(() => ['base64.binary.k8s.io', ...(imp?.subprotocols ?? [])], [imp]);
   const [wrapLines, setWrapLines] = useUserSettings<boolean>(
     LOG_WRAP_LINES_USERSETTINGS_KEY,
     false,
@@ -568,11 +561,11 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   const hasWrapAnnotation =
     resource?.metadata?.annotations?.['console.openshift.io/wrap-log-lines'] === 'true';
 
-  const [wrapLinesCheckbox, setWrapLinesCheckbox] = React.useState(wrapLines || hasWrapAnnotation);
-  const firstRender = React.useRef(true);
+  const [wrapLinesCheckbox, setWrapLinesCheckbox] = useState(wrapLines || hasWrapAnnotation);
+  const firstRender = useRef(true);
   const handleShowFullLogCheckbox = () => setShowFullLogCheckbox(!showFullLogCheckbox);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
       return;
@@ -582,10 +575,10 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     setShowFullLog(showFullLogCheckbox);
   }, [wrapLinesCheckbox, showFullLogCheckbox, setWrapLines, setShowFullLog]);
 
-  const timeoutIdRef = React.useRef(null);
-  const countRef = React.useRef(0);
+  const timeoutIdRef = useRef(null);
+  const countRef = useRef(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if ((status === STREAM_ACTIVE || status === STREAM_EOF) && lines.length > 0) {
       setContent(lines.join('\n'));
       // setTimeout here to wait until the content is updated in the log viewer
@@ -599,7 +592,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   }, [status, lines]);
 
   // Update lines behind while stream is paused, reset when unpaused
-  React.useEffect(() => {
+  useEffect(() => {
     if (status === STREAM_ACTIVE) {
       setLinesBehind(0);
     }
@@ -612,14 +605,14 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   }, [status, totalLineCount, previousTotalLineCount]);
 
   // Set back to viewing current log when switching containers
-  React.useEffect(() => {
+  useEffect(() => {
     if (resource.kind === 'Pod') {
       setLogType(LOG_TYPE_CURRENT);
     }
   }, [resource.kind, containerName]);
 
   //Check to see if previous log exists
-  React.useEffect(() => {
+  useEffect(() => {
     if (resource.kind === 'Pod') {
       const container = resource.status?.containerStatuses?.find(
         (pod) => pod.name === containerName,
@@ -628,7 +621,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     }
   }, [containerName, resource.kind, resource.status]);
 
-  const startWebSocket = React.useCallback(() => {
+  const startWebSocket = useCallback(() => {
     // Handler for websocket onopen event
     const onOpen = () => {
       buffer.current.clear();
@@ -681,7 +674,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
       .onopen(onOpen);
   }, [watchURL, subprotocols, buffer]);
   // Restart websocket if startWebSocket function changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       !error &&
       !stale &&
@@ -697,7 +690,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     setStatus((currentStatus) => (currentStatus === STREAM_ACTIVE ? STREAM_PAUSED : STREAM_ACTIVE));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (externalLogLinkFlag && resource.kind === 'Pod') {
       Promise.all([
         k8sList(ConsoleExternalLogLinkModel),
@@ -714,7 +707,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   }, [externalLogLinkFlag, resource.kind, resource.metadata.namespace]);
 
   // If container comes out of restarting state, currently displayed logs might be stale
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       previousResourceStatus === LOG_SOURCE_RESTARTING &&
       resourceStatus !== LOG_SOURCE_RESTARTING
@@ -732,6 +725,54 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
       }
     }
   };
+
+  const errorAlert = (
+    <Alert
+      isInline
+      key="error"
+      className="co-alert co-alert--margin-bottom-sm"
+      variant="danger"
+      title={t('An error occurred while retrieving the requested logs.')}
+      actionLinks={<AlertActionLink onClick={() => setError(false)}>{t('Retry')}</AlertActionLink>}
+      actionClose={<AlertActionCloseButton onClose={() => setShowErrorAlert(false)} />}
+    />
+  );
+
+  const staleAlert = (
+    <Alert
+      isInline
+      key="stale"
+      className="co-alert co-alert--margin-bottom-sm"
+      variant="info"
+      title={t('The logs for this {{resourceKind}} may be stale.', {
+        resourceKind: resource.kind,
+      })}
+      actionLinks={
+        <AlertActionLink onClick={() => setStale(false)}>{t('Refresh')}</AlertActionLink>
+      }
+      actionClose={<AlertActionCloseButton onClose={() => setShowStaleAlert(false)} />}
+    />
+  );
+
+  const truncatedAlert = (
+    <Alert
+      isInline
+      key="truncated"
+      className="co-alert co-alert--margin-bottom-sm"
+      variant="warning"
+      title={t('Some lines have been abridged because they are exceptionally long.')}
+      actionClose={<AlertActionCloseButton onClose={() => setShowTruncatedAlert(false)} />}
+    >
+      <Trans ns="public" t={t}>
+        To view unabridged log content, you can either{' '}
+        <LogLink href={linkURL}>open the raw file in another window</LogLink> or{' '}
+        <a href={linkURL} download={getLogDownloadFilename(resource, containerName)}>
+          download it
+        </a>
+        .
+      </Trans>
+    </Alert>
+  );
 
   const logControls = (
     <LogControls
@@ -757,87 +798,56 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
     />
   );
 
+  useEffect(() => {
+    window.dispatchEvent(new Event('resize'));
+    // trigger resize event to prevent double scrollbar
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstRender, error, stale, hasTruncated, isFullscreen]);
+
   return (
-    <>
-      <div
-        ref={resourceLogRef}
-        className={css('resource-log', { 'resource-log--fullscreen': isFullscreen })}
-      >
-        <div className={css('resource-log__alert-wrapper')}>
-          {error && (
-            <Alert
-              isInline
-              className="co-alert co-alert--margin-bottom-sm"
-              variant="danger"
-              title={t('public~An error occurred while retrieving the requested logs.')}
-              actionLinks={
-                <AlertActionLink onClick={() => setError(false)}>
-                  {t('public~Retry')}
-                </AlertActionLink>
-              }
-            />
-          )}
-          {stale && (
-            <Alert
-              isInline
-              className="co-alert co-alert--margin-bottom-sm"
-              variant="info"
-              title={t('public~The logs for this {{resourceKind}} may be stale.', {
-                resourceKind: resource.kind,
-              })}
-              actionLinks={
-                <AlertActionLink onClick={() => setStale(false)}>
-                  {t('public~Refresh')}
-                </AlertActionLink>
-              }
-            />
-          )}
-          {hasTruncated && (
-            <Alert
-              isInline
-              className="co-alert co-alert--margin-bottom-sm"
-              variant="warning"
-              title={t('public~Some lines have been abridged because they are exceptionally long.')}
-            >
-              <Trans ns="public" t={t}>
-                To view unabridged log content, you can either{' '}
-                <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
-                <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
-                  download it
-                </a>
-                .
-              </Trans>
-            </Alert>
-          )}
-        </div>
-        <div className={css('resource-log__log-viewer-wrapper')}>
-          <LogViewer
-            header={
-              <div className="log-window__header" data-test="no-log-lines">
-                <HeaderBanner lines={lines} />
-              </div>
-            }
-            theme={theme}
-            data={content}
-            ref={logViewerRef}
-            height="100%"
-            isTextWrapped={wrapLinesCheckbox}
-            toolbar={logControls}
-            footer={
-              <FooterButton
-                className={css('log-window__footer', {
-                  'log-window__footer--hidden': status !== STREAM_PAUSED,
-                })}
-                setStatus={setStatus}
-                linesBehind={linesBehind}
-              />
-            }
-            onScroll={onScroll}
-            initialIndexWidth={7}
+    <div
+      className={css('co-resource-log', { 'co-fullscreen pf-v6-u-p-sm': isFullscreen })}
+      ref={fullscreenRef}
+      style={{ display: 'contents' }}
+    >
+      <LogViewer
+        header={
+          <Flex
+            gap={{ default: 'gapNone' }}
+            direction={{ default: 'column' }}
+            fullWidth={{ default: 'fullWidth' }}
+            className="log-window__header"
+            data-test="resource-log-no-lines"
+          >
+            {(error || stale || hasTruncated) && (
+              <AlertGroup className="co-resource-log__alert-wrapper">
+                {showErrorAlert && error && errorAlert}
+                {showStaleAlert && stale && staleAlert}
+                {showTruncatedAlert && hasTruncated && truncatedAlert}
+              </AlertGroup>
+            )}
+            <HeaderBanner lines={lines} status={status} />
+          </Flex>
+        }
+        theme={theme}
+        data={content}
+        ref={logViewerRef}
+        height="100%"
+        isTextWrapped={wrapLinesCheckbox}
+        toolbar={logControls}
+        footer={
+          <FooterButton
+            className={css('log-window__footer', {
+              'log-window__footer--hidden': status !== STREAM_PAUSED,
+            })}
+            setStatus={setStatus}
+            linesBehind={linesBehind}
           />
-        </div>
-      </div>
-    </>
+        }
+        onScroll={onScroll}
+        initialIndexWidth={7}
+      />
+    </div>
   );
 };
 
@@ -845,7 +855,7 @@ type LogControlsProps = {
   currentLogURL: string;
   isFullscreen: boolean;
   canUseFullScreen?: boolean;
-  dropdown?: React.ReactNode;
+  dropdown?: ReactNode;
   status?: string;
   resource?: any;
   containerName?: string;
@@ -865,7 +875,7 @@ type LogControlsProps = {
 
 type ResourceLogProps = {
   containerName?: string;
-  dropdown?: React.ReactNode;
+  dropdown?: ReactNode;
   resource: any;
   resourceStatus: string;
   bufferSize?: number;

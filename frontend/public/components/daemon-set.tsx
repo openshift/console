@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import {
   usePodsWatcher,
   PodRing,
@@ -20,7 +19,6 @@ import {
   AsyncComponent,
   DetailsItem,
   Kebab,
-  KebabAction,
   ContainerTable,
   detailsPage,
   LabelList,
@@ -37,14 +35,6 @@ import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-
-export const menuActions: KebabAction[] = [
-  AddHealthChecks,
-  Kebab.factory.AddStorage,
-  ...Kebab.getExtensionsActionsForKind(DaemonSetModel),
-  EditHealthChecks,
-  ...Kebab.factory.common,
-];
 
 const kind = 'DaemonSet';
 

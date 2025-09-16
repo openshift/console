@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { useCloudShellCommandDispatch } from '../../redux/actions/cloud-shell-dispatchers';
-import { getCloudShellCommand } from '../../redux/reducers/cloud-shell-selectors';
+import { useGetCloudShellCommand } from '../../redux/reducers/cloud-shell-selectors';
 
 type ExecuteCommandProps = {
   onCommand: (command: string) => void;
 };
 
 const ExecuteCommand: React.FCC<ExecuteCommandProps> = ({ onCommand }) => {
-  const command = useSelector(getCloudShellCommand);
+  const command = useGetCloudShellCommand();
   const setCloudShellCommand = useCloudShellCommandDispatch();
 
   React.useEffect(() => {

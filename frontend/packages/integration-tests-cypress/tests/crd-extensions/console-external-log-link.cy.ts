@@ -82,7 +82,7 @@ describe(`${crd} CRD`, () => {
     });
 
     cy.visit(`/k8s/ns/${testName}/pods/${podName}/logs`);
-    cy.get('[data-test="log-links"').should('exist');
+    cy.get('[data-test="resource-log-toolbar"').should('exist');
     cy.get(cell).should('not.exist');
 
     cy.visit(`/k8s/ns/${testName}/pods?name=${podName}`);
