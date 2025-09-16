@@ -3,7 +3,8 @@ import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { impersonateStateToProps, useAccessReview } from '@console/dynamic-plugin-sdk';
-import { errorModal } from '@console/internal/components/modals';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
 import { startBuild } from '../../api';
 import { BuildRunModel } from '../../models';
@@ -28,6 +29,7 @@ const StartBuildButton: React.FC<StartBuildButtonProps & StateProps> = ({
   impersonate,
 }) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const defaultAccessReview: AccessReviewResourceAttributes = {
     group: BuildRunModel.apiGroup,
     resource: BuildRunModel.plural,
@@ -39,7 +41,7 @@ const StartBuildButton: React.FC<StartBuildButtonProps & StateProps> = ({
   const onClick = () => {
     startBuild(build).catch((err) => {
       const error = err.message;
-      errorModal({ error });
+      launchModal(ErrorModal, { error });
     });
   };
 

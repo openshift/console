@@ -4,8 +4,9 @@ import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-ico
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { BuildLogLink, BuildNumberLink } from '@console/internal/components/build';
-import { errorModal } from '@console/internal/components/modals/error-modal';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import {
   ResourceLink,
   resourcePath,
@@ -127,6 +128,7 @@ const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) =>
     builds,
   } = buildConfig;
   const { t } = useTranslation();
+  const launchModal = useOverlay();
 
   const canStartBuild = useAccessReview({
     group: BuildConfigModel.apiGroup,
@@ -139,7 +141,7 @@ const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) =>
   const onClick = () => {
     startBuild(buildConfig).catch((err) => {
       const error = err.message;
-      errorModal({ error });
+      launchModal(ErrorModal, { error });
     });
   };
   return (

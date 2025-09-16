@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
 import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
-import { errorModal } from '@console/internal/components/modals';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { resourceObjPath } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
@@ -15,6 +16,7 @@ import { Build } from '../types';
 const useBuildActions = (build: Build) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const launchModal = useOverlay();
   const [kindObj, inFlight] = useK8sModel(referenceFor(build));
   const [commonActions, isReady] = useCommonActions(kindObj, build, [
     CommonActionCreator.ModifyLabels,
@@ -36,7 +38,7 @@ const useBuildActions = (build: Build) => {
             navigate(resourceObjPath(newBuildRun, referenceFor(newBuildRun)));
           })
           .catch((err) => {
-            errorModal({ error: err.message });
+            launchModal(ErrorModal, { error: err.message });
           });
       },
       accessReview: {
@@ -59,7 +61,7 @@ const useBuildActions = (build: Build) => {
             })
             .catch((err) => {
               const error = err.message;
-              errorModal({ error });
+              launchModal(ErrorModal, { error });
             });
         },
         accessReview: {
@@ -86,7 +88,7 @@ const useBuildActions = (build: Build) => {
     });
     actions.push(commonActions.Delete);
     return actions;
-  }, [t, build, navigate, commonActions, isReady]);
+  }, [t, build, navigate, commonActions, isReady, launchModal]);
 
   return [actionsMenu, !inFlight, undefined];
 };

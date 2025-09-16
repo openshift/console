@@ -14,8 +14,9 @@ import { useTranslation } from 'react-i18next';
 import { useParams, Link, LinkProps } from 'react-router-dom-v5-compat';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
-import { errorModal } from '@console/internal/components/modals';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import {
   Firehose,
   FirehoseResult,
@@ -246,8 +247,9 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
   obj,
 }) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const annotationParserOptions = {
-    onError: (error) => errorModal({ error }),
+    onError: (error) => launchModal(ErrorModal, { error }),
   };
   const initializationLink = getInitializationLink(obj?.metadata?.annotations);
   const initializationResource =
@@ -292,10 +294,11 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
 
 const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj }) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const reason = (obj as ClusterServiceVersionKind)?.status?.reason || '';
   const message = (obj as ClusterServiceVersionKind)?.status?.message || '';
   const annotationParserOpts = {
-    onError: (error) => errorModal({ error }),
+    onError: (error) => launchModal(ErrorModal, { error }),
   };
   const initializationLink = getInitializationLink(obj?.metadata?.annotations);
   const initializationResource =
@@ -389,6 +392,7 @@ const OperatorInstallLogo = ({ subscription }) => {
 
 const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const { currentCSV, targetNamespace } = useParams<OperatorInstallStatusPageRouteParams>();
   let loading = true;
   let status = '';
@@ -420,7 +424,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
     k8sPatch(InstallPlanModel, installObj, [
       { op: 'replace', path: '/spec/approved', value: true },
     ]).catch((error) => {
-      errorModal({ error: error.toString() });
+      launchModal(ErrorModal, { error: error.toString() });
     });
   };
 

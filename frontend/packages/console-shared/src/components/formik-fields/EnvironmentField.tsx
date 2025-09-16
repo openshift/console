@@ -3,7 +3,8 @@ import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternf
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { errorModal } from '@console/internal/components/modals';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
@@ -24,6 +25,7 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
   } = props;
   const { setFieldValue, values } = useFormikContext<FormikValues>();
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const fieldId = getFieldId(props.name, 'env-input');
   const environmentVariables = React.useMemo(() => {
     return _.isEmpty(envs) ? [['', '']] : envs.map((env) => _.values(env));
@@ -67,12 +69,12 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
       .catch(async (err) => {
         if (err?.response?.status !== 403) {
           try {
-            await errorModal({ error: err?.message });
+            await launchModal(ErrorModal, { error: err?.message });
             // eslint-disable-next-line no-empty
           } catch (e) {}
         }
       });
-  }, [namespace]);
+  }, [namespace, launchModal]);
 
   return (
     <FormGroup fieldId={fieldId} label={label} isRequired={required}>

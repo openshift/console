@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action, K8sResourceCommon } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import { errorModal } from '@console/internal/components/modals';
+import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   DeploymentConfigKind,
@@ -63,6 +64,7 @@ const useReplicationController = (resource: DeploymentConfigKind) => {
 
 export const useRetryRolloutAction = (resource: DeploymentConfigKind): Action => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const [dcModel] = useK8sModel(referenceFor(resource));
   const [rcModel] = useK8sModel('ReplicationController');
   const [rc] = useReplicationController(resource);
@@ -76,7 +78,8 @@ export const useRetryRolloutAction = (resource: DeploymentConfigKind): Action =>
     () => ({
       id: 'retry-rollout',
       label: t('console-app~Retry rollout'),
-      cta: () => retryRollout(rcModel, rc).catch((err) => errorModal({ error: err.message })),
+      cta: () =>
+        retryRollout(rcModel, rc).catch((err) => launchModal(ErrorModal, { error: err.message })),
       insertAfter: 'start-rollout',
       disabled: !canRetry,
       disabledTooltip: !canRetry
@@ -92,6 +95,6 @@ export const useRetryRolloutAction = (resource: DeploymentConfigKind): Action =>
         verb: 'patch',
       },
     }),
-    [t, dcModel, rcModel, rc, canRetry, resource],
+    [t, dcModel, rcModel, rc, canRetry, resource, launchModal],
   );
 };
