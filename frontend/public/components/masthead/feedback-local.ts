@@ -39,6 +39,7 @@ export function useFeedbackLocal(reportBug: ReturnType<typeof getReportBugLink>)
     problemProcessingRequest: t(
       'public~There was a problem processing the request. Try reloading the page. If the problem persists, contact',
     ),
+    support: t('public~Support'),
     redHatSupport: t('public~Red Hat support'),
     reportABug: t('public~Report a bug'),
     responseSent: t('public~Response sent'),

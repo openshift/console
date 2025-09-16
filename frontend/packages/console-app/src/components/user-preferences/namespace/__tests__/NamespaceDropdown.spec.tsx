@@ -35,7 +35,7 @@ const mockUsePreferredNamespace = usePreferredNamespace as jest.Mock;
 
 describe('NamespaceDropdown', () => {
   let wrapper: ReactWrapper;
-  const preferredNamespace: string = mockNamespaces[1].metadata.name;
+  const preferredNamespace: string = mockNamespaces[1].metadata?.name || '';
 
   afterEach(() => {
     jest.resetAllMocks();

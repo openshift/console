@@ -27,7 +27,7 @@ import { appInternalFetch } from '../co-fetch';
 import { detectFeatures } from '../actions/features';
 import { setFlag } from '../actions/flags';
 import AppContents from './app-contents';
-import { Masthead } from './masthead';
+import { Masthead } from './masthead/masthead';
 import { getBrandingDetails } from './utils/branding';
 import { ConsoleNotifier } from './console-notifier';
 import { NotificationDrawer } from './notification-drawer';

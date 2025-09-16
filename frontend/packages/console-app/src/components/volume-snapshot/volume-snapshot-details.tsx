@@ -40,7 +40,7 @@ const { editYaml, events } = navFactory;
 
 const Details: React.FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
-  const { namespace } = obj.metadata || {};
+  const namespace = obj?.metadata?.namespace || '';
   const sourceModel = obj?.spec?.source?.persistentVolumeClaimName
     ? PersistentVolumeClaimModel
     : VolumeSnapshotContentModel;

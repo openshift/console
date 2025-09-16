@@ -13,7 +13,14 @@ import { K8sResourceKind } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
 import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
 
-const getStages = (status): any[] => (status && status.stages) || [];
+type BuildStageData = {
+  id: string;
+  name: string;
+  status: string;
+  startTimeMillis: number;
+};
+
+const getStages = (status): BuildStageData[] => (status && status.stages) || [];
 const getJenkinsStatus = (resource: K8sResourceKind) => {
   const json = _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-status-json']);
   if (!json) {
@@ -55,7 +62,7 @@ export const BuildPipelineLogLink: React.FCC<BuildPipelineLogLinkProps> = ({ obj
   ) : null;
 };
 
-const StagesNotStarted: React.FCC = () => {
+const StagesNotStarted: React.FCC<{}> = () => {
   const { t } = useTranslation();
   return (
     <div className="build-pipeline__stage build-pipeline__stage--none">
@@ -65,7 +72,9 @@ const StagesNotStarted: React.FCC = () => {
 };
 
 const BuildSummaryTimestamp: React.FCC<BuildSummaryTimestampProps> = ({ timestamp }) => (
-  <span className="build-pipeline__timestamp pf-v6-u-text-color-subtle">{fromNow(timestamp)}</span>
+  <span className="build-pipeline__timestamp pf-v6-u-text-color-subtle">
+    {fromNow(typeof timestamp === 'string' ? timestamp : timestamp)}
+  </span>
 );
 
 const BuildPipelineSummary: React.FCC<BuildPipelineSummaryProps> = ({ obj }) => {
@@ -117,7 +126,9 @@ const JenkinsInputUrl: React.FCC<JenkinsInputUrlProps> = ({ obj, stage }) => {
 };
 
 const BuildStageTimestamp: React.FCC<BuildStageTimestampProps> = ({ timestamp }) => (
-  <div className="build-pipeline__stage-time pf-v6-u-text-color-subtle">{fromNow(timestamp)}</div>
+  <div className="build-pipeline__stage-time pf-v6-u-text-color-subtle">
+    {fromNow(typeof timestamp === 'string' ? timestamp : timestamp)}
+  </div>
 );
 
 const BuildStageName: React.FCC<BuildStageNameProps> = ({ name }) => {
@@ -135,7 +146,7 @@ const BuildStage: React.FCC<BuildStageProps> = ({ obj, stage }) => {
         <BuildStageName name={stage.name} />
         <BuildAnimation status={stage.status} />
         <JenkinsInputUrl obj={obj} stage={stage} />
-        <BuildStageTimestamp timestamp={stage.startTimeMillis} />
+        <BuildStageTimestamp timestamp={stage.startTimeMillis.toString()} />
       </div>
     </div>
   );
@@ -166,7 +177,7 @@ export type BuildPipelineProps = {
 
 export type BuildStageProps = {
   obj: K8sResourceKind;
-  stage: any;
+  stage: BuildStageData;
 };
 
 export type BuildAnimationProps = {
@@ -182,7 +193,7 @@ export type BuildSummaryStatusIconProps = {
 };
 
 export type BuildStageTimestampProps = {
-  timestamp: string;
+  timestamp: string | undefined;
 };
 
 export type BuildPipelineLogLinkProps = {
@@ -195,7 +206,7 @@ export type BuildPipelineLinkProps = {
 };
 
 export type BuildSummaryTimestampProps = {
-  timestamp: string;
+  timestamp: string | undefined;
 };
 
 export type BuildStageNameProps = {
