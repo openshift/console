@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import { Extension } from '../../typings';
 import { isTranslatableString, getTranslationKey, translateExtension } from '../extension-i18n';
 
@@ -45,7 +46,7 @@ describe('translateExtension', () => {
 
     const t = jest.fn((key) => `translated: ${key}`);
 
-    expect(translateExtension(testExtension, t)).toEqual({
+    expect(translateExtension(testExtension, (t as unknown) as TFunction)).toEqual({
       type: 'Foo/Bar',
       properties: {
         foo1: 'translated: %test~1%',
@@ -73,7 +74,7 @@ describe('translateExtension', () => {
     const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
     const t = jest.fn<string>();
 
-    expect(translateExtension(testExtension, t)).toBe(testExtension);
+    expect(translateExtension(testExtension, (t as unknown) as TFunction)).toBe(testExtension);
     expect(t).not.toHaveBeenCalled();
   });
 });

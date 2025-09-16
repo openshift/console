@@ -4,12 +4,11 @@ import { ConsoleSample } from '../../../../types';
 import { normalizeConsoleSamples } from '../useConsoleSamples';
 import { gitImportSample, containerImportSample } from './useConsoleSamples.data';
 
-export const t: TFunction = (key: string) =>
-  key.includes('~') ? key.substring(key.indexOf('~') + 1) : key;
+export const t = (key: string) => (key.includes('~') ? key.substring(key.indexOf('~') + 1) : key);
 
 describe('normalizeConsoleSamples', () => {
   it('should return a correct CatalogItem for a git import sample', () => {
-    const actual = normalizeConsoleSamples('my-namespace', t)(gitImportSample);
+    const actual = normalizeConsoleSamples('my-namespace', t as TFunction)(gitImportSample);
     const expected: CatalogItem<ConsoleSample> = {
       uid: undefined, // metadata.uid
       type: 'ConsoleSample',
@@ -33,7 +32,7 @@ describe('normalizeConsoleSamples', () => {
   });
 
   it('should return a correct CatalogItem for a container import sample', () => {
-    const actual = normalizeConsoleSamples('my-namespace', t)(containerImportSample);
+    const actual = normalizeConsoleSamples('my-namespace', t as TFunction)(containerImportSample);
     const expected: CatalogItem<ConsoleSample> = {
       uid: undefined, // metadata.uid
       type: 'ConsoleSample',
