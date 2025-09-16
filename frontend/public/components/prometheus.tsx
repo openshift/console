@@ -1,10 +1,10 @@
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-import { ListPage, Table, TableData } from './factory';
+import { ListPage, ListPageProps, Table, TableData, TableProps } from './factory';
 import { Kebab, LabelList, ResourceKebab, ResourceLink, Selector } from './utils';
 import { PrometheusModel } from '../models';
-import { referenceForModel } from '../module/k8s';
+import { K8sResourceKind, referenceForModel } from '../module/k8s';
 
 const { Edit, Delete, ModifyCount } = Kebab.factory;
 const menuActions = [ModifyCount, Edit, Delete];
@@ -18,7 +18,11 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const PrometheusTableRow = ({ obj: instance }) => {
+interface PrometheusTableRowProps {
+  obj: K8sResourceKind;
+}
+
+const PrometheusTableRow: React.FCC<PrometheusTableRowProps> = ({ obj: instance }) => {
   const { metadata, spec } = instance;
   return (
     <>
@@ -55,7 +59,7 @@ const PrometheusTableRow = ({ obj: instance }) => {
   );
 };
 
-const PrometheusInstancesList = (props) => {
+const PrometheusInstancesList = (props: Partial<TableProps>) => {
   const { t } = useTranslation();
 
   const PrometheusTableHeader = () => {
@@ -108,7 +112,7 @@ const PrometheusInstancesList = (props) => {
   );
 };
 
-export const PrometheusInstancesPage = (props) => (
+export const PrometheusInstancesPage = (props: Partial<ListPageProps<never>>) => (
   <ListPage
     {...props}
     ListComponent={PrometheusInstancesList}
