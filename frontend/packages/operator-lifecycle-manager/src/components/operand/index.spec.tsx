@@ -29,7 +29,7 @@ import {
   testConditionsDescriptor,
 } from '../../../mocks';
 import { ClusterServiceVersionModel } from '../../models';
-import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
+import { DescriptorDetailsItem, DescriptorDetailsItems } from '../descriptors';
 import { Resources } from '../k8s-resource';
 import { OperandLink } from './operand-link';
 import {
@@ -271,7 +271,7 @@ describe(OperandDetails.displayName, () => {
 
   xit('[CONSOLE-2336] renders spec descriptor fields if the custom resource is `owned`', () => {
     expect(
-      wrapper.find(DescriptorDetailsItemList).last().shallow().find(DescriptorDetailsItem).length,
+      wrapper.find(DescriptorDetailsItems).last().shallow().find(DescriptorDetailsItem).length,
     ).toEqual(
       testClusterServiceVersion.spec.customresourcedefinitions.owned[0].specDescriptors.length,
     );
@@ -286,7 +286,7 @@ describe(OperandDetails.displayName, () => {
     wrapper = wrapper.setProps({ csv });
 
     expect(
-      wrapper.find(DescriptorDetailsItemList).last().shallow().find(DescriptorDetailsItem).length,
+      wrapper.find(DescriptorDetailsItems).last().shallow().find(DescriptorDetailsItem).length,
     ).toEqual(csv.spec.customresourcedefinitions.required[0].specDescriptors.length);
   });
 
