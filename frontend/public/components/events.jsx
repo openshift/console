@@ -12,7 +12,9 @@ import {
   ButtonSize,
   ButtonVariant,
   PageSection,
-  Flex,
+  Toolbar,
+  ToolbarItem,
+  ToolbarContent,
 } from '@patternfly/react-core';
 
 import { Trans, useTranslation } from 'react-i18next';
@@ -263,45 +265,54 @@ export const EventsList = (props) => {
     <>
       <PageHeading title={props.title} />
       <PageSection>
-        <Flex>
-          <ResourceListDropdown
-            onChange={toggleSelected}
-            selected={Array.from(selected)}
-            clearSelection={clearSelection}
-          />
-          <ConsoleSelect
-            items={eventTypes}
-            onChange={(v) => setType(v)}
-            selectedKey={type}
-            title={t('public~All types')}
-          />
-          <TextFilter
-            autoFocus={props.autoFocus}
-            label={t('public~Events by name or message')}
-            onChange={(_event, val) => setTextFilter(val || '')}
-          />
-        </Flex>
-        {selected.size > 0 && (
-          <LabelGroup
-            key="resources-category"
-            categoryName={t('public~Resource')}
-            defaultIsOpen={false}
-            collapsedText={t('public~{{numRemaining}} more', { numRemaining: '${remaining}' })}
-            expandedText={t('public~Show less')}
-            isClosable
-            onClick={clearSelection}
-            className="pf-v6-u-mt-md"
-          >
-            {[...selected].map((chip) => {
-              return (
-                <Label variant="outline" key={chip} onClose={() => removeResource(chip)}>
-                  <ResourceIcon kind={chip} />
-                  {kindForReference(chip)}
-                </Label>
-              );
-            })}
-          </LabelGroup>
-        )}
+        <Toolbar id="toolbar-component-managed-toggle-groups">
+          <ToolbarContent>
+            <ResourceListDropdown
+              onChange={toggleSelected}
+              selected={Array.from(selected)}
+              clearSelection={clearSelection}
+            />
+            <ToolbarItem>
+              <ConsoleSelect
+                items={eventTypes}
+                onChange={(v) => setType(v)}
+                selectedKey={type}
+                title={t('public~All types')}
+              />
+            </ToolbarItem>
+            <ToolbarItem className="pf-v6-u-w-100 pf-v6-u-w-50-on-sm pf-v6-u-w-25-on-xl">
+              <TextFilter
+                autoFocus={props.autoFocus}
+                label={t('public~Events by name or message')}
+                onChange={(_event, val) => setTextFilter(val || '')}
+              />
+            </ToolbarItem>
+          </ToolbarContent>
+          {selected.size > 0 && (
+            <ToolbarContent>
+              <LabelGroup
+                key="resources-category"
+                categoryName={t('public~Resource')}
+                defaultIsOpen={false}
+                collapsedText={t('public~{{numRemaining}} more', {
+                  numRemaining: '${remaining}',
+                })}
+                expandedText={t('public~Show less')}
+                isClosable
+                onClick={clearSelection}
+              >
+                {[...selected].map((chip) => {
+                  return (
+                    <Label variant="outline" key={chip} onClose={() => removeResource(chip)}>
+                      <ResourceIcon kind={chip} />
+                      {kindForReference(chip)}
+                    </Label>
+                  );
+                })}
+              </LabelGroup>
+            </ToolbarContent>
+          )}
+        </Toolbar>
       </PageSection>
       <EventStream
         {...props}
