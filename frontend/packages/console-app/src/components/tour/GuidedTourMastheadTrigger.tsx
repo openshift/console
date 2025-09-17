@@ -18,7 +18,7 @@ const GuidedTourMastheadTrigger = forwardRef<HTMLButtonElement, GuidedTourMasthe
         className={className}
         type="button"
         ref={ref}
-        onClick={() => tourDispatch({ type: TourActions.start })}
+        onClick={() => tourDispatch?.({ type: TourActions.start })}
       >
         {t('console-app~Guided Tour')}
       </button>
