@@ -1,6 +1,12 @@
-import { shallow } from 'enzyme';
+import { screen, waitFor } from '@testing-library/react';
+
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ALL_NAMESPACES_KEY, useActiveNamespace, useFlag } from '@console/shared/src';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
+import {
+  expectExternalLinkAttributes,
+  cleanupServerFlag,
+} from '../../../getting-started-test-utils';
+
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 
 jest.mock('@console/shared/src', () => ({
@@ -10,131 +16,140 @@ jest.mock('@console/shared/src', () => ({
   useFlag: jest.fn<boolean>(),
 }));
 
-// Workaround because getting-started exports also useGettingStartedShowState
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
-}));
-
-// Workaround because getting-started exports also QuickStartGettingStartedCard
-jest.mock(
-  '@console/app/src/components/quick-starts/loader/QuickStartsLoader',
-  () =>
-    function QuickStartsLoaderMock({ children }) {
-      return children;
-    },
-);
-
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
 const useFlagMock = useFlag as jest.Mock;
 
-afterEach(() => {
-  delete window.SERVER_FLAGS.addPage;
-});
-
 describe('DeveloperFeaturesGettingStartedCard', () => {
-  it('should contain links to current active namespace', () => {
+  beforeEach(() => {
+    useActiveNamespaceMock.mockReset();
+    useFlagMock.mockReset();
+
+    // Default mock setup for most tests
     useActiveNamespaceMock.mockReturnValue(['active-namespace']);
     useFlagMock.mockReturnValue(true);
-
-    const wrapper = shallow(<DeveloperFeaturesGettingStartedCard />);
-
-    expect(wrapper.find(GettingStartedCard).props().title).toEqual(
-      'Explore new developer features',
-    );
-    expect(wrapper.find(GettingStartedCard).props().links).toEqual([
-      {
-        id: 'helm-charts',
-        title: 'Try the sample AI Chatbot Helm chart',
-        href: '/catalog/ns/active-namespace?catalogType=HelmChart&keyword=chatbot+AI+sample',
-      },
-      {
-        id: 'topology',
-        title: 'Start building your application quickly in topology',
-        href: '/topology/ns/active-namespace?catalogSearch=',
-      },
-    ]);
-    expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      id: 'whats-new',
-      title: "What's new in OpenShift 4.8",
-      href: 'https://developers.redhat.com/products/openshift/whats-new',
-      external: true,
-    });
   });
 
-  it('should not show helm link when helm card is disabled', () => {
+  afterEach(() => {
+    cleanupServerFlag('addPage');
+  });
+
+  it('should contain links to current active namespace', async () => {
+    renderWithProviders(<DeveloperFeaturesGettingStartedCard />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Explore new developer features' })).toBeVisible();
+    });
+
+    const helmLink = screen.getByRole('link', { name: /Try the sample AI Chatbot Helm chart/ });
+    expect(helmLink).toBeVisible();
+    expect(helmLink).toHaveAttribute(
+      'href',
+      '/catalog/ns/active-namespace?catalogType=HelmChart&keyword=chatbot+AI+sample',
+    );
+
+    const topologyLink = screen.getByRole('link', {
+      name: /Start building your application quickly in topology/,
+    });
+    expect(topologyLink).toBeVisible();
+    expect(topologyLink).toHaveAttribute('href', '/topology/ns/active-namespace?catalogSearch=');
+
+    const whatsNewLink = screen.getByRole('link', {
+      name: "What's new in OpenShift 4.8 (Opens in new tab)",
+    });
+    expect(whatsNewLink).toBeVisible();
+    expectExternalLinkAttributes(
+      whatsNewLink,
+      'https://developers.redhat.com/products/openshift/whats-new',
+    );
+  });
+
+  it('should not show helm link when helm card is disabled', async () => {
     window.SERVER_FLAGS.addPage = '{ "disabledActions": "helm" }';
-    useFlagMock.mockReturnValue(true);
-    useActiveNamespaceMock.mockReturnValue(['active-namespace']);
 
-    const wrapper = shallow(<DeveloperFeaturesGettingStartedCard />);
+    renderWithProviders(<DeveloperFeaturesGettingStartedCard />);
 
-    expect(wrapper.find(GettingStartedCard).props().title).toEqual(
-      'Explore new developer features',
-    );
-    expect(wrapper.find(GettingStartedCard).props().links).toEqual([
-      {
-        id: 'topology',
-        title: 'Start building your application quickly in topology',
-        href: '/topology/ns/active-namespace?catalogSearch=',
-      },
-    ]);
-    expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      id: 'whats-new',
-      title: "What's new in OpenShift 4.8",
-      href: 'https://developers.redhat.com/products/openshift/whats-new',
-      external: true,
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Explore new developer features' })).toBeVisible();
     });
+
+    expect(
+      screen.queryByRole('link', { name: /Try the sample AI Chatbot Helm chart/ }),
+    ).not.toBeInTheDocument();
+
+    const topologyLink = screen.getByRole('link', {
+      name: /Start building your application quickly in topology/,
+    });
+    expect(topologyLink).toBeVisible();
+    expect(topologyLink).toHaveAttribute('href', '/topology/ns/active-namespace?catalogSearch=');
+
+    const whatsNewLink = screen.getByRole('link', {
+      name: "What's new in OpenShift 4.8 (Opens in new tab)",
+    });
+    expect(whatsNewLink).toBeVisible();
+    expectExternalLinkAttributes(
+      whatsNewLink,
+      'https://developers.redhat.com/products/openshift/whats-new',
+    );
   });
 
-  it('should contain links without namespace if all namespaces are active', () => {
+  it('should contain links without namespace if all namespaces are active', async () => {
     useActiveNamespaceMock.mockReturnValue([ALL_NAMESPACES_KEY]);
-    useFlagMock.mockReturnValue(true);
-    const wrapper = shallow(<DeveloperFeaturesGettingStartedCard />);
 
-    expect(wrapper.find(GettingStartedCard).props().title).toEqual(
-      'Explore new developer features',
-    );
-    expect(wrapper.find(GettingStartedCard).props().links).toEqual([
-      {
-        id: 'helm-charts',
-        title: 'Try the sample AI Chatbot Helm chart',
-        href: '/catalog/all-namespaces?catalogType=HelmChart&keyword=chatbot+AI+sample',
-      },
-      {
-        id: 'topology',
-        title: 'Start building your application quickly in topology',
-        href: '/topology/all-namespaces?catalogSearch=',
-      },
-    ]);
-    expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      id: 'whats-new',
-      title: "What's new in OpenShift 4.8",
-      href: 'https://developers.redhat.com/products/openshift/whats-new',
-      external: true,
+    renderWithProviders(<DeveloperFeaturesGettingStartedCard />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Explore new developer features' })).toBeVisible();
     });
+
+    const helmLink = screen.getByRole('link', { name: /Try the sample AI Chatbot Helm chart/ });
+    expect(helmLink).toBeVisible();
+    expect(helmLink).toHaveAttribute(
+      'href',
+      '/catalog/all-namespaces?catalogType=HelmChart&keyword=chatbot+AI+sample',
+    );
+
+    const topologyLink = screen.getByRole('link', {
+      name: /Start building your application quickly in topology/,
+    });
+    expect(topologyLink).toBeVisible();
+    expect(topologyLink).toHaveAttribute('href', '/topology/all-namespaces?catalogSearch=');
+
+    const whatsNewLink = screen.getByRole('link', {
+      name: "What's new in OpenShift 4.8 (Opens in new tab)",
+    });
+    expect(whatsNewLink).toBeVisible();
+    expectExternalLinkAttributes(
+      whatsNewLink,
+      'https://developers.redhat.com/products/openshift/whats-new',
+    );
   });
 
-  it('should not show helm link when helm fetaure flag is disabled', () => {
+  it('should not show helm link when helm feature flag is disabled', async () => {
     useFlagMock.mockReturnValue(false);
-    useActiveNamespaceMock.mockReturnValue(['active-namespace']);
 
-    const wrapper = shallow(<DeveloperFeaturesGettingStartedCard />);
+    renderWithProviders(<DeveloperFeaturesGettingStartedCard />);
 
-    expect(wrapper.find(GettingStartedCard).props().title).toEqual(
-      'Explore new developer features',
-    );
-    expect(wrapper.find(GettingStartedCard).props().links).toEqual([
-      {
-        id: 'topology',
-        title: 'Start building your application quickly in topology',
-        href: '/topology/ns/active-namespace?catalogSearch=',
-      },
-    ]);
-    expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      id: 'whats-new',
-      title: "What's new in OpenShift 4.8",
-      href: 'https://developers.redhat.com/products/openshift/whats-new',
-      external: true,
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Explore new developer features' })).toBeVisible();
     });
+
+    expect(
+      screen.queryByRole('link', { name: /Try the sample AI Chatbot Helm chart/ }),
+    ).not.toBeInTheDocument();
+
+    const topologyLink = screen.getByRole('link', {
+      name: /Start building your application quickly in topology/,
+    });
+    expect(topologyLink).toBeVisible();
+    expect(topologyLink).toHaveAttribute('href', '/topology/ns/active-namespace?catalogSearch=');
+
+    const whatsNewLink = screen.getByRole('link', {
+      name: "What's new in OpenShift 4.8 (Opens in new tab)",
+    });
+    expect(whatsNewLink).toBeVisible();
+    expectExternalLinkAttributes(
+      whatsNewLink,
+      'https://developers.redhat.com/products/openshift/whats-new',
+    );
   });
 });
