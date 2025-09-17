@@ -57,6 +57,15 @@ source ./contrib/oc-environment.sh
 
 The console will be running at [localhost:9000](http://localhost:9000).
 
+**NOTE**: When the OpenShift console runs on localhost while the OAuth server runs on the cluster domain, cross-origin restrictions can cause users signed in as kubeadmin in a local environment to be automatically reauthenticated when they attempt to log out. To work around this issue, clear the ssn cookie from your browser:
+
+1. Press F12 to open your browser's developer tools.
+2. In Chrome, go to Application > Cookies. In Firefox, go to Storage > Cookies.
+3. Find the OAuth server domain; for example, oauth-openshift.apps.your-cluster.com.
+4. Delete the `ssn` cookie.
+5. From the OpenShift console, click Logout.
+
+
 If you don't have `kubeadmin` access, you can use any user's API token,
 although you will be limited to that user's access and might not be able to run
 the full integration test suite.
