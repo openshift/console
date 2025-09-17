@@ -180,7 +180,7 @@ func main() {
 	}
 
 	if *fTechPreview {
-		klog.Warning("Tech preview features are enabled")
+		klog.Warning("Technology Preview features are enabled. These features are experimental and not supported for production use. If you encounter issues, send feedback through the usual support or bug-reporting channels.")
 	}
 
 	authOptions.ApplyConfig(&cfg.Auth)
