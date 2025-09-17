@@ -1173,6 +1173,7 @@
   "Pod details": "Pod details",
   "Init containers": "Init containers",
   "CrashLoopBackOff": "CrashLoopBackOff",
+  "Filter by status": "Filter by status",
   "Create Pod": "Create Pod",
   "Web console update is available": "Web console update is available",
   "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.": "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.",
