@@ -96,14 +96,14 @@ const LoginErrorMessage: React.FC = () => {
     case 'login_state_error':
       return t('public~There was an error generating login state.');
     case 'cookie_error':
-      return t('public~There was an error setting login state cookie');
+      return t('public~There was an error setting login state cookie.');
     case 'logout_error':
       return t('public~There was an error logging you out. Please try again.');
     case 'auth':
       // When the error type is set as auth
       switch (error) {
         case 'missing_state':
-          return t('public~There was an error parsing your state cookie');
+          return t('public~There was an error parsing your state cookie.');
         case 'invalid_state':
           return t(
             'public~There was an error verifying your session. Please log out and try again.',
@@ -148,7 +148,7 @@ export const AuthenticationErrorPage: React.FC = () => {
           </Stack>
         }
         customFooter={
-          <ButtonLink variant="primary" href="/logout">
+          <ButtonLink variant="primary" href="/">
             {t('public~Try again')}
           </ButtonLink>
         }
