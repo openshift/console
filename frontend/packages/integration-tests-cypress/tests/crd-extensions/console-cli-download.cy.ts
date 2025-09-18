@@ -4,6 +4,7 @@ import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { listPage } from '../../views/list-page';
 import * as yamlEditor from '../../views/yaml-editor';
+import { modal } from '../../views/modal';
 
 const crd = 'ConsoleCLIDownload';
 
@@ -59,6 +60,12 @@ describe(`${crd} CRD`, () => {
     cy.visit(`/command-line-tools`);
     cy.get(`[data-test-id=${name}]`).should('contain', name);
 
-    cy.exec(`oc delete ${crd} ${name}`);
+    cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickKebabAction(name, `Delete ${crd}`);
+    modal.shouldBeOpened();
+    modal.modalTitleShouldContain(`Delete ${crd}`);
+    modal.submit();
+    modal.shouldBeClosed();
   });
 });

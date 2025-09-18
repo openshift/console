@@ -29,6 +29,33 @@ import { ResourceFilters, GetDataViewRows } from './types';
 import { useResourceDataViewData } from './useResourceDataViewData';
 import { useResourceDataViewFilters } from './useResourceDataViewFilters';
 
+export const cellIsStickyProps = {
+  isStickyColumn: true,
+  stickyMinWidth: 0,
+};
+
+const nameCellProps = {
+  ...cellIsStickyProps,
+  hasRightBorder: true,
+};
+export const getNameCellProps = (name: string) => {
+  return {
+    ...nameCellProps,
+    'data-test': `data-view-cell-${name}-name`,
+  };
+};
+
+export const actionsCellProps = {
+  'data-test': 'actions',
+  hasLeftBorder: true,
+  isActionCell: true,
+};
+
+export const initialFiltersDefault = {
+  name: '',
+  label: '',
+};
+
 export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
   label?: string;
   data: TData[];
