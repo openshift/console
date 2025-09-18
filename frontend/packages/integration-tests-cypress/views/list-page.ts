@@ -56,6 +56,15 @@ export const listPage = {
       cy.get('@filterDropdownToggleButton').click();
     },
   },
+  dvFilter: {
+    byName: (name: string) => {
+      cy.get('[data-ouia-component-id="DataViewFilters"]').within(() =>
+        cy.get('.pf-v6-c-menu-toggle').first().click(),
+      );
+      cy.get('.pf-v6-c-menu__list-item').contains('Name').click();
+      cy.get('[aria-label="Name filter"]').clear().type(name);
+    },
+  },
   rows: {
     getFirstElementName: () => cy.get('[data-test-rows="resource-row"] a').first(),
     shouldBeLoaded: () => {
@@ -99,6 +108,45 @@ export const listPage = {
       cy.get(`a[data-test-id="${resourceName}"]`).click({ force: true }), // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
     shouldNotExist: (resourceName: string) =>
       cy.get(`[data-test-id="${resourceName}"]`, { timeout: 90000 }).should('not.exist'),
+  },
+  dvRows: {
+    getFirstElementName: () => cy.get('[data-test^="data-view-cell-"]').first().find('a'),
+    shouldBeLoaded: () => {
+      cy.get('[data-test="data-view-table"]').should('be.visible');
+    },
+    countShouldBe: (count: number) => {
+      cy.get('[data-test^="data-view-cell-"]').should('have.length', count);
+    },
+    countShouldBeWithin: (min: number, max: number) => {
+      cy.get('[data-test^="data-view-cell-"]').should('have.length.within', min, max);
+    },
+    clickFirstLinkInFirstRow: () => {
+      cy.get('[data-test^="data-view-cell-"]').first().find('a').first().click({ force: true }); // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
+    },
+    clickKebabAction: (resourceName: string, actionName: string) => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
+        .contains(resourceName)
+        .parents('tr')
+        .within(() => {
+          cy.get('[data-test-id="kebab-button"]').click();
+        });
+      cy.byTestActionID(actionName).click();
+    },
+    clickStatusButton: (resourceName: string) => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
+        .contains(resourceName)
+        .parents('tr')
+        .within(() => {
+          cy.byTestID('popover-status-button').click();
+        });
+    },
+    shouldExist: (resourceName: string) => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
+        .contains(resourceName)
+        .should('exist');
+    },
+    clickRowByName: (resourceName: string) =>
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).find('a').click({ force: true }), // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
   },
 };
 

@@ -105,6 +105,7 @@ type ListPageWrapperProps<L = any, C = any> = {
   customData?: C;
   hideColumnManagement?: boolean;
   nameFilter?: string;
+  omitFilterToolbar?: boolean;
 };
 
 export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
@@ -122,6 +123,7 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
     name,
     resources,
     nameFilter,
+    omitFilterToolbar,
   } = props;
   const dispatch = useDispatch();
   const memoizedIds = useDeepCompareMemoize(reduxIDs);
@@ -151,7 +153,7 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
 
   return (
     <div>
-      {!_.isEmpty(data) && Filter}
+      {!omitFilterToolbar && !_.isEmpty(data) && Filter}
       <Grid>
         <GridItem>
           <ListComponent {...props} data={data} />
@@ -348,6 +350,7 @@ export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   limit?: number;
   nameFilter?: string;
   skipAccessReview?: boolean;
+  omitFilterToolbar?: boolean;
 };
 
 export const ListPage = withFallback<ListPageProps>((props) => {
@@ -380,6 +383,7 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     hideNameLabelFilters,
     hideColumnManagement,
     columnLayout,
+    omitFilterToolbar,
     flatten = (_resources) => _.get(_resources, name || kind, {} as FirehoseResult).data,
   } = props;
   const { t } = useTranslation();
@@ -457,6 +461,7 @@ export const ListPage = withFallback<ListPageProps>((props) => {
       hideColumnManagement={hideColumnManagement}
       columnLayout={columnLayout}
       nameFilter={nameFilter}
+      omitFilterToolbar={omitFilterToolbar}
     />
   );
 }, ErrorBoundaryFallbackPage);
@@ -485,6 +490,7 @@ type PageCommonProps<L = any, C = any> = {
   nameFilterPlaceholder?: string;
   autoFocus?: boolean;
   mock?: boolean;
+  omitFilterToolbar?: boolean;
 };
 
 export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
@@ -499,6 +505,7 @@ export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   resources: (Omit<FirehoseResource, 'prop'> & { prop?: FirehoseResource['prop'] })[];
   staticFilters?: { key: string; value: string }[];
   nameFilter?: string;
+  omitFilterToolbar?: boolean;
 };
 
 export const MultiListPage: React.FC<MultiListPageProps> = (props) => {
@@ -530,6 +537,7 @@ export const MultiListPage: React.FC<MultiListPageProps> = (props) => {
     hideColumnManagement,
     columnLayout,
     nameFilter,
+    omitFilterToolbar,
   } = props;
 
   const { t } = useTranslation();
@@ -573,6 +581,7 @@ export const MultiListPage: React.FC<MultiListPageProps> = (props) => {
           labelFilterPlaceholder={labelFilterPlaceholder}
           nameFilter={nameFilter}
           namespace={namespace}
+          omitFilterToolbar={omitFilterToolbar}
         />
       </Firehose>
     </FireMan>

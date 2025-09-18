@@ -88,10 +88,12 @@ export const ResourceDataView = <
 
   const { dataViewColumns, dataViewRows, pagination } = useResourceDataViewData<
     TData,
-    TCustomRowData
+    TCustomRowData,
+    TFilters
   >({
     columns,
     filteredData,
+    filters,
     getDataViewRows,
     showNamespaceOverride,
     columnManagementID,
@@ -132,7 +134,14 @@ export const ResourceDataView = <
     const basicFilters: React.ReactNode[] = [];
 
     if (!hideNameLabelFilters) {
-      basicFilters.push(<DataViewTextFilter key="name" filterId="name" title={t('public~Name')} />);
+      basicFilters.push(
+        <DataViewTextFilter
+          key="name"
+          filterId="name"
+          title={t('public~Name')}
+          placeholder={t('public~Filter by name')}
+        />,
+      );
     }
 
     if (!hideNameLabelFilters && !hideLabelFilter) {
@@ -195,14 +204,41 @@ export const ResourceDataView = <
         />
         <InnerScrollContainer>
           <DataViewTable
+            aria-label={t(`public~{{label}} table`, { label })}
             columns={dataViewColumns}
             rows={dataViewRows}
             bodyStates={{ empty: bodyEmpty, loading: bodyLoading }}
             gridBreakPoint=""
             variant="compact"
+            data-test="data-view-table"
           />
         </InnerScrollContainer>
       </DataView>
     </StatusBox>
   );
 };
+
+export const cellIsStickyProps = {
+  isStickyColumn: true,
+  stickyMinWidth: '0',
+};
+
+const nameCellProps = {
+  ...cellIsStickyProps,
+  hasRightBorder: true,
+};
+
+export const getNameCellProps = (name: string) => {
+  return {
+    ...nameCellProps,
+    'data-test': `data-view-cell-${name}-name`,
+  };
+};
+
+export const actionsCellProps = {
+  ...cellIsStickyProps,
+  hasLeftBorder: true,
+  isActionCell: true,
+};
+
+export const initialFiltersDefault = { name: '', label: '' };
