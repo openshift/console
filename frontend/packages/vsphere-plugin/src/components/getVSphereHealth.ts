@@ -15,9 +15,9 @@ const getPrometheusMetricValue = (
 ): PrometheusValue | undefined => prometheusResult.find((r) => r.metric.reason === reason)?.value;
 
 export const getVSphereHealth = (
-  t: TFunction,
   responses: PrometheusHealthPopupProps['responses'],
   configMapResult: PrometheusHealthPopupProps['k8sResult'],
+  t?: TFunction,
 ): SubsystemHealth => {
   if (!configMapResult) {
     return { state: HealthState.LOADING };
