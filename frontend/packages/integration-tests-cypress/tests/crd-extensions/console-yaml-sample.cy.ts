@@ -76,7 +76,7 @@ metadata:
     });
 
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
     cy.log('Additional printer columns should not exist.');
     cy.byTestID('has-additional-printer-columns').should('not.exist');
     cy.log('Created date should exist since Age does not.');
@@ -106,8 +106,8 @@ metadata:
 
     // Delete CRD
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
-    listPage.rows.shouldBeLoaded();
-    listPage.rows.clickKebabAction(name, `Delete ${crd}`);
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickKebabAction(name, `Delete ${crd}`);
     modal.shouldBeOpened();
     modal.modalTitleShouldContain(`Delete ${crd}`);
     modal.submit();
