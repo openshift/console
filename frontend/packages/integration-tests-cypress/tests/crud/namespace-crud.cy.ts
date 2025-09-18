@@ -28,7 +28,7 @@ describe('Namespace', () => {
   it('lists, creates, and deletes', () => {
     cy.log('test Namespace list page');
     nav.sidenav.clickNavLink(['Administration', 'Namespaces']);
-    listPage.rows.shouldNotExist(newName);
+    listPage.dvRows.shouldExist(newName);
     listPage.filter.byName(testName);
     listPage.rows.shouldExist(testName); // created via cy.createProjectWithCLI(testName) above
     cy.testA11y('Namespace List page');
@@ -59,34 +59,34 @@ describe('Namespace', () => {
     nav.sidenav.clickNavLink(['Workloads', 'Pods']);
     projectDropdown.selectProject(allProjectsDropdownLabel);
     projectDropdown.shouldContain(allProjectsDropdownLabel);
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
 
     cy.log(
       'List page to details page should change Project from "All Projects" to resource specific project',
     );
 
-    listPage.rows
+    listPage.dvRows
       .getFirstElementName()
       .invoke('text')
       .then((text) => {
-        listPage.filter.byName(text);
-        listPage.rows.countShouldBeWithin(1, 3);
-        listPage.rows.clickRowByName(text);
+        listPage.dvFilter.byName(text);
+        listPage.dvRows.countShouldBeWithin(1, 3);
+        listPage.dvRows.clickRowByName(text);
         detailsPage.isLoaded();
         projectDropdown.shouldNotContain(allProjectsDropdownLabel);
         nav.sidenav.clickNavLink(['Workloads', 'Pods']);
-        listPage.rows.shouldBeLoaded();
+        listPage.dvRows.shouldBeLoaded();
         projectDropdown.shouldContain(allProjectsDropdownLabel);
         cy.log(
           'Details page to list page via breadcrumb should change Project back to "All Projects"',
         );
-        listPage.filter.byName(text);
-        listPage.rows.countShouldBeWithin(1, 3);
-        listPage.rows.clickRowByName(text);
+        listPage.dvFilter.byName(text);
+        listPage.dvRows.countShouldBeWithin(1, 3);
+        listPage.dvRows.clickRowByName(text);
         detailsPage.isLoaded();
         projectDropdown.shouldNotContain(allProjectsDropdownLabel);
         detailsPage.breadcrumb(0).contains('Pods').click();
-        listPage.rows.shouldBeLoaded();
+        listPage.dvRows.shouldBeLoaded();
         projectDropdown.shouldContain(allProjectsDropdownLabel);
       });
   });
