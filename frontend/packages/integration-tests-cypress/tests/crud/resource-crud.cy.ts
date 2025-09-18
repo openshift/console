@@ -135,7 +135,6 @@ describe('Kubernetes resource CRUD operations', () => {
     describe(kind, () => {
       const name = `${testName}-${_.kebabCase(kind)}`;
       const isDataViewResource = dataViewResources.has(kind);
-
       it(`creates the resource instance`, () => {
         cy.visit(
           `${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}?name=${testName}`,
