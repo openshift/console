@@ -203,7 +203,13 @@ export const SecretDetails = ({ obj: secret }) => {
   );
 };
 
-const SecretsList = ({ data, loaded, ...props }) => {
+type SecretsListProps = {
+  data: any[];
+  loaded: boolean;
+  [key: string]: any;
+};
+
+const SecretsList: React.FCC<SecretsListProps> = ({ data, loaded, ...props }) => {
   const columns = useSecretsColumns();
 
   return (
@@ -252,7 +258,13 @@ export const secretTypeFilterReducer = (secret): string => {
   }
 };
 
-const SecretsPage = (props) => {
+type SecretsPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+};
+
+const SecretsPage: React.FC<SecretsPageProps> = (props) => {
   const { t } = useTranslation();
   const createItems = {
     generic: t('public~Key/value secret'),
