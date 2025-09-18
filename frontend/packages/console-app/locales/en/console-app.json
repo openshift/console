@@ -530,7 +530,6 @@
   "Launch tour": "Launch tour",
   "Skip tour": "Skip tour",
   "Okay, got it!": "Okay, got it!",
-  "Guided Tour": "Guided Tour",
   "Step {{stepNumber, number}}/{{totalSteps, number}}": "Step {{stepNumber, number}}/{{totalSteps, number}}",
   "guided tour {{step, number}}": "guided tour {{step, number}}",
   "Use the default browser language setting.": "Use the default browser language setting.",
