@@ -13,7 +13,7 @@ export const BasicAuthSubform: React.FC<BasicAuthSubformProps> = ({ onChange, st
   const { t } = useTranslation();
 
   const handleUsernameChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
-    onChange({ ...stringData, name: value });
+    onChange({ ...stringData, username: value });
   };
 
   const handlePasswordChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {

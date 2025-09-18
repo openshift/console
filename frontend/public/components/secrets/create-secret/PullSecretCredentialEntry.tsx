@@ -46,7 +46,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
   );
 
   return (
-    <FormFieldGroup>
+    <FormFieldGroup data-test-id="create-image-secret-form">
       <FormGroup label={t('public~Registry server address')} isRequired fieldId={`${id}-address`}>
         <TextInput
           id={`${id}-address`}

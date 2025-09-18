@@ -70,7 +70,7 @@ describe('Source secrets', () => {
     cy.log('Create secret');
     cy.get('[data-test="page-heading"] h1').contains('Create source secret');
     secrets.enterSecretName(sshSourceSecretName);
-    cy.byTestID('console-select-menu-toggle').click();
+    cy.byTestID('console-select-auth-type-menu-toggle').click();
     cy.byTestDropDownMenu('kubernetes.io/ssh-auth').click();
     cy.byLegacyTestID('file-input-textarea').type(sshSourceSecretSSHKey);
     secrets.save();

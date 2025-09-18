@@ -66,16 +66,20 @@ export const AuthSecretForm: React.FC<SecretSubFormProps> = ({
                 ref={toggleRef}
                 onClick={onToggleClick}
                 isExpanded={isAuthTypeSelectOpen}
+                data-test="console-select-auth-type-menu-toggle"
               >
                 {getDisplayText(authType)}
               </MenuToggle>
             )}
           >
             <SelectList>
-              <SelectOption value={SecretType.basicAuth} key="basic-auth">
+              <SelectOption
+                value={SecretType.basicAuth}
+                data-test-dropdown-menu={SecretType.basicAuth}
+              >
                 {t('public~Basic authentication')}
               </SelectOption>
-              <SelectOption value={SecretType.sshAuth} key="ssh-key">
+              <SelectOption value={SecretType.sshAuth} data-test-dropdown-menu={SecretType.sshAuth}>
                 {t('public~SSH key')}
               </SelectOption>
             </SelectList>
