@@ -741,10 +741,10 @@ This extension can be used to define a new section of navigation items in the na
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `id` | `string` | no | A unique identifier for this item. |
-| `perspective` | `string` | yes | The perspective ID to which this item belongs to. If not specified, contributes to the default perspective. |
-| `dataAttributes` | `{ [key: string]: string; }` | yes | Adds data attributes to the DOM. |
 | `insertBefore` | `string \| string[]` | yes | Insert this item before the item referenced here. For arrays, the first one found in order is used. |
 | `insertAfter` | `string \| string[]` | yes | Insert this item after the item referenced here. For arrays, the first one found in order is used. `insertBefore` takes precedence. |
+| `perspective` | `string` | yes | The perspective ID to which this item belongs to. If not specified, contributes to the default perspective. |
+| `dataAttributes` | `{ [key: string]: string; }` | yes | Adds data attributes to the DOM. |
 | `name` | `string` | yes | Name of this section. If not supplied, only a separator will be shown above the section. |
 
 ---
@@ -760,11 +760,11 @@ This extension can be used to add a separator between navigation items in the na
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `id` | `string` | no | A unique identifier for this item. |
+| `insertBefore` | `string \| string[]` | yes | Insert this item before the item referenced here. For arrays, the first one found in order is used. |
+| `insertAfter` | `string \| string[]` | yes | Insert this item after the item referenced here. For arrays, the first one found in order is used. `insertBefore` takes precedence. |
 | `section` | `string` | yes | Navigation section to which this item belongs to. If not specified, render this item as a top level link. |
 | `perspective` | `string` | yes | The perspective ID to which this item belongs to. If not specified, contributes to the default perspective. |
 | `dataAttributes` | `{ [key: string]: string; }` | yes | Adds data attributes to the DOM. |
-| `insertBefore` | `string \| string[]` | yes | Insert this item before the item referenced here. For arrays, the first one found in order is used. |
-| `insertAfter` | `string \| string[]` | yes | Insert this item after the item referenced here. For arrays, the first one found in order is used. `insertBefore` takes precedence. |
 
 ---
 

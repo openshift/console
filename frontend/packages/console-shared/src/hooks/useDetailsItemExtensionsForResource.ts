@@ -22,9 +22,10 @@ export const useDetailsItemExtensionsForResource: UseDetailsItemExtensionsForRes
 ) => {
   const typeGuard = useCallback<ExtensionTypeGuard<DetailsItem>>(
     (e): e is DetailsItem => {
+      if (!isDetailsItem(e)) return false;
       const columnMatches = e.properties.column === column;
       const modelMatches = referenceFor(obj) === referenceForExtensionModel(e.properties.model);
-      return isDetailsItem(e) && modelMatches && columnMatches;
+      return modelMatches && columnMatches;
     },
     [obj, column],
   );

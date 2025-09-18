@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.21.0-prerelease.x - TBD
+
+- Begin alignment of plugin SDK types with `@openshift/dynamic-plugin-sdk` ([CONSOLE-3769], [#15509])
+
 ## 4.20.0-prerelease.1 - 2025-08-15
 
 - Add fullscreen toggle button to `ResourceYAMLEditor` component ([CONSOLE-4656], [#15254])
@@ -110,6 +114,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-3662]: https://issues.redhat.com/browse/CONSOLE-3662
 [CONSOLE-3693]: https://issues.redhat.com/browse/CONSOLE-3693
 [CONSOLE-3695]: https://issues.redhat.com/browse/CONSOLE-3695
+[CONSOLE-3769]: https://issues.redhat.com/browse/CONSOLE-3769
 [CONSOLE-3792]: https://issues.redhat.com/browse/CONSOLE-3792
 [CONSOLE-3883]: https://issues.redhat.com/browse/CONSOLE-3883
 [CONSOLE-3899]: https://issues.redhat.com/browse/CONSOLE-3899
@@ -180,3 +185,4 @@ table in [Console dynamic plugins README](./README.md).
 [#15231]: https://github.com/openshift/console/pull/15231
 [#15254]: https://github.com/openshift/console/pull/15254
 [#15386]: https://github.com/openshift/console/pull/15386
+[#15509]: https://github.com/openshift/console/pull/15509
