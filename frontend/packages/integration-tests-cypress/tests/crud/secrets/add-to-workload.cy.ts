@@ -46,9 +46,9 @@ describe('Add Secret to Workloads', () => {
     cy.login();
     guidedTour.close();
     cy.createProjectWithCLI(testName);
-    cy.exec(`echo '${JSON.stringify(deployment)}' | kubectl create -n ${testName} -f -`);
+    cy.exec(`echo '${JSON.stringify(deployment)}' | oc create -n ${testName} -f -`);
     cy.exec(
-      `kubectl create secret generic ${secretName} --from-literal=key1=supersecret -n ${testName}`,
+      `oc create secret generic ${secretName} --from-literal=key1=supersecret -n ${testName}`,
     );
   });
 

@@ -37,7 +37,7 @@ describe('Events', () => {
     guidedTour.close();
     cy.createProjectWithCLI(testName);
     try {
-      cy.exec(`echo '${JSON.stringify(testpod)}' | kubectl create -n ${testName} -f -`);
+      cy.exec(`echo '${JSON.stringify(testpod)}' | oc create -n ${testName} -f -`);
     } catch (error) {
       console.error(`\nFailed to create pod ${name}:\n${error}`);
     }

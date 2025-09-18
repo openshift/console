@@ -128,7 +128,7 @@ describe('Image pull secrets', () => {
     cy.log('Create secret');
     cy.get('[data-test="page-heading"] h1').contains(heading);
     secrets.enterSecretName(uploadConfigFileImageSecretName);
-    cy.byTestID('console-select-menu-toggle').click();
+    cy.byTestID('console-select-auth-type-menu-toggle').click();
     cy.byTestDropDownMenu('config-file').click();
     cy.byLegacyTestID('file-input-textarea').type(JSON.stringify(configFile), {
       parseSpecialCharSequences: false,

@@ -60,7 +60,7 @@ export const secrets = {
   encode: (username, password) => Base64.encode(`${username}:${password}`),
   enterSecretName: (secretName: string) => cy.byTestID('secret-name').type(secretName),
   getResourceJSON: (name: string, namespace: string, kind: string) => {
-    return cy.exec(`kubectl get -o json -n ${namespace} ${kind} ${name}`);
+    return cy.exec(`oc get -o json -n ${namespace} ${kind} ${name}`);
   },
   save: () => cy.byTestID('save-changes').click(),
 };

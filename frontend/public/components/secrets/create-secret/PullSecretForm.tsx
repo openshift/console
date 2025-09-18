@@ -63,16 +63,23 @@ export const PullSecretForm: FC<SecretSubFormProps> = ({
                 ref={toggleRef}
                 onClick={onToggleClick}
                 isExpanded={isAuthTypeSelectOpen}
+                data-test="console-select-auth-type-menu-toggle"
               >
                 {getDisplayText(selectedAuth)}
               </MenuToggle>
             )}
           >
             <SelectList>
-              <SelectOption value={PullSecretAuthenticationType.credentials} key="credentials">
+              <SelectOption
+                value={PullSecretAuthenticationType.credentials}
+                data-test-dropdown-menu={PullSecretAuthenticationType.credentials}
+              >
                 {t('public~Image registry credentials')}
               </SelectOption>
-              <SelectOption value={PullSecretAuthenticationType.config} key="config-file">
+              <SelectOption
+                value={PullSecretAuthenticationType.config}
+                data-test-dropdown-menu={PullSecretAuthenticationType.config}
+              >
                 {t('public~Upload configuration file')}
               </SelectOption>
             </SelectList>
