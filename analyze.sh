@@ -14,7 +14,7 @@ if [ -d "$ARTIFACT_DIR" ]; then
   cp public/dist/report.html "${ARTIFACT_DIR}"
 fi
 
-MAX_BYTES=4823450 # ~4.6 MiB
+MAX_BYTES=5700000 # ~5.4 MiB (increased for @patternfly/quickstarts@5.4.5 + marked dependency)
 VENDORS_MAIN_BYTES=$(du -b `find public/dist -type f -name 'vendors~main-chunk*js'` | cut -f1)
 DISPLAY_VALUE=$(awk "BEGIN {printf \"%.2f\n\", $VENDORS_MAIN_BYTES/1024/1024}")
 MAX_DISPLAY_VALUE=$(awk "BEGIN {printf \"%.2f\n\", $MAX_BYTES/1024/1024}")
