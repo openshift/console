@@ -1,7 +1,6 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { SecretSubFormProps, OpaqueDataEntry } from './types';
 import { OpaqueSecretFormEntry } from './OpaqueSecretFormEntry';
@@ -9,7 +8,7 @@ import { opaqueSecretObjectToArray, newOpaqueSecretEntry, opaqueEntriesToObject 
 
 export const OpaqueSecretForm: React.FC<SecretSubFormProps> = ({ onChange, base64StringData }) => {
   const { t } = useTranslation();
-  const [opaqueDataEntries, setOpaqueDataEntries] = React.useState(
+  const [opaqueDataEntries, setOpaqueDataEntries] = useState(
     opaqueSecretObjectToArray(base64StringData),
   );
 
@@ -34,35 +33,28 @@ export const OpaqueSecretForm: React.FC<SecretSubFormProps> = ({ onChange, base6
     onDataChanged([...opaqueDataEntries, newOpaqueSecretEntry()]);
   };
 
-  const secretEntriesList = opaqueDataEntries.map((entry, index) => (
-    <div className="co-add-remove-form__entry" key={entry.uid}>
-      {opaqueDataEntries.length > 1 && (
-        <div className="co-add-remove-form__link--remove-entry">
-          <Button
-            type="button"
-            onClick={() => removeEntry(index)}
-            variant="link"
-            data-test="remove-entry-button"
-            icon={<MinusCircleIcon className="co-icon-space-r" />}
-          >
-            {t('public~Remove key/value')}
-          </Button>
-        </div>
-      )}
-      <OpaqueSecretFormEntry index={index} entry={entry} onChange={updateEntry} />
-    </div>
-  ));
-
   return (
     <>
-      {secretEntriesList}
+      {opaqueDataEntries.map((entry, index) => {
+        return (
+          <>
+            <OpaqueSecretFormEntry
+              key={entry.uid}
+              index={index}
+              entry={entry}
+              onChange={updateEntry}
+              removeEntry={removeEntry}
+              showRemoveButton={opaqueDataEntries.length > 1}
+            />
+          </>
+        );
+      })}
       <Button
-        className="co-create-secret-form__link--add-entry pf-m-link--align-left"
         onClick={() => addEntry()}
         type="button"
         variant="link"
         data-test="add-credentials-button"
-        icon={<PlusCircleIcon className="co-icon-space-r" />}
+        icon={<PlusCircleIcon />}
       >
         {t('public~Add key/value')}
       </Button>

@@ -25,6 +25,6 @@ export const SSHAuthSubform: React.FC<SSHAuthSubformProps> = ({ onChange, string
 };
 
 type SSHAuthSubformProps = {
-  onChange: Function;
+  onChange: (stringData: SecretStringData) => void;
   stringData: SecretStringData;
 };

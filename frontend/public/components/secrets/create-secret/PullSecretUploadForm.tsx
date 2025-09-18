@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Alert, FormGroup } from '@patternfly/react-core';
 import { OnSecretChange, SecretStringData, SecretType } from './types';
 import { AUTHS_KEY } from './const';
 import { DroppableFileInput } from './DropableFileInput';
@@ -39,7 +40,7 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
   );
 
   return (
-    <>
+    <FormGroup>
       <DroppableFileInput
         onChange={onFileChange}
         inputFileData={configFile}
@@ -52,11 +53,11 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
         isRequired={true}
       />
       {parseError && (
-        <div className="co-create-secret-warning">
+        <Alert variant="danger" title={t('public~Invalid configuration file')} isInline>
           {t('public~Configuration file should be in JSON format.')}
-        </div>
+        </Alert>
       )}
-    </>
+    </FormGroup>
   );
 };
 

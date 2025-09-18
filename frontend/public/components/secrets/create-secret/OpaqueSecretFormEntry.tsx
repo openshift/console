@@ -1,13 +1,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
+import { TextInput, Button, FormGroup, FormFieldGroup } from '@patternfly/react-core';
 import { DroppableFileInput } from './DropableFileInput';
 import { OpaqueSecretFormEntryProps } from './types';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 
 export const OpaqueSecretFormEntry: React.FC<OpaqueSecretFormEntryProps> = ({
   onChange,
   entry,
+  key,
   index,
+  removeEntry,
+  showRemoveButton,
 }) => {
   const { t } = useTranslation();
 
@@ -20,48 +25,49 @@ export const OpaqueSecretFormEntry: React.FC<OpaqueSecretFormEntryProps> = ({
     onChange(updatedEntry, index);
   };
 
-  const handleKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleKeyChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
     onChange(
       {
         ...entry,
-        key: event.target.value,
+        key: value,
       },
       index,
     );
   };
 
   return (
-    <div className="co-create-generic-secret__form">
-      <div className="form-group">
-        <label className="co-required" htmlFor={`${index}-key`}>
-          {t('public~Key')}
-        </label>
-        <div>
-          <span className="pf-v6-c-form-control">
-            <input
-              id={`${index}-key`}
-              type="text"
-              name="key"
-              onChange={handleKeyChange}
-              value={entry.key}
-              data-test="secret-key"
-              required
-            />
-          </span>
-        </div>
-      </div>
-      <div className="form-group">
-        <DroppableFileInput
-          onChange={handleValueChange}
-          inputFileData={Base64.decode(entry.value)}
-          id={`${index}-value`}
-          label={t('public~Value')}
-          inputFieldHelpText={t(
-            'public~Drag and drop file with your value here or browse to upload it.',
-          )}
-          inputFileIsBinary={entry.isBinary_}
+    <FormFieldGroup>
+      <FormGroup label={t('public~Key')} isRequired fieldId="secret-key">
+        <TextInput
+          id={`${key}-key`}
+          type="text"
+          name="key"
+          value={entry.key}
+          onChange={handleKeyChange}
+          data-test="secret-key"
         />
-      </div>
-    </div>
+      </FormGroup>
+      <DroppableFileInput
+        onChange={handleValueChange}
+        inputFileData={Base64.decode(entry.value)}
+        id={`${key}-value`}
+        label={t('public~Value')}
+        inputFieldHelpText={t(
+          'public~Drag and drop file with your value here or browse to upload it.',
+        )}
+        inputFileIsBinary={entry.isBinary_}
+      />
+      {showRemoveButton && removeEntry && (
+        <Button
+          type="button"
+          onClick={() => removeEntry(index)}
+          variant="link"
+          data-test="remove-entry-button"
+          icon={<MinusCircleIcon />}
+        >
+          {t('public~Remove key/value')}
+        </Button>
+      )}
+    </FormFieldGroup>
   );
 };
