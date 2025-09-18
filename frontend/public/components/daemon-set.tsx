@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import {
   usePodsWatcher,
@@ -11,14 +9,20 @@ import {
   ActionMenu,
   ActionMenuVariant,
   usePrometheusGate,
+  DASH,
 } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { K8sResourceKind, referenceFor, referenceForModel, DaemonSetKind } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import {
+  K8sResourceKind,
+  referenceFor,
+  referenceForModel,
+  DaemonSetKind,
+  TableColumn,
+} from '../module/k8s';
+import { DetailsPage, ListPage } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
-  Kebab,
   ContainerTable,
   detailsPage,
   LabelList,
@@ -29,23 +33,88 @@ import {
   SectionHeading,
   Selector,
   LoadingInline,
+  LoadingBox,
 } from './utils';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
-const kind = 'DaemonSet';
+const kind = referenceForModel(DaemonSetModel);
 
-const tableColumnClasses = [
-  '',
-  '',
-  css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg'),
-  css('pf-m-hidden', 'pf-m-visible-on-lg'),
-  css('pf-m-hidden', 'pf-m-visible-on-lg'),
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'status' },
+  { id: 'labels' },
+  { id: 'podSelector' },
+  { id: 'actions' },
 ];
+
+const getDataViewRows: GetDataViewRows<DaemonSetKind, undefined> = (data, columns) => {
+  return data.map(({ obj: daemonset }) => {
+    const { name, namespace } = daemonset.metadata;
+    const resourceKind = referenceFor(daemonset);
+    const context = { [resourceKind]: daemonset };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(DaemonSetModel)}
+            name={name}
+            namespace={namespace}
+          />
+        ),
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: (
+          <Link
+            to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`}
+            title="pods"
+          >
+            {`${daemonset.status.currentNumberScheduled} of ${daemonset.status.desiredNumberScheduled} pods`}
+          </Link>
+        ),
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <LabelList kind={kind} labels={daemonset.metadata.labels} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: (
+          <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
+        ),
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
+};
 
 export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }) => {
   const { t } = useTranslation();
@@ -126,99 +195,96 @@ const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
   />
 );
 
-const DaemonSetTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj: daemonset }) => {
+const useDaemonSetsColumns = () => {
   const { t } = useTranslation();
-  const resourceKind = referenceFor(daemonset);
-  const context = { [resourceKind]: daemonset };
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={daemonset.metadata.name}
-          namespace={daemonset.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={daemonset.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Link
-          to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`}
-          title="pods"
-        >
-          {t('public~{{currentNumber}} of {{desiredNumber}} pods', {
-            currentNumber: daemonset.status.currentNumberScheduled,
-            desiredNumber: daemonset.status.desiredNumberScheduled,
-          })}
-        </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <LabelList kind={kind} labels={daemonset.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
+  const columns: TableColumn<DaemonSetKind>[] = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Status'),
+        id: tableColumnInfo[2].id,
+        sort: 'status.currentNumberScheduled',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Labels'),
+        id: tableColumnInfo[3].id,
+        sort: 'metadata.labels',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Pod selector'),
+        id: tableColumnInfo[4].id,
+        sort: 'spec.selector',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[5].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
 };
 
-export const DaemonSets: React.FC = (props) => {
-  const { t } = useTranslation();
-  const DaemonSetTableHeader = () => [
-    {
-      title: t('public~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: t('public~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: t('public~Status'),
-      sortFunc: 'daemonsetNumScheduled',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('public~Labels'),
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: t('public~Pod selector'),
-      sortField: 'spec.selector',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
+type DaemonSetsListProps = {
+  data: DaemonSetKind[];
+  loaded: boolean;
+  [key: string]: any;
+};
+
+export const DaemonSetsList: React.FC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
+  const columns = useDaemonSetsColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~DaemonSets')}
-      Header={DaemonSetTableHeader}
-      Row={DaemonSetTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView<DaemonSetKind>
+        {...props}
+        label={DaemonSetModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
 export const DaemonSetsPage: React.FC<DaemonSetsPageProps> = (props) => (
-  <ListPage canCreate={true} ListComponent={DaemonSets} kind={kind} {...props} />
+  <ListPage
+    canCreate={true}
+    ListComponent={DaemonSetsList}
+    kind={kind}
+    omitFilterToolbar={true}
+    {...props}
+  />
 );
 
 const DaemonSetPods: React.FC<DaemonSetPodsProps> = (props) => (
