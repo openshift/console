@@ -1,65 +1,67 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SecretChangeData, SecretStringData } from './types';
+import {
+  FormGroup,
+  TextInput,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
+import { SecretStringData } from './types';
 
 export const BasicAuthSubform: React.FC<BasicAuthSubformProps> = ({ onChange, stringData }) => {
   const { t } = useTranslation();
 
-  const changeData = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    onChange({ ...stringData, [name]: value });
+  const handleUsernameChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+    onChange({ ...stringData, name: value });
+  };
+
+  const handlePasswordChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+    onChange({ ...stringData, password: value });
   };
 
   return (
     <>
-      <div className="form-group">
-        <label htmlFor="username">{t('public~Username')}</label>
-        <div>
-          <span className="pf-v6-c-form-control">
-            <input
-              id="username"
-              data-test="secret-username"
-              aria-describedby="username-help"
-              type="text"
-              name="username"
-              onChange={changeData}
-              value={stringData.username}
-            />
-          </span>
-          <p className="help-block" id="username-help">
-            {t('public~Optional username for Git authentication.')}
-          </p>
-        </div>
-      </div>
-      <div className="form-group">
-        <label className="co-required" htmlFor="password">
-          {t('public~Password or token')}
-        </label>
-        <div>
-          <span className="pf-v6-c-form-control">
-            <input
-              id="password"
-              data-test="secret-password"
-              aria-describedby="password-help"
-              type="password"
-              name="password"
-              onChange={changeData}
-              value={stringData.password}
-              required
-            />
-          </span>
-          <p className="help-block" id="password-help">
-            {t(
-              'public~Password or token for Git authentication. Required if a ca.crt or .gitconfig file is not specified.',
-            )}
-          </p>
-        </div>
-      </div>
+      <FormGroup label={t('public~Username')} fieldId="username">
+        <TextInput
+          id="username"
+          data-test="secret-username"
+          type="text"
+          name="username"
+          value={stringData.username || ''}
+          onChange={handleUsernameChange}
+        />
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>{t('public~Optional username for Git authentication.')}</HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      </FormGroup>
+      <FormGroup label={t('public~Password or token')} isRequired fieldId="password">
+        <TextInput
+          id="password"
+          data-test="secret-password"
+          type="password"
+          name="password"
+          value={stringData.password || ''}
+          onChange={handlePasswordChange}
+          isRequired
+        />
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              {t(
+                'public~Password or token for Git authentication. Required if a ca.crt or .gitconfig file is not specified.',
+              )}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      </FormGroup>
     </>
   );
 };
 
 type BasicAuthSubformProps = {
-  onChange: (stringData: SecretChangeData) => void;
+  onChange: (stringData: SecretStringData) => void;
   stringData: SecretStringData;
 };
