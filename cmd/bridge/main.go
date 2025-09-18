@@ -21,14 +21,20 @@ import (
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/controllers"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
+	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
+	ctrlmetrics "sigs.k8s.io/controller-runtime/pkg/metrics/server"
+
+	kruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
@@ -166,6 +172,8 @@ func main() {
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
 	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
+
+	fControllerManagerMetricsAddr := fs.String("controller-manager-metrics-address", ":8081", "The address for the controller manager metrics endpoint. Defaults to :8081.")
 
 	cfg, err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE")
 	if err != nil {
@@ -571,6 +579,30 @@ func main() {
 	default:
 		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: in-cluster, off-cluster"))
 	}
+
+	controllerManagerMetricsOptions := ctrlmetrics.Options{
+		BindAddress: *fControllerManagerMetricsAddr,
+	}
+	mgr, err := ctrl.NewManager(srv.InternalProxiedK8SClientConfig, ctrl.Options{
+		Scheme:  kruntime.NewScheme(),
+		Metrics: controllerManagerMetricsOptions,
+	})
+	if err != nil {
+		klog.Errorf("problem creating controller manager: %v", err)
+	}
+
+	catalogService := olm.NewDummyCatalogService()
+	if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {
+		klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
+	}
+
+	klog.Info("starting manager")
+	mgrContext := ctrl.SetupSignalHandler()
+	go func() {
+		if err := mgr.Start(mgrContext); err != nil {
+			klog.Errorf("problem running manager: %v", err)
+		}
+	}()
 
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
