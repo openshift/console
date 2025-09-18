@@ -1,10 +1,10 @@
 import * as _ from 'lodash-es';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
+import { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage, Table, TableData, TableProps } from './factory';
+import { DetailsPage, ListPage } from './factory';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
+import { DASH } from '@console/shared';
 import {
   Kebab,
   SectionHeading,
@@ -14,102 +14,160 @@ import {
   ResourceSummary,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ConfigMapModel } from '../models/index';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { ConfigMapKind } from '@console/internal/module/k8s';
+import { ConfigMapKind, referenceForModel, TableColumn } from '../module/k8s';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { LoadingBox } from '@console/shared/src/components/loading';
+import { sortResourceByValue } from './factory/Table/sort';
+import { sorts } from './factory/table';
 
 const menuActions = [...Kebab.factory.common];
-
-const kind = 'ConfigMap';
-
-const tableColumnClasses = [
-  '',
-  'pf-v6-u-display-none pf-v6-u-display-table-cell-on-sm',
-  'pf-v6-u-display-none pf-v6-u-display-table-cell-on-sm',
-  'pf-v6-u-display-none pf-v6-u-display-table-cell-on-md',
-  Kebab.columnClass,
+const kind = referenceForModel(ConfigMapModel);
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'size' },
+  { id: 'created' },
+  { id: 'actions' },
 ];
 
-const ConfigMapTableRow: React.FCC<{ obj: ConfigMapKind }> = ({ obj: configMap }) => {
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind="ConfigMap"
-          name={configMap.metadata.name}
-          namespace={configMap.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={configMap.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {_.size(configMap.data) + _.size(configMap.binaryData)}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <Timestamp timestamp={configMap.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={configMap} />
-      </TableData>
-    </>
-  );
+const getDataViewRows: GetDataViewRows<ConfigMapKind, undefined> = (data, columns) => {
+  return data.map(({ obj: configMap }) => {
+    const { name, namespace } = configMap.metadata;
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(ConfigMapModel)}
+            name={name}
+            namespace={namespace}
+          />
+        ),
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: _.size(configMap.data) + _.size(configMap.binaryData),
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <Timestamp timestamp={configMap.metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <ResourceKebab actions={menuActions} kind={kind} resource={configMap} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
-export const ConfigMaps: React.FCC<Partial<TableProps>> = (props) => {
+const useConfigMapsColumns = (): TableColumn<ConfigMapKind>[] => {
   const { t } = useTranslation();
-  const ConfigMapTableHeader = () => [
-    {
-      title: t('public~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: t('public~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: t('public~Size'),
-      sortFunc: 'dataSize',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('public~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[4] },
-    },
-  ];
-
-  return (
-    <Table
-      {...props}
-      aria-label={t('public~ConfigMaps')}
-      Header={ConfigMapTableHeader}
-      Row={ConfigMapTableRow}
-      virtualize
-    />
+  return useMemo(
+    () => [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Size'),
+        id: tableColumnInfo[2].id,
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.dataSize)),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Created'),
+        id: tableColumnInfo[3].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[4].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ],
+    [t],
   );
 };
 
-export const ConfigMapsPage = (props) => {
+export const ConfigMaps: React.FCC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
+  const columns = useConfigMapsColumns();
+
+  return (
+    <Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<ConfigMapKind>
+        {...props}
+        label={ConfigMapModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </Suspense>
+  );
+};
+
+export const ConfigMapsPage: React.FCC<ConfigMapsPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/configmaps/~new/form`,
   };
   return (
-    <ListPage ListComponent={ConfigMaps} canCreate={true} createProps={createProps} {...props} />
+    <ListPage
+      {...props}
+      kind={kind}
+      ListComponent={ConfigMaps}
+      canCreate={true}
+      createProps={createProps}
+      omitFilterToolbar={true}
+    />
   );
 };
 
-export const ConfigMapsDetailsPage = (props) => {
+export const ConfigMapsDetailsPage: React.FCC = (props) => {
   const { t } = useTranslation();
   const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => {
     return (
@@ -137,8 +195,20 @@ export const ConfigMapsDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
+      kind={kind}
       menuActions={menuActions}
       pages={[navFactory.details(ConfigMapDetails), navFactory.editYaml()]}
     />
   );
+};
+
+type ConfigMapsProps = {
+  data: ConfigMapKind[];
+  loaded: boolean;
+};
+
+type ConfigMapsPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
 };

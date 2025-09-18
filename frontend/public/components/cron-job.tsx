@@ -1,31 +1,22 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
 import {
   getPodsForResource,
   ActionServiceProvider,
   ActionMenu,
   ActionMenuVariant,
   LazyActionMenu,
+  DASH,
 } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  DetailsPage,
-  ListPage,
-  Table,
-  TableData,
-  RowFunctionArgs,
-  ListPageWrapper,
-} from './factory';
+import { DetailsPage, ListPage, ListPageWrapper } from './factory';
 import {
   CronJobKind,
   K8sResourceCommon,
   K8sResourceKind,
   referenceForModel,
   referenceFor,
+  TableColumn,
 } from '../module/k8s';
 import {
   ContainerTable,
@@ -45,55 +36,87 @@ import { PodList, getFilters as getPodFilters } from './pod';
 import { JobsList } from './job';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { LoadingBox } from './utils/status-box';
 
 const { common } = Kebab.factory;
 export const menuActions = [...common];
 
-const kind = 'CronJob';
+const kind = referenceForModel(CronJobModel);
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-25-on-xl',
-  'pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-25-on-xl',
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'schedule' },
+  { id: 'suspend' },
+  { id: 'concurrencyPolicy' },
+  { id: 'startingDeadlineSeconds' },
+  { id: 'actions' },
 ];
 
-const CronJobTableRow: React.FC<RowFunctionArgs<CronJobKind>> = ({ obj: cronjob }) => {
-  const resourceKind = referenceFor(cronjob);
-  const context = { [resourceKind]: cronjob };
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={cronjob.metadata.name}
-          namespace={cronjob.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={cronjob.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>{cronjob.spec.schedule}</TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {cronjob.spec?.suspend ? i18next.t('public~True') : i18next.t('public~False')}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        {_.get(cronjob.spec, 'concurrencyPolicy', '-')}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        {_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
+const BooleanDisplay: React.FCC<{ value?: boolean }> = ({ value }) => {
+  const { t } = useTranslation();
+  return value ? t('public~True') : t('public~False');
 };
 
-const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
+const getDataViewRows: GetDataViewRows<CronJobKind, undefined> = (data, columns) => {
+  return data.map(({ obj: cronjob }) => {
+    const { name, namespace } = cronjob.metadata;
+    const resourceKind = referenceFor(cronjob);
+    const context = { [resourceKind]: cronjob };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(CronJobModel)}
+            name={name}
+            namespace={namespace}
+          />
+        ),
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: cronjob.spec.schedule,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <BooleanDisplay value={cronjob.spec?.suspend} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: cronjob.spec?.concurrencyPolicy || DASH,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: cronjob.spec?.startingDeadlineSeconds || DASH,
+      },
+      [tableColumnInfo[6].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
+};
+
+const CronJobDetails: React.FCC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   const job = cronjob.spec.jobTemplate;
   const { t } = useTranslation();
   return (
@@ -105,7 +128,7 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
             <ResourceSummary resource={cronjob}>
               <DetailsItem label={t('public~Schedule')} obj={cronjob} path="spec.schedule" />
               <DetailsItem label={t('public~Suspend')} obj={cronjob} path="spec.suspend">
-                {cronjob.spec?.suspend ? t('public~True') : t('public~False')}
+                <BooleanDisplay value={cronjob.spec?.suspend} />
               </DetailsItem>
               <DetailsItem
                 label={t('public~Concurrency policy')}
@@ -192,7 +215,7 @@ const getPodsWatcher = (namespace: string) => {
   ];
 };
 
-export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj }) => {
+export const CronJobPodsComponent: React.FCC<CronJobPodsComponentProps> = ({ obj }) => {
   const { t } = useTranslation();
   const podFilters = React.useMemo(() => getPodFilters(t), [t]);
   return (
@@ -234,7 +257,7 @@ export type CronJobJobsComponentProps = {
   obj: K8sResourceKind;
 };
 
-export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj }) => (
+export const CronJobJobsComponent: React.FCC<CronJobJobsComponentProps> = ({ obj }) => (
   <PaneBody>
     <Firehose resources={getJobsWatcher(obj.metadata.namespace)}>
       <ListPageWrapper
@@ -255,68 +278,101 @@ export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj 
   </PaneBody>
 );
 
-export const CronJobsList: React.FC = (props) => {
+const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
   const { t } = useTranslation();
-  const CronJobTableHeader = () => [
-    {
-      title: t('public~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: t('public~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: t('public~Schedule'),
-      sortField: 'spec.schedule',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('public~Suspend'),
-      sortField: 'spec.suspend',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: t('public~Concurrency policy'),
-      sortField: 'spec.concurrencyPolicy',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: t('public~Starting deadline seconds'),
-      sortField: 'spec.startingDeadlineSeconds',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[6] },
-    },
-  ];
+  const columns: TableColumn<CronJobKind>[] = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Schedule'),
+        id: tableColumnInfo[2].id,
+        sort: 'spec.schedule',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Suspend'),
+        id: tableColumnInfo[3].id,
+        sort: 'spec.suspend',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Concurrency policy'),
+        id: tableColumnInfo[4].id,
+        sort: 'spec.concurrencyPolicy',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Starting deadline seconds'),
+        id: tableColumnInfo[5].id,
+        sort: 'spec.startingDeadlineSeconds',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[6].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
+};
+
+export const CronJobsList: React.FCC<CronJobsListProps> = ({ data, loaded, ...props }) => {
+  const columns = useCronJobsColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={CronJobModel.labelPlural}
-      Header={CronJobTableHeader}
-      Row={CronJobTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<CronJobKind>
+        {...props}
+        label={CronJobModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
-export const CronJobsPage: React.FC<CronJobsPageProps> = (props) => (
-  <ListPage {...props} ListComponent={CronJobsList} kind={kind} canCreate={true} />
+export const CronJobsPage: React.FCC<CronJobsPageProps> = (props) => (
+  <ListPage
+    {...props}
+    ListComponent={CronJobsList}
+    kind={kind}
+    canCreate={true}
+    omitFilterToolbar={true}
+  />
 );
 
-export const CronJobsDetailsPage: React.FC = (props) => {
+export const CronJobsDetailsPage: React.FCC = (props) => {
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
@@ -344,6 +400,12 @@ export const CronJobsDetailsPage: React.FC = (props) => {
       ]}
     />
   );
+};
+
+type CronJobsListProps = {
+  data: CronJobKind[];
+  loaded: boolean;
+  [key: string]: any;
 };
 
 type CronJobDetailsProps = {
