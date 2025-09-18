@@ -166,7 +166,7 @@ func main() {
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
 	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
-	fTechPreview := fs.Bool("tech-preview", false, "Flag to indicate if tech preview features should be enabled.")
+	fTechPreview := fs.Bool("tech-preview", false, "Enable console Technology Preview features.")
 
 	cfg, err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE")
 	if err != nil {
