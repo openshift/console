@@ -115,7 +115,7 @@
 "@openshift-console/dynamic-plugin-sdk-webpack@file:../frontend/packages/console-dynamic-plugin-sdk/dist/webpack":
   version "0.0.0-fixed"
   dependencies:
-    "@openshift/dynamic-plugin-sdk-webpack" "^4.0.2"
+    "@openshift/dynamic-plugin-sdk-webpack" "^4.1.0"
     ajv "^6.12.3"
     chalk "2.4.x"
     comment-json "4.x"
@@ -129,6 +129,7 @@
 "@openshift-console/dynamic-plugin-sdk@file:../frontend/packages/console-dynamic-plugin-sdk/dist/core":
   version "0.0.0-fixed"
   dependencies:
+    "@openshift/dynamic-plugin-sdk" "^5.0.1"
     "@patternfly/react-topology" "^6.2.0"
     immutable "3.x"
     lodash "^4.17.21"
@@ -150,13 +151,23 @@
     sanitize-html "^2.3.2"
     showdown "1.8.6"
 
-"@openshift/dynamic-plugin-sdk-webpack@^4.0.2":
+"@openshift/dynamic-plugin-sdk-webpack@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@openshift/dynamic-plugin-sdk-webpack/-/dynamic-plugin-sdk-webpack-4.1.0.tgz#eb62ee18d975431411b78da15c9774d95dbe1fa7"
   integrity sha512-Pkq6R+fkoE0llgv9WJBcotViAPywrzDkpWK0HSTmrVyfEuWS5cuZUs8ono6L5w9BqDBRXm3ceEuUAZA/Zrar1w==
   dependencies:
     lodash "^4.17.21"
     semver "^7.3.7"
+    yup "^0.32.11"
+
+"@openshift/dynamic-plugin-sdk@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@openshift/dynamic-plugin-sdk/-/dynamic-plugin-sdk-5.0.1.tgz#3487afe57d07a28b9aba393e643d86ca13a3735c"
+  integrity sha512-+azUBN6FgcDmlcWMzG0bthcRUJC1u12wf9xa2aJGFbC/uTiOXwjrkcQ7LW/PyK5Em7wDhwaUdapaeOgh8I6Kjg==
+  dependencies:
+    lodash "^4.17.21"
+    semver "^7.3.7"
+    uuid "^8.3.2"
     yup "^0.32.11"
 
 "@patternfly/react-core@^6.0.0", "@patternfly/react-core@^6.2.2":
@@ -4460,6 +4471,11 @@ url-join@^2.0.5:
 util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
+
+uuid@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 v8-compile-cache-lib@^3.0.1:
   version "3.0.1"
