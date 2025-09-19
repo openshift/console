@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { GridPosition } from '@console/dynamic-plugin-sdk';
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import {
@@ -11,7 +10,6 @@ import {
   RoutePage,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthURLSubsystem,
-  DashboardsCard,
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
   DashboardsOverviewResourceActivity,
@@ -30,7 +28,6 @@ type ConsumedExtensions =
   | RoutePage
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewHealthURLSubsystem
-  | DashboardsCard
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
   | DashboardsOverviewResourceActivity
@@ -107,20 +104,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: '/test',
       render: () => <h1>Test Page</h1>,
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'foo-tab',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import('./components/dashboards/foo-card' /* webpackChunkName: "demo" */).then(
-          (m) => m.FooCard,
-        ),
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
     },
   },
   {

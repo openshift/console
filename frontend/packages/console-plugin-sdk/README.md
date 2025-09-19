@@ -1,5 +1,9 @@
 # OpenShift Console Static Plugins
 
+> [!CAUTION]
+> The static plugin system is deprecated and is actively being removed. New and existing plugins should
+> use the [dynamic plugin system](../console-dynamic-plugin-sdk/README.md) instead.
+
 Static plugins become part of the Console application during its webpack build. Their code is maintained
 as part of the frontend monorepo, built and released as an integral part of Console.
 
@@ -54,25 +58,6 @@ file extension).
 
 The `consolePlugin.entry` path in `package.json` file points to the plugin entry module which exports
 all of the plugin's static extensions.
-
-```ts
-import { Plugin, DashboardsCard } from '@console/plugin-sdk';
-
-type ConsumedExtensions = DashboardsCard;
-
-const plugin: Plugin<ConsumedExtensions> = [
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'foo-tab',
-      loader: () =>
-        import('./components/foo-card' /* webpackChunkName: "foo" */).then((m) => m.FooCard),
-    },
-  },
-];
-
-export default plugin;
-```
 
 The standard way to reference additional code in static extensions is via ES6 module `import` function,
 which generates a separate [webpack chunk](https://webpack.js.org/guides/code-splitting/) to be loaded

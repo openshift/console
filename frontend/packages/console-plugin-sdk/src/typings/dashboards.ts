@@ -1,10 +1,5 @@
 import { TFunction } from 'i18next';
-import {
-  WatchK8sResources,
-  ResourcesObject,
-  WatchK8sResults,
-  GridPosition,
-} from '@console/dynamic-plugin-sdk';
+import { WatchK8sResources, ResourcesObject, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   FirehoseResource,
@@ -134,20 +129,6 @@ namespace ExtensionProperties {
     viewAllLink?: string;
   }
 
-  export interface DashboardsCard {
-    /** The tab's ID where this card should be rendered */
-    tab: string;
-
-    /** The card position in the tab */
-    position: GridPosition;
-
-    /** Loader for the corresponding dashboard card component. */
-    loader: LazyLoader;
-
-    /** Card's vertical span in the column. Ignored for small screens, defaults to 12. */
-    span?: CardSpan;
-  }
-
   export interface DashboardsOverviewInventoryItem {
     /** The model for `resource` which will be fetched. The model is used for getting model's label or abbr. */
     model: K8sKind;
@@ -274,12 +255,6 @@ export const isDashboardsOverviewHealthSubsystem = (
   isDashboardsOverviewHealthResourceSubsystem(e) ||
   isDashboardsOverviewHealthOperator(e);
 
-export interface DashboardsCard extends Extension<ExtensionProperties.DashboardsCard> {
-  type: 'Dashboards/Card';
-}
-
-export const isDashboardsCard = (e: Extension): e is DashboardsCard => e.type === 'Dashboards/Card';
-
 export interface DashboardsOverviewInventoryItem
   extends Extension<ExtensionProperties.DashboardsOverviewInventoryItem> {
   type: 'Dashboards/Overview/Inventory/Item';
@@ -333,8 +308,6 @@ export const isDashboardsOverviewInventoryItemReplacement = (
   e: Extension,
 ): e is DashboardsOverviewInventoryItemReplacement =>
   e.type === 'Dashboards/Overview/Inventory/Item/Replacement';
-
-export type CardSpan = 4 | 6 | 12;
 
 export type K8sActivityProps = {
   resource: K8sResourceKind;
