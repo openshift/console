@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Select, SelectProps } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { render, screen, configure } from '@testing-library/react';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
 import { useUserSettings } from '@console/shared';
+import { render } from '@console/shared/src/test-utils/unit-test-utils';
 import UserPreferenceDropdownField from '../UserPreferenceDropdownField';
 
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
@@ -22,7 +22,10 @@ describe('UserPreferenceDropdownField', () => {
       { value: '#LATEST#', label: 'Last viewed' },
     ],
   };
-  let wrapper: ShallowWrapper<UserPreferenceDropdownFieldProps>;
+
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-test' });
+  });
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -30,24 +33,21 @@ describe('UserPreferenceDropdownField', () => {
 
   it('should render skeleton if user preference have not loaded', () => {
     mockUserSettings.mockReturnValue(['', () => {}, false]);
-    wrapper = shallow(<UserPreferenceDropdownField {...props} />);
-    expect(wrapper.find('[data-test="select skeleton id"]').exists()).toBeTruthy();
+    render(<UserPreferenceDropdownField {...props} />);
+    expect(screen.getByTestId('select skeleton id')).toBeInTheDocument();
   });
 
   it('should render select with selected value corresponding to user preference if it has loaded and is defined', () => {
     mockUserSettings.mockReturnValue(['value', () => {}, true]);
-    wrapper = shallow(<UserPreferenceDropdownField {...props} />);
-    expect(wrapper.find('[data-test="select id"]').exists()).toBeTruthy();
-    expect((wrapper.find(Select).props() as SelectProps).selected).toBe('label');
+    render(<UserPreferenceDropdownField {...props} />);
+    expect(screen.getByTestId('select id')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('label')).toBeInTheDocument();
   });
 
   it('should render select with selected value corresponding to defaultValue if user preference has loaded and is undefined', () => {
-    mockUserSettings.mockImplementation(() => {
-      const [val, setVal] = React.useState('');
-      return [val, setVal, true];
-    });
-    wrapper = shallow(<UserPreferenceDropdownField {...props} defaultValue="#LATEST#" />);
-    expect(wrapper.find('[data-test="select id"]').exists()).toBeTruthy();
-    expect((wrapper.find(Select).props() as SelectProps).selected).toBe('Last viewed');
+    mockUserSettings.mockReturnValue(['', () => {}, true]);
+    render(<UserPreferenceDropdownField {...props} defaultValue="#LATEST#" />);
+    expect(screen.getByTestId('select id')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Last viewed')).toBeInTheDocument();
   });
 });

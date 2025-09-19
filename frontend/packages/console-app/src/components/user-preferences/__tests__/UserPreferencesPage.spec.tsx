@@ -1,11 +1,10 @@
-import * as React from 'react';
-import { Tabs } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { screen, configure } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import * as Router from 'react-router-dom-v5-compat';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { LoadingBox } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src';
 import { useQueryParams } from '@console/shared/src';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import UserPreferencePage from '../UserPreferencePage';
 import {
   mockUserPreferenceGroupExtensions,
@@ -34,8 +33,9 @@ const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
 const useQueryParamsMock = useQueryParams as jest.Mock;
 
 describe('UserPreferencePage', () => {
-  type UserPreferencePageProps = React.ComponentProps<typeof UserPreferencePage>;
-  let wrapper: ShallowWrapper<UserPreferencePageProps>;
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-test' });
+  });
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -49,10 +49,13 @@ describe('UserPreferencePage', () => {
     useResolvedExtensionsMock.mockReturnValue([mockUserPreferenceItemExtensions, true]);
     useQueryParamsMock.mockReturnValue(new URLSearchParams());
 
-    wrapper = shallow(<UserPreferencePage />);
+    renderWithProviders(<UserPreferencePage />);
 
-    expect(wrapper.find('[data-test="tab language"]').exists()).toBeTruthy();
-    expect(wrapper.find(Tabs).props().activeKey).toEqual('language');
+    expect(screen.getByTestId('tab language')).toBeInTheDocument();
+    expect(screen.getByRole('tab', { selected: true })).toHaveAttribute(
+      'aria-controls',
+      expect.stringContaining('language'),
+    );
   });
 
   it('shoud render with "general" user preference group as default if url params does not provide a group', () => {
@@ -61,10 +64,13 @@ describe('UserPreferencePage', () => {
     useResolvedExtensionsMock.mockReturnValue([mockUserPreferenceItemExtensions, true]);
     useQueryParamsMock.mockReturnValue(new URLSearchParams());
 
-    wrapper = shallow(<UserPreferencePage />);
+    renderWithProviders(<UserPreferencePage />);
 
-    expect(wrapper.find('[data-test="tab general"]').exists()).toBeTruthy();
-    expect(wrapper.find(Tabs).props().activeKey).toEqual('general');
+    expect(screen.getByTestId('tab general')).toBeInTheDocument();
+    expect(screen.getByRole('tab', { selected: true })).toHaveAttribute(
+      'aria-controls',
+      expect.stringContaining('general'),
+    );
   });
 
   it('should render loading box if user preferece extensions have not resolved', () => {
@@ -73,8 +79,8 @@ describe('UserPreferencePage', () => {
     useResolvedExtensionsMock.mockReturnValue([mockUserPreferenceItemExtensions, false]);
     useQueryParamsMock.mockReturnValue(new URLSearchParams());
 
-    wrapper = shallow(<UserPreferencePage />);
+    renderWithProviders(<UserPreferencePage />);
 
-    expect(wrapper.find(LoadingBox).exists()).toBeTruthy();
+    expect(screen.getByTestId('loading-indicator')).toBeInTheDocument();
   });
 });

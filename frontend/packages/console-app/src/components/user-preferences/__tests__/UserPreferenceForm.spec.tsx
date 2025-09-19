@@ -1,23 +1,25 @@
 import * as React from 'react';
-import { Form } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
-import UserPreferenceField from '../UserPreferenceField';
+import { screen, configure } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import UserPreferenceForm from '../UserPreferenceForm';
 import { mockUserPreferenceItems } from './userPreferences.data';
 
 describe('UserPreferenceForm', () => {
-  type UserPreferenceFormProps = React.ComponentProps<typeof UserPreferenceForm>;
-  let wrapper: ShallowWrapper<UserPreferenceFormProps>;
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-test' });
+  });
 
   it('should return null if items array is empty', () => {
-    wrapper = shallow(<UserPreferenceForm items={[]} />);
-    expect(wrapper.isEmptyRender()).toBe(true);
+    const { container } = renderWithProviders(<UserPreferenceForm items={[]} />);
+    expect(container.firstChild).toBeNull();
   });
 
   it('should return Form with UserPreferenceFields if items array is not empty', () => {
-    wrapper = shallow(<UserPreferenceForm items={mockUserPreferenceItems} />);
-    expect(wrapper.find(Form).exists()).toBeTruthy();
-    expect(wrapper.find(UserPreferenceField).exists()).toBeTruthy();
-    expect(wrapper.find(UserPreferenceField)).toHaveLength(mockUserPreferenceItems.length);
+    renderWithProviders(<UserPreferenceForm items={mockUserPreferenceItems} />);
+    expect(screen.getByRole('form')).toBeInTheDocument();
+    // Check that preference items are rendered based on their labels from mock data
+    expect(screen.getByText('Project')).toBeInTheDocument();
+    expect(screen.getByText('Perspective')).toBeInTheDocument();
   });
 });

@@ -1,5 +1,5 @@
 import { Nav } from '@patternfly/react-core';
-import { shallow, mount } from 'enzyme';
+import { render, screen, configure } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom-v5-compat';
 import store from '@console/internal/redux';
@@ -46,29 +46,36 @@ jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
 }));
 
 describe('Perspective Nav', () => {
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-test' });
+  });
   it('should render dev perspective nav', () => {
     (usePinnedResources as jest.Mock).mockReturnValue([
       ['core~v1~ConfigMap', 'build.openshift.io~v1~BuildConfig'],
       jest.fn(),
       true,
     ]);
-    const wrapper = shallow(<PerspectiveNav />);
-    expect(wrapper.find('[data-test-id="dev-perspective-nav"]').exists()).toBeTruthy();
+    render(
+      <BrowserRouter>
+        <Provider store={store}>
+          <PerspectiveNav />
+        </Provider>
+      </BrowserRouter>,
+    );
+    expect(screen.getByTestId('dev-perspective-nav')).toBeInTheDocument();
   });
 
   it('should render non-draggable pinned items when only one pinned resource is available', () => {
     (usePinnedResources as jest.Mock).mockReturnValue([['core~v1~ConfigMap'], jest.fn(), true]);
-    const wrapper = mount(
+    render(
       <BrowserRouter>
         <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
+          <PerspectiveNav />
         </Provider>
       </BrowserRouter>,
     );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
+    expect(screen.getAllByTestId('pinned-resource-item')).toHaveLength(1);
+    expect(screen.queryByTestId('draggable-pinned-resource-item')).not.toBeInTheDocument();
   });
 
   it('should render draggable pinned items when more than one pinned resource is available', () => {
