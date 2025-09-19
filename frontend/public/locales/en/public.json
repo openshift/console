@@ -874,7 +874,7 @@
   "Custom update service": "Custom update service",
   "Please enter a URL.": "Please enter a URL.",
   "Create MachineAutoscaler": "Create MachineAutoscaler",
-  "This will automatically scale machine set <1>{{name}}</1>.": "This will automatically scale machine set <1>{{name}}</1>.",
+  "This will automatically scale machine set {{ name }}.": "This will automatically scale machine set {{ name }}.",
   "Minimum replicas:": "Minimum replicas:",
   "Maximum replicas:": "Maximum replicas:",
   "Default pull Secret": "Default pull Secret",

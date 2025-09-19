@@ -64,12 +64,7 @@ export const useMachineSetActions = (
           launcher(ConfigureMachineAutoscalerModal, {
             machineSet: obj,
           }),
-        accessReview: {
-          group: 'autoscaling.openshift.io',
-          resource: 'machineautoscalers',
-          verb: 'create' as const,
-          namespace: obj.metadata.namespace,
-        },
+        accessReview: asAccessReview(MachineSetModel, obj, 'create', 'machineautoscalers'),
       }),
     }),
     [t, obj, launcher],

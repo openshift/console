@@ -10,11 +10,13 @@ import {
   Button,
   HelperText,
   HelperTextItem,
+  FormGroup,
+  Form,
 } from '@patternfly/react-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-
-import { k8sPatch, K8sResourceKind, K8sKind } from '../../module/k8s';
+import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { K8sResourceKind, K8sModel } from '../../module/k8s';
 import { NumberSpinner } from '../utils';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
@@ -52,7 +54,13 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
       invalidateState(true, _.toInteger(value));
       resourceKind &&
         resource &&
-        handlePromise(k8sPatch(resourceKind, resource, patch, opts))
+        handlePromise(
+          k8sPatchResource({
+            model: resourceKind,
+            resource,
+            data: patch,
+          }),
+        )
           .then(() => closeOverlay())
           .catch(() => {
             invalidateState(false);
@@ -81,24 +89,26 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
         labelId="configure-count-modal-title"
       />
       <ModalBody>
-        <div className="form-group">
-          <p className="modal-paragraph">
-            {messageKey ? t(messageKey, messageVariablesSafe) : message}
-          </p>
-        </div>
-        <NumberSpinner
-          value={value}
-          onChange={onValueChange}
-          changeValueBy={(operation) => setValue(_.toInteger(value) + operation)}
-          autoFocus
-          required
-          min={0}
-        />
-        {errorMessage && (
-          <HelperText isLiveRegion className="pf-v6-u-mt-md">
-            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
-          </HelperText>
-        )}
+        <Form>
+          <FormGroup>
+            <p className="modal-paragraph">
+              {messageKey ? t(messageKey, messageVariablesSafe) : message}
+            </p>
+            <NumberSpinner
+              value={value}
+              onChange={onValueChange}
+              changeValueBy={(operation) => setValue(_.toInteger(value) + operation)}
+              autoFocus
+              required
+              min={0}
+            />
+            {errorMessage && (
+              <HelperText isLiveRegion className="pf-v6-u-mt-md">
+                <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
+              </HelperText>
+            )}
+          </FormGroup>
+        </Form>
       </ModalBody>
       <ModalFooter>
         <Button variant="secondary" onClick={closeOverlay} type="button">
@@ -171,7 +181,7 @@ export const configureJobParallelismModal = (props) => {
 export type ConfigureCountModalProps = {
   message?: string;
   messageKey?: string;
-  messageVariables?: { [key: string]: any };
+  messageVariables?: Record<string, string>;
   buttonText?: string;
   buttonTextKey?: string;
   buttonTextVariables?: { [key: string]: any };
@@ -179,7 +189,7 @@ export type ConfigureCountModalProps = {
   labelKey?: string;
   path?: string;
   resource?: K8sResourceKind;
-  resourceKind?: K8sKind;
+  resourceKind?: K8sModel;
   opts?: { [key: string]: any };
   title?: string;
   titleKey?: string;

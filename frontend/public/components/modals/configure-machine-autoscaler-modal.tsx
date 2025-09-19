@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import * as _ from 'lodash-es';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import {
   Modal,
@@ -10,13 +10,14 @@ import {
   Button,
   HelperText,
   HelperTextItem,
+  FormGroup,
+  Form,
 } from '@patternfly/react-core';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-
 import { MachineAutoscalerModel } from '../../models';
-import { createModalLauncher } from '../factory/modal';
 import { NumberSpinner, resourcePathFromModel } from '../utils';
-import { k8sCreate, K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind } from '../../module/k8s';
+import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineAutoscalerModalProps> = (
@@ -68,7 +69,10 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
         },
       },
     };
-    return k8sCreate(MachineAutoscalerModel, machineAutoscaler);
+    return k8sCreateResource({
+      model: MachineAutoscalerModel,
+      data: machineAutoscaler,
+    });
   }, [machineSet, minReplicas, maxReplicas]);
 
   const submit = useCallback(
@@ -108,43 +112,39 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
       <ModalHeader
         title={t('public~Create MachineAutoscaler')}
         labelId="configure-machine-autoscaler-modal-title"
+        description={t('public~This will automatically scale machine set {{ name }}.', { name })}
       />
       <ModalBody>
-        <div className="form-group">
-          <p>
-            <Trans t={t} ns="public">
-              This will automatically scale machine set <b>{{ name }}</b>.
-            </Trans>
-          </p>
-        </div>
-        <div className="form-group">
-          <label>
-            {t('public~Minimum replicas:')}
-            <NumberSpinner
-              value={minReplicas}
-              onChange={changeMinReplicas}
-              changeValueBy={changeMinReplicasBy}
-              autoFocus
-              required
-            />
-          </label>
-        </div>
-        <div className="form-group">
-          <label>
-            {t('public~Maximum replicas:')}
-            <NumberSpinner
-              value={maxReplicas}
-              onChange={changeMaxReplicas}
-              changeValueBy={changeMaxReplicasBy}
-              required
-            />
-          </label>
-        </div>
-        {errorMessage && (
-          <HelperText isLiveRegion className="pf-v6-u-mt-md">
-            <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
-          </HelperText>
-        )}
+        <Form>
+          <FormGroup>
+            <label>
+              {t('public~Minimum replicas:')}
+              <NumberSpinner
+                value={minReplicas}
+                onChange={changeMinReplicas}
+                changeValueBy={changeMinReplicasBy}
+                autoFocus
+                required
+              />
+            </label>
+          </FormGroup>
+          <FormGroup>
+            <label>
+              {t('public~Maximum replicas:')}
+              <NumberSpinner
+                value={maxReplicas}
+                onChange={changeMaxReplicas}
+                changeValueBy={changeMaxReplicasBy}
+                required
+              />
+            </label>
+          </FormGroup>
+          {errorMessage && (
+            <HelperText isLiveRegion className="pf-v6-u-mt-md">
+              <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
+            </HelperText>
+          )}
+        </Form>
       </ModalBody>
       <ModalFooter>
         <Button variant="secondary" onClick={closeOverlay || cancelProp} type="button">
@@ -157,8 +157,6 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
     </Modal>
   );
 };
-
-export const configureMachineAutoscalerModal = createModalLauncher(ConfigureMachineAutoscalerModal);
 
 type ConfigureMachineAutoscalerModalProps = {
   machineSet: K8sResourceKind;
