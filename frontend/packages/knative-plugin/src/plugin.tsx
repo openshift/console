@@ -1,16 +1,7 @@
-import { Plugin, OverviewResourceTab, DetailPageBreadCrumbs } from '@console/plugin-sdk';
-import { FLAG_KNATIVE_EVENTING } from './const';
-import {
-  eventSourceBreadcrumbsProvider,
-  channelBreadcrumbsProvider,
-  brokerBreadcrumbsProvider,
-  eventSourceModelsProviderForBreadcrumbs,
-  channelModelsProviderForBreadcrumbs,
-  brokerModelProviderForBreadcrumbs,
-} from './providers';
+import { OverviewResourceTab, Plugin } from '@console/plugin-sdk';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
 
-type ConsumedExtensions = OverviewResourceTab | TopologyConsumedExtensions | DetailPageBreadCrumbs;
+type ConsumedExtensions = OverviewResourceTab | TopologyConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -23,36 +14,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/overview/OverviewDetailsKnativeResourcesTab' /* webpackChunkName: "knative-overview" */
         ).then((m) => m.default),
-    },
-  },
-  {
-    type: 'DetailPageBreadCrumbs',
-    properties: {
-      getModels: eventSourceModelsProviderForBreadcrumbs,
-      breadcrumbsProvider: eventSourceBreadcrumbsProvider,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
-    type: 'DetailPageBreadCrumbs',
-    properties: {
-      getModels: channelModelsProviderForBreadcrumbs,
-      breadcrumbsProvider: channelBreadcrumbsProvider,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
-    type: 'DetailPageBreadCrumbs',
-    properties: {
-      getModels: brokerModelProviderForBreadcrumbs,
-      breadcrumbsProvider: brokerBreadcrumbsProvider,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
     },
   },
   ...topologyPlugin,

@@ -1966,5 +1966,47 @@
     "flags": {
       "required": ["KNATIVE_EVENTING"]
     }
+  },
+  {
+    "type": "dev-console.detailsPage/breadcrumbs",
+    "properties": {
+      "getModels": {
+        "$codeRef": "EventSourceBreadcrumbs.getEventSourceModelsForBreadcrumbs"
+      },
+      "breadcrumbsProvider": {
+        "$codeRef": "EventSourceBreadcrumbs.useEventSourceDetailPageBreadcrumbs"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "dev-console.detailsPage/breadcrumbs",
+    "properties": {
+      "getModels": {
+        "$codeRef": "fetchDynamicEventSourcesUtils.getChannelModels"
+      },
+      "breadcrumbsProvider": {
+        "$codeRef": "ChannelBreadcrumbs.useChannelDetailPageBreadcrumbs"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "dev-console.detailsPage/breadcrumbs",
+    "properties": {
+      "getModels": {
+        "$codeRef": "BrokerBreadcrumbs.getBrokerModel"
+      },
+      "breadcrumbsProvider": {
+        "$codeRef": "BrokerBreadcrumbs.useBrokerDetailPageBreadcrumbs"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
   }
 ]
