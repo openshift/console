@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"runtime"
+	"time"
 
 	"io/ioutil"
 	"net/http"
@@ -23,10 +24,12 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
+	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
+	"github.com/patrickmn/go-cache"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -36,8 +39,6 @@ import (
 const (
 	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-
-	catalogdHost = "catalogd-service.openshift-catalogd.svc:443"
 
 	// Well-known location of the tenant aware Thanos service for OpenShift exposing the query and query_range endpoints. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
@@ -426,11 +427,6 @@ func main() {
 				},
 			}
 
-			srv.CatalogdProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				Endpoint:        &url.URL{Scheme: "https", Host: catalogdHost},
-			}
-
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: srv.ProxyHeaderDenyList,
@@ -571,6 +567,12 @@ func main() {
 	default:
 		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: in-cluster, off-cluster"))
 	}
+
+	cache := cache.New(5*time.Minute, 30*time.Minute)
+	catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, cache)
+	srv.CatalogService = catalogService
+
+	// TODO: add cluster catalog reconciler and use the new catalog service
 
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
