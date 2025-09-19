@@ -24,7 +24,7 @@ const ResourceLimitsModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <form className="modal-content" onSubmit={handleSubmit}>
+    <form className="modal-content" onSubmit={handleSubmit} aria-label="Resource limits modal">
       <ModalTitle>{t('console-app~Edit resource limits')}</ModalTitle>
       <ModalBody>
         <ResourceLimitSection hideTitle />
@@ -35,6 +35,7 @@ const ResourceLimitsModal: React.FC<Props> = ({
         errorMessage={status?.submitError}
         submitText={t('console-app~Save')}
         cancel={cancel}
+        ariaLabel={t('public~Save')}
       />
     </form>
   );

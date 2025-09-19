@@ -152,6 +152,7 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
   submitDanger,
   buttonAlignment = 'right',
   resetText,
+  ariaLabel,
   reset,
 }) => {
   const { t } = useTranslation();
@@ -183,6 +184,7 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
       id="confirm-action"
       isDisabled={submitDisabled}
       type="submit"
+      aria-label={ariaLabel}
       variant={submitDanger ? 'danger' : 'primary'}
       isLoading={inProgress}
     >
@@ -277,6 +279,7 @@ export type ModalSubmitFooterProps = {
   submitDisabled?: boolean;
   submitDanger?: boolean;
   buttonAlignment?: 'left' | 'right';
+  ariaLabel?: string;
 };
 
 export type CreateModalLauncher = <P extends ModalComponentProps>(
