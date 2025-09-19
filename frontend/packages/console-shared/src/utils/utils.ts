@@ -30,6 +30,25 @@ export const createLookup = <A extends K8sResourceKind>(
   return {};
 };
 
+type HashingAlgorithm = 'SHA-1' | 'SHA-256' | 'SHA-384' | 'SHA-512';
+
+export const generateHash = async (algorithm: HashingAlgorithm, data: string): Promise<string> => {
+  if (!data) {
+    return '';
+  }
+
+  try {
+    const msgUint8 = new TextEncoder().encode(data);
+    const hashBuffer = await window.crypto.subtle.digest(algorithm, msgUint8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(`Failed to generate hash with ${algorithm}:`, e);
+    throw e; // Re-throw the error to be handled by the caller
+  }
+};
+
 export const getRandomChars = (len = 6): string => {
   return Math.random()
     .toString(36)

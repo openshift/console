@@ -96,6 +96,7 @@ const config: Configuration = {
       prettier: false,
       'prettier/parser-yaml': false,
     },
+    fallback: { crypto: false },
   },
   node: {
     global: true, // see https://github.com/browserify/randombytes/issues/36
@@ -267,6 +268,7 @@ const config: Configuration = {
     }),
     new NodePolyfillPlugin({
       additionalAliases: ['process'],
+      excludeAliases: ['crypto'],
     }),
     new CopyWebpackPlugin({
       patterns: [
