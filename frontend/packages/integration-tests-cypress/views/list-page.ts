@@ -100,6 +100,20 @@ export const listPage = {
     shouldNotExist: (resourceName: string) =>
       cy.get(`[data-test-id="${resourceName}"]`, { timeout: 90000 }).should('not.exist'),
   },
+  dvRows: {
+    shouldBeLoaded: () => {
+      cy.get(`[data-test="data-view-table"]`).should('be.visible');
+    },
+    clickKebabAction: (resourceName: string, actionName: string) => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
+        .contains(resourceName)
+        .parents('tr')
+        .within(() => {
+          cy.get('[data-test-id="kebab-button"]').click();
+        });
+      cy.byTestActionID(actionName).click();
+    },
+  },
 };
 
 export namespace ListPageSelector {
