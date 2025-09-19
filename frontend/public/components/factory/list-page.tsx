@@ -154,7 +154,7 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
 
   return (
     <div>
-      {!_.isEmpty(data) && Filter}
+      {!omitFilterToolbar && !_.isEmpty(data) && Filter}
       <Grid>
         <GridItem>
           <ListComponent {...props} data={data} />
@@ -351,7 +351,7 @@ export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   limit?: number;
   nameFilter?: string;
   skipAccessReview?: boolean;
-  hideLegacyFilterToolbar?: boolean;
+  omitFilterToolbar?: boolean;
 };
 
 export const ListPage = withFallback<ListPageProps>((props) => {

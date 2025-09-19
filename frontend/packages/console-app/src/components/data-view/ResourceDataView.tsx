@@ -115,10 +115,12 @@ export const ResourceDataView = <
 
   const { dataViewColumns, dataViewRows, pagination } = useResourceDataViewData<
     TData,
-    TCustomRowData
+    TCustomRowData,
+    TFilters
   >({
     columns,
     filteredData,
+    filters,
     getDataViewRows,
     showNamespaceOverride,
     columnManagementID,
@@ -242,3 +244,28 @@ export const ResourceDataView = <
     </StatusBox>
   );
 };
+
+export const cellIsStickyProps = {
+  isStickyColumn: true,
+  stickyMinWidth: '0',
+};
+
+const nameCellProps = {
+  ...cellIsStickyProps,
+  hasRightBorder: true,
+};
+
+export const getNameCellProps = (name: string) => {
+  return {
+    ...nameCellProps,
+    'data-test': `data-view-cell-${name}-name`,
+  };
+};
+
+export const actionsCellProps = {
+  ...cellIsStickyProps,
+  hasLeftBorder: true,
+  isActionCell: true,
+};
+
+export const initialFiltersDefault = { name: '', label: '' };

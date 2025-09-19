@@ -39,7 +39,7 @@ describe(`${crd} CRD`, () => {
   });
 
   it(`creates, displays, and deletes a new ${crd} instance`, () => {
-    cy.visit(`/k8s/cluster/customresourcedefinitions?custom-resource-definition-name=${crd}`);
+    cy.visit(`/k8s/cluster/customresourcedefinitions?name=${crd}`);
     listPage.isCreateButtonVisible();
     listPage.dvRows.shouldBeLoaded();
     listPage.dvRows.clickKebabAction(crd, 'View instances');
