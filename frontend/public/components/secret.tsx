@@ -26,10 +26,11 @@ import {
   initialFiltersDefault,
   ResourceDataView,
 } from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { LoadingBox } from './utils/status-box';
 import { sortResourceByValue } from './factory/Table/sort';
 import { sorts } from './factory/table';
-import { referenceForModel } from '../module/k8s';
+import { referenceForModel, TableColumn } from '../module/k8s';
 import { SecretModel } from '../models';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 
@@ -74,7 +75,7 @@ const menuActions = [
   Kebab.factory.Delete,
 ];
 
-const getDataViewRows = (data, columns) => {
+const getDataViewRows: GetDataViewRows<any, undefined> = (data, columns) => {
   return data.map(({ obj: secret }) => {
     const dataSize = sorts.dataSize(secret);
     const { name, namespace } = secret.metadata;
@@ -94,10 +95,10 @@ const getDataViewRows = (data, columns) => {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [tableColumnInfo[2].id]: {
-        cell: secret.type,
+        cell: <span>{secret.type}</span>,
       },
       [tableColumnInfo[3].id]: {
-        cell: dataSize,
+        cell: <span>{dataSize}</span>,
       },
       [tableColumnInfo[4].id]: {
         cell: <Timestamp timestamp={secret.metadata.creationTimestamp} />,
@@ -119,7 +120,7 @@ const getDataViewRows = (data, columns) => {
   });
 };
 
-const useSecretsColumns = () => {
+const useSecretsColumns = (): TableColumn<any>[] => {
   const { t } = useTranslation();
   const columns = React.useMemo(() => {
     return [
@@ -203,12 +204,6 @@ export const SecretDetails = ({ obj: secret }) => {
   );
 };
 
-type SecretsListProps = {
-  data: any[];
-  loaded: boolean;
-  [key: string]: any;
-};
-
 const SecretsList: React.FCC<SecretsListProps> = ({ data, loaded, ...props }) => {
   const columns = useSecretsColumns();
 
@@ -258,13 +253,7 @@ export const secretTypeFilterReducer = (secret): string => {
   }
 };
 
-type SecretsPageProps = {
-  showTitle?: boolean;
-  namespace?: string;
-  selector?: any;
-};
-
-const SecretsPage: React.FC<SecretsPageProps> = (props) => {
+const SecretsPage: React.FCC<SecretsPageProps> = (props) => {
   const { t } = useTranslation();
   const createItems = {
     generic: t('public~Key/value secret'),
@@ -336,3 +325,15 @@ const SecretsDetailsPage = (props) => (
 );
 
 export { SecretsList, SecretsPage, SecretsDetailsPage };
+
+type SecretsListProps = {
+  data: any[];
+  loaded: boolean;
+  [key: string]: any;
+};
+
+type SecretsPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+};

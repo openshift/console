@@ -11,6 +11,7 @@ import {
 } from '@console/app/src/components/data-view/ResourceDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
+import { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ResourceLink, Selector } from '@console/internal/components/utils';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
@@ -56,12 +57,15 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind, undefined> = (da
         cell: <Selector selector={pdb.spec.selector} namespace={namespace} />,
       },
       [tableColumnInfo[3].id]: {
-        cell:
-          _.isNil(pdb.spec.maxUnavailable) && _.isNil(pdb.spec.minAvailable)
-            ? DASH
-            : _.isNil(pdb.spec.maxUnavailable)
-            ? `Min available ${pdb.spec.minAvailable}`
-            : `Max unavailable ${pdb.spec.maxUnavailable}`,
+        cell: (
+          <span>
+            {_.isNil(pdb.spec.maxUnavailable) && _.isNil(pdb.spec.minAvailable)
+              ? DASH
+              : _.isNil(pdb.spec.maxUnavailable)
+              ? `Min available ${pdb.spec.minAvailable}`
+              : `Max unavailable ${pdb.spec.maxUnavailable}`}
+          </span>
+        ),
       },
       [tableColumnInfo[4].id]: {
         cell: (
@@ -95,7 +99,7 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind, undefined> = (da
   });
 };
 
-const usePDBColumns = () => {
+const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
   const { t } = useTranslation();
   const columns = React.useMemo(() => {
     return [
@@ -160,7 +164,7 @@ const usePDBColumns = () => {
   return columns;
 };
 
-const PodDisruptionBudgetList: React.FC<PodDisruptionBudgetsListProps> = ({
+const PodDisruptionBudgetList: React.FCC<PodDisruptionBudgetsListProps> = ({
   data,
   loaded,
   ...props

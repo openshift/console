@@ -12,7 +12,7 @@ import {
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 
 import { DeploymentModel } from '../models';
-import { DeploymentKind, referenceForModel, referenceFor } from '../module/k8s';
+import { DeploymentKind, referenceForModel, referenceFor, TableColumn } from '../module/k8s';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
@@ -68,7 +68,7 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ deployment }) => {
+export const DeploymentDetailsList: React.FCC<DeploymentDetailsListProps> = ({ deployment }) => {
   const { t } = useTranslation();
   return (
     <DescriptionList>
@@ -123,7 +123,7 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
 };
 DeploymentDetailsList.displayName = 'DeploymentDetailsList';
 
-const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }) => {
+const DeploymentDetails: React.FCC<DeploymentDetailsProps> = ({ obj: deployment }) => {
   const { t } = useTranslation();
 
   return (
@@ -186,7 +186,7 @@ const environmentComponent = (props) => (
   />
 );
 
-const ReplicaSetsTab: React.FC<ReplicaSetsTabProps> = ({ obj }) => {
+const ReplicaSetsTab: React.FCC<ReplicaSetsTabProps> = ({ obj }) => {
   const {
     metadata: { namespace },
     spec: { selector },
@@ -203,7 +203,7 @@ const ReplicaSetsTab: React.FC<ReplicaSetsTabProps> = ({ obj }) => {
   );
 };
 
-export const DeploymentsDetailsPage: React.FC = (props) => {
+export const DeploymentsDetailsPage: React.FCC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
@@ -243,24 +243,10 @@ export const DeploymentsDetailsPage: React.FC = (props) => {
 };
 DeploymentsDetailsPage.displayName = 'DeploymentsDetailsPage';
 
-type DeploymentDetailsListProps = {
-  deployment: DeploymentKind;
-};
-
-type DeploymentDetailsProps = {
-  obj: DeploymentKind;
-};
-
 const DeploymentTableHeader = () => {
   return WorkloadTableHeader();
 };
 DeploymentTableHeader.displayName = 'DeploymentTableHeader';
-
-type DeploymentsListProps = {
-  data: any[];
-  loaded: boolean;
-  [key: string]: any;
-};
 
 const getDataViewRows: GetDataViewRows<DeploymentKind, undefined> = (data, columns) => {
   return data.map(({ obj }) => {
@@ -313,7 +299,7 @@ const getDataViewRows: GetDataViewRows<DeploymentKind, undefined> = (data, colum
   });
 };
 
-const useDeploymentsColumns = () => {
+const useDeploymentsColumns = (): TableColumn<DeploymentKind>[] => {
   const { t } = useTranslation();
   const columns = React.useMemo(() => {
     return [
@@ -371,7 +357,7 @@ const useDeploymentsColumns = () => {
   return columns;
 };
 
-export const DeploymentsList: React.FC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
+export const DeploymentsList: React.FCC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
   const columns = useDeploymentsColumns();
 
   return (
@@ -391,7 +377,7 @@ export const DeploymentsList: React.FC<DeploymentsListProps> = ({ data, loaded, 
 };
 DeploymentsList.displayName = 'DeploymentsList';
 
-export const DeploymentsPage: React.FC<DeploymentsPageProps> = (props) => {
+export const DeploymentsPage: React.FCC<DeploymentsPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/deployments/~new/form`,
   };
@@ -408,6 +394,20 @@ export const DeploymentsPage: React.FC<DeploymentsPageProps> = (props) => {
   );
 };
 DeploymentsPage.displayName = 'DeploymentsPage';
+
+type DeploymentDetailsListProps = {
+  deployment: DeploymentKind;
+};
+
+type DeploymentDetailsProps = {
+  obj: DeploymentKind;
+};
+
+type DeploymentsListProps = {
+  data: any[];
+  loaded: boolean;
+  [key: string]: any;
+};
 
 type ReplicaSetsTabProps = {
   obj: DeploymentKind;
