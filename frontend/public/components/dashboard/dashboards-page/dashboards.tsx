@@ -10,18 +10,12 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import {
-  useExtensions,
-  DashboardsCard,
-  DashboardsTab,
-  isDashboardsCard,
-  isDashboardsTab,
-} from '@console/plugin-sdk';
+import { useExtensions, DashboardsCard, isDashboardsCard } from '@console/plugin-sdk';
 import {
   DashboardsCard as DynamicDashboardsCard,
-  DashboardsTab as DynamicDashboardsTab,
+  DashboardsTab,
   isDashboardsCard as isDynamicDashboardsCard,
-  isDashboardsTab as isDynamicDashboardsTab,
+  isDashboardsTab,
   GridPosition,
   OverviewGridCard,
 } from '@console/dynamic-plugin-sdk';
@@ -47,7 +41,7 @@ export const getCardsOnPosition = (
 ];
 
 export const getPluginTabPages = (
-  tabs: (DashboardsTab | DynamicDashboardsTab)[],
+  tabs: DashboardsTab[],
   cards: DashboardsCard[],
   dynamicCards: DynamicDashboardsCard[],
   navSection: string,
@@ -77,21 +71,13 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ kindsInFlight, k8sMode
   const title = t('public~Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
-  const dynamicTabExtensions = useExtensions<DynamicDashboardsTab>(isDynamicDashboardsTab);
   const dynamicCardExtensions = useExtensions<DynamicDashboardsCard>(isDynamicDashboardsCard);
 
   const location = useLocation();
 
   const pluginPages = React.useMemo(
-    () =>
-      getPluginTabPages(
-        [...tabExtensions, ...dynamicTabExtensions],
-        cardExtensions,
-        dynamicCardExtensions,
-        'home',
-        '',
-      ),
-    [tabExtensions, dynamicTabExtensions, cardExtensions, dynamicCardExtensions],
+    () => getPluginTabPages(tabExtensions, cardExtensions, dynamicCardExtensions, 'home', ''),
+    [tabExtensions, cardExtensions, dynamicCardExtensions],
   );
 
   const allPages: Page[] = React.useMemo(

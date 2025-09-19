@@ -134,17 +134,6 @@ namespace ExtensionProperties {
     viewAllLink?: string;
   }
 
-  export interface DashboardsTab {
-    /** The tab's ID which will be used as part of href within dashboards page */
-    id: string;
-
-    /** NavSection to which the tab belongs to */
-    navSection: 'home' | 'storage';
-
-    /** The tab title */
-    title: string;
-  }
-
   export interface DashboardsCard {
     /** The tab's ID where this card should be rendered */
     tab: string;
@@ -284,12 +273,6 @@ export const isDashboardsOverviewHealthSubsystem = (
   isDashboardsOverviewHealthPrometheusSubsystem(e) ||
   isDashboardsOverviewHealthResourceSubsystem(e) ||
   isDashboardsOverviewHealthOperator(e);
-
-export interface DashboardsTab extends Extension<ExtensionProperties.DashboardsTab> {
-  type: 'Dashboards/Tab';
-}
-
-export const isDashboardsTab = (e: Extension): e is DashboardsTab => e.type === 'Dashboards/Tab';
 
 export interface DashboardsCard extends Extension<ExtensionProperties.DashboardsCard> {
   type: 'Dashboards/Card';

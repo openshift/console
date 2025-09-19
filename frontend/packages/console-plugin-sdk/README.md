@@ -56,18 +56,11 @@ The `consolePlugin.entry` path in `package.json` file points to the plugin entry
 all of the plugin's static extensions.
 
 ```ts
-import { Plugin, DashboardsTab, DashboardsCard } from '@console/plugin-sdk';
+import { Plugin, DashboardsCard } from '@console/plugin-sdk';
 
-type ConsumedExtensions = DashboardsTab | DashboardsCard;
+type ConsumedExtensions = DashboardsCard;
 
 const plugin: Plugin<ConsumedExtensions> = [
-  {
-    type: 'Dashboards/Tab',
-    properties: {
-      id: 'foo-tab',
-      title: 'Foo',
-    },
-  },
   {
     type: 'Dashboards/Card',
     properties: {

@@ -12,7 +12,6 @@ import {
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsCard,
-  DashboardsTab,
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
   DashboardsOverviewResourceActivity,
@@ -31,7 +30,6 @@ type ConsumedExtensions =
   | RoutePage
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewHealthURLSubsystem
-  | DashboardsTab
   | DashboardsCard
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
@@ -109,17 +107,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: '/test',
       render: () => <h1>Test Page</h1>,
-    },
-  },
-  {
-    type: 'Dashboards/Tab',
-    properties: {
-      id: 'foo-tab',
-      navSection: 'home',
-      title: 'Foo',
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
     },
   },
   {
