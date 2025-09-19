@@ -9,4 +9,3 @@ export * from './pages';
 export * from './global-configs';
 export * from './guided-tour';
 export * from './post-form-submit';
-export * from './detail-page-bread-crumbs';

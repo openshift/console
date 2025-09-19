@@ -7,10 +7,6 @@ import withFallback from '@console/shared/src/components/error/fallbacks/withFal
 import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { ResourceTabPage, isResourceTabPage } from '@console/plugin-sdk/src/typings/pages';
-import {
-  isDetailPageBreadCrumbs,
-  DetailPageBreadCrumbs,
-} from '@console/plugin-sdk/src/typings/detail-page-bread-crumbs';
 import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import {
@@ -19,8 +15,8 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import {
-  isDetailPageBreadCrumbs as isDynamicDetailPageBreadCrumbs,
-  DetailPageBreadCrumbs as DynamicDetailPageBreadCrumbs,
+  isDetailPageBreadCrumbs,
+  DetailPageBreadCrumbs,
 } from '@console/dynamic-plugin-sdk/src/extensions/breadcrumbs';
 import {
   FirehoseResult,
@@ -46,32 +42,21 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 const useBreadCrumbsForDetailPage = (
   kindObj: K8sKind,
-): ResolvedExtension<DetailPageBreadCrumbs | DynamicDetailPageBreadCrumbs> => {
-  const [breadCrumbsExtension, breadCrumbsResolved] = useResolvedExtensions<DetailPageBreadCrumbs>(
+): ResolvedExtension<DetailPageBreadCrumbs> => {
+  const [breadCrumbsExtensions, breadCrumbsResolved] = useResolvedExtensions<DetailPageBreadCrumbs>(
     isDetailPageBreadCrumbs,
   );
-  const [dynamicBreadCrumbsExtension, dynamicBreadCrumbsResolved] = useResolvedExtensions<
-    DynamicDetailPageBreadCrumbs
-  >(isDynamicDetailPageBreadCrumbs);
   return React.useMemo(
     () =>
-      breadCrumbsResolved && dynamicBreadCrumbsResolved
-        ? [...breadCrumbsExtension, ...dynamicBreadCrumbsExtension].find(
-            ({ properties: { getModels } }) => {
-              const models = getModels();
-              return Array.isArray(models)
-                ? models.findIndex((model: K8sKind) => model.kind === kindObj?.kind) !== -1
-                : models.kind === kindObj?.kind;
-            },
-          )
+      breadCrumbsResolved
+        ? [...breadCrumbsExtensions].find(({ properties: { getModels } }) => {
+            const models = getModels();
+            return Array.isArray(models)
+              ? models.findIndex((model: K8sKind) => model.kind === kindObj?.kind) !== -1
+              : models.kind === kindObj?.kind;
+          })
         : undefined,
-    [
-      breadCrumbsResolved,
-      breadCrumbsExtension,
-      kindObj,
-      dynamicBreadCrumbsResolved,
-      dynamicBreadCrumbsExtension,
-    ],
+    [breadCrumbsResolved, breadCrumbsExtensions, kindObj],
   );
 };
 

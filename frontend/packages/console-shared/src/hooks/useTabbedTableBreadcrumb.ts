@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Location } from 'react-router-dom-v5-compat';
+import { createPath, Location } from 'react-router-dom-v5-compat';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { K8sKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
@@ -38,7 +38,7 @@ export const useTabbedTableBreadcrumbsFor = (
               name: t('console-shared~{{label}} details', {
                 label: customBreadCrumbDetailsPrefix || (labelKey ? t(labelKey) : label),
               }),
-              path: location,
+              path: createPath(location),
             },
           ],
     [
