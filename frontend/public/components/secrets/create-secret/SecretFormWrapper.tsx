@@ -3,7 +3,16 @@ import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import {
+  ActionGroup,
+  Button,
+  Form,
+  FormGroup,
+  TextInput,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../../module/k8s';
@@ -68,10 +77,9 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     setInProgress(false);
   };
 
-  const onNameChanged = (event) => {
-    const name = event.target.value;
+  const onNameChanged = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
     const newSecret = _.cloneDeep(secret);
-    newSecret.metadata.name = name;
+    newSecret.metadata.name = value;
     setSecret(newSecret);
   };
 
@@ -121,27 +129,22 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     return (
       <>
         <fieldset disabled={!isCreate}>
-          <div className="form-group">
-            <label className="co-required" htmlFor="secret-name">
-              {t('public~Secret name')}
-            </label>
-            <div>
-              <span className="pf-v6-c-form-control">
-                <input
-                  type="text"
-                  onChange={onNameChanged}
-                  value={secret?.metadata?.name}
-                  aria-describedby="secret-name-help"
-                  id="secret-name"
-                  data-test="secret-name"
-                  required
-                />
-              </span>
-              <p className="help-block" id="secret-name-help">
-                {t('public~Unique name of the new secret.')}
-              </p>
-            </div>
-          </div>
+          <FormGroup label={t('public~Secret name')} isRequired fieldId="secret-name">
+            <TextInput
+              type="text"
+              onChange={onNameChanged}
+              value={secret?.metadata?.name || ''}
+              id="secret-name"
+              data-test="secret-name"
+              isRequired
+              isDisabled={!isCreate}
+            />
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem>{t('public~Unique name of the new secret.')}</HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          </FormGroup>
         </fieldset>
         <SecretSubForm
           formType={formType}
@@ -158,25 +161,27 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
   };
 
   return modal ? (
-    <form className="co-create-secret-form modal-content" onSubmit={save}>
-      <ModalTitle>{title}</ModalTitle>
-      <ModalBody>{renderBody()}</ModalBody>
-      <ModalSubmitFooter
-        errorMessage={error || ''}
-        inProgress={inProgress}
-        submitText={t('public~Create')}
-        cancel={onCancel || cancel}
-      />
-    </form>
+    <PaneBody className="co-m-pane__form">
+      <Form onSubmit={save}>
+        <ModalTitle>{title}</ModalTitle>
+        <ModalBody>{renderBody()}</ModalBody>
+        <ModalSubmitFooter
+          errorMessage={error || ''}
+          inProgress={inProgress}
+          submitText={t('public~Create')}
+          cancel={onCancel || cancel}
+        />
+      </Form>
+    </PaneBody>
   ) : (
-    <div className="co-m-pane__form">
+    <>
       <DocumentTitle>{title}</DocumentTitle>
       <PageHeading title={title} helpText={helptext} />
-      <PaneBody>
-        <form className="co-create-secret-form" onSubmit={save}>
+      <PaneBody className="co-m-pane__form">
+        <Form onSubmit={save}>
           {renderBody()}
           <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <ActionGroup className="pf-v6-c-form">
+            <ActionGroup>
               <Button
                 type="submit"
                 data-test="save-changes"
@@ -191,9 +196,9 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
               </Button>
             </ActionGroup>
           </ButtonBar>
-        </form>
+        </Form>
       </PaneBody>
-    </div>
+    </>
   );
 };
 
