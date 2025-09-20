@@ -1,9 +1,8 @@
 import { Nav } from '@patternfly/react-core';
-import { shallow, mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom-v5-compat';
-import store from '@console/internal/redux';
+import { screen, configure } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import PerspectiveNav from '../PerspectiveNav';
 
 jest.mock('react', () => ({
@@ -18,6 +17,9 @@ jest.mock('@console/shared/src/hooks/usePinnedResources', () => ({
 }));
 jest.mock('@console/shared/src/hooks/perspective-utils', () => ({
   usePerspectives: jest.fn(),
+}));
+jest.mock('../useNavExtensionForPerspective', () => ({
+  useNavExtensionsForPerspective: jest.fn().mockReturnValue([]),
 }));
 jest.mock('react-dnd', () => {
   const reactDnd = jest.requireActual('react-dnd');
@@ -46,29 +48,40 @@ jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
 }));
 
 describe('Perspective Nav', () => {
-  it('should render dev perspective nav', () => {
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-test' });
+  });
+
+  it('should render dev perspective nav with proper accessibility', () => {
     (usePinnedResources as jest.Mock).mockReturnValue([
       ['core~v1~ConfigMap', 'build.openshift.io~v1~BuildConfig'],
       jest.fn(),
       true,
     ]);
-    const wrapper = shallow(<PerspectiveNav />);
-    expect(wrapper.find('[data-test-id="dev-perspective-nav"]').exists()).toBeTruthy();
+    renderWithProviders(<PerspectiveNav />);
+
+    // Test for the actual rendered component structure
+    expect(screen.getByTestId('dev-perspective-nav')).toBeInTheDocument();
+    expect(screen.getByTestId('dev-perspective-nav')).toBeVisible();
+
+    // Verify navigation functionality is accessible
+    const navigation = screen.getByRole('navigation', { name: /main navigation/i });
+    expect(navigation).toBeInTheDocument();
+    expect(navigation).toHaveClass('oc-perspective-nav');
   });
 
   it('should render non-draggable pinned items when only one pinned resource is available', () => {
     (usePinnedResources as jest.Mock).mockReturnValue([['core~v1~ConfigMap'], jest.fn(), true]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
+    renderWithProviders(
+      <Nav>
+        <PerspectiveNav />
+      </Nav>,
     );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
+    // Verify the pinned resource item is rendered correctly
+    expect(screen.getByTestId('pinned-resource-item')).toBeInTheDocument();
+    expect(screen.getByTestId('pinned-resource-item')).toBeVisible();
+    // Verify no draggable items when only one resource
+    expect(screen.queryByTestId('draggable-pinned-resource-item')).not.toBeInTheDocument();
   });
 
   it('should render draggable pinned items when more than one pinned resource is available', () => {
@@ -77,17 +90,17 @@ describe('Perspective Nav', () => {
       jest.fn(),
       true,
     ]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
+    renderWithProviders(
+      <Nav>
+        <PerspectiveNav />
+      </Nav>,
     );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
+    // Verify draggable behavior is enabled for multiple items
+    const draggableItems = screen.getAllByTestId('draggable-pinned-resource-item');
+    expect(draggableItems).toHaveLength(2);
+    draggableItems.forEach((item) => expect(item).toBeVisible());
+    // Verify no non-draggable items when multiple resources
+    expect(screen.queryByTestId('pinned-resource-item')).not.toBeInTheDocument();
   });
 
   it('should handle one valid and one invalid pinned resource', () => {
@@ -96,17 +109,15 @@ describe('Perspective Nav', () => {
       jest.fn(),
       true,
     ]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
+    renderWithProviders(
+      <Nav>
+        <PerspectiveNav />
+      </Nav>,
     );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
+    // Verify single valid resource renders as non-draggable
+    expect(screen.getByTestId('pinned-resource-item')).toBeInTheDocument();
+    expect(screen.getByTestId('pinned-resource-item')).toBeVisible();
+    expect(screen.queryByTestId('draggable-pinned-resource-item')).not.toBeInTheDocument();
   });
 
   it('should handle one valid and multiple invalid pinned resources', () => {
@@ -115,17 +126,15 @@ describe('Perspective Nav', () => {
       jest.fn(),
       true,
     ]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
+    renderWithProviders(
+      <Nav>
+        <PerspectiveNav />
+      </Nav>,
     );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
+    // Verify single valid resource renders as non-draggable
+    expect(screen.getByTestId('pinned-resource-item')).toBeInTheDocument();
+    expect(screen.getByTestId('pinned-resource-item')).toBeVisible();
+    expect(screen.queryByTestId('draggable-pinned-resource-item')).not.toBeInTheDocument();
   });
 
   it('should handle multiple valid and one invalid pinned resource', () => {
@@ -134,17 +143,16 @@ describe('Perspective Nav', () => {
       jest.fn(),
       true,
     ]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
+    renderWithProviders(
+      <Nav>
+        <PerspectiveNav />
+      </Nav>,
     );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
+    // Verify multiple valid resources render as draggable
+    expect(screen.queryByTestId('pinned-resource-item')).not.toBeInTheDocument();
+    const draggableItems = screen.getAllByTestId('draggable-pinned-resource-item');
+    expect(draggableItems).toHaveLength(2);
+    draggableItems.forEach((item) => expect(item).toBeVisible());
   });
 
   it('should handle multiple valid and multiple invalid pinned resources', () => {
@@ -153,32 +161,28 @@ describe('Perspective Nav', () => {
       jest.fn(),
       true,
     ]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
+    renderWithProviders(
+      <Nav>
+        <PerspectiveNav />
+      </Nav>,
     );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
+    // Verify multiple valid resources render as draggable
+    expect(screen.queryByTestId('pinned-resource-item')).not.toBeInTheDocument();
+    const draggableItems = screen.getAllByTestId('draggable-pinned-resource-item');
+    expect(draggableItems).toHaveLength(2);
+    draggableItems.forEach((item) => expect(item).toBeVisible());
   });
 
   it('should handle all invalid pinned resources', () => {
     (usePinnedResources as jest.Mock).mockReturnValue([['foo', 'bar', 'baz'], jest.fn(), true]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
+    renderWithProviders(
+      <Nav>
+        <PerspectiveNav />
+      </Nav>,
     );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
+    // Verify no resources are rendered when all are invalid
+    expect(screen.queryByTestId('pinned-resource-item')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('draggable-pinned-resource-item')).not.toBeInTheDocument();
   });
 
   // TODO: More unit tests for dynmamic plugins

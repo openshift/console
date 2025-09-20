@@ -1,4 +1,5 @@
-import { shallow, ShallowWrapper } from 'enzyme';
+import * as React from 'react';
+import { render, screen, configure } from '@testing-library/react';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
 import UserPreferenceCustomField from '../UserPreferenceCustomField';
 
@@ -10,16 +11,19 @@ describe('UserPreferenceCustomField', () => {
     component: (componentProps) => <span {...componentProps} />,
     props: { 'data-test': 'test custom component' },
   };
-  let wrapper: ShallowWrapper<UserPreferenceCustomFieldProps>;
 
-  it('should render null if component does not exist', () => {
-    wrapper = shallow(<UserPreferenceCustomField {...props} component={undefined} />);
-    expect(wrapper.isEmptyRender()).toBe(true);
-    expect(wrapper.find('[data-test="test custom component"]').exists()).toBeFalsy();
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-test' });
+  });
+
+  it('should render nothing if component does not exist', () => {
+    const { container } = render(<UserPreferenceCustomField {...props} component={null} />);
+    expect(container.firstChild).toBeNull();
+    expect(screen.queryByTestId('test custom component')).not.toBeInTheDocument();
   });
 
   it('should render custom component with custom props if component exists', () => {
-    wrapper = shallow(<UserPreferenceCustomField {...props} />);
-    expect(wrapper.find('[data-test="test custom component"]').exists()).toBeTruthy();
+    render(<UserPreferenceCustomField {...props} />);
+    expect(screen.getByTestId('test custom component')).toBeInTheDocument();
   });
 });
