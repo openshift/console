@@ -34,6 +34,8 @@
   "Warning: Updating this value will break any existing PersistentVolumes.": "Warning: Updating this value will break any existing PersistentVolumes.",
   "Virtual Machine Folder": "Virtual Machine Folder",
   "Provide <1>datacenter</1> folder which contains VMs of the cluster.": "Provide <1>datacenter</1> folder which contains VMs of the cluster.",
+  "Primary network": "Primary network",
+  "Provide the <1>primary network</1> of the cluster.": "Provide the <1>primary network</1> of the cluster.",
   "Saving": "Saving",
   "Save configuration": "Save configuration",
   "Cancel": "Cancel",
