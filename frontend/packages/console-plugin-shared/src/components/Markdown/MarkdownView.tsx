@@ -264,7 +264,9 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   return (
     <>
       <iframe
-        title={_.uniqueId('markdown-view')}
+        title="Markdown content viewer"
+        aria-label="Markdown content viewer"
+        role="document"
         sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
         style={{ border: '0px', display: 'block', width: '100%', height: frameHeight }}
         ref={frameRef}
