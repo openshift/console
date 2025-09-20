@@ -8,11 +8,16 @@ import {
   SectionHeading,
   navFactory,
   DetailsItem,
+  Kebab,
 } from '@console/internal/components/utils';
 import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { LazyActionMenu, ActionMenuVariant } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { PodDisruptionBudgetModel } from '../../models';
 import { PodDisruptionBudgetKind } from './types';
+
+const { common } = Kebab.factory;
+const menuActions = [...Kebab.getExtensionsActionsForKind(PodDisruptionBudgetModel), ...common];
 
 const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
@@ -41,7 +46,7 @@ const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({
               obj={obj}
               path="status.disruptionsAllowed"
             >
-              {obj.status.disruptionsAllowed}
+              {obj.status?.disruptionsAllowed}
             </DetailsItem>
           </DescriptionList>
         </GridItem>
@@ -57,6 +62,7 @@ export const PodDisruptionBudgetDetailsPage: React.FC<PodDisruptionBudgetDetails
     <DetailsPage
       {...props}
       kind={props.kind}
+      menuActions={menuActions}
       customActionMenu={(_kindObj: K8sModel, obj: K8sResourceKind) => (
         <LazyActionMenu
           context={{ [referenceFor(obj)]: obj }}

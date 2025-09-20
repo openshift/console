@@ -24,9 +24,9 @@ const nodeEventsFilter = (event: EventKind, uid: string, kind: string, name: str
 
 const RecentEvent: React.FC<RecentEventProps> = ({ node }) => {
   const [data, loaded, loadError] = useK8sWatchResource<EventKind[]>(eventsResource);
-  const { uid, name } = node.metadata;
+  const { uid, name } = node.metadata || {};
   const eventsFilter = React.useCallback(
-    (event) => nodeEventsFilter(event, uid, NodeModel.kind, name),
+    (event) => nodeEventsFilter(event, uid || '', NodeModel.kind, name || ''),
     [uid, name],
   );
   return <RecentEventsBody events={{ data, loaded, loadError }} filter={eventsFilter} />;
@@ -34,7 +34,7 @@ const RecentEvent: React.FC<RecentEventProps> = ({ node }) => {
 
 const ActivityCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
-  const eventsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/events`;
+  const eventsLink = `${resourcePathFromModel(NodeModel, obj?.metadata?.name || '')}/events`;
   const { t } = useTranslation();
   return (
     <Card data-test-id="activity-card">
@@ -53,7 +53,7 @@ const ActivityCard: React.FC = () => {
       </CardHeader>
       <ActivityBody className="co-project-dashboard__activity-body">
         <OngoingActivityBody loaded />
-        <RecentEvent node={obj} />
+        <RecentEvent node={obj || ({} as NodeKind)} />
       </ActivityBody>
     </Card>
   );

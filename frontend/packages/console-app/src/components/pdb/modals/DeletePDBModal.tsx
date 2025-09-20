@@ -16,17 +16,17 @@ import { PodDisruptionBudgetModel } from '../../../models';
 import { PodDisruptionBudgetKind } from '../types';
 
 const DeletePDBModal: React.FC<DeletePDBModalProps> = ({ close, pdb, workloadName }) => {
-  const [submitError, setSubmitError] = React.useState<string>(null);
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const { t } = useTranslation();
-  const pdbName = pdb.metadata.name;
+  const pdbName = pdb.metadata?.name || '';
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     k8sKill(PodDisruptionBudgetModel, pdb)
       .then(() => {
-        close();
+        close?.();
       })
       .catch((error) => {
         setSubmitError(
@@ -60,7 +60,7 @@ const DeletePDBModal: React.FC<DeletePDBModalProps> = ({ close, pdb, workloadNam
         )}
       </ModalBody>
       <ModalSubmitFooter
-        errorMessage={submitError}
+        errorMessage={submitError || undefined}
         inProgress={isSubmitting}
         submitText={t('console-app~Remove')}
         submitDanger
@@ -74,6 +74,7 @@ const DeletePDBModal: React.FC<DeletePDBModalProps> = ({ close, pdb, workloadNam
 export const deletePDBModal = createModalLauncher(DeletePDBModal);
 
 export type DeletePDBModalProps = ModalComponentProps & {
+  close?: () => void;
   pdb: PodDisruptionBudgetKind;
-  workloadName: string;
+  workloadName?: string;
 };

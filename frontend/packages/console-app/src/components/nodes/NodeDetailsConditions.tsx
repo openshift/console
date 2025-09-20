@@ -28,14 +28,14 @@ const NodeDetailsConditions: React.FC<NodeDetailsConditionsProps> = ({ node }) =
             </tr>
           </thead>
           <tbody className="pf-v6-c-table__tbody">
-            {_.map(node.status.conditions, (c, i) => (
+            {_.map(node.status?.conditions, (c, i) => (
               <tr className="pf-v6-c-table__tr" key={i}>
                 <td className="pf-v6-c-table__td">
                   <CamelCaseWrap value={c.type} />
                 </td>
                 <td className="pf-v6-c-table__td">{c.status || '-'}</td>
                 <td className="pf-v6-c-table__td">
-                  <CamelCaseWrap value={c.reason} />
+                  <CamelCaseWrap value={c.reason || '-'} />
                 </td>
                 <td className="pf-v6-c-table__td">
                   <Timestamp timestamp={c.lastHeartbeatTime} />

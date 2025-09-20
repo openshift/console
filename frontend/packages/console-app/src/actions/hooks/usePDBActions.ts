@@ -90,7 +90,7 @@ export const usePDBActions = (
         insertBefore: 'edit-resource-limits',
         cta: () => {
           deletePDBModal({
-            workloadName: resource.metadata.name,
+            workloadName: resource.metadata?.name,
             pdb: matchedPDB,
           });
         },
