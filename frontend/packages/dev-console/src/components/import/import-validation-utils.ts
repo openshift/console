@@ -87,5 +87,5 @@ export const detectGitRepoName = (url: string): string | undefined => {
     return undefined;
   }
   const name = url.replace(/\/$/, '').split('/').pop();
-  return createComponentName(name);
+  return name ? createComponentName(name) : undefined;
 };

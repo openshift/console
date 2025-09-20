@@ -77,12 +77,12 @@ describe('hasOtherKsvcDomainMappings', () => {
 
 describe('removeDuplicateDomainMappings', () => {
   it('should return empty arary if the domain mapping empty or null', () => {
-    expect(removeDuplicateDomainMappings(null, null)).toEqual([]);
+    expect(removeDuplicateDomainMappings(null as any, null as any)).toEqual([]);
     expect(removeDuplicateDomainMappings([], [])).toEqual([]);
   });
 
   it('should return the domainMapping  even if the connected domains are empty or invalid ', () => {
-    expect(removeDuplicateDomainMappings(['domain.org'], null)).toEqual(['domain.org']);
+    expect(removeDuplicateDomainMappings(['domain.org'], null as any)).toEqual(['domain.org']);
     expect(removeDuplicateDomainMappings(['domain.org'], [])).toEqual(['domain.org']);
   });
 
@@ -104,12 +104,12 @@ describe('getOtherKsvcFromDomainMapping', () => {
 
   it('should return null as the ksvc name if it is matching with the current ksvc name', () => {
     expect(
-      getOtherKsvcFromDomainMapping(domainMappings[0], domainMappings[0].spec.ref.name),
+      getOtherKsvcFromDomainMapping(domainMappings[0], domainMappings[0]?.spec?.ref?.name),
     ).toBeNull();
   });
 
   it('should return the ksvc name if its not matching with the current ksvc name', () => {
-    const currentKsvcName = domainMappings[1].spec.ref.name;
+    const currentKsvcName = domainMappings[1]?.spec?.ref?.name;
     expect(getOtherKsvcFromDomainMapping(domainMappings[0], currentKsvcName)).toEqual(
       'service-one',
     );
@@ -157,8 +157,8 @@ describe('getAllOtherDomainMappingInUse', () => {
       'service-three',
     );
     expect(domainsInUse).toHaveLength(2);
-    expect(domainsInUse[0].metadata.name).toBe('example.domain1.org');
-    expect(domainsInUse[1].metadata.name).toBe('example.domain2.org');
+    expect(domainsInUse[0]?.metadata?.name).toBe('example.domain1.org');
+    expect(domainsInUse[1]?.metadata?.name).toBe('example.domain2.org');
   });
 
   it('should not return domains if the user creates domain with the same name again', () => {
