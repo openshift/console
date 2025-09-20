@@ -6,6 +6,7 @@ import {
   ActionMenu,
   ActionMenuVariant,
   LazyActionMenu,
+  DASH,
 } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
@@ -16,13 +17,26 @@ import {
   K8sResourceKindReference,
   referenceForModel,
   referenceFor,
+  TableColumn,
 } from '../module/k8s';
 import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
-import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage } from './factory';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { LoadingBox } from './utils/status-box';
+import { sortResourceByValue } from './factory/Table/sort';
+
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   AsyncComponent,
   ContainerTable,
@@ -35,9 +49,13 @@ import {
   getDocumentationURL,
   documentationURLs,
   isManaged,
+  ResourceLink,
+  LabelList,
+  Selector,
+  resourcePath,
 } from './utils';
 import { ReplicationControllersPage } from './replication-controller';
-import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
+import { WorkloadTableHeader } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import {
   Alert,
@@ -50,6 +68,15 @@ import {
 } from '@patternfly/react-core';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
+
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'status' },
+  { id: 'labels' },
+  { id: 'podSelector' },
+  { id: 'actions' },
+];
 
 const getDeploymentConfigStatus = (dc: K8sResourceKind): string => {
   const conditions = _.get(dc, 'status.conditions');
@@ -145,7 +172,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
   );
 };
 
-export const DeploymentConfigDeprecationAlert: React.FC = () => {
+export const DeploymentConfigDeprecationAlert: React.FCC = () => {
   const { t } = useTranslation();
   return (
     <Alert
@@ -174,7 +201,7 @@ export const DeploymentConfigDeprecationAlert: React.FC = () => {
   );
 };
 
-export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
+export const DeploymentConfigsDetails: React.FCC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -230,7 +257,7 @@ const environmentComponent = (props) => (
   />
 );
 
-const ReplicationControllersTab: React.FC<ReplicationControllersTabProps> = ({ obj }) => {
+const ReplicationControllersTab: React.FCC<ReplicationControllersTabProps> = ({ obj }) => {
   const {
     metadata: { namespace, name },
   } = obj;
@@ -261,7 +288,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-const DetailsActionMenu: React.FC<DetailsActionMenuProps> = ({ kindObj, obj }) => {
+const DetailsActionMenu: React.FCC<DetailsActionMenuProps> = ({ kindObj, obj }) => {
   const resourceKind = referenceForModel(kindObj);
   const context = { [resourceKind]: obj };
 
@@ -278,7 +305,7 @@ const DetailsActionMenu: React.FC<DetailsActionMenuProps> = ({ kindObj, obj }) =
   );
 };
 
-export const DeploymentConfigsDetailsPage: React.FC = (props) => {
+export const DeploymentConfigsDetailsPage: React.FCC = (props) => {
   const customActionMenu = (kindObj, obj) => {
     return <DetailsActionMenu kindObj={kindObj} obj={obj} />;
   };
@@ -294,38 +321,138 @@ export const DeploymentConfigsDetailsPage: React.FC = (props) => {
 };
 DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
 
-const kind = 'DeploymentConfig';
-
-const DeploymentConfigTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
-  obj,
-  ...props
-}) => {
-  const resourceKind = referenceFor(obj);
-  const context = { [resourceKind]: obj };
-  const customActionMenu = <LazyActionMenu context={context} />;
-  return <WorkloadTableRow obj={obj} customActionMenu={customActionMenu} kind={kind} {...props} />;
-};
-
 const DeploymentConfigTableHeader = () => {
   return WorkloadTableHeader();
 };
 DeploymentConfigTableHeader.displayName = 'DeploymentConfigTableHeader';
 
-export const DeploymentConfigsList: React.FC = (props) => {
+const getDataViewRows: GetDataViewRows<any, undefined> = (data, columns) => {
+  return data.map(({ obj: dc }) => {
+    const { name, namespace } = dc.metadata;
+    const resourceKind = referenceFor(dc);
+    const context = { [resourceKind]: dc };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind="DeploymentConfig" name={name} namespace={namespace} />,
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: (
+          <Link to={`${resourcePath('DeploymentConfig', name, namespace)}/pods`} title="pods">
+            {`${dc.status.replicas || 0} of ${dc.spec.replicas} pods`}
+          </Link>
+        ),
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <LabelList kind="DeploymentConfig" labels={dc.metadata.labels} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <Selector selector={dc.spec.selector} namespace={namespace} />,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
+};
+
+const useDeploymentConfigsColumns = (): TableColumn<any>[] => {
   const { t } = useTranslation();
+  const columns = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Status'),
+        id: tableColumnInfo[2].id,
+        sort: (data, direction) =>
+          data.sort(sortResourceByValue(direction, (obj) => obj.status.replicas || 0)),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Labels'),
+        id: tableColumnInfo[3].id,
+        sort: 'metadata.labels',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Pod selector'),
+        id: tableColumnInfo[4].id,
+        sort: 'spec.selector',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[5].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
+};
+
+export const DeploymentConfigsList: React.FCC<DeploymentConfigsListProps> = ({
+  data,
+  loaded,
+  ...props
+}) => {
+  const columns = useDeploymentConfigsColumns();
+
   return (
-    <Table
-      {...props}
-      aria-label={t('public~DeploymentConfigs')}
-      Header={DeploymentConfigTableHeader}
-      Row={DeploymentConfigTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView
+        {...props}
+        label={DeploymentConfigModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
-export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (props) => {
+export const DeploymentConfigsPage: React.FCC<DeploymentConfigsPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/~new/form`,
   };
@@ -336,11 +463,18 @@ export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (prop
       createProps={createProps}
       canCreate={true}
       helpAlert={<DeploymentConfigDeprecationAlert />}
+      omitFilterToolbar={true}
       {...props}
     />
   );
 };
 DeploymentConfigsPage.displayName = 'DeploymentConfigsListPage';
+
+type DeploymentConfigsListProps = {
+  data: any[];
+  loaded: boolean;
+  [key: string]: any;
+};
 
 type DetailsActionMenuProps = {
   kindObj: K8sKind;
