@@ -166,6 +166,7 @@ func main() {
 	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
 	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
+	fTechPreview := fs.Bool("tech-preview", false, "Enable console Technology Preview features.")
 
 	cfg, err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE")
 	if err != nil {
@@ -176,6 +177,10 @@ func main() {
 	if err := serverconfig.Validate(fs); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
+	}
+
+	if *fTechPreview {
+		klog.Warning("Technology Preview features are enabled. These features are experimental and not supported for production use. If you encounter issues, send feedback through the usual support or bug-reporting channels.")
 	}
 
 	authOptions.ApplyConfig(&cfg.Auth)
