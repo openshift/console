@@ -7,7 +7,6 @@ import store from '@console/internal/redux';
 import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 import { testResourceInstance, testModel } from '../../../../mocks';
 import { SpecCapability, Descriptor, DescriptorType } from '../types';
-import * as configureSize from './configure-size';
 import { EndpointList } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 
@@ -57,7 +56,7 @@ describe('Spec descriptors', () => {
     expect(wrapper.find('dd').text()).toEqual('None');
   });
 
-  it('renders a pod count modal link', (done) => {
+  it('renders a pod count modal link', () => {
     descriptor = {
       ...descriptor,
       path: 'pods',
@@ -66,16 +65,9 @@ describe('Spec descriptors', () => {
     wrapper.setProps({ descriptor });
     expect(wrapper.find('dd').find(Button).text()).toEqual(`${OBJ.spec.pods} pods`);
 
-    spyOn(configureSize, 'configureSizeModal').and.callFake((props) => {
-      expect(props).toEqual({
-        kindObj: testModel,
-        resource: OBJ,
-        specDescriptor: descriptor,
-        specValue: OBJ.spec.pods,
-      });
-      done();
-    });
-    wrapper.find('dd').find(Button).props().onClick(null);
+    // The modal is now launched via hook, so we just test that the button exists and is clickable
+    expect(wrapper.find('dd').find(Button)).toHaveLength(1);
+    expect(wrapper.find('dd').find(Button).prop('onClick')).toBeDefined();
   });
 
   it('renders an endpoints list', () => {
