@@ -121,6 +121,7 @@ export const getCorePackage: GetPackageDefinition = (
     main: 'lib/lib-core.js',
     ...commonManifestFields,
     dependencies: {
+      ...parseDeps(sdkPackage, ['@openshift/dynamic-plugin-sdk'], missingDepCallback),
       ...parseSharedModuleDeps(rootPackage, missingDepCallback),
       ...parseDeps(rootPackage, ['immutable', 'reselect', 'typesafe-actions'], missingDepCallback),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
@@ -147,6 +148,7 @@ export const getInternalPackage: GetPackageDefinition = (
     main: 'lib/lib-internal.js',
     ...commonManifestFields,
     dependencies: {
+      ...parseDeps(sdkPackage, ['@openshift/dynamic-plugin-sdk'], missingDepCallback),
       ...parseSharedModuleDeps(rootPackage, missingDepCallback),
       ...parseDeps(rootPackage, ['immutable'], missingDepCallback),
     },
