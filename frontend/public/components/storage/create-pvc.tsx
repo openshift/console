@@ -280,7 +280,11 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
                 <Button id="save-changes" data-test="create-pvc" type="submit" variant="primary">
                   {t('public~Create')}
                 </Button>
-                <Button onClick={() => navigate(-1)} type="button" variant="secondary">
+                <Button
+                  onClick={() => navigate(`/k8s/ns/${namespace}/persistentvolumeclaims/`)}
+                  type="button"
+                  variant="secondary"
+                >
                   {t('public~Cancel')}
                 </Button>
               </ActionGroup>
@@ -294,7 +298,8 @@ export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
 
 export const CreatePVC = () => {
   const params = useParams();
-  return <CreatePVCPage namespace={params.ns} />;
+  const namespace = params.ns || 'default';
+  return <CreatePVCPage namespace={namespace} />;
 };
 
 export type CreatePVCFormProps = {
