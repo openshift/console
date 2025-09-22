@@ -4,6 +4,7 @@ import { AdmissionWebhookWarning } from '../../redux-types';
 
 export enum ActionType {
   SetUser = 'setUser',
+  SetUserResource = 'setUserResource',
   BeginImpersonate = 'beginImpersonate',
   EndImpersonate = 'endImpersonate',
   SetActiveCluster = 'setActiveCluster',
@@ -12,6 +13,8 @@ export enum ActionType {
 }
 
 export const setUser = (userInfo: UserInfo) => action(ActionType.SetUser, { userInfo });
+export const setUserResource = (userResource: any) =>
+  action(ActionType.SetUserResource, { userResource });
 export const beginImpersonate = (kind: string, name: string, subprotocols: string[]) =>
   action(ActionType.BeginImpersonate, { kind, name, subprotocols });
 export const endImpersonate = () => action(ActionType.EndImpersonate);
@@ -21,6 +24,7 @@ export const removeAdmissionWebhookWarning = (id) =>
   action(ActionType.RemoveAdmissionWebhookWarning, { id });
 const coreActions = {
   setUser,
+  setUserResource,
   beginImpersonate,
   endImpersonate,
   setAdmissionWebhookWarning,
