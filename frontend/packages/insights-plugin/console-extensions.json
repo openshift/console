@@ -1,1 +1,27 @@
-[]
+[
+  {
+    "type": "console.dashboards/overview/health/prometheus",
+    "properties": {
+      "title": "%insights-plugin~Insights%",
+      "queries": [
+        "health_statuses_insights{metric=~\"low|moderate|important|critical\"}",
+        "cluster_operator_conditions{name=\"insights\"}",
+        "insightsclient_last_gather_time"
+      ],
+      "healthHandler": {
+        "$codeRef": "status.getClusterInsightsStatus"
+      },
+      "additionalResource": {
+        "kind": "config.openshift.io~v1~ClusterVersion",
+        "namespaced": false,
+        "name": "version",
+        "isList": false,
+        "prop": "cluster"
+      },
+      "popupComponent": {
+        "$codeRef": "InsightsPopup.InsightsPopup"
+      },
+      "popupTitle": "%insights-plugin~Insights Advisor status%"
+    }
+  }
+]

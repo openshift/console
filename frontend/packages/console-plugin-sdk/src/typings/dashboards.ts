@@ -20,41 +20,6 @@ namespace ExtensionProperties {
     title: string;
   }
 
-  export interface DashboardsOverviewHealthPrometheusSubsystem
-    extends DashboardsOverviewHealthSubsystem {
-    /** The Prometheus queries */
-    queries: string[];
-
-    /** Additional resource which will be fetched and passed to healthHandler  */
-    additionalResource?: FirehoseResource;
-
-    /** Resolve the subsystem's health */
-    healthHandler: PrometheusHealthHandler;
-
-    /**
-     * Loader for popup content. If defined health item will be represented as link
-     * which opens popup with given content.
-     */
-    popupComponent?: LazyLoader<PrometheusHealthPopupProps>;
-
-    /**
-     * Popup title
-     */
-    popupTitle?: string;
-
-    /** Optional classname for the popup top-level component. */
-    popupClassname?: string;
-
-    /** Content of the popup */
-    popupBodyContent?: React.ReactNode | ((hide: () => void) => React.ReactNode);
-
-    /** If true, the popup will stay open when clicked outside of its boundary. Default: false */
-    popupKeepOnOutsideClick?: boolean;
-
-    /** Control plane topology for which the subsystem should be hidden. */
-    disallowedControlPlaneTopology?: string[];
-  }
-
   export interface DashboardsOverviewHealthResourceSubsystem<R extends ResourcesObject>
     extends DashboardsOverviewHealthSubsystem {
     /** Kubernetes resources which will be fetched and passed to healthHandler  */
@@ -169,16 +134,6 @@ namespace ExtensionProperties {
   }
 }
 
-export interface DashboardsOverviewHealthPrometheusSubsystem
-  extends Extension<ExtensionProperties.DashboardsOverviewHealthPrometheusSubsystem> {
-  type: 'Dashboards/Overview/Health/Prometheus';
-}
-
-export const isDashboardsOverviewHealthPrometheusSubsystem = (
-  e: Extension,
-): e is DashboardsOverviewHealthPrometheusSubsystem =>
-  e.type === 'Dashboards/Overview/Health/Prometheus';
-
 export interface DashboardsOverviewHealthResourceSubsystem<
   R extends ResourcesObject = ResourcesObject
 > extends Extension<ExtensionProperties.DashboardsOverviewHealthResourceSubsystem<R>> {
@@ -200,16 +155,13 @@ export const isDashboardsOverviewHealthOperator = (
 ): e is DashboardsOverviewHealthOperator => e.type === 'Dashboards/Overview/Health/Operator';
 
 export type DashboardsOverviewHealthSubsystem =
-  | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewHealthResourceSubsystem
   | DashboardsOverviewHealthOperator;
 
 export const isDashboardsOverviewHealthSubsystem = (
   e: Extension,
 ): e is DashboardsOverviewHealthSubsystem =>
-  isDashboardsOverviewHealthPrometheusSubsystem(e) ||
-  isDashboardsOverviewHealthResourceSubsystem(e) ||
-  isDashboardsOverviewHealthOperator(e);
+  isDashboardsOverviewHealthResourceSubsystem(e) || isDashboardsOverviewHealthOperator(e);
 
 export interface DashboardsOverviewInventoryItem
   extends Extension<ExtensionProperties.DashboardsOverviewInventoryItem> {
@@ -282,18 +234,6 @@ export type URLHealthHandler<R> = (
   response: R,
   error: any,
   additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
-) => SubsystemHealth;
-
-export type PrometheusHealthPopupProps = {
-  responses: { response: PrometheusResponse; error: any }[];
-  k8sResult?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>;
-};
-
-export type PrometheusHealthHandler = (
-  responses: { response: PrometheusResponse; error: any }[],
-  t?: TFunction,
-  additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
-  infrastructure?: K8sResourceKind,
 ) => SubsystemHealth;
 
 export type ResourceHealthHandler<R extends ResourcesObject> = (

@@ -193,6 +193,8 @@
   "Backend Service": "Backend Service",
   "Proxy Services": "Proxy Services",
   "Cluster": "Cluster",
+  "Control Plane": "Control Plane",
+  "Control Plane status": "Control Plane status",
   "Start Job": "Start Job",
   "Add Health Checks": "Add Health Checks",
   "Edit Health Checks": "Edit Health Checks",
@@ -570,7 +572,5 @@
   "Container name": "Container name",
   "VerticalPodAutoscalers": "VerticalPodAutoscalers",
   "No VerticalPodAutoscalers": "No VerticalPodAutoscalers",
-  "Control Plane": "Control Plane",
-  "Control Plane status": "Control Plane status",
   "Cluster operators": "Cluster operators"
 }

@@ -1,37 +1,5 @@
-import { ClusterVersionModel } from '@console/internal/models';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { Plugin, DashboardsOverviewHealthPrometheusSubsystem } from '@console/plugin-sdk';
-import { getClusterInsightsStatus } from './components/InsightsPopup/status';
+import { Plugin } from '@console/plugin-sdk';
 
-type ConsumedExtensions = DashboardsOverviewHealthPrometheusSubsystem;
-
-const plugin: Plugin<ConsumedExtensions> = [
-  {
-    type: 'Dashboards/Overview/Health/Prometheus',
-    properties: {
-      // t('insights-plugin~Insights')
-      title: '%insights-plugin~Insights%',
-      queries: [
-        'health_statuses_insights{metric=~"low|moderate|important|critical"}',
-        'cluster_operator_conditions{name="insights"}',
-        'insightsclient_last_gather_time',
-      ],
-      healthHandler: getClusterInsightsStatus,
-      additionalResource: {
-        kind: referenceForModel(ClusterVersionModel),
-        namespaced: false,
-        name: 'version',
-        isList: false,
-        prop: 'cluster',
-      },
-      popupComponent: () =>
-        import('./components/InsightsPopup/index' /* webpackChunkName: "insights-plugin" */).then(
-          (m) => m.InsightsPopup,
-        ),
-      // t('insights-plugin~Insights Advisor status')
-      popupTitle: '%insights-plugin~Insights Advisor status%',
-    },
-  },
-];
+const plugin: Plugin<any> = [];
 
 export default plugin;

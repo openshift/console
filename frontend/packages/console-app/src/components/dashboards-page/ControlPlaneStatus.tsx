@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
+import { PrometheusHealthPopupProps } from '@console/dynamic-plugin-sdk';
 import {
   HealthState,
   healthStateMapping,

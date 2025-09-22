@@ -1,6 +1,7 @@
 import { pluralize } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import { PrometheusHealthHandler } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { humanizePercentage } from '@console/internal/components/utils/units';
@@ -13,7 +14,6 @@ import {
   ClusterOperator,
 } from '@console/internal/module/k8s';
 import {
-  PrometheusHealthHandler,
   URLHealthHandler,
   SubsystemHealth,
   GetOperatorsWithStatuses,

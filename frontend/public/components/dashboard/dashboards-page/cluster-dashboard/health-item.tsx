@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
 import {
   DashboardsOverviewHealthOperator,
-  DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthResourceSubsystem,
   SubsystemHealth,
   OperatorRowProps,
@@ -14,7 +13,7 @@ import {
   ResolvedExtension,
   DashboardsOverviewHealthOperator as DynamicDashboardsOverviewHealthOperator,
   DashboardsOverviewHealthURLSubsystem,
-  DashboardsOverviewHealthPrometheusSubsystem as DynamicDashboardsOverviewHealthPrometheusSubsystem,
+  DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthResourceSubsystem as DynamicDashboardsOverviewHealthResourceSubsystem,
   WatchK8sResources,
   WatchK8sResults,
@@ -374,9 +373,7 @@ type URLHealthItemProps = DashboardItemProps & {
 };
 
 type PrometheusHealthItemProps = DashboardItemProps & {
-  subsystem:
-    | DashboardsOverviewHealthPrometheusSubsystem['properties']
-    | ResolvedExtension<DynamicDashboardsOverviewHealthPrometheusSubsystem>['properties'];
+  subsystem: ResolvedExtension<DashboardsOverviewHealthPrometheusSubsystem>['properties'];
   models: ImmutableMap<string, K8sKind>;
 };
 

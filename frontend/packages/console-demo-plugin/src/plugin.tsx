@@ -8,7 +8,6 @@ import {
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
-  DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
   DashboardsOverviewResourceActivity,
@@ -24,7 +23,6 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | RoutePage
-  | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
   | DashboardsOverviewResourceActivity

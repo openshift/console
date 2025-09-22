@@ -60,6 +60,7 @@
       "DynamicPluginsPopover": "src/components/dashboards-page/dynamic-plugins-health-resource/DynamicPluginsPopover.tsx",
       "getDynamicPluginHealthState": "src/components/dashboards-page/dynamic-plugins-health-resource/status.ts",
       "k8sHealth": "src/components/dashboards-page/status.ts",
+      "ControlPlaneStatus": "src/components/dashboards-page/ControlPlaneStatus.tsx",
       "secretsProvider": "src/actions/providers/secrets-provider.ts",
       "storageProvisioners": "src/components/storage/StorageClassProviders.ts",
       "storageProvisionerDocs": "src/components/storage/Documentation.ts",
