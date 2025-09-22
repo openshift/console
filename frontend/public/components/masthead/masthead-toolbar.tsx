@@ -617,7 +617,7 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
 
     const userToggle = (
       <span className="co-username" data-test="username">
-        {authEnabledFlag ? displayName : t('public~Auth disabled')}
+        {authEnabledFlag ? displayName || username || 'User' : t('public~Auth disabled')}
       </span>
     );
 

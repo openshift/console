@@ -79,4 +79,30 @@ describe('useUser', () => {
       payload: { userResource: mockUserResource },
     });
   });
+
+  it('should handle edge cases with empty strings and fallback to "Unknown User"', () => {
+    const mockUser = { username: '' }; // Empty username
+    const mockUserResource = { fullName: '   ' }; // Whitespace-only fullName
+
+    mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(mockUserResource);
+
+    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+
+    const { result } = testHook(() => useUser());
+
+    expect(result.current.displayName).toBe('Unknown User'); // Should fallback to "Unknown User"
+  });
+
+  it('should trim whitespace from fullName and username', () => {
+    const mockUser = { username: '  testuser@example.com  ' };
+    const mockUserResource = { fullName: '  Test User  ' };
+
+    mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(mockUserResource);
+
+    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+
+    const { result } = testHook(() => useUser());
+
+    expect(result.current.displayName).toBe('Test User'); // Should be trimmed
+  });
 });

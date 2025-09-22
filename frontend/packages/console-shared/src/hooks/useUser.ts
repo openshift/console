@@ -34,14 +34,32 @@ export const useUser = () => {
     }
   }, [dispatch, userResourceData, userResourceLoaded, userResourceError]);
 
+  const currentUserResource = userResource || userResourceData;
+  const currentUsername = user?.username;
+  const currentFullName = currentUserResource?.fullName;
+
+  // Create a robust display name that always has a fallback
+  const getDisplayName = () => {
+    // Prefer fullName if it exists and is not empty
+    if (currentFullName && currentFullName.trim()) {
+      return currentFullName.trim();
+    }
+    // Fallback to username if it exists and is not empty
+    if (currentUsername && currentUsername.trim()) {
+      return currentUsername.trim();
+    }
+    // Final fallback for edge cases
+    return 'Unknown User';
+  };
+
   return {
     user,
-    userResource: userResource || userResourceData,
+    userResource: currentUserResource,
     userResourceLoaded,
     userResourceError,
     // Computed properties for convenience
-    username: user?.username,
-    fullName: (userResource || userResourceData)?.fullName,
-    displayName: (userResource || userResourceData)?.fullName || user?.username || '',
+    username: currentUsername,
+    fullName: currentFullName,
+    displayName: getDisplayName(),
   };
 };
