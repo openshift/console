@@ -341,6 +341,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
     const readyReplicas = getReadyReplicas(obj);
     const desiredReplicas = getDesiredReplicas(obj);
     const instanceType = getMachineSetInstanceType(obj);
+
     return (
       <>
         <TableData {...tableColumnInfo[0]}>

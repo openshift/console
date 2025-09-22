@@ -31,6 +31,8 @@ import {
 } from './utils';
 
 import { useTranslation } from 'react-i18next';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { Action } from '@console/dynamic-plugin-sdk/src';
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
@@ -38,6 +40,8 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const commonActions = useCommonResourceActions(UserModel, user);
+
   const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
@@ -55,7 +59,7 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   });
   return (
     <ResourceKebab
-      actions={[impersonateAction, ...Kebab.factory.common]}
+      actions={[impersonateAction, ...commonActions]}
       kind={referenceForModel(UserModel)}
       resource={user}
     />
@@ -227,10 +231,11 @@ type UserKebabProps = {
   user: UserKind;
 };
 
-export const UserDetailsPage: React.FC = (props) => {
+export const UserDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const commonActions = useCommonResourceActions(UserModel, props.obj);
   const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
@@ -250,7 +255,7 @@ export const UserDetailsPage: React.FC = (props) => {
     <DetailsPage
       {...props}
       kind={referenceForModel(UserModel)}
-      menuActions={[impersonateAction, ...Kebab.factory.common]}
+      menuActions={[impersonateAction, ...commonActions] as Action[]}
       pages={[
         navFactory.details(UserDetails),
         navFactory.editYaml(),

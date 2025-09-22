@@ -32,6 +32,9 @@ import { ResourceSummary } from './utils/details-page';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { Action } from '@console/dynamic-plugin-sdk/src';
+import { ImageStreamModel } from '../models';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
@@ -82,9 +85,6 @@ export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
 // - It has a spec tag annotated with `builder` and not `hidden`
 // - It has a corresponding status tag
 export const isBuilder = (imageStream: K8sResourceKind) => !_.isEmpty(getBuilderTags(imageStream));
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
 
 const ImageStreamTagsRow: React.FCC<ImageStreamTagsRowProps> = ({
   imageStream,
@@ -320,9 +320,16 @@ const pages = [
   navFactory.editYaml(),
   navFactory.history(ImageStreamHistory),
 ];
-export const ImageStreamsDetailsPage: React.FCC = (props) => (
-  <DetailsPage {...props} kind={ImageStreamsReference} menuActions={menuActions} pages={pages} />
-);
+export const ImageStreamsDetailsPage: React.FCC<React.ComponentProps<typeof DetailsPage>> = (
+  props,
+) => {
+  const commonActions = useCommonResourceActions(ImageStreamModel, props.obj);
+
+  const menuActions = [...commonActions] as Action[];
+  return (
+    <DetailsPage {...props} kind={ImageStreamsReference} menuActions={menuActions} pages={pages} />
+  );
+};
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
 
 const tableColumnClasses = [
@@ -334,6 +341,9 @@ const tableColumnClasses = [
 ];
 
 const ImageStreamsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
+  const commonActions = useCommonResourceActions(ImageStreamModel, obj);
+
+  const menuActions = [...commonActions];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>

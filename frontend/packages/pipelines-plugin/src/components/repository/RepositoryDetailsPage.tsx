@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsPageProps, DetailsPage } from '@console/internal/components/factory';
-import { navFactory, Kebab } from '@console/internal/components/utils';
+import { navFactory } from '@console/internal/components/utils';
 import { useTabbedTableBreadcrumbsFor } from '@console/shared';
+import { RepositoryModel } from '../../models';
 import { pipelinesTab } from '../../utils/pipeline-utils';
 import RepositoryDetails from './RepositoryDetails';
 import RepositoryPipelineRunListPage from './RepositoryPipelineRunListPage';
@@ -13,6 +15,7 @@ const RepositoryDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const params = useParams();
   const location = useLocation();
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
+  const commonActions = useCommonResourceActions(RepositoryModel, props.obj);
   const breadcrumbs = useTabbedTableBreadcrumbsFor(
     kindObj,
     location,
@@ -28,7 +31,7 @@ const RepositoryDetailsPage: React.FC<DetailsPageProps> = (props) => {
       {...props}
       breadcrumbsFor={() => breadcrumbs}
       title={props.name}
-      menuActions={Kebab.factory.common}
+      menuActions={commonActions}
       pages={[
         navFactory.details(RepositoryDetails),
         navFactory.editYaml(),

@@ -50,6 +50,8 @@ import { ResourceEventStream } from './events';
 import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-settings';
 import { UpToDateMessage } from './cluster-settings/cluster-status';
 import { ErrorModal } from './modals/error-modal';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { Action } from '@console/dynamic-plugin-sdk/src';
 
 const usePauseAction = (): KebabAction => {
   const { t } = useTranslation();
@@ -72,9 +74,10 @@ const usePauseAction = (): KebabAction => {
 
 const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
 
-const useMachineConfigPoolMenuActions = (): KebabAction[] => {
+const useMachineConfigPoolMenuActions = (obj: MachineConfigPoolKind): Action[] => {
   const pauseAction = usePauseAction();
-  return useMemo(() => [pauseAction, ...Kebab.factory.common], [pauseAction]);
+  const commonActions = useCommonResourceActions(MachineConfigPoolModel, obj);
+  return useMemo(() => [pauseAction, ...commonActions] as Action[], [pauseAction, commonActions]);
 };
 
 const getConditionStatus = (
@@ -303,7 +306,7 @@ const MachineConfigPoolUpdateStatus: React.FC<MachineConfigPoolUpdateStatusProps
 };
 
 export const MachineConfigPoolDetailsPage: React.FCC<any> = (props) => {
-  const machineConfigPoolMenuActions = useMachineConfigPoolMenuActions();
+  const machineConfigPoolMenuActions = useMachineConfigPoolMenuActions(props.obj);
   return (
     <DetailsPage
       {...props}
@@ -324,7 +327,7 @@ const tableColumnClasses = [
 
 const MachineConfigPoolList: React.FCC<any> = (props) => {
   const { t } = useTranslation();
-  const machineConfigPoolMenuActions = useMachineConfigPoolMenuActions();
+  const machineConfigPoolMenuActions = useMachineConfigPoolMenuActions(props.obj);
   const MachineConfigPoolTableHeader = () => {
     return [
       {

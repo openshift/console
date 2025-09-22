@@ -30,6 +30,7 @@ import {
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { useCommonResourceActions } from '../../actions/hooks/useCommonResourceActions';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 export const tableColumnInfo = [
@@ -43,6 +44,7 @@ export const tableColumnInfo = [
 ];
 
 const Row: React.FC<RowProps<VolumeSnapshotContentKind>> = ({ obj }) => {
+  const commonActions = useCommonResourceActions(VolumeSnapshotContentModel, obj);
   const name = obj?.metadata?.name || '';
   const creationTimestamp = obj?.metadata?.creationTimestamp || '';
   const snapshotName = obj?.spec?.volumeSnapshotRef?.name || '';
@@ -79,7 +81,7 @@ const Row: React.FC<RowProps<VolumeSnapshotContentKind>> = ({ obj }) => {
         <ResourceKebab
           kind={referenceForModel(VolumeSnapshotContentModel)}
           resource={obj}
-          actions={Kebab.factory.common}
+          actions={commonActions}
         />
       </TableData>
     </>

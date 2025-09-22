@@ -368,32 +368,6 @@
     "properties": {
       "model": {
         "group": "tekton.dev",
-        "version": "v1alpha1",
-        "kind": "PipelineResource"
-      },
-      "component": { "$codeRef": "pipelinesComponent.PipelineResourceDetailsPage" }
-    }
-  },
-  {
-    "type": "console.page/resource/details",
-    "properties": {
-      "model": {
-        "group": "tekton.dev",
-        "version": "v1alpha1",
-        "kind": "Condition"
-      },
-      "component": { "$codeRef": "pipelinesComponent.PipelineConditionDetailsPage" }
-    },
-    "flags": {
-      "required": ["OPENSHIFT_PIPELINE_CONDITION"],
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONDITIONS_DETAILS"]
-    }
-  },
-  {
-    "type": "console.page/resource/details",
-    "properties": {
-      "model": {
-        "group": "tekton.dev",
         "version": "v1beta1",
         "kind": "PipelineRun"
       },
