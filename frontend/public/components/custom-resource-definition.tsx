@@ -73,7 +73,7 @@ const namespaced = (crd: CustomResourceDefinitionKind) => crd.spec.scope === 'Na
 
 const kind = referenceForModel(CustomResourceDefinitionModel);
 
-const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
+const Established: React.FCC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
   const { t } = useTranslation();
   return crd.status && isEstablished(crd.status.conditions) ? (
     <span>
@@ -86,12 +86,12 @@ const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) =
   );
 };
 
-const EmptyVersionsMsg: React.FC<{}> = () => {
+const EmptyVersionsMsg: React.FCC<{}> = () => {
   const { t } = useTranslation();
   return <EmptyBox label={t('public~CRD versions')} />;
 };
 
-const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
+const CRDVersionTable: React.FCC<CRDVersionProps> = ({ versions }) => {
   const { t } = useTranslation();
   const [sortBy, setSortBy] = React.useState({ index: 0, direction: SortByDirection.asc });
   const onSort = React.useCallback(
@@ -151,7 +151,7 @@ const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
   );
 };
 
-const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
+const Details: React.FCC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -193,7 +193,7 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
   );
 };
 
-const Instances: React.FC<InstancesProps> = ({ obj, namespace }) => {
+const Instances: React.FCC<InstancesProps> = ({ obj, namespace }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   const crdKind = referenceForCRD(obj);
   const componentLoader = getResourceListPages(resourceListPageExtensions).get(crdKind, () =>
@@ -280,7 +280,7 @@ const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefini
 
 const IsNamespaced: React.FCC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
   const { t } = useTranslation();
-  return namespaced(obj) ? t('public~Yes') : t('public~No');
+  return <>{namespaced(obj) ? t('public~Yes') : t('public~No')}</>;
 };
 
 const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) => {
@@ -303,10 +303,10 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
         props: getNameCellProps(displayName),
       },
       [tableColumnInfo[1].id]: {
-        cell: obj.spec.group,
+        cell: <span>{obj.spec.group}</span>,
       },
       [tableColumnInfo[2].id]: {
-        cell: getLatestVersionForCRD(obj),
+        cell: <span>{getLatestVersionForCRD(obj)}</span>,
       },
       [tableColumnInfo[3].id]: {
         cell: <IsNamespaced obj={obj} />,
@@ -355,7 +355,7 @@ export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsL
   );
 };
 
-export const CustomResourceDefinitionsPage: React.FC = (props) => (
+export const CustomResourceDefinitionsPage: React.FCC = (props) => (
   <ListPage
     {...props}
     ListComponent={CustomResourceDefinitionsList}
@@ -365,7 +365,7 @@ export const CustomResourceDefinitionsPage: React.FC = (props) => (
   />
 );
 
-export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
+export const CustomResourceDefinitionsDetailsPage: React.FCC = (props) => {
   return (
     <DetailsPage
       {...props}
