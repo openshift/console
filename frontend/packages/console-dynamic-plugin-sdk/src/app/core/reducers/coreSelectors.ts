@@ -35,7 +35,7 @@ export const getUser: GetUser = (state) => state.sdkCore.user;
 /**
  * It provides user resource details from the redux store.
  * @param state the root state
- * @returns The the user resource state.
+ * @returns The user resource state.
  */
 export const getUserResource: GetUserResource = (state) => state.sdkCore.userResource;
 

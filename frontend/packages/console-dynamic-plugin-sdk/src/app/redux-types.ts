@@ -16,7 +16,7 @@ export type ImpersonateKind = {
 
 export type CoreState = {
   user?: UserInfo;
-  userResource?: any; // UserKind from k8s API
+  userResource?: UserKind;
   impersonate?: ImpersonateKind;
   admissionWebhookWarnings?: ImmutableMap<string, AdmissionWebhookWarning>;
 };
