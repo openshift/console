@@ -1,4 +1,4 @@
-import i18n, { TFunction } from 'i18next';
+import i18n from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { nameValidationSchema } from '@console/shared';
@@ -429,7 +429,7 @@ const taskValidation = (formValues: PipelineBuilderFormYamlValues, taskType: Tas
  */
 const pipelineBuilderFormSchema = (formValues: PipelineBuilderFormYamlValues) => {
   return yup.object({
-    name: nameValidationSchema((tKey) => (i18n.t(tKey) as unknown) as TFunction).required(
+    name: nameValidationSchema((tKey) => i18n.t(tKey)).required(
       i18n.t('pipelines-plugin~Required'),
     ),
     params: yup.array().of(

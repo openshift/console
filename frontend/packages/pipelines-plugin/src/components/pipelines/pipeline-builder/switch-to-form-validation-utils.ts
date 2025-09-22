@@ -1,4 +1,4 @@
-import i18n, { TFunction } from 'i18next';
+import i18n from 'i18next';
 import * as yup from 'yup';
 import { nameValidationSchema } from '@console/shared';
 import { PipelineTask } from '../../../types';
@@ -31,7 +31,7 @@ const taskValidationYAMLSchema = (formData: PipelineBuilderFormValues) => {
     yup.lazy((taskObject) =>
       yup
         .object({
-          name: nameValidationSchema((tKey) => (i18n.t(tKey) as unknown) as TFunction),
+          name: nameValidationSchema((tKey) => i18n.t(tKey)),
           taskRef: yup
             .object({
               name: yup.string(),
