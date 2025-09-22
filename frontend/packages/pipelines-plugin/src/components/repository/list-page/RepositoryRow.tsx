@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import {
-  Kebab,
   ResourceIcon,
   ResourceKebab,
   ResourceLink,
@@ -29,6 +29,7 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
     metadata: { name, namespace },
   } = obj;
   const { taskRuns, pipelineRuns, taskRunsLoaded } = customData;
+  const commonActions = useCommonResourceActions(RepositoryModel, obj);
   const plrs = pipelineRuns.filter((plr) => {
     return (
       plr.metadata?.labels?.[RepositoryLabels[RepositoryFields.REPOSITORY]] === obj.metadata.name
@@ -99,7 +100,7 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
         {pipelineRunDuration(latestRun)}
       </TableData>
       <TableData className={repositoriesTableColumnClasses[8]}>
-        <ResourceKebab actions={Kebab.factory.common} kind={referenceFor(obj)} resource={obj} />
+        <ResourceKebab actions={commonActions} kind={referenceFor(obj)} resource={obj} />
       </TableData>
     </>
   );

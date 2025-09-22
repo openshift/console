@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import { Component } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
-import { RoleModel, RoleBindingModel } from '../../models';
+import { RoleModel, RoleBindingModel, ClusterRoleBindingModel } from '../../models';
 import { css } from '@patternfly/react-styles';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -32,8 +32,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-
-const { common } = Kebab.factory;
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 
 export const isSystemRole = (role) => _.startsWith(role.metadata.name, 'system:');
 
@@ -41,13 +40,15 @@ export const isSystemRole = (role) => _.startsWith(role.metadata.name, 'system:'
 
 export const roleKind = (role) => (role.metadata.namespace ? 'Role' : 'ClusterRole');
 
-const menuActions = [
-  // This page is temporarily disabled until we update the safe resources list.
-  // (kind, role) => ({
-  //   label: 'Add Rule',
-  //   href: addHref(role.metadata.name, role.metadata.namespace),
-  // }),
+const roleColumnClasses = ['', '', Kebab.columnClass];
+
+const addRoleBindingAction = [
   (kind, role) => ({
+    // This page is temporarily disabled until we update the safe resources list.
+    // (kind, role) => ({
+    //   label: 'Add Rule',
+    //   href: addHref(role.metadata.name, role.metadata.namespace),
+    // }),
     label: i18next.t('public~Add RoleBinding'),
     href: `/k8s/${
       role.metadata.namespace
@@ -57,13 +58,11 @@ const menuActions = [
         : `cluster/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}`
     }`,
   }),
-  Kebab.factory.Edit,
-  Kebab.factory.Delete,
 ];
 
-const roleColumnClasses = ['', '', Kebab.columnClass];
-
 const RolesTableRow = ({ obj: role }) => {
+  const commonActions = useCommonResourceActions(RoleModel, role);
+  const menuActions = [...addRoleBindingAction, ...commonActions];
   return (
     <>
       <TableData className={roleColumnClasses[0]}>
@@ -283,6 +282,8 @@ const getBreadcrumbs = (model, kindObj, location) => {
 
 export const RolesDetailsPage = (props) => {
   const location = useLocation();
+  const commonActions = useCommonResourceActions(RoleModel, props.obj);
+  const menuActions = [...addRoleBindingAction, ...commonActions];
   return (
     <DetailsPage
       {...props}
@@ -305,8 +306,9 @@ export const RolesDetailsPage = (props) => {
 export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 export const ClusterRoleBindingsDetailsPage = (props) => {
+  const commonActions = useCommonResourceActions(ClusterRoleBindingModel, props.obj);
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
-  const actions = [...common];
+  const actions = [...commonActions];
   const location = useLocation();
 
   return (

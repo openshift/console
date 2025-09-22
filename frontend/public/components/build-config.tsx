@@ -43,7 +43,7 @@ import {
   PipelineBuildStrategyAlert,
 } from './build';
 import { ResourceEventStream } from './events';
-import { BuildModel } from '../models';
+import { BuildConfigModel, BuildModel } from '../models';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { Status } from '@console/shared';
@@ -51,6 +51,8 @@ import { displayDurationInWords } from './utils/build-utils';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ErrorModal } from './modals/error-modal';
+import { Action } from '@console/dynamic-plugin-sdk/src';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 const BuildsReference: K8sResourceKindReference = 'Build';
@@ -114,12 +116,14 @@ const useStartLastBuildAction = (latestBuild: K8sResourceKind): KebabAction => {
   );
 };
 
-const useBuildConfigKebabActions = (latestBuild?: K8sResourceKind): KebabAction[] => {
+const useBuildConfigKebabActions = (latestBuild?: K8sResourceKind): Action[] => {
   const startBuildAction = useStartBuildAction();
   const startLastBuildAction = useStartLastBuildAction(latestBuild);
-  return useMemo(() => [startBuildAction, startLastBuildAction, ...Kebab.factory.common], [
+  const commonActions = useCommonResourceActions(BuildConfigModel, latestBuild);
+  return useMemo(() => [startBuildAction, startLastBuildAction, ...commonActions] as Action[], [
     startBuildAction,
     startLastBuildAction,
+    commonActions,
   ]);
 };
 
@@ -184,7 +188,7 @@ export const BuildConfigsDetailsPage: React.FC<DetailsPageProps> = (props) => {
     isList: true,
   });
   const latestBuild = buildsLoaded && !buildsLoadError ? getLatestBuild(builds) : null;
-  const menuActions: KebabAction[] = useBuildConfigKebabActions(latestBuild);
+  const menuActions = useBuildConfigKebabActions(latestBuild);
   return (
     <DetailsPage
       {...props}
@@ -209,7 +213,7 @@ const tableColumnClasses = [
 
 const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) => {
   const latestBuild = obj?.latestBuild;
-  const menuActions: KebabAction[] = useBuildConfigKebabActions(latestBuild);
+  const menuActions = useBuildConfigKebabActions(latestBuild);
 
   return (
     <>
