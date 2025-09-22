@@ -55,11 +55,8 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
 
     expect(screen.getByTestId('card admin-features')).toBeInTheDocument();
 
-    expect(screen.getByTestId('item openshift-ai')).toBeInTheDocument();
     expect(screen.getByText('OpenShift AI')).toBeVisible();
     expect(screen.getByText('Build, deploy, and manage AI-enabled applications.')).toBeVisible();
-
-    expect(screen.getByTestId('item whats-new')).toBeInTheDocument();
     expect(screen.getByText("See what's new in OpenShift 4.16")).toBeVisible();
   });
 

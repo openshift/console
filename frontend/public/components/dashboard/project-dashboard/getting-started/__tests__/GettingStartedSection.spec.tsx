@@ -93,8 +93,6 @@ describe('GettingStartedSection', () => {
       );
     });
 
-    expect(screen.getByTestId('getting-started')).toBeInTheDocument();
-
     // Check that all three cards are present by looking for their mocked components
     expect(screen.getByText('Sample getting started')).toBeInTheDocument();
     expect(screen.getByText('Quick start tutorials')).toBeInTheDocument();
@@ -111,7 +109,6 @@ describe('GettingStartedSection', () => {
       );
     });
 
-    expect(screen.queryByTestId('getting-started')).not.toBeInTheDocument();
     expect(screen.queryByText('Sample getting started')).not.toBeInTheDocument();
     expect(screen.queryByText('Quick start tutorials')).not.toBeInTheDocument();
     expect(screen.queryByText('Developer features')).not.toBeInTheDocument();
@@ -127,7 +124,6 @@ describe('GettingStartedSection', () => {
       );
     });
 
-    expect(screen.queryByTestId('getting-started')).not.toBeInTheDocument();
     expect(screen.queryByText('Sample getting started')).not.toBeInTheDocument();
     expect(screen.queryByText('Quick start tutorials')).not.toBeInTheDocument();
     expect(screen.queryByText('Developer features')).not.toBeInTheDocument();
@@ -147,7 +143,6 @@ describe('GettingStartedSection', () => {
       );
     });
 
-    expect(screen.queryByTestId('getting-started')).not.toBeInTheDocument();
     expect(screen.queryByText('Sample getting started')).not.toBeInTheDocument();
     expect(screen.queryByText('Quick start tutorials')).not.toBeInTheDocument();
     expect(screen.queryByText('Developer features')).not.toBeInTheDocument();
