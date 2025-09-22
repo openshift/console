@@ -192,6 +192,7 @@
   "Whether or not the plugin might have violated the Console Content Security Policy.": "Whether or not the plugin might have violated the Console Content Security Policy.",
   "Backend Service": "Backend Service",
   "Proxy Services": "Proxy Services",
+  "Cluster": "Cluster",
   "Start Job": "Start Job",
   "Add Health Checks": "Add Health Checks",
   "Edit Health Checks": "Edit Health Checks",
@@ -569,7 +570,6 @@
   "Container name": "Container name",
   "VerticalPodAutoscalers": "VerticalPodAutoscalers",
   "No VerticalPodAutoscalers": "No VerticalPodAutoscalers",
-  "Cluster": "Cluster",
   "Control Plane": "Control Plane",
   "Control Plane status": "Control Plane status",
   "Cluster operators": "Cluster operators"

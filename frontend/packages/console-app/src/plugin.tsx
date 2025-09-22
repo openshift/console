@@ -16,7 +16,6 @@ import {
   ModelDefinition,
   RoutePage,
   DashboardsOverviewResourceActivity,
-  DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewInventoryItem,
   DashboardsOverviewHealthOperator,
@@ -32,8 +31,6 @@ import {
   isClusterUpdateActivity,
 } from './components/dashboards-page/activity';
 import {
-  fetchK8sHealth,
-  getK8sHealthState,
   getControlPlaneHealth,
   getClusterOperatorHealthStatus,
 } from './components/dashboards-page/status';
@@ -51,7 +48,6 @@ type ConsumedExtensions =
   | ModelDefinition
   | RoutePage
   | DashboardsOverviewResourceActivity
-  | DashboardsOverviewHealthURLSubsystem<any>
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewInventoryItem
   | DashboardsOverviewHealthOperator<ClusterOperator>
@@ -85,24 +81,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAGS.CLUSTER_VERSION],
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Health/URL',
-    properties: {
-      // t('console-app~Cluster')
-      title: '%console-app~Cluster%',
-      url: 'healthz',
-      fetch: fetchK8sHealth,
-      healthHandler: getK8sHealthState,
-      additionalResource: {
-        kind: referenceForModel(ClusterVersionModel),
-        namespaced: false,
-        name: 'version',
-        isList: false,
-        prop: 'cv',
-        optional: true,
-      },
     },
   },
   {

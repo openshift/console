@@ -20,39 +20,6 @@ namespace ExtensionProperties {
     title: string;
   }
 
-  export interface DashboardsOverviewHealthURLSubsystem<R>
-    extends DashboardsOverviewHealthSubsystem {
-    /**
-     * The URL to fetch data from. It will be prefixed with base k8s URL.
-     * For example: `healthz` will result in `<k8sBasePath>/healthz`
-     */
-    url: string;
-
-    /**
-     * Custom function to fetch data from the URL.
-     * If none is specified, default one (`coFetchJson`) will be used.
-     * Response is then parsed by `healthHandler`.
-     */
-    fetch?: (url: string) => Promise<R>;
-
-    /** Additional resource which will be fetched and passed to healthHandler  */
-    additionalResource?: FirehoseResource;
-
-    /** Resolve the subsystem's health */
-    healthHandler: URLHealthHandler<R>;
-
-    /**
-     * Loader for popup content. If defined health item will be represented as link
-     * which opens popup with given content.
-     */
-    popupComponent?: LazyLoader<any>;
-
-    /**
-     * Popup title
-     */
-    popupTitle?: string;
-  }
-
   export interface DashboardsOverviewHealthPrometheusSubsystem
     extends DashboardsOverviewHealthSubsystem {
     /** The Prometheus queries */
@@ -202,15 +169,6 @@ namespace ExtensionProperties {
   }
 }
 
-export interface DashboardsOverviewHealthURLSubsystem<R = any>
-  extends Extension<ExtensionProperties.DashboardsOverviewHealthURLSubsystem<R>> {
-  type: 'Dashboards/Overview/Health/URL';
-}
-
-export const isDashboardsOverviewHealthURLSubsystem = (
-  e: Extension,
-): e is DashboardsOverviewHealthURLSubsystem => e.type === 'Dashboards/Overview/Health/URL';
-
 export interface DashboardsOverviewHealthPrometheusSubsystem
   extends Extension<ExtensionProperties.DashboardsOverviewHealthPrometheusSubsystem> {
   type: 'Dashboards/Overview/Health/Prometheus';
@@ -242,7 +200,6 @@ export const isDashboardsOverviewHealthOperator = (
 ): e is DashboardsOverviewHealthOperator => e.type === 'Dashboards/Overview/Health/Operator';
 
 export type DashboardsOverviewHealthSubsystem =
-  | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewHealthResourceSubsystem
   | DashboardsOverviewHealthOperator;
@@ -250,7 +207,6 @@ export type DashboardsOverviewHealthSubsystem =
 export const isDashboardsOverviewHealthSubsystem = (
   e: Extension,
 ): e is DashboardsOverviewHealthSubsystem =>
-  isDashboardsOverviewHealthURLSubsystem(e) ||
   isDashboardsOverviewHealthPrometheusSubsystem(e) ||
   isDashboardsOverviewHealthResourceSubsystem(e) ||
   isDashboardsOverviewHealthOperator(e);

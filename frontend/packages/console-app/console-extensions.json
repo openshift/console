@@ -2155,5 +2155,22 @@
       "href": "/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins"
     },
     "flags": { "required": ["CAN_GET_CONSOLE_OPERATOR_CONFIG"] }
+  },
+  {
+    "type": "console.dashboards/overview/health/url",
+    "properties": {
+      "title": "%console-app~Cluster%",
+      "url": "healthz",
+      "healthHandler": { "$codeRef": "k8sHealth.getK8sHealthState" },
+      "fetch": { "$codeRef": "k8sHealth.fetchK8sHealth" },
+      "additionalResource": {
+        "kind": "config.openshift.io~v1~ClusterVersion",
+        "namespaced": false,
+        "name": "version",
+        "isList": false,
+        "prop": "cv",
+        "optional": true
+      }
+    }
   }
 ]

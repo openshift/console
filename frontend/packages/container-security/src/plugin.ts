@@ -4,7 +4,6 @@ import {
   ModelDefinition,
   ModelFeatureFlag,
   ResourceListPage,
-  DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthResourceSubsystem,
   RoutePage,
   ResourceDetailsPage,
@@ -20,7 +19,6 @@ type ConsumedExtensions =
   | ModelFeatureFlag
   | ResourceListPage
   | ResourceDetailsPage
-  | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewHealthResourceSubsystem<WatchImageVuln>
   | RoutePage
   | HorizontalNavTab;

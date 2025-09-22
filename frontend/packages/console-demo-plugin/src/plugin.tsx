@@ -9,14 +9,12 @@ import {
   ResourceDetailsPage,
   RoutePage,
   DashboardsOverviewHealthPrometheusSubsystem,
-  DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
   DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
-import { getFooHealthState, getBarHealthState } from './components/dashboards/health';
 import { DemoGroupIcon } from './components/dashboards/inventory';
 import { FooBarModel } from './models';
 
@@ -27,7 +25,6 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | RoutePage
   | DashboardsOverviewHealthPrometheusSubsystem
-  | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
   | DashboardsOverviewResourceActivity
@@ -68,34 +65,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/test-pages' /* webpackChunkName: "demo" */).then(
           (m) => m.DummyResourceDetailsPage,
         ),
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Health/URL',
-    properties: {
-      title: 'Foo system',
-      url: 'fooUrl',
-      healthHandler: getFooHealthState,
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Health/Prometheus',
-    properties: {
-      title: 'Bar system',
-      queries: ['barQuery'],
-      healthHandler: getBarHealthState,
-      additionalResource: {
-        kind: NodeModel.kind,
-        isList: true,
-        namespaced: false,
-        prop: 'nodes',
-      },
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
     },
   },
   {

@@ -10,8 +10,6 @@ import {
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthOperator,
   isDashboardsOverviewHealthSubsystem,
-  isDashboardsOverviewHealthURLSubsystem,
-  DashboardsOverviewHealthURLSubsystem,
   isDashboardsOverviewHealthPrometheusSubsystem,
   isDashboardsOverviewHealthResourceSubsystem,
   isDashboardsOverviewHealthOperator,
@@ -19,10 +17,10 @@ import {
 import {
   DashboardsOverviewHealthSubsystem as DynamicDashboardsOverviewHealthSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem as DynamicDashboardsOverviewHealthPrometheusSubsystem,
-  DashboardsOverviewHealthURLSubsystem as DynamicDashboardsOverviewHealthURLSubsystem,
+  DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthOperator as DynamicDashboardsOverviewHealthOperator,
   isDashboardsOverviewHealthSubsystem as isDynamicDashboardsOverviewHealthSubsystem,
-  isDashboardsOverviewHealthURLSubsystem as isDynamicDashboardsOverviewHealthURLSubsystem,
+  isDashboardsOverviewHealthURLSubsystem,
   isDashboardsOverviewHealthPrometheusSubsystem as isDynamicDashboardsOverviewHealthPrometheusSubsystem,
   isResolvedDashboardsOverviewHealthURLSubsystem,
   isResolvedDashboardsOverviewHealthPrometheusSubsystem,
@@ -71,14 +69,12 @@ const filterSubsystems = (
     if (
       isDashboardsOverviewHealthURLSubsystem(s) ||
       isDashboardsOverviewHealthPrometheusSubsystem(s) ||
-      isDynamicDashboardsOverviewHealthURLSubsystem(s) ||
       isDynamicDashboardsOverviewHealthPrometheusSubsystem(s)
     ) {
       const subsystem = s as
         | DashboardsOverviewHealthPrometheusSubsystem
-        | DashboardsOverviewHealthURLSubsystem
         | ResolvedExtension<DynamicDashboardsOverviewHealthPrometheusSubsystem>
-        | ResolvedExtension<DynamicDashboardsOverviewHealthURLSubsystem>;
+        | ResolvedExtension<DashboardsOverviewHealthURLSubsystem>;
       return subsystem.properties.additionalResource &&
         !subsystem.properties.additionalResource.optional
         ? !!k8sModels.get(subsystem.properties.additionalResource.kind)
@@ -171,10 +167,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   const { t } = useTranslation();
   const healthItems: { title: string; Component: React.ReactNode }[] = [];
   subsystems.forEach((subsystem) => {
-    if (
-      isDashboardsOverviewHealthURLSubsystem(subsystem) ||
-      isResolvedDashboardsOverviewHealthURLSubsystem(subsystem)
-    ) {
+    if (isResolvedDashboardsOverviewHealthURLSubsystem(subsystem)) {
       healthItems.push({
         title: subsystem.properties.title,
         Component: <URLHealthItem subsystem={subsystem.properties} models={k8sModels} />,
