@@ -204,11 +204,7 @@ describe('window.loadPluginEntry', () => {
 
     pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
 
-    getPluginEntryCallback(
-      pluginStore,
-      initSharedPluginModules,
-      resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs)('Test@1.2.3', entryModule);
 
     expect(pluginMap.get('Test@1.2.3').entryCallbackFired).toBe(true);
     expect(initSharedPluginModules).toHaveBeenCalledWith(entryModule);
@@ -233,11 +229,7 @@ describe('window.loadPluginEntry', () => {
     const initSharedPluginModules = jest.fn();
     const resolveEncodedCodeRefs = jest.fn(() => []);
 
-    getPluginEntryCallback(
-      pluginStore,
-      initSharedPluginModules,
-      resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs)('Test@1.2.3', entryModule);
 
     expect(pluginMap.size).toBe(0);
     expect(initSharedPluginModules).not.toHaveBeenCalled();
@@ -258,17 +250,8 @@ describe('window.loadPluginEntry', () => {
 
     pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
 
-    getPluginEntryCallback(
-      pluginStore,
-      initSharedPluginModules,
-      resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
-
-    getPluginEntryCallback(
-      pluginStore,
-      initSharedPluginModules,
-      resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs)('Test@1.2.3', entryModule);
+    getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs)('Test@1.2.3', entryModule);
 
     expect(pluginMap.size).toBe(1);
     expect(initSharedPluginModules).toHaveBeenCalledTimes(1);
@@ -291,11 +274,7 @@ describe('window.loadPluginEntry', () => {
 
     pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
 
-    getPluginEntryCallback(
-      pluginStore,
-      initSharedPluginModules,
-      resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs)('Test@1.2.3', entryModule);
 
     expect(pluginMap.size).toBe(1);
     expect(initSharedPluginModules).toHaveBeenCalledWith(entryModule);

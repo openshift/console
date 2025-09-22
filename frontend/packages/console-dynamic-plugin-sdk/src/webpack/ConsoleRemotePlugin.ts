@@ -53,6 +53,7 @@ const getPluginSDKPackageDependencies = () =>
 const getPatternFlyStyles = (baseDir: string) =>
   glob.sync(`${baseDir}/node_modules/@patternfly/react-styles/**/*.css`);
 
+// Shared modules that can be used by the dynamic plugin
 // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
 const getWebpackSharedModules = () => {
   const sdkPkgDeps = getPluginSDKPackageDependencies();
