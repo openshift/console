@@ -197,12 +197,7 @@ export const URLHealthItem = withDashboardResources<URLHealthItemProps>(
     const modelExists =
       subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
     React.useEffect(() => {
-      watchURL(
-        subsystem.url,
-        (subsystem as DashboardsOverviewHealthURLSubsystem<any>['properties']).fetch
-          ? (subsystem as DashboardsOverviewHealthURLSubsystem<any>['properties']).fetch
-          : undefined,
-      );
+      watchURL(subsystem.url, subsystem.fetch);
       if (modelExists) {
         watchK8sResource(subsystem.additionalResource);
       }

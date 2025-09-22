@@ -467,6 +467,7 @@ Adds a health subsystem to the status card of Overview dashboard where the sourc
 | `title` | `string` | no | The display name of the subsystem. |
 | `url` | `string` | no | The URL to fetch data from. It will be prefixed with base k8s URL. |
 | `healthHandler` | `CodeRef<URLHealthHandler<T>>` | no | Resolve the subsystem's health. |
+| `fetch` | `CodeRef<Fetch>` | yes | Custom function to fetch data from the URL.<br/>If none is specified, default one (`coFetchJson`) will be used.<br/>Response is then parsed by `healthHandler`. |
 | `additionalResource` | `CodeRef<FirehoseResource>` | yes | Additional resource which will be fetched and passed to `healthHandler`. |
 | `popupComponent` | `CodeRef<React.ComponentType<{ healthResult?: T; healthResultError?: any; k8sResult?: FirehoseResult<R>; }>>` | yes | Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. |
 | `popupTitle` | `string` | yes | The title of the popover. |

@@ -1,4 +1,5 @@
 import { K8sModel } from '../api/common-types';
+import { Fetch } from '../api/internal-types';
 import { Extension, ExtensionDeclaration, CodeRef, ResolvedExtension } from '../types';
 import {
   K8sResourceCommon,
@@ -88,6 +89,12 @@ export type DashboardsOverviewHealthURLSubsystem<
     url: string;
     /** Resolve the subsystem's health. */
     healthHandler: CodeRef<URLHealthHandler<T>>;
+    /**
+     * Custom function to fetch data from the URL.
+     * If none is specified, default one (`coFetchJson`) will be used.
+     * Response is then parsed by `healthHandler`.
+     */
+    fetch?: CodeRef<Fetch>;
     /** Additional resource which will be fetched and passed to `healthHandler`. */
     additionalResource?: CodeRef<FirehoseResource>;
     /** Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. */
