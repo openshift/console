@@ -115,7 +115,7 @@
 "@openshift-console/dynamic-plugin-sdk-webpack@file:../frontend/packages/console-dynamic-plugin-sdk/dist/webpack":
   version "0.0.0-fixed"
   dependencies:
-    "@openshift/dynamic-plugin-sdk-webpack" "^4.0.2"
+    "@openshift/dynamic-plugin-sdk-webpack" "^4.1.0"
     ajv "^6.12.3"
     chalk "2.4.x"
     comment-json "4.x"
@@ -150,7 +150,7 @@
     sanitize-html "^2.3.2"
     showdown "1.8.6"
 
-"@openshift/dynamic-plugin-sdk-webpack@^4.0.2":
+"@openshift/dynamic-plugin-sdk-webpack@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@openshift/dynamic-plugin-sdk-webpack/-/dynamic-plugin-sdk-webpack-4.1.0.tgz#eb62ee18d975431411b78da15c9774d95dbe1fa7"
   integrity sha512-Pkq6R+fkoE0llgv9WJBcotViAPywrzDkpWK0HSTmrVyfEuWS5cuZUs8ono6L5w9BqDBRXm3ceEuUAZA/Zrar1w==

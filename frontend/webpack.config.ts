@@ -5,8 +5,12 @@ import * as _ from 'lodash';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
+import { WebpackSharedObject, WebpackSharedConfig } from '@openshift/dynamic-plugin-sdk-webpack';
 
-import { sharedPluginModules } from '@console/dynamic-plugin-sdk/src/shared-modules/shared-modules-meta';
+import {
+  sharedPluginModules,
+  getSharedModuleMetadata,
+} from '@console/dynamic-plugin-sdk/src/shared-modules/shared-modules-meta';
 import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpack/ExtensionValidatorPlugin';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { HtmlWebpackSkipAssetsPlugin } from 'html-webpack-skip-assets-plugin';
@@ -45,7 +49,6 @@ const getVendorModuleRegExp = (vendorModules: string[]) =>
   new RegExp(`node_modules\\/(${vendorModules.map(_.escapeRegExp).join('|')})\\/`);
 
 const sharedPluginModulesTest = getVendorModuleRegExp(
-  // Map shared module names to actual webpack modules as per shared-modules-init.ts
   sharedPluginModules.map((moduleName) => {
     if (moduleName === '@openshift-console/dynamic-plugin-sdk') {
       return '@console/dynamic-plugin-sdk/src/lib-core';
@@ -57,6 +60,28 @@ const sharedPluginModulesTest = getVendorModuleRegExp(
 
     return moduleName;
   }),
+);
+
+// Shared modules provided by Console application to all dynamic plugins
+// https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
+const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObject>(
+  (acc, moduleName) => {
+    const { singleton } = getSharedModuleMetadata(moduleName);
+    const moduleConfig: WebpackSharedConfig = { singleton, eager: true };
+
+    switch (moduleName) {
+      case '@openshift-console/dynamic-plugin-sdk':
+        moduleConfig.import = '@console/dynamic-plugin-sdk/src/lib-core';
+        break;
+      case '@openshift-console/dynamic-plugin-sdk-internal':
+        moduleConfig.import = '@console/dynamic-plugin-sdk/src/lib-internal';
+        break;
+    }
+
+    acc[moduleName] = moduleConfig;
+    return acc;
+  },
+  {},
 );
 
 const config: Configuration = {
@@ -230,6 +255,9 @@ const config: Configuration = {
   },
   plugins: [
     new ExtensionValidatorPlugin({ pluginPackages }),
+    new webpack.container.ModuleFederationPlugin({
+      shared: consoleProvidedSharedModules,
+    }),
     new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
     new ForkTsCheckerWebpackPlugin({
       typescript: {

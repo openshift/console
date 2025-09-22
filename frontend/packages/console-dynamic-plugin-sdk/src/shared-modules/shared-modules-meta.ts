@@ -7,10 +7,10 @@ type SharedModuleMetadata = Partial<{
   singleton: boolean;
 
   /**
-   * If `true`, plugins will provide their own fallback version of the module.
+   * If `true`, plugins may provide their own fallback version of the module.
    *
    * The fallback module will be loaded when a matching module is not found within
-   * the Console shared scope object. If the given module is declared as singleton
+   * the Console share scope object. If the given module is declared as singleton
    * and is already loaded, the fallback module will not load.
    *
    * @default true
