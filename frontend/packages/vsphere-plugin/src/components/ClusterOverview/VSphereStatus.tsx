@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { StackItem, Stack } from '@patternfly/react-core';
-import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import {
   HealthState,
@@ -18,7 +17,7 @@ import './VSphereStatus.css';
 
 const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ hide, responses, k8sResult }) => {
   const { t } = useTranslation();
-  const health = getVSphereHealth(t, responses, k8sResult);
+  const health = getVSphereHealth(responses, k8sResult, t);
 
   if (
     [HealthState.OK, HealthState.WARNING, HealthState.PROGRESS].includes(health.state) &&
@@ -55,7 +54,7 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ hide, responses, 
 };
 
 export const healthHandler: PrometheusHealthHandler = (responses, t, additionalResource) => {
-  const health = getVSphereHealth(t || ((() => '') as TFunction), responses, additionalResource);
+  const health = getVSphereHealth(responses, additionalResource, t);
   const { state } = health;
 
   let message: string | undefined;

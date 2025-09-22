@@ -1,16 +1,12 @@
 import * as _ from 'lodash-es';
 import { plural } from 'pluralize';
-import i18next, { TFunction } from 'i18next';
+import i18next from 'i18next';
 
 import { K8sKind, K8sVerb } from '../../module/k8s';
 import { isModelMetadata, ModelMetadata } from '@console/dynamic-plugin-sdk';
 import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import {
-  getTranslationKey,
-  isTranslatableString,
-  translateExtension,
-} from '@console/plugin-sdk/src/utils/extension-i18n';
+import { translateExtension } from '@console/plugin-sdk/src/utils/extension-i18n';
 import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
 import { fetchURL } from '../../graphql/client';
 import { pluginStore } from '../../plugins';
@@ -103,9 +99,7 @@ export const getModelExtensionMetadata = (
   version?: string,
   kind?: string,
 ) => {
-  const tcb = (value: string) =>
-    isTranslatableString(value) ? i18next.t(getTranslationKey(value)) : value;
-  const translatedExtensions = extensions.map((e) => translateExtension(e, tcb as TFunction));
+  const translatedExtensions = extensions.map((e) => translateExtension(e, i18next.t));
   const groupVersionKindMetadata = translatedExtensions
     .filter(
       ({ properties }) =>
