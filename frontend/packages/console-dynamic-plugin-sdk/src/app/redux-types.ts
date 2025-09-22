@@ -1,4 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
+import type { UserKind } from '@console/internal/module/k8s/types';
 import { UserInfo } from '../extensions/console-types';
 
 export type K8sState = ImmutableMap<string, any>;
