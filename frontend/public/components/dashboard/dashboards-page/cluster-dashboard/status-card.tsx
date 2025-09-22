@@ -9,7 +9,6 @@ import {
   DashboardsOverviewHealthSubsystem,
   DashboardsOverviewHealthOperator,
   isDashboardsOverviewHealthSubsystem,
-  isDashboardsOverviewHealthResourceSubsystem,
   isDashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
 import {
@@ -180,10 +179,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
         title: subsystem.properties.title,
         Component: <PrometheusHealthItem subsystem={subsystem.properties} models={k8sModels} />,
       });
-    } else if (
-      isDashboardsOverviewHealthResourceSubsystem(subsystem) ||
-      isResolvedDashboardsOverviewHealthResourceSubsystem(subsystem)
-    ) {
+    } else if (isResolvedDashboardsOverviewHealthResourceSubsystem(subsystem)) {
       healthItems.push({
         title: subsystem.properties.title,
         Component: <ResourceHealthItem subsystem={subsystem.properties} />,

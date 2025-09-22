@@ -82,5 +82,28 @@
     "flags": {
       "required": ["SECURITY_LABELLER"]
     }
+  },
+  {
+    "type": "console.dashboards/overview/health/resource",
+    "properties": {
+      "title": "Image Vulnerabilities",
+      "resources": {
+        "imageManifestVuln": {
+          "kind": "secscan.quay.redhat.com~v1alpha1~ImageManifestVuln",
+          "namespaced": true,
+          "isList": true
+        }
+      },
+      "healthHandler": {
+        "$codeRef": "summary.securityHealthHandler"
+      },
+      "popupTitle": "Image Vulnerabilities breakdown",
+      "popupComponent": {
+        "$codeRef": "summary.SecurityBreakdownPopup"
+      }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
   }
 ]

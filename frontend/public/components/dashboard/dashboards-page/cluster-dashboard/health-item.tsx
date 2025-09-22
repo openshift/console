@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
 import {
   DashboardsOverviewHealthOperator,
-  DashboardsOverviewHealthResourceSubsystem,
   SubsystemHealth,
   OperatorRowProps,
   LazyLoader,
@@ -14,7 +13,7 @@ import {
   DashboardsOverviewHealthOperator as DynamicDashboardsOverviewHealthOperator,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
-  DashboardsOverviewHealthResourceSubsystem as DynamicDashboardsOverviewHealthResourceSubsystem,
+  DashboardsOverviewHealthResourceSubsystem,
   WatchK8sResources,
   WatchK8sResults,
   ResourcesObject,
@@ -378,9 +377,7 @@ type PrometheusHealthItemProps = DashboardItemProps & {
 };
 
 type ResourceHealthItemProps = {
-  subsystem:
-    | DashboardsOverviewHealthResourceSubsystem['properties']
-    | ResolvedExtension<DynamicDashboardsOverviewHealthResourceSubsystem>['properties'];
+  subsystem: ResolvedExtension<DashboardsOverviewHealthResourceSubsystem>['properties'];
   namespace?: string;
 };
 

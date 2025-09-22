@@ -20,26 +20,6 @@ namespace ExtensionProperties {
     title: string;
   }
 
-  export interface DashboardsOverviewHealthResourceSubsystem<R extends ResourcesObject>
-    extends DashboardsOverviewHealthSubsystem {
-    /** Kubernetes resources which will be fetched and passed to healthHandler  */
-    resources: WatchK8sResources<R>;
-
-    /** Resolve the subsystem's health */
-    healthHandler: ResourceHealthHandler<R>;
-
-    /**
-     * Loader for popup content. If defined health item will be represented as link
-     * which opens popup with given content.
-     */
-    popupComponent?: LazyLoader<WatchK8sResults<R>>;
-
-    /**
-     * Popup title
-     */
-    popupTitle?: string;
-  }
-
   export interface DashboardsOverviewHealthOperator<R extends K8sResourceCommon>
     extends DashboardsOverviewHealthSubsystem {
     /** Title of operators section in popup */
@@ -134,17 +114,6 @@ namespace ExtensionProperties {
   }
 }
 
-export interface DashboardsOverviewHealthResourceSubsystem<
-  R extends ResourcesObject = ResourcesObject
-> extends Extension<ExtensionProperties.DashboardsOverviewHealthResourceSubsystem<R>> {
-  type: 'Dashboards/Overview/Health/Resource';
-}
-
-export const isDashboardsOverviewHealthResourceSubsystem = (
-  e: Extension,
-): e is DashboardsOverviewHealthResourceSubsystem =>
-  e.type === 'Dashboards/Overview/Health/Resource';
-
 export interface DashboardsOverviewHealthOperator<R extends K8sResourceCommon = K8sResourceCommon>
   extends Extension<ExtensionProperties.DashboardsOverviewHealthOperator<R>> {
   type: 'Dashboards/Overview/Health/Operator';
@@ -154,14 +123,11 @@ export const isDashboardsOverviewHealthOperator = (
   e: Extension,
 ): e is DashboardsOverviewHealthOperator => e.type === 'Dashboards/Overview/Health/Operator';
 
-export type DashboardsOverviewHealthSubsystem =
-  | DashboardsOverviewHealthResourceSubsystem
-  | DashboardsOverviewHealthOperator;
+export type DashboardsOverviewHealthSubsystem = DashboardsOverviewHealthOperator;
 
 export const isDashboardsOverviewHealthSubsystem = (
   e: Extension,
-): e is DashboardsOverviewHealthSubsystem =>
-  isDashboardsOverviewHealthResourceSubsystem(e) || isDashboardsOverviewHealthOperator(e);
+): e is DashboardsOverviewHealthSubsystem => isDashboardsOverviewHealthOperator(e);
 
 export interface DashboardsOverviewInventoryItem
   extends Extension<ExtensionProperties.DashboardsOverviewInventoryItem> {
