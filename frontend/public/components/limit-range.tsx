@@ -2,18 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
+import { K8sResourceKindReference, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { LimitRangeModel } from '../models';
 import { DetailsPage, ListPage } from './factory';
-import {
-  Kebab,
-  navFactory,
-  SectionHeading,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  LoadingBox,
-} from './utils';
+import { navFactory, SectionHeading, ResourceLink, ResourceSummary, LoadingBox } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
@@ -31,10 +23,7 @@ import {
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
 import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { DASH } from '@console/shared/src';
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
+import { DASH, LazyActionMenu } from '@console/shared/src';
 
 const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
@@ -59,7 +48,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
         cell: <Timestamp timestamp={creationTimestamp} />,
       },
       [tableColumnInfo[3].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={LimitRangeReference} resource={obj} />,
+        cell: <LazyActionMenu context={{ [referenceForModel(LimitRangeModel)]: obj }} />,
         props: {
           ...actionsCellProps,
         },
@@ -232,7 +221,10 @@ export const LimitRangeDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
-      menuActions={menuActions}
+      kind={referenceForModel(LimitRangeModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(LimitRangeModel)]: obj }} {...props} />
+      )}
       pages={[navFactory.details(Details), navFactory.editYaml()]}
     />
   );

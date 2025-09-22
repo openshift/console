@@ -20,10 +20,8 @@ import {
 } from '../module/k8s';
 import {
   DetailsItem,
-  Kebab,
   kindObj,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -44,7 +42,7 @@ import {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import { DASH } from '@console/shared';
+import { ActionMenu, ActionMenuVariant, DASH } from '@console/shared';
 import {
   isResourceActionProvider,
   ResourceActionProvider,
@@ -52,8 +50,10 @@ import {
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { useK8sGet } from './utils/k8s-get-hook';
 
-const { common } = Kebab.factory;
+// const { common } = Kebab.factory;
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];
 
@@ -177,7 +177,6 @@ const getDataViewRows = (
   return data.map(({ obj }) => {
     const { name, namespace, creationTimestamp } = obj.metadata;
     const kind = referenceFor(obj) || kinds[0];
-    const menuActions = [...common];
 
     const hasExtensionActions =
       resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
@@ -210,15 +209,7 @@ const getDataViewRows = (
         },
       }),
       [tableColumnInfo[3].id]: {
-        cell: (
-          <>
-            {hasExtensionActions ? (
-              <LazyActionMenu context={{ [kind]: obj }} />
-            ) : (
-              <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
-            )}
-          </>
-        ),
+        cell: <>{hasExtensionActions ? <LazyActionMenu context={{ [kind]: obj }} /> : <></>}</>,
         props: {
           ...actionsCellProps,
         },
@@ -378,9 +369,16 @@ DefaultPage.displayName = 'DefaultPage';
 
 export const DefaultDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
+  const [resource] = useK8sGet(kindObj(props.kind), props.name, props.namespace);
+  const common = useCommonResourceActions(kindObj(props.kind), resource);
   const menuActions = [...common];
-
-  return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
+  return (
+    <DetailsPage
+      {...props}
+      customActionMenu={<ActionMenu actions={menuActions} variant={ActionMenuVariant.DROPDOWN} />}
+      pages={pages}
+    />
+  );
 };
 DefaultDetailsPage.displayName = 'DefaultDetailsPage';
 

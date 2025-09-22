@@ -9,6 +9,7 @@ import {
   getMachineZone,
   Status,
   getMachinePhase,
+  LazyActionMenu,
 } from '@console/shared';
 import { DASH } from '@console/shared/src/constants';
 import { ListPageBody, TableColumn } from '@console/dynamic-plugin-sdk';
@@ -22,14 +23,12 @@ import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   DetailsItem,
-  Kebab,
   NodeLink,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
   navFactory,
   LoadingBox,
-  ResourceKebab,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
@@ -50,8 +49,6 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 export const machineReference = referenceForModel(MachineModel);
 
 const tableColumnInfo = [
@@ -100,7 +97,7 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
         cell: zone || DASH,
       },
       [tableColumnInfo[7].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />,
+        cell: <LazyActionMenu context={{ [machineReference]: obj }} />,
         props: {
           ...actionsCellProps,
         },
@@ -343,19 +340,23 @@ export const MachinePage: React.FC<MachinePageProps> = ({
   );
 };
 
-export const MachineDetailsPage: React.FCC = (props) => (
-  <DetailsPage
-    {...props}
-    kind={machineReference}
-    menuActions={menuActions}
-    pages={[
-      navFactory.details(MachineDetails),
-      navFactory.editYaml(),
-      navFactory.events(ResourceEventStream),
-    ]}
-    getResourceStatus={getMachinePhase}
-  />
-);
+export const MachineDetailsPage: React.FCC = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={machineReference}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineReference]: obj }} {...props} />
+      )}
+      pages={[
+        navFactory.details(MachineDetails),
+        navFactory.editYaml(),
+        navFactory.events(ResourceEventStream),
+      ]}
+      getResourceStatus={getMachinePhase}
+    />
+  );
+};
 
 export type MachineDetailsProps = {
   obj: MachineKind;

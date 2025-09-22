@@ -6,6 +6,7 @@ import { SemVer } from 'semver';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { LazyActionMenu } from '@console/shared/src';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
@@ -14,7 +15,6 @@ import {
 import SignedPipelinerunIcon from '../../../images/signed-badge.svg';
 import { PipelineRunModel } from '../../../models';
 import { ComputedStatus, PipelineRunKind, TaskRunKind } from '../../../types';
-import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
 import { TaskStatus } from '../../../utils/pipeline-augment';
 import {
   pipelineRunFilterReducer,
@@ -27,7 +27,6 @@ import { useTaskRuns } from '../hooks/useTaskRuns';
 import LinkedPipelineRunTaskStatus from '../status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatusContent from '../status/PipelineRunStatusContent';
 import PipelineRunVulnerabilities from '../status/PipelineRunVulnerabilities';
-import { ResourceKebabWithUserLabel } from '../triggered-by';
 import { tableColumnClasses } from './pipelinerun-table';
 
 const pipelinerunReference = referenceForModel(PipelineRunModel);
@@ -60,13 +59,7 @@ const PLRStatus: React.FC<PLRStatusProps> = React.memo(({ obj }) => {
   );
 });
 
-const PipelineRunRowTable = ({
-  obj,
-  PLRTaskRuns,
-  taskRunsLoaded,
-  taskRunStatusObj,
-  operatorVersion,
-}) => {
+const PipelineRunRowTable = ({ obj, PLRTaskRuns, taskRunsLoaded, taskRunStatusObj }) => {
   const { t } = useTranslation();
 
   return (
@@ -120,15 +113,14 @@ const PipelineRunRowTable = ({
       </TableData>
       <TableData className={tableColumnClasses.duration}>{pipelineRunDuration(obj)}</TableData>
       <TableData className={tableColumnClasses.actions}>
-        <ResourceKebabWithUserLabel
-          actions={getPipelineRunKebabActions(
-            operatorVersion,
-            PLRTaskRuns,
-            undefined,
-            taskRunStatusObj,
-          )}
-          kind={pipelinerunReference}
-          resource={obj}
+        <LazyActionMenu
+          context={{
+            [referenceForModel(PipelineRunModel)]: {
+              obj,
+              taskRuns: PLRTaskRuns,
+              taskRunStatusObj,
+            },
+          }}
         />
       </TableData>
     </>
@@ -136,13 +128,12 @@ const PipelineRunRowTable = ({
 };
 
 const PipelineRunRowWithoutTaskRuns: React.FC<PipelineRunRowWithoutTaskRunsProps> = React.memo(
-  ({ obj, operatorVersion, taskRunStatusObj }) => {
+  ({ obj, taskRunStatusObj }) => {
     return (
       <PipelineRunRowTable
         obj={obj}
         PLRTaskRuns={[]}
         taskRunsLoaded
-        operatorVersion={operatorVersion}
         taskRunStatusObj={taskRunStatusObj}
       />
     );
@@ -150,7 +141,7 @@ const PipelineRunRowWithoutTaskRuns: React.FC<PipelineRunRowWithoutTaskRunsProps
 );
 
 const PipelineRunRowWithTaskRunsFetch: React.FC<PipelineRunRowWithTaskRunsProps> = React.memo(
-  ({ obj, operatorVersion }) => {
+  ({ obj }) => {
     const cacheKey = `${obj.metadata.namespace}-${obj.metadata.name}`;
     const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
       obj.metadata.namespace,
@@ -167,7 +158,6 @@ const PipelineRunRowWithTaskRunsFetch: React.FC<PipelineRunRowWithTaskRunsProps>
         obj={obj}
         PLRTaskRuns={PLRTaskRuns}
         taskRunsLoaded={taskRunsLoaded}
-        operatorVersion={operatorVersion}
         taskRunStatusObj={undefined}
       />
     );
@@ -195,7 +185,6 @@ const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> = Re
         obj={obj}
         PLRTaskRuns={PLRTaskRuns}
         taskRunsLoaded={taskRunsLoaded}
-        operatorVersion={operatorVersion}
         taskRunStatusObj={undefined}
       />
     );

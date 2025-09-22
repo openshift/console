@@ -3,16 +3,19 @@ import * as _ from 'lodash-es';
 import { Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-import { Status, DASH } from '@console/shared';
+import { LazyActionMenu, Status, DASH } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, sorts } from './factory';
 import { Conditions } from './conditions';
-import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';
+import {
+  getTemplateInstanceStatus,
+  referenceFor,
+  referenceForModel,
+  TemplateInstanceKind,
+} from '../module/k8s';
 import {
   EmptyBox,
-  Kebab,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -45,8 +48,6 @@ import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataV
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { sortResourceByValue } from './factory/Table/sort';
 
-const menuActions = Kebab.factory.common;
-
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'status' }, { id: '' }];
 
 const getTemplateInstanceDataViewRows = (
@@ -75,7 +76,7 @@ const getTemplateInstanceDataViewRows = (
         cell: <Status status={status} />,
       },
       [tableColumnInfo[3].id]: {
-        cell: <ResourceKebab actions={menuActions} kind="TemplateInstance" resource={obj} />,
+        cell: <LazyActionMenu context={{ [referenceForModel(TemplateInstanceModel)]: obj }} />,
         props: {
           ...actionsCellProps,
         },
@@ -293,14 +294,18 @@ const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj 
   );
 };
 
-export const TemplateInstanceDetailsPage: React.FCC = (props) => (
-  <DetailsPage
-    {...props}
-    kind="TemplateInstance"
-    menuActions={menuActions}
-    pages={[navFactory.details(TemplateInstanceDetails), navFactory.editYaml()]}
-  />
-);
+export const TemplateInstanceDetailsPage: React.FCC = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={referenceForModel(TemplateInstanceModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(TemplateInstanceModel)]: obj }} {...props} />
+      )}
+      pages={[navFactory.details(TemplateInstanceDetails), navFactory.editYaml()]}
+    />
+  );
+};
 
 type TemplateInstanceFilters = ResourceFilters & { status: string[] };
 

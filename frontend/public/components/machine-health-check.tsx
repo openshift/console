@@ -11,9 +11,7 @@ import { DASH } from '@console/shared/src/constants';
 import {
   DetailsItem,
   EmptyBox,
-  Kebab,
   LoadingBox,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -32,20 +30,15 @@ import {
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { LazyActionMenu } from '@console/shared/src';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: '' }];
 
-const getDataViewRows: GetDataViewRows<MachineHealthCheckKind, typeof menuActions> = (
-  data,
-  columns,
-) => {
-  return data.map(({ obj, rowData }) => {
+const getDataViewRows: GetDataViewRows<MachineHealthCheckKind, undefined> = (data, columns) => {
+  return data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
-    const actions = rowData;
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -65,7 +58,7 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind, typeof menuAction
         },
       },
       [tableColumnInfo[3].id]: {
-        cell: <ResourceKebab actions={actions} kind={machineHealthCheckReference} resource={obj} />,
+        cell: <LazyActionMenu context={{ [machineHealthCheckReference]: obj }} />,
         props: {
           ...actionsCellProps,
         },
@@ -134,7 +127,7 @@ const MachineHealthCheckList: React.FC<MachineHealthCheckListProps> = ({
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ConsoleDataView<MachineHealthCheckKind, typeof menuActions>
+      <ConsoleDataView<MachineHealthCheckKind>
         {...props}
         label={MachineHealthCheckModel.labelPlural}
         data={data}
@@ -143,7 +136,6 @@ const MachineHealthCheckList: React.FC<MachineHealthCheckListProps> = ({
         columns={columns}
         initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
-        customRowData={menuActions}
         hideColumnManagement={true}
       />
     </React.Suspense>
@@ -229,14 +221,18 @@ export const MachineHealthCheckPage: React.FC<MachineHealthCheckPageProps> = (pr
   />
 );
 
-export const MachineHealthCheckDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    kind={machineHealthCheckReference}
-    pages={[navFactory.details(MachineHealthCheckDetails), navFactory.editYaml()]}
-  />
-);
+export const MachineHealthCheckDetailsPage: React.FC = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={machineHealthCheckReference}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineHealthCheckReference]: obj }} {...props} />
+      )}
+      pages={[navFactory.details(MachineHealthCheckDetails), navFactory.editYaml()]}
+    />
+  );
+};
 
 type MachineHealthCheckPageProps = {
   showTitle?: boolean;
