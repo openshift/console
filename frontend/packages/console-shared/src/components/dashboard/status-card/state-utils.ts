@@ -1,11 +1,11 @@
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { K8sResourceCommon } from '@console/internal/module/k8s';
 import {
   OperatorStatusWithResources,
   OperatorHealth,
   GetOperatorStatusPriority,
-} from '@console/plugin-sdk';
+} from '@console/dynamic-plugin-sdk';
+import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
 
 export const getMostImportantStatuses = (

@@ -1506,16 +1506,6 @@
     "flags": { "required": ["CAN_LIST_CRD"] }
   },
   {
-    "type": "console.dashboards/overview/health/resource",
-    "properties": {
-      "title": "%console-app~Dynamic Plugins%",
-      "resources": { "$codeRef": "DynamicPluginsPopover.dynamicPluginsResources" },
-      "healthHandler": { "$codeRef": "getDynamicPluginHealthState.getDynamicPluginHealthState" },
-      "popupComponent": { "$codeRef": "DynamicPluginsPopover" },
-      "popupTitle": "%console-app~Dynamic Plugin status%"
-    }
-  },
-  {
     "type": "console.storage-class/provisioner",
     "properties": {
       "CSI": {
@@ -2206,6 +2196,40 @@
       },
       "popupTitle": "%console-app~Control Plane status%",
       "disallowedControlPlaneTopology": ["External"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/operator",
+    "properties": {
+      "title": "%console-app~Cluster operators%",
+      "resources": [
+        {
+          "kind": "config.openshift.io~v1~ClusterOperator",
+          "isList": true,
+          "namespaced": false,
+          "prop": "clusterOperators"
+        }
+      ],
+      "getOperatorsWithStatuses": {
+        "$codeRef": "k8sHealth.getClusterOperatorHealthStatus"
+      },
+      "operatorRowLoader": {
+        "$codeRef": "OperatorStatus.default"
+      },
+      "viewAllLink": "/settings/cluster/clusteroperators"
+    },
+    "flags": {
+      "required": ["CLUSTER_VERSION"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/resource",
+    "properties": {
+      "title": "%console-app~Dynamic Plugins%",
+      "resources": { "$codeRef": "DynamicPluginsPopover.dynamicPluginsResources" },
+      "healthHandler": { "$codeRef": "getDynamicPluginHealthState.getDynamicPluginHealthState" },
+      "popupComponent": { "$codeRef": "DynamicPluginsPopover" },
+      "popupTitle": "%console-app~Dynamic Plugin status%"
     }
   }
 ]

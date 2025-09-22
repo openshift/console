@@ -1,19 +1,15 @@
 import * as _ from 'lodash';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
-  Plugin,
   ModelDefinition,
   ModelFeatureFlag,
-  ResourceListPage,
+  Plugin,
   ResourceDetailsPage,
+  ResourceListPage,
   RoutePage,
-  DashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
-import { FLAGS } from '@console/shared/src/constants';
-import { getClusterServiceVersionsWithStatuses } from './components/dashboard/utils';
 import { Flags } from './const';
 import * as models from './models';
-import { ClusterServiceVersionKind } from './types';
 
 import './style.scss';
 
@@ -22,8 +18,7 @@ type ConsumedExtensions =
   | ModelFeatureFlag
   | ResourceListPage
   | ResourceDetailsPage
-  | RoutePage
-  | DashboardsOverviewHealthOperator<ClusterServiceVersionKind>;
+  | RoutePage;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -224,35 +219,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import('./components/install-plan' /* webpackChunkName: "install-plan" */))
           .InstallPlansPage,
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Health/Operator',
-    properties: {
-      // t('olm~Operators')
-      title: '%olm~Operators%',
-      resources: [
-        {
-          kind: referenceForModel(models.ClusterServiceVersionModel),
-          isList: true,
-          prop: 'clusterServiceVersions',
-        },
-        {
-          kind: referenceForModel(models.SubscriptionModel),
-          prop: 'subscriptions',
-          isList: true,
-        },
-      ],
-      getOperatorsWithStatuses: getClusterServiceVersionsWithStatuses,
-      operatorRowLoader: async () =>
-        (
-          await import(
-            './components/dashboard/csv-status' /* webpackChunkName: "csv-dashboard-status" */
-          )
-        ).default,
-    },
-    flags: {
-      required: [FLAGS.CAN_LIST_OPERATOR_GROUP],
     },
   },
 ];

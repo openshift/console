@@ -34,11 +34,20 @@ export type OperatorStatusWithResources<R extends K8sResourceCommon = K8sResourc
   status: OperatorStatusPriority;
 };
 
+export type GetOperatorStatusPriority<R extends K8sResourceCommon = K8sResourceCommon> = (
+  operator: R,
+) => OperatorStatusPriority;
+
 export type OperatorStatusPriority = {
   title: string;
   priority: number;
   icon: React.ReactNode;
   health: keyof typeof HealthState;
+};
+
+export type OperatorHealth = {
+  health: keyof typeof HealthState;
+  count?: number;
 };
 
 export type PrometheusHealthHandler = (

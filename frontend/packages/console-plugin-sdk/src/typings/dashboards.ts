@@ -1,46 +1,14 @@
-import { TFunction } from 'i18next';
-import { WatchK8sResources, ResourcesObject, WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import {
-  FirehoseResource,
-  FirehoseResult,
-  FirehoseResourcesResult,
-} from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import { FirehoseResource } from '@console/internal/components/utils';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   StatusGroupMapper,
   ExpandedComponentProps,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { Extension, LazyLoader } from './base';
 
 namespace ExtensionProperties {
-  interface DashboardsOverviewHealthSubsystem {
-    /** The subsystem's display name */
-    title: string;
-  }
-
-  export interface DashboardsOverviewHealthOperator<R extends K8sResourceCommon>
-    extends DashboardsOverviewHealthSubsystem {
-    /** Title of operators section in popup */
-    title: string;
-
-    /** Resources which will be fetched and passed to healthHandler */
-    resources: FirehoseResource[];
-
-    /** Resolve status for operators */
-    getOperatorsWithStatuses: GetOperatorsWithStatuses<R>;
-
-    /** Loader for popup row component */
-    operatorRowLoader: LazyLoader<OperatorRowProps<R>>;
-
-    /**
-     * Link to all resources page.
-     * If not provided then a list page of first resource from resources prop is used.
-     */
-    viewAllLink?: string;
-  }
-
   export interface DashboardsOverviewInventoryItem {
     /** The model for `resource` which will be fetched. The model is used for getting model's label or abbr. */
     model: K8sKind;
@@ -114,21 +82,6 @@ namespace ExtensionProperties {
   }
 }
 
-export interface DashboardsOverviewHealthOperator<R extends K8sResourceCommon = K8sResourceCommon>
-  extends Extension<ExtensionProperties.DashboardsOverviewHealthOperator<R>> {
-  type: 'Dashboards/Overview/Health/Operator';
-}
-
-export const isDashboardsOverviewHealthOperator = (
-  e: Extension,
-): e is DashboardsOverviewHealthOperator => e.type === 'Dashboards/Overview/Health/Operator';
-
-export type DashboardsOverviewHealthSubsystem = DashboardsOverviewHealthOperator;
-
-export const isDashboardsOverviewHealthSubsystem = (
-  e: Extension,
-): e is DashboardsOverviewHealthSubsystem => isDashboardsOverviewHealthOperator(e);
-
 export interface DashboardsOverviewInventoryItem
   extends Extension<ExtensionProperties.DashboardsOverviewInventoryItem> {
   type: 'Dashboards/Overview/Inventory/Item';
@@ -189,51 +142,4 @@ export type K8sActivityProps = {
 
 export type PrometheusActivityProps = {
   results: PrometheusResponse[];
-};
-
-export type SubsystemHealth = {
-  message?: string;
-  state: HealthState;
-};
-
-export type URLHealthHandler<R> = (
-  response: R,
-  error: any,
-  additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
-) => SubsystemHealth;
-
-export type ResourceHealthHandler<R extends ResourcesObject> = (
-  resourcesResult: WatchK8sResults<R>,
-  t?: TFunction,
-) => SubsystemHealth;
-
-export type OperatorHealthHandler = (resources: FirehoseResourcesResult) => OperatorHealth;
-
-export type OperatorHealth = {
-  health: keyof typeof HealthState;
-  count?: number;
-};
-
-export type GetOperatorsWithStatuses<R extends K8sResourceCommon = K8sResourceCommon> = (
-  resources: FirehoseResourcesResult,
-) => OperatorStatusWithResources<R>[];
-
-export type OperatorStatusWithResources<R extends K8sResourceCommon = K8sResourceCommon> = {
-  operators: R[];
-  status: OperatorStatusPriority;
-};
-
-export type GetOperatorStatusPriority<R extends K8sResourceCommon = K8sResourceCommon> = (
-  operator: R,
-) => OperatorStatusPriority;
-
-export type OperatorStatusPriority = {
-  title: string;
-  priority: number;
-  icon: React.ReactNode;
-  health: keyof typeof HealthState;
-};
-
-export type OperatorRowProps<R extends K8sResourceCommon = K8sResourceCommon> = {
-  operatorStatus: OperatorStatusWithResources<R>;
 };

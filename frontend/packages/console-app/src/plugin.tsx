@@ -6,18 +6,16 @@ import {
   StorageClassModel,
   PersistentVolumeClaimModel,
   VolumeSnapshotContentModel,
-  ClusterOperatorModel,
   ConsoleOperatorConfigModel,
   ConsolePluginModel,
 } from '@console/internal/models';
-import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Plugin,
   ModelDefinition,
   RoutePage,
   DashboardsOverviewResourceActivity,
   DashboardsOverviewInventoryItem,
-  DashboardsOverviewHealthOperator,
   ResourceDetailsPage,
   ResourceListPage,
   ResourceTabPage,
@@ -29,7 +27,6 @@ import {
   getClusterUpdateTimestamp,
   isClusterUpdateActivity,
 } from './components/dashboards-page/activity';
-import { getClusterOperatorHealthStatus } from './components/dashboards-page/status';
 import { getGuidedTour } from './components/guided-tour';
 import { USER_PREFERENCES_BASE_URL } from './components/user-preferences/const';
 import * as models from './models';
@@ -39,7 +36,6 @@ type ConsumedExtensions =
   | RoutePage
   | DashboardsOverviewResourceActivity
   | DashboardsOverviewInventoryItem
-  | DashboardsOverviewHealthOperator<ClusterOperator>
   | GuidedTour
   | ResourceListPage
   | ResourceDetailsPage
@@ -106,30 +102,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           '@console/shared/src/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
         ).then((m) => m.getPVCStatusGroups),
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Health/Operator',
-    properties: {
-      // t('console-app~Cluster operators')
-      title: '%console-app~Cluster operators%',
-      resources: [
-        {
-          kind: referenceForModel(ClusterOperatorModel),
-          isList: true,
-          namespaced: false,
-          prop: 'clusterOperators',
-        },
-      ],
-      getOperatorsWithStatuses: getClusterOperatorHealthStatus,
-      operatorRowLoader: () =>
-        import(
-          './components/dashboards-page/OperatorStatus' /* webpackChunkName: "console-app" */
-        ).then((c) => c.default),
-      viewAllLink: '/settings/cluster/clusteroperators',
-    },
-    flags: {
-      required: [FLAGS.CLUSTER_VERSION],
     },
   },
   {

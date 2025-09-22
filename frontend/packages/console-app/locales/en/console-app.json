@@ -195,6 +195,7 @@
   "Cluster": "Cluster",
   "Control Plane": "Control Plane",
   "Control Plane status": "Control Plane status",
+  "Cluster operators": "Cluster operators",
   "Start Job": "Start Job",
   "Add Health Checks": "Add Health Checks",
   "Edit Health Checks": "Edit Health Checks",
@@ -571,6 +572,5 @@
   "Recommended": "Recommended",
   "Container name": "Container name",
   "VerticalPodAutoscalers": "VerticalPodAutoscalers",
-  "No VerticalPodAutoscalers": "No VerticalPodAutoscalers",
-  "Cluster operators": "Cluster operators"
+  "No VerticalPodAutoscalers": "No VerticalPodAutoscalers"
 }

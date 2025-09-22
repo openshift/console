@@ -77,7 +77,8 @@
       "consolePluginProxyDetail": "src/components/console-operator/ConsolePluginProxyDetail.tsx",
       "getConsoleOperatorConfigFlag": "src/hooks/useCanGetConsoleOperatorConfig.ts",
       "usePerspectivesAvailable": "src/components/user-preferences/perspective/usePerspectivesAvailable.ts",
-      "defaultProvider": "src/actions/providers/default-provider.ts"
+      "defaultProvider": "src/actions/providers/default-provider.ts",
+      "OperatorStatus": "src/components/dashboards-page/OperatorStatus.tsx"
     }
   }
 }

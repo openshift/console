@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { OperatorStatusPriority, GetOperatorsWithStatuses } from '@console/plugin-sdk';
+import { GetOperatorsWithStatuses, OperatorStatusPriority } from '@console/dynamic-plugin-sdk';
 import { getOperatorsStatus } from '@console/shared/src/components/dashboard/status-card/state-utils';
 import {
   HealthState,

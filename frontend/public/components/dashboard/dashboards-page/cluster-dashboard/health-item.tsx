@@ -2,21 +2,18 @@ import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
-import {
-  DashboardsOverviewHealthOperator,
-  SubsystemHealth,
-  OperatorRowProps,
-  LazyLoader,
-} from '@console/plugin-sdk';
+import { LazyLoader } from '@console/plugin-sdk';
 import {
   ResolvedExtension,
-  DashboardsOverviewHealthOperator as DynamicDashboardsOverviewHealthOperator,
+  DashboardsOverviewHealthOperator,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthResourceSubsystem,
+  OperatorRowProps,
   WatchK8sResources,
   WatchK8sResults,
   ResourcesObject,
+  SubsystemHealth,
 } from '@console/dynamic-plugin-sdk';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { OperatorsSection } from '@console/shared/src/components/dashboard/status-card/OperatorStatusBody';
@@ -59,31 +56,11 @@ const OperatorRow: React.FC<
 
 export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
   resources,
-  operatorExtensions,
-  dynamicOperatorSubsystems,
+  operatorSubsystems,
 }) => {
   const { t } = useTranslation();
   const sections = [
-    ...operatorExtensions.map((o, index) => {
-      const operatorResources = o.resources.reduce((acc, r) => {
-        acc[r.prop] = resources[uniqueResource(r, index).prop];
-        return acc;
-      }, {});
-      return (
-        <StackItem key={o.title}>
-          <OperatorsSection
-            resources={operatorResources}
-            getOperatorsWithStatuses={o.getOperatorsWithStatuses}
-            title={o.title}
-            linkTo={o.viewAllLink || resourcePath(o.resources[0].kind)}
-            Row={OperatorRow}
-            Component={o.operatorRowLoader}
-            isResolved={false}
-          />
-        </StackItem>
-      );
-    }),
-    ...dynamicOperatorSubsystems.map((o, index) => {
+    ...operatorSubsystems.map((o, index) => {
       const operatorResources = o.resources.reduce((acc, r) => {
         acc[r.prop] = resources[uniqueResource(r, index).prop];
         return acc;
@@ -116,26 +93,20 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
 };
 
 export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps>(
-  ({
-    resources,
-    watchK8sResource,
-    stopWatchK8sResource,
-    operatorExtensions,
-    dynamicOperatorSubsystems,
-  }) => {
+  ({ resources, watchK8sResource, stopWatchK8sResource, operatorSubsystems }) => {
     const { t } = useTranslation();
     React.useEffect(() => {
-      operatorExtensions.forEach((o, index) =>
+      operatorSubsystems.forEach((o, index) =>
         o.resources.forEach((r) => watchK8sResource(uniqueResource(r, index))),
       );
       return () => {
-        operatorExtensions.forEach((o, index) =>
+        operatorSubsystems.forEach((o, index) =>
           o.resources.forEach((r) => stopWatchK8sResource(uniqueResource(r, index))),
         );
       };
-    }, [watchK8sResource, stopWatchK8sResource, operatorExtensions]);
+    }, [watchK8sResource, stopWatchK8sResource, operatorSubsystems]);
 
-    const healthStatuses = operatorExtensions.map((o, index) => {
+    const healthStatuses = operatorSubsystems.map((o, index) => {
       const operatorResources = o.resources.reduce((acc, r) => {
         acc[r.prop] = resources[uniqueResource(r, index).prop] || {};
         return acc;
@@ -168,11 +139,7 @@ export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps
         details={operatorsHealth.detailMessage}
         popupTitle={t('public~Operator status')}
       >
-        <OperatorsPopup
-          resources={resources}
-          operatorExtensions={operatorExtensions}
-          dynamicOperatorSubsystems={dynamicOperatorSubsystems}
-        />
+        <OperatorsPopup resources={resources} operatorSubsystems={operatorSubsystems} />
       </HealthItem>
     );
   },
@@ -360,10 +327,7 @@ export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsyste
 };
 
 type OperatorHealthItemProps = DashboardItemProps & {
-  operatorExtensions: DashboardsOverviewHealthOperator['properties'][];
-  dynamicOperatorSubsystems: ResolvedExtension<
-    DynamicDashboardsOverviewHealthOperator
-  >['properties'][];
+  operatorSubsystems: ResolvedExtension<DashboardsOverviewHealthOperator>['properties'][];
 };
 
 type URLHealthItemProps = DashboardItemProps & {
@@ -383,8 +347,5 @@ type ResourceHealthItemProps = {
 
 type OperatorsPopupProps = {
   resources: FirehoseResourcesResult;
-  operatorExtensions: DashboardsOverviewHealthOperator['properties'][];
-  dynamicOperatorSubsystems: ResolvedExtension<
-    DynamicDashboardsOverviewHealthOperator
-  >['properties'][];
+  operatorSubsystems: ResolvedExtension<DashboardsOverviewHealthOperator>['properties'][];
 };

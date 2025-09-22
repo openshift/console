@@ -5,18 +5,11 @@ import { Map as ImmutableMap } from 'immutable';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import {
-  useExtensions,
   DashboardsOverviewHealthSubsystem,
-  DashboardsOverviewHealthOperator,
-  isDashboardsOverviewHealthSubsystem,
-  isDashboardsOverviewHealthOperator,
-} from '@console/plugin-sdk';
-import {
-  DashboardsOverviewHealthSubsystem as DynamicDashboardsOverviewHealthSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthURLSubsystem,
-  DashboardsOverviewHealthOperator as DynamicDashboardsOverviewHealthOperator,
-  isDashboardsOverviewHealthSubsystem as isDynamicDashboardsOverviewHealthSubsystem,
+  DashboardsOverviewHealthOperator,
+  isDashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthURLSubsystem,
   isDashboardsOverviewHealthPrometheusSubsystem,
   isResolvedDashboardsOverviewHealthURLSubsystem,
@@ -58,7 +51,7 @@ import { useNotificationAlerts } from '@console/shared/src/hooks/useNotification
 const filterSubsystems = (
   subsystems: (
     | DashboardsOverviewHealthSubsystem
-    | ResolvedExtension<DynamicDashboardsOverviewHealthSubsystem>
+    | ResolvedExtension<DashboardsOverviewHealthSubsystem>
   )[],
   k8sModels: ImmutableMap<string, K8sKind>,
 ) =>
@@ -118,18 +111,12 @@ const mapStateToProps = (state: RootState) => ({
   k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
 });
 export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels }) => {
-  const subsystemExtensions = useExtensions<DashboardsOverviewHealthSubsystem>(
+  const [subsystemExtensions] = useResolvedExtensions<DashboardsOverviewHealthSubsystem>(
     isDashboardsOverviewHealthSubsystem,
   );
-  const [dynamicSubsystemExtensions] = useResolvedExtensions<
-    DynamicDashboardsOverviewHealthSubsystem
-  >(isDynamicDashboardsOverviewHealthSubsystem);
 
   const subsystems = React.useMemo(() => {
-    const filteredSubsystems = filterSubsystems(
-      [...subsystemExtensions, ...dynamicSubsystemExtensions],
-      k8sModels,
-    );
+    const filteredSubsystems = filterSubsystems([...subsystemExtensions], k8sModels);
     return filteredSubsystems.map((e) => {
       if (
         isResolvedDashboardsOverviewHealthURLSubsystem(e) ||
@@ -149,14 +136,10 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       }
       return e;
     });
-  }, [subsystemExtensions, dynamicSubsystemExtensions, k8sModels]);
+  }, [subsystemExtensions, k8sModels]);
 
   const operatorSubsystemIndex = React.useMemo(
-    () =>
-      subsystems.findIndex(
-        (e) =>
-          isDashboardsOverviewHealthOperator(e) || isResolvedDashboardsOverviewHealthOperator(e),
-      ),
+    () => subsystems.findIndex((e) => isResolvedDashboardsOverviewHealthOperator(e)),
     [subsystems],
   );
   const { t } = useTranslation();
@@ -188,25 +171,17 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   });
 
   if (operatorSubsystemIndex !== -1) {
-    const operatorSubsystems: DashboardsOverviewHealthOperator['properties'][] = [];
-    const dynamicOperatorSubsystems: ResolvedExtension<
-      DynamicDashboardsOverviewHealthOperator
+    const operatorSubsystems: ResolvedExtension<
+      DashboardsOverviewHealthOperator
     >['properties'][] = [];
     subsystems.forEach((e) => {
       if (isResolvedDashboardsOverviewHealthOperator(e)) {
-        dynamicOperatorSubsystems.push(e.properties);
-      } else if (isDashboardsOverviewHealthOperator(e)) {
         operatorSubsystems.push(e.properties);
       }
     });
     healthItems.splice(operatorSubsystemIndex, 0, {
       title: 'Operators',
-      Component: (
-        <OperatorHealthItem
-          operatorExtensions={operatorSubsystems}
-          dynamicOperatorSubsystems={dynamicOperatorSubsystems}
-        />
-      ),
+      Component: <OperatorHealthItem operatorSubsystems={operatorSubsystems} />,
     });
   }
 
