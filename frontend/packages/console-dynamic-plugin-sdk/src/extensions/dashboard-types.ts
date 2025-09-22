@@ -9,6 +9,7 @@ import {
   FirehoseResourcesResult,
   FirehoseResult,
   OverviewCardSpan,
+  K8sResourceKind,
 } from './console-types';
 
 /**
@@ -44,6 +45,7 @@ export type PrometheusHealthHandler = (
   responses: { response: PrometheusResponse; error: any }[],
   t?: TFunction,
   additionalResource?: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>,
+  infrastructure?: K8sResourceKind,
 ) => SubsystemHealth;
 
 export type PrometheusHealthPopupProps = {

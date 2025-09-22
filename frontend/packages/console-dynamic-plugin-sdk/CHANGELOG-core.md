@@ -14,6 +14,7 @@ table in [Console dynamic plugins README](./README.md).
 
 - Begin alignment of plugin SDK types with `@openshift/dynamic-plugin-sdk` ([CONSOLE-3769], [#15509])
 - Add optional `fetch` property to `DashboardsOverviewHealthURLSubsystem` ([CONSOLE-4796], [#XXXXX])
+- Add optional `infrastructure` parameter to `PrometheusHealthHandler` ([CONSOLE-4796], [#XXXXX])
 
 ## 4.20.0-prerelease.1 - 2025-08-15
 
