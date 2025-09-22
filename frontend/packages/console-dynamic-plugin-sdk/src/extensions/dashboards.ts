@@ -123,7 +123,7 @@ export type DashboardsOverviewHealthResourceSubsystem<
     /** Resolve the subsystem's health. */
     healthHandler: CodeRef<ResourceHealthHandler<T>>;
     /** Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. */
-    popupComponent?: CodeRef<WatchK8sResults<T>>;
+    popupComponent?: CodeRef<React.ComponentType<{ namespace?: string } | WatchK8sResults<T>>>;
     /** The title of the popover. */
     popupTitle?: string;
   }

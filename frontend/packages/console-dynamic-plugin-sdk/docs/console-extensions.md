@@ -449,7 +449,7 @@ Adds a health subsystem to the status card of Overview dashboard where the sourc
 | `title` | `string` | no | The display name of the subsystem. |
 | `resources` | `CodeRef<WatchK8sResources<T>>` | no | Kubernetes resources which will be fetched and passed to `healthHandler`. |
 | `healthHandler` | `CodeRef<ResourceHealthHandler<T>>` | no | Resolve the subsystem's health. |
-| `popupComponent` | `CodeRef<WatchK8sResults<T>>` | yes | Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. |
+| `popupComponent` | `CodeRef<React.ComponentType<{ namespace?: string; } \| WatchK8sResults<T>>>` | yes | Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. |
 | `popupTitle` | `string` | yes | The title of the popover. |
 
 ---
