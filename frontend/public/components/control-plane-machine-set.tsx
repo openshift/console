@@ -41,12 +41,10 @@ import {
 import { ResourceEventStream } from './events';
 import { MachinePage, machineReference } from './machine';
 import { MachineTabPageProps } from './machine-set';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 
 const controlPlaneMachineSetReference = referenceForModel(ControlPlaneMachineSetModel);
-const controlPlaneMachineSetMenuActions = [
-  ...Kebab.getExtensionsActionsForKind(ControlPlaneMachineSetModel),
-  ...Kebab.factory.common,
-];
+
 const getDesiredReplicas = (resource: ControlPlaneMachineSetKind) => {
   return resource.spec.replicas;
 };
@@ -197,14 +195,21 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const ControlPlaneMachineSetDetailsPage: React.FC<any> = (props) => (
-  <DetailsPage
-    {...props}
-    kind={controlPlaneMachineSetReference}
-    menuActions={controlPlaneMachineSetMenuActions}
-    pages={pages}
-  />
-);
+export const ControlPlaneMachineSetDetailsPage: React.FC<any> = (props) => {
+  const commonActions = useCommonResourceActions(ControlPlaneMachineSetModel, props.obj);
+  const controlPlaneMachineSetMenuActions = [
+    ...Kebab.getExtensionsActionsForKind(ControlPlaneMachineSetModel),
+    ...commonActions,
+  ];
+  return (
+    <DetailsPage
+      {...props}
+      kind={controlPlaneMachineSetReference}
+      menuActions={controlPlaneMachineSetMenuActions}
+      pages={pages}
+    />
+  );
+};
 
 const tableColumnClasses = [
   '',
@@ -256,6 +261,11 @@ const ControlPlaneMachineSetList: React.FC<ControlPlaneMachineSetListProps> = (p
   }) => {
     const desiredReplicas = getDesiredReplicas(obj);
     const readyReplicas = getReadyReplicas(obj);
+    const commonActions = useCommonResourceActions(ControlPlaneMachineSetModel, obj);
+    const controlPlaneMachineSetMenuActions = [
+      ...Kebab.getExtensionsActionsForKind(ControlPlaneMachineSetModel),
+      ...commonActions,
+    ];
     return (
       <>
         <TableData className={css(tableColumnClasses[0], 'co-break-word')}>

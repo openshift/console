@@ -25,11 +25,10 @@ import {
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { Action } from '@console/dynamic-plugin-sdk/src';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalPodAutoscaler';
-
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(HorizontalPodAutoscalerModel), ...common];
 
 const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
   <Tr>
@@ -241,14 +240,24 @@ const pages = [
   navFactory.editYaml(),
   navFactory.events(ResourceEventStream),
 ];
-export const HorizontalPodAutoscalersDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    kind={HorizontalPodAutoscalersReference}
-    menuActions={menuActions}
-    pages={pages}
-  />
-);
+export const HorizontalPodAutoscalersDetailsPage: React.FC<React.ComponentProps<
+  typeof DetailsPage
+>> = (props) => {
+  const commonActions = useCommonResourceActions(HorizontalPodAutoscalerModel, props.obj);
+
+  const menuActions = [
+    ...Kebab.getExtensionsActionsForKind(HorizontalPodAutoscalerModel),
+    ...commonActions,
+  ] as Action[];
+  return (
+    <DetailsPage
+      {...props}
+      kind={HorizontalPodAutoscalersReference}
+      menuActions={menuActions}
+      pages={pages}
+    />
+  );
+};
 HorizontalPodAutoscalersDetailsPage.displayName = 'HorizontalPodAutoscalersDetailsPage';
 
 const tableColumnClasses = [
@@ -264,6 +273,12 @@ const tableColumnClasses = [
 const kind = 'HorizontalPodAutoscaler';
 
 const HorizontalPodAutoscalersTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
+  const commonActions = useCommonResourceActions(HorizontalPodAutoscalerModel, obj);
+
+  const menuActions = [
+    ...Kebab.getExtensionsActionsForKind(HorizontalPodAutoscalerModel),
+    ...commonActions,
+  ];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>

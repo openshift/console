@@ -1457,10 +1457,6 @@
   "Cluster Operators": "Cluster Operators",
   "Workloads": "Workloads",
   "Terminal": "Terminal",
-  "Delete {{kind}}": "Delete {{kind}}",
-  "Edit {{kind}}": "Edit {{kind}}",
-  "Edit Pod selector": "Edit Pod selector",
-  "Add storage": "Add storage",
   "Resource is being deleted.": "Resource is being deleted.",
   "Error loading {{desc}}": "Error loading {{desc}}",
   "No {{selection}} found": "No {{selection}} found",
@@ -1749,6 +1745,7 @@
   "Stacked": "Stacked",
   "unknown host": "unknown host",
   "Just now": "Just now",
+  "Delete {{kind}}": "Delete {{kind}}",
   "Disable": "Disable",
   "Disabled": "Disabled",
   "Enabled": "Enabled"

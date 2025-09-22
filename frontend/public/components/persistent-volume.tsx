@@ -21,6 +21,7 @@ import {
   SectionHeading,
   ResourceLink,
   ResourceSummary,
+  KebabAction,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PersistentVolumeModel } from '../models';
@@ -33,9 +34,7 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { PersistentVolumeKind } from '@console/internal/module/k8s';
-
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(PersistentVolumeModel), ...common];
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 
 const PVStatus = ({ pv }: { pv: PersistentVolumeKind }) => (
   <Status status={pv.metadata.deletionTimestamp ? 'Terminating' : pv.status.phase} />
@@ -55,6 +54,8 @@ const { kind } = PersistentVolumeModel;
 
 const PVTableRow = ({ obj }: { obj: PersistentVolumeKind }) => {
   const { t } = useTranslation();
+  const common = useCommonResourceActions(PersistentVolumeModel, obj);
+  const menuActions = [...Kebab.getExtensionsActionsForKind(PersistentVolumeModel), ...common];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -238,10 +239,14 @@ export const PersistentVolumesList = (props: Partial<TableProps>) => {
 export const PersistentVolumesPage = (props: ListPageProps) => (
   <ListPage {...props} ListComponent={PersistentVolumesList} kind={kind} canCreate={true} />
 );
-export const PersistentVolumesDetailsPage = (props: DetailsPageProps) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    pages={[navFactory.details(Details), navFactory.editYaml()]}
-  />
-);
+export const PersistentVolumesDetailsPage = (props: DetailsPageProps) => {
+  const common = useCommonResourceActions(PersistentVolumeModel, props.obj);
+  const menuActions = [...Kebab.getExtensionsActionsForKind(PersistentVolumeModel), ...common];
+  return (
+    <DetailsPage
+      {...props}
+      menuActions={menuActions as KebabAction[]}
+      pages={[navFactory.details(Details), navFactory.editYaml()]}
+    />
+  );
+};
