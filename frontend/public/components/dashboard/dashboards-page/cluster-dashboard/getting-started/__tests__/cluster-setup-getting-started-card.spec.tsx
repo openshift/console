@@ -72,17 +72,14 @@ describe('ClusterSetupGettingStartedCard', () => {
 
     expect(screen.getByRole('heading', { name: 'Set up your cluster' })).toBeVisible();
 
-    expect(screen.getByTestId('item identity-providers')).toBeInTheDocument();
     expect(screen.getByText('Add identity providers')).toBeVisible();
     const identityProviderLink = screen.getByTestId('item identity-providers');
     expect(identityProviderLink).toHaveAttribute('href', '/cluster');
 
-    expect(screen.getByTestId('item alert-receivers')).toBeInTheDocument();
     expect(screen.getByText('Configure alert receivers')).toBeVisible();
     const alertReceiverLink = screen.getByTestId('item alert-receivers');
     expect(alertReceiverLink).toHaveAttribute('href', '/settings/cluster/alertmanagerconfig');
 
-    expect(screen.getByTestId('item machine-configuration')).toBeInTheDocument();
     expect(screen.getByText('View all steps in documentation')).toBeVisible();
     const moreLink = screen.getByTestId('item machine-configuration');
     expect(moreLink).toHaveAttribute('target', '_blank');
@@ -99,7 +96,7 @@ describe('ClusterSetupGettingStartedCard', () => {
 
     // When no links are provided, the component should not render anything
     expect(screen.queryByRole('heading', { name: 'Set up your cluster' })).not.toBeInTheDocument();
-    expect(screen.queryByTestId('item identity-providers')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('item alert-receivers')).not.toBeInTheDocument();
+    expect(screen.queryByText('Add identity providers')).not.toBeInTheDocument();
+    expect(screen.queryByText('Configure alert receivers')).not.toBeInTheDocument();
   });
 });

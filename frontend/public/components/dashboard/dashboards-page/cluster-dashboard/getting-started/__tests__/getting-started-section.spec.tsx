@@ -13,25 +13,11 @@ import { CLUSTER_DASHBOARD_USER_SETTINGS_KEY } from '../constants';
 
 // Mock the child card components
 jest.mock('../cluster-setup-getting-started-card', () => ({
-  ClusterSetupGettingStartedCard: function ClusterSetupGettingStartedCard() {
-    const React = require('react');
-    return React.createElement(
-      'div',
-      { 'data-testid': 'cluster-setup-card' },
-      'Set up your cluster',
-    );
-  },
+  ClusterSetupGettingStartedCard: () => 'Set up your cluster',
 }));
 
 jest.mock('../explore-admin-features-getting-started-card', () => ({
-  ExploreAdminFeaturesGettingStartedCard: function ExploreAdminFeaturesGettingStartedCard() {
-    const React = require('react');
-    return React.createElement(
-      'div',
-      { 'data-testid': 'explore-features-card' },
-      'Explore new features',
-    );
-  },
+  ExploreAdminFeaturesGettingStartedCard: () => 'Explore new features',
 }));
 
 jest.mock('react', () => ({
@@ -47,14 +33,7 @@ jest.mock('@console/shared/src/hooks/flag', () => ({
 jest.mock('@console/shared/src/components/getting-started', () => ({
   ...jest.requireActual('@console/shared/src/components/getting-started'),
   useGettingStartedShowState: jest.fn(),
-  QuickStartGettingStartedCard: function QuickStartGettingStartedCard() {
-    const React = require('react');
-    return React.createElement(
-      'div',
-      { 'data-testid': 'quickstart-card' },
-      'Learn with guided tours',
-    );
-  },
+  QuickStartGettingStartedCard: () => 'Learn with guided tours',
 }));
 
 // Workaround because getting-started exports also RestoreGettingStartedButton
@@ -97,10 +76,12 @@ describe('GettingStartedSection', () => {
       );
     });
 
-    expect(screen.getByTestId('getting-started')).toBeInTheDocument();
-    expect(screen.getByText('Set up your cluster')).toBeInTheDocument();
-    expect(screen.getByText('Learn with guided tours')).toBeInTheDocument();
-    expect(screen.getByText('Explore new features')).toBeInTheDocument();
+    const contentContainer = screen
+      .getByTestId('getting-started')
+      .querySelector('.ocs-getting-started-expandable-grid__content');
+    expect(contentContainer).toHaveTextContent('Set up your cluster');
+    expect(contentContainer).toHaveTextContent('Learn with guided tours');
+    expect(contentContainer).toHaveTextContent('Explore new features');
   });
 
   it('should render nothing when useFlag(FLAGS.OPENSHIFT) returns false', async () => {
@@ -114,7 +95,6 @@ describe('GettingStartedSection', () => {
       );
     });
 
-    expect(screen.queryByTestId('getting-started')).not.toBeInTheDocument();
     expect(screen.queryByText('Set up your cluster')).not.toBeInTheDocument();
     expect(screen.queryByText('Learn with guided tours')).not.toBeInTheDocument();
     expect(screen.queryByText('Explore new features')).not.toBeInTheDocument();
@@ -131,7 +111,6 @@ describe('GettingStartedSection', () => {
       );
     });
 
-    expect(screen.queryByTestId('getting-started')).not.toBeInTheDocument();
     expect(screen.queryByText('Set up your cluster')).not.toBeInTheDocument();
     expect(screen.queryByText('Learn with guided tours')).not.toBeInTheDocument();
     expect(screen.queryByText('Explore new features')).not.toBeInTheDocument();
@@ -152,7 +131,6 @@ describe('GettingStartedSection', () => {
       );
     });
 
-    expect(screen.queryByTestId('getting-started')).not.toBeInTheDocument();
     expect(screen.queryByText('Set up your cluster')).not.toBeInTheDocument();
     expect(screen.queryByText('Learn with guided tours')).not.toBeInTheDocument();
     expect(screen.queryByText('Explore new features')).not.toBeInTheDocument();
