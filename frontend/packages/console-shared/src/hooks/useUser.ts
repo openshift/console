@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUser, getUserResource, setUserResource } from '@console/dynamic-plugin-sdk';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
@@ -13,6 +14,7 @@ import type { UserKind } from '@console/internal/module/k8s/types';
  * @returns Object containing user info, user resource, and loading states
  */
 export const useUser = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   // Get current user info from Redux (username, groups, etc.)
@@ -49,7 +51,7 @@ export const useUser = () => {
       return currentUsername.trim();
     }
     // Final fallback for edge cases
-    return 'Unknown User';
+    return t('public~Unknown User');
   };
 
   return {

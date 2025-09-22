@@ -3,6 +3,12 @@ import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { useUser } from '../useUser';
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key.replace('public~', ''),
+  }),
+}));
+
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useSelector: jest.fn(),
@@ -90,7 +96,7 @@ describe('useUser', () => {
 
     const { result } = testHook(() => useUser());
 
-    expect(result.current.displayName).toBe('Unknown User'); // Should fallback to "Unknown User"
+    expect(result.current.displayName).toBe('Unknown User'); // Should fallback to translated "Unknown User"
   });
 
   it('should trim whitespace from fullName and username', () => {
