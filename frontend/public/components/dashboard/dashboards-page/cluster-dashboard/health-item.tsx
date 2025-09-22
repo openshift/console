@@ -184,26 +184,23 @@ export const URLHealthItem = withDashboardResources<URLHealthItemProps>(
       message: healthStateMessage(HealthState.NOT_AVAILABLE, t),
     };
 
+    const PopupComponent = subsystem?.popupComponent;
+
     return (
       <HealthItem
         title={subsystem.title}
         state={healthState.state}
         details={healthState.message}
         popupTitle={subsystem.popupTitle}
-        popupBodyContent={
-          subsystem.popupComponent
-            ? (hide) => (
-                <AsyncComponent
-                  loader={subsystem.popupComponent}
-                  healthResult={healthResult}
-                  healthResultError={healthResultError}
-                  k8sResult={k8sResult}
-                  hide={hide}
-                />
-              )
-            : undefined
-        }
-      />
+      >
+        {PopupComponent && (
+          <PopupComponent
+            healthResult={healthResult}
+            healthResultError={healthResultError}
+            k8sResult={k8sResult}
+          />
+        )}
+      </HealthItem>
     );
   },
 );
@@ -265,6 +262,8 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
       infrastructure,
     ) ?? { state: HealthState.NOT_AVAILABLE, message: 'Health handler not available' };
 
+    const PopupComponent = subsystem?.popupComponent;
+
     return (
       <HealthItem
         title={subsystem.title}
@@ -274,14 +273,9 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
         popupClassname={subsystem.popupClassname}
         popupKeepOnOutsideClick={subsystem.popupKeepOnOutsideClick}
         popupBodyContent={
-          subsystem.popupComponent
+          PopupComponent
             ? (hide) => (
-                <AsyncComponent
-                  loader={subsystem.popupComponent}
-                  responses={queryResults}
-                  k8sResult={k8sResult}
-                  hide={hide}
-                />
+                <PopupComponent responses={queryResults} k8sResult={k8sResult} hide={hide} />
               )
             : undefined
         }
@@ -293,7 +287,7 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
 export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsystem, namespace }) => {
   const { t } = useTranslation();
 
-  const { title, resources, healthHandler, popupComponent, popupTitle } = subsystem;
+  const { title, resources, healthHandler, popupComponent: PopupComponent, popupTitle } = subsystem;
 
   const resourcesWithNamespace: WatchK8sResources<ResourcesObject> = React.useMemo(() => {
     return {
@@ -319,8 +313,8 @@ export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsyste
       details={healthState.message}
       popupTitle={popupTitle}
     >
-      {popupComponent && resourcesResult && (
-        <AsyncComponent loader={popupComponent} {...resourcesResult} namespace={namespace} />
+      {PopupComponent && resourcesResult && (
+        <PopupComponent {...resourcesResult} namespace={namespace} />
       )}
     </HealthItem>
   );

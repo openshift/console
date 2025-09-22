@@ -19,19 +19,10 @@ export const StatusCard: React.FC = () => {
   const [subsystemExtensions, extensionsResolved] = useResolvedExtensions<
     DashboardsOverviewHealthResourceSubsystem
   >(isDashboardsOverviewHealthResourceSubsystem);
-  const subsystem = React.useMemo(() => {
-    const extension = subsystemExtensions.find(
-      (s) => s.properties.title === 'Image Vulnerabilities',
-    );
-    // mimic cluster-dashboard/status-card.tsx as we use a promise here for some reason
-    return {
-      ...extension,
-      properties: {
-        ...extension?.properties,
-        popupComponent: () => Promise.resolve(extension.properties.popupComponent),
-      },
-    };
-  }, [subsystemExtensions]);
+  const subsystem = React.useMemo(
+    () => subsystemExtensions.find((s) => s.properties.title === 'Image Vulnerabilities'),
+    [subsystemExtensions],
+  );
   const {
     metadata: { name: namespace },
   } = obj;
@@ -50,7 +41,6 @@ export const StatusCard: React.FC = () => {
                 <Status status={obj.status?.phase} className="co-icon-and-text--lg" />
               </div>
               {subsystem && extensionsResolved && (
-                // @ts-expect-error we are providing a promise to the popupComponent
                 <ResourceHealthItem subsystem={subsystem.properties} namespace={namespace} />
               )}
             </Gallery>

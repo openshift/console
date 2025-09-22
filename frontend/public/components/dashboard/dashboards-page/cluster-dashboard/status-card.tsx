@@ -116,26 +116,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   );
 
   const subsystems = React.useMemo(() => {
-    const filteredSubsystems = filterSubsystems([...subsystemExtensions], k8sModels);
-    return filteredSubsystems.map((e) => {
-      if (
-        isResolvedDashboardsOverviewHealthURLSubsystem(e) ||
-        isResolvedDashboardsOverviewHealthPrometheusSubsystem(e) ||
-        isResolvedDashboardsOverviewHealthResourceSubsystem(e)
-      ) {
-        const popup = e.properties.popupComponent
-          ? { popupComponent: () => Promise.resolve(e.properties.popupComponent) }
-          : {};
-        return {
-          ...e,
-          properties: {
-            ...e.properties,
-            ...popup,
-          },
-        };
-      }
-      return e;
-    });
+    return filterSubsystems([...subsystemExtensions], k8sModels);
   }, [subsystemExtensions, k8sModels]);
 
   const operatorSubsystemIndex = React.useMemo(

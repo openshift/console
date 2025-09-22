@@ -13,9 +13,9 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.21.0-prerelease.x - TBD
 
 - Begin alignment of plugin SDK types with `@openshift/dynamic-plugin-sdk` ([CONSOLE-3769], [#15509])
-- Add optional `fetch` property to `DashboardsOverviewHealthURLSubsystem` ([CONSOLE-4796], [#XXXXX])
-- Add optional `infrastructure` parameter to `PrometheusHealthHandler` ([CONSOLE-4796], [#XXXXX])
-- Fix `popupComponent` prop type in `DashboardsOverviewHealthResourceSubsystem` ([CONSOLE-4796], [#XXXXX])
+- Add optional `fetch` property to extension `console.dashboards/overview/health/url` ([CONSOLE-4796], [#15526])
+- Add optional `infrastructure` parameter to `PrometheusHealthHandler` type ([CONSOLE-4796], [#15526])
+- Fix `popupComponent` prop type in extension `console.dashboards/overview/health/resource` ([CONSOLE-4796], [#15526])
 
 ## 4.20.0-prerelease.1 - 2025-08-15
 
@@ -190,3 +190,4 @@ table in [Console dynamic plugins README](./README.md).
 [#15254]: https://github.com/openshift/console/pull/15254
 [#15386]: https://github.com/openshift/console/pull/15386
 [#15509]: https://github.com/openshift/console/pull/15509
+[#15526]: https://github.com/openshift/console/pull/15526
