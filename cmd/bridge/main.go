@@ -585,29 +585,32 @@ func main() {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: in-cluster, off-cluster"))
 	}
 
-	controllerManagerMetricsOptions := ctrlmetrics.Options{
-		BindAddress: *fControllerManagerMetricsAddr,
-	}
-	mgr, err := ctrl.NewManager(srv.InternalProxiedK8SClientConfig, ctrl.Options{
-		Scheme:  kruntime.NewScheme(),
-		Metrics: controllerManagerMetricsOptions,
-	})
-	if err != nil {
-		klog.Errorf("problem creating controller manager: %v", err)
-	}
-
-	catalogService := olm.NewDummyCatalogService()
-	if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {
-		klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
-	}
-
-	klog.Info("starting manager")
-	mgrContext := ctrl.SetupSignalHandler()
-	go func() {
-		if err := mgr.Start(mgrContext); err != nil {
-			klog.Errorf("problem running manager: %v", err)
+	// Controllers are behind Tech Preview flag
+	if *fTechPreview {
+		controllerManagerMetricsOptions := ctrlmetrics.Options{
+			BindAddress: *fControllerManagerMetricsAddr,
 		}
-	}()
+		mgr, err := ctrl.NewManager(srv.InternalProxiedK8SClientConfig, ctrl.Options{
+			Scheme:  kruntime.NewScheme(),
+			Metrics: controllerManagerMetricsOptions,
+		})
+		if err != nil {
+			klog.Errorf("problem creating controller manager: %v", err)
+		}
+
+		catalogService := olm.NewDummyCatalogService()
+		if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {
+			klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
+		}
+
+		klog.Info("starting manager")
+		mgrContext := ctrl.SetupSignalHandler()
+		go func() {
+			if err := mgr.Start(mgrContext); err != nil {
+				klog.Errorf("problem running manager: %v", err)
+			}
+		}()
+	}
 
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
