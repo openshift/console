@@ -32,17 +32,6 @@ import { ConfigMapModel } from '../models';
 const menuActions = [...Kebab.factory.common];
 
 const kind = referenceForModel(ConfigMapModel);
-
-type ConfigMapsListProps = {
-  data: ConfigMapKind[];
-  loaded: boolean;
-};
-
-type ConfigMapsPageProps = {
-  showTitle?: boolean;
-  namespace?: string;
-  selector?: any;
-};
 const tableColumnInfo = [
   { id: 'name' },
   { id: 'namespace' },
@@ -71,7 +60,7 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind, undefined> = (data, column
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [tableColumnInfo[2].id]: {
-        cell: dataSize,
+        cell: <span>{dataSize}</span>,
       },
       [tableColumnInfo[3].id]: {
         cell: <Timestamp timestamp={configMap.metadata.creationTimestamp} />,
@@ -95,10 +84,10 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind, undefined> = (data, column
   });
 };
 
-const useConfigMapsColumns = () => {
+const useConfigMapsColumns = (): TableColumn<ConfigMapKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<ConfigMapKind>[] = React.useMemo(() => {
-    return [
+  return React.useMemo(
+    () => [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
@@ -139,9 +128,9 @@ const useConfigMapsColumns = () => {
           ...cellIsStickyProps,
         },
       },
-    ];
-  }, [t]);
-  return columns;
+    ],
+    [t],
+  );
 };
 
 export const ConfigMapsList: React.FCC<ConfigMapsListProps> = ({ data, loaded, ...props }) => {
@@ -164,7 +153,7 @@ export const ConfigMapsList: React.FCC<ConfigMapsListProps> = ({ data, loaded, .
 };
 ConfigMapsList.displayName = 'ConfigMapsList';
 
-export const ConfigMapsPage: React.FC<ConfigMapsPageProps> = (props) => {
+export const ConfigMapsPage: React.FCC<ConfigMapsPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/configmaps/~new/form`,
   };
@@ -181,7 +170,7 @@ export const ConfigMapsPage: React.FC<ConfigMapsPageProps> = (props) => {
 };
 ConfigMapsPage.displayName = 'ConfigMapsPage';
 
-export const ConfigMapsDetailsPage: React.FC = (props) => {
+export const ConfigMapsDetailsPage: React.FCC = (props) => {
   const { t } = useTranslation();
   const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => {
     return (
@@ -216,3 +205,14 @@ export const ConfigMapsDetailsPage: React.FC = (props) => {
   );
 };
 ConfigMapsDetailsPage.displayName = 'ConfigMapsDetailsPage';
+
+type ConfigMapsListProps = {
+  data: ConfigMapKind[];
+  loaded: boolean;
+};
+
+type ConfigMapsPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+};

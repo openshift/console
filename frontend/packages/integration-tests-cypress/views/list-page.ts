@@ -58,8 +58,7 @@ export const listPage = {
   },
   dvFilter: {
     byName: (name: string) => {
-      // these are not great selectors, but we're limited by data view toolbar
-      cy.get('[data-ouia-component-id="DataViewToolbar"').within(() =>
+      cy.get('[data-ouia-component-id="DataViewFilters"]').within(() =>
         cy.get('.pf-v6-c-menu-toggle').first().click(),
       );
       cy.get('.pf-v6-c-menu__list-item').contains('Name').click();
@@ -130,8 +129,7 @@ export const listPage = {
       cy.get('[data-test^="data-view-cell-"]').should('have.length.within', min, max);
     },
     clickFirstLinkInFirstRow: () => {
-      cy.get('[data-test^="data-view-cell-"]').first().find('a').first().click({ force: true });
-      // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
+      cy.get('[data-test^="data-view-cell-"]').first().find('a').first().click({ force: true }); // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
     },
     clickKebabAction: (resourceName: string, actionName: string) => {
       cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
@@ -154,8 +152,7 @@ export const listPage = {
       cy.get(`[data-test="data-view-cell-${resourceName}-${cellName}"]`).should('exist');
     },
     clickRowByName: (resourceName: string) =>
-      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).find('a').click({ force: true }),
-    // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).find('a').click({ force: true }), // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
   },
 };
 

@@ -17,6 +17,7 @@ import {
   K8sResourceKindReference,
   referenceForModel,
   referenceFor,
+  TableColumn,
 } from '../module/k8s';
 import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
@@ -30,6 +31,7 @@ import {
   initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { LoadingBox } from './utils/status-box';
 import { sortResourceByValue } from './factory/Table/sort';
 
@@ -75,12 +77,6 @@ const tableColumnInfo = [
   { id: 'podSelector' },
   { id: 'actions' },
 ];
-
-type DeploymentConfigsListProps = {
-  data: any[];
-  loaded: boolean;
-  [key: string]: any;
-};
 
 const getDeploymentConfigStatus = (dc: K8sResourceKind): string => {
   const conditions = _.get(dc, 'status.conditions');
@@ -176,7 +172,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
   );
 };
 
-export const DeploymentConfigDeprecationAlert: React.FC = () => {
+export const DeploymentConfigDeprecationAlert: React.FCC = () => {
   const { t } = useTranslation();
   return (
     <Alert
@@ -205,7 +201,7 @@ export const DeploymentConfigDeprecationAlert: React.FC = () => {
   );
 };
 
-export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
+export const DeploymentConfigsDetails: React.FCC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -261,7 +257,7 @@ const environmentComponent = (props) => (
   />
 );
 
-const ReplicationControllersTab: React.FC<ReplicationControllersTabProps> = ({ obj }) => {
+const ReplicationControllersTab: React.FCC<ReplicationControllersTabProps> = ({ obj }) => {
   const {
     metadata: { namespace, name },
   } = obj;
@@ -292,7 +288,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-const DetailsActionMenu: React.FC<DetailsActionMenuProps> = ({ kindObj, obj }) => {
+const DetailsActionMenu: React.FCC<DetailsActionMenuProps> = ({ kindObj, obj }) => {
   const resourceKind = referenceForModel(kindObj);
   const context = { [resourceKind]: obj };
 
@@ -309,7 +305,7 @@ const DetailsActionMenu: React.FC<DetailsActionMenuProps> = ({ kindObj, obj }) =
   );
 };
 
-export const DeploymentConfigsDetailsPage: React.FC = (props) => {
+export const DeploymentConfigsDetailsPage: React.FCC = (props) => {
   const customActionMenu = (kindObj, obj) => {
     return <DetailsActionMenu kindObj={kindObj} obj={obj} />;
   };
@@ -330,7 +326,7 @@ const DeploymentConfigTableHeader = () => {
 };
 DeploymentConfigTableHeader.displayName = 'DeploymentConfigTableHeader';
 
-const getDataViewRows = (data, columns) => {
+const getDataViewRows: GetDataViewRows<any, undefined> = (data, columns) => {
   return data.map(({ obj: dc }) => {
     const { name, namespace } = dc.metadata;
     const resourceKind = referenceFor(dc);
@@ -374,7 +370,7 @@ const getDataViewRows = (data, columns) => {
   });
 };
 
-const useDeploymentConfigsColumns = () => {
+const useDeploymentConfigsColumns = (): TableColumn<any>[] => {
   const { t } = useTranslation();
   const columns = React.useMemo(() => {
     return [
@@ -432,7 +428,7 @@ const useDeploymentConfigsColumns = () => {
   return columns;
 };
 
-export const DeploymentConfigsList: React.FC<DeploymentConfigsListProps> = ({
+export const DeploymentConfigsList: React.FCC<DeploymentConfigsListProps> = ({
   data,
   loaded,
   ...props
@@ -456,7 +452,7 @@ export const DeploymentConfigsList: React.FC<DeploymentConfigsListProps> = ({
 };
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
-export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (props) => {
+export const DeploymentConfigsPage: React.FCC<DeploymentConfigsPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/~new/form`,
   };
@@ -468,12 +464,17 @@ export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (prop
       canCreate={true}
       helpAlert={<DeploymentConfigDeprecationAlert />}
       omitFilterToolbar={true}
-      hideColumnManagement={true}
       {...props}
     />
   );
 };
 DeploymentConfigsPage.displayName = 'DeploymentConfigsListPage';
+
+type DeploymentConfigsListProps = {
+  data: any[];
+  loaded: boolean;
+  [key: string]: any;
+};
 
 type DetailsActionMenuProps = {
   kindObj: K8sKind;

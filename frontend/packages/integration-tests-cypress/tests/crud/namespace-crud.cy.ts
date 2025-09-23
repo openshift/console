@@ -28,7 +28,7 @@ describe('Namespace', () => {
   it('lists, creates, and deletes', () => {
     cy.log('test Namespace list page');
     nav.sidenav.clickNavLink(['Administration', 'Namespaces']);
-    listPage.dvRows.shouldExist(newName);
+    listPage.rows.shouldNotExist(newName);
     listPage.filter.byName(testName);
     listPage.rows.shouldExist(testName); // created via cy.createProjectWithCLI(testName) above
     cy.testA11y('Namespace List page');
