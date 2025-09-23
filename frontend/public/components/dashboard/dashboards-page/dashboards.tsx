@@ -10,18 +10,12 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
+import { useExtensions } from '@console/plugin-sdk';
 import {
-  useExtensions,
   DashboardsCard,
   DashboardsTab,
   isDashboardsCard,
   isDashboardsTab,
-} from '@console/plugin-sdk';
-import {
-  DashboardsCard as DynamicDashboardsCard,
-  DashboardsTab as DynamicDashboardsTab,
-  isDashboardsCard as isDynamicDashboardsCard,
-  isDashboardsTab as isDynamicDashboardsTab,
   GridPosition,
   OverviewGridCard,
 } from '@console/dynamic-plugin-sdk';
@@ -29,16 +23,9 @@ import { RootState } from '../../../redux';
 
 export const getCardsOnPosition = (
   cards: DashboardsCard[],
-  dynamicCards: DynamicDashboardsCard[],
   position: GridPosition,
 ): OverviewGridCard[] => [
   ...cards
-    .filter((c) => c.properties.position === position)
-    .map((c) => ({
-      Card: () => <AsyncComponent loader={c.properties.loader} />,
-      span: c.properties.span,
-    })),
-  ...dynamicCards
     .filter((c) => c.properties.position === position)
     .map((c) => ({
       Card: () => <AsyncComponent loader={c.properties.component} />,
@@ -47,9 +34,8 @@ export const getCardsOnPosition = (
 ];
 
 export const getPluginTabPages = (
-  tabs: (DashboardsTab | DynamicDashboardsTab)[],
+  tabs: DashboardsTab[],
   cards: DashboardsCard[],
-  dynamicCards: DynamicDashboardsCard[],
   navSection: string,
   firstTabId: string,
 ): Page[] => {
@@ -62,9 +48,9 @@ export const getPluginTabPages = (
       component: () => (
         <Dashboard>
           <DashboardGrid
-            mainCards={getCardsOnPosition(tabCards, dynamicCards, GridPosition.MAIN)}
-            leftCards={getCardsOnPosition(tabCards, dynamicCards, GridPosition.LEFT)}
-            rightCards={getCardsOnPosition(tabCards, dynamicCards, GridPosition.RIGHT)}
+            mainCards={getCardsOnPosition(tabCards, GridPosition.MAIN)}
+            leftCards={getCardsOnPosition(tabCards, GridPosition.LEFT)}
+            rightCards={getCardsOnPosition(tabCards, GridPosition.RIGHT)}
           />
         </Dashboard>
       ),
@@ -77,21 +63,12 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ kindsInFlight, k8sMode
   const title = t('public~Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
-  const dynamicTabExtensions = useExtensions<DynamicDashboardsTab>(isDynamicDashboardsTab);
-  const dynamicCardExtensions = useExtensions<DynamicDashboardsCard>(isDynamicDashboardsCard);
 
   const location = useLocation();
 
   const pluginPages = React.useMemo(
-    () =>
-      getPluginTabPages(
-        [...tabExtensions, ...dynamicTabExtensions],
-        cardExtensions,
-        dynamicCardExtensions,
-        'home',
-        '',
-      ),
-    [tabExtensions, dynamicTabExtensions, cardExtensions, dynamicCardExtensions],
+    () => getPluginTabPages(tabExtensions, cardExtensions, 'home', ''),
+    [tabExtensions, cardExtensions],
   );
 
   const allPages: Page[] = React.useMemo(

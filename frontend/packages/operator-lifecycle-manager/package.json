@@ -22,7 +22,9 @@
       "useOperatorCatalogItems": "src/hooks/useOperatorCatalogItems.tsx",
       "useOperatorCatalogCategories": "src/hooks/useOperatorCatalogCategories.ts",
       "filters": "src/utils/filters.ts",
-      "CatalogRedirect": "src/components/catalog-redirect.tsx"
+      "CatalogRedirect": "src/components/catalog-redirect.tsx",
+      "utils": "src/components/dashboard/utils.ts",
+      "csvStatus": "src/components/dashboard/csv-status.tsx"
     }
   }
 }

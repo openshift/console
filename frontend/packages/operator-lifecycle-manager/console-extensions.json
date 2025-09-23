@@ -176,5 +176,32 @@
       "catalogId": "dev-catalog",
       "provider": { "$codeRef": "useOperatorCatalogCategories" }
     }
+  },
+  {
+    "type": "console.dashboards/overview/health/operator",
+    "properties": {
+      "title": "%olm~Operators%",
+      "resources": [
+        {
+          "kind": "operators.coreos.com~v1alpha1~ClusterServiceVersion",
+          "isList": true,
+          "prop": "clusterServiceVersions"
+        },
+        {
+          "kind": "operators.coreos.com~v1alpha1~Subscription",
+          "prop": "subscriptions",
+          "isList": true
+        }
+      ],
+      "getOperatorsWithStatuses": {
+        "$codeRef": "utils.getClusterServiceVersionsWithStatuses"
+      },
+      "operatorRowLoader": {
+        "$codeRef": "csvStatus.default"
+      }
+    },
+    "flags": {
+      "required": ["CAN_LIST_OPERATOR_GROUP"]
+    }
   }
 ]

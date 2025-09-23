@@ -87,6 +87,10 @@
   "ResourceQuotas": "ResourceQuotas",
   "LimitRanges": "LimitRanges",
   "CustomResourceDefinitions": "CustomResourceDefinitions",
+  "Cluster": "Cluster",
+  "Control Plane": "Control Plane",
+  "Control Plane status": "Control Plane status",
+  "Cluster operators": "Cluster operators",
   "Dynamic Plugins": "Dynamic Plugins",
   "Dynamic Plugin status": "Dynamic Plugin status",
   "AWS CSI": "AWS CSI",
@@ -568,9 +572,5 @@
   "Recommended": "Recommended",
   "Container name": "Container name",
   "VerticalPodAutoscalers": "VerticalPodAutoscalers",
-  "No VerticalPodAutoscalers": "No VerticalPodAutoscalers",
-  "Cluster": "Cluster",
-  "Control Plane": "Control Plane",
-  "Control Plane status": "Control Plane status",
-  "Cluster operators": "Cluster operators"
+  "No VerticalPodAutoscalers": "No VerticalPodAutoscalers"
 }

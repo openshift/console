@@ -59,6 +59,8 @@
       "perspectiveConfiguration": "src/components/detect-perspective/PerspectiveConfiguration.tsx",
       "DynamicPluginsPopover": "src/components/dashboards-page/dynamic-plugins-health-resource/DynamicPluginsPopover.tsx",
       "getDynamicPluginHealthState": "src/components/dashboards-page/dynamic-plugins-health-resource/status.ts",
+      "k8sHealth": "src/components/dashboards-page/status.ts",
+      "ControlPlaneStatus": "src/components/dashboards-page/ControlPlaneStatus.tsx",
       "secretsProvider": "src/actions/providers/secrets-provider.ts",
       "storageProvisioners": "src/components/storage/StorageClassProviders.ts",
       "storageProvisionerDocs": "src/components/storage/Documentation.ts",
@@ -75,7 +77,8 @@
       "consolePluginProxyDetail": "src/components/console-operator/ConsolePluginProxyDetail.tsx",
       "getConsoleOperatorConfigFlag": "src/hooks/useCanGetConsoleOperatorConfig.ts",
       "usePerspectivesAvailable": "src/components/user-preferences/perspective/usePerspectivesAvailable.ts",
-      "defaultProvider": "src/actions/providers/default-provider.ts"
+      "defaultProvider": "src/actions/providers/default-provider.ts",
+      "OperatorStatus": "src/components/dashboards-page/OperatorStatus.tsx"
     }
   }
 }

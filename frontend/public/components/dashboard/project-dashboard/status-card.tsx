@@ -6,11 +6,9 @@ import { Status } from '@console/shared';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import {
   DashboardsOverviewHealthResourceSubsystem,
-  DashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthResourceSubsystem,
-  isDashboardsOverviewHealthSubsystem,
-  useExtensions,
-} from '@console/plugin-sdk';
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { ResourceHealthItem } from '../dashboards-page/cluster-dashboard/health-item';
 
@@ -18,16 +16,11 @@ import { DashboardAlerts } from '../dashboards-page/cluster-dashboard/status-car
 
 export const StatusCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
-  const filterSubsystems = (subsystems: DashboardsOverviewHealthSubsystem[]) =>
-    subsystems.filter(isDashboardsOverviewHealthResourceSubsystem);
-  const subsystemExtensions = useExtensions<DashboardsOverviewHealthSubsystem>(
-    isDashboardsOverviewHealthSubsystem,
-  );
-  const subsystem: DashboardsOverviewHealthResourceSubsystem = React.useMemo(
-    () =>
-      filterSubsystems(subsystemExtensions).find(
-        (s) => s.properties.title === 'Image Vulnerabilities',
-      ),
+  const [subsystemExtensions, extensionsResolved] = useResolvedExtensions<
+    DashboardsOverviewHealthResourceSubsystem
+  >(isDashboardsOverviewHealthResourceSubsystem);
+  const subsystem = React.useMemo(
+    () => subsystemExtensions.find((s) => s.properties.title === 'Image Vulnerabilities'),
     [subsystemExtensions],
   );
   const {
@@ -47,7 +40,7 @@ export const StatusCard: React.FC = () => {
               <div className="co-status-card__health-item" data-test="project-status">
                 <Status status={obj.status?.phase} className="co-icon-and-text--lg" />
               </div>
-              {subsystem && (
+              {subsystem && extensionsResolved && (
                 <ResourceHealthItem subsystem={subsystem.properties} namespace={namespace} />
               )}
             </Gallery>

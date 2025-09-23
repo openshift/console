@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { GridPosition } from '@console/dynamic-plugin-sdk';
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import {
@@ -9,17 +8,12 @@ import {
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
-  DashboardsOverviewHealthPrometheusSubsystem,
-  DashboardsOverviewHealthURLSubsystem,
-  DashboardsCard,
-  DashboardsTab,
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
   DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
-import { getFooHealthState, getBarHealthState } from './components/dashboards/health';
 import { DemoGroupIcon } from './components/dashboards/inventory';
 import { FooBarModel } from './models';
 
@@ -29,10 +23,6 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | RoutePage
-  | DashboardsOverviewHealthPrometheusSubsystem
-  | DashboardsOverviewHealthURLSubsystem
-  | DashboardsTab
-  | DashboardsCard
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
   | DashboardsOverviewResourceActivity
@@ -76,64 +66,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Dashboards/Overview/Health/URL',
-    properties: {
-      title: 'Foo system',
-      url: 'fooUrl',
-      healthHandler: getFooHealthState,
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Health/Prometheus',
-    properties: {
-      title: 'Bar system',
-      queries: ['barQuery'],
-      healthHandler: getBarHealthState,
-      additionalResource: {
-        kind: NodeModel.kind,
-        isList: true,
-        namespaced: false,
-        prop: 'nodes',
-      },
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
     type: 'Page/Route',
     properties: {
       exact: true,
       path: '/test',
       render: () => <h1>Test Page</h1>,
-    },
-  },
-  {
-    type: 'Dashboards/Tab',
-    properties: {
-      id: 'foo-tab',
-      navSection: 'home',
-      title: 'Foo',
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'foo-tab',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import('./components/dashboards/foo-card' /* webpackChunkName: "demo" */).then(
-          (m) => m.FooCard,
-        ),
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
     },
   },
   {

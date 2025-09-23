@@ -1,27 +1,20 @@
-import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Plugin,
   ModelDefinition,
   ModelFeatureFlag,
   ResourceListPage,
-  DashboardsOverviewHealthURLSubsystem,
-  DashboardsOverviewHealthResourceSubsystem,
   RoutePage,
   ResourceDetailsPage,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
-import { securityHealthHandler } from './components/summary';
 import { ContainerSecurityFlag } from './const';
 import { ImageManifestVulnModel } from './models';
-import { WatchImageVuln } from './types';
 
 type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
   | ResourceListPage
   | ResourceDetailsPage
-  | DashboardsOverviewHealthURLSubsystem
-  | DashboardsOverviewHealthResourceSubsystem<WatchImageVuln>
   | RoutePage
   | HorizontalNavTab;
 
@@ -59,28 +52,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/image-manifest-vuln' /* webpackChunkName: "container-security" */
         ).then((m) => m.ImageManifestVulnDetailsPage),
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Health/Resource',
-    properties: {
-      title: 'Image Vulnerabilities',
-      resources: {
-        imageManifestVuln: {
-          kind: referenceForModel(ImageManifestVulnModel),
-          namespaced: true,
-          isList: true,
-        },
-      },
-      healthHandler: securityHealthHandler,
-      popupTitle: 'Image Vulnerabilities breakdown',
-      popupComponent: () =>
-        import('./components/summary' /* webpackChunkName: "container-security" */).then(
-          (m) => m.SecurityBreakdownPopup,
-        ),
-    },
-    flags: {
-      required: [ContainerSecurityFlag],
     },
   },
 ];
