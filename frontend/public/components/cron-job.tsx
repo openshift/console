@@ -84,16 +84,20 @@ const getDataViewRows: GetDataViewRows<CronJobKind, undefined> = (data, columns)
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [tableColumnInfo[2].id]: {
-        cell: cronjob.spec.schedule,
+        cell: <span>{cronjob.spec.schedule}</span>,
       },
       [tableColumnInfo[3].id]: {
-        cell: cronjob.spec?.suspend ? i18next.t('public~True') : i18next.t('public~False'),
+        cell: (
+          <span>
+            {cronjob.spec?.suspend ? i18next.t('public~True') : i18next.t('public~False')}
+          </span>
+        ),
       },
       [tableColumnInfo[4].id]: {
-        cell: cronjob.spec?.concurrencyPolicy || DASH,
+        cell: <span>{cronjob.spec?.concurrencyPolicy || DASH}</span>,
       },
       [tableColumnInfo[5].id]: {
-        cell: cronjob.spec?.startingDeadlineSeconds || DASH,
+        cell: <span>{cronjob.spec?.startingDeadlineSeconds || DASH}</span>,
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={context} />,
@@ -112,7 +116,7 @@ const getDataViewRows: GetDataViewRows<CronJobKind, undefined> = (data, columns)
   });
 };
 
-const useCronJobsColumns = () => {
+const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
   const { t } = useTranslation();
   const columns: TableColumn<CronJobKind>[] = React.useMemo(() => {
     return [
@@ -339,12 +343,6 @@ export const CronJobJobsComponent: React.FCC<CronJobJobsComponentProps> = ({ obj
   </PaneBody>
 );
 
-type CronJobsListProps = {
-  data: CronJobKind[];
-  loaded: boolean;
-  [key: string]: any;
-};
-
 export const CronJobsList: React.FCC<CronJobsListProps> = ({ data, loaded, ...props }) => {
   const columns = useCronJobsColumns();
 
@@ -402,6 +400,12 @@ export const CronJobsDetailsPage: React.FCC = (props) => {
       ]}
     />
   );
+};
+
+type CronJobsListProps = {
+  data: CronJobKind[];
+  loaded: boolean;
+  [key: string]: any;
 };
 
 type CronJobDetailsProps = {
