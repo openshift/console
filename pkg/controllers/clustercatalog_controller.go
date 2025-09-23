@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/openshift/console/pkg/olm"
 	ocv1 "github.com/operator-framework/operator-controller/api/v1"
@@ -53,15 +54,13 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 
 	// The ClusterCatalog has been found on the cluster, attempt to add to or update cache
 	if clusterCatalog.Status.URLs == nil {
-		klog.Error("ClusterCatalog URLs field is empty", "name", req.Name)
-		return ctrl.Result{}, nil
+		return ctrl.Result{}, fmt.Errorf("URLs field is empty for clustercatalog %s", req.Name)
 	}
 
 	baseURL := clusterCatalog.Status.URLs.Base
 
 	if baseURL == "" {
-		klog.Error("ClusterCatalog Base URL is empty", "name", req.Name)
-		return ctrl.Result{}, nil
+		return ctrl.Result{}, fmt.Errorf("base URL is empty for clustercatalog %s", req.Name)
 	}
 
 	err = r.catalogService.UpdateCatalog(req.Name, baseURL)
