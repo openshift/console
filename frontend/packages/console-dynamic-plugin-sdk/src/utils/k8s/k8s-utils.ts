@@ -31,7 +31,7 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }: K8sModel): string => {
 export const getK8sResourcePath = (model: K8sModel, options: Options): string => {
   let u = getK8sAPIPath(model);
 
-  if (options.ns) {
+  if (model.namespaced && options.ns) {
     u += `/namespaces/${options.ns}`;
   }
   u += `/${model.plural}`;
