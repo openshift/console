@@ -48,19 +48,19 @@ const extractCSS = new MiniCssExtractPlugin({
 const getVendorModuleRegExp = (vendorModules: string[]) =>
   new RegExp(`node_modules\\/(${vendorModules.map(_.escapeRegExp).join('|')})\\/`);
 
-const sharedPluginModulesTest = getVendorModuleRegExp(
-  sharedPluginModules.map((moduleName) => {
-    if (moduleName === '@openshift-console/dynamic-plugin-sdk') {
+/** Rewrite SDK imports within console to point to their real location */
+const updateSdkImports = (moduleName: string) => {
+  switch (moduleName) {
+    case '@openshift-console/dynamic-plugin-sdk':
       return '@console/dynamic-plugin-sdk/src/lib-core';
-    }
-
-    if (moduleName === '@openshift-console/dynamic-plugin-sdk-internal') {
+    case '@openshift-console/dynamic-plugin-sdk-internal':
       return '@console/dynamic-plugin-sdk/src/lib-internal';
-    }
+    default:
+      return moduleName;
+  }
+};
 
-    return moduleName;
-  }),
-);
+const sharedPluginModulesTest = getVendorModuleRegExp(sharedPluginModules.map(updateSdkImports));
 
 // Shared modules provided by Console application to all dynamic plugins
 // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
@@ -69,14 +69,7 @@ const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObj
     const { singleton } = getSharedModuleMetadata(moduleName);
     const moduleConfig: WebpackSharedConfig = { singleton, eager: true };
 
-    switch (moduleName) {
-      case '@openshift-console/dynamic-plugin-sdk':
-        moduleConfig.import = '@console/dynamic-plugin-sdk/src/lib-core';
-        break;
-      case '@openshift-console/dynamic-plugin-sdk-internal':
-        moduleConfig.import = '@console/dynamic-plugin-sdk/src/lib-internal';
-        break;
-    }
+    moduleConfig.import = updateSdkImports(moduleName);
 
     acc[moduleName] = moduleConfig;
     return acc;
