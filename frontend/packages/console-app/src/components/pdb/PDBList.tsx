@@ -137,7 +137,7 @@ const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
         },
       },
       {
-        title: t('console-app~Allowed disruptions'),
+        title: t('console-app~Disruptions allowed'),
         id: tableColumnInfo[4].id,
         sort: 'status.disruptionsAllowed',
         props: {
