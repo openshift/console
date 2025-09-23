@@ -148,7 +148,7 @@ export const AuthenticationErrorPage: React.FC = () => {
           </Stack>
         }
         customFooter={
-          <ButtonLink variant="primary" href="/logout">
+          <ButtonLink variant="primary" href="/">
             {t('public~Try again')}
           </ButtonLink>
         }
