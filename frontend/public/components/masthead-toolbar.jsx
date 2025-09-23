@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext } from 'react';
 import * as _ from 'lodash-es';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +45,7 @@ import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
 import redhatLogoImg from '../imgs/logos/redhat.svg';
-import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
+import { TourContext, TourActions } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
 import ClusterMenu from '@console/app/src/components/nav/ClusterMenu';
 import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
@@ -120,6 +121,7 @@ const SystemStatusButton = ({ statuspageData }) => {
 const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
+  const { tourDispatch, tour } = useContext(TourContext);
   const authEnabledFlag = useFlag(FLAGS.AUTH_ENABLED);
   const consoleCLIDownloadFlag = useFlag(FLAGS.CONSOLE_CLI_DOWNLOAD);
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
@@ -163,6 +165,11 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   const onAboutModal = (e) => {
     e.preventDefault();
     setshowAboutModal(true);
+  };
+
+  const handleGuidedTourClick = (e) => {
+    e.preventDefault();
+    tourDispatch({ type: TourActions.start });
   };
 
   const closeAboutModal = () => setshowAboutModal(false);
@@ -297,7 +304,6 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
 
   const getHelpActions = (additionalHelpActions) => {
     const helpActions = [];
-    const tourRef = React.createRef();
 
     helpActions.push({
       isSection: true,
@@ -330,11 +336,14 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
               },
             ]
           : []),
-        {
-          component: () => (
-            <GuidedTourMastheadTrigger ref={tourRef} className="pf-v6-c-menu__item" />
-          ),
-        },
+        ...(tour
+          ? [
+              {
+                label: t('public~Guided Tour'),
+                callback: handleGuidedTourClick,
+              },
+            ]
+          : []),
         ...(reportBugLink
           ? [
               {
