@@ -66,8 +66,8 @@ const sharedPluginModulesTest = getVendorModuleRegExp(sharedPluginModules.map(up
 // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
 const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObject>(
   (acc, moduleName) => {
-    const { singleton } = getSharedModuleMetadata(moduleName);
-    const moduleConfig: WebpackSharedConfig = { singleton, eager: true };
+    const { singleton, version } = getSharedModuleMetadata(moduleName);
+    const moduleConfig: WebpackSharedConfig = { singleton, eager: true, version };
 
     moduleConfig.import = updateSdkImports(moduleName);
 
