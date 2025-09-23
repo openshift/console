@@ -201,7 +201,7 @@ const CronJobDetails: React.FCC<CronJobDetailsProps> = ({ obj: cronjob }) => {
                 path="spec.concurrencyPolicy"
               />
               <DetailsItem
-                label={t('public~Starting deadline seconds')}
+                label={t('public~Start deadline seconds')}
                 obj={cronjob}
                 path="spec.startingDeadlineSeconds"
               >

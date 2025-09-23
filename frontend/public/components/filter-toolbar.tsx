@@ -510,7 +510,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                         columnLayout,
                       })
                     }
-                    aria-label={t('public~Column management')}
+                    aria-label={t('public~Manage columns')}
                     data-test="manage-columns"
                   />
                 </Tooltip>
