@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { createHash } from 'crypto-browserify';
 import { useSelector } from 'react-redux';
 import { UseUserSettings, getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -64,7 +63,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   // Request counter
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
 
-  const hashNameOrKubeadmin = (name: string): string | null => {
+  const hashNameOrKubeadmin = async (name: string): Promise<string | null> => {
     if (!name) {
       return null;
     }
@@ -72,20 +71,73 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
     if (name === 'kube:admin') {
       return 'kubeadmin';
     }
-    const hash = createHash('sha256');
-    hash.update(name);
-    return hash.digest('hex');
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(name);
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+
+    return hashHex;
   };
 
   // User and impersonate
-  const userUid = useSelector((state: RootState) => {
+  const currentUser = useSelector((state: RootState) => {
     const impersonateName = getImpersonate(state)?.name;
     const { uid, username } = getUser(state) ?? {};
-    const hashName = hashNameOrKubeadmin(username);
-    return impersonateName || uid || hashName || '';
+    return { impersonateName, uid, username };
   });
 
   const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
+
+  const [hashedUsername, setHashedUsername] = React.useState('');
+  const [isHashingComplete, setIsHashingComplete] = React.useState(false);
+
+  // Compute hash asynchronously when username changes
+  React.useEffect(() => {
+    if (currentUser.username) {
+      setIsHashingComplete(false);
+      hashNameOrKubeadmin(currentUser.username)
+        .then((hash) => {
+          if (mounted.current) {
+            setHashedUsername(hash || '');
+            setIsHashingComplete(true);
+          }
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error('Failed to hash username:', error);
+          if (mounted.current) {
+            setHashedUsername('');
+            setIsHashingComplete(true);
+          }
+        });
+    } else {
+      setHashedUsername('');
+      setIsHashingComplete(true);
+    }
+  }, [currentUser.username]);
+
+  // Compute final userUid once hashing is complete
+  const userUid = React.useMemo(() => {
+    if (
+      !isHashingComplete &&
+      currentUser.username &&
+      !currentUser.impersonateName &&
+      !currentUser.uid
+    ) {
+      // Still hashing, return empty string temporarily
+      return '';
+    }
+    return currentUser.impersonateName || currentUser.uid || hashedUsername || '';
+  }, [
+    currentUser.impersonateName,
+    currentUser.uid,
+    hashedUsername,
+    isHashingComplete,
+    currentUser.username,
+  ]);
 
   // Fallback
   const [fallbackLocalStorage, setFallbackLocalStorageUnsafe] = React.useState<boolean>(
