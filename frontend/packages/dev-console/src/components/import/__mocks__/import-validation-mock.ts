@@ -1,7 +1,12 @@
 import { GitProvider } from '@console/git-service/src';
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
-import { GitImportFormData, Resources } from '../import-types';
+import {
+  GitImportFormData,
+  InsecureTrafficType,
+  Resources,
+  TerminationType,
+} from '../import-types';
 import { serverlessInitialValues } from './serverless-mock';
 
 export const mockFormData: GitImportFormData = {
@@ -45,8 +50,8 @@ export const mockFormData: GitImportFormData = {
     hostname: '',
     secure: false,
     tls: {
-      termination: null,
-      insecureEdgeTerminationPolicy: null,
+      termination: 'None' as TerminationType,
+      insecureEdgeTerminationPolicy: 'None' as InsecureTrafficType,
       caCertificate: '',
       certificate: '',
       destinationCACertificate: '',
@@ -75,18 +80,18 @@ export const mockFormData: GitImportFormData = {
   serverless: serverlessInitialValues,
   limits: {
     cpu: {
-      request: null,
+      request: '',
       requestUnit: 'm',
       defaultRequestUnit: 'm',
-      limit: null,
+      limit: '',
       limitUnit: 'm',
       defaultLimitUnit: 'm',
     },
     memory: {
-      request: null,
+      request: '',
       requestUnit: 'Mi',
       defaultRequestUnit: 'Mi',
-      limit: null,
+      limit: '',
       limitUnit: 'Mi',
       defaultLimitUnit: 'Mi',
     },

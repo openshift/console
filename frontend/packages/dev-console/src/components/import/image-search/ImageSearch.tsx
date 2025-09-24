@@ -221,7 +221,7 @@ const ImageSearch: React.FC = () => {
 
   React.useEffect(() => {
     if (touched.searchTerm && initialValues.searchTerm !== values.searchTerm) {
-      const targetPort: ContainerPort = _.head(values.isi.ports);
+      const targetPort: ContainerPort = _.head(values.isi.ports) as ContainerPort;
       targetPort && setFieldValue('route.targetPort', makePortName(targetPort));
     }
   }, [
@@ -239,7 +239,7 @@ const ImageSearch: React.FC = () => {
   return (
     <div data-test-id="image-search-field">
       <InputField
-        ref={inputRef}
+        ref={inputRef as React.RefObject<HTMLInputElement>}
         type={TextInputTypes.text}
         name="searchTerm"
         placeholder={t(

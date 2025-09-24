@@ -10,6 +10,6 @@ export const useGetAutoscalerConfig = () => {
     'knative-serving',
   );
   // eslint-disable-next-line no-underscore-dangle
-  const config = configmapLoaded && !configmapError && safeYAMLToJS(configmap.data._example);
+  const config = configmapLoaded && !configmapError && safeYAMLToJS(configmap?.data?.example || '');
   return config;
 };

@@ -7,7 +7,7 @@ import { LoadingInline } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { DomainMappingModel } from '@console/knative-plugin/src';
-import { MultiTypeaheadField } from '@console/shared';
+import { MultiTypeaheadField, SelectInputOption } from '@console/shared';
 import { GitImportFormData, DeployImageFormData, UploadJarFormData } from '../import-types';
 import {
   getAllOtherDomainMappingInUse,
@@ -43,7 +43,7 @@ const ServerlessRouteSection: React.FC = () => {
       ? data.map((dm) => {
           const ksvc = getOtherKsvcFromDomainMapping(dm, name);
           return {
-            value: ksvc ? `${dm.metadata.name} (${ksvc})` : dm.metadata.name,
+            value: ksvc ? `${dm?.metadata?.name} (${ksvc})` : dm?.metadata?.name || '',
             disabled: false,
           };
         })
@@ -54,11 +54,8 @@ const ServerlessRouteSection: React.FC = () => {
     if (domainMappingLoaded && !domainMappingLoadErr && data?.length) {
       const mappedDomain = data
         .filter((domainRes) => domainRes.spec?.ref?.name === name)
-        .map((filterDm) => filterDm.metadata.name);
-      const newDomainMap = [
-        ...(serverless.domainMapping ? serverless.domainMapping : []),
-        ...mappedDomain,
-      ];
+        .map((filterDm) => filterDm?.metadata?.name || '');
+      const newDomainMap = [...(serverless?.domainMapping || []), ...mappedDomain];
       setFieldValue('serverless', {
         ...serverless,
         domainMapping: removeDuplicateDomainMappings(newDomainMap, mappedDomain),
@@ -67,7 +64,11 @@ const ServerlessRouteSection: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, domainMappingLoaded, domainMappingLoadErr, name, setFieldValue]);
 
-  const domainsInUse = getAllOtherDomainMappingInUse(serverless.domainMapping, data, name) ?? [];
+  const domainsInUse = getAllOtherDomainMappingInUse(
+    serverless?.domainMapping || [],
+    data || [],
+    name || '',
+  );
   return (
     <>
       {domainMappingLoaded || domainMappingLoadErr ? (
@@ -77,12 +78,12 @@ const ServerlessRouteSection: React.FC = () => {
             name="serverless.domainMapping"
             label={t('devconsole~Domain mapping')}
             ariaLabel={t('devconsole~Domain mapping')}
-            options={domainMappingResources}
+            options={domainMappingResources as SelectInputOption[]}
             placeholderText={t('devconsole~Add domain')}
             helpText={t('devconsole~Enter custom domain to map to the Knative service')}
             isCreatable
           />
-          {hasOtherKsvcDomainMappings(serverless.domainMapping) && (
+          {hasOtherKsvcDomainMappings(serverless?.domainMapping || []) && (
             <Alert
               data-test="domain-mapping-warning"
               variant="warning"
@@ -98,10 +99,10 @@ const ServerlessRouteSection: React.FC = () => {
                 <ul>
                   {domainsInUse.map((dm) => {
                     return (
-                      <li key={dm.metadata.uid}>
+                      <li key={dm?.metadata?.uid}>
                         {t(`devconsole~{{domainMapping}} from {{knativeService}}`, {
-                          domainMapping: dm.metadata.name,
-                          knativeService: dm.spec.ref.name,
+                          domainMapping: dm?.metadata?.name || '',
+                          knativeService: dm?.spec?.ref?.name || '',
                         })}
                       </li>
                     );

@@ -33,7 +33,7 @@ const Footer = ({ children }) => {
 const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
   const { t } = useTranslation();
 
-  const [visibleItems, setVisibleItems] = React.useState([]);
+  const [visibleItems, setVisibleItems] = React.useState<string[]>([]);
   const handleVisibleItemChange = (item: string) => {
     setVisibleItems([...visibleItems, item]);
   };

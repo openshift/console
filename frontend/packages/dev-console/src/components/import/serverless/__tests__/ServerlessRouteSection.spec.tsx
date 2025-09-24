@@ -153,7 +153,7 @@ describe('ServerlessRouteSection', () => {
 
   it('Should render MultiTypeaheadField with the domain mapping options without other ksvc info', () => {
     const connectedDomainMapping = { ...domainMappings[0] };
-    connectedDomainMapping.spec.ref.name = 'hello-openshift';
+    (connectedDomainMapping as any).spec.ref.name = 'hello-openshift';
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[connectedDomainMapping], true]);
 
     render(<ServerlessRouteSection />);
@@ -163,7 +163,7 @@ describe('ServerlessRouteSection', () => {
 
   it('Should not contain the warning Alert if the selected domain is not from other knative services', () => {
     const connectedDomainMapping = { ...domainMappings[0] };
-    connectedDomainMapping.spec.ref.name = 'hello-openshift';
+    (connectedDomainMapping as any).spec.ref.name = 'hello-openshift';
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[connectedDomainMapping], true]);
 
     render(<ServerlessRouteSection />);

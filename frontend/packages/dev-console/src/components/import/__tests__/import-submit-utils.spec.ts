@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
@@ -15,7 +16,7 @@ import * as triggerUtils from '@console/pipelines-plugin/src/components/pipeline
 import * as pipelineOverviewUtils from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import * as submitUtils from '../import-submit-utils';
-import { Resources } from '../import-types';
+import { GitImportFormData, Resources, ServerlessData } from '../import-types';
 import {
   defaultData,
   devfileImportData,
@@ -34,7 +35,7 @@ const {
 } = submitUtils;
 
 describe('Import Submit Utils', () => {
-  const t = jest.fn();
+  const t = (jest.fn() as unknown) as TFunction;
 
   describe('createDeployment tests', () => {
     beforeAll(() => {
@@ -197,7 +198,9 @@ describe('Import Submit Utils', () => {
 
     it('should create pipeline resources if pipeline is enabled and template is present', async (done) => {
       const mockData = _.cloneDeep(defaultData);
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
 
       const createPipelineResourceSpy = jest
         .spyOn(pipelineUtils, 'createPipelineForImportFlow')
@@ -242,7 +245,9 @@ describe('Import Submit Utils', () => {
 
     it('should create pipeline resource with same name as application name', async (done) => {
       const mockData = _.cloneDeep(defaultData);
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
 
       const createPipelineResourceSpy = jest.spyOn(pipelineUtils, 'createPipelineForImportFlow');
 
@@ -268,14 +273,16 @@ describe('Import Submit Utils', () => {
         {},
       );
       const pipelineRunResource = returnValue[1];
-      expect(pipelineRunResource.metadata.name.includes(mockData.name)).toEqual(true);
+      expect(pipelineRunResource?.metadata?.name?.includes(mockData.name)).toEqual(true);
       done();
     });
 
     it('should suppress the error if the trigger creation fails with the error', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
 
       // Suppress the console log for a cleaner test
       const errorLogger = jest.spyOn(console, 'warn').mockImplementation(jest.fn());
@@ -300,7 +307,9 @@ describe('Import Submit Utils', () => {
     it('should suppress the error if the pipelinerun creation fails with the error', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
 
       // Suppress the console log for a cleaner test
       jest.spyOn(console, 'log').mockImplementation(jest.fn());
@@ -336,7 +345,10 @@ describe('Import Submit Utils', () => {
     it('should throw error if the deployment creation fails with the error', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
+
       jest
         .spyOn(submitUtils, 'createOrUpdateDeployment')
         .mockImplementation(() => Promise.reject(new Error('Deployment')));
@@ -365,7 +377,10 @@ describe('Import Submit Utils', () => {
 
     it('should add pipeline annotations to secret if present and update service account', async (done) => {
       const mockData = _.cloneDeep(defaultData);
-      mockData.pipeline.enabled = true;
+      if (mockData.pipeline) {
+        mockData.pipeline.enabled = true;
+      }
+
       mockData.git.secret = 'sample-secret';
 
       const k8sUpdateMock = jest
@@ -420,7 +435,8 @@ describe('Import Submit Utils', () => {
       const formData = sampleDevfileFormData;
       const returnValue = await createDevfileResources(formData, false, {}, '');
 
-      const deployment = returnValue.find((resource) => resource.data.kind === 'Deployment').data;
+      const deployment = returnValue.find((resource) => resource?.data?.kind === 'Deployment')
+        ?.data;
 
       expect(deployment).toEqual({
         apiVersion: 'apps/v1',
@@ -518,7 +534,7 @@ describe('Import Submit Utils', () => {
       const telGhScalingData = submitUtils.isScalingAdvOptions(
         ghImportDefaultData.resources,
         ghImportDefaultData.deployment,
-        ghImportDefaultData.serverless,
+        ghImportDefaultData.serverless as ServerlessData,
       );
       expect(telGhScalingData).toEqual(false);
     });
@@ -527,7 +543,7 @@ describe('Import Submit Utils', () => {
       const telGhRouteData = submitUtils.isRouteAdvOptionsUsed(
         ghImportDefaultData.resources,
         ghImportDefaultData.route,
-        ghImportDefaultData.serverless,
+        ghImportDefaultData.serverless as ServerlessData,
       );
       expect(telGhRouteData).toEqual(false);
     });
@@ -546,7 +562,7 @@ describe('Import Submit Utils', () => {
       const telGhRouteData = submitUtils.isRouteAdvOptionsUsed(
         ghImportAdvData.resources,
         ghImportAdvData.route,
-        ghImportAdvData.serverless,
+        ghImportAdvData.serverless as ServerlessData,
       );
 
       expect(telGhRouteData).toEqual(true);
@@ -566,7 +582,7 @@ describe('Import Submit Utils', () => {
       const telGhScalingData = submitUtils.isScalingAdvOptions(
         ghImportAdvData.resources,
         ghImportAdvData.deployment,
-        ghImportAdvData.serverless,
+        ghImportAdvData.serverless as ServerlessData,
       );
 
       expect(telGhScalingData).toEqual(true);
@@ -577,14 +593,14 @@ describe('Import Submit Utils', () => {
         ...ghImportDefaultData,
         resources: Resources.KnativeService,
         serverless: {
-          ...ghImportDefaultData.serverless,
+          ...(ghImportDefaultData.serverless as ServerlessData),
           scaling: {
-            ...ghImportDefaultData.serverless.scaling,
+            ...ghImportDefaultData.serverless?.scaling,
             concurrencytarget: 102,
           },
         },
       };
-      const telGHData = submitUtils.getTelemetryImport(ghImportAdvData);
+      const telGHData = submitUtils.getTelemetryImport(ghImportAdvData as GitImportFormData);
       expect(telGHData).toEqual({
         ...ghImportTelData,
         resource: 'Knative Service',
@@ -594,7 +610,7 @@ describe('Import Submit Utils', () => {
       const telGhScalingData = submitUtils.isScalingAdvOptions(
         ghImportAdvData.resources,
         ghImportAdvData.deployment,
-        ghImportAdvData.serverless,
+        ghImportAdvData.serverless as ServerlessData,
       );
 
       expect(telGhScalingData).toEqual(true);
@@ -614,7 +630,7 @@ describe('Import Submit Utils', () => {
       const telGhScalingData = submitUtils.isRouteAdvOptionsUsed(
         ghImportAdvData.resources,
         ghImportAdvData.route,
-        ghImportAdvData.serverless,
+        ghImportAdvData.serverless as ServerlessData,
       );
 
       expect(telGhScalingData).toEqual(true);
@@ -625,7 +641,7 @@ describe('Import Submit Utils', () => {
         ...ghImportDefaultData,
         resources: Resources.KnativeService,
         serverless: {
-          ...ghImportDefaultData.serverless,
+          ...(ghImportDefaultData.serverless as ServerlessData),
           domainMapping: ['domain.org'],
         },
       };
@@ -639,7 +655,7 @@ describe('Import Submit Utils', () => {
       const telGhScalingData = submitUtils.isRouteAdvOptionsUsed(
         ghImportAdvData.resources,
         ghImportAdvData.route,
-        ghImportAdvData.serverless,
+        ghImportAdvData.serverless as ServerlessData,
       );
 
       expect(telGhScalingData).toEqual(true);

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
+import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import { hasSampleQueryParameter } from '../../utils/samples';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
@@ -49,11 +50,11 @@ const GitImportForm: React.FC<
   const isSample = hasSampleQueryParameter();
   const showAdvancedSections =
     importType !== ImportTypes.devfile &&
-    values.import.selectedStrategy.type !== ImportStrategy.DEVFILE &&
+    values?.import?.selectedStrategy?.type !== ImportStrategy.DEVFILE &&
     !isSample;
   const showSecureRouteSectionForDevfile =
     (importType === ImportTypes.devfile ||
-      values.import.selectedStrategy.type === ImportStrategy.DEVFILE) &&
+      values?.import?.selectedStrategy?.type === ImportStrategy.DEVFILE) &&
     values?.devfile?.devfileSuggestedResources?.route?.spec?.tls;
 
   return (
@@ -64,14 +65,16 @@ const GitImportForm: React.FC<
             <GitSection
               builderImages={builderImages}
               defaultSample={
-                gitRepositoryUrl && {
-                  url: gitRepositoryUrl,
-                  ref: gitRevision,
-                  dir: gitContextDir,
-                }
+                gitRepositoryUrl
+                  ? {
+                      url: gitRepositoryUrl,
+                      ref: gitRevision || '',
+                      dir: gitContextDir || '',
+                    }
+                  : undefined
               }
-              formType={formType}
-              importType={importType}
+              formType={formType || ''}
+              importType={importType || ''}
             />
             <NamespaceSection />
             {showFullForm && (
@@ -79,11 +82,11 @@ const GitImportForm: React.FC<
                 {importType === ImportTypes.devfile ? (
                   <DevfileStrategySection />
                 ) : (
-                  <ImportStrategySection builderImages={builderImages} />
+                  <ImportStrategySection builderImages={builderImages as NormalizedBuilderImages} />
                 )}
                 <AppSection
                   project={values.project}
-                  noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+                  noProjectsAvailable={projects?.loaded && _.isEmpty(projects?.data)}
                 />
                 {formType !== 'sample' && importType !== ImportTypes.devfile && (
                   <BuildSection values={values} />
@@ -91,7 +94,7 @@ const GitImportForm: React.FC<
                 {showAdvancedSections && (
                   <>
                     {buildOption === BuildOptions.PIPELINES && (
-                      <PipelineSection builderImages={builderImages} />
+                      <PipelineSection builderImages={builderImages as NormalizedBuilderImages} />
                     )}
                     {buildOption !== BuildOptions.DISABLED && <DeploySection values={values} />}
 
