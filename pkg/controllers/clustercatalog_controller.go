@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/openshift/console/pkg/olm"
 	ocv1 "github.com/operator-framework/operator-controller/api/v1"
@@ -33,8 +32,8 @@ func NewClusterCatalogReconciler(mgr ctrl.Manager, cs olm.CatalogService) *Clust
 
 // Reconcile implements the reconcile.Reconciler interface
 func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
-	klog.Info("Reconciling ClusterCatalog", "name", req.Name)
-	defer klog.Info("ClusterCatalog reconcilation ending")
+	klog.Infof("Reconciling ClusterCatalog %s", req.Name)
+	defer klog.Infof("Reconcilation ending for ClusterCatalog %s", req.Name)
 
 	clusterCatalog := &ocv1.ClusterCatalog{}
 
@@ -42,7 +41,7 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 	if err != nil {
 		if apierrors.IsNotFound(err) {
 			// The ClusterCatalog has been deleted, delete its CatalogItems from the cache
-			klog.Info("Removing CatalogItems for ClusterCatalog from cache", "name", req.Name)
+			klog.Infof("Removing CatalogItems for ClusterCatalog %s from cache", req.Name)
 			err = r.catalogService.RemoveCatalog(req.Name)
 			if err != nil {
 				return ctrl.Result{}, err
@@ -54,13 +53,15 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 
 	// The ClusterCatalog has been found on the cluster, attempt to add to or update cache
 	if clusterCatalog.Status.URLs == nil {
-		return ctrl.Result{}, fmt.Errorf("URLs field is empty for clustercatalog %s", req.Name)
+		klog.Infof("ClusterCatalog %s URLs field is empty", req.Name)
+		return ctrl.Result{}, nil
 	}
 
 	baseURL := clusterCatalog.Status.URLs.Base
 
 	if baseURL == "" {
-		return ctrl.Result{}, fmt.Errorf("base URL is empty for clustercatalog %s", req.Name)
+		klog.Infof("ClusterCatalog %s Base URL is empty", req.Name)
+		return ctrl.Result{}, nil
 	}
 
 	err = r.catalogService.UpdateCatalog(req.Name, baseURL)

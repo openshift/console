@@ -174,8 +174,6 @@ func main() {
 	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
 	fTechPreview := fs.Bool("tech-preview", false, "Enable console Technology Preview features.")
 
-	fControllerManagerMetricsAddr := fs.String("controller-manager-metrics-address", ":8081", "The address for the controller manager metrics endpoint. Defaults to :8081.")
-
 	cfg, err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -588,7 +586,8 @@ func main() {
 	// Controllers are behind Tech Preview flag
 	if *fTechPreview {
 		controllerManagerMetricsOptions := ctrlmetrics.Options{
-			BindAddress: *fControllerManagerMetricsAddr,
+			// Disable the metrics server for now. We can enable it later if we want and make it a configurable flag.
+			BindAddress: "0",
 		}
 		mgr, err := ctrl.NewManager(srv.InternalProxiedK8SClientConfig, ctrl.Options{
 			Scheme:  kruntime.NewScheme(),

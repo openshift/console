@@ -89,8 +89,7 @@ func TestReconcile_ClusterCatalogNoURLs(t *testing.T) {
 
 	result, err := reconciler.Reconcile(context.Background(), req)
 
-	require.Error(t, err)
-	assert.Equal(t, "URLs field is empty for clustercatalog test-catalog", err.Error())
+	require.NoError(t, err)
 	assert.Equal(t, reconcile.Result{}, result)
 	assert.False(t, mockService.updateCatalogCalled)
 	assert.False(t, mockService.removeCatalogCalled)
@@ -118,8 +117,7 @@ func TestReconcile_ClusterCatalogEmptyBaseURL(t *testing.T) {
 
 	result, err := reconciler.Reconcile(context.Background(), req)
 
-	require.Error(t, err)
-	assert.Equal(t, "base URL is empty for clustercatalog test-catalog", err.Error())
+	require.NoError(t, err)
 	assert.Equal(t, reconcile.Result{}, result)
 	assert.False(t, mockService.updateCatalogCalled)
 	assert.False(t, mockService.removeCatalogCalled)
