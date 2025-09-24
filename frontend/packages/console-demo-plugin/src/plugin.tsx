@@ -11,7 +11,6 @@ import {
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
   DashboardsOverviewResourceActivity,
-  DashboardsOverviewPrometheusActivity,
 } from '@console/plugin-sdk';
 import { DemoGroupIcon } from './components/dashboards/inventory';
 import { FooBarModel } from './models';
@@ -24,8 +23,7 @@ type ConsumedExtensions =
   | RoutePage
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
-  | DashboardsOverviewResourceActivity
-  | DashboardsOverviewPrometheusActivity;
+  | DashboardsOverviewResourceActivity;
 
 const TEST_MODEL_FLAG = 'TEST_MODEL';
 
@@ -112,20 +110,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: () =>
         import('./components/dashboards/activity' /* webpackChunkName: "demo" */).then(
           (m) => m.DemoActivity,
-        ),
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Activity/Prometheus',
-    properties: {
-      queries: ['barQuery'],
-      isActivity: () => true,
-      loader: () =>
-        import('./components/dashboards/activity' /* webpackChunkName: "demo" */).then(
-          (m) => m.DemoPrometheusActivity,
         ),
     },
     flags: {
