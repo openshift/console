@@ -4,7 +4,6 @@ export * from './base';
 export * from './dashboards';
 export * from './features';
 export * from './models';
-export * from './overview';
 export * from './pages';
 export * from './global-configs';
 export * from './guided-tour';
