@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Plugin, ModelDefinition, ModelFeatureFlag } from '@console/plugin-sdk';
+import { Plugin, ModelDefinition } from '@console/plugin-sdk';
 import { defaultDecoratorsPlugin } from './components/graph-view/components/nodes/decorators/defaultDecoratorsPlugin';
 import { TopologyDecoratorProvider } from './extensions';
 import * as models from './models';
@@ -10,7 +10,6 @@ import {
 
 type ConsumedExtensions =
   | ModelDefinition
-  | ModelFeatureFlag
   | TopologyDecoratorProvider
   | OperatorsTopologyConsumedExtensions;
 

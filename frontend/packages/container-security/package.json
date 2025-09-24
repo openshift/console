@@ -8,7 +8,7 @@
     "@console/plugin-sdk": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts",
+    "entry": "src/plugin.tsx",
     "exposedModules": {
       "containerSecurityComponent": "src/components/image-manifest-vuln.tsx",
       "summary": "src/components/summary.tsx"

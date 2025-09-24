@@ -1,10 +1,9 @@
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
-import { Plugin, PostFormSubmissionAction } from '@console/plugin-sdk';
+import { Plugin } from '@console/plugin-sdk';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
   TopologyDisplayFilters,
-  TopologyCreateConnector,
 } from '../extensions/topology';
 import { getOperatorWatchedResources } from './operatorResources';
 import {
@@ -18,9 +17,7 @@ import {
 export type OperatorsTopologyConsumedExtensions =
   | TopologyComponentFactory
   | TopologyDataModelFactory
-  | TopologyCreateConnector
-  | TopologyDisplayFilters
-  | PostFormSubmissionAction;
+  | TopologyDisplayFilters;
 
 export const operatorsTopologyPlugin: Plugin<OperatorsTopologyConsumedExtensions> = [
   {

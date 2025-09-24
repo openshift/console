@@ -1,13 +1,4 @@
-import {
-  Plugin,
-  ModelDefinition,
-  OverviewResourceTab,
-  ResourceListPage,
-  ResourceDetailsPage,
-  RoutePage,
-  HorizontalNavTab,
-  DetailPageBreadCrumbs,
-} from '@console/plugin-sdk';
+import { Plugin, OverviewResourceTab, DetailPageBreadCrumbs } from '@console/plugin-sdk';
 import { FLAG_KNATIVE_EVENTING } from './const';
 import {
   eventSourceBreadcrumbsProvider,
@@ -19,15 +10,7 @@ import {
 } from './providers';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
 
-type ConsumedExtensions =
-  | ModelDefinition
-  | OverviewResourceTab
-  | ResourceListPage
-  | RoutePage
-  | ResourceDetailsPage
-  | TopologyConsumedExtensions
-  | HorizontalNavTab
-  | DetailPageBreadCrumbs;
+type ConsumedExtensions = OverviewResourceTab | TopologyConsumedExtensions | DetailPageBreadCrumbs;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
