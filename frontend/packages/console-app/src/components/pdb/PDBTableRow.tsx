@@ -13,10 +13,7 @@ import { tableColumnInfo } from './pdb-table-columns';
 import { PodDisruptionBudgetKind } from './types';
 import { isDisruptionViolated } from './utils/get-pdb-resources';
 
-const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> = ({
-  obj,
-  activeColumnIDs,
-}) => {
+const PDBTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> = ({ obj, activeColumnIDs }) => {
   const { t } = useTranslation();
   const isPDBViolated = isDisruptionViolated(obj);
   const resourceKind = referenceForModel(PodDisruptionBudgetModel);
@@ -34,7 +31,7 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData {...tableColumnInfo[2]} activeColumnIDs={activeColumnIDs}>
-        <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />
+        <Selector selector={obj.spec?.selector || {}} namespace={obj.metadata.namespace} />
       </TableData>
       <TableData {...tableColumnInfo[3]} activeColumnIDs={activeColumnIDs}>
         {_.isNil(obj.spec.maxUnavailable) && _.isNil(obj.spec.minAvailable)
@@ -45,7 +42,7 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
       </TableData>
       <TableData {...tableColumnInfo[4]} activeColumnIDs={activeColumnIDs}>
         <>
-          {obj.status.disruptionsAllowed}{' '}
+          {obj.status?.disruptionsAllowed}{' '}
           {isPDBViolated && (
             <Tooltip content={t('console-app~Disruption not allowed')}>
               <YellowExclamationTriangleIcon />
@@ -54,7 +51,7 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
         </>
       </TableData>
       <TableData {...tableColumnInfo[5]} activeColumnIDs={activeColumnIDs}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+        <Timestamp timestamp={obj.metadata?.creationTimestamp} />
       </TableData>
       <TableData {...tableColumnInfo[6]} activeColumnIDs={activeColumnIDs}>
         <LazyActionMenu context={context} />
@@ -63,4 +60,4 @@ const PodDisruptionBudgetTableRow: React.FC<RowProps<PodDisruptionBudgetKind>> =
   );
 };
 
-export default PodDisruptionBudgetTableRow;
+export default PDBTableRow;

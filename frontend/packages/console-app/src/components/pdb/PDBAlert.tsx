@@ -35,7 +35,7 @@ export const PDBAlert: React.FC<PDBAlertProps> = ({ namespace }) => {
 
   const { count: pdbCount, name: pdbName } = checkPodDisruptionBudgets(resources);
   const getRedirectLink = () => {
-    return resourcePathFromModel(PodDisruptionBudgetModel, pdbName || null, namespace);
+    return resourcePathFromModel(PodDisruptionBudgetModel, pdbName || '', namespace);
   };
 
   const onWarningLinkClick = () => {

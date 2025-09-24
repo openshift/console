@@ -35,7 +35,8 @@ export const PodDisruptionBudgetsPage: React.FC<PodDisruptionBudgetsPageProps> =
   };
   return (
     <>
-      <ListPageHeader title={showTitle ? t(PodDisruptionBudgetModel.labelPluralKey) : undefined}>
+      {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
+      <ListPageHeader title={showTitle ? t(PodDisruptionBudgetModel!.labelPluralKey!) : ''}>
         <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
           {t('console-app~Create PodDisruptionBudget')}
         </ListPageCreate>

@@ -53,7 +53,7 @@ const InventoryCard: React.FC = () => {
         <Stack hasGutter>
           <StackItem>
             <NodeInventoryItem
-              nodeName={obj.metadata.name}
+              nodeName={obj?.metadata?.name || ''}
               model={PodModel}
               mapper={getPodStatusGroups}
             />
@@ -63,8 +63,8 @@ const InventoryCard: React.FC = () => {
               isLoading={!obj}
               title={t('console-app~Image')}
               titlePlural={t('console-app~Images')}
-              count={obj.status?.images?.length}
-              error={!obj.status?.images}
+              count={obj?.status?.images?.length || 0}
+              error={!obj?.status?.images}
             />
           </StackItem>
         </Stack>

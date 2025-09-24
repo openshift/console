@@ -19,7 +19,7 @@ const StatusCard: React.FC = () => {
         <>
           <NodeHealth />
           <NodeAlerts />
-          <DashboardAlerts labelSelector={{ node: obj.metadata.name }} />
+          <DashboardAlerts labelSelector={{ node: obj.metadata?.name ?? '' }} />
         </>
       ) : (
         <LoadingInline />

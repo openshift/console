@@ -47,7 +47,6 @@ type LogControlsProps = {
   pathItems: string[];
   isJournal: boolean;
   onChangeUnit: (value: string) => void;
-  unit: string;
   isLoadingFilenames: boolean;
   logFilenamesExist: boolean;
   onToggleFilename: () => void;
@@ -70,7 +69,6 @@ const LogControls: React.FC<LogControlsProps> = ({
   pathItems,
   isJournal,
   onChangeUnit,
-  unit,
   isLoadingFilenames,
   logFilenamesExist,
   onToggleFilename,
@@ -120,7 +118,7 @@ const LogControls: React.FC<LogControlsProps> = ({
             <SelectList>{options(pathItems)}</SelectList>
           </Select>
         </FlexItem>
-        {isJournal && <NodeLogsUnitFilter onChangeUnit={onChangeUnit} unit={unit} />}
+        {isJournal && <NodeLogsUnitFilter onChangeUnit={onChangeUnit} />}
         {!isJournal && (
           <FlexItem>
             {isLoadingFilenames ? (
@@ -185,7 +183,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
   const [path, setPath] = React.useState(getQueryArgument(pathQueryArgument) || pathItems[0]);
   const [logURL, setLogURL] = React.useState('');
   const [logFilenames, setLogFilenames] = React.useState([]);
-  const [unit, setUnit] = React.useState(getQueryArgument(unitQueryArgument));
+  const [unit, setUnit] = React.useState(getQueryArgument(unitQueryArgument) || '');
   const [logFilename, setLogFilename] = React.useState(getQueryArgument(logQueryArgument));
   const [isLoadingLog, setLoadingLog] = React.useState(true);
   const [isLoadingFilenames, setLoadingFilenames] = React.useState(true);
@@ -333,7 +331,6 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       setPathOpen={setPathOpen}
       isJournal={isJournal}
       onChangeUnit={onChangeUnit}
-      unit={unit}
       isLoadingFilenames={isLoadingFilenames}
       logFilenamesExist={logFilenamesExist}
       onToggleFilename={onToggleFilename}

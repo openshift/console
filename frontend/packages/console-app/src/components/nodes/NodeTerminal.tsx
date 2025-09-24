@@ -158,12 +158,16 @@ const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
 const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
   const [resources, setResources] = React.useState<FirehoseResource[]>([]);
   const [errorMessage, setErrorMessage] = React.useState('');
-  const nodeName = node.metadata.name;
+  const nodeName = node.metadata?.name;
   const isWindows = node.status?.nodeInfo?.operatingSystem === 'windows';
 
   React.useEffect(() => {
+    if (!nodeName) {
+      setErrorMessage('Node name is required but not available');
+      return () => {};
+    }
     let namespace;
-    const name = `${nodeName?.replace(/\./g, '-')}-debug`;
+    const name = `${nodeName.replace(/\./g, '-')}-debug`;
     const deleteNamespace = async (ns) => {
       try {
         await k8sKillByName(NamespaceModel, ns);
@@ -208,6 +212,7 @@ const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
             },
           ]);
         }
+        return;
       } catch (e) {
         setErrorMessage(e.message);
         if (namespace) {

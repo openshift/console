@@ -23,7 +23,7 @@ export const PodDisruptionBudgetField: React.FC<PodDisruptionBudgetFieldProps> =
     },
     isList: true,
     namespaced: true,
-    namespace: obj.metadata.namespace,
+    namespace: obj.metadata?.namespace || '',
   });
   const pdb = getPDBResource(pdbResources, obj);
   const { replicas } = obj.spec ?? {};
@@ -35,8 +35,8 @@ export const PodDisruptionBudgetField: React.FC<PodDisruptionBudgetFieldProps> =
         <>
           <ResourceLink
             kind={referenceForModel(PodDisruptionBudgetModel)}
-            name={pdb.metadata.name}
-            namespace={pdb.metadata.namespace}
+            name={pdb.metadata?.name || ''}
+            namespace={pdb.metadata?.namespace || ''}
           />
           {replicas && <AvailabilityRequirement pdb={pdb} replicas={replicas} />}
         </>

@@ -45,8 +45,8 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
     group: NodeModel.apiGroup,
     resource: NodeModel.plural,
     verb: 'patch',
-    name: node.metadata.name,
-    namespace: node.metadata.namespace,
+    name: node.metadata?.name,
+    namespace: node.metadata?.namespace,
   });
   const { t } = useTranslation();
 
@@ -58,7 +58,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
           <DescriptionList>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('console-app~Node name')}</DescriptionListTerm>
-              <DescriptionListDescription>{node.metadata.name || '-'}</DescriptionListDescription>
+              <DescriptionListDescription>{node.metadata?.name || '-'}</DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
@@ -92,7 +92,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
               canEdit={canUpdate}
               editAsGroup
             >
-              <LabelList kind="Node" labels={node.metadata.labels} />
+              <LabelList kind="Node" labels={node.metadata?.labels} />
             </DetailsItem>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('console-app~Taints')}</DescriptionListTerm>
@@ -129,13 +129,17 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
                     isInline
                     onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}
                   >
-                    {_.size(node.metadata.annotations)}{' '}
-                    {t('console-app~Annotation', { count: _.size(node.metadata.annotations) })}
+                    {_.size(node.metadata?.annotations)}{' '}
+                    {t('console-app~Annotation', {
+                      count: _.size(node.metadata?.annotations),
+                    })}
                   </Button>
                 ) : (
                   <span>
-                    {_.size(node.metadata.annotations)}{' '}
-                    {t('console-app~Annotation', { count: _.size(node.metadata.annotations) })}
+                    {_.size(node.metadata?.annotations)}{' '}
+                    {t('console-app~Annotation', {
+                      count: _.size(node.metadata?.annotations),
+                    })}
                   </span>
                 )}
               </DescriptionListDescription>
@@ -169,7 +173,7 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
             <DescriptionListGroup>
               <DescriptionListTerm>{t('console-app~Created')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <Timestamp timestamp={node.metadata.creationTimestamp} />
+                <Timestamp timestamp={node.metadata?.creationTimestamp} />
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>

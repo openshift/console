@@ -155,14 +155,14 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
   reset,
 }) => {
   const { t } = useTranslation();
-  const onCancelClick = (e) => {
+  const onCancelClick = (e: React.SyntheticEvent) => {
     e.stopPropagation();
-    cancel(e);
+    cancel?.(e);
   };
 
-  const onResetClick = (e) => {
+  const onResetClick = (e: React.SyntheticEvent) => {
     e.stopPropagation();
-    reset(e);
+    reset?.(e);
   };
 
   const cancelButton = (
@@ -268,7 +268,7 @@ export type ModalSubmitFooterProps = {
   message?: string;
   errorMessage?: string;
   inProgress: boolean;
-  cancel: (e: React.SyntheticEvent<any, Event>) => void;
+  cancel?: (e: React.SyntheticEvent<any, Event>) => void;
   cancelText?: React.ReactNode;
   className?: string;
   resetText?: React.ReactNode;
