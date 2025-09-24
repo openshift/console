@@ -1,11 +1,9 @@
-import * as _ from 'lodash-es';
 import { consoleFetch as coFetch } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { stripBasePath } from '../components/utils/link';
 
 const {
   kubeAdminLogoutURL,
   loginErrorURL,
-  loginSuccessURL,
   loginURL,
   logoutRedirect,
   logoutURL,
@@ -81,7 +79,7 @@ export const authSvc = {
     }
   },
 
-  logout: _.once((next, isKubeAdmin = false) => {
+  logout: (next, isKubeAdmin = false) => {
     setNext(next);
     clearLocalStorage(clearLocalStorageKeys);
     coFetch(logoutURL, { method: 'POST' })
@@ -94,7 +92,7 @@ export const authSvc = {
           authSvc.logoutRedirect(next);
         }
       });
-  }),
+  },
 
   // The kube:admin user has a special logout flow. The OAuth server has a
   // session cookie that must be cleared by POSTing to the kube:admin logout
@@ -107,12 +105,12 @@ export const authSvc = {
     form.action = kubeAdminLogoutURL;
     form.method = 'POST';
 
-    // Redirect back to the console when logout is complete by passing a
-    // `then` parameter.
+    // Redirect to the console root when logout is complete by passing a
+    // `then` parameter. Use window.location.origin to avoid cross-origin issues.
     const input = document.createElement('input');
     input.type = 'hidden';
     input.name = 'then';
-    input.value = loginSuccessURL;
+    input.value = window.location.origin;
     form.appendChild(input);
 
     document.body.appendChild(form);
