@@ -58,7 +58,7 @@ describe('AddHealthChecksForm', () => {
         data: sampleDeployments.data[0],
         loadError: '',
       },
-    };
+    } as React.ComponentProps<typeof AddHealthChecksForm>;
   });
 
   describe('Loading States', () => {
@@ -78,8 +78,10 @@ describe('AddHealthChecksForm', () => {
 
   describe('Error States', () => {
     it('should show StatusBox on load error', () => {
-      addHealthCheckWrapperProps.resource.loaded = true;
-      addHealthCheckWrapperProps.resource.loadError = 'Not Found';
+      if (addHealthCheckWrapperProps.resource) {
+        addHealthCheckWrapperProps.resource.loaded = true;
+        addHealthCheckWrapperProps.resource.loadError = 'Not Found';
+      }
 
       renderWithProviders(<AddHealthChecksForm {...addHealthCheckWrapperProps} />);
 
@@ -87,8 +89,10 @@ describe('AddHealthChecksForm', () => {
     });
 
     it('should not show loading or form when there is an error', () => {
-      addHealthCheckWrapperProps.resource.loaded = true;
-      addHealthCheckWrapperProps.resource.loadError = 'Not Found';
+      if (addHealthCheckWrapperProps.resource) {
+        addHealthCheckWrapperProps.resource.loaded = true;
+        addHealthCheckWrapperProps.resource.loadError = 'Not Found';
+      }
 
       renderWithProviders(<AddHealthChecksForm {...addHealthCheckWrapperProps} />);
 
@@ -99,7 +103,9 @@ describe('AddHealthChecksForm', () => {
 
   describe('Container Validation', () => {
     it('should show container not found error when container is empty', () => {
-      addHealthCheckWrapperProps.resource.loaded = true;
+      if (addHealthCheckWrapperProps.resource) {
+        addHealthCheckWrapperProps.resource.loaded = true;
+      }
       addHealthCheckWrapperProps.currentContainer = '';
 
       renderWithProviders(<AddHealthChecksForm {...addHealthCheckWrapperProps} />);
@@ -108,7 +114,9 @@ describe('AddHealthChecksForm', () => {
     });
 
     it('should show container not found error when container does not exist', () => {
-      addHealthCheckWrapperProps.resource.loaded = true;
+      if (addHealthCheckWrapperProps.resource) {
+        addHealthCheckWrapperProps.resource.loaded = true;
+      }
       addHealthCheckWrapperProps.currentContainer = 'non-existent-container';
 
       renderWithProviders(<AddHealthChecksForm {...addHealthCheckWrapperProps} />);

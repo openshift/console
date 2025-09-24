@@ -70,7 +70,7 @@ export const sendK8sRequest = (
         data: [{ op: 'replace', path: `/subjects`, value: roleBinding.subjects }],
       });
     default:
-      return null;
+      return Promise.resolve({} as K8sResourceKind);
   }
 };
 
@@ -220,7 +220,7 @@ export const getRolesWithMultipleSubjects = (
       const roleWithMultipleSubjects = updateRolesWithMultipleSubjects.find(
         (r) => r.roleBindingName === updateRole.roleBindingName,
       );
-      roleWithMultipleSubjects.subjects.push(updateRole.subject);
+      roleWithMultipleSubjects?.subjects?.push(updateRole.subject);
       return true;
     }
     return false;
