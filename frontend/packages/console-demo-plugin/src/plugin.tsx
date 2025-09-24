@@ -11,7 +11,6 @@ import {
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
   DashboardsOverviewResourceActivity,
-  DashboardsOverviewPrometheusActivity,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
 import { DemoGroupIcon } from './components/dashboards/inventory';
@@ -26,7 +25,6 @@ type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
   | DashboardsOverviewResourceActivity
-  | DashboardsOverviewPrometheusActivity
   | HorizontalNavTab;
 
 const TEST_MODEL_FLAG = 'TEST_MODEL';
@@ -114,20 +112,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: () =>
         import('./components/dashboards/activity' /* webpackChunkName: "demo" */).then(
           (m) => m.DemoActivity,
-        ),
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Activity/Prometheus',
-    properties: {
-      queries: ['barQuery'],
-      isActivity: () => true,
-      loader: () =>
-        import('./components/dashboards/activity' /* webpackChunkName: "demo" */).then(
-          (m) => m.DemoPrometheusActivity,
         ),
     },
     flags: {
