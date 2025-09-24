@@ -2,7 +2,7 @@ import {
   GuidedTour,
   OverviewResourceTab,
   Plugin,
-  PostFormSubmissionAction,
+  PostFormSubmissionAction
 } from '@console/plugin-sdk';
 import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
 import { getGuidedTour } from './components/guided-tour';
