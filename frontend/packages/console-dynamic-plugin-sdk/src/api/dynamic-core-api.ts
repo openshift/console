@@ -39,6 +39,7 @@ import {
   VirtualizedTableFC,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
+import { GetSwaggerPropertyDescription } from './common-types';
 
 export * from '../app/components';
 export * from './common-types';
@@ -946,3 +947,13 @@ export const useUserSettings: UseUserSettings = require('@console/shared/src/hoo
  */
 export const useQuickStartContext: UseQuickStartContext = require('@console/shared/src/hooks/useQuickStartContext')
   .useQuickStartContext;
+
+/**
+ * Function that returns a description of a K8s property described by a given K8sModel and path.
+ * Dynamic plugins can use this function to generate popover help content for standard K8s properties like Name, Namespace, Labels, etc.
+ * @param kindObj - K8sModel whose properties will be used
+ * @param propertyPath - path to the property in a given K8sModel, e.g. "metadata.name"
+ * @returns Description of a given property.
+ */
+export const getSwaggerPropertyDescription: GetSwaggerPropertyDescription = require('@console/internal/module/k8s/swagger')
+  .getSwaggerPropertyDescription;
