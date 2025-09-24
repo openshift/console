@@ -1,7 +1,6 @@
 import {
   Plugin,
   ModelFeatureFlag,
-  KebabActions,
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
@@ -22,7 +21,6 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | RoutePage
-  | KebabActions
   | OverviewResourceTab
   | OverviewTabSection
   | GuidedTour

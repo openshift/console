@@ -9,7 +9,6 @@ import {
   K8sResourceKindReference,
   HorizontalPodAutoscalerKind,
 } from '../module/k8s';
-import { HorizontalPodAutoscalerModel } from '../models';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
@@ -29,7 +28,7 @@ import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalPodAutoscaler';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(HorizontalPodAutoscalerModel), ...common];
+const menuActions = [...common];
 
 const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
   <Tr>

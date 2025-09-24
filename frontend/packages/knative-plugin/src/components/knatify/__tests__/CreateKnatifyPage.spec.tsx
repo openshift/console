@@ -22,7 +22,6 @@ jest.mock('@console/internal/components/utils', () => ({
       ModifyAnnotations: jest.fn(),
       common: [],
     },
-    getExtensionsActionsForKind: jest.fn(() => []),
   },
   withHandlePromise: (Component: any) => Component,
 }));

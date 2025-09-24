@@ -561,10 +561,7 @@ export const InstallPlanDetailsPage: React.FC = (props) => {
         // t('olm~Components')
         { href: 'components', nameKey: 'olm~Components', component: InstallPlanPreview },
       ]}
-      menuActions={[
-        ...Kebab.getExtensionsActionsForKind(InstallPlanModel),
-        ...Kebab.factory.common,
-      ]}
+      menuActions={[...Kebab.factory.common]}
     />
   );
 };

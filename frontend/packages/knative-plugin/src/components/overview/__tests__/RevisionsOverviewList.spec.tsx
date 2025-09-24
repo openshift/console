@@ -21,7 +21,6 @@ jest.mock('@console/internal/components/utils', () => ({
     factory: {
       common: [],
     },
-    getExtensionsActionsForKind: jest.fn(() => []),
   },
 }));
 

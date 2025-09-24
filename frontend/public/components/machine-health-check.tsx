@@ -24,7 +24,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(MachineHealthCheckModel), ...common];
+const menuActions = [...common];
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];

@@ -36,10 +36,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
-const machineConfigMenuActions = [
-  ...Kebab.getExtensionsActionsForKind(MachineConfigModel),
-  ...Kebab.factory.common,
-];
+const machineConfigMenuActions = [...Kebab.factory.common];
 
 const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>

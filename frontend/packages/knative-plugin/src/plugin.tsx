@@ -5,7 +5,6 @@ import {
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
-  KebabActions,
   HorizontalNavTab,
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
@@ -25,7 +24,6 @@ type ConsumedExtensions =
   | OverviewResourceTab
   | ResourceListPage
   | RoutePage
-  | KebabActions
   | ResourceDetailsPage
   | TopologyConsumedExtensions
   | HorizontalNavTab

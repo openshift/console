@@ -112,12 +112,7 @@ const configureMachineAutoscaler: KebabAction = (kind: K8sKind, machineSet: Mach
   },
 });
 
-const menuActions = [
-  editCountAction,
-  configureMachineAutoscaler,
-  ...Kebab.getExtensionsActionsForKind(MachineSetModel),
-  ...Kebab.factory.common,
-];
+const menuActions = [editCountAction, configureMachineAutoscaler, ...Kebab.factory.common];
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
 

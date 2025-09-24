@@ -52,16 +52,9 @@ import {
 
 const { common } = Kebab.factory;
 
-const resourceQuotaMenuActions = [
-  ...Kebab.getExtensionsActionsForKind(ResourceQuotaModel),
-  ...common,
-];
-const clusterResourceQuotaMenuActions = [
-  ...Kebab.getExtensionsActionsForKind(ClusterResourceQuotaModel),
-  ...common,
-];
+const resourceQuotaMenuActions = [...common];
+const clusterResourceQuotaMenuActions = [...common];
 const appliedClusterResourceQuotaMenuActions = (namespace) => [
-  ...Kebab.getExtensionsActionsForKind(ClusterResourceQuotaModel),
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
   (kind, obj) => {

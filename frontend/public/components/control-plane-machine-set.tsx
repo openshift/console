@@ -43,10 +43,7 @@ import { MachinePage, machineReference } from './machine';
 import { MachineTabPageProps } from './machine-set';
 
 const controlPlaneMachineSetReference = referenceForModel(ControlPlaneMachineSetModel);
-const controlPlaneMachineSetMenuActions = [
-  ...Kebab.getExtensionsActionsForKind(ControlPlaneMachineSetModel),
-  ...Kebab.factory.common,
-];
+const controlPlaneMachineSetMenuActions = [...Kebab.factory.common];
 const getDesiredReplicas = (resource: ControlPlaneMachineSetKind) => {
   return resource.spec.replicas;
 };

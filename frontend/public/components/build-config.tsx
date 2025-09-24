@@ -43,7 +43,7 @@ import {
   PipelineBuildStrategyAlert,
 } from './build';
 import { ResourceEventStream } from './events';
-import { BuildConfigModel, BuildModel } from '../models';
+import { BuildModel } from '../models';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { Status } from '@console/shared';
@@ -117,15 +117,10 @@ const useStartLastBuildAction = (latestBuild: K8sResourceKind): KebabAction => {
 const useBuildConfigKebabActions = (latestBuild?: K8sResourceKind): KebabAction[] => {
   const startBuildAction = useStartBuildAction();
   const startLastBuildAction = useStartLastBuildAction(latestBuild);
-  return useMemo(
-    () => [
-      startBuildAction,
-      startLastBuildAction,
-      ...Kebab.getExtensionsActionsForKind(BuildConfigModel),
-      ...Kebab.factory.common,
-    ],
-    [startBuildAction, startLastBuildAction],
-  );
+  return useMemo(() => [startBuildAction, startLastBuildAction, ...Kebab.factory.common], [
+    startBuildAction,
+    startLastBuildAction,
+  ]);
 };
 
 export const BuildConfigsDetails: React.FCC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {

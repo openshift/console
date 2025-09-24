@@ -6,7 +6,6 @@ import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { ImageStreamTagModel } from '../models';
 import { DetailsPage, Table } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
 import { humanizeBinaryBytes } from './utils/units';
@@ -27,7 +26,7 @@ const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(ImageStreamTagModel), ...common];
+const menuActions = [...common];
 
 // Splits a name/value pair separated by an `=`
 const splitEnv = (nameValue: string) => {

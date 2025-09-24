@@ -74,14 +74,7 @@ const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
 
 const useMachineConfigPoolMenuActions = (): KebabAction[] => {
   const pauseAction = usePauseAction();
-  return useMemo(
-    () => [
-      pauseAction,
-      ...Kebab.getExtensionsActionsForKind(MachineConfigPoolModel),
-      ...Kebab.factory.common,
-    ],
-    [pauseAction],
-  );
+  return useMemo(() => [pauseAction, ...Kebab.factory.common], [pauseAction]);
 };
 
 const getConditionStatus = (

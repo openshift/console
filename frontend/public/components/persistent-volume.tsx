@@ -35,7 +35,7 @@ import {
 import { PersistentVolumeKind } from '@console/internal/module/k8s';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(PersistentVolumeModel), ...common];
+const menuActions = [...common];
 
 const PVStatus = ({ pv }: { pv: PersistentVolumeKind }) => (
   <Status status={pv.metadata.deletionTimestamp ? 'Terminating' : pv.status.phase} />
