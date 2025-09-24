@@ -214,13 +214,13 @@ export class PluginStore {
     }
   }
 
-  private getLoadedDynamicPlugin(pluginName?: string) {
+  private getLoadedDynamicPlugin(pluginName: string) {
     return Array.from(this.loadedDynamicPlugins.values()).find(
       (plugin) => plugin.manifest.name === pluginName,
     );
   }
 
-  private isDynamicPluginLoaded(pluginName?: string) {
+  private isDynamicPluginLoaded(pluginName: string) {
     return this.getLoadedDynamicPlugin(pluginName) !== undefined;
   }
 
@@ -315,7 +315,7 @@ export class PluginStore {
     );
   }
 
-  getDynamicPluginManifest(pluginName?: string): DynamicPluginManifest | undefined {
+  getDynamicPluginManifest(pluginName: string): DynamicPluginManifest | undefined {
     return this.getLoadedDynamicPlugin(pluginName)?.manifest;
   }
 

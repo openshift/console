@@ -17,7 +17,7 @@ describe('getValueForNamespace', () => {
 
   it('should return false if namespace is not defined', async () => {
     k8sGetMock.mockReturnValueOnce(Promise.resolve());
-    const exists = await checkNamespaceExists('', true);
+    const exists = await checkNamespaceExists(null, true);
 
     expect(exists).toBeFalsy();
   });
