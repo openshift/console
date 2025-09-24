@@ -29,7 +29,7 @@ export const tourReducer = (state: TourState, action: TourStateAction) => {
       return {
         completedTour: action.payload?.completed,
         stepNumber: 0,
-        startTour: action.payload?.completed,
+        startTour: !action.payload?.completed,
       };
     case TourActions.start:
       return { startTour: true, completedTour: false, stepNumber: 0 };
@@ -152,7 +152,7 @@ export const useTourValuesForContext = (): TourContextType => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePerspective, loaded]);
 
-  if (!tour || !loaded) return { tour: undefined };
+  if (!tour || !loaded) return { tour: null };
   const {
     properties: {
       tour: { intro, steps: unfilteredSteps, end },
