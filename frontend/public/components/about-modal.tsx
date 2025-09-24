@@ -57,7 +57,7 @@ const DynamicPlugins: React.FC = () => {
       {items}
     </Content>
   ) : (
-    t('public~None')
+    <>{t('public~None')}</>
   );
 };
 

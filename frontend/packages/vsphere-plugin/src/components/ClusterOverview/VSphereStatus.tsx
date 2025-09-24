@@ -17,7 +17,7 @@ import './VSphereStatus.css';
 
 const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ hide, responses, k8sResult }) => {
   const { t } = useTranslation();
-  const health = getVSphereHealth(t, responses, k8sResult);
+  const health = getVSphereHealth(responses, k8sResult, t);
 
   if (
     [HealthState.OK, HealthState.WARNING, HealthState.PROGRESS].includes(health.state) &&
@@ -54,7 +54,7 @@ const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ hide, responses, 
 };
 
 export const healthHandler: PrometheusHealthHandler = (responses, t, additionalResource) => {
-  const health = getVSphereHealth(t || (() => ''), responses, additionalResource);
+  const health = getVSphereHealth(responses, additionalResource, t);
   const { state } = health;
 
   let message: string | undefined;
