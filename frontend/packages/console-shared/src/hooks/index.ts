@@ -4,7 +4,6 @@ export * from './deep-compare-memoize';
 export * from './document-listener';
 export * from './scroll';
 export * from './useScrollShadows';
-export * from './plugins-overview-tab-section';
 export * from './debounce';
 export * from './select-list';
 export * from './useBuildConfigsWatcher';
