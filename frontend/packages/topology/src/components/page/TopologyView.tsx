@@ -18,10 +18,10 @@ import {
 import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToProjectAccess';
 import {
   useResolvedExtensions,
-  isTopologyCreateConnector as isDynamicTopologyCreateConnector,
+  isTopologyCreateConnector,
   isTopologyDecoratorProvider as isDynamicTopologyDecoratorProvider,
   isTopologyDisplayFilters as isDynamicTopologyDisplayFilters,
-  TopologyCreateConnector as DynamicTopologyCreateConnector,
+  TopologyCreateConnector,
   TopologyDecoratorProvider as DynamicTopologyDecoratorProvider,
   TopologyDisplayFilters as DynamicTopologyDisplayFilters,
   TopologyRelationshipProvider,
@@ -41,10 +41,8 @@ import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY } from '../../const';
 import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
 import {
-  isTopologyCreateConnector,
   isTopologyDecoratorProvider,
   isTopologyDisplayFilters,
-  TopologyCreateConnector,
   TopologyDecoratorProvider,
   TopologyDisplayFilters,
 } from '../../extensions/topology';
@@ -141,9 +139,6 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     TopologyDisplayFilters
   >(isTopologyDisplayFilters);
 
-  const [createConnectors, createConnectorsResolved] = useResolvedExtensions<
-    TopologyCreateConnector
-  >(isTopologyCreateConnector);
   const [extensionDecorators, extensionDecoratorsResolved] = useResolvedExtensions<
     TopologyDecoratorProvider
   >(isTopologyDecoratorProvider);
@@ -152,9 +147,9 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     dynamicDisplayFilterExtensions,
     dynamicDisplayFilterExtensionsResolved,
   ] = useResolvedExtensions<DynamicTopologyDisplayFilters>(isDynamicTopologyDisplayFilters);
-  const [dynamicCreateConnectors, dynamicCreateConnectorsResolved] = useResolvedExtensions<
-    DynamicTopologyCreateConnector
-  >(isDynamicTopologyCreateConnector);
+  const [createConnectors, createConnectorsResolved] = useResolvedExtensions<
+    TopologyCreateConnector
+  >(isTopologyCreateConnector);
   const [dynamicExtensionDecorators, dynamicExtensionDecoratorsResolved] = useResolvedExtensions<
     DynamicTopologyDecoratorProvider
   >(isDynamicTopologyDecoratorProvider);
@@ -199,12 +194,9 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
       createResourceAccess,
       namespace,
       eventSourceEnabled,
-      createConnectorExtensions:
-        createConnectorsResolved && dynamicCreateConnectorsResolved
-          ? [...createConnectors, ...dynamicCreateConnectors].map(
-              (creator) => creator.properties.getCreateConnector,
-            )
-          : [],
+      createConnectorExtensions: createConnectorsResolved
+        ? createConnectors.map((creator) => creator.properties.getCreateConnector)
+        : [],
       decorators: topologyDecorators,
       relationshipProviderExtensions: relationshipProvider,
     }),
@@ -212,8 +204,6 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
       createConnectors,
       createConnectorsResolved,
       createResourceAccess,
-      dynamicCreateConnectors,
-      dynamicCreateConnectorsResolved,
       eventSourceEnabled,
       namespace,
       relationshipProvider,
