@@ -103,7 +103,7 @@ const LoginErrorMessage: React.FC = () => {
       // When the error type is set as auth
       switch (error) {
         case 'missing_state':
-          return t('public~There was an error parsing your state cookie');
+          return t('public~There was an error parsing your state cookie.');
         case 'invalid_state':
           return t(
             'public~There was an error verifying your session. Please log out and try again.',
