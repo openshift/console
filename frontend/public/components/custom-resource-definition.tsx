@@ -67,15 +67,10 @@ import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 
 const { common } = Kebab.factory;
 
-const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>
-  _.get(crd, 'spec.scope') === 'Namespaced'
-    ? `/k8s/all-namespaces/${referenceForCRD(crd)}`
-    : `/k8s/cluster/${referenceForCRD(crd)}`;
-
 const instances = (kind: K8sKind, obj: CustomResourceDefinitionKind) => ({
   // t('public~View instances')
   labelKey: 'public~View instances',
-  href: crdInstancesPath(obj),
+  href: `/k8s/cluster/customresourcedefinitions/${obj.spec.names.plural}.${obj.spec.group}/instances`,
 });
 
 const menuActions: KebabAction[] = [
