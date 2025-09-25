@@ -536,7 +536,7 @@
   "There was an error generating login state.": "There was an error generating login state.",
   "There was an error setting login state cookie": "There was an error setting login state cookie",
   "There was an error logging you out. Please try again.": "There was an error logging you out. Please try again.",
-  "There was an error parsing your state cookie": "There was an error parsing your state cookie",
+  "There was an error parsing your state cookie.": "There was an error parsing your state cookie.",
   "There was an error verifying your session. Please log out and try again.": "There was an error verifying your session. Please log out and try again.",
   "Auth code is missing in query param.": "Auth code is missing in query param.",
   "There was an error logging you in. Please log out and try again.": "There was an error logging you in. Please log out and try again.",
