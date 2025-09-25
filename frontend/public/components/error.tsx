@@ -96,7 +96,7 @@ const LoginErrorMessage: React.FC = () => {
     case 'login_state_error':
       return t('public~There was an error generating login state.');
     case 'cookie_error':
-      return t('public~There was an error setting login state cookie');
+      return t('public~There was an error setting login state cookie.');
     case 'logout_error':
       return t('public~There was an error logging you out. Please try again.');
     case 'auth':
