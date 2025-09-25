@@ -1,13 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import {
-  Status,
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-  LazyActionMenu,
-  DASH,
-} from '@console/shared';
+import { Status, ActionServiceProvider, ActionMenu, ActionMenuVariant } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -16,8 +9,7 @@ import {
   K8sResourceKind,
   K8sResourceKindReference,
   referenceForModel,
-  referenceFor,
-  TableColumn,
+  DeploymentConfigKind,
 } from '../module/k8s';
 import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
@@ -25,18 +17,13 @@ import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DetailsPage, ListPage } from './factory';
 import {
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
   initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { LoadingBox } from './utils/status-box';
-import { sortResourceByValue } from './factory/Table/sort';
 
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { Link } from 'react-router-dom-v5-compat';
 import {
   AsyncComponent,
   ContainerTable,
@@ -49,13 +36,9 @@ import {
   getDocumentationURL,
   documentationURLs,
   isManaged,
-  ResourceLink,
-  LabelList,
-  Selector,
-  resourcePath,
 } from './utils';
 import { ReplicationControllersPage } from './replication-controller';
-import { WorkloadTableHeader } from './workload-table';
+import { WorkloadTableHeader, useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import {
   Alert,
@@ -68,15 +51,6 @@ import {
 } from '@patternfly/react-core';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
-
-const tableColumnInfo = [
-  { id: 'name' },
-  { id: 'namespace' },
-  { id: 'status' },
-  { id: 'labels' },
-  { id: 'podSelector' },
-  { id: 'actions' },
-];
 
 const getDeploymentConfigStatus = (dc: K8sResourceKind): string => {
   const conditions = _.get(dc, 'status.conditions');
@@ -326,106 +300,8 @@ const DeploymentConfigTableHeader = () => {
 };
 DeploymentConfigTableHeader.displayName = 'DeploymentConfigTableHeader';
 
-const getDataViewRows: GetDataViewRows<any, undefined> = (data, columns) => {
-  return data.map(({ obj: dc }) => {
-    const { name, namespace } = dc.metadata;
-    const resourceKind = referenceFor(dc);
-    const context = { [resourceKind]: dc };
-
-    const rowCells = {
-      [tableColumnInfo[0].id]: {
-        cell: <ResourceLink kind="DeploymentConfig" name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
-      },
-      [tableColumnInfo[1].id]: {
-        cell: <ResourceLink kind="Namespace" name={namespace} />,
-      },
-      [tableColumnInfo[2].id]: {
-        cell: (
-          <Link to={`${resourcePath('DeploymentConfig', name, namespace)}/pods`} title="pods">
-            {`${dc.status.replicas || 0} of ${dc.spec.replicas} pods`}
-          </Link>
-        ),
-      },
-      [tableColumnInfo[3].id]: {
-        cell: <LabelList kind="DeploymentConfig" labels={dc.metadata.labels} />,
-      },
-      [tableColumnInfo[4].id]: {
-        cell: <Selector selector={dc.spec.selector} namespace={namespace} />,
-      },
-      [tableColumnInfo[5].id]: {
-        cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
-      },
-    };
-
-    return columns.map(({ id }) => {
-      const cell = rowCells[id]?.cell || DASH;
-      return {
-        id,
-        props: rowCells[id]?.props,
-        cell,
-      };
-    });
-  });
-};
-
-const useDeploymentConfigsColumns = (): TableColumn<any>[] => {
-  const { t } = useTranslation();
-  const columns = React.useMemo(() => {
-    return [
-      {
-        title: t('public~Name'),
-        id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('public~Namespace'),
-        id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('public~Status'),
-        id: tableColumnInfo[2].id,
-        sort: (data, direction) =>
-          data.sort(sortResourceByValue(direction, (obj) => obj.status.replicas || 0)),
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('public~Labels'),
-        id: tableColumnInfo[3].id,
-        sort: 'metadata.labels',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('public~Pod selector'),
-        id: tableColumnInfo[4].id,
-        sort: 'spec.selector',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...cellIsStickyProps,
-        },
-      },
-    ];
-  }, [t]);
-  return columns;
+const getDataViewRows: GetDataViewRows<DeploymentConfigKind, undefined> = (data, columns) => {
+  return getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
 };
 
 export const DeploymentConfigsList: React.FCC<DeploymentConfigsListProps> = ({
@@ -433,7 +309,7 @@ export const DeploymentConfigsList: React.FCC<DeploymentConfigsListProps> = ({
   loaded,
   ...props
 }) => {
-  const columns = useDeploymentConfigsColumns();
+  const columns = useWorkloadColumns<DeploymentConfigKind>();
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
