@@ -159,11 +159,6 @@ const fetchPodMetrics = (namespace: string): Promise<UIActions.PodMetrics> => {
   return Promise.all(promises).then((data: unknown[]) => _.assign({}, ...data));
 };
 
-export const menuActions = [
-  ...(Kebab.getExtensionsActionsForKind(PodModel) || []),
-  ...(Kebab.factory.common || []),
-];
-
 // t('public~Name')
 // t('public~Namespace')
 // t('public~Status')

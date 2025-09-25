@@ -23,6 +23,7 @@ import {
 import {
   DetailsItem,
   Kebab,
+  KebabAction,
   kindObj,
   navFactory,
   ResourceKebab,
@@ -39,8 +40,9 @@ import {
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { useCRDAdditionalPrinterColumns } from '@console/shared/src/hooks/useCRDAdditionalPrinterColumns';
 import { AdditionalPrinterColumnValue } from '@console/shared/src/components/additional-printer-column/AdditionalPrinterColumnValue';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 
-const { common } = Kebab.factory;
+// const { common } = Kebab.factory;
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
@@ -150,8 +152,8 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
 
 const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, customData }) => {
   const kind = referenceFor(obj) || customData.kind;
-
   const model = kindObj(kind);
+  const common = useCommonResourceActions(model, obj);
   const menuActions = [...Kebab.getExtensionsActionsForKind(model), ...common];
   const { t } = useTranslation();
 
@@ -316,8 +318,9 @@ DefaultPage.displayName = 'DefaultPage';
 
 export const DefaultDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
+  const common = useCommonResourceActions(kindObj(props.kind), props.obj);
   const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(props.kind)), ...common];
 
-  return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
+  return <DetailsPage {...props} menuActions={menuActions as KebabAction[]} pages={pages} />;
 };
 DefaultDetailsPage.displayName = 'DefaultDetailsPage';

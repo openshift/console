@@ -1,3 +1,4 @@
+import { Action } from '@console/dynamic-plugin-sdk/src';
 import { KebabAction } from '@console/internal/components/utils/kebab';
 import { K8sKind } from '@console/internal/module/k8s';
 import { Extension } from './base';
@@ -5,7 +6,7 @@ import { Extension } from './base';
 namespace ExtensionProperties {
   export interface KebabActions {
     // no kind should return any actions common for all kinds
-    getKebabActionsForKind: (kind: K8sKind) => KebabAction[];
+    getKebabActionsForKind: (kind: K8sKind) => Action[] | KebabAction[];
   }
 }
 

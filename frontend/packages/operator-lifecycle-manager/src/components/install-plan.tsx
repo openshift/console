@@ -20,7 +20,8 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom-v5-compat';
-import { getUser } from '@console/dynamic-plugin-sdk';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { Action, getUser } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { Conditions } from '@console/internal/components/conditions';
 import {
@@ -96,6 +97,7 @@ export const InstallPlanHint: React.FC<InstallPlanHintProps> = ({ title, body, f
 
 export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
+  const commonActions = useCommonResourceActions(InstallPlanModel, obj);
   const phaseFor = (phase: InstallPlanKind['status']['phase']) => <Status status={phase} />;
   return (
     <>
@@ -162,7 +164,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
       {/* Kebab */}
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab
-          actions={Kebab.factory.common}
+          actions={commonActions}
           kind={referenceForModel(InstallPlanModel)}
           resource={obj}
         />
@@ -547,8 +549,15 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   );
 };
 
-export const InstallPlanDetailsPage: React.FC = (props) => {
+export const InstallPlanDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
+  props,
+) => {
   const params = useParams();
+  const commonActions = useCommonResourceActions(InstallPlanModel, props.obj);
+  const menuActions = [
+    ...Kebab.getExtensionsActionsForKind(InstallPlanModel),
+    ...commonActions,
+  ] as Action[];
   return (
     <DetailsPage
       {...props}
@@ -561,10 +570,7 @@ export const InstallPlanDetailsPage: React.FC = (props) => {
         // t('olm~Components')
         { href: 'components', nameKey: 'olm~Components', component: InstallPlanPreview },
       ]}
-      menuActions={[
-        ...Kebab.getExtensionsActionsForKind(InstallPlanModel),
-        ...Kebab.factory.common,
-      ]}
+      menuActions={menuActions}
     />
   );
 };

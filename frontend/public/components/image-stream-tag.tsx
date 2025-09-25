@@ -22,12 +22,11 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+// import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { Action } from '@console/dynamic-plugin-sdk/src';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
-
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(ImageStreamTagModel), ...common];
 
 // Splits a name/value pair separated by an `=`
 const splitEnv = (nameValue: string) => {
@@ -330,6 +329,12 @@ export const ImageStreamTagsDetailsPage: React.FCC<ImageStreamTagsDetailsPagePro
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();
+  // const commonActions = useCommonResourceActions(ImageStreamTagModel, props.obj);
+
+  const menuActions = [
+    ...Kebab.getExtensionsActionsForKind(ImageStreamTagModel),
+    // ...commonActions,
+  ] as Action[];
   return (
     <DetailsPage
       {...props}

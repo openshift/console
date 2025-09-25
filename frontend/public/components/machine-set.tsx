@@ -20,8 +20,9 @@ import {
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { useTranslation } from 'react-i18next';
 
-import { useActiveColumns } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { Action, useActiveColumns } from '@console/dynamic-plugin-sdk/src/lib-core';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { MachineAutoscalerModel, MachineModel, MachineSetModel, NodeModel } from '../models';
 import {
@@ -112,12 +113,6 @@ const configureMachineAutoscaler: KebabAction = (kind: K8sKind, machineSet: Mach
   },
 });
 
-const menuActions = [
-  editCountAction,
-  configureMachineAutoscaler,
-  ...Kebab.getExtensionsActionsForKind(MachineSetModel),
-  ...Kebab.factory.common,
-];
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
 
@@ -375,6 +370,14 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
     const readyReplicas = getReadyReplicas(obj);
     const desiredReplicas = getDesiredReplicas(obj);
     const instanceType = getMachineSetInstanceType(obj);
+    const commonActions = useCommonResourceActions(MachineSetModel, obj);
+
+    const menuActions = [
+      editCountAction,
+      configureMachineAutoscaler,
+      ...Kebab.getExtensionsActionsForKind(MachineSetModel),
+      ...commonActions,
+    ];
     return (
       <>
         <TableData {...tableColumnInfo[0]}>
@@ -484,19 +487,31 @@ export const MachineSetPage: React.FC<MachineSetPageProps> = ({
   );
 };
 
-export const MachineSetDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    kind={machineSetReference}
-    pages={[
-      navFactory.details(MachineSetDetails),
-      navFactory.editYaml(),
-      navFactory.machines(MachineTabPage),
-      navFactory.events(ResourceEventStream),
-    ]}
-  />
-);
+export const MachineSetDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
+  props,
+) => {
+  const commonActions = useCommonResourceActions(MachineSetModel, props.obj);
+
+  const menuActions = [
+    editCountAction,
+    configureMachineAutoscaler,
+    ...Kebab.getExtensionsActionsForKind(MachineSetModel),
+    ...commonActions,
+  ] as Action[];
+  return (
+    <DetailsPage
+      {...props}
+      menuActions={menuActions}
+      kind={machineSetReference}
+      pages={[
+        navFactory.details(MachineSetDetails),
+        navFactory.editYaml(),
+        navFactory.machines(MachineTabPage),
+        navFactory.events(ResourceEventStream),
+      ]}
+    />
+  );
+};
 
 type MachineSetListProps = {
   data: MachineSetKind[];

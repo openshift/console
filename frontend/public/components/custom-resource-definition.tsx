@@ -20,7 +20,6 @@ import {
   DetailsItem,
   EmptyBox,
   Kebab,
-  KebabAction,
   LoadingBox,
   navFactory,
   ResourceKebab,
@@ -44,6 +43,7 @@ import { DefaultPage } from './default-resource';
 import { GreenCheckCircleIcon, DASH } from '@console/shared';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {
+  Action,
   ResourceListPage as DynamicResourceListPage,
   isResourceListPage as isDynamicResourceListPage,
 } from '@console/dynamic-plugin-sdk';
@@ -64,8 +64,7 @@ import {
   ResourceDataView,
 } from '@console/app/src/components/data-view/ResourceDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-
-const { common } = Kebab.factory;
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 
 const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>
   _.get(crd, 'spec.scope') === 'Namespaced'
@@ -77,12 +76,6 @@ const instances = (kind: K8sKind, obj: CustomResourceDefinitionKind) => ({
   labelKey: 'public~View instances',
   href: crdInstancesPath(obj),
 });
-
-const menuActions: KebabAction[] = [
-  instances,
-  ...Kebab.getExtensionsActionsForKind(CustomResourceDefinitionModel),
-  ...common,
-];
 
 const isEstablished = (conditions: any[]) => {
   const condition = _.find(conditions, (c) => c.type === 'Established');
@@ -340,9 +333,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> 
         cell: <Established crd={obj} />,
       },
       [tableColumnInfo[5].id]: {
-        cell: (
-          <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={obj} />
-        ),
+        cell: <ResourceKebab kind="CustomResourceDefinition" resource={obj} />,
         props: {
           ...actionsCellProps,
         },
@@ -394,8 +385,16 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
     omitFilterToolbar={true}
   />
 );
+export const CustomResourceDefinitionsDetailsPage: React.FC<React.ComponentProps<
+  typeof DetailsPage
+>> = (props) => {
+  const commonActions = useCommonResourceActions(CustomResourceDefinitionModel, props.obj);
 
-export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
+  const menuActions = [
+    instances,
+    ...Kebab.getExtensionsActionsForKind(CustomResourceDefinitionModel),
+    ...commonActions,
+  ] as Action[];
   return (
     <DetailsPage
       {...props}

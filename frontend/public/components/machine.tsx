@@ -27,6 +27,7 @@ import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   DetailsItem,
   Kebab,
+  KebabAction,
   NodeLink,
   ResourceKebab,
   ResourceLink,
@@ -331,19 +332,21 @@ export const MachinePage: React.FC<MachinePageProps> = ({
   );
 };
 
-export const MachineDetailsPage: React.FCC = (props) => (
-  <DetailsPage
-    {...props}
-    kind={machineReference}
-    menuActions={menuActions}
-    pages={[
-      navFactory.details(MachineDetails),
-      navFactory.editYaml(),
-      navFactory.events(ResourceEventStream),
-    ]}
-    getResourceStatus={getMachinePhase}
-  />
-);
+export const MachineDetailsPage: React.FCC = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={machineReference}
+      menuActions={menuActions as KebabAction[]}
+      pages={[
+        navFactory.details(MachineDetails),
+        navFactory.editYaml(),
+        navFactory.events(ResourceEventStream),
+      ]}
+      getResourceStatus={getMachinePhase}
+    />
+  );
+};
 
 export type MachineDetailsProps = {
   obj: MachineKind;

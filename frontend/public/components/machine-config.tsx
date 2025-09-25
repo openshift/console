@@ -34,12 +34,9 @@ import {
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
-const machineConfigMenuActions = [
-  ...Kebab.getExtensionsActionsForKind(MachineConfigModel),
-  ...Kebab.factory.common,
-];
 
 const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>
@@ -126,6 +123,11 @@ const pages = [
 ];
 
 export const MachineConfigDetailsPage: React.FCC<any> = (props) => {
+  const commonActions = useCommonResourceActions(MachineConfigModel, props.obj);
+  const machineConfigMenuActions = [
+    ...Kebab.getExtensionsActionsForKind(MachineConfigModel),
+    ...commonActions,
+  ];
   return (
     <DetailsPage
       {...props}
@@ -146,6 +148,11 @@ const tableColumnClasses = [
 ];
 
 const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ obj }) => {
+  const commonActions = useCommonResourceActions(MachineConfigModel, obj);
+  const machineConfigMenuActions = [
+    ...Kebab.getExtensionsActionsForKind(MachineConfigModel),
+    ...commonActions,
+  ];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>

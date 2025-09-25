@@ -380,7 +380,7 @@ describe('InstallPlanDetailsPage', () => {
     jest
       .spyOn(Router, 'useParams')
       .mockReturnValue({ ns: 'default', name: testInstallPlan.metadata.name });
-    wrapper = shallow(<InstallPlanDetailsPage />);
+    wrapper = shallow(<InstallPlanDetailsPage kind={referenceForModel(InstallPlanModel)} />);
   });
 
   it('renders a `DetailsPage` with correct props', () => {

@@ -28,9 +28,9 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { Action } from '@console/dynamic-plugin-sdk/src';
 
-const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(MachineAutoscalerModel), ...common];
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
 const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = ({ obj }) => {
@@ -58,6 +58,12 @@ const tableColumnClasses = [
 ];
 
 const MachineAutoscalerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
+  const commonActions = useCommonResourceActions(MachineAutoscalerModel, obj);
+
+  const menuActions = [
+    ...Kebab.getExtensionsActionsForKind(MachineAutoscalerModel),
+    ...commonActions,
+  ];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -181,14 +187,24 @@ export const MachineAutoscalerPage: React.FC<MachineAutoscalerPageProps> = (prop
   />
 );
 
-export const MachineAutoscalerDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    kind={machineAutoscalerReference}
-    pages={[navFactory.details(MachineAutoscalerDetails), navFactory.editYaml()]}
-  />
-);
+export const MachineAutoscalerDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
+  props,
+) => {
+  const commonActions = useCommonResourceActions(MachineAutoscalerModel, props.obj);
+
+  const menuActions = [
+    ...Kebab.getExtensionsActionsForKind(MachineAutoscalerModel),
+    ...commonActions,
+  ] as Action[];
+  return (
+    <DetailsPage
+      {...props}
+      menuActions={menuActions}
+      kind={machineAutoscalerReference}
+      pages={[navFactory.details(MachineAutoscalerDetails), navFactory.editYaml()]}
+    />
+  );
+};
 
 type MachineAutoscalerPageProps = {
   showTitle?: boolean;

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import {
   navFactory,
   SectionHeading,
   ResourceSummary,
-  Kebab,
   DetailsItem,
   useAccessReview,
 } from '@console/internal/components/utils';
@@ -77,6 +77,7 @@ const Sources: React.FC<CatalogSourceListPageProps> = (props) => (
 );
 
 export const OperatorHubDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const commonActions = useCommonResourceActions(OperatorHubModel, props.obj);
   const pages = [
     navFactory.details(OperatorHubDetails),
     navFactory.editYaml(),
@@ -87,7 +88,7 @@ export const OperatorHubDetailsPage: React.FC<DetailsPageProps> = (props) => {
       component: Sources,
     },
   ];
-  return <DetailsPage {...props} menuActions={Kebab.factory.common} pages={pages} />;
+  return <DetailsPage {...props} menuActions={commonActions} pages={pages} />;
 };
 
 type OperatorHubDetailsProps = {

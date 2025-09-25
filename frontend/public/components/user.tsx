@@ -31,6 +31,7 @@ import {
 } from './utils';
 
 import { useTranslation } from 'react-i18next';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
@@ -38,6 +39,8 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const commonActions = useCommonResourceActions(UserModel, user);
+
   const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
@@ -55,7 +58,7 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   });
   return (
     <ResourceKebab
-      actions={[impersonateAction, ...Kebab.factory.common]}
+      actions={[impersonateAction, ...commonActions]}
       kind={referenceForModel(UserModel)}
       resource={user}
     />
