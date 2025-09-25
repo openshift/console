@@ -4,11 +4,6 @@
 // TODO: Improve focus and keybinding handling, see https://issues.redhat.com/browse/ODC-3554
 export const isModalOpen = () => document.body.classList.contains('ReactModal__Body--open');
 
-export const configureReplicaCountModal = (props) =>
-  import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */).then((m) =>
-    m.configureReplicaCountModal(props),
-  );
-
 export const configureJobParallelismModal = (props) =>
   import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */).then((m) =>
     m.configureJobParallelismModal(props),

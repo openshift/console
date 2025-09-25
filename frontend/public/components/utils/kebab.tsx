@@ -20,7 +20,6 @@ import {
 import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import {
   annotationsModalLauncher,
-  configureReplicaCountModal,
   taintsModal,
   tolerationsModal,
   labelsModalLauncher,
@@ -259,11 +258,7 @@ const kebabFactory: KebabFactory = {
   ModifyCount: (kind, obj) => ({
     // t('public~Edit Pod count')
     labelKey: 'public~Edit Pod count',
-    callback: () =>
-      configureReplicaCountModal({
-        resourceKind: kind,
-        resource: obj,
-      }),
+    callback: () => {},
     accessReview: asAccessReview(kind, obj, 'patch', 'scale'),
   }),
   ModifyTaints: (kind, obj) => ({

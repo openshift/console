@@ -430,6 +430,17 @@
       "provider": { "$codeRef": "machineSetProvider.useMachineSetActionsProvider" }
     }
   },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "monitoring.coreos.com",
+        "version": "v1",
+        "kind": "Prometheus"
+      },
+      "provider": { "$codeRef": "prometheusProvider.usePrometheusActionsProvider" }
+    }
+  },
 
   {
     "type": "console.page/route",

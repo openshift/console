@@ -66,6 +66,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
             invalidateState(false);
           });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [value, path, props.invalidateState, handlePromise, resourceKind, resource, opts, closeOverlay],
   );
 
@@ -135,26 +136,6 @@ export const useConfigureCountModal = (baseProps?: Partial<ConfigureCountModalPr
     },
     [launcher, baseProps],
   );
-};
-
-export const configureReplicaCountModal = (props) => {
-  const mergedProps = _.assign(
-    {},
-    {
-      defaultValue: 0,
-      titleKey: 'public~Edit Pod count',
-      labelKey: props.resourceKind.labelPluralKey,
-      messageKey: 'public~{{resourceKinds}} maintain the desired number of healthy pods.',
-      messageVariables: { resourceKinds: props.resourceKind.labelPlural },
-      path: '/spec/replicas',
-      buttonTextKey: 'public~Save',
-      opts: { path: 'scale' },
-    },
-    props,
-  );
-
-  // Return the props for the useOverlay pattern
-  return mergedProps;
 };
 
 export const configureJobParallelismModal = (props) => {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import { css } from '@patternfly/react-styles';
@@ -36,7 +36,10 @@ import {
   LabelSelector,
 } from '../module/k8s';
 import { MachinePage } from './machine';
-import { configureReplicaCountModal } from './modals';
+import {
+  useConfigureCountModal,
+  ConfigureCountModalProps,
+} from '@console/internal/components/modals/configure-count-modal';
 import { DetailsPage, TableData } from './factory';
 import VirtualizedTable from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
@@ -69,19 +72,21 @@ const NodesResource = {
   namespaced: false,
 };
 
-const machineReplicasModal = (
-  resourceKind: K8sKind,
-  resource: MachineSetKind | MachineDeploymentKind,
-) =>
-  configureReplicaCountModal({
-    resourceKind,
+const useMachineCountModal = ({ resource }: ConfigureCountModalProps) => {
+  const launchModal = useConfigureCountModal({
+    resourceKind: MachineSetModel,
     resource,
-    // t('public~Edit Machine count')
     titleKey: 'public~Edit Machine count',
-    // t('public~{{resourceKind}} maintain the proper number of healthy machines.')
     messageKey: 'public~{{resourceKind}} maintain the proper number of healthy machines.',
-    messageVariables: { resourceKind: resourceKind.labelPlural },
+    messageVariables: { resourceKind: MachineSetModel.labelPlural },
+    path: '/spec/replicas',
+    buttonTextKey: 'public~Save',
   });
+
+  return useCallback(() => {
+    launchModal();
+  }, [launchModal]);
+};
 
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
@@ -107,11 +112,7 @@ const tableColumnInfo = [
 ];
 
 export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, resource }) => {
-  const editReplicas = (event) => {
-    event.preventDefault();
-    machineReplicasModal(resourceKind, resource);
-  };
-
+  const editReplicas = useMachineCountModal({ resource });
   const desiredReplicas = getDesiredReplicas(resource);
   const replicas = getReplicas(resource);
   const readyReplicas = getReadyReplicas(resource);
@@ -142,7 +143,7 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, reso
                 variant="link"
                 type="button"
                 isInline
-                onClick={editReplicas}
+                onClick={() => editReplicas()}
               >
                 {desiredReplicasText}
               </Button>
@@ -260,7 +261,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
   const [nodes] = useK8sWatchResource<NodeKind[]>(NodesResource);
 
   // TODO (jon) - use React context to share capacityResolver across table columns and rows
-  const capacityResolver = React.useCallback(
+  const capacityResolver = useCallback(
     (obj: MachineSetKind) => {
       const machine = (machines ?? [])?.find((m) => {
         return new LabelSelector(obj.spec.selector).matches(m);
@@ -278,7 +279,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
   );
 
   // TODO (jon) - this should be a hook
-  const machineSetTableColumn = React.useMemo<TableColumn<MachineSetKind>[]>(
+  const machineSetTableColumn = useMemo<TableColumn<MachineSetKind>[]>(
     () => [
       {
         title: t('public~Name'),

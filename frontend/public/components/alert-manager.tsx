@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
@@ -17,18 +17,29 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { referenceForModel, K8sResourceKind } from '../module/k8s';
 import { ListPage, DetailsPage, Table, TableData, RowFunctionArgs } from './factory';
 import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluralize } from './utils';
-import { configureReplicaCountModal } from './modals';
+import { useConfigureCountModal } from './modals/configure-count-modal';
 import { AlertmanagerModel } from '../models';
 
 const Details: React.FCC<DetailsProps> = (props) => {
   const alertManager = props.obj;
   const { metadata, spec } = alertManager;
+  const launchModal = useConfigureCountModal({
+    resourceKind: AlertmanagerModel,
+    resource: alertManager,
+    titleKey: 'public~Edit Alertmanager replicas',
+    messageKey: 'public~Alertmanager maintains the proper number of healthy replicas.',
+    path: '/spec/replicas',
+    buttonTextKey: 'public~Save',
+  });
 
-  const openReplicaCountModal = (event) => {
-    event.preventDefault();
-    event.target.blur();
-    configureReplicaCountModal({ resourceKind: AlertmanagerModel, resource: alertManager });
-  };
+  const openReplicaCountModal = useCallback(
+    (event) => {
+      event.preventDefault();
+      event.target.blur();
+      launchModal();
+    },
+    [launchModal],
+  );
   const { t } = useTranslation();
 
   return (
