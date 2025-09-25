@@ -14,7 +14,7 @@ import type { UserKind } from '@console/internal/module/k8s/types';
  * @returns Object containing user info, user resource, and loading states
  */
 export const useUser = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('public');
   const dispatch = useDispatch();
 
   // Get current user info from Redux (username, groups, etc.)
@@ -51,7 +51,7 @@ export const useUser = () => {
       return currentUsername.trim();
     }
     // Final fallback for edge cases
-    return t('public~Unknown User');
+    return t('Unknown user');
   };
 
   return {

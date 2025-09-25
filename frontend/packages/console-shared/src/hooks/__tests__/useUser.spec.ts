@@ -5,7 +5,7 @@ import { useUser } from '../useUser';
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => key.replace('public~', ''),
+    t: (key: string) => key,
   }),
 }));
 
@@ -86,7 +86,7 @@ describe('useUser', () => {
     });
   });
 
-  it('should handle edge cases with empty strings and fallback to "Unknown User"', () => {
+  it('should handle edge cases with empty strings and fallback to "Unknown user"', () => {
     const mockUser = { username: '' }; // Empty username
     const mockUserResource = { fullName: '   ' }; // Whitespace-only fullName
 
@@ -96,7 +96,7 @@ describe('useUser', () => {
 
     const { result } = testHook(() => useUser());
 
-    expect(result.current.displayName).toBe('Unknown User'); // Should fallback to translated "Unknown User"
+    expect(result.current.displayName).toBe('Unknown User'); // Should fallback to translated "Unknown user"
   });
 
   it('should trim whitespace from fullName and username', () => {
