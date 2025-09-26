@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
-import { useListPageFilter } from '@console/internal/components/factory/ListPage/filter-hook';
 import ListPageCreate from '@console/internal/components/factory/ListPage/ListPageCreate';
-import ListPageFilter from '@console/internal/components/factory/ListPage/ListPageFilter';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -27,7 +25,6 @@ export const PodDisruptionBudgetsPage: React.FC<PodDisruptionBudgetsPageProps> =
     namespace,
   });
 
-  const [data, filteredData, onFilterChange] = useListPageFilter(resources);
   const resourceKind = referenceForModel(PodDisruptionBudgetModel);
   const accessReview = {
     groupVersionKind: resourceKind,
@@ -41,13 +38,7 @@ export const PodDisruptionBudgetsPage: React.FC<PodDisruptionBudgetsPageProps> =
         </ListPageCreate>
       </ListPageHeader>
       <ListPageBody>
-        <ListPageFilter data={data} loaded={loaded} onFilterChange={onFilterChange} />
-        <PodDisruptionBudgetList
-          data={filteredData}
-          unfilteredData={resources}
-          loaded={loaded}
-          loadError={loadError}
-        />
+        <PodDisruptionBudgetList data={resources} loaded={loaded} loadError={loadError} />
       </ListPageBody>
     </>
   );
