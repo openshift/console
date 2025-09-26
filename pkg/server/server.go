@@ -20,10 +20,12 @@ import (
 	"github.com/coreos/pkg/health"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/rest"
 	"k8s.io/klog"
 
 	"github.com/openshift/console/pkg/auth"
-	devconsoleProxy "github.com/openshift/console/pkg/devconsole/proxy"
+	devconsole "github.com/openshift/console/pkg/devconsole"
 	"github.com/openshift/console/pkg/devfile"
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
@@ -164,9 +166,11 @@ type Server struct {
 	HubConsoleURL                       *url.URL // TODO remove multicluster
 	I18nNamespaces                      []string
 	InactivityTimeout                   int
+	InternalProxiedK8SClientConfig      *rest.Config
 	K8sClient                           *http.Client
 	K8sMode                             string
 	K8sProxyConfig                      *proxy.Config
+	ProxyHeaderDenyList                 []string
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
 	KubeAPIServerURL                    string // JS global only. Do no use internally.
@@ -245,6 +249,11 @@ func (s *Server) getManagedClusterList() []string {
 }
 
 func (s *Server) HTTPHandler() http.Handler {
+	internalProxiedDynamic, err := dynamic.NewForConfig(s.InternalProxiedK8SClientConfig)
+	if err != nil {
+		return nil
+	}
+
 	mux := http.NewServeMux()
 
 	// TODO remove multicluster
@@ -556,11 +565,11 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
 
-	// Dev-Console Proxy
+	// Dev-Console Endpoints
 	handle(devConsoleEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, devConsoleEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			devconsoleProxy.Handler(w, r)
+			devconsole.Handler(user, w, r, internalProxiedDynamic, s.K8sMode, s.ProxyHeaderDenyList)
 		})),
 	)
 

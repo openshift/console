@@ -8,3 +8,4 @@ export const PIPELINE_STRATEGY_LABEL = 'pipeline.openshift.io/strategy';
 export const PREFERRED_DEV_PIPELINE_PAGE_TAB_USER_SETTING_KEY = 'pipeline.preferredPipelinePageTab';
 export const FUNC_PIPELINE_RUNTIME_LABEL = 'function.knative.dev/runtime';
 export const ARTIFACTHUB_API_BASE_URL = 'https://artifacthub.io/api/v1';
+export const GITHUB_BASE_URL = 'https://github.com';
