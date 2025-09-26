@@ -1,18 +1,3 @@
-.co-add-remove-form__entry {
-  position: relative;
-}
-
-.co-add-remove-form__entry + .co-add-remove-form__entry {
-  border-top: var(--pf-t--global--border--width--divider--default) solid
-    var(--pf-t--global--border--color--default);
-  padding-top: 10px;
-}
-
-.co-add-remove-form__link--remove-entry {
-  display: flex;
-  flex-flow: row-reverse;
-}
-
 .co-required > * {
   display: inline-block;
 }

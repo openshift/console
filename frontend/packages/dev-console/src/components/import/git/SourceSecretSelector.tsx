@@ -1,25 +1,26 @@
-import * as React from 'react';
+import { FCC, useEffect } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useCreateSecretModal } from '@console/dev-console/src/components/import/CreateSecretModal';
 import { SecretFormType } from '@console/internal/components/secrets/create-secret';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import { getFieldId } from '@console/shared';
 import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';
-import { secretModalLauncher } from '../CreateSecretModal';
 
 const CREATE_SOURCE_SECRET = 'create-source-secret';
 const CLEAR_SOURCE_SECRET = 'clear-source-secret';
 
-const SourceSecretSelector: React.FC<{
+const SourceSecretSelector: FCC<{
   formContextField?: string;
 }> = ({ formContextField }) => {
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
 
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
+  const launchCreateSecretModal = useCreateSecretModal();
   const namespace: string = _.get(values, `${fieldPrefix}project.name`);
   const secret: string = _.get(values, `${fieldPrefix}git.secret`);
   const [data, loaded, loadError] = useK8sWatchResource(
@@ -41,7 +42,7 @@ const SourceSecretSelector: React.FC<{
   const handleDropdownChange = (key: string) => {
     if (key === CREATE_SOURCE_SECRET) {
       setFieldValue(`${fieldPrefix}git.secret`, secret);
-      secretModalLauncher({
+      launchCreateSecretModal({
         namespace,
         save: handleSave,
         formType: SecretFormType.source,
@@ -54,7 +55,7 @@ const SourceSecretSelector: React.FC<{
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     loaded &&
       !loadError &&
       secret &&
@@ -63,39 +64,37 @@ const SourceSecretSelector: React.FC<{
   }, [loaded, loadError, secret, data, setFieldValue, fieldPrefix]);
 
   return (
-    <>
-      <FormGroup
-        fieldId={getFieldId('source-secret', 'dropdown')}
-        label={t('devconsole~Source Secret')}
-      >
-        <SourceSecretDropdown
-          isFullWidth
-          menuClassName="dropdown-menu--text-wrap"
-          namespace={namespace}
-          actionItems={[
-            {
-              actionTitle: t('devconsole~Create new Secret'),
-              actionKey: CREATE_SOURCE_SECRET,
-            },
-            {
-              actionTitle: t('devconsole~No Secret'),
-              actionKey: CLEAR_SOURCE_SECRET,
-            },
-          ]}
-          selectedKey={secret}
-          title={secret}
-          onChange={handleDropdownChange}
-        />
+    <FormGroup
+      fieldId={getFieldId('source-secret', 'dropdown')}
+      label={t('devconsole~Source Secret')}
+    >
+      <SourceSecretDropdown
+        isFullWidth
+        menuClassName="dropdown-menu--text-wrap"
+        namespace={namespace}
+        actionItems={[
+          {
+            actionTitle: t('devconsole~Create new Secret'),
+            actionKey: CREATE_SOURCE_SECRET,
+          },
+          {
+            actionTitle: t('devconsole~No Secret'),
+            actionKey: CLEAR_SOURCE_SECRET,
+          },
+        ]}
+        selectedKey={secret}
+        title={secret}
+        onChange={handleDropdownChange}
+      />
 
-        <FormHelperText>
-          <HelperText>
-            <HelperTextItem>
-              {t('devconsole~Secret with credentials for pulling your source code.')}
-            </HelperTextItem>
-          </HelperText>
-        </FormHelperText>
-      </FormGroup>
-    </>
+      <FormHelperText>
+        <HelperText>
+          <HelperTextItem>
+            {t('devconsole~Secret with credentials for pulling your source code.')}
+          </HelperTextItem>
+        </HelperText>
+      </FormHelperText>
+    </FormGroup>
   );
 };
 

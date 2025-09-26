@@ -3,7 +3,7 @@ import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternf
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { secretModalLauncher } from '@console/dev-console/src/components/import/CreateSecretModal';
+import { useCreateSecretModal } from '@console/dev-console/src/components/import/CreateSecretModal';
 import { SecretFormType } from '@console/internal/components/secrets/create-secret';
 import { getFieldId } from '@console/shared';
 import PushSecretDropdown from './PushSecretDropdown';
@@ -18,6 +18,7 @@ const PushSecretSelector: React.FC<{
   const fieldPrefix = formContextField ? `${formContextField}` : '';
 
   const { t } = useTranslation();
+  const launchCreateSecretModal = useCreateSecretModal();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const secret: string = _.get(values, `${fieldPrefix}`);
 
@@ -28,7 +29,7 @@ const PushSecretSelector: React.FC<{
   const handleDropdownChange = (key: string) => {
     if (key === CREATE_PULL_SECRET) {
       setFieldValue(`${fieldPrefix}`, secret);
-      secretModalLauncher({
+      launchCreateSecretModal({
         namespace,
         save: handleSave,
         formType: SecretFormType.image,

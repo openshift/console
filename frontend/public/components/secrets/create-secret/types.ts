@@ -5,6 +5,11 @@ export enum SecretFormType {
   webhook = 'webhook',
 }
 
+export enum PullSecretAuthenticationType {
+  credentials = 'credentials',
+  config = 'config-file',
+}
+
 export enum SecretType {
   basicAuth = 'kubernetes.io/basic-auth',
   dockercfg = 'kubernetes.io/dockercfg',
@@ -52,7 +57,10 @@ export type OpaqueDataEntry = {
 };
 
 export type OpaqueSecretFormEntryProps = {
+  key: string;
   entry: OpaqueDataEntry;
   index: number;
   onChange: (entry: OpaqueDataEntry, index: number) => void;
+  removeEntry: (index: number) => void;
+  showRemoveButton: boolean;
 };
