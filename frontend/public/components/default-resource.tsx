@@ -151,8 +151,7 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
 const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, customData }) => {
   const kind = referenceFor(obj) || customData.kind;
 
-  const model = kindObj(kind);
-  const menuActions = [...Kebab.getExtensionsActionsForKind(model), ...common];
+  const menuActions = [...common];
   const { t } = useTranslation();
 
   const resourceProviderGuard = React.useCallback(
@@ -316,7 +315,7 @@ DefaultPage.displayName = 'DefaultPage';
 
 export const DefaultDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
-  const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(props.kind)), ...common];
+  const menuActions = [...common];
 
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
 };

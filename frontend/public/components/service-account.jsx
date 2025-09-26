@@ -11,12 +11,11 @@ import {
   ResourceLink,
   ResourceSummary,
 } from './utils';
-import { ServiceAccountModel } from '../models';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(ServiceAccountModel), ...common];
+const menuActions = [...common];
 
 const kind = 'ServiceAccount';
 

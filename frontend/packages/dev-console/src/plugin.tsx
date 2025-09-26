@@ -1,33 +1,14 @@
 import {
-  Plugin,
-  ModelFeatureFlag,
-  KebabActions,
-  ResourceListPage,
-  ResourceDetailsPage,
-  RoutePage,
-  OverviewResourceTab,
-  OverviewTabSection,
   GuidedTour,
+  OverviewResourceTab,
+  Plugin,
   PostFormSubmissionAction,
-  CustomFeatureFlag,
 } from '@console/plugin-sdk';
-import { TopologyDataModelFactory } from '@console/topology/src/extensions';
 import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
 import { getGuidedTour } from './components/guided-tour';
 import { INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
 
-type ConsumedExtensions =
-  | ModelFeatureFlag
-  | CustomFeatureFlag
-  | ResourceListPage
-  | ResourceDetailsPage
-  | RoutePage
-  | KebabActions
-  | OverviewResourceTab
-  | OverviewTabSection
-  | GuidedTour
-  | PostFormSubmissionAction
-  | TopologyDataModelFactory;
+type ConsumedExtensions = OverviewResourceTab | GuidedTour | PostFormSubmissionAction;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {

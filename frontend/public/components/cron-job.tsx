@@ -47,7 +47,7 @@ import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDis
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-export const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
+export const menuActions = [...common];
 
 const kind = 'CronJob';
 

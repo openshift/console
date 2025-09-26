@@ -39,7 +39,6 @@ jest.mock('@console/internal/components/utils', () => ({
     goBack: jest.fn(),
   },
   Kebab: {
-    getExtensionsActionsForKind: jest.fn(() => []),
     factory: {
       common: [],
     },

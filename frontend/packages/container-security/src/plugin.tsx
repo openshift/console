@@ -3,9 +3,7 @@ import {
   ModelDefinition,
   ModelFeatureFlag,
   ResourceListPage,
-  RoutePage,
   ResourceDetailsPage,
-  HorizontalNavTab,
 } from '@console/plugin-sdk';
 import { ContainerSecurityFlag } from './const';
 import { ImageManifestVulnModel } from './models';
@@ -14,9 +12,7 @@ type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
   | ResourceListPage
-  | ResourceDetailsPage
-  | RoutePage
-  | HorizontalNavTab;
+  | ResourceDetailsPage;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {

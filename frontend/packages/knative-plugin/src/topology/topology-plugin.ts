@@ -1,12 +1,6 @@
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { Plugin } from '@console/plugin-sdk';
-import {
-  TopologyComponentFactory,
-  TopologyDataModelFactory,
-  TopologyDisplayFilters,
-  TopologyCreateConnector,
-  TopologyDecoratorProvider,
-} from '@console/topology/src/extensions';
+import { TopologyDataModelFactory } from '@console/topology/src/extensions';
 import {
   FLAG_CAMEL_KAMELETS,
   FLAG_KNATIVE_EVENTING,
@@ -43,12 +37,7 @@ const getIsKnativeResource = () =>
     (m) => m.isKnativeResource,
   );
 
-export type TopologyConsumedExtensions =
-  | TopologyComponentFactory
-  | TopologyDataModelFactory
-  | TopologyDisplayFilters
-  | TopologyCreateConnector
-  | TopologyDecoratorProvider;
+export type TopologyConsumedExtensions = TopologyDataModelFactory;
 
 export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
   {

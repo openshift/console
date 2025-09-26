@@ -30,7 +30,7 @@ import {
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(MachineAutoscalerModel), ...common];
+const menuActions = [...common];
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
 const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = ({ obj }) => {

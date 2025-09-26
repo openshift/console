@@ -50,7 +50,7 @@ import {
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common];
+const menuActions = [...common];
 export const machineReference = referenceForModel(MachineModel);
 
 const tableColumnInfo = [

@@ -78,11 +78,7 @@ const instances = (kind: K8sKind, obj: CustomResourceDefinitionKind) => ({
   href: crdInstancesPath(obj),
 });
 
-const menuActions: KebabAction[] = [
-  instances,
-  ...Kebab.getExtensionsActionsForKind(CustomResourceDefinitionModel),
-  ...common,
-];
+const menuActions: KebabAction[] = [instances, ...common];
 
 const isEstablished = (conditions: any[]) => {
   const condition = _.find(conditions, (c) => c.type === 'Established');

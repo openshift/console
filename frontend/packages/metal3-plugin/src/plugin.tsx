@@ -15,7 +15,6 @@ import {
   DashboardsOverviewInventoryItemReplacement,
   DashboardsInventoryItemGroup,
   CustomFeatureFlag,
-  HorizontalNavTab,
 } from '@console/plugin-sdk';
 // TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
 // no longer import from @console/internal (cyclic deps issues)
@@ -47,8 +46,7 @@ type ConsumedExtensions =
   | ModelFeatureFlag
   | ModelDefinition
   | CustomFeatureFlag
-  | DashboardsOverviewResourceActivity
-  | HorizontalNavTab;
+  | DashboardsOverviewResourceActivity;
 
 const METAL3_FLAG = 'METAL3';
 
