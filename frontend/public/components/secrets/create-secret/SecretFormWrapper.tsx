@@ -12,6 +12,12 @@ import {
   FormHelperText,
   HelperText,
   HelperTextItem,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalVariant,
+  ButtonVariant,
 } from '@patternfly/react-core';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -19,7 +25,6 @@ import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../../mo
 import { ButtonBar } from '../../utils/button-bar';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { resourceObjPath } from '../../utils/resource-link';
-import { ModalBody, ModalTitle, ModalSubmitFooter } from '../../factory/modal';
 import { SecretModel } from '../../../models';
 import { SecretFormType } from './types';
 import {
@@ -127,25 +132,23 @@ export const SecretFormWrapper: FCC<BaseEditSecretProps_> = (props) => {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
 
     return (
-      <>
-        <fieldset disabled={!isCreate}>
-          <FormGroup label={t('public~Secret name')} isRequired fieldId="secret-name">
-            <TextInput
-              type="text"
-              onChange={onNameChanged}
-              value={secret?.metadata?.name || ''}
-              id="secret-name"
-              data-test="secret-name"
-              isRequired
-              isDisabled={!isCreate}
-            />
-            <FormHelperText>
-              <HelperText>
-                <HelperTextItem>{t('public~Unique name of the new secret.')}</HelperTextItem>
-              </HelperText>
-            </FormHelperText>
-          </FormGroup>
-        </fieldset>
+      <Form>
+        <FormGroup label={t('public~Secret name')} isRequired fieldId="secret-name">
+          <TextInput
+            type="text"
+            onChange={onNameChanged}
+            value={secret?.metadata?.name || ''}
+            id="secret-name"
+            data-test="secret-name"
+            isRequired
+            isDisabled={!isCreate}
+          />
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem>{t('public~Unique name of the new secret.')}</HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
         <SecretSubForm
           formType={formType}
           onChange={onDataChanged}
@@ -156,23 +159,30 @@ export const SecretFormWrapper: FCC<BaseEditSecretProps_> = (props) => {
           isCreate={isCreate}
           base64StringData={base64StringData}
         />
-      </>
+      </Form>
     );
   };
 
   return modal ? (
-    <PaneBody className="co-m-pane__form">
-      <Form onSubmit={save}>
-        <ModalTitle>{title}</ModalTitle>
-        <ModalBody>{renderBody()}</ModalBody>
-        <ModalSubmitFooter
-          errorMessage={error || ''}
-          inProgress={inProgress}
-          submitText={t('public~Create')}
-          cancel={onCancel || cancel}
-        />
-      </Form>
-    </PaneBody>
+    <Modal isOpen={true} onClose={onCancel || cancel} title={title} variant={ModalVariant.medium}>
+      <ModalHeader title={title} />
+      <ModalBody>{renderBody()}</ModalBody>
+      <ModalFooter>
+        <Button
+          type="submit"
+          variant={ButtonVariant.primary}
+          isLoading={inProgress}
+          isDisabled={disableForm}
+          onClick={save}
+        >
+          {t('public~Create')}
+        </Button>
+        <Button variant={ButtonVariant.link} onClick={onCancel || cancel} isDisabled={inProgress}>
+          {t('public~Cancel')}
+        </Button>
+        {error && <div className="pf-v6-u-danger-color-100 pf-v6-u-mt-md">{error}</div>}
+      </ModalFooter>
+    </Modal>
   ) : (
     <>
       <DocumentTitle>{title}</DocumentTitle>

@@ -1,4 +1,4 @@
-import { useState, FCC } from 'react';
+import { useState, FCC, MouseEvent as ReactMouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PullSecretCredentialsForm } from './PullSecretCredentialsForm';
 import { PullSecretUploadForm } from './PullSecretUploadForm';
@@ -40,7 +40,7 @@ export const PullSecretForm: FCC<SecretSubFormProps> = ({
   };
 
   const onSelect = (
-    _event: React.MouseEvent<Element, MouseEvent> | undefined,
+    _event: ReactMouseEvent<Element, MouseEvent> | undefined,
     value: string | number | undefined,
   ) => {
     setSelectedAuth(value as PullSecretAuthenticationType);
