@@ -92,6 +92,7 @@ func main() {
 	fK8sModeOffClusterThanos := fs.String("k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Thanos server.")
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
 	fK8sModeOffClusterManagedClusterProxy := fs.String("k8s-mode-off-cluster-managed-cluster-proxy", "", "DEV ONLY. Public URL of the ACM/MCE cluster proxy.")
+	fK8sModeOffClusterServiceAccountBearerTokenFile := fs.String("k8s-mode-off-cluster-service-account-bearer-token-file", "", "DEV ONLY. bearer token file for the service account used for internal K8s API server calls.")
 
 	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
@@ -397,6 +398,14 @@ func main() {
 			RootCAs: rootCAs,
 		})
 
+		srv.InternalProxiedK8SClientConfig = &rest.Config{
+			Host:            k8sEndpoint.String(),
+			BearerTokenFile: k8sInClusterBearerToken,
+			TLSClientConfig: rest.TLSClientConfig{
+				CAFile: k8sInClusterCA,
+			},
+		}
+
 		bearerToken, err := ioutil.ReadFile(k8sInClusterBearerToken)
 		if err != nil {
 			klog.Fatalf("failed to read bearer token: %v", err)
@@ -487,6 +496,15 @@ func main() {
 			Transport: &http.Transport{
 				TLSClientConfig: serviceProxyTLSConfig,
 			},
+		}
+
+		srv.InternalProxiedK8SClientConfig = &rest.Config{
+			Host:      k8sEndpoint.String(),
+			Transport: &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
+		}
+
+		if *fK8sModeOffClusterServiceAccountBearerTokenFile != "" {
+			srv.InternalProxiedK8SClientConfig.BearerTokenFile = *fK8sModeOffClusterServiceAccountBearerTokenFile
 		}
 
 		srv.K8sProxyConfig = &proxy.Config{

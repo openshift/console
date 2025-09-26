@@ -6,7 +6,6 @@ import (
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/devconsole/artifacthub"
-	tektonresults "github.com/openshift/console/pkg/devconsole/tekton-results"
 	"github.com/openshift/console/pkg/devconsole/webhooks"
 	"github.com/openshift/console/pkg/serverutils"
 	"k8s.io/client-go/dynamic"
@@ -44,20 +43,6 @@ func Handler(user *auth.User, w http.ResponseWriter, r *http.Request, dynamicCli
 			// POST /api/dev-console/artifacthub/yaml
 			"yaml": func(r *http.Request, user *auth.User, _ *dynamic.DynamicClient, _ string, _ []string) (interface{}, error) {
 				return artifacthub.GetTaskYAMLFromGithub(r, user)
-			},
-		},
-		"tekton-results": {
-			// POST /api/dev-console/tekton-results/get
-			"get": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, _ []string) (interface{}, error) {
-				return tektonresults.GetTektonResults(r, user, dynamicClient, k8sMode)
-			},
-			// POST /api/dev-console/tekton-results/logs
-			"logs": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, _ []string) (interface{}, error) {
-				return tektonresults.GetTaskRunLog(r, user, dynamicClient, k8sMode)
-			},
-			// POST /api/dev-console/tekton-results/summary
-			"summary": func(r *http.Request, user *auth.User, dynamicClient *dynamic.DynamicClient, k8sMode string, _ []string) (interface{}, error) {
-				return tektonresults.GetResultsSummary(r, user, dynamicClient, k8sMode)
 			},
 		},
 		"webhooks": {
