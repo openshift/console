@@ -1,15 +1,29 @@
 import { useState, useCallback } from 'react';
 import * as _ from 'lodash-es';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  HelperText,
+  HelperTextItem,
+  FormGroup,
+  Form,
+} from '@patternfly/react-core';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { MachineAutoscalerModel } from '../../models';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { NumberSpinner, resourcePathFromModel } from '../utils';
-import { k8sCreate, K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind } from '../../module/k8s';
+import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-const ConfigureMachineAutoscalerModal = (props: ConfigureMachineAutoscalerModalProps) => {
+export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineAutoscalerModalProps> = (
+  props,
+) => {
+  const { machineSet, closeOverlay, close, cancel: cancelProp } = props;
   const navigate = useNavigate();
   const [minReplicas, setMinReplicas] = useState(1);
   const [maxReplicas, setMaxReplicas] = useState(12);
@@ -55,17 +69,24 @@ const ConfigureMachineAutoscalerModal = (props: ConfigureMachineAutoscalerModalP
         },
       },
     };
-    return k8sCreate(MachineAutoscalerModel, machineAutoscaler);
-  }, [props.machineSet, minReplicas, maxReplicas]);
+    return k8sCreateResource({
+      model: MachineAutoscalerModel,
+      data: machineAutoscaler,
+    });
+  }, [machineSet, minReplicas, maxReplicas]);
 
   const submit = useCallback(
     (event): void => {
       event.preventDefault();
-      const { close } = props;
+      // Use destructured close from props
       const promise = createAutoscaler();
       handlePromise(promise)
         .then((obj: K8sResourceKind) => {
-          close();
+          if (closeOverlay) {
+            closeOverlay();
+          } else if (close) {
+            close();
+          }
           navigate(
             resourcePathFromModel(
               MachineAutoscalerModel,
@@ -76,29 +97,26 @@ const ConfigureMachineAutoscalerModal = (props: ConfigureMachineAutoscalerModalP
         })
         .catch(() => {});
     },
-    [props, createAutoscaler, handlePromise, navigate],
+    [createAutoscaler, handlePromise, navigate, closeOverlay, close],
   );
 
   const {
     machineSet: {
       metadata: { name },
     },
-    cancel,
   } = props;
   const { t } = useTranslation();
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle className="modal-header">{t('public~Create MachineAutoscaler')}</ModalTitle>
+    <Modal isOpen onClose={closeOverlay} variant="small">
+      <ModalHeader
+        title={t('public~Create MachineAutoscaler')}
+        labelId="configure-machine-autoscaler-modal-title"
+        description={t('public~This will automatically scale machine set {{ name }}.', { name })}
+      />
       <ModalBody>
-        <p>
-          <Trans t={t} ns="public">
-            This will automatically scale machine set <b>{{ name }}</b>.
-          </Trans>
-        </p>
-        <div className="form-group">
-          <label>
-            {t('public~Minimum replicas:')}
+        <Form>
+          <FormGroup label={t('public~Minimum replicas:')} fieldId="min-replicas" isRequired>
             <NumberSpinner
               value={minReplicas}
               onChange={changeMinReplicas}
@@ -106,35 +124,36 @@ const ConfigureMachineAutoscalerModal = (props: ConfigureMachineAutoscalerModalP
               autoFocus
               required
             />
-          </label>
-        </div>
-        <div className="form-group">
-          <label>
-            {t('public~Maximum replicas:')}
+          </FormGroup>
+          <FormGroup label={t('public~Maximum replicas:')} fieldId="max-replicas" isRequired>
             <NumberSpinner
               value={maxReplicas}
               onChange={changeMaxReplicas}
               changeValueBy={changeMaxReplicasBy}
               required
             />
-          </label>
-        </div>
+          </FormGroup>
+          {errorMessage && (
+            <HelperText isLiveRegion className="pf-v6-u-mt-md">
+              <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
+            </HelperText>
+          )}
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        inProgress={inProgress}
-        errorMessage={errorMessage}
-        cancel={cancel}
-        submitText={t('public~Create')}
-        cancelText={t('public~Cancel')}
-      />
-    </form>
+      <ModalFooter>
+        <Button variant="secondary" onClick={closeOverlay || cancelProp} type="button">
+          {t('public~Cancel')}
+        </Button>
+        <Button variant="primary" isLoading={inProgress} onClick={submit}>
+          {t('public~Create')}
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 };
 
-export const configureMachineAutoscalerModal = createModalLauncher(ConfigureMachineAutoscalerModal);
-
 type ConfigureMachineAutoscalerModalProps = {
   machineSet: K8sResourceKind;
-  cancel: () => void;
-  close: () => void;
+  cancel?: () => void;
+  close?: () => void;
 };

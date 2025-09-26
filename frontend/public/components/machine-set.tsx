@@ -1,5 +1,4 @@
-import * as React from 'react';
-import * as _ from 'lodash-es';
+import { useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import { css } from '@patternfly/react-styles';
@@ -19,13 +18,15 @@ import {
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { useTranslation } from 'react-i18next';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 import { useActiveColumns } from '@console/dynamic-plugin-sdk/src/lib-core';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-import { MachineAutoscalerModel, MachineModel, MachineSetModel, NodeModel } from '../models';
+import { MachineModel, MachineSetModel, NodeModel } from '../models';
 import {
   K8sKind,
+  K8sResourceKind,
   MachineDeploymentKind,
   MachineSetKind,
   MachineKind,
@@ -35,7 +36,10 @@ import {
   LabelSelector,
 } from '../module/k8s';
 import { MachinePage } from './machine';
-import { configureMachineAutoscalerModal, configureReplicaCountModal } from './modals';
+import {
+  useConfigureCountModal,
+  ConfigureCountModalProps,
+} from '@console/internal/components/modals/configure-count-modal';
 import { DetailsPage, TableData } from './factory';
 import VirtualizedTable from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
@@ -45,8 +49,6 @@ import { useListPageFilter } from './factory/ListPage/filter-hook';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   Kebab,
-  KebabAction,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -70,49 +72,22 @@ const NodesResource = {
   namespaced: false,
 };
 
-const machineReplicasModal = (
-  resourceKind: K8sKind,
-  resource: MachineSetKind | MachineDeploymentKind,
-) =>
-  configureReplicaCountModal({
-    resourceKind,
+const useMachineCountModal = ({ resource }: ConfigureCountModalProps) => {
+  const launchModal = useConfigureCountModal({
+    resourceKind: MachineSetModel,
     resource,
-    // t('public~Edit Machine count')
     titleKey: 'public~Edit Machine count',
-    // t('public~{{resourceKind}} maintain the proper number of healthy machines.')
     messageKey: 'public~{{resourceKind}} maintain the proper number of healthy machines.',
-    messageVariables: { resourceKind: resourceKind.labelPlural },
+    messageVariables: { resourceKind: MachineSetModel.labelPlural },
+    path: '/spec/replicas',
+    buttonTextKey: 'public~Save',
   });
 
-export const editCountAction: KebabAction = (
-  kind: K8sKind,
-  resource: MachineSetKind | MachineDeploymentKind,
-) => ({
-  // t('public~Edit Machine count')
-  labelKey: 'public~Edit Machine count',
-  callback: () => machineReplicasModal(kind, resource),
-  accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: resource.metadata.name,
-    namespace: resource.metadata.namespace,
-    verb: 'patch',
-  },
-});
+  return useCallback(() => {
+    launchModal();
+  }, [launchModal]);
+};
 
-const configureMachineAutoscaler: KebabAction = (kind: K8sKind, machineSet: MachineSetKind) => ({
-  // t('public~Create MachineAutoscaler')
-  labelKey: 'public~Create MachineAutoscaler',
-  callback: () => configureMachineAutoscalerModal({ machineSet, cancel: _.noop, close: _.noop }),
-  accessReview: {
-    group: MachineAutoscalerModel.apiGroup,
-    resource: MachineAutoscalerModel.plural,
-    namespace: machineSet.metadata.namespace,
-    verb: 'create',
-  },
-});
-
-const menuActions = [editCountAction, configureMachineAutoscaler, ...Kebab.factory.common];
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
 
@@ -137,11 +112,7 @@ const tableColumnInfo = [
 ];
 
 export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, resource }) => {
-  const editReplicas = (event) => {
-    event.preventDefault();
-    machineReplicasModal(resourceKind, resource);
-  };
-
+  const editReplicas = useMachineCountModal({ resource });
   const desiredReplicas = getDesiredReplicas(resource);
   const replicas = getReplicas(resource);
   const readyReplicas = getReadyReplicas(resource);
@@ -172,7 +143,7 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({ resourceKind, reso
                 variant="link"
                 type="button"
                 isInline
-                onClick={editReplicas}
+                onClick={() => editReplicas()}
               >
                 {desiredReplicasText}
               </Button>
@@ -290,7 +261,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
   const [nodes] = useK8sWatchResource<NodeKind[]>(NodesResource);
 
   // TODO (jon) - use React context to share capacityResolver across table columns and rows
-  const capacityResolver = React.useCallback(
+  const capacityResolver = useCallback(
     (obj: MachineSetKind) => {
       const machine = (machines ?? [])?.find((m) => {
         return new LabelSelector(obj.spec.selector).matches(m);
@@ -308,7 +279,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
   );
 
   // TODO (jon) - this should be a hook
-  const machineSetTableColumn = React.useMemo<TableColumn<MachineSetKind>[]>(
+  const machineSetTableColumn = useMemo<TableColumn<MachineSetKind>[]>(
     () => [
       {
         title: t('public~Name'),
@@ -404,7 +375,7 @@ export const MachineSetList: React.FC<MachineSetListProps> = (props) => {
         <TableData {...tableColumnInfo[4]}>{t('public~{{count}} core', { count: cpu })}</TableData>
         <TableData {...tableColumnInfo[5]}>{t('public~{{memory}} GiB', { memory })}</TableData>
         <TableData {...tableColumnInfo[6]}>
-          <ResourceKebab actions={menuActions} kind={machineSetReference} resource={obj} />
+          <LazyActionMenu context={{ [machineSetReference]: obj }} />
         </TableData>
       </>
     );
@@ -482,8 +453,10 @@ export const MachineSetPage: React.FC<MachineSetPageProps> = ({
 export const MachineSetDetailsPage: React.FC = (props) => (
   <DetailsPage
     {...props}
-    menuActions={menuActions}
     kind={machineSetReference}
+    customActionMenu={(obj: K8sResourceKind) => (
+      <LazyActionMenu context={{ [machineSetReference]: obj }} />
+    )}
     pages={[
       navFactory.details(MachineSetDetails),
       navFactory.editYaml(),

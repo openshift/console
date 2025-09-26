@@ -4,16 +4,6 @@
 // TODO: Improve focus and keybinding handling, see https://issues.redhat.com/browse/ODC-3554
 export const isModalOpen = () => document.body.classList.contains('ReactModal__Body--open');
 
-export const configureCountModal = (props) =>
-  import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */).then((m) =>
-    m.configureCountModal(props),
-  );
-
-export const configureReplicaCountModal = (props) =>
-  import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */).then((m) =>
-    m.configureReplicaCountModal(props),
-  );
-
 export const configureJobParallelismModal = (props) =>
   import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */).then((m) =>
     m.configureJobParallelismModal(props),
@@ -102,11 +92,6 @@ export const configureClusterUpstreamModal = (props) =>
   import(
     './configure-cluster-upstream-modal' /* webpackChunkName: "configure-cluster-upstream-modal" */
   ).then((m) => m.configureClusterUpstreamModal(props));
-
-export const configureMachineAutoscalerModal = (props) =>
-  import(
-    './configure-machine-autoscaler-modal' /* webpackChunkName: "configure-machine-autoscaler-modal" */
-  ).then((m) => m.configureMachineAutoscalerModal(props));
 
 export const createAlertRoutingModal = (props) =>
   import('./alert-routing-modal' /* webpackChunkName: "alert-routing-modal" */).then((m) =>

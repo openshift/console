@@ -6,10 +6,10 @@ import {
   annotationsModalLauncher,
   deleteModal,
   labelsModalLauncher,
-  configureReplicaCountModal,
   podSelectorModal,
   tolerationsModal,
 } from '@console/internal/components/modals';
+import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
 import { resourceObjPath, asAccessReview } from '@console/internal/components/utils';
 import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { CommonActionCreator, ActionObject } from './types';
@@ -41,6 +41,18 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   editPath?: string,
 ): [ActionObject<T>, boolean] => {
   const { t } = useTranslation();
+  const launchCountModal = useConfigureCountModal({
+    resourceKind: kind,
+    resource,
+    defaultValue: 0,
+    titleKey: 'public~Edit Pod count',
+    labelKey: kind?.labelPluralKey,
+    messageKey: 'public~{{resourceKinds}} maintain the desired number of healthy pods.',
+    messageVariables: { resourceKinds: kind?.labelPlural },
+    path: '/spec/replicas',
+    buttonTextKey: 'public~Save',
+    opts: { path: 'scale' },
+  });
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
@@ -103,11 +115,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       [CommonActionCreator.ModifyCount]: (): Action => ({
         id: 'edit-pod-count',
         label: t('console-app~Edit Pod count'),
-        cta: () =>
-          configureReplicaCountModal({
-            resourceKind: kind,
-            resource,
-          }),
+        cta: launchCountModal,
         accessReview: asAccessReview(
           kind as K8sModel,
           resource as K8sResourceKind,
@@ -149,6 +157,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [kind, resource, t, message, actualEditPath],
   );
 
