@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route, useLocation } from 'react-router-dom-v5-compat';
+import { createPath, Route, useLocation } from 'react-router-dom-v5-compat';
 import {
   useActivePerspective,
   RoutePage as DynamicRoutePageExtension,
@@ -55,13 +55,13 @@ const RoutePage: React.FCC<RoutePageProps> = ({
   setActivePerspective,
 }) => {
   const active = isRoutePageExtensionActive(extension, activePerspective);
-  const { pathname } = useLocation();
+  const location = useLocation();
   return active ? (
     <LazyRoutePage extension={extension} />
   ) : (
     <InactiveRoutePage
       extension={extension}
-      path={pathname}
+      path={createPath(location)}
       setActivePerspective={setActivePerspective}
     />
   );
