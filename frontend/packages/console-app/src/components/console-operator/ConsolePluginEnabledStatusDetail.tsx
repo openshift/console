@@ -23,13 +23,13 @@ const ConsolePluginEnabledStatusDetail: React.FC<DetailsItemComponentProps> = ({
     consoleOperatorConfig?.spec?.plugins,
   ]);
 
-  return consoleOperatorConfigLoaded ? (
+  return consoleOperatorConfigLoaded && pluginName ? (
     <ConsolePluginEnabledStatus
       pluginName={pluginName}
       enabled={
         developmentMode
-          ? (isLoadedDynamicPluginInfo(pluginInfo) && pluginInfo.enabled) ?? false
-          : enabledPlugins.includes(pluginName) ?? false
+          ? (pluginInfo && isLoadedDynamicPluginInfo(pluginInfo) && pluginInfo.enabled) ?? false
+          : enabledPlugins.includes(pluginName)
       }
     />
   ) : (
