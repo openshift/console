@@ -25,10 +25,6 @@ func newTestVerifier(payload string) IDTokenVerifier {
 	return verifier.Verify
 }
 
-func testErrVerifier(context.Context, string) (*oidc.IDToken, error) {
-	return nil, fmt.Errorf("not a valid token: this is a test")
-}
-
 func TestNewLoginState(t *testing.T) {
 	exp := time.Now().Unix()
 	tests := []struct {
