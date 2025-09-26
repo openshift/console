@@ -206,8 +206,6 @@ const App = (props) => {
     }
   };
 
-  const { productName } = getBrandingDetails();
-
   const isNotificationDrawerExpanded = useSelector(
     (state) => !!state.UI.getIn(['notifications', 'isExpanded']),
   );
@@ -223,8 +221,7 @@ const App = (props) => {
   };
 
   const content = (
-    <HelmetProvider>
-      <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+    <>
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
         <Flex
@@ -279,7 +276,7 @@ const App = (props) => {
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />
       <FeatureFlagExtensionLoader />
-    </HelmetProvider>
+    </>
   );
 
   return (
@@ -324,7 +321,7 @@ const AppRouter = () => {
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
       <CompatRouter>
         <Routes>
-          <Route path={LOGIN_ERROR_PATH} component={AuthenticationErrorPage} />
+          <Route path={LOGIN_ERROR_PATH} element={<AuthenticationErrorPage />} />
           {standaloneRouteExtensions.map((e) => (
             <Route
               key={e.uid}
@@ -606,6 +603,7 @@ const initApiDiscovery = (storeInstance) => {
 };
 
 graphQLReady.onReady(() => {
+  const { productName } = getBrandingDetails();
   store.dispatch(detectFeatures());
 
   // Global timer to ensure all <Timestamp> components update in sync
@@ -660,19 +658,22 @@ graphQLReady.onReady(() => {
     <React.Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
         <ThemeProvider>
-          <AppInitSDK
-            configurations={{
-              appFetch: appInternalFetch,
-              apiDiscovery: initApiDiscovery,
-              initPlugins,
-            }}
-          >
-            <ToastProvider>
-              <PollConsoleUpdates />
-              <AdmissionWebhookWarningNotifications />
-              <AppRouter />
-            </ToastProvider>
-          </AppInitSDK>
+          <HelmetProvider>
+            <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+            <AppInitSDK
+              configurations={{
+                appFetch: appInternalFetch,
+                apiDiscovery: initApiDiscovery,
+                initPlugins,
+              }}
+            >
+              <ToastProvider>
+                <PollConsoleUpdates />
+                <AdmissionWebhookWarningNotifications />
+                <AppRouter />
+              </ToastProvider>
+            </AppInitSDK>
+          </HelmetProvider>
         </ThemeProvider>
       </Provider>
     </React.Suspense>,
