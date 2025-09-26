@@ -62,6 +62,8 @@ describe('Debug pod', () => {
     cy.byTestID('debug-container-link').click();
     listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
     cy.get(XTERM_CLASS).should('exist');
+    cy.get('[data-test-id="breadcrumb-link-0"]').click();
+    listPage.rows.shouldExist(POD_NAME);
   });
 
   it('Opens debug terminal page from Pod Details - Status tool tip', () => {
@@ -71,6 +73,8 @@ describe('Debug pod', () => {
     cy.byTestID(`popup-debug-container-link-${CONTAINER_NAME}`).click();
     listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
     cy.get(XTERM_CLASS).should('exist');
+    cy.get('[data-test-id="breadcrumb-link-0"]').click();
+    listPage.rows.shouldExist(POD_NAME);
   });
 
   it('Opens debug terminal page from Pods Page - Status tool tip', () => {
@@ -81,5 +85,27 @@ describe('Debug pod', () => {
     cy.byTestID(`popup-debug-container-link-${CONTAINER_NAME}`).click();
     listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
     cy.get(XTERM_CLASS).should('exist');
+
+    cy.log('debug pod should not copy main pod network info');
+    cy.exec(
+      `oc get pods -n ${testName} -o jsonpath='{.items[0].status.podIP}{"#"}{.items[1].status.podIP}'`,
+    ).then((result) => {
+      const [ipAddressOne, ipAddressTwo] = result.stdout.split('#');
+      expect(`${ipAddressOne}`).to.not.equal(`${ipAddressTwo}`);
+    });
+    cy.get('[data-test-id="breadcrumb-link-0"]').click();
+    listPage.rows.shouldExist(POD_NAME);
+  });
+
+  it('Debug pod should be terminated after leaving debug container page', () => {
+    cy.visit(`/k8s/ns/${testName}/pods`);
+    listPage.rows.shouldExist(POD_NAME);
+    listPage.filter.by('Running');
+    cy.exec(
+      `oc get pods -n ${testName} -o jsonpath='{.items[0].metadata.name}{"#"}{.items[1].metadata.name}'`,
+    ).then((result) => {
+      const debugPodName = result.stdout.split('#')[1];
+      listPage.rows.shouldNotExist(debugPodName);
+    });
   });
 });
