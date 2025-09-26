@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: examplepod1
+  labels:
+    app: httpd
+spec:
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: container1
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest'
+      args:
+      - /bin/sh
+      - -c
+      - >
+        i=0;
+        while true;
+        do
+          echo "$i:Log   TEST   $(date)" >> /var/log/1.log;
+          echo "$(date):Log    INFO     $i" >> /var/log/2.log;
+          i=$((i+1));
+          sleep 1;
+        done
+      volumeMounts:
+      - name: varlog
+        mountPath: /var/log
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+    - name: container2
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest'
+      args: [/bin/sh, -c, 'tail -n+1 -f /var/log/1.log']
+      volumeMounts:
+      - name: varlog
+        mountPath: /var/log
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+  volumes:
+  - name: varlog
+    emptyDir: {}
