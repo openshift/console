@@ -73,27 +73,14 @@ export const usePluginRoutes: UsePluginRoutes = () => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const getRoutesForExtension = React.useCallback(
     (extension: LoadedRoutePageExtension): React.ReactElement[] => {
-      if (Array.isArray(extension.properties.path)) {
-        return extension.properties.path.map((path) => (
-          <Route
-            {...extension.properties}
-            path={`${path}${extension.properties.exact ? '' : '/*'}`}
-            key={path}
-            element={
-              <RoutePage
-                extension={extension}
-                activePerspective={activePerspective}
-                setActivePerspective={setActivePerspective}
-              />
-            }
-          />
-        ));
-      }
-      return [
+      const paths = Array.isArray(extension.properties.path)
+        ? extension.properties.path
+        : [extension.properties.path];
+      return paths.map((path) => (
         <Route
           {...extension.properties}
-          path={`${extension.properties.path}${extension.properties.exact ? '' : '/*'}`}
-          key={extension.properties.path}
+          path={`${path}${extension.properties.exact ? '' : '/*'}`}
+          key={path}
           element={
             <RoutePage
               extension={extension}
@@ -101,8 +88,8 @@ export const usePluginRoutes: UsePluginRoutes = () => {
               setActivePerspective={setActivePerspective}
             />
           }
-        />,
-      ];
+        />
+      ));
     },
     [activePerspective, setActivePerspective],
   );
