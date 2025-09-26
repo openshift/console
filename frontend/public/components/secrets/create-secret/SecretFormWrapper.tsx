@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { FCC, useState, FormEvent } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
@@ -31,7 +31,7 @@ import {
 import { SecretSubForm } from './SecretSubForm';
 import { isBinary } from 'istextorbinary';
 
-export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
+export const SecretFormWrapper: FCC<BaseEditSecretProps_> = (props) => {
   const { formType, isCreate, modal, onCancel } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -49,10 +49,10 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     type: defaultSecretType,
   });
 
-  const [secret, setSecret] = React.useState(initialSecret);
-  const [inProgress, setInProgress] = React.useState(false);
-  const [error, setError] = React.useState();
-  const [stringData, setStringData] = React.useState(
+  const [secret, setSecret] = useState(initialSecret);
+  const [inProgress, setInProgress] = useState(false);
+  const [error, setError] = useState();
+  const [stringData, setStringData] = useState(
     Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
       if (isBinary(null, Buffer.from(value, 'base64'))) {
         return null;
@@ -61,8 +61,8 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
       return acc;
     }, {}),
   );
-  const [base64StringData, setBase64StringData] = React.useState(props?.obj?.data ?? {});
-  const [disableForm, setDisableForm] = React.useState(false);
+  const [base64StringData, setBase64StringData] = useState(props?.obj?.data ?? {});
+  const [disableForm, setDisableForm] = useState(false);
   const title = useSecretTitle(isCreate, formType);
   const helptext = useSecretDescription(formType);
   const cancel = () => navigate(`/k8s/ns/${params.ns}/core~v1~Secret`);
@@ -77,7 +77,7 @@ export const SecretFormWrapper: React.FC<BaseEditSecretProps_> = (props) => {
     setInProgress(false);
   };
 
-  const onNameChanged = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const onNameChanged = (_event: FormEvent<HTMLInputElement>, value: string) => {
     const newSecret = _.cloneDeep(secret);
     newSecret.metadata.name = value;
     setSecret(newSecret);

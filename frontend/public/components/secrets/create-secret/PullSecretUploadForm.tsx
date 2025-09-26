@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FCC, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, FormGroup } from '@patternfly/react-core';
 import { OnSecretChange, SecretStringData, SecretType } from './types';
@@ -6,7 +6,7 @@ import { AUTHS_KEY } from './const';
 import { DroppableFileInput } from './DropableFileInput';
 import { getPullSecretFileName } from './utils';
 
-export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
+export const PullSecretUploadForm: FCC<PullSecretUploadFormProps> = ({
   onChange,
   stringData,
   secretType,
@@ -15,10 +15,10 @@ export const PullSecretUploadForm: React.FC<PullSecretUploadFormProps> = ({
   const { t } = useTranslation();
   const fileName = getPullSecretFileName(secretType);
   const configContent = stringData[fileName] ?? '';
-  const [configFile, setConfigFile] = React.useState<string>(configContent);
-  const [parseError, setParseError] = React.useState<boolean>(false);
+  const [configFile, setConfigFile] = useState<string>(configContent);
+  const [parseError, setParseError] = useState<boolean>(false);
 
-  const onFileChange = React.useCallback(
+  const onFileChange = useCallback(
     (fileData: string) => {
       try {
         setConfigFile(fileData);

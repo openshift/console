@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, FCC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -11,7 +11,7 @@ import {
   newPullSecretCredential,
 } from './utils';
 
-export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps> = ({
+export const PullSecretCredentialsForm: FCC<PullSecretCredentialsFormProps> = ({
   onChange,
   stringData,
   onError,
@@ -20,9 +20,9 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
   const { t } = useTranslation();
   const pullSecretFileName = getPullSecretFileName(secretType);
   const pullSecretJSON = stringData[pullSecretFileName];
-  const [entries, setEntries] = React.useState(arrayifyPullSecret(pullSecretJSON, onError));
+  const [entries, setEntries] = useState(arrayifyPullSecret(pullSecretJSON, onError));
 
-  React.useEffect(() => {
+  useEffect(() => {
     const newPullSecretJSON = stringifyPullSecret(entries, secretType);
     if (newPullSecretJSON && newPullSecretJSON !== pullSecretJSON) {
       onChange({ stringData: { [pullSecretFileName]: newPullSecretJSON } });

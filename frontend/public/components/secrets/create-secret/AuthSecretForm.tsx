@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FCC, useState, Ref, MouseEvent as ReactMouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   FormGroup,
@@ -12,16 +12,16 @@ import { SecretType, SecretSubFormProps, SecretStringData } from './types';
 import { BasicAuthSubform } from './BasicAuthSubform';
 import { SSHAuthSubform } from './SSHAuthSubform';
 
-export const AuthSecretForm: React.FC<SecretSubFormProps> = ({
+export const AuthSecretForm: FCC<SecretSubFormProps> = ({
   onChange,
   stringData,
   isCreate,
   secretType,
 }) => {
   const { t } = useTranslation();
-  const [authType, setAuthType] = React.useState<SecretType>(secretType);
-  const [data, setData] = React.useState<SecretStringData>(stringData);
-  const [isAuthTypeSelectOpen, setIsAuthTypeSelectOpen] = React.useState(false);
+  const [authType, setAuthType] = useState<SecretType>(secretType);
+  const [data, setData] = useState<SecretStringData>(stringData);
+  const [isAuthTypeSelectOpen, setIsAuthTypeSelectOpen] = useState(false);
 
   const getDisplayText = (type: SecretType): string => {
     switch (type) {
@@ -43,10 +43,7 @@ export const AuthSecretForm: React.FC<SecretSubFormProps> = ({
     setIsAuthTypeSelectOpen(!isAuthTypeSelectOpen);
   };
 
-  const onSelect = (
-    _event: React.MouseEvent<Element, MouseEvent> | undefined,
-    value: string | number | undefined,
-  ) => {
+  const onSelect = (_event?: ReactMouseEvent<Element, MouseEvent>, value?: string | number) => {
     setAuthType(value as SecretType);
     setIsAuthTypeSelectOpen(false);
   };
@@ -60,7 +57,7 @@ export const AuthSecretForm: React.FC<SecretSubFormProps> = ({
             selected={authType}
             onSelect={onSelect}
             onOpenChange={(isOpen: boolean) => setIsAuthTypeSelectOpen(isOpen)}
-            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            toggle={(toggleRef: Ref<MenuToggleElement>) => (
               <MenuToggle
                 isFullWidth
                 ref={toggleRef}

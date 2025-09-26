@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, FCC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -6,7 +6,7 @@ import { SecretSubFormProps, OpaqueDataEntry } from './types';
 import { OpaqueSecretFormEntry } from './OpaqueSecretFormEntry';
 import { opaqueSecretObjectToArray, newOpaqueSecretEntry, opaqueEntriesToObject } from './utils';
 
-export const OpaqueSecretForm: React.FC<SecretSubFormProps> = ({ onChange, base64StringData }) => {
+export const OpaqueSecretForm: FCC<SecretSubFormProps> = ({ onChange, base64StringData }) => {
   const { t } = useTranslation();
   const [opaqueDataEntries, setOpaqueDataEntries] = useState(
     opaqueSecretObjectToArray(base64StringData),

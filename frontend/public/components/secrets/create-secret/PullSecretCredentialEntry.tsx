@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FCC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
 import {
@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 
-export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps> = ({
+export const PullSecretCredentialEntry: FCC<PullSecretCredentialEntryProps> = ({
   id,
   address,
   email,
@@ -24,7 +24,7 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
 }) => {
   const { t } = useTranslation();
 
-  const updateEntry = React.useCallback(
+  const updateEntry = useCallback(
     (name: string, value: string): void => {
       const trimmedUsername = username.trim();
       const trimmedPassword = password.trim();
