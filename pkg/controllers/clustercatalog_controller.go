@@ -32,8 +32,8 @@ func NewClusterCatalogReconciler(mgr ctrl.Manager, cs olm.CatalogService) *Clust
 
 // Reconcile implements the reconcile.Reconciler interface
 func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
-	klog.Infof("Reconciling ClusterCatalog %s", req.Name)
-	defer klog.Infof("Reconcilation ending for ClusterCatalog %s", req.Name)
+	klog.Infof("Starting reconciliation for ClusterCatalog %s", req.Name)
+	defer klog.Infof("Ending reconciliation for ClusterCatalog %s", req.Name)
 
 	clusterCatalog := &ocv1.ClusterCatalog{}
 

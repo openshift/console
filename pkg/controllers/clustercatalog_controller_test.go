@@ -25,6 +25,8 @@ type mockCatalogService struct {
 	lastBaseURL         string
 }
 
+const testCatalogName = "test-catalog"
+
 func (m *mockCatalogService) UpdateCatalog(catalogName string, baseURL string) error {
 	m.updateCatalogCalled = true
 	m.lastCatalogName = catalogName
@@ -52,12 +54,12 @@ func createTestReconciler(objects ...client.Object) (*ClusterCatalogReconciler, 
 	}, mockService
 }
 
-func TestReconcile_ClusterCatalogNotFound(t *testing.T) {
+func TestReconcileClusterCatalogNotFound(t *testing.T) {
 	reconciler, mockService := createTestReconciler()
 
 	req := reconcile.Request{
 		NamespacedName: types.NamespacedName{
-			Name: "test-catalog",
+			Name: testCatalogName,
 		},
 	}
 
@@ -66,13 +68,13 @@ func TestReconcile_ClusterCatalogNotFound(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, reconcile.Result{}, result)
 	assert.True(t, mockService.removeCatalogCalled)
-	assert.Equal(t, "test-catalog", mockService.lastCatalogName)
+	assert.Equal(t, testCatalogName, mockService.lastCatalogName)
 }
 
-func TestReconcile_ClusterCatalogNoURLs(t *testing.T) {
+func TestReconcileClusterCatalogNoURLs(t *testing.T) {
 	clusterCatalog := &ocv1.ClusterCatalog{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "test-catalog",
+			Name: testCatalogName,
 		},
 		Status: ocv1.ClusterCatalogStatus{
 			URLs: nil,
@@ -83,7 +85,7 @@ func TestReconcile_ClusterCatalogNoURLs(t *testing.T) {
 
 	req := reconcile.Request{
 		NamespacedName: types.NamespacedName{
-			Name: "test-catalog",
+			Name: testCatalogName,
 		},
 	}
 
@@ -95,10 +97,10 @@ func TestReconcile_ClusterCatalogNoURLs(t *testing.T) {
 	assert.False(t, mockService.removeCatalogCalled)
 }
 
-func TestReconcile_ClusterCatalogEmptyBaseURL(t *testing.T) {
+func TestReconcileClusterCatalogEmptyBaseURL(t *testing.T) {
 	clusterCatalog := &ocv1.ClusterCatalog{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "test-catalog",
+			Name: testCatalogName,
 		},
 		Status: ocv1.ClusterCatalogStatus{
 			URLs: &ocv1.ClusterCatalogURLs{
@@ -111,7 +113,7 @@ func TestReconcile_ClusterCatalogEmptyBaseURL(t *testing.T) {
 
 	req := reconcile.Request{
 		NamespacedName: types.NamespacedName{
-			Name: "test-catalog",
+			Name: testCatalogName,
 		},
 	}
 
@@ -123,10 +125,10 @@ func TestReconcile_ClusterCatalogEmptyBaseURL(t *testing.T) {
 	assert.False(t, mockService.removeCatalogCalled)
 }
 
-func TestReconcile_ClusterCatalogSuccess(t *testing.T) {
+func TestReconcileClusterCatalogSuccess(t *testing.T) {
 	clusterCatalog := &ocv1.ClusterCatalog{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "test-catalog",
+			Name: testCatalogName,
 		},
 		Status: ocv1.ClusterCatalogStatus{
 			URLs: &ocv1.ClusterCatalogURLs{
@@ -139,7 +141,7 @@ func TestReconcile_ClusterCatalogSuccess(t *testing.T) {
 
 	req := reconcile.Request{
 		NamespacedName: types.NamespacedName{
-			Name: "test-catalog",
+			Name: testCatalogName,
 		},
 	}
 
@@ -148,14 +150,14 @@ func TestReconcile_ClusterCatalogSuccess(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, reconcile.Result{}, result)
 	assert.True(t, mockService.updateCatalogCalled)
-	assert.Equal(t, "test-catalog", mockService.lastCatalogName)
+	assert.Equal(t, testCatalogName, mockService.lastCatalogName)
 	assert.Equal(t, "https://example.com/catalog", mockService.lastBaseURL)
 }
 
-func TestReconcile_UpdateCatalogError(t *testing.T) {
+func TestReconcileUpdateCatalogError(t *testing.T) {
 	clusterCatalog := &ocv1.ClusterCatalog{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "test-catalog",
+			Name: testCatalogName,
 		},
 		Status: ocv1.ClusterCatalogStatus{
 			URLs: &ocv1.ClusterCatalogURLs{
@@ -165,11 +167,11 @@ func TestReconcile_UpdateCatalogError(t *testing.T) {
 	}
 
 	reconciler, mockService := createTestReconciler(clusterCatalog)
-	mockService.updateError = errors.New("update failed")
+	mockService.updateError = errors.New("mock update failed")
 
 	req := reconcile.Request{
 		NamespacedName: types.NamespacedName{
-			Name: "test-catalog",
+			Name: testCatalogName,
 		},
 	}
 
@@ -180,13 +182,13 @@ func TestReconcile_UpdateCatalogError(t *testing.T) {
 	assert.True(t, mockService.updateCatalogCalled)
 }
 
-func TestReconcile_RemoveCatalogError(t *testing.T) {
+func TestReconcileRemoveCatalogError(t *testing.T) {
 	reconciler, mockService := createTestReconciler()
-	mockService.removeError = errors.New("remove failed")
+	mockService.removeError = errors.New("mock remove failed")
 
 	req := reconcile.Request{
 		NamespacedName: types.NamespacedName{
-			Name: "test-catalog",
+			Name: testCatalogName,
 		},
 	}
 
