@@ -1,13 +1,12 @@
+import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-import { ListPage, ListPageProps, Table, TableData, TableProps } from './factory';
-import { Kebab, LabelList, ResourceKebab, ResourceLink, Selector } from './utils';
+import { ListPage, Table, TableData, TableProps, ListPageProps } from './factory';
+import { LabelList, ResourceLink, Selector } from './utils';
 import { PrometheusModel } from '../models';
-import { K8sResourceKind, referenceForModel } from '../module/k8s';
-
-const { Edit, Delete, ModifyCount } = Kebab.factory;
-const menuActions = [ModifyCount, Edit, Delete];
+import { referenceForModel, referenceFor, K8sResourceKind } from '../module/k8s';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const tableColumnClasses = [
   'pf-v6-u-w-25-on-xl',
@@ -15,7 +14,7 @@ const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-25-on-xl',
   'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-8-on-xl',
   'pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-16-on-xl',
-  Kebab.columnClass,
+  'pf-v6-c-table__action',
 ];
 
 interface PrometheusTableRowProps {
@@ -24,6 +23,8 @@ interface PrometheusTableRowProps {
 
 const PrometheusTableRow: React.FCC<PrometheusTableRowProps> = ({ obj: instance }) => {
   const { metadata, spec } = instance;
+  const resourceKind = referenceFor(instance);
+  const context = { [resourceKind]: instance };
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -49,11 +50,7 @@ const PrometheusTableRow: React.FCC<PrometheusTableRowProps> = ({ obj: instance 
         />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab
-          actions={menuActions}
-          kind={referenceForModel(PrometheusModel)}
-          resource={instance}
-        />
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );

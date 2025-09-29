@@ -44,6 +44,8 @@
       "replicaSetProvider": "src/actions/providers/replicaset-provider.ts",
       "replicationControllersProvider": "src/actions/providers/replication-controllers-provider.ts",
       "persistentVolumeClaimsProvider": "src/actions/providers/persistent-volume-claim-provider.ts",
+      "machineSetProvider": "src/actions/providers/machine-set-provider.ts",
+      "prometheusProvider": "src/actions/providers/prometheus-provider.ts",
       "groupProvider": "src/actions/providers/group-provider.ts",
       "volumeSnapshotProvider": "src/actions/providers/volume-snaphot-provider.ts",
       "podProvider": "src/actions/providers/pod-provider.ts",
