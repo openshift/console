@@ -1,7 +1,7 @@
 import { FCC, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
-import { TextInput, Button, FormGroup, FormFieldGroup } from '@patternfly/react-core';
+import { TextInput, Button, FormGroup, ActionGroup, FormFieldGroup } from '@patternfly/react-core';
 import { DroppableFileInput } from './DropableFileInput';
 import { OpaqueSecretFormEntryProps } from './types';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
@@ -36,7 +36,20 @@ export const OpaqueSecretFormEntry: FCC<OpaqueSecretFormEntryProps> = ({
   };
 
   return (
-    <FormFieldGroup>
+    <FormFieldGroup className="pf-v6-u-display-block">
+      {showRemoveButton && removeEntry && (
+        <ActionGroup className="pf-v6-u-m-0 pf-v6-u-ml-auto">
+          <Button
+            type="button"
+            onClick={() => removeEntry(index)}
+            variant="link"
+            data-test="remove-entry-button"
+            icon={<MinusCircleIcon />}
+          >
+            {t('public~Remove key/value')}
+          </Button>
+        </ActionGroup>
+      )}
       <FormGroup label={t('public~Key')} isRequired fieldId="secret-key">
         <TextInput
           id={`${key}-key`}
@@ -57,17 +70,6 @@ export const OpaqueSecretFormEntry: FCC<OpaqueSecretFormEntryProps> = ({
         )}
         inputFileIsBinary={entry.isBinary_}
       />
-      {showRemoveButton && removeEntry && (
-        <Button
-          type="button"
-          onClick={() => removeEntry(index)}
-          variant="link"
-          data-test="remove-entry-button"
-          icon={<MinusCircleIcon />}
-        >
-          {t('public~Remove key/value')}
-        </Button>
-      )}
     </FormFieldGroup>
   );
 };

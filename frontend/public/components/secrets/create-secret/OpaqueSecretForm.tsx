@@ -1,6 +1,6 @@
 import { useState, FCC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@patternfly/react-core';
+import { Button, ActionGroup } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { SecretSubFormProps, OpaqueDataEntry } from './types';
 import { OpaqueSecretFormEntry } from './OpaqueSecretFormEntry';
@@ -49,15 +49,17 @@ export const OpaqueSecretForm: FCC<SecretSubFormProps> = ({ onChange, base64Stri
           </>
         );
       })}
-      <Button
-        onClick={() => addEntry()}
-        type="button"
-        variant="link"
-        data-test="add-credentials-button"
-        icon={<PlusCircleIcon />}
-      >
-        {t('public~Add key/value')}
-      </Button>
+      <ActionGroup className="pf-v6-u-m-0">
+        <Button
+          onClick={() => addEntry()}
+          type="button"
+          variant="link"
+          data-test="add-credentials-button"
+          icon={<PlusCircleIcon />}
+        >
+          {t('public~Add key/value')}
+        </Button>
+      </ActionGroup>
     </>
   );
 };

@@ -9,6 +9,7 @@ import {
   HelperTextItem,
   Button,
   FormFieldGroup,
+  ActionGroup,
 } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 
@@ -46,7 +47,20 @@ export const PullSecretCredentialEntry: FCC<PullSecretCredentialEntryProps> = ({
   );
 
   return (
-    <FormFieldGroup data-test-id="create-image-secret-form">
+    <FormFieldGroup data-test-id="create-image-secret-form" className="pf-v6-u-display-block">
+      {showRemoveButton && (
+        <ActionGroup className="pf-v6-u-m-0 pf-v6-u-ml-auto">
+          <Button
+            onClick={() => removeEntry(id)}
+            type="button"
+            variant="link"
+            data-test="remove-entry-button"
+            icon={<MinusCircleIcon />}
+          >
+            {t('public~Remove credentials')}
+          </Button>
+        </ActionGroup>
+      )}
       <FormGroup label={t('public~Registry server address')} isRequired fieldId={`${id}-address`}>
         <TextInput
           id={`${id}-address`}
@@ -99,17 +113,6 @@ export const PullSecretCredentialEntry: FCC<PullSecretCredentialEntryProps> = ({
           data-test="image-secret-email"
         />
       </FormGroup>
-      {showRemoveButton && (
-        <Button
-          onClick={() => removeEntry(id)}
-          type="button"
-          variant="link"
-          data-test="remove-entry-button"
-          icon={<MinusCircleIcon />}
-        >
-          {t('public~Remove credentials')}
-        </Button>
-      )}
     </FormFieldGroup>
   );
 };

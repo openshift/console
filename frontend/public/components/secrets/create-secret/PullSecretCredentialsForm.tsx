@@ -1,6 +1,6 @@
 import { useState, FCC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@patternfly/react-core';
+import { Button, ActionGroup } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { PullSecretCredentialEntry } from './PullSecretCredentialEntry';
 import { SecretStringData, SecretType, OnSecretChange } from './types';
@@ -57,15 +57,17 @@ export const PullSecretCredentialsForm: FCC<PullSecretCredentialsFormProps> = ({
           showRemoveButton={entries.length > 1}
         />
       ))}
-      <Button
-        onClick={addEntry}
-        type="button"
-        variant="link"
-        data-test="add-credentials-button"
-        icon={<PlusCircleIcon />}
-      >
-        {t('public~Add credentials')}
-      </Button>
+      <ActionGroup className="pf-v6-u-m-0">
+        <Button
+          onClick={addEntry}
+          type="button"
+          variant="link"
+          data-test="add-credentials-button"
+          icon={<PlusCircleIcon />}
+        >
+          {t('public~Add credentials')}
+        </Button>
+      </ActionGroup>
     </>
   );
 };
