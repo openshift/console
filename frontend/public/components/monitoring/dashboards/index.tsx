@@ -209,7 +209,6 @@ const VariableOption = ({ itemKey }) =>
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
   const { t } = useTranslation();
-  const [namespace] = useActiveNamespace();
 
   const timespan = useSelector(({ observe }: RootState) =>
     observe.getIn(['dashboards', 'dev', 'timespan']),
@@ -219,6 +218,11 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
     observe.getIn(['dashboards', 'dev', 'variables']),
   );
   const variable = variables.toJS()[name] as Variable;
+
+  // Use the namespace value in the variables to ensure that we are never desynced
+  // Once the namespace variable is updated then this will also get updated
+  const namespace = variables.toJS().namespace.value;
+
   const query = evaluateTemplate(variable.query, variables, timespan, namespace);
 
   const dispatch = useDispatch();
@@ -451,12 +455,11 @@ export const PollIntervalDropdown: React.FC = () => {
   );
 };
 
-const TimeDropdowns: React.FC<{}> = React.memo(() => {
-  const [namespace] = useActiveNamespace();
+const TimeDropdowns: React.FC = React.memo(() => {
   return (
     <div className="monitoring-dashboards__options">
-      <TimespanDropdown namespace={namespace} />
-      <PollIntervalDropdown namespace={namespace} />
+      <TimespanDropdown />
+      <PollIntervalDropdown />
     </div>
   );
 });
@@ -535,6 +538,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
   const variables = useSelector(({ observe }: RootState) =>
     observe.getIn(['dashboards', 'dev', 'variables']),
   );
+  const variableNamespace = variables.toJS().namespace.value;
 
   const ref = React.useRef();
   const [, wasEverVisible] = useIsVisible(ref);
@@ -658,7 +662,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
                     <BarChart
                       pollInterval={pollInterval}
                       query={queries[0]}
-                      namespace={namespace}
+                      namespace={variableNamespace}
                       customDataSource={customDataSource}
                     />
                   )}
@@ -671,7 +675,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
                       showLegend={panel.legend?.show}
                       units={panel.yaxes?.[0]?.format}
                       onZoomHandle={handleZoom}
-                      namespace={namespace}
+                      namespace={variableNamespace}
                       customDataSource={customDataSource}
                     />
                   )}
@@ -680,7 +684,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
                       panel={panel}
                       pollInterval={pollInterval}
                       query={queries[0]}
-                      namespace={namespace}
+                      namespace={variableNamespace}
                       customDataSource={customDataSource}
                     />
                   )}
@@ -689,7 +693,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
                       panel={panel}
                       pollInterval={pollInterval}
                       queries={queries}
-                      namespace={namespace}
+                      namespace={variableNamespace}
                       customDataSource={customDataSource}
                     />
                   )}
@@ -751,7 +755,7 @@ const MonitoringDashboardsPage: React.FC = () => {
   const dispatch = useDispatch();
   const [namespace] = useActiveNamespace();
   const [board, setBoard] = React.useState<string>();
-  const [boards, isLoading, error] = useFetchDashboards(namespace);
+  const [boards, isLoading, error] = useFetchDashboards();
 
   React.useEffect(
     () => () => {
