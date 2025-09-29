@@ -24,7 +24,7 @@ import {
   ResourceDataView,
 } from '@console/app/src/components/data-view/ResourceDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { LoadingBox } from './utils/status-box';
+import { LoadingBox } from '@console/shared/src/components/loading';
 import { sortResourceByValue } from './factory/Table/sort';
 import { sorts } from './factory/table';
 
