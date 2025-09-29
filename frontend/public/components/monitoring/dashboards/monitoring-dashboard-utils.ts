@@ -29,11 +29,11 @@ export const getAllVariables = (boards: Board[], newBoardName: string, namespace
       allVariables[v.name] = ImmutableMap({
         datasource: v.datasource,
         includeAll: !!v.includeAll,
-        isHidden: namespace && v.name === 'namespace' ? true : v.hide !== 0,
-        isLoading: namespace ? v.type === 'query' && !namespace : v.type === 'query',
+        isHidden: v.name === 'namespace' ? true : v.hide !== 0,
+        isLoading: v.name === 'namespace' ? false : v.type === 'query',
         options: _.map(v.options, 'value'),
         query: v.type === 'query' ? v.query : undefined,
-        value: namespace && v.name === 'namespace' ? namespace : value || v.options?.[0]?.value,
+        value: v.name === 'namespace' ? namespace : value || v.options?.[0]?.value,
       });
     }
   });
