@@ -6,7 +6,7 @@ import { useSafeFetch } from '../../utils';
 import { useBoolean } from '../hooks/useBoolean';
 import { Board } from './types';
 
-export const useFetchDashboards = (namespace: string): [Board[], boolean, string] => {
+export const useFetchDashboards = (): [Board[], boolean, string] => {
   const { t } = useTranslation();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const safeFetch = React.useCallback(useSafeFetch(), []);
@@ -20,12 +20,10 @@ export const useFetchDashboards = (namespace: string): [Board[], boolean, string
         setLoaded();
         setError(undefined);
         let items = response.items;
-        if (namespace) {
-          items = _.filter(
-            items,
-            (item) => item.metadata?.labels['console.openshift.io/odc-dashboard'] === 'true',
-          );
-        }
+        items = _.filter(
+          items,
+          (item) => item.metadata?.labels['console.openshift.io/odc-dashboard'] === 'true',
+        );
 
         const getBoardData = (item): Board => {
           try {
@@ -52,7 +50,7 @@ export const useFetchDashboards = (namespace: string): [Board[], boolean, string
           setError(_.get(err, 'json.error', err.message));
         }
       });
-  }, [namespace, safeFetch, setLoaded, t]);
+  }, [safeFetch, setLoaded, t]);
 
   return [boards, isLoading, error];
 };

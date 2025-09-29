@@ -95,10 +95,6 @@ export type Board = {
   name: string;
 };
 
-export type TimeDropdownsProps = {
-  namespace?: string;
-};
-
 export type DataSource = {
   name: string;
   type: string;
