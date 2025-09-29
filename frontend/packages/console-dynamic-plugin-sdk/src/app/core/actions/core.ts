@@ -13,7 +13,7 @@ export enum ActionType {
 }
 
 export const setUser = (userInfo: UserInfo) => action(ActionType.SetUser, { userInfo });
-export const setUserResource = (userResource: any) =>
+export const setUserResource = (userResource: UserKind) =>
   action(ActionType.SetUserResource, { userResource });
 export const beginImpersonate = (kind: string, name: string, subprotocols: string[]) =>
   action(ActionType.BeginImpersonate, { kind, name, subprotocols });
