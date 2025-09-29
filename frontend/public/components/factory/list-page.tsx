@@ -258,7 +258,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     if (action) {
       action();
     } else if (_.isFunction(createProps.createLink)) {
-      navigate(createProps.createLink(itemName), { replace: true });
+      navigate(createProps.createLink(itemName));
     }
   };
 
