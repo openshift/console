@@ -1,4 +1,5 @@
 import { action, ActionType as Action } from 'typesafe-actions';
+import type { UserKind } from '@console/internal/module/k8s/types';
 import { UserInfo } from '../../../extensions';
 import { AdmissionWebhookWarning } from '../../redux-types';
 
