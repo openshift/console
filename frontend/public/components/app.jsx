@@ -296,7 +296,7 @@ const AppRouter = () => {
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
       <CompatRouter>
         <Routes>
-          <Route path={LOGIN_ERROR_PATH} component={AuthenticationErrorPage} />
+          <Route path={LOGIN_ERROR_PATH} element={<AuthenticationErrorPage />} />
           {standaloneRouteExtensions.map((e) => (
             <Route
               key={e.uid}
