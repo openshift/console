@@ -239,6 +239,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[
         sort: 'metadata.labels',
         props: {
           modifier: 'nowrap',
+          width: 20,
         },
       },
       {
@@ -247,6 +248,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[
         sort: 'spec.selector',
         props: {
           modifier: 'nowrap',
+          width: 20,
         },
       },
       {
