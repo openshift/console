@@ -1,19 +1,31 @@
-import * as React from 'react';
+import { FCC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
-import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import {
+  FormGroup,
+  TextInput,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  Button,
+  FormFieldGroup,
+  ActionGroup,
+} from '@patternfly/react-core';
+import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 
-export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps> = ({
+export const PullSecretCredentialEntry: FCC<PullSecretCredentialEntryProps> = ({
   id,
   address,
   email,
   password,
   username,
   onChange,
+  removeEntry,
+  showRemoveButton,
 }) => {
   const { t } = useTranslation();
 
-  const updateEntry = React.useCallback(
+  const updateEntry = useCallback(
     (name: string, value: string): void => {
       const trimmedUsername = username.trim();
       const trimmedPassword = password.trim();
@@ -34,92 +46,74 @@ export const PullSecretCredentialEntry: React.FC<PullSecretCredentialEntryProps>
     [address, email, id, onChange, password, username],
   );
 
-  const handleBlurEvent = (e: React.SyntheticEvent<HTMLInputElement>) =>
-    updateEntry(e.currentTarget.name, e.currentTarget.value.trim());
-
-  const handleChangeEvent = (e: React.SyntheticEvent<HTMLInputElement>) =>
-    updateEntry(e.currentTarget.name, e.currentTarget.value);
-
   return (
-    <PaneBodyGroup data-test-id="create-image-secret-form">
-      <div className="form-group">
-        <label className="co-required" htmlFor={`${id}-address`}>
-          {t('public~Registry server address')}
-        </label>
-        <div>
-          <span className="pf-v6-c-form-control">
-            <input
-              id={`${id}-address`}
-              aria-describedby={`${id}-address-help`}
-              type="text"
-              name="address"
-              onChange={handleChangeEvent}
-              value={address}
-              onBlur={handleBlurEvent}
-              data-test="image-secret-address"
-              required
-            />
-          </span>
-        </div>
-        <p className="help-block" id={`${id}-address-help`}>
-          {t('public~For example quay.io or docker.io')}
-        </p>
-      </div>
-      <div className="form-group">
-        <label className="co-required" htmlFor={`${id}-username`}>
-          {t('public~Username')}
-        </label>
-        <div>
-          <span className="pf-v6-c-form-control">
-            <input
-              id={`${id}-username`}
-              type="text"
-              name="username"
-              onChange={handleChangeEvent}
-              value={username}
-              onBlur={handleBlurEvent}
-              data-test="image-secret-username"
-              required
-            />
-          </span>
-        </div>
-      </div>
-      <div className="form-group">
-        <label className="co-required" htmlFor={`${id}-password`}>
-          {t('public~Password')}
-        </label>
-        <div>
-          <span className="pf-v6-c-form-control">
-            <input
-              id={`${id}-password`}
-              type="password"
-              name="password"
-              onChange={handleChangeEvent}
-              value={password}
-              onBlur={handleBlurEvent}
-              data-test="image-secret-password"
-              required
-            />
-          </span>
-        </div>
-      </div>
-      <div className="form-group">
-        <label htmlFor={`${id}-email`}>{t('public~Email')}</label>
-        <div>
-          <span className="pf-v6-c-form-control">
-            <input
-              id={`${id}-email`}
-              type="text"
-              name="email"
-              onChange={handleChangeEvent}
-              value={email}
-              onBlur={handleBlurEvent}
-              data-test="image-secret-email"
-            />
-          </span>
-        </div>
-      </div>
-    </PaneBodyGroup>
+    <FormFieldGroup data-test-id="create-image-secret-form" className="pf-v6-u-display-block">
+      {showRemoveButton && (
+        <ActionGroup className="pf-v6-u-m-0 pf-v6-u-ml-auto">
+          <Button
+            onClick={() => removeEntry(id)}
+            type="button"
+            variant="link"
+            data-test="remove-entry-button"
+            icon={<MinusCircleIcon />}
+          >
+            {t('public~Remove credentials')}
+          </Button>
+        </ActionGroup>
+      )}
+      <FormGroup label={t('public~Registry server address')} isRequired fieldId={`${id}-address`}>
+        <TextInput
+          id={`${id}-address`}
+          type="text"
+          name="address"
+          value={address}
+          onChange={(_event, value) => updateEntry('address', value)}
+          onBlur={(event) => updateEntry('address', event.currentTarget.value.trim())}
+          data-test="image-secret-address"
+          isRequired
+        />
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>{t('public~For example quay.io or docker.io')}</HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      </FormGroup>
+      <FormGroup label={t('public~Username')} isRequired fieldId={`${id}-username`}>
+        <TextInput
+          id={`${id}-username`}
+          type="text"
+          name="username"
+          value={username}
+          onChange={(_event, value) => updateEntry('username', value)}
+          onBlur={(event) => updateEntry('username', event.currentTarget.value.trim())}
+          data-test="image-secret-username"
+          isRequired
+        />
+      </FormGroup>
+      <FormGroup label={t('public~Password')} isRequired fieldId={`${id}-password`}>
+        <TextInput
+          id={`${id}-password`}
+          type="password"
+          name="password"
+          value={password}
+          onChange={(event, value) => updateEntry('password', value)}
+          onBlur={(event) => updateEntry('password', event.currentTarget.value.trim())}
+          data-test="image-secret-password"
+          isRequired
+        />
+      </FormGroup>
+      <FormGroup label={t('public~Email')} fieldId={`${id}-email`}>
+        <TextInput
+          id={`${id}-email`}
+          type="email"
+          name="email"
+          value={email}
+          onChange={(_event, value) => updateEntry('email', value)}
+          onBlur={(event) => updateEntry('email', event.currentTarget.value.trim())}
+          data-test="image-secret-email"
+        />
+      </FormGroup>
+    </FormFieldGroup>
   );
 };
 
@@ -130,4 +124,6 @@ type PullSecretCredentialEntryProps = {
   password: string;
   username: string;
   onChange: (updatedEntry, entryIndex: number) => void;
+  removeEntry: (entryIndex: number) => void;
+  showRemoveButton: boolean;
 };

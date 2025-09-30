@@ -1,7 +1,6 @@
-import * as React from 'react';
+import { useState, FCC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { Button, ActionGroup } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { PullSecretCredentialEntry } from './PullSecretCredentialEntry';
 import { SecretStringData, SecretType, OnSecretChange } from './types';
@@ -12,7 +11,7 @@ import {
   newPullSecretCredential,
 } from './utils';
 
-export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps> = ({
+export const PullSecretCredentialsForm: FCC<PullSecretCredentialsFormProps> = ({
   onChange,
   stringData,
   onError,
@@ -21,9 +20,9 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
   const { t } = useTranslation();
   const pullSecretFileName = getPullSecretFileName(secretType);
   const pullSecretJSON = stringData[pullSecretFileName];
-  const [entries, setEntries] = React.useState(arrayifyPullSecret(pullSecretJSON, onError));
+  const [entries, setEntries] = useState(arrayifyPullSecret(pullSecretJSON, onError));
 
-  React.useEffect(() => {
+  useEffect(() => {
     const newPullSecretJSON = stringifyPullSecret(entries, secretType);
     if (newPullSecretJSON && newPullSecretJSON !== pullSecretJSON) {
       onChange({ stringData: { [pullSecretFileName]: newPullSecretJSON } });
@@ -46,40 +45,29 @@ export const PullSecretCredentialsForm: React.FC<PullSecretCredentialsFormProps>
   return (
     <>
       {entries.map(({ uid, address, email, username, password }, index) => (
-        <div className="co-add-remove-form__entry" key={uid}>
-          {entries.length > 1 && (
-            <div className="co-add-remove-form__link--remove-entry">
-              <Button
-                onClick={() => removeEntry(index)}
-                type="button"
-                variant="link"
-                data-test="remove-entry-button"
-              >
-                <MinusCircleIcon className="co-icon-space-r" />
-                {t('public~Remove credentials')}
-              </Button>
-            </div>
-          )}
-          <PullSecretCredentialEntry
-            id={index}
-            address={address}
-            email={email}
-            password={password}
-            username={username}
-            onChange={updateEntry}
-          />
-        </div>
+        <PullSecretCredentialEntry
+          key={uid}
+          id={index}
+          address={address}
+          email={email}
+          password={password}
+          username={username}
+          onChange={updateEntry}
+          removeEntry={removeEntry}
+          showRemoveButton={entries.length > 1}
+        />
       ))}
-      <Button
-        className="co-create-secret-form__link--add-entry pf-m-link--align-left"
-        onClick={addEntry}
-        type="button"
-        variant="link"
-        data-test="add-credentials-button"
-      >
-        <PlusCircleIcon className="co-icon-space-r" />
-        {t('public~Add credentials')}
-      </Button>
+      <ActionGroup className="pf-v6-u-m-0">
+        <Button
+          onClick={addEntry}
+          type="button"
+          variant="link"
+          data-test="add-credentials-button"
+          icon={<PlusCircleIcon />}
+        >
+          {t('public~Add credentials')}
+        </Button>
+      </ActionGroup>
     </>
   );
 };

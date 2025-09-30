@@ -17,7 +17,7 @@ import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/co
 import { isContainerImportSource } from '../../../types/samples';
 import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagestream-utils';
 import { getContainerImportSample, getSample } from '../../../utils/samples';
-import { secretModalLauncher } from '../CreateSecretModal';
+import { useCreateSecretModal } from '../CreateSecretModal';
 import './ImageSearch.scss';
 
 const useQueryParametersIfDefined = (handleSearch: (image: string) => void) => {
@@ -89,6 +89,7 @@ const ImageSearch: React.FC = () => {
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>();
   const { values, setFieldValue, dirty, initialValues, touched } = useFormikContext<FormikValues>();
+  const launchCreateSecretModal = useCreateSecretModal();
   const [newImageSecret, setNewImageSecret] = React.useState('');
   const [alertVisible, shouldHideAlert] = React.useState(true);
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
@@ -265,7 +266,7 @@ const ImageSearch: React.FC = () => {
             variant="link"
             isInline
             onClick={() =>
-              secretModalLauncher({
+              launchCreateSecretModal({
                 namespace,
                 save: handleSave,
                 formType: SecretFormType.image,
