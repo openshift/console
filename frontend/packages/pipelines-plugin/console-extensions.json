@@ -1,11 +1,5 @@
 [
   {
-    "type": "console.flag/hookProvider",
-    "properties": {
-      "handler": { "$codeRef": "pipelinesComponent.useIsPipelineOperatorVersion_1_17_or_newer" }
-    }
-  },
-  {
     "type": "console.model-metadata",
     "properties": {
       "model": {
@@ -939,18 +933,6 @@
     }
   },
   {
-    "type": "console.flag/hookProvider",
-    "properties": {
-      "handler": { "$codeRef": "pipelinesComponent.useIsTektonV1VersionPresent" }
-    }
-  },
-  {
-    "type": "console.flag/hookProvider",
-    "properties": {
-      "handler": { "$codeRef": "pipelinesComponent.useIsPipelineOperatorVersion_1_16_or_newer" }
-    }
-  },
-  {
     "type": "dev-console.add/action-group",
     "properties": {
       "id": "pipelines",
@@ -1219,6 +1201,33 @@
         "PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER",
         "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_YAML_TEMPLATE_EXTENSION"
       ]
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "pipelinesComponent.useIsPipelineOperatorVersion_1_16_or_newer" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "pipelinesComponent.useIsPipelineOperatorVersion_1_17_or_newer" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "pipelinesComponent.useIsTektonV1VersionPresent" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
     }
   },
   {
