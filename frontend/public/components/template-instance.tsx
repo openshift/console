@@ -26,8 +26,8 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-
-const menuActions = Kebab.factory.common;
+import { TemplateInstanceModel } from '../models';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 
 const tableColumnClasses = [
   'pf-v6-u-w-42-on-md',
@@ -37,6 +37,7 @@ const tableColumnClasses = [
 ];
 
 const TemplateInstanceTableRow: React.FC<RowFunctionArgs<TemplateInstanceKind>> = ({ obj }) => {
+  const commonActions = useCommonResourceActions(TemplateInstanceModel, obj);
   return (
     <>
       <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
@@ -53,7 +54,7 @@ const TemplateInstanceTableRow: React.FC<RowFunctionArgs<TemplateInstanceKind>> 
         <Status status={getTemplateInstanceStatus(obj)} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind="TemplateInstance" resource={obj} />
+        <ResourceKebab actions={commonActions} kind="TemplateInstance" resource={obj} />
       </TableData>
     </>
   );
@@ -211,14 +212,19 @@ const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj 
   );
 };
 
-export const TemplateInstanceDetailsPage: React.FCC = (props) => (
-  <DetailsPage
-    {...props}
-    kind="TemplateInstance"
-    menuActions={menuActions}
-    pages={[navFactory.details(TemplateInstanceDetails), navFactory.editYaml()]}
-  />
-);
+export const TemplateInstanceDetailsPage: React.FCC<React.ComponentProps<typeof DetailsPage>> = (
+  props,
+) => {
+  const commonActions = useCommonResourceActions(TemplateInstanceModel, props.obj);
+  return (
+    <DetailsPage
+      {...props}
+      kind="TemplateInstance"
+      menuActions={commonActions}
+      pages={[navFactory.details(TemplateInstanceDetails), navFactory.editYaml()]}
+    />
+  );
+};
 
 type TemplateInstancePageProps = {
   autoFocus?: boolean;

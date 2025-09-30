@@ -22,14 +22,17 @@ import {
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { Action } from '@console/dynamic-plugin-sdk/src';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
 const MachineHealthCheckTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
+  const commonActions = useCommonResourceActions(MachineHealthCheckModel, obj);
+
+  const menuActions = [...commonActions];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -171,14 +174,22 @@ export const MachineHealthCheckPage: React.FC<MachineHealthCheckPageProps> = (pr
   />
 );
 
-export const MachineHealthCheckDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    kind={machineHealthCheckReference}
-    pages={[navFactory.details(MachineHealthCheckDetails), navFactory.editYaml()]}
-  />
-);
+export const MachineHealthCheckDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
+  props,
+) => {
+  const commonActions = useCommonResourceActions(MachineHealthCheckModel, props.obj);
+
+  const menuActions = [...commonActions] as Action[];
+
+  return (
+    <DetailsPage
+      {...props}
+      menuActions={menuActions}
+      kind={machineHealthCheckReference}
+      pages={[navFactory.details(MachineHealthCheckDetails), navFactory.editYaml()]}
+    />
+  );
+};
 
 type MachineHealthCheckPageProps = {
   showTitle?: boolean;

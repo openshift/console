@@ -1453,7 +1453,6 @@
   "Cluster Operators": "Cluster Operators",
   "Workloads": "Workloads",
   "Terminal": "Terminal",
-  "Delete {{kind}}": "Delete {{kind}}",
   "Edit {{kind}}": "Edit {{kind}}",
   "Edit Pod selector": "Edit Pod selector",
   "Edit Pod count": "Edit Pod count",
@@ -1747,6 +1746,7 @@
   "Stacked": "Stacked",
   "unknown host": "unknown host",
   "Just now": "Just now",
+  "Delete {{kind}}": "Delete {{kind}}",
   "Disable": "Disable",
   "Disabled": "Disabled",
   "Enabled": "Enabled"

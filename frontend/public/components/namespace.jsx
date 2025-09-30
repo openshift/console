@@ -2,6 +2,7 @@
 import * as _ from 'lodash-es';
 import { useEffect, useMemo, useState } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import {
@@ -149,13 +150,6 @@ export const deleteModal = (kind, ns) => {
   }
   return { label, labelKey, labelKind, weight, callback, accessReview };
 };
-
-const nsMenuActions = [
-  Kebab.factory.ModifyLabels,
-  Kebab.factory.ModifyAnnotations,
-  Kebab.factory.Edit,
-  deleteModal,
-];
 
 const fetchNamespaceMetrics = () => {
   const metrics = [
@@ -312,6 +306,7 @@ const getNamespacesSelectedColumns = () => {
 const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
   const { t } = useTranslation();
   const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const nsMenuActions = useCommonResourceActions(NamespaceModel, ns);
   const name = getName(ns);
   const requester = getRequester(ns);
   const bytes = metrics?.memory?.[name];
@@ -491,8 +486,6 @@ export const NamespacesPage = (props) => {
   );
 };
 
-export const projectMenuActions = [Kebab.factory.Edit, deleteModal];
-
 const projectColumnManagementID = referenceForModel(ProjectModel);
 
 const projectTableHeader = ({ showMetrics, showActions }) => {
@@ -628,6 +621,7 @@ const projectHeaderWithoutActions = () =>
 
 const ProjectTableRow = ({ obj: project, customData = {} }) => {
   const { t } = useTranslation();
+  const projectMenuActions = useCommonResourceActions(ProjectModel, project);
   const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
   const name = getName(project);
   const requester = getRequester(project);
@@ -1117,19 +1111,23 @@ const RolesPage = ({ obj: { metadata } }) => {
   );
 };
 
-export const NamespacesDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={nsMenuActions}
-    pages={[
-      navFactory.details(NamespaceDetails),
-      navFactory.editYaml(),
-      navFactory.roles(RolesPage),
-    ]}
-  />
-);
+export const NamespacesDetailsPage = (props) => {
+  const commonActions = useCommonResourceActions(NamespaceModel, props.obj);
+  return (
+    <DetailsPage
+      {...props}
+      menuActions={commonActions}
+      pages={[
+        navFactory.details(NamespaceDetails),
+        navFactory.editYaml(),
+        navFactory.roles(RolesPage),
+      ]}
+    />
+  );
+};
 
 export const ProjectsDetailsPage = (props) => {
+  const projectMenuActions = useCommonResourceActions(ProjectModel, props.obj);
   return (
     <DetailsPage
       {...props}

@@ -7,7 +7,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage, Table } from './factory';
-import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
+import { SectionHeading, navFactory, ResourceSummary } from './utils';
 import { humanizeBinaryBytes } from './utils/units';
 import { ExampleDockerCommandPopover } from './image-stream';
 import { ImageStreamTimeline } from './image-stream-timeline';
@@ -21,12 +21,11 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+// import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { Action } from '@console/dynamic-plugin-sdk/src';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
 
 // Splits a name/value pair separated by an `=`
 const splitEnv = (nameValue: string) => {
@@ -329,6 +328,11 @@ export const ImageStreamTagsDetailsPage: React.FCC<ImageStreamTagsDetailsPagePro
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();
+  // const commonActions = useCommonResourceActions(ImageStreamTagModel, props.obj);
+
+  const menuActions = [
+    // ...commonActions,
+  ] as Action[];
   return (
     <DetailsPage
       {...props}

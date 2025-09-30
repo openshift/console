@@ -16,8 +16,8 @@ import {
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { ConfigMapKind } from '@console/internal/module/k8s';
-
-const menuActions = [...Kebab.factory.common];
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { ConfigMapModel } from '../models';
 
 const kind = 'ConfigMap';
 
@@ -30,6 +30,7 @@ const tableColumnClasses = [
 ];
 
 const ConfigMapTableRow: React.FCC<{ obj: ConfigMapKind }> = ({ obj: configMap }) => {
+  const menuActions = useCommonResourceActions(ConfigMapModel, configMap);
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -111,6 +112,7 @@ export const ConfigMapsPage = (props) => {
 
 export const ConfigMapsDetailsPage = (props) => {
   const { t } = useTranslation();
+  const menuActions = useCommonResourceActions(ConfigMapModel, props.obj);
   const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => {
     return (
       <>

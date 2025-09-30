@@ -15,13 +15,13 @@ import {
   ResourceSummary,
   ResourceLink,
   navFactory,
-  Kebab,
   humanizeBinaryBytes,
 } from '@console/internal/components/utils';
 import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { useCommonResourceActions } from '../../actions/hooks/useCommonResourceActions';
 import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;
@@ -104,6 +104,8 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
 };
 
 const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const commonActions = useCommonResourceActions(VolumeSnapshotModel, props.obj);
+
   const pages = [
     {
       href: '',
@@ -118,7 +120,7 @@ const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => 
     <DetailsPage
       {...props}
       getResourceStatus={volumeSnapshotStatus}
-      menuActions={Kebab.factory.common}
+      menuActions={commonActions}
       pages={pages}
     />
   );
