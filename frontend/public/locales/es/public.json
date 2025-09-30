@@ -1397,7 +1397,7 @@
   "Shared access (RWX)": "Acceso compartido (RWX)",
   "Read only (ROX)": "Solo lectura (ROX)",
   "Read write once pod (RWOP)": "Pod de lectura y escritura único (RWOP)",
-  "Block": "Bloquear",
+  "Block": "Bloques",
   "TemplateInstances": "Instancias de plantilla",
   "TemplateInstance details": "Detalles de TemplateInstance",
   "Parameters": "Parámetros",
