@@ -9,6 +9,7 @@ import { ResourcesFullIcon } from '@patternfly/react-icons/dist/esm/icons/resour
 import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 
 import { useTranslation } from 'react-i18next';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
 import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
 import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
@@ -50,13 +51,9 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-const { common } = Kebab.factory;
-
-const resourceQuotaMenuActions = [...common];
-const clusterResourceQuotaMenuActions = [...common];
 const appliedClusterResourceQuotaMenuActions = (namespace) => [
-  Kebab.factory.ModifyLabels,
-  Kebab.factory.ModifyAnnotations,
+  // Kebab.factory.ModifyLabels,
+  // Kebab.factory.ModifyAnnotations,
   (kind, obj) => {
     return {
       // t('public~Edit AppliedClusterResourceQuota')
@@ -81,7 +78,12 @@ const isClusterQuota = (quota) => !quota.metadata.namespace;
 const clusterQuotaReference = referenceForModel(ClusterResourceQuotaModel);
 const appliedClusterQuotaReference = referenceForModel(AppliedClusterResourceQuotaModel);
 
-const quotaActions = (quota, customData = undefined) => {
+const useQuotaActions = (quota, customData = undefined) => {
+  const resourceQuotaMenuActions = useCommonResourceActions(ResourceQuotaModel, quota);
+  const clusterResourceQuotaMenuActions = useCommonResourceActions(
+    ClusterResourceQuotaModel,
+    quota,
+  );
   if (quota.metadata.namespace) {
     return resourceQuotaMenuActions;
   }
@@ -396,7 +398,7 @@ const Details = ({ obj: rq }) => {
 
 const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
   const { t } = useTranslation();
-  const actions = quotaActions(rq, customData);
+  const actions = useQuotaActions(rq, customData);
   let resourcesAtQuota;
   if (rq.kind === ResourceQuotaModel.kind) {
     resourcesAtQuota = Object.keys(rq?.status?.hard || {}).reduce(
@@ -474,7 +476,7 @@ const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
 
 const AppliedClusterResourceQuotaTableRow = ({ obj: rq, customData }) => {
   const { t } = useTranslation();
-  const actions = quotaActions(rq, customData);
+  const actions = useQuotaActions(rq, customData);
   const resourcesAtQuota = Object.keys(rq?.status?.total?.hard || {}).reduce(
     (acc, resource) =>
       getUsedPercentage(rq?.status?.total?.hard[resource], rq?.status?.total?.used?.[resource]) >=
@@ -744,6 +746,7 @@ export const AppliedClusterResourceQuotasPage = ({ namespace, mock, showTitle })
 };
 
 export const ResourceQuotasDetailsPage = (props) => {
+  const resourceQuotaMenuActions = useCommonResourceActions(ResourceQuotaModel, props.obj);
   return (
     <DetailsPage
       {...props}
