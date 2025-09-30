@@ -384,28 +384,28 @@
       "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
     }
   },
-      {
-      "type": "console.action/resource-provider",
-      "properties": {
-        "model": {
-          "version": "v1",
-          "kind": "ClusterRoleBinding",
-          "group": "rbac.authorization.k8s.io"
-        },
-        "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
-      }
-    },
-    {
-      "type": "console.action/resource-provider",
-      "properties": {
-        "model": {
-          "version": "v1",
-          "kind": "Build",
-          "group": "build.openshift.io"
-        },
-        "provider": { "$codeRef": "buildProvider.useBuildActionsProvider" }
-      }
-    },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "ClusterRoleBinding",
+        "group": "rbac.authorization.k8s.io"
+      },
+      "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Build",
+        "group": "build.openshift.io"
+      },
+      "provider": { "$codeRef": "buildProvider.useBuildActionsProvider" }
+    }
+  },
   {
     "type": "console.action/resource-provider",
     "properties": {
@@ -1229,6 +1229,17 @@
       }
     },
     "flags": { "required": ["OPENSHIFT_BUILD"] }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "BuildConfig"
+      },
+      "provider": { "$codeRef": "buildConfigProvider.useBuildConfigActionsProvider" }
+    }
   },
   {
     "type": "console.navigation/resource-ns",
