@@ -6,14 +6,13 @@ import {
   TelemetryEventListener,
   UserInfo,
 } from '@console/dynamic-plugin-sdk';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { UserModel } from '@console/internal/models';
 import type { UserKind } from '@console/internal/module/k8s/types';
 import {
   CLUSTER_TELEMETRY_ANALYTICS,
   PREFERRED_TELEMETRY_USER_SETTING_KEY,
   USER_TELEMETRY_ANALYTICS,
 } from '../constants';
+import { useUser } from './useUser';
 import { useUserSettings } from './useUserSettings';
 
 export interface ClusterProperties {
@@ -81,7 +80,8 @@ export const useTelemetry = () => {
     true,
   );
 
-  const [userResource, userResourceIsLoaded] = useK8sGet<UserKind>(UserModel, '~');
+  // Use centralized user data instead of fetching directly
+  const { userResource, userResourceLoaded: userResourceIsLoaded } = useUser();
 
   const [extensions] = useResolvedExtensions<TelemetryListener>(isTelemetryListener);
 
