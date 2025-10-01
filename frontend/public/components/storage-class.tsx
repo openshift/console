@@ -35,10 +35,12 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
 export const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
+export const kubevirtDefaultClassAnnotation = 'storageclass.kubevirt.io/is-default-virt-class';
 const betaDefaultStorageClassAnnotation = 'storageclass.beta.kubernetes.io/is-default-class';
 export const isDefaultClass = (storageClass: K8sResourceKind) => {
   const annotations = _.get(storageClass, 'metadata.annotations') || {};
@@ -46,6 +48,11 @@ export const isDefaultClass = (storageClass: K8sResourceKind) => {
     annotations[defaultClassAnnotation] === 'true' ||
     annotations[betaDefaultStorageClassAnnotation] === 'true'
   );
+};
+
+export const isKubevirtDefaultClass = (storageClass: K8sResourceKind) => {
+  const annotations = _.get(storageClass, 'metadata.annotations') || {};
+  return annotations[kubevirtDefaultClassAnnotation] === 'true';
 };
 
 const tableColumnClasses = [
@@ -89,6 +96,10 @@ const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
 
 const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> = ({ obj }) => {
   const { t } = useTranslation();
+  const pluginStore = usePluginStore();
+  const isKubevirtPluginActive = pluginStore
+    .getAllowedDynamicPluginNames()
+    .includes('kubevirt-plugin');
   const resourceKind = referenceFor(obj);
   const context = { [resourceKind]: obj };
   return (
@@ -98,6 +109,11 @@ const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> 
           {isDefaultClass(obj) && (
             <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
               &ndash; {t('public~Default')}
+            </span>
+          )}
+          {isKubevirtDefaultClass(obj) && isKubevirtPluginActive && (
+            <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
+              &ndash; {t('public~Default for VirtualMachines')}
             </span>
           )}
         </ResourceLink>
