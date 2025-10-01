@@ -9,6 +9,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/operator-framework/kubectl-operator/pkg/action"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
@@ -70,6 +71,8 @@ func (o *OLMHandler) OperandsList(user *auth.User, w http.ResponseWriter, r *htt
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
 		return
 	}
+
+	operandsList = deduplicateOperands(operandsList)
 
 	w.Header().Set("Content-Type", "application/json")
 	resp, err := json.Marshal(operandsList)
@@ -149,4 +152,32 @@ func (o *OLMHandler) getClientWithScheme(user *auth.User) (client.Client, *runti
 		return nil, nil, fmt.Errorf("failed to get new olm client: %v", err)
 	}
 	return client, scheme, nil
+}
+
+func deduplicateOperands(operandsList *unstructured.UnstructuredList) *unstructured.UnstructuredList {
+	if operandsList == nil || len(operandsList.Items) == 0 {
+		return operandsList
+	}
+
+	seen := make(map[string]bool)
+	uniqueOperands := make([]unstructured.Unstructured, 0, len(operandsList.Items))
+
+	for _, operand := range operandsList.Items {
+		key := fmt.Sprintf("%s-%s-%s",
+			operand.GetKind(),
+			operand.GetName(),
+			operand.GetNamespace())
+
+		if !seen[key] {
+			seen[key] = true
+			uniqueOperands = append(uniqueOperands, operand)
+		}
+	}
+
+	result := &unstructured.UnstructuredList{
+		Items: uniqueOperands,
+	}
+	result.SetGroupVersionKind(operandsList.GroupVersionKind())
+
+	return result
 }
