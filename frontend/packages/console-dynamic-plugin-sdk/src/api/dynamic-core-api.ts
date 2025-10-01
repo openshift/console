@@ -6,6 +6,7 @@ import {
   CodeEditorRef,
   DocumentTitleProps,
   ErrorBoundaryFallbackProps,
+  GetConsoleRequestHeaders,
   HorizontalNavProps,
   InventoryItemBodyProps,
   InventoryItemStatusProps,
@@ -397,6 +398,20 @@ export {
 } from '../utils/k8s/hooks';
 
 export { consoleFetch, consoleFetchJSON, consoleFetchText } from '../utils/fetch';
+
+/**
+ * Creates an HTTP headers object for use with API requests, including the CSRF token.
+ * If the user is currently impersonating another user/group, the appropriate impersonation
+ * headers will be included as well.
+ * @example
+ * ```tsx
+ * const headers = getConsoleRequestHeaders();
+ * const options: RequestInit = { method: 'GET', headers };
+ * const response = await consoleFetch(url, options);
+ * ```
+ */
+export const getConsoleRequestHeaders: GetConsoleRequestHeaders = require('@console/dynamic-plugin-sdk/src/utils/fetch')
+  .getConsoleRequestHeaders;
 
 // Expose K8s CRUD utilities as below
 export {

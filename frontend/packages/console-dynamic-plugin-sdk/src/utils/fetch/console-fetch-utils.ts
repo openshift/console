@@ -1,11 +1,9 @@
+import {
+  ConsoleRequestHeaders,
+  GetConsoleRequestHeaders,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getImpersonate } from '../../app/core/reducers';
 import storeHandler from '../../app/storeHandler';
-
-type ConsoleRequestHeaders = {
-  'Impersonate-Group'?: string;
-  'Impersonate-User'?: string;
-  'X-CSRFToken'?: string;
-};
 
 export const getCSRFToken = () => {
   const cookiePrefix = 'csrf-token=';
@@ -21,11 +19,7 @@ export const getCSRFToken = () => {
   );
 };
 
-/**
- * A function that creates impersonation headers for API requests using current redux state.
- * @returns an object containing the appropriate impersonation requst headers, based on redux state
- */
-export const getConsoleRequestHeaders = (): ConsoleRequestHeaders => {
+export const getConsoleRequestHeaders: GetConsoleRequestHeaders = () => {
   const store = storeHandler.getStore();
   if (!store) return undefined;
   const state = store.getState();

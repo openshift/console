@@ -276,6 +276,14 @@ export type ConsoleFetchJSON<T = any> = {
 
 export type ConsoleFetchText<T = any> = (...args: Parameters<ConsoleFetch>) => Promise<T>;
 
+export type ConsoleRequestHeaders = {
+  'Impersonate-Group'?: string;
+  'Impersonate-User'?: string;
+  'X-CSRFToken'?: string;
+};
+
+export type GetConsoleRequestHeaders = () => ConsoleRequestHeaders;
+
 /* Horizontal Nav Types */
 export type NavPage = {
   href?: string;
