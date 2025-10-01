@@ -10,28 +10,12 @@ import {
 
 import { GettingStartedSection } from '../GettingStartedSection';
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useLayoutEffect: jest.requireActual('react').useEffect,
-}));
-
-// Mock the child card components
 jest.mock('../SampleGettingStartedCard', () => ({
-  SampleGettingStartedCard: function SampleGettingStartedCard() {
-    const React = require('react');
-    return React.createElement('div', { 'data-testid': 'sample-card' }, 'Sample getting started');
-  },
+  SampleGettingStartedCard: () => 'Sample getting started',
 }));
 
 jest.mock('../DeveloperFeaturesGettingStartedCard', () => ({
-  DeveloperFeaturesGettingStartedCard: function DeveloperFeaturesGettingStartedCard() {
-    const React = require('react');
-    return React.createElement(
-      'div',
-      { 'data-testid': 'developer-features-card' },
-      'Developer features',
-    );
-  },
+  DeveloperFeaturesGettingStartedCard: () => 'Developer features',
 }));
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
@@ -42,14 +26,7 @@ jest.mock('@console/shared/src/hooks/flag', () => ({
 jest.mock('@console/shared/src/components/getting-started', () => ({
   ...jest.requireActual('@console/shared/src/components/getting-started'),
   useGettingStartedShowState: jest.fn(),
-  QuickStartGettingStartedCard: function QuickStartGettingStartedCard() {
-    const React = require('react');
-    return React.createElement(
-      'div',
-      { 'data-testid': 'quickstart-card' },
-      'Quick start tutorials',
-    );
-  },
+  QuickStartGettingStartedCard: () => 'Quick start tutorials',
 }));
 
 // Workaround because getting-started exports also useGettingStartedShowState
@@ -94,9 +71,12 @@ describe('GettingStartedSection', () => {
     });
 
     // Check that all three cards are present by looking for their mocked components
-    expect(screen.getByText('Sample getting started')).toBeInTheDocument();
-    expect(screen.getByText('Quick start tutorials')).toBeInTheDocument();
-    expect(screen.getByText('Developer features')).toBeInTheDocument();
+    const contentContainer = screen
+      .getByTestId('getting-started')
+      .querySelector('.ocs-getting-started-expandable-grid__content');
+    expect(contentContainer).toHaveTextContent('Sample getting started');
+    expect(contentContainer).toHaveTextContent('Quick start tutorials');
+    expect(contentContainer).toHaveTextContent('Developer features');
   });
 
   it('should render nothing when useFlag(FLAGS.OPENSHIFT) returns false', async () => {

@@ -5,21 +5,11 @@ import { ALL_NAMESPACES_KEY, useActiveNamespace, useFlag } from '@console/shared
 
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useLayoutEffect: jest.requireActual('react').useEffect,
-}));
-
 jest.mock('@console/shared/src', () => ({
   ...jest.requireActual('@console/shared/src'),
   useActiveNamespace: jest.fn(),
   useOpenShiftVersion: () => '4.8.0',
   useFlag: jest.fn<boolean>(),
-}));
-
-// Workaround because getting-started exports also useGettingStartedShowState
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(() => [null, jest.fn(), false]),
 }));
 
 // Workaround because getting-started exports also QuickStartGettingStartedCard
@@ -56,12 +46,10 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
       renderWithProviders(<DeveloperFeaturesGettingStartedCard />);
     });
 
-    expect(
-      screen.getByRole('heading', { name: 'Explore new developer features' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Explore new developer features' })).toBeVisible();
 
     const helmLink = screen.getByRole('link', { name: /Try the sample AI Chatbot Helm chart/ });
-    expect(helmLink).toBeInTheDocument();
+    expect(helmLink).toBeVisible();
     expect(helmLink).toHaveAttribute(
       'href',
       '/catalog/ns/active-namespace?catalogType=HelmChart&keyword=chatbot+AI+sample',
@@ -70,13 +58,13 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     const topologyLink = screen.getByRole('link', {
       name: /Start building your application quickly in topology/,
     });
-    expect(topologyLink).toBeInTheDocument();
+    expect(topologyLink).toBeVisible();
     expect(topologyLink).toHaveAttribute('href', '/topology/ns/active-namespace?catalogSearch=');
 
     const whatsNewLink = screen.getByRole('link', {
       name: "What's new in OpenShift 4.8 (Opens in new tab)",
     });
-    expect(whatsNewLink).toBeInTheDocument();
+    expect(whatsNewLink).toBeVisible();
     expect(whatsNewLink).toHaveAttribute(
       'href',
       'https://developers.redhat.com/products/openshift/whats-new',
@@ -94,9 +82,7 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
       renderWithProviders(<DeveloperFeaturesGettingStartedCard />);
     });
 
-    expect(
-      screen.getByRole('heading', { name: 'Explore new developer features' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Explore new developer features' })).toBeVisible();
 
     expect(
       screen.queryByRole('link', { name: /Try the sample AI Chatbot Helm chart/ }),
@@ -105,13 +91,13 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     const topologyLink = screen.getByRole('link', {
       name: /Start building your application quickly in topology/,
     });
-    expect(topologyLink).toBeInTheDocument();
+    expect(topologyLink).toBeVisible();
     expect(topologyLink).toHaveAttribute('href', '/topology/ns/active-namespace?catalogSearch=');
 
     const whatsNewLink = screen.getByRole('link', {
       name: "What's new in OpenShift 4.8 (Opens in new tab)",
     });
-    expect(whatsNewLink).toBeInTheDocument();
+    expect(whatsNewLink).toBeVisible();
     expect(whatsNewLink).toHaveAttribute(
       'href',
       'https://developers.redhat.com/products/openshift/whats-new',
@@ -128,12 +114,10 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
       renderWithProviders(<DeveloperFeaturesGettingStartedCard />);
     });
 
-    expect(
-      screen.getByRole('heading', { name: 'Explore new developer features' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Explore new developer features' })).toBeVisible();
 
     const helmLink = screen.getByRole('link', { name: /Try the sample AI Chatbot Helm chart/ });
-    expect(helmLink).toBeInTheDocument();
+    expect(helmLink).toBeVisible();
     expect(helmLink).toHaveAttribute(
       'href',
       '/catalog/all-namespaces?catalogType=HelmChart&keyword=chatbot+AI+sample',
@@ -142,13 +126,13 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     const topologyLink = screen.getByRole('link', {
       name: /Start building your application quickly in topology/,
     });
-    expect(topologyLink).toBeInTheDocument();
+    expect(topologyLink).toBeVisible();
     expect(topologyLink).toHaveAttribute('href', '/topology/all-namespaces?catalogSearch=');
 
     const whatsNewLink = screen.getByRole('link', {
       name: "What's new in OpenShift 4.8 (Opens in new tab)",
     });
-    expect(whatsNewLink).toBeInTheDocument();
+    expect(whatsNewLink).toBeVisible();
     expect(whatsNewLink).toHaveAttribute(
       'href',
       'https://developers.redhat.com/products/openshift/whats-new',
@@ -165,9 +149,7 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
       renderWithProviders(<DeveloperFeaturesGettingStartedCard />);
     });
 
-    expect(
-      screen.getByRole('heading', { name: 'Explore new developer features' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Explore new developer features' })).toBeVisible();
 
     expect(
       screen.queryByRole('link', { name: /Try the sample AI Chatbot Helm chart/ }),
@@ -176,13 +158,13 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     const topologyLink = screen.getByRole('link', {
       name: /Start building your application quickly in topology/,
     });
-    expect(topologyLink).toBeInTheDocument();
+    expect(topologyLink).toBeVisible();
     expect(topologyLink).toHaveAttribute('href', '/topology/ns/active-namespace?catalogSearch=');
 
     const whatsNewLink = screen.getByRole('link', {
       name: "What's new in OpenShift 4.8 (Opens in new tab)",
     });
-    expect(whatsNewLink).toBeInTheDocument();
+    expect(whatsNewLink).toBeVisible();
     expect(whatsNewLink).toHaveAttribute(
       'href',
       'https://developers.redhat.com/products/openshift/whats-new',

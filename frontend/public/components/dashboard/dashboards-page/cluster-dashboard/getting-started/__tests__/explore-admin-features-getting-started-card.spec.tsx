@@ -31,8 +31,7 @@ jest.mock('@console/shared/src/hooks/flag', () => ({
   useFlag: jest.fn(),
 }));
 
-// Get the mocked version after the mock is set up
-const { useFlag } = require('@console/shared/src/hooks/flag');
+import { useFlag } from '@console/shared/src/hooks/flag';
 const mockUseFlag = useFlag as jest.Mock;
 
 describe('ExploreAdminFeaturesGettingStartedCard', () => {
@@ -53,7 +52,7 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
       screen.getByRole('heading', { name: 'Explore new features and capabilities' }),
     ).toBeVisible();
 
-    expect(screen.getByTestId('card admin-features')).toBeInTheDocument();
+    expect(screen.getByTestId('card admin-features')).toBeVisible();
 
     expect(screen.getByText('OpenShift AI')).toBeVisible();
     expect(screen.getByText('Build, deploy, and manage AI-enabled applications.')).toBeVisible();
@@ -88,8 +87,10 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
       screen.getByText('Console language options now include French and Spanish.'),
     ).toBeVisible();
 
-    const languageLink = screen.getByTestId('item new-translations');
-    expect(languageLink).toHaveAttribute('href', '/user-preferences/language');
+    expect(screen.getByTestId('item new-translations')).toHaveAttribute(
+      'href',
+      '/user-preferences/language',
+    );
   });
 
   it('should display lightspeed link when flags are enabled', async () => {

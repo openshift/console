@@ -68,6 +68,8 @@ export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGrid
       className="ocs-getting-started-expandable-grid"
       variant="secondary"
       data-test="getting-started"
+      isClickable
+      isSelectable
       isExpanded={isOpen}
     >
       <CardHeader
@@ -104,7 +106,12 @@ export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGrid
       </CardHeader>
       <CardExpandableContent>
         {headerContent && headerContent}
-        <CardBody className="ocs-getting-started-expandable-grid__content">{children}</CardBody>
+        <CardBody
+          id="getting-started-content"
+          className="ocs-getting-started-expandable-grid__content"
+        >
+          {children}
+        </CardBody>
         {footerContent && footerContent}
       </CardExpandableContent>
     </Card>

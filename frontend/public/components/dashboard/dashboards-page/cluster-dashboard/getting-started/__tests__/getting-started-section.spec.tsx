@@ -20,18 +20,16 @@ jest.mock('../explore-admin-features-getting-started-card', () => ({
   ExploreAdminFeaturesGettingStartedCard: () => 'Explore new features',
 }));
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useLayoutEffect: jest.requireActual('react').useEffect,
-}));
-
 jest.mock('@console/shared/src/hooks/flag', () => ({
   ...jest.requireActual('@console/shared/src/hooks/flag'),
   useFlag: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/components/getting-started', () => ({
-  ...jest.requireActual('@console/shared/src/components/getting-started'),
+  GettingStartedExpandableGrid: jest.requireActual('@console/shared/src/components/getting-started')
+    .GettingStartedExpandableGrid,
+  GettingStartedShowState: jest.requireActual('@console/shared/src/components/getting-started')
+    .GettingStartedShowState,
   useGettingStartedShowState: jest.fn(),
   QuickStartGettingStartedCard: () => 'Learn with guided tours',
 }));
@@ -78,7 +76,7 @@ describe('GettingStartedSection', () => {
 
     const contentContainer = screen
       .getByTestId('getting-started')
-      .querySelector('.ocs-getting-started-expandable-grid__content');
+      .querySelector('#getting-started-content');
     expect(contentContainer).toHaveTextContent('Set up your cluster');
     expect(contentContainer).toHaveTextContent('Learn with guided tours');
     expect(contentContainer).toHaveTextContent('Explore new features');

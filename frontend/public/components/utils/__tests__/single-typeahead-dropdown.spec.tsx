@@ -3,11 +3,6 @@ import { screen, configure, act, waitFor, fireEvent } from '@testing-library/rea
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { SingleTypeaheadDropdown } from '../single-typeahead-dropdown';
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useLayoutEffect: jest.requireActual('react').useEffect,
-}));
-
 describe('SingleTypeaheadDropdown', () => {
   let onChange: jest.Mock;
 

@@ -73,12 +73,13 @@ describe('ClusterSetupGettingStartedCard', () => {
     expect(screen.getByRole('heading', { name: 'Set up your cluster' })).toBeVisible();
 
     expect(screen.getByText('Add identity providers')).toBeVisible();
-    const identityProviderLink = screen.getByTestId('item identity-providers');
-    expect(identityProviderLink).toHaveAttribute('href', '/cluster');
+    expect(screen.getByTestId('item identity-providers')).toHaveAttribute('href', '/cluster');
 
     expect(screen.getByText('Configure alert receivers')).toBeVisible();
-    const alertReceiverLink = screen.getByTestId('item alert-receivers');
-    expect(alertReceiverLink).toHaveAttribute('href', '/settings/cluster/alertmanagerconfig');
+    expect(screen.getByTestId('item alert-receivers')).toHaveAttribute(
+      'href',
+      '/settings/cluster/alertmanagerconfig',
+    );
 
     expect(screen.getByText('View all steps in documentation')).toBeVisible();
     const moreLink = screen.getByTestId('item machine-configuration');
