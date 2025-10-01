@@ -107,12 +107,13 @@ describe('Kubernetes resource CRUD operations', () => {
   ]);
 
   const dataViewResources = new Set([
-    'HorizontalPodAutoscaler',
-    'Job',
-    'Pod',
-    'ReplicaSet',
-    'ReplicationController',
-    'StatefulSet',
+    'Deployment',
+    'DeploymentConfig',
+    'Secret',
+    'ConfigMap',
+    'CronJob',
+    'DaemonSet',
+    'PodDisruptionBudget',
   ]);
 
   testObjs.forEach((testObj, resource) => {

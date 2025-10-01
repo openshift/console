@@ -13,6 +13,7 @@ import {
   ResourceSummary,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ConfigMapModel } from '../models/index';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { ConfigMapKind, referenceForModel, TableColumn } from '../module/k8s';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -29,7 +30,6 @@ import { sortResourceByValue } from './factory/Table/sort';
 import { sorts } from './factory/table';
 
 const menuActions = [...Kebab.factory.common];
-
 const kind = referenceForModel(ConfigMapModel);
 const tableColumnInfo = [
   { id: 'name' },
