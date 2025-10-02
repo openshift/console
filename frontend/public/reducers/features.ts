@@ -42,6 +42,7 @@ export const defaults = _.mapValues(FLAGS, (flag) => {
       return true;
     case FLAGS.IMPERSONATE: {
       // FIXME: Check localStorage for override, default to false (disabled)
+      // This is the flag for the multi-group impersonation feature.
       const localStorageValue = localStorage.getItem('bridge/impersonate-enabled');
       if (localStorageValue === 'true') {
         // eslint-disable-next-line no-console
