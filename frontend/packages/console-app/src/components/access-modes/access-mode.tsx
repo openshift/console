@@ -67,17 +67,25 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
     setIsOpen(!isOpen);
   };
 
-  const onSelect = (_event: undefined, value: { val: string; label: string }) => {
-    setIsOpen(!isOpen);
-    setSelected(value.label);
-    changeAccessMode(value.val);
+  const onSelect = (
+    _event: React.MouseEvent<Element, MouseEvent> | undefined,
+    value: string | number | undefined,
+  ) => {
+    if (typeof value === 'string') {
+      const option = getAccessModeOptions().find((opt) => opt.value === value);
+      if (option) {
+        setIsOpen(!isOpen);
+        setSelected(option.title);
+        changeAccessMode(option.value);
+      }
+    }
   };
   const selectOptions = getAccessModeOptions().map((option) => {
     const disabled = !allowedAccessModes?.includes(option.value);
     return (
       <SelectOption
         key={option.title}
-        value={{ val: option.value, label: option.title }}
+        value={option.value}
         isDisabled={disabled}
         isSelected={accessMode === option.value}
       >
@@ -137,7 +145,6 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
         <Select
           isOpen={isOpen}
           selected={selected}
-          // @ts-expect-error FIXME: PatternFly's onSelect is typed wrong (value should be any)
           onSelect={onSelect}
           onOpenChange={(open) => setIsOpen(open)}
           toggle={toggle}
