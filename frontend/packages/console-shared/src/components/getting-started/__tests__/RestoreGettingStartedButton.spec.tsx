@@ -1,24 +1,11 @@
-import { shallow } from 'enzyme';
+import { screen, fireEvent } from '@testing-library/react';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { RestoreGettingStartedButton } from '../RestoreGettingStartedButton';
 import { useGettingStartedShowState, GettingStartedShowState } from '../useGettingStartedShowState';
-
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  // Set useLayoutEffect to useEffect to solve react warning
-  // "useLayoutEffect does nothing on the server, ..." while
-  // running this test. useLayoutEffect was used internally by
-  // the PatternFly Label for a tooltip.
-  useLayoutEffect: jest.requireActual('react').useEffect,
-}));
 
 jest.mock('../useGettingStartedShowState', () => ({
   ...jest.requireActual('../useGettingStartedShowState'),
   useGettingStartedShowState: jest.fn(),
-}));
-
-// Workaround because getting-started exports also useGettingStartedShowState
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
 }));
 
 const useGettingStartedShowStateMock = useGettingStartedShowState as jest.Mock;
@@ -27,17 +14,19 @@ describe('RestoreGettingStartedButton', () => {
   it('should render nothing if getting started is shown', () => {
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
-    const wrapper = shallow(<RestoreGettingStartedButton userSettingsKey="test" />);
+    const { container } = renderWithProviders(
+      <RestoreGettingStartedButton userSettingsKey="test" />,
+    );
 
-    expect(wrapper.render().text()).toEqual('');
+    expect(container.textContent).toBe('');
   });
 
   it('should render button if getting started is hidden', () => {
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
 
-    const wrapper = shallow(<RestoreGettingStartedButton userSettingsKey="test" />);
+    renderWithProviders(<RestoreGettingStartedButton userSettingsKey="test" />);
 
-    expect(wrapper.render().text()).toEqual('Show getting started resources');
+    expect(screen.getByText('Show getting started resources')).toBeVisible();
   });
 
   it('should change user settings to show if button is pressed', () => {
@@ -48,15 +37,14 @@ describe('RestoreGettingStartedButton', () => {
       true,
     ]);
 
-    const wrapper = shallow(<RestoreGettingStartedButton userSettingsKey="test" />).shallow();
+    renderWithProviders(<RestoreGettingStartedButton userSettingsKey="test" />);
 
-    wrapper.find('button').simulate('click');
-
+    fireEvent.click(screen.getByRole('button', { name: 'Show getting started resources' }));
     expect(setGettingStartedShowState).toHaveBeenCalledTimes(1);
     expect(setGettingStartedShowState).toHaveBeenLastCalledWith(GettingStartedShowState.SHOW);
   });
 
-  it('should change user settings to disappear if x on the button is pressed', () => {
+  it('should change user settings to disappear if close (x) on the button is pressed', () => {
     const setGettingStartedShowState = jest.fn();
     useGettingStartedShowStateMock.mockReturnValue([
       GettingStartedShowState.HIDE,
@@ -64,12 +52,9 @@ describe('RestoreGettingStartedButton', () => {
       true,
     ]);
 
-    const wrapper = shallow(<RestoreGettingStartedButton userSettingsKey="test" />).shallow();
-    // TimesIcon is an x which is used by the PatternFly Label component to 'close' the label.
-    wrapper
-      .find('Button[aria-label="Close Show getting started resources"]')
-      .simulate('click', { preventDefault: jest.fn(), stopPropagation: jest.fn() });
+    renderWithProviders(<RestoreGettingStartedButton userSettingsKey="test" />);
 
+    fireEvent.click(screen.getByRole('button', { name: 'Close Show getting started resources' }));
     expect(setGettingStartedShowState).toHaveBeenCalledTimes(1);
     expect(setGettingStartedShowState).toHaveBeenLastCalledWith(GettingStartedShowState.DISAPPEAR);
   });
@@ -81,8 +66,10 @@ describe('RestoreGettingStartedButton', () => {
       true,
     ]);
 
-    const wrapper = shallow(<RestoreGettingStartedButton userSettingsKey="test" />);
+    const { container } = renderWithProviders(
+      <RestoreGettingStartedButton userSettingsKey="test" />,
+    );
 
-    expect(wrapper.render().text()).toEqual('');
+    expect(container.textContent).toBe('');
   });
 });

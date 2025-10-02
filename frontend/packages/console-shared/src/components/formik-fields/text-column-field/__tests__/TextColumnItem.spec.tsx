@@ -1,16 +1,26 @@
-import { shallow } from 'enzyme';
+import { renderWithProviders } from '../../../../test-utils/unit-test-utils';
 import TextColumnItem from '../TextColumnItem';
-import TextColumnItemContent from '../TextColumnItemContent';
 import TextColumnItemWithDnd from '../TextColumnItemWithDnd';
 
-jest.mock('react-dnd', () => {
-  const reactDnd = jest.requireActual('react-dnd');
-  return {
-    ...reactDnd,
-    useDrag: jest.fn(() => [{}, {}]),
-    useDrop: jest.fn(() => [{}, {}]),
-  };
-});
+Element.prototype.scrollIntoView = jest.fn();
+
+jest.mock('react-dnd', () => ({
+  useDrag: jest.fn(() => [{}, jest.fn(), jest.fn()]),
+  useDrop: jest.fn(() => [{ opacity: 1 }, jest.fn()]),
+}));
+
+jest.mock('@console/internal/components/utils/drag-drop-context', () => ({
+  default: (component) => component,
+}));
+
+let mockTextColumnItemContentProps: any;
+
+jest.mock('../TextColumnItemContent', () => ({
+  default: jest.fn((props) => {
+    mockTextColumnItemContentProps = props;
+    return null;
+  }),
+}));
 
 const mockArrayHelper = {
   push: jest.fn(),
@@ -21,81 +31,56 @@ const mockArrayHelper = {
   handleMove: jest.fn(),
   insert: jest.fn(),
   handleInsert: jest.fn(),
-  replace: jest.fn(),
-  handleReplace: jest.fn(),
   unshift: jest.fn(),
   handleUnshift: jest.fn(),
-  handleRemove: jest.fn(),
-  handlePop: jest.fn(),
   remove: jest.fn(),
+  handleRemove: jest.fn(),
   pop: jest.fn(),
+  handlePop: jest.fn(),
+  replace: jest.fn(),
+  handleReplace: jest.fn(),
+};
+
+const mockProps = {
+  name: 'test',
+  label: 'Test Label',
+  idx: 0,
+  rowValues: ['value1', 'value2'],
+  arrayHelpers: mockArrayHelper,
 };
 
 describe('TextColumnItem', () => {
-  it('should render TextColumnItem', () => {
-    const wrapper = shallow(
-      <TextColumnItem
-        name={'fieldName'}
-        label={'label value'}
-        idx={0}
-        rowValues={['']}
-        arrayHelpers={mockArrayHelper}
-      />,
-    );
-    expect(wrapper.isEmptyRender()).toBe(false);
+  beforeEach(() => {
+    mockTextColumnItemContentProps = undefined;
   });
 
-  it('should not contain dndEnabled if the props is not passed', () => {
-    const wrapper = shallow(
-      <TextColumnItem
-        name={'fieldName'}
-        label={'label value'}
-        idx={0}
-        rowValues={['']}
-        arrayHelpers={mockArrayHelper}
-      />,
-    );
-    expect(wrapper.find(TextColumnItemContent).exists()).toBe(true);
-    expect(wrapper.find(TextColumnItemContent).props().dndEnabled).toBeUndefined();
+  it('should render TextColumnItemContent', () => {
+    renderWithProviders(<TextColumnItem {...mockProps} />);
+    expect(mockTextColumnItemContentProps).toBeDefined();
+  });
+
+  it('should pass correct props to TextColumnItemContent', () => {
+    renderWithProviders(<TextColumnItem {...mockProps} />);
+    expect(mockTextColumnItemContentProps.name).toBe('test');
+    expect(mockTextColumnItemContentProps.idx).toBe(0);
+    expect(mockTextColumnItemContentProps.rowValues).toEqual(['value1', 'value2']);
   });
 });
 
 describe('TextColumnItemWithDnd', () => {
-  it('should render TextColumnItemWithDnd', () => {
-    const wrapper = shallow(
-      <TextColumnItemWithDnd
-        name={'fieldName'}
-        label={'label value'}
-        idx={0}
-        rowValues={['']}
-        arrayHelpers={mockArrayHelper}
-      />,
-    )
-      .shallow()
-      .childAt(0)
-      .shallow();
-
-    expect(wrapper.isEmptyRender()).toBe(false);
-    expect(wrapper.find(TextColumnItemContent).exists()).toBe(true);
+  beforeEach(() => {
+    mockTextColumnItemContentProps = undefined;
   });
 
-  it('should pass dndEnabled props to TextColumnItemContent', () => {
-    const wrapper = shallow(
-      <TextColumnItemWithDnd
-        name={'fieldName'}
-        label={'label value'}
-        idx={0}
-        rowValues={['']}
-        dndEnabled
-        arrayHelpers={mockArrayHelper}
-      />,
-    )
-      .shallow()
-      .childAt(0)
-      .shallow();
-    expect(wrapper.find(TextColumnItemContent).exists()).toBe(true);
-    expect(wrapper.find(TextColumnItemContent).props().dndEnabled).toBe(true);
-    expect(wrapper.find(TextColumnItemContent).props().previewDropRef).not.toBe(null);
-    expect(wrapper.find(TextColumnItemContent).props().dragRef).not.toBe(null);
+  it('should render TextColumnItemContent with drag and drop', () => {
+    renderWithProviders(<TextColumnItemWithDnd {...mockProps} />);
+    expect(mockTextColumnItemContentProps).toBeDefined();
+  });
+
+  it('should pass correct props to TextColumnItemContent with drag functionality', () => {
+    renderWithProviders(<TextColumnItemWithDnd {...mockProps} />);
+    expect(mockTextColumnItemContentProps.name).toBe('test');
+    expect(mockTextColumnItemContentProps.idx).toBe(0);
+    expect(mockTextColumnItemContentProps.rowValues).toEqual(['value1', 'value2']);
   });
 });

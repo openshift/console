@@ -1,9 +1,6 @@
-import { screen, fireEvent, configure } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { GettingStartedCard, GettingStartedCardProps } from '../GettingStartedCard';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('GettingStartedCard', () => {
   const defaultProps: GettingStartedCardProps = {
@@ -30,20 +27,24 @@ describe('GettingStartedCard', () => {
     },
   };
 
-  it('renders title and description', () => {
+  it('renders title and description', async () => {
     renderWithProviders(<GettingStartedCard {...defaultProps} />);
-    expect(screen.getByText('Test Card')).toBeInTheDocument();
-    expect(screen.getByText('This is a test card.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Test Card')).toBeVisible();
+      expect(screen.getByText('This is a test card.')).toBeVisible();
+    });
   });
 
-  it('renders all links', () => {
+  it('renders all links', async () => {
     renderWithProviders(<GettingStartedCard {...defaultProps} />);
-    expect(screen.getByTestId('item link-1')).toBeInTheDocument();
-    expect(screen.getByTestId('item link-2')).toBeInTheDocument();
-    expect(screen.getByTestId('item more-link')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('item link-1')).toBeVisible();
+      expect(screen.getByTestId('item link-2')).toBeVisible();
+      expect(screen.getByTestId('item more-link')).toBeVisible();
+    });
   });
 
-  it('calls onClick for internal link', () => {
+  it('calls onClick for internal link', async () => {
     const onClick = jest.fn();
     const props = {
       ...defaultProps,
@@ -57,11 +58,15 @@ describe('GettingStartedCard', () => {
       ],
     };
     renderWithProviders(<GettingStartedCard {...props} />);
+
     fireEvent.click(screen.getByTestId('item link-1'));
-    expect(onClick).toHaveBeenCalled();
+
+    await waitFor(() => {
+      expect(onClick).toHaveBeenCalled();
+    });
   });
 
-  it('calls onClick for moreLink', () => {
+  it('calls onClick for moreLink', async () => {
     const onClick = jest.fn();
     const props = {
       ...defaultProps,
@@ -73,11 +78,15 @@ describe('GettingStartedCard', () => {
       },
     };
     renderWithProviders(<GettingStartedCard {...props} />);
+
     fireEvent.click(screen.getByTestId('item more-link'));
-    expect(onClick).toHaveBeenCalled();
+
+    await waitFor(() => {
+      expect(onClick).toHaveBeenCalled();
+    });
   });
 
-  it('renders skeleton for loading links', () => {
+  it('renders skeleton for loading links', async () => {
     const props = {
       ...defaultProps,
       links: [
@@ -88,6 +97,8 @@ describe('GettingStartedCard', () => {
       ],
     };
     renderWithProviders(<GettingStartedCard {...props} />);
-    expect(screen.getByTestId('getting-started-skeleton')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('getting-started-skeleton')).toBeInTheDocument();
+    });
   });
 });
