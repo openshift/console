@@ -20,6 +20,7 @@ import (
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/controllers"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
@@ -148,13 +149,35 @@ func main() {
 
 	configFile := fs.Lookup("config").Value.String()
 
+	// Track session-related config to determine if we need to recreate sessions
+	var (
+		cachedCompletedAuthnOptions   *authopts.CompletedOptions
+		cachedCompletedSessionOptions *session.CompletedOptions
+		cachedAuthenticator           auth.Authenticator
+		cachedCSRFVerifier            *csrfverifier.CSRFVerifier
+	)
+
 	// Run server in a loop to support restarts
 	for {
 		// Parse and apply config
 		applyConfig(fs, bridgeOptions, authOptions, sessionOptions)
 
-		// Build the server with current config
-		srv := createServer(bridgeOptions, authOptions, sessionOptions)
+		// Build the server with current config, potentially reusing session state
+		srv, newAuthn, newSession := createServer(
+			bridgeOptions,
+			authOptions,
+			sessionOptions,
+			cachedCompletedAuthnOptions,
+			cachedCompletedSessionOptions,
+			cachedAuthenticator,
+			cachedCSRFVerifier,
+		)
+
+		// Cache the new session state for next iteration
+		cachedCompletedAuthnOptions = newAuthn
+		cachedCompletedSessionOptions = newSession
+		cachedAuthenticator = srv.Authenticator
+		cachedCSRFVerifier = srv.CSRFVerifier
 
 		// Run the server with config file watching
 		shouldRestart := runServer(bridgeOptions, srv, configFile)
@@ -162,6 +185,51 @@ func main() {
 			return
 		}
 	}
+}
+
+func sessionConfigHasChanged(
+	authOptions *authopts.AuthOptions,
+	sessionOptions *session.SessionOptions,
+	cachedAuthnOptions *authopts.CompletedOptions,
+	cachedSessionOptions *session.CompletedOptions,
+) bool {
+	// If no cached options, session config has "changed" (needs to be created)
+	if cachedAuthnOptions == nil || cachedSessionOptions == nil {
+		return true
+	}
+
+	// Compare authentication options that affect sessions
+	if authOptions.AuthType != cachedAuthnOptions.AuthType {
+		return true
+	}
+
+	// Compare issuer URLs
+	cachedIssuerURL := ""
+	if cachedAuthnOptions.IssuerURL != nil {
+		cachedIssuerURL = cachedAuthnOptions.IssuerURL.String()
+	}
+	if authOptions.IssuerURL != cachedIssuerURL {
+		return true
+	}
+
+	if authOptions.ClientID != cachedAuthnOptions.ClientID {
+		return true
+	}
+	if authOptions.ClientSecretFilePath != "" {
+		// Client secret file path changed - assume secret might have changed
+		return true
+	}
+	if authOptions.InactivityTimeoutSeconds != cachedAuthnOptions.InactivityTimeoutSeconds {
+		return true
+	}
+
+	// Compare session options
+	if sessionOptions.CookieEncryptionKeyPath != "" || sessionOptions.CookieAuthenticationKeyPath != "" {
+		// If key paths are set, assume keys might have changed
+		return true
+	}
+
+	return false
 }
 
 func addFlags(fs *flag.FlagSet, bridgeOptions *BridgeOptions, authOptions *authopts.AuthOptions, sessionOptions *session.SessionOptions) {
@@ -254,7 +322,15 @@ func applyConfig(fs *flag.FlagSet, bridgeOptions *BridgeOptions, authOptions *au
 	sessionOptions.ApplyConfig(&cfg.Session)
 }
 
-func createServer(bridgeOptions *BridgeOptions, authOptions *authopts.AuthOptions, sessionOptions *session.SessionOptions) *server.Server {
+func createServer(
+	bridgeOptions *BridgeOptions,
+	authOptions *authopts.AuthOptions,
+	sessionOptions *session.SessionOptions,
+	cachedAuthnOptions *authopts.CompletedOptions,
+	cachedSessionOptions *session.CompletedOptions,
+	cachedAuthenticator auth.Authenticator,
+	cachedCSRFVerifier *csrfverifier.CSRFVerifier,
+) (*server.Server, *authopts.CompletedOptions, *session.CompletedOptions) {
 	baseURL, err := flags.ValidateFlagIsURL("base-address", bridgeOptions.fBaseAddress, true)
 	flags.FatalIfFailed(err)
 
@@ -418,16 +494,34 @@ func createServer(bridgeOptions *BridgeOptions, authOptions *authopts.AuthOption
 		Capabilities:                 capabilities,
 	}
 
-	completedAuthnOptions, err := authOptions.Complete()
-	if err != nil {
-		klog.Fatalf("failed to complete authentication options: %v", err)
-		os.Exit(1)
-	}
+	// Check if we can reuse cached session config
+	var completedAuthnOptions *authopts.CompletedOptions
+	var completedSessionOptions *session.CompletedOptions
+	sessionConfigChanged := sessionConfigHasChanged(authOptions, sessionOptions, cachedAuthnOptions, cachedSessionOptions)
 
-	completedSessionOptions, err := sessionOptions.Complete(completedAuthnOptions.AuthType)
-	if err != nil {
-		klog.Fatalf("failed to complete session options: %v", err)
-		os.Exit(1)
+	if !sessionConfigChanged && cachedAuthnOptions != nil && cachedSessionOptions != nil {
+		// Reuse cached session configuration
+		klog.Info("Reusing existing session configuration")
+		completedAuthnOptions = cachedAuthnOptions
+		completedSessionOptions = cachedSessionOptions
+	} else {
+		// Create session configuration
+		if cachedAuthnOptions != nil {
+			klog.Info("Creating new session state")
+		}
+
+		var err error
+		completedAuthnOptions, err = authOptions.Complete()
+		if err != nil {
+			klog.Fatalf("failed to complete authentication options: %v", err)
+			os.Exit(1)
+		}
+
+		completedSessionOptions, err = sessionOptions.Complete(completedAuthnOptions.AuthType)
+		if err != nil {
+			klog.Fatalf("failed to complete session options: %v", err)
+			os.Exit(1)
+		}
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
@@ -755,11 +849,18 @@ func createServer(bridgeOptions *BridgeOptions, authOptions *authopts.AuthOption
 	}
 	srv.TokenReviewer = tokenReviewer
 
-	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
-		klog.Fatalf("failed to apply configuration to server: %v", err)
+	// Reuse cached authenticator and CSRF verifier if session config hasn't changed
+	if !sessionConfigChanged && cachedAuthenticator != nil && cachedCSRFVerifier != nil {
+		klog.Info("Reusing existing authenticator")
+		srv.Authenticator = cachedAuthenticator
+		srv.CSRFVerifier = cachedCSRFVerifier
+	} else {
+		if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
+			klog.Fatalf("failed to apply configuration to server: %v", err)
+		}
 	}
 
-	return srv
+	return srv, completedAuthnOptions, completedSessionOptions
 }
 
 func runServer(bridgeOptions *BridgeOptions, srv *server.Server, configFile string) bool {
