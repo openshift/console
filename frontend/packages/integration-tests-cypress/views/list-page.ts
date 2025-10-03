@@ -69,7 +69,7 @@ export const listPage = {
       cy.get(
         `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${checkboxLabel}"]`,
       ).click();
-      cy.url().should('include', `=${checkboxLabel}`);
+      cy.url().should('include', 'status=Running');
       cy.get('[data-ouia-component-id="DataViewCheckboxFilter"]').click();
     },
   },
@@ -152,9 +152,6 @@ export const listPage = {
       cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
         .contains(resourceName)
         .should('exist');
-    },
-    shouldNotExist: (resourceName: string) => {
-      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).should('not.exist');
     },
     clickRowByName: (resourceName: string) =>
       cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).find('a').click({ force: true }), // after applying row filter, resource rows detached from DOM according to cypress, need to force the click

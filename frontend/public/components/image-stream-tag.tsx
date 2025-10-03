@@ -5,14 +5,20 @@ import { useParams, useLocation } from 'react-router-dom-v5-compat';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { DetailsPage, Table } from './factory';
+import { K8sResourceKind, K8sResourceKindReference, TableColumn } from '../module/k8s';
+import { DetailsPage } from './factory';
+import {
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
 import { humanizeBinaryBytes } from './utils/units';
 import { ExampleDockerCommandPopover } from './image-stream';
 import { ImageStreamTimeline } from './image-stream-timeline';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
-import { sortable } from '@patternfly/react-table';
+import { LoadingBox } from './utils/status-box';
+
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -24,6 +30,12 @@ import {
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
+
+const supportedPlatformsTableColumnInfo = [
+  { id: 'os' },
+  { id: 'architecture' },
+  { id: 'identifier' },
+];
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
@@ -45,62 +57,69 @@ const splitEnv = (nameValue: string) => {
   };
 };
 
-const supportedPlatformColumnClasses = [
-  'pf-m-hidden pf-m-visible-on-sm',
-  'pf-m-hidden pf-m-visible-on-sm',
-  'pf-m-hidden pf-m-visible-on-lg',
-];
-
-const SupportedPlatformsTableRows = ({ componentProps: { data } }) => {
-  return _.map(data, (submanifest: RowSupportedPlatformData) => {
+const getSupportedPlatformsDataViewRows: GetDataViewRows<any, undefined> = (data, columns) => {
+  return data.map(({ obj: submanifest }) => {
     const { os, architecture, digest } = submanifest;
+
+    const rowCells = {
+      [supportedPlatformsTableColumnInfo[0].id]: {
+        cell: os,
+      },
+      [supportedPlatformsTableColumnInfo[1].id]: {
+        cell: architecture,
+      },
+      [supportedPlatformsTableColumnInfo[2].id]: {
+        cell: digest,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || '-';
+      return {
+        id,
+        cell,
+      };
+    });
+  });
+};
+
+const useSupportedPlatformsColumns = (): TableColumn<any>[] => {
+  const { t } = useTranslation();
+  const columns = React.useMemo(() => {
     return [
       {
-        title: os,
+        title: t('public~OS'),
+        id: supportedPlatformsTableColumnInfo[0].id,
+        sort: 'os',
         props: {
-          className: supportedPlatformColumnClasses[0],
+          modifier: 'nowrap',
         },
       },
       {
-        title: architecture,
+        title: t('public~Architecture'),
+        id: supportedPlatformsTableColumnInfo[1].id,
+        sort: 'architecture',
         props: {
-          className: supportedPlatformColumnClasses[1],
+          modifier: 'nowrap',
         },
       },
       {
-        title: digest,
+        title: t('public~Identifier'),
+        id: supportedPlatformsTableColumnInfo[2].id,
+        sort: 'digest',
         props: {
-          className: supportedPlatformColumnClasses[2],
+          modifier: 'nowrap',
         },
       },
     ];
-  });
+  }, [t]);
+  return columns;
 };
 
 export const SupportedPlatformsTable = (props) => {
   const { t } = useTranslation();
-  const { submanifests, policy, ...tableProps } = props;
-
-  const SupportedPlatformsTableHeader = () => [
-    {
-      title: t('public~OS'),
-      sortField: 'os',
-      transforms: [sortable],
-      props: { className: supportedPlatformColumnClasses[0] },
-    },
-    {
-      title: t('public~Architecture'),
-      sortField: 'architecture',
-      transforms: [sortable],
-      props: { className: supportedPlatformColumnClasses[1] },
-    },
-    {
-      title: t('public~Identifier'),
-      sortField: 'digest',
-      transforms: [sortable],
-      props: { className: supportedPlatformColumnClasses[2] },
-    },
-  ];
+  const { submanifests, policy, heading } = props;
+  const columns = useSupportedPlatformsColumns();
 
   if (!policy || submanifests.length === 0) {
     // If the policy does not support Manifest Lists, it exits.
@@ -110,17 +129,19 @@ export const SupportedPlatformsTable = (props) => {
 
   return (
     <>
-      {props.heading && <SectionHeading text={props.heading} />}
-      <Table
-        {...tableProps}
-        aria-label={t('public~Supported Platforms')}
-        loaded={true}
-        label={props.heading}
-        data={submanifests}
-        Header={SupportedPlatformsTableHeader}
-        Rows={SupportedPlatformsTableRows}
-        virtualize={false}
-      />
+      {heading && <SectionHeading text={heading} />}
+      <React.Suspense fallback={<LoadingBox />}>
+        <ResourceDataView
+          label={t('public~Supported Platforms')}
+          data={submanifests}
+          loaded={true}
+          columns={columns}
+          initialFilters={initialFiltersDefault}
+          getDataViewRows={getSupportedPlatformsDataViewRows}
+          hideColumnManagement={true}
+          hideNameLabelFilters={true}
+        />
+      </React.Suspense>
     </>
   );
 };
@@ -304,7 +325,7 @@ const getImageStreamNameAndTag = (imageStreamTag: K8sResourceKind) => {
   return { imageStreamName, tag };
 };
 
-const ImageStreamTagHistory: React.FC<ImageStreamTagHistoryProps> = ({
+const ImageStreamTagHistory: React.FCC<ImageStreamTagHistoryProps> = ({
   obj: imageStreamTag,
   imageStream,
 }) => {
