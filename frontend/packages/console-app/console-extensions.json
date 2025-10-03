@@ -429,6 +429,20 @@
     "properties": {
       "model": {
         "version": "v1",
+        "kind": "VolumeAttributesClass",
+        "group": "storage.k8s.io"
+      },
+      "provider": { "$codeRef": "volumeAttributesClassProvider.useVolumeAttributesClassActionsProvider" }
+    },
+    "flags": {
+      "required": ["VAC_PLATFORM_SUPPORT"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
         "kind": "StorageClass",
         "group": "storage.k8s.io"
       },
@@ -1256,12 +1270,30 @@
     }
   },
   {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "storage",
+      "id": "volumeattributesclasses",
+      "insertAfter": "storageclasses",
+      "name": "%console-app~VolumeAttributesClasses%",
+      "model": {
+        "group": "storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeAttributesClass"
+      }
+    },
+    "flags": { 
+      "required": ["VAC_PLATFORM_SUPPORT"] 
+    }
+  },
+  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "perspective": "admin",
       "section": "storage",
       "id": "volumesnapshots",
-      "insertAfter": "storageclasses",
+      "insertAfter": "volumeattributesclasses",
       "name": "%console-app~VolumeSnapshots%",
       "model": {
         "group": "snapshot.storage.k8s.io",
@@ -2404,6 +2436,12 @@
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": { "$codeRef": "getConsoleOperatorConfigFlag" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "vacPlatformSupport.useVACPlatformSupportProvider" }
     }
   },
   {
