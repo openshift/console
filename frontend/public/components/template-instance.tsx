@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { css } from '@patternfly/react-styles';
-import { sortable, Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
+import { Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-import { Status } from '@console/shared';
+import { Status, DASH } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
+import { DetailsPage, ListPage, sorts } from './factory';
 import { Conditions } from './conditions';
 import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';
 import {
@@ -17,6 +16,7 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
+  LoadingBox,
 } from './utils';
 import {
   DescriptionList,
@@ -26,96 +26,178 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { TemplateInstanceModel } from '../models';
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
+import {
+  ResourceFilters,
+  ResourceDataViewColumn,
+  ResourceDataViewRow,
+} from '@console/app/src/components/data-view/types';
+import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { sortResourceByValue } from './factory/Table/sort';
 
 const menuActions = Kebab.factory.common;
 
-const tableColumnClasses = [
-  'pf-v6-u-w-42-on-md',
-  'pf-v6-u-w-42-on-md',
-  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-16-on-md',
-  Kebab.columnClass,
-];
+const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'status' }, { id: '' }];
 
-const TemplateInstanceTableRow: React.FC<RowFunctionArgs<TemplateInstanceKind>> = ({ obj }) => {
-  return (
-    <>
-      <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
-        <ResourceLink
-          kind="TemplateInstance"
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Status status={getTemplateInstanceStatus(obj)} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind="TemplateInstance" resource={obj} />
-      </TableData>
-    </>
-  );
+const getTemplateInstanceDataViewRows = (
+  rowData: RowProps<TemplateInstanceKind, TemplateInstanceRowData>[],
+  tableColumns: ResourceDataViewColumn<TemplateInstanceKind>[],
+): ResourceDataViewRow[] => {
+  return rowData.map(({ obj }) => {
+    const { name, namespace } = obj.metadata;
+    const status = getTemplateInstanceStatus(obj);
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(TemplateInstanceModel)}
+            name={name}
+            namespace={namespace}
+          />
+        ),
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <Status status={status} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <ResourceKebab actions={menuActions} kind="TemplateInstance" resource={obj} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return tableColumns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
-export const TemplateInstanceList: React.FCC = (props) => {
+const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
   const { t } = useTranslation();
-
-  const TemplateInstanceTableHeader = () => {
+  const columns = React.useMemo(() => {
     return [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Status'),
-        sortFunc: 'getTemplateInstanceStatus',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: (data, direction) =>
+          data.sort(
+            sortResourceByValue<TemplateInstanceKind>(direction, sorts.getTemplateInstanceStatus),
+          ),
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
     ];
-  };
+  }, [t]);
+  return columns;
+};
+
+export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
+  data,
+  loaded,
+  ...props
+}) => {
+  const { t } = useTranslation();
+  const columns = useTemplateInstanceColumns();
+  const templateInstanceStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(() => {
+    return [
+      {
+        value: 'Ready',
+        label: t('public~Ready'),
+      },
+      {
+        value: 'Not Ready',
+        label: t('public~Not Ready'),
+      },
+      {
+        value: 'Failed',
+        label: t('public~Failed'),
+      },
+    ];
+  }, [t]);
+  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+    () => [
+      <DataViewCheckboxFilter
+        key="status"
+        filterId="status"
+        title={t('public~Status')}
+        placeholder={t('public~Filter by status')}
+        options={templateInstanceStatusFilterOptions}
+      />,
+    ],
+    [t, templateInstanceStatusFilterOptions],
+  );
+  const matchesAdditionalFilters = React.useCallback(
+    (resource: TemplateInstanceKind, filters: TemplateInstanceFilters) =>
+      filters.status.length === 0 || filters.status.includes(getTemplateInstanceStatus(resource)),
+    [],
+  );
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~TemplateInstances')}
-      Header={TemplateInstanceTableHeader}
-      Row={TemplateInstanceTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView<TemplateInstanceKind, TemplateInstanceRowData, TemplateInstanceFilters>
+        {...props}
+        label={TemplateInstanceModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={{ ...initialFiltersDefault, status: [] }}
+        additionalFilterNodes={additionalFilterNodes}
+        matchesAdditionalFilters={matchesAdditionalFilters}
+        getDataViewRows={getTemplateInstanceDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
-const allStatuses = ['Ready', 'Not Ready', 'Failed'];
-
 export const TemplateInstancePage: React.FCC<TemplateInstancePageProps> = (props) => {
   const { t } = useTranslation();
-
-  const filters = [
-    {
-      filterGroupName: t('public~Status'),
-      type: 'template-instance-status',
-      reducer: getTemplateInstanceStatus,
-      items: _.map(allStatuses, (status) => ({
-        id: status,
-        title: status,
-      })),
-    },
-  ];
 
   return (
     <ListPage
@@ -124,7 +206,7 @@ export const TemplateInstancePage: React.FCC<TemplateInstancePageProps> = (props
       kind="TemplateInstance"
       ListComponent={TemplateInstanceList}
       canCreate={false}
-      rowFilters={filters}
+      omitFilterToolbar={true}
     />
   );
 };
@@ -219,6 +301,20 @@ export const TemplateInstanceDetailsPage: React.FCC = (props) => (
     pages={[navFactory.details(TemplateInstanceDetails), navFactory.editYaml()]}
   />
 );
+
+type TemplateInstanceFilters = ResourceFilters & { status: string[] };
+
+type TemplateInstanceRowData = {
+  obj: TemplateInstanceKind;
+};
+
+type TemplateInstanceListProps = {
+  data: TemplateInstanceKind[];
+  loaded: boolean;
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  namespace?: string;
+};
 
 type TemplateInstancePageProps = {
   autoFocus?: boolean;

@@ -50,10 +50,10 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
     alertmanager.save();
 
     cy.log('verify PagerDuty Receiver was created correctly');
-    alertmanager.validateCreation(receiverName, receiverType, label);
+    alertmanager.validateCreation(receiverName);
 
     cy.log('update pagerduty_url');
-    listPage.rows.clickKebabAction(receiverName, 'Edit Receiver');
+    listPage.dvRows.clickKebabAction(receiverName, 'Edit Receiver');
     // Save as default checkbox disabled when url equals global url
     cy.byTestID('save-as-default').should('be.disabled');
     // changing url enables Save as default checkbox, should save pagerduty_url with Receiver

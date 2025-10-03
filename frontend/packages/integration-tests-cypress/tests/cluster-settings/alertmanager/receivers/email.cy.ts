@@ -49,7 +49,7 @@ describe('Alertmanager: Email Receiver Form', () => {
     alertmanager.save();
 
     cy.log('verify Email Receiver was created correctly');
-    alertmanager.validateCreation(receiverName, receiverType, label);
+    alertmanager.validateCreation(receiverName);
     alertmanager.visitYAMLPage();
     yamlEditor.getEditorContent().then((content) => {
       const configs = getGlobalsAndReceiverConfig(receiverName, configName, content);

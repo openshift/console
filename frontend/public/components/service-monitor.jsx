@@ -1,12 +1,30 @@
+import * as React from 'react';
 import * as _ from 'lodash-es';
-import { sortable } from '@patternfly/react-table';
-import { ListPage, Table, TableData } from './factory';
-import { Kebab, ResourceKebab, ResourceLink, Selector } from './utils';
+import { DASH } from '@console/shared';
+
+import { ListPage } from './factory';
+import { Kebab, ResourceKebab, ResourceLink, Selector, LoadingBox } from './utils';
 import { ServiceMonitorModel } from '../models';
 import { referenceForModel } from '../module/k8s';
+import { useTranslation } from 'react-i18next';
+import {
+  ResourceDataView,
+  initialFiltersDefault,
+  getNameCellProps,
+  actionsCellProps,
+  cellIsStickyProps,
+} from '@console/app/src/components/data-view/ResourceDataView';
 
 const { Edit, Delete } = Kebab.factory;
 const menuActions = [Edit, Delete];
+
+const serviceMonitorTableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'serviceSelector' },
+  { id: 'monitoringNamespace' },
+  { id: 'actions' },
+];
 
 const namespaceSelectorLinks = ({ spec }) => {
   const namespaces = _.get(spec, 'namespaceSelector.matchNames', []);
@@ -34,87 +52,123 @@ const serviceSelectorLinks = ({ spec }) => {
   return <Selector selector={spec.selector} kind="Service" />;
 };
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-md',
-  Kebab.columnClass,
-];
+const getServiceMonitorDataViewRows = (data, columns) => {
+  return data.map(({ obj }) => {
+    const { metadata } = obj;
+    const resourceKind = referenceForModel(ServiceMonitorModel);
 
-const ServiceMonitorTableRow = ({ obj: sm }) => {
-  const { metadata } = sm;
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={referenceForModel(ServiceMonitorModel)}
-          name={metadata.name}
-          namespace={metadata.namespace}
-          title={metadata.uid}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
-        <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>{serviceSelectorLinks(sm)}</TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <p>{namespaceSelectorLinks(sm)}</p>
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <ResourceKebab
-          actions={menuActions}
-          kind={referenceForModel(ServiceMonitorModel)}
-          resource={sm}
-        />
-      </TableData>
-    </>
+    const rowCells = {
+      [serviceMonitorTableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            kind={resourceKind}
+            name={metadata.name}
+            namespace={metadata.namespace}
+            title={metadata.uid}
+          />
+        ),
+        props: getNameCellProps(metadata.name),
+      },
+      [serviceMonitorTableColumnInfo[1].id]: {
+        cell: (
+          <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
+        ),
+      },
+      [serviceMonitorTableColumnInfo[2].id]: {
+        cell: serviceSelectorLinks(obj),
+      },
+      [serviceMonitorTableColumnInfo[3].id]: {
+        cell: namespaceSelectorLinks(obj),
+      },
+      [serviceMonitorTableColumnInfo[4].id]: {
+        cell: <ResourceKebab actions={menuActions} kind={resourceKind} resource={obj} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
+};
+
+const useServiceMonitorColumns = () => {
+  const { t } = useTranslation();
+  return React.useMemo(
+    () => [
+      {
+        title: t('public~Name'),
+        id: serviceMonitorTableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: serviceMonitorTableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Service Selector'),
+        id: serviceMonitorTableColumnInfo[2].id,
+        sort: 'spec.selector',
+        props: {
+          modifier: 'nowrap',
+          width: 25,
+        },
+      },
+      {
+        title: t('public~Monitoring Namespace'),
+        id: serviceMonitorTableColumnInfo[3].id,
+        sort: 'spec.namespaceSelector',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: serviceMonitorTableColumnInfo[4].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ],
+    [t],
   );
 };
 
-const ServiceMonitorTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Service Selector',
-      sortField: 'spec.selector',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Monitoring Namespace',
-      sortField: 'spec.namespaceSelector',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[4] },
-    },
-  ];
-};
-ServiceMonitorTableHeader.displayName = 'ServiceMonitorTableHeader';
+export const ServiceMonitorsList = (props) => {
+  const { data, loaded } = props;
+  const columns = useServiceMonitorColumns();
 
-export const ServiceMonitorsList = (props) => (
-  <Table
-    {...props}
-    aria-label="Service Monitors"
-    Header={ServiceMonitorTableHeader}
-    Row={ServiceMonitorTableRow}
-    virtualize
-  />
-);
+  return (
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView
+        {...props}
+        data={data}
+        loaded={loaded}
+        label={ServiceMonitorModel.labelPlural}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={(dvData, dvColumns) => getServiceMonitorDataViewRows(dvData, dvColumns)}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
+  );
+};
 
 export const ServiceMonitorsPage = (props) => (
   <ListPage
@@ -122,5 +176,6 @@ export const ServiceMonitorsPage = (props) => (
     canCreate={true}
     kind={referenceForModel(ServiceMonitorModel)}
     ListComponent={ServiceMonitorsList}
+    omitFilterToolbar={true}
   />
 );

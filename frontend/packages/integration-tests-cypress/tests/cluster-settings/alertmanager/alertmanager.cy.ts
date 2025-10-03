@@ -74,11 +74,11 @@ describe('Alertmanager', () => {
     cy.byTestID('webhook-url').type(webhookURL);
     cy.byTestID('label-0').type(label);
     alertmanager.save();
-    alertmanager.validateCreation(receiverName, receiverType, label);
-    listPage.rows.clickKebabAction(receiverName, 'Delete Receiver');
+    alertmanager.validateCreation(receiverName, 'integration-types', 'routing-labels');
+    listPage.dvRows.clickKebabAction(receiverName, 'Delete Receiver');
     warningModal.confirm('AlertmanagerDeleteReceiverConfirmation');
     warningModal.shouldBeClosed('AlertmanagerDeleteReceiverConfirmation');
-    listPage.rows.shouldNotExist(receiverName);
+    listPage.dvRows.shouldNotExist(receiverName);
   });
 
   it('prevents deletion and form edit of a receiver with sub-route', () => {
@@ -100,8 +100,7 @@ receivers:
     yamlEditor.clickSaveCreateButton();
     cy.byTestID('alert-success').should('exist');
     detailsPage.selectTab('Details');
-    cy.get('[data-test-rows="resource-row"]')
-      .contains('team-X-pager')
+    cy.get('[data-test="data-view-cell-team-X-pager-name"]')
       .parents('tr')
       .within(() => {
         cy.get('[data-test-id="kebab-button"]').click();
@@ -180,7 +179,7 @@ route:
     yamlEditor.clickSaveCreateButton();
     cy.get('.yaml-editor__buttons .pf-m-success').should('exist');
     detailsPage.selectTab('Details');
-    listPage.rows.shouldExist(receiverName);
+    listPage.dvRows.shouldExist(receiverName);
     alertmanager.visitEditPage(receiverName);
     cy.byTestID('label-0').should('have.value', matcher1);
     cy.byTestID('label-1').should('have.value', matcher2);

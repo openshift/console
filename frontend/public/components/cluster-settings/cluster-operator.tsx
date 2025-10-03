@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { css } from '@patternfly/react-styles';
 import { useLocation } from 'react-router-dom-v5-compat';
-import { sortable } from '@patternfly/react-table';
 import {
   Alert,
   DescriptionList,
@@ -15,10 +13,11 @@ import {
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
 import { useTranslation } from 'react-i18next';
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ClusterOperatorModel } from '../../models';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from '../factory';
+import { DetailsPage, ListPage } from '../factory';
 import { Conditions } from '../conditions';
 import {
   getClusterOperatorStatus,
@@ -37,19 +36,35 @@ import {
 import {
   navFactory,
   EmptyBox,
-  Kebab,
   LinkifyExternal,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
+  LoadingBox,
 } from '../utils';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
+  DASH,
 } from '@console/shared';
 import RelatedObjectsPage from './related-objects';
 import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-status';
+import {
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import {
+  ResourceFilters,
+  ResourceDataViewColumn,
+  ResourceDataViewRow,
+} from '@console/app/src/components/data-view/types';
+import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { sortResourceByValue } from '../factory/Table/sort';
+import { sorts } from '../factory/table';
 
 export const clusterOperatorReference: K8sResourceKindReference = referenceForModel(
   ClusterOperatorModel,
@@ -75,75 +90,166 @@ const OperatorStatusIconAndLabel: React.FC<OperatorStatusIconAndLabelProps> = ({
   );
 };
 
-const tableColumnClasses = [
-  '',
-  'pf-v6-u-w-16-on-xl',
-  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-33-on-2xl',
-  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-33-on-2xl',
-  Kebab.columnClass,
-];
+const tableColumnInfo = [{ id: 'name' }, { id: 'status' }, { id: 'version' }, { id: 'message' }];
 
-const ClusterOperatorTableRow: React.FC<RowFunctionArgs<ClusterOperator>> = ({ obj }) => {
-  const { status, message } = getStatusAndMessage(obj);
-  const operatorVersion = getClusterOperatorVersion(obj);
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={clusterOperatorReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
-        <OperatorStatusIconAndLabel status={status} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>{operatorVersion || '-'}</TableData>
-      <TableData
-        className={css(tableColumnClasses[3], 'co-break-word', 'co-line-clamp', 'co-pre-line')}
-      >
-        <LinkifyExternal>{message || '-'}</LinkifyExternal>
-      </TableData>
-    </>
-  );
+const getClusterOperatorDataViewRows = (
+  rowData: RowProps<ClusterOperator, ClusterOperatorRowData>[],
+  tableColumns: ResourceDataViewColumn<ClusterOperator>[],
+): ResourceDataViewRow[] => {
+  return rowData.map(({ obj }) => {
+    const { name, namespace } = obj.metadata;
+    const { status, message } = getStatusAndMessage(obj);
+    const operatorVersion = getClusterOperatorVersion(obj);
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={clusterOperatorReference} name={name} namespace={namespace} />,
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <OperatorStatusIconAndLabel status={status} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: operatorVersion || DASH,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: (
+          <div className="co-break-word co-line-clamp co-pre-line">
+            <LinkifyExternal>{message || DASH}</LinkifyExternal>
+          </div>
+        ),
+      },
+    };
+
+    return tableColumns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
-export const ClusterOperatorList: React.FC = (props) => {
+const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
   const { t } = useTranslation();
-  const ClusterOperatorTableHeader = () => {
+  const columns = React.useMemo(() => {
     return [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+          width: 20,
+        },
       },
       {
         title: t('public~Status'),
-        sortFunc: 'getClusterOperatorStatus',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
+        id: tableColumnInfo[1].id,
+        sort: (data, direction) =>
+          data.sort(
+            sortResourceByValue<ClusterOperator>(direction, sorts.getClusterOperatorStatus),
+          ),
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Version'),
-        sortFunc: 'getClusterOperatorVersion',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: (data, direction) =>
+          data.sort(
+            sortResourceByValue<ClusterOperator>(direction, sorts.getClusterOperatorVersion),
+          ),
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Message'),
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        props: {
+          modifier: 'nowrap',
+        },
       },
     ];
-  };
+  }, [t]);
+  return columns;
+};
+
+export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
+  data,
+  loaded,
+  ...props
+}) => {
+  const { t } = useTranslation();
+  const columns = useClusterOperatorColumns();
+  const clusterOperatorStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(() => {
+    return [
+      {
+        value: 'Available',
+        label: t('public~Available'),
+      },
+      {
+        value: 'Progressing',
+        label: t('public~Progressing'),
+      },
+      {
+        value: 'Degraded',
+        label: t('public~Degraded'),
+      },
+      {
+        value: 'Cannot update',
+        label: t('public~Cannot update'),
+      },
+      {
+        value: 'Unavailable',
+        label: t('public~Unavailable'),
+      },
+      {
+        value: 'Unknown',
+        label: t('public~Unknown'),
+      },
+    ];
+  }, [t]);
+  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+    () => [
+      <DataViewCheckboxFilter
+        key="status"
+        filterId="status"
+        title={t('public~Status')}
+        placeholder={t('public~Filter by status')}
+        options={clusterOperatorStatusFilterOptions}
+      />,
+    ],
+    [t, clusterOperatorStatusFilterOptions],
+  );
+  const matchesAdditionalFilters = React.useCallback(
+    (resource: ClusterOperator, filters: ClusterOperatorFilters) =>
+      filters.status.length === 0 || filters.status.includes(getClusterOperatorStatus(resource)),
+    [],
+  );
+
   return (
-    <Table
-      {...props}
-      aria-label={ClusterOperatorModel.labelPlural}
-      Header={ClusterOperatorTableHeader}
-      Row={ClusterOperatorTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView<ClusterOperator, ClusterOperatorRowData, ClusterOperatorFilters>
+        {...props}
+        label={ClusterOperatorModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={{ ...initialFiltersDefault, status: [] }}
+        additionalFilterNodes={additionalFilterNodes}
+        matchesAdditionalFilters={matchesAdditionalFilters}
+        getDataViewRows={(rowData, tableColumns) =>
+          getClusterOperatorDataViewRows(rowData, tableColumns)
+        }
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -172,22 +278,6 @@ const UpdateInProgressAlert: React.FC<UpdateInProgressAlertProps> = ({ cv }) => 
 };
 
 export const ClusterOperatorPage: React.FC<ClusterOperatorPageProps> = (props) => {
-  const { t } = useTranslation();
-  const filters = [
-    {
-      filterGroupName: t('public~Status'),
-      type: 'cluster-operator-status',
-      reducer: getClusterOperatorStatus,
-      items: [
-        { id: 'Available', title: t('public~Available') },
-        { id: 'Progressing', title: t('public~Progressing') },
-        { id: 'Degraded', title: t('public~Degraded') },
-        { id: 'Cannot update', title: t('public~Cannot update') },
-        { id: 'Unavailable', title: t('public~Unavailable') },
-        { id: 'Unknown', title: t('public~Unknown') },
-      ],
-    },
-  ];
   return (
     <>
       <UpdateInProgressAlert cv={props.cv} />
@@ -197,7 +287,7 @@ export const ClusterOperatorPage: React.FC<ClusterOperatorPageProps> = (props) =
         kind={clusterOperatorReference}
         ListComponent={ClusterOperatorList}
         canCreate={false}
-        rowFilters={filters}
+        omitFilterToolbar={true}
       />
     </>
   );
@@ -332,4 +422,18 @@ type ClusterOperatorDetailsProps = {
 
 type UpdateInProgressAlertProps = {
   cv: ClusterVersionKind;
+};
+
+type ClusterOperatorFilters = ResourceFilters & { status: string[] };
+
+type ClusterOperatorRowData = {
+  obj: ClusterOperator;
+};
+
+type ClusterOperatorListProps = {
+  data: ClusterOperator[];
+  loaded: boolean;
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  hideColumnManagement?: boolean;
 };
