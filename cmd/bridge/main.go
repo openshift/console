@@ -8,13 +8,13 @@ import (
 	"flag"
 	"fmt"
 	"net"
-	"runtime"
-
 	"net/http"
 	"net/url"
 	"os"
+	"runtime"
 	"sort"
 	"strings"
+	"time"
 
 	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
@@ -142,11 +142,26 @@ func main() {
 	sessionOptions := session.NewSessionOptions()
 	addFlags(fs, bridgeOptions, authOptions, sessionOptions)
 
-	// TODO watch for changes in the config file, update the config, and restart the server
-	applyConfig(fs, bridgeOptions, authOptions, sessionOptions)
-	srv := createServer(fs, bridgeOptions, authOptions, sessionOptions)
-	startRedirectServer(bridgeOptions, srv)
-	startServer(bridgeOptions, srv)
+	if err := fs.Parse(os.Args[1:]); err != nil {
+		klog.Fatalf("Failed to parse flags: %v", err)
+	}
+
+	configFile := fs.Lookup("config").Value.String()
+
+	// Run server in a loop to support restarts
+	for {
+		// Parse and apply config
+		applyConfig(fs, bridgeOptions, authOptions, sessionOptions)
+
+		// Build the server with current config
+		srv := createServer(bridgeOptions, authOptions, sessionOptions)
+
+		// Run the server with config file watching
+		shouldRestart := runServer(bridgeOptions, srv, configFile)
+		if !shouldRestart {
+			return
+		}
+	}
 }
 
 func addFlags(fs *flag.FlagSet, bridgeOptions *BridgeOptions, authOptions *authopts.AuthOptions, sessionOptions *session.SessionOptions) {
@@ -239,7 +254,7 @@ func applyConfig(fs *flag.FlagSet, bridgeOptions *BridgeOptions, authOptions *au
 	sessionOptions.ApplyConfig(&cfg.Session)
 }
 
-func createServer(fs *flag.FlagSet, bridgeOptions *BridgeOptions, authOptions *authopts.AuthOptions, sessionOptions *session.SessionOptions) *server.Server {
+func createServer(bridgeOptions *BridgeOptions, authOptions *authopts.AuthOptions, sessionOptions *session.SessionOptions) *server.Server {
 	baseURL, err := flags.ValidateFlagIsURL("base-address", bridgeOptions.fBaseAddress, true)
 	flags.FatalIfFailed(err)
 
@@ -747,7 +762,7 @@ func createServer(fs *flag.FlagSet, bridgeOptions *BridgeOptions, authOptions *a
 	return srv
 }
 
-func startServer(bridgeOptions *BridgeOptions, srv *server.Server) {
+func runServer(bridgeOptions *BridgeOptions, srv *server.Server, configFile string) bool {
 	listenURL, err := flags.ValidateFlagIsURL("listen", bridgeOptions.fListen, false)
 	flags.FatalIfFailed(err)
 
@@ -766,8 +781,6 @@ func startServer(bridgeOptions *BridgeOptions, srv *server.Server) {
 	}
 
 	httpsrv := &http.Server{Handler: handler}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	listener, err := listen(listenURL.Scheme, listenURL.Host, bridgeOptions.fTLSCertFile, bridgeOptions.fTLSKeyFile)
 	if err != nil {
@@ -775,18 +788,39 @@ func startServer(bridgeOptions *BridgeOptions, srv *server.Server) {
 	}
 	defer listener.Close()
 
+	// Create a context that can be cancelled to trigger shutdown
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Start config file watcher if a config file is specified
+	if configFile != "" {
+		watcher, err := serverconfig.NewConfigWatcher(configFile, func() {
+			klog.Info("Config file changed, triggering server restart...")
+			cancel()
+		})
+		if err != nil {
+			klog.Fatalf("Failed to create config file watcher: %v", err)
+		}
+
+		go func() {
+			if err := watcher.Start(ctx); err != nil && err != context.Canceled {
+				klog.Errorf("Config file watcher stopped with error: %v", err)
+			}
+		}()
+	}
+
+	// Start shutdown handler
 	go func() {
 		<-ctx.Done()
-		klog.Infof("Shutting down server...")
-		if err = httpsrv.Shutdown(ctx); err != nil {
-			klog.Fatalf("Error shutting down server: %v", err)
+		klog.Info("Shutting down server...")
+		// Create a new context with timeout for shutdown
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer shutdownCancel()
+		if err := httpsrv.Shutdown(shutdownCtx); err != nil {
+			klog.Errorf("Error shutting down server: %v", err)
 		}
 	}()
 
-	httpsrv.Serve(listener)
-}
-
-func startRedirectServer(bridgeOptions *BridgeOptions, srv *server.Server) {
 	if bridgeOptions.fRedirectPort != 0 {
 		go func() {
 			// Listen on passed port number to be redirected to the console
@@ -805,6 +839,24 @@ func startRedirectServer(bridgeOptions *BridgeOptions, srv *server.Server) {
 			klog.Fatal(http.ListenAndServe(redirectPort, redirectServer))
 		}()
 	}
+
+	klog.Infof("Server listening on %s", listenURL.String())
+	serveErr := httpsrv.Serve(listener)
+
+	// Determine if we should restart
+	if ctx.Err() == context.Canceled {
+		// Context was cancelled (config change triggered restart)
+		klog.Info("Server stopped, restarting with new configuration...")
+		return true
+	}
+
+	// Server stopped naturally or with an error
+	if serveErr != nil && serveErr != http.ErrServerClosed {
+		klog.Fatalf("Server stopped with error: %v", serveErr)
+	}
+
+	klog.Info("Server stopped gracefully")
+	return false
 }
 
 func listen(scheme, host, certFile, keyFile string) (net.Listener, error) {
