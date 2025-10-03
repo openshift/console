@@ -5,7 +5,7 @@ type CatalogPageNumItemsProps = {
   children: React.ReactNode;
 };
 
-const CatalogPageNumItems: React.FC<CatalogPageNumItemsProps> = ({ children }) => (
+const CatalogPageNumItems: React.FCC<CatalogPageNumItemsProps> = ({ children }) => (
   <FlexItem className="co-catalog-page__num-items">{children}</FlexItem>
 );
 

@@ -11,6 +11,7 @@ type MaintenancePopoverProps = {
   title: string;
   nodeMaintenance: K8sResourceKind;
   className?: string;
+  children?: React.ReactNode;
 };
 
 const MaintenancePopover: React.FC<MaintenancePopoverProps> = ({

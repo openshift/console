@@ -91,4 +91,5 @@ export type StatusPopupItemProps = {
 export type StatusPopupSectionProps = {
   firstColumn: React.ReactNode;
   secondColumn?: React.ReactNode;
+  children?: React.ReactNode;
 };

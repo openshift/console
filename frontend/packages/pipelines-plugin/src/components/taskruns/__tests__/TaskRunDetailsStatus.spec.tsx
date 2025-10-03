@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import { render, configure } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom-v5-compat';
@@ -10,7 +11,11 @@ configure({ testIdAttribute: 'data-test' });
 
 type TaskRunDetailsStatusProps = React.ComponentProps<typeof TaskRunDetailsStatus>;
 
-const Wrapper: React.FC = ({ children }) => (
+interface WrapperProps {
+  children?: ReactNode;
+}
+
+const Wrapper: React.FC<WrapperProps> = ({ children }) => (
   <BrowserRouter>
     <Provider store={store}>{children}</Provider>
   </BrowserRouter>

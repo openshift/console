@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import * as _ from 'lodash';
 import { UnknownProps } from '../common-types';
 
@@ -30,7 +31,11 @@ type ComponentMap = {
   };
 };
 
-export const ModalProvider: React.FC = ({ children }) => {
+interface ModalProviderProps {
+  children?: ReactNode;
+}
+
+export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const [isOpen, setOpen] = React.useState(false);
   const [Component, setComponent] = React.useState<ModalComponent>();
   const [componentProps, setComponentProps] = React.useState({});
