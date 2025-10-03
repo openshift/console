@@ -107,7 +107,7 @@ export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGrid
       <CardExpandableContent>
         {headerContent && headerContent}
         <CardBody
-          id="getting-started-content"
+          data-testid="getting-started-content"
           className="ocs-getting-started-expandable-grid__content"
         >
           {children}

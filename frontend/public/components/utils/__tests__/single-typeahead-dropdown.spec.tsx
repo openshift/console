@@ -1,14 +1,10 @@
-import { screen, configure, act, waitFor, fireEvent } from '@testing-library/react';
+import { screen, act, waitFor, fireEvent } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { SingleTypeaheadDropdown } from '../single-typeahead-dropdown';
 
 describe('SingleTypeaheadDropdown', () => {
   let onChange: jest.Mock;
-
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   beforeEach(() => {
     onChange = jest.fn();

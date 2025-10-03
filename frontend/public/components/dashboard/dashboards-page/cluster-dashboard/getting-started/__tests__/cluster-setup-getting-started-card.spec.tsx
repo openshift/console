@@ -1,4 +1,4 @@
-import { screen, configure, act } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { useCanClusterUpgrade } from '@console/shared';
@@ -43,12 +43,7 @@ const useIdentityProviderLinkMock = useIdentityProviderLink as jest.Mock;
 const useAlertReceiverLinkMock = useAlertReceiverLink as jest.Mock;
 
 describe('ClusterSetupGettingStartedCard', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   beforeEach(() => {
-    useCanClusterUpgradeMock.mockReset();
     useIdentityProviderLinkMock.mockReset();
     useAlertReceiverLinkMock.mockReset();
   });
@@ -66,11 +61,11 @@ describe('ClusterSetupGettingStartedCard', () => {
       href: '/settings/cluster/alertmanagerconfig',
     });
 
-    await act(async () => {
-      renderWithProviders(<ClusterSetupGettingStartedCard />);
-    });
+    renderWithProviders(<ClusterSetupGettingStartedCard />);
 
-    expect(screen.getByRole('heading', { name: 'Set up your cluster' })).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Set up your cluster' })).toBeVisible();
+    });
 
     expect(screen.getByText('Add identity providers')).toBeVisible();
     expect(screen.getByTestId('item identity-providers')).toHaveAttribute('href', '/cluster');
@@ -91,12 +86,14 @@ describe('ClusterSetupGettingStartedCard', () => {
     useIdentityProviderLinkMock.mockReturnValue(null);
     useAlertReceiverLinkMock.mockReturnValue(null);
 
-    await act(async () => {
-      renderWithProviders(<ClusterSetupGettingStartedCard />);
-    });
+    renderWithProviders(<ClusterSetupGettingStartedCard />);
 
     // When no links are provided, the component should not render anything
-    expect(screen.queryByRole('heading', { name: 'Set up your cluster' })).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('heading', { name: 'Set up your cluster' }),
+      ).not.toBeInTheDocument();
+    });
     expect(screen.queryByText('Add identity providers')).not.toBeInTheDocument();
     expect(screen.queryByText('Configure alert receivers')).not.toBeInTheDocument();
   });

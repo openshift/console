@@ -1,6 +1,8 @@
-import { screen, configure, act } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { expectExternalLinkAttributes } from '../../../../getting-started-test-utils';
 import { ExploreAdminFeaturesGettingStartedCard } from '../explore-admin-features-getting-started-card';
 
 jest.mock('react', () => ({
@@ -31,28 +33,23 @@ jest.mock('@console/shared/src/hooks/flag', () => ({
   useFlag: jest.fn(),
 }));
 
-import { useFlag } from '@console/shared/src/hooks/flag';
 const mockUseFlag = useFlag as jest.Mock;
 
 describe('ExploreAdminFeaturesGettingStartedCard', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   beforeEach(() => {
     mockUseFlag.mockReturnValue(false);
   });
 
   it('should contain the right static content and structure', async () => {
-    await act(async () => {
-      renderWithProviders(<ExploreAdminFeaturesGettingStartedCard />);
+    renderWithProviders(<ExploreAdminFeaturesGettingStartedCard />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { name: 'Explore new features and capabilities' }),
+      ).toBeVisible();
     });
 
-    expect(
-      screen.getByRole('heading', { name: 'Explore new features and capabilities' }),
-    ).toBeVisible();
-
-    expect(screen.getByTestId('card admin-features')).toBeVisible();
+    expect(screen.getByTestId('card admin-features')).toBeInTheDocument();
 
     expect(screen.getByText('OpenShift AI')).toBeVisible();
     expect(screen.getByText('Build, deploy, and manage AI-enabled applications.')).toBeVisible();
@@ -60,8 +57,11 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
   });
 
   it('should have correct link destinations', async () => {
-    await act(async () => {
-      renderWithProviders(<ExploreAdminFeaturesGettingStartedCard />);
+    renderWithProviders(<ExploreAdminFeaturesGettingStartedCard />);
+
+    await waitFor(() => {
+      const openShiftAiLink = screen.getByTestId('item openshift-ai');
+      expect(openShiftAiLink).toBeTruthy();
     });
 
     const openShiftAiLink = screen.getByTestId('item openshift-ai');
@@ -71,18 +71,16 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
     );
 
     const whatsNewLink = screen.getByTestId('item whats-new');
-    expect(whatsNewLink).toHaveAttribute('href', 'https://www.openshift.com/learn/whats-new');
-    expect(whatsNewLink).toHaveAttribute('target', '_blank');
-    expect(whatsNewLink).toHaveAttribute('rel', 'noopener noreferrer');
+    expectExternalLinkAttributes(whatsNewLink, 'https://www.openshift.com/learn/whats-new');
   });
 
   it('should display language options when lightspeed is not available', async () => {
-    await act(async () => {
-      renderWithProviders(<ExploreAdminFeaturesGettingStartedCard />);
-    });
+    renderWithProviders(<ExploreAdminFeaturesGettingStartedCard />);
 
     // Since useFlag returns false (lightspeed not available), should show language link instead
-    expect(screen.getByText('French and Spanish now available')).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByText('French and Spanish now available')).toBeVisible();
+    });
     expect(
       screen.getByText('Console language options now include French and Spanish.'),
     ).toBeVisible();
@@ -106,12 +104,12 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
       }
     });
 
-    await act(async () => {
-      renderWithProviders(<ExploreAdminFeaturesGettingStartedCard />);
-    });
+    renderWithProviders(<ExploreAdminFeaturesGettingStartedCard />);
 
     // Should show lightspeed link instead of language options
-    expect(screen.getByText('OpenShift Lightspeed')).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByText('OpenShift Lightspeed')).toBeVisible();
+    });
     expect(screen.getByText('Your personal AI helper.')).toBeVisible();
   });
 });

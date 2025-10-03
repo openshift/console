@@ -1,9 +1,10 @@
-import { screen, configure, act } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { useActiveNamespace, CatalogServiceProvider } from '@console/shared/src';
 import { loadingCatalogService, loadedCatalogService } from './SampleGettingStartedCard.data';
 import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
+import { cleanupServerFlag } from '../../../getting-started-test-utils';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
@@ -36,20 +37,13 @@ const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
 const CatalogServiceProviderMock = CatalogServiceProvider as jest.Mock;
 
 describe('SampleGettingStartedCard', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   beforeEach(() => {
     useActiveNamespaceMock.mockReset();
     CatalogServiceProviderMock.mockReset();
-
-    // Clean up any SERVER_FLAGS from previous tests
-    delete window.SERVER_FLAGS.addPage;
   });
 
   afterEach(() => {
-    delete window.SERVER_FLAGS.addPage;
+    cleanupServerFlag('addPage');
   });
 
   it('should not render when Samples add card is disabled', async () => {
@@ -58,11 +52,11 @@ describe('SampleGettingStartedCard', () => {
     useActiveNamespaceMock.mockReturnValue(['active-namespace']);
     CatalogServiceProviderMock.mockImplementation((props) => props.children(loadedCatalogService));
 
-    await act(async () => {
-      renderWithProviders(<SampleGettingStartedCard />);
-    });
+    renderWithProviders(<SampleGettingStartedCard />);
 
-    expect(screen.queryByText('Create applications using samples')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText('Create applications using samples')).not.toBeInTheDocument();
+    });
     expect(screen.queryByText('View all samples')).not.toBeInTheDocument();
   });
 
@@ -70,16 +64,16 @@ describe('SampleGettingStartedCard', () => {
     useActiveNamespaceMock.mockReturnValue(['active-namespace']);
     CatalogServiceProviderMock.mockImplementation((props) => props.children(loadingCatalogService));
 
-    await act(async () => {
-      renderWithProviders(
-        <SampleGettingStartedCard featured={['code-with-quarkus', 'java-springboot-basic']} />,
-      );
+    renderWithProviders(
+      <SampleGettingStartedCard featured={['code-with-quarkus', 'java-springboot-basic']} />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Create applications using samples')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Create applications using samples')).toBeInTheDocument();
-
     const viewAllSamplesLink = screen.getByRole('link', { name: 'View all samples' });
-    expect(viewAllSamplesLink).toBeInTheDocument();
+    expect(viewAllSamplesLink).toBeVisible();
     expect(viewAllSamplesLink).toHaveAttribute('href', '/samples/ns/active-namespace');
 
     expect(screen.getByTestId('card samples')).toBeInTheDocument();
@@ -93,30 +87,30 @@ describe('SampleGettingStartedCard', () => {
     useActiveNamespaceMock.mockReturnValue(['active-namespace']);
     CatalogServiceProviderMock.mockImplementation((props) => props.children(loadedCatalogService));
 
-    await act(async () => {
-      renderWithProviders(
-        <SampleGettingStartedCard featured={['code-with-quarkus', 'java-springboot-basic']} />,
-      );
+    renderWithProviders(
+      <SampleGettingStartedCard featured={['code-with-quarkus', 'java-springboot-basic']} />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Create applications using samples')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Create applications using samples')).toBeInTheDocument();
-
     const quarkusLink = screen.getByRole('link', { name: 'Basic Quarkus' });
-    expect(quarkusLink).toBeInTheDocument();
+    expect(quarkusLink).toBeVisible();
     expect(quarkusLink).toHaveAttribute(
       'href',
       '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/devfile-samples/devfile-sample-code-with-quarkus.git',
     );
 
     const springBootLink = screen.getByRole('link', { name: 'Basic Spring Boot' });
-    expect(springBootLink).toBeInTheDocument();
+    expect(springBootLink).toBeVisible();
     expect(springBootLink).toHaveAttribute(
       'href',
       '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/devfile-samples/devfile-sample-java-springboot-basic.git',
     );
 
     const viewAllSamplesLink = screen.getByRole('link', { name: 'View all samples' });
-    expect(viewAllSamplesLink).toBeInTheDocument();
+    expect(viewAllSamplesLink).toBeVisible();
     expect(viewAllSamplesLink).toHaveAttribute('href', '/samples/ns/active-namespace');
   });
 
@@ -124,26 +118,26 @@ describe('SampleGettingStartedCard', () => {
     useActiveNamespaceMock.mockReturnValue(['active-namespace']);
     CatalogServiceProviderMock.mockImplementation((props) => props.children(loadedCatalogService));
 
-    await act(async () => {
-      renderWithProviders(<SampleGettingStartedCard />);
-    });
+    renderWithProviders(<SampleGettingStartedCard />);
 
-    expect(screen.getByText('Create applications using samples')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Create applications using samples')).toBeInTheDocument();
+    });
 
     // When no featured items are specified, it should show the first 2 items from the catalog
     const dotnetLink = screen.getByRole('link', { name: '.NET Core' });
-    expect(dotnetLink).toBeInTheDocument();
+    expect(dotnetLink).toBeVisible();
     expect(dotnetLink).toHaveAttribute('href', '/samples/ns/active-namespace/dotnet/openshift');
 
     const nodejsLink = screen.getByRole('link', { name: 'Basic Node.js' });
-    expect(nodejsLink).toBeInTheDocument();
+    expect(nodejsLink).toBeVisible();
     expect(nodejsLink).toHaveAttribute(
       'href',
       '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/nodeshift-starters/devfile-sample.git',
     );
 
     const viewAllSamplesLink = screen.getByRole('link', { name: 'View all samples' });
-    expect(viewAllSamplesLink).toBeInTheDocument();
+    expect(viewAllSamplesLink).toBeVisible();
     expect(viewAllSamplesLink).toHaveAttribute('href', '/samples/ns/active-namespace');
   });
 });

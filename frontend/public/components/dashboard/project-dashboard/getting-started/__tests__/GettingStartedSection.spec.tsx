@@ -1,4 +1,4 @@
-import { screen, configure, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { useUserSettings } from '@console/shared';
@@ -7,6 +7,7 @@ import {
   GettingStartedShowState,
   useGettingStartedShowState,
 } from '@console/shared/src/components/getting-started';
+import { expectTextsNotInDocument } from '../../../getting-started-test-utils';
 
 import { GettingStartedSection } from '../GettingStartedSection';
 
@@ -48,83 +49,72 @@ const useFlagMock = useFlag as jest.Mock;
 const useGettingStartedShowStateMock = useGettingStartedShowState as jest.Mock;
 
 describe('GettingStartedSection', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   beforeEach(() => {
     mockUserSettings.mockReset();
     useFlagMock.mockReset();
     useGettingStartedShowStateMock.mockReset();
 
+    // Default mock setup for most tests
     mockUserSettings.mockReturnValue([true, jest.fn(), false]);
-  });
-
-  it('should render with three child cards when all conditions are met', async () => {
     useFlagMock.mockReturnValue(true);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
+  });
 
-    await act(async () => {
-      renderWithProviders(
-        <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
-      );
-    });
+  it('should render with three child cards when all conditions are met', () => {
+    renderWithProviders(
+      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+    );
 
     // Check that all three cards are present by looking for their mocked components
-    const contentContainer = screen
-      .getByTestId('getting-started')
-      .querySelector('.ocs-getting-started-expandable-grid__content');
+    const contentContainer = screen.getByTestId('getting-started-content');
     expect(contentContainer).toHaveTextContent('Sample getting started');
     expect(contentContainer).toHaveTextContent('Quick start tutorials');
     expect(contentContainer).toHaveTextContent('Developer features');
   });
 
-  it('should render nothing when useFlag(FLAGS.OPENSHIFT) returns false', async () => {
+  it('should render nothing when useFlag(FLAGS.OPENSHIFT) returns false', () => {
     useFlagMock.mockReturnValue(false);
-    useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
-    await act(async () => {
-      renderWithProviders(
-        <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
-      );
-    });
+    renderWithProviders(
+      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+    );
 
-    expect(screen.queryByText('Sample getting started')).not.toBeInTheDocument();
-    expect(screen.queryByText('Quick start tutorials')).not.toBeInTheDocument();
-    expect(screen.queryByText('Developer features')).not.toBeInTheDocument();
+    expectTextsNotInDocument([
+      'Sample getting started',
+      'Quick start tutorials',
+      'Developer features',
+    ]);
   });
 
-  it('should render nothing if user settings hide them', async () => {
-    useFlagMock.mockReturnValue(true);
+  it('should render nothing if user settings hide them', () => {
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
 
-    await act(async () => {
-      renderWithProviders(
-        <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
-      );
-    });
+    renderWithProviders(
+      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+    );
 
-    expect(screen.queryByText('Sample getting started')).not.toBeInTheDocument();
-    expect(screen.queryByText('Quick start tutorials')).not.toBeInTheDocument();
-    expect(screen.queryByText('Developer features')).not.toBeInTheDocument();
+    expectTextsNotInDocument([
+      'Sample getting started',
+      'Quick start tutorials',
+      'Developer features',
+    ]);
   });
 
-  it('should render nothing if showStateLoaded is false', async () => {
-    useFlagMock.mockReturnValue(true);
+  it('should render nothing if showStateLoaded is false', () => {
     useGettingStartedShowStateMock.mockReturnValue([
       GettingStartedShowState.SHOW,
       jest.fn(),
       false,
     ]);
 
-    await act(async () => {
-      renderWithProviders(
-        <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
-      );
-    });
+    renderWithProviders(
+      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+    );
 
-    expect(screen.queryByText('Sample getting started')).not.toBeInTheDocument();
-    expect(screen.queryByText('Quick start tutorials')).not.toBeInTheDocument();
-    expect(screen.queryByText('Developer features')).not.toBeInTheDocument();
+    expectTextsNotInDocument([
+      'Sample getting started',
+      'Quick start tutorials',
+      'Developer features',
+    ]);
   });
 });

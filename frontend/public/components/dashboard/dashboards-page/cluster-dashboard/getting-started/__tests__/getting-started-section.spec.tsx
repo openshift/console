@@ -1,4 +1,4 @@
-import { screen, configure, act } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { useUserSettings } from '@console/shared';
@@ -7,6 +7,7 @@ import {
   GettingStartedShowState,
   useGettingStartedShowState,
 } from '@console/shared/src/components/getting-started';
+import { expectTextsNotInDocument } from '../../../../getting-started-test-utils';
 
 import { GettingStartedSection } from '../getting-started-section';
 import { CLUSTER_DASHBOARD_USER_SETTINGS_KEY } from '../constants';
@@ -53,10 +54,6 @@ const useFlagMock = useFlag as jest.Mock;
 const useGettingStartedShowStateMock = useGettingStartedShowState as jest.Mock;
 
 describe('GettingStartedSection', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   beforeEach(() => {
     mockUserSettings.mockReset();
     useFlagMock.mockReset();
@@ -68,18 +65,16 @@ describe('GettingStartedSection', () => {
     mockUserSettings.mockReturnValue([true, jest.fn()]);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
-    await act(async () => {
-      renderWithProviders(
-        <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
-      );
-    });
+    renderWithProviders(
+      <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
+    );
 
-    const contentContainer = screen
-      .getByTestId('getting-started')
-      .querySelector('#getting-started-content');
-    expect(contentContainer).toHaveTextContent('Set up your cluster');
-    expect(contentContainer).toHaveTextContent('Learn with guided tours');
-    expect(contentContainer).toHaveTextContent('Explore new features');
+    await waitFor(() => {
+      const contentContainer = screen.getByTestId('getting-started-content');
+      expect(contentContainer).toHaveTextContent('Set up your cluster');
+      expect(contentContainer).toHaveTextContent('Learn with guided tours');
+      expect(contentContainer).toHaveTextContent('Explore new features');
+    });
   });
 
   it('should render nothing when useFlag(FLAGS.OPENSHIFT) returns false', async () => {
@@ -87,15 +82,17 @@ describe('GettingStartedSection', () => {
     mockUserSettings.mockReturnValue([true, jest.fn()]);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
-    await act(async () => {
-      renderWithProviders(
-        <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
-      );
-    });
+    renderWithProviders(
+      <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
+    );
 
-    expect(screen.queryByText('Set up your cluster')).not.toBeInTheDocument();
-    expect(screen.queryByText('Learn with guided tours')).not.toBeInTheDocument();
-    expect(screen.queryByText('Explore new features')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expectTextsNotInDocument([
+        'Set up your cluster',
+        'Learn with guided tours',
+        'Explore new features',
+      ]);
+    });
   });
 
   it('should render nothing if user settings hide them', async () => {
@@ -103,15 +100,17 @@ describe('GettingStartedSection', () => {
     mockUserSettings.mockReturnValue([true, jest.fn()]);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
 
-    await act(async () => {
-      renderWithProviders(
-        <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
-      );
-    });
+    renderWithProviders(
+      <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
+    );
 
-    expect(screen.queryByText('Set up your cluster')).not.toBeInTheDocument();
-    expect(screen.queryByText('Learn with guided tours')).not.toBeInTheDocument();
-    expect(screen.queryByText('Explore new features')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expectTextsNotInDocument([
+        'Set up your cluster',
+        'Learn with guided tours',
+        'Explore new features',
+      ]);
+    });
   });
 
   it('should render nothing if showStateLoaded is false', async () => {
@@ -123,14 +122,16 @@ describe('GettingStartedSection', () => {
       false,
     ]);
 
-    await act(async () => {
-      renderWithProviders(
-        <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
-      );
-    });
+    renderWithProviders(
+      <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
+    );
 
-    expect(screen.queryByText('Set up your cluster')).not.toBeInTheDocument();
-    expect(screen.queryByText('Learn with guided tours')).not.toBeInTheDocument();
-    expect(screen.queryByText('Explore new features')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expectTextsNotInDocument([
+        'Set up your cluster',
+        'Learn with guided tours',
+        'Explore new features',
+      ]);
+    });
   });
 });
