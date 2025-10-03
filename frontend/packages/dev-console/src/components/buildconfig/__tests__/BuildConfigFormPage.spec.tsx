@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import { render, cleanup } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import * as Router from 'react-router-dom-v5-compat';
@@ -50,7 +51,13 @@ const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const useUserSettingsMock = useUserSettings as jest.Mock;
 const usePreferredCreateEditMethodMock = usePreferredCreateEditMethod as jest.Mock;
 
-const Wrapper: React.FC<{}> = ({ children }) => <Provider store={store}>{children}</Provider>;
+interface WrapperProps {
+  children?: ReactNode;
+}
+
+const Wrapper: React.FC<WrapperProps> = ({ children }) => (
+  <Provider store={store}>{children}</Provider>
+);
 
 beforeEach(() => {
   useUserSettingsMock.mockReturnValue([undefined, jest.fn(), true]);

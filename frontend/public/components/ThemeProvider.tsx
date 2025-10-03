@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 
 export const THEME_USER_SETTING_KEY = 'console.theme';
@@ -44,7 +45,11 @@ export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PR
 
 export const ThemeContext = React.createContext<PROCESSED_THEME>(undefined);
 
-export const ThemeProvider: React.FC<{}> = ({ children }) => {
+interface ThemeProviderProps {
+  children?: ReactNode;
+}
+
+export const ThemeProvider: React.FCC<ThemeProviderProps> = ({ children }) => {
   const htmlTagElement = document.documentElement;
   const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as PROCESSED_THEME;
   const [theme, , themeLoaded] = useUserSettings(

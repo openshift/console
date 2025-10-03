@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import { Button, Popover as PFPopover, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
@@ -144,7 +145,11 @@ const HealthChecksLink: React.FC = () => {
   );
 };
 
-const NodeAlerts: React.FC = ({ children }) => {
+interface NodeAlertsProps {
+  children?: ReactNode;
+}
+
+const NodeAlerts: React.FCC<NodeAlertsProps> = ({ children }) => {
   const { cpuLimit, memoryLimit, healthCheck } = React.useContext(NodeDashboardContext);
   const { t } = useTranslation();
 

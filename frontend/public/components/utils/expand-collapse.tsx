@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
 
 interface ExpandCollapseProps {
+  children?: React.ReactNode;
   textExpanded: string;
   textCollapsed: string;
   onToggle?: (isExpanded: boolean) => void;
