@@ -1,8 +1,7 @@
-import * as React from 'react';
-import { Checkbox, Skeleton } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { screen, configure, act } from '@testing-library/react';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
 import { useUserSettings } from '@console/shared';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import UserPreferenceCheckboxField from '../UserPreferenceCheckboxField';
 
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
@@ -21,42 +20,69 @@ describe('UserPreferenceCheckboxField', () => {
     trueValue: 'trueValue',
     falseValue: 'falseValue',
   };
-  let wrapper: ShallowWrapper<UserPreferenceCheckboxFieldProps>;
 
-  afterEach(() => {
-    jest.resetAllMocks();
+  const setupMocks = (
+    userPreference: string,
+    setValue: jest.Mock = jest.fn(),
+    loaded: boolean = true,
+  ) => {
+    mockUserSettings.mockReturnValue([userPreference, setValue, loaded]);
+  };
+
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-test' });
   });
 
-  it('should render skeleton if user preferences have not loaded', () => {
-    mockUserSettings.mockReturnValue(['', () => {}, false]);
-    wrapper = shallow(<UserPreferenceCheckboxField {...props} />);
-    expect(wrapper.find(Skeleton).exists()).toBeTruthy();
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('should render checkbox if user preferences have loaded', () => {
-    mockUserSettings.mockReturnValue(['trueValue', () => {}, true]);
-    wrapper = shallow(<UserPreferenceCheckboxField {...props} />);
-    expect(wrapper.find(Checkbox).exists()).toBeTruthy();
-  });
+  it('should show loading state while user preferences are being fetched', async () => {
+    setupMocks('', jest.fn(), false);
 
-  it('should render with isChecked true if defaultValue is equal to trueValue and user preference has loaded but is not defined', () => {
-    mockUserSettings.mockImplementation(() => {
-      const [val, setVal] = React.useState('');
-      return [val, setVal, true];
+    await act(async () => {
+      renderWithProviders(<UserPreferenceCheckboxField {...props} />);
     });
-    wrapper = shallow(<UserPreferenceCheckboxField {...props} defaultValue="trueValue" />);
-    expect(wrapper.find(Checkbox).props().isChecked).toBe(true);
+
+    expect(screen.getByTestId('dropdown skeleton id')).toBeInTheDocument();
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
 
-  it('should render with isChecked true if user preference has loaded and is equal to trueValue', () => {
-    mockUserSettings.mockReturnValue(['trueValue', () => {}, true]);
-    wrapper = shallow(<UserPreferenceCheckboxField {...props} defaultValue="falseValue" />);
-    expect(wrapper.find(Checkbox).props().isChecked).toBe(true);
+  it('should display checkbox when user preferences have loaded', async () => {
+    setupMocks('trueValue');
+
+    await act(async () => {
+      renderWithProviders(<UserPreferenceCheckboxField {...props} />);
+    });
+
+    expect(screen.getByRole('checkbox')).toBeVisible();
   });
 
-  it('should render with isChecked false if user preference has loaded and is equal to falseValue', () => {
-    mockUserSettings.mockReturnValue(['falseValue', () => {}, true]);
-    wrapper = shallow(<UserPreferenceCheckboxField {...props} defaultValue="trueValue" />);
-    expect(wrapper.find(Checkbox).props().isChecked).toBe(false);
+  it('should render with isChecked true if defaultValue is equal to trueValue and user preference has loaded but is not defined', async () => {
+    const mockSetValue = jest.fn();
+    setupMocks('', mockSetValue, true);
+    await act(async () => {
+      renderWithProviders(<UserPreferenceCheckboxField {...props} defaultValue="trueValue" />);
+    });
+
+    expect(mockSetValue).toHaveBeenCalledWith('trueValue');
+  });
+
+  it('should render with isChecked true if user preference has loaded and is equal to trueValue', async () => {
+    setupMocks('trueValue');
+    await act(async () => {
+      renderWithProviders(<UserPreferenceCheckboxField {...props} defaultValue="falseValue" />);
+    });
+
+    expect(screen.getByRole('checkbox')).toBeChecked();
+  });
+
+  it('should render with isChecked false if user preference has loaded and is equal to falseValue', async () => {
+    setupMocks('falseValue');
+    await act(async () => {
+      renderWithProviders(<UserPreferenceCheckboxField {...props} defaultValue="trueValue" />);
+    });
+
+    expect(screen.getByRole('checkbox')).not.toBeChecked();
   });
 });
