@@ -4,8 +4,7 @@ import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { NavBar } from '@console/internal/components/utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
-import { sortable } from '@patternfly/react-table';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom-v5-compat';
 import {
   Alert,
   Button,
@@ -18,12 +17,10 @@ import {
   EmptyStateVariant,
   Label as PfLabel,
   LabelGroup as PfLabelGroup,
-  Toolbar,
-  ToolbarContent,
-  ToolbarItem,
   Grid,
   GridItem,
   ButtonVariant,
+  Pagination,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -33,16 +30,35 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
 import { K8sResourceKind } from '../../../module/k8s';
-import { Table, TableData, TextFilter, RowFunctionArgs } from '../../factory';
 import { createAlertRoutingModal } from '../../modals';
+import {
+  DataView,
+  DataViewTable,
+  DataViewToolbar,
+  DataViewTextFilter,
+  DataViewState,
+  useDataViewPagination,
+  DataViewTr,
+  useDataViewFilters,
+  useDataViewSort,
+} from '@patternfly/react-data-view';
+import { InnerScrollContainer } from '@patternfly/react-table';
+import DataViewFilters from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { Firehose, ConsoleEmptyState, Kebab, SectionHeading, StatusBox } from '../../utils';
+import { Firehose, Kebab, SectionHeading, StatusBox } from '../../utils';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
   receiverTypes,
 } from './alertmanager-utils';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  BodyLoading,
+  BodyEmpty,
+} from '@console/app/src/components/data-view/ResourceDataView';
 
 export enum InitialReceivers {
   Critical = 'Critical',
@@ -108,13 +124,6 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
     </PaneBody>
   );
 };
-
-const tableColumnClasses = [
-  'pf-v6-u-w-50-on-xs pf-v6-u-w-25-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-25-on-lg',
-  'pf-v6-u-w-50-on-xs',
-  Kebab.columnClass,
-];
 
 const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
   /* Given receiver = {
@@ -243,181 +252,324 @@ const deleteReceiver = (
   receiverName: string,
   navigate: any,
 ) => {
+  // Create a deep copy of the config to avoid mutating the original
+  const updatedConfig = _.cloneDeep(config);
   // remove any routes which use receiverToDelete
-  _.update(config, 'route.routes', (routes) => {
+  _.update(updatedConfig, 'route.routes', (routes) => {
     _.remove(routes, (route: AlertmanagerRoute) => route.receiver === receiverName);
     return routes;
   });
   // delete receiver
-  _.update(config, 'receivers', (receivers) => {
+  _.update(updatedConfig, 'receivers', (receivers) => {
     _.remove(receivers, (receiver: AlertmanagerReceiver) => receiver.name === receiverName);
     return receivers;
   });
-  return patchAlertmanagerConfig(secret, config).then(() => {
+  return patchAlertmanagerConfig(secret, updatedConfig).then(() => {
     navigate('/settings/cluster/alertmanagerconfig');
   });
 };
 
-const ReceiverTableRow: React.FC<RowFunctionArgs<
-  AlertmanagerReceiver,
-  {
-    routingLabelsByReceivers: RoutingLabelsByReceivers[];
-    defaultReceiverName: string;
-    config: any;
-    secret: any;
-  }
->> = ({
-  obj: receiver,
-  customData: { routingLabelsByReceivers, defaultReceiverName, config, secret },
-}) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  // filter to routing labels belonging to current Receiver
-  const receiverRoutingLabels = _.filter(routingLabelsByReceivers, { receiver: receiver.name });
-  const receiverIntegrationTypes = getIntegrationTypes(receiver);
-  const integrationTypesLabel = _.join(
-    _.map(receiverIntegrationTypes, (type) => type.substr(0, type.indexOf('_configs'))),
-    ', ',
-  );
-  const isDefaultReceiver = receiver.name === defaultReceiverName;
-  const receiverHasSimpleRoute = hasSimpleRoute(config, receiver, receiverRoutingLabels);
-
-  // Receiver form can only handle simple configurations. Can edit via form if receiver
-  // has a simple route and receiver
-  const canUseEditForm =
-    receiverHasSimpleRoute && hasSimpleReceiver(config, receiver, receiverIntegrationTypes);
-
-  // Receivers can be deleted if it has a simple route and not the default receiver
-  const canDelete = !isDefaultReceiver && receiverHasSimpleRoute;
-
-  const openDeleteReceiverConfirm = useWarningModal({
-    title: t('public~Delete Receiver'),
-    children: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
-      receiverName: receiver?.name,
-    }),
-    confirmButtonLabel: t('public~Delete Receiver'),
-    confirmButtonVariant: ButtonVariant.danger,
-    onConfirm: () => deleteReceiver(secret, config, receiver.name, navigate),
-    ouiaId: 'AlertmanagerDeleteReceiverConfirmation',
-  });
-
-  const receiverMenuItems = (receiverName: string) => [
-    {
-      label: t('public~Edit Receiver'),
-      callback: () => {
-        const targetUrl = canUseEditForm
-          ? `/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`
-          : `/settings/cluster/alertmanageryaml`;
-        return navigate(targetUrl);
-      },
-    },
-    {
-      label: t('public~Delete Receiver'),
-      isDisabled: !canDelete,
-      tooltip: !canDelete
-        ? t('public~Cannot delete the default receiver, or a receiver which has a sub-route')
-        : '',
-      callback: () => openDeleteReceiverConfirm(),
-    },
-  ];
-
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>{receiver.name}</TableData>
-      <TableData className={tableColumnClasses[1]}>
-        {(receiver.name === InitialReceivers.Critical ||
-          receiver.name === InitialReceivers.Default) &&
-        !integrationTypesLabel ? (
-          <Link to={`/settings/cluster/alertmanagerconfig/receivers/${receiver.name}/edit`}>
-            {t('public~Configure')}
-            <PencilAltIcon className="co-icon-space-l" />
-          </Link>
-        ) : (
-          integrationTypesLabel
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {isDefaultReceiver
-          ? t('public~All (default receiver)')
-          : _.map(receiverRoutingLabels, (rte, i) => {
-              return <RoutingLabels data={rte} key={i} />;
-            })}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <Kebab options={receiverMenuItems(receiver.name)} />
-      </TableData>
-    </>
-  );
+type ReceiverFilters = {
+  name: string;
 };
 
 interface ReceiversTableProps {
   secret: K8sResourceKind;
   config: AlertmanagerConfig;
   data: AlertmanagerReceiver[];
-  filterValue?: string;
 }
 
 const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
-  const { secret, config, filterValue } = props;
+  const { secret, config, data } = props;
   const { route } = config;
   const { receiver: defaultReceiverName, routes } = route;
   const { t } = useTranslation();
+  const label = t('public~Receivers');
+  const navigate = useNavigate();
 
   const routingLabelsByReceivers = React.useMemo(
     () => (_.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes)),
     [routes],
   );
 
-  const EmptyMsg = () => (
-    <ConsoleEmptyState
-      title={t('public~No Receivers match filter {{filterValue}}', { filterValue })}
-    />
-  );
-  const ReceiverTableHeader = () => {
-    return [
-      {
-        title: t('public~Name'),
-        sortField: 'name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('public~Integration type'),
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('public~Routing labels'),
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[3] },
-      },
-    ];
-  };
+  const openDeleteReceiverConfirm = useWarningModal();
 
-  const customData = React.useMemo(
-    () => ({
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { filters, onSetFilters, clearAllFilters } = useDataViewFilters<ReceiverFilters>({
+    initialFilters: { name: '' },
+    searchParams,
+    setSearchParams,
+  });
+
+  const { sortBy, direction, onSort } = useDataViewSort({
+    searchParams,
+    setSearchParams,
+    initialSort: { sortBy: 'name', direction: 'asc' },
+  });
+
+  const filteredData = React.useMemo(() => {
+    let result = data;
+
+    if (filters.name) {
+      result = result.filter((receiver) =>
+        fuzzy(filters.name.toLowerCase(), receiver.name.toLowerCase()),
+      );
+    }
+
+    const sortDirection = direction || 'asc';
+    const sortColumn = sortBy || 'name';
+
+    if (sortColumn === 'name') {
+      result = [...result].sort((a, b) => {
+        const aName = a.name.toLowerCase();
+        const bName = b.name.toLowerCase();
+        const comparison = aName.localeCompare(bName);
+        return sortDirection === 'asc' ? comparison : -comparison;
+      });
+    }
+
+    return result;
+  }, [data, filters.name, sortBy, direction]);
+
+  const getSortParams = React.useCallback(
+    (columnIndex: number, columnKey: string) => {
+      const currentSortBy = sortBy || 'name';
+      const currentDirection = direction || 'asc';
+
+      return {
+        sortBy: {
+          index: currentSortBy === columnKey ? 0 : -1,
+          direction: currentDirection,
+          defaultDirection: 'asc' as const,
+        },
+        onSort: (
+          _event: React.MouseEvent | React.KeyboardEvent,
+          index: number,
+          sortDirection: 'asc' | 'desc',
+        ) => onSort(_event, columnKey, sortDirection),
+        columnIndex,
+      };
+    },
+    [sortBy, direction, onSort],
+  );
+
+  const columns = React.useMemo(
+    () => [
+      {
+        cell: t('public~Name'),
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+          sort: getSortParams(0, 'name'),
+        },
+      },
+      {
+        cell: t('public~Integration type'),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        cell: t('public~Routing labels'),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        cell: <span className="pf-v6-u-screen-reader">{t('public~Actions')}</span>,
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+    ],
+    [t, getSortParams],
+  );
+
+  const pagination = useDataViewPagination({
+    perPage: 50,
+    searchParams,
+    setSearchParams,
+  });
+
+  // Reset pagination to page 1 when filters change
+  React.useEffect(() => {
+    if (pagination.page > 1) {
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set('page', '1');
+        return newParams;
+      });
+    }
+  }, [filters.name, pagination.page, setSearchParams]);
+
+  const paginatedData = React.useMemo(() => {
+    const startIndex = (pagination.page - 1) * pagination.perPage;
+    return filteredData.slice(startIndex, startIndex + pagination.perPage);
+  }, [filteredData, pagination.page, pagination.perPage]);
+
+  // Function to create row data for a receiver
+  const createReceiverRow = React.useCallback(
+    (receiver: AlertmanagerReceiver): DataViewTr => {
+      // filter to routing labels belonging to current Receiver
+      const receiverRoutingLabels = _.filter(routingLabelsByReceivers, {
+        receiver: receiver.name,
+      });
+      const receiverIntegrationTypes = getIntegrationTypes(receiver);
+      const integrationTypesLabel = _.join(
+        _.map(receiverIntegrationTypes, (type) => type.substr(0, type.indexOf('_configs'))),
+        ', ',
+      );
+      const isDefaultReceiver = receiver.name === defaultReceiverName;
+      const receiverHasSimpleRoute = hasSimpleRoute(config, receiver, receiverRoutingLabels);
+
+      // Receiver form can only handle simple configurations. Can edit via form if receiver
+      // has a simple route and receiver
+      const canUseEditForm =
+        receiverHasSimpleRoute && hasSimpleReceiver(config, receiver, receiverIntegrationTypes);
+
+      // Receivers can be deleted if it has a simple route and not the default receiver
+      const canDelete = !isDefaultReceiver && receiverHasSimpleRoute;
+
+      const receiverMenuItems = (receiverName: string) => [
+        {
+          label: t('public~Edit Receiver'),
+          callback: () => {
+            const targetUrl = canUseEditForm
+              ? `/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`
+              : `/settings/cluster/alertmanageryaml`;
+            return navigate(targetUrl);
+          },
+        },
+        {
+          label: t('public~Delete Receiver'),
+          isDisabled: !canDelete,
+          tooltip: !canDelete
+            ? t('public~Cannot delete the default receiver, or a receiver which has a sub-route')
+            : '',
+          callback: () => {
+            openDeleteReceiverConfirm({
+              title: t('public~Delete Receiver'),
+              children: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
+                receiverName,
+              }),
+              confirmButtonLabel: t('public~Delete Receiver'),
+              confirmButtonVariant: ButtonVariant.danger,
+              onConfirm: () => {
+                deleteReceiver(secret, config, receiverName, navigate);
+              },
+              ouiaId: 'AlertmanagerDeleteReceiverConfirmation',
+            });
+          },
+        },
+      ];
+
+      return [
+        {
+          cell: receiver.name,
+          props: getNameCellProps(receiver.name),
+        },
+        {
+          cell:
+            (receiver.name === InitialReceivers.Critical ||
+              receiver.name === InitialReceivers.Default) &&
+            !integrationTypesLabel ? (
+              <Link to={`/settings/cluster/alertmanagerconfig/receivers/${receiver.name}/edit`}>
+                {t('public~Configure')}
+                <PencilAltIcon className="co-icon-space-l" />
+              </Link>
+            ) : (
+              integrationTypesLabel
+            ),
+          props: {
+            'data-test': `data-view-cell-${receiver.name}-integration-types`,
+          },
+        },
+        {
+          cell: isDefaultReceiver
+            ? t('public~All (default receiver)')
+            : _.map(receiverRoutingLabels, (rte, i) => {
+                return <RoutingLabels data={rte} key={i} />;
+              }),
+          props: {
+            'data-test': `data-view-cell-${receiver.name}-routing-labels`,
+          },
+        },
+        {
+          cell: <Kebab options={receiverMenuItems(receiver.name)} />,
+          props: {
+            ...actionsCellProps,
+          },
+        },
+      ];
+    },
+    [
       routingLabelsByReceivers,
       defaultReceiverName,
       config,
+      t,
+      navigate,
+      openDeleteReceiverConfirm,
       secret,
-    }),
-    [config, defaultReceiverName, routingLabelsByReceivers, secret],
+    ],
   );
 
+  const rows: DataViewTr[] = React.useMemo(() => paginatedData.map(createReceiverRow), [
+    paginatedData,
+    createReceiverRow,
+  ]);
+
+  const bodyLoading = React.useMemo(() => <BodyLoading columns={columns.length} />, [
+    columns.length,
+  ]);
+
+  const bodyEmpty = React.useMemo(() => <BodyEmpty label={label} colSpan={columns.length} />, [
+    columns.length,
+    label,
+  ]);
+
+  const activeState = React.useMemo(() => {
+    if (filteredData.length === 0) {
+      return DataViewState.empty;
+    }
+    return undefined;
+  }, [filteredData.length]);
+
   return (
-    <Table
-      {...props}
-      aria-label={t('public~Receivers')}
-      customData={customData}
-      EmptyMsg={EmptyMsg}
-      Header={ReceiverTableHeader}
-      Row={ReceiverTableRow}
-      loaded={true}
-      defaultSortField="name"
-      virtualize
-    />
+    <DataView activeState={activeState}>
+      <DataViewToolbar
+        filters={
+          <DataViewFilters values={filters} onChange={(_e, values) => onSetFilters(values)}>
+            <DataViewTextFilter
+              filterId="name"
+              title={t('public~Name')}
+              placeholder={t('public~Filter by name')}
+            />
+          </DataViewFilters>
+        }
+        clearAllFilters={clearAllFilters}
+        pagination={
+          <Pagination
+            itemCount={filteredData.length}
+            page={pagination.page}
+            perPage={pagination.perPage}
+            onSetPage={pagination.onSetPage}
+            onPerPageSelect={pagination.onPerPageSelect}
+          />
+        }
+      />
+      <InnerScrollContainer>
+        <DataViewTable
+          aria-label={t('public~Receivers table')}
+          columns={columns}
+          rows={rows}
+          bodyStates={{ empty: bodyEmpty, loading: bodyLoading }}
+          gridBreakPoint=""
+          variant="compact"
+          data-test="data-view-table"
+        />
+      </InnerScrollContainer>
+    </DataView>
   );
 };
 ReceiversTable.displayName = 'ReceiversTable';
@@ -445,37 +597,20 @@ interface ReceiversProps {
 }
 
 const Receivers = ({ secret, config }: ReceiversProps) => {
-  const [receiverFilter, setReceiverFilter] = React.useState('');
-  let receivers = _.get(config, 'receivers', []);
-  if (receiverFilter) {
-    const filterStr = _.toLower(receiverFilter);
-    receivers = receivers.filter((receiver) => fuzzy(filterStr, _.toLower(receiver.name)));
-  }
+  const receivers = _.get(config, 'receivers', []);
 
   const numOfIncompleteReceivers = numberOfIncompleteReceivers(config);
   const { t } = useTranslation();
   const receiverString = t('public~receiver', { count: numOfIncompleteReceivers });
   return (
     <PaneBody>
-      <SectionHeading text={t('public~Receivers')} />
-      <Toolbar>
-        <ToolbarContent>
-          <ToolbarItem>
-            <TextFilter
-              defaultValue=""
-              label={t('public~Receivers by name')}
-              onChange={(_event, val) => setReceiverFilter(val)}
-            />
-          </ToolbarItem>
-          <ToolbarItem align={{ default: 'alignEnd' }}>
-            <Link to="/settings/cluster/alertmanagerconfig/receivers/~new">
-              <Button variant="primary" data-test="create-receiver">
-                {t('public~Create Receiver')}
-              </Button>
-            </Link>
-          </ToolbarItem>
-        </ToolbarContent>
-      </Toolbar>
+      <SectionHeading text={t('public~Receivers')}>
+        <Link to="/settings/cluster/alertmanagerconfig/receivers/~new">
+          <Button variant="primary" data-test="create-receiver">
+            {t('public~Create Receiver')}
+          </Button>
+        </Link>
+      </SectionHeading>
       {numOfIncompleteReceivers > 0 && (
         <Alert
           isInline
@@ -491,15 +626,10 @@ const Receivers = ({ secret, config }: ReceiversProps) => {
           </div>
         </Alert>
       )}
-      {_.isEmpty(receivers) && !receiverFilter ? (
+      {_.isEmpty(receivers) ? (
         <ReceiversEmptyState />
       ) : (
-        <ReceiversTable
-          secret={secret}
-          config={config}
-          filterValue={receiverFilter}
-          data={receivers}
-        />
+        <ReceiversTable secret={secret} config={config} data={receivers} />
       )}
     </PaneBody>
   );

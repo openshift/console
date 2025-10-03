@@ -70,12 +70,11 @@ export const alertmanager = {
     ),
   save: () => cy.byTestID('save-changes').should('be.enabled').click(),
   showAdvancedConfiguration: () => cy.byTestID('advanced-configuration').find('button').click(),
-  validateCreation: (receiverName: string, type: string, label: string) => {
-    cy.byLegacyTestID('item-filter').clear();
-    cy.byLegacyTestID('item-filter').type(receiverName);
-    listPage.rows.shouldExist(receiverName);
-    listPage.rows.shouldExist(type);
-    listPage.rows.shouldExist(label);
+  validateCreation: (receiverName: string, typeCellName: string, labelCellName: string) => {
+    listPage.dvFilter.byName(receiverName);
+    listPage.dvRows.shouldExist(receiverName);
+    listPage.dvRows.shouldExist(receiverName, typeCellName);
+    listPage.dvRows.shouldExist(receiverName, labelCellName);
   },
   visitAlertmanagerPage: () => {
     cy.visit('/settings/cluster/alertmanagerconfig');

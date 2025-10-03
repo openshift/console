@@ -109,8 +109,10 @@ describe('Kubernetes resource CRUD operations', () => {
   const dataViewResources = new Set([
     'HorizontalPodAutoscaler',
     'Job',
+    'LimitRange',
     'Pod',
     'ReplicaSet',
+    'ResourceQuota',
     'ReplicationController',
     'StatefulSet',
   ]);
