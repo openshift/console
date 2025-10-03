@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import {
   Accordion,
   AccordionItem,
@@ -360,6 +361,7 @@ export type ExpandedComponentProps = {
 type ResourceTitleComponentComponent = {
   kind: K8sKind;
   namespace: string;
+  children?: ReactNode;
   basePath?: string;
   dataTest?: string;
 };

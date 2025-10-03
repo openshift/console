@@ -6,7 +6,11 @@ import { MetricsTooltipProps } from '@console/dynamic-plugin-sdk/src/extensions/
 import { truncateMiddle } from '@console/internal/components/utils';
 import { useIsMobile } from '@console/shared';
 
-const MetricsTooltip: React.FC<MetricsTooltipProps> = ({ metricLabel, byPod, children }) => {
+const MetricsTooltip: React.FC<MetricsTooltipProps & { children?: React.ReactNode }> = ({
+  metricLabel,
+  byPod,
+  children,
+}) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
 

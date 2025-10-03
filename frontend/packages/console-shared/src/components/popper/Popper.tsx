@@ -69,6 +69,7 @@ type PopperProps = {
   reference: Reference | (() => Reference);
   zIndex?: number;
   returnFocus?: boolean;
+  children?: React.ReactNode;
 };
 
 const DEFAULT_POPPER_OPTIONS: PopperOptions = {};

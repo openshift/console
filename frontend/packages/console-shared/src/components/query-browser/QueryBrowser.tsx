@@ -90,7 +90,7 @@ const Error: React.FC<ErrorProps> = ({ error, title = 'An error occurred' }) => 
   </Alert>
 );
 
-const GraphEmptyState: React.FC<GraphEmptyStateProps> = ({ children, title }) => (
+const GraphEmptyState: React.FCC<GraphEmptyStateProps> = ({ children, title }) => (
   <div className="query-browser__wrapper graph-empty-state">
     <EmptyState
       headingLevel="h2"

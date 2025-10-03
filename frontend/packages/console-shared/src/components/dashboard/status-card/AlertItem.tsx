@@ -120,6 +120,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, documentationLink }) => {
 export default AlertItem;
 
 type StatusItemProps = {
+  children?: React.ReactNode;
   Icon: React.ComponentType<any>;
   timestamp?: string;
   message: string;
