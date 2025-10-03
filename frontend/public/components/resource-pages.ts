@@ -50,6 +50,7 @@ import {
   ServiceMonitorModel,
   StatefulSetModel,
   StorageClassModel,
+  VolumeAttributesClassModel,
   TemplateInstanceModel,
   UserModel,
   VolumeSnapshotModel,
@@ -263,6 +264,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.StorageClassDetailsPage,
     ),
   )
+  .set(referenceForModel(VolumeAttributesClassModel), () =>
+    import('./volume-attributes-class' /* webpackChunkName: "volume-attributes-class" */).then(
+      (m) => m.VolumeAttributesClassDetailsPage,
+    ),
+  )
   .set(referenceForModel(TemplateInstanceModel), () =>
     import('./template-instance' /* webpackChunkName: "template-instance" */).then(
       (m) => m.TemplateInstanceDetailsPage,
@@ -464,6 +470,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(StorageClassModel), () =>
     import('./storage-class' /* webpackChunkName: "storage-class" */).then(
       (m) => m.StorageClassPage,
+    ),
+  )
+  .set(referenceForModel(VolumeAttributesClassModel), () =>
+    import('./volume-attributes-class' /* webpackChunkName: "volume-attributes-class" */).then(
+      (m) => m.VolumeAttributesClassPage,
     ),
   )
   .set(referenceForModel(TemplateInstanceModel), () =>

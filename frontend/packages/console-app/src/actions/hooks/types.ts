@@ -29,6 +29,7 @@ export enum PVCActionCreator {
   PVCSnapshot = 'PVCSnapshot',
   ClonePVC = 'ClonePVC',
   DeletePVC = 'DeletePVC',
+  ModifyVAC = 'ModifyVAC',
 }
 
 export enum VolumeSnapshotActionCreator {
