@@ -2,8 +2,6 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, redirect } from 'react-router-dom-v5-compat';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   K8sModel,
@@ -11,24 +9,16 @@ import {
   K8sResourceKindReference,
   referenceFor,
   referenceForModel,
+  TableColumn,
 } from '../module/k8s';
 import { cloneBuild, startBuild } from '../module/k8s/builds';
-import {
-  DetailsPage,
-  ListPage,
-  Table,
-  TableData,
-  RowFunctionArgs,
-  TableProps,
-  DetailsPageProps,
-} from './factory';
+import { DetailsPage, ListPage, DetailsPageProps } from './factory';
 import {
   BuildHooks,
   BuildStrategy,
   Kebab,
   KebabAction,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   resourceObjPath,
   ResourceSummary,
@@ -46,14 +36,167 @@ import { ResourceEventStream } from './events';
 import { BuildModel } from '../models';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { Status } from '@console/shared';
+import { Status, DASH, LazyActionMenu } from '@console/shared';
 import { displayDurationInWords } from './utils/build-utils';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ErrorModal } from './modals/error-modal';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { LoadingBox } from './utils/status-box';
+
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { sortResourceByValue } from './factory/Table/sort';
+import { sorts } from './factory/table';
+import { BuildConfigModel } from '../models';
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
-const BuildsReference: K8sResourceKindReference = 'Build';
+
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'lastRun' },
+  { id: 'lastRunStatus' },
+  { id: 'lastRunTime' },
+  { id: 'lastRunDuration' },
+  { id: 'actions' },
+];
+
+const getDataViewRows: GetDataViewRows<BuildConfig, undefined> = (data, columns) => {
+  return data.map(({ obj: buildConfig }) => {
+    const { name, namespace } = buildConfig.metadata;
+    const latestBuild = buildConfig?.latestBuild;
+    const resourceKind = referenceForModel(BuildConfigModel);
+    const context = { [resourceKind]: buildConfig };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(BuildConfigModel)}
+            name={name}
+            namespace={namespace}
+          />
+        ),
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: latestBuild ? (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(BuildModel)}
+            name={latestBuild.metadata?.name}
+            namespace={latestBuild.metadata?.namespace}
+          />
+        ) : (
+          DASH
+        ),
+      },
+      [tableColumnInfo[3].id]: {
+        cell: latestBuild ? <Status status={latestBuild.status?.phase} /> : DASH,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: latestBuild ? (
+          <Timestamp timestamp={latestBuild.metadata?.creationTimestamp} />
+        ) : (
+          DASH
+        ),
+      },
+      [tableColumnInfo[5].id]: {
+        cell: displayDurationInWords(
+          latestBuild?.status?.startTimestamp,
+          latestBuild?.status?.completionTimestamp,
+        ),
+      },
+      [tableColumnInfo[6].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
+};
+
+const useBuildConfigColumns = (): TableColumn<BuildConfig>[] => {
+  const { t } = useTranslation();
+  const columns = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Last run'),
+        id: tableColumnInfo[2].id,
+        sort: 'latestBuild.metadata.name',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Last run status'),
+        id: tableColumnInfo[3].id,
+        sort: 'latestBuild.status.phase',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Last run time'),
+        id: tableColumnInfo[4].id,
+        sort: 'latestBuild.status.completionTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Last run duration'),
+        id: tableColumnInfo[5].id,
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.buildDuration)),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[6].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
+};
 
 const useStartBuildAction = (): KebabAction => {
   const { t } = useTranslation();
@@ -197,62 +340,6 @@ export const BuildConfigsDetailsPage: React.FC<DetailsPageProps> = (props) => {
 };
 BuildConfigsDetailsPage.displayName = 'BuildConfigsDetailsPage';
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg',
-  Kebab.columnClass,
-];
-
-const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) => {
-  const latestBuild = obj?.latestBuild;
-  const menuActions: KebabAction[] = useBuildConfigKebabActions(latestBuild);
-
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={BuildConfigsReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {latestBuild ? (
-          <ResourceLink
-            kind={BuildsReference}
-            name={latestBuild.metadata?.name}
-            namespace={latestBuild.metadata?.namespace}
-          />
-        ) : (
-          '-'
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {latestBuild ? <Status status={latestBuild.status?.phase} /> : '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        {latestBuild ? <Timestamp timestamp={latestBuild.metadata?.creationTimestamp} /> : '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        {displayDurationInWords(
-          latestBuild?.status?.startTimestamp,
-          latestBuild?.status?.completionTimestamp,
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={menuActions} kind={BuildConfigsReference} resource={obj} />
-      </TableData>
-    </>
-  );
-};
-
 const isBuildNewerThen = (newBuild: K8sResourceKind, prevBuild: K8sResourceKind | undefined) => {
   const prevCreationTime = new Date(prevBuild?.metadata?.creationTimestamp);
   const newCreationTime = new Date(newBuild?.metadata?.creationTimestamp);
@@ -267,54 +354,8 @@ const getBuildStatus = (buildConfig: BuildConfig) => {
   return buildConfig?.latestBuild?.status?.phase || 'Unknown';
 };
 
-export const BuildConfigsList: React.FCC<BuildConfigsListProps> = (props) => {
-  const { t } = useTranslation();
-  const BuildConfigsTableHeader = () => {
-    return [
-      {
-        title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-        id: 'namespace',
-      },
-      {
-        title: t('public~Last run'),
-        transforms: [sortable],
-        sortField: 'latestBuild.metadata.name',
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: t('public~Last run status'),
-        transforms: [sortable],
-        sortField: 'latestBuild.status.phase',
-        props: { className: tableColumnClasses[3] },
-      },
-      {
-        title: t('public~Last run time'),
-        transforms: [sortable],
-        sortField: 'latestBuild.status.completionTimestamp',
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: t('public~Last run duration'),
-        transforms: [sortable],
-        sortFunc: 'latestRunDuration',
-        props: { className: tableColumnClasses[5] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[6] },
-      },
-    ];
-  };
-  BuildConfigsTableHeader.displayName = 'BuildConfigsTableHeader';
+export const BuildConfigsList: React.FCC<BuildConfigsListProps> = ({ data, loaded, ...props }) => {
+  const columns = useBuildConfigColumns();
   const buildModel = referenceForModel(BuildModel);
   const BUILDCONFIG_TO_BUILD_REFERENCE_LABEL = 'openshift.io/build-config.name';
   const [builds, buildsLoaded, buildsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
@@ -322,7 +363,8 @@ export const BuildConfigsList: React.FCC<BuildConfigsListProps> = (props) => {
     namespace: props.namespace,
     isList: true,
   });
-  const data = React.useMemo<CustomData>(
+
+  const buildData = React.useMemo<CustomData>(
     () => ({
       builds: {
         latestByBuildName: builds.reduce<Record<string, K8sResourceKind>>((acc, build) => {
@@ -342,10 +384,10 @@ export const BuildConfigsList: React.FCC<BuildConfigsListProps> = (props) => {
     [builds, buildsLoaded, buildsLoadError],
   );
 
-  const buildResource = props.data
-    ? props.data.map((buildConfig) => {
+  const buildResource = data
+    ? data.map((buildConfig) => {
         buildConfig.latestBuild =
-          data.builds.latestByBuildName[
+          buildData.builds.latestByBuildName[
             `${buildConfig.metadata.name}-${buildConfig.metadata.namespace}`
           ];
         return buildConfig;
@@ -353,21 +395,18 @@ export const BuildConfigsList: React.FCC<BuildConfigsListProps> = (props) => {
     : [];
 
   return (
-    <Table
-      {...props}
-      data={buildResource}
-      aria-label={t('public~BuildConfigs')}
-      Header={BuildConfigsTableHeader}
-      Row={BuildConfigsTableRow}
-      customSorts={{
-        latestRunDuration: (obj) =>
-          displayDurationInWords(
-            obj?.latestBuild?.status?.startTimestamp,
-            obj?.latestBuild?.status?.completionTimestamp,
-          ),
-      }}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView
+        {...props}
+        label={BuildConfigModel.labelPlural}
+        data={buildResource}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -431,14 +470,19 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
         createProps={createProps}
         filterLabel={props.filterLabel}
         rowFilters={filters}
+        omitFilterToolbar={true}
+        hideColumnManagement={true}
       />
     </>
   );
 };
 BuildConfigsPage.displayName = 'BuildConfigsListPage';
 
-type BuildConfigsListProps = TableProps & {
+type BuildConfigsListProps = {
+  data: any[];
+  loaded: boolean;
   namespace: string;
+  [key: string]: any;
 };
 
 export type BuildConfigsDetailsProps = {
