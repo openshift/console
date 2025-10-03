@@ -1,7 +1,6 @@
+import * as React from 'react';
 import { useCallback } from 'react';
-import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { sortable } from '@patternfly/react-table';
 import {
   Button,
   DescriptionList,
@@ -14,11 +13,21 @@ import {
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { referenceForModel, K8sResourceKind } from '../module/k8s';
-import { ListPage, DetailsPage, Table, TableData, RowFunctionArgs } from './factory';
+import { referenceForModel, K8sResourceKind, TableColumn } from '../module/k8s';
+import { ListPage, DetailsPage } from './factory';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluralize } from './utils';
 import { useConfigureCountModal } from './modals/configure-count-modal';
 import { AlertmanagerModel } from '../models';
+import { LoadingBox } from './utils/status-box';
+import { LazyActionMenu } from '@console/shared';
 
 const Details: React.FCC<DetailsProps> = (props) => {
   const alertManager = props.obj;
@@ -97,93 +106,143 @@ const Details: React.FCC<DetailsProps> = (props) => {
 };
 
 const { details, editYaml } = navFactory;
+const kind = referenceForModel(AlertmanagerModel);
 
 export const AlertManagersDetailsPage = (props) => (
   <DetailsPage {...props} pages={[details(Details), editYaml()]} />
 );
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-25-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-25-on-lg',
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'labels' },
+  { id: 'version' },
+  { id: 'nodeSelector' },
+  { id: 'actions' },
 ];
 
-const AlertManagerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
-  obj: alertManager,
-}) => {
-  const { metadata, spec } = alertManager;
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={referenceForModel(AlertmanagerModel)}
-          name={metadata.name}
-          namespace={metadata.namespace}
-          title={metadata.uid}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
-        <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={AlertmanagerModel.kind} labels={metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>{spec.version}</TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <Selector selector={spec.nodeSelector} kind="Node" />
-      </TableData>
-    </>
-  );
+const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
+  return data.map(({ obj: alertManager }) => {
+    const { metadata, spec } = alertManager;
+    const resourceKind = referenceForModel(AlertmanagerModel);
+    const context = { [resourceKind]: alertManager };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            kind={referenceForModel(AlertmanagerModel)}
+            name={metadata.name}
+            namespace={metadata.namespace}
+            title={metadata.uid}
+          />
+        ),
+        props: getNameCellProps(metadata.name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: (
+          <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
+        ),
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <LabelList kind={AlertmanagerModel.kind} labels={metadata.labels} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: spec.version || '-',
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <Selector selector={spec.nodeSelector} kind="Node" />,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || '-';
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
-const AlertManagerTableHeader = () => {
-  return [
-    {
-      title: i18next.t('public~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: i18next.t('public~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: i18next.t('public~Labels'),
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: i18next.t('public~Version'),
-      sortField: 'spec.version',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: i18next.t('public~Node selector'),
-      sortField: 'spec.nodeSelector',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-  ];
-};
-AlertManagerTableHeader.displayName = 'AlertManagerTableHeader';
-
-const AlertManagersList = (props) => {
+const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
+  const columns = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Labels'),
+        id: tableColumnInfo[2].id,
+        sort: 'metadata.labels',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Version'),
+        id: tableColumnInfo[3].id,
+        sort: 'spec.version',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Node selector'),
+        id: tableColumnInfo[4].id,
+        sort: 'spec.nodeSelector',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[5].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
+};
+
+const AlertManagersList: React.FCC<AlertManagersListProps> = ({ data, loaded, ...props }) => {
+  const columns = useAlertManagerColumns();
+
   return (
-    <Table
-      {...props}
-      aria-label={t('public~Alertmanagers')}
-      Header={AlertManagerTableHeader}
-      Row={AlertManagerTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView
+        {...props}
+        label={AlertmanagerModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -192,10 +251,17 @@ export const AlertManagersPage = (props) => (
     {...props}
     ListComponent={AlertManagersList}
     canCreate={false}
-    kind={referenceForModel(AlertmanagerModel)}
+    kind={kind}
+    omitFilterToolbar={true}
   />
 );
 
 type DetailsProps = {
   obj: K8sResourceKind;
+};
+
+type AlertManagersListProps = {
+  data: K8sResourceKind[];
+  loaded: boolean;
+  [key: string]: any;
 };
