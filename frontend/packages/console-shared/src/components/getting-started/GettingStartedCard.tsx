@@ -66,15 +66,20 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
       direction={{ default: 'column' }}
       grow={{ default: 'grow' }}
       className="ocs-getting-started-card"
-      data-test={`card ${id}`}
+      data-testid={`card ${id}`}
     >
-      <Title headingLevel="h3" size={TitleSizes.md} style={{ color: titleColor }} data-test="title">
+      <Title
+        headingLevel="h3"
+        size={TitleSizes.md}
+        style={{ color: titleColor }}
+        data-testid="title"
+      >
         {icon ? <span className="ocs-getting-started-card__title-icon">{icon}</span> : null}
         {title}
       </Title>
 
       {description ? (
-        <Content component={ContentVariants.small} data-test="description">
+        <Content component={ContentVariants.small} data-testid="description">
           {description}
         </Content>
       ) : null}
@@ -84,7 +89,7 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
           <SimpleList isControlled={false} className="ocs-getting-started-card__list">
             {links.map((link) =>
               link.loading ? (
-                <li key={link.id} data-test="getting-started-skeleton">
+                <li key={link.id} data-testid="getting-started-skeleton">
                   <Skeleton fontSize="sm" />
                 </li>
               ) : (
@@ -97,11 +102,11 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                           href: link.href,
                           target: '_blank',
                           rel: 'noopener noreferrer',
-                          'data-test': `item ${link.id}`,
+                          'data-testid': `item ${link.id}`,
                         }
                       : {
                           to: link.href,
-                          'data-test': `item ${link.id}`,
+                          'data-testid': `item ${link.id}`,
                         }
                   }
                   href={link.href}
@@ -138,7 +143,7 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
               }}
               isInline
               variant="link"
-              data-test={`item ${moreLink.id}`}
+              data-testid={`item ${moreLink.id}`}
             >
               {moreLink.title}
             </Button>
@@ -146,12 +151,16 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
             <ExternalLink
               onClick={telemetryCallback}
               href={moreLink.href}
-              data-test={`item ${moreLink.id}`}
+              data-testid={`item ${moreLink.id}`}
             >
               {moreLink.title}
             </ExternalLink>
           ) : (
-            <Link to={moreLink.href} data-test={`item ${moreLink.id}`} onClick={telemetryCallback}>
+            <Link
+              to={moreLink.href}
+              data-testid={`item ${moreLink.id}`}
+              onClick={telemetryCallback}
+            >
               {moreLink.title}
             </Link>
           )}
