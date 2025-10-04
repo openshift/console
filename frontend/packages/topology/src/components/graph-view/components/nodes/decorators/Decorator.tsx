@@ -13,6 +13,7 @@ type DecoratorTypes = {
   ariaLabel?: string;
   external?: boolean;
   circleRef?: React.Ref<SVGCircleElement>;
+  children?: React.ReactNode;
 };
 
 const Decorator: React.FunctionComponent<DecoratorTypes> = ({
@@ -22,10 +23,13 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   href,
   ariaLabel,
   external,
+  children,
   ...rest
 }) => {
   const decorator = (
-    <PfDecorator x={x} y={y} radius={radius} className="odc-decorator" showBackground {...rest} />
+    <PfDecorator x={x} y={y} radius={radius} className="odc-decorator" showBackground {...rest}>
+      {children}
+    </PfDecorator>
   );
 
   if (href) {

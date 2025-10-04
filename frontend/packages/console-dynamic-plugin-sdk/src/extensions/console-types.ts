@@ -340,6 +340,7 @@ export type TableDataProps = {
   id: string;
   activeColumnIDs: Set<string>;
   className?: string;
+  children?: React.ReactNode;
 };
 
 export type UseActiveColumns = <D = any>({
@@ -380,10 +381,12 @@ export type CreateWithPermissionsProps = {
 
 export type ListPageCreateProps = CreateWithPermissionsProps & {
   groupVersionKind: K8sResourceKindReference | K8sGroupVersionKind;
+  children?: React.ReactNode;
 };
 
 export type ListPageCreateLinkProps = CreateWithPermissionsProps & {
   to: string;
+  children?: React.ReactNode;
 };
 
 export type ListPageCreateButtonProps = CreateWithPermissionsProps & ButtonProps;
@@ -393,6 +396,7 @@ export type ListPageCreateDropdownProps = CreateWithPermissionsProps & {
     [key: string]: React.ReactNode;
   };
   onClick: (item: string) => void;
+  children?: React.ReactNode;
 };
 
 export type RowFilterItem = {
@@ -581,6 +585,7 @@ export type InventoryItemTitleProps = {
 
 export type InventoryItemBodyProps = {
   error?: any;
+  children?: React.ReactNode;
 };
 
 export type InventoryItemStatusProps = {

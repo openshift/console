@@ -383,8 +383,10 @@ type FormFieldProps = {
   required: boolean;
   schema: JSONSchema7;
   uiSchema: UiSchema;
+  children?: React.ReactNode;
 };
 
 type FieldSetProps = Pick<FieldProps, 'idSchema' | 'required' | 'schema' | 'uiSchema'> & {
   defaultLabel?: string;
+  children?: React.ReactNode;
 };

@@ -5,7 +5,7 @@ type CatalogPageProps = {
   children: React.ReactNode;
 };
 
-const CatalogPage: React.FC<CatalogPageProps> = ({ children }) => (
+const CatalogPage: React.FCC<CatalogPageProps> = ({ children }) => (
   <Flex className="co-catalog-page" direction={{ default: 'column', md: 'row' }}>
     {children}
   </Flex>
