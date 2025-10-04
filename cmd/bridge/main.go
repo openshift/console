@@ -8,19 +8,19 @@ import (
 	"flag"
 	"fmt"
 	"net"
-	"runtime"
-
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
+	"runtime"
 	"sort"
 	"strings"
+	"time"
 
 	operatorv1 "github.com/openshift/api/operator/v1"
 	authopts "github.com/openshift/console/cmd/bridge/config/auth"
 	"github.com/openshift/console/cmd/bridge/config/session"
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/auth/csrfverifier"
 	"github.com/openshift/console/pkg/controllers"
 	"github.com/openshift/console/pkg/flags"
 	"github.com/openshift/console/pkg/knative"
@@ -73,6 +73,63 @@ const (
 	clusterManagementURL = "https://api.openshift.com/"
 )
 
+type BridgeOptions struct {
+	consoleCSPFlags                                 serverconfig.MultiKeyValue
+	customFaviconFlags                              serverconfig.LogosKeyValue
+	customLogoFlags                                 serverconfig.LogosKeyValue
+	enabledPlugins                                  serverconfig.MultiKeyValue
+	fAddPage                                        string
+	fAlermanagerPublicURL                           string
+	fAlertmanagerTenancyHost                        string
+	fAlertmanagerUserWorkloadHost                   string
+	fBaseAddress                                    string
+	fBasePath                                       string
+	fBranding                                       string
+	fCAFile                                         string
+	fCapabilities                                   string
+	fContentSecurityPolicyEnabled                   bool
+	fControlPlaneTopology                           string
+	fCopiedCSVsDisabled                             bool
+	fCustomProductName                              string
+	fDevCatalogCategories                           string
+	fDevCatalogTypes                                string
+	fDocumentationBaseURL                           string
+	fGrafanaPublicURL                               string
+	fI18NamespacesFlags                             string
+	fK8sAuth                                        string
+	fK8sMode                                        string
+	fK8sModeOffClusterAlertmanager                  string
+	fK8sModeOffClusterCatalogd                      string
+	fK8sModeOffClusterEndpoint                      string
+	fK8sModeOffClusterGitOps                        string
+	fK8sModeOffClusterServiceAccountBearerTokenFile string
+	fK8sModeOffClusterSkipVerifyTLS                 bool
+	fK8sModeOffClusterThanos                        string
+	fK8sPublicEndpoint                              string
+	fListen                                         string
+	fLoadTestFactor                                 int
+	fLogLevel                                       string
+	fNodeArchitectures                              string
+	fNodeOperatingSystems                           string
+	fPerspectives                                   string
+	fPluginProxy                                    string
+	fPluginsOrder                                   string
+	fProjectAccessClusterRoles                      string
+	fPrometheusPublicURL                            string
+	fPublicDir                                      string
+	fQuickStarts                                    string
+	fRedirectPort                                   int
+	fReleaseVersion                                 string
+	fServiceCAFile                                  string
+	fStatuspageID                                   string
+	fTechPreview                                    bool
+	fThanosPublicURL                                string
+	fTLSCertFile                                    string
+	fTLSKeyFile                                     string
+	fUserSettingsLocation                           string
+	telemetryFlags                                  serverconfig.MultiKeyValue
+}
+
 func main() {
 	// Initialize controller-runtime logger, needed for the OLM handler
 	log.SetLogger(zap.New())
@@ -81,99 +138,171 @@ func main() {
 	klog.InitFlags(fs)
 	defer klog.Flush()
 
+	bridgeOptions := &BridgeOptions{}
 	authOptions := authopts.NewAuthOptions()
-	authOptions.AddFlags(fs)
-
 	sessionOptions := session.NewSessionOptions()
+	addFlags(fs, bridgeOptions, authOptions, sessionOptions)
+
+	if err := fs.Parse(os.Args[1:]); err != nil {
+		klog.Fatalf("Failed to parse flags: %v", err)
+	}
+
+	configFile := fs.Lookup("config").Value.String()
+
+	// Track session-related config to determine if we need to recreate sessions
+	var (
+		cachedCompletedAuthnOptions   *authopts.CompletedOptions
+		cachedCompletedSessionOptions *session.CompletedOptions
+		cachedAuthenticator           auth.Authenticator
+		cachedCSRFVerifier            *csrfverifier.CSRFVerifier
+	)
+
+	// Run server in a loop to support restarts
+	for {
+		// Parse and apply config
+		applyConfig(fs, bridgeOptions, authOptions, sessionOptions)
+
+		// Build the server with current config, potentially reusing session state
+		srv, newAuthn, newSession := createServer(
+			bridgeOptions,
+			authOptions,
+			sessionOptions,
+			cachedCompletedAuthnOptions,
+			cachedCompletedSessionOptions,
+			cachedAuthenticator,
+			cachedCSRFVerifier,
+		)
+
+		// Cache the new session state for next iteration
+		cachedCompletedAuthnOptions = newAuthn
+		cachedCompletedSessionOptions = newSession
+		cachedAuthenticator = srv.Authenticator
+		cachedCSRFVerifier = srv.CSRFVerifier
+
+		// Run the server with config file watching
+		shouldRestart := runServer(bridgeOptions, srv, configFile)
+		if !shouldRestart {
+			return
+		}
+	}
+}
+
+func sessionConfigHasChanged(
+	authOptions *authopts.AuthOptions,
+	sessionOptions *session.SessionOptions,
+	cachedAuthnOptions *authopts.CompletedOptions,
+	cachedSessionOptions *session.CompletedOptions,
+) bool {
+	// If no cached options, session config has "changed" (needs to be created)
+	if cachedAuthnOptions == nil || cachedSessionOptions == nil {
+		return true
+	}
+
+	// Compare authentication options that affect sessions
+	if authOptions.AuthType != cachedAuthnOptions.AuthType {
+		return true
+	}
+
+	// Compare issuer URLs
+	cachedIssuerURL := ""
+	if cachedAuthnOptions.IssuerURL != nil {
+		cachedIssuerURL = cachedAuthnOptions.IssuerURL.String()
+	}
+	if authOptions.IssuerURL != cachedIssuerURL {
+		return true
+	}
+
+	if authOptions.ClientID != cachedAuthnOptions.ClientID {
+		return true
+	}
+	if authOptions.ClientSecretFilePath != "" {
+		// Client secret file path changed - assume secret might have changed
+		return true
+	}
+	if authOptions.InactivityTimeoutSeconds != cachedAuthnOptions.InactivityTimeoutSeconds {
+		return true
+	}
+
+	// Compare session options
+	if sessionOptions.CookieEncryptionKeyPath != "" || sessionOptions.CookieAuthenticationKeyPath != "" {
+		// If key paths are set, assume keys might have changed
+		return true
+	}
+
+	return false
+}
+
+func addFlags(fs *flag.FlagSet, bridgeOptions *BridgeOptions, authOptions *authopts.AuthOptions, sessionOptions *session.SessionOptions) {
+	authOptions.AddFlags(fs)
 	sessionOptions.AddFlags(fs)
 
 	// Define commandline / env / config options
 	fs.String("config", "", "The YAML config file.")
-
-	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
-
-	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")
-	fBasePath := fs.String("base-path", "/", "")
-
+	fs.StringVar(&bridgeOptions.fListen, "listen", "http://0.0.0.0:9000", "")
+	fs.StringVar(&bridgeOptions.fBaseAddress, "base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")
+	fs.StringVar(&bridgeOptions.fBasePath, "base-path", "/", "")
 	// See https://github.com/openshift/service-serving-cert-signer
-	fServiceCAFile := fs.String("service-ca-file", "", "CA bundle for OpenShift services signed with the service signing certificates.")
-
-	fK8sMode := fs.String("k8s-mode", "in-cluster", "in-cluster | off-cluster")
-	fK8sModeOffClusterEndpoint := fs.String("k8s-mode-off-cluster-endpoint", "", "URL of the Kubernetes API server.")
-	fK8sModeOffClusterSkipVerifyTLS := fs.Bool("k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
-	fK8sModeOffClusterThanos := fs.String("k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Thanos server.")
-	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
-	fK8sModeOffClusterCatalogd := fs.String("k8s-mode-off-cluster-catalogd", "", "DEV ONLY. URL of the cluster's catalogd server.")
-	fK8sModeOffClusterServiceAccountBearerTokenFile := fs.String("k8s-mode-off-cluster-service-account-bearer-token-file", "", "DEV ONLY. bearer token file for the service account used for internal K8s API server calls.")
-
-	fK8sAuth := fs.String("k8s-auth", "", "this option is deprecated, setting it has no effect")
-
-	fK8sModeOffClusterGitOps := fs.String("k8s-mode-off-cluster-gitops", "", "DEV ONLY. URL of the GitOps backend service")
-
-	fRedirectPort := fs.Int("redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
-	fLogLevel := fs.String("log-level", "", "level of logging information by package (pkg=level).")
-	fPublicDir := fs.String("public-dir", "./frontend/public/dist", "directory containing static web assets.")
-	fTLSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
-	fTLSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
-	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
-
-	_ = fs.String("kubectl-client-id", "", "DEPRECATED: setting this does not do anything.")
-	_ = fs.String("kubectl-client-secret", "", "DEPRECATED: setting this does not do anything.")
-	_ = fs.String("kubectl-client-secret-file", "", "DEPRECATED: setting this does not do anything.")
-
-	fK8sPublicEndpoint := fs.String("k8s-public-endpoint", "", "Endpoint to use to communicate to the API server.")
-
-	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, ocp, online, dedicated, azure, or rosa. Defaults to okd.")
-	fCustomProductName := fs.String("custom-product-name", "", "Custom product name for console branding.")
-
-	customLogoFlags := serverconfig.LogosKeyValue{}
-	fs.Var(&customLogoFlags, "custom-logo-files", "List of custom product images used for branding of console's logo in the Masthead and 'About' modal.\n"+
+	fs.StringVar(&bridgeOptions.fServiceCAFile, "service-ca-file", "", "CA bundle for OpenShift services signed with the service signing certificates.")
+	fs.StringVar(&bridgeOptions.fK8sMode, "k8s-mode", "in-cluster", "in-cluster | off-cluster")
+	fs.StringVar(&bridgeOptions.fK8sModeOffClusterEndpoint, "k8s-mode-off-cluster-endpoint", "", "URL of the Kubernetes API server.")
+	fs.BoolVar(&bridgeOptions.fK8sModeOffClusterSkipVerifyTLS, "k8s-mode-off-cluster-skip-verify-tls", false, "DEV ONLY. When true, skip verification of certs presented by k8s API server.")
+	fs.StringVar(&bridgeOptions.fK8sModeOffClusterThanos, "k8s-mode-off-cluster-thanos", "", "DEV ONLY. URL of the cluster's Thanos server.")
+	fs.StringVar(&bridgeOptions.fK8sModeOffClusterAlertmanager, "k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
+	fs.StringVar(&bridgeOptions.fK8sModeOffClusterCatalogd, "k8s-mode-off-cluster-catalogd", "", "DEV ONLY. URL of the cluster's catalogd server.")
+	fs.StringVar(&bridgeOptions.fK8sModeOffClusterServiceAccountBearerTokenFile, "k8s-mode-off-cluster-service-account-bearer-token-file", "", "DEV ONLY. bearer token file for the service account used for internal K8s API server calls.")
+	fs.StringVar(&bridgeOptions.fK8sAuth, "k8s-auth", "", "this option is deprecated, setting it has no effect")
+	fs.StringVar(&bridgeOptions.fK8sModeOffClusterGitOps, "k8s-mode-off-cluster-gitops", "", "DEV ONLY. URL of the GitOps backend service")
+	fs.IntVar(&bridgeOptions.fRedirectPort, "redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
+	fs.StringVar(&bridgeOptions.fLogLevel, "log-level", "", "level of logging information by package (pkg=level).")
+	fs.StringVar(&bridgeOptions.fPublicDir, "public-dir", "./frontend/public/dist", "directory containing static web assets.")
+	fs.StringVar(&bridgeOptions.fTLSCertFile, "tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
+	fs.StringVar(&bridgeOptions.fTLSKeyFile, "tls-key-file", "", "The TLS certificate key.")
+	fs.StringVar(&bridgeOptions.fCAFile, "ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
+	fs.String("kubectl-client-id", "", "DEPRECATED: setting this does not do anything.")
+	fs.String("kubectl-client-secret", "", "DEPRECATED: setting this does not do anything.")
+	fs.String("kubectl-client-secret-file", "", "DEPRECATED: setting this does not do anything.")
+	fs.StringVar(&bridgeOptions.fK8sPublicEndpoint, "k8s-public-endpoint", "", "Endpoint to use to communicate to the API server.")
+	fs.StringVar(&bridgeOptions.fBranding, "branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, ocp, online, dedicated, azure, or rosa. Defaults to okd.")
+	fs.StringVar(&bridgeOptions.fCustomProductName, "custom-product-name", "", "Custom product name for console branding.")
+	fs.Var(&bridgeOptions.customLogoFlags, "custom-logo-files", "List of custom product images used for branding of console's logo in the Masthead and 'About' modal.\n"+
 		"Each entry consist of theme type (Dark | Light ) as a key and the path to the image file used for the given theme as its value.\n"+
 		"Example --custom-logo-files Dark=./foo/dark-image.png,Light=./foo/light-image.png")
-	customFaviconFlags := serverconfig.LogosKeyValue{}
-	fs.Var(&customFaviconFlags, "custom-favicon-files", "List of custom images used for branding of console's favicon.\n"+
+	fs.Var(&bridgeOptions.customFaviconFlags, "custom-favicon-files", "List of custom images used for branding of console's favicon.\n"+
 		"Each entry consist of theme type (Dark | Light ) as a key and the path to the image file used for the given theme as its value.\n"+
 		"Example --custom-favicon-files Dark=./foo/dark-image.png,Light=./foo/light-image.png")
-	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
-	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
+	fs.StringVar(&bridgeOptions.fStatuspageID, "statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
+	fs.StringVar(&bridgeOptions.fDocumentationBaseURL, "documentation-base-url", "", "The base URL for documentation links.")
+	fs.StringVar(&bridgeOptions.fAlertmanagerUserWorkloadHost, "alermanager-user-workload-host", openshiftAlertManagerHost, "Location of the Alertmanager service for user-defined alerts.")
+	fs.StringVar(&bridgeOptions.fAlertmanagerTenancyHost, "alermanager-tenancy-host", openshiftAlertManagerTenancyHost, "Location of the tenant-aware Alertmanager service.")
+	fs.StringVar(&bridgeOptions.fAlermanagerPublicURL, "alermanager-public-url", "", "Public URL of the cluster's AlertManager server.")
+	fs.StringVar(&bridgeOptions.fGrafanaPublicURL, "grafana-public-url", "", "Public URL of the cluster's Grafana server.")
+	fs.StringVar(&bridgeOptions.fPrometheusPublicURL, "prometheus-public-url", "", "Public URL of the cluster's Prometheus server.")
+	fs.StringVar(&bridgeOptions.fThanosPublicURL, "thanos-public-url", "", "Public URL of the cluster's Thanos server.")
+	fs.Var(&bridgeOptions.enabledPlugins, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
+	fs.StringVar(&bridgeOptions.fPluginsOrder, "plugins-order", "", "List of plugin names which determines the order in which plugin extensions will be resolved.")
+	fs.StringVar(&bridgeOptions.fPluginProxy, "plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
+	fs.StringVar(&bridgeOptions.fI18NamespacesFlags, "i18n-namespaces", "", "List of namespaces separated by comma. Example --i18n-namespaces=plugin__acm,plugin__kubevirt")
+	fs.BoolVar(&bridgeOptions.fContentSecurityPolicyEnabled, "content-security-policy-enabled", false, "Flag to indicate if Content Secrity Policy features should be enabled.")
+	fs.Var(&bridgeOptions.consoleCSPFlags, "content-security-policy", "List of CSP directives that are enabled for the console. Each entry consist of csp-directive-name as a key and csp-directive-value as a value. Example --content-security-policy script-src='localhost:9000',font-src='localhost:9001'")
+	fs.Var(&bridgeOptions.telemetryFlags, "telemetry", "Telemetry configuration that can be used by console plugins. Each entry should be a key=value pair.")
+	fs.IntVar(&bridgeOptions.fLoadTestFactor, "load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
+	fs.StringVar(&bridgeOptions.fDevCatalogCategories, "developer-catalog-categories", "", "Allow catalog categories customization. (JSON as string)")
+	fs.StringVar(&bridgeOptions.fDevCatalogTypes, "developer-catalog-types", "", "Allow enabling/disabling of sub-catalog types from the developer catalog. (JSON as string)")
+	fs.StringVar(&bridgeOptions.fUserSettingsLocation, "user-settings-location", "configmap", "DEV ONLY. Define where the user settings should be stored. (configmap | localstorage).")
+	fs.StringVar(&bridgeOptions.fQuickStarts, "quick-starts", "", "Allow customization of available ConsoleQuickStart resources in console. (JSON as string)")
+	fs.StringVar(&bridgeOptions.fAddPage, "add-page", "", "DEV ONLY. Allow add page customization. (JSON as string)")
+	fs.StringVar(&bridgeOptions.fProjectAccessClusterRoles, "project-access-cluster-roles", "", "The list of Cluster Roles assignable for the project access page. (JSON as string)")
+	fs.StringVar(&bridgeOptions.fPerspectives, "perspectives", "", "Allow enabling/disabling of perspectives in the console. (JSON as string)")
+	fs.StringVar(&bridgeOptions.fCapabilities, "capabilities", "", "Allow enabling/disabling of capabilities in the console. (JSON as string)")
+	fs.StringVar(&bridgeOptions.fControlPlaneTopology, "control-plane-topology-mode", "", "Defines the topology mode of the control-plane nodes (External | HighlyAvailable | HighlyAvailableArbiter | DualReplica | SingleReplica)")
+	fs.StringVar(&bridgeOptions.fReleaseVersion, "release-version", "", "Defines the release version of the cluster")
+	fs.StringVar(&bridgeOptions.fNodeArchitectures, "node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
+	fs.StringVar(&bridgeOptions.fNodeOperatingSystems, "node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
+	fs.BoolVar(&bridgeOptions.fCopiedCSVsDisabled, "copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
+	fs.BoolVar(&bridgeOptions.fTechPreview, "tech-preview", false, "Enable console Technology Preview features.")
+}
 
-	fAlertmanagerUserWorkloadHost := fs.String("alermanager-user-workload-host", openshiftAlertManagerHost, "Location of the Alertmanager service for user-defined alerts.")
-	fAlertmanagerTenancyHost := fs.String("alermanager-tenancy-host", openshiftAlertManagerTenancyHost, "Location of the tenant-aware Alertmanager service.")
-	fAlermanagerPublicURL := fs.String("alermanager-public-url", "", "Public URL of the cluster's AlertManager server.")
-	fGrafanaPublicURL := fs.String("grafana-public-url", "", "Public URL of the cluster's Grafana server.")
-	fPrometheusPublicURL := fs.String("prometheus-public-url", "", "Public URL of the cluster's Prometheus server.")
-	fThanosPublicURL := fs.String("thanos-public-url", "", "Public URL of the cluster's Thanos server.")
-
-	enabledPlugins := serverconfig.MultiKeyValue{}
-	fs.Var(&enabledPlugins, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
-	fPluginsOrder := fs.String("plugins-order", "", "List of plugin names which determines the order in which plugin extensions will be resolved.")
-	fPluginProxy := fs.String("plugin-proxy", "", "Defines various service types to which will console proxy plugins requests. (JSON as string)")
-	fI18NamespacesFlags := fs.String("i18n-namespaces", "", "List of namespaces separated by comma. Example --i18n-namespaces=plugin__acm,plugin__kubevirt")
-
-	fContentSecurityPolicyEnabled := fs.Bool("content-security-policy-enabled", false, "Flag to indicate if Content Secrity Policy features should be enabled.")
-	consoleCSPFlags := serverconfig.MultiKeyValue{}
-	fs.Var(&consoleCSPFlags, "content-security-policy", "List of CSP directives that are enabled for the console. Each entry consist of csp-directive-name as a key and csp-directive-value as a value. Example --content-security-policy script-src='localhost:9000',font-src='localhost:9001'")
-
-	telemetryFlags := serverconfig.MultiKeyValue{}
-	fs.Var(&telemetryFlags, "telemetry", "Telemetry configuration that can be used by console plugins. Each entry should be a key=value pair.")
-
-	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
-
-	fDevCatalogCategories := fs.String("developer-catalog-categories", "", "Allow catalog categories customization. (JSON as string)")
-	fDevCatalogTypes := fs.String("developer-catalog-types", "", "Allow enabling/disabling of sub-catalog types from the developer catalog. (JSON as string)")
-	fUserSettingsLocation := fs.String("user-settings-location", "configmap", "DEV ONLY. Define where the user settings should be stored. (configmap | localstorage).")
-	fQuickStarts := fs.String("quick-starts", "", "Allow customization of available ConsoleQuickStart resources in console. (JSON as string)")
-	fAddPage := fs.String("add-page", "", "DEV ONLY. Allow add page customization. (JSON as string)")
-	fProjectAccessClusterRoles := fs.String("project-access-cluster-roles", "", "The list of Cluster Roles assignable for the project access page. (JSON as string)")
-	fPerspectives := fs.String("perspectives", "", "Allow enabling/disabling of perspectives in the console. (JSON as string)")
-	fCapabilities := fs.String("capabilities", "", "Allow enabling/disabling of capabilities in the console. (JSON as string)")
-	fControlPlaneTopology := fs.String("control-plane-topology-mode", "", "Defines the topology mode of the control-plane nodes (External | HighlyAvailable | HighlyAvailableArbiter | DualReplica | SingleReplica)")
-	fReleaseVersion := fs.String("release-version", "", "Defines the release version of the cluster")
-	fNodeArchitectures := fs.String("node-architectures", "", "List of node architectures. Example --node-architecture=amd64,arm64")
-	fNodeOperatingSystems := fs.String("node-operating-systems", "", "List of node operating systems. Example --node-operating-system=linux,windows")
-	fCopiedCSVsDisabled := fs.Bool("copied-csvs-disabled", false, "Flag to indicate if OLM copied CSVs are disabled.")
-	fTechPreview := fs.Bool("tech-preview", false, "Enable console Technology Preview features.")
-
+func applyConfig(fs *flag.FlagSet, bridgeOptions *BridgeOptions, authOptions *authopts.AuthOptions, sessionOptions *session.SessionOptions) {
 	cfg, err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -185,43 +314,53 @@ func main() {
 		os.Exit(1)
 	}
 
-	if *fTechPreview {
+	if bridgeOptions.fTechPreview {
 		klog.Warning("Technology Preview features are enabled. These features are experimental and not supported for production use. If you encounter issues, send feedback through the usual support or bug-reporting channels.")
 	}
 
 	authOptions.ApplyConfig(&cfg.Auth)
 	sessionOptions.ApplyConfig(&cfg.Session)
+}
 
-	baseURL, err := flags.ValidateFlagIsURL("base-address", *fBaseAddress, true)
+func createServer(
+	bridgeOptions *BridgeOptions,
+	authOptions *authopts.AuthOptions,
+	sessionOptions *session.SessionOptions,
+	cachedAuthnOptions *authopts.CompletedOptions,
+	cachedSessionOptions *session.CompletedOptions,
+	cachedAuthenticator auth.Authenticator,
+	cachedCSRFVerifier *csrfverifier.CSRFVerifier,
+) (*server.Server, *authopts.CompletedOptions, *session.CompletedOptions) {
+	baseURL, err := flags.ValidateFlagIsURL("base-address", bridgeOptions.fBaseAddress, true)
 	flags.FatalIfFailed(err)
 
-	if !strings.HasPrefix(*fBasePath, "/") || !strings.HasSuffix(*fBasePath, "/") {
+	if !strings.HasPrefix(bridgeOptions.fBasePath, "/") || !strings.HasSuffix(bridgeOptions.fBasePath, "/") {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("base-path", "value must start and end with slash"))
 	}
-	baseURL.Path = *fBasePath
+	baseURL.Path = bridgeOptions.fBasePath
 
 	documentationBaseURL := &url.URL{}
-	if *fDocumentationBaseURL != "" {
-		if !strings.HasSuffix(*fDocumentationBaseURL, "/") {
+	if bridgeOptions.fDocumentationBaseURL != "" {
+		if !strings.HasSuffix(bridgeOptions.fDocumentationBaseURL, "/") {
 			flags.FatalIfFailed(flags.NewInvalidFlagError("documentation-base-url", "value must end with slash"))
 		}
-		documentationBaseURL, err = flags.ValidateFlagIsURL("documentation-base-url", *fDocumentationBaseURL, false)
+		documentationBaseURL, err = flags.ValidateFlagIsURL("documentation-base-url", bridgeOptions.fDocumentationBaseURL, false)
 		flags.FatalIfFailed(err)
 	}
 
-	alertManagerPublicURL, err := flags.ValidateFlagIsURL("alermanager-public-url", *fAlermanagerPublicURL, true)
+	alertManagerPublicURL, err := flags.ValidateFlagIsURL("alermanager-public-url", bridgeOptions.fAlermanagerPublicURL, true)
 	flags.FatalIfFailed(err)
 
-	grafanaPublicURL, err := flags.ValidateFlagIsURL("grafana-public-url", *fGrafanaPublicURL, true)
+	grafanaPublicURL, err := flags.ValidateFlagIsURL("grafana-public-url", bridgeOptions.fGrafanaPublicURL, true)
 	flags.FatalIfFailed(err)
 
-	prometheusPublicURL, err := flags.ValidateFlagIsURL("prometheus-public-url", *fPrometheusPublicURL, true)
+	prometheusPublicURL, err := flags.ValidateFlagIsURL("prometheus-public-url", bridgeOptions.fPrometheusPublicURL, true)
 	flags.FatalIfFailed(err)
 
-	thanosPublicURL, err := flags.ValidateFlagIsURL("thanos-public-url", *fThanosPublicURL, true)
+	thanosPublicURL, err := flags.ValidateFlagIsURL("thanos-public-url", bridgeOptions.fThanosPublicURL, true)
 	flags.FatalIfFailed(err)
 
-	branding := *fBranding
+	branding := bridgeOptions.fBranding
 	if branding == "origin" {
 		branding = "okd"
 	}
@@ -238,8 +377,8 @@ func main() {
 	}
 
 	i18nNamespaces := []string{}
-	if *fI18NamespacesFlags != "" {
-		for _, str := range strings.Split(*fI18NamespacesFlags, ",") {
+	if bridgeOptions.fI18NamespacesFlags != "" {
+		for _, str := range strings.Split(bridgeOptions.fI18NamespacesFlags, ",") {
 			str = strings.TrimSpace(str)
 			if str == "" {
 				flags.FatalIfFailed(flags.NewInvalidFlagError("i18n-namespaces", "list must contain name of i18n namespaces separated by comma"))
@@ -249,19 +388,19 @@ func main() {
 	}
 
 	enabledPluginsOrder := []string{}
-	if *fPluginsOrder != "" {
-		for _, str := range strings.Split(*fPluginsOrder, ",") {
+	if bridgeOptions.fPluginsOrder != "" {
+		for _, str := range strings.Split(bridgeOptions.fPluginsOrder, ",") {
 			str = strings.TrimSpace(str)
 			if str == "" {
 				flags.FatalIfFailed(flags.NewInvalidFlagError("plugins-order", "list must contain names of plugins separated by comma"))
 			}
-			if enabledPlugins[str] == "" {
+			if bridgeOptions.enabledPlugins[str] == "" {
 				flags.FatalIfFailed(flags.NewInvalidFlagError("plugins-order", "list must only contain currently enabled plugins"))
 			}
 			enabledPluginsOrder = append(enabledPluginsOrder, str)
 		}
-	} else if len(enabledPlugins) > 0 {
-		for plugin := range enabledPlugins {
+	} else if len(bridgeOptions.enabledPlugins) > 0 {
+		for plugin := range bridgeOptions.enabledPlugins {
 			enabledPluginsOrder = append(enabledPluginsOrder, plugin)
 		}
 	}
@@ -274,8 +413,8 @@ func main() {
 	}
 
 	nodeArchitectures := []string{}
-	if *fNodeArchitectures != "" {
-		for _, str := range strings.Split(*fNodeArchitectures, ",") {
+	if bridgeOptions.fNodeArchitectures != "" {
+		for _, str := range strings.Split(bridgeOptions.fNodeArchitectures, ",") {
 			str = strings.TrimSpace(str)
 			if str == "" {
 				flags.FatalIfFailed(flags.NewInvalidFlagError("node-architectures", "list must contain name of node architectures separated by comma"))
@@ -285,8 +424,8 @@ func main() {
 	}
 
 	nodeOperatingSystems := []string{}
-	if *fNodeOperatingSystems != "" {
-		for _, str := range strings.Split(*fNodeOperatingSystems, ",") {
+	if bridgeOptions.fNodeOperatingSystems != "" {
+		for _, str := range strings.Split(bridgeOptions.fNodeOperatingSystems, ",") {
 			str = strings.TrimSpace(str)
 			if str == "" {
 				flags.FatalIfFailed(flags.NewInvalidFlagError("node-operating-systems", "list must contain name of node architectures separated by comma"))
@@ -296,80 +435,98 @@ func main() {
 	}
 
 	capabilities := []operatorv1.Capability{}
-	if *fCapabilities != "" {
-		err = json.Unmarshal([]byte(*fCapabilities), &capabilities)
+	if bridgeOptions.fCapabilities != "" {
+		err = json.Unmarshal([]byte(bridgeOptions.fCapabilities), &capabilities)
 		if err != nil {
 			klog.Fatalf("Error unmarshaling capabilities JSON: %v", err)
 		}
 	}
 
-	if len(telemetryFlags) > 0 {
-		keys := make([]string, 0, len(telemetryFlags))
-		for name := range telemetryFlags {
+	if len(bridgeOptions.telemetryFlags) > 0 {
+		keys := make([]string, 0, len(bridgeOptions.telemetryFlags))
+		for name := range bridgeOptions.telemetryFlags {
 			keys = append(keys, name)
 		}
 		sort.Strings(keys)
 
 		klog.Infoln("Console telemetry options:")
 		for _, k := range keys {
-			klog.Infof(" - %s %s", k, telemetryFlags[k])
+			klog.Infof(" - %s %s", k, bridgeOptions.telemetryFlags[k])
 		}
 	}
 
 	srv := &server.Server{
-		PublicDir:                    *fPublicDir,
+		PublicDir:                    bridgeOptions.fPublicDir,
 		BaseURL:                      baseURL,
 		Branding:                     branding,
-		CustomProductName:            *fCustomProductName,
-		CustomLogoFiles:              customLogoFlags,
-		CustomFaviconFiles:           customFaviconFlags,
-		ControlPlaneTopology:         *fControlPlaneTopology,
-		StatuspageID:                 *fStatuspageID,
+		CustomProductName:            bridgeOptions.fCustomProductName,
+		CustomLogoFiles:              bridgeOptions.customLogoFlags,
+		CustomFaviconFiles:           bridgeOptions.customFaviconFlags,
+		ControlPlaneTopology:         bridgeOptions.fControlPlaneTopology,
+		StatuspageID:                 bridgeOptions.fStatuspageID,
 		DocumentationBaseURL:         documentationBaseURL,
-		AlertManagerUserWorkloadHost: *fAlertmanagerUserWorkloadHost,
-		AlertManagerTenancyHost:      *fAlertmanagerTenancyHost,
+		AlertManagerUserWorkloadHost: bridgeOptions.fAlertmanagerUserWorkloadHost,
+		AlertManagerTenancyHost:      bridgeOptions.fAlertmanagerTenancyHost,
 		AlertManagerPublicURL:        alertManagerPublicURL,
 		GrafanaPublicURL:             grafanaPublicURL,
 		PrometheusPublicURL:          prometheusPublicURL,
 		ThanosPublicURL:              thanosPublicURL,
-		LoadTestFactor:               *fLoadTestFactor,
-		DevCatalogCategories:         *fDevCatalogCategories,
-		DevCatalogTypes:              *fDevCatalogTypes,
-		UserSettingsLocation:         *fUserSettingsLocation,
-		EnabledPlugins:               enabledPlugins,
+		LoadTestFactor:               bridgeOptions.fLoadTestFactor,
+		DevCatalogCategories:         bridgeOptions.fDevCatalogCategories,
+		DevCatalogTypes:              bridgeOptions.fDevCatalogTypes,
+		UserSettingsLocation:         bridgeOptions.fUserSettingsLocation,
+		EnabledPlugins:               bridgeOptions.enabledPlugins,
 		EnabledPluginsOrder:          enabledPluginsOrder,
 		I18nNamespaces:               i18nNamespaces,
-		PluginProxy:                  *fPluginProxy,
-		ContentSecurityPolicyEnabled: *fContentSecurityPolicyEnabled,
-		ContentSecurityPolicy:        consoleCSPFlags,
-		QuickStarts:                  *fQuickStarts,
-		AddPage:                      *fAddPage,
-		ProjectAccessClusterRoles:    *fProjectAccessClusterRoles,
-		Perspectives:                 *fPerspectives,
-		Telemetry:                    telemetryFlags,
-		ReleaseVersion:               *fReleaseVersion,
+		PluginProxy:                  bridgeOptions.fPluginProxy,
+		ContentSecurityPolicyEnabled: bridgeOptions.fContentSecurityPolicyEnabled,
+		ContentSecurityPolicy:        bridgeOptions.consoleCSPFlags,
+		QuickStarts:                  bridgeOptions.fQuickStarts,
+		AddPage:                      bridgeOptions.fAddPage,
+		ProjectAccessClusterRoles:    bridgeOptions.fProjectAccessClusterRoles,
+		Perspectives:                 bridgeOptions.fPerspectives,
+		Telemetry:                    bridgeOptions.telemetryFlags,
+		ReleaseVersion:               bridgeOptions.fReleaseVersion,
 		NodeArchitectures:            nodeArchitectures,
 		NodeOperatingSystems:         nodeOperatingSystems,
-		K8sMode:                      *fK8sMode,
-		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
+		K8sMode:                      bridgeOptions.fK8sMode,
+		CopiedCSVsDisabled:           bridgeOptions.fCopiedCSVsDisabled,
 		Capabilities:                 capabilities,
 	}
 
-	completedAuthnOptions, err := authOptions.Complete()
-	if err != nil {
-		klog.Fatalf("failed to complete authentication options: %v", err)
-		os.Exit(1)
-	}
+	// Check if we can reuse cached session config
+	var completedAuthnOptions *authopts.CompletedOptions
+	var completedSessionOptions *session.CompletedOptions
+	sessionConfigChanged := sessionConfigHasChanged(authOptions, sessionOptions, cachedAuthnOptions, cachedSessionOptions)
 
-	completedSessionOptions, err := sessionOptions.Complete(completedAuthnOptions.AuthType)
-	if err != nil {
-		klog.Fatalf("failed to complete session options: %v", err)
-		os.Exit(1)
+	if !sessionConfigChanged && cachedAuthnOptions != nil && cachedSessionOptions != nil {
+		// Reuse cached session configuration
+		klog.Info("Reusing existing session configuration")
+		completedAuthnOptions = cachedAuthnOptions
+		completedSessionOptions = cachedSessionOptions
+	} else {
+		// Create session configuration
+		if cachedAuthnOptions != nil {
+			klog.Info("Creating new session state")
+		}
+
+		var err error
+		completedAuthnOptions, err = authOptions.Complete()
+		if err != nil {
+			klog.Fatalf("failed to complete authentication options: %v", err)
+			os.Exit(1)
+		}
+
+		completedSessionOptions, err = sessionOptions.Complete(completedAuthnOptions.AuthType)
+		if err != nil {
+			klog.Fatalf("failed to complete session options: %v", err)
+			os.Exit(1)
+		}
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
 	// is used by catalog-utils.ts
-	if *fK8sMode == "in-cluster" {
+	if bridgeOptions.fK8sMode == "in-cluster" {
 		srv.GOARCH = runtime.GOARCH
 		srv.GOOS = runtime.GOOS
 	}
@@ -377,7 +534,7 @@ func main() {
 	// Blacklisted headers
 	srv.ProxyHeaderDenyList = []string{"Cookie", "X-CSRFToken"}
 
-	if *fLogLevel != "" {
+	if bridgeOptions.fLogLevel != "" {
 		klog.Warningf("DEPRECATED: --log-level is now deprecated, use verbosity flag --v=Level instead")
 	}
 
@@ -387,11 +544,11 @@ func main() {
 	)
 
 	var k8sEndpoint *url.URL
-	switch *fK8sMode {
+	switch bridgeOptions.fK8sMode {
 	case "in-cluster":
 		k8sEndpoint = &url.URL{Scheme: "https", Host: "kubernetes.default.svc"}
 		var err error
-		k8sCertPEM, err = ioutil.ReadFile(k8sInClusterCA)
+		k8sCertPEM, err = os.ReadFile(k8sInClusterCA)
 		if err != nil {
 			klog.Fatalf("Error inferring Kubernetes config from environment: %v", err)
 		}
@@ -418,8 +575,8 @@ func main() {
 		}
 
 		// If running in an OpenShift cluster, set up a proxy to the prometheus-k8s service running in the openshift-monitoring namespace.
-		if *fServiceCAFile != "" {
-			serviceCertPEM, err := ioutil.ReadFile(*fServiceCAFile)
+		if bridgeOptions.fServiceCAFile != "" {
+			serviceCertPEM, err := os.ReadFile(bridgeOptions.fServiceCAFile)
 			if err != nil {
 				klog.Fatalf("failed to read service-ca.crt file: %v", err)
 			}
@@ -466,12 +623,12 @@ func main() {
 			srv.AlertManagerUserWorkloadProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: srv.ProxyHeaderDenyList,
-				Endpoint:        &url.URL{Scheme: "https", Host: *fAlertmanagerUserWorkloadHost, Path: "/api"},
+				Endpoint:        &url.URL{Scheme: "https", Host: bridgeOptions.fAlertmanagerUserWorkloadHost, Path: "/api"},
 			}
 			srv.AlertManagerTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: srv.ProxyHeaderDenyList,
-				Endpoint:        &url.URL{Scheme: "https", Host: *fAlertmanagerTenancyHost, Path: "/api"},
+				Endpoint:        &url.URL{Scheme: "https", Host: bridgeOptions.fAlertmanagerTenancyHost, Path: "/api"},
 			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 			srv.PluginsProxyTLSConfig = serviceProxyTLSConfig
@@ -484,11 +641,11 @@ func main() {
 		}
 
 	case "off-cluster":
-		k8sEndpoint, err = flags.ValidateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint, false)
+		k8sEndpoint, err = flags.ValidateFlagIsURL("k8s-mode-off-cluster-endpoint", bridgeOptions.fK8sModeOffClusterEndpoint, false)
 		flags.FatalIfFailed(err)
 
 		serviceProxyTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
-			InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
+			InsecureSkipVerify: bridgeOptions.fK8sModeOffClusterSkipVerifyTLS,
 		})
 
 		srv.ServiceClient = &http.Client{
@@ -502,8 +659,8 @@ func main() {
 			Transport: &http.Transport{TLSClientConfig: serviceProxyTLSConfig},
 		}
 
-		if *fK8sModeOffClusterServiceAccountBearerTokenFile != "" {
-			srv.InternalProxiedK8SClientConfig.BearerTokenFile = *fK8sModeOffClusterServiceAccountBearerTokenFile
+		if bridgeOptions.fK8sModeOffClusterServiceAccountBearerTokenFile != "" {
+			srv.InternalProxiedK8SClientConfig.BearerTokenFile = bridgeOptions.fK8sModeOffClusterServiceAccountBearerTokenFile
 		}
 
 		srv.K8sProxyConfig = &proxy.Config{
@@ -513,8 +670,8 @@ func main() {
 			UseProxyFromEnvironment: true,
 		}
 
-		if *fK8sModeOffClusterCatalogd != "" {
-			offClusterCatalogdURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-catalogd", *fK8sModeOffClusterCatalogd, false)
+		if bridgeOptions.fK8sModeOffClusterCatalogd != "" {
+			offClusterCatalogdURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-catalogd", bridgeOptions.fK8sModeOffClusterCatalogd, false)
 			flags.FatalIfFailed(err)
 			srv.CatalogdProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
@@ -522,8 +679,8 @@ func main() {
 			}
 		}
 
-		if *fK8sModeOffClusterThanos != "" {
-			offClusterThanosURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-thanos", *fK8sModeOffClusterThanos, false)
+		if bridgeOptions.fK8sModeOffClusterThanos != "" {
+			offClusterThanosURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-thanos", bridgeOptions.fK8sModeOffClusterThanos, false)
 			flags.FatalIfFailed(err)
 
 			offClusterThanosURL.Path += "/api"
@@ -544,8 +701,8 @@ func main() {
 			}
 		}
 
-		if *fK8sModeOffClusterAlertmanager != "" {
-			offClusterAlertManagerURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-alertmanager", *fK8sModeOffClusterAlertmanager, false)
+		if bridgeOptions.fK8sModeOffClusterAlertmanager != "" {
+			offClusterAlertManagerURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-alertmanager", bridgeOptions.fK8sModeOffClusterAlertmanager, false)
 			flags.FatalIfFailed(err)
 
 			offClusterAlertManagerURL.Path += "/api"
@@ -569,8 +726,8 @@ func main() {
 		srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 		srv.PluginsProxyTLSConfig = serviceProxyTLSConfig
 
-		if *fK8sModeOffClusterGitOps != "" {
-			offClusterGitOpsURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-gitops", *fK8sModeOffClusterGitOps, false)
+		if bridgeOptions.fK8sModeOffClusterGitOps != "" {
+			offClusterGitOpsURL, err := flags.ValidateFlagIsURL("k8s-mode-off-cluster-gitops", bridgeOptions.fK8sModeOffClusterGitOps, false)
 			flags.FatalIfFailed(err)
 
 			srv.GitOpsProxyConfig = &proxy.Config{
@@ -584,7 +741,7 @@ func main() {
 	}
 
 	// Controllers are behind Tech Preview flag
-	if *fTechPreview {
+	if bridgeOptions.fTechPreview {
 		controllerManagerMetricsOptions := ctrlmetrics.Options{
 			// Disable the metrics server for now. We can enable it later if we want and make it a configurable flag.
 			BindAddress: "0",
@@ -611,7 +768,7 @@ func main() {
 		}()
 	}
 
-	apiServerEndpoint := *fK8sPublicEndpoint
+	apiServerEndpoint := bridgeOptions.fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
 		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
 	}
@@ -627,7 +784,7 @@ func main() {
 		Endpoint:        clusterManagementURL,
 	}
 
-	if len(*fK8sAuth) > 0 {
+	if len(bridgeOptions.fK8sAuth) > 0 {
 		klog.Warning("DEPRECATED: --k8s-auth is deprecated and setting it has no effect")
 	}
 
@@ -681,8 +838,8 @@ func main() {
 
 	srv.AuthMetrics = auth.NewMetrics(srv.AnonymousInternalProxiedK8SRT)
 
-	caCertFilePath := *fCAFile
-	if *fK8sMode == "in-cluster" {
+	caCertFilePath := bridgeOptions.fCAFile
+	if bridgeOptions.fK8sMode == "in-cluster" {
 		caCertFilePath = k8sInClusterCA
 	}
 
@@ -692,18 +849,29 @@ func main() {
 	}
 	srv.TokenReviewer = tokenReviewer
 
-	if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
-		klog.Fatalf("failed to apply configuration to server: %v", err)
+	// Reuse cached authenticator and CSRF verifier if session config hasn't changed
+	if !sessionConfigChanged && cachedAuthenticator != nil && cachedCSRFVerifier != nil {
+		klog.Info("Reusing existing authenticator")
+		srv.Authenticator = cachedAuthenticator
+		srv.CSRFVerifier = cachedCSRFVerifier
+	} else {
+		if err := completedAuthnOptions.ApplyTo(srv, k8sEndpoint, caCertFilePath, completedSessionOptions); err != nil {
+			klog.Fatalf("failed to apply configuration to server: %v", err)
+		}
 	}
 
-	listenURL, err := flags.ValidateFlagIsURL("listen", *fListen, false)
+	return srv, completedAuthnOptions, completedSessionOptions
+}
+
+func runServer(bridgeOptions *BridgeOptions, srv *server.Server, configFile string) bool {
+	listenURL, err := flags.ValidateFlagIsURL("listen", bridgeOptions.fListen, false)
 	flags.FatalIfFailed(err)
 
 	switch listenURL.Scheme {
 	case "http":
 	case "https":
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-cert-file", *fTLSCertFile))
-		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", *fTLSKeyFile))
+		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-cert-file", bridgeOptions.fTLSCertFile))
+		flags.FatalIfFailed(flags.ValidateFlagNotEmpty("tls-key-file", bridgeOptions.fTLSKeyFile))
 	default:
 		flags.FatalIfFailed(flags.NewInvalidFlagError("listen", "scheme must be one of: http, https"))
 	}
@@ -714,24 +882,47 @@ func main() {
 	}
 
 	httpsrv := &http.Server{Handler: handler}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
-	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile)
+	listener, err := listen(listenURL.Scheme, listenURL.Host, bridgeOptions.fTLSCertFile, bridgeOptions.fTLSKeyFile)
 	if err != nil {
 		klog.Fatalf("error getting listener, %v", err)
 	}
 	defer listener.Close()
 
+	// Create a context that can be cancelled to trigger shutdown
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Start config file watcher if a config file is specified
+	if configFile != "" {
+		watcher, err := serverconfig.NewConfigWatcher(configFile, func() {
+			klog.Info("Config file changed, triggering server restart...")
+			cancel()
+		})
+		if err != nil {
+			klog.Fatalf("Failed to create config file watcher: %v", err)
+		}
+
+		go func() {
+			if err := watcher.Start(ctx); err != nil && err != context.Canceled {
+				klog.Errorf("Config file watcher stopped with error: %v", err)
+			}
+		}()
+	}
+
+	// Start shutdown handler
 	go func() {
 		<-ctx.Done()
-		klog.Infof("Shutting down server...")
-		if err = httpsrv.Shutdown(ctx); err != nil {
-			klog.Fatalf("Error shutting down server: %v", err)
+		klog.Info("Shutting down server...")
+		// Create a new context with timeout for shutdown
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer shutdownCancel()
+		if err := httpsrv.Shutdown(shutdownCtx); err != nil {
+			klog.Errorf("Error shutting down server: %v", err)
 		}
 	}()
 
-	if *fRedirectPort != 0 {
+	if bridgeOptions.fRedirectPort != 0 {
 		go func() {
 			// Listen on passed port number to be redirected to the console
 			redirectServer := http.NewServeMux()
@@ -744,13 +935,29 @@ func main() {
 				}
 				http.Redirect(res, req, redirectURL.String(), http.StatusMovedPermanently)
 			})
-			redirectPort := fmt.Sprintf(":%d", *fRedirectPort)
+			redirectPort := fmt.Sprintf(":%d", bridgeOptions.fRedirectPort)
 			klog.Infof("Listening on %q for custom hostname redirect...", redirectPort)
 			klog.Fatal(http.ListenAndServe(redirectPort, redirectServer))
 		}()
 	}
 
-	httpsrv.Serve(listener)
+	klog.Infof("Server listening on %s", listenURL.String())
+	serveErr := httpsrv.Serve(listener)
+
+	// Determine if we should restart
+	if ctx.Err() == context.Canceled {
+		// Context was cancelled (config change triggered restart)
+		klog.Info("Server stopped, restarting with new configuration...")
+		return true
+	}
+
+	// Server stopped naturally or with an error
+	if serveErr != nil && serveErr != http.ErrServerClosed {
+		klog.Fatalf("Server stopped with error: %v", serveErr)
+	}
+
+	klog.Info("Server stopped gracefully")
+	return false
 }
 
 func listen(scheme, host, certFile, keyFile string) (net.Listener, error) {
