@@ -8,6 +8,7 @@ import {
   ContentVariants,
   Toolbar,
   ToolbarContent,
+  ToolbarItem,
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -203,11 +204,13 @@ export const GlobalConfigPage: React.FCC = () => {
           </Content>
           <Toolbar>
             <ToolbarContent>
-              <TextFilter
-                value={textFilter}
-                label={t('public~by name or description')}
-                onChange={(_event, val) => setTextFilter(val)}
-              />
+              <ToolbarItem>
+                <TextFilter
+                  value={textFilter}
+                  label={t('public~by name or description')}
+                  onChange={(_event, val) => setTextFilter(val)}
+                />
+              </ToolbarItem>
             </ToolbarContent>
           </Toolbar>
         </>
