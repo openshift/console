@@ -18,11 +18,11 @@ import (
 type ClusterCatalogReconciler struct {
 	client.Client
 	Scheme         *runtime.Scheme
-	catalogService olm.CatalogService
+	catalogService *olm.CatalogService
 }
 
 // NewClusterCatalogReconciler creates a new ClusterCatalogReconciler
-func NewClusterCatalogReconciler(mgr ctrl.Manager, cs olm.CatalogService) *ClusterCatalogReconciler {
+func NewClusterCatalogReconciler(mgr ctrl.Manager, cs *olm.CatalogService) *ClusterCatalogReconciler {
 	return &ClusterCatalogReconciler{
 		Client:         mgr.GetClient(),
 		Scheme:         mgr.GetScheme(),
