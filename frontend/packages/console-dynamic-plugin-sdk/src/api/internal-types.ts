@@ -40,7 +40,6 @@ type OngoingActvityProps<T> = {
 export type OngoingActivityBodyProps = {
   resourceActivities?: (OngoingActvityProps<K8sResourceCommon> & {
     timestamp: Date;
-    loader?: () => Promise<React.ComponentType<Partial<OngoingActvityProps<K8sResourceCommon>>>>;
     component?: React.ComponentType<Partial<OngoingActvityProps<K8sResourceCommon>>>;
   })[];
   prometheusActivities?: {

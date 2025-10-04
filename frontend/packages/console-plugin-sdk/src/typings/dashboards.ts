@@ -1,5 +1,4 @@
 import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
-import { PrometheusResponse } from '@console/internal/components/graphs';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -58,28 +57,6 @@ namespace ExtensionProperties {
     /** Loader for corresponding action component */
     loader: LazyLoader<K8sActivityProps>;
   }
-
-  export interface DashboardsOverviewPrometheusActivity {
-    /** Queries to watch */
-    queries: string[];
-
-    /** Function which will determine if given query results represent the action */
-    isActivity: (results: PrometheusResponse[]) => boolean;
-
-    /** Loader for corresponding action component */
-    loader: LazyLoader<PrometheusActivityProps>;
-  }
-
-  export interface ProjectDashboardInventoryItem {
-    /** The K8s model which will be scoped to project, fetched and passed to `mapper` function. */
-    model: K8sKind;
-
-    /** Additional resources which will be fetched and passed to `mapper` function. */
-    additionalResources?: FirehoseResource[];
-
-    /** Function which will map various statuses to groups. */
-    mapper: StatusGroupMapper;
-  }
 }
 
 export interface DashboardsOverviewInventoryItem
@@ -108,24 +85,6 @@ export const isDashboardsOverviewResourceActivity = (
   e: Extension,
 ): e is DashboardsOverviewResourceActivity => e.type === 'Dashboards/Overview/Activity/Resource';
 
-export interface DashboardsOverviewPrometheusActivity
-  extends Extension<ExtensionProperties.DashboardsOverviewPrometheusActivity> {
-  type: 'Dashboards/Overview/Activity/Prometheus';
-}
-
-export const isDashboardsOverviewPrometheusActivity = (
-  e: Extension,
-): e is DashboardsOverviewPrometheusActivity =>
-  e.type === 'Dashboards/Overview/Activity/Prometheus';
-
-export interface ProjectDashboardInventoryItem
-  extends Extension<ExtensionProperties.ProjectDashboardInventoryItem> {
-  type: 'Project/Dashboard/Inventory/Item';
-}
-
-export const isProjectDashboardInventoryItem = (e: Extension): e is ProjectDashboardInventoryItem =>
-  e.type === 'Project/Dashboard/Inventory/Item';
-
 export interface DashboardsOverviewInventoryItemReplacement
   extends Extension<ExtensionProperties.DashboardsOverviewInventoryItem> {
   type: 'Dashboards/Overview/Inventory/Item/Replacement';
@@ -138,8 +97,4 @@ export const isDashboardsOverviewInventoryItemReplacement = (
 
 export type K8sActivityProps = {
   resource: K8sResourceKind;
-};
-
-export type PrometheusActivityProps = {
-  results: PrometheusResponse[];
 };

@@ -29,14 +29,9 @@ import { K8sKind, referenceForModel } from '../../../module/k8s';
 import { getName } from '@console/shared';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import {
-  useExtensions,
-  ProjectDashboardInventoryItem,
-  isProjectDashboardInventoryItem,
-} from '@console/plugin-sdk';
-import {
   useResolvedExtensions,
-  DashboardsProjectOverviewInventoryItem as DynamicProjectDashboardInventoryItem,
-  isDashboardsProjectOverviewInventoryItem as isDynamicProjectDashboardInventoryItem,
+  DashboardsProjectOverviewInventoryItem,
+  isDashboardsProjectOverviewInventoryItem,
   K8sResourceCommon,
   WatchK8sResources,
   ProjectOverviewInventoryItem,
@@ -127,11 +122,8 @@ const ProjectInventoryItem = withDashboardResources(
 );
 
 export const InventoryCard = () => {
-  const itemExtensions = useExtensions<ProjectDashboardInventoryItem>(
-    isProjectDashboardInventoryItem,
-  );
-  const [dynamicItemExtensions] = useResolvedExtensions<DynamicProjectDashboardInventoryItem>(
-    isDynamicProjectDashboardInventoryItem,
+  const [itemExtensions] = useResolvedExtensions<DashboardsProjectOverviewInventoryItem>(
+    isDashboardsProjectOverviewInventoryItem,
   );
   const [inventoryExtensions] = useResolvedExtensions<ProjectOverviewInventoryItem>(
     isProjectOverviewInventoryItem,
@@ -177,15 +169,6 @@ export const InventoryCard = () => {
             mapper={getVSStatusGroups}
           />
           {itemExtensions.map((item) => (
-            <ProjectInventoryItem
-              key={item.properties.model.kind}
-              projectName={projectName}
-              model={item.properties.model}
-              mapper={item.properties.mapper}
-              additionalResources={item.properties.additionalResources}
-            />
-          ))}
-          {dynamicItemExtensions.map((item) => (
             <ProjectInventoryItem
               key={item.properties.model.kind}
               projectName={projectName}

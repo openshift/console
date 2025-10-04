@@ -72,7 +72,8 @@
       "modalPage": "./components/Modals/ModalPage",
       "sampleErrorBoundaryPage": "./components/ErrorBoundary/SampleErrorBoundaryPage",
       "createProjectModal": "./components/Modals/CreateProjectModal",
-      "health": "./components/health"
+      "health": "./components/health",
+      "PrometheusActivity": "./components/PrometheusActivity"
     },
     "disableStaticPlugins": [
       "@console/demo-plugin"
