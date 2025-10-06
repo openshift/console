@@ -11,11 +11,21 @@ const HeadersKey string = "headers"
 
 func contextToHeaders(ctx context.Context, request *http.Request) {
 	if ctx.Value(HeadersKey) != nil {
-		headers, ok := ctx.Value(HeadersKey).(map[string]string)
+		headers, ok := ctx.Value(HeadersKey).(map[string]interface{})
 		if ok {
 			for key, value := range headers {
-				if value != "" {
-					request.Header.Add(key, value)
+				switch v := value.(type) {
+				case string:
+					if v != "" {
+						request.Header.Add(key, v)
+					}
+				case []string:
+					// Handle multiple values for the same header (e.g., Impersonate-Group)
+					for _, val := range v {
+						if val != "" {
+							request.Header.Add(key, val)
+						}
+					}
 				}
 			}
 		}
@@ -23,8 +33,9 @@ func contextToHeaders(ctx context.Context, request *http.Request) {
 }
 
 type initPayload struct {
-	ImpersonateUser  string `json:"Impersonate-User"`
-	ImpersonateGroup string `json:"Impersonate-Group"`
+	ImpersonateUser   string   `json:"Impersonate-User"`
+	ImpersonateGroup  string   `json:"Impersonate-Group"`
+	ImpersonateGroups []string `json:"Impersonate-Groups"`
 }
 
 func InitPayload(ctx context.Context, payload json.RawMessage) context.Context {
@@ -33,10 +44,19 @@ func InitPayload(ctx context.Context, payload json.RawMessage) context.Context {
 	if err != nil {
 		return ctx
 	}
-	headers, ok := ctx.Value(HeadersKey).(map[string]string)
+	headers, ok := ctx.Value(HeadersKey).(map[string]interface{})
 	if ok {
-		headers["Impersonate-User"] = initPayload.ImpersonateUser
-		headers["Impersonate-Group"] = initPayload.ImpersonateGroup
+		if initPayload.ImpersonateUser != "" {
+			headers["Impersonate-User"] = initPayload.ImpersonateUser
+		}
+		// Support both single group (backward compatibility) and multiple groups
+		if len(initPayload.ImpersonateGroups) > 0 {
+			groups := initPayload.ImpersonateGroups
+			groups = append(groups, "system:authenticated")
+			headers["Impersonate-Group"] = groups
+		} else if initPayload.ImpersonateGroup != "" {
+			headers["Impersonate-Group"] = []string{initPayload.ImpersonateGroup, "system:authenticated"}
+		}
 		ctx = context.WithValue(ctx, HeadersKey, headers)
 	}
 	return ctx
