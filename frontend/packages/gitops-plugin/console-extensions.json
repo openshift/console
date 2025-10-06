@@ -1,5 +1,32 @@
 [
   {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "pipelines.openshift.io",
+        "version": "v1alpha1",
+        "kind": "GitopsService"
+      },
+      "flag": "OPENSHIFT_GITOPS"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/environments",
+      "component": { "$codeRef": "listPage.default" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/environments/:appName",
+      "component": { "$codeRef": "detailsPage.default" }
+    }
+  },
+  {
     "type": "console.navigation/href",
     "properties": {
       "id": "environments",
