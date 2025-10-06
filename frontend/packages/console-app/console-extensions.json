@@ -1319,6 +1319,30 @@
     }
   },
   {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machine.openshift.io",
+        "version": "v1",
+        "kind": "ControlPlaneMachineSet"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apiextensions.k8s.io",
+        "version": "v1",
+        "kind": "CustomResourceDefinition"
+      },
+      "provider": {
+        "$codeRef": "customResourceDefinitionProvider.useCustomResourceDefinitionActionsProvider"
+      }
+    }
+  },
+  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "perspective": "admin",

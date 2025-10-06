@@ -31,7 +31,6 @@ import { DetailsPage, ListPage, TableData } from './factory';
 import {
   Kebab,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   resourcePath,
   ResourceSummary,
@@ -41,7 +40,7 @@ import {
 import { ResourceEventStream } from './events';
 import { MachinePage, machineReference } from './machine';
 import { MachineTabPageProps } from './machine-set';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { LazyActionMenu } from '@console/shared/src';
 
 const controlPlaneMachineSetReference = referenceForModel(ControlPlaneMachineSetModel);
 const getDesiredReplicas = (resource: ControlPlaneMachineSetKind) => {
@@ -195,13 +194,13 @@ const pages = [
 ];
 
 export const ControlPlaneMachineSetDetailsPage: React.FC<any> = (props) => {
-  const commonActions = useCommonResourceActions(ControlPlaneMachineSetModel, props.obj);
-  const controlPlaneMachineSetMenuActions = [...commonActions];
   return (
     <DetailsPage
       {...props}
       kind={controlPlaneMachineSetReference}
-      menuActions={controlPlaneMachineSetMenuActions}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [controlPlaneMachineSetReference]: obj }} {...props} />
+      )}
       pages={pages}
     />
   );
@@ -257,8 +256,6 @@ const ControlPlaneMachineSetList: React.FC<ControlPlaneMachineSetListProps> = (p
   }) => {
     const desiredReplicas = getDesiredReplicas(obj);
     const readyReplicas = getReadyReplicas(obj);
-    const commonActions = useCommonResourceActions(ControlPlaneMachineSetModel, obj);
-    const controlPlaneMachineSetMenuActions = [...commonActions];
     return (
       <>
         <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
@@ -290,11 +287,7 @@ const ControlPlaneMachineSetList: React.FC<ControlPlaneMachineSetListProps> = (p
         </TableData>
         <TableData className={tableColumnClasses[4]}>{obj.spec?.state || DASH}</TableData>
         <TableData className={tableColumnClasses[5]}>
-          <ResourceKebab
-            actions={controlPlaneMachineSetMenuActions}
-            kind={controlPlaneMachineSetReference}
-            resource={obj}
-          />
+          <LazyActionMenu context={{ [controlPlaneMachineSetReference]: obj }} />
         </TableData>
       </>
     );

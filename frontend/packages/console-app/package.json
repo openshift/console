@@ -56,6 +56,7 @@
       "buildConfigProvider": "src/actions/providers/build-config-provider.ts",
       "projectProvider": "src/actions/providers/project-provider.ts",
       "roleProvider": "src/actions/providers/role-provider.ts",
+      "customResourceDefinitionProvider": "src/actions/providers/custom-resource-definition-provider.ts",
       "ClusterConfigurationPage": "src/components/cluster-configuration/ClusterConfigurationPage.tsx",
       "PreferredPerspectiveSelect": "src/components/user-preferences/perspective/PreferredPerspectiveSelect.tsx",
       "NamespaceDropdown": "src/components/user-preferences/namespace/NamespaceDropdown.tsx",
