@@ -55,7 +55,7 @@
       "buildProvider": "src/actions/providers/build-provider.ts",
       "buildConfigProvider": "src/actions/providers/build-config-provider.ts",
       "projectProvider": "src/actions/providers/project-provider.ts",
-      "commonActionsProvider": "src/actions/providers/common-actions-provider.ts",
+      "roleProvider": "src/actions/providers/role-provider.ts",
       "ClusterConfigurationPage": "src/components/cluster-configuration/ClusterConfigurationPage.tsx",
       "PreferredPerspectiveSelect": "src/components/user-preferences/perspective/PreferredPerspectiveSelect.tsx",
       "NamespaceDropdown": "src/components/user-preferences/namespace/NamespaceDropdown.tsx",

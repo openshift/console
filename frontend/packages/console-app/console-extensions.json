@@ -1260,7 +1260,7 @@
         "version": "v1",
         "kind": "Namespace"
       },
-      "provider": { "$codeRef": "commonActionsProvider.useCommonActionsProvider" }
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
     }
   },
   {
@@ -1271,7 +1271,7 @@
         "version": "v1",
         "kind": "OAuth"
       },
-      "provider": { "$codeRef": "commonActionsProvider.useCommonActionsProvider" }
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
     }
   },
   {
@@ -1282,7 +1282,29 @@
         "version": "v1",
         "kind": "VolumeSnapshotContent"
       },
-      "provider": { "$codeRef": "commonActionsProvider.useCommonActionsProvider" }
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "Role"
+      },
+      "provider": { "$codeRef": "roleProvider.useRoleActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "ClusterRole"
+      },
+      "provider": { "$codeRef": "roleProvider.useRoleActionsProvider" }
     }
   },
   {
