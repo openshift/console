@@ -13,14 +13,7 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
-import {
-  Kebab,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-} from './utils';
+import { Kebab, navFactory, ResourceLink, ResourceSummary, SectionHeading } from './utils';
 import {
   DescriptionListDescription,
   DescriptionListGroup,
@@ -28,8 +21,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
-import { Action } from '@console/dynamic-plugin-sdk/src';
+import { LazyActionMenu } from '@console/shared/src';
 
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
@@ -58,9 +50,6 @@ const tableColumnClasses = [
 ];
 
 const MachineAutoscalerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
-  const commonActions = useCommonResourceActions(MachineAutoscalerModel, obj);
-
-  const menuActions = [...commonActions];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -81,7 +70,7 @@ const MachineAutoscalerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
         {_.get(obj, 'spec.maxReplicas') || '-'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={machineAutoscalerReference} resource={obj} />
+        <LazyActionMenu context={{ [machineAutoscalerReference]: obj }} />
       </TableData>
     </>
   );
@@ -187,13 +176,12 @@ export const MachineAutoscalerPage: React.FC<MachineAutoscalerPageProps> = (prop
 export const MachineAutoscalerDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
   props,
 ) => {
-  const commonActions = useCommonResourceActions(MachineAutoscalerModel, props.obj);
-
-  const menuActions = [...commonActions] as Action[];
   return (
     <DetailsPage
       {...props}
-      menuActions={menuActions}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineAutoscalerReference]: obj }} {...props} />
+      )}
       kind={machineAutoscalerReference}
       pages={[navFactory.details(MachineAutoscalerDetails), navFactory.editYaml()]}
     />

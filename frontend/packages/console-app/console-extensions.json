@@ -1376,6 +1376,17 @@
     }
   },
   {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "autoscaling.openshift.io",
+        "version": "v1beta1",
+        "kind": "MachineAutoscaler"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "perspective": "admin",
