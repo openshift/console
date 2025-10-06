@@ -365,7 +365,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handler.InitPayload = resolver.InitPayload
 	graphQLHandler := handler.NewHandlerFunc(schema, gql.NewHttpHandler(schema))
 	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]string{
+		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]interface{}{
 			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
 		})
 		graphQLHandler(w, r.WithContext(ctx))
