@@ -2,7 +2,6 @@
 import * as _ from 'lodash-es';
 import { useEffect, useMemo, useState } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import {
@@ -36,6 +35,7 @@ import {
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+  LazyActionMenu,
   useUserSettingsCompatibility,
   isModifiedEvent,
   REQUESTER_FILTER,
@@ -65,7 +65,6 @@ import {
   LoadingInline,
   ConsoleEmptyState,
   ResourceIcon,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -306,7 +305,6 @@ const getNamespacesSelectedColumns = () => {
 const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
   const { t } = useTranslation();
   const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
-  const nsMenuActions = useCommonResourceActions(NamespaceModel, ns);
   const name = getName(ns);
   const requester = getRequester(ns);
   const bytes = metrics?.memory?.[name];
@@ -384,7 +382,7 @@ const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
         <LabelList kind="Namespace" labels={labels} />
       </TableData>
       <TableData className={Kebab.columnClass}>
-        <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
+        <LazyActionMenu context={{ [referenceForModel(NamespaceModel)]: ns }} />
       </TableData>
     </>
   );
@@ -621,7 +619,6 @@ const projectHeaderWithoutActions = () =>
 
 const ProjectTableRow = ({ obj: project, customData = {} }) => {
   const { t } = useTranslation();
-  const projectMenuActions = useCommonResourceActions(ProjectModel, project);
   const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
   const name = getName(project);
   const requester = getRequester(project);
@@ -727,7 +724,7 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
       )}
       {actionsEnabled && (
         <TableData className={Kebab.columnClass}>
-          <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
+          <LazyActionMenu context={{ [referenceForModel(ProjectModel)]: project }} />
         </TableData>
       )}
     </>
@@ -1112,11 +1109,13 @@ const RolesPage = ({ obj: { metadata } }) => {
 };
 
 export const NamespacesDetailsPage = (props) => {
-  const commonActions = useCommonResourceActions(NamespaceModel, props.obj);
   return (
     <DetailsPage
       {...props}
-      menuActions={commonActions}
+      kind={referenceForModel(NamespaceModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(NamespaceModel)]: obj }} {...props} />
+      )}
       pages={[
         navFactory.details(NamespaceDetails),
         navFactory.editYaml(),
@@ -1127,11 +1126,13 @@ export const NamespacesDetailsPage = (props) => {
 };
 
 export const ProjectsDetailsPage = (props) => {
-  const projectMenuActions = useCommonResourceActions(ProjectModel, props.obj);
   return (
     <DetailsPage
       {...props}
-      menuActions={projectMenuActions}
+      kind={referenceForModel(ProjectModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(ProjectModel)]: obj }} {...props} />
+      )}
       pages={[
         {
           href: '',
