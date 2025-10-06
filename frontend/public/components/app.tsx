@@ -148,23 +148,25 @@ const App = (props) => {
   }, [location, params, prevLocation, prevParams]);
 
   const dispatch = useDispatch();
+
+  // Check if LightspeedButton capability is enabled
+  const lightspeedButtonCapability = window.SERVER_FLAGS.capabilities?.find(
+    (capability) => capability.name === 'LightspeedButton',
+  );
+  const isLightspeedButtonEnabled = lightspeedButtonCapability?.visibility?.state === 'Enabled';
+
   const [, , errorMessage] = usePackageManifestCheck(
     'lightspeed-operator',
     'openshift-marketplace',
+    isLightspeedButtonEnabled,
   );
 
   useEffect(() => {
-    const lightspeedButtonCapability = window.SERVER_FLAGS.capabilities?.find(
-      (capability) => capability.name === 'LightspeedButton',
-    );
     const gettingStartedBannerCapability = window.SERVER_FLAGS.capabilities?.find(
       (capability) => capability.name === 'GettingStartedBanner',
     );
     dispatch(
-      setFlag(
-        FLAGS.CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED,
-        lightspeedButtonCapability?.visibility?.state === 'Enabled',
-      ),
+      setFlag(FLAGS.CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED, isLightspeedButtonEnabled),
     );
     dispatch(
       setFlag(
@@ -173,7 +175,7 @@ const App = (props) => {
       ),
     );
     dispatch(setFlag(FLAGS.LIGHTSPEED_IS_AVAILABLE_TO_INSTALL, errorMessage === ''));
-  }, [dispatch, errorMessage]);
+  }, [dispatch, errorMessage, isLightspeedButtonEnabled]);
 
   const consoleCapabilityLightspeedButtonIsEnabled = useFlag(
     FLAGS.CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED,
