@@ -50,9 +50,12 @@ const consoleFetchCommon = async (
   options: RequestInit = {},
   timeout?: number,
 ): Promise<Response | string> => {
-  const headers = getConsoleRequestHeaders();
-  // Pass headers last to let callers to override Accept.
-  const allOptions = _.defaultsDeep({ method }, options, { headers });
+  const consoleHeaders = getConsoleRequestHeaders();
+
+  // Merge headers properly - console headers first, then let options override
+  const mergedHeaders = { ...consoleHeaders, ...options.headers };
+  const allOptions = _.defaultsDeep({ method, headers: mergedHeaders }, options);
+
   const response = await consoleFetch(url, allOptions, timeout);
   const dataPromise = parseData(response);
   const warning = response.headers.get('Warning');
