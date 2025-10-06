@@ -5,7 +5,7 @@ import { useParams, useLocation } from 'react-router-dom-v5-compat';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';
 import { DetailsPage, Table } from './factory';
 import { SectionHeading, navFactory, ResourceSummary } from './utils';
 import { humanizeBinaryBytes } from './utils/units';
@@ -21,10 +21,9 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-// import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
-import { Action } from '@console/dynamic-plugin-sdk/src';
+import { LazyActionMenu } from '@console/shared/src';
+import { ImageStreamTagModel } from '../models';
 
-const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 
 // Splits a name/value pair separated by an `=`
@@ -328,11 +327,7 @@ export const ImageStreamTagsDetailsPage: React.FCC<ImageStreamTagsDetailsPagePro
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();
-  // const commonActions = useCommonResourceActions(ImageStreamTagModel, props.obj);
 
-  const menuActions = [
-    // ...commonActions,
-  ] as Action[];
   return (
     <DetailsPage
       {...props}
@@ -353,8 +348,10 @@ export const ImageStreamTagsDetailsPage: React.FCC<ImageStreamTagsDetailsPagePro
           },
         ];
       }}
-      kind={ImageStreamTagsReference}
-      menuActions={menuActions}
+      kind={referenceForModel(ImageStreamTagModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(ImageStreamTagModel)]: obj }} {...props} />
+      )}
       resources={[
         {
           kind: ImageStreamsReference,

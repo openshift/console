@@ -1354,6 +1354,28 @@
     }
   },
   {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStreamTag"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStream"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "perspective": "admin",

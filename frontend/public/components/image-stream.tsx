@@ -17,13 +17,13 @@ import {
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { DOC_URL_PODMAN } from './utils';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { Kebab, ResourceKebab } from './utils/kebab';
+import { Kebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
@@ -31,9 +31,7 @@ import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
-import { YellowExclamationTriangleIcon } from '@console/shared';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
-import { Action } from '@console/dynamic-plugin-sdk/src';
+import { LazyActionMenu, YellowExclamationTriangleIcon } from '@console/shared';
 import { ImageStreamModel } from '../models';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -323,11 +321,15 @@ const pages = [
 export const ImageStreamsDetailsPage: React.FCC<React.ComponentProps<typeof DetailsPage>> = (
   props,
 ) => {
-  const commonActions = useCommonResourceActions(ImageStreamModel, props.obj);
-
-  const menuActions = [...commonActions] as Action[];
   return (
-    <DetailsPage {...props} kind={ImageStreamsReference} menuActions={menuActions} pages={pages} />
+    <DetailsPage
+      {...props}
+      kind={referenceForModel(ImageStreamModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(ImageStreamModel)]: obj }} {...props} />
+      )}
+      pages={pages}
+    />
   );
 };
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
@@ -341,9 +343,6 @@ const tableColumnClasses = [
 ];
 
 const ImageStreamsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
-  const commonActions = useCommonResourceActions(ImageStreamModel, obj);
-
-  const menuActions = [...commonActions];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -363,7 +362,7 @@ const ImageStreamsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj 
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <ResourceKebab actions={menuActions} kind={ImageStreamsReference} resource={obj} />
+        <LazyActionMenu context={{ [referenceForModel(ImageStreamModel)]: obj }} />
       </TableData>
     </>
   );
