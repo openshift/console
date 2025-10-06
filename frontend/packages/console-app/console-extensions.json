@@ -1343,6 +1343,17 @@
     }
   },
   {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "autoscaling",
+        "version": "v2",
+        "kind": "HorizontalPodAutoscaler"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "perspective": "admin",

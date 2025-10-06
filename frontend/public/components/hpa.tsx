@@ -8,6 +8,7 @@ import {
   K8sResourceKind,
   K8sResourceKindReference,
   HorizontalPodAutoscalerKind,
+  referenceForModel,
 } from '../module/k8s';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
@@ -15,7 +16,6 @@ import {
   DetailsItem,
   Kebab,
   LabelList,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -24,9 +24,8 @@ import {
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
-import { Action } from '@console/dynamic-plugin-sdk/src';
 import { HorizontalPodAutoscalerModel } from '../models';
+import { LazyActionMenu } from '@console/shared/src';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalPodAutoscaler';
 
@@ -243,14 +242,16 @@ const pages = [
 export const HorizontalPodAutoscalersDetailsPage: React.FC<React.ComponentProps<
   typeof DetailsPage
 >> = (props) => {
-  const commonActions = useCommonResourceActions(HorizontalPodAutoscalerModel, props.obj);
-
-  const menuActions = [...commonActions] as Action[];
   return (
     <DetailsPage
       {...props}
-      kind={HorizontalPodAutoscalersReference}
-      menuActions={menuActions}
+      kind={referenceForModel(HorizontalPodAutoscalerModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(HorizontalPodAutoscalerModel)]: obj }}
+          {...props}
+        />
+      )}
       pages={pages}
     />
   );
@@ -270,9 +271,6 @@ const tableColumnClasses = [
 const kind = 'HorizontalPodAutoscaler';
 
 const HorizontalPodAutoscalersTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
-  const commonActions = useCommonResourceActions(HorizontalPodAutoscalerModel, obj);
-
-  const menuActions = [...commonActions];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -299,11 +297,7 @@ const HorizontalPodAutoscalersTableRow: React.FC<RowFunctionArgs<K8sResourceKind
       <TableData className={tableColumnClasses[4]}>{obj.spec.minReplicas}</TableData>
       <TableData className={tableColumnClasses[5]}>{obj.spec.maxReplicas}</TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab
-          actions={menuActions}
-          kind={HorizontalPodAutoscalersReference}
-          resource={obj}
-        />
+        <LazyActionMenu context={{ [referenceForModel(HorizontalPodAutoscalerModel)]: obj }} />
       </TableData>
     </>
   );
