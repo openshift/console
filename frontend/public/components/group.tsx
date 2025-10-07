@@ -1,17 +1,17 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { sortable } from '@patternfly/react-table';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { GroupModel, UserModel } from '../models';
 import { referenceForModel, GroupKind } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage } from './factory';
 import { RoleBindingsPage } from './RBAC';
 import {
   asAccessReview,
   EmptyBox,
   Kebab,
   KebabOption,
+  LoadingBox,
   navFactory,
   ResourceLink,
   ResourceSummary,
@@ -20,69 +20,133 @@ import {
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useTranslation } from 'react-i18next';
 import { Grid, GridItem, ButtonVariant } from '@patternfly/react-core';
+import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  ResourceDataView,
+  initialFiltersDefault,
+  getNameCellProps,
+  actionsCellProps,
+  cellIsStickyProps,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { TableColumn, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  ResourceDataViewColumn,
+  ResourceDataViewRow,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
+import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { DASH } from '@console/shared/src';
 
-const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
+const tableColumnInfo = [{ id: 'name' }, { id: 'users' }, { id: 'created' }, { id: 'actions' }];
 
-const GroupTableRow: React.FC<RowFunctionArgs<GroupKind>> = ({ obj }) => {
-  const resourceKind = referenceForModel(GroupModel);
-  const context = { [resourceKind]: obj };
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={referenceForModel(GroupModel)} name={obj.metadata.name} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>{_.size(obj.users)}</TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
+const getDataViewRows: GetDataViewRows<GroupKind, undefined> = (
+  data: RowProps<GroupKind, undefined>[],
+  columns: ResourceDataViewColumn<GroupKind>[],
+): ResourceDataViewRow[] => {
+  return data.map(({ obj }) => {
+    const { metadata } = obj;
+    const resourceKind = referenceForModel(GroupModel);
+    const context = { [resourceKind]: obj };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            kind={referenceForModel(GroupModel)}
+            name={metadata.name}
+            title={metadata.uid}
+          />
+        ),
+        props: getNameCellProps(metadata.name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: _.size(obj.users),
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <Timestamp timestamp={metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
 };
 
-export const GroupList: React.FC = (props) => {
+const useGroupColumns = (): TableColumn<GroupKind>[] => {
   const { t } = useTranslation();
-  const GroupTableHeader = () => {
-    return [
+  return React.useMemo(
+    () => [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Users'),
-        sortField: 'users.length',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
+        id: tableColumnInfo[1].id,
+        sort: 'users.length',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Created'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
-    ];
-  };
-  GroupTableHeader.displayName = 'GroupTableHeader';
+    ],
+    [t],
+  );
+};
+
+export const GroupList: React.FC<{ data: GroupKind[]; loaded: boolean }> = (props) => {
+  const { data, loaded } = props;
+  const { t } = useTranslation();
+  const columns = useGroupColumns();
+
   return (
-    <Table
-      {...props}
-      aria-label={t('public~Groups')}
-      Header={GroupTableHeader}
-      Row={GroupTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView<GroupKind>
+        {...props}
+        data={data}
+        loaded={loaded}
+        label={t('public~Groups')}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -95,6 +159,7 @@ export const GroupPage: React.FC<GroupPageProps> = (props) => {
       kind={referenceForModel(GroupModel)}
       ListComponent={GroupList}
       canCreate
+      omitFilterToolbar={true}
     />
   );
 };
@@ -134,26 +199,26 @@ const UsersTable: React.FC<UsersTableProps> = ({ group, users }) => {
   return _.isEmpty(users) ? (
     <EmptyBox label={t('public~Users')} />
   ) : (
-    <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
-      <thead className="pf-v6-c-table__thead">
-        <tr className="pf-v6-c-table__tr">
-          <th className="pf-v6-c-table__th">{t('public~Name')}</th>
-          <th className="pf-v6-c-table__th" />
-        </tr>
-      </thead>
-      <tbody className="pf-v6-c-table__tbody">
+    <Table variant="compact" borders>
+      <Thead>
+        <Tr>
+          <Th>{t('public~Name')}</Th>
+          <Th />
+        </Tr>
+      </Thead>
+      <Tbody>
         {users.map((user: string) => (
-          <tr className="pf-v6-c-table__tr" key={user}>
-            <td className="pf-v6-c-table__td">
+          <Tr key={user}>
+            <Td>
               <ResourceLink kind={referenceForModel(UserModel)} name={user} />
-            </td>
-            <td className="pf-v6-c-table__td pf-v6-c-table__action">
+            </Td>
+            <Td isActionCell>
               <UserKebab group={group} user={user} />
-            </td>
-          </tr>
+            </Td>
+          </Tr>
         ))}
-      </tbody>
-    </table>
+      </Tbody>
+    </Table>
   );
 };
 
