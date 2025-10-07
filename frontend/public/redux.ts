@@ -59,4 +59,12 @@ if (process.env.NODE_ENV !== 'production') {
   window.store = store;
 }
 
+// Temporary: Expose store for testing multi-group impersonation
+// TODO: Remove this after testing. This SHOULD NOT BE IN MERGED in production!!!!!
+(window as any).store = store;
+
+// Expose UI actions for testing
+import * as UIActions from './actions/ui';
+(window as any).UIActions = UIActions;
+
 export default store;
