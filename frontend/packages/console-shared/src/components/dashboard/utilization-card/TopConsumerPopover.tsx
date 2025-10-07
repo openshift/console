@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { useActivePerspective, LIMIT_STATE, Humanize } from '@console/dynamic-plugin-sdk';
+import { LIMIT_STATE, Humanize } from '@console/dynamic-plugin-sdk';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import {
   withDashboardResources,
@@ -15,8 +15,7 @@ import { ConsoleSelect } from '@console/internal/components/utils/console-select
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
-import { getName, getNamespace, useFlag } from '../../..';
-import { FLAGS } from '../../../constants';
+import { getName, getNamespace } from '../../..';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
 import Status from '../status-card/StatusPopup';
 
@@ -131,9 +130,6 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
     }) => {
       const { t } = useTranslation();
       const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
-      const [activePerspective, setActivePerspective] = useActivePerspective();
-      const canAccessMonitoring =
-        useFlag(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL;
       const { query, model, metric, fieldSelector } = currentConsumer;
       const k8sResource = React.useMemo(
         () => (isOpen ? getResourceToWatch(model, namespace, fieldSelector) : null),
@@ -176,8 +172,9 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
       const monitoringParams = React.useMemo(() => {
         const params = new URLSearchParams();
         params.set('query0', currentConsumer.query);
+        params.set('namespace', namespace);
         return params;
-      }, [currentConsumer.query]);
+      }, [currentConsumer.query, namespace]);
 
       const dropdownItems = React.useMemo(
         () =>
@@ -195,10 +192,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
         [consumers],
       );
 
-      const monitoringURL =
-        canAccessMonitoring && activePerspective === 'admin'
-          ? `/monitoring/query-browser?${monitoringParams.toString()}`
-          : `/dev-monitoring/ns/${namespace}/metrics?${monitoringParams.toString()}`;
+      const monitoringURL = `/monitoring/query-browser?${monitoringParams.toString()}`;
 
       let body: React.ReactNode;
       if (error || consumersLoadError) {
@@ -235,16 +229,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
                   );
                 })}
             </ul>
-            <Link
-              to={monitoringURL}
-              onClick={() => {
-                if (monitoringURL.startsWith('/dev-monitoring') && activePerspective !== 'dev') {
-                  setActivePerspective('dev');
-                }
-              }}
-            >
-              {t('console-shared~View more')}
-            </Link>
+            <Link to={monitoringURL}>{t('console-shared~View more')}</Link>
           </>
         );
       }
