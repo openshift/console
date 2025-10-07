@@ -12,7 +12,7 @@ import {
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { history } from '@console/internal/components/utils';
 import catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
-import { CatalogType, CatalogTypeCounts } from './types';
+import { CatalogSortOrder, CatalogType, CatalogTypeCounts } from './types';
 
 enum CatalogVisibilityState {
   Enabled = 'Enabled',
@@ -206,6 +206,57 @@ export const keywordCompare = (filterString: string, items: CatalogItem[]): Cata
 
   // Remove the added properties before returning
   return sortedItems.map(({ relevanceScore, redHatPriority, ...item }) => item);
+};
+
+/**
+ * Sort catalog items based on the selected sort order.
+ * @param items - Array of catalog items to sort
+ * @param sortOrder - Sort order: RELEVANCE (default), ASC (A-Z), or DESC (Z-A)
+ * @param searchKeyword - Optional search keyword for filtering and relevance scoring
+ * @returns Sorted and filtered array of catalog items
+ */
+export const sortCatalogItems = (
+  items: CatalogItem[],
+  sortOrder: CatalogSortOrder = CatalogSortOrder.RELEVANCE,
+  searchKeyword = '',
+): CatalogItem[] => {
+  if (!items || items.length === 0) {
+    return items;
+  }
+
+  // First, filter items by search keyword if provided
+  let filteredItems = items;
+  if (searchKeyword) {
+    const searchTerm = searchKeyword.toLowerCase();
+    filteredItems = items.filter((item) => {
+      const relevanceScore = calculateCatalogItemRelevanceScore(searchTerm, item);
+      return relevanceScore > 0;
+    });
+  }
+
+  // Then, sort the filtered items based on the selected sort order
+  switch (sortOrder) {
+    case CatalogSortOrder.RELEVANCE:
+      // Use the existing keywordCompare function for relevance-based sorting
+      // Note: keywordCompare handles its own filtering, so we pass the original items
+      return keywordCompare(searchKeyword, items);
+
+    case CatalogSortOrder.ASC:
+      // Sort alphabetically A-Z (pure alphabetical, no Red Hat prioritization)
+      return [...filteredItems].sort((a, b) => {
+        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+      });
+
+    case CatalogSortOrder.DESC:
+      // Sort alphabetically Z-A (pure alphabetical, no Red Hat prioritization)
+      return [...filteredItems].sort((a, b) => {
+        return b.name.toLowerCase().localeCompare(a.name.toLowerCase());
+      });
+
+    default:
+      // Fallback to relevance sorting
+      return keywordCompare(searchKeyword, items);
+  }
 };
 
 export const getIconProps = (item: CatalogItem) => {
