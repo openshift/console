@@ -32,8 +32,8 @@ func NewClusterCatalogReconciler(mgr ctrl.Manager, cs *olm.CatalogService) *Clus
 
 // Reconcile implements the reconcile.Reconciler interface
 func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
-	klog.Infof("Starting reconciliation for ClusterCatalog %s", req.Name)
-	defer klog.Infof("Ending reconciliation for ClusterCatalog %s", req.Name)
+	klog.V(4).Infof("Starting reconciliation for ClusterCatalog %s", req.Name)
+	defer klog.V(4).Infof("Ending reconciliation for ClusterCatalog %s", req.Name)
 
 	clusterCatalog := &ocv1.ClusterCatalog{}
 
@@ -41,7 +41,7 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 	if err != nil {
 		if apierrors.IsNotFound(err) {
 			// The ClusterCatalog has been deleted, delete its CatalogItems from the cache
-			klog.Infof("Removing CatalogItems for ClusterCatalog %s from cache", req.Name)
+			klog.V(4).Infof("Removing CatalogItems for ClusterCatalog %s from cache", req.Name)
 			err = r.catalogService.RemoveCatalog(req.Name)
 			if err != nil {
 				return ctrl.Result{}, err
@@ -53,14 +53,14 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 
 	// The ClusterCatalog has been found on the cluster, attempt to add to or update cache
 	if clusterCatalog.Status.URLs == nil {
-		klog.Infof("ClusterCatalog %s URLs field is empty", req.Name)
+		klog.V(4).Infof("ClusterCatalog %s URLs field is empty", req.Name)
 		return ctrl.Result{}, nil
 	}
 
 	baseURL := clusterCatalog.Status.URLs.Base
 
 	if baseURL == "" {
-		klog.Infof("ClusterCatalog %s Base URL is empty", req.Name)
+		klog.V(4).Infof("ClusterCatalog %s Base URL is empty", req.Name)
 		return ctrl.Result{}, nil
 	}
 
