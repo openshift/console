@@ -65,14 +65,19 @@ func (s *CatalogService) GetCatalogItems(r *http.Request) ([]ConsoleCatalogItem,
 		}
 	}
 
-	catlogItems := []ConsoleCatalogItem{}
+	allItems := []ConsoleCatalogItem{}
 	for catalog := range s.catalogs {
 		items, ok := s.cache.Get(catalog)
 		if !ok {
 			klog.Errorf("Failed to get catalog %s from cache", catalog)
 			continue
 		}
-		catlogItems = append(catlogItems, items.([]ConsoleCatalogItem)...)
+		catalogItems, ok := items.([]ConsoleCatalogItem)
+		if !ok {
+			klog.Errorf("Failed to get catalog items from cache for catalog %s", catalog)
+			continue
+		}
+		allItems = append(catalogItems, catalogItems...)
 	}
-	return catlogItems, s.lastModified, false
+	return allItems, s.lastModified, false
 }
