@@ -3,22 +3,13 @@ import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
+import { K8sResourceKindReference, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { LimitRangeModel } from '../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
-import {
-  Kebab,
-  navFactory,
-  SectionHeading,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-} from './utils';
+import { Kebab, navFactory, SectionHeading, ResourceLink, ResourceSummary } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
+import { LazyActionMenu } from '@console/shared';
 
 const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
@@ -41,7 +32,7 @@ export const LimitRangeTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={LimitRangeReference} resource={obj} />
+        <LazyActionMenu context={{ [referenceForModel(LimitRangeModel)]: obj }} />
       </TableData>
     </>
   );
@@ -176,7 +167,10 @@ export const LimitRangeDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
-      menuActions={menuActions}
+      kind={referenceForModel(LimitRangeModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(LimitRangeModel)]: obj }} {...props} />
+      )}
       pages={[navFactory.details(Details), navFactory.editYaml()]}
     />
   );
