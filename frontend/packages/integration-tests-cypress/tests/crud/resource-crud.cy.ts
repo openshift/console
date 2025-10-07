@@ -111,8 +111,11 @@ describe('Kubernetes resource CRUD operations', () => {
     'Job',
     'Pod',
     'ReplicaSet',
+    'Role',
     'ReplicationController',
+    'ServiceAccount',
     'StatefulSet',
+    'user.openshift.io~v1~Group',
   ]);
 
   testObjs.forEach((testObj, resource) => {

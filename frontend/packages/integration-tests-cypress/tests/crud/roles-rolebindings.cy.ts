@@ -18,7 +18,7 @@ const clusterRoleBindingName = 'example-cluster-rolebinding';
 const createExampleRoles = () => {
   cy.log('create Role instance');
   nav.sidenav.clickNavLink(['User Management', 'Roles']);
-  listPage.rows.shouldBeLoaded();
+  listPage.dvRows.shouldBeLoaded();
   projectDropdown.selectProject(testName);
   projectDropdown.shouldContain(testName);
   listPage.clickCreateYAMLbutton();
@@ -36,7 +36,7 @@ const createExampleRoles = () => {
   detailsPage.breadcrumb(0).click();
 
   cy.log('create ClusterRole instance');
-  listPage.rows.shouldBeLoaded();
+  listPage.dvRows.shouldBeLoaded();
   listPage.clickCreateYAMLbutton();
   cy.byTestID('resource-sidebar').should('exist');
   yamlEditor.isLoaded();
@@ -57,7 +57,7 @@ const createExampleRoles = () => {
 const createExampleRoleBindings = () => {
   cy.log('create RoleBindings instance');
   nav.sidenav.clickNavLink(['User Management', 'RoleBindings']);
-  listPage.rows.shouldBeLoaded();
+  listPage.dvRows.shouldBeLoaded();
   listPage.clickCreateYAMLbutton();
   roleBindings.titleShouldHaveText('Create RoleBinding');
   roleBindings.inputName(roleBindingName);
@@ -69,7 +69,7 @@ const createExampleRoleBindings = () => {
 
   cy.log('create ClusterRoleBindings instance');
   nav.sidenav.clickNavLink(['User Management', 'RoleBindings']);
-  listPage.rows.shouldBeLoaded();
+  listPage.dvRows.shouldBeLoaded();
   listPage.clickCreateYAMLbutton();
   roleBindings.titleShouldHaveText('Create RoleBinding');
   cy.byTestID('Cluster-wide role binding (ClusterRoleBinding)-radio-input').click();
@@ -84,18 +84,18 @@ const createExampleRoleBindings = () => {
 const deleteClusterExamples = () => {
   cy.log('delete ClusterRole instance');
   nav.sidenav.clickNavLink(['User Management', 'Roles']);
-  listPage.rows.shouldBeLoaded();
-  listPage.filter.byName(clusterRoleName);
-  listPage.rows.clickKebabAction(clusterRoleName, 'Delete ClusterRole');
+  listPage.dvRows.shouldBeLoaded();
+  listPage.dvFilter.byName(clusterRoleName);
+  listPage.dvRows.clickKebabAction(clusterRoleName, 'Delete ClusterRole');
   modal.shouldBeOpened();
   modal.submit();
   modal.shouldBeClosed();
   detailsPage.isLoaded();
   cy.log('delete ClusterRoleBindings instance');
   nav.sidenav.clickNavLink(['User Management', 'RoleBindings']);
-  listPage.rows.shouldBeLoaded();
-  listPage.filter.byName(clusterRoleBindingName);
-  listPage.rows.clickKebabAction(clusterRoleBindingName, 'Delete ClusterRoleBinding');
+  listPage.dvRows.shouldBeLoaded();
+  listPage.dvFilter.byName(clusterRoleBindingName);
+  listPage.dvRows.clickKebabAction(clusterRoleBindingName, 'Delete ClusterRoleBinding');
   modal.shouldBeOpened();
   modal.submit();
   modal.shouldBeClosed();
@@ -129,14 +129,14 @@ describe('Roles and RoleBindings', () => {
     it(`test ${rolesOrBindings} detail page breadcrumbs to list page restores 'All Projects' dropdown`, () => {
       nav.sidenav.clickNavLink(['User Management', rolesOrBindings]);
       projectDropdown.selectProject(allProjectsDropdownLabel);
-      listPage.rows.shouldBeLoaded();
-      listPage.filter.by('namespace');
-      listPage.filter.byName(roleOrBindingName);
-      listPage.rows.clickRowByName(roleOrBindingName);
+      listPage.dvRows.shouldBeLoaded();
+      listPage.dvFilter.by('namespace');
+      listPage.dvFilter.byName(roleOrBindingName);
+      listPage.dvRows.clickRowByName(roleOrBindingName);
       detailsPage.isLoaded();
       projectDropdown.shouldContain(testName);
       detailsPage.breadcrumb(0).contains(rolesOrBindings).click();
-      listPage.rows.shouldBeLoaded();
+      listPage.dvRows.shouldBeLoaded();
       projectDropdown.shouldContain(allProjectsDropdownLabel);
     });
 
@@ -144,44 +144,44 @@ describe('Roles and RoleBindings', () => {
       nav.sidenav.clickNavLink(['User Management', rolesOrBindings]);
       projectDropdown.selectProject(testName);
       projectDropdown.shouldContain(testName);
-      listPage.rows.shouldBeLoaded();
-      listPage.filter.by('namespace');
-      listPage.filter.byName(roleOrBindingName);
-      listPage.rows.clickRowByName(roleOrBindingName);
+      listPage.dvRows.shouldBeLoaded();
+      listPage.dvFilter.by('namespace');
+      listPage.dvFilter.byName(roleOrBindingName);
+      listPage.dvRows.clickRowByName(roleOrBindingName);
       detailsPage.isLoaded();
       projectDropdown.shouldContain(testName);
       detailsPage.breadcrumb(0).contains(rolesOrBindings).click();
-      listPage.rows.shouldBeLoaded();
+      listPage.dvRows.shouldBeLoaded();
       projectDropdown.shouldContain(testName);
     });
 
     it(`test Cluster${rolesOrBindings} detail page breadcrumbs to list page restores 'All Projects' dropdown`, () => {
       nav.sidenav.clickNavLink(['User Management', rolesOrBindings]);
       projectDropdown.selectProject(allProjectsDropdownLabel);
-      listPage.rows.shouldBeLoaded();
-      listPage.filter.by('cluster');
-      listPage.filter.byName(clusterRoleOrBindingName);
-      listPage.rows.clickRowByName(clusterRoleOrBindingName);
+      listPage.dvRows.shouldBeLoaded();
+      listPage.dvFilter.by('cluster');
+      listPage.dvFilter.byName(clusterRoleOrBindingName);
+      listPage.dvRows.clickRowByName(clusterRoleOrBindingName);
       detailsPage.isLoaded();
       projectDropdown.shouldNotExist();
       detailsPage.breadcrumb(0).contains(rolesOrBindings).click();
-      listPage.rows.shouldBeLoaded();
+      listPage.dvRows.shouldBeLoaded();
       projectDropdown.shouldContain(allProjectsDropdownLabel);
     });
 
     it(`test Cluster${rolesOrBindings} detail page breadcrumbs to list page restores last selected project`, () => {
       nav.sidenav.clickNavLink(['User Management', rolesOrBindings]);
-      listPage.rows.shouldBeLoaded();
+      listPage.dvRows.shouldBeLoaded();
       projectDropdown.selectProject(testName);
       projectDropdown.shouldContain(testName);
-      listPage.rows.shouldBeLoaded();
-      listPage.filter.by('cluster');
-      listPage.filter.byName(clusterRoleOrBindingName);
-      listPage.rows.clickRowByName(clusterRoleOrBindingName);
+      listPage.dvRows.shouldBeLoaded();
+      listPage.dvFilter.by('cluster');
+      listPage.dvFilter.byName(clusterRoleOrBindingName);
+      listPage.dvRows.clickRowByName(clusterRoleOrBindingName);
       detailsPage.isLoaded();
       projectDropdown.shouldNotExist();
       detailsPage.breadcrumb(0).contains(rolesOrBindings).click();
-      listPage.rows.shouldBeLoaded();
+      listPage.dvRows.shouldBeLoaded();
       projectDropdown.shouldContain(testName);
     });
   });
