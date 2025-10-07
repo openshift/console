@@ -104,6 +104,12 @@ export const listPage = {
     shouldBeLoaded: () => {
       cy.get(`[data-test="data-view-table"]`).should('be.visible');
     },
+    shouldExist: (resourceName: string) =>
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).contains(resourceName),
+    shouldNotExist: (resourceName: string) =>
+      cy
+        .get(`[data-test="data-view-cell-${resourceName}-name"]`, { timeout: 90000 })
+        .should('not.exist'),
     clickKebabAction: (resourceName: string, actionName: string) => {
       cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
         .contains(resourceName)

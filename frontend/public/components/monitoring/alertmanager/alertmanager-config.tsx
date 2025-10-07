@@ -323,7 +323,13 @@ const ReceiverTableRow: React.FC<RowFunctionArgs<
 
   return (
     <>
-      <TableData className={tableColumnClasses[0]}>{receiver.name}</TableData>
+      <TableData
+        className={tableColumnClasses[0]}
+        data-test={`data-view-cell-${receiver.name}-name`}
+        data-receiver-name={receiver.name}
+      >
+        {receiver.name}
+      </TableData>
       <TableData className={tableColumnClasses[1]}>
         {(receiver.name === InitialReceivers.Critical ||
           receiver.name === InitialReceivers.Default) &&

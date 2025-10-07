@@ -73,9 +73,9 @@ export const alertmanager = {
   validateCreation: (receiverName: string, type: string, label: string) => {
     cy.byLegacyTestID('item-filter').clear();
     cy.byLegacyTestID('item-filter').type(receiverName);
-    listPage.rows.shouldExist(receiverName);
-    listPage.rows.shouldExist(type);
-    listPage.rows.shouldExist(label);
+    listPage.dvRows.shouldExist(receiverName);
+    listPage.dvRows.shouldExist(type);
+    listPage.dvRows.shouldExist(label);
   },
   visitAlertmanagerPage: () => {
     cy.visit('/settings/cluster/alertmanagerconfig');
