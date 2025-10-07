@@ -55,4 +55,14 @@ export BRIDGE_USER_SETTINGS_LOCATION
 HELM_REPOSITORY_CONFIG="/tmp/repositories.yaml"
 export HELM_REPOSITORY_CONFIG
 
+
+# Add bearer token file to bridge env var
+temp_file=$(mktemp)
+BEARER_TOKEN=$(oc whoami --show-token)
+if [ -n "$BEARER_TOKEN" ]; then
+    echo "$BEARER_TOKEN" > $temp_file
+    BRIDGE_K8S_MODE_OFF_CLUSTER_SERVICE_ACCOUNT_BEARER_TOKEN_FILE=$temp_file
+    export BRIDGE_K8S_MODE_OFF_CLUSTER_SERVICE_ACCOUNT_BEARER_TOKEN_FILE
+fi
+
 echo "Using $BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT"
