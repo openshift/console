@@ -365,6 +365,17 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
     namespace: createNS,
   };
   const { t } = useTranslation();
+  const location = useLocation();
+
+  const isUserManagementContext =
+    location.pathname.includes('/k8s/ns/') || location.pathname.includes('/k8s/all-namespaces/');
+
+  const resources = [{ kind: 'Role', namespaced: true, optional: mock }];
+
+  if (!isUserManagementContext) {
+    resources.push({ kind: 'ClusterRole', namespaced: false, optional: true });
+  }
+
   return (
     <MultiListPage
       ListComponent={RolesList}
@@ -374,18 +385,14 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
       createAccessReview={accessReview}
       createButtonText={t('public~Create Role')}
       createProps={{ to: `/k8s/ns/${createNS}/roles/~new` }}
-      flatten={(resources) => _.flatMap(resources, 'data').filter((r) => !!r)}
-      resources={[
-        { kind: 'Role', namespaced: true, optional: mock },
-        { kind: 'ClusterRole', namespaced: false, optional: true },
-      ]}
+      flatten={(resourceData) => _.flatMap(resourceData, 'data').filter((r) => !!r)}
+      resources={resources}
       rowFilters={[
         {
           filterGroupName: t('public~Role'),
           type: 'role-kind',
           reducer: roleType,
           items: [
-            { id: 'cluster', title: t('public~Cluster-wide Roles') },
             { id: 'namespace', title: t('public~Namespace Roles') },
             { id: 'system', title: t('public~System Roles') },
           ],
