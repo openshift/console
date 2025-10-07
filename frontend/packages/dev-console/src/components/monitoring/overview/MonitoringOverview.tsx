@@ -128,12 +128,16 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
             ) : (
               <>
                 <div className="odc-monitoring-overview__view-monitoring-dashboards">
+                  {/* query params:
+                    namespace - used within dashboard logic
+                    openshift-project - used for namespace dropdown for console
+                  */}
                   <Link
-                    to={`/monitoring/dashboards/grafana-dashboard-k8s-resources-workload&workload=${
+                    to={`/monitoring/dashboards/dashboard-k8s-resources-workload?workload=${
                       resource?.metadata?.name
-                    }&type=${resource?.kind?.toLowerCase()}&namespace=${
+                    }&type=${resource?.kind?.toLowerCase()}&openshift-project=${
                       resource?.metadata?.namespace
-                    }`}
+                    }&namespace=${resource?.metadata?.namespace}`}
                     data-test="observe-dashboards-link"
                   >
                     {t('devconsole~View dashboards')}
