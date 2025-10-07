@@ -15,23 +15,23 @@ import (
 // ConsoleCatalogItem represents a single item in the catalog.
 type ConsoleCatalogItem struct {
 	ID                     string   `json:"id"`
-	Capabilities           string   `json:"capabilities"`
+	Capabilities           string   `json:"capabilities,omitempty"`
 	Catalog                string   `json:"catalog"`
-	Categories             []string `json:"categories"`
-	CreatedAt              string   `json:"createdAt"`
-	Description            string   `json:"description"`
-	DisplayName            string   `json:"displayName"`
-	Image                  string   `json:"image"`
-	InfrastructureFeatures []string `json:"infrastructureFeatures"`
-	Keywords               []string `json:"keywords"`
-	MarkdownDescription    string   `json:"markdownDescription"`
+	Categories             []string `json:"categories,omitempty"`
+	CreatedAt              string   `json:"createdAt,omitempty"`
+	Description            string   `json:"description,omitempty"`
+	DisplayName            string   `json:"displayName,omitempty"`
+	Image                  string   `json:"image,omitempty"`
+	InfrastructureFeatures []string `json:"infrastructureFeatures,omitempty"`
+	Keywords               []string `json:"keywords,omitempty"`
+	MarkdownDescription    string   `json:"markdownDescription,omitempty"`
 	Name                   string   `json:"name"`
-	Provider               string   `json:"provider"`
-	Repository             string   `json:"repository"`
-	Source                 string   `json:"source"`
-	Support                string   `json:"support"`
-	ValidSubscription      []string `json:"validSubscription"`
-	Version                string   `json:"version"`
+	Provider               string   `json:"provider,omitempty"`
+	Repository             string   `json:"repository,omitempty"`
+	Source                 string   `json:"source,omitempty"`
+	Support                string   `json:"support,omitempty"`
+	ValidSubscription      []string `json:"validSubscription,omitempty"`
+	Version                string   `json:"version,omitempty"`
 }
 
 // TransformCatalog transforms the raw catalog data into a list of CatalogItems.
@@ -51,6 +51,9 @@ func CreateConsoleCatalog(catalogName string, packages []*declcfg.Package, bundl
 		}
 
 		item := CreateCatalogItem(catalogName, pkg, bundle)
+		if item == nil {
+			continue
+		}
 		item.Catalog = catalogName
 		catalogItems = append(catalogItems, *item)
 	}
@@ -61,6 +64,7 @@ func CreateCatalogItem(catalogName string, pkg *declcfg.Package, bundle *declcfg
 	csvMetadata, err := getCSVMetadata(bundle)
 	if err != nil {
 		klog.Warningf("failed to get csv metadata for bundle %q: %v", bundle.Name, err)
+		return nil
 	}
 
 	item := &ConsoleCatalogItem{
@@ -79,7 +83,6 @@ func CreateCatalogItem(catalogName string, pkg *declcfg.Package, bundle *declcfg
 	withKeywords(item, csvMetadata)
 	withMarkdownDescription(item, csvMetadata, pkg)
 	withProvider(item, csvMetadata)
-	withMarkdownDescription(item, csvMetadata, pkg)
 	withRepository(item, csvMetadata)
 	withSupport(item, csvMetadata)
 	withValidSubscription(item, csvMetadata)
@@ -193,8 +196,6 @@ func withDescription(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata
 	if csvMetadata.Annotations[DescriptionOLMAnnotationKey] != "" {
 		item.Description = csvMetadata.Annotations[DescriptionOLMAnnotationKey]
 	}
-
-	item.Description = pkg.Description
 }
 
 func withDisplayName(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata, pkg *declcfg.Package) {
@@ -299,11 +300,10 @@ func withValidSubscription(item *ConsoleCatalogItem, csvMetadata *property.CSVMe
 
 func withVersion(item *ConsoleCatalogItem, bundle *declcfg.Bundle) {
 	version, err := getBundleVersion(bundle)
-	if err != nil {
+	if err != nil || version == "" {
 		klog.Warningf("failed to get bundle version for bundle %q: %v", bundle.Name, err)
+		return
 	}
 
-	if version != "" {
-		item.Version = version
-	}
+	item.Version = version
 }

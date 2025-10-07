@@ -45,6 +45,8 @@ const (
 	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
+	catalogdHost = "catalogd-service.openshift-catalogd.svc:443"
+
 	// Well-known location of the tenant aware Thanos service for OpenShift exposing the query and query_range endpoints. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
 	openshiftThanosTenancyHost = "thanos-querier.openshift-monitoring.svc:9092"
@@ -435,6 +437,11 @@ func main() {
 				Transport: &http.Transport{
 					TLSClientConfig: serviceProxyTLSConfig,
 				},
+			}
+
+			srv.CatalogdProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				Endpoint:        &url.URL{Scheme: "https", Host: catalogdHost},
 			}
 
 			srv.ThanosProxyConfig = &proxy.Config{
