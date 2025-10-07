@@ -131,6 +131,12 @@ export const listPage = {
     clickFirstLinkInFirstRow: () => {
       cy.get('[data-test^="data-view-cell-"]').first().find('a').first().click({ force: true }); // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
     },
+    shouldExist: (resourceName: string) =>
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).contains(resourceName),
+    shouldNotExist: (resourceName: string) =>
+      cy
+        .get(`[data-test="data-view-cell-${resourceName}-name"]`, { timeout: 90000 })
+        .should('not.exist'),
     clickKebabAction: (resourceName: string, actionName: string) => {
       cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
         .contains(resourceName)

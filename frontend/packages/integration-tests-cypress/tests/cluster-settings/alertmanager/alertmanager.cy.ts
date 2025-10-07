@@ -74,7 +74,7 @@ describe('Alertmanager', () => {
     cy.byTestID('webhook-url').type(webhookURL);
     cy.byTestID('label-0').type(label);
     alertmanager.save();
-    alertmanager.validateCreation(receiverName, 'integration-types', 'routing-labels');
+    alertmanager.validateCreation(receiverName, receiverType, label);
     listPage.dvRows.clickKebabAction(receiverName, 'Delete Receiver');
     warningModal.confirm('AlertmanagerDeleteReceiverConfirmation');
     warningModal.shouldBeClosed('AlertmanagerDeleteReceiverConfirmation');
@@ -100,7 +100,8 @@ receivers:
     yamlEditor.clickSaveCreateButton();
     cy.byTestID('alert-success').should('exist');
     detailsPage.selectTab('Details');
-    cy.get('[data-test="data-view-cell-team-X-pager-name"]')
+    cy.get('[data-test="data-view-table"]')
+      .contains('team-X-pager')
       .parents('tr')
       .within(() => {
         cy.get('[data-test-id="kebab-button"]').click();

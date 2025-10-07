@@ -8,10 +8,6 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { Map as ImmutableMap } from 'immutable';
 import * as fuzzy from 'fuzzysearch';
 import {
-  Toolbar,
-  ToolbarContent,
-  ToolbarItem,
-  ToolbarToggleGroup,
   Switch,
   FlexItem,
   Flex,
@@ -20,12 +16,11 @@ import {
   DescriptionListTerm,
   DescriptionListDescription,
 } from '@patternfly/react-core';
-import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
-import { ALL_NAMESPACES_KEY, FLAGS, APIError, getTitleForNodeKind } from '@console/shared';
+import { ALL_NAMESPACES_KEY, FLAGS, APIError, getTitleForNodeKind, DASH } from '@console/shared';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { Page, useAccessReview } from '@console/internal/components/utils';
@@ -50,6 +45,14 @@ import { RowFilter } from './row-filter';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
+import {
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+
 import { getResourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
@@ -60,10 +63,8 @@ import {
   LinkifyExternal,
   LoadError,
   LoadingBox,
-  removeQueryArgument,
   ResourceIcon,
   ScrollToTopOnMount,
-  setQueryArgument,
 } from './utils';
 import { isResourceListPage, useExtensions, ResourceListPage } from '@console/plugin-sdk';
 import {
@@ -114,11 +115,6 @@ const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOw
   mapStateToProps,
 )(APIResourceLink_);
 
-const EmptyAPIResourcesMsg: React.FC<{}> = () => {
-  const { t } = useTranslation();
-  return <EmptyBox label={t('public~API resources')} />;
-};
-
 const Group: React.FC<{ value: string }> = ({ value }) => {
   if (!value) {
     return <>-</>;
@@ -134,42 +130,116 @@ const Group: React.FC<{ value: string }> = ({ value }) => {
     </span>
   );
 };
-
-const tableClasses = [
-  'pf-v6-u-w-25-on-2xl',
-  'pf-v6-u-w-16-on-2xl',
-  'pf-v6-u-w-16-on-lg pf-v6-u-w-10-on-2xl',
-  'pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-16-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg',
+const TableColumnInfo = [
+  { id: 'kind' },
+  { id: 'group' },
+  { id: 'version' },
+  { id: 'namespaced' },
+  { id: 'description' },
 ];
 
-const APIResourceRows = ({ componentProps: { data } }) =>
-  _.map(data, (model: K8sKind) => [
-    {
-      title: <APIResourceLink model={model} />,
-      props: { className: tableClasses[0] },
-    },
-    {
-      title: (
-        <span className="co-select-to-copy">
-          <Group value={model.apiGroup} />
-        </span>
-      ),
-      props: { className: tableClasses[1] },
-    },
-    {
-      title: model.apiVersion,
-      props: { className: tableClasses[2] },
-    },
-    {
-      title: model.namespaced ? i18next.t('public~true') : i18next.t('public~false'),
-      props: { className: tableClasses[3] },
-    },
-    {
-      title: <div className="co-line-clamp">{getResourceDescription(model)}</div>,
-      props: { className: tableClasses[4] },
-    },
-  ]);
+const getAPIExplorerDataViewRows: GetDataViewRows<K8sKind, undefined> = (data, columns) => {
+  return data.map(({ obj: model }) => {
+    const rowCells = {
+      [TableColumnInfo[0].id]: {
+        cell: <APIResourceLink model={model} />,
+        props: getNameCellProps(model.kind),
+      },
+      [TableColumnInfo[1].id]: {
+        cell: (
+          <span className="co-select-to-copy">
+            <Group value={model.apiGroup} />
+          </span>
+        ),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      [TableColumnInfo[2].id]: {
+        cell: model.apiVersion,
+      },
+      [TableColumnInfo[3].id]: {
+        cell: model.namespaced ? i18next.t('public~true') : i18next.t('public~false'),
+        props: {
+          modifier: 'nowrap',
+          props: {
+            width: 20,
+          },
+        },
+      },
+      [TableColumnInfo[4].id]: {
+        cell: <div className="co-line-clamp">{getResourceDescription(model)}</div>,
+        props: {
+          modifier: 'wrap',
+          width: 40,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
+};
+
+const useAPIExplorerColumns = () => {
+  const { t } = useTranslation();
+  const columns = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Kind'),
+        id: TableColumnInfo[0].id,
+        sort: 'kind',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+          'data-test-id': 'api-kind-header',
+        },
+      },
+      {
+        title: t('public~Group'),
+        id: TableColumnInfo[1].id,
+        sort: 'apiGroup',
+        props: {
+          modifier: 'nowrap',
+          'data-test-id': 'api-group-header',
+        },
+      },
+      {
+        title: t('public~Version'),
+        id: TableColumnInfo[2].id,
+        sort: 'apiVersion',
+        props: {
+          modifier: 'nowrap',
+          'data-test-id': 'api-version-header',
+        },
+      },
+      {
+        title: t('public~Namespaced'),
+        id: TableColumnInfo[3].id,
+        sort: 'namespaced',
+        props: {
+          modifier: 'nowrap',
+          'data-test-id': 'api-namespaced-header',
+        },
+      },
+      {
+        title: t('public~Description'),
+        id: TableColumnInfo[4].id,
+        props: {
+          modifier: 'nowrap',
+          'data-test-id': 'api-description-header',
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
+};
 
 const stateToProps = ({ k8s }) => ({
   models: k8s.getIn(['RESOURCES', 'models']),
@@ -185,24 +255,14 @@ const APIResourcesList = compose(
   const TEXT_FILTER_PARAM = 'q';
   const SCOPE_PARAM = 's';
   const search = new URLSearchParams(location.search);
-  // Differentiate between an empty group and an unspecified param.
   const groupFilter = search.has(GROUP_PARAM) ? search.get(GROUP_PARAM) : ALL;
   const versionFilter = search.get(VERSION_PARAM) || ALL;
   const textFilter = search.get(TEXT_FILTER_PARAM) || '';
   const scopeFilter = search.get(SCOPE_PARAM) || ALL;
-  const { t } = useTranslation();
-  // group options
   const groups: Set<string> = models.reduce((result: Set<string>, { apiGroup }) => {
     return apiGroup ? result.add(apiGroup) : result;
   }, new Set<string>());
   const sortedGroups: string[] = [...groups].sort();
-  const groupOptions = sortedGroups.reduce(
-    (result, group: string) => {
-      result[group] = <Group value={group} />;
-      return result;
-    },
-    { [ALL]: t('public~All groups'), '': t('public~No group') },
-  );
   const [isExactSearch] = useExactSearch();
   const matchFn: Function = isExactSearch ? exactMatch : fuzzyCaseInsensitive;
 
@@ -211,34 +271,16 @@ const APIResourcesList = compose(
     groupSpacer.add(sortedGroups[0]);
   }
 
-  const autocompleteGroups = (text: string, _item: string, key: string): boolean => {
-    return key !== ALL && fuzzy(text, key);
-  };
-
   // version options
   const versions: Set<string> = models.reduce((result: Set<string>, { apiVersion }) => {
     return result.add(apiVersion);
   }, new Set<string>());
   const sortedVersions: string[] = [...versions].sort();
-  const versionOptions = sortedVersions.reduce(
-    (result, version: string) => {
-      result[version] = version;
-      return result;
-    },
-    { [ALL]: t('public~All versions') },
-  );
 
   const versionSpacer = new Set<string>();
   if (sortedVersions.length) {
     versionSpacer.add(sortedVersions[0]);
   }
-
-  const scopeOptions = {
-    [ALL]: t('public~All scopes'),
-    cluster: t('public~Cluster'),
-    namespace: t('public~Namespace'),
-  };
-  const scopeSpacer = new Set<string>(['cluster']);
 
   // filter by group, version, or text
   const filteredResources = models.filter(({ kind, apiGroup, apiVersion, namespaced }) => {
@@ -272,113 +314,25 @@ const APIResourcesList = compose(
     'kind',
   ]);
 
-  const updateURL = (k: string, v: string) => {
-    if (v === ALL) {
-      removeQueryArgument(k);
-    } else {
-      setQueryArgument(k, v);
-    }
-  };
-  const onGroupSelected = (group: string) => updateURL(GROUP_PARAM, group);
-  const onVersionSelected = (version: string) => updateURL(VERSION_PARAM, version);
-  const onScopeSelected = (scope: string) => updateURL(SCOPE_PARAM, scope);
-  const setTextFilter = (text: string) => {
-    if (!text) {
-      removeQueryArgument(TEXT_FILTER_PARAM);
-    } else {
-      setQueryArgument(TEXT_FILTER_PARAM, text);
-    }
-  };
-
-  const APIResourceHeader = () => [
-    {
-      title: t('public~Kind'),
-      sortField: 'kind',
-      transforms: [sortable],
-      props: { className: tableClasses[0] },
-    },
-    {
-      title: t('public~Group'),
-      sortField: 'apiGroup',
-      transforms: [sortable],
-      props: { className: tableClasses[1] },
-    },
-    {
-      title: t('public~Version'),
-      sortField: 'apiVersion',
-      transforms: [sortable],
-      props: { className: tableClasses[2] },
-    },
-    {
-      title: t('public~Namespaced'),
-      sortField: 'namespaced',
-      transforms: [sortable],
-      props: { className: tableClasses[3] },
-    },
-    {
-      title: t('public~Description'),
-      props: { className: tableClasses[4] },
-    },
-  ];
-
   return (
     <PaneBody>
-      <Toolbar className="pf-m-toggle-group-container">
-        <ToolbarContent>
-          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
-            <ToolbarItem>
-              <ConsoleSelect
-                autocompleteFilter={autocompleteGroups}
-                items={groupOptions}
-                onChange={onGroupSelected}
-                selectedKey={groupFilter}
-                spacerBefore={groupSpacer}
-                title={groupOptions[groupFilter]}
-                alwaysShowTitle
-                isFullWidth
-              />
-            </ToolbarItem>
-            <ToolbarItem>
-              <ConsoleSelect
-                items={versionOptions}
-                onChange={onVersionSelected}
-                selectedKey={versionFilter}
-                spacerBefore={versionSpacer}
-                title={versionOptions[versionFilter]}
-                alwaysShowTitle
-                isFullWidth
-              />
-            </ToolbarItem>
-            <ToolbarItem>
-              <ConsoleSelect
-                items={scopeOptions}
-                onChange={onScopeSelected}
-                selectedKey={scopeFilter}
-                spacerBefore={scopeSpacer}
-                title={scopeOptions[scopeFilter]}
-                alwaysShowTitle
-                isFullWidth
-              />
-            </ToolbarItem>
-          </ToolbarToggleGroup>
-          <ToolbarItem>
-            <TextFilter
-              value={textFilter}
-              label={t('public~by kind')}
-              onChange={(_event, value) => setTextFilter(value)}
-            />
-          </ToolbarItem>
-        </ToolbarContent>
-      </Toolbar>
-      <Table
-        EmptyMsg={EmptyAPIResourcesMsg}
-        Header={APIResourceHeader}
-        Rows={APIResourceRows}
-        aria-label={t('public~API resources')}
-        data={sortedResources}
-        loaded={!!models.size}
-        virtualize={false}
-      />
+      <React.Suspense fallback={<LoadingBox />}>
+        <ResourceDataView<any>
+          data={sortedResources.map((model) => ({
+            ...model,
+            metadata: {
+              name: model.kind,
+              uid: model.kind,
+            },
+          }))}
+          loaded={!!models.size}
+          columns={useAPIExplorerColumns()}
+          initialFilters={initialFiltersDefault}
+          getDataViewRows={getAPIExplorerDataViewRows}
+          hideColumnManagement={true}
+          label="API resources"
+        />
+      </React.Suspense>
     </PaneBody>
   );
 });

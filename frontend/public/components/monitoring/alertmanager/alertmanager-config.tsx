@@ -268,7 +268,7 @@ type ReceiverRowData = {
   routingLabelsByReceivers: RoutingLabelsByReceivers[];
   defaultReceiverName: string;
   navigate: any;
-  openDeleteReceiverConfirm: any;
+  openDeleteReceiverConfirm: any; // Not used directly, created per-row
   t: any;
 };
 
@@ -296,7 +296,6 @@ const getReceiverDataViewRows = (
       routingLabelsByReceivers,
       defaultReceiverName,
       navigate,
-      openDeleteReceiverConfirm,
       t,
     } = customData;
 
@@ -320,6 +319,17 @@ const getReceiverDataViewRows = (
     // Receivers can be deleted if it has a simple route and not the default receiver
     const canDelete = !isDefaultReceiver && receiverHasSimpleRoute;
 
+    const openDeleteReceiverConfirmWrapper = useWarningModal({
+      title: t('public~Delete Receiver'),
+      children: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
+        receiverName: receiver.name,
+      }),
+      confirmButtonLabel: t('public~Delete Receiver'),
+      confirmButtonVariant: ButtonVariant.danger,
+      onConfirm: () => deleteReceiver(secret, config, receiver.name, navigate),
+      ouiaId: 'AlertmanagerDeleteReceiverConfirmation',
+    });
+
     const receiverMenuItems = (receiverName: string) => [
       {
         label: t('public~Edit Receiver'),
@@ -336,20 +346,7 @@ const getReceiverDataViewRows = (
         tooltip: !canDelete
           ? t('public~Cannot delete the default receiver, or a receiver which has a sub-route')
           : '',
-        callback: () => {
-          openDeleteReceiverConfirm({
-            title: t('public~Delete Receiver'),
-            children: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
-              receiverName,
-            }),
-            confirmButtonLabel: t('public~Delete Receiver'),
-            confirmButtonVariant: ButtonVariant.danger,
-            onConfirm: () => {
-              deleteReceiver(secret, config, receiverName, navigate);
-            },
-            ouiaId: 'AlertmanagerDeleteReceiverConfirmation',
-          });
-        },
+        callback: () => openDeleteReceiverConfirmWrapper(),
       },
     ];
 
@@ -460,14 +457,13 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
     [routes],
   );
 
-  const openDeleteReceiverConfirm = useWarningModal();
   const customRowData: ReceiverRowData = {
     secret,
     config,
     routingLabelsByReceivers,
     defaultReceiverName,
     navigate,
-    openDeleteReceiverConfirm,
+    openDeleteReceiverConfirm: null,
     t,
   };
 
