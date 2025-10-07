@@ -23,11 +23,9 @@ const PrometheusGraphLink = ({ query, namespace, ariaChartLinkLabel }) => {
   }
   const params = new URLSearchParams();
   queries.forEach((q, index) => params.set(`query${index}`, q));
+  params.set('namespace', namespace);
   return (
-    <Link
-      aria-label={ariaChartLinkLabel}
-      to={`/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`}
-    >
+    <Link aria-label={ariaChartLinkLabel} to={`/monitoring/query-browser?${params.toString()}`}>
       {t('devconsole~Inspect')}
     </Link>
   );
