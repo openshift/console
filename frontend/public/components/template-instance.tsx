@@ -4,16 +4,20 @@ import { css } from '@patternfly/react-styles';
 import { sortable, Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-import { Status } from '@console/shared';
+import { LazyActionMenu, Status } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
 import { Conditions } from './conditions';
-import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';
+import {
+  getTemplateInstanceStatus,
+  referenceFor,
+  referenceForModel,
+  TemplateInstanceKind,
+} from '../module/k8s';
 import {
   EmptyBox,
   Kebab,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -27,7 +31,6 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { TemplateInstanceModel } from '../models';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 
 const tableColumnClasses = [
   'pf-v6-u-w-42-on-md',
@@ -37,7 +40,6 @@ const tableColumnClasses = [
 ];
 
 const TemplateInstanceTableRow: React.FC<RowFunctionArgs<TemplateInstanceKind>> = ({ obj }) => {
-  const commonActions = useCommonResourceActions(TemplateInstanceModel, obj);
   return (
     <>
       <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
@@ -54,7 +56,7 @@ const TemplateInstanceTableRow: React.FC<RowFunctionArgs<TemplateInstanceKind>> 
         <Status status={getTemplateInstanceStatus(obj)} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={commonActions} kind="TemplateInstance" resource={obj} />
+        <LazyActionMenu context={{ [referenceForModel(TemplateInstanceModel)]: obj }} />
       </TableData>
     </>
   );
@@ -212,15 +214,14 @@ const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj 
   );
 };
 
-export const TemplateInstanceDetailsPage: React.FCC<React.ComponentProps<typeof DetailsPage>> = (
-  props,
-) => {
-  const commonActions = useCommonResourceActions(TemplateInstanceModel, props.obj);
+export const TemplateInstanceDetailsPage: React.FCC = (props) => {
   return (
     <DetailsPage
       {...props}
-      kind="TemplateInstance"
-      menuActions={commonActions}
+      kind={referenceForModel(TemplateInstanceModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(TemplateInstanceModel)]: obj }} {...props} />
+      )}
       pages={[navFactory.details(TemplateInstanceDetails), navFactory.editYaml()]}
     />
   );

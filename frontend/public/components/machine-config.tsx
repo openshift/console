@@ -18,6 +18,7 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk/src';
+import { LazyActionMenu } from '@console/shared/src';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
@@ -27,14 +28,12 @@ import {
   CopyToClipboard,
   Kebab,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
 
@@ -123,13 +122,13 @@ const pages = [
 ];
 
 export const MachineConfigDetailsPage: React.FCC<any> = (props) => {
-  const commonActions = useCommonResourceActions(MachineConfigModel, props.obj);
-  const machineConfigMenuActions = [...commonActions];
   return (
     <DetailsPage
       {...props}
       kind={machineConfigReference}
-      menuActions={machineConfigMenuActions}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineConfigReference]: obj }} {...props} />
+      )}
       pages={pages}
     />
   );
@@ -145,8 +144,6 @@ const tableColumnClasses = [
 ];
 
 const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ obj }) => {
-  const commonActions = useCommonResourceActions(MachineConfigModel, obj);
-  const machineConfigMenuActions = [...commonActions];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -173,11 +170,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab
-          actions={machineConfigMenuActions}
-          kind={machineConfigReference}
-          resource={obj}
-        />
+        <LazyActionMenu context={{ [machineConfigReference]: obj }} />
       </TableData>
     </>
   );

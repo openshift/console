@@ -11,6 +11,7 @@ import {
   getMachineZone,
   Status,
   getMachinePhase,
+  LazyActionMenu,
 } from '@console/shared';
 import { ListPageBody, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import { MachineModel } from '../models';
@@ -27,9 +28,7 @@ import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   DetailsItem,
   Kebab,
-  KebabAction,
   NodeLink,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -50,8 +49,6 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 export const machineReference = referenceForModel(MachineModel);
 
 const tableColumnInfo = [
@@ -109,7 +106,7 @@ const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj, activeColumnIDs
         {zone || '-'}
       </TableData>
       <TableData {...tableColumnInfo[7]} activeColumnIDs={activeColumnIDs}>
-        <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />
+        <LazyActionMenu context={{ [machineReference]: obj }} />
       </TableData>
     </>
   );
@@ -337,7 +334,9 @@ export const MachineDetailsPage: React.FCC = (props) => {
     <DetailsPage
       {...props}
       kind={machineReference}
-      menuActions={menuActions as KebabAction[]}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineReference]: obj }} {...props} />
+      )}
       pages={[
         navFactory.details(MachineDetails),
         navFactory.editYaml(),

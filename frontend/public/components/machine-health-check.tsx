@@ -13,7 +13,6 @@ import {
   DetailsItem,
   EmptyBox,
   Kebab,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -22,17 +21,13 @@ import {
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
-import { Action } from '@console/dynamic-plugin-sdk/src';
+import { LazyActionMenu } from '@console/shared/src';
 
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
 const MachineHealthCheckTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
-  const commonActions = useCommonResourceActions(MachineHealthCheckModel, obj);
-
-  const menuActions = [...commonActions];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -49,7 +44,7 @@ const MachineHealthCheckTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = (
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={machineHealthCheckReference} resource={obj} />
+        <LazyActionMenu context={{ [machineHealthCheckReference]: obj }} />
       </TableData>
     </>
   );
@@ -174,18 +169,14 @@ export const MachineHealthCheckPage: React.FC<MachineHealthCheckPageProps> = (pr
   />
 );
 
-export const MachineHealthCheckDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
-  props,
-) => {
-  const commonActions = useCommonResourceActions(MachineHealthCheckModel, props.obj);
-
-  const menuActions = [...commonActions] as Action[];
-
+export const MachineHealthCheckDetailsPage: React.FC = (props) => {
   return (
     <DetailsPage
       {...props}
-      menuActions={menuActions}
       kind={machineHealthCheckReference}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineHealthCheckReference]: obj }} {...props} />
+      )}
       pages={[navFactory.details(MachineHealthCheckDetails), navFactory.editYaml()]}
     />
   );

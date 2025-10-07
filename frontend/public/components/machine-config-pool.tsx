@@ -1,6 +1,5 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { useMemo } from 'react';
 import { sortable } from '@patternfly/react-table';
 import { css } from '@patternfly/react-styles';
 import {
@@ -18,13 +17,12 @@ import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-ci
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import { LazyActionMenu } from '@console/shared/src';
 import { Conditions } from './conditions';
 import { MachineConfigPoolModel } from '../models';
 import { machineConfigReference, MachineConfigPage } from './machine-config';
 import {
-  K8sModel,
   K8sResourceCondition,
   K8sResourceConditionStatus,
   MachineConfigPoolConditionType,
@@ -35,50 +33,19 @@ import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './fact
 import {
   DetailsItem,
   Kebab,
-  KebabAction,
   LoadingInline,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
   Selector,
-  togglePaused,
   WorkloadPausedAlert,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-settings';
 import { UpToDateMessage } from './cluster-settings/cluster-status';
-import { ErrorModal } from './modals/error-modal';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
-import { Action } from '@console/dynamic-plugin-sdk/src';
-
-const usePauseAction = (): KebabAction => {
-  const { t } = useTranslation();
-  const launchModal = useOverlay();
-  return useMemo(
-    () => (kind: K8sModel, obj: MachineConfigPoolKind) => ({
-      labelKey: obj.spec?.paused ? t('public~Resume updates') : t('public~Pause updates'),
-      callback: () =>
-        togglePaused(kind, obj).catch((err) => launchModal(ErrorModal, { error: err.message })),
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        name: obj.metadata.name,
-        verb: 'patch',
-      },
-    }),
-    [launchModal, t],
-  );
-};
 
 const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
-
-const useMachineConfigPoolMenuActions = (obj: MachineConfigPoolKind): Action[] => {
-  const pauseAction = usePauseAction();
-  const commonActions = useCommonResourceActions(MachineConfigPoolModel, obj);
-  return useMemo(() => [pauseAction, ...commonActions] as Action[], [pauseAction, commonActions]);
-};
 
 const getConditionStatus = (
   mcp: MachineConfigPoolKind,
@@ -306,12 +273,13 @@ const MachineConfigPoolUpdateStatus: React.FC<MachineConfigPoolUpdateStatusProps
 };
 
 export const MachineConfigPoolDetailsPage: React.FCC<any> = (props) => {
-  const machineConfigPoolMenuActions = useMachineConfigPoolMenuActions(props.obj);
   return (
     <DetailsPage
       {...props}
       kind={machineConfigPoolReference}
-      menuActions={machineConfigPoolMenuActions}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineConfigPoolReference]: obj }} {...props} />
+      )}
       pages={pages}
     />
   );
@@ -327,7 +295,6 @@ const tableColumnClasses = [
 
 const MachineConfigPoolList: React.FCC<any> = (props) => {
   const { t } = useTranslation();
-  const machineConfigPoolMenuActions = useMachineConfigPoolMenuActions(props.obj);
   const MachineConfigPoolTableHeader = () => {
     return [
       {
@@ -381,11 +348,7 @@ const MachineConfigPoolList: React.FCC<any> = (props) => {
           <MachineConfigPoolUpdateStatus obj={obj} />
         </TableData>
         <TableData className={tableColumnClasses[4]}>
-          <ResourceKebab
-            actions={machineConfigPoolMenuActions}
-            kind={machineConfigPoolReference}
-            resource={obj}
-          />
+          <LazyActionMenu context={{ [machineConfigPoolReference]: obj }} />
         </TableData>
       </>
     );

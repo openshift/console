@@ -57,6 +57,8 @@
       "projectProvider": "src/actions/providers/project-provider.ts",
       "roleProvider": "src/actions/providers/role-provider.ts",
       "customResourceDefinitionProvider": "src/actions/providers/custom-resource-definition-provider.ts",
+      "machineConfigPoolProvider": "src/actions/providers/machine-config-pool-provider.ts",
+      "userProvider": "src/actions/providers/user-provider.ts",
       "ClusterConfigurationPage": "src/components/cluster-configuration/ClusterConfigurationPage.tsx",
       "PreferredPerspectiveSelect": "src/components/user-preferences/perspective/PreferredPerspectiveSelect.tsx",
       "NamespaceDropdown": "src/components/user-preferences/namespace/NamespaceDropdown.tsx",

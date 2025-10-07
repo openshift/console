@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
-import { Status } from '@console/shared';
+import { Status, LazyActionMenu } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -17,7 +17,6 @@ import {
   Kebab,
   LabelList,
   navFactory,
-  ResourceKebab,
   SectionHeading,
   ResourceLink,
   ResourceSummary,
@@ -32,8 +31,9 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { PersistentVolumeKind } from '@console/internal/module/k8s';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { PersistentVolumeKind, referenceForModel } from '@console/internal/module/k8s';
+
+const persistentVolumeReference = referenceForModel(PersistentVolumeModel);
 
 const PVStatus = ({ pv }: { pv: PersistentVolumeKind }) => (
   <Status status={pv.metadata.deletionTimestamp ? 'Terminating' : pv.status.phase} />
@@ -53,8 +53,6 @@ const { kind } = PersistentVolumeModel;
 
 const PVTableRow = ({ obj }: { obj: PersistentVolumeKind }) => {
   const { t } = useTranslation();
-  const common = useCommonResourceActions(PersistentVolumeModel, obj);
-  const menuActions = [...common];
   return (
     <>
       <TableData className={tableColumnClasses[0]}>
@@ -85,14 +83,7 @@ const PVTableRow = ({ obj }: { obj: PersistentVolumeKind }) => {
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab
-          actions={menuActions}
-          kind={kind}
-          resource={obj}
-          terminatingTooltip={t(
-            'public~The corresponding PersistentVolumeClaim must be deleted first.',
-          )}
-        />
+        <LazyActionMenu context={{ [persistentVolumeReference]: obj }} />
       </TableData>
     </>
   );
@@ -239,12 +230,13 @@ export const PersistentVolumesPage = (props: ListPageProps) => (
   <ListPage {...props} ListComponent={PersistentVolumesList} kind={kind} canCreate={true} />
 );
 export const PersistentVolumesDetailsPage = (props: DetailsPageProps) => {
-  const common = useCommonResourceActions(PersistentVolumeModel, props.obj);
-  const menuActions = [...common];
   return (
     <DetailsPage
       {...props}
-      menuActions={menuActions}
+      kind={persistentVolumeReference}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [persistentVolumeReference]: obj }} {...props} />
+      )}
       pages={[navFactory.details(Details), navFactory.editYaml()]}
     />
   );

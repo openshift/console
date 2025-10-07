@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import {
   Button,
@@ -12,18 +11,16 @@ import {
 import { sortable } from '@patternfly/react-table';
 
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
+import { LazyActionMenu } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
-import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
+import { referenceForModel, UserKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { RoleBindingsPage } from './RBAC';
 import {
   Kebab,
-  KebabAction,
   ConsoleEmptyState,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -31,40 +28,8 @@ import {
 } from './utils';
 
 import { useTranslation } from 'react-i18next';
-import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
-import { Action } from '@console/dynamic-plugin-sdk/src';
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
-
-const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const commonActions = useCommonResourceActions(UserModel, user);
-
-  const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
-    label: t('public~Impersonate User {{name}}', obj.metadata),
-    callback: () => {
-      dispatch(UIActions.startImpersonate('User', obj.metadata.name));
-      navigate(window.SERVER_FLAGS.basePath);
-    },
-    // Must use API group authorization.k8s.io, NOT user.openshift.io
-    // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
-    accessReview: {
-      group: 'authorization.k8s.io',
-      resource: 'users',
-      name: obj.metadata.name,
-      verb: 'impersonate',
-    },
-  });
-  return (
-    <ResourceKebab
-      actions={[impersonateAction, ...commonActions]}
-      kind={referenceForModel(UserModel)}
-      resource={user}
-    />
-  );
-};
 
 const UserTableRow: React.FC<RowFunctionArgs<UserKind>> = ({ obj }) => {
   return (
@@ -79,7 +44,7 @@ const UserTableRow: React.FC<RowFunctionArgs<UserKind>> = ({ obj }) => {
         ))}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <UserKebab user={obj} />
+        <LazyActionMenu context={{ [referenceForModel(UserModel)]: obj }} />
       </TableData>
     </>
   );
@@ -227,35 +192,14 @@ const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
   );
 };
 
-type UserKebabProps = {
-  user: UserKind;
-};
-
-export const UserDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const commonActions = useCommonResourceActions(UserModel, props.obj);
-  const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
-    label: t('public~Impersonate User {{name}}', obj.metadata),
-    callback: () => {
-      dispatch(UIActions.startImpersonate('User', obj.metadata.name));
-      navigate(window.SERVER_FLAGS.basePath);
-    },
-    // Must use API group authorization.k8s.io, NOT user.openshift.io
-    // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
-    accessReview: {
-      group: 'authorization.k8s.io',
-      resource: 'users',
-      name: obj.metadata.name,
-      verb: 'impersonate',
-    },
-  });
+export const UserDetailsPage: React.FC = (props) => {
   return (
     <DetailsPage
       {...props}
       kind={referenceForModel(UserModel)}
-      menuActions={[impersonateAction, ...commonActions] as Action[]}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(UserModel)]: obj }} {...props} />
+      )}
       pages={[
         navFactory.details(UserDetails),
         navFactory.editYaml(),
