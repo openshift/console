@@ -1,18 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { sortable } from '@patternfly/react-table';
-import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { MachineHealthCheckModel, MachineModel } from '../models';
 import { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
 import { referenceForModel } from '../module/k8s/k8s';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage } from './factory';
+import { DASH } from '@console/shared/src/constants';
 import {
   DetailsItem,
   EmptyBox,
   Kebab,
+  LoadingBox,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
@@ -22,74 +22,131 @@ import {
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
+import { TableColumn } from '@console/dynamic-plugin-sdk';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
-const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
+const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: '' }];
 
-const MachineHealthCheckTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={machineHealthCheckReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={machineHealthCheckReference} resource={obj} />
-      </TableData>
-    </>
-  );
+const getDataViewRows: GetDataViewRows<MachineHealthCheckKind, typeof menuActions> = (
+  data,
+  columns,
+) => {
+  return data.map(({ obj, rowData }) => {
+    const { name, namespace } = obj.metadata;
+    const actions = rowData;
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={machineHealthCheckReference} name={name} namespace={namespace} />,
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <ResourceKebab actions={actions} kind={machineHealthCheckReference} resource={obj} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
-const MachineHealthCheckList: React.FC = (props) => {
+const useMachineHealthCheckColumns = (): TableColumn<MachineHealthCheckKind>[] => {
   const { t } = useTranslation();
-  const MachineHealthCheckTableHeader = () => {
+  const columns: TableColumn<MachineHealthCheckKind>[] = React.useMemo(() => {
     return [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-        id: 'namespace',
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Created'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
     ];
-  };
+  }, [t]);
+  return columns;
+};
+
+const MachineHealthCheckList: React.FC<MachineHealthCheckListProps> = ({
+  data,
+  loaded,
+  loadError,
+  ...props
+}) => {
+  const columns = useMachineHealthCheckColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~MachineHealthChecks')}
-      Header={MachineHealthCheckTableHeader}
-      Row={MachineHealthCheckTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView<MachineHealthCheckKind, typeof menuActions>
+        {...props}
+        label={MachineHealthCheckModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        loadError={loadError}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        customRowData={menuActions}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -98,24 +155,24 @@ const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) =
   return _.isEmpty(obj.spec.unhealthyConditions) ? (
     <EmptyBox label={t('public~Unhealthy conditions')} />
   ) : (
-    <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
-      <thead className="pf-v6-c-table__thead">
-        <tr className="pf-v6-c-table__tr">
-          <th className="pf-v6-c-table__th">{t('public~Type')}</th>
-          <th className="pf-v6-c-table__th">{t('public~Status')}</th>
-          <th className="pf-v6-c-table__th">{t('public~Timeout')}</th>
-        </tr>
-      </thead>
-      <tbody className="pf-v6-c-table__tbody">
+    <Table variant="compact" borders={true}>
+      <Thead>
+        <Tr>
+          <Th>{t('public~Type')}</Th>
+          <Th>{t('public~Status')}</Th>
+          <Th>{t('public~Timeout')}</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
         {obj.spec.unhealthyConditions.map(({ status, timeout, type }, i: number) => (
-          <tr className="pf-v6-c-table__tr" key={i}>
-            <td className="pf-v6-c-table__td">{type}</td>
-            <td className="pf-v6-c-table__td">{status}</td>
-            <td className="pf-v6-c-table__td">{timeout}</td>
-          </tr>
+          <Tr key={i}>
+            <Td>{type}</Td>
+            <Td>{status}</Td>
+            <Td>{timeout}</Td>
+          </Tr>
         ))}
-      </tbody>
-    </table>
+      </Tbody>
+    </Table>
   );
 };
 
@@ -168,6 +225,7 @@ export const MachineHealthCheckPage: React.FC<MachineHealthCheckPageProps> = (pr
     ListComponent={MachineHealthCheckList}
     kind={machineHealthCheckReference}
     canCreate={true}
+    omitFilterToolbar={true}
   />
 );
 
@@ -184,6 +242,15 @@ type MachineHealthCheckPageProps = {
   showTitle?: boolean;
   namespace?: string;
   selector?: any;
+};
+
+type MachineHealthCheckListProps = {
+  data: MachineHealthCheckKind[];
+  loaded: boolean;
+  loadError?: any;
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  hideColumnManagement?: boolean;
 };
 
 export type MachineHealthCheckDetailsProps = {
