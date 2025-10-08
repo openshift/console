@@ -1,6 +1,6 @@
 /* eslint-disable tsdoc/syntax */
 import * as _ from 'lodash-es';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
@@ -40,6 +40,7 @@ import {
   REQUESTER_FILTER,
   useFlag,
   usePrometheusGate,
+  DASH,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
@@ -56,12 +57,20 @@ import { coFetchJSON } from '../co-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   DetailsItem,
   Kebab,
   LabelList,
   LoadingInline,
+  LoadingBox,
   ConsoleEmptyState,
   ResourceIcon,
   ResourceKebab,
@@ -296,132 +305,166 @@ const NamespacesTableHeader = () => {
 };
 NamespacesTableHeader.displayName = 'NamespacesTableHeader';
 
-const NamespacesColumnManagementID = referenceForModel(NamespaceModel);
-
-const getNamespacesSelectedColumns = () => {
-  return new Set(
-    NamespacesTableHeader().reduce((acc, column) => {
-      if (column.id && !column.additional) {
-        acc.push(column.id);
-      }
-      return acc;
-    }, []),
-  );
+const useNamespacesColumns = () => {
+  const { t } = useTranslation();
+  const columns = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Name'),
+        id: namespaceColumnInfo.name.id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Display name'),
+        id: namespaceColumnInfo.displayName.id,
+        sort: 'metadata.annotations["openshift.io/display-name"]',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Status'),
+        id: namespaceColumnInfo.status.id,
+        sort: 'status.phase',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Requester'),
+        id: namespaceColumnInfo.requester.id,
+        sort: "metadata.annotations.['openshift.io/requester']",
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Memory'),
+        id: namespaceColumnInfo.memory.id,
+        sort: 'namespaceMemory',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~CPU'),
+        id: namespaceColumnInfo.cpu.id,
+        sort: 'namespaceCPU',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Created'),
+        id: namespaceColumnInfo.created.id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Description'),
+        id: namespaceColumnInfo.description.id,
+        sort: "metadata.annotations.['openshift.io/description']",
+        props: {
+          modifier: 'nowrap',
+        },
+        additional: true,
+      },
+      {
+        title: t('public~Labels'),
+        id: namespaceColumnInfo.labels.id,
+        sort: 'metadata.labels',
+        props: {
+          modifier: 'nowrap',
+        },
+        additional: true,
+      },
+      {
+        title: '',
+        id: '',
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
 };
 
-const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
-  const { t } = useTranslation();
-  const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
-  const name = getName(ns);
-  const requester = getRequester(ns);
-  const bytes = metrics?.memory?.[name];
-  const cores = metrics?.cpu?.[name];
-  const description = getDescription(ns);
-  const labels = ns.metadata.labels;
-  const columns = tableColumns?.length > 0 ? new Set(tableColumns) : getNamespacesSelectedColumns();
-  return (
-    <>
-      <TableData className={namespaceColumnInfo.name.classes}>
-        <ResourceLink kind="Namespace" name={ns.metadata.name} />
-      </TableData>
-      <TableData
-        className={namespaceColumnInfo.displayName.classes}
-        columns={columns}
-        columnID={namespaceColumnInfo.displayName.id}
-      >
-        <span className="co-break-word co-line-clamp">
-          {getDisplayName(ns) || (
-            <span className="pf-v6-u-text-color-subtle">{t('public~No display name')}</span>
-          )}
-        </span>
-      </TableData>
-      <TableData
-        className={css(namespaceColumnInfo.status.classes, 'co-break-word')}
-        columns={columns}
-        columnID={namespaceColumnInfo.status.id}
-      >
-        <Status status={ns.status?.phase} />
-      </TableData>
-      <TableData
-        className={css(namespaceColumnInfo.requester.classes, 'co-break-word')}
-        columns={columns}
-        columnID={namespaceColumnInfo.requester.id}
-      >
-        {requester || <span className="pf-v6-u-text-color-subtle">{t('public~No requester')}</span>}
-      </TableData>
-      <TableData
-        className={namespaceColumnInfo.memory.classes}
-        columns={columns}
-        columnID={namespaceColumnInfo.memory.id}
-      >
-        {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
-      </TableData>
-      <TableData
-        className={namespaceColumnInfo.cpu.classes}
-        columns={columns}
-        columnID={namespaceColumnInfo.cpu.id}
-      >
-        {cores ? t('public~{{cores}} cores', { cores: formatCores(cores) }) : '-'}
-      </TableData>
-      <TableData
-        className={namespaceColumnInfo.created.classes}
-        columns={columns}
-        columnID={namespaceColumnInfo.created.id}
-      >
-        <Timestamp timestamp={ns.metadata.creationTimestamp} />
-      </TableData>
-      <TableData
-        className={namespaceColumnInfo.description.classes}
-        columns={columns}
-        columnID={namespaceColumnInfo.description.id}
-      >
-        <span className="co-break-word co-line-clamp">
-          {description || (
-            <span className="pf-v6-u-text-color-subtle">{t('public~No description')}</span>
-          )}
-        </span>
-      </TableData>
-      <TableData
-        className={namespaceColumnInfo.labels.classes}
-        columns={columns}
-        columnID={namespaceColumnInfo.labels.id}
-      >
-        <LabelList kind="Namespace" labels={labels} />
-      </TableData>
-      <TableData className={Kebab.columnClass}>
-        <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
-      </TableData>
-    </>
-  );
-};
+const getNamespacesDataViewRows = (data, columns) => {
+  return data.map(({ obj: ns }) => {
+    const name = getName(ns);
+    const requester = getRequester(ns);
+    const description = getDescription(ns);
+    const labels = ns.metadata.labels;
+    const displayName = getDisplayName(ns);
+    // Note: Metrics will be handled by the parent component's useSelector
+    const bytes = ns._metrics?.memory;
+    const cores = ns._metrics?.cpu;
 
-const NamespacesNotFoundMessage = () => {
-  const { t } = useTranslation();
-  return (
-    <ConsoleEmptyState title={t('public~No Namespaces found')} Icon={SearchIcon}>
-      {t('public~No results were found for the requested Namespaces.')}
-    </ConsoleEmptyState>
-  );
-};
+    const rowCells = {
+      [namespaceColumnInfo.name.id]: {
+        cell: <ResourceLink kind="Namespace" name={ns.metadata.name} />,
+        props: getNameCellProps(name),
+      },
+      [namespaceColumnInfo.displayName.id]: {
+        cell: (
+          <span className="co-break-word co-line-clamp">
+            {displayName || <span className="pf-v6-u-text-color-subtle">No display name</span>}
+          </span>
+        ),
+      },
+      [namespaceColumnInfo.status.id]: {
+        cell: <Status status={ns.status?.phase} />,
+      },
+      [namespaceColumnInfo.requester.id]: {
+        cell: requester || <span className="pf-v6-u-text-color-subtle">No requester</span>,
+      },
+      [namespaceColumnInfo.memory.id]: {
+        cell: bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-',
+      },
+      [namespaceColumnInfo.cpu.id]: {
+        cell: cores ? `${formatCores(cores)} cores` : '-',
+      },
+      [namespaceColumnInfo.created.id]: {
+        cell: <Timestamp timestamp={ns.metadata.creationTimestamp} />,
+      },
+      [namespaceColumnInfo.description.id]: {
+        cell: (
+          <span className="co-break-word co-line-clamp">
+            {description || <span className="pf-v6-u-text-color-subtle">No description</span>}
+          </span>
+        ),
+      },
+      [namespaceColumnInfo.labels.id]: {
+        cell: <LabelList kind="Namespace" labels={labels} />,
+      },
+      '': {
+        cell: <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />,
+        props: actionsCellProps,
+      },
+    };
 
-const NamespacesEmptyMessage = () => {
-  const { t } = useTranslation();
-  return (
-    <ConsoleEmptyState title={t('public~No matching Namespaces')} Icon={SearchIcon}>
-      {t('public~No results match the filter criteria.')}
-    </ConsoleEmptyState>
-  );
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
 export const NamespacesList = (props) => {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [tableColumns] = useUserSettingsCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-    undefined,
-    true,
-  );
+  const columns = useNamespacesColumns();
+  const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
 
   // TODO Utilize usePoll hook
   useEffect(() => {
@@ -431,47 +474,43 @@ export const NamespacesList = (props) => {
     const id = setInterval(updateMetrics, 30 * 1000);
     return () => clearInterval(id);
   }, [dispatch]);
-  const selectedColumns =
-    tableColumns?.[NamespacesColumnManagementID]?.length > 0
-      ? new Set(tableColumns[NamespacesColumnManagementID])
-      : null;
 
-  const customData = useMemo(
-    () => ({
-      tableColumns: tableColumns?.[NamespacesColumnManagementID],
-    }),
-    [tableColumns],
-  );
+  // Enhance data with metrics
+  const enhancedData = useMemo(() => {
+    if (!props.data) {
+      return props.data;
+    }
+    return props.data.map((item) => {
+      const name = getName(item);
+      const bytes = metrics?.memory?.[name];
+      const cores = metrics?.cpu?.[name];
+      return {
+        ...item,
+        obj: {
+          ...item.obj,
+          _metrics: { memory: bytes, cpu: cores },
+        },
+      };
+    });
+  }, [props.data, metrics]);
 
   return (
-    <Table
-      {...props}
-      activeColumns={selectedColumns}
-      columnManagementID={NamespacesColumnManagementID}
-      aria-label={t('public~Namespaces')}
-      Header={NamespacesTableHeader}
-      Row={NamespacesTableRow}
-      customData={customData}
-      virtualize
-      EmptyMsg={NamespacesEmptyMessage}
-      NoDataEmptyMsg={NamespacesNotFoundMessage}
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView
+        {...props}
+        data={enhancedData}
+        label={NamespaceModel.labelPlural}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getNamespacesDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
 export const NamespacesPage = (props) => {
-  const { t } = useTranslation();
   const createNamespaceModal = useCreateNamespaceModal();
-  const [tableColumns] = useUserSettingsCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-    undefined,
-    true,
-  );
-  const selectedColumns =
-    tableColumns?.[NamespacesColumnManagementID]?.length > 0
-      ? new Set(tableColumns[NamespacesColumnManagementID])
-      : getNamespacesSelectedColumns();
   return (
     <ListPage
       {...props}
@@ -479,14 +518,7 @@ export const NamespacesPage = (props) => {
       ListComponent={NamespacesList}
       canCreate={true}
       createHandler={() => createNamespaceModal()}
-      columnLayout={{
-        columns: NamespacesTableHeader(null, t).map((column) =>
-          _.pick(column, ['title', 'additional', 'id']),
-        ),
-        id: NamespacesColumnManagementID,
-        selectedColumns,
-        type: t('public~Namespaces'),
-      }}
+      omitFilterToolbar={true}
     />
   );
 };
