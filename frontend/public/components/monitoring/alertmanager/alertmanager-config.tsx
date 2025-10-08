@@ -329,6 +329,7 @@ const getReceiverDataViewRows = (
       onConfirm: () => deleteReceiver(secret, config, receiver.name, navigate),
       ouiaId: 'AlertmanagerDeleteReceiverConfirmation',
     });
+      // Receivers can be deleted if it has a simple route and not the default receiver
 
     const receiverMenuItems = (receiverName: string) => [
       {
