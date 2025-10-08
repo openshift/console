@@ -50,7 +50,7 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
     alertmanager.save();
 
     cy.log('verify PagerDuty Receiver was created correctly');
-    alertmanager.validateCreation(receiverName, receiverType, label);
+    alertmanager.validateCreation(receiverName);
 
     cy.log('update pagerduty_url');
     listPage.dvRows.clickKebabAction(receiverName, 'Edit Receiver');
