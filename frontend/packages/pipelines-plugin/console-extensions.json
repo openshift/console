@@ -130,23 +130,6 @@
     "properties": {
       "model": {
         "group": "tekton.dev",
-        "version": "v1beta1",
-        "kind": "ClusterTask"
-      },
-      "color": "#38812f",
-      "label": "%pipelines-plugin~ClusterTask%",
-      "labelPlural": "%pipelines-plugin~ClusterTasks%",
-      "abbr": "CT"
-    },
-    "flags": {
-      "disallowed": ["PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER"]
-    }
-  },
-  {
-    "type": "console.model-metadata",
-    "properties": {
-      "model": {
-        "group": "tekton.dev",
         "version": "v1alpha1",
         "kind": "Condition"
       },
@@ -433,23 +416,6 @@
       "model": {
         "group": "tekton.dev",
         "version": "v1beta1",
-        "kind": "ClusterTask"
-      },
-      "component": { "$codeRef": "tasksComponent.ClusterTaskDetailsPage" }
-    },
-    "flags": {
-      "disallowed": [
-        "HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASK_DETAILS",
-        "PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER"
-      ]
-    }
-  },
-  {
-    "type": "console.page/resource/details",
-    "properties": {
-      "model": {
-        "group": "tekton.dev",
-        "version": "v1beta1",
         "kind": "Task"
       },
       "component": { "$codeRef": "tasksComponent.TaskDetailsPage" }
@@ -653,40 +619,6 @@
     },
     "flags": {
       "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKS_LIST"]
-    }
-  },
-  {
-    "type": "console.page/resource/list",
-    "properties": {
-      "model": {
-        "group": "tekton.dev",
-        "version": "v1beta1",
-        "kind": "ClusterTask"
-      },
-      "component": { "$codeRef": "tasksComponent.ClusterTaskListPage" }
-    },
-    "flags": {
-      "disallowed": [
-        "HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST",
-        "PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER"
-      ]
-    }
-  },
-  {
-    "type": "console.page/resource/list",
-    "properties": {
-      "model": {
-        "group": "tekton.dev",
-        "version": "v1",
-        "kind": "ClusterTask"
-      },
-      "component": { "$codeRef": "tasksComponent.ClusterTaskListPage" }
-    },
-    "flags": {
-      "disallowed": [
-        "HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST",
-        "PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER"
-      ]
     }
   },
   {
@@ -1186,24 +1118,6 @@
     }
   },
   {
-    "type": "console.yaml-template",
-    "properties": {
-      "name": "default",
-      "model": {
-        "group": "tekton.dev",
-        "kind": "ClusterTask",
-        "version": "v1beta1"
-      },
-      "template": { "$codeRef": "yamlTemplates.newClusterTaskTemplate" }
-    },
-    "flags": {
-      "disallowed": [
-        "PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER",
-        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_YAML_TEMPLATE_EXTENSION"
-      ]
-    }
-  },
-  {
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": { "$codeRef": "pipelinesComponent.useIsPipelineOperatorVersion_1_16_or_newer" }
@@ -1473,6 +1387,39 @@
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"],
       "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Task"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "provider": { "$codeRef": "pipelineActionsProvider.usePipelineActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "provider": { "$codeRef": "pipelineRunActionsProvider.usePipelineRunActionsProvider" }
     }
   }
 ]
