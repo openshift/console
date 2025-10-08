@@ -242,3 +242,8 @@ export enum PrometheusEndpoint {
   RULES = 'api/v1/rules',
   TARGETS = 'api/v1/targets',
 }
+
+export type GetSwaggerPropertyDescription = (
+  kindObj: K8sModel,
+  propertyPath: string | string[],
+) => string;
