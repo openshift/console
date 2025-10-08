@@ -1,7 +1,5 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { sortable } from '@patternfly/react-table';
-import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import {
@@ -17,15 +15,25 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk/src';
+import { BlueInfoCircleIcon, TableColumn } from '@console/dynamic-plugin-sdk';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
 import { MachineConfigModel } from '../models';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage } from './factory';
 import {
   CopyToClipboard,
   Kebab,
+  LoadingBox,
   navFactory,
   ResourceKebab,
   ResourceLink,
@@ -42,7 +50,7 @@ const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) 
   <ResourceSummary resource={obj}>
     <DescriptionListGroup>
       <DescriptionListTerm>{t('public~OS image URL')}</DescriptionListTerm>
-      <DescriptionListDescription>{obj.spec.osImageURL || '-'}</DescriptionListDescription>
+      <DescriptionListDescription>{obj.spec.osImageURL || DASH}</DescriptionListDescription>
     </DescriptionListGroup>
   </ResourceSummary>
 );
@@ -133,102 +141,157 @@ export const MachineConfigDetailsPage: React.FCC<any> = (props) => {
   );
 };
 
-const tableColumnClasses = [
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-xl',
-  '',
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'generatedByController' },
+  { id: 'ignitionVersion' },
+  { id: 'osImageURL' },
+  { id: 'created' },
+  { id: '' },
 ];
 
-const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ obj }) => {
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={machineConfigReference} name={obj.metadata.name} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
-        {_.get(
+const getDataViewRows: GetDataViewRows<MachineConfigKind, undefined> = (data, columns) => {
+  return data.map(({ obj }) => {
+    const { name } = obj.metadata;
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={machineConfigReference} name={name} />,
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: _.get(
           obj,
           [
             'metadata',
             'annotations',
             'machineconfiguration.openshift.io/generated-by-controller-version',
           ],
-          '-',
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {_.get(obj, 'spec.config.ignition.version') || '-'}
-      </TableData>
-      <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
-        {_.get(obj, 'spec.osImageURL') || '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab
-          actions={machineConfigMenuActions}
-          kind={machineConfigReference}
-          resource={obj}
-        />
-      </TableData>
-    </>
-  );
+          DASH,
+        ),
+        props: {
+          modifier: 'breakWord',
+        },
+      },
+      [tableColumnInfo[2].id]: {
+        cell: _.get(obj, 'spec.config.ignition.version') || DASH,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: _.get(obj, 'spec.osImageURL') || DASH,
+        props: {
+          modifier: 'breakWord',
+        },
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: (
+          <ResourceKebab
+            actions={machineConfigMenuActions}
+            kind={machineConfigReference}
+            resource={obj}
+          />
+        ),
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
-const MachineConfigList: React.FCC<any> = (props) => {
+const useMachineConfigColumns = (): TableColumn<MachineConfigKind>[] => {
   const { t } = useTranslation();
-  const MachineConfigTableHeader = () => {
+  const columns: TableColumn<MachineConfigKind>[] = React.useMemo(() => {
     return [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Generated by controller'),
-        sortField:
+        id: tableColumnInfo[1].id,
+        sort:
           "metadata.annotations['machineconfiguration.openshift.io/generated-by-controller-version']",
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
+        props: {
+          modifier: 'nowrap',
+          width: 20,
+        },
       },
       {
         title: t('public~Ignition version'),
-        sortField: 'spec.config.ignition.version',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: 'spec.config.ignition.version',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~OS image URL'),
-        sortField: 'spec.osImageURL',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        sort: 'spec.osImageURL',
+        props: {
+          modifier: 'nowrap',
+          width: 20,
+        },
       },
       {
         title: t('public~Created'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
+        id: tableColumnInfo[4].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[5] },
+        id: tableColumnInfo[5].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
     ];
-  };
+  }, [t]);
+  return columns;
+};
+
+const MachineConfigList: React.FC<MachineConfigListProps> = ({
+  data,
+  loaded,
+  loadError,
+  ...props
+}) => {
+  const columns = useMachineConfigColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~MachineConfigs')}
-      Header={MachineConfigTableHeader}
-      Row={MachineConfigTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView<MachineConfigKind>
+        {...props}
+        label={MachineConfigModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        loadError={loadError}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -238,6 +301,7 @@ export const MachineConfigPage: React.FCC<any> = ({ canCreate = true, ...rest })
     canCreate={canCreate}
     ListComponent={MachineConfigList}
     kind={machineConfigReference}
+    omitFilterToolbar={true}
   />
 );
 
@@ -248,4 +312,13 @@ type MachineConfigDetailsProps = {
 type MachineConfigSummaryProps = {
   obj: MachineConfigKind;
   t: TFunction;
+};
+
+type MachineConfigListProps = {
+  data: MachineConfigKind[];
+  loaded: boolean;
+  loadError?: any;
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  hideColumnManagement?: boolean;
 };
