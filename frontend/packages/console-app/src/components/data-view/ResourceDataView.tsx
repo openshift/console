@@ -144,7 +144,7 @@ export const ResourceDataView = <
       );
     }
 
-    if (!hideNameLabelFilters && !hideLabelFilter) {
+    if (!hideNameLabelFilters && !hideLabelFilter && loaded) {
       basicFilters.push(
         <DataViewLabelFilter key="label" filterId="label" title={t('public~Label')} data={data} />,
       );
@@ -156,7 +156,7 @@ export const ResourceDataView = <
 
     // Can't use data in the deps array as it will recompute the filters and will cause the selected category to reset
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [additionalFilterNodes, t]);
+  }, [additionalFilterNodes, t, loaded]);
 
   return mock ? (
     <EmptyBox label={label} />
