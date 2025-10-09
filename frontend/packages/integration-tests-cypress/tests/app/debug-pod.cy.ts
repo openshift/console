@@ -54,7 +54,7 @@ describe('Debug pod', () => {
 
   it('Opens debug terminal page from Logs subsection', () => {
     cy.visit(`/k8s/ns/${testName}/pods`);
-    listPage.rows.shouldExist(POD_NAME);
+    listPage.dvRows.shouldExist(POD_NAME);
     cy.visit(`/k8s/ns/${testName}/pods/${POD_NAME}`);
     detailsPage.isLoaded();
     detailsPage.selectTab('Logs');
@@ -63,7 +63,7 @@ describe('Debug pod', () => {
     listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
     cy.get(XTERM_CLASS).should('exist');
     cy.get('[data-test-id="breadcrumb-link-0"]').click();
-    listPage.rows.shouldExist(POD_NAME);
+    listPage.dvRows.shouldExist(POD_NAME);
   });
 
   it('Opens debug terminal page from Pod Details - Status tool tip', () => {
@@ -74,13 +74,13 @@ describe('Debug pod', () => {
     listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
     cy.get(XTERM_CLASS).should('exist');
     cy.get('[data-test-id="breadcrumb-link-0"]').click();
-    listPage.rows.shouldExist(POD_NAME);
+    listPage.dvRows.shouldExist(POD_NAME);
   });
 
   it('Opens debug terminal page from Pods Page - Status tool tip', () => {
     cy.visit(`/k8s/ns/${testName}/pods`);
-    listPage.rows.shouldExist(POD_NAME);
-    listPage.rows.clickStatusButton(POD_NAME);
+    listPage.dvRows.shouldExist(POD_NAME);
+    listPage.dvRows.clickStatusButton(POD_NAME);
     // Click on first debug link
     cy.byTestID(`popup-debug-container-link-${CONTAINER_NAME}`).click();
     listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
@@ -94,18 +94,18 @@ describe('Debug pod', () => {
       expect(`${ipAddressOne}`).to.not.equal(`${ipAddressTwo}`);
     });
     cy.get('[data-test-id="breadcrumb-link-0"]').click();
-    listPage.rows.shouldExist(POD_NAME);
+    listPage.dvRows.shouldExist(POD_NAME);
   });
 
   it('Debug pod should be terminated after leaving debug container page', () => {
     cy.visit(`/k8s/ns/${testName}/pods`);
-    listPage.rows.shouldExist(POD_NAME);
-    listPage.filter.by('Running');
+    listPage.dvRows.shouldExist(POD_NAME);
+    listPage.dvFilter.by('Running');
     cy.exec(
       `oc get pods -n ${testName} -o jsonpath='{.items[0].metadata.name}{"#"}{.items[1].metadata.name}'`,
     ).then((result) => {
       const debugPodName = result.stdout.split('#')[1];
-      listPage.rows.shouldNotExist(debugPodName);
+      listPage.dvRows.shouldNotExist(debugPodName);
     });
   });
 });

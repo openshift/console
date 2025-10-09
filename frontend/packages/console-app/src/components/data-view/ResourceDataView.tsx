@@ -49,6 +49,25 @@ export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
   mock?: boolean;
 };
 
+export const BodyLoading: React.FCC<{ columns: number }> = ({ columns }) => {
+  return <SkeletonTableBody rowsCount={5} columnsCount={columns} />;
+};
+
+export const BodyEmpty: React.FCC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
+  const { t } = useTranslation();
+  return (
+    <Tbody>
+      <Tr>
+        <Td colSpan={colSpan}>
+          <Bullseye>
+            {label ? t('public~No {{label}} found', { label }) : t('public~None found')}
+          </Bullseye>
+        </Td>
+      </Tr>
+    </Tbody>
+  );
+};
+
 /**
  * Console DataView component based on PatternFly DataView.
  */
@@ -100,24 +119,13 @@ export const ResourceDataView = <
     customRowData,
   });
 
-  const bodyLoading = React.useMemo(
-    () => <SkeletonTableBody rowsCount={5} columnsCount={dataViewColumns.length} />,
-    [dataViewColumns.length],
-  );
+  const bodyLoading = React.useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
+    dataViewColumns.length,
+  ]);
 
   const bodyEmpty = React.useMemo(
-    () => (
-      <Tbody>
-        <Tr>
-          <Td colSpan={dataViewColumns.length}>
-            <Bullseye>
-              {label ? t('public~No {{label}} found', { label }) : t('public~None found')}
-            </Bullseye>
-          </Td>
-        </Tr>
-      </Tbody>
-    ),
-    [t, dataViewColumns.length, label],
+    () => <BodyEmpty label={label} colSpan={dataViewColumns.length} />,
+    [dataViewColumns.length, label],
   );
 
   const activeState = React.useMemo(() => {
@@ -134,10 +142,17 @@ export const ResourceDataView = <
     const basicFilters: React.ReactNode[] = [];
 
     if (!hideNameLabelFilters) {
-      basicFilters.push(<DataViewTextFilter key="name" filterId="name" title={t('public~Name')} />);
+      basicFilters.push(
+        <DataViewTextFilter
+          key="name"
+          filterId="name"
+          title={t('public~Name')}
+          placeholder={t('public~Filter by name')}
+        />,
+      );
     }
 
-    if (!hideNameLabelFilters && !hideLabelFilter) {
+    if (!hideNameLabelFilters && !hideLabelFilter && loaded) {
       basicFilters.push(
         <DataViewLabelFilter key="label" filterId="label" title={t('public~Label')} data={data} />,
       );
@@ -149,7 +164,7 @@ export const ResourceDataView = <
 
     // Can't use data in the deps array as it will recompute the filters and will cause the selected category to reset
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [additionalFilterNodes, t]);
+  }, [additionalFilterNodes, t, loaded]);
 
   return mock ? (
     <EmptyBox label={label} />
