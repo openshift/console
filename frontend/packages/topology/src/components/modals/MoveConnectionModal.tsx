@@ -97,10 +97,12 @@ const MoveConnectionForm: React.FC<
           <FormGroup fieldId="target-node" label="Target">
             <Select
               id="target-node-dropdown"
-              // @ts-expect-error FIXME: PatternFly's onSelect is typed wrong (value should be any)
-              onSelect={(_, value: Node) => {
+              onSelect={(_, value: string | number | undefined) => {
                 if (value) {
-                  values.target = value;
+                  const selectedNode = availableTargets.find((node) => node.getId() === value);
+                  if (selectedNode) {
+                    values.target = selectedNode;
+                  }
                 }
                 setOpen(false);
               }}
@@ -112,7 +114,7 @@ const MoveConnectionForm: React.FC<
                 {availableTargets.map((node) => (
                   <SelectOption
                     key={node.getId()}
-                    value={node}
+                    value={node.getId()}
                     isSelected={values.target.getId() === node.getId()}
                   >
                     {nodeItem(node)}
