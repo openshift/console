@@ -9,6 +9,10 @@
     "test": "yarn --cwd ../.. test packages/gitops-plugin"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx"
+    "entry": "src/plugin.ts",
+    "exposedModules": {
+      "listPage": "src/components/GitOpsListPage.tsx",
+      "detailsPage": "src/components/GitOpsDetailsPage.tsx"
+    }
   }
 }
