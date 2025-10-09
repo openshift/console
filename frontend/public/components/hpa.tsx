@@ -8,6 +8,7 @@ import {
   K8sResourceKind,
   K8sResourceKindReference,
   HorizontalPodAutoscalerKind,
+  referenceForModel,
 } from '../module/k8s';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
@@ -15,7 +16,6 @@ import {
   DetailsItem,
   Kebab,
   LabelList,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -24,11 +24,10 @@ import {
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { HorizontalPodAutoscalerModel } from '../models';
+import { LazyActionMenu } from '@console/shared/src';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalPodAutoscaler';
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
 
 const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
   <Tr>
@@ -240,14 +239,23 @@ const pages = [
   navFactory.editYaml(),
   navFactory.events(ResourceEventStream),
 ];
-export const HorizontalPodAutoscalersDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    kind={HorizontalPodAutoscalersReference}
-    menuActions={menuActions}
-    pages={pages}
-  />
-);
+export const HorizontalPodAutoscalersDetailsPage: React.FC<React.ComponentProps<
+  typeof DetailsPage
+>> = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={referenceForModel(HorizontalPodAutoscalerModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(HorizontalPodAutoscalerModel)]: obj }}
+          {...props}
+        />
+      )}
+      pages={pages}
+    />
+  );
+};
 HorizontalPodAutoscalersDetailsPage.displayName = 'HorizontalPodAutoscalersDetailsPage';
 
 const tableColumnClasses = [
@@ -289,11 +297,7 @@ const HorizontalPodAutoscalersTableRow: React.FC<RowFunctionArgs<K8sResourceKind
       <TableData className={tableColumnClasses[4]}>{obj.spec.minReplicas}</TableData>
       <TableData className={tableColumnClasses[5]}>{obj.spec.maxReplicas}</TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab
-          actions={menuActions}
-          kind={HorizontalPodAutoscalersReference}
-          resource={obj}
-        />
+        <LazyActionMenu context={{ [referenceForModel(HorizontalPodAutoscalerModel)]: obj }} />
       </TableData>
     </>
   );

@@ -31,7 +31,6 @@ import { DetailsPage, ListPage, TableData } from './factory';
 import {
   Kebab,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   resourcePath,
   ResourceSummary,
@@ -41,9 +40,9 @@ import {
 import { ResourceEventStream } from './events';
 import { MachinePage, machineReference } from './machine';
 import { MachineTabPageProps } from './machine-set';
+import { LazyActionMenu } from '@console/shared/src';
 
 const controlPlaneMachineSetReference = referenceForModel(ControlPlaneMachineSetModel);
-const controlPlaneMachineSetMenuActions = [...Kebab.factory.common];
 const getDesiredReplicas = (resource: ControlPlaneMachineSetKind) => {
   return resource.spec.replicas;
 };
@@ -194,14 +193,18 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const ControlPlaneMachineSetDetailsPage: React.FC<any> = (props) => (
-  <DetailsPage
-    {...props}
-    kind={controlPlaneMachineSetReference}
-    menuActions={controlPlaneMachineSetMenuActions}
-    pages={pages}
-  />
-);
+export const ControlPlaneMachineSetDetailsPage: React.FC<any> = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={controlPlaneMachineSetReference}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [controlPlaneMachineSetReference]: obj }} {...props} />
+      )}
+      pages={pages}
+    />
+  );
+};
 
 const tableColumnClasses = [
   '',
@@ -284,11 +287,7 @@ const ControlPlaneMachineSetList: React.FC<ControlPlaneMachineSetListProps> = (p
         </TableData>
         <TableData className={tableColumnClasses[4]}>{obj.spec?.state || DASH}</TableData>
         <TableData className={tableColumnClasses[5]}>
-          <ResourceKebab
-            actions={controlPlaneMachineSetMenuActions}
-            kind={controlPlaneMachineSetReference}
-            resource={obj}
-          />
+          <LazyActionMenu context={{ [controlPlaneMachineSetReference]: obj }} />
         </TableData>
       </>
     );

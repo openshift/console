@@ -5,6 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import {
@@ -208,9 +209,12 @@ export const CatalogSourceOperatorsPage: React.FC<CatalogSourceOperatorsPageProp
   return <PackageManifestsPage catalogSource={props.obj} showTitle={false} {...props} />;
 };
 
-export const CatalogSourceDetailsPage: React.FC = (props) => {
+export const CatalogSourceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
+  props,
+) => {
   const [operatorHub, operatorHubLoaded, operatorHubLoadError] = useOperatorHubConfig();
   const params = useParams();
+  const commonActions = useCommonResourceActions(CatalogSourceModel, props.obj);
 
   const isDefaultSource = React.useMemo(
     () =>
@@ -221,7 +225,7 @@ export const CatalogSourceDetailsPage: React.FC = (props) => {
 
   const menuActions = isDefaultSource
     ? [Kebab.factory.Edit, () => disableSourceModal(OperatorHubModel, operatorHub, params.name)]
-    : Kebab.factory.common;
+    : commonActions;
 
   return (
     <DetailsPage

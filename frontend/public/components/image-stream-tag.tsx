@@ -5,9 +5,9 @@ import { useParams, useLocation } from 'react-router-dom-v5-compat';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';
 import { DetailsPage, Table } from './factory';
-import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
+import { SectionHeading, navFactory, ResourceSummary } from './utils';
 import { humanizeBinaryBytes } from './utils/units';
 import { ExampleDockerCommandPopover } from './image-stream';
 import { ImageStreamTimeline } from './image-stream-timeline';
@@ -21,12 +21,10 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { LazyActionMenu } from '@console/shared/src';
+import { ImageStreamTagModel } from '../models';
 
-const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
 
 // Splits a name/value pair separated by an `=`
 const splitEnv = (nameValue: string) => {
@@ -329,6 +327,7 @@ export const ImageStreamTagsDetailsPage: React.FCC<ImageStreamTagsDetailsPagePro
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();
+
   return (
     <DetailsPage
       {...props}
@@ -349,8 +348,10 @@ export const ImageStreamTagsDetailsPage: React.FCC<ImageStreamTagsDetailsPagePro
           },
         ];
       }}
-      kind={ImageStreamTagsReference}
-      menuActions={menuActions}
+      kind={referenceForModel(ImageStreamTagModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(ImageStreamTagModel)]: obj }} {...props} />
+      )}
       resources={[
         {
           kind: ImageStreamsReference,

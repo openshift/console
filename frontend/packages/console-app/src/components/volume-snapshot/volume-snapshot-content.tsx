@@ -16,7 +16,6 @@ import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import {
   ResourceLink,
-  ResourceKebab,
   Kebab,
   humanizeBinaryBytes,
   PageComponentProps,
@@ -28,7 +27,7 @@ import {
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
+import { LazyActionMenu, Status } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
@@ -76,11 +75,7 @@ const Row: React.FC<RowProps<VolumeSnapshotContentKind>> = ({ obj }) => {
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
       <TableData {...tableColumnInfo[6]}>
-        <ResourceKebab
-          kind={referenceForModel(VolumeSnapshotContentModel)}
-          resource={obj}
-          actions={Kebab.factory.common}
-        />
+        <LazyActionMenu context={{ [referenceForModel(VolumeSnapshotContentModel)]: obj }} />
       </TableData>
     </>
   );

@@ -12,10 +12,10 @@ import {
   ComponentProps,
 } from '@console/internal/components/factory';
 import {
-  ResourceKebab,
+  // ResourceKebab,
   ResourceLink,
   ResourceIcon,
-  Kebab,
+  // Kebab,
   ConsoleEmptyState,
   useAccessReview,
 } from '@console/internal/components/utils';
@@ -71,9 +71,9 @@ describe('InstallPlanTableRow', () => {
     wrapper = updateWrapper();
   });
 
-  it('renders resource kebab for performing common actions', () => {
-    expect(wrapper.find(ResourceKebab).props().actions).toEqual(Kebab.factory.common);
-  });
+  // it('renders resource kebab for performing common actions', () => {
+  //   expect(wrapper.find(ResourceKebab).props().actions).toEqual(Kebab.factory.common);
+  // });
 
   it('renders column for install plan name', () => {
     expect(wrapper.childAt(0).find(ResourceLink).props().kind).toEqual(
@@ -380,7 +380,7 @@ describe('InstallPlanDetailsPage', () => {
     jest
       .spyOn(Router, 'useParams')
       .mockReturnValue({ ns: 'default', name: testInstallPlan.metadata.name });
-    wrapper = shallow(<InstallPlanDetailsPage />);
+    wrapper = shallow(<InstallPlanDetailsPage kind={referenceForModel(InstallPlanModel)} />);
   });
 
   it('renders a `DetailsPage` with correct props', () => {

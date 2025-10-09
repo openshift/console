@@ -13,7 +13,6 @@ import {
   DetailsItem,
   EmptyBox,
   Kebab,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -22,9 +21,8 @@ import {
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
+import { LazyActionMenu } from '@console/shared/src';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
@@ -46,7 +44,7 @@ const MachineHealthCheckTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = (
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={machineHealthCheckReference} resource={obj} />
+        <LazyActionMenu context={{ [machineHealthCheckReference]: obj }} />
       </TableData>
     </>
   );
@@ -171,14 +169,18 @@ export const MachineHealthCheckPage: React.FC<MachineHealthCheckPageProps> = (pr
   />
 );
 
-export const MachineHealthCheckDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    kind={machineHealthCheckReference}
-    pages={[navFactory.details(MachineHealthCheckDetails), navFactory.editYaml()]}
-  />
-);
+export const MachineHealthCheckDetailsPage: React.FC = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={machineHealthCheckReference}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineHealthCheckReference]: obj }} {...props} />
+      )}
+      pages={[navFactory.details(MachineHealthCheckDetails), navFactory.editYaml()]}
+    />
+  );
+};
 
 type MachineHealthCheckPageProps = {
   showTitle?: boolean;

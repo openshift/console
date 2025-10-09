@@ -13,14 +13,7 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
-import {
-  Kebab,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-} from './utils';
+import { Kebab, navFactory, ResourceLink, ResourceSummary, SectionHeading } from './utils';
 import {
   DescriptionListDescription,
   DescriptionListGroup,
@@ -28,9 +21,8 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { LazyActionMenu } from '@console/shared/src';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
 const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = ({ obj }) => {
@@ -78,7 +70,7 @@ const MachineAutoscalerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
         {_.get(obj, 'spec.maxReplicas') || '-'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={machineAutoscalerReference} resource={obj} />
+        <LazyActionMenu context={{ [machineAutoscalerReference]: obj }} />
       </TableData>
     </>
   );
@@ -181,14 +173,20 @@ export const MachineAutoscalerPage: React.FC<MachineAutoscalerPageProps> = (prop
   />
 );
 
-export const MachineAutoscalerDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    kind={machineAutoscalerReference}
-    pages={[navFactory.details(MachineAutoscalerDetails), navFactory.editYaml()]}
-  />
-);
+export const MachineAutoscalerDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
+  props,
+) => {
+  return (
+    <DetailsPage
+      {...props}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineAutoscalerReference]: obj }} {...props} />
+      )}
+      kind={machineAutoscalerReference}
+      pages={[navFactory.details(MachineAutoscalerDetails), navFactory.editYaml()]}
+    />
+  );
+};
 
 type MachineAutoscalerPageProps = {
   showTitle?: boolean;

@@ -3,19 +3,12 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
-import {
-  Kebab,
-  SectionHeading,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-} from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceLink, ResourceSummary } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
+import { LazyActionMenu } from '@console/shared';
+import { referenceForModel } from '../module/k8s';
+import { ServiceAccountModel } from '../models';
 
 const kind = 'ServiceAccount';
 
@@ -45,7 +38,7 @@ const ServiceAccountTableRow = ({ obj: serviceaccount }) => {
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={serviceaccount} />
+        <LazyActionMenu context={{ [referenceForModel(ServiceAccountModel)]: serviceaccount }} />
       </TableData>
     </>
   );
@@ -69,7 +62,10 @@ const Details = ({ obj: serviceaccount }) => {
 const ServiceAccountsDetailsPage = (props) => (
   <DetailsPage
     {...props}
-    menuActions={menuActions}
+    kind={referenceForModel(ServiceAccountModel)}
+    customActionMenu={(obj) => (
+      <LazyActionMenu context={{ [referenceForModel(ServiceAccountModel)]: obj }} {...props} />
+    )}
     pages={[navFactory.details(Details), navFactory.editYaml()]}
   />
 );
