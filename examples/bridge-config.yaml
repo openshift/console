@@ -1,0 +1,15 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleConfig
+servingInfo:
+  bindAddress: http://0.0.0.0:9000
+clusterInfo:
+  consoleBaseAddress: http://localhost:9000
+  consoleBasePath: /
+customization:
+  branding: okd
+  documentationBaseURL: https://docs.okd.io/latest/
+auth:
+  authType: openshift
+  clientID: console-oauth-client
+  clientSecretFile: examples/console-client-secret
+  oauthEndpointCAFile: examples/ca.crt
