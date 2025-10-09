@@ -993,20 +993,47 @@ export const PodList: React.FCC<PodListProps> = ({
     }),
     [columns, columnManagementID, activeColumns, t],
   );
-  const podStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(
-    () => [
-      { value: 'Running', label: t('public~Running') },
-      { value: 'Pending', label: t('public~Pending') },
-      { value: 'Terminating', label: t('public~Terminating') },
-      { value: 'CrashLoopBackOff', label: t('public~CrashLoopBackOff') },
+  const podStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(() => {
+    // Calculate pod counts by status
+    const statusCounts = data.reduce((counts, pod) => {
+      const status = podPhaseFilterReducer(pod);
+      counts[status] = (counts[status] || 0) + 1;
+      return counts;
+    }, {} as Record<string, number>);
+
+    return [
+      {
+        value: 'Running',
+        label: `${t('public~Running')} (${statusCounts.Running || 0})`,
+      },
+      {
+        value: 'Pending',
+        label: `${t('public~Pending')} (${statusCounts.Pending || 0})`,
+      },
+      {
+        value: 'Terminating',
+        label: `${t('public~Terminating')} (${statusCounts.Terminating || 0})`,
+      },
+      {
+        value: 'CrashLoopBackOff',
+        label: `${t('public~CrashLoopBackOff')} (${statusCounts.CrashLoopBackOff || 0})`,
+      },
       // Use title "Completed" to match what appears in the status column for the pod.
       // The pod phase is "Succeeded," but the container state is "Completed."
-      { value: 'Succeeded', label: t('public~Completed') },
-      { value: 'Failed', label: t('public~Failed') },
-      { value: 'Unknown', label: t('public~Unknown') },
-    ],
-    [t],
-  );
+      {
+        value: 'Succeeded',
+        label: `${t('public~Completed')} (${statusCounts.Succeeded || 0})`,
+      },
+      {
+        value: 'Failed',
+        label: `${t('public~Failed')} (${statusCounts.Failed || 0})`,
+      },
+      {
+        value: 'Unknown',
+        label: `${t('public~Unknown')} (${statusCounts.Unknown || 0})`,
+      },
+    ];
+  }, [t, data]);
   const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
