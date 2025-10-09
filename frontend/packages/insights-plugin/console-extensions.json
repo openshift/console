@@ -21,7 +21,7 @@
       "popupComponent": {
         "$codeRef": "InsightsPopup.InsightsPopup"
       },
-      "popupTitle": "%insights-plugin~Red Hat Lightspeed status%"
+      "popupTitle": "%insights-plugin~Red Hat Lightspeed  Advisor status%"
     }
   }
 ]
