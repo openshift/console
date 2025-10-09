@@ -9,6 +9,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/operator-framework/kubectl-operator/pkg/action"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
@@ -69,6 +70,20 @@ func (o *OLMHandler) OperandsList(user *auth.User, w http.ResponseWriter, r *htt
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
 		return
+	}
+	// Deduplicate operands by UID to prevent duplicate CRs
+	if operandsList != nil && len(operandsList.Items) > 0 {
+		seen := make(map[string]bool)
+		uniqueOperands := make([]unstructured.Unstructured, 0, len(operandsList.Items))
+
+		for _, operand := range operandsList.Items {
+			uid := string(operand.GetUID())
+			if !seen[uid] {
+				seen[uid] = true
+				uniqueOperands = append(uniqueOperands, operand)
+			}
+		}
+		operandsList.Items = uniqueOperands
 	}
 
 	w.Header().Set("Content-Type", "application/json")
