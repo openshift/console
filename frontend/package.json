@@ -153,7 +153,7 @@
     "@patternfly/react-topology": "^6.2.0",
     "@patternfly/react-user-feedback": "^6.1.0",
     "@patternfly/react-virtualized-extension": "^6.0.0",
-    "@rjsf/core": "^2.5.1",
+    "@rjsf/core": "^4.2.3",
     "@xterm/addon-fit": "0.10.0",
     "@xterm/xterm": "^5.5.0",
     "ajv": "^6.12.3",
