@@ -148,6 +148,8 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	subProtocol := ""
 	proxiedHeader := make(http.Header, len(r.Header))
+	hasImpersonateUser := false
+
 	for key, value := range r.Header {
 		if key != "Sec-Websocket-Protocol" {
 			// Do not proxy the subprotocol to the API server because k8s does not understand what we're sending
@@ -169,6 +171,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					proxiedHeader.Set("Impersonate-User", decodedProtocol)
+					hasImpersonateUser = true
 					subProtocol = protocol
 				} else if strings.HasPrefix(protocol, "Impersonate-Group.") {
 					encodedProtocol := strings.TrimPrefix(protocol, "Impersonate-Group.")
@@ -178,8 +181,12 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						http.Error(w, errMsg, http.StatusBadRequest)
 						return
 					}
-					proxiedHeader.Set("Impersonate-User", string(decodedProtocol))
-					proxiedHeader.Set("Impersonate-Group", string(decodedProtocol))
+					// If we haven't set Impersonate-User yet, this is single-group impersonation (backward compatibility)
+					if !hasImpersonateUser {
+						proxiedHeader.Set("Impersonate-User", string(decodedProtocol))
+					}
+					// Add each group as a separate Impersonate-Group header
+					proxiedHeader.Add("Impersonate-Group", string(decodedProtocol))
 					subProtocol = protocol
 				} else {
 					proxiedHeader.Set("Sec-Websocket-Protocol", protocol)
@@ -187,6 +194,11 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
+	}
+
+	// Add system:authenticated when impersonating groups
+	if len(proxiedHeader["Impersonate-Group"]) > 0 {
+		proxiedHeader.Add("Impersonate-Group", "system:authenticated")
 	}
 
 	// Filter websocket headers.
