@@ -123,6 +123,20 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		r.Header.Del(h)
 	}
 
+	// Handle X-Console-Impersonate-Groups header for multi-group impersonation
+	// The fetch() API doesn't support multiple headers with the same name,
+	// so the frontend sends a comma-separated list that we split here
+	if consoleGroups := r.Header.Get("X-Console-Impersonate-Groups"); consoleGroups != "" {
+		r.Header.Del("X-Console-Impersonate-Groups")
+		groups := strings.Split(consoleGroups, ",")
+		for _, group := range groups {
+			group = strings.TrimSpace(group)
+			if group != "" {
+				r.Header.Add("Impersonate-Group", group)
+			}
+		}
+	}
+
 	// Include `system:authenticated` when impersonating groups so that basic requests that all
 	// users can run like self-subject access reviews work.
 	if len(r.Header["Impersonate-Group"]) > 0 {
