@@ -1,18 +1,18 @@
-import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle, Gallery } from '@patternfly/react-core';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import { Status } from '@console/shared';
-import { LoadingInline } from '@console/internal/components/utils/status-box';
 import {
   DashboardsOverviewHealthResourceSubsystem,
   isDashboardsOverviewHealthResourceSubsystem,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
-import { ProjectDashboardContext } from './project-dashboard-context';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
+import { Status } from '@console/shared';
+import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import { Card, CardHeader, CardTitle, Gallery } from '@patternfly/react-core';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ResourceHealthItem } from '../dashboards-page/cluster-dashboard/health-item';
+import { ProjectDashboardContext } from './project-dashboard-context';
 
-import { DashboardAlerts } from '../dashboards-page/cluster-dashboard/status-card';
+import { DashboardNamespacedAlerts } from '../dashboards-page/cluster-dashboard/status-card';
 
 export const StatusCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
@@ -45,7 +45,7 @@ export const StatusCard: React.FC = () => {
               )}
             </Gallery>
           </HealthBody>
-          <DashboardAlerts labelSelector={{ namespace }} />
+          {namespace && <DashboardNamespacedAlerts namespace={namespace} />}
         </>
       ) : (
         <LoadingInline />
