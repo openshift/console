@@ -1,33 +1,12 @@
 import * as React from 'react';
 import {
-  ResponsiveAction,
-  ResponsiveActions,
-  SkeletonTableBody,
-} from '@patternfly/react-component-groups';
-import { Bullseye, Pagination, Tooltip } from '@patternfly/react-core';
-import {
-  DataView,
-  DataViewState,
-  DataViewTable,
-  DataViewTextFilter,
-  DataViewToolbar,
-} from '@patternfly/react-data-view';
-import DataViewFilters from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
-import { ColumnsIcon } from '@patternfly/react-icons';
-import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
-import { useTranslation } from 'react-i18next';
-import {
   ColumnLayout,
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { createColumnManagementModal } from '@console/internal/components/modals';
 import { TableColumn } from '@console/internal/module/k8s';
-import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
-import { StatusBox } from '@console/shared/src/components/status/StatusBox';
-import { DataViewLabelFilter } from './DataViewLabelFilter';
-import { ResourceFilters, GetDataViewRows } from './types';
-import { useResourceDataViewData } from './useResourceDataViewData';
-import { useResourceDataViewFilters } from './useResourceDataViewFilters';
+import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
+import { GeneralDataView } from './GeneralDataView';
+import { GeneralFilters, GetGeneralDataViewRows, ResourceFilters, GetDataViewRows } from './types';
 
 export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
   label?: string;
@@ -49,27 +28,11 @@ export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
   mock?: boolean;
 };
 
-export const BodyLoading: React.FCC<{ columns: number }> = ({ columns }) => {
-  return <SkeletonTableBody rowsCount={5} columnsCount={columns} />;
-};
-
-export const BodyEmpty: React.FCC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
-  const { t } = useTranslation();
-  return (
-    <Tbody>
-      <Tr>
-        <Td colSpan={colSpan}>
-          <Bullseye>
-            {label ? t('public~No {{label}} found', { label }) : t('public~None found')}
-          </Bullseye>
-        </Td>
-      </Tr>
-    </Tbody>
-  );
-};
+export { BodyLoading, BodyEmpty, initialFiltersDefault } from './GeneralDataView';
 
 /**
  * Console DataView component based on PatternFly DataView.
+ * This component is now a wrapper around GeneralDataView that provides K8s-specific functionality.
  */
 export const ResourceDataView = <
   TData extends K8sResourceCommon = K8sResourceCommon,
@@ -94,135 +57,46 @@ export const ResourceDataView = <
   hideColumnManagement,
   mock,
 }: ResourceDataViewProps<TData, TCustomRowData, TFilters>) => {
-  const { t } = useTranslation();
+  // Convert GetDataViewRows to GetGeneralDataViewRows
+  const getGeneralDataViewRows: GetGeneralDataViewRows<TData, TCustomRowData> = (
+    rowData: any[],
+    dataViewColumns: any[],
+  ) => {
+    return getDataViewRows(rowData, dataViewColumns);
+  };
 
-  const { filters, onSetFilters, clearAllFilters, filteredData } = useResourceDataViewFilters<
-    TData,
-    TFilters
-  >({
-    data,
-    initialFilters,
-    matchesAdditionalFilters,
-  });
+  // Convert matchesAdditionalFilters to work with GeneralFilters
+  const matchesGeneralAdditionalFilters = matchesAdditionalFilters
+    ? (resource: TData, filters: GeneralFilters) => {
+        const resourceFilters: TFilters = {
+          ...filters,
+        } as TFilters;
+        return matchesAdditionalFilters(resource, resourceFilters);
+      }
+    : undefined;
 
-  const { dataViewColumns, dataViewRows, pagination } = useResourceDataViewData<
-    TData,
-    TCustomRowData,
-    TFilters
-  >({
-    columns,
-    filteredData,
-    filters,
-    getDataViewRows,
-    showNamespaceOverride,
-    columnManagementID,
-    customRowData,
-  });
-
-  const bodyLoading = React.useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
-    dataViewColumns.length,
-  ]);
-
-  const bodyEmpty = React.useMemo(
-    () => <BodyEmpty label={label} colSpan={dataViewColumns.length} />,
-    [dataViewColumns.length, label],
-  );
-
-  const activeState = React.useMemo(() => {
-    if (!loaded) {
-      return DataViewState.loading;
-    }
-    if (filteredData.length === 0) {
-      return DataViewState.empty;
-    }
-    return undefined;
-  }, [filteredData.length, loaded]);
-
-  const dataViewFilterNodes = React.useMemo<React.ReactNode[]>(() => {
-    const basicFilters: React.ReactNode[] = [];
-
-    if (!hideNameLabelFilters) {
-      basicFilters.push(
-        <DataViewTextFilter
-          key="name"
-          filterId="name"
-          title={t('public~Name')}
-          placeholder={t('public~Filter by name')}
-        />,
-      );
-    }
-
-    if (!hideNameLabelFilters && !hideLabelFilter && loaded) {
-      basicFilters.push(
-        <DataViewLabelFilter key="label" filterId="label" title={t('public~Label')} data={data} />,
-      );
-    }
-
-    return additionalFilterNodes?.length > 0
-      ? [...additionalFilterNodes, ...basicFilters]
-      : basicFilters;
-
-    // Can't use data in the deps array as it will recompute the filters and will cause the selected category to reset
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [additionalFilterNodes, t, loaded]);
-
-  return mock ? (
-    <EmptyBox label={label} />
-  ) : (
-    <StatusBox
+  return (
+    <GeneralDataView
       label={label}
       data={data}
       loaded={loaded}
       loadError={loadError}
-      skeleton={<div className="loading-skeleton--table" />}
-    >
-      <DataView activeState={activeState}>
-        <DataViewToolbar
-          filters={
-            dataViewFilterNodes.length > 0 && (
-              <DataViewFilters values={filters} onChange={(_e, values) => onSetFilters(values)}>
-                {dataViewFilterNodes}
-              </DataViewFilters>
-            )
-          }
-          clearAllFilters={clearAllFilters}
-          actions={
-            !hideColumnManagement && (
-              <ResponsiveActions breakpoint="lg">
-                <ResponsiveAction
-                  isPersistent
-                  variant="plain"
-                  onClick={() =>
-                    createColumnManagementModal({
-                      columnLayout,
-                      noLimit: true,
-                    })
-                  }
-                  aria-label={t('public~Column management')}
-                  data-test="manage-columns"
-                >
-                  <Tooltip content={t('public~Manage columns')} trigger="mouseenter">
-                    <ColumnsIcon />
-                  </Tooltip>
-                </ResponsiveAction>
-              </ResponsiveActions>
-            )
-          }
-          pagination={<Pagination itemCount={filteredData.length} {...pagination} />}
-        />
-        <InnerScrollContainer>
-          <DataViewTable
-            aria-label={t(`public~{{label}} table`, { label })}
-            columns={dataViewColumns}
-            rows={dataViewRows}
-            bodyStates={{ empty: bodyEmpty, loading: bodyLoading }}
-            gridBreakPoint=""
-            variant="compact"
-            data-test="data-view-table"
-          />
-        </InnerScrollContainer>
-      </DataView>
-    </StatusBox>
+      columns={columns}
+      columnLayout={columnLayout}
+      columnManagementID={columnManagementID}
+      initialFilters={initialFilters}
+      additionalFilterNodes={additionalFilterNodes}
+      matchesAdditionalFilters={matchesGeneralAdditionalFilters}
+      getDataViewRows={getGeneralDataViewRows}
+      customRowData={customRowData}
+      showNamespaceOverride={showNamespaceOverride}
+      hideNameLabelFilters={hideNameLabelFilters}
+      hideLabelFilter={hideLabelFilter}
+      hideColumnManagement={hideColumnManagement}
+      mock={mock}
+      getNameFromItem={(item: TData) => item.metadata?.name || ''}
+      getLabelsAsString={(item: TData) => getLabelsAsString(item).join(', ')}
+    />
   );
 };
 
@@ -248,5 +122,3 @@ export const actionsCellProps = {
   hasLeftBorder: true,
   isActionCell: true,
 };
-
-export const initialFiltersDefault = { name: '', label: '' };
