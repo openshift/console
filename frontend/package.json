@@ -352,6 +352,7 @@
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.x",
     "@types/jest": "21.x",
+    "dompurify": "3.2.7",
     "hosted-git-info": "^3.0.8",
     "jquery": "3.5.1",
     "lodash-es": "^4.17.21",
