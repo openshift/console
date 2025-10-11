@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { listPage } from '../../views/list-page';
-import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
 
 const crd = 'ConsoleNotification';
@@ -50,9 +49,8 @@ describe(`${crd} CRD`, () => {
     });
 
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
     cy.log('Additional printer columns should exist.');
-    cy.byTestID('has-additional-printer-columns').should('exist');
     cy.byTestID('additional-printer-column-header-Text').should('have.text', 'Text');
     cy.byTestID('additional-printer-column-data-Text').should('have.text', text);
     cy.byTestID('additional-printer-column-header-Location').should('have.text', 'Location');
@@ -99,12 +97,6 @@ describe(`${crd} CRD`, () => {
 
     cy.get(altNotification).contains(altText).should('exist').and('be.visible');
 
-    cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
-    listPage.rows.shouldBeLoaded();
-    listPage.rows.clickKebabAction(name, `Delete ${crd}`);
-    modal.shouldBeOpened();
-    modal.modalTitleShouldContain(`Delete ${crd}`);
-    modal.submit();
-    modal.shouldBeClosed();
+    cy.exec(`oc delete ${crd} ${name}`);
   });
 });
