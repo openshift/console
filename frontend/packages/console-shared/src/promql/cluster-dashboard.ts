@@ -309,7 +309,10 @@ const overviewQueries = {
   [OverviewQuery.CPU_UTILIZATION]: _.template(
     `
       sum(
-        1 - sum without (mode) (rate(node_cpu_seconds_total{mode=~"idle|iowait|steal"}[2m]))
+          (
+            sum without (mode) (rate(node_cpu_seconds_total{}[2m]))
+            - sum without (mode) (rate(node_cpu_seconds_total{mode=~"idle|iowait|steal"}[2m]))
+          )
         *
         on(instance) group_left() (
           label_replace(max by (node) (kube_node_role{role=~"<%= nodeType %>"}), "instance", "$1", "node","(.*)")
