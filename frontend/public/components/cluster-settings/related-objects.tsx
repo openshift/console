@@ -1,27 +1,27 @@
 import * as React from 'react';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { Table, TableData, RowFunctionArgs } from '../factory';
+import { GeneralDataView } from '@console/app/src/components/data-view/GeneralDataView';
 import {
   referenceForModel,
   ClusterOperator,
   ClusterOperatorObjectReference,
   useModelFinder,
 } from '../../module/k8s';
-import { ResourceLink, EmptyBox } from '../utils';
+import { ResourceLink } from '../utils';
+import { DASH } from '@console/shared/src/constants';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import {
+  getNameCellProps,
+  cellIsStickyProps,
+  initialFiltersDefault,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GeneralRowProps } from '@console/app/src/components/data-view/types';
 
-const tableColumnClasses = [
-  '', // Name
-  css('pf-m-hidden', 'pf-m-visible-on-sm'), // Resource
-  css('pf-m-hidden', 'pf-m-visible-on-md'), // Group
-  '', // NS
-];
+const columnIds = [{ id: 'name' }, { id: 'resource' }, { id: 'group' }, { id: 'namespace' }];
 
 const ResourceObjectName: React.FC<ResourceObjectNameProps> = ({ gsv, name, namespace }) => {
   if (!name) {
-    return <>-</>;
+    return <>{DASH}</>;
   }
   if (gsv) {
     return <ResourceLink kind={gsv} name={name} namespace={namespace} />;
@@ -29,88 +29,117 @@ const ResourceObjectName: React.FC<ResourceObjectNameProps> = ({ gsv, name, name
   return <>{name}</>;
 };
 
-const Row: React.FC<RowFunctionArgs> = ({ obj, customData: { findModel } }) => {
-  const { name, resource, namespace, group } = obj;
-  const model = findModel(group, resource);
+const getDataViewRows = (
+  data: GeneralRowProps<ClusterOperatorObjectReference, any>[],
+  findModel: (group: string, resource: string) => any,
+) => {
+  if (!Array.isArray(data)) {
+    return [];
+  }
 
-  const gsv = model ? referenceForModel(model) : null;
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceObjectName gsv={gsv} name={name} namespace={namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
-        {resource}
-        {group && (
-          <div className="pf-v6-u-display-none-on-md pf-v6-u-text-color-subtle">{group}</div>
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>{group || '-'}</TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {namespace ? <ResourceLink kind="Namespace" name={namespace} /> : '-'}
-      </TableData>
-    </>
-  );
+  return data.map((item) => {
+    const { name, resource, namespace, group } = item.obj;
+    const model = findModel(group, resource);
+    const gsv = model ? referenceForModel(model) : null;
+
+    const rowCells = {
+      [columnIds[0].id]: {
+        cell: <ResourceObjectName gsv={gsv} name={name} namespace={namespace} />,
+        props: getNameCellProps(name),
+      },
+      [columnIds[1].id]: {
+        cell: resource,
+      },
+      [columnIds[2].id]: {
+        cell: group || DASH,
+      },
+      [columnIds[3].id]: {
+        cell: namespace ? <ResourceLink kind="Namespace" name={namespace} /> : DASH,
+      },
+    };
+
+    return columnIds.map(({ id }) => ({
+      id,
+      cell: rowCells[id].cell,
+      props: rowCells[id].props,
+    }));
+  });
 };
 
-const EmptyMessage = () => {
-  const { t } = useTranslation();
-  return <EmptyBox label={t('public~Related objects')} />;
-};
-
-const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
+const RelatedObjects: React.FC<RelatedObjectsProps> = ({ data }) => {
   const { findModel } = useModelFinder();
   const { t } = useTranslation();
-  const Header = () => [
-    {
-      title: t('public~Name'),
-      sortField: 'name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: t('public~Resource'),
-      sortField: 'resource',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: t('public~Group'),
-      sortField: 'group',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('public~Namespace'),
-      sortField: 'namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-  ];
-  const customData = React.useMemo(
-    () => ({
-      findModel,
-    }),
+
+  const columns = React.useMemo(
+    () => [
+      {
+        id: columnIds[0].id,
+        title: t('public~Name'),
+        sort: 'name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        id: columnIds[1].id,
+        title: t('public~Resource'),
+        sort: 'resource',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        id: columnIds[2].id,
+        title: t('public~Group'),
+        sort: 'group',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        id: columnIds[3].id,
+        title: t('public~Namespace'),
+        sort: 'namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+    ],
+    [t],
+  );
+
+  // Create a wrapper function that includes findModel
+  const getDataViewRowsWithFindModel = React.useCallback(
+    (dataItems: GeneralRowProps<ClusterOperatorObjectReference, any>[]) =>
+      getDataViewRows(dataItems, findModel),
     [findModel],
   );
+
   return (
-    <PaneBody>
-      <Table
-        {...props}
-        Header={Header}
-        Row={Row}
-        customData={customData}
-        aria-label={t('public~Related objects')}
-        NoDataEmptyMsg={EmptyMessage}
-      />
-    </PaneBody>
+    <GeneralDataView
+      label={t('public~Related objects')}
+      data={data}
+      loaded={true}
+      columns={columns}
+      initialFilters={initialFiltersDefault}
+      getDataViewRows={getDataViewRowsWithFindModel}
+      getNameFromItem={(item) => item.name}
+      hideLabelFilter={true}
+      hideColumnManagement={true}
+    />
   );
 };
 
 const RelatedObjectsPage: React.FC<RelatedObjectsPageProps> = (props) => {
   const relatedObject: ClusterOperatorObjectReference[] = props.obj?.status?.relatedObjects;
-  const data = relatedObject?.filter(({ resource }) => resource);
-  return <RelatedObjects {...props} data={data} />;
+  const data: ClusterOperatorObjectReference[] =
+    relatedObject?.filter(({ resource }) => resource) || [];
+  return (
+    <PaneBody>
+      <RelatedObjects data={data} />
+    </PaneBody>
+  );
 };
 
 export default RelatedObjectsPage;

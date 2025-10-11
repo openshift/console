@@ -8,7 +8,7 @@ import { ResourceDataViewColumn } from './types';
 export const getSortByDirection = (value: string): SortByDirection =>
   value === SortByDirection.desc.valueOf() ? SortByDirection.desc : SortByDirection.asc;
 
-export const useResourceDataViewSort = <TData extends K8sResourceCommon = K8sResourceCommon>({
+export const useDataViewSort = <TData extends K8sResourceCommon = K8sResourceCommon>({
   columns,
   sortColumnIndex,
   sortDirection,
