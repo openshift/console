@@ -52,10 +52,11 @@ import { getClusterOperatorVersion, getJobTypeAndCompletions } from '../../modul
 import { getLatestVersionForCRD } from '../../module/k8s/k8s';
 import { getTemplateInstanceStatus } from '../../module/k8s/template';
 import { podPhase, podReadiness, podRestarts } from '../../module/k8s/pods';
+import { displayDurationInWords } from '../utils/build-utils';
 import { useTableData } from './table-data-hook';
 import TableHeader from './Table/TableHeader';
 
-const sorts = {
+export const sorts = {
   alertingRuleStateOrder,
   alertSeverityOrder,
   crdLatestVersion: (crd: CustomResourceDefinitionKind): string => getLatestVersionForCRD(crd),
@@ -90,6 +91,11 @@ const sorts = {
     const channel = defaultChannelFor(packageManifest);
     return channel?.currentCSVDesc?.displayName;
   },
+  buildDuration: (buildConfig) =>
+    displayDurationInWords(
+      buildConfig?.latestBuild?.status?.startTimestamp,
+      buildConfig?.latestBuild?.status?.completionTimestamp,
+    ),
 };
 
 // Common table row/columns helper SFCs for implementing accessible data grid
