@@ -1,26 +1,30 @@
-import { EmptyState } from '@patternfly/react-core';
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import { mockFormikRenderer } from '../../../test-utils/unit-test-utils';
 import ItemSelectorField from '../item-selector-field/ItemSelectorField';
 
-jest.mock('formik', () => ({
-  useField: jest.fn(() => [{}, {}]),
-  useFormikContext: jest.fn(() => ({
-    setFieldValue: jest.fn(),
-    setFieldTouched: jest.fn(),
-    validateForm: jest.fn(),
-  })),
-}));
-
 describe('ItemSelectorField', () => {
-  it('Should not render if showIfSingle is false and list contains single item', () => {
+  it('should not render if showIfSingle is false and list contains single item', () => {
     const list = { ListItem: { name: 'ItemName', title: 'ItemName', iconUrl: 'DisplayIcon' } };
-    const wrapper = shallow(<ItemSelectorField name="test" itemList={list} />);
-    expect(wrapper.isEmptyRender()).toBe(true);
+    mockFormikRenderer(<ItemSelectorField name="test" itemList={list} />, { test: '' });
+
+    expect(screen.queryByText('ItemName')).not.toBeInTheDocument();
   });
 
-  it('Should display empty state if list is empty and filter is shown', () => {
+  it('should display empty state if list is empty and filter is shown', () => {
     const list = {};
-    const wrapper = shallow(<ItemSelectorField name="test" itemList={list} showFilter />);
-    expect(wrapper.find(EmptyState)).toHaveLength(1);
+    mockFormikRenderer(<ItemSelectorField name="test" itemList={list} showFilter />, { test: '' });
+
+    expect(screen.getByText('No results match the filter criteria')).toBeVisible();
+  });
+
+  it('should render items when list has multiple items', () => {
+    const list = {
+      item1: { name: 'item1', title: 'Item 1', iconUrl: 'icon1' },
+      item2: { name: 'item2', title: 'Item 2', iconUrl: 'icon2' },
+    };
+    mockFormikRenderer(<ItemSelectorField name="test" itemList={list} />, { test: '' });
+
+    expect(screen.getByText('Item 1')).toBeVisible();
+    expect(screen.getByText('Item 2')).toBeVisible();
   });
 });

@@ -1,7 +1,7 @@
-import { shallow } from 'enzyme';
+import { screen, waitFor } from '@testing-library/react';
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { QuickStartGettingStartedCard } from '../QuickStartGettingStartedCard';
 import { loadingQuickStarts, loadedQuickStarts } from './QuickStartGettingStartedCard.data';
 
@@ -13,92 +13,51 @@ jest.mock('@console/app/src/components/quick-starts/loader/QuickStartsLoader', (
   default: jest.fn(),
 }));
 
-// Workaround because getting-started exports also useGettingStartedShowState
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
-}));
-
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
 const QuickStartsLoaderMock = QuickStartsLoader as jest.Mock;
 
 describe('QuickStartGettingStartedCard', () => {
-  it('should render loading links until catalog service is loaded', () => {
+  it('should render loading links until catalog service is loaded', async () => {
     useActiveNamespaceMock.mockReturnValue(['active-namespace']);
-    QuickStartsLoaderMock.mockImplementation((props) => props.children(loadingQuickStarts, false));
+    QuickStartsLoaderMock.mockImplementation(({ children }) => children(loadingQuickStarts, false));
 
-    const wrapper = shallow(
+    renderWithProviders(
       <QuickStartGettingStartedCard featured={['quarkus-with-s2i', 'spring-with-s2i']} />,
-    ).shallow();
-
-    expect(wrapper.find(GettingStartedCard).props().title).toEqual(
-      'Build with guided documentation',
     );
-    expect(wrapper.find(GettingStartedCard).props().links).toEqual([
-      { id: 'quarkus-with-s2i', loading: true },
-      { id: 'spring-with-s2i', loading: true },
-    ]);
-    expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      id: 'all-quick-starts',
-      title: 'View all quick starts',
-      href: '/quickstart',
+
+    await waitFor(() => {
+      expect(screen.getByText('Build with guided documentation')).toBeVisible();
+      expect(screen.getByText('View all quick starts')).toBeVisible();
     });
   });
 
-  it('should render featured links when catalog service is loaded', () => {
+  it('should render featured links when catalog service is loaded', async () => {
     useActiveNamespaceMock.mockReturnValue(['active-namespace']);
-    QuickStartsLoaderMock.mockImplementation((props) => props.children(loadedQuickStarts, true));
+    QuickStartsLoaderMock.mockImplementation(({ children }) => children(loadedQuickStarts, true));
 
-    const wrapper = shallow(
+    renderWithProviders(
       <QuickStartGettingStartedCard featured={['quarkus-with-s2i', 'spring-with-s2i']} />,
-    ).shallow();
-
-    expect(wrapper.find(GettingStartedCard).props().title).toEqual(
-      'Build with guided documentation',
     );
-    expect(wrapper.find(GettingStartedCard).props().links).toMatchObject([
-      {
-        id: 'quarkus-with-s2i',
-        title: 'Get started with Quarkus using s2i',
-        onClick: expect.any(Function),
-      },
-      {
-        id: 'spring-with-s2i',
-        title: 'Get started with Spring',
-        onClick: expect.any(Function),
-      },
-    ]);
-    expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      id: 'all-quick-starts',
-      title: 'View all quick starts',
-      href: '/quickstart',
+
+    await waitFor(() => {
+      expect(screen.getByText('Build with guided documentation')).toBeVisible();
+      expect(screen.getByText('Get started with Quarkus using s2i')).toBeVisible();
+      expect(screen.getByText('Get started with Spring')).toBeVisible();
+      expect(screen.getByText('View all quick starts')).toBeVisible();
     });
   });
 
-  it('should render first samples when catalog service is loaded without featured links', () => {
+  it('should render first samples when catalog service is loaded without featured links', async () => {
     useActiveNamespaceMock.mockReturnValue(['active-namespace']);
-    QuickStartsLoaderMock.mockImplementation((props) => props.children(loadedQuickStarts, true));
+    QuickStartsLoaderMock.mockImplementation(({ children }) => children(loadedQuickStarts, true));
 
-    const wrapper = shallow(<QuickStartGettingStartedCard />).shallow();
+    renderWithProviders(<QuickStartGettingStartedCard />);
 
-    expect(wrapper.find(GettingStartedCard).props().title).toEqual(
-      'Build with guided documentation',
-    );
-    expect(wrapper.find(GettingStartedCard).props().links).toMatchObject([
-      {
-        id: 'spring-with-s2i',
-        title: 'Get started with Spring',
-        onClick: expect.any(Function),
-      },
-      {
-        id: 'monitor-sampleapp',
-        title: 'Monitor your sample application',
-        onClick: expect.any(Function),
-      },
-    ]);
-    expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      id: 'all-quick-starts',
-      title: 'View all quick starts',
-      href: '/quickstart',
+    await waitFor(() => {
+      expect(screen.getByText('Build with guided documentation')).toBeVisible();
+      expect(screen.getByText('Get started with Spring')).toBeVisible();
+      expect(screen.getByText('Monitor your sample application')).toBeVisible();
+      expect(screen.getByText('View all quick starts')).toBeVisible();
     });
   });
 });

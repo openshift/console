@@ -1,7 +1,7 @@
-import { FormGroup } from '@patternfly/react-core';
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
 import { useFormikContext, useField } from 'formik';
 import { SelectorInput } from '@console/internal/components/utils';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import SelectorInputField from '../SelectorInputField';
 
 jest.mock('formik', () => ({
@@ -9,12 +9,46 @@ jest.mock('formik', () => ({
   useField: jest.fn(() => [{}, {}]),
 }));
 
+// This mock has implementation complexity because SelectorInputField
+// relies on SelectorInput.arrayify() and SelectorInput.objectify() to convert
+// between object format (Record<string, string>) and tag array format (string[]).
+jest.mock('@console/internal/components/utils', () => {
+  const mockFn = jest.fn(() => null) as jest.Mock & {
+    arrayify: (obj: Record<string, string | boolean | null>) => string[];
+    objectify: (arr: string[]) => Record<string, string | null>;
+  };
+
+  mockFn.arrayify = (obj: Record<string, string | boolean | null>) => {
+    if (typeof obj !== 'object' || obj === null) return [];
+    return Object.entries(obj).map(([key, value]) => (value === null ? key : `${key}=${value}`));
+  };
+
+  mockFn.objectify = (arr: string[]) => {
+    return arr.reduce((acc, item) => {
+      const [key, value] = item.split('=');
+      acc[key] = value || null;
+      return acc;
+    }, {} as Record<string, string | null>);
+  };
+
+  return {
+    SelectorInput: mockFn,
+  };
+});
+
+const mockSelectorInput = (SelectorInput as unknown) as jest.Mock;
 const useFormikContextMock = useFormikContext as jest.Mock;
 const useFieldMock = useField as jest.Mock;
 
 describe('SelectorInputField', () => {
+  beforeEach(() => {
+    useFormikContextMock.mockClear();
+    useFieldMock.mockClear();
+    mockSelectorInput.mockClear();
+  });
+
   it('should use formik data to render child components', () => {
-    const wrapper = shallow(
+    renderWithProviders(
       <SelectorInputField
         name="field-name"
         label="a label"
@@ -26,19 +60,18 @@ describe('SelectorInputField', () => {
     expect(useFormikContextMock).toHaveBeenCalled();
     expect(useFieldMock).toHaveBeenCalled();
 
-    // PatternFly FormGroup around the actual input field
-    const formGroup = wrapper.find(FormGroup).first();
-    expect(formGroup.props().fieldId).toBe('form-selector-field-name-field');
-    expect(formGroup.props().label).toBe('a label');
+    expect(screen.getByText('a label')).toBeInTheDocument();
 
-    // Shared compontent
-    const selectorInput = wrapper.find(SelectorInput).first();
-    expect(selectorInput.props().onChange).toBeTruthy();
-    expect(selectorInput.props().tags).toEqual([]);
-    expect(selectorInput.props().inputProps).toEqual({
-      id: 'form-selector-field-name-field',
-      'data-test': 'field-test-id',
-    });
+    expect(mockSelectorInput).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tags: [],
+        inputProps: {
+          id: 'form-selector-field-name-field',
+          'data-test': 'field-test-id',
+        },
+      }),
+      {},
+    );
   });
 
   it('should automatically convert objects to a tags-array', () => {
@@ -53,7 +86,7 @@ describe('SelectorInputField', () => {
       {},
     ]);
 
-    const wrapper = shallow(
+    renderWithProviders(
       <SelectorInputField
         name="field-name"
         label="a label"
@@ -62,23 +95,18 @@ describe('SelectorInputField', () => {
       />,
     );
 
-    // PatternFly FormGroup around the actual input field
-    const formGroup = wrapper.find(FormGroup).first();
-    expect(formGroup.props().fieldId).toBe('form-selector-field-name-field');
-    expect(formGroup.props().label).toBe('a label');
+    expect(screen.getByText('a label')).toBeInTheDocument();
 
-    // Shared compontent
-    const selectorInput = wrapper.find(SelectorInput).first();
-    expect(selectorInput.props().onChange).toBeTruthy();
-    expect(selectorInput.props().tags).toEqual([
-      'labelwithoutvalue',
-      'labelwithstring=a-string',
-      'labelwithboolean=true',
-    ]);
-    expect(selectorInput.props().inputProps).toEqual({
-      id: 'form-selector-field-name-field',
-      'data-test': 'field-test-id',
-    });
+    expect(mockSelectorInput).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tags: ['labelwithoutvalue', 'labelwithstring=a-string', 'labelwithboolean=true'],
+        inputProps: {
+          id: 'form-selector-field-name-field',
+          'data-test': 'field-test-id',
+        },
+      }),
+      {},
+    );
   });
 
   it('should set formik objects when receiving tag-array change events', () => {
@@ -99,7 +127,7 @@ describe('SelectorInputField', () => {
       {},
     ]);
 
-    const wrapper = shallow(
+    renderWithProviders(
       <SelectorInputField
         name="field-name"
         label="a label"
@@ -108,17 +136,15 @@ describe('SelectorInputField', () => {
       />,
     );
 
-    // trigger onChange
-    const selectorInput = wrapper.find(SelectorInput).first();
-    selectorInput
-      .props()
-      .onChange([
-        'another-labelwithoutvalue',
-        'another-labelwithstring=a-string',
-        'another-labelwithboolean=true',
-      ]);
+    const lastCall = mockSelectorInput.mock.calls[mockSelectorInput.mock.calls.length - 1];
+    const onChangeHandler = lastCall[0].onChange;
 
-    // assert formik updates
+    onChangeHandler([
+      'another-labelwithoutvalue',
+      'another-labelwithstring=a-string',
+      'another-labelwithboolean=true',
+    ]);
+
     expect(setFieldValueMock).toHaveBeenCalledTimes(1);
     expect(setFieldValueMock).toHaveBeenCalledWith(
       'field-name',

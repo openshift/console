@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { screen, render, fireEvent, configure, act, waitFor } from '@testing-library/react';
+import { screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig, FormikErrors } from 'formik';
+import { renderWithProviders } from '../../../../test-utils/unit-test-utils';
 import KeyValueFileInputField from '../KeyValueFileInputField';
-
-configure({ testIdAttribute: 'data-test' });
 
 const onSubmit = jest.fn();
 const TestKeyValueInputField: React.FC<FormikConfig<any> & { disableRemoveAction?: boolean }> = ({
@@ -32,7 +31,7 @@ const TestKeyValueInputField: React.FC<FormikConfig<any> & { disableRemoveAction
 );
 
 test('should have validation error given input field is touched and error exists on form', async () => {
-  render(
+  const { container } = renderWithProviders(
     <TestKeyValueInputField
       onSubmit={onSubmit}
       initialValues={{
@@ -41,18 +40,18 @@ test('should have validation error given input field is touched and error exists
     />,
   );
 
-  const KeyField = screen.getByTestId('key-0');
+  const KeyField = container.querySelector('[data-test="key-0"]') as HTMLElement;
   act(() => {
     fireEvent.click(KeyField);
     fireEvent.blur(KeyField);
   });
 
-  const validationErrors = await screen.findByText(`Required`);
-  expect(validationErrors.innerHTML).toContain('Required');
+  const validationErrors = await screen.findByText('Required');
+  expect(validationErrors).toBeVisible();
 });
 
 test('should have remove key value pair button if there are more than one key value entries', async () => {
-  render(
+  const { container } = renderWithProviders(
     <TestKeyValueInputField
       onSubmit={onSubmit}
       initialValues={{
@@ -64,11 +63,12 @@ test('should have remove key value pair button if there are more than one key va
     />,
   );
 
-  expect(await screen.findAllByTestId('remove-key-value-button')).toHaveLength(2);
+  const removeButtons = container.querySelectorAll('[data-test="remove-key-value-button"]');
+  expect(removeButtons).toHaveLength(2);
 });
 
 test('should not contain remove key value pair button if there is one entry', async () => {
-  render(
+  const { container } = renderWithProviders(
     <TestKeyValueInputField
       onSubmit={onSubmit}
       disableRemoveAction
@@ -79,13 +79,13 @@ test('should not contain remove key value pair button if there is one entry', as
   );
 
   await waitFor(() => {
-    const removeButton = screen.queryByTestId('remove-key-value-button');
+    const removeButton = container.querySelector('[data-test="remove-key-value-button"]');
     expect(removeButton).toBeNull();
   });
 });
 
 test('should contain remove key value pair button if there is one entry and remove actions is set to false', async () => {
-  render(
+  const { container } = renderWithProviders(
     <TestKeyValueInputField
       onSubmit={onSubmit}
       disableRemoveAction={false}
@@ -96,13 +96,13 @@ test('should contain remove key value pair button if there is one entry and remo
   );
 
   await waitFor(() => {
-    const removeButton = screen.queryByTestId('remove-key-value-button');
+    const removeButton = container.querySelector('[data-test="remove-key-value-button"]');
     expect(removeButton).not.toBeNull();
   });
 });
 
 test('should add new entry on clicking Add key/value button', async () => {
-  render(
+  const { container } = renderWithProviders(
     <TestKeyValueInputField
       onSubmit={onSubmit}
       initialValues={{
@@ -110,11 +110,13 @@ test('should add new entry on clicking Add key/value button', async () => {
       }}
     />,
   );
-  const addKeyValueButton = screen.getByTestId('add-key-value-button');
+  const addKeyValueButton = container.querySelector(
+    '[data-test="add-key-value-button"]',
+  ) as HTMLElement;
   fireEvent.click(addKeyValueButton);
 
   await waitFor(() => {
-    const keyValuePair = screen.queryAllByTestId('key-value-pair');
+    const keyValuePair = container.querySelectorAll('[data-test="key-value-pair"]');
     expect(keyValuePair).toHaveLength(2);
   });
 });
