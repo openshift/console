@@ -3,6 +3,7 @@ import { Button, Popover, PopoverPosition, PopoverProps } from '@patternfly/reac
 import './PopoverStatus.scss';
 
 type PopoverStatusProps = {
+  children?: React.ReactNode;
   statusBody: React.ReactNode;
   onHide?: () => void;
   onShow?: () => void;

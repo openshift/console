@@ -48,6 +48,7 @@ export type KnativeServiceGroupProps = {
   edgeDragging?: boolean;
   editAccess?: boolean;
   tooltipLabel?: string;
+  children?: React.ReactNode;
 } & WithSelectionProps &
   WithDndDropProps &
   WithDragNodeProps &

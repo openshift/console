@@ -4,7 +4,9 @@ import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dis
 import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
 import { CloudShellDrawer } from './CloudShellDrawer';
 
-type CloudShellProps = React.PropsWithChildren<{}>;
+interface CloudShellProps {
+  children: React.ReactNode;
+}
 
 const CloudShell: React.FCC<CloudShellProps> = ({ children }) => {
   const onClose = useToggleCloudShellExpanded();

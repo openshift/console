@@ -8,7 +8,7 @@ type ClampedTextProps = {
   lineClamp?: number;
 };
 
-const ClampedText: React.FC<ClampedTextProps> = ({ children, lineClamp = 1 }) => {
+const ClampedText: React.FCC<ClampedTextProps> = ({ children, lineClamp = 1 }) => {
   const [isContentClamped, setContentClamped] = React.useState<boolean>(false);
   const measureRef = React.useRef<HTMLDivElement>(null);
   const debouncedSetContentClamped = useDebounceCallback(() => {

@@ -23,6 +23,7 @@ type TippyProps = {
   tippyOptions?: PopperOptions;
   onShow?: (event: Event) => void;
   onHide?: (event: Event) => void;
+  children?: React.ReactNode;
 };
 
 export const Tippy: React.FC<TippyProps> = ({

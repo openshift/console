@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import { Node, observer } from '@patternfly/react-topology';
 import TypedResourceBadgeCell from '@console/topology/src/components/list-view/cells/TypedResourceBadgeCell';
 import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
@@ -8,6 +9,7 @@ interface HelmReleaseListViewNodeProps {
   item: Node;
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
+  children?: ReactNode;
 }
 
 const HelmReleaseListViewNode: React.FC<HelmReleaseListViewNodeProps> = ({
