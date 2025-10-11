@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"runtime"
+	"time"
 
 	"io/ioutil"
 	"net/http"
@@ -31,6 +32,7 @@ import (
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 	ctrlmetrics "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
+	"github.com/patrickmn/go-cache"
 	kruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
@@ -597,7 +599,10 @@ func main() {
 			klog.Errorf("problem creating controller manager: %v", err)
 		}
 
-		catalogService := olm.NewDummyCatalogService()
+		cache := cache.New(5*time.Minute, 30*time.Minute)
+		catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, cache)
+		srv.CatalogService = catalogService
+
 		if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {
 			klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
 		}
