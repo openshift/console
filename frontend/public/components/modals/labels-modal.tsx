@@ -42,6 +42,7 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
     namespace: resource?.metadata?.namespace,
   });
   const [stale, setStale] = React.useState(false);
+  const [isInputValid, setIsInputValid] = React.useState(true);
   const createPath = !labels.length;
   const { t } = useTranslation();
 
@@ -107,6 +108,7 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
             </label>
             <SelectorInput
               onChange={(l) => setLabels(l)}
+              onValidationChange={setIsInputValid}
               tags={labels}
               labelClassName={labelClassName || `co-m-${kind.id}`}
               autoFocus
@@ -123,7 +125,7 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
         }
         inProgress={false}
         submitText={t('public~Save')}
-        submitDisabled={stale}
+        submitDisabled={stale || !isInputValid}
         cancel={cancel}
       />
     </form>
