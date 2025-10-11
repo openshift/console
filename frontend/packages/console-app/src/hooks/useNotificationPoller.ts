@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -21,6 +21,7 @@ import {
   getAlertTime,
 } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
+import { NotificationAlerts } from 'public/reducers/observe';
 
 /** Fetches notification alerts from redux store and updates the notification count.
  * Polls the Prometheus and Alertmanager for notification alerts AND silences, stores the
@@ -121,3 +122,63 @@ type NotificationPoll = (
   key: 'notificationAlerts' | 'silences',
   dataHandler: (data) => any,
 ) => void;
+
+export const useNamespacedNotificationAlertsPoller = (namespace: string) => {
+  const { t } = useTranslation();
+  const [alerts, setAlerts] = useState<NotificationAlerts['data']>([]);
+  const [loaded, setLoaded] = useState<NotificationAlerts['loaded']>(false);
+  const [loadError, setLoadError] = useState<NotificationAlerts['loadError']>(null);
+
+  useEffect(() => {
+    const { prometheusTenancyBaseURL } = window.SERVER_FLAGS;
+
+    if (!prometheusTenancyBaseURL) {
+      setLoadError(new Error(t('public~prometheusBaseURL not set')));
+      return () => {};
+    }
+
+    let pollTimeout: NodeJS.Timeout;
+
+    const poll = () => {
+      setLoaded(false);
+      coFetchJSON(`${prometheusTenancyBaseURL}/${PrometheusEndpoint.RULES}?namespace=${namespace}`)
+        .then((alertsResults) =>
+          alertsResults
+            ? getAlertsAndRules(alertsResults.data)
+                .alerts.filter(
+                  (a) =>
+                    a.state === 'firing' &&
+                    getAlertName(a) !== 'Watchdog' &&
+                    getAlertName(a) !== 'UpdateAvailable',
+                )
+                .sort((a, b) => +new Date(getAlertTime(b)) - +new Date(getAlertTime(a)))
+            : [],
+        )
+        .then((data) => {
+          setAlerts(data);
+          pollTimeout = setTimeout(poll, 15 * 1000);
+        })
+        .finally(() => {
+          setLoaded(true);
+        })
+        .catch((e) => {
+          setLoadError(e);
+          pollTimeout = setTimeout(poll, 60 * 1000);
+        });
+    };
+
+    poll();
+
+    return () => {
+      if (pollTimeout) {
+        clearTimeout(pollTimeout);
+      }
+    };
+  }, [namespace, t]);
+
+  return {
+    alerts,
+    loaded,
+    loadError,
+  };
+};
