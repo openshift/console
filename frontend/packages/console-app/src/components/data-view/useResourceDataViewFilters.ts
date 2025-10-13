@@ -35,7 +35,7 @@ export const useResourceDataViewFilters = <
     () =>
       data.filter((resource) => {
         // Filter by K8s resource name
-        const resourceName = resource.metadata.name;
+        const resourceName = resource.metadata?.name;
         const matchesName =
           !filters.name || isExactSearch
             ? exactMatch(filters.name, resourceName)
@@ -50,7 +50,7 @@ export const useResourceDataViewFilters = <
         return (
           matchesName && matchesLabels && (matchesAdditionalFilters?.(resource, filters) ?? true)
         );
-      }),
+      }) ?? [],
     [data, filters, isExactSearch, matchesAdditionalFilters],
   );
 
