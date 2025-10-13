@@ -86,8 +86,8 @@ describe(`${crd} CRD`, () => {
     cy.get(cell).should('not.exist');
 
     cy.visit(`/k8s/ns/${testName}/pods?name=${podName}`);
-    listPage.dvRows.shouldBeLoaded();
-    listPage.dvRows.clickKebabAction(podName, 'Delete Pod');
+    listPage.rows.shouldBeLoaded();
+    listPage.rows.clickKebabAction(podName, 'Delete Pod');
     modal.shouldBeOpened();
     modal.modalTitleShouldContain('Delete Pod');
     modal.submit();

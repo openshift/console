@@ -59,34 +59,34 @@ describe('Namespace', () => {
     nav.sidenav.clickNavLink(['Workloads', 'Pods']);
     projectDropdown.selectProject(allProjectsDropdownLabel);
     projectDropdown.shouldContain(allProjectsDropdownLabel);
-    listPage.dvRows.shouldBeLoaded();
+    listPage.rows.shouldBeLoaded();
 
     cy.log(
       'List page to details page should change Project from "All Projects" to resource specific project',
     );
 
-    listPage.dvRows
+    listPage.rows
       .getFirstElementName()
       .invoke('text')
       .then((text) => {
-        listPage.dvFilter.byName(text);
-        listPage.dvRows.countShouldBeWithin(1, 3);
-        listPage.dvRows.clickRowByName(text);
+        listPage.filter.byName(text);
+        listPage.rows.countShouldBeWithin(1, 3);
+        listPage.rows.clickRowByName(text);
         detailsPage.isLoaded();
         projectDropdown.shouldNotContain(allProjectsDropdownLabel);
         nav.sidenav.clickNavLink(['Workloads', 'Pods']);
-        listPage.dvRows.shouldBeLoaded();
+        listPage.rows.shouldBeLoaded();
         projectDropdown.shouldContain(allProjectsDropdownLabel);
         cy.log(
           'Details page to list page via breadcrumb should change Project back to "All Projects"',
         );
-        listPage.dvFilter.byName(text);
-        listPage.dvRows.countShouldBeWithin(1, 3);
-        listPage.dvRows.clickRowByName(text);
+        listPage.filter.byName(text);
+        listPage.rows.countShouldBeWithin(1, 3);
+        listPage.rows.clickRowByName(text);
         detailsPage.isLoaded();
         projectDropdown.shouldNotContain(allProjectsDropdownLabel);
         detailsPage.breadcrumb(0).contains('Pods').click();
-        listPage.dvRows.shouldBeLoaded();
+        listPage.rows.shouldBeLoaded();
         projectDropdown.shouldContain(allProjectsDropdownLabel);
       });
   });
