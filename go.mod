@@ -226,4 +226,4 @@ require (
 
 // Running `go mod tidy` forces openshift/api to the tagged version
 // 3.9.0+incompatible, but it was retracted.
-replace github.com/openshift/api => github.com/openshift/api v0.0.0-20250402094343-3d7abe90f97e
+replace github.com/openshift/api => github.com/openshift/api v0.0.0-20251013165757-fe48e8fd548b
