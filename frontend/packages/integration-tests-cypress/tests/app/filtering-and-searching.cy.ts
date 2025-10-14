@@ -4,7 +4,6 @@ import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
-import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
 
 describe('Filtering and Searching', () => {
@@ -42,13 +41,7 @@ describe('Filtering and Searching', () => {
   });
 
   after(() => {
-    cy.visit(`/k8s/ns/${testName}/deployments`);
-    listPage.rows.shouldBeLoaded();
-    listPage.filter.byName(WORKLOAD_NAME);
-    listPage.rows.clickKebabAction(WORKLOAD_NAME, 'Delete Deployment');
-    modal.shouldBeOpened();
-    modal.submit();
-    modal.shouldBeClosed();
+    cy.exec(`oc delete deployment ${WORKLOAD_NAME} -n ${testName}`);
     cy.deleteProjectWithCLI(testName);
   });
 
