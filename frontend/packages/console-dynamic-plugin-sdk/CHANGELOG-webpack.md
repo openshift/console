@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
 in [Console dynamic plugins README](./README.md).
 
+## 4.18.1 - 2025-09-22
+
+- Fix bug when processing Console provided PatternFly shared modules ([OCPBUGS-61569], [#15479])
+
 ## 4.18.0 - 2025-09-04
 
 > Initial release for OCP Console 4.18.
@@ -61,6 +65,7 @@ in [Console dynamic plugins README](./README.md).
 [OCPBUGS-38734]: https://issues.redhat.com/browse/OCPBUGS-38734
 [OCPBUGS-42985]: https://issues.redhat.com/browse/OCPBUGS-42985
 [OCPBUGS-55323]: https://issues.redhat.com/browse/OCPBUGS-55323
+[OCPBUGS-61569]: https://issues.redhat.com/browse/OCPBUGS-61569
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -73,3 +78,4 @@ in [Console dynamic plugins README](./README.md).
 [#14167]: https://github.com/openshift/console/pull/14167
 [#14300]: https://github.com/openshift/console/pull/14300
 [#14993]: https://github.com/openshift/console/pull/14993
+[#15479]: https://github.com/openshift/console/pull/15479
