@@ -248,6 +248,8 @@ export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj 
         }}
         kinds={['Jobs']}
         ListComponent={JobsList}
+        hideColumnManagement={true}
+        omitFilterToolbar={true}
       />
     </Firehose>
   </PaneBody>
