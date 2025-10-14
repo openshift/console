@@ -89,6 +89,8 @@ const isEstablished = (conditions: any[]) => {
 
 const namespaced = (crd: CustomResourceDefinitionKind) => crd.spec.scope === 'Namespaced';
 
+const kind = referenceForModel(CustomResourceDefinitionModel);
+
 const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
   const { t } = useTranslation();
   return crd.status && isEstablished(crd.status.conditions) ? (
@@ -391,7 +393,7 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
   <ListPage
     {...props}
     ListComponent={CustomResourceDefinitionsList}
-    kind={referenceForModel(CustomResourceDefinitionModel)}
+    kind={kind}
     canCreate={true}
     omitFilterToolbar={true}
   />
@@ -401,7 +403,7 @@ export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
   return (
     <DetailsPage
       {...props}
-      kind={referenceForModel(CustomResourceDefinitionModel)}
+      kind={kind}
       menuActions={menuActions}
       pages={[
         navFactory.details(Details),
