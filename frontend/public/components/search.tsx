@@ -20,7 +20,7 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { getBadgeFromType, usePinnedResources } from '@console/shared';
+import { getBadgeFromType, usePinnedResources, useTelemetry } from '@console/shared';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
 import { ResourceListDropdown } from './resource-dropdown';
@@ -88,6 +88,7 @@ const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
 
 const SearchPage_: React.FC<SearchProps> = (props) => {
   const [perspective] = useActivePerspective();
+  const fireTelemetryEvent = useTelemetry();
   const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
   const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
   const [labelFilter, setLabelFilter] = React.useState([]);
@@ -130,6 +131,9 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 
   const updateSelectedItems = (selection: string) => {
     const updateItems = selectedItems;
+    fireTelemetryEvent('search-resource-selected', {
+      resource: selection,
+    });
     updateItems.has(selection) ? updateItems.delete(selection) : updateItems.add(selection);
     setSelectedItems(updateItems);
     setQueryArgument('kind', [...updateItems].join(','));
