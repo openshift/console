@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { screen } from '@testing-library/react';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { fakeVulnFor } from '../../../integration-tests/bad-pods';
 import { Priority } from '../../const';
 import { SecurityBreakdownPopup, securityHealthHandler } from '../summary';
@@ -42,26 +42,22 @@ describe('securityHealthHandler', () => {
 });
 
 describe('SecurityBreakdownPopup', () => {
-  type SecurityBreakdownPopupProps = React.ComponentProps<typeof SecurityBreakdownPopup>;
-  let wrapper: ShallowWrapper<SecurityBreakdownPopupProps>;
   const imageManifestVuln = {
     loaded: true,
     loadError: null,
     data: [{ ...highVuln, status: { ...highVuln.status, fixableCount: 27 } }],
   };
-  beforeEach(() => {
-    wrapper = shallow(<SecurityBreakdownPopup imageManifestVuln={imageManifestVuln} />);
-  });
 
   it('should display proper message when there are no vulnerabilities', () => {
-    wrapper = shallow(
+    renderWithProviders(
       <SecurityBreakdownPopup imageManifestVuln={{ loaded: true, loadError: null, data: [] }} />,
     );
-    expect(wrapper.contains('No vulnerabilities detected.')).toBe(true);
+
+    expect(screen.getByText('No vulnerabilities detected.')).toBeVisible();
   });
 
   it('should not display section for list of vulnerabilities if there are no fixable vulnerabilities', () => {
-    wrapper = shallow(
+    renderWithProviders(
       <SecurityBreakdownPopup
         imageManifestVuln={{
           loaded: true,
@@ -70,23 +66,21 @@ describe('SecurityBreakdownPopup', () => {
         }}
       />,
     );
-    expect(
-      wrapper.contains(
-        <span className="co-status-popup__text--bold">Fixable Container Images</span>,
-      ),
-    ).toBe(false);
+
+    expect(screen.queryByText('Fixable Container Images')).not.toBeInTheDocument();
   });
 
   it('should display list of impact and vulnerabilities when not in context of a namespace', () => {
-    expect(wrapper.contains(<span className="co-status-popup__text--bold">Impact</span>)).toBe(
-      true,
-    );
+    renderWithProviders(<SecurityBreakdownPopup imageManifestVuln={imageManifestVuln} />);
+
+    expect(screen.getByText('Impact')).toBeVisible();
   });
 
   it('should display list of images and vulnerabilities when in context of a namespace', () => {
-    wrapper = shallow(
+    renderWithProviders(
       <SecurityBreakdownPopup imageManifestVuln={imageManifestVuln} namespace="default" />,
     );
-    expect(wrapper.contains(<span className="co-status-popup__text--bold">Image</span>)).toBe(true);
+
+    expect(screen.getByText('Image')).toBeVisible();
   });
 });
