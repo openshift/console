@@ -68,11 +68,7 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 		}
 	}
 	cmd.ReleaseName = name
-	if len(tlsFiles) == 0 {
-		chartLocation = url
-	} else {
-		chartLocation = chartInfo.Name
-	}
+	chartLocation = url
 
 	cmd.ChartPathOptions.Version = chartInfo.Version
 	cp, err = cmd.ChartPathOptions.LocateChart(chartLocation, settings)
@@ -150,11 +146,7 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 		}
 	}
 	cmd.ReleaseName = name
-	if len(tlsFiles) == 0 {
-		chartLocation = url
-	} else {
-		chartLocation = chartInfo.Name
-	}
+	chartLocation = url
 	cmd.ChartPathOptions.Version = chartInfo.Version
 	cp, err = cmd.ChartPathOptions.LocateChart(chartLocation, settings)
 	if err != nil {
