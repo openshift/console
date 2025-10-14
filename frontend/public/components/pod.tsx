@@ -140,7 +140,6 @@ import {
   RowProps,
   TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { useActiveColumns } from './factory/Table/active-columns-hook';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -967,6 +966,7 @@ export const PodList: React.FCC<PodListProps> = ({
   hideNameLabelFilters,
   hideLabelFilter,
   hideColumnManagement,
+  selectedColumns,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -975,11 +975,6 @@ export const PodList: React.FCC<PodListProps> = ({
     return UI.getIn(['metrics', 'pod']);
   });
   const columnManagementID = referenceForModel(PodModel);
-  const [activeColumns] = useActiveColumns({
-    columns,
-    showNamespaceOverride,
-    columnManagementID,
-  });
   const columnLayout = React.useMemo<ColumnLayout>(
     () => ({
       id: columnManagementID,
@@ -989,9 +984,13 @@ export const PodList: React.FCC<PodListProps> = ({
         title: col.title,
         additional: col.additional,
       })),
-      selectedColumns: new Set(activeColumns.map((col) => col.id)),
+      selectedColumns:
+        selectedColumns?.[columnManagementID]?.length > 0
+          ? new Set(selectedColumns[columnManagementID])
+          : new Set(),
+      showNamespaceOverride,
     }),
-    [columns, columnManagementID, activeColumns, t],
+    [columns, columnManagementID, selectedColumns, showNamespaceOverride, t],
   );
   const podStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(() => {
     // Calculate pod counts by status
@@ -1124,7 +1123,7 @@ export const PodsPage: React.FC<PodPageProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
+  const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
     undefined,
@@ -1189,6 +1188,7 @@ export const PodsPage: React.FC<PodPageProps> = ({
           hideNameLabelFilters={hideNameLabelFilters}
           hideLabelFilter={hideLabelFilter}
           hideColumnManagement={hideColumnManagement}
+          selectedColumns={selectedColumns}
         />
       </ListPageBody>
     </>
@@ -1285,6 +1285,7 @@ type PodListProps = {
   hideLabelFilter?: boolean;
   hideColumnManagement?: boolean;
   namespace?: string;
+  selectedColumns?: TableColumnsType;
 };
 
 type PodPageProps = {
