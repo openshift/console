@@ -10,12 +10,17 @@ import {
   within,
   BoundFunctions,
   Queries,
+  configure,
 } from '@testing-library/react';
 import { Formik, FormikValues } from 'formik';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom-v5-compat';
 import { combineReducers, createStore } from 'redux';
 import { RootState, baseReducers } from '@console/internal/redux';
+
+// Configure RTL to use 'data-test' instead of 'data-testid' for consistency
+// with Cypress tests, which also use data-test attributes
+configure({ testIdAttribute: 'data-test' });
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   initialState?: Partial<RootState>;
