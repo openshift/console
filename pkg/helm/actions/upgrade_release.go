@@ -84,11 +84,7 @@ func UpgradeRelease(
 				return nil, fmt.Errorf("error setting up authentication: %v", err)
 			}
 		}
-		if len(tlsFiles) == 0 {
-			chartLocation = chartUrl
-		} else {
-			chartLocation = chartInfo.Name
-		}
+		chartLocation = chartUrl
 		client.ChartPathOptions.Version = chartInfo.Version
 		cp, err = client.ChartPathOptions.LocateChart(chartLocation, settings)
 		if err != nil {
@@ -199,11 +195,7 @@ func UpgradeReleaseAsync(
 				return nil, fmt.Errorf("error setting up authentication: %v", err)
 			}
 		}
-		if len(tlsFiles) == 0 {
-			chartLocation = chartUrl
-		} else {
-			chartLocation = chartInfo.Name
-		}
+		chartLocation = chartUrl
 		client.ChartPathOptions.Version = chartInfo.Version
 		cp, err = client.ChartPathOptions.LocateChart(chartLocation, settings)
 		if err != nil {
