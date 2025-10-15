@@ -34,7 +34,6 @@ Feature: Create the different workloads from Add page
                   | Middleware        | Apache HTTP Server                    | httpd-example             |
                   | Other             | Nginx HTTP server and a reverse proxy | nginx-example             |
 
-        @broken-test
         Scenario Outline: Deploy <image> image with Runtime icon from external registry: A-02-TC02
             Given user is at Deploy Image page
              When user enters Image name from external registry as "<image_name>"
@@ -83,7 +82,6 @@ Feature: Create the different workloads from Add page
                   | image_name                                  | custom_icon                      | name                |
                   | ghcr.io/logonoff/fortune-cowsay-motd:latest | https://i.imgur.com/cxiObse.jpeg | fortune-cowsay-motd |
 
-        @broken-test
         Scenario: Edit Runtime Icon while Editing Image: A-02-TC05
             Given user has deployed container Image "openshift/hello-openshift" from external registry
               And user is at Topology page
@@ -165,7 +163,7 @@ Feature: Create the different workloads from Add page
 
         @regression
         Scenario: Quick Starts page when Quick Start has completed: QS-03-TC03
-            When user selects QuickStarts from the help menu icon on the masthead
+             When user selects QuickStarts from the help menu icon on the masthead
               And user has completed "Get started with a sample application" Quick Start
              Then user can see time taken to complete the "Get started with a sample application" tour on the card
               And user can see Complete label on "Get started with a sample application" card
