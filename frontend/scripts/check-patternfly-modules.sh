@@ -54,6 +54,7 @@ PKGS_TO_CHECK=(
   '@patternfly/react-component-groups:6'
   '@patternfly/react-console:6'
   '@patternfly/react-core:6'
+  '@patternfly/react-drag-drop:6'
   '@patternfly/react-icons:6'
   '@patternfly/react-log-viewer:6'
   '@patternfly/react-styles:6'
