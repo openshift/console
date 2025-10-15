@@ -28,7 +28,6 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from './utils';
 import { PrometheusResponse } from '../../../graphs';
-import { Link } from 'react-router-dom-v5-compat';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 const viewEvents = '/k8s/all-namespaces/events';
@@ -187,19 +186,7 @@ export const ActivityCard: React.FC<{}> = React.memo(() => {
   const { t } = useTranslation();
   return (
     <Card data-test-id="activity-card">
-      <CardHeader
-        actions={{
-          actions: (
-            <>
-              <Link to={viewEvents} data-test="view-events-link">
-                {t('public~View events')}
-              </Link>
-            </>
-          ),
-          hasNoOffset: false,
-          className: 'co-overview-card__actions',
-        }}
-      >
+      <CardHeader>
         <CardTitle>{t('public~Activity')}</CardTitle>
       </CardHeader>
       <ActivityBody className="co-overview-dashboard__activity-body">

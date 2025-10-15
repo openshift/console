@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Accordion, Button } from '@patternfly/react-core';
+import { Accordion, Button, CardFooter } from '@patternfly/react-core';
 import { PauseIcon } from '@patternfly/react-icons/dist/esm/icons/pause-icon';
 import { PlayIcon } from '@patternfly/react-icons/dist/esm/icons/play-icon';
 import { css } from '@patternfly/react-styles';
@@ -112,13 +112,15 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
         ))}
       </Accordion>
       {sortedEvents.length > 50 && !!moreLink && (
-        <Link
-          className="co-activity-card__recent-more-link"
-          to={moreLink}
-          data-test="events-view-all-link"
-        >
-          {t('console-shared~View all events')}
-        </Link>
+        <CardFooter className="co-activity-card__recent-footer">
+          <Link
+            className="co-activity-card__recent-more-link"
+            to={moreLink}
+            data-test="events-view-all-link"
+          >
+            {t('console-shared~View all events')}
+          </Link>
+        </CardFooter>
       )}
     </>
   );
