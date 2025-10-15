@@ -42,21 +42,23 @@ const GitOpsListPage: React.FC = () => {
     };
   }, [baseURL, namespaces, nsError, nsLoaded, t]);
 
+  const isLoading = !appGroups && !emptyStateMsg;
+
   return (
     <>
       <DocumentTitle>{t('gitops-plugin~Environments')}</DocumentTitle>
-      <PageHeading title={t('gitops-plugin~Environments')} badge={<DevPreviewBadge />} />
+      <PageHeading
+        title={t('gitops-plugin~Environments')}
+        badge={<DevPreviewBadge />}
+        helpText={
+          !isLoading &&
+          t("gitops-plugin~Select an application to view the environment it's deployed in.")
+        }
+      />
       {!appGroups && !emptyStateMsg ? (
         <LoadingBox />
       ) : (
-        <>
-          <PageHeading
-            helpText={t(
-              "gitops-plugin~Select an application to view the environment it's deployed in.",
-            )}
-          />
-          <GitOpsList appGroups={appGroups} emptyStateMsg={emptyStateMsg} />
-        </>
+        <GitOpsList appGroups={appGroups} emptyStateMsg={emptyStateMsg} />
       )}
     </>
   );
