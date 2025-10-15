@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"runtime"
+	"time"
 
 	"io/ioutil"
 	"net/http"
@@ -31,6 +32,7 @@ import (
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 	ctrlmetrics "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
+	"github.com/patrickmn/go-cache"
 	kruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
@@ -71,6 +73,8 @@ const (
 	openshiftClusterProxyHost = "cluster-proxy-addon-user.multicluster-engine.svc:9092"
 
 	clusterManagementURL = "https://api.openshift.com/"
+	defaultCacheDuration = 5 * time.Minute
+	defaultCacheCleanup  = 30 * time.Minute
 )
 
 func main() {
@@ -594,15 +598,18 @@ func main() {
 			Metrics: controllerManagerMetricsOptions,
 		})
 		if err != nil {
-			klog.Errorf("problem creating controller manager: %v", err)
+			klog.Errorf("problem creating main controller manager: %v", err)
 		}
 
-		catalogService := olm.NewDummyCatalogService()
+		cache := cache.New(defaultCacheDuration, defaultCacheCleanup)
+		catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, cache)
+		srv.CatalogService = catalogService
+
 		if err = controllers.NewClusterCatalogReconciler(mgr, catalogService).SetupWithManager(mgr); err != nil {
 			klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
 		}
 
-		klog.Info("starting manager")
+		klog.Info("starting controller manager")
 		mgrContext := ctrl.SetupSignalHandler()
 		go func() {
 			if err := mgr.Start(mgrContext); err != nil {
