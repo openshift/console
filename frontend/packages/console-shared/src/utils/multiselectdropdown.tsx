@@ -17,7 +17,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     [selected, options],
   );
 
-  const onSelect = (event: React.MouseEvent | React.ChangeEvent, selections: string[]) => {
+  const onSelect = (event: React.UIEvent, selections: string[]) => {
     event.preventDefault();
     setSelected(selections);
     onChange(selections);
@@ -28,7 +28,6 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
       initialOptions={initialOptions}
       placeholder={placeholder || t('console-shared~Select options')}
       noOptionsFoundMessage={t('console-shared~No results found')}
-      // @ts-expect-error FIXME: PatternFly's onSelect is typed wrong (value should be any)
       onSelectionChange={onSelect}
       aria-label={t('console-shared~Select input')}
       aria-labelledby={id}
