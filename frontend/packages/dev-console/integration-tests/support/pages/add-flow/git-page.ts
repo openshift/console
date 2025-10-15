@@ -85,7 +85,7 @@ export const gitPage = {
         cy.get(gitPO.appName).click();
         cy.get('[data-test="console-select-search-input"]').type(appName);
         cy.get('[data-test="console-select-menu-list"]').then(($el) => {
-          if ($el.find('[data-test="console-select-item"]').length === 0) {
+          if ($el.find(`[data-test-dropdown-menu="${appName}"]`).length === 0) {
             cy.byTestDropDownMenu('#CREATE_APPLICATION_KEY#').click();
             cy.get('#form-input-application-name-field')
               .clear()

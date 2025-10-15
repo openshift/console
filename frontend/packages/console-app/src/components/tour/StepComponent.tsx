@@ -32,11 +32,9 @@ const StepComponent: React.FC<StepComponentProps> = ({
   introBannerDark,
   modalVariant,
 }) => {
-  const {
-    tourDispatch,
-    totalSteps,
-    tourState: { stepNumber: step },
-  } = React.useContext(TourContext);
+  const { tourDispatch, totalSteps, tourState: { stepNumber: step } = {} } = React.useContext(
+    TourContext,
+  );
   return (
     <TourStepComponent
       key={step}
@@ -53,16 +51,16 @@ const StepComponent: React.FC<StepComponentProps> = ({
       showStepBadge={showStepBadge}
       nextButtonText={nextButtonText}
       backButtonText={backButtonText}
-      onClose={() => tourDispatch({ type: TourActions.complete })}
+      onClose={() => tourDispatch?.({ type: TourActions.complete })}
       onNext={() =>
-        step > totalSteps
-          ? tourDispatch({ type: TourActions.complete })
-          : tourDispatch({ type: TourActions.next })
+        step && totalSteps && step > totalSteps
+          ? tourDispatch?.({ type: TourActions.complete })
+          : tourDispatch?.({ type: TourActions.next })
       }
       onBack={() =>
         step === 0
-          ? tourDispatch({ type: TourActions.complete })
-          : tourDispatch({ type: TourActions.back })
+          ? tourDispatch?.({ type: TourActions.complete })
+          : tourDispatch?.({ type: TourActions.back })
       }
     />
   );

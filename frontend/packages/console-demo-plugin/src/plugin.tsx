@@ -11,8 +11,6 @@ import {
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
   DashboardsOverviewResourceActivity,
-  DashboardsOverviewPrometheusActivity,
-  HorizontalNavTab,
 } from '@console/plugin-sdk';
 import { DemoGroupIcon } from './components/dashboards/inventory';
 import { FooBarModel } from './models';
@@ -25,9 +23,7 @@ type ConsumedExtensions =
   | RoutePage
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
-  | DashboardsOverviewResourceActivity
-  | DashboardsOverviewPrometheusActivity
-  | HorizontalNavTab;
+  | DashboardsOverviewResourceActivity;
 
 const TEST_MODEL_FLAG = 'TEST_MODEL';
 
@@ -118,34 +114,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Activity/Prometheus',
-    properties: {
-      queries: ['barQuery'],
-      isActivity: () => true,
-      loader: () =>
-        import('./components/dashboards/activity' /* webpackChunkName: "demo" */).then(
-          (m) => m.DemoPrometheusActivity,
-        ),
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'HorizontalNavTab',
-    properties: {
-      model: PodModel,
-      page: {
-        href: 'example',
-        name: 'Example',
-      },
-      loader: () =>
-        import('./components/test-pages' /* webpackChunkName: "demo" */).then(
-          (m) => m.DummyHorizontalNavTab,
-        ),
     },
   },
 ];

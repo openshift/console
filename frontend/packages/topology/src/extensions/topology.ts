@@ -7,7 +7,6 @@ import {
   TopologyDataModelDepicted,
   TopologyDataModelGetter,
   TopologyDisplayOption,
-  CreateConnectionGetter,
   ViewComponentFactory,
   TopologyDataModelReconciler,
   TopologyDecoratorGetter,
@@ -36,11 +35,6 @@ namespace ExtensionProperties {
     getDataModelReconciler?: CodeRef<TopologyDataModelReconciler>;
   }
 
-  export interface TopologyCreateConnector {
-    /** Getter for the create connector function */
-    getCreateConnector: CodeRef<CreateConnectionGetter>;
-  }
-
   export interface TopologyDisplayFilters {
     // Getter for topology filters specific to the extension
     getTopologyFilters: CodeRef<() => TopologyDisplayOption[]>;
@@ -66,11 +60,6 @@ export interface TopologyDataModelFactory
   type: 'Topology/DataModelFactory';
 }
 
-export interface TopologyCreateConnector
-  extends Extension<ExtensionProperties.TopologyCreateConnector> {
-  type: 'Topology/CreateConnector';
-}
-
 export interface TopologyDisplayFilters
   extends Extension<ExtensionProperties.TopologyDisplayFilters> {
   type: 'Topology/DisplayFilters';
@@ -87,10 +76,6 @@ export const isTopologyComponentFactory = (e: Extension): e is TopologyComponent
 
 export const isTopologyDataModelFactory = (e: Extension): e is TopologyDataModelFactory => {
   return e.type === 'Topology/DataModelFactory';
-};
-
-export const isTopologyCreateConnector = (e: Extension): e is TopologyCreateConnector => {
-  return e.type === 'Topology/CreateConnector';
 };
 
 export const isTopologyDisplayFilters = (e: Extension): e is TopologyDisplayFilters => {

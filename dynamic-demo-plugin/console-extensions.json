@@ -473,5 +473,17 @@
         "prop": "nodes"
       }
     }
+  },
+  {
+    "type": "console.dashboards/overview/prometheus/activity/resource",
+    "properties": {
+      "queries": ["barQuery"],
+      "isActivity": {
+        "$codeRef": "PrometheusActivity.isDemoPrometheusActivity"
+      },
+      "component": {
+        "$codeRef": "PrometheusActivity.DemoPrometheusActivity"
+      }
+    }
   }
 ]

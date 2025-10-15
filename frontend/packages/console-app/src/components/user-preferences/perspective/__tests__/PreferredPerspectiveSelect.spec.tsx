@@ -1,5 +1,6 @@
-import { render, screen, configure } from '@testing-library/react';
+import { screen, configure, act } from '@testing-library/react';
 import { useExtensions } from '@console/plugin-sdk/src';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import PreferredPerspectiveSelect from '../PreferredPerspectiveSelect';
 import { usePreferredPerspective } from '../usePreferredPerspective';
 import { mockPerspectiveExtensions } from './perspective.data';
@@ -20,39 +21,52 @@ const useExtensionsMock = useExtensions as jest.Mock;
 const usePreferredPerspectiveMock = usePreferredPerspective as jest.Mock;
 
 describe('PreferredPerspectiveSelect', () => {
-  configure({
-    testIdAttribute: 'data-test',
-  });
-
   const {
     id: preferredPerspectiveValue,
     name: preferredPerspectiveLabel,
   } = mockPerspectiveExtensions[1].properties;
 
-  afterEach(() => {
-    jest.resetAllMocks();
+  const setupMocks = (preferredPerspective?: string, loaded = true) => {
+    useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
+    usePreferredPerspectiveMock.mockReturnValue([preferredPerspective, jest.fn(), loaded]);
+  };
+
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-test' });
   });
 
-  it('should render skeleton if user preferences have not loaded', () => {
-    useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
-    usePreferredPerspectiveMock.mockReturnValue(['', jest.fn(), false]);
-    render(<PreferredPerspectiveSelect />);
-    expect(screen.findByTestId('select skeleton console.preferredPerspective')).toBeTruthy();
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('should render select with value corresponding to preferred perspective if user preferences have loaded and preferred perspective is defined', () => {
-    useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
-    usePreferredPerspectiveMock.mockReturnValue([preferredPerspectiveValue, jest.fn(), true]);
-    render(<PreferredPerspectiveSelect />);
-    expect(screen.findByTestId('select console.preferredPerspective')).toBeTruthy();
-    expect(screen.findByText(preferredPerspectiveLabel)).toBeTruthy();
+  it('should show loading state while perspective preferences are being fetched', async () => {
+    setupMocks('', false);
+
+    await act(async () => {
+      renderWithProviders(<PreferredPerspectiveSelect />);
+    });
+
+    expect(screen.getByTestId('select skeleton console.preferredPerspective')).toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('should render select with value "Last viewed" if user preferences have loaded but preferred perspective is not defined', () => {
-    useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
-    usePreferredPerspectiveMock.mockReturnValue([undefined, jest.fn(), true]);
-    render(<PreferredPerspectiveSelect />);
-    expect(screen.findByTestId('select console.preferredPerspective"]')).toBeTruthy();
-    expect(screen.findByText('Last viewed')).toBeTruthy();
+  it('should display selected perspective name when preference is set', async () => {
+    setupMocks(preferredPerspectiveValue, true);
+
+    await act(async () => {
+      renderWithProviders(<PreferredPerspectiveSelect />);
+    });
+
+    expect(screen.getByText(preferredPerspectiveLabel)).toBeVisible();
+  });
+
+  it('should show "Last viewed" option when no preference is set', async () => {
+    setupMocks(undefined, true);
+
+    await act(async () => {
+      renderWithProviders(<PreferredPerspectiveSelect />);
+    });
+
+    expect(screen.getByText('Last viewed')).toBeVisible();
   });
 });

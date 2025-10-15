@@ -16,16 +16,14 @@ import ActivityBody, {
 import {
   useExtensions,
   DashboardsOverviewResourceActivity,
-  DashboardsOverviewPrometheusActivity,
   isDashboardsOverviewResourceActivity,
-  isDashboardsOverviewPrometheusActivity,
 } from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
   DashboardsOverviewResourceActivity as DynamicDashboardsOverviewResourceActivity,
-  DashboardsOverviewPrometheusActivity as DynamicDashboardsOverviewPrometheusActivity,
+  DashboardsOverviewPrometheusActivity,
   isDashboardsOverviewResourceActivity as isDynamicDashboardsOverviewResourceActivity,
-  isDashboardsOverviewPrometheusActivity as isDynamicDashboardsOverviewPrometheusActivity,
+  isDashboardsOverviewPrometheusActivity,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from './utils';
@@ -82,25 +80,22 @@ const OngoingActivity = connect(mapStateToProps)(
         [dynamicResourceActivityExtensions, models, resourceActivityExtensions],
       );
 
-      const prometheusActivities = useExtensions<DashboardsOverviewPrometheusActivity>(
+      const [prometheusActivities] = useResolvedExtensions<DashboardsOverviewPrometheusActivity>(
         isDashboardsOverviewPrometheusActivity,
       );
-      const [dynamicPrometheusActivities] = useResolvedExtensions<
-        DynamicDashboardsOverviewPrometheusActivity
-      >(isDynamicDashboardsOverviewPrometheusActivity);
 
       React.useEffect(() => {
         resourceActivities.forEach((a, index) => {
           watchK8sResource(uniqueResource(a.properties.k8sResource, index));
         });
-        [...prometheusActivities, ...dynamicPrometheusActivities].forEach((a) =>
+        prometheusActivities.forEach((a) =>
           a.properties.queries.forEach((q) => watchPrometheus(q)),
         );
         return () => {
           resourceActivities.forEach((a, index) => {
             stopWatchK8sResource(uniqueResource(a.properties.k8sResource, index));
           });
-          [...prometheusActivities, ...dynamicPrometheusActivities].forEach((a) =>
+          prometheusActivities.forEach((a) =>
             a.properties.queries.forEach(stopWatchPrometheusQuery),
           );
         };
@@ -111,7 +106,6 @@ const OngoingActivity = connect(mapStateToProps)(
         stopWatchPrometheusQuery,
         resourceActivities,
         prometheusActivities,
-        dynamicPrometheusActivities,
       ]);
 
       const allResourceActivities = React.useMemo(
@@ -139,7 +133,7 @@ const OngoingActivity = connect(mapStateToProps)(
 
       const allPrometheusActivities = React.useMemo(
         () =>
-          [...prometheusActivities, ...dynamicPrometheusActivities]
+          prometheusActivities
             .filter((a) => {
               const queryResults = a.properties.queries.map(
                 (q) => prometheusResults.getIn([q, 'data']) as PrometheusResponse,
@@ -151,13 +145,11 @@ const OngoingActivity = connect(mapStateToProps)(
                 (q) => prometheusResults.getIn([q, 'data']) as PrometheusResponse,
               );
               return {
-                loader: (a as DashboardsOverviewPrometheusActivity)?.properties.loader,
-                component: (a as ResolvedExtension<DynamicDashboardsOverviewPrometheusActivity>)
-                  ?.properties.component,
+                component: a.properties.component,
                 results: queryResults,
               };
             }),
-        [dynamicPrometheusActivities, prometheusActivities, prometheusResults],
+        [prometheusActivities, prometheusResults],
       );
 
       const resourcesLoaded = React.useMemo(

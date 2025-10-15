@@ -6,6 +6,9 @@
     --pf-v6-c-dropdown__menu-item--PaddingBottom: 0;
     --pf-v6-c-dropdown__menu-item--PaddingLeft: 0;
   }
+  .pf-v6-c-menu__list-item {
+    min-width: auto; // prevent topology content menu items from truncating: https://github.com/patternfly/react-topology/issues/293
+  }
 }
 
 :root:where(.pf-v6-theme-dark) .pf-v6-c-dropdown__menu-item-icon {

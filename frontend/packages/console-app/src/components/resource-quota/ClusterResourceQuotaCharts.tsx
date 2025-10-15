@@ -14,8 +14,8 @@ const ClusterResourceQuotaCharts = ({
 }: ClusterResourceQuotaChartsProps): JSX.Element => {
   const { t } = useTranslation();
   const charts = Object.keys(clusterResourceQuota.status?.total?.hard ?? {}).map((resourceName) => {
-    const clusterHard = clusterResourceQuota.status.total.hard[resourceName];
-    const clusterUsed = clusterResourceQuota.status.total.used?.[resourceName];
+    const clusterHard = clusterResourceQuota.status?.total?.hard?.[resourceName];
+    const clusterUsed = clusterResourceQuota.status?.total?.used?.[resourceName];
 
     const { label, percent } = getLabelAndUsage({
       resourceName,
