@@ -26,6 +26,8 @@ import (
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
+	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
 const (
@@ -63,6 +65,9 @@ const (
 )
 
 func main() {
+	// Initialize controller-runtime logger, needed for the OLM handler
+	log.SetLogger(zap.New())
+
 	fs := flag.NewFlagSet("bridge", flag.ExitOnError)
 	klog.InitFlags(fs)
 	defer klog.Flush()
