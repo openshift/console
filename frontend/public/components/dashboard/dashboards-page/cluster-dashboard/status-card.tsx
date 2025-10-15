@@ -58,7 +58,10 @@ import {
 } from './health-item';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
+import {
+  useNamespacedNotificationAlerts,
+  useNotificationAlerts,
+} from '@console/shared/src/hooks/useNotificationAlerts';
 
 const filterSubsystems = (
   subsystems: (
@@ -117,6 +120,20 @@ export const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ labelSelector 
         </StatusItem>
       )}
       {alerts.map((alert) => (
+        <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
+      ))}
+    </AlertsBody>
+  );
+};
+
+export const DashboardNamespacedAlerts: React.FC<DashboardNamespacedAlertsProps> = ({
+  namespace,
+}) => {
+  const [namespacedAlerts, , loadError] = useNamespacedNotificationAlerts(namespace);
+
+  return (
+    <AlertsBody error={!_.isEmpty(loadError)}>
+      {namespacedAlerts.map((alert) => (
         <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
       ))}
     </AlertsBody>
@@ -267,4 +284,8 @@ type StatusCardProps = {
 
 type DashboardAlertsProps = {
   labelSelector?: ObjectMetadata['labels'];
+};
+
+type DashboardNamespacedAlertsProps = {
+  namespace: string;
 };
