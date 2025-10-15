@@ -26,6 +26,13 @@
     var(--pf-v6-c-card--child--PaddingBlockEnd) var(--pf-v6-c-card--child--PaddingInlineStart);
 }
 
+.co-activity-card__recent-footer {
+  border-top: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
+  padding: 1.5rem var(--pf-v6-c-card--child--PaddingInlineEnd)
+    var(--pf-v6-c-card--child--PaddingBlockEnd) 0;
+}
+
 .co-activity-card__recent-accordion.pf-v6-c-accordion {
   padding: 0.75rem 0;
   h5 {
