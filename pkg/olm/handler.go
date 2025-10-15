@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/operator-framework/kubectl-operator/pkg/action"
 	olmv1 "github.com/operator-framework/operator-lifecycle-manager/pkg/package-server/apis/operators/v1"
@@ -40,13 +41,23 @@ func (o *OLMHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o *OLMHandler) catalogItemsHandler(w http.ResponseWriter, r *http.Request) {
-	items, lastModified, stale := o.catalogService.GetCatalogItems(r)
-	if stale {
-		w.WriteHeader(http.StatusNotModified)
+	// Check for not modified condition
+	if ifModifiedSince := r.Header.Get("If-Modified-Since"); ifModifiedSince != "" {
+		if parsedTime, err := time.Parse(http.TimeFormat, ifModifiedSince); err == nil {
+			if !o.catalogService.LastModified.After(parsedTime) {
+				w.WriteHeader(http.StatusNotModified)
+				return
+			}
+		}
+	}
+
+	items, err := o.catalogService.GetCatalogItems(r)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	w.Header().Set("Last-Modified", lastModified.UTC().Format(http.TimeFormat))
+	w.Header().Set("Last-Modified", o.catalogService.LastModified.UTC().Format(http.TimeFormat))
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(items); err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())

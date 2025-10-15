@@ -90,6 +90,28 @@ func CreateCatalogItem(catalogName string, pkg *declcfg.Package, bundle *declcfg
 	return item
 }
 
+// Get plain text description from CSV metadata or package description
+func getPlainTextDescription(csvMetadata *property.CSVMetadata, pkg *declcfg.Package) string {
+	if csvMetadata == nil || csvMetadata.Description == "" {
+		return pkg.Description
+	}
+
+	return csvMetadata.Description
+}
+
+// Get description from CSV metadata annotations, wich can be formatted as markdown
+func getMarkdownDescription(csvMetadata *property.CSVMetadata) string {
+	if csvMetadata == nil {
+		return ""
+	}
+
+	if csvMetadata.Annotations == nil {
+		return ""
+	}
+
+	return csvMetadata.Annotations[DescriptionOLMAnnotationKey]
+}
+
 func getCSVMetadata(bundle *declcfg.Bundle) (*property.CSVMetadata, error) {
 	var csvMetadata *property.CSVMetadata
 	for _, p := range bundle.Properties {
@@ -183,18 +205,13 @@ func withCreatedAt(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata) 
 	}
 }
 
+// Plain text description takes precedence, fall back to markdown description if empty
 func withDescription(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata, pkg *declcfg.Package) {
-	item.Description = pkg.Description
-	if csvMetadata == nil {
-		return
-	}
 
-	if csvMetadata.Description != "" {
-		item.Description = csvMetadata.Description
-	}
+	item.Description = getPlainTextDescription(csvMetadata, pkg)
 
-	if csvMetadata.Annotations[DescriptionOLMAnnotationKey] != "" {
-		item.Description = csvMetadata.Annotations[DescriptionOLMAnnotationKey]
+	if item.Description == "" {
+		item.Description = getMarkdownDescription(csvMetadata)
 	}
 }
 
@@ -240,18 +257,12 @@ func withKeywords(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata) {
 	}
 }
 
+// Markdown description takes precedence, fall back to plain text description if empty
 func withMarkdownDescription(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata, pkg *declcfg.Package) {
-	item.MarkdownDescription = pkg.Description
-	if csvMetadata == nil {
-		return
-	}
+	item.MarkdownDescription = getMarkdownDescription(csvMetadata)
 
-	if csvMetadata.Annotations[DescriptionOLMAnnotationKey] != "" {
-		item.MarkdownDescription = csvMetadata.Annotations[DescriptionOLMAnnotationKey]
-	}
-
-	if csvMetadata.Description != "" {
-		item.MarkdownDescription = csvMetadata.Description
+	if item.MarkdownDescription == "" {
+		item.MarkdownDescription = getPlainTextDescription(csvMetadata, pkg)
 	}
 }
 

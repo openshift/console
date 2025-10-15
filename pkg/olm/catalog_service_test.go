@@ -57,7 +57,7 @@ func TestUpdateCatalog(t *testing.T) {
 		items, found := c.Get("test-catalog")
 		assert.True(t, found)
 		assert.NotEmpty(t, items)
-		assert.NotZero(t, service.lastModified)
+		assert.NotZero(t, service.LastModified)
 	})
 
 	t.Run("should return error on fetch failure", func(t *testing.T) {
@@ -84,31 +84,23 @@ func TestGetCatalogItems(t *testing.T) {
 	service := &CatalogService{
 		cache:        c,
 		catalogs:     map[string]string{"test-catalog": "test-catalog"},
-		lastModified: time.Now(),
+		LastModified: time.Now(),
 	}
 
 	t.Run("should return items from cache", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/", nil)
-		returnedItems, _, stale := service.GetCatalogItems(req)
+		returnedItems, err := service.GetCatalogItems(req)
 
-		assert.False(t, stale)
+		assert.Nil(t, err)
 		assert.Equal(t, items, returnedItems)
-	})
-
-	t.Run("should return not modified if cache is fresh", func(t *testing.T) {
-		req := httptest.NewRequest("GET", "/", nil)
-		req.Header.Set("If-Modified-Since", service.lastModified.Add(1*time.Second).UTC().Format(http.TimeFormat))
-		_, _, stale := service.GetCatalogItems(req)
-
-		assert.True(t, stale)
 	})
 
 	t.Run("should return items if cache is stale", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/", nil)
-		req.Header.Set("If-Modified-Since", service.lastModified.Add(-1*time.Hour).UTC().Format(http.TimeFormat))
-		returnedItems, _, stale := service.GetCatalogItems(req)
+		req.Header.Set("If-Modified-Since", service.LastModified.Add(-1*time.Hour).UTC().Format(http.TimeFormat))
+		returnedItems, err := service.GetCatalogItems(req)
 
-		assert.False(t, stale)
+		assert.Nil(t, err)
 		assert.Equal(t, items, returnedItems)
 	})
 }
