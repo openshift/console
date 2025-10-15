@@ -73,17 +73,7 @@ func (o *OLMHandler) OperandsList(user *auth.User, w http.ResponseWriter, r *htt
 	}
 	// Deduplicate operands by UID to prevent duplicate CRs
 	if operandsList != nil && len(operandsList.Items) > 0 {
-		seen := make(map[string]bool)
-		uniqueOperands := make([]unstructured.Unstructured, 0, len(operandsList.Items))
-
-		for _, operand := range operandsList.Items {
-			uid := string(operand.GetUID())
-			if !seen[uid] {
-				seen[uid] = true
-				uniqueOperands = append(uniqueOperands, operand)
-			}
-		}
-		operandsList.Items = uniqueOperands
+		operandsList.Items = deduplicateUnstructuredList(operandsList.Items)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -164,4 +154,19 @@ func (o *OLMHandler) getClientWithScheme(user *auth.User) (client.Client, *runti
 		return nil, nil, fmt.Errorf("failed to get new olm client: %v", err)
 	}
 	return client, scheme, nil
+}
+
+func deduplicateUnstructuredList(list []unstructured.Unstructured) []unstructured.Unstructured {
+	seen := make(map[string]bool)
+	uniqueItems := make([]unstructured.Unstructured, 0, len(list))
+
+	for _, item := range list {
+		uid := string(item.GetUID())
+		if !seen[uid] {
+			seen[uid] = true
+			uniqueItems = append(uniqueItems, item)
+		}
+	}
+
+	return uniqueItems
 }
