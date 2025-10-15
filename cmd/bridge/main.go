@@ -73,6 +73,8 @@ const (
 	openshiftClusterProxyHost = "cluster-proxy-addon-user.multicluster-engine.svc:9092"
 
 	clusterManagementURL = "https://api.openshift.com/"
+	defaultCacheDuration = 5 * time.Minute
+	defaultCacheCleanup  = 30 * time.Minute
 )
 
 func main() {
@@ -596,10 +598,10 @@ func main() {
 			Metrics: controllerManagerMetricsOptions,
 		})
 		if err != nil {
-			klog.Errorf("problem creating controller manager: %v", err)
+			klog.Errorf("problem creating main controller manager: %v", err)
 		}
 
-		cache := cache.New(5*time.Minute, 30*time.Minute)
+		cache := cache.New(defaultCacheDuration, defaultCacheCleanup)
 		catalogService := olm.NewCatalogService(srv.ServiceClient, srv.CatalogdProxyConfig, cache)
 		srv.CatalogService = catalogService
 
@@ -607,7 +609,7 @@ func main() {
 			klog.Errorf("failed to start ClusterCatalog reconciler: %v", err)
 		}
 
-		klog.Info("starting manager")
+		klog.Info("starting controller manager")
 		mgrContext := ctrl.SetupSignalHandler()
 		go func() {
 			if err := mgr.Start(mgrContext); err != nil {

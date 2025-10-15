@@ -42,10 +42,7 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 		if apierrors.IsNotFound(err) {
 			// The ClusterCatalog has been deleted, delete its CatalogItems from the cache
 			klog.V(4).Infof("Removing CatalogItems for ClusterCatalog %s from cache", req.Name)
-			err = r.catalogService.RemoveCatalog(req.Name)
-			if err != nil {
-				return ctrl.Result{}, err
-			}
+			r.catalogService.RemoveCatalog(req.Name)
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, err

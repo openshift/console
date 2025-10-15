@@ -39,6 +39,7 @@ func (c *CatalogdClient) Fetch(catalog, baseUrl string, ifNotModifiedSince *time
 	var catalogURL string
 	var err error
 
+	// Proxy config is used in an off-cluster environment, while the baseUrl is when running in-cluster.
 	if c.proxyConfig != nil {
 		catalogURL = fmt.Sprintf("%s/catalogs/%s%s", c.proxyConfig.Endpoint.String(), catalog, CatalogdAllEndpoint)
 	} else {
