@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { screen } from '@testing-library/react';
+import { cleanup, screen } from '@testing-library/react';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -15,12 +15,16 @@ import {
 import { AddRequestHeaderPage } from '../../cluster-settings/request-header-idp-form';
 
 describe('Add Identity Provider: Request Header', () => {
+  beforeAll(() => {
+    setupFileReaderMock();
+  });
+
   beforeEach(() => {
     renderWithProviders(<AddRequestHeaderPage />);
   });
 
-  beforeAll(() => {
-    setupFileReaderMock();
+  afterEach(() => {
+    cleanup();
   });
 
   afterAll(() => {

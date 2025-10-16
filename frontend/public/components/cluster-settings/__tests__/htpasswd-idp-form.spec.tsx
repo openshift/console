@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import { cleanup } from '@testing-library/react';
 import {
   renderWithProviders,
   verifyInputField,
@@ -13,12 +14,16 @@ import {
 import { AddHTPasswdPage } from '../../cluster-settings/htpasswd-idp-form';
 
 describe('Add Identity Provider: HTPasswd', () => {
+  beforeAll(() => {
+    setupFileReaderMock();
+  });
+
   beforeEach(() => {
     renderWithProviders(<AddHTPasswdPage />);
   });
 
-  beforeAll(() => {
-    setupFileReaderMock();
+  afterEach(() => {
+    cleanup();
   });
 
   afterAll(() => {

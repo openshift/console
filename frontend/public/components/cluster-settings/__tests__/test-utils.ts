@@ -3,6 +3,25 @@ import '@testing-library/jest-dom';
 import { screen, fireEvent, within } from '@testing-library/react';
 import { verifyFormElementBasics } from '@console/shared/src/test-utils/unit-test-utils';
 
+// Mock the cluster-settings module to prevent async API calls during tests
+jest.mock('../../cluster-settings', () => ({
+  getOAuthResource: jest.fn(() => Promise.resolve({ spec: { identityProviders: [] } })),
+  addIDP: jest.fn(() => Promise.resolve({})),
+  redirectToOAuthPage: jest.fn(),
+  mockNames: {
+    secret: 'secret-name',
+    ca: 'ca-name',
+  },
+}));
+
+// Mock k8s module to prevent API calls
+jest.mock('../../../module/k8s', () => ({
+  ...jest.requireActual('../../../module/k8s'),
+  k8sCreate: jest.fn(() => Promise.resolve({ metadata: { name: 'test-secret' } })),
+  k8sGet: jest.fn(() => Promise.resolve({ spec: { identityProviders: [] } })),
+  k8sPatch: jest.fn(() => Promise.resolve({})),
+}));
+
 const updatedFormValues = {
   id: '2729292624425',
   name: 'example',
