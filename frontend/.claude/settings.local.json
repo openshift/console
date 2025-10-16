@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(yarn test)",
+      "Bash(yarn test:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
