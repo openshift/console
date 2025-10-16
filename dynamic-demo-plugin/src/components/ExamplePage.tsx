@@ -54,21 +54,21 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
           </Gallery>
           <StackItem>
             {error && (
-              <Alert variant="warning" data-testid="prometheus-error" title={t('Prometheus error')}>
+              <Alert variant="warning" data-test="demo-plugin_prometheus-error" title={t('Prometheus error')}>
                 {error}
               </Alert>
             )}
             {!loaded && (
               <Alert
                 variant="info"
-                data-testid="prometheus-loading"
+                data-test="demo-plugin_prometheus-loading"
                 title={t('Prometheus loading')}
               >
                 {t('Prometheus loading')}
               </Alert>
             )}
             {!error && loaded && (
-              <Alert data-testid="prometheus-data" title={t('Prometheus data')}>
+              <Alert data-test="demo-plugin_prometheus-data" title={t('Prometheus data')}>
                 {JSON.stringify(result.data)}
               </Alert>
             )}
