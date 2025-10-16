@@ -9,6 +9,7 @@ import (
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/operator-framework/kubectl-operator/pkg/action"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 
@@ -69,6 +70,10 @@ func (o *OLMHandler) OperandsList(user *auth.User, w http.ResponseWriter, r *htt
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
 		return
+	}
+	// Deduplicate operands by UID to prevent duplicate CRs
+	if operandsList != nil && len(operandsList.Items) > 0 {
+		operandsList.Items = deduplicateUnstructuredList(operandsList.Items)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -149,4 +154,19 @@ func (o *OLMHandler) getClientWithScheme(user *auth.User) (client.Client, *runti
 		return nil, nil, fmt.Errorf("failed to get new olm client: %v", err)
 	}
 	return client, scheme, nil
+}
+
+func deduplicateUnstructuredList(list []unstructured.Unstructured) []unstructured.Unstructured {
+	seen := make(map[string]bool)
+	uniqueItems := make([]unstructured.Unstructured, 0, len(list))
+
+	for _, item := range list {
+		uid := string(item.GetUID())
+		if !seen[uid] {
+			seen[uid] = true
+			uniqueItems = append(uniqueItems, item)
+		}
+	}
+
+	return uniqueItems
 }
