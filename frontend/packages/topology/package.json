@@ -16,30 +16,35 @@
     "@console/dev-console": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx",
+    "entry": "src/plugin.ts",
     "exposedModules": {
-      "reduxReducer": "src/utils/reducer.ts",
+      "BuildTabSection": "src/components/workload/build-tab-section.tsx",
       "CronJobSideBarDetails": "src/components/workload/CronJobSideBarDetails.tsx",
       "DaemonSetSideBarDetails": "src/components/workload/DaemonSetSideBarDetails.tsx",
       "DeploymentConfigSideBarDetails": "src/components/workload/DeploymentConfigSideBarDetails.tsx",
       "DeploymentSideBarDetails": "src/components/workload/DeploymentSideBarDetails.tsx",
       "JobSideBarDetails": "src/components/workload/JobSideBarDetails.tsx",
-      "PodsTabSection": "src/components/workload/pods-tab-section.tsx",
-      "StatefulSetSideBarDetails": "src/components/workload/StatefulSetSideBarDetails.tsx",
-      "WorkloadResourceLink": "src/components/workload/workload-resource-link.tsx",
-      "workloadUtils": "src/components/workload/utils.ts",
-      "BuildTabSection": "src/components/workload/build-tab-section.tsx",
-      "NetworkTabSection": "src/components/workload/network-tab-section.tsx",
       "JobsTabSection": "src/components/workload/jobs-tab-section.tsx",
+      "NetworkTabSection": "src/components/workload/network-tab-section.tsx",
       "PodSideBarDetails": "src/components/workload/PodSideBarDetails.tsx",
+      "PodsTabSection": "src/components/workload/pods-tab-section.tsx",
       "ResourceAlert": "src/components/workload/resource-alert.tsx",
+      "StatefulSetSideBarDetails": "src/components/workload/StatefulSetSideBarDetails.tsx",
       "VpaTabSection": "src/components/workload/vpa-tab-section.tsx",
+      "WorkloadResourceLink": "src/components/workload/workload-resource-link.tsx",
       "actions": "src/actions/provider.ts",
-      "exportAppContext": "src/components/export-app/export-app-context.ts",
       "applicationResourceLink": "src/components/application-panel/application-resource-link.tsx",
       "applicationResourceTabSection": "src/components/application-panel/application-resource-tab-section.tsx",
+      "defaultDecorators": "src/components/graph-view/components/nodes/decorators/defaultDecorators.tsx",
       "edgeResourceLink": "src/components/visual-connector/edge-resource-link.tsx",
-      "resourceTabSection": "src/components/visual-connector/resource-tab-section.tsx"
+      "exportAppContext": "src/components/export-app/export-app-context.ts",
+      "operatorFilters": "src/operators/operatorFilters.ts",
+      "operatorsComponentFactory": "src/operators/components/operatorsComponentFactory.ts",
+      "operatorsDataModelReconciler": "src/operators/operatorsDataModelReconciler.ts",
+      "operatorsDataTransformer": "src/operators/operators-data-transformer.ts",
+      "reduxReducer": "src/utils/reducer.ts",
+      "resourceTabSection": "src/components/visual-connector/resource-tab-section.tsx",
+      "workloadUtils": "src/components/workload/utils.ts"
     }
   }
 }
