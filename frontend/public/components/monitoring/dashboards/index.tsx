@@ -21,9 +21,8 @@ import {
 import { AngleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angle-down-icon';
 import { AngleRightIcon } from '@patternfly/react-icons/dist/esm/icons/angle-right-icon';
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router-dom-v5-compat';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
@@ -64,22 +63,18 @@ import {
   MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
   Panel,
   Row,
-  TimeDropdownsProps,
 } from './types';
 import { useBoolean } from '../hooks/useBoolean';
 import { useIsVisible } from '../hooks/useIsVisible';
 import { useFetchDashboards } from './useFetchDashboards';
-import {
-  DEFAULT_GRAPH_SAMPLES,
-  getActivePerspective,
-  getAllVariables,
-} from './monitoring-dashboard-utils';
+import { DEFAULT_GRAPH_SAMPLES, getAllVariables } from './monitoring-dashboard-utils';
 
 import {
   isDataSource,
   DataSource as DataSourceExtension,
   CustomDataSource,
 } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-data-source';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 
 const intervalVariableRegExps = ['__interval', '__rate_interval', '__auto_interval_[a-z]+'];
 
@@ -90,6 +85,7 @@ const evaluateTemplate = (
   template: string,
   variables: ImmutableMap<string, Variable>,
   timespan: number,
+  namespace: string,
 ): string => {
   if (_.isEmpty(template)) {
     return undefined;
@@ -123,16 +119,18 @@ const evaluateTemplate = (
         result = undefined;
         return false;
       }
-      const replacement =
+
+      let replacement =
         v.value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY ? '.+' : v.value || '';
+      if (v.name === 'namespace') {
+        replacement = namespace;
+      }
       result = result.replace(re, replacement);
     }
   });
 
   return result;
 };
-
-const NamespaceContext = React.createContext('');
 
 const FilterSelect: React.FC<FilterSelectProps> = ({
   items,
@@ -209,20 +207,23 @@ const VariableOption = ({ itemKey }) =>
     </SelectOptionDeprecated>
   );
 
-const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace }) => {
+const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
   const { t } = useTranslation();
 
-  const activePerspective = getActivePerspective(namespace);
-
   const timespan = useSelector(({ observe }: RootState) =>
-    observe.getIn(['dashboards', activePerspective, 'timespan']),
+    observe.getIn(['dashboards', 'dev', 'timespan']),
   );
 
   const variables = useSelector(({ observe }: RootState) =>
-    observe.getIn(['dashboards', activePerspective, 'variables']),
+    observe.getIn(['dashboards', 'dev', 'variables']),
   );
-  const variable = variables.toJS()[name];
-  const query = evaluateTemplate(variable.query, variables, timespan);
+  const variable = variables.toJS()[name] as Variable;
+
+  // Use the namespace value in the variables to ensure that we are never desynced
+  // Once the namespace variable is updated then this will also get updated
+  const namespace = variables.toJS().namespace.value;
+
+  const query = evaluateTemplate(variable.query, variables, timespan, namespace);
 
   const dispatch = useDispatch();
 
@@ -276,40 +277,36 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
           .then(({ data }) => {
             setIsError(false);
             const newOptions = _.flatMap(data?.result, ({ metric }) => _.values(metric)).sort();
-            dispatch(dashboardsVariableOptionsLoaded(name, newOptions, activePerspective));
+            dispatch(dashboardsVariableOptionsLoaded(name, newOptions, 'dev'));
           })
           .catch((err) => {
-            dispatch(dashboardsPatchVariable(name, { isLoading: false }, activePerspective));
+            dispatch(dashboardsPatchVariable(name, { isLoading: false }, 'dev'));
             if (err.name !== 'AbortError') {
               setIsError(true);
             }
           }),
       );
     }
-  }, [activePerspective, dispatch, getURL, name, namespace, query, safeFetch, timespan]);
+  }, [dispatch, getURL, name, query, safeFetch, timespan, namespace]);
 
   React.useEffect(() => {
     if (variable.value && variable.value !== getQueryArgument(name)) {
-      if (activePerspective === 'dev' && name !== 'namespace') {
-        setQueryArgument(name, variable.value);
-      } else if (activePerspective === 'admin') {
+      if (name !== 'namespace') {
         setQueryArgument(name, variable.value);
       }
     }
-  }, [activePerspective, name, variable.value]);
+  }, [name, variable.value]);
 
   const onChange = React.useCallback(
     (v: string) => {
       if (v !== variable.value) {
-        if (activePerspective === 'dev' && name !== 'namespace') {
-          setQueryArgument(name, v);
-        } else if (activePerspective === 'admin') {
+        if (name !== 'namespace') {
           setQueryArgument(name, v);
         }
-        dispatch(dashboardsPatchVariable(name, { value: v }, activePerspective));
+        dispatch(dashboardsPatchVariable(name, { value: v }, 'dev'));
       }
     },
-    [activePerspective, dispatch, name, variable.value],
+    [dispatch, name, variable.value],
   );
 
   if (variable.isHidden || (!isError && _.isEmpty(variable.options))) {
@@ -354,15 +351,14 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name, namespace
 };
 
 const AllVariableDropdowns = () => {
-  const namespace = React.useContext(NamespaceContext);
   const variables = useSelector(({ observe }: RootState) =>
-    observe.getIn(['dashboards', getActivePerspective(namespace), 'variables']),
+    observe.getIn(['dashboards', 'dev', 'variables']),
   );
 
   return (
     <>
       {variables.keySeq().map((name: string) => (
-        <VariableDropdown key={name} id={name} name={name} namespace={namespace} />
+        <VariableDropdown key={name} id={name} name={name} />
       ))}
     </>
   );
@@ -424,13 +420,12 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
   },
 );
 
-export const PollIntervalDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
+export const PollIntervalDropdown: React.FC = () => {
   const { t } = useTranslation();
 
   const refreshIntervalFromParams = getQueryArgument('refreshInterval');
-  const activePerspective = getActivePerspective(namespace);
   const interval = useSelector(({ observe }: RootState) =>
-    observe.getIn(['dashboards', activePerspective, 'pollInterval']),
+    observe.getIn(['dashboards', 'dev', 'pollInterval']),
   );
 
   const dispatch = useDispatch();
@@ -441,9 +436,9 @@ export const PollIntervalDropdown: React.FC<TimeDropdownsProps> = ({ namespace }
       } else {
         removeQueryArgument('refreshInterval');
       }
-      dispatch(dashboardsSetPollInterval(v, activePerspective));
+      dispatch(dashboardsSetPollInterval(v, 'dev'));
     },
-    [dispatch, activePerspective],
+    [dispatch],
   );
 
   return (
@@ -460,12 +455,11 @@ export const PollIntervalDropdown: React.FC<TimeDropdownsProps> = ({ namespace }
   );
 };
 
-const TimeDropdowns: React.FC<{}> = React.memo(() => {
-  const namespace = React.useContext(NamespaceContext);
+const TimeDropdowns: React.FC = React.memo(() => {
   return (
     <div className="monitoring-dashboards__options">
-      <TimespanDropdown namespace={namespace} />
-      <PollIntervalDropdown namespace={namespace} />
+      <TimespanDropdown />
+      <PollIntervalDropdown />
     </div>
   );
 });
@@ -488,16 +482,12 @@ const QueryBrowserLink = ({ queries }) => {
 
   const params = new URLSearchParams();
   queries.forEach((q, i) => params.set(`query${i}`, q));
-  const namespace = React.useContext(NamespaceContext);
+  const [namespace] = useActiveNamespace();
 
   return (
     <Link
       aria-label={t('public~Inspect')}
-      to={
-        namespace
-          ? `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`
-          : `/monitoring/query-browser?${params.toString()}`
-      }
+      to={`/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`}
     >
       {t('public~Inspect')}
     </Link>
@@ -538,17 +528,17 @@ const getPanelClassModifier = (panel: Panel): string => {
 const Card: React.FC<CardProps> = React.memo(({ panel }) => {
   const { t } = useTranslation();
 
-  const namespace = React.useContext(NamespaceContext);
-  const activePerspective = getActivePerspective(namespace);
+  const [namespace] = useActiveNamespace();
   const pollInterval = useSelector(({ observe }: RootState) =>
-    observe.getIn(['dashboards', activePerspective, 'pollInterval']),
+    observe.getIn(['dashboards', 'dev', 'pollInterval']),
   );
   const timespan = useSelector(({ observe }: RootState) =>
-    observe.getIn(['dashboards', activePerspective, 'timespan']),
+    observe.getIn(['dashboards', 'dev', 'timespan']),
   );
   const variables = useSelector(({ observe }: RootState) =>
-    observe.getIn(['dashboards', activePerspective, 'variables']),
+    observe.getIn(['dashboards', 'dev', 'variables']),
   );
+  const variableNamespace = variables.toJS().namespace.value;
 
   const ref = React.useRef();
   const [, wasEverVisible] = useIsVisible(ref);
@@ -626,7 +616,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
   if (!rawQueries.length) {
     return null;
   }
-  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variables, timespan));
+  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variables, timespan, namespace));
   const isLoading =
     (_.some(queries, _.isUndefined) && dataSourceInfoLoading) || customDataSource === undefined;
 
@@ -672,7 +662,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
                     <BarChart
                       pollInterval={pollInterval}
                       query={queries[0]}
-                      namespace={namespace}
+                      namespace={variableNamespace}
                       customDataSource={customDataSource}
                     />
                   )}
@@ -685,7 +675,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
                       showLegend={panel.legend?.show}
                       units={panel.yaxes?.[0]?.format}
                       onZoomHandle={handleZoom}
-                      namespace={namespace}
+                      namespace={variableNamespace}
                       customDataSource={customDataSource}
                     />
                   )}
@@ -694,7 +684,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
                       panel={panel}
                       pollInterval={pollInterval}
                       query={queries[0]}
-                      namespace={namespace}
+                      namespace={variableNamespace}
                       customDataSource={customDataSource}
                     />
                   )}
@@ -703,7 +693,7 @@ const Card: React.FC<CardProps> = React.memo(({ panel }) => {
                       panel={panel}
                       pollInterval={pollInterval}
                       queries={queries}
-                      namespace={namespace}
+                      namespace={variableNamespace}
                       customDataSource={customDataSource}
                     />
                   )}
@@ -760,27 +750,19 @@ const Board: React.FC<BoardProps> = ({ rows }) => (
 );
 
 const MonitoringDashboardsPage: React.FC = () => {
-  const { t } = useTranslation();
-  const params = useParams();
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
-  const namespace = params?.ns;
-  const activePerspective = getActivePerspective(namespace);
+  const [namespace] = useActiveNamespace();
   const [board, setBoard] = React.useState<string>();
-  const [boards, isLoading, error] = useFetchDashboards(namespace);
+  const [boards, isLoading, error] = useFetchDashboards();
 
-  // Clear queries on unmount
-  React.useEffect(() => () => dispatch(queryBrowserDeleteAllQueries()), [dispatch]);
-
-  // Clear variables on unmount for dev perspective
   React.useEffect(
     () => () => {
-      if (activePerspective === 'dev') {
-        dispatch(DashboardsClearVariables(activePerspective));
-      }
+      dispatch(queryBrowserDeleteAllQueries());
+      dispatch(DashboardsClearVariables('dev'));
     },
-    [activePerspective, dispatch],
+    [dispatch],
   );
 
   const boardItems = React.useMemo(
@@ -796,9 +778,7 @@ const MonitoringDashboardsPage: React.FC = () => {
     (newBoard: string) => {
       let timeSpan: string;
       let endTime: string;
-      let url = namespace
-        ? `/dev-monitoring/ns/${namespace}?dashboard=${newBoard}`
-        : `/monitoring/dashboards/${newBoard}`;
+      let url = `/dev-monitoring/ns/${namespace}?dashboard=${newBoard}`;
 
       const refreshInterval = getQueryArgument('refreshInterval');
 
@@ -824,41 +804,38 @@ const MonitoringDashboardsPage: React.FC = () => {
         }
 
         const allVariables = getAllVariables(boards, newBoard, namespace);
-        dispatch(dashboardsPatchAllVariables(allVariables, activePerspective));
+        dispatch(dashboardsPatchAllVariables(allVariables, 'dev'));
 
         // Set time range and poll interval options to their defaults or from the query params if
         // available
         if (refreshInterval) {
-          dispatch(dashboardsSetPollInterval(_.toNumber(refreshInterval), activePerspective));
+          dispatch(dashboardsSetPollInterval(_.toNumber(refreshInterval), 'dev'));
         }
-        dispatch(dashboardsSetEndTime(_.toNumber(endTime) || null, activePerspective));
+        dispatch(dashboardsSetEndTime(_.toNumber(endTime) || null, 'dev'));
         dispatch(
           dashboardsSetTimespan(
             _.toNumber(timeSpan) || MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
-            activePerspective,
+            'dev',
           ),
         );
 
         setBoard(newBoard);
       }
     },
-    [activePerspective, board, boards, dispatch, namespace, navigate],
+    [board, boards, dispatch, namespace, navigate],
   );
 
   // Display dashboard present in the params or show the first board
   React.useEffect(() => {
     if (!board && !_.isEmpty(boards)) {
       const boardName = getQueryArgument('dashboard');
-      changeBoard((namespace ? boardName : params.board) || boards?.[0]?.name);
+      changeBoard(boardName || boards?.[0]?.name);
     }
-  }, [board, boards, changeBoard, params.board, namespace]);
+  }, [board, boards, changeBoard]);
 
   React.useEffect(() => {
-    const newBoard = getQueryArgument('dashboard');
-    const allVariables = getAllVariables(boards, newBoard, namespace);
-    dispatch(dashboardsPatchAllVariables(allVariables, activePerspective));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace]);
+    dispatch(dashboardsPatchVariable('namespace', { value: namespace }, 'dev'));
+  }, [namespace, dispatch]);
 
   // If we don't find any rows, build the rows array based on what we have in `data.panels`
   const rows = React.useMemo(() => {
@@ -888,26 +865,19 @@ const MonitoringDashboardsPage: React.FC = () => {
 
   return (
     <>
-      {!namespace && (
-        <Helmet>
-          <title>{t('public~Metrics dashboards')}</title>
-        </Helmet>
-      )}
-      <NamespaceContext.Provider value={namespace}>
-        <div className="co-m-nav-title co-m-nav-title--detail">
-          {!namespace && <HeaderTop />}
-          <div className="monitoring-dashboards__variables">
-            <div className="monitoring-dashboards__dropdowns">
-              {!_.isEmpty(boardItems) && (
-                <DashboardDropdown items={boardItems} onChange={changeBoard} selectedKey={board} />
-              )}
-              <AllVariableDropdowns key={board} />
-            </div>
-            {namespace && <TimeDropdowns />}
+      <div className="co-m-nav-title co-m-nav-title--detail">
+        {!namespace && <HeaderTop />}
+        <div className="monitoring-dashboards__variables">
+          <div className="monitoring-dashboards__dropdowns">
+            {!_.isEmpty(boardItems) && (
+              <DashboardDropdown items={boardItems} onChange={changeBoard} selectedKey={board} />
+            )}
+            <AllVariableDropdowns key={board} />
           </div>
+          <TimeDropdowns />
         </div>
-        <Dashboard>{isLoading ? <LoadingInline /> : <Board key={board} rows={rows} />}</Dashboard>
-      </NamespaceContext.Provider>
+      </div>
+      <Dashboard>{isLoading ? <LoadingInline /> : <Board key={board} rows={rows} />}</Dashboard>
     </>
   );
 };
@@ -918,6 +888,8 @@ type Variable = {
   options?: string[];
   query?: string;
   value?: string;
+  datasource?: any;
+  includeAll?: boolean;
 };
 
 type FilterSelectProps = {
@@ -930,7 +902,6 @@ type FilterSelectProps = {
 type VariableDropdownProps = {
   id: string;
   name: string;
-  namespace?: string;
 };
 
 type DashboardDropdownProps = {

@@ -33,24 +33,19 @@ const toISOTimeString = (date: Date): string =>
   ).format(date);
 
 type CustomTimeRangeModalProps = {
-  activePerspective: string;
   isOpen: boolean;
   setClosed: () => void;
 };
 
-const CustomTimeRangeModal: React.FC<CustomTimeRangeModalProps> = ({
-  activePerspective,
-  isOpen,
-  setClosed,
-}) => {
+const CustomTimeRangeModal: React.FC<CustomTimeRangeModalProps> = ({ isOpen, setClosed }) => {
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
   const endTime = useSelector(({ observe }: RootState) =>
-    observe.getIn(['dashboards', activePerspective, 'endTime']),
+    observe.getIn(['dashboards', 'dev', 'endTime']),
   );
   const timespan = useSelector(({ observe }: RootState) =>
-    observe.getIn(['dashboards', activePerspective, 'timespan']),
+    observe.getIn(['dashboards', 'dev', 'timespan']),
   );
 
   // If a time is already set in Redux, default to that, otherwise default to a time range that
@@ -70,8 +65,8 @@ const CustomTimeRangeModal: React.FC<CustomTimeRangeModalProps> = ({
     const from = Date.parse(`${fromDate} ${fromTime}`);
     const to = Date.parse(`${toDate} ${toTime}`);
     if (_.isInteger(from) && _.isInteger(to)) {
-      dispatch(dashboardsSetEndTime(to, activePerspective));
-      dispatch(dashboardsSetTimespan(to - from, activePerspective));
+      dispatch(dashboardsSetEndTime(to, 'dev'));
+      dispatch(dashboardsSetTimespan(to - from, 'dev'));
       setQueryArguments({
         endTime: to.toString(),
         timeRange: (to - from).toString(),

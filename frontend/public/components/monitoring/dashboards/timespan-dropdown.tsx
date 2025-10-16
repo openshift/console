@@ -19,23 +19,20 @@ import { RootState } from '../../../redux';
 import { getQueryArgument, removeQueryArgument, setQueryArgument } from '../../utils';
 import { useBoolean } from '../hooks/useBoolean';
 import CustomTimeRangeModal from './custom-time-range-modal';
-import { TimeDropdownsProps } from './types';
-import { getActivePerspective } from './monitoring-dashboard-utils';
 
 const CUSTOM_TIME_RANGE_KEY = 'CUSTOM_TIME_RANGE_KEY';
 
-const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
+const TimespanDropdown: React.FC = () => {
   const { t } = useTranslation();
-  const activePerspective = getActivePerspective(namespace);
 
   const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
   const [isModalOpen, , setModalOpen, setModalClosed] = useBoolean(false);
 
   const timespan = useSelector(({ observe }: RootState) =>
-    observe.getIn(['dashboards', activePerspective, 'timespan']),
+    observe.getIn(['dashboards', 'dev', 'timespan']),
   );
   const endTime = useSelector(({ observe }: RootState) =>
-    observe.getIn(['dashboards', activePerspective, 'endTime']),
+    observe.getIn(['dashboards', 'dev', 'endTime']),
   );
 
   const timeSpanFromParams = getQueryArgument('timeRange');
@@ -49,11 +46,11 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
       } else {
         setQueryArgument('timeRange', parsePrometheusDuration(v).toString());
         removeQueryArgument('endTime');
-        dispatch(dashboardsSetTimespan(parsePrometheusDuration(v), activePerspective));
-        dispatch(dashboardsSetEndTime(null, activePerspective));
+        dispatch(dashboardsSetTimespan(parsePrometheusDuration(v), 'dev'));
+        dispatch(dashboardsSetEndTime(null, 'dev'));
       }
     },
-    [activePerspective, dispatch, setModalOpen],
+    [dispatch, setModalOpen],
   );
 
   const items = {
@@ -73,11 +70,7 @@ const TimespanDropdown: React.FC<TimeDropdownsProps> = ({ namespace }) => {
 
   return (
     <>
-      <CustomTimeRangeModal
-        activePerspective={activePerspective}
-        isOpen={isModalOpen}
-        setClosed={setModalClosed}
-      />
+      <CustomTimeRangeModal isOpen={isModalOpen} setClosed={setModalClosed} />
       <div className="form-group monitoring-dashboards__dropdown-wrap">
         <label
           className="monitoring-dashboards__dropdown-title"
