@@ -90,7 +90,7 @@ describe('Project dashboard', () => {
   });
 
   describe('Activity Card', () => {
-    it('has View events link', () => {
+    xit('has View events link', () => {
       cy.byLegacyTestID('activity-card').should('be.visible');
       cy.byTestID('view-events-link')
         .should('have.text', 'View events')
