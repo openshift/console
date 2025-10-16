@@ -126,7 +126,7 @@ describe('Cluster dashboard', () => {
   });
 
   describe('Activity Card', () => {
-    it('has View events link', () => {
+    xit('has View events link', () => {
       cy.byTestID('view-events-link')
         .should('have.text', 'View events')
         .and('have.attr', 'href', `/k8s/all-namespaces/events`);

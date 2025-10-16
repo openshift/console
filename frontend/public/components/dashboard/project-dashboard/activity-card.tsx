@@ -27,7 +27,6 @@ import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
 
 const getEventsResource = (projectName: string): FirehoseResource => ({
   isList: true,
@@ -148,19 +147,7 @@ export const ActivityCard: React.FC = () => {
   const { t } = useTranslation();
   return (
     <Card data-test-id="activity-card">
-      <CardHeader
-        actions={{
-          actions: (
-            <>
-              <Link to={viewEvents} data-test="view-events-link">
-                {t('public~View events')}
-              </Link>
-            </>
-          ),
-          hasNoOffset: false,
-          className: 'co-overview-card__actions',
-        }}
-      >
+      <CardHeader>
         <CardTitle>{t('public~Activity')}</CardTitle>
       </CardHeader>
       <ActivityBody className="co-project-dashboard__activity-body">
