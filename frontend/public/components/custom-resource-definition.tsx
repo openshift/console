@@ -19,11 +19,8 @@ import {
   AsyncComponent,
   DetailsItem,
   EmptyBox,
-  Kebab,
-  KebabAction,
   LoadingBox,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -33,15 +30,15 @@ import {
   CRDVersion,
   CustomResourceDefinitionKind,
   getLatestVersionForCRD,
-  K8sKind,
   referenceForCRD,
+  referenceForModel,
   TableColumn,
 } from '../module/k8s';
 import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
 import { getResourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
-import { GreenCheckCircleIcon, DASH } from '@console/shared';
+import { GreenCheckCircleIcon, DASH, LazyActionMenu } from '@console/shared';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {
   ResourceListPage as DynamicResourceListPage,
@@ -64,21 +61,6 @@ import {
   ResourceDataView,
 } from '@console/app/src/components/data-view/ResourceDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-
-const { common } = Kebab.factory;
-
-const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>
-  _.get(crd, 'spec.scope') === 'Namespaced'
-    ? `/k8s/all-namespaces/${referenceForCRD(crd)}`
-    : `/k8s/cluster/${referenceForCRD(crd)}`;
-
-const instances = (kind: K8sKind, obj: CustomResourceDefinitionKind) => ({
-  // t('public~View instances')
-  labelKey: 'public~View instances',
-  href: crdInstancesPath(obj),
-});
-
-const menuActions: KebabAction[] = [instances, ...common];
 
 const isEstablished = (conditions: any[]) => {
   const condition = _.find(conditions, (c) => c.type === 'Established');
@@ -337,7 +319,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> 
       },
       [tableColumnInfo[5].id]: {
         cell: (
-          <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={obj} />
+          <LazyActionMenu context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }} />
         ),
         props: {
           ...actionsCellProps,
@@ -390,13 +372,19 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
     omitFilterToolbar={true}
   />
 );
-
-export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
+export const CustomResourceDefinitionsDetailsPage: React.FC<React.ComponentProps<
+  typeof DetailsPage
+>> = (props) => {
   return (
     <DetailsPage
       {...props}
-      kind="CustomResourceDefinition"
-      menuActions={menuActions}
+      kind={referenceForModel(CustomResourceDefinitionModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }}
+          {...props}
+        />
+      )}
       pages={[
         navFactory.details(Details),
         navFactory.editYaml(),

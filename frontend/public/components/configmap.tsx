@@ -5,21 +5,12 @@ import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData, TableProps } from './factory';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
-import {
-  Kebab,
-  SectionHeading,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-} from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceLink, ResourceSummary } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { ConfigMapKind } from '@console/internal/module/k8s';
-
-const menuActions = [...Kebab.factory.common];
-
-const kind = 'ConfigMap';
+import { ConfigMapKind, referenceForModel } from '@console/internal/module/k8s';
+import { ConfigMapModel } from '../models';
+import { LazyActionMenu } from '@console/shared/src';
 
 const tableColumnClasses = [
   '',
@@ -49,7 +40,7 @@ const ConfigMapTableRow: React.FCC<{ obj: ConfigMapKind }> = ({ obj: configMap }
         <Timestamp timestamp={configMap.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={configMap} />
+        <LazyActionMenu context={{ [referenceForModel(ConfigMapModel)]: configMap }} />
       </TableData>
     </>
   );
@@ -137,7 +128,10 @@ export const ConfigMapsDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
-      menuActions={menuActions}
+      kind={referenceForModel(ConfigMapModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(ConfigMapModel)]: obj }} {...props} />
+      )}
       pages={[navFactory.details(ConfigMapDetails), navFactory.editYaml()]}
     />
   );

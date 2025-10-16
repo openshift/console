@@ -14,13 +14,12 @@ import ResourceQuotaCharts from '@console/app/src/components/resource-quota/Reso
 import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
-import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
+import { FLAGS, LazyActionMenu, YellowExclamationTriangleIcon } from '@console/shared';
 import { DetailsPage, MultiListPage, Table, TableData } from './factory';
 import {
   Kebab,
   SectionHeading,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   convertToBaseValue,
@@ -50,50 +49,11 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-const { common } = Kebab.factory;
-
-const resourceQuotaMenuActions = [...common];
-const clusterResourceQuotaMenuActions = [...common];
-const appliedClusterResourceQuotaMenuActions = (namespace) => [
-  Kebab.factory.ModifyLabels,
-  Kebab.factory.ModifyAnnotations,
-  (kind, obj) => {
-    return {
-      // t('public~Edit AppliedClusterResourceQuota')
-      labelKey: 'public~Edit AppliedClusterResourceQuota',
-      href: `/k8s/ns/${namespace}/${referenceForModel(AppliedClusterResourceQuotaModel)}/${
-        obj.metadata.name
-      }/yaml`,
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        name: obj.metadata.name,
-        namespace,
-        verb: 'update',
-      },
-    };
-  },
-  Kebab.factory.Delete,
-];
-
 const isClusterQuota = (quota) => !quota.metadata.namespace;
 
+const resourceQuotaReference = referenceForModel(ResourceQuotaModel);
 const clusterQuotaReference = referenceForModel(ClusterResourceQuotaModel);
 const appliedClusterQuotaReference = referenceForModel(AppliedClusterResourceQuotaModel);
-
-const quotaActions = (quota, customData = undefined) => {
-  if (quota.metadata.namespace) {
-    return resourceQuotaMenuActions;
-  }
-
-  if (quota.kind === 'ClusterResourceQuota') {
-    return clusterResourceQuotaMenuActions;
-  }
-
-  if (quota.kind === 'AppliedClusterResourceQuota') {
-    return appliedClusterResourceQuotaMenuActions(customData.namespace);
-  }
-};
 
 export const getQuotaResourceTypes = (quota) => {
   const specHard = isClusterQuota(quota)
@@ -396,7 +356,6 @@ const Details = ({ obj: rq }) => {
 
 const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
   const { t } = useTranslation();
-  const actions = quotaActions(rq, customData);
   let resourcesAtQuota;
   if (rq.kind === ResourceQuotaModel.kind) {
     resourcesAtQuota = Object.keys(rq?.status?.hard || {}).reduce(
@@ -461,12 +420,7 @@ const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
         <Timestamp timestamp={rq.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab
-          customData={customData}
-          actions={actions}
-          kind={referenceFor(rq)}
-          resource={rq}
-        />
+        <LazyActionMenu context={{ [resourceQuotaReference]: rq }} />
       </TableData>
     </>
   );
@@ -474,7 +428,6 @@ const ResourceQuotaTableRow = ({ obj: rq, customData }) => {
 
 const AppliedClusterResourceQuotaTableRow = ({ obj: rq, customData }) => {
   const { t } = useTranslation();
-  const actions = quotaActions(rq, customData);
   const resourcesAtQuota = Object.keys(rq?.status?.total?.hard || {}).reduce(
     (acc, resource) =>
       getUsedPercentage(rq?.status?.total?.hard[resource], rq?.status?.total?.used?.[resource]) >=
@@ -516,12 +469,7 @@ const AppliedClusterResourceQuotaTableRow = ({ obj: rq, customData }) => {
         <Timestamp timestamp={rq.metadata.creationTimestamp} />
       </TableData>
       <TableData className={acrqTableColumnClasses[5]}>
-        <ResourceKebab
-          customData={customData}
-          actions={actions}
-          kind={appliedClusterQuotaReference}
-          resource={rq}
-        />
+        <LazyActionMenu context={{ [appliedClusterQuotaReference]: rq }} />
       </TableData>
     </>
   );
@@ -747,19 +695,23 @@ export const ResourceQuotasDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
-      menuActions={resourceQuotaMenuActions}
+      kind={referenceForModel(ResourceQuotaModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(ResourceQuotaModel)]: obj }} {...props} />
+      )}
       pages={[navFactory.details(Details), navFactory.editYaml()]}
     />
   );
 };
 
 export const AppliedClusterResourceQuotasDetailsPage = (props) => {
-  const params = useParams();
-  const actions = appliedClusterResourceQuotaMenuActions(params?.ns);
   return (
     <DetailsPage
       {...props}
-      menuActions={actions}
+      kind={appliedClusterQuotaReference}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [appliedClusterQuotaReference]: obj }} {...props} />
+      )}
       pages={[navFactory.details(Details), navFactory.editYaml()]}
     />
   );

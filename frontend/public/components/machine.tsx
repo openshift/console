@@ -11,6 +11,7 @@ import {
   getMachineZone,
   Status,
   getMachinePhase,
+  LazyActionMenu,
 } from '@console/shared';
 import { ListPageBody, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
 import { MachineModel } from '../models';
@@ -28,7 +29,6 @@ import {
   DetailsItem,
   Kebab,
   NodeLink,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -49,8 +49,6 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 export const machineReference = referenceForModel(MachineModel);
 
 const tableColumnInfo = [
@@ -108,7 +106,7 @@ const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj, activeColumnIDs
         {zone || '-'}
       </TableData>
       <TableData {...tableColumnInfo[7]} activeColumnIDs={activeColumnIDs}>
-        <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />
+        <LazyActionMenu context={{ [machineReference]: obj }} />
       </TableData>
     </>
   );
@@ -331,19 +329,23 @@ export const MachinePage: React.FC<MachinePageProps> = ({
   );
 };
 
-export const MachineDetailsPage: React.FCC = (props) => (
-  <DetailsPage
-    {...props}
-    kind={machineReference}
-    menuActions={menuActions}
-    pages={[
-      navFactory.details(MachineDetails),
-      navFactory.editYaml(),
-      navFactory.events(ResourceEventStream),
-    ]}
-    getResourceStatus={getMachinePhase}
-  />
-);
+export const MachineDetailsPage: React.FCC = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={machineReference}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineReference]: obj }} {...props} />
+      )}
+      pages={[
+        navFactory.details(MachineDetails),
+        navFactory.editYaml(),
+        navFactory.events(ResourceEventStream),
+      ]}
+      getResourceStatus={getMachinePhase}
+    />
+  );
+};
 
 export type MachineDetailsProps = {
   obj: MachineKind;

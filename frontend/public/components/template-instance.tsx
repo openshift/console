@@ -4,16 +4,20 @@ import { css } from '@patternfly/react-styles';
 import { sortable, Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-import { Status } from '@console/shared';
+import { LazyActionMenu, Status } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
 import { Conditions } from './conditions';
-import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';
+import {
+  getTemplateInstanceStatus,
+  referenceFor,
+  referenceForModel,
+  TemplateInstanceKind,
+} from '../module/k8s';
 import {
   EmptyBox,
   Kebab,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -26,8 +30,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-
-const menuActions = Kebab.factory.common;
+import { TemplateInstanceModel } from '../models';
 
 const tableColumnClasses = [
   'pf-v6-u-w-42-on-md',
@@ -53,7 +56,7 @@ const TemplateInstanceTableRow: React.FC<RowFunctionArgs<TemplateInstanceKind>> 
         <Status status={getTemplateInstanceStatus(obj)} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind="TemplateInstance" resource={obj} />
+        <LazyActionMenu context={{ [referenceForModel(TemplateInstanceModel)]: obj }} />
       </TableData>
     </>
   );
@@ -211,14 +214,18 @@ const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj 
   );
 };
 
-export const TemplateInstanceDetailsPage: React.FCC = (props) => (
-  <DetailsPage
-    {...props}
-    kind="TemplateInstance"
-    menuActions={menuActions}
-    pages={[navFactory.details(TemplateInstanceDetails), navFactory.editYaml()]}
-  />
-);
+export const TemplateInstanceDetailsPage: React.FCC = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={referenceForModel(TemplateInstanceModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(TemplateInstanceModel)]: obj }} {...props} />
+      )}
+      pages={[navFactory.details(TemplateInstanceDetails), navFactory.editYaml()]}
+    />
+  );
+};
 
 type TemplateInstancePageProps = {
   autoFocus?: boolean;

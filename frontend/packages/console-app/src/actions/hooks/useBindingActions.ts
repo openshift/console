@@ -51,8 +51,8 @@ export const useBindingActions = (
       label: model.kind,
     }),
     children: t('public~Are you sure you want to delete subject {{name}} of type {{kind}}?', {
-      name: subject.name,
-      kind: subject.kind,
+      name: subject?.name,
+      kind: subject?.kind,
     }),
     confirmButtonVariant: ButtonVariant.danger,
     confirmButtonLabel: t('public~Delete'),
@@ -131,7 +131,7 @@ export const useBindingActions = (
       }),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [model, navigate, obj, startImpersonate, subject.kind, subject.name, subjectIndex, t],
+    [model, navigate, obj, startImpersonate, subject?.kind, subject?.name, subjectIndex, t],
   );
 
   // filter and initialize requested actions or construct list of all BindingActions
@@ -140,14 +140,14 @@ export const useBindingActions = (
       return memoizedFilterActions.map((creator) => factory[creator]());
     }
     return [
-      ...(subject.kind === 'User' || subject.kind === 'Group'
+      ...(subject?.kind === 'User' || subject?.kind === 'Group'
         ? [factory.ImpersonateBindingSubject()]
         : []),
       factory.DuplicateBinding(),
       factory.EditBindingSubject(),
       ...(subjects.length === 1 ? [commonActions.Delete] : [factory.DeleteBindingSubject()]),
     ];
-  }, [memoizedFilterActions, subject.kind, factory, subjects.length, commonActions.Delete]);
+  }, [memoizedFilterActions, subject?.kind, factory, subjects.length, commonActions.Delete]);
 
   return actions;
 };

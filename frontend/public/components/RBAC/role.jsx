@@ -16,14 +16,14 @@ import {
   SectionHeading,
   ConsoleEmptyState,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   resourceListPathFromModel,
 } from '../utils';
+import { referenceForModel } from '../../module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY, LazyActionMenu } from '@console/shared';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -33,33 +33,11 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-const { common } = Kebab.factory;
-
 export const isSystemRole = (role) => _.startsWith(role.metadata.name, 'system:');
 
 // const addHref = (name, ns) => ns ? `/k8s/ns/${ns}/roles/${name}/add-rule` : `/k8s/cluster/clusterroles/${name}/add-rule`;
 
 export const roleKind = (role) => (role.metadata.namespace ? 'Role' : 'ClusterRole');
-
-const menuActions = [
-  // This page is temporarily disabled until we update the safe resources list.
-  // (kind, role) => ({
-  //   label: 'Add Rule',
-  //   href: addHref(role.metadata.name, role.metadata.namespace),
-  // }),
-  (kind, role) => ({
-    label: i18next.t('public~Add RoleBinding'),
-    href: `/k8s/${
-      role.metadata.namespace
-        ? `ns/${role.metadata.namespace}/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${
-            role.metadata.name
-          }&namespace=${role.metadata.namespace}`
-        : `cluster/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}`
-    }`,
-  }),
-  Kebab.factory.Edit,
-  Kebab.factory.Delete,
-];
 
 const roleColumnClasses = ['', '', Kebab.columnClass];
 
@@ -81,7 +59,7 @@ const RolesTableRow = ({ obj: role }) => {
         )}
       </TableData>
       <TableData className={roleColumnClasses[2]}>
-        <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />
+        <LazyActionMenu context={{ [referenceForModel(RoleModel)]: role }} />
       </TableData>
     </>
   );
@@ -286,6 +264,10 @@ export const RolesDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
+      kind={referenceForModel(props.kindObj)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(props.kindObj)]: obj }} {...props} />
+      )}
       pages={[
         navFactory.details(DetailsWithTranslation),
         navFactory.editYaml(),
@@ -296,7 +278,6 @@ export const RolesDetailsPage = (props) => {
           component: BindingsForRolePage,
         },
       ]}
-      menuActions={menuActions}
       breadcrumbsFor={() => getBreadcrumbs(RoleModel, props.kindObj, location)}
     />
   );
@@ -306,18 +287,21 @@ export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 export const ClusterRoleBindingsDetailsPage = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
-  const actions = [...common];
   const location = useLocation();
-
   return (
     <DetailsPage
       {...props}
-      menuActions={actions}
+      kind={referenceForModel(props.kindObj)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(props.kindObj)]: obj }} {...props} />
+      )}
       pages={pages}
       breadcrumbsFor={() => getBreadcrumbs(RoleBindingModel, props.kindObj, location)}
     />
   );
 };
+
+export const RoleBindingDetailsPage = ClusterRoleBindingsDetailsPage;
 
 const EmptyMsg = () => {
   const { t } = useTranslation();

@@ -18,6 +18,7 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk/src';
+import { LazyActionMenu } from '@console/shared/src';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
@@ -27,7 +28,6 @@ import {
   CopyToClipboard,
   Kebab,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -36,7 +36,6 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
-const machineConfigMenuActions = [...Kebab.factory.common];
 
 const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>
@@ -127,7 +126,9 @@ export const MachineConfigDetailsPage: React.FCC<any> = (props) => {
     <DetailsPage
       {...props}
       kind={machineConfigReference}
-      menuActions={machineConfigMenuActions}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineConfigReference]: obj }} {...props} />
+      )}
       pages={pages}
     />
   );
@@ -169,11 +170,7 @@ const MachineConfigTableRow: React.FC<RowFunctionArgs<MachineConfigKind>> = ({ o
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab
-          actions={machineConfigMenuActions}
-          kind={machineConfigReference}
-          resource={obj}
-        />
+        <LazyActionMenu context={{ [machineConfigReference]: obj }} />
       </TableData>
     </>
   );

@@ -46,9 +46,6 @@ import { JobsList } from './job';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
-const { common } = Kebab.factory;
-export const menuActions = [...common];
-
 const kind = 'CronJob';
 
 const tableColumnClasses = [

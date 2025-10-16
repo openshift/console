@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
 import { DetailsPage } from '@console/internal/components/factory';
-import { NamespaceDetails, projectMenuActions } from '@console/internal/components/namespace';
+import { NamespaceDetails } from '@console/internal/components/namespace';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { history, useAccessReview, Page } from '@console/internal/components/utils';
 import { ProjectModel, RoleBindingModel } from '@console/internal/models';
@@ -23,6 +24,27 @@ const handleNamespaceChange = (newNamespace: string): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {
     history.push(PROJECT_DETAILS_ALL_NS_PAGE_URI);
   }
+};
+
+const ProjectDetails = (props) => {
+  const { t } = useTranslation();
+  const { activeNamespace, pages } = props;
+  const projectMenuActions = useCommonResourceActions(ProjectModel, props.obj);
+  return (
+    <DetailsPage
+      {...props}
+      breadcrumbsFor={() => [
+        { name: t('devconsole~Projects'), path: '/project-details/all-namespaces' },
+        { name: t('devconsole~Project Details'), path: `/project-details/ns/${activeNamespace}` },
+      ]}
+      name={activeNamespace}
+      kind={ProjectModel.kind}
+      kindObj={ProjectModel}
+      menuActions={projectMenuActions}
+      customData={{ activeNamespace, hideHeading: true }}
+      pages={pages}
+    />
+  );
 };
 
 export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailable, ...props }) => {
@@ -68,19 +90,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailabl
   }
 
   return !noProjectsAvailable && activeNamespace ? (
-    <DetailsPage
-      {...props}
-      breadcrumbsFor={() => [
-        { name: t('devconsole~Projects'), path: '/project-details/all-namespaces' },
-        { name: t('devconsole~Project Details'), path: `/project-details/ns/${activeNamespace}` },
-      ]}
-      name={activeNamespace}
-      kind={ProjectModel.kind}
-      kindObj={ProjectModel}
-      menuActions={projectMenuActions}
-      customData={{ activeNamespace, hideHeading: true }}
-      pages={pages}
-    />
+    <ProjectDetails {...props} activeNamespace={activeNamespace} pages={pages} />
   ) : (
     <CreateProjectListPage title={t('devconsole~Project Details')}>
       {(openProjectModal) => (
