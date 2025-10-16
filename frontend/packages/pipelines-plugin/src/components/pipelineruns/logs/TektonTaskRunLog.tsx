@@ -57,17 +57,17 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
         data-test-id="tr-logs-task-container"
         ref={scrollPane}
       >
-        <div className="odc-multi-stream-logs__container__logs" data-testid="tr-logs-container">
+        <div className="odc-multi-stream-logs__container__logs" data-test="tr-logs-container">
           {errorMessage && (
-            <div className="odc-pipeline-run-logs__logtext" data-testid="tr-logs-error-message">
+            <div className="odc-pipeline-run-logs__logtext" data-test="tr-logs-error-message">
               {errorMessage}
             </div>
           )}
           {!errorMessage && trLoaded ? (
-            <div className="odc-logs" data-testid="tr-logs-container">
+            <div className="odc-logs" data-test="tr-logs-container">
               <p className="odc-logs__name">{taskName}</p>
               <div>
-                <div className="odc-logs__content" data-testid="tr-logs-content">
+                <div className="odc-logs__content" data-test="tr-logs-content">
                   {trResults}
                 </div>
               </div>

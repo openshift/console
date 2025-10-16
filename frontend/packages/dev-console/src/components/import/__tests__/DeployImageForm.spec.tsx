@@ -1,4 +1,4 @@
-import { configure, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import DeployImageForm from '../DeployImageForm';
@@ -63,13 +63,6 @@ jest.mock('../../../utils/samples', () => ({
 let deployImageFormProps: React.ComponentProps<typeof DeployImageForm>;
 
 describe('DeployImageForm', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-testid' });
-  });
-  afterAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   beforeEach(() => {
     deployImageFormProps = {
       ...formikFormProps,

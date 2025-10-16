@@ -16,7 +16,7 @@ describe('PromiseComponent', () => {
 
     render() {
       return this.state.inProgress ? (
-        <div data-testid="loading">Loading...</div>
+        <div data-test="loading">Loading...</div>
       ) : (
         <button onClick={this.handleClick}>Click me</button>
       );

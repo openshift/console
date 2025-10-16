@@ -1,4 +1,4 @@
-import { configure, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import DeployImage from '../DeployImage';
@@ -85,13 +85,6 @@ jest.mock('@console/shared/src/components/form-utils', () => ({
 }));
 
 describe('DeployImage Page Test', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-testid' });
-  });
-  afterAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   beforeEach(() => {
     jest.spyOn(Router, 'useParams').mockReturnValue({
       ns: 'openshift',

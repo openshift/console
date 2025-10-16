@@ -148,7 +148,7 @@ export const verifyIDPFileFields = ({
 /**
  * Verifies ListInput component UI structure and interactions.
  * @param inputLabel - The label text for the input elements
- * @param testId - The data-testid of the ListInput container
+ * @param testId - The data-test of the ListInput container
  * @param initialValue - The initial value of the input element (optional).
  * @param testValue - Value to enter in the input element for testing (optional)
  * @param helpText - The expected help text for the input group (optional)
