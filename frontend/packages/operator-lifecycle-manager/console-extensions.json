@@ -11,6 +11,110 @@
     }
   },
   {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1",
+        "kind": "OperatorSource"
+      },
+      "label": "%olm~OperatorSource%",
+      "labelPlural": "%olm~OperatorSource%",
+      "abbr": "OSRC"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "CatalogSource"
+      },
+      "label": "%olm~CatalogSource%",
+      "labelPlural": "%olm~CatalogSources%",
+      "abbr": "CS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "packages.operators.coreos.com",
+        "version": "v1",
+        "kind": "PackageManifest"
+      },
+      "label": "%olm~PackageManifest%",
+      "labelPlural": "%olm~PackageManifests%",
+      "abbr": "PM"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
+      "label": "%olm~ClusterServiceVersion%",
+      "labelPlural": "%olm~ClusterServiceVersions%",
+      "abbr": "CSV"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "InstallPlan"
+      },
+      "label": "%olm~InstallPlan%",
+      "labelPlural": "%olm~InstallPlans%",
+      "abbr": "IP"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "Subscription"
+      },
+      "label": "%olm~Subscription%",
+      "labelPlural": "%olm~Subscriptions%",
+      "abbr": "SUB"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1",
+        "kind": "OperatorGroup"
+      },
+      "label": "%olm~OperatorGroup%",
+      "labelPlural": "%olm~OperatorGroups%",
+      "abbr": "OG"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OperatorHub"
+      },
+      "label": "%olm~OperatorHub%",
+      "labelPlural": "%olm~OperatorHubs%",
+      "abbr": "OH"
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
       "exact": true,
