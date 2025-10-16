@@ -16,8 +16,6 @@ import {
 } from '../../../test-data/catalog-item-data';
 import PipelineQuickSearchDetails from '../PipelineQuickSearchDetails';
 
-configure({ testIdAttribute: 'data-test' });
-
 const coFetchMock = coFetch as jest.Mock;
 
 jest.mock('@console/internal/co-fetch', () => ({

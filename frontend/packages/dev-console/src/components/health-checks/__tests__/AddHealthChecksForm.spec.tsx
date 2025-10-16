@@ -4,8 +4,6 @@ import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-reso
 import AddHealthChecksForm from '../AddHealthChecksForm';
 import '@testing-library/jest-dom';
 
-configure({ testIdAttribute: 'data-testid' });
-
 jest.mock('@console/internal/components/utils', () => ({
   ...jest.requireActual('@console/internal/components/utils'),
   LoadingBox: () => 'Loading...',
@@ -50,6 +48,13 @@ jest.mock('../../edit-application/edit-application-utils', () => ({
 let addHealthCheckWrapperProps: React.ComponentProps<typeof AddHealthChecksForm>;
 
 describe('AddHealthChecksForm', () => {
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-testid' });
+  });
+  afterAll(() => {
+    configure({ testIdAttribute: 'data-test' });
+  });
+
   beforeEach(() => {
     addHealthCheckWrapperProps = {
       currentContainer: '',

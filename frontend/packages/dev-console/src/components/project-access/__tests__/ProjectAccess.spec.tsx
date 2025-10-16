@@ -1,9 +1,7 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { defaultAccessRoles } from '../project-access-form-utils';
 import ProjectAccess from '../ProjectAccess';
 import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/internal/components/utils', () => ({
   LoadingBox: () => 'LoadingBox',

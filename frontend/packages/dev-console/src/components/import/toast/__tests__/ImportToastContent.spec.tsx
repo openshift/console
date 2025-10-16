@@ -1,9 +1,7 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { mockResources } from '../../__mocks__/import-toast-mock';
 import ImportToastContent from '../ImportToastContent';
 import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/shared/src/components/utils/routes', () => ({
   RouteLinkAndCopy: () => 'Route Link and Copy',

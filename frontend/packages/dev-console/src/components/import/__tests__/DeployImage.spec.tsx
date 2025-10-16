@@ -5,8 +5,6 @@ import DeployImage from '../DeployImage';
 import DeployImagePage from '../DeployImagePage';
 import '@testing-library/jest-dom';
 
-configure({ testIdAttribute: 'data-testid' });
-
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
@@ -88,6 +86,13 @@ jest.mock('@console/shared/src/components/form-utils', () => ({
 }));
 
 describe('DeployImage Page Test', () => {
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-testid' });
+  });
+  afterAll(() => {
+    configure({ testIdAttribute: 'data-test' });
+  });
+
   beforeEach(() => {
     jest.spyOn(Router, 'useParams').mockReturnValue({
       ns: 'openshift',

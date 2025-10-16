@@ -1,4 +1,4 @@
-import { configure, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
@@ -6,8 +6,6 @@ import { getResourcesType } from '../../edit-application/edit-application-utils'
 import AddHealthChecks from '../AddHealthChecks';
 import '@testing-library/jest-dom';
 import { getHealthChecksData } from '../create-health-checks-probe-utils';
-
-configure({ testIdAttribute: 'data-test' });
 
 global.ResizeObserver = class ResizeObserver {
   observe = () => {};

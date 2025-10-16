@@ -2,8 +2,6 @@ import { configure, fireEvent, render, screen, waitFor } from '@testing-library/
 import SecureRouteFields from '../SecureRouteFields';
 import { usePreferredRoutingOptions } from '../usePreferredRoutingOptions';
 
-configure({ testIdAttribute: 'id' });
-
 jest.mock('../usePreferredRoutingOptions', () => ({
   usePreferredRoutingOptions: jest.fn(),
 }));
@@ -13,6 +11,8 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
 }));
 
 const mockUsePreferredRoutingOptions = usePreferredRoutingOptions as jest.Mock;
+
+configure({ testIdAttribute: 'id' });
 
 describe('SecureRouteFields', () => {
   it('should render Secure Route Fields component', () => {

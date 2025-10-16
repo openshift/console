@@ -1,4 +1,4 @@
-import { screen, configure, act } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import UserPreferenceField from '../UserPreferenceField';
 import {
@@ -21,10 +21,6 @@ jest.mock('../UserPreferenceCustomField', () => ({
 }));
 
 describe('UserPreferenceField', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   beforeEach(() => {
     jest.clearAllMocks();
   });

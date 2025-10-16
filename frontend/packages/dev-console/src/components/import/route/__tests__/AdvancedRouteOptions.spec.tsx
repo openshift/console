@@ -1,9 +1,7 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Resources } from '../../import-types';
 import AdvancedRouteOptions from '../AdvancedRouteOptions';
 import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/internal/module/k8s', () => ({
   ...jest.requireActual('@console/internal/module/k8s'),

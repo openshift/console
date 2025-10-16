@@ -1,4 +1,4 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -6,8 +6,6 @@ import { JobModel, PodModel } from '@console/internal/models';
 import store from '@console/internal/redux';
 import ExportViewLogButton from '../ExportViewLogButton';
 import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),

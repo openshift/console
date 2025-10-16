@@ -1,4 +1,4 @@
-import { screen, fireEvent, configure } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -14,10 +14,6 @@ const defaultProps = {
 
 describe('ConfigureUpdateStrategy component', () => {
   let mockProps: typeof defaultProps;
-
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   beforeEach(() => {
     mockProps = {

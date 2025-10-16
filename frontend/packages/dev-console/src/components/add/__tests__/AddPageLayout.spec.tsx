@@ -1,4 +1,4 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
@@ -19,8 +19,6 @@ jest.mock('../hooks/useShowAddCardItemDetails', () => ({
 jest.mock('@console/app/src/components/quick-starts/utils/useQuickStarts', () => ({
   useQuickStarts: () => [[], true, null],
 }));
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('AddPageLayout', () => {
   const props = { title: 'title' };

@@ -4,8 +4,6 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import DeployImageForm from '../DeployImageForm';
 import '@testing-library/jest-dom';
 
-configure({ testIdAttribute: 'data-testid' });
-
 jest.mock('react-i18next', () => ({
   __esModule: true,
   useTranslation: () => ({
@@ -66,6 +64,13 @@ jest.mock('../../../utils/samples', () => ({
 let deployImageFormProps: React.ComponentProps<typeof DeployImageForm>;
 
 describe('DeployImageForm', () => {
+  beforeAll(() => {
+    configure({ testIdAttribute: 'data-testid' });
+  });
+  afterAll(() => {
+    configure({ testIdAttribute: 'data-test' });
+  });
+
   beforeEach(() => {
     deployImageFormProps = {
       ...formikFormProps,

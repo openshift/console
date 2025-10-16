@@ -1,4 +1,4 @@
-import { screen, render, configure, fireEvent } from '@testing-library/react';
+import { screen, render, fireEvent } from '@testing-library/react';
 import * as _ from 'lodash';
 import { act } from 'react-dom/test-utils';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
@@ -10,8 +10,6 @@ import { ExportModel } from '../../../models';
 import { ExportApplicationModal } from '../ExportApplicationModal';
 import { mockExportData } from './export-data';
 import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('react-i18next', () => {
   const reactI18next = jest.requireActual('react-i18next');

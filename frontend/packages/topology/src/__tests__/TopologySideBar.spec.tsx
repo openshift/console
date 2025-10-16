@@ -1,8 +1,6 @@
-import { render, screen, fireEvent, configure } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import TopologySideBar from '../components/side-bar/TopologySideBar';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(() => [500, jest.fn(), true]),

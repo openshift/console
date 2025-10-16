@@ -1,4 +1,4 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { useFlag } from '@console/shared';
 import { InternalCloudShellTerminal } from '../CloudShellTerminal';
@@ -37,8 +37,6 @@ jest.mock('@console/shared', () => {
 });
 
 const useFlagMock = useFlag as jest.Mock;
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('CloudShellTerminal', () => {
   it('should display loading box', () => {

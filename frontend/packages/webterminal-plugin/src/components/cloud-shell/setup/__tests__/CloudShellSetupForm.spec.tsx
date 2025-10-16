@@ -1,4 +1,4 @@
-import { configure, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import CloudShellSetupForm from '../CloudShellSetupForm';
 import '@testing-library/jest-dom';
@@ -21,8 +21,6 @@ jest.mock('formik', () => ({
   })),
   getFieldId: jest.fn(),
 }));
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('CloudShellSetupForm', () => {
   it('should disable submit button', () => {

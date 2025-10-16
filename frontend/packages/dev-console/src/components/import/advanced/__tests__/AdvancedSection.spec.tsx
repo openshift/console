@@ -1,11 +1,9 @@
-import { configure, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { BuildOptions, Resources } from '../../import-types';
 import AdvancedSection from '../AdvancedSection';
 import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('react-i18next', () => ({
   __esModule: true,

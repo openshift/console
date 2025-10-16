@@ -1,10 +1,8 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { useFormikContext } from 'formik';
 import * as shipwrightHooks from '@console/dev-console/src/utils/shipwright-build-hook';
 import { BuildStrategySelector } from '../BuildStrategySelector';
 import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 const spySWClusterBuildStrategy = jest.spyOn(shipwrightHooks, 'useClusterBuildStrategy');
 

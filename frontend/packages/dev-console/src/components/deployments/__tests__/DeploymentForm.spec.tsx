@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, fireEvent, screen, cleanup, waitFor, configure } from '@testing-library/react';
+import { render, fireEvent, screen, cleanup, waitFor } from '@testing-library/react';
 import i18n from 'i18next';
 import * as _ from 'lodash';
 import { setI18n } from 'react-i18next';
@@ -9,8 +9,6 @@ import { mockDeploymentConfig, mockEditDeploymentData } from '../__mocks__/deplo
 import MockForm from '../__mocks__/MockForm';
 import ContainerField from '../ContainerField';
 import DeploymentForm from '../DeploymentForm';
-
-configure({ testIdAttribute: 'data-test' });
 
 class ResizeObserver {
   observe() {

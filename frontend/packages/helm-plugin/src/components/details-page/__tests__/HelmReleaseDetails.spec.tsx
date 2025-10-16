@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { screen, render, configure } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import * as Router from 'react-router-dom-v5-compat';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -8,8 +8,6 @@ import HelmReleaseDetails, { LoadedHelmReleaseDetails } from '../HelmReleaseDeta
 
 let helmReleaseDetailsProps: React.ComponentProps<typeof HelmReleaseDetails>;
 let loadedHelmReleaseDetailsProps: React.ComponentProps<typeof LoadedHelmReleaseDetails>;
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),

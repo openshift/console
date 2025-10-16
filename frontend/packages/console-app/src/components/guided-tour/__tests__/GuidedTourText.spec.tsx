@@ -1,4 +1,4 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { helpTourText, userPreferencesTourText, FinishTourText } from '../GuidedTourText';
 import '@testing-library/jest-dom';
 
@@ -8,8 +8,6 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
     [{ metadata: { name: 'openshift-blog' }, spec: { href: 'https://blog.example.com' } }],
   ],
 }));
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('GuidedTourText', () => {
   it('renders helpTourText', () => {

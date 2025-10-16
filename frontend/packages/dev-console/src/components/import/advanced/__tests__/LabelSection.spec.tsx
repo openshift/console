@@ -1,9 +1,7 @@
-import { configure, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import LabelSection from '../LabelSection';
 import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('react-i18next', () => ({
   __esModule: true,

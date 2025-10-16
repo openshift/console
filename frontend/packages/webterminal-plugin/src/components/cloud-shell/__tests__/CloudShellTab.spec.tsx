@@ -1,4 +1,4 @@
-import { configure, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import CloudShellTab from '../CloudShellTab';
@@ -8,8 +8,6 @@ jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
   Navigate: ({ to, replace }) => `redirect to ${to}${replace ? ' and also replace' : ''}`,
 }));
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('CloudShellTab', () => {
   it('should not render redirect component if flag check is pending', () => {

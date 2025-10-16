@@ -1,10 +1,8 @@
-import { screen, configure } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { RowFunctionArgs } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import HelmReleaseResourcesRow, { HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';
-
-configure({ testIdAttribute: 'data-test' });
 
 let rowArgs: RowFunctionArgs<K8sResourceKind>;
 
