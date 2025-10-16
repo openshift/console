@@ -1,4 +1,4 @@
-import { configure, render, screen } from '@testing-library/react';
+import { configure, render, screen, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
@@ -28,6 +28,7 @@ describe('AddPageLayout', () => {
   const useAccessFilterExtensionsSpy = jest.spyOn(accessFilterHook, 'useAccessFilterExtensions');
 
   afterEach(() => {
+    cleanup();
     jest.resetAllMocks();
   });
 

@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { screen } from '@testing-library/react';
+import { cleanup, screen } from '@testing-library/react';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -15,12 +15,16 @@ import {
 import { AddOpenIDIDPPage } from '../../cluster-settings/openid-idp-form';
 
 describe('Add Identity Provider: OpenID Connect', () => {
+  beforeAll(() => {
+    setupFileReaderMock();
+  });
+
   beforeEach(() => {
     renderWithProviders(<AddOpenIDIDPPage />);
   });
 
-  beforeAll(() => {
-    setupFileReaderMock();
+  afterEach(() => {
+    cleanup();
   });
 
   afterAll(() => {
@@ -35,8 +39,8 @@ describe('Add Identity Provider: OpenID Connect', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Name label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'openid',
       containerId: 'idp-name-form',
@@ -46,16 +50,16 @@ describe('Add Identity Provider: OpenID Connect', () => {
     });
   });
 
-  it('should render the Client ID label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Client ID label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Client ID',
       testValue: mockData.updatedFormValues.id,
       isRequired: true,
     });
   });
 
-  it('should render the Client Secret label and input password element', () => {
-    verifyInputField({
+  it('should render the Client Secret label and input password element', async () => {
+    await verifyInputField({
       inputLabel: 'Client secret',
       inputType: 'password',
       testValue: mockData.updatedFormValues.secret,
@@ -63,8 +67,8 @@ describe('Add Identity Provider: OpenID Connect', () => {
     });
   });
 
-  it('should render the Issuer URL label and elements', () => {
-    verifyInputField({
+  it('should render the Issuer URL label and elements', async () => {
+    await verifyInputField({
       inputLabel: 'Issuer URL',
       inputType: 'url',
       testValue: mockData.updatedFormValues.url,
