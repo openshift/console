@@ -3,7 +3,6 @@ import { formikFormProps } from '@console/shared/src/test-utils/formik-props-uti
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { BuildOptions, Resources } from '../../import-types';
 import AdvancedSection from '../AdvancedSection';
-import '@testing-library/jest-dom';
 
 jest.mock('react-i18next', () => ({
   __esModule: true,

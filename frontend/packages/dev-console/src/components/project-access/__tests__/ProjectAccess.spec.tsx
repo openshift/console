@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { defaultAccessRoles } from '../project-access-form-utils';
 import ProjectAccess from '../ProjectAccess';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils', () => ({
   LoadingBox: () => 'LoadingBox',

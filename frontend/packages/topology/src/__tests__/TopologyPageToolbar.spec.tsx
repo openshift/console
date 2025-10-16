@@ -7,7 +7,6 @@ import * as SharedHooks from '@console/shared';
 import TopologyPageToolbar from '../components/page/TopologyPageToolbar';
 import { ModelContext } from '../data-transforms/ModelContext';
 import { TopologyViewType } from '../topology-types';
-import '@testing-library/jest-dom';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),

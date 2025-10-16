@@ -1,5 +1,4 @@
 import { render, screen, cleanup } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import * as utils from '../../../utils/useAddActionExtensions';

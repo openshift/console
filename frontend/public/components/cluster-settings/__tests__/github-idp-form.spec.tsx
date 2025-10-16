@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { cleanup, screen } from '@testing-library/react';
 import { AddGitHubPage } from '../../cluster-settings/github-idp-form';
 import {

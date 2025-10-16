@@ -4,7 +4,6 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import * as serverlessUtils from '../serverless-utils';
 import ServerlessRouteSection from '../ServerlessRouteSection';
 import { domainMappings } from './serverless-utils.data';
-import '@testing-library/jest-dom';
 
 const useFormikContextMock = useFormikContext as jest.Mock;
 jest.mock('formik', () => {

@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { FLAGS } from '@console/shared';
 import { WorkspaceModel } from '../../../../models';
 import { InternalCloudShellExec, CloudShellExecProps } from '../CloudShellExec';

@@ -2,7 +2,6 @@ import { screen } from '@testing-library/react';
 import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import CloudShellTab from '../CloudShellTab';
-import '@testing-library/jest-dom';
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),

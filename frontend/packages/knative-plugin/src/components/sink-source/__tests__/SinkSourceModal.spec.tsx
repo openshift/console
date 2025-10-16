@@ -3,7 +3,6 @@ import { render, fireEvent } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { ServiceModel } from '../../../models';
 import SinkSourceModal from '../SinkSourceModal';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/factory/modal', () => ({
   ModalTitle: jest.fn(() => null),

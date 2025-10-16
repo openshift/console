@@ -9,7 +9,6 @@ import { getExportAppData } from '@console/topology/src/utils/export-app-utils';
 import { ExportModel } from '../../../models';
 import { ExportApplicationModal } from '../ExportApplicationModal';
 import { mockExportData } from './export-data';
-import '@testing-library/jest-dom';
 
 jest.mock('react-i18next', () => {
   const reactI18next = jest.requireActual('react-i18next');

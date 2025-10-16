@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { useField } from 'formik';
 import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';

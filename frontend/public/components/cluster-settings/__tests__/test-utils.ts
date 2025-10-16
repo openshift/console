@@ -1,5 +1,4 @@
 // Reusable test utilities for Identity Provider (IDP) form components
-import '@testing-library/jest-dom';
 import { screen, fireEvent, within } from '@testing-library/react';
 import { verifyFormElementBasics } from '@console/shared/src/test-utils/unit-test-utils';
 

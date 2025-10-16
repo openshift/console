@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/factory', () => ({
   DetailsPage: () => 'DetailsPage',

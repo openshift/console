@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { useFlag } from '@console/shared';
 import { InternalCloudShellTerminal } from '../CloudShellTerminal';
 import useCloudShellNamespace from '../useCloudShellNamespace';

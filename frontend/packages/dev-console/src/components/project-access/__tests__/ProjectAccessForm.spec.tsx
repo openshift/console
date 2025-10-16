@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { defaultAccessRoles } from '../project-access-form-utils';
 import ProjectAccessForm from '../ProjectAccessForm';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared', () => ({
   MultiColumnField: (props) => props.children,

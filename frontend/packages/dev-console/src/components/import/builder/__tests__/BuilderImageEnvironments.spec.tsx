@@ -3,7 +3,6 @@ import { useFormikContext } from 'formik';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import BuilderImageEnvironments from '../BuilderImageEnvironments';
 import { useBuilderImageEnvironments } from '../builderImageHooks';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared', () => ({
   ...jest.requireActual('@console/shared'),

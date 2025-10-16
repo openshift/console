@@ -1,7 +1,6 @@
 import { screen, fireEvent } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { GettingStartedCard, GettingStartedCardProps } from '../GettingStartedCard';
-import '@testing-library/jest-dom';
 
 describe('GettingStartedCard', () => {
   const defaultProps: GettingStartedCardProps = {

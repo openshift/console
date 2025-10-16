@@ -3,7 +3,6 @@ import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/cons
 import { mockChannelCRDData } from '../../../../../utils/__mocks__/dynamic-channels-crd-mock';
 import { fetchChannelsCrd } from '../../../../../utils/fetch-dynamic-eventsources-utils';
 import SinkResources from '../SinkResources';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared', () => ({
   ResourceDropdownField: 'ResourceDropdownField',

@@ -5,7 +5,6 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { JobModel, PodModel } from '@console/internal/models';
 import store from '@console/internal/redux';
 import ExportViewLogButton from '../ExportViewLogButton';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),

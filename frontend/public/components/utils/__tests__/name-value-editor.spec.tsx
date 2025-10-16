@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { NameValueEditor } from '../../../components/utils/name-value-editor';
 
 jest.mock('react-i18next');

@@ -5,7 +5,6 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import AddCardItem from '../AddCardItem';
 import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';
 import { addActionExtensions } from './add-page-test-data';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},

@@ -1,5 +1,4 @@
 import { screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 

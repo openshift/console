@@ -4,7 +4,6 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { getResourcesType } from '../../edit-application/edit-application-utils';
 import AddHealthChecks from '../AddHealthChecks';
-import '@testing-library/jest-dom';
 import { getHealthChecksData } from '../create-health-checks-probe-utils';
 
 global.ResizeObserver = class ResizeObserver {

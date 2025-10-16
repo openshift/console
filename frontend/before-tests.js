@@ -1,7 +1,6 @@
 /* eslint-env node */
 
-import { configure as configureEnzyme } from 'enzyme';
-import { configure } from '@testing-library/react';
+import { configure } from 'enzyme';
 import * as Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import { URLSearchParams } from 'url';
 import fetch, { Headers } from 'node-fetch';
@@ -54,12 +53,8 @@ if (!window.fetch) {
   });
 }
 
-// Configure RTL to use 'data-test' instead of 'data-testid' for consistency
-// with Cypress tests, which also use data-test attributes
-configure({ testIdAttribute: 'data-test' });
-
 // http://airbnb.io/enzyme/docs/installation/index.html#working-with-react-16
-configureEnzyme({ adapter: new Adapter() });
+configure({ adapter: new Adapter() });
 
 /**
  * Since Node.js 15 all unhandled promise rejections triggers a `unhandledRejection`

@@ -3,7 +3,6 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { mockDeploymentConfig } from '../__mocks__/deployment-data';
 import MockForm from '../__mocks__/MockForm';
 import DeploymentForm from '../DeploymentForm';
-import '@testing-library/jest-dom';
 
 jest.mock('../ContainerField', () => ({
   __esModule: true,

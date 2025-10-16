@@ -2,7 +2,6 @@ import { render } from '@testing-library/react';
 import { EVENT_SOURCE_CONTAINER_KIND } from '../../../const';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSource } from '../EventSource';
-import '@testing-library/jest-dom';
 
 jest.mock('formik', () => ({
   ...jest.requireActual('formik'),

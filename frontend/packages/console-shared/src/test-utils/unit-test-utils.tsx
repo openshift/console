@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import { Form } from '@patternfly/react-core';
-import '@testing-library/jest-dom';
 import {
   render,
   RenderOptions,

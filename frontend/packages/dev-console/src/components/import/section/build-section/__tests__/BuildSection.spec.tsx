@@ -8,7 +8,6 @@ import {
   GitImportFormData,
 } from '../../../import-types';
 import { BuildSection } from '../BuildSection';
-import '@testing-library/jest-dom';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),

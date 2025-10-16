@@ -10,7 +10,6 @@ import {
   KnativeOverviewDetails,
   KnativeOverviewRevisionPodsRing,
 } from '../KnativeOverviewSections';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils', () => ({
   ResourceSummary: jest.fn(() => null),

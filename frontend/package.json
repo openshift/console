@@ -118,6 +118,7 @@
       "./__mocks__/websocket.js",
       "./before-tests.js"
     ],
+    "setupTestFrameworkScriptFile": "<rootDir>/setup-tests.js",
     "coverageDirectory": "__coverage__",
     "coverageReporters": [
       "json",

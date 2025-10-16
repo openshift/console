@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { useFormikContext } from 'formik';
 import JarSection from '../JarSection';
-import '@testing-library/jest-dom';
 
 jest.mock('@patternfly/react-core', () => ({
   FileUpload: () => 'FileUpload',

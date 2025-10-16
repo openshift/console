@@ -3,7 +3,6 @@ import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { NormalizedBuilderImages } from '../../../../utils/imagestream-utils';
 import BuilderImageSelector from '../BuilderImageSelector';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared', () => ({
   ItemSelectorField: (props) =>

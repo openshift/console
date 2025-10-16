@@ -3,7 +3,6 @@ import { screen, cleanup } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { PageContents as AddPage } from '../AddPage';
-import '@testing-library/jest-dom';
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),

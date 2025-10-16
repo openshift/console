@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { sortMonitoringAlerts } from '@console/shared';
 import { mockAlerts } from '@console/shared/src/utils/__mocks__/alerts-and-rules-data';
 import { InternalMonitoringOverviewAlerts as MonitoringOverviewAlerts } from '../MonitoringOverviewAlerts';
-import '@testing-library/jest-dom';
 
 jest.mock('@patternfly/react-core', () => ({
   Alert: () => 'Alert',

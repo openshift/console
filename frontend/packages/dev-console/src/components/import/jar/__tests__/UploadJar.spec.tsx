@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { ImageTag } from '@console/dev-console/src/utils/imagestream-utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import UploadJar from '../UploadJar';
-import '@testing-library/jest-dom';
 
 jest.mock('formik', () => ({
   Formik: (props) => `Formik initialValues=${JSON.stringify(props.initialValues)}`,

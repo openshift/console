@@ -6,7 +6,6 @@ import { useFlag } from '@console/shared';
 import { isPreferredStrategyAvailable } from '../../../../../utils/shipwright-build-hook';
 import { BuildOption as NamedBuildOption } from '../BuildOptions';
 import * as BuildOption from '../BuildOptions';
-import '@testing-library/jest-dom';
 
 const spySWClusterBuildStrategy = jest.spyOn(shipwrightHooks, 'useClusterBuildStrategy');
 const spyShipwrightBuilds = jest.spyOn(shipwrightHooks, 'useShipwrightBuilds');

@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { sampleKnativeConfigurations } from '../../../topology/__tests__/topology-knative-test-data';
 import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
-import '@testing-library/jest-dom';
 
 jest.mock('../ConfigurationsOverviewListItem', () => ({
   __esModule: true,

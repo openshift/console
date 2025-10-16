@@ -3,7 +3,6 @@ import { useFormikContext } from 'formik';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import ResourceLimitSection from '../ResourceLimitSection';
-import '@testing-library/jest-dom';
 
 jest.mock('react-i18next', () => ({
   __esModule: true,

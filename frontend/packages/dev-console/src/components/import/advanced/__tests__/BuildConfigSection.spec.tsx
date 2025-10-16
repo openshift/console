@@ -2,7 +2,6 @@ import { screen } from '@testing-library/react';
 import { useFormikContext } from 'formik';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import BuildConfigSection from '../BuildConfigSection';
-import '@testing-library/jest-dom';
 
 jest.mock('react-i18next', () => ({
   __esModule: true,

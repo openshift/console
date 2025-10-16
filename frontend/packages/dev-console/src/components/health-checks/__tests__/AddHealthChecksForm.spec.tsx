@@ -2,7 +2,6 @@ import { configure, screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import AddHealthChecksForm from '../AddHealthChecksForm';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils', () => ({
   ...jest.requireActual('@console/internal/components/utils'),

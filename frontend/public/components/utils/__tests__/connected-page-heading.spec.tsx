@@ -1,5 +1,4 @@
 import { screen, act, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ConnectedPageHeading } from '../../../components/utils/headings';
 import { testResourceInstance } from '../../../../__mocks__/k8sResourcesMocks';

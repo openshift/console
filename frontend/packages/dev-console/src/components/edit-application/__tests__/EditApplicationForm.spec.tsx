@@ -3,7 +3,6 @@ import { formikFormProps } from '@console/shared/src/test-utils/formik-props-uti
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ApplicationFlowType } from '../edit-application-utils';
 import EditApplicationForm from '../EditApplicationForm';
-import '@testing-library/jest-dom';
 
 global.ResizeObserver = class ResizeObserver {
   observe = () => {};

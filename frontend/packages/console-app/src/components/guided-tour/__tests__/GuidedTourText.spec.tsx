@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import { helpTourText, userPreferencesTourText, FinishTourText } from '../GuidedTourText';
-import '@testing-library/jest-dom';
 
 // Mock k8s-watch-hook
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
