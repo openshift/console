@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { Component, useState, useMemo, useEffect } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import { RoleModel, RoleBindingModel } from '../../models';
@@ -87,7 +87,7 @@ const RolesTableRow = ({ obj: role }) => {
   );
 };
 
-class Details extends React.Component {
+class Details extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -376,7 +376,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
   const location = useLocation();
 
   // Track which filter is selected from URL params
-  const [selectedFilters, setSelectedFilters] = React.useState(() => {
+  const [selectedFilters, setSelectedFilters] = useState(() => {
     const params = new URLSearchParams(location.search);
     const filterParam = params.get('rowFilter-role-kind');
     return filterParam ? filterParam.split(',') : [];
@@ -389,7 +389,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
   };
 
   // Dynamically determine which resources to fetch
-  const resources = React.useMemo(() => {
+  const resources = useMemo(() => {
     const hasCluster = selectedFilters.includes('cluster');
     const hasNamespaceOrSystem =
       selectedFilters.includes('namespace') || selectedFilters.includes('system');
@@ -410,7 +410,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
   }, [selectedFilters]);
 
   // Update state when URL params change
-  React.useEffect(() => {
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     const filterParam = params.get('rowFilter-role-kind');
     const newFilters = filterParam ? filterParam.split(',') : [];
