@@ -131,7 +131,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
     }) => {
       const { t } = useTranslation();
       const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
-      const activePerspective = useActivePerspective()[0];
+      const [activePerspective, setActivePerspective] = useActivePerspective();
       const canAccessMonitoring =
         useFlag(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL;
       const { query, model, metric, fieldSelector } = currentConsumer;
@@ -235,7 +235,16 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
                   );
                 })}
             </ul>
-            <Link to={monitoringURL}>{t('console-shared~View more')}</Link>
+            <Link
+              to={monitoringURL}
+              onClick={() => {
+                if (monitoringURL.startsWith('/dev-monitoring') && activePerspective !== 'dev') {
+                  setActivePerspective('dev');
+                }
+              }}
+            >
+              {t('console-shared~View more')}
+            </Link>
           </>
         );
       }
