@@ -10,9 +10,9 @@ export type ResourceFilters = {
   label: string;
 };
 
-export type ResourceDataViewColumn<
-  TData extends K8sResourceCommon = K8sResourceCommon
-> = DataViewTh & {
+export type GetK8sResourceMetadata<TData> = (data: TData) => K8sResourceCommon['metadata'];
+
+export type ResourceDataViewColumn<TData> = DataViewTh & {
   id: string;
   title: string;
   sortFunction?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
