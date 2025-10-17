@@ -1,111 +1,175 @@
 import * as React from 'react';
-import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-import { ListPage, Table, TableData, TableProps, ListPageProps } from './factory';
-import { LabelList, ResourceLink, Selector } from './utils';
+import { ListPage, ListPageProps } from './factory';
+import { LabelList, ResourceLink, Selector, LoadingBox } from './utils';
 import { PrometheusModel } from '../models';
 import { referenceForModel, referenceFor, K8sResourceKind } from '../module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import {
+  ConsoleDataView,
+  initialFiltersDefault,
+  getNameCellProps,
+  actionsCellProps,
+  cellIsStickyProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { TableColumn } from '@console/internal/module/k8s';
+import {
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
+import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { DASH } from '@console/shared/src';
 
-const tableColumnClasses = [
-  'pf-v6-u-w-25-on-xl',
-  'pf-v6-u-w-25-on-xl',
-  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-25-on-xl',
-  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-8-on-xl',
-  'pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-16-on-xl',
-  'pf-v6-c-table__action',
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'labels' },
+  { id: 'version' },
+  { id: 'serviceMonitorSelector' },
+  { id: 'actions' },
 ];
 
-interface PrometheusTableRowProps {
-  obj: K8sResourceKind;
-}
+const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
+  data: RowProps<K8sResourceKind, undefined>[],
+  columns: ConsoleDataViewColumn<K8sResourceKind>[],
+): ConsoleDataViewRow[] => {
+  return data.map(({ obj }) => {
+    const { metadata, spec } = obj;
+    const resourceKind = referenceFor(obj);
+    const context = { [resourceKind]: obj };
 
-const PrometheusTableRow: React.FCC<PrometheusTableRowProps> = ({ obj: instance }) => {
-  const { metadata, spec } = instance;
-  const resourceKind = referenceFor(instance);
-  const context = { [resourceKind]: instance };
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={referenceForModel(PrometheusModel)}
-          name={metadata.name}
-          namespace={metadata.namespace}
-          title={metadata.uid}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
-        <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={PrometheusModel.kind} labels={metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>{spec.version}</TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <Selector
-          selector={spec.serviceMonitorSelector}
-          kind="ServiceMonitor"
-          namespace={metadata.namespace}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            kind={referenceForModel(PrometheusModel)}
+            name={metadata.name}
+            namespace={metadata.namespace}
+            title={metadata.uid}
+          />
+        ),
+        props: getNameCellProps(metadata.name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: (
+          <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
+        ),
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <LabelList kind={PrometheusModel.kind} labels={metadata.labels} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: spec.version,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: (
+          <Selector
+            selector={spec.serviceMonitorSelector}
+            kind="ServiceMonitor"
+            namespace={metadata.namespace}
+          />
+        ),
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
 };
 
-const PrometheusInstancesList = (props: Partial<TableProps>) => {
+const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-
-  const PrometheusTableHeader = () => {
-    return [
+  return React.useMemo(
+    () => [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Labels'),
-        sortField: 'metadata.labels',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: 'metadata.labels',
+        props: {
+          modifier: 'nowrap',
+          width: 20,
+        },
       },
       {
         title: t('public~Version'),
-        sortField: 'spec.version',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        sort: 'spec.version',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Service monitor selector'),
-        sortField: 'spec.serviceMonitorSelector',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
+        id: tableColumnInfo[4].id,
+        sort: 'spec.serviceMonitorSelector',
+        props: {
+          modifier: 'nowrap',
+          width: 20,
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[5] },
+        id: tableColumnInfo[5].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
-    ];
-  };
+    ],
+    [t],
+  );
+};
+
+export const PrometheusInstancesList: React.FC<{ data: K8sResourceKind[]; loaded: boolean }> = (
+  props,
+) => {
+  const { data, loaded } = props;
+  const columns = usePrometheusColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~Promethesuses')}
-      Header={PrometheusTableHeader}
-      Row={PrometheusTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<K8sResourceKind>
+        {...props}
+        data={data}
+        loaded={loaded}
+        label={PrometheusModel.labelPlural}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -115,5 +179,6 @@ export const PrometheusInstancesPage = (props: Partial<ListPageProps<never>>) =>
     ListComponent={PrometheusInstancesList}
     canCreate={true}
     kind={referenceForModel(PrometheusModel)}
+    omitFilterToolbar={true}
   />
 );

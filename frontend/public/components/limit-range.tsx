@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
 import { LimitRangeModel } from '../models';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage } from './factory';
 import {
   Kebab,
   navFactory,
@@ -13,83 +12,140 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
+  LoadingBox,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
+import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
+import {
+  ConsoleDataView,
+  initialFiltersDefault,
+  getNameCellProps,
+  actionsCellProps,
+  cellIsStickyProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { TableColumn } from '@console/internal/module/k8s';
+import {
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
+import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { DASH } from '@console/shared/src';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
-const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
+const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];
 
-export const LimitRangeTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={LimitRangeReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses[1]} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={LimitRangeReference} resource={obj} />
-      </TableData>
-    </>
-  );
+const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
+  data: RowProps<K8sResourceKind, undefined>[],
+  columns: ConsoleDataViewColumn<K8sResourceKind>[],
+): ConsoleDataViewRow[] => {
+  return data.map(({ obj }) => {
+    const { name, namespace, creationTimestamp } = obj.metadata;
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={LimitRangeReference} name={name} namespace={namespace} />,
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <Timestamp timestamp={creationTimestamp} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <ResourceKebab actions={menuActions} kind={LimitRangeReference} resource={obj} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
 };
 
-export const LimitRangeList: React.FC = (props) => {
+const useLimitRangeColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  const LimitRangeTableHeader = () => {
-    return [
+  return React.useMemo(
+    () => [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-        id: 'namespace',
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Created'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
-    ];
-  };
+    ],
+    [t],
+  );
+};
+
+export const LimitRangeList: React.FC<{ data: K8sResourceKind[]; loaded: boolean }> = (props) => {
+  const { data, loaded } = props;
+  const columns = useLimitRangeColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={LimitRangeModel.labelPlural}
-      Header={LimitRangeTableHeader}
-      Row={LimitRangeTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<K8sResourceKind>
+        data={data}
+        loaded={loaded}
+        label={LimitRangeModel.labelPlural}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
 export const LimitRangeListPage: React.FC<LimitRangeListPageProps> = (props) => (
-  <ListPage {...props} kind={LimitRangeReference} ListComponent={LimitRangeList} canCreate={true} />
+  <ListPage
+    {...props}
+    kind={LimitRangeReference}
+    ListComponent={LimitRangeList}
+    canCreate={true}
+    omitFilterToolbar={true}
+  />
 );
 
 export const LimitRangeDetailsRow: React.FCC<LimitRangeDetailsRowProps> = ({
@@ -98,15 +154,15 @@ export const LimitRangeDetailsRow: React.FCC<LimitRangeDetailsRowProps> = ({
   limit,
 }) => {
   return (
-    <tr className="pf-v6-c-table__tr">
-      <td className="pf-v6-c-table__td">{limitType}</td>
-      <td className="pf-v6-c-table__td">{resource}</td>
-      <td className="pf-v6-c-table__td">{limit.min || '-'}</td>
-      <td className="pf-v6-c-table__td">{limit.max || '-'}</td>
-      <td className="pf-v6-c-table__td">{limit.defaultRequest || '-'}</td>
-      <td className="pf-v6-c-table__td">{limit.default || '-'}</td>
-      <td className="pf-v6-c-table__td">{limit.maxLimitRequestRatio || '-'}</td>
-    </tr>
+    <Tr>
+      <Td>{limitType}</Td>
+      <Td>{resource}</Td>
+      <Td>{limit.min || '-'}</Td>
+      <Td>{limit.max || '-'}</Td>
+      <Td>{limit.defaultRequest || '-'}</Td>
+      <Td>{limit.default || '-'}</Td>
+      <Td>{limit.maxLimitRequestRatio || '-'}</Td>
+    </Tr>
   );
 };
 
@@ -136,24 +192,24 @@ export const LimitRangeDetailsList = (resource) => {
   return (
     <PaneBody>
       <SectionHeading text={t('public~Limits')} />
-      <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
-        <thead className="pf-v6-c-table__thead">
-          <tr className="pf-v6-c-table__tr">
-            <th className="pf-v6-c-table__th">{t('public~Type')}</th>
-            <th className="pf-v6-c-table__th">{t('public~Resource')}</th>
-            <th className="pf-v6-c-table__th">{t('public~Min')}</th>
-            <th className="pf-v6-c-table__th">{t('public~Max')}</th>
-            <th className="pf-v6-c-table__th">{t('public~Default request')}</th>
-            <th className="pf-v6-c-table__th">{t('public~Default limit')}</th>
-            <th className="pf-v6-c-table__th">{t('public~Max limit/request ratio')}</th>
-          </tr>
-        </thead>
-        <tbody className="pf-v6-c-table__tbody">
+      <Table variant="compact" borders>
+        <Thead>
+          <Tr>
+            <Th>{t('public~Type')}</Th>
+            <Th>{t('public~Resource')}</Th>
+            <Th>{t('public~Min')}</Th>
+            <Th>{t('public~Max')}</Th>
+            <Th>{t('public~Default request')}</Th>
+            <Th>{t('public~Default limit')}</Th>
+            <Th>{t('public~Max limit/request ratio')}</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {_.map(resource.resource.spec.limits, (limit, index) => (
             <LimitRangeDetailsRows limit={limit} key={index} />
           ))}
-        </tbody>
-      </table>
+        </Tbody>
+      </Table>
     </PaneBody>
   );
 };

@@ -20,10 +20,10 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-} from '@console/app/src/components/data-view/ResourceDataView';
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import {
-  ResourceDataViewColumn,
-  ResourceDataViewRow,
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -152,9 +152,9 @@ export const ReplicasCount: React.FCC<ReplicasCountProps> = ({ obj, kind }) => {
 
 export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
   data: RowProps<T, any>[],
-  columns: ResourceDataViewColumn<T>[],
+  columns: ConsoleDataViewColumn<T>[],
   model: K8sModel,
-): ResourceDataViewRow[] => {
+): ConsoleDataViewRow[] => {
   return data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const resourceKind = referenceForModel(model);
