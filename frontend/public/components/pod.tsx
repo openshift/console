@@ -122,8 +122,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { PodTraffic } from './pod-traffic';
@@ -131,8 +131,8 @@ import { RootState } from '../redux';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import {
   ResourceFilters,
-  ResourceDataViewColumn,
-  ResourceDataViewRow,
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
 import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import {
@@ -334,10 +334,10 @@ const Cores: React.FCC<CoresProps> = ({ cores }) => {
 
 const getPodDataViewRows = (
   rowData: RowProps<PodKind, PodRowData>[],
-  tableColumns: ResourceDataViewColumn<PodKind>[],
+  tableColumns: ConsoleDataViewColumn<PodKind>[],
   showNodes: boolean,
   podMetrics: UIActions.PodMetrics,
-): ResourceDataViewRow[] => {
+): ConsoleDataViewRow[] => {
   return rowData.map(({ obj }) => {
     const { name, namespace, creationTimestamp, labels } = obj.metadata;
     const { readyCount, totalContainers } = podReadiness(obj);
@@ -1054,7 +1054,7 @@ export const PodList: React.FCC<PodListProps> = ({
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<PodKind, PodRowData, PodFilters>
+      <ConsoleDataView<PodKind, PodRowData, PodFilters>
         {...props}
         label={PodModel.labelPlural}
         data={data}
@@ -1077,7 +1077,7 @@ export const PodList: React.FCC<PodListProps> = ({
   );
 };
 
-// in use in cron-job.tsx, but can be removed once the tables there are updated to use ResourceDataView
+// in use in cron-job.tsx, but can be removed once the tables there are updated to use ConsoleDataView
 export const getFilters = (t: TFunction): RowFilter<PodKind>[] => [
   {
     filterGroupName: t('public~Status'),

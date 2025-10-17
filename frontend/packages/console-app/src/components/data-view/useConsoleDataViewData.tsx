@@ -7,8 +7,8 @@ import { useSearchParams } from 'react-router-dom-v5-compat';
 import { TableColumn, RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
-import { ResourceDataViewColumn, GetDataViewRows, ResourceFilters } from './types';
-import { useResourceDataViewSort, getSortByDirection } from './useResourceDataViewSort';
+import { ConsoleDataViewColumn, GetDataViewRows, ResourceFilters } from './types';
+import { useConsoleDataViewSort, getSortByDirection } from './useConsoleDataViewSort';
 
 const isDataViewConfigurableColumn = (
   column: DataViewTh,
@@ -16,7 +16,7 @@ const isDataViewConfigurableColumn = (
   return (column as any)?.cell !== undefined;
 };
 
-export const useResourceDataViewData = <
+export const useConsoleDataViewData = <
   TData,
   TCustomRowData = any,
   TFilters extends ResourceFilters = ResourceFilters
@@ -70,7 +70,7 @@ export const useResourceDataViewData = <
     columnManagementID,
   });
 
-  const dataViewColumns = React.useMemo<ResourceDataViewColumn<TData>[]>(
+  const dataViewColumns = React.useMemo<ConsoleDataViewColumn<TData>[]>(
     () =>
       activeColumns.map(({ id, title, sort, props }, index) => {
         const headerProps: ThProps = {
@@ -104,7 +104,7 @@ export const useResourceDataViewData = <
     [activeColumns, t],
   );
 
-  const { sortBy, onSort } = useResourceDataViewSort<TData>({
+  const { sortBy, onSort } = useConsoleDataViewSort<TData>({
     columns: dataViewColumns,
   });
 

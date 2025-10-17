@@ -27,8 +27,8 @@ import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDis
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import {
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { StatefulSetModel } from '../models';
 import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 
@@ -85,7 +85,7 @@ const StatefulSetsList: React.FCC<StatefulSetsListProps> = ({ data, loaded, ...p
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<K8sResourceKind>
+      <ConsoleDataView<K8sResourceKind>
         {...props}
         label={StatefulSetModel.labelPlural}
         data={data}

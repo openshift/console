@@ -7,20 +7,20 @@ import {
   fuzzyCaseInsensitive,
 } from '@console/internal/components/factory/table-filters';
 import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
-import { ResourceFilters, GetK8sResourceMetadata } from './types';
+import { ResourceFilters, GetResourceMetadata } from './types';
 
-export const useResourceDataViewFilters = <
+export const useConsoleDataViewFilters = <
   TData,
   TFilters extends ResourceFilters = ResourceFilters
 >({
   data,
   initialFilters,
-  getK8sResourceMetadata,
+  getResourceMetadata,
   matchesAdditionalFilters,
 }: {
   data: TData[];
   initialFilters: TFilters;
-  getK8sResourceMetadata?: GetK8sResourceMetadata<TData>;
+  getResourceMetadata?: GetResourceMetadata<TData>;
   matchesAdditionalFilters?: (resource: TData, filters: TFilters) => boolean;
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -35,7 +35,7 @@ export const useResourceDataViewFilters = <
   const filteredData = React.useMemo(
     () =>
       data.filter((resource) => {
-        const resourceMetadata = getK8sResourceMetadata?.(resource);
+        const resourceMetadata = getResourceMetadata?.(resource);
 
         // Filter by K8s resource name
         const resourceName = resourceMetadata?.name;
@@ -54,7 +54,7 @@ export const useResourceDataViewFilters = <
           matchesName && matchesLabels && (matchesAdditionalFilters?.(resource, filters) ?? true)
         );
       }),
-    [data, filters, isExactSearch, getK8sResourceMetadata, matchesAdditionalFilters],
+    [data, filters, isExactSearch, getResourceMetadata, matchesAdditionalFilters],
   );
 
   return { filters, onSetFilters, clearAllFilters, filteredData };

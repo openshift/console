@@ -10,8 +10,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { MachineAutoscalerModel } from '../models';
 import {
@@ -175,7 +175,7 @@ const MachineAutoscalerList: React.FC<MachineAutoscalerListProps> = ({
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<K8sResourceKind>
+      <ConsoleDataView<K8sResourceKind>
         {...props}
         label={MachineAutoscalerModel.labelPlural}
         data={data}

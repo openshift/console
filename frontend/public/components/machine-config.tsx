@@ -23,8 +23,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
@@ -280,7 +280,7 @@ const MachineConfigList: React.FC<MachineConfigListProps> = ({
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<MachineConfigKind>
+      <ConsoleDataView<MachineConfigKind>
         {...props}
         label={MachineConfigModel.labelPlural}
         data={data}

@@ -22,11 +22,11 @@ import { TableColumn } from '@console/internal/module/k8s';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
-import { ResourceFilters, GetK8sResourceMetadata, GetDataViewRows } from './types';
-import { useResourceDataViewData } from './useResourceDataViewData';
-import { useResourceDataViewFilters } from './useResourceDataViewFilters';
+import { ResourceFilters, GetResourceMetadata, GetDataViewRows } from './types';
+import { useConsoleDataViewData } from './useConsoleDataViewData';
+import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
-export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
+export type ConsoleDataViewProps<TData, TCustomRowData, TFilters> = {
   label?: string;
   data: TData[];
   loaded: boolean;
@@ -36,7 +36,7 @@ export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
   columnManagementID?: string;
   initialFilters: TFilters;
   additionalFilterNodes?: React.ReactNode[];
-  getK8sResourceMetadata?: GetK8sResourceMetadata<TData>;
+  getResourceMetadata?: GetResourceMetadata<TData>;
   matchesAdditionalFilters?: (resource: TData, filters: TFilters) => boolean;
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
   customRowData?: TCustomRowData;
@@ -50,7 +50,7 @@ export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
 /**
  * Console DataView component based on PatternFly DataView.
  */
-export const ResourceDataView = <
+export const ConsoleDataView = <
   TData,
   TCustomRowData = any,
   TFilters extends ResourceFilters = ResourceFilters
@@ -64,7 +64,7 @@ export const ResourceDataView = <
   columnManagementID,
   initialFilters,
   additionalFilterNodes,
-  getK8sResourceMetadata,
+  getResourceMetadata,
   matchesAdditionalFilters,
   getDataViewRows,
   customRowData,
@@ -73,20 +73,20 @@ export const ResourceDataView = <
   hideLabelFilter,
   hideColumnManagement,
   mock,
-}: ResourceDataViewProps<TData, TCustomRowData, TFilters>) => {
+}: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation();
 
-  const { filters, onSetFilters, clearAllFilters, filteredData } = useResourceDataViewFilters<
+  const { filters, onSetFilters, clearAllFilters, filteredData } = useConsoleDataViewFilters<
     TData,
     TFilters
   >({
     data,
     initialFilters,
-    getK8sResourceMetadata,
+    getResourceMetadata,
     matchesAdditionalFilters,
   });
 
-  const { dataViewColumns, dataViewRows, pagination } = useResourceDataViewData<
+  const { dataViewColumns, dataViewRows, pagination } = useConsoleDataViewData<
     TData,
     TCustomRowData,
     TFilters

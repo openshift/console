@@ -21,8 +21,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 
 import { Conditions } from './conditions';
@@ -353,7 +353,7 @@ const ControlPlaneMachineSetList: React.FC<ControlPlaneMachineSetListProps> = ({
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<ControlPlaneMachineSetKind, undefined>
+      <ConsoleDataView<ControlPlaneMachineSetKind, undefined>
         {...props}
         label={ControlPlaneMachineSetModel.labelPlural}
         data={data}
