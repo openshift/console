@@ -90,7 +90,6 @@ const TelemetryAnalyticsSelect: React.FC<{
       <Select
         toggle={toggle}
         isOpen={isOpen}
-        // @ts-expect-error FIXME: PatternFly's onSelect is typed wrong (value should be any)
         onSelect={(_, selectedValue: TelemetryAnalyticsSelectOptions) => {
           if (selectedValue && !disabled) {
             onChange(selectedValue);
