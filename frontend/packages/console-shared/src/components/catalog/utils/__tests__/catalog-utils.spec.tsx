@@ -3,7 +3,9 @@ import {
   keywordCompare,
   calculateCatalogItemRelevanceScore,
   getRedHatPriority,
+  sortCatalogItems,
 } from '../catalog-utils';
+import { CatalogSortOrder } from '../types';
 
 // Mock CatalogItem data for testing
 const createMockCatalogItem = (overrides: Partial<CatalogItem> = {}): CatalogItem => ({
@@ -311,5 +313,156 @@ describe('keywordCompare', () => {
     // Red Hat should still be prioritized due to priority delta threshold
     expect(result[0].attributes?.provider).toBe('Red Hat');
     expect(result[1].attributes?.provider).toBe('Other Company');
+  });
+});
+
+describe('sortCatalogItems', () => {
+  const testItems = [
+    createMockCatalogItem({
+      uid: 'item-1',
+      name: 'Zebra Operator',
+      attributes: { provider: 'Red Hat' },
+      description: 'Contains gitops in description',
+    }),
+    createMockCatalogItem({
+      uid: 'item-2',
+      name: 'Argo CD',
+      attributes: { provider: 'CNCF' },
+      description: 'GitOps tool for Kubernetes',
+      tags: ['gitops'],
+    }),
+    createMockCatalogItem({
+      uid: 'item-3',
+      name: 'Database Manager',
+      attributes: { provider: 'Red Hat' },
+      description: 'Database management',
+    }),
+    createMockCatalogItem({
+      uid: 'item-4',
+      name: 'Flux',
+      attributes: { provider: 'Weaveworks' },
+      description: 'GitOps for Kubernetes',
+      tags: ['gitops'],
+    }),
+  ];
+
+  describe('filtering behavior', () => {
+    it('filters items by search keyword before sorting', () => {
+      const result = sortCatalogItems(testItems, CatalogSortOrder.ASC, 'gitops');
+
+      // Should only return items matching 'gitops'
+      expect(result).toHaveLength(3);
+      expect(result.every((item) => item.name !== 'Database Manager')).toBe(true);
+    });
+
+    it('returns all items when no search keyword provided', () => {
+      const result = sortCatalogItems(testItems, CatalogSortOrder.ASC, '');
+
+      expect(result).toHaveLength(4);
+    });
+
+    it('returns empty array when no items match search keyword', () => {
+      const result = sortCatalogItems(testItems, CatalogSortOrder.ASC, 'nonexistent');
+
+      expect(result).toHaveLength(0);
+    });
+  });
+
+  describe('RELEVANCE mode', () => {
+    it('delegates to keywordCompare correctly', () => {
+      const result = sortCatalogItems(testItems, CatalogSortOrder.RELEVANCE, 'gitops');
+
+      // Red Hat item should be first due to priority + relevance
+      expect(result[0].name).toBe('Zebra Operator');
+      expect(result[0].attributes?.provider).toBe('Red Hat');
+    });
+
+    it('uses keywordCompare with no search term', () => {
+      const result = sortCatalogItems(testItems, CatalogSortOrder.RELEVANCE, '');
+
+      // Should return all items sorted by Red Hat priority + alphabetical
+      expect(result).toHaveLength(4);
+    });
+  });
+
+  describe('A-Z mode', () => {
+    it('sorts alphabetically ascending without Red Hat priority', () => {
+      const result = sortCatalogItems(testItems, CatalogSortOrder.ASC, 'gitops');
+
+      // Pure alphabetical order (Argo CD, Flux, Zebra Operator)
+      expect(result[0].name).toBe('Argo CD');
+      expect(result[1].name).toBe('Flux');
+      expect(result[2].name).toBe('Zebra Operator');
+    });
+
+    it('sorts all items alphabetically when no search term', () => {
+      const result = sortCatalogItems(testItems, CatalogSortOrder.ASC, '');
+
+      // Pure alphabetical: Argo CD, Database Manager, Flux, Zebra Operator
+      expect(result[0].name).toBe('Argo CD');
+      expect(result[1].name).toBe('Database Manager');
+      expect(result[2].name).toBe('Flux');
+      expect(result[3].name).toBe('Zebra Operator');
+    });
+
+    it('ignores Red Hat priority in alphabetical sorting', () => {
+      const items = [
+        createMockCatalogItem({
+          name: 'Zebra Service',
+          attributes: { provider: 'Red Hat' }, // High priority
+        }),
+        createMockCatalogItem({
+          name: 'Alpha Service',
+          attributes: { provider: 'Community' }, // Low priority
+        }),
+      ];
+
+      const result = sortCatalogItems(items, CatalogSortOrder.ASC, '');
+
+      // Alpha should come before Zebra despite lower Red Hat priority
+      expect(result[0].name).toBe('Alpha Service');
+      expect(result[1].name).toBe('Zebra Service');
+    });
+  });
+
+  describe('Z-A mode', () => {
+    it('sorts alphabetically descending without Red Hat priority', () => {
+      const result = sortCatalogItems(testItems, CatalogSortOrder.DESC, 'gitops');
+
+      // Reverse alphabetical order
+      expect(result[0].name).toBe('Zebra Operator');
+      expect(result[1].name).toBe('Flux');
+      expect(result[2].name).toBe('Argo CD');
+    });
+
+    it('sorts all items reverse alphabetically when no search term', () => {
+      const result = sortCatalogItems(testItems, CatalogSortOrder.DESC, '');
+
+      expect(result[0].name).toBe('Zebra Operator');
+      expect(result[1].name).toBe('Flux');
+      expect(result[2].name).toBe('Database Manager');
+      expect(result[3].name).toBe('Argo CD');
+    });
+  });
+
+  describe('edge cases', () => {
+    it('handles empty items array', () => {
+      const result = sortCatalogItems([], CatalogSortOrder.ASC, 'test');
+
+      expect(result).toEqual([]);
+    });
+
+    it('handles null/undefined items', () => {
+      const result = sortCatalogItems(null as any, CatalogSortOrder.ASC, 'test');
+
+      expect(result).toBeNull();
+    });
+
+    it('defaults to RELEVANCE mode when no sortOrder provided', () => {
+      const result = sortCatalogItems(testItems, undefined as any, 'gitops');
+
+      // Should behave like RELEVANCE mode
+      expect(result[0].name).toBe('Zebra Operator'); // Red Hat priority
+    });
   });
 });
