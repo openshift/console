@@ -42,8 +42,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ReplicationControllerModel } from '../models';
 import { sortResourceByValue } from './factory/Table/sort';
@@ -294,7 +294,7 @@ const ReplicationControllersList = ({ data, loaded, ...props }) => {
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ConsoleDataView
         {...props}
         label={ReplicationControllerModel.labelPlural}
         data={data}

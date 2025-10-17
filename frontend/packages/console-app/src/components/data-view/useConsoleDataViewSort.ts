@@ -2,17 +2,17 @@ import * as React from 'react';
 import { SortByDirection, ISortBy } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useSearchParams } from 'react-router-dom-v5-compat';
-import { ResourceDataViewColumn } from './types';
+import { ConsoleDataViewColumn } from './types';
 
 export const getSortByDirection = (value: string): SortByDirection =>
   value === SortByDirection.desc.valueOf() ? SortByDirection.desc : SortByDirection.asc;
 
-export const useResourceDataViewSort = <TData>({
+export const useConsoleDataViewSort = <TData>({
   columns,
   sortColumnIndex,
   sortDirection,
 }: {
-  columns: ResourceDataViewColumn<TData>[];
+  columns: ConsoleDataViewColumn<TData>[];
   sortColumnIndex?: number;
   sortDirection?: SortByDirection;
 }) => {
