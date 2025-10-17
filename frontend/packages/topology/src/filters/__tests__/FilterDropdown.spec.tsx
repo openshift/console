@@ -7,7 +7,6 @@ import {
 } from '../const';
 import { getFilterById } from '../filter-utils';
 import FilterDropdown from '../FilterDropdown';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},

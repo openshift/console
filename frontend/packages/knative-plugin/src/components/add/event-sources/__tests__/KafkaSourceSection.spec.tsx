@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import KafkaSourceSection from '../KafkaSourceSection';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/dev-console/src/components/import/section/FormSection', () => ({
   __esModule: true,

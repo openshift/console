@@ -1,4 +1,4 @@
-import { screen, configure, act } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
 import { useUserSettings } from '@console/shared';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -31,10 +31,6 @@ describe('UserPreferenceDropdownField', () => {
   ) => {
     mockUserSettings.mockReturnValue([userPreference, setValue, loaded]);
   };
-
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();

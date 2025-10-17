@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom-v5-compat';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import ApplicationGroupResource from '../ApplicationGroupResource';
-import '@testing-library/jest-dom';
 
 const renderComponent = (props: React.ComponentProps<typeof ApplicationGroupResource>) => {
   return render(

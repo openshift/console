@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MinimizeRestoreButton } from '../MinimizeRestoreButton';
-import '@testing-library/jest-dom';
 
 describe('MinimizeRestoreButton', () => {
   it('should render a button', () => {

@@ -1,10 +1,8 @@
-import { screen, configure } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useUserSettings } from '@console/shared';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { mockHelmReleases } from '../../__tests__/helm-release-mock-data';
 import HelmReleaseNotes from '../notes/HelmReleaseNotes';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@openshift-console/plugin-shared/src/hooks/useResizeObserver', () => ({
   useResizeObserver: jest.fn(),

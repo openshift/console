@@ -1,5 +1,4 @@
 import { screen, act } from '@testing-library/react';
-import '@testing-library/jest-dom';
 
 import { DetailsPage } from '@console/internal/components/factory/details';
 import { PodModel } from '@console/internal/models';

@@ -1,10 +1,7 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import UploadJarPage from '../UploadJarPage';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/internal/components/utils', () => ({
   LoadingBox: () => 'Loading...',

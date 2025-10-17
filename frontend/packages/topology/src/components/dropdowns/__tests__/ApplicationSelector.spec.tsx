@@ -3,7 +3,6 @@ import * as formik from 'formik';
 import { CREATE_APPLICATION_KEY } from '../../../const';
 import ApplicationDropdown from '../ApplicationDropdown';
 import ApplicationSelector from '../ApplicationSelector';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared', () => ({
   InputField: jest.fn(() => 'Mock Input Field'),

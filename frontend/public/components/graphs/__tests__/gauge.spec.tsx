@@ -1,4 +1,4 @@
-import { screen, configure } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 import { GaugeChart } from '@console/internal/components/graphs/gauge';
@@ -8,10 +8,6 @@ const MOCK_ERROR_DATA = { x: 'Memory Usage', y: 85 };
 const MOCK_LOADING_DATA = { x: 'Disk Usage', y: 50 };
 
 describe('GaugeChart', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   it('should render a gauge chart', () => {
     renderWithProviders(
       <GaugeChart title="Test Gauge" label="75%" data={MOCK_GAUGE_DATA} loading={false} />,

@@ -1,5 +1,4 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import * as fileSaver from 'file-saver';
 
 import { DownloadButton } from '../../../components/utils/download-button';

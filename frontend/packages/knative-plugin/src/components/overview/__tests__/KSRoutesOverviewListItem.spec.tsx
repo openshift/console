@@ -4,7 +4,6 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { RouteModel } from '../../../models';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import KSRoutesOverviewListItem from '../KSRoutesOverviewListItem';
-import '@testing-library/jest-dom';
 
 jest.mock('@patternfly/react-core', () => ({
   ListItem: 'ListItem',

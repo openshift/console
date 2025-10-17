@@ -1,7 +1,25 @@
 // Reusable test utilities for Identity Provider (IDP) form components
-import '@testing-library/jest-dom';
 import { screen, fireEvent, within } from '@testing-library/react';
 import { verifyFormElementBasics } from '@console/shared/src/test-utils/unit-test-utils';
+
+// Mock the cluster-settings module to prevent async API calls during tests
+jest.mock('../../cluster-settings', () => ({
+  getOAuthResource: jest.fn(() => Promise.resolve({ spec: { identityProviders: [] } })),
+  addIDP: jest.fn(() => Promise.resolve({})),
+  redirectToOAuthPage: jest.fn(),
+  mockNames: {
+    secret: 'secret-name',
+    ca: 'ca-name',
+  },
+}));
+
+// Mock k8s module to prevent API calls
+jest.mock('../../../module/k8s', () => ({
+  ...jest.requireActual('../../../module/k8s'),
+  k8sCreate: jest.fn(() => Promise.resolve({ metadata: { name: 'test-secret' } })),
+  k8sGet: jest.fn(() => Promise.resolve({ spec: { identityProviders: [] } })),
+  k8sPatch: jest.fn(() => Promise.resolve({})),
+}));
 
 const updatedFormValues = {
   id: '2729292624425',
@@ -130,7 +148,7 @@ export const verifyIDPFileFields = ({
 /**
  * Verifies ListInput component UI structure and interactions.
  * @param inputLabel - The label text for the input elements
- * @param testId - The data-testid of the ListInput container
+ * @param testId - The data-test of the ListInput container
  * @param initialValue - The initial value of the input element (optional).
  * @param testValue - Value to enter in the input element for testing (optional)
  * @param helpText - The expected help text for the input group (optional)

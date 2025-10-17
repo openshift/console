@@ -1,7 +1,5 @@
-import { render, fireEvent, configure } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { ReplaceCodeModal } from '../replace-code-modal';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({

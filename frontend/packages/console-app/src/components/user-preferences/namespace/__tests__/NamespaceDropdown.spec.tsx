@@ -1,4 +1,4 @@
-import { screen, configure, act } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import { useProjectOrNamespaceModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { NamespaceModel } from '@console/internal/models';
@@ -39,10 +39,6 @@ describe('NamespaceDropdown', () => {
     mockK8sWatchResource.mockReturnValue([mockNamespaces, true, false]);
     mockUsePreferredNamespace.mockReturnValue([preferredNs, jest.fn(), loaded]);
   };
-
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();

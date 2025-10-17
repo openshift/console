@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { configure, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
@@ -30,8 +30,6 @@ jest.mock('../EditorField', () =>
 
 const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
 const spyEvaluateFunc = jest.spyOn(serverlessFxUtils, 'evaluateFunc');
-
-configure({ testIdAttribute: 'data-test' });
 
 const Wrapper: React.FC<FormikConfig<SourceSectionFormData>> = ({ children, ...formikConfig }) => (
   <Provider store={store}>

@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react';
 import EventSinkAlert from '../EventSinkAlert';
-import '@testing-library/jest-dom';
 
 jest.mock('@patternfly/react-core', () => ({
   Alert: 'Alert',

@@ -3,7 +3,6 @@ import * as flagsModule from '@console/dynamic-plugin-sdk/src/utils/flags';
 import * as rbacModule from '@console/internal/components/utils/rbac';
 import * as useIsMobileModule from '@console/shared/src/hooks/useIsMobile';
 import ExportApplication from '../ExportApplication';
-import '@testing-library/jest-dom';
 
 describe('ExportApplication', () => {
   const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');

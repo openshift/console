@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import { ActionType } from '@console/internal/reducers/ols';
 import { useOLSConfig } from '../../../hooks/ols-hook';
 import { AskOpenShiftLightspeedButton, CodeEditorToolbar } from '../CodeEditorToolbar';
-import '@testing-library/jest-dom';
 
 jest.mock('react-i18next', () => ({
   useTranslation: jest.fn(),

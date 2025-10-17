@@ -4,7 +4,6 @@ import { RowFunctionArgs } from '@console/internal/components/factory';
 import { knativeRouteObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { RouteKind } from '../../../types';
 import RouteRow from '../RouteRow';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/factory', () => ({
   TableData: 'TableData',

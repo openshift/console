@@ -1,11 +1,9 @@
-import { configure, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { LoadError } from '../LoadError';
 import { Loading } from '../Loading';
 import { LoadingBox } from '../LoadingBox';
 import { LoadingInline } from '../LoadingInline';
-import '@testing-library/jest-dom';
 
-configure({ testIdAttribute: 'data-test' });
 const label = 'foo';
 const message = 'bar';
 

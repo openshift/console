@@ -1,10 +1,7 @@
-import { act, configure } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import AddCardSectionSkeleton from '../AddCardSectionSkeleton';
 import { MasonryLayout } from '../layout/MasonryLayout';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('Masonry Layout', () => {
   const setWidth = (width: number) => {

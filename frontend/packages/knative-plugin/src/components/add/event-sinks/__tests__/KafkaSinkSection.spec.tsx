@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import KafkaSinkSection from '../KafkaSinkSection';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),

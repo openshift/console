@@ -7,9 +7,6 @@ import * as SharedHooks from '@console/shared';
 import TopologyPageToolbar from '../components/page/TopologyPageToolbar';
 import { ModelContext } from '../data-transforms/ModelContext';
 import { TopologyViewType } from '../topology-types';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test-id' });
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
@@ -45,6 +42,8 @@ jest.mock('@console/dev-console/src/utils/useAddToProjectAccess', () => ({
 jest.mock('@console/app/src/components/file-upload/file-upload-context', () => ({
   FileUploadContext: { extensions: ['.yaml'] },
 }));
+
+configure({ testIdAttribute: 'data-test-id' });
 
 describe('TopologyPageToolbar tests', () => {
   const mockContext = {

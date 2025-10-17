@@ -1,4 +1,4 @@
-import { cleanup, configure, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { Resources } from '../../import/import-types';
@@ -11,8 +11,6 @@ import {
 import MockForm from '../__mocks__/MockForm';
 import DeploymentStrategySection from '../deployment-strategy/DeploymentStrategySection';
 import { convertDeploymentToEditForm } from '../utils/deployment-utils';
-
-configure({ testIdAttribute: 'data-test' });
 
 const handleSubmit = jest.fn();
 

@@ -1,7 +1,5 @@
-import { configure, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { AccessDenied, EmptyBox, ConsoleEmptyState } from '..';
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('EmptyBox', () => {
   it('should render without label', () => {

@@ -4,7 +4,6 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import TopologyDataRenderer from '../components/page/TopologyDataRenderer';
 import { ModelContext } from '../data-transforms/ModelContext';
 import { TopologyViewType } from '../topology-types';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: () => [],

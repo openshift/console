@@ -1,9 +1,6 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import ProjectAccessPage from '../ProjectAccessPage';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/internal/components/utils', () => ({
   Firehose: (props) => props.children,

@@ -1,8 +1,5 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import MonitoringEvents from '../MonitoringEvents';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/internal/components/events', () => ({
   EventsList: () => 'EventsList',

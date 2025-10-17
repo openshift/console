@@ -1,4 +1,4 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useBuilderImageEnvironments } from '../../../builder/builderImageHooks';
 import {
@@ -8,9 +8,6 @@ import {
   GitImportFormData,
 } from '../../../import-types';
 import { BuildSection } from '../BuildSection';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),

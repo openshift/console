@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { configure, render, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
@@ -9,8 +9,6 @@ import HooksSection, { HooksSectionFormData } from '../HooksSection';
 jest.mock('../EditorField', () =>
   jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
-
-configure({ testIdAttribute: 'data-test' });
 
 const Wrapper: React.FC<FormikConfig<HooksSectionFormData>> = ({ children, ...formikConfig }) => (
   <Provider store={store}>

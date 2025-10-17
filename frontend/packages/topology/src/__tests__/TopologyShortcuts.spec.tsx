@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { TFunction } from 'react-i18next';
 import { getTopologyShortcuts } from '../components/graph-view/TopologyShortcuts';
 import { TopologyViewType } from '../topology-types';
-import '@testing-library/jest-dom';
 
 const t = ((key: string) => key) as TFunction;
 

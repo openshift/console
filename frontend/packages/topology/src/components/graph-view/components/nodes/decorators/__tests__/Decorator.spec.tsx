@@ -2,7 +2,6 @@ import { SVGDefsProvider } from '@patternfly/react-topology';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import Decorator from '../Decorator';
-import '@testing-library/jest-dom';
 
 describe('Decorator', () => {
   const renderInSvg = (ui: React.ReactElement) => {

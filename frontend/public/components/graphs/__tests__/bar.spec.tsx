@@ -1,4 +1,4 @@
-import { screen, configure } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { BarChart } from '@console/internal/components/graphs/bar';
@@ -13,10 +13,6 @@ const MOCK_EMPTY_DATA = [];
 const MOCK_LOADING_DATA = [];
 
 describe('BarChart', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   it('should render correct number of bars with dimensions and title', () => {
     renderWithProviders(<BarChart title="Test Bar Chart" data={MOCK_BAR_DATA} loading={false} />);
 

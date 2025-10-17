@@ -1,11 +1,8 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { AlertStates } from '@console/dynamic-plugin-sdk';
 import { mockAlerts } from '@console/shared/src/utils/__mocks__/alerts-and-rules-data';
 import MonitoringOverview from '../MonitoringOverview';
 import { mockPodEvents, mockResourceEvents, mockPods } from './mockData';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@patternfly/react-core', () => ({
   Accordion: () => 'Accordion',

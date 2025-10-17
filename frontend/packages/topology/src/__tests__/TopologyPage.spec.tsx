@@ -4,9 +4,6 @@ import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/sr
 import { TopologyPage } from '../components/page/TopologyPage';
 import { TopologyViewType } from '../topology-types';
 import { usePreferredTopologyView } from '../user-preferences/usePreferredTopologyView';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test-id' });
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
@@ -65,6 +62,8 @@ jest.mock('@console/internal/components/start-guide', () => ({
   __esModule: true,
   withStartGuide: () => 'withStartGuide',
 }));
+
+configure({ testIdAttribute: 'data-test-id' });
 
 describe('TopologyPage view logic', () => {
   beforeEach(() => {

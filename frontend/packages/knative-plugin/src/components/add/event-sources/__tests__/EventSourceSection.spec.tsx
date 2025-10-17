@@ -4,7 +4,6 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { getDefaultEventingData } from '../../../../utils/__tests__/knative-serving-data';
 import { EventSources } from '../../import-types';
 import EventSourceSection from '../EventSourceSection';
-import '@testing-library/jest-dom';
 
 const mockEventingData = getDefaultEventingData(EventSources.PingSource);
 

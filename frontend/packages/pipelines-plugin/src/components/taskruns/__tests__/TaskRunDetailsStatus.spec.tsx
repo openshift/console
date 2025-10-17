@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { render, configure } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom-v5-compat';
 import store from '@console/internal/redux';
 import TaskRunDetailsStatus from '../TaskRunDetailsStatus';
 import { failedTaskRun, taskRunWithResults } from './taskrun-test-data';
-
-configure({ testIdAttribute: 'data-test' });
 
 type TaskRunDetailsStatusProps = React.ComponentProps<typeof TaskRunDetailsStatus>;
 

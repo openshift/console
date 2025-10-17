@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { configure, render, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import userEvent from '../../__tests__/user-event';
 import TriggersSection, { TriggersSectionFormData } from '../TriggersSection';
-
-configure({ testIdAttribute: 'data-test' });
 
 const Wrapper: React.FC<FormikConfig<TriggersSectionFormData>> = ({
   children,

@@ -3,7 +3,6 @@ import { render } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { kameletSourceTelegram } from '../../../utils/__tests__/knative-eventing-data';
 import EventSourceForm from '../EventSourceForm';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared', () => ({
   FormFooter: 'FormFooter',

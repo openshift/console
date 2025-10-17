@@ -3,7 +3,6 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { EVENT_SOURCE_SINK_BINDING_KIND, KNATIVE_EVENT_SOURCE_APIGROUP } from '../../../const';
 import { getEventSourceResponse } from '../../../topology/__tests__/topology-knative-test-data';
 import EventSourceOwnedList from '../EventSourceOwnedList';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils', () => ({
   ResourceLink: 'ResourceLink',

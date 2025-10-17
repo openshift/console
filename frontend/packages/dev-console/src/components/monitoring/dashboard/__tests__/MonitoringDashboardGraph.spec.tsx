@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { screen, render } from '@testing-library/react';
 import { shallow } from 'enzyme';
-import '@testing-library/jest-dom';
 import * as redux from 'react-redux';
 import { BrowserRouter } from 'react-router-dom-v5-compat';
 import { QueryBrowser } from '@console/shared/src/components/query-browser';

@@ -6,7 +6,6 @@ import {
   mockNormalizedSink,
 } from '../__mocks__/Kamelet-data';
 import EventSink from '../EventSink';
-import '@testing-library/jest-dom';
 
 const useSelectorMock = useSelector as jest.Mock;
 

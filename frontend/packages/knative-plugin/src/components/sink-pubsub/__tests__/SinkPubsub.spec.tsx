@@ -5,7 +5,6 @@ import {
   EventSubscriptionObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
 import SinkPubsub from '../SinkPubsub';
-import '@testing-library/jest-dom';
 
 jest.mock('formik', () => ({
   Formik: 'Formik',

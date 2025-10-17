@@ -1,8 +1,7 @@
-import { configure, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { useIsCloudShellExpanded } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
 import { CloudShellDrawer } from '../CloudShellDrawer';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
@@ -26,8 +25,6 @@ jest.mock('@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors'
 
 const mockUseFlag = useFlag as jest.Mock;
 const mockUseIsCloudShellExpanded = useIsCloudShellExpanded as jest.Mock;
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('CloudShellDrawer', () => {
   it('should render children as Drawer children when present', () => {

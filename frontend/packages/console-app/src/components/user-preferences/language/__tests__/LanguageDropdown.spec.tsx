@@ -1,4 +1,4 @@
-import { screen, configure, act } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { supportedLocales } from '../const';
 import { getLastLanguage } from '../getLastLanguage';
@@ -30,10 +30,6 @@ describe('LanguageDropdown', () => {
     usePreferredLanguageMock.mockReturnValue([preferredLang, jest.fn(), loaded]);
     getLastLanguageMock.mockReturnValue(['']);
   };
-
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();

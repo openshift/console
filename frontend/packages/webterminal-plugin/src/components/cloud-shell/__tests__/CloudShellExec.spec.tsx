@@ -1,5 +1,4 @@
-import { configure, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
 import { FLAGS } from '@console/shared';
 import { WorkspaceModel } from '../../../../models';
 import { InternalCloudShellExec, CloudShellExecProps } from '../CloudShellExec';
@@ -25,8 +24,6 @@ const cloudShellExecProps: CloudShellExecProps = {
   onActivate: () => {},
   flags: { [FLAGS.OPENSHIFT]: true },
 };
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('CloudShellExec', () => {
   it('should TerminalLoadingBox On Mount', () => {

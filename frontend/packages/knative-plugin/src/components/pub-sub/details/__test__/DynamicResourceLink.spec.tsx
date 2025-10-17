@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react';
 import DynamicResourceLink from '../DynamicResourceLink';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils', () => ({
   ResourceLink: 'ResourceLink',

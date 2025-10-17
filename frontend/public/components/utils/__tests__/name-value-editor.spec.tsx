@@ -1,8 +1,6 @@
-import { render, screen, fireEvent, configure } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { NameValueEditor } from '../../../components/utils/name-value-editor';
 
-configure({ testIdAttribute: 'data-test' });
 jest.mock('react-i18next');
 
 describe('NameValueEditor', () => {

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { screen, configure } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { screen } from '@testing-library/react';
 import { useField } from 'formik';
 import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';
@@ -12,8 +11,6 @@ import { HelmActionType } from '../../../types/helm-types';
 import HelmInstallUpgradeForm, {
   HelmInstallUpgradeFormData,
 } from '../install-upgrade/HelmInstallUpgradeForm';
-
-configure({ testIdAttribute: 'data-test' });
 
 // Mock the barrel import from @console/shared
 jest.mock('@console/shared', () => ({

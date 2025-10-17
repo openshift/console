@@ -1,11 +1,9 @@
-import { render, screen, fireEvent, cleanup, waitFor, configure } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import i18n from 'i18next';
 import { setI18n } from 'react-i18next';
 import { Resources } from '../../import/import-types';
 import MockForm from '../__mocks__/MockForm';
 import AdvancedSection from '../AdvancedSection';
-
-configure({ testIdAttribute: 'data-test' });
 
 window.HTMLElement.prototype.scrollIntoView = () => {}; // scrollIntoView is not implemented in jsdom
 

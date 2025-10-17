@@ -1,12 +1,10 @@
-import { screen, configure } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { t } from '../../../../../../../__mocks__/i18next';
 import HelmReleaseResourcesHeader from '../HelmReleaseResourcesHeader';
 import HelmResourcesList from '../HelmReleaseResourcesList';
 import HelmReleaseResourcesRow from '../HelmReleaseResourcesRow';
 import { helmReleaseResourceData } from './helm-release-resource.data';
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('HelmResourcesList', () => {
   beforeEach(() => {

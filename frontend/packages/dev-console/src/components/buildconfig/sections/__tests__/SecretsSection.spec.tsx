@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { configure, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import userEvent from '../../__tests__/user-event';
 import SecretsSection, { SecretsSectionFormData } from '../SecretsSection';
-
-configure({ testIdAttribute: 'data-test' });
 
 // Skip Firehose fetching and render just the children
 jest.mock('@console/internal/components/utils/firehose', () => ({

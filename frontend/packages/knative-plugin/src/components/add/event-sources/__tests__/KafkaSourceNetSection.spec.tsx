@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react';
 import KafkaSourceNetSection from '../KafkaSourceNetSection';
-import '@testing-library/jest-dom';
 
 jest.mock('../../SecretKeySelector', () => ({
   __esModule: true,

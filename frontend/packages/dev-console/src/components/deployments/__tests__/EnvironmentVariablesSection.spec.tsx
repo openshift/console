@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cleanup, fireEvent, render, screen, waitFor, configure } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
@@ -7,8 +7,6 @@ import { mockEditDeploymentData, mockDeploymentConfig } from '../__mocks__/deplo
 import MockForm from '../__mocks__/MockForm';
 import ContainerField from '../ContainerField';
 import EnvironmentVariablesSection from '../EnvironmentVariablesSection';
-
-configure({ testIdAttribute: 'data-test' });
 
 const MockContainerField: React.FC = () => <div>Container: foo</div>;
 

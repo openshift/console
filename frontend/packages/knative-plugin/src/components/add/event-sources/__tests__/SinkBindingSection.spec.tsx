@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react';
 import SinkBindingSection from '../SinkBindingSection';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/dev-console/src/components/import/section/FormSection', () => ({
   __esModule: true,

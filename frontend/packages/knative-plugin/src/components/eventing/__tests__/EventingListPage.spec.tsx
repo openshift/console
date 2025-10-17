@@ -2,7 +2,6 @@ import { render } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
 import * as ConsoleShared from '@console/shared';
 import EventingListPage from '../EventingListPage';
-import '@testing-library/jest-dom';
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),

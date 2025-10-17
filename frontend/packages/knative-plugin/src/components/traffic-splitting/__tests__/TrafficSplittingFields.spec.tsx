@@ -5,7 +5,6 @@ import {
   mockRevisionItems,
 } from '../../../utils/__mocks__/traffic-splitting-utils-mock';
 import TrafficSplittingFields from '../TrafficSplittingFields';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared', () => ({
   MultiColumnField: jest.fn(() => null),

@@ -2,7 +2,6 @@ import { render } from '@testing-library/react';
 import * as _ from 'lodash';
 import { subscriptionData } from '../../../../utils/__tests__/knative-eventing-data';
 import SubscriptionDetails from '../SubscriptionDetails';
-import '@testing-library/jest-dom';
 
 jest.mock('../DynamicResourceLink', () => ({
   __esModule: true,

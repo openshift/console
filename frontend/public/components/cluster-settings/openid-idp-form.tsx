@@ -253,7 +253,7 @@ export const AddOpenIDIDPPage = () => {
             />
           </div>
           <div className="co-form-section__separator" />
-          <div data-testid="openid-more-options-list-input">
+          <div data-test="openid-more-options-list-input">
             <Title headingLevel="h3" className="pf-v6-u-mb-sm">
               {t('public~More options')}
             </Title>

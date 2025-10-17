@@ -7,7 +7,6 @@ import { ROUTE_URL_ANNOTATION, ROUTE_DISABLED_ANNOTATION } from '../../../../../
 import { WorkloadModelProps } from '../../../../../../data-transforms/transform-utils';
 import { OdcBaseNode } from '../../../../../../elements';
 import UrlDecorator from '../UrlDecorator';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared', () => ({
   ...jest.requireActual('@console/shared'),

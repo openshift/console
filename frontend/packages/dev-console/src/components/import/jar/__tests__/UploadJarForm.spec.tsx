@@ -1,10 +1,7 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { ImageTag } from '@console/dev-console/src/utils/imagestream-utils';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import UploadJarForm from '../UploadJarForm';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@patternfly/react-core', () => ({
   Alert: (props) =>

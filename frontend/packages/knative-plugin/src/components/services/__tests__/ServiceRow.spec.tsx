@@ -4,7 +4,6 @@ import { RowFunctionArgs } from '@console/internal/components/factory';
 import { knativeServiceObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { ServiceKind } from '../../../types';
 import ServiceRow from '../ServiceRow';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/factory', () => ({
   TableData: 'TableData',

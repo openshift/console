@@ -2,7 +2,6 @@ import * as React from 'react';
 import { render } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import SinkUriModal from '../SinkUriModal';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/factory/modal', () => ({
   ModalTitle: jest.fn(() => null),

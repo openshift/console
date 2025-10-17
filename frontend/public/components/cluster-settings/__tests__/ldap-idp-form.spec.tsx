@@ -1,5 +1,4 @@
-import '@testing-library/jest-dom';
-import { screen } from '@testing-library/react';
+import { cleanup, screen } from '@testing-library/react';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -15,12 +14,16 @@ import {
 import { AddLDAPPage } from '../../cluster-settings/ldap-idp-form';
 
 describe('Add Identity Provider: LDAP', () => {
+  beforeAll(() => {
+    setupFileReaderMock();
+  });
+
   beforeEach(() => {
     renderWithProviders(<AddLDAPPage />);
   });
 
-  beforeAll(() => {
-    setupFileReaderMock();
+  afterEach(() => {
+    cleanup();
   });
 
   afterAll(() => {
@@ -34,8 +37,8 @@ describe('Add Identity Provider: LDAP', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Name label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Name',
       containerId: 'idp-name-form',
       initialValue: 'ldap',
@@ -45,8 +48,8 @@ describe('Add Identity Provider: LDAP', () => {
     });
   });
 
-  it('should render the URL label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the URL label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'URL',
       inputType: 'url',
       testValue: mockData.updatedFormValues.url,
@@ -55,16 +58,16 @@ describe('Add Identity Provider: LDAP', () => {
     });
   });
 
-  it('should render the Bind DN label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Bind DN label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Bind DN',
       testValue: mockData.updatedFormValues.updatedValue,
       helpText: 'DN to bind with during the search phase.',
     });
   });
 
-  it('should render the Bind Password label and input password element', () => {
-    verifyInputField({
+  it('should render the Bind Password label and input password element', async () => {
+    await verifyInputField({
       inputLabel: 'Bind password',
       inputType: 'password',
       testValue: mockData.updatedFormValues.secret,

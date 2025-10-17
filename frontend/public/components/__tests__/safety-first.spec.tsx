@@ -35,7 +35,7 @@ describe('When calling setter from `useState()` hook in an unsafe React componen
     fireEvent.click(screen.getByRole('button', { name: /loading/i }));
 
     // Unmount the component by rerendering with different content
-    rerender(<div data-testid="unmounted" />);
+    rerender(<div data-test="unmounted" />);
 
     // Wait for the async operation to complete and check for warning
     await waitFor(() => {
@@ -82,7 +82,7 @@ describe('useSafetyFirst hook', () => {
     fireEvent.click(screen.getByRole('button', { name: /loading/i }));
 
     // Unmount the component by rerendering with different content
-    rerender(<div data-testid="unmounted" />);
+    rerender(<div data-test="unmounted" />);
 
     // Wait and verify no warning was logged
     await waitFor(() => {
