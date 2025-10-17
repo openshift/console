@@ -18,16 +18,16 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import {
-  ResourceDataView,
+  ConsoleDataView,
   initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
-} from '@console/app/src/components/data-view/ResourceDataView';
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { TableColumn } from '@console/internal/module/k8s';
 import {
-  ResourceDataViewColumn,
-  ResourceDataViewRow,
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
 import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -42,8 +42,8 @@ const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' },
 
 const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
   data: RowProps<K8sResourceKind, undefined>[],
-  columns: ResourceDataViewColumn<K8sResourceKind>[],
-): ResourceDataViewRow[] => {
+  columns: ConsoleDataViewColumn<K8sResourceKind>[],
+): ConsoleDataViewRow[] => {
   return data.map(({ obj }) => {
     const { name, namespace, creationTimestamp } = obj.metadata;
 
@@ -125,7 +125,7 @@ export const LimitRangeList: React.FC<{ data: K8sResourceKind[]; loaded: boolean
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<K8sResourceKind>
+      <ConsoleDataView<K8sResourceKind>
         data={data}
         loaded={loaded}
         label={LimitRangeModel.labelPlural}

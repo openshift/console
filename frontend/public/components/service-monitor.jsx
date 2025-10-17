@@ -8,12 +8,12 @@ import { ServiceMonitorModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { useTranslation } from 'react-i18next';
 import {
-  ResourceDataView,
+  ConsoleDataView,
   initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
-} from '@console/app/src/components/data-view/ResourceDataView';
+} from '@console/app/src/components/data-view/ConsoleDataView';
 
 const { Edit, Delete } = Kebab.factory;
 const menuActions = [Edit, Delete];
@@ -156,7 +156,7 @@ export const ServiceMonitorsList = (props) => {
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ConsoleDataView
         {...props}
         data={data}
         loaded={loaded}
