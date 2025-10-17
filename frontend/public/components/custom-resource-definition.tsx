@@ -63,8 +63,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 
 const { common } = Kebab.factory;
@@ -373,7 +373,7 @@ export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsL
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<CustomResourceDefinitionKind>
+      <ConsoleDataView<CustomResourceDefinitionKind>
         {...props}
         label={CustomResourceDefinitionModel.labelPlural}
         data={data}
