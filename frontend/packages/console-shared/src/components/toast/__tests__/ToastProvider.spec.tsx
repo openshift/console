@@ -1,32 +1,36 @@
 import * as React from 'react';
-import { Alert, AlertActionCloseButton, AlertActionLink } from '@patternfly/react-core';
-import { mount, ReactWrapper } from 'enzyme';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import ToastContext, { ToastContextType, ToastVariant } from '../ToastContext';
 import ToastProvider from '../ToastProvider';
 
 describe('ToastProvider', () => {
   let toastContext: ToastContextType;
-  let wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>;
 
-  beforeEach(() => {
-    const TestComponent = () => {
-      toastContext = React.useContext(ToastContext);
-      return null;
-    };
-    wrapper = mount(
+  const TestComponent = () => {
+    toastContext = React.useContext(ToastContext);
+    return null;
+  };
+
+  it('should provide a context', () => {
+    renderWithProviders(
       <ToastProvider>
         <TestComponent />
       </ToastProvider>,
     );
-  });
 
-  it('should provide a context', () => {
     expect(typeof toastContext.addToast).toBe('function');
     expect(typeof toastContext.removeToast).toBe('function');
   });
 
-  it('should add and remove alerts', () => {
+  it('should add and remove alerts', async () => {
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
     // fixed id
     const id1 = 'foo';
     // generated id
@@ -46,34 +50,33 @@ describe('ToastProvider', () => {
       });
     });
 
-    wrapper.update();
-
-    const alerts = wrapper.find(Alert);
-    expect(alerts.length).toBe(2);
-
-    expect(alerts.at(0).props()).toMatchObject({
-      title: 'test success',
-      variant: ToastVariant.success,
-      children: 'description 1',
+    await waitFor(() => {
+      expect(screen.getByText('test success')).toBeVisible();
+      expect(screen.getByText('test danger')).toBeVisible();
     });
 
-    expect(alerts.at(1).props()).toMatchObject({
-      title: 'test danger',
-      variant: ToastVariant.danger,
-      children: 'description 2',
-    });
+    expect(screen.getByText('description 1')).toBeVisible();
+    expect(screen.getByText('description 2')).toBeVisible();
 
     act(() => {
       toastContext.removeToast(id1);
       toastContext.removeToast(id2);
     });
 
-    wrapper.update();
-    expect(wrapper.find(Alert).length).toBe(0);
+    await waitFor(() => {
+      expect(screen.queryByText('test success')).not.toBeInTheDocument();
+      expect(screen.queryByText('test danger')).not.toBeInTheDocument();
+    });
   });
 
-  it('should dismiss toast on action', () => {
+  it('should dismiss toast on action', async () => {
     const actionFn = jest.fn();
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
     act(() => {
       toastContext.addToast({
         title: 'test success',
@@ -89,25 +92,28 @@ describe('ToastProvider', () => {
       });
     });
 
-    wrapper.update();
-
-    expect(wrapper.find(Alert).length).toBe(1);
-    const alertActionLinks = wrapper.find(AlertActionLink);
-    expect(alertActionLinks.length).toBe(1);
-
-    act(() => {
-      alertActionLinks.at(0).find('button').simulate('click');
+    await waitFor(() => {
+      expect(screen.getByText('test success')).toBeVisible();
     });
 
-    wrapper.update();
+    const actionButton = screen.getByRole('button', { name: /action 1/i });
+    fireEvent.click(actionButton);
 
     expect(actionFn).toHaveBeenCalledTimes(1);
 
-    expect(wrapper.find(Alert).length).toBe(0);
+    await waitFor(() => {
+      expect(screen.queryByText('test success')).not.toBeInTheDocument();
+    });
   });
 
-  it('should have anchor tag if componet "a" is passed', () => {
+  it('should have anchor tag if component "a" is passed', async () => {
     const actionFn = jest.fn();
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
     act(() => {
       toastContext.addToast({
         title: 'test success',
@@ -124,16 +130,23 @@ describe('ToastProvider', () => {
       });
     });
 
-    wrapper.update();
+    await waitFor(() => {
+      expect(screen.getByText('test success')).toBeVisible();
+    });
 
-    expect(wrapper.find(Alert).length).toBe(1);
-    const alertActionLinks = wrapper.find(AlertActionLink);
-    expect(alertActionLinks.length).toBe(1);
-    expect(alertActionLinks.at(0).find('a').exists()).toBe(true);
+    const actionLink = await screen.findByText('action 1');
+    expect(actionLink).toBeVisible();
+    expect(actionLink.closest('a')).toBeVisible();
   });
 
-  it('should dismiss toast on action on anchor click', () => {
+  it('should dismiss toast on action on anchor click', async () => {
     const actionFn = jest.fn();
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
     act(() => {
       toastContext.addToast({
         title: 'test success',
@@ -150,23 +163,31 @@ describe('ToastProvider', () => {
       });
     });
 
-    wrapper.update();
-
-    expect(wrapper.find(Alert).length).toBe(1);
-    const alertActionLinks = wrapper.find(AlertActionLink);
-    expect(alertActionLinks.length).toBe(1);
-    act(() => {
-      alertActionLinks.at(0).find('a').simulate('click');
+    await waitFor(() => {
+      expect(screen.getByText('test success')).toBeInTheDocument();
     });
 
-    wrapper.update();
+    const actionLink = await screen.findByText('action 1');
+    const anchorElement = actionLink.closest('a');
+    if (anchorElement) {
+      fireEvent.click(anchorElement);
+    }
 
     expect(actionFn).toHaveBeenCalledTimes(1);
-    expect(wrapper.find(Alert).length).toBe(0);
+
+    await waitFor(() => {
+      expect(screen.queryByText('test success')).not.toBeInTheDocument();
+    });
   });
 
-  it('should call onToastClose if provided on toast close', () => {
+  it('should call onToastClose if provided on toast close', async () => {
     const toastClose = jest.fn();
+    renderWithProviders(
+      <ToastProvider>
+        <TestComponent />
+      </ToastProvider>,
+    );
+
     act(() => {
       toastContext.addToast({
         title: 'test success',
@@ -177,10 +198,13 @@ describe('ToastProvider', () => {
       });
     });
 
-    wrapper.update();
-    const closeBtn = wrapper.find(AlertActionCloseButton);
-    expect(closeBtn.exists()).toBe(true);
-    closeBtn.simulate('click');
+    await waitFor(() => {
+      expect(screen.getByText('test success')).toBeVisible();
+    });
+
+    const closeButton = screen.getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+
     expect(toastClose).toHaveBeenCalled();
   });
 });

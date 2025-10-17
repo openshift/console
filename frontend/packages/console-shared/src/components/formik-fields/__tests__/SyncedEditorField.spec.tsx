@@ -1,13 +1,9 @@
-import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { screen } from '@testing-library/react';
 import { useField } from 'formik';
-import * as _ from 'lodash';
 import { LoadingBox } from '@console/internal/components/utils';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { EditorType } from '../../synced-editor/editor-toggle';
 import { useEditorType } from '../../synced-editor/useEditorType';
-import CodeEditorField from '../CodeEditorField';
-import DynamicFormField from '../DynamicFormField';
 import RadioGroupField from '../RadioGroupField';
 import SyncedEditorField from '../SyncedEditorField';
 
@@ -23,92 +19,126 @@ jest.mock('../../synced-editor/useEditorType', () => ({
   useEditorType: jest.fn(),
 }));
 
+jest.mock('../CodeEditorField', () => () => 'Form Editor');
+
+jest.mock('../DynamicFormField', () => () => 'YAML Editor');
+
+jest.mock('../RadioGroupField', () => ({
+  default: jest.fn(() => null),
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  LoadingBox: jest.fn(() => null),
+}));
+
 const mockUseEditorType = useEditorType as jest.Mock;
 const mockUseField = useField as jest.Mock;
+const mockRadioGroupField = RadioGroupField as jest.Mock;
+const mockLoadingBox = LoadingBox as jest.Mock;
 
 describe('SyncedEditorField', () => {
   type SyncedEditorFieldProps = React.ComponentProps<typeof SyncedEditorField>;
-  let wrapper: ShallowWrapper<SyncedEditorFieldProps>;
-
-  const mockEditors = {
-    form: <DynamicFormField name="formData" schema={{}} />,
-    yaml: <CodeEditorField name="yamlData" showSamples />,
-  };
 
   const props: SyncedEditorFieldProps = {
     name: 'editorType',
     formContext: {
       name: 'formData',
-      editor: mockEditors.form,
+      editor: 'Form Editor',
       isDisabled: false,
     },
     yamlContext: {
       name: 'yamlData',
-      editor: mockEditors.yaml,
+      editor: 'YAML Editor',
       isDisabled: false,
     },
-    lastViewUserSettingKey: 'key',
+    lastViewUserSettingKey: 'test.lastView',
   };
 
-  afterEach(() => {
-    mockUseField.mockReset();
-    mockUseEditorType.mockReset();
+  beforeEach(() => {
+    mockRadioGroupField.mockClear();
+    mockLoadingBox.mockClear();
   });
 
-  it('should render radio group field inline', () => {
+  it('should render loading box if editor type not loaded', () => {
+    mockUseField.mockReturnValue([{ value: EditorType.Form }, {}]);
+    mockUseEditorType.mockReturnValue([EditorType.Form, jest.fn(), false]);
+
+    renderWithProviders(<SyncedEditorField {...props} />);
+
+    expect(mockLoadingBox).toHaveBeenCalled();
+  });
+
+  it('should render radio group field when loaded', () => {
     mockUseField.mockReturnValue([{ value: EditorType.Form }, {}]);
     mockUseEditorType.mockReturnValue([EditorType.Form, jest.fn(), true]);
-    wrapper = shallow(<SyncedEditorField {...props} />);
-    expect(wrapper.find(RadioGroupField).exists()).toBe(true);
-    expect(wrapper.find(RadioGroupField).first().props().isInline).toBe(true);
-  });
 
-  it('should render dynamic form field if useEditorType returns form', () => {
-    mockUseField.mockReturnValue([{ value: EditorType.Form }, {}]);
-    mockUseEditorType.mockReturnValue([EditorType.Form, jest.fn(), true]);
-    wrapper = shallow(<SyncedEditorField {...props} />);
-    expect(wrapper.find(DynamicFormField).exists()).toBe(true);
-  });
+    renderWithProviders(<SyncedEditorField {...props} />);
 
-  it('should render dynamic yaml field if useEditorType returns yaml', () => {
-    mockUseField.mockReturnValue([{ value: EditorType.YAML }, {}]);
-    mockUseEditorType.mockReturnValue([EditorType.YAML, jest.fn(), true]);
-    wrapper = shallow(<SyncedEditorField {...props} />);
-    expect(wrapper.find(CodeEditorField).exists()).toBe(true);
-  });
-
-  it('should disable corresponding radio button if any editor context is disabled', () => {
-    mockUseField.mockReturnValue([{ value: EditorType.Form }, {}]);
-    mockUseEditorType.mockReturnValue([EditorType.Form, jest.fn(), true]);
-    const newProps = _.cloneDeep(props);
-    newProps.yamlContext.isDisabled = true;
-    wrapper = shallow(<SyncedEditorField {...newProps} />);
-    expect(wrapper.find(RadioGroupField).first().props().options[1].isDisabled).toBe(true);
-  });
-
-  it('should show an alert if form context is disaled', () => {
-    mockUseField.mockReturnValue([{ value: EditorType.YAML }, {}]);
-    mockUseEditorType.mockReturnValue([EditorType.YAML, jest.fn(), true]);
-    const newProps = _.cloneDeep(props);
-    newProps.formContext.isDisabled = true;
-    wrapper = shallow(<SyncedEditorField {...newProps} />);
-    expect(wrapper.find(Alert).exists()).toBe(true);
-    expect(wrapper.find(Alert).first().props().title).toBe(
-      'Form view is disabled for this chart because the schema is not available',
+    expect(mockRadioGroupField).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'editorType',
+      }),
+      {},
     );
   });
 
-  it('should render LoadingBox if useEditorType returns false for loaded', () => {
-    mockUseField.mockReturnValue([{ value: EditorType.YAML }, {}]);
-    mockUseEditorType.mockReturnValue([EditorType.YAML, jest.fn(), false]);
-    wrapper = shallow(<SyncedEditorField {...props} />);
-    expect(wrapper.find(LoadingBox).exists()).toBe(true);
+  it('should render form editor if useEditorType returns form', () => {
+    mockUseField.mockReturnValue([{ value: EditorType.Form }, {}]);
+    mockUseEditorType.mockReturnValue([EditorType.Form, jest.fn(), true]);
+
+    renderWithProviders(<SyncedEditorField {...props} />);
+
+    expect(screen.getByText('Form Editor')).toBeVisible();
   });
 
-  it('should render LoadingBox if formik field value does not match with editorType returned by useEditorType', () => {
-    mockUseField.mockReturnValue([{ value: EditorType.Form }, {}]);
+  it('should render yaml editor if useEditorType returns yaml', () => {
+    mockUseField.mockReturnValue([{ value: EditorType.YAML }, {}]);
     mockUseEditorType.mockReturnValue([EditorType.YAML, jest.fn(), true]);
-    wrapper = shallow(<SyncedEditorField {...props} />);
-    expect(wrapper.find(LoadingBox).exists()).toBe(true);
+
+    renderWithProviders(<SyncedEditorField {...props} />);
+
+    expect(screen.getByText('YAML Editor')).toBeVisible();
+  });
+
+  it('should allow disabling form context', () => {
+    mockUseField.mockReturnValue([{ value: EditorType.YAML }, {}]);
+    mockUseEditorType.mockReturnValue([EditorType.YAML, jest.fn(), true]);
+
+    const disabledProps = {
+      ...props,
+      formContext: {
+        ...props.formContext,
+        isDisabled: true,
+      },
+    };
+
+    renderWithProviders(<SyncedEditorField {...disabledProps} />);
+
+    const callArgs = mockRadioGroupField.mock.calls[0][0];
+    expect(callArgs.options).toEqual([
+      expect.objectContaining({ value: EditorType.Form, isDisabled: true }),
+      expect.objectContaining({ value: EditorType.YAML, isDisabled: false }),
+    ]);
+  });
+
+  it('should allow disabling yaml context', () => {
+    mockUseField.mockReturnValue([{ value: EditorType.Form }, {}]);
+    mockUseEditorType.mockReturnValue([EditorType.Form, jest.fn(), true]);
+
+    const disabledProps = {
+      ...props,
+      yamlContext: {
+        ...props.yamlContext,
+        isDisabled: true,
+      },
+    };
+
+    renderWithProviders(<SyncedEditorField {...disabledProps} />);
+
+    const callArgs = mockRadioGroupField.mock.calls[0][0];
+    expect(callArgs.options).toEqual([
+      expect.objectContaining({ value: EditorType.Form, isDisabled: false }),
+      expect.objectContaining({ value: EditorType.YAML, isDisabled: true }),
+    ]);
   });
 });

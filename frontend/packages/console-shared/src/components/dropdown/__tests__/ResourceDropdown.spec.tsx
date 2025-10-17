@@ -1,6 +1,5 @@
-import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { mockDropdownData } from '../__mocks__/dropdown-data-mock';
 import { ResourceDropdown } from '../ResourceDropdown';
 
@@ -28,18 +27,32 @@ const componentFactory = (props = {}) => (
 );
 
 describe('ResourceDropdown', () => {
-  it('should select nothing as default option when no items and action item are available', () => {
+  it('should select nothing as default option when no items and action item are available', async () => {
     const spy = jest.fn();
-    render(componentFactory({ onChange: spy, actionItems: null, resources: [] }));
-    expect(spy).not.toHaveBeenCalled();
+    renderWithProviders(componentFactory({ onChange: spy, actionItems: null, resources: [] }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+    });
+
+    await waitFor(() => {
+      expect(spy).not.toHaveBeenCalled();
+    });
   });
 
   it('should select Create New Application as default option when only one action item is available', async () => {
     const spy = jest.fn();
-    const { rerender } = render(componentFactory({ onChange: spy, loaded: false }));
+    const { rerender } = renderWithProviders(componentFactory({ onChange: spy, loaded: false }));
 
-    // Trigger componentWillReceiveProps by updating loaded state
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+    });
+
     rerender(componentFactory({ onChange: spy, resources: [], loaded: true }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+    });
 
     await waitFor(() => {
       expect(spy).toHaveBeenCalledWith('#CREATE_APPLICATION_KEY#', undefined, undefined);
@@ -48,7 +61,7 @@ describe('ResourceDropdown', () => {
 
   it('should select Create New Application as default option when more than one action items is available', async () => {
     const spy = jest.fn();
-    const { rerender } = render(
+    const { rerender } = renderWithProviders(
       componentFactory({
         onChange: spy,
         actionItems: [
@@ -65,7 +78,10 @@ describe('ResourceDropdown', () => {
       }),
     );
 
-    // Trigger componentWillReceiveProps by updating loaded state
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+    });
+
     rerender(
       componentFactory({
         onChange: spy,
@@ -91,7 +107,7 @@ describe('ResourceDropdown', () => {
 
   it('should select Choose Existing Application as default option when selectedKey is passed as #CHOOSE_APPLICATION_KEY#', async () => {
     const spy = jest.fn();
-    const { rerender } = render(
+    const { rerender } = renderWithProviders(
       componentFactory({
         onChange: spy,
         actionItems: [
@@ -108,7 +124,10 @@ describe('ResourceDropdown', () => {
       }),
     );
 
-    // Trigger componentWillReceiveProps by updating loaded state and selectedKey
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+    });
+
     rerender(
       componentFactory({
         onChange: spy,
@@ -129,32 +148,36 @@ describe('ResourceDropdown', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Choose Existing Application')).toBeInTheDocument();
+      expect(screen.getByText('Choose Existing Application')).toBeVisible();
       expect(spy).toHaveBeenCalledWith('#CHOOSE_APPLICATION_KEY#', undefined, undefined);
     });
   });
 
-  it('should select first item as default option when an item is available', () => {
+  it('should select first item as default option when an item is available', async () => {
     const spy = jest.fn();
-    render(componentFactory({ onChange: spy, resources: mockDropdownData.slice(0, 1) }));
+    renderWithProviders(
+      componentFactory({ onChange: spy, resources: mockDropdownData.slice(0, 1) }),
+    );
 
-    // Verify the dropdown component renders without errors
-    expect(screen.getByRole('button')).toBeInTheDocument();
-    expect(screen.getByText('Select an Item')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+      expect(screen.getByText('Select an Item')).toBeVisible();
+    });
   });
 
-  it('should select first item as default option when more than one items are available', () => {
+  it('should select first item as default option when more than one items are available', async () => {
     const spy = jest.fn();
-    render(componentFactory({ onChange: spy, resources: mockDropdownData }));
+    renderWithProviders(componentFactory({ onChange: spy, resources: mockDropdownData }));
 
-    // Verify the dropdown component renders without errors
-    expect(screen.getByRole('button')).toBeInTheDocument();
-    expect(screen.getByText('Select an Item')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+      expect(screen.getByText('Select an Item')).toBeVisible();
+    });
   });
 
   it('should select given selectedKey as default option when more than one items are available', async () => {
     const spy = jest.fn();
-    const { rerender } = render(
+    const { rerender } = renderWithProviders(
       componentFactory({
         onChange: spy,
         selectedKey: null,
@@ -163,7 +186,10 @@ describe('ResourceDropdown', () => {
       }),
     );
 
-    // Trigger componentWillReceiveProps by updating loaded state and selectedKey
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+    });
+
     rerender(
       componentFactory({
         onChange: spy,
@@ -173,15 +199,14 @@ describe('ResourceDropdown', () => {
       }),
     );
 
-    // Wait for the component to update with the selected key
     await waitFor(() => {
-      expect(screen.getByText('app-group-2')).toBeInTheDocument();
+      expect(screen.getByText('app-group-2')).toBeVisible();
     });
   });
 
-  it('should reset to default item when the selectedKey is no longer available in the items', () => {
+  it('should reset to default item when the selectedKey is no longer available in the items', async () => {
     const spy = jest.fn();
-    render(
+    renderWithProviders(
       componentFactory({
         onChange: spy,
         selectedKey: 'app-group-2',
@@ -194,15 +219,16 @@ describe('ResourceDropdown', () => {
       }),
     );
 
-    // Verify the component renders with placeholder
-    expect(screen.getByRole('button')).toBeInTheDocument();
-    expect(screen.getByText('Select an Item')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+      expect(screen.getByText('Select an Item')).toBeVisible();
+    });
   });
 
   it('should callback selected item from dropdown and change the title to selected item', async () => {
     const spy = jest.fn();
 
-    const { rerender } = render(
+    const { rerender } = renderWithProviders(
       componentFactory({
         onChange: spy,
         selectedKey: null,
@@ -212,7 +238,10 @@ describe('ResourceDropdown', () => {
       }),
     );
 
-    // Trigger componentWillReceiveProps by updating loaded state and selectedKey
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+    });
+
     rerender(
       componentFactory({
         onChange: spy,
@@ -225,47 +254,48 @@ describe('ResourceDropdown', () => {
 
     // Wait for the component to update with the selected key
     await waitFor(() => {
-      expect(screen.getByText('app-group-2')).toBeInTheDocument();
+      expect(screen.getByText('app-group-2')).toBeVisible();
     });
 
     // Click the dropdown button to open it
     const dropdownButton = screen.getByRole('button');
-    await userEvent.click(dropdownButton);
+    fireEvent.click(dropdownButton);
 
     // Wait for dropdown to open and find the menu item
     await waitFor(() => {
-      expect(screen.getByRole('listbox')).toBeInTheDocument();
+      expect(screen.getByRole('listbox')).toBeVisible();
     });
 
     // Find and click the third item (app-group-3)
     const menuItem = screen.getByRole('option', { name: /app-group-3/ });
-    await userEvent.click(menuItem);
+    fireEvent.click(menuItem);
 
     // Verify the dropdown button text has changed
     await waitFor(() => {
-      expect(screen.getByText('app-group-3')).toBeInTheDocument();
+      expect(screen.getByText('app-group-3')).toBeVisible();
     });
   });
 
-  it('should pass a third argument in the onChange handler based on the resources availability', () => {
+  it('should pass a third argument in the onChange handler based on the resources availability', async () => {
     const spy = jest.fn();
 
-    // Test with resources - verify component renders
-    const { rerender } = render(
+    const { rerender } = renderWithProviders(
       componentFactory({ onChange: spy, resources: mockDropdownData.slice(0, 1) }),
     );
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+    });
 
-    // Test without resources - when autoSelect is true and resources are empty,
-    // it auto-selects the first action item instead of showing placeholder
     rerender(componentFactory({ onChange: spy, resources: [] }));
-    expect(screen.getByText('Create New Application')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Create New Application')).toBeVisible();
+    });
   });
 
-  it('should show error if loadError', () => {
+  it('should show error if loadError', async () => {
     const spy = jest.fn();
 
-    render(
+    renderWithProviders(
       componentFactory({
         onChange: spy,
         resources: [],
@@ -274,7 +304,8 @@ describe('ResourceDropdown', () => {
       }),
     );
 
-    // Verify component renders (the error handling might be different in RTL)
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toBeVisible();
+    });
   });
 });
