@@ -48,8 +48,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { sortResourceByValue } from './factory/Table/sort';
@@ -316,7 +316,7 @@ const JobsList: React.FCC<JobsListProps> = ({ data, loaded, ...props }) => {
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<JobKind>
+      <ConsoleDataView<JobKind>
         {...props}
         label={JobModel.labelPlural}
         data={data}

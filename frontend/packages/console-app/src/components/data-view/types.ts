@@ -10,20 +10,20 @@ export type ResourceFilters = {
   label: string;
 };
 
-export type GetK8sResourceMetadata<TData> = (data: TData) => K8sResourceCommon['metadata'];
+export type GetResourceMetadata<TData> = (data: TData) => K8sResourceCommon['metadata'];
 
-export type ResourceDataViewColumn<TData> = DataViewTh & {
+export type ConsoleDataViewColumn<TData> = DataViewTh & {
   id: string;
   title: string;
   sortFunction?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
 };
 
-export type ResourceDataViewRow = DataViewTd[];
+export type ConsoleDataViewRow = DataViewTd[];
 
 /**
  * Maps Console `RowProps` data to DataView compatible format.
  */
 export type GetDataViewRows<TData, TCustomRowData> = (
   data: RowProps<TData, TCustomRowData>[],
-  columns: ResourceDataViewColumn<TData>[],
-) => ResourceDataViewRow[];
+  columns: ConsoleDataViewColumn<TData>[],
+) => ConsoleDataViewRow[];

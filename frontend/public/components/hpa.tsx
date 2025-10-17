@@ -32,8 +32,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { DASH } from '@console/shared';
 
@@ -413,7 +413,7 @@ export const HorizontalPodAutoscalersList: React.FCC<HorizontalPodAutoscalersLis
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<HorizontalPodAutoscalerKind>
+      <ConsoleDataView<HorizontalPodAutoscalerKind>
         {...props}
         label={HorizontalPodAutoscalerModel.labelPlural}
         data={data}
