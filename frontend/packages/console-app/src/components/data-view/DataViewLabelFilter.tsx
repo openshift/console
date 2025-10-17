@@ -3,7 +3,6 @@ import { ToolbarFilter } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom-v5-compat';
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import AutocompleteInput from '@console/internal/components/autocomplete';
 
 type DataViewLabelFilterProps<TData> = {
@@ -14,7 +13,7 @@ type DataViewLabelFilterProps<TData> = {
   showToolbarItem?: boolean;
 };
 
-export const DataViewLabelFilter = <TData extends K8sResourceCommon = K8sResourceCommon>({
+export const DataViewLabelFilter = <TData,>({
   data,
   title,
   filterId,
