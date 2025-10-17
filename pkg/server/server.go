@@ -380,6 +380,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			targetAPIPath               = prometheusProxyEndpoint + "/api/"
 			tenancyQuerySourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/query"
 			tenancyQueryRangeSourcePath = prometheusTenancyProxyEndpoint + "/api/v1/query_range"
+			tenancyLabelSourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/label/"
 			tenancyRulesSourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/rules"
 			tenancyTargetAPIPath        = prometheusTenancyProxyEndpoint + "/api/"
 			thanosProxy                 = proxy.NewProxy(s.ThanosProxyConfig)
@@ -417,6 +418,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		// tenancy queries and query ranges have to be proxied via thanos
 		handle(tenancyQuerySourcePath, handleThanosTenancyRequest)
 		handle(tenancyQueryRangeSourcePath, handleThanosTenancyRequest)
+		handle(tenancyLabelSourcePath, handleThanosTenancyRequest)
 
 		// tenancy rules have to be proxied via thanos
 		handle(tenancyRulesSourcePath, handleThanosTenancyForRulesRequest)
