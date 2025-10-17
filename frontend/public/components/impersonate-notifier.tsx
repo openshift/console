@@ -1,7 +1,7 @@
+import * as React from 'react';
 import { connect } from 'react-redux';
-import { useTranslation, Trans } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { Banner, Flex, Button } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Banner, Flex, Button, Tooltip } from '@patternfly/react-core';
 import { getImpersonate, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 
 import * as UIActions from '../actions/ui';
@@ -22,7 +22,26 @@ export const ImpersonateNotifier = connect(
     impersonate: ImpersonateKind;
   }) => {
     const { t } = useTranslation();
-    const navigate = useNavigate();
+    
+    // Memory leak prevention - track component mount state
+    const isMountedRef = React.useRef(true);
+    React.useEffect(() => {
+      return () => {
+        isMountedRef.current = false;
+      };
+    }, []);
+
+    // Safe handler to prevent memory leaks
+    const handleStopImpersonate = React.useCallback(() => {
+      stopImpersonate();
+      // Use window.location to avoid React state updates on unmounted component
+      setTimeout(() => {
+        if (isMountedRef.current) {
+          window.location.href = window.SERVER_FLAGS.basePath || '/';
+        }
+      }, 0);
+    }, [stopImpersonate]);
+
     if (!impersonate) {
       return null;
     }
@@ -30,6 +49,52 @@ export const ImpersonateNotifier = connect(
       ? t(modelFor(impersonate.kind).labelKey)
       : impersonate.kind;
     const impersonateName = impersonate.name;
+
+    // Handle UserWithGroups display with enhanced group support
+    const isUserWithGroups = impersonate.kind === 'UserWithGroups';
+    const displayKind = isUserWithGroups ? 'user' : kindTranslated;
+    const displayKindForAccess = isUserWithGroups ? 'multi-group' : kindTranslated;
+    
+    // Enhanced group display with tooltip for many groups
+    const MAX_GROUPS_DISPLAY = 2;
+    const groups = impersonate.groups || [];
+    const hasGroups = isUserWithGroups && groups.length > 0;
+    const visibleGroups = groups.slice(0, MAX_GROUPS_DISPLAY);
+    const remainingCount = Math.max(0, groups.length - MAX_GROUPS_DISPLAY);
+    
+    const groupsElement = hasGroups ? (
+      <>
+        {' with groups: '}
+        <strong>
+          {visibleGroups.join(', ')}
+          {remainingCount > 0 && (
+            <>
+              {', and '}
+              <Tooltip
+                content={
+                  <div>
+                    {groups.map((group, index) => (
+                      <div key={index}>{group}</div>
+                    ))}
+                  </div>
+                }
+              >
+                <span
+                  style={{
+                    textDecorationLine: 'underline',
+                    textDecorationStyle: 'dotted',
+                    cursor: 'help',
+                  }}
+                >
+                  {remainingCount} more
+                </span>
+              </Tooltip>
+            </>
+          )}
+        </strong>
+      </>
+    ) : null;
+
     return (
       <Banner color="blue">
         <Flex
@@ -37,29 +102,21 @@ export const ImpersonateNotifier = connect(
           flexWrap={{ default: 'nowrap' }}
           gap={{ default: 'gapSm' }}
         >
-          <strong>
-            {t('public~Impersonating {{kind}}', {
-              kind: kindTranslated,
-            })}
-          </strong>{' '}
-          <p>
-            <Trans t={t} ns="public">
-              You are impersonating <strong>{{ impersonateName }}</strong>. You are viewing all
-              resources and roles this {{ kindTranslated }} can access.
-            </Trans>{' '}
+          <div>
+            You're impersonating {displayKind}{' '}
+            <strong>{impersonateName}</strong>
+            {groupsElement}
+            . You're viewing all resources and roles this {displayKindForAccess} can access.{' '}
             <Button
               isInline
               type="button"
               variant="link"
               style={{ color: 'inherit' }}
-              onClick={() => {
-                stopImpersonate();
-                navigate(window.SERVER_FLAGS.basePath);
-              }}
+              onClick={handleStopImpersonate}
             >
-              {t('public~Stop impersonation')}
+              Stop impersonating
             </Button>
-          </p>
+          </div>
         </Flex>
       </Banner>
     );

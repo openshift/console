@@ -29,6 +29,8 @@ import {
   SectionHeading,
   resourcePathFromModel,
 } from './utils';
+import { ImpersonateUserModal } from './modals/impersonate-user-modal';
+import { FLAGS, useFlag } from '@console/shared';
 
 import { useTranslation } from 'react-i18next';
 
@@ -38,11 +40,20 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const impersonateFlag = useFlag(FLAGS.IMPERSONATE);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
-      dispatch(UIActions.startImpersonate('User', obj.metadata.name));
-      navigate(window.SERVER_FLAGS.basePath);
+      if (impersonateFlag) {
+        // New behavior: show modal for multi-group impersonation
+        setIsModalOpen(true);
+      } else {
+        // Old behavior: directly impersonate as user
+        dispatch(UIActions.startImpersonate('User', obj.metadata.name));
+        navigate(window.SERVER_FLAGS.basePath);
+      }
     },
     // Must use API group authorization.k8s.io, NOT user.openshift.io
     // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
@@ -53,12 +64,33 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
       verb: 'impersonate',
     },
   });
+
+  const handleImpersonate = (username: string, groups: string[]) => {
+    if (groups && groups.length > 0) {
+      dispatch(UIActions.startImpersonate('UserWithGroups', username, groups));
+    } else {
+      dispatch(UIActions.startImpersonate('User', username));
+    }
+    navigate(window.SERVER_FLAGS.basePath);
+  };
+
   return (
-    <ResourceKebab
-      actions={[impersonateAction, ...Kebab.factory.common]}
-      kind={referenceForModel(UserModel)}
-      resource={user}
-    />
+    <>
+      <ResourceKebab
+        actions={[impersonateAction, ...Kebab.factory.common]}
+        kind={referenceForModel(UserModel)}
+        resource={user}
+      />
+      {impersonateFlag && (
+        <ImpersonateUserModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onImpersonate={handleImpersonate}
+          prefilledUsername={user.metadata.name}
+          isUsernameReadonly={true}
+        />
+      )}
+    </>
   );
 };
 
@@ -231,11 +263,22 @@ export const UserDetailsPage: React.FC = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const impersonateFlag = useFlag(FLAGS.IMPERSONATE);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [selectedUser, setSelectedUser] = React.useState<string>('');
+
   const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
-      dispatch(UIActions.startImpersonate('User', obj.metadata.name));
-      navigate(window.SERVER_FLAGS.basePath);
+      if (impersonateFlag) {
+        // New behavior: show modal for multi-group impersonation
+        setSelectedUser(obj.metadata.name);
+        setIsModalOpen(true);
+      } else {
+        // Old behavior: directly impersonate as user
+        dispatch(UIActions.startImpersonate('User', obj.metadata.name));
+        navigate(window.SERVER_FLAGS.basePath);
+      }
     },
     // Must use API group authorization.k8s.io, NOT user.openshift.io
     // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
@@ -246,17 +289,38 @@ export const UserDetailsPage: React.FC = (props) => {
       verb: 'impersonate',
     },
   });
+
+  const handleImpersonate = (username: string, groups: string[]) => {
+    if (groups && groups.length > 0) {
+      dispatch(UIActions.startImpersonate('UserWithGroups', username, groups));
+    } else {
+      dispatch(UIActions.startImpersonate('User', username));
+    }
+    navigate(window.SERVER_FLAGS.basePath);
+  };
+
   return (
-    <DetailsPage
-      {...props}
-      kind={referenceForModel(UserModel)}
-      menuActions={[impersonateAction, ...Kebab.factory.common]}
-      pages={[
-        navFactory.details(UserDetails),
-        navFactory.editYaml(),
-        navFactory.roles(RoleBindingsTab),
-      ]}
-    />
+    <>
+      <DetailsPage
+        {...props}
+        kind={referenceForModel(UserModel)}
+        menuActions={[impersonateAction, ...Kebab.factory.common]}
+        pages={[
+          navFactory.details(UserDetails),
+          navFactory.editYaml(),
+          navFactory.roles(RoleBindingsTab),
+        ]}
+      />
+      {impersonateFlag && (
+        <ImpersonateUserModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onImpersonate={handleImpersonate}
+          prefilledUsername={selectedUser}
+          isUsernameReadonly={true}
+        />
+      )}
+    </>
   );
 };
 
