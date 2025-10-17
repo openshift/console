@@ -50,12 +50,12 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import {
-  ResourceDataView,
+  ConsoleDataView,
   initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
-} from '@console/app/src/components/data-view/ResourceDataView';
+} from '@console/app/src/components/data-view/ConsoleDataView';
 
 const { common } = Kebab.factory;
 
@@ -651,7 +651,7 @@ export const ResourceQuotasList = (props) => {
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ConsoleDataView
         data={data}
         loaded={loaded}
         label={ResourceQuotaModel.labelPlural}
@@ -730,7 +730,7 @@ export const AppliedClusterResourceQuotasList = (props) => {
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ConsoleDataView
         {...props}
         data={data}
         loaded={loaded}

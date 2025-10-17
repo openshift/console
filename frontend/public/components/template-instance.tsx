@@ -31,15 +31,15 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { TemplateInstanceModel } from '../models';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import {
   ResourceFilters,
-  ResourceDataViewColumn,
-  ResourceDataViewRow,
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
 import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -51,8 +51,8 @@ const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'status' }, 
 
 const getTemplateInstanceDataViewRows = (
   rowData: RowProps<TemplateInstanceKind, TemplateInstanceRowData>[],
-  tableColumns: ResourceDataViewColumn<TemplateInstanceKind>[],
-): ResourceDataViewRow[] => {
+  tableColumns: ConsoleDataViewColumn<TemplateInstanceKind>[],
+): ConsoleDataViewRow[] => {
   return rowData.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const status = getTemplateInstanceStatus(obj);
@@ -180,7 +180,7 @@ export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<TemplateInstanceKind, TemplateInstanceRowData, TemplateInstanceFilters>
+      <ConsoleDataView<TemplateInstanceKind, TemplateInstanceRowData, TemplateInstanceFilters>
         {...props}
         label={TemplateInstanceModel.labelPlural}
         data={data}

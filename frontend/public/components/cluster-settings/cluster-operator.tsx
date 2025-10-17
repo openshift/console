@@ -54,12 +54,12 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import {
   ResourceFilters,
-  ResourceDataViewColumn,
-  ResourceDataViewRow,
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
 import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -94,8 +94,8 @@ const tableColumnInfo = [{ id: 'name' }, { id: 'status' }, { id: 'version' }, { 
 
 const getClusterOperatorDataViewRows = (
   rowData: RowProps<ClusterOperator, ClusterOperatorRowData>[],
-  tableColumns: ResourceDataViewColumn<ClusterOperator>[],
-): ResourceDataViewRow[] => {
+  tableColumns: ConsoleDataViewColumn<ClusterOperator>[],
+): ConsoleDataViewRow[] => {
   return rowData.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const { status, message } = getStatusAndMessage(obj);
@@ -155,6 +155,7 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
           ),
         props: {
           modifier: 'nowrap',
+          width: 20,
         },
       },
       {
@@ -235,7 +236,7 @@ export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<ClusterOperator, ClusterOperatorRowData, ClusterOperatorFilters>
+      <ConsoleDataView<ClusterOperator, ClusterOperatorRowData, ClusterOperatorFilters>
         {...props}
         label={ClusterOperatorModel.labelPlural}
         data={data}
@@ -244,9 +245,7 @@ export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
         initialFilters={{ ...initialFiltersDefault, status: [] }}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
-        getDataViewRows={(rowData, tableColumns) =>
-          getClusterOperatorDataViewRows(rowData, tableColumns)
-        }
+        getDataViewRows={getClusterOperatorDataViewRows}
         hideColumnManagement={true}
       />
     </React.Suspense>

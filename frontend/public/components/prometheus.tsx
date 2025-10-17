@@ -7,16 +7,16 @@ import { PrometheusModel } from '../models';
 import { referenceForModel, referenceFor, K8sResourceKind } from '../module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import {
-  ResourceDataView,
+  ConsoleDataView,
   initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
-} from '@console/app/src/components/data-view/ResourceDataView';
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { TableColumn } from '@console/internal/module/k8s';
 import {
-  ResourceDataViewColumn,
-  ResourceDataViewRow,
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
 import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -33,8 +33,8 @@ const tableColumnInfo = [
 
 const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
   data: RowProps<K8sResourceKind, undefined>[],
-  columns: ResourceDataViewColumn<K8sResourceKind>[],
-): ResourceDataViewRow[] => {
+  columns: ConsoleDataViewColumn<K8sResourceKind>[],
+): ConsoleDataViewRow[] => {
   return data.map(({ obj }) => {
     const { metadata, spec } = obj;
     const resourceKind = referenceFor(obj);
@@ -159,7 +159,7 @@ export const PrometheusInstancesList: React.FC<{ data: K8sResourceKind[]; loaded
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<K8sResourceKind>
+      <ConsoleDataView<K8sResourceKind>
         {...props}
         data={data}
         loaded={loaded}
