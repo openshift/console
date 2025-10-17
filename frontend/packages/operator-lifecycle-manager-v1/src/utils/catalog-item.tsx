@@ -1,42 +1,52 @@
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { CapabilityLevel } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-item-details';
-import { validSubscriptionReducer } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
+import {
+  infrastructureFeatureMap,
+  validSubscriptionReducer,
+} from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import PlainList from '@console/shared/src/components/lists/PlainList';
-import { ExtensionCatalogItem } from './types';
+import { OLMCatalogItem, OLMCatalogItemData } from '../types';
 
-type NormalizeExtensionCatalogItem = (item: ExtensionCatalogItem) => CatalogItem;
-export const normalizeExtensionCatalogItem: NormalizeExtensionCatalogItem = (pkg) => {
+type NormalizeExtensionCatalogItem = (item: OLMCatalogItem) => CatalogItem<OLMCatalogItemData>;
+export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (pkg) => {
   const {
+    id,
+    capabilities,
     catalog,
     categories,
-    capabilities,
+    createdAt,
     description,
     displayName,
-    icon,
+    image,
     infrastructureFeatures,
     keywords,
-    longDescription,
+    markdownDescription,
     name,
     provider,
     repository,
-    support,
-    image,
     source,
+    support,
     validSubscription,
-    createdAt,
+    version,
   } = pkg;
   const [validSubscriptions, validSubscriptionFilters] = validSubscriptionReducer(
     validSubscription,
   );
+  const normalizedInfrastructureFeatures = infrastructureFeatures?.reduce(
+    (acc, feature) =>
+      infrastructureFeatureMap[feature] ? [...acc, infrastructureFeatureMap[feature]] : acc,
+    [],
+  );
+  const tags = (categories ?? []).map((cat) => cat.toLowerCase().trim()).filter(Boolean);
   return {
     attributes: {
       keywords,
       source,
       provider,
-      infrastructureFeatures,
+      infrastructureFeatures: normalizedInfrastructureFeatures,
       capabilities,
       validSubscription: validSubscriptionFilters,
     },
@@ -45,7 +55,11 @@ export const normalizeExtensionCatalogItem: NormalizeExtensionCatalogItem = (pkg
       label: 'Install',
       href: `/ecosystem/catalog/install/${catalog}/${name}`,
     },
-    description: description || longDescription,
+    description: description || markdownDescription,
+    data: {
+      latestVersion: version,
+      categories,
+    },
     details: {
       properties: [
         {
@@ -56,8 +70,8 @@ export const normalizeExtensionCatalogItem: NormalizeExtensionCatalogItem = (pkg
         { label: 'Provider', value: provider || '-' },
         {
           label: 'Infrastructure features',
-          value: infrastructureFeatures?.length ? (
-            <PlainList items={infrastructureFeatures} />
+          value: normalizedInfrastructureFeatures?.length ? (
+            <PlainList items={normalizedInfrastructureFeatures} />
           ) : (
             '-'
           ),
@@ -74,16 +88,16 @@ export const normalizeExtensionCatalogItem: NormalizeExtensionCatalogItem = (pkg
         { label: 'Created at', value: createdAt ? <Timestamp timestamp={createdAt} /> : '-' },
         { label: 'Support', value: support || '-' },
       ],
-      descriptions: [{ value: <SyncMarkdownView content={longDescription} /> }],
+      descriptions: [{ value: <SyncMarkdownView content={markdownDescription || description} /> }],
     },
     displayName,
-    icon: icon ? { url: `data:${icon.mediatype};base64,${icon.base64data}` } : null,
+    // icon: icon ? { url: `data:${icon.mediatype};base64,${icon.base64data}` } : null,
     name: displayName || name,
     supportUrl: support,
     provider,
-    tags: categories,
-    type: 'ExtensionCatalogItem',
+    tags,
+    type: 'OLMv1CatalogItem',
     typeLabel: source,
-    uid: `${catalog}-${name}`,
+    uid: id,
   };
 };

@@ -1,11 +1,12 @@
 {
-  "Extension Catalog": "Extension Catalog",
+  "OLM v1 Catalog": "OLM v1 Catalog",
   "Installed Extensions": "Installed Extensions",
-  "Extension Catalog Items": "Extension Catalog Items",
+  "Operators (OLMv1)": "Operators (OLMv1)",
   "Source": "Source",
   "Provider": "Provider",
   "Capability level": "Capability level",
   "Infrastructure features": "Infrastructure features",
   "Valid subscription": "Valid subscription",
+  "Extension Catalog": "Extension Catalog",
   "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers."
 }

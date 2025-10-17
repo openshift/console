@@ -24,26 +24,26 @@
   {
     "type": "console.navigation/href",
     "properties": {
-      "id": "extension-catalog",
+      "id": "olm-v1-catalog",
       "perspective": "admin",
       "section": "ecosystem",
-      "name": "%olm-v1~Extension Catalog%",
-      "href": "/ecosystem/catalog"
+      "name": "%olm-v1~OLM v1 Catalog%",
+      "href": "/olmv1/catalog"
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+      "required": ["CLUSTER_CATALOG_API"]
     }
   },
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/ecosystem/catalog",
+      "path": "/olmv1/catalog",
       "component": {
-        "$codeRef": "ExtensionCatalog"
+        "$codeRef": "Catalog"
       }
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+      "required": ["CLUSTER_CATALOG_API"]
     }
   },
   {
@@ -60,35 +60,25 @@
       "startsWith": ["olm.operatorframework.io"]
     },
     "flags": {
-      "required": ["CLUSTER_EXTENSION_API", "FALSE"] // TODO re-enable
-    }
-  },
-  {
-    "type": "console.context-provider",
-    "properties": {
-      "provider": { "$codeRef": "ExtensionCatalogDatabaseContextProvider" },
-      "useValueHook": { "$codeRef": "useExtensionCatalogDatabaseContextValues" }
-    },
-    "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+      "required": ["CLUSTER_EXTENSION_API"]
     }
   },
   {
     "type": "console.catalog/item-provider",
     "properties": {
-      "catalogId": "olm-extension-catalog",
-      "type": "ExtensionCatalogItem",
-      "provider": { "$codeRef": "useExtensionCatalogItems" }
+      "catalogId": "olm-v1-catalog",
+      "type": "OLMv1CatalogItem",
+      "provider": { "$codeRef": "useCatalogItems" }
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+      "required": ["CLUSTER_CATALOG_API"]
     }
   },
   {
     "type": "console.catalog/item-type",
     "properties": {
-      "type": "ExtensionCatalogItem",
-      "title": "%olm-v1~Extension Catalog Items%",
+      "type": "OLMv1CatalogItem",
+      "title": "%olm-v1~Operators (OLMv1)%",
       "filters": [
         {
           "label": "%olm-v1~Source%",
@@ -128,15 +118,15 @@
       ]
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API", "FALSE"] // TODO re-enable
+      "required": ["CLUSTER_CATALOG_API"]
     }
   },
   {
     "type": "console.catalog/categories-provider",
     "properties": {
-      "catalogId": "olm-extension-catalog",
-      "type": "ExtensionCatalogItem",
-      "provider": { "$codeRef": "useExtensionCatalogCategories" }
+      "catalogId": "olm-v1-catalog",
+      "type": "OLMv1CatalogItem",
+      "provider": { "$codeRef": "useCatalogCategories" }
     }
   }
 ]
