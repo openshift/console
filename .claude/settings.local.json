@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "bash/zsh/sh",
+      "bash/yarn test",
+      "bash/yarn test:*"
+    ]
+  },
+  "strictTyping": {
+    "enabled": true,
+    "excludePaths": [
+      "node_modules",
+      "dist",
+      "build",
+      "vendor",
+      "gui_test_screenshots",
+      "locales",
+      "*.d.ts"
+    ],
+    "includePaths": [
+      "frontend/public",
+      "frontend/packages",
+      "dynamic-demo-plugin/src"
+    ],
+    "rules": {
+      "allowAnyInTests": false,
+      "requireExplicitTypes": true,
+      "enforceNullChecks": true,
+      "preferSpecificK8sTypes": true
+    }
+  },
+  "codeAnalysis": {
+    "focusAreas": [
+      "React components",
+      "Kubernetes resource types",
+      "Type assertions",
+      "Null safety"
+    ],
+    "reportFormat": "detailed"
+  }
+}
