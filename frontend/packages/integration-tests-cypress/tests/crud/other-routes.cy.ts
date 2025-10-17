@@ -29,7 +29,7 @@ describe('Visiting other routes', () => {
     },
     {
       path: '/k8s/cluster/nodes',
-      waitFor: () => listPage.rows.shouldBeLoaded(),
+      waitFor: () => listPage.dvRows.shouldBeLoaded(),
     },
     {
       path: '/k8s/all-namespaces/events',
@@ -67,15 +67,15 @@ describe('Visiting other routes', () => {
           },
           {
             path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~Machine',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/cluster/machine.openshift.io~v1~ControlPlaneMachineSet',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path:
@@ -84,15 +84,15 @@ describe('Visiting other routes', () => {
           },
           {
             path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineHealthCheck',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfig',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfigPool',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/all-namespaces/monitoring.coreos.com~v1~Alertmanager',
