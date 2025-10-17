@@ -3,7 +3,7 @@ import { NavExpandable, Button, FlexItem, Flex, Truncate } from '@patternfly/rea
 import { StarIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-import { useUserSettingsCompatibility } from '@console/shared';
+import { useTelemetry, useUserSettingsCompatibility } from '@console/shared';
 import { FAVORITES_CONFIG_MAP_KEY, FAVORITES_LOCAL_STORAGE_KEY } from '../../consts';
 import { FavoritesType } from '../../types';
 import { FavoriteNavItem } from './FavoriteNavItem';
@@ -12,6 +12,7 @@ import './FavoriteNavItems.scss';
 
 export const FavoriteNavItems: React.FC = () => {
   const { t } = useTranslation();
+  const triggerTelemetry = useTelemetry();
   const [activeGroup, setActiveGroup] = React.useState('');
   const [activeItem, setActiveItem] = React.useState('');
   const currentUrlPath = window.location.pathname;
@@ -42,6 +43,9 @@ export const FavoriteNavItems: React.FC = () => {
       if (activeItem === `favorites-item-${favoriteUrl}`) {
         setActiveItem('');
       }
+      triggerTelemetry('remove-favorite-from-nav', {
+        url: favoriteUrl,
+      });
     };
     if (!loaded) return null;
     if (!favorites || favorites.length === 0) {
@@ -86,7 +90,7 @@ export const FavoriteNavItems: React.FC = () => {
         </Flex>
       </FavoriteNavItem>
     ));
-  }, [favorites, activeItem, loaded, t, setFavorites]);
+  }, [favorites, activeItem, loaded, t, setFavorites, triggerTelemetry]);
 
   return (
     <NavExpandable

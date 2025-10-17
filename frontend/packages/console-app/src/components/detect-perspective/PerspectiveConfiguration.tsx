@@ -242,7 +242,7 @@ const PerspectiveConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
           const perspectiveId = perspectiveExtension.properties.id;
           const value = configuredPerspectives?.find((p) => p.id === perspectiveId)?.visibility;
           const onChange = (selectedOption: PerspectiveVisibilitySelectOptions) => {
-            fireTelemetryEvent('Console cluster configuration changed', {
+            fireTelemetryEvent('Console cluster perspective configuration changed', {
               customize: 'Perspective',
               id: perspectiveExtension.properties.id,
               name: perspectiveExtension.properties.name,
