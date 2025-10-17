@@ -5,15 +5,12 @@ import {
   ActionServiceProvider,
   ActionMenu,
   ActionMenuVariant,
-  LazyActionMenu,
   usePrometheusGate,
 } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DeploymentKind, K8sResourceKind, referenceForModel, referenceFor } from '../module/k8s';
+import { DeploymentKind, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
-
-import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
+import { DetailsPage, ListPage } from './factory';
 
 import {
   AsyncComponent,
@@ -23,24 +20,17 @@ import {
   navFactory,
   PodsComponent,
   RuntimeClass,
+  LoadingBox,
 } from './utils';
 import { VolumesTable } from './volumes-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-
-const kind = 'StatefulSet';
-
-const StatefulSetTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
-  const resourceKind = referenceFor(obj);
-  const context = { [resourceKind]: obj };
-  const customActionMenu = <LazyActionMenu context={context} />;
-  return <WorkloadTableRow obj={obj} customActionMenu={customActionMenu} kind={kind} />;
-};
-
-const StatefulSetTableHeader = () => {
-  return WorkloadTableHeader();
-};
-StatefulSetTableHeader.displayName = 'StatefulSetTableHeader';
+import {
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { StatefulSetModel } from '../models';
+import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 
 const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
   const { t } = useTranslation();
@@ -90,21 +80,38 @@ const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
   />
 );
 
-export const StatefulSetsList: React.FC = (props) => {
-  const { t } = useTranslation();
+const StatefulSetsList: React.FCC<StatefulSetsListProps> = ({ data, loaded, ...props }) => {
+  const columns = useWorkloadColumns();
+
   return (
-    <Table
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView<K8sResourceKind>
+        {...props}
+        label={StatefulSetModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={(dvData, dvColumns) =>
+          getWorkloadDataViewRows(dvData, dvColumns, StatefulSetModel)
+        }
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
+  );
+};
+
+export const StatefulSetsPage: React.FCC<StatefulSetsPageProps> = (props) => {
+  return (
+    <ListPage
       {...props}
-      aria-label={t('public~StatefulSets')}
-      Header={StatefulSetTableHeader}
-      Row={StatefulSetTableRow}
-      virtualize
+      kind={referenceForModel(StatefulSetModel)}
+      ListComponent={StatefulSetsList}
+      canCreate={true}
+      omitFilterToolbar={true}
     />
   );
 };
-export const StatefulSetsPage: React.FC<StatefulSetsPageProps> = (props) => (
-  <ListPage {...props} ListComponent={StatefulSetsList} kind={kind} canCreate={true} />
-);
 
 const StatefulSetPods: React.FC<StatefulSetPodsProps> = (props) => (
   <PodsComponent {...props} showNodes />
@@ -128,7 +135,7 @@ export const StatefulSetsDetailsPage: React.FC = (props) => {
   return (
     <DetailsPage
       {...props}
-      kind={kind}
+      kind={referenceForModel(StatefulSetModel)}
       customActionMenu={customActionMenu}
       pages={[
         navFactory.details(StatefulSetDetails),
@@ -155,6 +162,11 @@ type EnvironmentTabProps = {
 
 type StatefulSetDetailsProps = {
   obj: DeploymentKind;
+};
+
+type StatefulSetsListProps = {
+  data: any[];
+  loaded: boolean;
 };
 
 type StatefulSetsPageProps = {

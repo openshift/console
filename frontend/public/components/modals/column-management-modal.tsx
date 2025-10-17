@@ -62,6 +62,11 @@ const DataListRow: React.FC<DataListRowProps> = ({
   </DataListItem>
 );
 
+const NamespaceColumnHelpText: React.FCC = () => {
+  const { t } = useTranslation();
+  return t('public~The namespace column is only shown when in "All projects"');
+};
+
 export const ColumnManagementModal: React.FC<
   ColumnManagementModalProps & WithUserSettingsCompatibilityProps<object>
 > = ({ cancel, close, columnLayout, setUserSettingState: setTableColumns, noLimit }) => {
@@ -110,7 +115,7 @@ export const ColumnManagementModal: React.FC<
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle className="modal-header">{t('public~Manage columns')}</ModalTitle>
       <ModalBody>
-        {!noLimit && (
+        {!noLimit ? (
           <>
             <div className="co-m-form-row">
               <p>{t('public~Selected columns will appear in the table.')}</p>
@@ -124,11 +129,16 @@ export const ColumnManagementModal: React.FC<
                 })}
                 variant="info"
               >
-                {!columnLayout?.showNamespaceOverride &&
-                  t('public~The namespace column is only shown when in "All projects"')}
+                {!columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />}
               </Alert>
             </div>
           </>
+        ) : (
+          !columnLayout?.showNamespaceOverride && (
+            <div className="co-m-form-row">
+              <NamespaceColumnHelpText />
+            </div>
+          )
         )}
         <Grid hasGutter className="co-m-form-row">
           <GridItem sm={6}>

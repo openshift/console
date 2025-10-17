@@ -76,42 +76,35 @@ export const useResourceDataViewData = <
 
   const dataViewColumns = React.useMemo<ResourceDataViewColumn<TData>[]>(
     () =>
-      activeColumns.map(
-        (
-          { id, title, sort, props: { classes, isStickyColumn, stickyMinWidth, modifier } },
-          index,
-        ) => {
-          const headerProps: ThProps = {
-            className: classes,
-            isStickyColumn,
-            stickyMinWidth,
-            modifier,
-          };
+      activeColumns.map(({ id, title, sort, props }, index) => {
+        const headerProps: ThProps = {
+          ...props,
+          dataLabel: title,
+        };
 
-          if (sort) {
-            headerProps.sort = {
-              columnIndex: index,
-              sortBy: {
-                index: 0,
-                direction: SortByDirection.asc,
-                defaultDirection: SortByDirection.asc,
-              },
-            };
-          }
-
-          return {
-            id,
-            title,
-            sortFunction: sort,
-            props: headerProps,
-            cell: title ? (
-              <span>{title}</span>
-            ) : (
-              <span className="pf-v6-u-screen-reader">{t('public~Actions')}</span>
-            ),
+        if (sort) {
+          headerProps.sort = {
+            columnIndex: index,
+            sortBy: {
+              index: 0,
+              direction: SortByDirection.asc,
+              defaultDirection: SortByDirection.asc,
+            },
           };
-        },
-      ),
+        }
+
+        return {
+          id,
+          title,
+          sortFunction: sort,
+          props: headerProps,
+          cell: title ? (
+            <span>{title}</span>
+          ) : (
+            <span className="pf-v6-u-screen-reader">{t('public~Actions')}</span>
+          ),
+        };
+      }),
     [activeColumns, t],
   );
 

@@ -112,7 +112,7 @@ describe('Visiting other routes', () => {
           {
             // Test loading search page for a kind with no static model.
             path: '/search/all-namespaces?kind=config.openshift.io~v1~Console',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
         ]
       : []),
