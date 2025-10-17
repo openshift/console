@@ -11,6 +11,7 @@ export enum NamespacedPageVariants {
 }
 
 export interface NamespacedPageProps {
+  children?: React.ReactNode;
   disabled?: boolean;
   hideProjects?: boolean;
   hideApplications?: boolean;

@@ -60,7 +60,12 @@ const isColumnVisible = <D extends any>(
   return true;
 };
 
-export const TableData: React.FC<TableDataProps> = ({ className, id, activeColumnIDs, children }) =>
+export const TableData: React.FCC<TableDataProps> = ({
+  className,
+  id,
+  activeColumnIDs,
+  children,
+}) =>
   (activeColumnIDs.has(id) || id === '') && (
     <Td data-label={id} className={className} role="gridcell">
       {children}

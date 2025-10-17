@@ -3,6 +3,7 @@ import ProgressiveListFooter from './ProgressiveListFooter';
 import ProgressiveListItem from './ProgressiveListItem';
 
 type ProgressiveListProps = {
+  children?: React.ReactNode;
   visibleItems: string[];
   onVisibleItemChange: (item: string) => void;
   Footer: (children) => React.ReactElement;

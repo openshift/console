@@ -20,6 +20,7 @@ export type EventSourceProps = {
   element: Node;
   dragging?: boolean;
   edgeDragging?: boolean;
+  children?: React.ReactNode;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
