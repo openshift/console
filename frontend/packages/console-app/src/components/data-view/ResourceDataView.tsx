@@ -16,16 +16,13 @@ import DataViewFilters from '@patternfly/react-data-view/dist/cjs/DataViewFilter
 import { ColumnsIcon } from '@patternfly/react-icons';
 import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import {
-  ColumnLayout,
-  K8sResourceCommon,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { ColumnLayout } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { createColumnManagementModal } from '@console/internal/components/modals';
 import { TableColumn } from '@console/internal/module/k8s';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
-import { ResourceFilters, GetDataViewRows } from './types';
+import { ResourceFilters, GetK8sResourceMetadata, GetDataViewRows } from './types';
 import { useResourceDataViewData } from './useResourceDataViewData';
 import { useResourceDataViewFilters } from './useResourceDataViewFilters';
 
@@ -39,6 +36,7 @@ export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
   columnManagementID?: string;
   initialFilters: TFilters;
   additionalFilterNodes?: React.ReactNode[];
+  getK8sResourceMetadata?: GetK8sResourceMetadata<TData>;
   matchesAdditionalFilters?: (resource: TData, filters: TFilters) => boolean;
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
   customRowData?: TCustomRowData;
@@ -53,7 +51,7 @@ export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
  * Console DataView component based on PatternFly DataView.
  */
 export const ResourceDataView = <
-  TData extends K8sResourceCommon = K8sResourceCommon,
+  TData,
   TCustomRowData = any,
   TFilters extends ResourceFilters = ResourceFilters
 >({
@@ -66,6 +64,7 @@ export const ResourceDataView = <
   columnManagementID,
   initialFilters,
   additionalFilterNodes,
+  getK8sResourceMetadata,
   matchesAdditionalFilters,
   getDataViewRows,
   customRowData,
@@ -83,6 +82,7 @@ export const ResourceDataView = <
   >({
     data,
     initialFilters,
+    getK8sResourceMetadata,
     matchesAdditionalFilters,
   });
 
