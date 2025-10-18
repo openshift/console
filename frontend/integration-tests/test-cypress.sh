@@ -59,7 +59,6 @@ if [ $# -eq 0 ]; then
     echo "  test-cypress.sh -p console                            // opens Cypress Test Runner for console tests"
     echo "  test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests"
     echo "  test-cypress.sh -p dev-console                        // opens Cypress Test Runner for Dev-Console tests"
-    echo "  test-cypress.sh -p gitops                             // opens Cypress Test Runner for gitops tests"
     echo "  test-cypress.sh -p knative                            // opens Cypress Test Runner for knative tests"
     echo "  test-cypress.sh -p pipelines                          // opens Cypress Test Runner for pipelines tests"
     echo "  test-cypress.sh -p shipwright                         // opens Cypress Test Runner for shipwright tests"

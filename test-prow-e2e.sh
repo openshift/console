@@ -32,8 +32,6 @@ elif [ "$SCENARIO" == "dev-console" ]; then
   ./integration-tests/test-cypress.sh -p dev-console -h true
 elif [ "$SCENARIO" == "pipelines" ]; then
   ./integration-tests/test-cypress.sh -p pipelines -h true
-# elif [ "$SCENARIO" == "gitops" ]; then
-#  ./integration-tests/test-cypress.sh -p gitops -h true
 elif [ "$SCENARIO" == "knative" ]; then
   ./integration-tests/test-cypress.sh -p knative -h true
 fi
