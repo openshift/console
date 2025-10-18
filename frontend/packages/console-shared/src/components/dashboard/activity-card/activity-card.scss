@@ -21,11 +21,6 @@
     var(--pf-v6-c-card--child--PaddingInlineStart);
 }
 
-.co-activity-card__recent-more-link {
-  padding: 0 var(--pf-v6-c-card--child--PaddingInlineEnd)
-    var(--pf-v6-c-card--child--PaddingBlockEnd) var(--pf-v6-c-card--child--PaddingInlineStart);
-}
-
 .co-activity-card__recent-footer {
   border-top: var(--pf-t--global--border--width--divider--default) solid
     var(--pf-t--global--border--color--default);
