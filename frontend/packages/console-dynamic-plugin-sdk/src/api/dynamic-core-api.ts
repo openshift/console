@@ -721,10 +721,10 @@ export const Timestamp: React.FC<TimestampProps> = require('@console/shared/src/
   .default;
 
 export { useModal } from '../app/modal-support/useModal';
-export type { ModalComponent } from '../app/modal-support/ModalProvider';
+export type { ModalComponent, LaunchModal } from '../app/modal-support/ModalProvider';
 
 export { useOverlay } from '../app/modal-support/useOverlay';
-export type { OverlayComponent } from '../app/modal-support/OverlayProvider';
+export type { OverlayComponent, LaunchOverlay } from '../app/modal-support/OverlayProvider';
 
 /**
  * Component that allows to receive contributions from other plugins for the `console.action/provider` extension type.
