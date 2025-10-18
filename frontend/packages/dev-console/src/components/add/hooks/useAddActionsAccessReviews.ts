@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { checkAccess } from '@console/internal/components/utils';
+import { checkAccess } from '@console/internal/components/utils/rbac';
 import { SelfSubjectAccessReviewKind } from '@console/internal/module/k8s';
 
 export type AddAccessReviewResults = {

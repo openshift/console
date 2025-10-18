@@ -1,5 +1,5 @@
 import { act } from 'react-dom/test-utils';
-import { checkAccess } from '@console/internal/components/utils';
+import { checkAccess } from '@console/internal/components/utils/rbac';
 import {
   AccessReviewResourceAttributes,
   SelfSubjectAccessReviewKind,
