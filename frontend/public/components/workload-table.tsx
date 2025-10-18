@@ -215,6 +215,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[
         props: {
           ...cellIsStickyProps,
           modifier: 'nowrap',
+          style: { width: 'auto' },
         },
       },
       {
@@ -223,6 +224,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[
         sort: 'metadata.namespace',
         props: {
           modifier: 'nowrap',
+          style: { width: 'auto' },
         },
       },
       {

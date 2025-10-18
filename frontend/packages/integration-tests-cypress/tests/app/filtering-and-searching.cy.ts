@@ -64,15 +64,12 @@ describe('Filtering and Searching', () => {
 
   it('filters invalid Pod from object detail', () => {
     cy.visit(`/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
-    listPage.dvRows.shouldBeLoaded();
-    listPage.dvFilter.byName('XYZ123');
-    cy.get('[data-test="data-view-table"]').within(() => {
-      cy.get('.pf-v6-l-bullseye').should('contain', 'No Pods found');
-    });
+    listPage.rows.shouldBeLoaded();
+    listPage.filter.byName('XYZ123');
+    cy.byTestID('empty-box-body').should('be.visible');
   });
 
-  // disabled as listPage.rows.shouldExist isn't a valid test
-  xit('filters from Pods list', () => {
+  it('filters from Pods list', () => {
     cy.visit(`/k8s/all-namespaces/pods`);
     listPage.rows.shouldBeLoaded();
     listPage.filter.byName(WORKLOAD_NAME);
@@ -84,8 +81,7 @@ describe('Filtering and Searching', () => {
     listPage.rows.shouldExist(WORKLOAD_NAME);
   });
 
-  // disabled as listPage.rows.shouldExist isn't a valid test
-  xit('searches for object by kind, label, and name', () => {
+  it('searches for object by kind, label, and name', () => {
     cy.visit(`/search/all-namespaces`, {
       qs: { kind: 'Pod', q: 'app=name', name: WORKLOAD_NAME },
     });

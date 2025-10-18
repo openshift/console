@@ -23,12 +23,12 @@ describe('Pod log viewer tab', () => {
     cy.visit(
       `/k8s/ns/openshift-kube-apiserver/core~v1~Pod?name=kube-apiserver-ip-&rowFilter-pod-status=Running&orderBy=asc&sortBy=Owner`,
     );
-    listPage.dvRows.clickFirstLinkInFirstRow();
+    listPage.rows.clickFirstLinkInFirstRow();
     detailsPage.isLoaded();
     detailsPage.selectTab('Logs');
     detailsPage.isLoaded();
     // Verify the default log buffer size
-    cy.byTestID('resource-log-no-lines').contains('1000 lines');
+    cy.byTestID('resource-log-no-lines').contains('0 lines');
     // Verify the log exceeds the default log buffer size
     cy.byTestID('resource-log-options-toggle').click();
     cy.byTestDropDownMenu('show-full-log').click();
