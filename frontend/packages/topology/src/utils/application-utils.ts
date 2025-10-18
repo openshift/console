@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { detectGitType } from '@console/dev-console/src/components/import/import-validation-utils';
-import { checkAccess } from '@console/internal/components/utils';
+import { checkAccess } from '@console/internal/components/utils/rbac';
 import {
   ImageStreamModel,
   BuildConfigModel,

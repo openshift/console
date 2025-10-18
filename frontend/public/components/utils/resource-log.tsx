@@ -52,7 +52,7 @@ import {
   LOG_WRAP_LINES_USERSETTINGS_KEY,
   SHOW_FULL_LOG_USERSETTINGS_KEY,
 } from '@console/shared/src/constants';
-import { useUserSettings } from '@console/shared';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { Loading, TogglePlay } from './';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
