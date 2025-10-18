@@ -73,6 +73,23 @@ export const listPage = {
       cy.get('[data-ouia-component-id="DataViewCheckboxFilter"]').click();
     },
   },
+  dvFilter: {
+    byName: (name: string) => {
+      cy.get('[data-ouia-component-id="DataViewFilters"]').within(() =>
+        cy.get('.pf-v6-c-menu-toggle').first().click(),
+      );
+      cy.get('.pf-v6-c-menu__list-item').contains('Name').click();
+      cy.get('[aria-label="Name filter"]').clear().type(name);
+    },
+    by: (checkboxLabel: string) => {
+      cy.get('[data-ouia-component-id="DataViewCheckboxFilter"]').click();
+      cy.get(
+        `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${checkboxLabel}"]`,
+      ).click();
+      cy.url().should('include', `=${checkboxLabel}`);
+      cy.get('[data-ouia-component-id="DataViewCheckboxFilter"]').click();
+    },
+  },
   rows: {
     getFirstElementName: () => cy.get('[data-test-rows="resource-row"] a').first(),
     shouldBeLoaded: () => {
@@ -131,6 +148,12 @@ export const listPage = {
     clickFirstLinkInFirstRow: () => {
       cy.get('[data-test^="data-view-cell-"]').first().find('a').first().click({ force: true }); // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
     },
+    shouldExistWithName: (resourceName: string) =>
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).contains(resourceName),
+    shouldNotExist: (resourceName: string) =>
+      cy
+        .get(`[data-test="data-view-cell-${resourceName}-name"]`, { timeout: 90000 })
+        .should('not.exist'),
     clickKebabAction: (resourceName: string, actionName: string) => {
       cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
         .contains(resourceName)
@@ -148,12 +171,10 @@ export const listPage = {
           cy.byTestID('popover-status-button').click();
         });
     },
-    shouldExist: (resourceName: string) => {
-      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
-        .contains(resourceName)
-        .should('exist');
+    shouldExist: (resourceName: string, cellName: string = 'name') => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-${cellName}"]`).should('exist');
     },
-    shouldNotExist: (resourceName: string) => {
+    shouldNotExistWithName: (resourceName: string) => {
       cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).should('not.exist');
     },
     clickRowByName: (resourceName: string) =>
