@@ -23,22 +23,22 @@ import {
   DescriptionListTerm,
   DescriptionListDescription,
 } from '@patternfly/react-core';
+import { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import {
-  Status,
-  TableColumnsType,
-  LazyActionMenu,
   ActionServiceProvider,
+  LazyActionMenu,
   ActionMenu,
   ActionMenuVariant,
-  useUserSettingsCompatibility,
-  usePrometheusGate,
-  DASH,
-} from '@console/shared';
+} from '@console/shared/src/components/actions';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import { DASH } from '@console/shared/src/constants/ui';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
+import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import { ListPageBody, RowFilter } from '@console/dynamic-plugin-sdk';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import * as UIActions from '../actions/ui';
