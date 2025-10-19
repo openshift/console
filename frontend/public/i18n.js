@@ -63,7 +63,6 @@ export const init = () => {
         'container-security',
         'devconsole',
         'git-service',
-        'gitops-plugin',
         'helm-plugin',
         'insights-plugin',
         'knative-plugin',

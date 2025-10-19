@@ -42,8 +42,6 @@
     "test-cypress-telemetry-headless": "cd packages/console-telemetry-plugin/integration-tests && yarn run test-cypress-headless",
     "test-cypress-telemetry-nightly": "cd packages/console-telemetry-plugin/integration-tests && yarn run test-cypress-headless-all",
     "test-cypress-telemetry": "cd packages/console-telemetry-plugin/integration-tests && yarn run test-cypress",
-    "test-cypress-gitops": "cd packages/gitops-plugin/integration-tests && yarn run test-cypress",
-    "test-cypress-gitops-headless": "cd packages/gitops-plugin/integration-tests && yarn run test-cypress-headless",
     "test-cypress-knative": "cd packages/knative-plugin/integration-tests && yarn run test-cypress",
     "test-cypress-knative-headless": "cd packages/knative-plugin/integration-tests && yarn run test-cypress-headless",
     "test-cypress-knative-nightly": "cd packages/knative-plugin/integration-tests && yarn run test-cypress-headless-all",
