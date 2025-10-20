@@ -15,11 +15,11 @@ import { PodRCData } from './pod-utils';
 
 export const usePodsForVm = (
   vm: K8sResourceKind,
-): { loaded: boolean; loadError: string; podData: PodRCData } => {
+): { loaded: boolean; loadError: string | null; podData: PodRCData | undefined } => {
   const { namespace } = vm.metadata;
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [loadError, setLoadError] = useState<string>('');
-  const [podData, setPodData] = useState<PodRCData>();
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [podData, setPodData] = useState<PodRCData | undefined>();
   const vmName = vm.metadata.name;
   const vmRef = useRef<K8sResourceKind>(vm);
 

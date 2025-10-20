@@ -6,6 +6,7 @@ import {
   GridItem,
   HelperText,
   HelperTextItem,
+  Skeleton,
   TextInput,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
@@ -63,7 +64,7 @@ import './restore-pvc-modal.scss';
 const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<PersistentVolumeClaimKind>();
   const { t } = useTranslation();
-  const [restorePVCName, setPVCName] = React.useState(`${getName(resource) || 'pvc'}-restore`);
+  const [restorePVCName, setPVCName] = React.useState(`${getName(resource) ?? 'pvc'}-restore`);
   const volumeSnapshotAnnotations = getAnnotations(resource);
   const snapshotBaseSize = convertToBaseValue(resource?.status?.restoreSize ?? '0');
   const snapshotHumanizedSize = humanizeBinaryBytesWithoutB(snapshotBaseSize);
@@ -94,7 +95,7 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
   };
 
   const handleStorageClass = (updatedStorageClass: StorageClassResourceKind) => {
-    setPVCStorageClass(updatedStorageClass?.metadata.name || '');
+    setPVCStorageClass(updatedStorageClass?.metadata.name);
     setUpdatedProvisioner(updatedStorageClass?.provisioner);
   };
 
@@ -112,7 +113,7 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
         dataSource: {
           name: snapshotName,
           kind: VolumeSnapshotModel.kind,
-          apiGroup: VolumeSnapshotModel.apiGroup,
+          apiGroup: VolumeSnapshotModel.apiGroup ?? '',
         },
         accessModes: [restoreAccessMode],
         volumeMode,
@@ -124,14 +125,14 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
       },
     };
 
-    handlePromise(k8sCreate(PersistentVolumeClaimModel, restorePVCTemplate, { ns: namespace }))
-      .then((newPVC) => {
-        close();
-        history.push(
-          resourcePathFromModel(PersistentVolumeClaimModel, newPVC.metadata.name, namespace),
-        );
-      })
-      .catch(() => {});
+    return handlePromise(
+      k8sCreate(PersistentVolumeClaimModel, restorePVCTemplate, { ns: namespace }),
+    ).then((newPVC) => {
+      close?.();
+      history.push(
+        resourcePathFromModel(PersistentVolumeClaimModel, newPVC.metadata.name, namespace),
+      );
+    });
   };
   return (
     <form onSubmit={submit} name="form" className="modal-content pf-v6-c-form pf-v6-c-form--no-gap">
@@ -161,7 +162,7 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
         </FormGroup>
         <FormGroup fieldId="restore-storage-class" className="co-restore-pvc-modal__input">
           {!pvcStorageClassName || !scResourceLoaded ? (
-            <div className="skeleton-text" />
+            <Skeleton width="100%" />
           ) : (
             <StorageClassDropdown
               onChange={handleStorageClass}
@@ -212,7 +213,7 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
               required
             />
           ) : (
-            <div className="skeleton-text" />
+            <Skeleton width="100%" />
           )}
 
           {!validSize && (
@@ -238,7 +239,7 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
               <div className="co-restore-pvc-modal__pvc-details">
                 <strong>{t('console-app~Created at')}</strong>
                 <span>
-                  <Timestamp timestamp={resource?.metadata?.creationTimestamp} />
+                  <Timestamp timestamp={resource?.metadata.creationTimestamp} />
                 </span>
               </div>
               <div className="co-restore-pvc-modal__pvc-details">
