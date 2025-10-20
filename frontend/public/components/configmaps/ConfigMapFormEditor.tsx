@@ -77,7 +77,15 @@ export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEdito
     setFieldValue('yamlData', safeJSToYAML(configMap, '', { skipInvalid: true }), false);
     setFieldValue('resourceVersion', configMap?.metadata?.resourceVersion, true);
     setFieldValue('formReloadCount', formReloadCount + 1);
-  }, [setErrors, setFieldValue, setStatus, values, configMap]);
+  }, [
+    setErrors,
+    setFieldValue,
+    setStatus,
+    configMap,
+    editorType,
+    formData.namespace,
+    formReloadCount,
+  ]);
 
   React.useEffect(() => {
     setStatus({ submitError: null });

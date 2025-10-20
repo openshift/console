@@ -146,14 +146,13 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
 };
 
 export const ConfigureUpdateStrategyModal = (props: ConfigureUpdateStrategyModalProps) => {
-  const [strategyType, setStrategyType] = React.useState(
-    _.get(props.deployment.spec, 'strategy.type'),
-  );
+  const { deployment, close } = props;
+  const [strategyType, setStrategyType] = React.useState(_.get(deployment.spec, 'strategy.type'));
   const [maxUnavailable, setMaxUnavailable] = React.useState(
-    _.get(props.deployment.spec, 'strategy.rollingUpdate.maxUnavailable', '25%'),
+    _.get(deployment.spec, 'strategy.rollingUpdate.maxUnavailable', '25%'),
   );
   const [maxSurge, setMaxSurge] = React.useState(
-    _.get(props.deployment.spec, 'strategy.rollingUpdate.maxSurge', '25%'),
+    _.get(deployment.spec, 'strategy.rollingUpdate.maxSurge', '25%'),
   );
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
@@ -171,13 +170,13 @@ export const ConfigureUpdateStrategyModal = (props: ConfigureUpdateStrategyModal
         };
         patch.op = 'add';
       }
-      const promise = k8sPatch(DeploymentModel, props.deployment, [
+      const promise = k8sPatch(DeploymentModel, deployment, [
         patch,
         { path: '/spec/strategy/type', value: strategyType, op: 'replace' },
       ]);
-      handlePromise(promise).then(() => props.close());
+      handlePromise(promise).then(() => close());
     },
-    [strategyType, maxUnavailable, maxSurge, props.deployment, props.close, handlePromise],
+    [strategyType, maxUnavailable, maxSurge, deployment, close, handlePromise],
   );
 
   return (

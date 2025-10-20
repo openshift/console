@@ -356,16 +356,24 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <ResourceLink kind={ImageStreamsReference} name={name} namespace={namespace} />,
-        props: getNameCellProps(name),
+        props: { ...getNameCellProps(name), width: 10, modifier: 'nowrap' },
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [tableColumnInfo[2].id]: {
         cell: <LabelList kind={ImageStreamsReference} labels={labels} />,
+        props: {
+          width: 40,
+          modifier: 'nowrap',
+        },
       },
       [tableColumnInfo[3].id]: {
         cell: <Timestamp timestamp={creationTimestamp} />,
+        props: {
+          width: 10,
+          modifier: 'nowrap',
+        },
       },
       [tableColumnInfo[4].id]: {
         cell: <LazyActionMenu context={context} />,

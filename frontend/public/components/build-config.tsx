@@ -33,7 +33,6 @@ import {
   PipelineBuildStrategyAlert,
 } from './build';
 import { ResourceEventStream } from './events';
-import { BuildModel } from '../models';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { Status, DASH, LazyActionMenu } from '@console/shared';
@@ -54,7 +53,7 @@ import { LoadingBox } from './utils/status-box';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { sortResourceByValue } from './factory/Table/sort';
 import { sorts } from './factory/table';
-import { BuildConfigModel } from '../models';
+import { BuildModel, BuildConfigModel } from '../models';
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 

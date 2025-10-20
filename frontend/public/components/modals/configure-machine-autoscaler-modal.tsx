@@ -50,7 +50,7 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
       apiVersion,
       kind,
       metadata: { name, namespace },
-    } = props.machineSet;
+    } = machineSet;
 
     const machineAutoscaler = {
       apiVersion: 'autoscaling.openshift.io/v1beta1',

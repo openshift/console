@@ -100,14 +100,20 @@ export const GlobalConfigPage: React.FCC = () => {
     label: t('public~{{label}}', { label }),
     href: `/settings/idp/${id}`,
   }));
-  const editYAMLMenuItem = (name: string, resourceLink: string) => ({
-    label: t('public~Edit {{name}} resource', { name }),
-    href: `${resourceLink}/yaml`,
-  });
-  const viewAPIExplorerMenuItem = (name: string, apiExplorerLink: string) => ({
-    label: t('public~Explore {{name}} API', { name }),
-    href: apiExplorerLink,
-  });
+  const editYAMLMenuItem = React.useCallback(
+    (name: string, resourceLink: string) => ({
+      label: t('public~Edit {{name}} resource', { name }),
+      href: `${resourceLink}/yaml`,
+    }),
+    [t],
+  );
+  const viewAPIExplorerMenuItem = React.useCallback(
+    (name: string, apiExplorerLink: string) => ({
+      label: t('public~Explore {{name}} API', { name }),
+      href: apiExplorerLink,
+    }),
+    [t],
+  );
 
   React.useEffect(() => {
     let isSubscribed = true;
@@ -185,7 +191,15 @@ export const GlobalConfigPage: React.FCC = () => {
     return () => {
       isSubscribed = false;
     };
-  }, [clusterOperatorConfigResources, configResources, globalConfigs, t]);
+  }, [
+    clusterOperatorConfigResources,
+    configResources,
+    globalConfigs,
+    t,
+    editYAMLMenuItem,
+    oauthMenuItems,
+    viewAPIExplorerMenuItem,
+  ]);
   const visibleItems = items.filter(({ label, description = '' }) => {
     return (
       fuzzyCaseInsensitive(textFilter, label) ||

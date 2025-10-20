@@ -107,10 +107,15 @@ describe('Kubernetes resource CRUD operations', () => {
   ]);
 
   const dataViewResources = new Set([
+    'Build',
+    'BuildConfig',
     'HorizontalPodAutoscaler',
+    'ImageStream',
     'Job',
+    'LimitRange',
     'Pod',
     'ReplicaSet',
+    'ResourceQuota',
     'ReplicationController',
     'StatefulSet',
   ]);
@@ -129,7 +134,6 @@ describe('Kubernetes resource CRUD operations', () => {
     }
     describe(kind, () => {
       const name = `${testName}-${_.kebabCase(kind)}`;
-      const isDataViewResource = dataViewResources.has(kind);
 
       it(`creates the resource instance`, () => {
         cy.visit(
@@ -227,7 +231,7 @@ describe('Kubernetes resource CRUD operations', () => {
           // should not have a namespace dropdown for non-namespaced objects');
           projectDropdown.shouldNotExist();
         }
-        if (isDataViewResource) {
+        if (dataViewResources.has(kind)) {
           listPage.dvRows.shouldBeLoaded();
         } else {
           listPage.rows.shouldBeLoaded();
@@ -243,7 +247,7 @@ describe('Kubernetes resource CRUD operations', () => {
           }?kind=${kind}&q=${testLabel}%3d${testName}&name=${name}`,
         );
 
-        if (isDataViewResource) {
+        if (dataViewResources.has(kind)) {
           listPage.dvRows.shouldExist(name);
         } else {
           listPage.rows.shouldExist(name);
@@ -251,7 +255,11 @@ describe('Kubernetes resource CRUD operations', () => {
         cy.testA11y(`Search page for ${kind}: ${name}`);
 
         // link to to details page
-        listPage.rows.clickRowByName(name);
+        if (dataViewResources.has(kind)) {
+          listPage.dvRows.clickRowByName(name);
+        } else {
+          listPage.rows.clickRowByName(name);
+        }
         cy.url().should('include', `/${name}`);
         detailsPage.titleShouldContain(name);
       });
@@ -262,7 +270,7 @@ describe('Kubernetes resource CRUD operations', () => {
             namespaced ? `ns/${testName}` : 'all-namespaces'
           }?kind=${kind}&q=${testLabel}%3d${testName}&name=${name}`,
         );
-        if (isDataViewResource) {
+        if (dataViewResources.has(kind)) {
           listPage.dvRows.clickKebabAction(name, editKind(kind, humanizeKind));
         } else {
           listPage.rows.clickKebabAction(name, editKind(kind, humanizeKind));
@@ -278,7 +286,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
       it(`deletes the resource instance`, () => {
         cy.visit(`${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
-        if (isDataViewResource) {
+        if (dataViewResources.has(kind)) {
           listPage.dvFilter.byName(name);
           listPage.dvRows.countShouldBe(1);
           listPage.dvRows.clickKebabAction(name, deleteKind(kind, humanizeKind));
