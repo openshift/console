@@ -2,12 +2,18 @@ import * as React from 'react';
 import { useDataViewFilters } from '@patternfly/react-data-view';
 import { useSearchParams } from 'react-router-dom-v5-compat';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
   exactMatch,
   fuzzyCaseInsensitive,
 } from '@console/internal/components/factory/table-filters';
-import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
-import { ResourceFilters, GetResourceMetadata } from './types';
+import { mapLabelsToStrings } from '@console/shared/src/utils/label-filter';
+import { ResourceFilters, ResourceMetadata } from './types';
+
+const getK8sResourceMetadata = (obj: K8sResourceCommon): ResourceMetadata => ({
+  name: obj.metadata?.name,
+  labels: obj.metadata?.labels,
+});
 
 export const useConsoleDataViewFilters = <
   TData,
@@ -15,13 +21,13 @@ export const useConsoleDataViewFilters = <
 >({
   data,
   initialFilters,
-  getResourceMetadata,
+  getObjectMetadata = getK8sResourceMetadata,
   matchesAdditionalFilters,
 }: {
   data: TData[];
   initialFilters: TFilters;
-  getResourceMetadata?: GetResourceMetadata<TData>;
-  matchesAdditionalFilters?: (resource: TData, filters: TFilters) => boolean;
+  getObjectMetadata?: (obj: TData) => ResourceMetadata;
+  matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isExactSearch] = useExactSearch();
@@ -35,18 +41,18 @@ export const useConsoleDataViewFilters = <
   const filteredData = React.useMemo(
     () =>
       data.filter((resource) => {
-        const resourceMetadata = getResourceMetadata?.(resource);
+        const { name: resourceName, labels } = getObjectMetadata(resource);
 
         // Filter by K8s resource name
-        const resourceName = resourceMetadata?.name;
         const matchesName =
           !filters.name || isExactSearch
             ? exactMatch(filters.name, resourceName)
             : fuzzyCaseInsensitive(filters.name, resourceName);
 
-        // Filter by K8s resource labels
-        const resourceLabels = getLabelsAsString(resourceMetadata, 'labels');
+        const resourceLabels = mapLabelsToStrings(labels);
         const filterLabelsArray = filters.label?.split(',') ?? [];
+
+        // Filter by K8s resource labels
         const matchesLabels =
           !filters.label || filterLabelsArray.every((label) => resourceLabels.includes(label));
 
@@ -54,7 +60,7 @@ export const useConsoleDataViewFilters = <
           matchesName && matchesLabels && (matchesAdditionalFilters?.(resource, filters) ?? true)
         );
       }),
-    [data, filters, isExactSearch, getResourceMetadata, matchesAdditionalFilters],
+    [data, filters, isExactSearch, getObjectMetadata, matchesAdditionalFilters],
   );
 
   return { filters, onSetFilters, clearAllFilters, filteredData };

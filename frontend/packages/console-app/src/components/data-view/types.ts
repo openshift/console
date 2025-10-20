@@ -1,16 +1,16 @@
 import { DataViewTh, DataViewTd } from '@patternfly/react-data-view';
 import { SortByDirection } from '@patternfly/react-table';
-import {
-  K8sResourceCommon,
-  RowProps,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export type ResourceFilters = {
   name: string;
   label: string;
 };
 
-export type GetResourceMetadata<TData> = (data: TData) => K8sResourceCommon['metadata'];
+export type ResourceMetadata = {
+  name: string;
+  labels?: { [key: string]: string };
+};
 
 export type ConsoleDataViewColumn<TData> = DataViewTh & {
   id: string;

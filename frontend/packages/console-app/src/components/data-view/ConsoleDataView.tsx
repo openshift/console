@@ -22,7 +22,7 @@ import { TableColumn } from '@console/internal/module/k8s';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
-import { ResourceFilters, GetResourceMetadata, GetDataViewRows } from './types';
+import { ResourceFilters, ResourceMetadata, GetDataViewRows } from './types';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
@@ -36,8 +36,13 @@ export type ConsoleDataViewProps<TData, TCustomRowData, TFilters> = {
   columnManagementID?: string;
   initialFilters: TFilters;
   additionalFilterNodes?: React.ReactNode[];
-  getResourceMetadata?: GetResourceMetadata<TData>;
-  matchesAdditionalFilters?: (resource: TData, filters: TFilters) => boolean;
+  /**
+   * By default, `TData` is assumed to be assignable to `K8sResourceCommon` type.
+   *
+   * This function overrides the default getters for the metadata of `TData` objects.
+   */
+  getObjectMetadata?: (obj: TData) => ResourceMetadata;
+  matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
   customRowData?: TCustomRowData;
   showNamespaceOverride?: boolean;
@@ -64,7 +69,7 @@ export const ConsoleDataView = <
   columnManagementID,
   initialFilters,
   additionalFilterNodes,
-  getResourceMetadata,
+  getObjectMetadata,
   matchesAdditionalFilters,
   getDataViewRows,
   customRowData,
@@ -82,7 +87,7 @@ export const ConsoleDataView = <
   >({
     data,
     initialFilters,
-    getResourceMetadata,
+    getObjectMetadata,
     matchesAdditionalFilters,
   });
 
