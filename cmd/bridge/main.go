@@ -8,7 +8,9 @@ import (
 	"flag"
 	"fmt"
 	"net"
+	"os/signal"
 	"runtime"
+	"syscall"
 	"time"
 
 	"io/ioutil"
@@ -587,6 +589,18 @@ func main() {
 		flags.FatalIfFailed(flags.NewInvalidFlagError("k8s-mode", "must be one of: in-cluster, off-cluster"))
 	}
 
+	// Set up signal handler for graceful shutdown on first interrupt
+	// This context will be used by both the controller manager and HTTP server
+	ctx, cancel := context.WithCancel(context.Background())
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		sig := <-sigCh
+		klog.Infof("Received shutdown signal: %v. Gracefully shutting down...", sig)
+		cancel()
+	}()
+
 	// Controllers are behind Tech Preview flag
 	if *fTechPreview {
 		controllerManagerMetricsOptions := ctrlmetrics.Options{
@@ -610,9 +624,9 @@ func main() {
 		}
 
 		klog.Info("starting controller manager")
-		mgrContext := ctrl.SetupSignalHandler()
 		go func() {
-			if err := mgr.Start(mgrContext); err != nil {
+			// Controller manager will be stopped when signal context is cancelled
+			if err := mgr.Start(ctx); err != nil {
 				klog.Errorf("problem running manager: %v", err)
 			}
 		}()
@@ -721,8 +735,6 @@ func main() {
 	}
 
 	httpsrv := &http.Server{Handler: handler}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile)
 	if err != nil {
@@ -732,9 +744,12 @@ func main() {
 
 	go func() {
 		<-ctx.Done()
-		klog.Infof("Shutting down server...")
-		if err = httpsrv.Shutdown(ctx); err != nil {
-			klog.Fatalf("Error shutting down server: %v", err)
+		klog.Infof("Shutting down HTTP server...")
+		// Use a timeout context for graceful shutdown
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer shutdownCancel()
+		if err = httpsrv.Shutdown(shutdownCtx); err != nil {
+			klog.Errorf("Error shutting down server: %v", err)
 		}
 	}()
 
