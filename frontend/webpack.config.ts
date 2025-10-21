@@ -28,6 +28,7 @@ const CHECK_CYCLES = process.env.CHECK_CYCLES || 'false';
 const ANALYZE_BUNDLE = process.env.ANALYZE_BUNDLE || 'false';
 const REACT_REFRESH = process.env.REACT_REFRESH;
 const OPENSHIFT_CI = process.env.OPENSHIFT_CI;
+const HIDE_ROUTE_CREATION = process.env.HIDE_ROUTE_CREATION || 'false'; // Disable Route Component
 const WDS_PORT = 8080;
 
 /* Helpers */
@@ -210,6 +211,9 @@ const config: Configuration = {
     runtimeChunk: true,
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.HIDE_ROUTE_CREATION': JSON.stringify(HIDE_ROUTE_CREATION),
+    }),
     new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, memoryLimit: 4096 }),
     new HtmlWebpackPlugin({

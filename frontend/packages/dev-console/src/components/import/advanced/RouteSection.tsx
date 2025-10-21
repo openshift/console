@@ -14,16 +14,23 @@ const RouteSection: React.FC<RouteSectionProps> = ({ route, resources }) => {
   const { t } = useTranslation();
   const { defaultUnknownPort, disable, create } = route;
 
+  // Disable Route Component: Allow disabling route creation via env var
+  const hideRouteCreation = process.env.HIDE_ROUTE_CREATION === 'true';
+
   return (
     <>
       <PortInputField defaultPort={defaultUnknownPort} />
-      <CheckboxField
-        name="route.create"
-        label={t('devconsole~Create a route')}
-        helpText={t('devconsole~Exposes your component at a public URL')}
-        isDisabled={disable}
-      />
-      <AdvancedRouteOptions canCreateRoute={create} resources={resources} />
+      {!hideRouteCreation && (
+        <>
+          <CheckboxField
+            name="route.create"
+            label={t('devconsole~Create a route')}
+            helpText={t('devconsole~Exposes your component at a public URL')}
+            isDisabled={disable}
+          />
+          <AdvancedRouteOptions canCreateRoute={create} resources={resources} />
+        </>
+      )}
     </>
   );
 };

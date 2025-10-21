@@ -897,22 +897,6 @@
     "properties": {
       "perspective": "admin",
       "section": "networking",
-      "id": "routes",
-      "insertAfter": "services",
-      "name": "%console-app~Routes%",
-      "model": {
-        "group": "route.openshift.io",
-        "version": "v1",
-        "kind": "Route"
-      }
-    },
-    "flags": { "required": ["OPENSHIFT"] }
-  },
-  {
-    "type": "console.navigation/resource-ns",
-    "properties": {
-      "perspective": "admin",
-      "section": "networking",
       "id": "ingresses",
       "insertAfter": "routes",
       "name": "%console-app~Ingresses%",
