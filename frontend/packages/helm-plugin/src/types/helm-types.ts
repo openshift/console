@@ -110,6 +110,7 @@ export interface HelmChartRepositoryType {
       url: string;
       ca?: { name: string };
       tlsClientConfig?: { name: string };
+      basicAuthConfig?: { name: string };
     };
     description?: string;
     disabled?: boolean;
@@ -125,6 +126,7 @@ export interface HelmChartRepositoryFormData {
   repoDescription?: string;
   ca?: string;
   tlsClientConfig?: string;
+  basicAuthConfig?: string;
   disabled?: boolean;
   metadata?: object;
 }

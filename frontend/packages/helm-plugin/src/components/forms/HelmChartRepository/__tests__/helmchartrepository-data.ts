@@ -22,6 +22,9 @@ export const sampleProjectHelmChartRepository: HelmChartRepositoryType = {
       tlsClientConfig: {
         name: 'test-tlsClientConfig',
       },
+      basicAuthConfig: {
+        name: 'test-basicAuthConfig',
+      },
     },
     description: 'test-description',
     disabled: false,
@@ -36,6 +39,7 @@ export const sampleHelmChartRepositoryFormData: HelmChartRepositoryFormData = {
   scope: 'ProjectHelmChartRepository',
   disabled: false,
   tlsClientConfig: 'test-tlsClientConfig',
+  basicAuthConfig: 'test-basicAuthConfig',
   repoDescription: 'test-description',
   repoUrl: 'https://github.com/helm/examples/tree/main/charts/hello-world',
   metadata: {
