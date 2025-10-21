@@ -19,11 +19,11 @@ type mockCatalogdClient struct {
 	err      error
 }
 
-func (m *mockCatalogdClient) Fetch(catalog, baseURL string, ifNotModifiedSince *time.Time) ([]*declcfg.Package, []*declcfg.Bundle, error) {
+func (m *mockCatalogdClient) Fetch(catalog, baseURL string, ifNotModifiedSince *time.Time) ([]*declcfg.Package, []*declcfg.Bundle, *time.Time, error) {
 	if m.err != nil {
-		return nil, nil, m.err
+		return nil, nil, nil, m.err
 	}
-	return m.packages, m.bundles, nil
+	return m.packages, m.bundles, nil, nil
 }
 
 func TestNewCatalogService(t *testing.T) {
@@ -46,9 +46,9 @@ func TestUpdateCatalog(t *testing.T) {
 
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		service := &CatalogService{
-			cache:    c,
-			client:   client,
-			catalogs: make(map[string]string),
+			cache:  c,
+			client: client,
+			index:  make(map[string]string),
 		}
 
 		err := service.UpdateCatalog("test-catalog", "")
@@ -57,7 +57,7 @@ func TestUpdateCatalog(t *testing.T) {
 		items, found := c.Get("test-catalog")
 		assert.True(t, found)
 		assert.NotEmpty(t, items)
-		assert.NotZero(t, service.LastModified)
+		assert.NotZero(t, service.CatalogsLastModified)
 	})
 
 	t.Run("should return error on fetch failure", func(t *testing.T) {
@@ -66,9 +66,9 @@ func TestUpdateCatalog(t *testing.T) {
 		}
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		service := &CatalogService{
-			cache:    c,
-			client:   client,
-			catalogs: make(map[string]string),
+			cache:  c,
+			client: client,
+			index:  make(map[string]string),
 		}
 
 		err := service.UpdateCatalog("test-catalog", "")
@@ -82,14 +82,13 @@ func TestGetCatalogItems(t *testing.T) {
 	c.Set("test-catalog", items, cache.DefaultExpiration)
 
 	service := &CatalogService{
-		cache:        c,
-		catalogs:     map[string]string{"test-catalog": "test-catalog"},
-		LastModified: time.Now(),
+		cache:                c,
+		index:                map[string]string{"test-catalog": "test-catalog"},
+		CatalogsLastModified: time.Now(),
 	}
 
 	t.Run("should return items from cache", func(t *testing.T) {
-		req := httptest.NewRequest("GET", "/", nil)
-		returnedItems, err := service.GetCatalogItems(req)
+		returnedItems, err := service.GetCatalogItems(0)
 
 		assert.Nil(t, err)
 		assert.Equal(t, items, returnedItems)
@@ -97,8 +96,8 @@ func TestGetCatalogItems(t *testing.T) {
 
 	t.Run("should return items if cache is stale", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/", nil)
-		req.Header.Set("If-Modified-Since", service.LastModified.Add(-1*time.Hour).UTC().Format(http.TimeFormat))
-		returnedItems, err := service.GetCatalogItems(req)
+		req.Header.Set("If-Modified-Since", service.CatalogsLastModified.Add(-1*time.Hour).UTC().Format(http.TimeFormat))
+		returnedItems, err := service.GetCatalogItems(0)
 
 		assert.Nil(t, err)
 		assert.Equal(t, items, returnedItems)

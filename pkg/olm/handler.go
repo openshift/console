@@ -44,20 +44,21 @@ func (o *OLMHandler) catalogItemsHandler(w http.ResponseWriter, r *http.Request)
 	// Check for not modified condition
 	if ifModifiedSince := r.Header.Get("If-Modified-Since"); ifModifiedSince != "" {
 		if parsedTime, err := time.Parse(http.TimeFormat, ifModifiedSince); err == nil {
-			if !o.catalogService.LastModified.After(parsedTime) {
+			if !o.catalogService.CatalogsLastModified.After(parsedTime) {
 				w.WriteHeader(http.StatusNotModified)
 				return
 			}
 		}
 	}
 
-	items, err := o.catalogService.GetCatalogItems(r)
+	items, err := o.catalogService.GetCatalogItems(0)
+
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	w.Header().Set("Last-Modified", o.catalogService.LastModified.UTC().Format(http.TimeFormat))
+	w.Header().Set("Last-Modified", o.catalogService.CatalogsLastModified.UTC().Format(http.TimeFormat))
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(items); err != nil {
 		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())

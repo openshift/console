@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/openshift/console/pkg/olm"
 	ocv1 "github.com/operator-framework/operator-controller/api/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,10 +35,13 @@ func (m *mockCatalogService) UpdateCatalog(catalogName string, baseURL string) e
 	return m.updateError
 }
 
-func (m *mockCatalogService) RemoveCatalog(catalogName string) error {
+func (m *mockCatalogService) RemoveCatalog(catalogName string) {
 	m.removeCatalogCalled = true
 	m.lastCatalogName = catalogName
-	return m.removeError
+}
+
+func (m *mockCatalogService) GetCatalogItems(retryCount int) ([]olm.ConsoleCatalogItem, error) {
+	return nil, nil
 }
 
 func createTestReconciler(objects ...client.Object) (*ClusterCatalogReconciler, *mockCatalogService) {

@@ -24,8 +24,8 @@ func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		c.Set("test-catalog", items, cache.NoExpiration)
 		service := NewCatalogService(&http.Client{}, nil, c)
-		service.LastModified = lastModified
-		service.catalogs["test-catalog"] = "test-catalog"
+		service.CatalogsLastModified = lastModified
+		service.index["test-catalog"] = "test-catalog"
 
 		handler := NewOLMHandler("", nil, service)
 
@@ -45,7 +45,7 @@ func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 		lastModified := time.Now()
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		service := NewCatalogService(&http.Client{}, nil, c)
-		service.LastModified = lastModified
+		service.CatalogsLastModified = lastModified
 		handler := NewOLMHandler("", nil, service)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-items/", nil)

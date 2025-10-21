@@ -72,7 +72,7 @@ func TestFetch(t *testing.T) {
 			},
 		}
 
-		packages, fetchedBundles, err := client.Fetch("test-catalog", "", &now)
+		packages, fetchedBundles, _, err := client.Fetch("test-catalog", "", &now)
 		require.NoError(t, err)
 		assert.Equal(t, pkg, *packages[0])
 		assert.Equal(t, bundle, *fetchedBundles[0])
@@ -84,7 +84,7 @@ func TestFetch(t *testing.T) {
 			},
 		}
 
-		_, _, err := client.Fetch("test-catalog", "", &now)
+		_, _, _, err := client.Fetch("test-catalog", "", &now)
 		assert.Error(t, err)
 	})
 	t.Run("should return an error when the status code is not OK", func(t *testing.T) {
@@ -99,7 +99,7 @@ func TestFetch(t *testing.T) {
 			},
 		}
 
-		_, _, err := client.Fetch("test-catalog", "", &now)
+		_, _, _, err := client.Fetch("test-catalog", "", &now)
 		assert.Error(t, err)
 	})
 	t.Run("should return an error when the response body is invalid", func(t *testing.T) {
@@ -114,7 +114,7 @@ func TestFetch(t *testing.T) {
 			},
 		}
 
-		_, _, err := client.Fetch("test-catalog", "", &now)
+		_, _, _, err := client.Fetch("test-catalog", "", &now)
 		assert.Error(t, err)
 	})
 	t.Run("should return nil if content is not modified", func(t *testing.T) {
@@ -129,7 +129,7 @@ func TestFetch(t *testing.T) {
 			},
 		}
 
-		packages, bundles, err := client.Fetch("test-catalog", "", &now)
+		packages, bundles, _, err := client.Fetch("test-catalog", "", &now)
 		require.NoError(t, err)
 		assert.Nil(t, packages)
 		assert.Nil(t, bundles)
