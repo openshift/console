@@ -22,7 +22,7 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
 }));
 
 const mockPluginStore = {
-  getDynamicPluginInfo: jest.fn().mockReturnValue([]),
+  getPluginInfo: jest.fn().mockReturnValue([]),
 };
 jest.mock('@console/plugin-sdk/src/api/usePluginStore', () => ({
   usePluginStore: () => mockPluginStore,

@@ -304,7 +304,7 @@ describe('PluginStore', () => {
 
       expect(store.getExtensions()).toEqual([]);
       expect(store.getAllowedDynamicPluginNames()).toEqual(['TestA', 'TestB']);
-      expect(store.getDynamicPluginInfo()).toEqual([
+      expect(store.getPluginInfo()).toEqual([
         {
           status: 'Pending',
           pluginName: 'TestA',
@@ -970,13 +970,13 @@ describe('PluginStore', () => {
     });
   });
 
-  describe('getDynamicPluginInfo', () => {
+  describe('getPluginInfo', () => {
     it('returns runtime information for all known dynamic plugins', () => {
       const store = new PluginStore([], ['TestA', 'TestB']);
 
       const manifest = getPluginManifest('TestA', '1.2.3', [{ type: 'Foo', properties: {} }]);
 
-      expect(store.getDynamicPluginInfo()).toEqual([
+      expect(store.getPluginInfo()).toEqual([
         {
           status: 'Pending',
           pluginName: 'TestA',
@@ -989,7 +989,7 @@ describe('PluginStore', () => {
 
       addDynamicPluginToStore(store, manifest);
 
-      expect(store.getDynamicPluginInfo()).toEqual([
+      expect(store.getPluginInfo()).toEqual([
         {
           status: 'Loaded',
           pluginID: 'TestA@1.2.3',
@@ -1004,7 +1004,7 @@ describe('PluginStore', () => {
 
       store.setDynamicPluginEnabled('TestA@1.2.3', true);
 
-      expect(store.getDynamicPluginInfo()).toEqual([
+      expect(store.getPluginInfo()).toEqual([
         {
           status: 'Loaded',
           pluginID: 'TestA@1.2.3',
@@ -1017,7 +1017,7 @@ describe('PluginStore', () => {
         },
       ]);
 
-      expect(store.getDynamicPluginInfo()).toEqual([
+      expect(store.getPluginInfo()).toEqual([
         {
           status: 'Loaded',
           pluginID: 'TestA@1.2.3',
@@ -1032,7 +1032,7 @@ describe('PluginStore', () => {
 
       store.registerFailedDynamicPlugin('TestB', 'Test error message', new Error('Boom'));
 
-      expect(store.getDynamicPluginInfo()).toEqual([
+      expect(store.getPluginInfo()).toEqual([
         {
           status: 'Loaded',
           pluginID: 'TestA@1.2.3',

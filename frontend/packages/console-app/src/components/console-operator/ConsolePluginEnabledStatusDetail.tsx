@@ -18,7 +18,7 @@ const ConsolePluginEnabledStatusDetail: React.FC<DetailsItemComponentProps> = ({
   const pluginInfo = React.useMemo(
     () =>
       pluginStore
-        .getDynamicPluginInfo()
+        .getPluginInfo()
         .find((entry) =>
           isLoadedDynamicPluginInfo(entry)
             ? entry.metadata.name === pluginName
