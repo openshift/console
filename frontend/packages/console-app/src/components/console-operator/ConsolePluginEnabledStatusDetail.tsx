@@ -15,10 +15,17 @@ const ConsolePluginEnabledStatusDetail: React.FC<DetailsItemComponentProps> = ({
 
   const pluginName = React.useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
-  const pluginInfo = React.useMemo(() => pluginStore.findDynamicPluginInfo(pluginName), [
-    pluginStore,
-    pluginName,
-  ]);
+  const pluginInfo = React.useMemo(
+    () =>
+      pluginStore
+        .getDynamicPluginInfo()
+        .find((entry) =>
+          isLoadedDynamicPluginInfo(entry)
+            ? entry.metadata.name === pluginName
+            : entry.pluginName === pluginName,
+        ),
+    [pluginStore, pluginName],
+  );
   const enabledPlugins = React.useMemo<string[]>(() => consoleOperatorConfig?.spec?.plugins ?? [], [
     consoleOperatorConfig?.spec?.plugins,
   ]);
