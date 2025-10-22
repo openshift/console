@@ -20,8 +20,8 @@ describe('Node terminal', () => {
   it('Opens a debug terminal', () => {
     cy.visit(`/k8s/cluster/nodes`);
     listPage.titleShouldHaveText('Nodes');
-    listPage.rows.shouldBeLoaded();
-    listPage.rows.clickFirstLinkInFirstRow();
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickFirstLinkInFirstRow();
     detailsPage.isLoaded();
     detailsPage.selectTab('Terminal');
     cy.byTestID('node-terminal-error').should('not.exist');
