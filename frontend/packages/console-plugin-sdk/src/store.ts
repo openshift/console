@@ -241,7 +241,7 @@ export class PluginStore {
     this.invokeListeners();
   }
 
-  getDynamicPluginInfo(): DynamicPluginInfo[] {
+  getPluginInfo(): DynamicPluginInfo[] {
     const loadedPluginEntries = Array.from(this.loadedDynamicPlugins.entries()).reduce(
       (acc, [pluginID, plugin]) => {
         acc.push({

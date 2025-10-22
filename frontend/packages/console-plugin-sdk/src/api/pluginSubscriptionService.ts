@@ -65,7 +65,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
   };
 
   onDynamicPluginListenerAdded = (listener) => {
-    listener(pluginStore.getDynamicPluginInfo());
+    listener(pluginStore.getPluginInfo());
   };
 
   let lastExtensions: Extension[] = null;
@@ -98,7 +98,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
       return;
     }
 
-    const nextPluginEntries = pluginStore.getDynamicPluginInfo();
+    const nextPluginEntries = pluginStore.getPluginInfo();
 
     if (_.isEqual(nextPluginEntries, lastPluginEntries)) {
       return;
