@@ -8,10 +8,17 @@ const ConsolePluginDescriptionDetail: React.FC<DetailsItemComponentProps> = ({ o
   const pluginStore = usePluginStore();
   const pluginName = React.useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
-  const pluginInfo = React.useMemo(() => pluginStore.findDynamicPluginInfo(pluginName), [
-    pluginStore,
-    pluginName,
-  ]);
+  const pluginInfo = React.useMemo(
+    () =>
+      pluginStore
+        .getDynamicPluginInfo()
+        .find((entry) =>
+          isLoadedDynamicPluginInfo(entry)
+            ? entry.metadata.name === pluginName
+            : entry.pluginName === pluginName,
+        ),
+    [pluginStore, pluginName],
+  );
 
   return isLoadedDynamicPluginInfo(pluginInfo) ? (
     <>{pluginInfo.metadata.customProperties?.console?.description || DASH}</>

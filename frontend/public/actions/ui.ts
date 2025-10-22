@@ -59,6 +59,7 @@ export enum ActionType {
   SetDeprecatedPackage = 'setDeprecatedPackage',
   SetDeprecatedChannel = 'setDeprecatedChannel',
   SetDeprecatedVersion = 'setDeprecatedVersion',
+  SetPluginCSPViolations = 'setPluginCSPViolations',
 }
 
 type MetricValuesByNamespace = {
@@ -82,6 +83,10 @@ export type NodeMetrics = {
 
 export type PVCMetrics = {
   usedCapacity?: MetricValuesByName;
+};
+
+export type PluginCSPViolations = {
+  [pluginName: string]: boolean;
 };
 
 // URL routes that can be namespaced
@@ -305,6 +310,9 @@ export const setDeprecatedChannel = (value: DeprecatedOperatorWarning) => {
 export const setDeprecatedVersion = (value: DeprecatedOperatorWarning) => {
   return action(ActionType.SetDeprecatedVersion, { value });
 };
+export const setPluginCSPViolations = (pluginName: string, hasViolation: boolean) => {
+  return action(ActionType.SetPluginCSPViolations, { pluginName, hasViolation });
+};
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
@@ -336,6 +344,7 @@ const uiActions = {
   setDeprecatedPackage,
   setDeprecatedChannel,
   setDeprecatedVersion,
+  setPluginCSPViolations,
 };
 
 export type UIAction = Action<typeof uiActions>;
