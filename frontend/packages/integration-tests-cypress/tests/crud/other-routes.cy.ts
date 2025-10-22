@@ -59,7 +59,7 @@ describe('Visiting other routes', () => {
       ? [
           {
             path: '/api-resource/ns/default/core~v1~Pod/access',
-            waitFor: () => cy.get('[data-test="data-view-table"]').should('be.visible'),
+            waitFor: () => cy.get('[data-test="page-heading"]').should('be.visible'),
           },
           {
             path: '/k8s/cluster/user.openshift.io~v1~User',
