@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { NavExpandable, Button, FlexItem, Flex, Truncate } from '@patternfly/react-core';
-import { StarIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { useUserSettingsCompatibility } from '@console/shared';
@@ -73,13 +72,14 @@ export const FavoriteNavItems: React.FC = () => {
           </FlexItem>
           <FlexItem className="pf-v6-u-mr-xs">
             <Button
+              isFavorite
+              isFavorited
               variant="plain"
               aria-label={`Unfavorite ${favorite.name}`}
               onClick={(e) => {
                 e.preventDefault();
                 handleUnfavorite(favorite.url);
               }}
-              icon={<StarIcon color="gold" />}
               data-test="remove-favorite-button"
             />
           </FlexItem>
