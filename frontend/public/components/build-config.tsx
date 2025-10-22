@@ -19,6 +19,7 @@ import {
   Kebab,
   KebabAction,
   navFactory,
+  ResourceKebab,
   ResourceLink,
   resourceObjPath,
   ResourceSummary,
@@ -35,7 +36,7 @@ import {
 import { ResourceEventStream } from './events';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { Status, DASH, LazyActionMenu } from '@console/shared';
+import { Status, DASH } from '@console/shared';
 import { displayDurationInWords } from './utils/build-utils';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -54,6 +55,7 @@ import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/uti
 import { sortResourceByValue } from './factory/Table/sort';
 import { sorts } from './factory/table';
 import { BuildModel, BuildConfigModel } from '../models';
+import { menuActions } from './pod';
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 
@@ -71,8 +73,6 @@ const getDataViewRows: GetDataViewRows<BuildConfig, undefined> = (data, columns)
   return data.map(({ obj: buildConfig }) => {
     const { name, namespace } = buildConfig.metadata;
     const latestBuild = buildConfig?.latestBuild;
-    const resourceKind = referenceForModel(BuildConfigModel);
-    const context = { [resourceKind]: buildConfig };
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -116,8 +116,16 @@ const getDataViewRows: GetDataViewRows<BuildConfig, undefined> = (data, columns)
         ),
       },
       [tableColumnInfo[6].id]: {
-        cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
+        cell: (
+          <ResourceKebab
+            actions={menuActions}
+            kind={BuildConfigsReference}
+            resource={buildConfig}
+          />
+        ),
+        props: {
+          ...actionsCellProps,
+        },
       },
     };
 
@@ -326,12 +334,12 @@ export const BuildConfigsDetailsPage: React.FC<DetailsPageProps> = (props) => {
     isList: true,
   });
   const latestBuild = buildsLoaded && !buildsLoadError ? getLatestBuild(builds) : null;
-  const menuActions: KebabAction[] = useBuildConfigKebabActions(latestBuild);
+  const detailsMenuActions: KebabAction[] = useBuildConfigKebabActions(latestBuild);
   return (
     <DetailsPage
       {...props}
       kind={BuildConfigsReference}
-      menuActions={menuActions}
+      menuActions={detailsMenuActions}
       pages={pages}
       customData={latestBuild}
     />

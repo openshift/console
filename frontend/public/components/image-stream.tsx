@@ -36,7 +36,7 @@ import { DOC_URL_PODMAN } from './utils';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { Kebab } from './utils/kebab';
+import { Kebab, ResourceKebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
@@ -44,7 +44,7 @@ import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
-import { YellowExclamationTriangleIcon, LazyActionMenu } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 import { LoadingBox } from './utils/status-box';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -351,7 +351,6 @@ ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
 const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
   return data.map(({ obj: imageStream }) => {
     const { name, namespace, labels, creationTimestamp } = imageStream.metadata;
-    const context = { [ImageStreamsReference]: imageStream };
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -376,8 +375,16 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
         },
       },
       [tableColumnInfo[4].id]: {
-        cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
+        cell: (
+          <ResourceKebab
+            actions={menuActions}
+            kind={ImageStreamsReference}
+            resource={imageStream}
+          />
+        ),
+        props: {
+          ...actionsCellProps,
+        },
       },
     };
 

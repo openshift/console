@@ -112,10 +112,8 @@ describe('Kubernetes resource CRUD operations', () => {
     'HorizontalPodAutoscaler',
     'ImageStream',
     'Job',
-    'LimitRange',
     'Pod',
     'ReplicaSet',
-    'ResourceQuota',
     'ReplicationController',
     'StatefulSet',
   ]);

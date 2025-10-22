@@ -16,15 +16,7 @@ import { ONE_HOUR, ONE_MINUTE, Status, usePrometheusGate } from '@console/shared
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { LazyActionMenu, ActionMenuVariant } from '@console/shared/src/components/actions';
-import {
-  K8sResourceKindReference,
-  referenceFor,
-  referenceForModel,
-  K8sResourceKind,
-  K8sModel,
-  TableColumn,
-} from '../module/k8s';
+import { K8sResourceKindReference, K8sResourceKind, TableColumn } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
 import { DetailsPage, ListPage } from './factory';
 import {
@@ -49,6 +41,7 @@ import {
   isManaged,
   isUpstream,
   navFactory,
+  ResourceKebab,
   ResourceLink,
   resourcePath,
   ResourceSummary,
@@ -64,6 +57,7 @@ import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { displayDurationInWords } from './utils/build-utils';
 import { LoadingBox } from './utils/status-box';
+import { menuActions } from './pod';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
@@ -366,10 +360,9 @@ export const BuildsDetailsPage: React.FCC = (props) => {
     <DetailsPage
       {...props}
       kind={BuildsReference}
-      customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) => {
-        const reference = referenceForModel(kindObj);
-        const context = { [reference]: obj };
-        return <LazyActionMenu context={context} variant={ActionMenuVariant.DROPDOWN} />;
+      menuActions={menuActions}
+      customActionMenu={(obj: K8sResourceKind) => {
+        return <ResourceKebab actions={menuActions} kind={BuildsReference} resource={obj} />;
       }}
       pages={[
         navFactory.details(BuildsDetails),
@@ -387,8 +380,6 @@ BuildsDetailsPage.displayName = 'BuildsDetailsPage';
 const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
   return data.map(({ obj: build }) => {
     const { name, namespace } = build.metadata;
-    const kindReference = referenceFor(build);
-    const context = { [kindReference]: build };
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -411,7 +402,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
         ),
       },
       [tableColumnInfo[5].id]: {
-        cell: <LazyActionMenu context={context} />,
+        cell: <ResourceKebab actions={menuActions} kind={BuildsReference} resource={build} />,
         props: actionsCellProps,
       },
     };

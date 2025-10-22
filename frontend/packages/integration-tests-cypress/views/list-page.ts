@@ -155,6 +155,10 @@ export const listPage = {
     },
     clickRowByName: (resourceName: string) =>
       cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).find('a').click({ force: true }), // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
+    shouldNotExist: (resourceName: string) =>
+      cy
+        .get(`[data-test="data-view-cell-${resourceName}-name"]`, { timeout: 90000 })
+        .should('not.exist'),
   },
 };
 
