@@ -95,7 +95,7 @@ export class PluginStore {
     this.updateExtensions();
   }
 
-  getExtensionsInUse() {
+  getExtensions() {
     return [...this.staticPluginExtensions, ...this.dynamicPluginExtensions];
   }
 

@@ -43,7 +43,7 @@ const WatchResource: React.FC<{ initResources: WatchK8sResources<{}> }> = ({ ini
 
 beforeEach(() => {
   // Init k8s redux store with just one model
-  setPluginStore({ getExtensionsInUse: () => [] });
+  setPluginStore({ getExtensions: () => [] });
   store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));
   store.dispatch(
     receivedResources({

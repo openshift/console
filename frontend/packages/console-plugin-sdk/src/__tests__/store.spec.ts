@@ -286,7 +286,7 @@ describe('PluginStore', () => {
       ]);
 
       expect(disabledStaticPluginNames).toEqual(new Set());
-      expect(store.getExtensionsInUse()).toEqual(staticPluginExtensions);
+      expect(store.getExtensions()).toEqual(staticPluginExtensions);
     });
 
     it('initializes dynamic plugin information', () => {
@@ -302,7 +302,7 @@ describe('PluginStore', () => {
       expect(loadedDynamicPlugins.size).toBe(0);
       expect(failedDynamicPlugins.size).toBe(0);
 
-      expect(store.getExtensionsInUse()).toEqual([]);
+      expect(store.getExtensions()).toEqual([]);
       expect(store.getAllowedDynamicPluginNames()).toEqual(['TestA', 'TestB']);
       expect(store.getDynamicPluginInfo()).toEqual([
         {
@@ -317,7 +317,7 @@ describe('PluginStore', () => {
     });
   });
 
-  describe('getExtensionsInUse', () => {
+  describe('getExtensions', () => {
     it('returns a list of static and dynamic extensions currently in use', () => {
       const store = new PluginStore(
         [
@@ -332,7 +332,7 @@ describe('PluginStore', () => {
         ['TestA', 'TestB', 'TestC'],
       );
 
-      expect(store.getExtensionsInUse()).toEqual([
+      expect(store.getExtensions()).toEqual([
         {
           type: 'Foo',
           properties: { test: true },
@@ -369,7 +369,7 @@ describe('PluginStore', () => {
       store.setDynamicPluginEnabled('TestB@1.2.3', true);
       store.setDynamicPluginEnabled('TestC@2.3.4', true);
 
-      expect(store.getExtensionsInUse()).toEqual([
+      expect(store.getExtensions()).toEqual([
         {
           type: 'Foo',
           properties: { test: true },
@@ -409,7 +409,7 @@ describe('PluginStore', () => {
         getPluginManifest('TestA', '3.4.5', dynamicPluginExtensionsA, ['Test']),
       );
 
-      expect(store.getExtensionsInUse()).toEqual([
+      expect(store.getExtensions()).toEqual([
         {
           type: 'Qux',
           properties: { value: 'test' },
@@ -430,7 +430,7 @@ describe('PluginStore', () => {
 
       store.setDynamicPluginEnabled('TestA@3.4.5', true);
 
-      expect(store.getExtensionsInUse()).toEqual([
+      expect(store.getExtensions()).toEqual([
         {
           type: 'Baz',
           properties: {},
@@ -459,7 +459,7 @@ describe('PluginStore', () => {
 
       store.setDynamicPluginEnabled('TestA@3.4.5', false);
 
-      expect(store.getExtensionsInUse()).toEqual([
+      expect(store.getExtensions()).toEqual([
         {
           type: 'Qux',
           properties: { value: 'test' },
@@ -603,8 +603,8 @@ describe('PluginStore', () => {
         expect(Object.isFrozen(e)).toBe(true);
       });
 
-      expect(store.getExtensionsInUse()).toEqual([]);
-      expect(store.getDynamicPluginInfo()).toEqual([
+      expect(store.getExtensions()).toEqual([]);
+      expect(store.getPluginInfo()).toEqual([
         {
           status: 'Loaded',
           pluginID: 'Test@1.2.3',
@@ -692,7 +692,7 @@ describe('PluginStore', () => {
       const { disabledStaticPluginNames } = store.getStateForTestPurposes();
 
       expect(disabledStaticPluginNames).toEqual(new Set());
-      expect(store.getExtensionsInUse()).toEqual([
+      expect(store.getExtensions()).toEqual([
         {
           type: 'Foo',
           properties: { test: true },
@@ -717,7 +717,7 @@ describe('PluginStore', () => {
       );
 
       expect(disabledStaticPluginNames).toEqual(new Set(['Test1']));
-      expect(store.getExtensionsInUse()).toEqual([
+      expect(store.getExtensions()).toEqual([
         {
           type: 'Bar',
           properties: { baz: 1 },
@@ -734,7 +734,7 @@ describe('PluginStore', () => {
       );
 
       expect(disabledStaticPluginNames).toEqual(new Set(['Test1', 'Test2']));
-      expect(store.getExtensionsInUse()).toEqual([]);
+      expect(store.getExtensions()).toEqual([]);
     });
   });
 
