@@ -143,8 +143,8 @@ export const ReplicasCount: React.FCC<ReplicasCountProps> = ({ obj, kind }) => {
   return (
     <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">
       {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
-        statusReplicas: obj.status.replicas || 0,
-        specReplicas: obj.spec.replicas,
+        statusReplicas: obj.status?.currentNumberScheduled ?? obj.status?.replicas ?? 0,
+        specReplicas: obj.status?.desiredNumberScheduled ?? obj.spec?.replicas ?? 0,
       })}
     </Link>
   );
@@ -215,6 +215,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[
         props: {
           ...cellIsStickyProps,
           modifier: 'nowrap',
+          style: { width: 'auto' },
         },
       },
       {
@@ -223,6 +224,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[
         sort: 'metadata.namespace',
         props: {
           modifier: 'nowrap',
+          style: { width: 'auto' },
         },
       },
       {
@@ -239,6 +241,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[
         sort: 'metadata.labels',
         props: {
           modifier: 'nowrap',
+          width: 20,
         },
       },
       {
@@ -247,6 +250,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[
         sort: 'spec.selector',
         props: {
           modifier: 'nowrap',
+          width: 20,
         },
       },
       {

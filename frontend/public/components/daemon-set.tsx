@@ -1,49 +1,34 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import {
   usePodsWatcher,
   PodRing,
-  LazyActionMenu,
   ActionServiceProvider,
   ActionMenu,
   ActionMenuVariant,
   usePrometheusGate,
-  DASH,
 } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sResourceKind,
-  referenceFor,
-  referenceForModel,
-  DaemonSetKind,
-  TableColumn,
-} from '../module/k8s';
+import { K8sResourceKind, referenceForModel, DaemonSetKind } from '../module/k8s';
 import { DetailsPage, ListPage } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
   ContainerTable,
   detailsPage,
-  LabelList,
   navFactory,
   PodsComponent,
-  ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Selector,
   LoadingInline,
   LoadingBox,
 } from './utils';
 import {
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
   initialFiltersDefault,
   ResourceDataView,
 } from '@console/app/src/components/data-view/ResourceDataView';
+import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
@@ -52,68 +37,8 @@ import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const kind = referenceForModel(DaemonSetModel);
 
-const tableColumnInfo = [
-  { id: 'name' },
-  { id: 'namespace' },
-  { id: 'status' },
-  { id: 'labels' },
-  { id: 'podSelector' },
-  { id: 'actions' },
-];
-
 const getDataViewRows: GetDataViewRows<DaemonSetKind, undefined> = (data, columns) => {
-  return data.map(({ obj: daemonset }) => {
-    const { name, namespace } = daemonset.metadata;
-    const resourceKind = referenceFor(daemonset);
-    const context = { [resourceKind]: daemonset };
-
-    const rowCells = {
-      [tableColumnInfo[0].id]: {
-        cell: (
-          <ResourceLink
-            groupVersionKind={getGroupVersionKindForModel(DaemonSetModel)}
-            name={name}
-            namespace={namespace}
-          />
-        ),
-        props: getNameCellProps(name),
-      },
-      [tableColumnInfo[1].id]: {
-        cell: <ResourceLink kind="Namespace" name={namespace} />,
-      },
-      [tableColumnInfo[2].id]: {
-        cell: (
-          <Link
-            to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`}
-            title="pods"
-          >
-            {`${daemonset.status.currentNumberScheduled} of ${daemonset.status.desiredNumberScheduled} pods`}
-          </Link>
-        ),
-      },
-      [tableColumnInfo[3].id]: {
-        cell: <LabelList kind={kind} labels={daemonset.metadata.labels} />,
-      },
-      [tableColumnInfo[4].id]: {
-        cell: (
-          <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
-        ),
-      },
-      [tableColumnInfo[5].id]: {
-        cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
-      },
-    };
-
-    return columns.map(({ id }) => {
-      const cell = rowCells[id]?.cell || DASH;
-      return {
-        id,
-        props: rowCells[id]?.props,
-        cell,
-      };
-    });
-  });
+  return getWorkloadDataViewRows(data, columns, DaemonSetModel);
 };
 
 export const DaemonSetDetailsList: React.FCC<DaemonSetDetailsListProps> = ({ ds }) => {
@@ -195,65 +120,8 @@ const EnvironmentTab: React.FCC<EnvironmentTabProps> = (props) => (
   />
 );
 
-const useDaemonSetsColumns = (): TableColumn<DaemonSetKind>[] => {
-  const { t } = useTranslation();
-  const columns: TableColumn<DaemonSetKind>[] = React.useMemo(() => {
-    return [
-      {
-        title: t('public~Name'),
-        id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('public~Namespace'),
-        id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('public~Status'),
-        id: tableColumnInfo[2].id,
-        sort: 'status.currentNumberScheduled',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('public~Labels'),
-        id: tableColumnInfo[3].id,
-        sort: 'metadata.labels',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('public~Pod selector'),
-        id: tableColumnInfo[4].id,
-        sort: 'spec.selector',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...cellIsStickyProps,
-        },
-      },
-    ];
-  }, [t]);
-  return columns;
-};
-
 export const DaemonSetsList: React.FCC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
-  const columns = useDaemonSetsColumns();
+  const columns = useWorkloadColumns<DaemonSetKind>();
 
   return (
     <React.Suspense fallback={<LoadingBox />}>

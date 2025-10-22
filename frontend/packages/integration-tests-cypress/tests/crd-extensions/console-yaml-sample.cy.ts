@@ -3,9 +3,9 @@ import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { listPage } from '../../views/list-page';
+import { modal } from '../../views/modal';
 import * as resourceSidebar from '../../views/resource-sidebar';
 import * as yamlEditor from '../../views/yaml-editor';
-import { modal } from '../../views/modal';
 
 const crd = 'ConsoleYAMLSample';
 const testJobName = 'test-job';

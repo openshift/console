@@ -57,8 +57,8 @@ describe('Start a Job from a CronJob', () => {
 
   it('verify "Start Job" on the CronJob list page', () => {
     cy.visit(`/k8s/ns/${testName}/cronjobs`);
-    listPage.rows.shouldBeLoaded();
-    listPage.rows.clickKebabAction(CRONJOB_NAME, 'Start Job');
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickKebabAction(CRONJOB_NAME, 'Start Job');
     detailsPage.isLoaded();
     detailsPage.sectionHeaderShouldExist('Job details');
     detailsPage.titleShouldContain(`${CRONJOB_NAME}`);
@@ -66,9 +66,9 @@ describe('Start a Job from a CronJob', () => {
 
   it('verify the number of Jobs in CronJob > Jobs tab list page', () => {
     cy.visit(`/k8s/ns/${testName}/cronjobs`);
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
     cy.visit(`/k8s/ns/${testName}/cronjobs/${CRONJOB_NAME}/jobs`);
-    listPage.dvRows.countShouldBe(2);
+    listPage.rows.countShouldBe(2);
   });
 
   it('verify the number of events in CronJob > Events tab list page', () => {

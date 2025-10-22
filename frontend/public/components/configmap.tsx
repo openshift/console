@@ -13,6 +13,7 @@ import {
   ResourceSummary,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ConfigMapModel } from '../models/index';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { ConfigMapKind, referenceForModel, TableColumn } from '../module/k8s';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -24,13 +25,12 @@ import {
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { LoadingBox } from './utils/status-box';
+import { LoadingBox } from '@console/shared/src/components/loading';
 import { sortResourceByValue } from './factory/Table/sort';
 import { sorts } from './factory/table';
 import { ConfigMapModel } from '../models';
 
 const menuActions = [...Kebab.factory.common];
-
 const kind = referenceForModel(ConfigMapModel);
 const tableColumnInfo = [
   { id: 'name' },

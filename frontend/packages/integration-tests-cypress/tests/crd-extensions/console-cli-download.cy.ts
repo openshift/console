@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { listPage } from '../../views/list-page';
-import * as yamlEditor from '../../views/yaml-editor';
 import { modal } from '../../views/modal';
+import * as yamlEditor from '../../views/yaml-editor';
 
 const crd = 'ConsoleCLIDownload';
 
