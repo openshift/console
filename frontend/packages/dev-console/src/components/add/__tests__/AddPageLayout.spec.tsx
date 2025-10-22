@@ -1,5 +1,4 @@
-import { configure, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen, cleanup } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import * as utils from '../../../utils/useAddActionExtensions';
@@ -20,14 +19,13 @@ jest.mock('@console/app/src/components/quick-starts/utils/useQuickStarts', () =>
   useQuickStarts: () => [[], true, null],
 }));
 
-configure({ testIdAttribute: 'data-test' });
-
 describe('AddPageLayout', () => {
   const props = { title: 'title' };
   const useAddActionExtensionsSpy = jest.spyOn(utils, 'useAddActionExtensions');
   const useAccessFilterExtensionsSpy = jest.spyOn(accessFilterHook, 'useAccessFilterExtensions');
 
   afterEach(() => {
+    cleanup();
     jest.resetAllMocks();
   });
 

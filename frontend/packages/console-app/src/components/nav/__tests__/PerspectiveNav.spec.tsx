@@ -1,5 +1,5 @@
 import { Nav } from '@patternfly/react-core';
-import { screen, configure } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import PerspectiveNav from '../PerspectiveNav';
@@ -55,10 +55,6 @@ describe('Perspective Nav', () => {
       </Nav>,
     );
   };
-
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();

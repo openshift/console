@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { configure, render, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import userEvent from '../../__tests__/user-event';
 import { BuildConfigRunPolicy } from '../../types';
 import PolicySection, { PolicySectionFormData } from '../PolicySection';
-
-configure({ testIdAttribute: 'data-test' });
 
 const Wrapper: React.FC<FormikConfig<PolicySectionFormData>> = ({ children, ...formikConfig }) => (
   <Provider store={store}>

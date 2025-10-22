@@ -1,5 +1,4 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
 
 import {
   PromiseComponent,
@@ -17,7 +16,7 @@ describe('PromiseComponent', () => {
 
     render() {
       return this.state.inProgress ? (
-        <div data-testid="loading">Loading...</div>
+        <div data-test="loading">Loading...</div>
       ) : (
         <button onClick={this.handleClick}>Click me</button>
       );

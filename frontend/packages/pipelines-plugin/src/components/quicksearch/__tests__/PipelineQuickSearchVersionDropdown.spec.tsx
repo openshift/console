@@ -1,17 +1,7 @@
-import {
-  render,
-  cleanup,
-  waitFor,
-  configure,
-  fireEvent,
-  screen,
-  act,
-} from '@testing-library/react';
+import { render, cleanup, waitFor, fireEvent, screen, act } from '@testing-library/react';
 import { omit } from 'lodash';
 import { sampleClusterTaskCatalogItem } from '../../../test-data/catalog-item-data';
 import PipelineQuickSearchVersionDropdown from '../PipelineQuickSearchVersionDropdown';
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('pipelineQuickSearchVersionDropdown', () => {
   const onChange = jest.fn();

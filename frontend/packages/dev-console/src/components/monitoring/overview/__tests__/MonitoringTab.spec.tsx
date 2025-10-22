@@ -1,8 +1,5 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import MonitoringTab from '../MonitoringTab';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/internal/components/utils', () => ({
   Firehose: (props) => props.children,

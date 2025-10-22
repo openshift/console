@@ -9,7 +9,6 @@ import {
   EventTriggerObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
 import EventPubSubResources, { PubSubResourceOverviewList } from '../EventPubSubResources';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils', () => ({
   ResourceLink: 'ResourceLink',

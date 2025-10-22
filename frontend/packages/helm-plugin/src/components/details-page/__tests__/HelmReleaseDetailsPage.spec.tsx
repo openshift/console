@@ -1,8 +1,6 @@
-import { screen, configure } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import HelmReleaseDetailsPage from '../HelmReleaseDetailsPage';
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('HelmReleaseDetailsPage', () => {
   beforeEach(() => {

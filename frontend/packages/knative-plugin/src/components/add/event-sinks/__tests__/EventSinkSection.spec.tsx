@@ -4,7 +4,6 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { mockKameletSink } from '../../__mocks__/Kamelet-data';
 import { formikMockDataKafkaSink } from '../__mocks__/event-kafka-sink-data';
 import EventSinkSection from '../EventSinkSection';
-import '@testing-library/jest-dom';
 
 jest.mock('../KafkaSinkSection', () => ({
   __esModule: true,
