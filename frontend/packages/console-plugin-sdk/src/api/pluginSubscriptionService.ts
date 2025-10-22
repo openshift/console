@@ -35,7 +35,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
   subscriptionServiceInitialized = true;
   getPluginStoreInstance = () => pluginStore;
 
-  const getExtensionsInUse = () => pluginStore.getExtensionsInUse();
+  const getExtensions = () => pluginStore.getExtensions();
   const getFlags = () => reduxStore.getState().FLAGS;
 
   type FeatureFlags = ReturnType<typeof getFlags>;
@@ -61,7 +61,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
   };
 
   onExtensionSubscriptionAdded = (sub) => {
-    invokeExtensionListener(sub, getExtensionsInUse(), getFlags());
+    invokeExtensionListener(sub, getExtensions(), getFlags());
   };
 
   onDynamicPluginListenerAdded = (listener) => {
@@ -76,7 +76,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
       return;
     }
 
-    const nextExtensions = getExtensionsInUse();
+    const nextExtensions = getExtensions();
     const nextFlags = getFlags();
 
     if (_.isEqual(nextExtensions, lastExtensions) && nextFlags === lastFlags) {

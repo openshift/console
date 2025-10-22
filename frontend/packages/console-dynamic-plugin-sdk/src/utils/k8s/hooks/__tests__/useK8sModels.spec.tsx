@@ -26,7 +26,7 @@ const WatchModels: React.FC<{}> = () => {
   return null;
 };
 
-setPluginStore({ getExtensionsInUse: () => [] });
+setPluginStore({ getExtensions: () => [] });
 
 beforeEach(() => {
   store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));
