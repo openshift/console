@@ -23,11 +23,19 @@ import {
   ResourceDataView,
 } from '@console/app/src/components/data-view/ResourceDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluralize } from './utils';
+import {
+  SectionHeading,
+  LabelList,
+  navFactory,
+  ResourceLink,
+  Selector,
+  pluralize,
+  ResourceKebab,
+  Kebab,
+} from './utils';
 import { useConfigureCountModal } from './modals/configure-count-modal';
 import { AlertmanagerModel } from '../models';
 import { LoadingBox } from './utils/status-box';
-import { LazyActionMenu } from '@console/shared';
 
 const Details: React.FCC<DetailsProps> = (props) => {
   const alertManager = props.obj;
@@ -124,8 +132,6 @@ const tableColumnInfo = [
 const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
   return data.map(({ obj: alertManager }) => {
     const { metadata, spec } = alertManager;
-    const resourceKind = referenceForModel(AlertmanagerModel);
-    const context = { [resourceKind]: alertManager };
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -162,8 +168,16 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
         },
       },
       [tableColumnInfo[5].id]: {
-        cell: <LazyActionMenu context={context} />,
-        props: actionsCellProps,
+        cell: (
+          <ResourceKebab
+            actions={[...Kebab.factory.common]}
+            kind={referenceForModel(AlertmanagerModel)}
+            resource={alertManager}
+          />
+        ),
+        props: {
+          ...actionsCellProps,
+        },
       },
     };
 
