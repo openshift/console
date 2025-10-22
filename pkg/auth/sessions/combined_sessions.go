@@ -54,7 +54,8 @@ func (cs *CombinedSessionStore) AddSession(w http.ResponseWriter, r *http.Reques
 
 	clientSession := cs.getCookieSession(r)
 	clientSession.sessionToken.Values["session-token"] = ls.sessionToken
-	clientSession.refreshToken.Values["refresh-token"] = ls.refreshToken
+	// Store only the small reference ID in the cookie, not the full refresh token
+	clientSession.refreshToken.Values["refresh-token-id"] = ls.refreshTokenID
 
 	return ls, clientSession.save(r, w)
 }
@@ -89,12 +90,19 @@ func (cs *CombinedSessionStore) GetSession(w http.ResponseWriter, r *http.Reques
 	// Get always returns a session, even if empty.
 	clientSession := cs.getCookieSession(r)
 
-	var sessionToken, refreshToken string
+	var (
+		sessionToken string
+		refreshToken string
+	)
+
 	if sessionTokenIface, ok := clientSession.sessionToken.Values["session-token"]; ok {
 		sessionToken = sessionTokenIface.(string)
 	}
-	if refreshTokenIface, ok := clientSession.refreshToken.Values["refresh-token"]; ok {
-		refreshToken = refreshTokenIface.(string)
+	if refreshTokenID, ok := clientSession.refreshToken.Values["refresh-token-id"]; ok {
+		// Look up the actual refresh token from the ID
+		if actualToken, exists := cs.serverStore.byRefreshTokenID[refreshTokenID.(string)]; exists {
+			refreshToken = actualToken
+		}
 	}
 
 	loginState := cs.serverStore.GetSession(sessionToken, refreshToken)
@@ -104,16 +112,23 @@ func (cs *CombinedSessionStore) GetSession(w http.ResponseWriter, r *http.Reques
 func (cs *CombinedSessionStore) GetCookieRefreshToken(r *http.Request) string {
 	// Get always returns a session, even if empty.
 	clientSession, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
-	if refreshToken, ok := clientSession.Values["refresh-token"].(string); ok {
-		return refreshToken
+	if refreshTokenID, ok := clientSession.Values["refresh-token-id"].(string); ok {
+		// Look up the actual refresh token using the ID
+		if actualToken, exists := cs.serverStore.byRefreshTokenID[refreshTokenID]; exists {
+			return actualToken
+		}
 	}
 	return ""
 }
 
 func (cs *CombinedSessionStore) UpdateCookieRefreshToken(w http.ResponseWriter, r *http.Request, refreshToken string) error {
-	// no need to lock here since there shouldn't be any races around the client session
+	// Generate a new ID for the refresh token
+	newID := RandomString(32)
+	cs.serverStore.byRefreshTokenID[newID] = refreshToken
+
+	// Store the ID in the cookie, not the full token
 	clientSession, _ := cs.clientStore.Get(r, openshiftRefreshTokenCookieName)
-	clientSession.Values["refresh-token"] = refreshToken
+	clientSession.Values["refresh-token-id"] = newID
 	return clientSession.Save(r, w)
 }
 
@@ -122,13 +137,25 @@ func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Requ
 	defer cs.sessionLock.Unlock()
 
 	clientSession := cs.getCookieSession(r)
+	var oldRefreshTokenID string
 	var oldRefreshToken string
-	if oldToken, ok := clientSession.refreshToken.Values["refresh-token"]; ok {
-		oldRefreshToken = oldToken.(string)
+	if oldID, ok := clientSession.refreshToken.Values["refresh-token-id"]; ok {
+		oldRefreshTokenID = oldID.(string)
+		// Look up the actual refresh token from the ID
+		if actualToken, exists := cs.serverStore.byRefreshTokenID[oldRefreshTokenID]; exists {
+			oldRefreshToken = actualToken
+		}
 	}
 
-	refreshToken := tokenResponse.RefreshToken
-	clientSession.refreshToken.Values["refresh-token"] = refreshToken
+	// Generate a new ID for the new refresh token
+	newRefreshTokenID := RandomString(32)
+	newRefreshToken := tokenResponse.RefreshToken
+	if newRefreshToken != "" {
+		cs.serverStore.byRefreshTokenID[newRefreshTokenID] = newRefreshToken
+	}
+
+	// Store the new ID in the cookie
+	clientSession.refreshToken.Values["refresh-token-id"] = newRefreshTokenID
 
 	var loginState *LoginState
 	sessionToken, ok := clientSession.sessionToken.Values["session-token"]
@@ -142,16 +169,22 @@ func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Requ
 			return nil, fmt.Errorf("failed to add session to server store: %w", err)
 		}
 		clientSession.sessionToken.Values["session-token"] = loginState.sessionToken
+		// AddSession already generated an ID, so update the cookie with it
+		clientSession.refreshToken.Values["refresh-token-id"] = loginState.refreshTokenID
 	} else {
 		// loginState is a pointer to the cache so this effectively mutates it for everyone
 		if err := loginState.UpdateTokens(tokenVerifier, tokenResponse); err != nil {
 			return nil, err
 		}
+		// Update the ID in the LoginState
+		loginState.refreshTokenID = newRefreshTokenID
 	}
 
 	// index by the old refresh token so that any follow-up requests that arrived
 	// before their cookie was updated with an actual session can still find the login state
-	cs.serverStore.byRefreshToken[oldRefreshToken] = loginState
+	if oldRefreshToken != "" {
+		cs.serverStore.byRefreshToken[oldRefreshToken] = loginState
+	}
 	return loginState, clientSession.save(r, w)
 }
 
@@ -168,8 +201,14 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 	}
 
 	cookieSession := cs.getCookieSession(r)
-	if refreshToken, ok := cookieSession.refreshToken.Values["refresh-token"]; ok {
-		cs.serverStore.DeleteByRefreshToken(refreshToken.(string))
+	if refreshTokenID, ok := cookieSession.refreshToken.Values["refresh-token-id"]; ok {
+		refreshTokenIDStr := refreshTokenID.(string)
+		// Look up the actual refresh token from the ID and delete
+		if actualToken, exists := cs.serverStore.byRefreshTokenID[refreshTokenIDStr]; exists {
+			cs.serverStore.DeleteByRefreshToken(actualToken)
+			// Clean up the ID mapping
+			delete(cs.serverStore.byRefreshTokenID, refreshTokenIDStr)
+		}
 	}
 
 	if sessionToken, ok := cookieSession.sessionToken.Values["session-token"]; ok {
@@ -184,4 +223,10 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 	}
 
 	return nil
+}
+
+// ServerStore returns the underlying server session store.
+// This is primarily used for testing purposes.
+func (cs *CombinedSessionStore) ServerStore() *SessionStore {
+	return cs.serverStore
 }

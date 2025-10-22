@@ -360,7 +360,10 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 			name: "session exists with different refresh token - session tokens match short-circuit to prevent multiple refreshes",
 			initSessions: func(s *sessions.CombinedSessionStore) (initSessionToken string) {
 				testCookieFactory := &testCookieFactory{
-					cookieCodecs: securecookie.CodecsFromPairs(authnKey, encryptionKey),
+					cookieCodecs:  securecookie.CodecsFromPairs(authnKey, encryptionKey),
+					serverStore:   s.ServerStore(),
+					tokenVerifier: oidcProvider.verifyIDToken,
+					signPayload:   oidcProvider.signPayload,
 				}
 				// inject the refresh token into the refresh token cache
 				testCookieFactory.WithRefreshToken("test-original-refresh-token")
@@ -406,7 +409,10 @@ func Test_oidcAuth_refreshSession(t *testing.T) {
 			require.NoError(t, err)
 
 			testCookieFactory := &testCookieFactory{
-				cookieCodecs: securecookie.CodecsFromPairs(authnKey, encryptionKey),
+				cookieCodecs:  securecookie.CodecsFromPairs(authnKey, encryptionKey),
+				serverStore:   o.sessions.ServerStore(),
+				tokenVerifier: oidcProvider.verifyIDToken,
+				signPayload:   oidcProvider.signPayload,
 			}
 			if len(tt.cookieRefreshToken) > 0 {
 				testCookieFactory.WithRefreshToken(tt.cookieRefreshToken)
@@ -530,7 +536,10 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 			require.NoError(t, err)
 
 			testCookieFactory := &testCookieFactory{
-				cookieCodecs: securecookie.CodecsFromPairs(authnKey, encryptionKey),
+				cookieCodecs:  securecookie.CodecsFromPairs(authnKey, encryptionKey),
+				serverStore:   o.sessions.ServerStore(),
+				tokenVerifier: oidcProvider.verifyIDToken,
+				signPayload:   oidcProvider.signPayload,
 			}
 			if len(tt.cookieRefreshToken) > 0 {
 				testCookieFactory.WithRefreshToken(tt.cookieRefreshToken)
@@ -609,8 +618,11 @@ func BenchmarkRefreshSession(b *testing.B) {
 						<-startChan
 						refreshToken := testValidRefreshToken + strconv.Itoa(tokenSuffix)
 						testCookieFactory := &testCookieFactory{
-							cookieCodecs: securecookie.CodecsFromPairs(authnKey, encryptionKey),
-							refreshToken: &refreshToken,
+							cookieCodecs:  securecookie.CodecsFromPairs(authnKey, encryptionKey),
+							refreshToken:  &refreshToken,
+							serverStore:   o.sessions.ServerStore(),
+							tokenVerifier: oidcProvider.verifyIDToken,
+							signPayload:   oidcProvider.signPayload,
 						}
 						req := httptest.NewRequest("GET", "/", nil)
 						testCookieFactory.Complete(b, req)
@@ -687,10 +699,14 @@ func testOAuth2ConfigConstructor(endpointConfig oauth2.Endpoint) *oauth2.Config 
 }
 
 type testCookieFactory struct {
-	cookieCodecs  []securecookie.Codec
-	sessionToken  *string
-	refreshToken  *string
-	customCookies map[string]map[interface{}]interface{}
+	cookieCodecs   []securecookie.Codec
+	sessionToken   *string
+	refreshToken   *string
+	refreshTokenID *string
+	customCookies  map[string]map[interface{}]interface{}
+	serverStore    *sessions.SessionStore // needed to set up refresh token ID mapping
+	tokenVerifier  sessions.IDTokenVerifier
+	signPayload    func(string) string // function to sign an ID token payload
 }
 
 func (f *testCookieFactory) WithSessionToken(sessionToken string) *testCookieFactory {
@@ -720,9 +736,26 @@ func (f *testCookieFactory) Complete(t testing.TB, req *http.Request) *http.Requ
 			f.cookieCodecs)
 	}
 	if f.refreshToken != nil {
+		var id string
+		if f.serverStore != nil && f.tokenVerifier != nil && f.signPayload != nil {
+			// Use AddSession to properly set up the state
+			token := addIDToken(
+				&oauth2.Token{RefreshToken: *f.refreshToken},
+				f.signPayload(`{"sub":"testuser","exp":`+strconv.FormatInt(time.Now().Add(5*time.Minute).Unix(), 10)+`}`),
+			)
+			loginState, err := f.serverStore.AddSession(f.tokenVerifier, token)
+			require.NoError(t, err)
+			id = loginState.RefreshTokenID()
+		} else {
+			// Fallback to generating a random ID
+			id = randomString(32)
+		}
+		f.refreshTokenID = &id
+
+		// Store only the ID in the cookie
 		attachCookieOrDie(t, req, "openshift-refresh-token",
 			map[interface{}]interface{}{
-				"refresh-token": f.refreshToken,
+				"refresh-token-id": id,
 			},
 			f.cookieCodecs)
 	}
