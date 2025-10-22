@@ -22,7 +22,7 @@ export const ImpersonateNotifier = connect(
     impersonate: ImpersonateKind;
   }) => {
     const { t } = useTranslation();
-    
+
     // Memory leak prevention - track component mount state
     const isMountedRef = React.useRef(true);
     React.useEffect(() => {
@@ -54,14 +54,14 @@ export const ImpersonateNotifier = connect(
     const isUserWithGroups = impersonate.kind === 'UserWithGroups';
     const displayKind = isUserWithGroups ? 'user' : kindTranslated;
     const displayKindForAccess = isUserWithGroups ? 'multi-group' : kindTranslated;
-    
+
     // Enhanced group display with tooltip for many groups
     const MAX_GROUPS_DISPLAY = 2;
     const groups = impersonate.groups || [];
     const hasGroups = isUserWithGroups && groups.length > 0;
     const visibleGroups = groups.slice(0, MAX_GROUPS_DISPLAY);
     const remainingCount = Math.max(0, groups.length - MAX_GROUPS_DISPLAY);
-    
+
     const groupsElement = hasGroups ? (
       <>
         {' with groups: '}
@@ -103,10 +103,9 @@ export const ImpersonateNotifier = connect(
           gap={{ default: 'gapSm' }}
         >
           <div>
-            You're impersonating {displayKind}{' '}
-            <strong>{impersonateName}</strong>
-            {groupsElement}
-            . You're viewing all resources and roles this {displayKindForAccess} can access.{' '}
+            You're impersonating {displayKind} <strong>{impersonateName}</strong>
+            {groupsElement}. You're viewing all resources and roles this {displayKindForAccess} can
+            access.{' '}
             <Button
               isInline
               type="button"

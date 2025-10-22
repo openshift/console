@@ -837,11 +837,11 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
         <ImpersonateUserModal
           isOpen={isImpersonateModalOpen}
           onClose={() => setIsImpersonateModalOpen(false)}
-          onImpersonate={(username: string, groups: string[]) => {
+          onImpersonate={(userName: string, groups: string[]) => {
             if (groups && groups.length > 0) {
-              dispatch(UIActions.startImpersonate('UserWithGroups', username, groups));
+              dispatch(UIActions.startImpersonate('UserWithGroups', userName, groups));
             } else {
-              dispatch(UIActions.startImpersonate('User', username));
+              dispatch(UIActions.startImpersonate('User', userName));
             }
             setIsImpersonateModalOpen(false);
           }}

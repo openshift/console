@@ -214,7 +214,10 @@ export const setActiveNamespace = (namespace: string = '') => {
   return action(ActionType.SetActiveNamespace, { namespace });
 };
 
-export const startImpersonate = (kind: string, name: string, groups?: string[]) => async (dispatch, getState) => {
+export const startImpersonate = (kind: string, name: string, groups?: string[]) => async (
+  dispatch,
+  getState,
+) => {
   const textEncoder = new TextEncoder();
 
   const imp = getImpersonate(getState());
@@ -242,8 +245,10 @@ export const startImpersonate = (kind: string, name: string, groups?: string[]) 
     // Encode user subprotocol
     subprotocols = [`Impersonate-User.${encodedName}`];
     // Encode each group as a separate subprotocol
-    groups.forEach(group => {
-      const encodedGroup = Base64.encode(String.fromCharCode.apply(String, textEncoder.encode(group)))
+    groups.forEach((group) => {
+      const encodedGroup = Base64.encode(
+        String.fromCharCode.apply(String, textEncoder.encode(group)),
+      )
         .replace(/=/g, '_')
         .replace(/\//g, '-');
       subprotocols.push(`Impersonate-Group.${encodedGroup}`);
