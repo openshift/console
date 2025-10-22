@@ -944,6 +944,7 @@
   "Enter a username": "Enter a username",
   "The groups to impersonate the user with": "The groups to impersonate the user with",
   "No results found": "No results found",
+  "Select all": "Select all",
   "Edit {{description}}": "Edit {{description}}",
   "Edit labels": "Edit labels",
   "Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.": "Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.",

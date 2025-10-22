@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import {
@@ -31,6 +31,8 @@ import {
 } from './utils';
 import { ImpersonateUserModal } from './modals/impersonate-user-modal';
 import { FLAGS, useFlag } from '@console/shared';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import { RootState } from '@console/internal/redux';
 
 import { useTranslation } from 'react-i18next';
 
@@ -41,7 +43,16 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const impersonateFlag = useFlag(FLAGS.IMPERSONATE);
+  const impersonate = useSelector((state: RootState) => getImpersonate(state));
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const stopImpersonateAction: KebabAction = () => ({
+    label: t('public~Stop impersonating'),
+    callback: () => {
+      dispatch(UIActions.stopImpersonate());
+      navigate(window.SERVER_FLAGS.basePath);
+    },
+  });
 
   const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
@@ -74,14 +85,17 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
     navigate(window.SERVER_FLAGS.basePath);
   };
 
+  // Determine which action to show based on impersonation state
+  const impersonationAction = impersonate ? stopImpersonateAction : impersonateAction;
+
   return (
     <>
       <ResourceKebab
-        actions={[impersonateAction, ...Kebab.factory.common]}
+        actions={[impersonationAction, ...Kebab.factory.common]}
         kind={referenceForModel(UserModel)}
         resource={user}
       />
-      {impersonateFlag && (
+      {impersonateFlag && !impersonate && (
         <ImpersonateUserModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -264,8 +278,17 @@ export const UserDetailsPage: React.FC = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const impersonateFlag = useFlag(FLAGS.IMPERSONATE);
+  const impersonate = useSelector((state: RootState) => getImpersonate(state));
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<string>('');
+
+  const stopImpersonateAction: KebabAction = () => ({
+    label: t('public~Stop impersonating'),
+    callback: () => {
+      dispatch(UIActions.stopImpersonate());
+      navigate(window.SERVER_FLAGS.basePath);
+    },
+  });
 
   const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
@@ -299,19 +322,22 @@ export const UserDetailsPage: React.FC = (props) => {
     navigate(window.SERVER_FLAGS.basePath);
   };
 
+  // Determine which action to show based on impersonation state
+  const impersonationAction = impersonate ? stopImpersonateAction : impersonateAction;
+
   return (
     <>
       <DetailsPage
         {...props}
         kind={referenceForModel(UserModel)}
-        menuActions={[impersonateAction, ...Kebab.factory.common]}
+        menuActions={[impersonationAction, ...Kebab.factory.common]}
         pages={[
           navFactory.details(UserDetails),
           navFactory.editYaml(),
           navFactory.roles(RoleBindingsTab),
         ]}
       />
-      {impersonateFlag && (
+      {impersonateFlag && !impersonate && (
         <ImpersonateUserModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

@@ -13,7 +13,6 @@ import {
   MenuToggle,
   MenuToggleElement,
   Label,
-  Badge,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
@@ -55,6 +54,9 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   const [showAllGroups, setShowAllGroups] = useState(false);
   const [groupSearchFilter, setGroupSearchFilter] = useState('');
 
+  // Show first 5 groups, then +N badge (unless expanded)
+  const MAX_VISIBLE_CHIPS = 5;
+
   // TODO: Replace with actual API call to fetch available groups
   // This is temporary mock data for development/testing purposes
   const availableGroups = useMemo(
@@ -95,8 +97,36 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     }
   };
 
+  // Filter groups based on search input
+  const filteredGroups = useMemo(() => {
+    if (!groupSearchFilter) {
+      return availableGroups;
+    }
+    return availableGroups.filter((group) =>
+      group.toLowerCase().includes(groupSearchFilter.toLowerCase()),
+    );
+  }, [groupSearchFilter, availableGroups]);
+
+  const handleSelectAll = () => {
+    if (selectedGroups.length === filteredGroups.length) {
+      // If all filtered groups are selected, deselect all
+      setSelectedGroups(selectedGroups.filter((g) => !filteredGroups.includes(g)));
+    } else {
+      // Select all filtered groups (merge with existing selections from other filters)
+      const newSelections = new Set([...selectedGroups, ...filteredGroups]);
+      setSelectedGroups(Array.from(newSelections));
+    }
+  };
+
   const handleGroupSelect = (_event: MouseEvent | undefined, value: string | number) => {
     const group = value as string;
+
+    // Handle "Select all" option
+    if (group === '__select_all__') {
+      handleSelectAll();
+      return;
+    }
+
     if (selectedGroups.includes(group)) {
       // Deselect if already selected
       setSelectedGroups(selectedGroups.filter((g) => g !== group));
@@ -133,23 +163,27 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
       setSelectedGroups([]);
       setUsernameError('');
       setGroupSearchFilter('');
+      setShowAllGroups(false);
     }
   }, [isOpen, prefilledUsername]);
 
-  // Show first 2 groups, then +N badge (unless expanded)
-  const MAX_VISIBLE_CHIPS = 2;
+  // Reset showAllGroups when selected groups drop to or below MAX_VISIBLE_CHIPS
+  useEffect(() => {
+    if (selectedGroups.length <= MAX_VISIBLE_CHIPS) {
+      setShowAllGroups(false);
+    }
+  }, [selectedGroups.length]);
+
   const visibleGroups = showAllGroups ? selectedGroups : selectedGroups.slice(0, MAX_VISIBLE_CHIPS);
   const remainingCount = selectedGroups.length - MAX_VISIBLE_CHIPS;
 
-  // Filter groups based on search input
-  const filteredGroups = useMemo(() => {
-    if (!groupSearchFilter) {
-      return availableGroups;
+  // Check if all filtered groups are selected
+  const areAllFilteredGroupsSelected = useMemo(() => {
+    if (filteredGroups.length === 0) {
+      return false;
     }
-    return availableGroups.filter((group) =>
-      group.toLowerCase().includes(groupSearchFilter.toLowerCase()),
-    );
-  }, [groupSearchFilter, availableGroups]);
+    return filteredGroups.every((group) => selectedGroups.includes(group));
+  }, [filteredGroups, selectedGroups]);
 
   const textInputGroupRef = useRef<HTMLDivElement>(null);
 
@@ -257,20 +291,33 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
               toggle={toggle}
               isScrollable
               maxMenuHeight="300px"
+              popperProps={{
+                enableFlip: false,
+                direction: 'down',
+              }}
             >
               <SelectList id="impersonate-groups-listbox">
                 {filteredGroups.length === 0 ? (
                   <SelectOption isDisabled>{t('public~No results found')}</SelectOption>
                 ) : (
-                  filteredGroups.map((group) => (
+                  <>
                     <SelectOption
-                      key={group}
-                      value={group}
-                      isSelected={selectedGroups.includes(group)}
+                      key="__select_all__"
+                      value="__select_all__"
+                      isSelected={areAllFilteredGroupsSelected}
                     >
-                      {group}
+                      {t('public~Select all')}
                     </SelectOption>
-                  ))
+                    {filteredGroups.map((group) => (
+                      <SelectOption
+                        key={group}
+                        value={group}
+                        isSelected={selectedGroups.includes(group)}
+                      >
+                        {group}
+                      </SelectOption>
+                    ))}
+                  </>
                 )}
               </SelectList>
             </Select>
@@ -286,13 +333,13 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
                 ))}
                 {!showAllGroups && remainingCount > 0 && (
                   <FlexItem>
-                    <Badge
-                      isRead
+                    <Label
+                      color="grey"
                       className="pf-v5-u-cursor-pointer"
                       onClick={() => setShowAllGroups(true)}
                     >
                       +{remainingCount}
-                    </Badge>
+                    </Label>
                   </FlexItem>
                 )}
               </Flex>
@@ -305,6 +352,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
           key="impersonate"
           variant="primary"
           onClick={handleImpersonate}
+          isDisabled={!username.trim()}
           data-test="impersonate-button"
         >
           {t('public~Impersonate')}
