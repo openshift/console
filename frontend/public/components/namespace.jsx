@@ -478,7 +478,7 @@ export const NamespacesList = (props) => {
   // Enhance data with metrics
   const enhancedData = useMemo(() => {
     if (!props.data) {
-      return props.data;
+      return [];
     }
     return props.data.map((item) => {
       const name = getName(item);

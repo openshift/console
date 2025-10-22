@@ -59,7 +59,7 @@ export const useConsoleDataViewFilters = <
         return (
           matchesName && matchesLabels && (matchesAdditionalFilters?.(resource, filters) ?? true)
         );
-      }),
+      }) ?? [],
     [data, filters, isExactSearch, getObjectMetadata, matchesAdditionalFilters],
   );
 
