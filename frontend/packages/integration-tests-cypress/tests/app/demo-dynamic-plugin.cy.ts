@@ -53,7 +53,8 @@ const enableDemoPlugin = (enable: boolean) => {
       cy.byTestID('edit-console-plugin').contains(enable ? 'Enabled' : 'Disabled');
     });
   cy.log(`Running plugin test on ci using PLUGIN_PULL_SPEC: ${PLUGIN_PULL_SPEC}`);
-  cy.byTestID(`${PLUGIN_NAME}-status`)
+  // Extended timeout (5 minutes) for CI environment where plugin loading takes longer
+  cy.byTestID(`${PLUGIN_NAME}-status`, { timeout: 300000 })
     .should('include.text', enable ? 'Loaded' : '-')
     .then(() => {
       if (!enable) {
@@ -129,7 +130,15 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
               listPage.rows.shouldBeLoaded();
               listPage.filter.byName(PLUGIN_NAME);
               listPage.rows.shouldExist(PLUGIN_NAME);
-              enableDemoPlugin(true);
+              // Wait for deployment to be ready before enabling plugin
+              cy.byLegacyTestID(PLUGIN_NAME).click();
+              // Wait for the deployment to be ready with extended timeout for CI
+              cy.get('[data-test="status-text"]', { timeout: 300000 })
+                .should('contain.text', 'Available')
+                .then(() => {
+                  // Go back to console plugins page to enable the plugin
+                  enableDemoPlugin(true);
+                });
             });
         } else {
           console.log('this IS A local env, not setting the pull spec for the deployment');
