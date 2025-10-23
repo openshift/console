@@ -7,4 +7,3 @@ export * from './models';
 export * from './pages';
 export * from './global-configs';
 export * from './guided-tour';
-export * from './post-form-submit';

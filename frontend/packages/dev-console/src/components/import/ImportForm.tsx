@@ -15,13 +15,9 @@ import { PipelineType } from '@console/pipelines-plugin/src/components/import/im
 import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { usePacInfo } from '@console/pipelines-plugin/src/components/repository/hooks/pac-hook';
 import { createRemoteWebhook } from '@console/pipelines-plugin/src/components/repository/repository-form-utils';
-import {
-  ALL_APPLICATIONS_KEY,
-  usePerspectives,
-  usePostFormSubmitAction,
-  useTelemetry,
-} from '@console/shared';
+import { ALL_APPLICATIONS_KEY, usePerspectives, useTelemetry } from '@console/shared';
 import { useToast } from '@console/shared/src/components/toast';
+import { usePostFormSubmitAction } from '@console/shared/src/hooks/usePostFormSubmitAction';
 import { startBuild as startShipwrightBuild } from '@console/shipwright-plugin/src/api';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import {

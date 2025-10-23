@@ -10,9 +10,9 @@ import {
   useScrollToTopOnMount,
 } from '@console/internal/components/utils';
 import { k8sCreate, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { usePostFormSubmitAction } from '@console/shared';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { usePostFormSubmitAction } from '@console/shared/src/hooks/usePostFormSubmitAction';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
@@ -30,7 +30,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
 }) => {
   const [errors, setErrors] = React.useState<string[]>([]);
   const params = useParams();
-  const postFormCallback = usePostFormSubmitAction<K8sResourceKind>();
+  const postFormCallback = usePostFormSubmitAction();
   const processFormData = ({ metadata, ...rest }) => {
     const data = {
       metadata: {
