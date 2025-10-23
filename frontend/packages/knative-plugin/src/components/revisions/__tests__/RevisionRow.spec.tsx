@@ -4,7 +4,6 @@ import { RowFunctionArgs } from '@console/internal/components/factory';
 import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { RevisionKind } from '../../../types';
 import RevisionRow from '../RevisionRow';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/factory', () => ({
   TableData: 'TableData',

@@ -1,30 +1,30 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import {
   Status,
   ActionServiceProvider,
   ActionMenu,
-  LazyActionMenu,
   ActionMenuVariant,
+  DASH,
+  LazyActionMenu,
 } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   getJobTypeAndCompletions,
   JobKind,
   K8sResourceKind,
-  referenceForModel,
   referenceFor,
+  referenceForModel,
+  TableColumn,
 } from '../module/k8s';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage } from './factory';
 import {
   ContainerTable,
   DetailsItem,
-  Kebab,
   LabelList,
+  LoadingBox,
   PodsComponent,
   ResourceLink,
   ResourceSummary,
@@ -43,52 +43,91 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { sortResourceByValue } from './factory/Table/sort';
+import { sorts } from './factory/table';
 
-const kind = 'Job';
+const kind = referenceForModel(JobModel);
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-xl',
-  'pf-m-hidden pf-m-visible-on-2xl',
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'labels' },
+  { id: 'completions' },
+  { id: 'type' },
+  { id: 'created' },
+  { id: '' },
 ];
 
-const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
-  const { type, completions } = getJobTypeAndCompletions(job);
-  const resourceKind = referenceFor(job);
-  const context = { [resourceKind]: job };
+const Completions: React.FCC<CompletionsCellProps> = ({ obj, completions }) => {
   const { t } = useTranslation();
   return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={job.metadata.name} namespace={job.metadata.namespace} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={job.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={kind} labels={job.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <Link to={`/k8s/ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
-          {t('public~{{jobsSucceeded}} of {{completions}}', {
-            jobsSucceeded: job.status.succeeded || 0,
-            completions,
-          })}
-        </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>{type}</TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <Timestamp timestamp={job.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
+    <Link to={`/k8s/ns/${obj.metadata.namespace}/jobs/${obj.metadata.name}/pods`} title="pods">
+      {t('public~{{jobsSucceeded}} of {{completions}}', {
+        jobsSucceeded: obj.status.succeeded || 0,
+        completions,
+      })}
+    </Link>
   );
+};
+
+const getDataViewRows: GetDataViewRows<JobKind, undefined> = (data, columns) => {
+  return data.map(({ obj }) => {
+    const { name, namespace } = obj.metadata;
+    const { type, completions } = getJobTypeAndCompletions(obj);
+    const context = { [referenceFor(obj)]: obj };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(JobModel)}
+            name={name}
+            namespace={namespace}
+          />
+        ),
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <LabelList kind={kind} labels={obj.metadata.labels} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <Completions obj={obj} completions={completions} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: type,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[6].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
 export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
@@ -204,70 +243,111 @@ const JobsDetailsPage: React.FC = (props) => {
     />
   );
 };
-const JobsList: React.FC = (props) => {
+const useJobsColumns = (): TableColumn<JobKind>[] => {
   const { t } = useTranslation();
-  const JobTableHeader = () => [
-    {
-      title: t('public~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: t('public~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: t('public~Labels'),
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('public~Completions'),
-      sortFunc: 'jobCompletionsSucceeded',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: t('public~Type'),
-      sortFunc: 'jobType',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: t('public~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[6] },
-    },
-  ];
+  const columns: TableColumn<JobKind>[] = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Labels'),
+        id: tableColumnInfo[2].id,
+        sort: 'metadata.labels',
+        props: {
+          modifier: 'nowrap',
+          width: 20,
+        },
+      },
+      {
+        title: t('public~Completions'),
+        id: tableColumnInfo[3].id,
+        sort: (data, direction) =>
+          data.sort(sortResourceByValue<JobKind>(direction, sorts.jobCompletionsSucceeded)),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Type'),
+        id: tableColumnInfo[4].id,
+        sort: (data, direction) =>
+          data.sort(sortResourceByValue<JobKind>(direction, sorts.jobType)),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Created'),
+        id: tableColumnInfo[5].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[6].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
+};
+
+const JobsList: React.FCC<JobsListProps> = ({ data, loaded, ...props }) => {
+  const columns = useJobsColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={JobModel.labelPlural}
-      Header={JobTableHeader}
-      Row={JobTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView<JobKind>
+        {...props}
+        label={JobModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
 const JobsPage: React.FC<JobsPageProps> = (props) => (
-  <ListPage ListComponent={JobsList} kind={kind} canCreate={true} {...props} />
+  <ListPage
+    {...props}
+    kind={kind}
+    ListComponent={JobsList}
+    canCreate={true}
+    omitFilterToolbar={true}
+  />
 );
 export { JobsList, JobsPage, JobsDetailsPage };
 
 type JobsDetailsProps = {
   obj: JobKind;
+};
+
+type JobsListProps = {
+  data: JobKind[];
+  loaded: boolean;
 };
 
 type JobsPageProps = {
@@ -278,4 +358,9 @@ type JobsPageProps = {
 
 type JobPodsProps = {
   obj: K8sResourceKind;
+};
+
+type CompletionsCellProps = {
+  obj: JobKind;
+  completions: number;
 };

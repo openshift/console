@@ -6,7 +6,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import AddBareMetalHost from './AddBareMetalHost';
 
-const AddBareMetalHostPage: React.FunctionComponent = () => {
+const AddBareMetalHostPage: React.FC = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const { name, ns: namespace } = useParams();

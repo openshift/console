@@ -2,7 +2,6 @@ import { render } from '@testing-library/react';
 import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 import DeploymentOverviewList from '../DeploymentOverviewList';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils', () => ({
   ResourceLink: 'ResourceLink',

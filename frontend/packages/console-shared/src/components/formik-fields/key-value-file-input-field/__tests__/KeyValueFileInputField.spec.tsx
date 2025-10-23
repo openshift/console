@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { screen, render, fireEvent, configure, act, waitFor } from '@testing-library/react';
+import { screen, render, fireEvent, act, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig, FormikErrors } from 'formik';
 import KeyValueFileInputField from '../KeyValueFileInputField';
-
-configure({ testIdAttribute: 'data-test' });
 
 const onSubmit = jest.fn();
 const TestKeyValueInputField: React.FC<FormikConfig<any> & { disableRemoveAction?: boolean }> = ({

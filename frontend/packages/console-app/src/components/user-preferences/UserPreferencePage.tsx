@@ -62,14 +62,20 @@ const UserPreferencePage: React.FC = () => {
   const [activeTabId, setActiveTabId] = useState<string>(initialTabId);
 
   const [userPreferenceTabs, userPreferenceTabContents] = useMemo<
-    [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]]
+    [
+      React.ReactElement<TabProps, React.JSXElementConstructor<TabProps>>[],
+      React.ReactElement<TabContentProps>[],
+    ]
   >(() => {
     const populatedUserPreferenceGroups: UserPreferenceTabGroup[] = getUserPreferenceGroups(
       sortedUserPreferenceGroups,
       sortedUserPreferenceItems,
     );
     const [tabs, tabContents] = populatedUserPreferenceGroups.reduce<
-      [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]]
+      [
+        React.ReactElement<TabProps, React.JSXElementConstructor<TabProps>>[],
+        React.ReactElement<TabContentProps>[],
+      ]
     >(
       (acc, currGroup) => {
         const { id, label, items } = currGroup;
@@ -151,7 +157,7 @@ const UserPreferencePage: React.FC = () => {
                 variant="secondary"
                 data-test="user-preferences tabs"
               >
-                <>{userPreferenceTabs}</>
+                {userPreferenceTabs}
               </Tabs>
             </div>
             <div className="co-user-preference-page-content__tab-content">

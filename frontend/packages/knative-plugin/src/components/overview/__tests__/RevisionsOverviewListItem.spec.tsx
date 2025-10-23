@@ -3,7 +3,6 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 import RevisionsOverviewListItem from '../RevisionsOverviewListItem';
-import '@testing-library/jest-dom';
 
 jest.mock('victory', () => ({
   createContainer: jest.fn(() => jest.fn()),

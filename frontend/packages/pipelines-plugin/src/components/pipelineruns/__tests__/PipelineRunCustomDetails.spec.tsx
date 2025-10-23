@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { configure, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import store from '@console/internal/redux';
@@ -9,8 +9,6 @@ import {
   pipelineTestData,
 } from '../../../test-data/pipeline-data';
 import PipelineRunCustomDetails from '../detail-page-tabs/PipelineRunCustomDetails';
-
-configure({ testIdAttribute: 'data-test' });
 
 type PipelineRunCustomDetailsProps = React.ComponentProps<typeof PipelineRunCustomDetails>;
 

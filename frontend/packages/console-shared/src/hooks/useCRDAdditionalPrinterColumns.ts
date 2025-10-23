@@ -6,22 +6,24 @@ import {
   K8sModel,
 } from '@console/internal/module/k8s';
 
-export const useCRDAdditionalPrinterColumns = (model: K8sModel): CRDAdditionalPrinterColumn[] => {
+export const useCRDAdditionalPrinterColumns = (
+  model: K8sModel,
+): [CRDAdditionalPrinterColumn[], boolean] => {
   const [CRDAPC, setCRDAPC] = useState<CRDAdditionalPrinterColumns>({});
-  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     coFetchJSON(`/api/console/crd-columns/${model.plural}.${model.apiGroup}`)
       .then((response) => {
         setCRDAPC(response);
-        setLoading(false);
+        setLoaded(true);
       })
       .catch((e) => {
-        setLoading(false);
+        setLoaded(false);
         // eslint-disable-next-line no-console
         console.log(e.message);
       });
   }, [model.plural, model.apiGroup]);
 
-  return !loading ? CRDAPC?.[model.apiVersion] ?? [] : [];
+  return [CRDAPC?.[model.apiVersion] ?? [], loaded];
 };

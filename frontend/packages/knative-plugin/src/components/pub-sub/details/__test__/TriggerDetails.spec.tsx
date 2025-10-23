@@ -2,7 +2,6 @@ import { render } from '@testing-library/react';
 import * as _ from 'lodash';
 import { triggerData } from '../../../../utils/__tests__/knative-eventing-data';
 import TriggerDetails from '../TriggerDetails';
-import '@testing-library/jest-dom';
 
 jest.mock('../DynamicResourceLink', () => ({
   __esModule: true,

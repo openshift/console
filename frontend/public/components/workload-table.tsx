@@ -2,7 +2,7 @@ import * as React from 'react';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { Link } from 'react-router-dom-v5-compat';
-import { K8sResourceKind } from '../module/k8s';
+import { K8sResourceKind, referenceForModel } from '../module/k8s';
 import { TableData } from './factory';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -15,6 +15,19 @@ import {
   resourcePath,
   Selector,
 } from './utils';
+import { DASH, LazyActionMenu } from '@console/shared';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import {
+  ResourceDataViewColumn,
+  ResourceDataViewRow,
+} from '@console/app/src/components/data-view/types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 const tableColumnClasses = [
   '',
@@ -115,3 +128,142 @@ export const WorkloadTableHeader = () => {
   ];
 };
 WorkloadTableHeader.displayName = 'WorkloadTableHeader';
+
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'status' },
+  { id: 'labels' },
+  { id: 'selector' },
+  { id: '' },
+];
+
+export const ReplicasCount: React.FCC<ReplicasCountProps> = ({ obj, kind }) => {
+  const { t } = useTranslation();
+  return (
+    <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">
+      {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
+        statusReplicas: obj.status.replicas || 0,
+        specReplicas: obj.spec.replicas,
+      })}
+    </Link>
+  );
+};
+
+export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
+  data: RowProps<T, any>[],
+  columns: ResourceDataViewColumn<T>[],
+  model: K8sModel,
+): ResourceDataViewRow[] => {
+  return data.map(({ obj }) => {
+    const { name, namespace } = obj.metadata;
+    const resourceKind = referenceForModel(model);
+    const context = { [resourceKind]: obj };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <span className="co-resource-item">
+            <ResourceLink
+              groupVersionKind={getGroupVersionKindForModel(model)}
+              name={name}
+              namespace={namespace}
+            />
+          </span>
+        ),
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <ReplicasCount obj={obj} kind={resourceKind} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <LabelList kind={resourceKind} labels={obj.metadata.labels} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
+};
+
+export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[] => {
+  const { t } = useTranslation();
+  const columns = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Status'),
+        id: tableColumnInfo[2].id,
+        sort: 'status.replicas',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Labels'),
+        id: tableColumnInfo[3].id,
+        sort: 'metadata.labels',
+        props: {
+          modifier: 'nowrap',
+          width: 20,
+        },
+      },
+      {
+        title: t('public~Pod selector'),
+        id: tableColumnInfo[4].id,
+        sort: 'spec.selector',
+        props: {
+          modifier: 'nowrap',
+          width: 20,
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[5].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
+};
+
+type ReplicasCountProps = {
+  obj: K8sResourceKind;
+  kind: string;
+};

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { keywordCompare } from './catalog-utils';
-import { CatalogFilter, CatalogFilterCounts, CatalogFilters } from './types';
+import { sortCatalogItems } from './catalog-utils';
+import { CatalogFilter, CatalogFilterCounts, CatalogFilters, CatalogSortOrder } from './types';
 
 export const filterByGroup = (
   items: CatalogItem[],
@@ -61,8 +61,9 @@ export const filterByAttributes = (
 export const filterBySearchKeyword = (
   items: CatalogItem[],
   searchKeyword: string,
+  sortOrder: CatalogSortOrder = CatalogSortOrder.RELEVANCE,
 ): CatalogItem[] => {
-  return keywordCompare(searchKeyword, items);
+  return sortCatalogItems(items, sortOrder, searchKeyword);
 };
 
 export const filterByCategory = (

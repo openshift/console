@@ -42,8 +42,6 @@
     "test-cypress-telemetry-headless": "cd packages/console-telemetry-plugin/integration-tests && yarn run test-cypress-headless",
     "test-cypress-telemetry-nightly": "cd packages/console-telemetry-plugin/integration-tests && yarn run test-cypress-headless-all",
     "test-cypress-telemetry": "cd packages/console-telemetry-plugin/integration-tests && yarn run test-cypress",
-    "test-cypress-gitops": "cd packages/gitops-plugin/integration-tests && yarn run test-cypress",
-    "test-cypress-gitops-headless": "cd packages/gitops-plugin/integration-tests && yarn run test-cypress-headless",
     "test-cypress-knative": "cd packages/knative-plugin/integration-tests && yarn run test-cypress",
     "test-cypress-knative-headless": "cd packages/knative-plugin/integration-tests && yarn run test-cypress-headless",
     "test-cypress-knative-nightly": "cd packages/knative-plugin/integration-tests && yarn run test-cypress-headless-all",
@@ -118,6 +116,7 @@
       "./__mocks__/websocket.js",
       "./before-tests.js"
     ],
+    "setupTestFrameworkScriptFile": "<rootDir>/setup-tests.js",
     "coverageDirectory": "__coverage__",
     "coverageReporters": [
       "json",
@@ -153,7 +152,7 @@
     "@patternfly/react-topology": "^6.2.0",
     "@patternfly/react-user-feedback": "^6.1.0",
     "@patternfly/react-virtualized-extension": "^6.0.0",
-    "@rjsf/core": "^2.5.1",
+    "@rjsf/core": "^4.2.3",
     "@xterm/addon-fit": "0.10.0",
     "@xterm/xterm": "^5.5.0",
     "ajv": "^6.12.3",

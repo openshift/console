@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
-import { configure, render, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
@@ -36,8 +36,6 @@ const mockImageStream = (props) => (
 jest.mock('../../../import/image-search/ImageStream', () => ({
   default: (props) => mockImageStream(props),
 }));
-
-configure({ testIdAttribute: 'data-test' });
 
 const Wrapper: React.FC<FormikConfig<ImagesSectionFormData>> = ({ children, ...formikConfig }) => (
   <Provider store={store}>

@@ -57,11 +57,7 @@ class FileInputWithTranslation extends Component<FileInputProps, FileInputState>
           </label>
           <div className="modal-body__field">
             <div className="pf-v6-c-input-group">
-              <span
-                id={id}
-                data-testid={`${id}-text`}
-                className="pf-v6-c-form-control pf-m-readonly"
-              >
+              <span id={id} data-test={`${id}-text`} className="pf-v6-c-form-control pf-m-readonly">
                 <input
                   type="text"
                   id={id}
@@ -73,7 +69,7 @@ class FileInputWithTranslation extends Component<FileInputProps, FileInputState>
               </span>
               <span
                 id={id}
-                data-testid={`${id}-file`}
+                data-test={`${id}-file`}
                 className="pf-v6-c-button pf-m-control co-btn-file"
               >
                 <input
@@ -93,7 +89,7 @@ class FileInputWithTranslation extends Component<FileInputProps, FileInputState>
             ) : null}
             {!hideContents && (
               <span
-                data-testid={`${id}-textarea`}
+                data-test={`${id}-textarea`}
                 className="pf-v6-c-form-control pf-m-resize-vertical pf-v6-u-mt-sm"
               >
                 <textarea

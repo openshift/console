@@ -1,10 +1,7 @@
-import { configure, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useFormikContext } from 'formik';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import DeploymentConfigSection from '../DeploymentConfigSection';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('react-i18next', () => ({
   __esModule: true,

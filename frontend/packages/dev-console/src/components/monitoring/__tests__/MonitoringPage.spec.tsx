@@ -1,10 +1,7 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
 import * as rbacModule from '@console/internal/components/utils/rbac';
 import { PageContents } from '../MonitoringPage';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/internal/module/k8s', () => ({
   k8sCreate: jest.fn(),

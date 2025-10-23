@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+import { cleanup } from '@testing-library/react';
 import { AddBasicAuthPage } from '../../cluster-settings/basicauth-idp-form';
 import {
   renderWithProviders,
@@ -13,12 +13,16 @@ import {
 } from './test-utils';
 
 describe('Add Identity Provider: Basic Authentication', () => {
+  beforeAll(() => {
+    setupFileReaderMock();
+  });
+
   beforeEach(() => {
     renderWithProviders(<AddBasicAuthPage />);
   });
 
-  beforeAll(() => {
-    setupFileReaderMock();
+  afterEach(() => {
+    cleanup();
   });
 
   afterAll(() => {

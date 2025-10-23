@@ -222,6 +222,8 @@ export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj 
           kinds={['Pods']}
           ListComponent={PodList}
           rowFilters={podFilters}
+          hideColumnManagement={true}
+          omitFilterToolbar={true}
         />
       </Firehose>
     </PaneBody>
@@ -246,6 +248,8 @@ export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj 
         }}
         kinds={['Jobs']}
         ListComponent={JobsList}
+        hideColumnManagement={true}
+        omitFilterToolbar={true}
       />
     </Firehose>
   </PaneBody>
