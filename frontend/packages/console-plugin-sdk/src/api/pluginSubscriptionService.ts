@@ -136,8 +136,7 @@ export const getPluginStore = (): PluginStore => {
  *
  * _Tip: need to access extensions in a React component?_
  * - **Yes**
- *   - Functional components: use `useExtensions` hook.
- *   - Class components: use `withExtensions` higher-order component.
+ *   - Use `useExtensions` hook.
  * - **No**
  *   - Use `subscribeToExtensions` function.
  *

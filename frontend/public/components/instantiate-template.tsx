@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -23,11 +22,11 @@ import { CompressIcon, ExpandIcon } from '@patternfly/react-icons/dist/js/icons'
 /* eslint-disable import/named */
 import { useTranslation } from 'react-i18next';
 
-import { ANNOTATIONS, withActivePerspective } from '@console/shared';
+import { ANNOTATIONS } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
-import { withExtensions } from '@console/plugin-sdk';
+import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import {
   getTemplateIcon,
@@ -44,7 +43,6 @@ import {
   TemplateParameter,
 } from '../module/k8s';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { RootState } from '../redux';
 
 const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ template }) => {
   const resources = _.uniq(_.compact(_.map(template.objects, 'kind'))).sort();
@@ -136,10 +134,6 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
 };
 TemplateInfo.displayName = 'TemplateInfo';
 
-const stateToProps = (state: RootState) => ({
-  models: state.k8s.getIn(['RESOURCES', 'models']),
-});
-
 const TemplateFormField: React.FC<TemplateFormFieldProps> = ({
   name,
   value,
@@ -202,9 +196,11 @@ const TemplateFormField: React.FC<TemplateFormFieldProps> = ({
   );
 };
 
-const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
-  const { preselectedNamespace: ns = '', activePerspective, perspectiveExtensions, obj } = props;
+export const TemplateForm: React.FC<TemplateFormProps> = (props) => {
+  const { preselectedNamespace: ns = '', obj } = props;
 
+  const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const [activePerspective] = useActivePerspective();
   const [namespace, setNamespace] = React.useState(ns);
   const [parameters, setParameters] = React.useState([]);
   const [inProgress, setInProgress] = React.useState(false);
@@ -387,12 +383,6 @@ const TemplateForm_: React.FC<TemplateFormProps> = (props) => {
   );
 };
 
-const TemplateForm = connect(stateToProps)(
-  withExtensions<ExtensionsProps>({ perspectiveExtensions: isPerspective })(
-    withActivePerspective<TemplateFormProps>(TemplateForm_),
-  ),
-);
-
 export const InstantiateTemplatePage: React.FC<{}> = (props) => {
   const title = 'Instantiate Template';
   const location = useLocation();
@@ -431,15 +421,9 @@ type TemplateInfoProps = {
   template: TemplateKind;
 };
 
-type ExtensionsProps = {
-  perspectiveExtensions: Perspective[];
-};
-
-type TemplateFormProps = ExtensionsProps & {
+type TemplateFormProps = {
   obj: any;
   preselectedNamespace: string;
-  models: any;
-  activePerspective: string;
 };
 
 type TemplateFormFieldProps = {
