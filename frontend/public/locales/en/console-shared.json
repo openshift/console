@@ -1,4 +1,5 @@
 {
+  "View all events": "View all events",
   "Actions": "Actions",
   "An error occurred": "An error occurred",
   "Note: Some fields may not be represented in this form view. Please select \"YAML view\" for full control.": "Note: Some fields may not be represented in this form view. Please select \"YAML view\" for full control.",
@@ -34,7 +35,6 @@
   "No resources found": "No resources found",
   "Started": "Started",
   "There are no recent events.": "There are no recent events.",
-  "View all events": "View all events",
   "Resume": "Resume",
   "Pause": "Pause",
   "Recent events": "Recent events",
@@ -44,7 +44,7 @@
   "{{count}} resource_one": "{{count}} resource",
   "{{count}} resource_other": "{{count}} resources",
   "{{count}} resource reached quota_one": "{{count}} resource reached quota",
-  "{{count}} resource reached quota_other": "{{count}} resources reached quota",
+  "{{count}} resource reached quota_other": "{{count}} resource reached quotas",
   "none are at quota": "none are at quota",
   "No ResourceQuotas": "No ResourceQuotas",
   "Go to documentation": "Go to documentation",

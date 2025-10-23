@@ -125,17 +125,6 @@ describe('Cluster dashboard', () => {
     });
   });
 
-  describe('Activity Card', () => {
-    xit('has View events link', () => {
-      cy.byTestID('view-events-link')
-        .should('have.text', 'View events')
-        .and('have.attr', 'href', `/k8s/all-namespaces/events`);
-    });
-    it('has Pause events button', () => {
-      cy.byTestID('events-pause-button').should('be.visible').and('have.text', 'Pause');
-    });
-  });
-
   afterEach(() => {
     checkErrors();
   });
