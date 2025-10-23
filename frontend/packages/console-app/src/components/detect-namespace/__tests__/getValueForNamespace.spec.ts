@@ -34,7 +34,12 @@ describe('getValueForNamespace', () => {
     checkNamespaceExistsMock
       .mockReturnValueOnce(Promise.resolve(false))
       .mockReturnValueOnce(Promise.resolve(true));
-    const namespace = await getValueForNamespace(preferredNamespace, lastNamespace, true);
+    const namespace = await getValueForNamespace(
+      preferredNamespace,
+      lastNamespace,
+      true,
+      activeNamespace,
+    );
 
     expect(namespace).toEqual(preferredNamespace);
   });
@@ -45,7 +50,12 @@ describe('getValueForNamespace', () => {
       .mockReturnValueOnce(Promise.resolve(false))
       .mockReturnValueOnce(Promise.resolve(true));
 
-    const namespace = await getValueForNamespace(preferredNamespace, lastNamespace, true);
+    const namespace = await getValueForNamespace(
+      preferredNamespace,
+      lastNamespace,
+      true,
+      activeNamespace,
+    );
 
     expect(namespace).toEqual(lastNamespace);
   });
@@ -56,7 +66,12 @@ describe('getValueForNamespace', () => {
       .mockReturnValueOnce(Promise.resolve(false))
       .mockReturnValueOnce(Promise.resolve(false));
 
-    const namespace = await getValueForNamespace(preferredNamespace, lastNamespace, true);
+    const namespace = await getValueForNamespace(
+      preferredNamespace,
+      lastNamespace,
+      true,
+      activeNamespace,
+    );
 
     expect(namespace).toEqual(ALL_NAMESPACES_KEY);
   });
