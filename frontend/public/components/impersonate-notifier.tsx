@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Banner, Flex, Button, Tooltip } from '@patternfly/react-core';
@@ -24,15 +24,15 @@ export const ImpersonateNotifier = connect(
     const { t } = useTranslation();
 
     // Memory leak prevention - track component mount state
-    const isMountedRef = React.useRef(true);
-    React.useEffect(() => {
+    const isMountedRef = useRef(true);
+    useEffect(() => {
       return () => {
         isMountedRef.current = false;
       };
     }, []);
 
     // Safe handler to prevent memory leaks
-    const handleStopImpersonate = React.useCallback(() => {
+    const handleStopImpersonate = useCallback(() => {
       stopImpersonate();
       // Use window.location to avoid React state updates on unmounted component
       setTimeout(() => {
@@ -64,12 +64,12 @@ export const ImpersonateNotifier = connect(
 
     const groupsElement = hasGroups ? (
       <>
-        {' with groups: '}
+        {t('public~ with groups: ')}
         <strong>
           {visibleGroups.join(', ')}
           {remainingCount > 0 && (
             <>
-              {', and '}
+              {t('public~, and ')}
               <Tooltip
                 content={
                   <div>
@@ -79,15 +79,13 @@ export const ImpersonateNotifier = connect(
                   </div>
                 }
               >
-                <span
-                  style={{
-                    textDecorationLine: 'underline',
-                    textDecorationStyle: 'dotted',
-                    cursor: 'help',
-                  }}
+                <Button
+                  variant="link"
+                  isInline
+                  className="pf-v6-u-text-decoration-underline-dotted"
                 >
-                  {remainingCount} more
-                </span>
+                  {t('public~{{count}} more', { count: remainingCount })}
+                </Button>
               </Tooltip>
             </>
           )}
@@ -103,9 +101,12 @@ export const ImpersonateNotifier = connect(
           gap={{ default: 'gapSm' }}
         >
           <div>
-            You're impersonating {displayKind} <strong>{impersonateName}</strong>
-            {groupsElement}. You're viewing all resources and roles this {displayKindForAccess} can
-            access.{' '}
+            {t('public~You are impersonating {{kind}} ', { kind: displayKind })}
+            <strong>{impersonateName}</strong>
+            {groupsElement}
+            {t('public~. You are viewing all resources and roles this {{kind}} can access. ', {
+              kind: displayKindForAccess,
+            })}
             <Button
               isInline
               type="button"
@@ -113,7 +114,7 @@ export const ImpersonateNotifier = connect(
               style={{ color: 'inherit' }}
               onClick={handleStopImpersonate}
             >
-              Stop impersonating
+              {t('public~Stop impersonating')}
             </Button>
           </div>
         </Flex>

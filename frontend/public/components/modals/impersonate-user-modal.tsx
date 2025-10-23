@@ -31,6 +31,8 @@ import { TimesIcon } from '@patternfly/react-icons/dist/esm/icons/times-icon';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import { FieldLevelHelp } from '../utils/field-level-help';
 
+const SELECT_ALL_KEY = '__select_all__';
+
 export interface ImpersonateUserModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -57,8 +59,6 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   // Show first 5 groups, then +N badge (unless expanded)
   const MAX_VISIBLE_CHIPS = 5;
 
-  // TODO: Replace with actual API call to fetch available groups
-  // This is temporary mock data for development/testing purposes
   const availableGroups = useMemo(
     () => [
       'developers',
@@ -122,7 +122,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     const group = value as string;
 
     // Handle "Select all" option
-    if (group === '__select_all__') {
+    if (group === SELECT_ALL_KEY) {
       handleSelectAll();
       return;
     }
@@ -286,7 +286,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
             <Select
               id="impersonate-groups"
               isOpen={isGroupSelectOpen}
-              onOpenChange={(open) => setIsGroupSelectOpen(open)}
+              onOpenChange={setIsGroupSelectOpen}
               onSelect={handleGroupSelect}
               toggle={toggle}
               isScrollable
@@ -302,8 +302,8 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
                 ) : (
                   <>
                     <SelectOption
-                      key="__select_all__"
-                      value="__select_all__"
+                      key={SELECT_ALL_KEY}
+                      value={SELECT_ALL_KEY}
                       isSelected={areAllFilteredGroupsSelected}
                     >
                       {t('public~Select all')}
@@ -323,7 +323,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
             </Select>
 
             {selectedGroups.length > 0 && (
-              <Flex spaceItems={{ default: 'spaceItemsSm' }} className="pf-v5-u-mt-sm">
+              <Flex spaceItems={{ default: 'spaceItemsSm' }} className="pf-v6-u-mt-sm">
                 {visibleGroups.map((group) => (
                   <FlexItem key={group}>
                     <Label onClose={() => handleGroupRemove(group)} color="blue">
@@ -333,11 +333,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
                 ))}
                 {!showAllGroups && remainingCount > 0 && (
                   <FlexItem>
-                    <Label
-                      color="grey"
-                      className="pf-v5-u-cursor-pointer"
-                      onClick={() => setShowAllGroups(true)}
-                    >
+                    <Label color="grey" isClickable onClick={() => setShowAllGroups(true)}>
                       +{remainingCount}
                     </Label>
                   </FlexItem>

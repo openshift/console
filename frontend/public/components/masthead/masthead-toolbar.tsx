@@ -188,8 +188,8 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
   const reportBugLink = cv ? getReportBugLink(cv) : null;
   const userInactivityTimeout = useRef(null);
   // Show impersonated user if active, otherwise show actual user
-  const username = impersonate?.name || user?.username || '';
-  const isKubeAdmin = (user?.username ?? '') === 'kube:admin';
+  const username = impersonate?.name ?? user?.username ?? '';
+  const isKubeAdmin = user?.username === 'kube:admin';
 
   const drawerToggle = useCallback(() => dispatch(UIActions.notificationDrawerToggleExpanded()), [
     dispatch,
