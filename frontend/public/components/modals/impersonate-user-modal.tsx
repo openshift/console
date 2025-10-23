@@ -30,6 +30,9 @@ import {
 import { TimesIcon } from '@patternfly/react-icons/dist/esm/icons/times-icon';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import { FieldLevelHelp } from '../utils/field-level-help';
+import { useK8sWatchResource } from '../utils/k8s-watch-hook';
+import { GroupModel } from '../../models';
+import { GroupKind } from '../../module/k8s';
 
 const SELECT_ALL_KEY = '__select_all__';
 
@@ -59,29 +62,23 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   // Show first 5 groups, then +N badge (unless expanded)
   const MAX_VISIBLE_CHIPS = 5;
 
-  const availableGroups = useMemo(
-    () => [
-      'developers',
-      'test-group-1',
-      'test-group-2',
-      'test-group-3',
-      'admins',
-      'monitoring',
-      'operators',
-      'viewers',
-      'editors',
-      'system:authenticated',
-      'system:unauthenticated',
-      'system:serviceaccounts',
-      'system:serviceaccounts:kube-system',
-      'system:serviceaccounts:openshift-kube-apiserver',
-      'system:serviceaccounts:openshift-kube-controller-manager',
-      'system:serviceaccounts:openshift-kube-scheduler',
-      'system:serviceaccounts:openshift-kube-proxy',
-      'system:serviceaccounts:openshift-kube-router',
-    ],
-    [],
-  );
+  // Fetch available groups from the cluster
+  const [groups, groupsLoaded, groupsLoadError] = useK8sWatchResource<GroupKind[]>({
+    groupVersionKind: {
+      group: GroupModel.apiGroup,
+      version: GroupModel.apiVersion,
+      kind: GroupModel.kind,
+    },
+    isList: true,
+  });
+
+  // Extract group names from the API response
+  const availableGroups = useMemo(() => {
+    if (!groupsLoaded || groupsLoadError) {
+      return [];
+    }
+    return groups.map((group) => group.metadata.name).sort();
+  }, [groups, groupsLoaded, groupsLoadError]);
 
   const handleClose = useCallback(() => {
     setUsername(prefilledUsername);
