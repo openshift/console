@@ -1,5 +1,4 @@
-// triple slash directive gets formatted incorrectly by prettier
-// eslint-disable-next-line
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference, spaced-comment
 /// <reference types="webpack/module" />
 
 const SHARED_SCOPE_NAME = 'default';

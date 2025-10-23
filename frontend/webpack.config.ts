@@ -48,8 +48,8 @@ const extractCSS = new MiniCssExtractPlugin({
 const getVendorModuleRegExp = (vendorModules: string[]) =>
   new RegExp(`node_modules\\/(${vendorModules.map(_.escapeRegExp).join('|')})\\/`);
 
-/** Rewrite SDK imports within console to point to their real location */
-const updateSdkImports = (moduleName: string) => {
+/** Custom hook to rewrite Console provided shared module imports as needed */
+const getSharedModuleImport = (moduleName: string) => {
   switch (moduleName) {
     case '@openshift-console/dynamic-plugin-sdk':
       return '@console/dynamic-plugin-sdk/src/lib-core';
@@ -60,16 +60,18 @@ const updateSdkImports = (moduleName: string) => {
   }
 };
 
-const sharedPluginModulesTest = getVendorModuleRegExp(sharedPluginModules.map(updateSdkImports));
+const sharedPluginModulesTest = getVendorModuleRegExp(
+  sharedPluginModules.map(getSharedModuleImport),
+);
 
 // Shared modules provided by Console application to all dynamic plugins
 // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
 const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObject>(
   (acc, moduleName) => {
-    const { singleton, version } = getSharedModuleMetadata(moduleName);
-    const moduleConfig: WebpackSharedConfig = { singleton, eager: true, version };
+    const { singleton } = getSharedModuleMetadata(moduleName);
+    const moduleConfig: WebpackSharedConfig = { singleton, eager: true };
 
-    moduleConfig.import = updateSdkImports(moduleName);
+    moduleConfig.import = getSharedModuleImport(moduleName);
 
     acc[moduleName] = moduleConfig;
     return acc;

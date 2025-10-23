@@ -172,7 +172,7 @@ describe('window.loadPluginEntry', () => {
   beforeEach(() => {
     /* eslint-disable no-underscore-dangle */
     global.__webpack_init_sharing__ = jest.fn(() => Promise.resolve());
-    // @ts-expect-error: it's in the global scope but not defined by webpack ts
+    // @ts-expect-error - incorrectly defined webpack global (should use declare var)
     global.__webpack_share_scopes__ = { default: {} };
     /* eslint-enable no-underscore-dangle */
   });
@@ -260,7 +260,7 @@ describe('window.loadPluginEntry', () => {
     expect(addDynamicPlugin).toHaveBeenCalledTimes(1);
   });
 
-  xit('does nothing if overriding shared modules throws an error', () => {
+  it('does nothing if entry module init function throws an error', () => {
     const pluginStore = new PluginStore();
     const addDynamicPlugin = jest.spyOn(pluginStore, 'addDynamicPlugin');
 
@@ -271,6 +271,10 @@ describe('window.loadPluginEntry', () => {
     const resolveEncodedCodeRefs = jest.fn(() => []);
 
     pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
+
+    entryModule.init.mockImplementation(() => {
+      throw new Error('boom');
+    });
 
     getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs)('Test@1.2.3', entryModule);
 

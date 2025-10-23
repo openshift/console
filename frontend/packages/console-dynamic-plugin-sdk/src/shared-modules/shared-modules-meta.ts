@@ -16,20 +16,6 @@ type SharedModuleMetadata = Partial<{
    * @default false
    */
   allowFallback: boolean;
-
-  /**
-   * Version of the provided module. Will replace lower matching versions, but not higher.
-   *
-   * If not specified, the provided shared module version will be determined by
-   * webpack based on some unspecified heuristics.
-   *
-   * This is useful when there are multiple versions of the same module in the
-   * host application's `node_modules` and you want to ensure that a specific
-   * version is shared with dynamic plugins.
-   *
-   * @default undefined
-   */
-  version: string;
 }>;
 
 /**
@@ -74,10 +60,6 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
 export const getSharedModuleMetadata = (
   moduleName: SharedModuleNames,
 ): Required<SharedModuleMetadata> => {
-  const {
-    singleton = true,
-    allowFallback = false,
-    version = undefined,
-  } = sharedPluginModulesMetadata[moduleName];
-  return { singleton, allowFallback, version };
+  const { singleton = true, allowFallback = false } = sharedPluginModulesMetadata[moduleName];
+  return { singleton, allowFallback };
 };
