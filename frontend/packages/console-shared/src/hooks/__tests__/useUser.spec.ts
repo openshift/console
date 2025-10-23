@@ -19,11 +19,16 @@ jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
 }));
 
+const mockSetUserResource = jest.fn((userResource) => ({
+  type: 'setUserResource',
+  payload: { userResource },
+}));
+
 jest.mock('@console/dynamic-plugin-sdk', () => ({
   ...jest.requireActual('@console/dynamic-plugin-sdk'),
   getUser: jest.fn(),
   getUserResource: jest.fn(),
-  setUserResource: jest.fn(),
+  setUserResource: (...args) => mockSetUserResource(...args),
 }));
 
 const mockDispatch = jest.fn();
@@ -96,7 +101,7 @@ describe('useUser', () => {
 
     const { result } = testHook(() => useUser());
 
-    expect(result.current.displayName).toBe('Unknown User'); // Should fallback to translated "Unknown user"
+    expect(result.current.displayName).toBe('Unknown user'); // Should fallback to translated "Unknown user"
   });
 
   it('should trim whitespace from fullName and username', () => {
