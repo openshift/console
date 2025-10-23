@@ -18,7 +18,7 @@ import {
   isUserPreferenceItem,
 } from '@console/dynamic-plugin-sdk';
 import { LoadingBox, history } from '@console/internal/components/utils';
-import { useExtensions } from '@console/plugin-sdk/src';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   isModifiedEvent,
   orderExtensionBasedOnInsertBeforeAndAfter,

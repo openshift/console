@@ -10,8 +10,8 @@ import { ErrorBoundary } from '@console/shared/src/components/error';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '../../../../module/k8s';
 import { AsyncComponent } from '../../../utils';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  useExtensions,
   DashboardsOverviewInventoryItem,
   DashboardsOverviewInventoryItemReplacement,
   isDashboardsOverviewInventoryItem,

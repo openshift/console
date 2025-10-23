@@ -14,8 +14,8 @@ import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  useExtensions,
   DashboardsOverviewResourceActivity,
   isDashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ChartDonut } from '@patternfly/react-charts/victory';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   isPVCAlert,
   isPVCCreateProp,
