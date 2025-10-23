@@ -3,14 +3,14 @@ import {
   impersonateStateToProps,
   useSafetyFirst,
 } from '@console/dynamic-plugin-sdk';
-import { Dropdown, MenuToggle, MenuToggleElement } from '@patternfly/react-core';
+import { Button, Dropdown, MenuToggle, MenuToggleElement } from '@patternfly/react-core';
 import { some } from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
 
 import { ReactNode, RefObject, useEffect, useState } from 'react';
-import { KebabItems, KebabOption } from './kebab';
+import { KebabItem, KebabItems, KebabOption } from './kebab';
 import { checkAccess } from './rbac';
 
 type ActionsMenuProps = {
@@ -18,10 +18,16 @@ type ActionsMenuProps = {
   title?: ReactNode;
 };
 
-const ActionsMenuDropdown = (props) => {
+type ActionsMenuDropdownProps = {
+  actions: KebabOption[];
+  title?: ReactNode;
+  active?: boolean;
+};
+
+const ActionsMenuDropdown: React.FCC<ActionsMenuDropdownProps> = ({ actions, title, active }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [active, setActive] = useState(!!props.active);
+  const [isActive, setIsActive] = useState(!!active);
 
   const onClick = (event, option) => {
     event.preventDefault();
@@ -34,14 +40,22 @@ const ActionsMenuDropdown = (props) => {
       navigate(option.href);
     }
 
-    setActive(false);
+    setIsActive(false);
   };
+
+  if (actions.length === 0) {
+    return null;
+  }
+
+  if (actions.length === 1) {
+    return <KebabItem option={actions[0]} onClick={onClick} Component={Button} />;
+  }
 
   return (
     <Dropdown
-      isOpen={active}
-      onSelect={() => setActive(false)}
-      onOpenChange={setActive}
+      isOpen={isActive}
+      onSelect={() => setIsActive(false)}
+      onOpenChange={setIsActive}
       shouldFocusToggleOnSelect
       popperProps={{
         enableFlip: true,
@@ -50,15 +64,15 @@ const ActionsMenuDropdown = (props) => {
       toggle={(toggleRef: RefObject<MenuToggleElement>) => (
         <MenuToggle
           ref={toggleRef}
-          onClick={() => setActive(!active)}
+          onClick={() => setIsActive(!active)}
           isExpanded={active}
           data-test-id="actions-menu-button"
         >
-          {props.title || t('public~Actions')}
+          {title || t('public~Actions')}
         </MenuToggle>
       )}
     >
-      <KebabItems options={props.actions} onClick={onClick} />
+      <KebabItems options={actions} onClick={onClick} />
     </Dropdown>
   );
 };
