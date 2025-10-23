@@ -9,7 +9,7 @@ import {
   matchRoutes,
 } from 'react-router-dom-v5-compat';
 import { useActivePerspective, Perspective } from '@console/dynamic-plugin-sdk';
-import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { FLAGS, useUserSettings, getPerspectiveVisitedKey, usePerspectives } from '@console/shared';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
@@ -149,7 +149,7 @@ const HorizontalPodRedirect = () => {
 };
 
 const AppContents: React.FC<{}> = () => {
-  const [, allPluginsProcessed] = useDynamicPluginInfo();
+  const [, allPluginsProcessed] = usePluginInfo();
   const location = useLocation();
   const [pluginPageRoutes, inactivePluginPageRoutes] = usePluginRoutes();
 

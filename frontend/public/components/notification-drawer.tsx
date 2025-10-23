@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
 import {
   isNotLoadedDynamicPluginInfo,
-  useDynamicPluginInfo,
+  usePluginInfo,
   DynamicPluginInfo,
 } from '@console/plugin-sdk';
 import * as UIActions from '@console/internal/actions/ui';
@@ -244,7 +244,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   const { t } = useTranslation();
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
-  const [pluginInfoEntries] = useDynamicPluginInfo();
+  const [pluginInfoEntries] = usePluginInfo();
   const dispatch = useDispatch();
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();

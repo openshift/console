@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion, BlueArrowCircleUpIcon, useCanClusterUpgrade } from '@console/shared';
 import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
-import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { getBrandingDetails, MASTHEAD_TYPE, useCustomLogoURL } from './utils/branding';
 import {
   ReleaseNotesLink,
@@ -31,7 +31,7 @@ import redHatFedoraWatermarkImg from '../imgs/red-hat-fedora-watermark.svg';
 
 const DynamicPlugins: React.FC = () => {
   const { t } = useTranslation();
-  const [pluginInfoEntries] = useDynamicPluginInfo();
+  const [pluginInfoEntries] = usePluginInfo();
   const [items, setItems] = React.useState([]);
 
   React.useEffect(() => {

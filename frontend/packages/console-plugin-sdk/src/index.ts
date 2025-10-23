@@ -5,5 +5,5 @@ export * from './store';
 // React integrations
 export * from './api/useExtensions';
 export * from './api/withExtensions';
-export * from './api/useDynamicPluginInfo';
+export * from './api/usePluginInfo';
 export * from './api/usePluginStore';
