@@ -28,6 +28,10 @@ jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => jest.fn(),
+}));
+
 // Workaround because getting-started exports also QuickStartGettingStartedCard
 jest.mock(
   '@console/app/src/components/quick-starts/loader/QuickStartsLoader',
