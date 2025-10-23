@@ -43,7 +43,8 @@ import {
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
-import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {
   ResourceListPage as DynamicResourceListPage,
   isResourceListPage as isDynamicResourceListPage,

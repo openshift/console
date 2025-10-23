@@ -10,7 +10,8 @@ import {
   referenceForExtensionModel,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { LoadedExtension, useExtensions } from '@console/plugin-sdk/src';
+import { LoadedExtension } from '@console/plugin-sdk/src';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../extensions/topology';
 import DataModelExtension from './DataModelExtension';
 import { ModelContext, ExtensibleModel } from './ModelContext';

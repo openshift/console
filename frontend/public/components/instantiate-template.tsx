@@ -26,7 +26,7 @@ import { ANNOTATIONS } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import {
   getTemplateIcon,

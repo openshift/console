@@ -1,5 +1,5 @@
 import { screen, act } from '@testing-library/react';
-import { useExtensions } from '@console/plugin-sdk/src';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import PreferredPerspectiveSelect from '../PreferredPerspectiveSelect';
 import { usePreferredPerspective } from '../usePreferredPerspective';

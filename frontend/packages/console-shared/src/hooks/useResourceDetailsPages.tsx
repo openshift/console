@@ -4,7 +4,8 @@ import {
   isResourceDetailsPage as isDynamicResourceDetailsPage,
 } from '@console/dynamic-plugin-sdk/src';
 import { getResourceDetailsPages } from '@console/internal/components/resource-pages';
-import { isResourceDetailsPage, ResourceDetailsPage, useExtensions } from '@console/plugin-sdk/src';
+import { isResourceDetailsPage, ResourceDetailsPage } from '@console/plugin-sdk/src';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 
 export const useResourceDetailsPages = () => {
   const resourceDetailsPageExtensions = useExtensions<ResourceDetailsPage>(isResourceDetailsPage);

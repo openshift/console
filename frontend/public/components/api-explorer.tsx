@@ -65,7 +65,8 @@ import {
   ScrollToTopOnMount,
   setQueryArgument,
 } from './utils';
-import { isResourceListPage, useExtensions, ResourceListPage } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {
   ResourceListPage as DynamicResourceListPage,
   isResourceListPage as isDynamicResourceListPage,
