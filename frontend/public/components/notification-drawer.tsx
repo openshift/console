@@ -4,11 +4,8 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useDispatch } from 'react-redux';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
-import {
-  isNotLoadedDynamicPluginInfo,
-  usePluginInfo,
-  DynamicPluginInfo,
-} from '@console/plugin-sdk';
+import { isNotLoadedDynamicPluginInfo, DynamicPluginInfo } from '@console/plugin-sdk';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import * as UIActions from '@console/internal/actions/ui';
 import { resourcePath } from '@console/internal/components/utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
