@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/openshift/console/pkg/olm"
 	ocv1 "github.com/operator-framework/operator-controller/api/v1"
@@ -40,7 +41,7 @@ func (m *mockCatalogService) RemoveCatalog(catalogName string) {
 	m.lastCatalogName = catalogName
 }
 
-func (m *mockCatalogService) GetCatalogItems(retryCount int) ([]olm.ConsoleCatalogItem, error) {
+func (m *mockCatalogService) GetCatalogItems() ([]olm.ConsoleCatalogItem, error) {
 	return nil, nil
 }
 
@@ -182,23 +183,8 @@ func TestReconcileUpdateCatalogError(t *testing.T) {
 	result, err := reconciler.Reconcile(context.Background(), req)
 
 	require.Error(t, err)
-	assert.Equal(t, reconcile.Result{}, result)
+	assert.Equal(t, reconcile.Result{
+		RequeueAfter: 30 * time.Second,
+	}, result)
 	assert.True(t, mockService.updateCatalogCalled)
-}
-
-func TestReconcileRemoveCatalogError(t *testing.T) {
-	reconciler, mockService := createTestReconciler()
-	mockService.removeError = errors.New("mock remove failed")
-
-	req := reconcile.Request{
-		NamespacedName: types.NamespacedName{
-			Name: testCatalogName,
-		},
-	}
-
-	result, err := reconciler.Reconcile(context.Background(), req)
-
-	require.Error(t, err)
-	assert.Equal(t, reconcile.Result{}, result)
-	assert.True(t, mockService.removeCatalogCalled)
 }

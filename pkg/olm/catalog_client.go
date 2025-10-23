@@ -45,13 +45,14 @@ func (c *CatalogdClient) Fetch(catalog, baseUrl string, ifModifiedSince *time.Ti
 	} else {
 		catalogURL, err = url.JoinPath(baseUrl, CatalogdAllEndpoint)
 		if err != nil {
-			return nil, nil, nil, fmt.Errorf("error parsing clustercatalog baseURL: %v", baseUrl)
+			klog.V(4).Infof("error parsing clustercatalog baseURL: %v", err)
+			return nil, nil, nil, err
 		}
 	}
 
 	req, err := http.NewRequest(http.MethodGet, catalogURL, nil)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("failed to create request: %w", err)
+		return nil, nil, nil, err
 	}
 
 	if ifModifiedSince != nil {
@@ -61,31 +62,33 @@ func (c *CatalogdClient) Fetch(catalog, baseUrl string, ifModifiedSince *time.Ti
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("http client error when fetching catalog %s from %s: %w", catalog, catalogURL, err)
+		return nil, nil, nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotModified {
-		klog.V(4).Infof("Catalog %s not modified", catalog)
 		return nil, nil, nil, nil
 	}
 
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, nil, nil, fmt.Errorf("not found")
+	}
+
 	if resp.StatusCode != http.StatusOK {
-		klog.Warningf("Failed to fetch catalog %s from %s: %s", catalog, catalogURL, resp.Status)
-		return nil, nil, nil, fmt.Errorf("failed to fetch catalog %s from %s: %s", catalog, catalogURL, resp.Status)
+		return nil, nil, nil, fmt.Errorf("catalogd request failed with status: %d, %v", resp.StatusCode, resp.Status)
 	}
 
 	if err := declcfg.WalkMetasReader(resp.Body, func(meta *declcfg.Meta, err error) error {
 		if err != nil {
-			klog.Warningf("Error parsing catalog contents: %v", err)
-			return fmt.Errorf("error parsing catalog contents: %v", err)
+			klog.V(4).Infof("error parsing catalog contents: %v", err)
+			return err
 		}
 
 		switch meta.Schema {
 		case declcfg.SchemaPackage:
 			pkg, err := c.processPackage(meta.Blob)
 			if err != nil {
-				klog.Warningf("failed to process package: %v", err)
+				klog.V(4).Infof("failed to process package: %v", err)
 				return err
 			}
 			packages = append(packages, pkg)
@@ -93,7 +96,7 @@ func (c *CatalogdClient) Fetch(catalog, baseUrl string, ifModifiedSince *time.Ti
 		case declcfg.SchemaBundle:
 			bundle, err := c.processBundle(meta.Blob)
 			if err != nil {
-				klog.Warningf("failed to process bundle: %v", err)
+				klog.V(4).Infof("failed to process bundle: %v", err)
 			}
 
 			bundleHasMetadata := false
@@ -109,13 +112,13 @@ func (c *CatalogdClient) Fetch(catalog, baseUrl string, ifModifiedSince *time.Ti
 				if existingBundle, ok := latestBundles[bundle.Package]; ok {
 					existingVersion, err := getBundleVersion(existingBundle)
 					if err != nil {
-						klog.Warningf("failed to get existing bundle version: %v", err)
+						klog.V(4).Infof("failed to get existing bundle version: %v", err)
 						break
 					}
 
 					newVersion, err := getBundleVersion(bundle)
 					if err != nil {
-						klog.Warningf("failed to get new bundle version: %v", err)
+						klog.V(4).Infof("failed to get new bundle version: %v", err)
 						break
 					}
 
@@ -129,7 +132,7 @@ func (c *CatalogdClient) Fetch(catalog, baseUrl string, ifModifiedSince *time.Ti
 		}
 		return nil
 	}); err != nil {
-		klog.Warningf("Error walking catalog contents: %v", err)
+		klog.V(4).Infof("error walking catalog contents: %v", err)
 		return nil, nil, nil, err
 	}
 
@@ -143,8 +146,8 @@ func (c *CatalogdClient) Fetch(catalog, baseUrl string, ifModifiedSince *time.Ti
 	if lastModified != "" {
 		lastModifiedTime, err = time.Parse(http.TimeFormat, lastModified)
 		if err != nil {
-			klog.Warningf("Error parsing last modified time: %v", err)
-			return nil, nil, nil, fmt.Errorf("error parsing last modified time: %v", err)
+			klog.V(4).Infof("error parsing last modified time: %v", err)
+			return nil, nil, nil, err
 		}
 	}
 	return packages, bundles, &lastModifiedTime, nil

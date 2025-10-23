@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"time"
 
 	"github.com/openshift/console/pkg/olm"
 	ocv1 "github.com/operator-framework/operator-controller/api/v1"
@@ -63,7 +64,9 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 
 	err = r.catalogService.UpdateCatalog(req.Name, baseURL)
 	if err != nil {
-		return ctrl.Result{}, err
+		return ctrl.Result{
+			RequeueAfter: 30 * time.Second,
+		}, err
 	}
 
 	return ctrl.Result{}, nil
