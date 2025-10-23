@@ -6,8 +6,8 @@ const useQuickStartPermission = (quickStart: QuickStart): [boolean, boolean] => 
     spec: { accessReviewResources },
   } = quickStart;
 
-  const accessReviews = [];
-  const accessReviewsLoading = [];
+  const accessReviews: boolean[] = [];
+  const accessReviewsLoading: boolean[] = [];
 
   if (accessReviewResources) {
     accessReviewResources.forEach((descriptor) => {

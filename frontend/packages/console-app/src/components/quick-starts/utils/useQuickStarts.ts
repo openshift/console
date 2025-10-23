@@ -117,5 +117,10 @@ export const useQuickStarts = (filterDisabledQuickStarts = true): WatchK8sResult
     );
   }, [quickStarts, quickStartsLoaded, filterDisabledQuickStarts, preferredLanguage]);
 
-  return [bestMatchQuickStarts, quickStartsLoaded, quickStartsError];
+  const filteredQuickStarts = useMemo(
+    () => bestMatchQuickStarts.filter((quickStart) => quickStart !== null),
+    [bestMatchQuickStarts],
+  );
+
+  return [filteredQuickStarts, quickStartsLoaded, quickStartsError];
 };

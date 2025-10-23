@@ -1,5 +1,4 @@
-import '@testing-library/jest-dom';
-import { screen } from '@testing-library/react';
+import { cleanup, screen } from '@testing-library/react';
 import { AddGitHubPage } from '../../cluster-settings/github-idp-form';
 import {
   verifyIDPAddAndCancelButtons,
@@ -15,12 +14,16 @@ import {
 } from '@console/shared/src/test-utils/unit-test-utils';
 
 describe('Add Identity Provider: GitHub', () => {
+  beforeAll(() => {
+    setupFileReaderMock();
+  });
+
   beforeEach(() => {
     renderWithProviders(<AddGitHubPage />);
   });
 
-  beforeAll(() => {
-    setupFileReaderMock();
+  afterEach(() => {
+    cleanup();
   });
 
   afterAll(() => {

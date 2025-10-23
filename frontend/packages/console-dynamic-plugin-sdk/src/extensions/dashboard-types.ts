@@ -9,6 +9,7 @@ import {
   FirehoseResourcesResult,
   FirehoseResult,
   OverviewCardSpan,
+  K8sResourceKind,
 } from './console-types';
 
 /**
@@ -33,6 +34,10 @@ export type OperatorStatusWithResources<R extends K8sResourceCommon = K8sResourc
   status: OperatorStatusPriority;
 };
 
+export type GetOperatorStatusPriority<R extends K8sResourceCommon = K8sResourceCommon> = (
+  operator: R,
+) => OperatorStatusPriority;
+
 export type OperatorStatusPriority = {
   title: string;
   priority: number;
@@ -40,10 +45,16 @@ export type OperatorStatusPriority = {
   health: keyof typeof HealthState;
 };
 
+export type OperatorHealth = {
+  health: keyof typeof HealthState;
+  count?: number;
+};
+
 export type PrometheusHealthHandler = (
   responses: { response: PrometheusResponse; error: any }[],
   t?: TFunction,
   additionalResource?: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>,
+  infrastructure?: K8sResourceKind,
 ) => SubsystemHealth;
 
 export type PrometheusHealthPopupProps = {

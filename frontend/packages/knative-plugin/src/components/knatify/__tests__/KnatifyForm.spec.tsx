@@ -2,7 +2,6 @@ import * as React from 'react';
 import { render } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import KnatifyForm from '../KnatifyForm';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/dev-console/src/components/import/advanced/AdvancedSection', () => ({
   __esModule: true,

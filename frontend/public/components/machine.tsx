@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { sortable } from '@patternfly/react-table';
-import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import {
   getMachineAddresses,
@@ -12,34 +10,37 @@ import {
   Status,
   getMachinePhase,
 } from '@console/shared';
-import { ListPageBody, RowProps, TableColumn } from '@console/dynamic-plugin-sdk';
+import { DASH } from '@console/shared/src/constants';
+import { ListPageBody, TableColumn } from '@console/dynamic-plugin-sdk';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage } from './factory';
-import ListPageFilter from './factory/ListPage/ListPageFilter';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
-import { useListPageFilter } from './factory/ListPage/filter-hook';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   DetailsItem,
   Kebab,
   NodeLink,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
   navFactory,
+  LoadingBox,
+  ResourceKebab,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import VirtualizedTable, { TableData } from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
-import { useActiveColumns } from './factory/Table/active-columns-hook';
-import { tableFilters } from './factory/table-filters';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -50,68 +51,71 @@ import {
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common];
+const menuActions = [...common];
 export const machineReference = referenceForModel(MachineModel);
 
 const tableColumnInfo = [
-  { className: '', id: 'name' },
-  { className: '', id: 'namespace' },
-  { className: css('pf-m-hidden', 'pf-m-visible-on-sm'), id: 'nodeRef' },
-  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'phase' },
-  { className: css('pf-m-hidden', 'pf-m-visible-on-lg'), id: 'provider' },
-  { className: css('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'region' },
-  { className: css('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'avail' },
-  { className: Kebab.columnClass, id: '' },
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'nodeRef' },
+  { id: 'phase' },
+  { id: 'provider' },
+  { id: 'region' },
+  { id: 'avail' },
+  { id: '' },
 ];
 
 const getMachineProviderState = (obj: MachineKind): string =>
   obj?.status?.providerStatus?.instanceState;
 
-const MachineTableRow: React.FC<RowProps<MachineKind>> = ({ obj, activeColumnIDs }) => {
-  const nodeName = getMachineNodeName(obj);
-  const region = getMachineRegion(obj);
-  const zone = getMachineZone(obj);
-  const providerState = getMachineProviderState(obj);
-  return (
-    <>
-      <TableData
-        {...tableColumnInfo[0]}
-        className={css(tableColumnInfo[0].className, 'co-break-word')}
-        activeColumnIDs={activeColumnIDs}
-      >
-        <ResourceLink
-          kind={machineReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData
-        {...tableColumnInfo[1]}
-        className={css(tableColumnInfo[1].className, 'co-break-word')}
-        activeColumnIDs={activeColumnIDs}
-      >
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData {...tableColumnInfo[2]} activeColumnIDs={activeColumnIDs}>
-        {nodeName ? <NodeLink name={nodeName} /> : '-'}
-      </TableData>
-      <TableData {...tableColumnInfo[3]} activeColumnIDs={activeColumnIDs}>
-        <Status status={getMachinePhase(obj)} />
-      </TableData>
-      <TableData {...tableColumnInfo[4]} activeColumnIDs={activeColumnIDs}>
-        {providerState ?? '-'}
-      </TableData>
-      <TableData {...tableColumnInfo[5]} activeColumnIDs={activeColumnIDs}>
-        {region || '-'}
-      </TableData>
-      <TableData {...tableColumnInfo[6]} activeColumnIDs={activeColumnIDs}>
-        {zone || '-'}
-      </TableData>
-      <TableData {...tableColumnInfo[7]} activeColumnIDs={activeColumnIDs}>
-        <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />
-      </TableData>
-    </>
-  );
+const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<MachineKind>[]) => {
+  return data.map(({ obj }: { obj: MachineKind }) => {
+    const { name, namespace } = obj.metadata;
+    const nodeName = getMachineNodeName(obj);
+    const region = getMachineRegion(obj);
+    const zone = getMachineZone(obj);
+    const providerState = getMachineProviderState(obj);
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={machineReference} name={name} namespace={namespace} />,
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: nodeName ? <NodeLink name={nodeName} /> : DASH,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <Status status={getMachinePhase(obj)} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: providerState ?? DASH,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: region || DASH,
+      },
+      [tableColumnInfo[6].id]: {
+        cell: zone || DASH,
+      },
+      [tableColumnInfo[7].id]: {
+        cell: <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
 const MachineDetails: React.FCC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
@@ -194,84 +198,104 @@ const MachineDetails: React.FCC<MachineDetailsProps> = ({ obj }: { obj: MachineK
 
 type MachineListProps = {
   data: MachineKind[];
-  unfilteredData: MachineKind[];
   loaded: boolean;
-  loadError: any;
+  loadError?: any;
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  hideColumnManagement?: boolean;
 };
 
-export const MachineList: React.FC<MachineListProps> = (props) => {
+const useMachineColumns = (): TableColumn<MachineKind>[] => {
   const { t } = useTranslation();
 
-  const machineTableColumns = React.useMemo<TableColumn<MachineKind>[]>(
-    () => [
+  const columns: TableColumn<MachineKind>[] = React.useMemo(() => {
+    return [
       {
         title: t('public~Name'),
-        sort: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnInfo[0].className },
         id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Namespace'),
-        sort: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnInfo[1].className },
         id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Node'),
-        sort: 'status.nodeRef.name',
-        transforms: [sortable],
-        props: { className: tableColumnInfo[2].className },
         id: tableColumnInfo[2].id,
+        sort: 'status.nodeRef.name',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Phase'),
-        sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachinePhase)),
-        transforms: [sortable],
-        props: { className: tableColumnInfo[3].className },
         id: tableColumnInfo[3].id,
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachinePhase)),
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Provider state'),
-        sort: 'status.providerStatus.instanceState',
-        transforms: [sortable],
-        props: { className: tableColumnInfo[4].className },
         id: tableColumnInfo[4].id,
+        sort: 'status.providerStatus.instanceState',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Region'),
-        sort: "metadata.labels['machine.openshift.io/region']",
-        transforms: [sortable],
-        props: { className: tableColumnInfo[5].className },
         id: tableColumnInfo[5].id,
+        sort: "metadata.labels['machine.openshift.io/region']",
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Availability zone'),
-        sort: "metadata.labels['machine.openshift.io/zone']",
-        transforms: [sortable],
-        props: { className: tableColumnInfo[6].className },
         id: tableColumnInfo[6].id,
+        sort: "metadata.labels['machine.openshift.io/zone']",
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnInfo[7].className },
         id: tableColumnInfo[7].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
-    ],
-    [t],
-  );
+    ];
+  }, [t]);
+  return columns;
+};
 
-  const [columns] = useActiveColumns({ columns: machineTableColumns });
+export const MachineList: React.FC<MachineListProps> = ({ data, loaded, loadError, ...props }) => {
+  const columns = useMachineColumns();
 
   return (
-    <VirtualizedTable<MachineKind>
-      {...props}
-      aria-label={t('public~Machines')}
-      label={t('public~Machines')}
-      columns={columns}
-      Row={MachineTableRow}
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView<MachineKind>
+        {...props}
+        label={MachineModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        loadError={loadError}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -283,9 +307,6 @@ export const MachinePage: React.FC<MachinePageProps> = ({
   hideNameLabelFilters,
   hideColumnManagement,
 }) => {
-  const { t } = useTranslation();
-  const [isExactSearch] = useExactSearch();
-
   const [machines, loaded, loadError] = useK8sWatchResource<MachineKind[]>({
     kind: referenceForModel(MachineModel),
     isList: true,
@@ -296,11 +317,8 @@ export const MachinePage: React.FC<MachinePageProps> = ({
     groupVersionKind: referenceForModel(MachineModel),
     namespace: namespace || 'default',
   };
-  const machineFilter = [
-    { type: 'name', filterGroupName: 'Machine', filter: tableFilters(isExactSearch).machine },
-  ];
-  const [data, filteredData, onFilterChange] = useListPageFilter(machines, machineFilter);
 
+  const { t } = useTranslation();
   return (
     <>
       <ListPageHeader title={showTitle ? t(MachineModel.labelPluralKey) : undefined}>
@@ -312,19 +330,13 @@ export const MachinePage: React.FC<MachinePageProps> = ({
         </ListPageCreate>
       </ListPageHeader>
       <ListPageBody>
-        <ListPageFilter
-          data={data}
+        <MachineList
+          data={machines}
           loaded={loaded}
-          onFilterChange={onFilterChange}
+          loadError={loadError}
           hideNameLabelFilters={hideNameLabelFilters}
           hideLabelFilter={hideLabelFilter}
           hideColumnManagement={hideColumnManagement}
-        />
-        <MachineList
-          data={filteredData}
-          unfilteredData={machines}
-          loaded={loaded}
-          loadError={loadError}
         />
       </ListPageBody>
     </>

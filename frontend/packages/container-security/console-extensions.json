@@ -82,5 +82,56 @@
     "flags": {
       "required": ["SECURITY_LABELLER"]
     }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "secscan.quay.redhat.com",
+        "version": "v1alpha1",
+        "kind": "ImageManifestVuln"
+      },
+      "component": { "$codeRef": "containerSecurityComponent.ImageManifestVulnPage" }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "secscan.quay.redhat.com",
+        "version": "v1alpha1",
+        "kind": "ImageManifestVuln"
+      },
+      "component": { "$codeRef": "containerSecurityComponent.ImageManifestVulnDetailsPage" }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/resource",
+    "properties": {
+      "title": "Image Vulnerabilities",
+      "resources": {
+        "imageManifestVuln": {
+          "kind": "secscan.quay.redhat.com~v1alpha1~ImageManifestVuln",
+          "namespaced": true,
+          "isList": true
+        }
+      },
+      "healthHandler": {
+        "$codeRef": "summary.securityHealthHandler"
+      },
+      "popupTitle": "Image Vulnerabilities breakdown",
+      "popupComponent": {
+        "$codeRef": "summary.SecurityBreakdownPopup"
+      }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
   }
 ]

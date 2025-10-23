@@ -18,7 +18,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(LimitRangeModel), ...common];
+const menuActions = [...common];
 
 const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 

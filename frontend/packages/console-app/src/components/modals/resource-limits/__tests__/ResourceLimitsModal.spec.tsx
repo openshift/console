@@ -1,21 +1,26 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { screen, fireEvent } from '@testing-library/react';
 import { FormikProps, FormikValues } from 'formik';
-import ResourceLimitSection from '@console/dev-console/src/components/import/advanced/ResourceLimitSection';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import ResourceLimitsModal from '../ResourceLimitsModal';
+
+jest.mock('@console/dev-console/src/components/import/advanced/ResourceLimitSection', () => ({
+  default: () => null,
+}));
 
 type ResourceLimitsModalProps = React.ComponentProps<typeof ResourceLimitsModal>;
 
 describe('ResourceLimitsModal Form', () => {
   let formProps: ResourceLimitsModalProps;
-  let ResourceLimitsModalWrapper: ShallowWrapper<ResourceLimitsModalProps>;
 
   type Props = FormikProps<FormikValues> & ResourceLimitsModalProps;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     formProps = {
       ...formikFormProps,
+      cancel: jest.fn(),
       resource: {
         apiVersion: 'apps/v1',
         kind: 'Deployment',
@@ -52,15 +57,28 @@ describe('ResourceLimitsModal Form', () => {
         },
       },
     } as Props;
-    ResourceLimitsModalWrapper = shallow(<ResourceLimitsModal {...formProps} />);
   });
 
-  it('should render ResouceLimitSection', () => {
-    expect(ResourceLimitsModalWrapper.find(ResourceLimitSection)).toHaveLength(1);
+  it('renders the modal with the correct title and initial elements', () => {
+    renderWithProviders(<ResourceLimitsModal {...formProps} />);
+
+    expect(screen.getByText('Edit resource limits')).toBeVisible();
+    expect(screen.getByRole('form', { name: 'Edit resource limits modal' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Save' })).toBeVisible();
   });
 
-  it('should call handleSubmit on form submit', () => {
-    ResourceLimitsModalWrapper.simulate('submit');
+  it('calls the cancel function when the Cancel button is clicked', async () => {
+    renderWithProviders(<ResourceLimitsModal {...formProps} />);
+
+    await fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(formProps.cancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls the handleSubmit function when the form is submitted', async () => {
+    renderWithProviders(<ResourceLimitsModal {...formProps} />);
+
+    await fireEvent.submit(screen.getByRole('form', { name: 'Edit resource limits modal' }));
     expect(formProps.handleSubmit).toHaveBeenCalledTimes(1);
   });
 });

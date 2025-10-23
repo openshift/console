@@ -13,7 +13,10 @@
     "entry": "src/plugin.tsx",
     "exposedModules": {
       "nodeActions": "src/components/maintenance/actions.tsx",
-      "features": "src/features.ts"
+      "features": "src/features.ts",
+      "baremetalHostsDetailsPage": "src/components/baremetal-hosts/BareMetalHostDetailsPage.tsx",
+      "baremetalHostsPage": "src/components/baremetal-hosts/BareMetalHostsPage.tsx",
+      "addBareMetalHostPage": "src/components/baremetal-hosts/add-baremetal-host/AddBareMetalHostPage.tsx"
     }
   }
 }

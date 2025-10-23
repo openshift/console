@@ -2,7 +2,6 @@ import * as React from 'react';
 import { render } from '@testing-library/react';
 import { sampleEventSourceSinkbinding } from '../../../topology/__tests__/topology-knative-test-data';
 import SinkSource from '../SinkSource';
-import '@testing-library/jest-dom';
 
 const mockCapturedFormikProps: any = {};
 

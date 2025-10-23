@@ -1,10 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { sortable } from '@patternfly/react-table';
-import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DASH } from '@console/shared/src/constants';
+import { TableColumn } from '@console/dynamic-plugin-sdk';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { MachineAutoscalerModel } from '../models';
 import {
   groupVersionFor,
@@ -12,9 +20,10 @@ import {
   referenceForGroupVersionKind,
   referenceForModel,
 } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage } from './factory';
 import {
   Kebab,
+  LoadingBox,
   navFactory,
   ResourceKebab,
   ResourceLink,
@@ -30,7 +39,7 @@ import {
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(MachineAutoscalerModel), ...common];
+const menuActions = [...common];
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
 const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = ({ obj }) => {
@@ -38,7 +47,7 @@ const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = 
   const targetKind: string = _.get(obj, 'spec.scaleTargetRef.kind');
   const targetName: string = _.get(obj, 'spec.scaleTargetRef.name');
   if (!targetAPIVersion || !targetKind || !targetName) {
-    return <>-</>;
+    return <>{DASH}</>;
   }
 
   const groupVersion = groupVersionFor(targetAPIVersion);
@@ -48,92 +57,136 @@ const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = 
   return <ResourceLink kind={reference} name={targetName} namespace={obj.metadata.namespace} />;
 };
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-sm pf-v6-u-w-25-on-xl',
-  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-16-on-xl pf-v6-u-w-10-on-2xl',
-  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-16-on-xl pf-v6-u-w-10-on-2xl',
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'scaleTarget' },
+  { id: 'minReplicas' },
+  { id: 'maxReplicas' },
+  { id: '' },
 ];
 
-const MachineAutoscalerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={machineAutoscalerReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
-        <MachineAutoscalerTargetLink obj={obj} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>{_.get(obj, 'spec.minReplicas', '-')}</TableData>
-      <TableData className={tableColumnClasses[4]}>
-        {_.get(obj, 'spec.maxReplicas') || '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={machineAutoscalerReference} resource={obj} />
-      </TableData>
-    </>
-  );
+const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
+  return data.map(({ obj }) => {
+    const { name, namespace } = obj.metadata;
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={machineAutoscalerReference} name={name} namespace={namespace} />,
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <MachineAutoscalerTargetLink obj={obj} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: _.get(obj, 'spec.minReplicas', DASH),
+      },
+      [tableColumnInfo[4].id]: {
+        cell: _.get(obj, 'spec.maxReplicas') || DASH,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: (
+          <ResourceKebab actions={menuActions} kind={machineAutoscalerReference} resource={obj} />
+        ),
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
-const MachineAutoscalerList: React.FC = (props) => {
+const useMachineAutoscalerColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  const MachineAutoscalerTableHeader = () => {
+  const columns: TableColumn<K8sResourceKind>[] = React.useMemo(() => {
     return [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-        id: 'namespace',
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Scale target'),
-        sortField: 'spec.scaleTargetRef.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: 'spec.scaleTargetRef.name',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Min'),
-        sortField: 'spec.minReplicas',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        sort: 'spec.minReplicas',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Max'),
-        sortField: 'spec.maxReplicas',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
+        id: tableColumnInfo[4].id,
+        sort: 'spec.maxReplicas',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[5] },
+        id: tableColumnInfo[5].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
     ];
-  };
+  }, [t]);
+  return columns;
+};
+
+const MachineAutoscalerList: React.FC<MachineAutoscalerListProps> = ({
+  data,
+  loaded,
+  loadError,
+  ...props
+}) => {
+  const columns = useMachineAutoscalerColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~Machine autoscalers')}
-      Header={MachineAutoscalerTableHeader}
-      Row={MachineAutoscalerTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView<K8sResourceKind>
+        {...props}
+        label={MachineAutoscalerModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        loadError={loadError}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -155,13 +208,13 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('public~Min replicas')}</DescriptionListTerm>
                 <DescriptionListDescription>
-                  {_.get(obj, 'spec.minReplicas', '-')}
+                  {_.get(obj, 'spec.minReplicas', DASH)}
                 </DescriptionListDescription>
               </DescriptionListGroup>
               <DescriptionListGroup>
                 <DescriptionListTerm>{t('public~Max replicas')}</DescriptionListTerm>
                 <DescriptionListDescription>
-                  {_.get(obj, 'spec.maxReplicas') || '-'}
+                  {_.get(obj, 'spec.maxReplicas') || DASH}
                 </DescriptionListDescription>
               </DescriptionListGroup>
             </ResourceSummary>
@@ -178,6 +231,7 @@ export const MachineAutoscalerPage: React.FC<MachineAutoscalerPageProps> = (prop
     ListComponent={MachineAutoscalerList}
     kind={machineAutoscalerReference}
     canCreate={true}
+    omitFilterToolbar={true}
   />
 );
 
@@ -189,6 +243,12 @@ export const MachineAutoscalerDetailsPage: React.FC = (props) => (
     pages={[navFactory.details(MachineAutoscalerDetails), navFactory.editYaml()]}
   />
 );
+
+type MachineAutoscalerListProps = {
+  data: K8sResourceKind[];
+  loaded: boolean;
+  loadError?: any;
+};
 
 type MachineAutoscalerPageProps = {
   showTitle?: boolean;

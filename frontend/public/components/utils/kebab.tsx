@@ -13,8 +13,6 @@ import {
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
-import { KebabActions, isKebabActions } from '@console/plugin-sdk/src/typings/kebab-actions';
 import {
   HelmChartRepositoryModel,
   ProjectHelmChartRepositoryModel,
@@ -22,7 +20,6 @@ import {
 import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import {
   annotationsModalLauncher,
-  configureReplicaCountModal,
   taintsModal,
   tolerationsModal,
   labelsModalLauncher,
@@ -261,11 +258,7 @@ const kebabFactory: KebabFactory = {
   ModifyCount: (kind, obj) => ({
     // t('public~Edit Pod count')
     labelKey: 'public~Edit Pod count',
-    callback: () =>
-      configureReplicaCountModal({
-        resourceKind: kind,
-        resource: obj,
-      }),
+    callback: () => {},
     accessReview: asAccessReview(kind, obj, 'patch', 'scale'),
   }),
   ModifyTaints: (kind, obj) => ({
@@ -305,22 +298,6 @@ kebabFactory.common = [
   kebabFactory.Edit,
   kebabFactory.Delete,
 ];
-
-let kebabActionExtensions: KebabActions[] = [];
-
-subscribeToExtensions<KebabActions>((extensions) => {
-  kebabActionExtensions = extensions;
-}, isKebabActions);
-
-export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
-  const actionsForKind: KebabAction[] = [];
-  kebabActionExtensions.forEach((e) => {
-    e.properties.getKebabActionsForKind(kind).forEach((kebabAction) => {
-      actionsForKind.push(kebabAction);
-    });
-  });
-  return actionsForKind;
-};
 
 export const Kebab: KebabComponent = (props) => {
   const { t } = useTranslation();
@@ -398,7 +375,6 @@ export const Kebab: KebabComponent = (props) => {
 };
 Kebab.factory = kebabFactory;
 Kebab.columnClass = 'pf-v6-c-table__action';
-Kebab.getExtensionsActionsForKind = getExtensionsKebabActionsForKind;
 
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   const { t } = useTranslation();
@@ -494,7 +470,6 @@ export type KebabFactory = { [name: string]: KebabAction } & { common?: KebabAct
 type KebabStaticProperties = {
   columnClass: string;
   factory: KebabFactory;
-  getExtensionsActionsForKind: (kind: K8sKind) => KebabAction[];
 };
 
 type KebabComponent = React.FC<KebabProps> & KebabStaticProperties;

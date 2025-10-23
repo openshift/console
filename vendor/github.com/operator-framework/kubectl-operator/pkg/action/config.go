@@ -11,7 +11,7 @@ import (
 
 	v1 "github.com/operator-framework/api/pkg/operators/v1"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
-	olmv1 "github.com/operator-framework/operator-controller/api/v1alpha1"
+	olmv1 "github.com/operator-framework/operator-controller/api/v1"
 	operatorsv1 "github.com/operator-framework/operator-lifecycle-manager/pkg/package-server/apis/operators/v1"
 )
 
@@ -22,6 +22,7 @@ func NewScheme() (*runtime.Scheme, error) {
 		operatorsv1.AddToScheme,
 		v1.AddToScheme,
 		apiextensionsv1.AddToScheme,
+		olmv1.AddToScheme,
 		olmv1.AddToScheme,
 	} {
 		if err := f(sch); err != nil {

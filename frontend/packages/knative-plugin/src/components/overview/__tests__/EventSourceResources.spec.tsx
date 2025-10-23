@@ -11,7 +11,6 @@ import {
 import { ServiceModel } from '../../../models';
 import { getEventSourceResponse } from '../../../topology/__tests__/topology-knative-test-data';
 import { EventSourceTarget } from '../EventSourceResources';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils', () => ({
   ResourceLink: 'ResourceLink',

@@ -14,11 +14,10 @@ import {
   ResourceSummary,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ConfigMapModel } from '../models';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { ConfigMapKind } from '@console/internal/module/k8s';
 
-const menuActions = [...Kebab.getExtensionsActionsForKind(ConfigMapModel), ...Kebab.factory.common];
+const menuActions = [...Kebab.factory.common];
 
 const kind = 'ConfigMap';
 

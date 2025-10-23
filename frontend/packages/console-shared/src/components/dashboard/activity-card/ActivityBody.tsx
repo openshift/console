@@ -11,7 +11,6 @@ import {
   RecentEventsBodyProps,
 } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
-import { AsyncComponent } from '@console/internal/components/utils/async';
 import { EventKind } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
@@ -173,31 +172,21 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
       </div>
     );
   } else {
-    const allActivities = prometheusActivities.map(
-      ({ results, loader, component: Component }, idx) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <Activity key={idx}>
-          <ErrorBoundaryInline>
-            {loader ? (
-              <AsyncComponent loader={loader} results={results} />
-            ) : (
-              <Component results={results} />
-            )}
-          </ErrorBoundaryInline>
-        </Activity>
-      ),
-    );
+    const allActivities = prometheusActivities.map(({ results, component: Component }, idx) => (
+      // eslint-disable-next-line react/no-array-index-key
+      <Activity key={idx}>
+        <ErrorBoundaryInline>
+          <Component results={results} />
+        </ErrorBoundaryInline>
+      </Activity>
+    ));
     resourceActivities
       .sort((a, b) => +b.timestamp - +a.timestamp)
-      .forEach(({ resource, timestamp, loader, component: Component }) =>
+      .forEach(({ resource, timestamp, component: Component }) =>
         allActivities.push(
           <Activity key={resource.metadata.uid} timestamp={timestamp}>
             <ErrorBoundaryInline>
-              {loader ? (
-                <AsyncComponent loader={loader} resource={resource} />
-              ) : (
-                <Component resource={resource} />
-              )}
+              <Component resource={resource} />
             </ErrorBoundaryInline>
           </Activity>,
         ),

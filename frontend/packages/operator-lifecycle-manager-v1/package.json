@@ -4,7 +4,7 @@
   "description": "A management framework for extending Kubernetes with Operators",
   "private": true,
   "consolePlugin": {
-    "entry": "src/plugin.tsx",
+    "entry": "src/plugin.ts",
     "exposedModules": {
       "ExtensionCatalog": "src/components/ExtensionCatalog.tsx",
       "useExtensionCatalogDatabaseContextValues": "src/contexts/useExtensionCatalogDatabaseContextValues.ts",

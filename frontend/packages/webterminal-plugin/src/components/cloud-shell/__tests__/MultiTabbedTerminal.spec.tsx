@@ -1,4 +1,4 @@
-import { configure, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { sendActivityTick } from '../cloud-shell-utils';
@@ -15,8 +15,6 @@ jest.mock('@console/webterminal-plugin/src/components/cloud-shell/CloudShellTerm
 }));
 
 const originalWindowRequestAnimationFrame = window.requestAnimationFrame;
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('MultiTabTerminal', () => {
   jest.useFakeTimers();

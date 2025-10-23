@@ -86,16 +86,16 @@ describe(`${crd} CRD`, () => {
     cy.get(cell).should('not.exist');
 
     cy.visit(`/k8s/ns/${testName}/pods?name=${podName}`);
-    listPage.rows.shouldBeLoaded();
-    listPage.rows.clickKebabAction(podName, 'Delete Pod');
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickKebabAction(podName, 'Delete Pod');
     modal.shouldBeOpened();
     modal.modalTitleShouldContain('Delete Pod');
     modal.submit();
     modal.shouldBeClosed();
 
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
-    listPage.rows.shouldBeLoaded();
-    listPage.rows.clickKebabAction(name, `Delete ${crd}`);
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvRows.clickKebabAction(name, `Delete ${crd}`);
     modal.shouldBeOpened();
     modal.modalTitleShouldContain(`Delete ${crd}`);
     modal.submit();

@@ -61,7 +61,11 @@
       "getRevisionRouteDecorator": "src/topology/components/decorators/getRevisionRouteDecorator.tsx",
       "dataTransformer": "src/topology/data-transformer.ts",
       "knativeComponentFactory": "src/topology/components/knativeComponentFactory.ts",
-      "eventingContext": "src/topology/eventing-context.ts"
+      "eventingContext": "src/topology/eventing-context.ts",
+      "fetchDynamicEventSourcesUtils": "src/utils/fetch-dynamic-eventsources-utils.ts",
+      "EventSourceBreadcrumbs": "src/providers/useEventSourceDetailPageBreadcrumbs.ts",
+      "ChannelBreadcrumbs": "src/providers/useChannelDetailPageBreadcrumbs.ts",
+      "BrokerBreadcrumbs": "src/providers/useBrokerDetailPageBreadcrumbs.ts"
     }
   }
 }

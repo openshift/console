@@ -1,11 +1,8 @@
 import * as React from 'react';
-import { configure, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import AddCardSection from '../AddCardSection';
 import { addActionExtensions, addActionGroupExtensions } from './add-page-test-data';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('AddCardSection', () => {
   type AddCardSectionProps = React.ComponentProps<typeof AddCardSection>;

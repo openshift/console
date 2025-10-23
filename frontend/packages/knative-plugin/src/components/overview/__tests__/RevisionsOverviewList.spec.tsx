@@ -10,7 +10,6 @@ import {
 } from '../../../utils/__mocks__/traffic-splitting-utils-mock';
 import * as TrafficSplittingController from '../../traffic-splitting/TrafficSplittingController';
 import RevisionsOverviewList from '../RevisionsOverviewList';
-import '@testing-library/jest-dom';
 
 // Mock Kebab factory at the very top to avoid hoisting issues
 jest.mock('@console/internal/components/utils', () => ({
@@ -21,7 +20,6 @@ jest.mock('@console/internal/components/utils', () => ({
     factory: {
       common: [],
     },
-    getExtensionsActionsForKind: jest.fn(() => []),
   },
 }));
 

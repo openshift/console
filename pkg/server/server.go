@@ -141,6 +141,7 @@ type jsGlobals struct {
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ThanosPublicURL                 string                     `json:"thanosPublicURL"`
 	UserSettingsLocation            string                     `json:"userSettingsLocation"`
+	DevConsoleProxyAvailable        bool                       `json:"devConsoleProxyAvailable"`
 }
 
 type Server struct {
@@ -181,6 +182,7 @@ type Server struct {
 	InactivityTimeout                   int
 	InternalProxiedK8SClientConfig      *rest.Config
 	K8sMode                             string
+	K8sModeOffClusterSkipVerifyTLS      bool
 	K8sProxyConfig                      *proxy.Config
 	ProxyHeaderDenyList                 []string
 	KnativeChannelCRDLister             ResourceLister
@@ -212,6 +214,7 @@ type Server struct {
 	UserSettingsLocation                string
 	EnabledPlugins                      serverconfig.MultiKeyValue
 	EnabledPluginsOrder                 []string
+	DevConsoleProxyAvailable            bool
 }
 
 func disableDirectoryListing(handler http.Handler) http.Handler {
@@ -382,6 +385,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			targetAPIPath               = prometheusProxyEndpoint + "/api/"
 			tenancyQuerySourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/query"
 			tenancyQueryRangeSourcePath = prometheusTenancyProxyEndpoint + "/api/v1/query_range"
+			tenancyLabelSourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/label/"
 			tenancyRulesSourcePath      = prometheusTenancyProxyEndpoint + "/api/v1/rules"
 			tenancyTargetAPIPath        = prometheusTenancyProxyEndpoint + "/api/"
 			thanosProxy                 = proxy.NewProxy(s.ThanosProxyConfig)
@@ -419,6 +423,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		// tenancy queries and query ranges have to be proxied via thanos
 		handle(tenancyQuerySourcePath, handleThanosTenancyRequest)
 		handle(tenancyQueryRangeSourcePath, handleThanosTenancyRequest)
+		handle(tenancyLabelSourcePath, handleThanosTenancyRequest)
 
 		// tenancy rules have to be proxied via thanos
 		handle(tenancyRulesSourcePath, handleThanosTenancyForRulesRequest)
@@ -764,6 +769,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		Telemetry:                 s.Telemetry,
 		ThanosPublicURL:           s.ThanosPublicURL.String(),
 		UserSettingsLocation:      s.UserSettingsLocation,
+		DevConsoleProxyAvailable:  true,
 	}
 
 	if s.prometheusProxyEnabled() {

@@ -1,10 +1,8 @@
-import { mount, ReactWrapper } from 'enzyme';
-import { Provider } from 'react-redux';
+import { screen, act } from '@testing-library/react';
 import { useProjectOrNamespaceModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { NamespaceModel } from '@console/internal/models';
-import store from '@console/internal/redux';
-import NamespaceMenuToggle from '@console/shared/src/components/namespace/NamespaceMenuToggle';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import NamespaceDropdown from '../NamespaceDropdown';
 import { usePreferredNamespace } from '../usePreferredNamespace';
 import { mockNamespaces } from './namespace.data';
@@ -34,50 +32,46 @@ const mockK8sWatchResource = useK8sWatchResource as jest.Mock;
 const mockUsePreferredNamespace = usePreferredNamespace as jest.Mock;
 
 describe('NamespaceDropdown', () => {
-  let wrapper: ReactWrapper;
-  const preferredNamespace: string = mockNamespaces[1].metadata?.name || '';
+  const preferredNamespace: string = mockNamespaces[1].metadata.name;
 
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
-
-  it('should render skeleton if extensions have not loaded', () => {
+  const setupMocks = (preferredNs?: string, loaded = true) => {
     mockProjectOrNamespaceModel.mockReturnValue([NamespaceModel, true]);
     mockK8sWatchResource.mockReturnValue([mockNamespaces, true, false]);
-    mockUsePreferredNamespace.mockReturnValue(['', jest.fn(), false]);
-    wrapper = mount(
-      <Provider store={store}>
-        <NamespaceDropdown />
-      </Provider>,
-    );
-    expect(
-      wrapper.find('[data-test="dropdown skeleton console.preferredNamespace"]').exists(),
-    ).toBeTruthy();
+    mockUsePreferredNamespace.mockReturnValue([preferredNs, jest.fn(), loaded]);
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('should render menu with preferred namespace if extensions have loaded and user preference for namespace is defined', () => {
-    mockProjectOrNamespaceModel.mockReturnValue([NamespaceModel, true]);
-    mockK8sWatchResource.mockReturnValue([mockNamespaces, true, false]);
-    mockUsePreferredNamespace.mockReturnValue([preferredNamespace, jest.fn(), true]);
-    wrapper = mount(
-      <Provider store={store}>
-        <NamespaceDropdown />
-      </Provider>,
-    );
-    expect(wrapper.find('[data-test="dropdown console.preferredNamespace"]').exists()).toBeTruthy();
-    expect(wrapper.find(NamespaceMenuToggle).props().title).toEqual(preferredNamespace);
+  it('should show loading state while namespace preferences are being fetched', async () => {
+    setupMocks('', false);
+
+    await act(async () => {
+      renderWithProviders(<NamespaceDropdown />);
+    });
+
+    expect(screen.getByTestId('dropdown skeleton console.preferredNamespace')).toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('should render select with "Last viewed" if extensions have loaded but user preference for namespace is not defined', () => {
-    mockProjectOrNamespaceModel.mockReturnValue([NamespaceModel, true]);
-    mockK8sWatchResource.mockReturnValue([mockNamespaces, true, false]);
-    mockUsePreferredNamespace.mockReturnValue([undefined, jest.fn(), true]);
-    wrapper = mount(
-      <Provider store={store}>
-        <NamespaceDropdown />
-      </Provider>,
-    );
-    expect(wrapper.find('[data-test="dropdown console.preferredNamespace"]').exists()).toBeTruthy();
-    expect(wrapper.find(NamespaceMenuToggle).props().title).toEqual('Last viewed');
+  it('should display selected namespace name when preference is set', async () => {
+    setupMocks(preferredNamespace, true);
+
+    await act(async () => {
+      renderWithProviders(<NamespaceDropdown />);
+    });
+
+    expect(screen.getByRole('button', { name: preferredNamespace })).toBeVisible();
+  });
+
+  it('should show "Last viewed" option when no preference is set', async () => {
+    setupMocks(undefined, true);
+
+    await act(async () => {
+      renderWithProviders(<NamespaceDropdown />);
+    });
+
+    expect(screen.getByRole('button', { name: 'Last viewed' })).toBeVisible();
   });
 });

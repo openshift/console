@@ -1,30 +1,31 @@
-import * as React from 'react';
-import {
-  createModalLauncher,
-  ModalComponentProps,
-} from '@console/internal/components/factory/modal';
+import { useCallback } from 'react';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
   SecretFormWrapper,
   SecretFormType,
 } from '@console/internal/components/secrets/create-secret';
 
 export interface CreateSecretModalProps {
-  save?: (name: string) => void;
   namespace: string;
   formType: SecretFormType;
+  save?: (name: string) => void;
 }
 
-type Props = CreateSecretModalProps & ModalComponentProps;
-
-const CreateSecretModal: React.FC<Props> = ({ close, namespace, save, formType }) => {
+const CreateSecretModal: OverlayComponent<CreateSecretModalProps> = ({
+  closeOverlay,
+  namespace,
+  save,
+  formType,
+}) => {
   const handleSave = (name: string) => {
-    close();
-    save(name);
+    closeOverlay();
+    save?.(name);
   };
 
   return (
     <SecretFormWrapper
-      onCancel={close}
+      onCancel={closeOverlay}
       onSave={handleSave}
       fixed={{ metadata: { namespace } }}
       formType={formType}
@@ -34,6 +35,10 @@ const CreateSecretModal: React.FC<Props> = ({ close, namespace, save, formType }
   );
 };
 
-export const secretModalLauncher = createModalLauncher<Props>(CreateSecretModal);
+export type CreateSecretCallbackWithProps = (props?: CreateSecretModalProps) => void;
 
-export default CreateSecretModal;
+export const useCreateSecretModal = (): CreateSecretCallbackWithProps => {
+  const launcher = useOverlay();
+
+  return useCallback((props) => launcher(CreateSecretModal, props), [launcher]);
+};

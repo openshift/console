@@ -60,6 +60,8 @@ When('user searches {string}', (value: string) => {
     if ($el.text().includes('operator.openshift.io')) {
       cy.wrap($el).contains('operator.openshift.io').click();
       cy.get('button[aria-label="Clear input value"]').should('be.visible').click();
+      // close the select so it doesn't block the items on the page
+      cy.get('body').click();
     }
   });
 });

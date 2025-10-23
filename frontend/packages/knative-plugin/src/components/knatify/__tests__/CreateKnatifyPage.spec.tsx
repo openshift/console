@@ -4,7 +4,6 @@ import { useRelatedHPA } from '@console/shared/src/hooks/hpa-hooks';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { deploymentData } from '../../../utils/__tests__/knative-serving-data';
 import CreateKnatifyPage from '../CreateKnatifyPage';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
@@ -22,7 +21,6 @@ jest.mock('@console/internal/components/utils', () => ({
       ModifyAnnotations: jest.fn(),
       common: [],
     },
-    getExtensionsActionsForKind: jest.fn(() => []),
   },
   withHandlePromise: (Component: any) => Component,
 }));

@@ -47,7 +47,7 @@ import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDis
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-export const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
+export const menuActions = [...common];
 
 const kind = 'CronJob';
 
@@ -222,6 +222,8 @@ export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj 
           kinds={['Pods']}
           ListComponent={PodList}
           rowFilters={podFilters}
+          hideColumnManagement={true}
+          omitFilterToolbar={true}
         />
       </Firehose>
     </PaneBody>
@@ -246,6 +248,8 @@ export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj 
         }}
         kinds={['Jobs']}
         ListComponent={JobsList}
+        hideColumnManagement={true}
+        omitFilterToolbar={true}
       />
     </Firehose>
   </PaneBody>

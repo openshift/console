@@ -33,7 +33,7 @@ import {
   CatalogFilterGroupMap,
   CatalogFilters as FiltersType,
   CatalogQueryParams,
-  // CatalogSortOrder,
+  CatalogSortOrder,
   CatalogStringMap,
   CatalogType,
   CatalogTypeCounts,
@@ -80,8 +80,9 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   const activeCategoryId = queryParams.get(CatalogQueryParams.CATEGORY) ?? ALL_CATEGORY;
   const activeSearchKeyword = queryParams.get(CatalogQueryParams.KEYWORD) ?? '';
   const activeGrouping = queryParams.get(CatalogQueryParams.GROUPING) ?? NO_GROUPING;
-  // const sortOrder =
-  //   (queryParams.get(CatalogQueryParams.SORT_ORDER) as CatalogSortOrder) ?? CatalogSortOrder.ASC;
+  const sortOrder =
+    (queryParams.get(CatalogQueryParams.SORT_ORDER) as CatalogSortOrder) ??
+    CatalogSortOrder.RELEVANCE;
   const activeFilters = React.useMemo(() => {
     const attributeFilters = {};
 
@@ -139,9 +140,9 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     updateURLParams(CatalogQueryParams.GROUPING, grouping);
   }, []);
 
-  // const handleSortOrderChange = React.useCallback((order) => {
-  //   updateURLParams(CatalogQueryParams.SORT_ORDER, order);
-  // }, []);
+  const handleSortOrderChange = React.useCallback((order) => {
+    updateURLParams(CatalogQueryParams.SORT_ORDER, order);
+  }, []);
 
   const handleShowAllToggle = React.useCallback((groupName) => {
     setFilterGroupsShowAll((showAll) => {
@@ -175,6 +176,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     const filteredBySearchItems = filterBySearchKeyword(
       filteredByCategoryItems,
       activeSearchKeyword,
+      sortOrder,
     );
     const filteredByAttributes = filterByAttributes(filteredBySearchItems, activeFilters);
 
@@ -185,7 +187,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     setCatalogTypeCounts(typeCounts);
 
     // Console table for final filtered results (only for operators)
-    if (filteredByAttributes.length > 0 && filteredByAttributes[0]?.type === 'operator') {
+    if (filteredByAttributes.length > 0) {
       // Check if we have active filters beyond just search and category
       const hasAttributeFilters = Object.values(activeFilters).some((filterGroup) =>
         Object.values(filterGroup).some((filter) => filter.active),
@@ -261,6 +263,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     categorizedIds,
     filterGroups,
     items,
+    sortOrder,
   ]);
 
   const totalItems = filteredItems.length;
@@ -335,11 +338,11 @@ const CatalogView: React.FC<CatalogViewProps> = ({
             title={activeCategory.label}
             totalItems={totalItems}
             searchKeyword={activeSearchKeyword}
-            // sortOrder={sortOrder}
+            sortOrder={sortOrder}
             groupings={groupings}
             activeGrouping={activeGrouping}
             onGroupingChange={handleGroupingChange}
-            // onSortOrderChange={handleSortOrderChange}
+            onSortOrderChange={handleSortOrderChange}
             onSearchKeywordChange={handleSearchKeywordChange}
           />
           {totalItems > 0 ? (

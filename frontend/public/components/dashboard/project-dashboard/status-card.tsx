@@ -1,33 +1,26 @@
-import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle, Gallery } from '@patternfly/react-core';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import { Status } from '@console/shared';
-import { LoadingInline } from '@console/internal/components/utils/status-box';
 import {
   DashboardsOverviewHealthResourceSubsystem,
-  DashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthResourceSubsystem,
-  isDashboardsOverviewHealthSubsystem,
-  useExtensions,
-} from '@console/plugin-sdk';
-import { ProjectDashboardContext } from './project-dashboard-context';
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
+import { Status } from '@console/shared';
+import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import { Card, CardHeader, CardTitle, Gallery } from '@patternfly/react-core';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ResourceHealthItem } from '../dashboards-page/cluster-dashboard/health-item';
+import { ProjectDashboardContext } from './project-dashboard-context';
 
-import { DashboardAlerts } from '../dashboards-page/cluster-dashboard/status-card';
+import { DashboardNamespacedAlerts } from '../dashboards-page/cluster-dashboard/status-card';
 
 export const StatusCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
-  const filterSubsystems = (subsystems: DashboardsOverviewHealthSubsystem[]) =>
-    subsystems.filter(isDashboardsOverviewHealthResourceSubsystem);
-  const subsystemExtensions = useExtensions<DashboardsOverviewHealthSubsystem>(
-    isDashboardsOverviewHealthSubsystem,
-  );
-  const subsystem: DashboardsOverviewHealthResourceSubsystem = React.useMemo(
-    () =>
-      filterSubsystems(subsystemExtensions).find(
-        (s) => s.properties.title === 'Image Vulnerabilities',
-      ),
+  const [subsystemExtensions, extensionsResolved] = useResolvedExtensions<
+    DashboardsOverviewHealthResourceSubsystem
+  >(isDashboardsOverviewHealthResourceSubsystem);
+  const subsystem = React.useMemo(
+    () => subsystemExtensions.find((s) => s.properties.title === 'Image Vulnerabilities'),
     [subsystemExtensions],
   );
   const {
@@ -47,12 +40,12 @@ export const StatusCard: React.FC = () => {
               <div className="co-status-card__health-item" data-test="project-status">
                 <Status status={obj.status?.phase} className="co-icon-and-text--lg" />
               </div>
-              {subsystem && (
+              {subsystem && extensionsResolved && (
                 <ResourceHealthItem subsystem={subsystem.properties} namespace={namespace} />
               )}
             </Gallery>
           </HealthBody>
-          <DashboardAlerts labelSelector={{ namespace }} />
+          {namespace && <DashboardNamespacedAlerts namespace={namespace} />}
         </>
       ) : (
         <LoadingInline />

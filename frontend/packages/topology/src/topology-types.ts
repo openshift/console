@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  Graph,
   Node,
   Model,
   EdgeModel,
@@ -11,6 +10,7 @@ import {
   TopologyQuadrant,
 } from '@patternfly/react-topology';
 import { WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import { CreateConnectionGetter } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { K8sResourceKind, K8sResourceKindReference } from '@console/internal/module/k8s';
 import { ExtPodKind, OverviewItem } from '@console/shared';
 
@@ -49,17 +49,6 @@ export type ViewComponentFactory = (
 export type TopologyDataModelDepicted = (resource: K8sResourceKind, model: Model) => boolean;
 
 export type TopologyDataModelReconciler = (model: Model, resources: TopologyDataResources) => void;
-
-export type CreateConnection = (
-  source: Node,
-  target: Node | Graph,
-) => Promise<React.ReactElement[] | null>;
-
-export type CreateConnectionGetter = (
-  createHints: string[],
-  source?: Node,
-  target?: Node,
-) => CreateConnection;
 
 export enum TopologyDisplayFilterType {
   show = 'show',

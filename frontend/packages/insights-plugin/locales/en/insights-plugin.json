@@ -1,4 +1,6 @@
 {
+  "Insights": "Insights",
+  "Insights Advisor status": "Insights Advisor status",
   "low": "low",
   "moderate": "moderate",
   "important": "important",
@@ -19,7 +21,5 @@
   "Disabled": "Disabled",
   "Issues pending": "Issues pending",
   "{{issuesNumber}} issue found": "{{issuesNumber}} issue found",
-  "{{issuesNumber}} issues found": "{{issuesNumber}} issues found",
-  "Insights": "Insights",
-  "Insights Advisor status": "Insights Advisor status"
+  "{{issuesNumber}} issues found": "{{issuesNumber}} issues found"
 }

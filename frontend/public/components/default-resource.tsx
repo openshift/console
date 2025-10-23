@@ -1,9 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { JSONPath } from 'jsonpath-plus';
-import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-import { sortable } from '@patternfly/react-table';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { PageComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/horizontal-nav-tabs';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -12,13 +10,13 @@ import { useDetailsItemExtensionsForResource } from '@console/shared/src/hooks/u
 import { ExtensionDetailsItem } from '@console/shared/src/components/details-page/ExtensionDetailsItem';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableData, TableProps, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage, TableProps } from './factory';
 import {
   referenceFor,
   K8sResourceKind,
+  CRDAdditionalPrinterColumn,
   referenceForExtensionModel,
   ExtensionK8sGroupModel,
-  CRDAdditionalPrinterColumn,
 } from '../module/k8s';
 import {
   DetailsItem,
@@ -29,20 +27,35 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
+  LoadingBox,
 } from './utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { useCRDAdditionalPrinterColumns } from '@console/shared/src/hooks/useCRDAdditionalPrinterColumns';
+import { AdditionalPrinterColumnValue } from '@console/shared/src/components/additional-printer-column/AdditionalPrinterColumnValue';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import {
+  ResourceDataViewColumn,
+  ResourceDataViewRow,
+} from '@console/app/src/components/data-view/types';
+import { DASH } from '@console/shared';
 import {
   isResourceActionProvider,
   ResourceActionProvider,
   useResolvedExtensions,
+  ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import { useCRDAdditionalPrinterColumns } from '@console/shared/src/hooks/useCRDAdditionalPrinterColumns';
-import { AdditionalPrinterColumnValue } from '@console/shared/src/components/additional-printer-column/AdditionalPrinterColumnValue';
 
 const { common } = Kebab.factory;
 
-const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
+const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];
 
 const getPathArray = (path: string) => {
   return JSONPath.toPathArray(path);
@@ -53,16 +66,21 @@ const checkPathHasSpecialCharacter = (path: string) => {
   return pathArray.some((segment) => /[^a-zA-Z0-9]/.test(segment));
 };
 
-const getMaxAdditionalPrinterColumns = (columns: CRDAdditionalPrinterColumn[]) => {
-  return columns.slice(0, 3);
-};
-
 const checkColumnsForCreationTimestamp = (columns: CRDAdditionalPrinterColumn[]) => {
   return columns.some((col) => col.jsonPath === '.metadata.creationTimestamp');
 };
 
 const checkAdditionalPrinterColumns = (columns: CRDAdditionalPrinterColumn[]) => {
   return columns.length > 0;
+};
+
+const getAdditionaPrinterColumnID = (column: CRDAdditionalPrinterColumn) => {
+  return `apc-${column.name}`;
+};
+
+const NamespaceCell: React.FCC<NamespaceCellProps> = ({ namespace }) => {
+  const { t } = useTranslation();
+  return namespace ? <ResourceLink kind="Namespace" name={namespace} /> : <>{t('public~None')}</>;
 };
 
 export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ obj }) => {
@@ -88,7 +106,7 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
   );
   const hasRightDetailsItems = rightDetailsItems.length > 0;
 
-  const additionalPrinterColumns = useCRDAdditionalPrinterColumns(model);
+  const [additionalPrinterColumns] = useCRDAdditionalPrinterColumns(model);
   const hasAdditionalPrinterColumns = checkAdditionalPrinterColumns(additionalPrinterColumns);
 
   return (
@@ -148,128 +166,165 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
   );
 };
 
-const TableRowForKind: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj, customData }) => {
-  const kind = referenceFor(obj) || customData.kind;
+const getDataViewRows = (
+  data: RowProps<K8sResourceKind, undefined>[],
+  columns: ResourceDataViewColumn<K8sResourceKind>[],
+  additionalPrinterColumns: CRDAdditionalPrinterColumn[],
+  kinds: string[],
+  resourceProviderExtensions: ResolvedExtension<ResourceActionProvider>[],
+  resourceProviderExtensionsResolved: boolean,
+): ResourceDataViewRow[] => {
+  return data.map(({ obj }) => {
+    const { name, namespace, creationTimestamp } = obj.metadata;
+    const kind = referenceFor(obj) || kinds[0];
+    const menuActions = [...common];
 
-  const model = kindObj(kind);
-  const menuActions = [...Kebab.getExtensionsActionsForKind(model), ...common];
-  const { t } = useTranslation();
+    const hasExtensionActions =
+      resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
 
-  const resourceProviderGuard = React.useCallback(
-    (e): e is ResourceActionProvider =>
-      isResourceActionProvider(e) &&
-      referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === kind,
-    [kind],
-  );
+    const additionalPrinterColumnsCells = additionalPrinterColumns.reduce((acc, col) => {
+      acc[getAdditionaPrinterColumnID(col)] = {
+        cell: <AdditionalPrinterColumnValue key={col.name} col={col} obj={obj} />,
+        props: {
+          'data-test': `additional-printer-column-data-${col.name}`,
+        },
+      };
+      return acc;
+    }, {} as Record<string, { cell: React.ReactNode; props?: any }>);
 
-  const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
-    ResourceActionProvider
-  >(resourceProviderGuard);
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={kind} name={name} namespace={namespace} />,
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <NamespaceCell namespace={namespace} />,
+      },
+      ...additionalPrinterColumnsCells,
+      ...(!checkColumnsForCreationTimestamp(additionalPrinterColumns) && {
+        [tableColumnInfo[2].id]: {
+          cell: <Timestamp timestamp={creationTimestamp} />,
+          props: {
+            'data-test': 'column-data-Created',
+          },
+        },
+      }),
+      [tableColumnInfo[3].id]: {
+        cell: (
+          <>
+            {hasExtensionActions ? (
+              <LazyActionMenu context={{ [kind]: obj }} />
+            ) : (
+              <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+            )}
+          </>
+        ),
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
 
-  const hasExtensionActions =
-    resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
-
-  const additionalPrinterColumns = customData.additionalPrinterColumns;
-
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={customData.kind}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
-        {obj.metadata.namespace ? (
-          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-        ) : (
-          t('public~None')
-        )}
-      </TableData>
-      {additionalPrinterColumns.map((col) => {
-        return (
-          <TableData
-            key={col.name}
-            className={tableColumnClasses[2]}
-            dataTest={`additional-printer-column-data-${col.name}`}
-          >
-            <AdditionalPrinterColumnValue col={col} obj={obj} />
-          </TableData>
-        );
-      })}
-      {!checkColumnsForCreationTimestamp(additionalPrinterColumns) && (
-        <TableData className={tableColumnClasses[2]} dataTest="column-data-Created">
-          <Timestamp timestamp={obj.metadata.creationTimestamp} />
-        </TableData>
-      )}
-      <TableData className={tableColumnClasses[3]}>
-        {hasExtensionActions ? (
-          <LazyActionMenu context={{ [kind]: obj }} />
-        ) : (
-          <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
-        )}
-      </TableData>
-    </>
-  );
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
 };
 
-export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) => {
+const useDefaultResourceColumns = <T extends K8sResourceKind>(
+  additionalPrinterColumns: CRDAdditionalPrinterColumn[],
+): TableColumn<T>[] => {
   const { t } = useTranslation();
-
-  const { kinds } = props;
-  const [model] = useK8sModel(kinds[0]);
-  const additionalPrinterColumns = getMaxAdditionalPrinterColumns(
-    useCRDAdditionalPrinterColumns(model),
-  );
-
-  const TableHeader = () => {
+  const columns = React.useMemo(() => {
     const additionalPrinterColumnsHeaders = additionalPrinterColumns.map((col) => {
       const path = col.jsonPath;
       const pathHasSpecialCharacter = checkPathHasSpecialCharacter(path);
 
       return {
         title: col.name,
-        sortField: pathHasSpecialCharacter ? undefined : path.replace(/^\./, ''),
-        transforms: pathHasSpecialCharacter ? undefined : [sortable],
+        id: getAdditionaPrinterColumnID(col),
+        sort: pathHasSpecialCharacter ? undefined : path.replace(/^\./, ''),
         props: {
-          className: tableColumnClasses[2],
+          modifier: 'nowrap',
           'data-test': `additional-printer-column-header-${col.name}`,
         },
       };
     });
 
-    const headers = [
+    const baseColumns = [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       ...additionalPrinterColumnsHeaders,
-      {
-        title: '',
-        props: { className: tableColumnClasses[3] },
-      },
     ];
 
     if (!checkColumnsForCreationTimestamp(additionalPrinterColumns)) {
-      headers.splice(headers.length - 1, 0, {
+      baseColumns.push({
         title: t('public~Created'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2], 'data-test': 'column-header-Created' },
+        id: tableColumnInfo[2].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+          'data-test': 'column-header-Created',
+        },
       });
     }
 
-    return headers;
-  };
+    baseColumns.push({
+      title: '',
+      id: tableColumnInfo[3].id,
+      sort: '',
+      props: {
+        ...cellIsStickyProps,
+        modifier: 'nowrap',
+      },
+    });
+
+    return baseColumns;
+  }, [t, additionalPrinterColumns]);
+
+  return columns;
+};
+
+export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) => {
+  const { t } = useTranslation();
+  const { kinds, data, loaded } = props;
+  const [model] = useK8sModel(kinds[0]);
+  const [additionalPrinterColumns, additionalPrinterColumnsLoaded] = useCRDAdditionalPrinterColumns(
+    model,
+  );
+  const columns = useDefaultResourceColumns(
+    additionalPrinterColumnsLoaded ? additionalPrinterColumns : [],
+  );
+  const resourceProviderGuard = React.useCallback(
+    (e): e is ResourceActionProvider =>
+      isResourceActionProvider(e) &&
+      referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === kinds[0],
+    [kinds],
+  );
+  const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
+    ResourceActionProvider
+  >(resourceProviderGuard);
 
   const getAriaLabel = () => {
     // API discovery happens asynchronously. Avoid runtime errors if the model hasn't loaded.
@@ -279,26 +334,32 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
     return model.labelPluralKey ? t(model.labelPluralKey) : model.labelPlural;
   };
 
-  const customData = React.useMemo(
-    () => ({
-      additionalPrinterColumns,
-      kind: kinds[0],
-    }),
-    [additionalPrinterColumns, kinds],
-  );
-
-  const hasAdditionalPrinterColumns = checkAdditionalPrinterColumns(additionalPrinterColumns);
-
   return (
-    <Table
-      {...props}
-      aria-label={getAriaLabel()}
-      customData={customData}
-      Header={TableHeader}
-      Row={TableRowForKind}
-      virtualize
-      data-test={hasAdditionalPrinterColumns ? 'has-additional-printer-columns' : undefined}
-    />
+    <>
+      {!loaded && !additionalPrinterColumnsLoaded ? (
+        <LoadingBox />
+      ) : (
+        <ResourceDataView<K8sResourceKind>
+          {...props}
+          label={getAriaLabel()}
+          data={data}
+          loaded={loaded}
+          columns={columns}
+          initialFilters={initialFiltersDefault}
+          getDataViewRows={(dvData, dvColumns) =>
+            getDataViewRows(
+              dvData,
+              dvColumns,
+              additionalPrinterColumns,
+              kinds,
+              resourceProviderExtensions,
+              resourceProviderExtensionsResolved,
+            )
+          }
+          hideColumnManagement={true}
+        />
+      )}
+    </>
   );
 };
 DefaultList.displayName = 'DefaultList';
@@ -310,14 +371,19 @@ export const DefaultPage: React.FC<Omit<React.ComponentProps<typeof ListPage>, '
     {...props}
     ListComponent={DefaultList}
     canCreate={props.canCreate ?? _.get(kindObj(props.kind), 'crd')}
+    omitFilterToolbar={true}
   />
 );
 DefaultPage.displayName = 'DefaultPage';
 
 export const DefaultDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
-  const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(props.kind)), ...common];
+  const menuActions = [...common];
 
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
 };
 DefaultDetailsPage.displayName = 'DefaultDetailsPage';
+
+type NamespaceCellProps = {
+  namespace: string;
+};

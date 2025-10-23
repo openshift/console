@@ -23,7 +23,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared';
 import { DefaultCapability, K8sResourceLinkCapability, SecretCapability } from '../common';
 import { CapabilityProps, SpecCapability, Error } from '../types';
 import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
-import { configureSizeModal } from './configure-size';
+import { useConfigureSizeModal } from './configure-size';
 import { configureUpdateStrategyModal } from './configure-update-strategy';
 import { EndpointList, EndpointListProps } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
@@ -36,24 +36,26 @@ const PodCount: React.FC<SpecCapabilityProps<number>> = ({
   obj,
   fullPath,
   value,
-}) => (
-  <DetailsItem
-    description={description}
-    label={label}
-    obj={obj}
-    path={fullPath}
-    onEdit={() =>
-      configureSizeModal({
-        kindObj: model,
-        resource: obj,
-        specDescriptor: descriptor,
-        specValue: value,
-      })
-    }
-  >
-    {_.isNil(value) ? '-' : `${value} pods`}
-  </DetailsItem>
-);
+}) => {
+  const launchConfigureSizeModal = useConfigureSizeModal({
+    kindObj: model,
+    resource: obj,
+    specDescriptor: descriptor,
+    specValue: value,
+  });
+
+  return (
+    <DetailsItem
+      description={description}
+      label={label}
+      obj={obj}
+      path={fullPath}
+      onEdit={launchConfigureSizeModal}
+    >
+      {_.isNil(value) ? '-' : `${value} pods`}
+    </DetailsItem>
+  );
+};
 
 const Endpoints: React.FC<SpecCapabilityProps<EndpointListProps['endpoints']>> = ({
   description,

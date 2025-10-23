@@ -447,5 +447,43 @@
       "name": "%plugin__console-demo-plugin~Example Namespaced Page%",
       "href": "/example-namespaced-page"
     }
+  },
+  {
+    "type": "console.dashboards/overview/health/url",
+    "properties": {
+      "title": "Foo system",
+      "url": "fooUrl",
+      "healthHandler": {
+        "$codeRef": "health.getFooHealthState"
+      }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/health/prometheus",
+    "properties": {
+      "title": "Bar system",
+      "queries": ["barQuery"],
+      "healthHandler": {
+        "$codeRef": "health.getBarHealthState"
+      },
+      "additionalResource": {
+        "kind": "Node",
+        "isList": true,
+        "namespaced": false,
+        "prop": "nodes"
+      }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/prometheus/activity/resource",
+    "properties": {
+      "queries": ["barQuery"],
+      "isActivity": {
+        "$codeRef": "PrometheusActivity.isDemoPrometheusActivity"
+      },
+      "component": {
+        "$codeRef": "PrometheusActivity.DemoPrometheusActivity"
+      }
+    }
   }
 ]

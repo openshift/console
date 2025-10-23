@@ -2,14 +2,15 @@ import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useCreateSecretModal } from '@console/dev-console/src/components/import/CreateSecretModal';
 import { SecretFormType } from '@console/internal/components/secrets/create-secret';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { ResourceDropdownField } from '@console/shared/src';
-import { secretModalLauncher } from '../../import/CreateSecretModal';
 
 const AdvancedImageOptions: React.FC = () => {
   const { t } = useTranslation();
+  const launchCreateSecretModal = useCreateSecretModal();
   const {
     setFieldValue,
     values: {
@@ -55,7 +56,7 @@ const AdvancedImageOptions: React.FC = () => {
         className="pf-m-link--align-left"
         variant={ButtonVariant.link}
         onClick={() =>
-          secretModalLauncher({
+          launchCreateSecretModal({
             namespace,
             save: handleSave,
             formType: SecretFormType.image,

@@ -4,7 +4,6 @@ import { formikFormProps } from '@console/shared/src/test-utils/formik-props-uti
 import { CamelKameletBindingModel } from '../../../models';
 import { mockKameletSink } from '../__mocks__/Kamelet-data';
 import EventSinkForm from '../EventSinkForm';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/shared', () => ({
   FormFooter: 'FormFooter',

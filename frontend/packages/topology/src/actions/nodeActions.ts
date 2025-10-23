@@ -7,7 +7,7 @@ export const nodeActions = (contextMenuResource: K8sResourceKind): KebabOption[]
     return null;
   }
   const resourceKind = modelFor(referenceFor(contextMenuResource));
-  const menuActions = [...Kebab.getExtensionsActionsForKind(resourceKind), ...Kebab.factory.common];
+  const menuActions = [...Kebab.factory.common];
 
   return _.map(menuActions, (a) => a(resourceKind, contextMenuResource));
 };

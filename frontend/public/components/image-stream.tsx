@@ -18,7 +18,6 @@ import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/quest
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { ImageStreamModel } from '../models';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { DOC_URL_PODMAN } from './utils';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
@@ -85,7 +84,7 @@ export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
 export const isBuilder = (imageStream: K8sResourceKind) => !_.isEmpty(getBuilderTags(imageStream));
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(ImageStreamModel), ...common];
+const menuActions = [...common];
 
 const ImageStreamTagsRow: React.FCC<ImageStreamTagsRowProps> = ({
   imageStream,

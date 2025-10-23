@@ -1,10 +1,7 @@
-import { configure, screen, act, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { screen, act, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ConnectedPageHeading } from '../../../components/utils/headings';
 import { testResourceInstance } from '../../../../__mocks__/k8sResourcesMocks';
-
-configure({ testIdAttribute: 'data-test' });
 
 describe('ConnectedPageHeading', () => {
   it('renders resource icon if given `kind`', async () => {

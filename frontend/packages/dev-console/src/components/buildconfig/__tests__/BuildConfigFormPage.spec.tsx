@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { configure, render, cleanup } from '@testing-library/react';
+import { render, cleanup } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import * as Router from 'react-router-dom-v5-compat';
 import { usePreferredCreateEditMethod } from '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod';
@@ -51,8 +51,6 @@ const useUserSettingsMock = useUserSettings as jest.Mock;
 const usePreferredCreateEditMethodMock = usePreferredCreateEditMethod as jest.Mock;
 
 const Wrapper: React.FC<{}> = ({ children }) => <Provider store={store}>{children}</Provider>;
-
-configure({ testIdAttribute: 'data-test' });
 
 beforeEach(() => {
   useUserSettingsMock.mockReturnValue([undefined, jest.fn(), true]);

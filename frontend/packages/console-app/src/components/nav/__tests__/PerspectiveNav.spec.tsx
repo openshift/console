@@ -1,185 +1,145 @@
 import { Nav } from '@patternfly/react-core';
-import { shallow, mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom-v5-compat';
-import store from '@console/internal/redux';
+import { screen } from '@testing-library/react';
 import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import PerspectiveNav from '../PerspectiveNav';
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useLayoutEffect: jest.requireActual('react').useEffect,
-}));
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
-  default: jest.fn().mockReturnValue(['dev', jest.fn()]),
+  default: jest.fn(() => ['dev', jest.fn()]),
 }));
+
 jest.mock('@console/shared/src/hooks/usePinnedResources', () => ({
   usePinnedResources: jest.fn(),
 }));
+
 jest.mock('@console/shared/src/hooks/perspective-utils', () => ({
   usePerspectives: jest.fn(),
 }));
-jest.mock('react-dnd', () => {
-  const reactDnd = jest.requireActual('react-dnd');
-  return {
-    ...reactDnd,
-    useDrag: jest.fn().mockReturnValue([{}, {}, jest.fn()]),
-    useDrop: jest.fn().mockReturnValue([{}, jest.fn()]),
-  };
-});
+
+jest.mock('../useNavExtensionForPerspective', () => ({
+  useNavExtensionsForPerspective: jest.fn(() => []),
+}));
+
+jest.mock('react-dnd', () => ({
+  ...jest.requireActual('react-dnd'),
+  useDrag: jest.fn(() => [{}, jest.fn(), jest.fn()]),
+  useDrop: jest.fn(() => [{}, jest.fn()]),
+}));
+
+const mockK8sModel = {
+  apiVersion: 'v1',
+  label: 'Test',
+  labelKey: 'public~Test',
+  plural: 'tests',
+  abbr: 'T',
+  namespaced: true,
+  kind: 'Test',
+  id: 'test',
+  labelPlural: 'Tests',
+  labelPluralKey: 'public~Tests',
+};
+
 jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
-  useK8sModel: jest.fn().mockReturnValue([
-    {
-      apiVersion: 'v1',
-      label: 'Test',
-      labelKey: 'public~Test',
-      plural: 'tests',
-      abbr: 'T',
-      namespaced: true,
-      kind: 'Test',
-      id: 'test',
-      labelPlural: 'Tests',
-      labelPluralKey: 'public~Tests',
-    },
-    false,
-  ]),
+  useK8sModel: jest.fn(() => [mockK8sModel, false]),
 }));
 
 describe('Perspective Nav', () => {
-  it('should render dev perspective nav', () => {
-    (usePinnedResources as jest.Mock).mockReturnValue([
-      ['core~v1~ConfigMap', 'build.openshift.io~v1~BuildConfig'],
-      jest.fn(),
-      true,
-    ]);
-    const wrapper = shallow(<PerspectiveNav />);
-    expect(wrapper.find('[data-test-id="dev-perspective-nav"]').exists()).toBeTruthy();
+  const setupPinnedResources = (resources: string[]) => {
+    (usePinnedResources as jest.Mock).mockReturnValue([resources, jest.fn(), true]);
+  };
+
+  const renderPerspectiveNav = () => {
+    return renderWithProviders(
+      <Nav>
+        <PerspectiveNav />
+      </Nav>,
+    );
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should render dev perspective nav with proper accessibility', () => {
+    setupPinnedResources(['core~v1~ConfigMap', 'build.openshift.io~v1~BuildConfig']);
+    renderPerspectiveNav();
+
+    expect(screen.getByRole('region', { name: 'Pinned resources' })).toBeVisible();
+    expect(screen.getByRole('link', { name: 'ConfigMaps' })).toBeVisible();
+    expect(screen.getByRole('link', { name: 'BuildConfigs' })).toBeVisible();
   });
 
   it('should render non-draggable pinned items when only one pinned resource is available', () => {
-    (usePinnedResources as jest.Mock).mockReturnValue([['core~v1~ConfigMap'], jest.fn(), true]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
-    );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
+    setupPinnedResources(['core~v1~ConfigMap']);
+    renderPerspectiveNav();
+
+    expect(screen.getByRole('link', { name: 'ConfigMaps' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Drag to reorder' })).not.toBeInTheDocument();
   });
 
   it('should render draggable pinned items when more than one pinned resource is available', () => {
-    (usePinnedResources as jest.Mock).mockReturnValue([
-      ['core~v1~ConfigMap', 'build.openshift.io~v1~BuildConfig'],
-      jest.fn(),
-      true,
-    ]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
-    );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
+    setupPinnedResources(['core~v1~ConfigMap', 'build.openshift.io~v1~BuildConfig']);
+    renderPerspectiveNav();
+
+    const dragButtons = screen.getAllByRole('button', { name: 'Drag to reorder' });
+    expect(dragButtons).toHaveLength(2);
+    dragButtons.forEach((button) => expect(button).toBeVisible());
+
+    expect(screen.getByRole('link', { name: 'ConfigMaps' })).toBeVisible();
+    expect(screen.getByRole('link', { name: 'BuildConfigs' })).toBeVisible();
   });
 
   it('should handle one valid and one invalid pinned resource', () => {
-    (usePinnedResources as jest.Mock).mockReturnValue([
-      ['core~v1~ConfigMap', 'foo'],
-      jest.fn(),
-      true,
-    ]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
-    );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
-  });
+    setupPinnedResources(['core~v1~ConfigMap', 'foo']);
+    renderPerspectiveNav();
 
-  it('should handle one valid and multiple invalid pinned resources', () => {
-    (usePinnedResources as jest.Mock).mockReturnValue([
-      ['core~v1~ConfigMap', 'foo', 'bar', 'baz'],
-      jest.fn(),
-      true,
-    ]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
-    );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(1);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
+    expect(screen.getByRole('link', { name: 'ConfigMaps' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Drag to reorder' })).not.toBeInTheDocument();
   });
 
   it('should handle multiple valid and one invalid pinned resource', () => {
-    (usePinnedResources as jest.Mock).mockReturnValue([
-      ['core~v1~ConfigMap', 'build.openshift.io~v1~BuildConfig', 'foo'],
-      jest.fn(),
-      true,
-    ]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
-    );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
+    setupPinnedResources(['core~v1~ConfigMap', 'build.openshift.io~v1~BuildConfig', 'foo']);
+    renderPerspectiveNav();
+
+    const dragButtons = screen.getAllByRole('button', { name: 'Drag to reorder' });
+    expect(dragButtons).toHaveLength(2);
+    dragButtons.forEach((button) => expect(button).toBeVisible());
+
+    expect(screen.getByRole('link', { name: 'ConfigMaps' })).toBeVisible();
+    expect(screen.getByRole('link', { name: 'BuildConfigs' })).toBeVisible();
+  });
+
+  it('should handle one valid and multiple invalid pinned resources', () => {
+    setupPinnedResources(['core~v1~ConfigMap', 'foo', 'bar', 'baz']);
+    renderPerspectiveNav();
+
+    expect(screen.getByRole('link', { name: 'ConfigMaps' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Drag to reorder' })).not.toBeInTheDocument();
   });
 
   it('should handle multiple valid and multiple invalid pinned resources', () => {
-    (usePinnedResources as jest.Mock).mockReturnValue([
-      ['core~v1~ConfigMap', 'build.openshift.io~v1~BuildConfig', 'foo', 'bar', 'baz'],
-      jest.fn(),
-      true,
+    setupPinnedResources([
+      'core~v1~ConfigMap',
+      'build.openshift.io~v1~BuildConfig',
+      'foo',
+      'bar',
+      'baz',
     ]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
-    );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(2);
+    renderPerspectiveNav();
+
+    const dragButtons = screen.getAllByRole('button', { name: 'Drag to reorder' });
+    expect(dragButtons).toHaveLength(2);
+    dragButtons.forEach((button) => expect(button).toBeVisible());
+
+    expect(screen.getByRole('link', { name: 'ConfigMaps' })).toBeVisible();
+    expect(screen.getByRole('link', { name: 'BuildConfigs' })).toBeVisible();
   });
 
   it('should handle all invalid pinned resources', () => {
-    (usePinnedResources as jest.Mock).mockReturnValue([['foo', 'bar', 'baz'], jest.fn(), true]);
-    const wrapper = mount(
-      <BrowserRouter>
-        <Provider store={store}>
-          <Nav>
-            <PerspectiveNav />
-          </Nav>
-        </Provider>
-      </BrowserRouter>,
-    );
-    expect(wrapper.find('a[data-test="pinned-resource-item"]').length).toBe(0);
-    expect(wrapper.find('a[data-test="draggable-pinned-resource-item"]').length).toBe(0);
-  });
+    setupPinnedResources(['foo', 'bar', 'baz']);
+    renderPerspectiveNav();
 
-  // TODO: More unit tests for dynmamic plugins
+    expect(screen.queryByRole('link', { name: 'ConfigMaps' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Drag to reorder' })).not.toBeInTheDocument();
+  });
 });

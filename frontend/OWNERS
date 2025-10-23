@@ -1,20 +1,18 @@
 reviewers:
+  - cajieh
   - jhadvig
+  - krishagarwal278
+  - Leo6Leo
   - rhamilto
+  - sg00dwin
   - spadgett
   - TheRealJon
-  - cajieh
-  - Mylanos
-  - Leo6Leo
-  - krishagarwal278
-  - sg00dwin
 approvers:
   - cajieh
   - jhadvig
+  - logonoff
   - rawagner
   - rhamilto
   - spadgett
   - vikram-raj
   - vojtechszocs
-  - logonoff
-  - Mylanos

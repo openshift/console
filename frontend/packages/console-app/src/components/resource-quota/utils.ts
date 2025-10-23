@@ -13,14 +13,18 @@ const genericCountResources = [
   'openshift.io/imagestreams',
 ];
 
-export const getUsedPercentage = (hard: string, used: string) => {
+export const getUsedPercentage = (hard?: string, used?: string) => {
+  if (!hard || !used) {
+    return 0;
+  }
+
   let usedNum = convertToBaseValue(used);
   let hardNum = convertToBaseValue(hard);
 
   if (!usedNum || !hardNum) {
     // try to get the value without unit
-    usedNum = parseInt(usedNum, 10);
-    hardNum = parseInt(hardNum, 10);
+    usedNum = parseInt(used, 10);
+    hardNum = parseInt(hard, 10);
   }
 
   return !usedNum || !hardNum ? 0 : (usedNum / hardNum) * 100;
@@ -41,7 +45,7 @@ export const getLabelAndUsage = ({
   const percent = getUsedPercentage(hard, used);
 
   return {
-    label: useCount ? `${used || 0} of ${hard}` : humanizePercentage(percent).string,
+    label: useCount ? `${used || 0} of ${hard || ''}` : humanizePercentage(percent).string,
     percent,
   };
 };

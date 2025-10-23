@@ -35,8 +35,10 @@ import {
   getLatestVersionForCRD,
   K8sKind,
   referenceForCRD,
+  referenceForModel,
   TableColumn,
 } from '../module/k8s';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
 import { getResourceListPages } from './resource-pages';
@@ -78,11 +80,7 @@ const instances = (kind: K8sKind, obj: CustomResourceDefinitionKind) => ({
   href: crdInstancesPath(obj),
 });
 
-const menuActions: KebabAction[] = [
-  instances,
-  ...Kebab.getExtensionsActionsForKind(CustomResourceDefinitionModel),
-  ...common,
-];
+const menuActions: KebabAction[] = [instances, ...common];
 
 const isEstablished = (conditions: any[]) => {
   const condition = _.find(conditions, (c) => c.type === 'Established');
@@ -90,6 +88,8 @@ const isEstablished = (conditions: any[]) => {
 };
 
 const namespaced = (crd: CustomResourceDefinitionKind) => crd.spec.scope === 'Namespaced';
+
+const kind = referenceForModel(CustomResourceDefinitionModel);
 
 const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
   const { t } = useTranslation();
@@ -241,7 +241,7 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const useCustomResourceDefinitionsColumns = () => {
+const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefinitionKind>[] => {
   const { t } = useTranslation();
   const columns: TableColumn<CustomResourceDefinitionKind>[] = React.useMemo(() => {
     return [
@@ -318,7 +318,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> 
         cell: (
           <span className="co-resource-item">
             <ResourceLink
-              kind="CustomResourceDefinition"
+              groupVersionKind={getGroupVersionKindForModel(CustomResourceDefinitionModel)}
               name={name}
               namespace={namespace}
               displayName={displayName}
@@ -341,7 +341,11 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> 
       },
       [tableColumnInfo[5].id]: {
         cell: (
-          <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={obj} />
+          <ResourceKebab
+            actions={menuActions}
+            kind={CustomResourceDefinitionModel}
+            resource={obj}
+          />
         ),
         props: {
           ...actionsCellProps,
@@ -369,7 +373,7 @@ export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsL
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ResourceDataView<CustomResourceDefinitionKind>
         {...props}
         label={CustomResourceDefinitionModel.labelPlural}
         data={data}
@@ -389,7 +393,7 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
   <ListPage
     {...props}
     ListComponent={CustomResourceDefinitionsList}
-    kind="CustomResourceDefinition"
+    kind={kind}
     canCreate={true}
     omitFilterToolbar={true}
   />
@@ -399,7 +403,7 @@ export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
   return (
     <DetailsPage
       {...props}
-      kind="CustomResourceDefinition"
+      kind={kind}
       menuActions={menuActions}
       pages={[
         navFactory.details(Details),

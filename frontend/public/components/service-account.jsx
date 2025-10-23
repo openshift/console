@@ -1,8 +1,7 @@
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage, Table, TableData } from './factory';
+import { DetailsPage, ListPage } from './factory';
 import {
   Kebab,
   SectionHeading,
@@ -10,46 +9,71 @@ import {
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
+  LoadingBox,
 } from './utils';
-import { ServiceAccountModel } from '../models';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
+import {
+  ResourceDataView,
+  initialFiltersDefault,
+  getNameCellProps,
+  actionsCellProps,
+  cellIsStickyProps,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { DASH } from '@console/shared/src';
 
 const { common } = Kebab.factory;
-const menuActions = [...Kebab.getExtensionsActionsForKind(ServiceAccountModel), ...common];
+const menuActions = [...common];
 
 const kind = 'ServiceAccount';
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-md',
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'secrets' },
+  { id: 'created' },
+  { id: 'actions' },
 ];
 
-const ServiceAccountTableRow = ({ obj: serviceaccount }) => {
-  const {
-    metadata: { name, namespace, uid, creationTimestamp },
-    secrets,
-  } = serviceaccount;
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={namespace} title={namespace} /> {}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>{secrets ? secrets.length : 0}</TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <Timestamp timestamp={creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={serviceaccount} />
-      </TableData>
-    </>
-  );
+const getDataViewRows = (data, columns) => {
+  return data.map(({ obj }) => {
+    const {
+      metadata: { name, namespace, uid, creationTimestamp },
+      secrets,
+    } = obj;
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />,
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} title={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: secrets ? secrets.length : 0,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <Timestamp timestamp={creationTimestamp} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <ResourceKebab actions={menuActions} kind={kind} resource={obj} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
 };
 
 const Details = ({ obj: serviceaccount }) => {
@@ -75,54 +99,81 @@ const ServiceAccountsDetailsPage = (props) => (
   />
 );
 
-const ServiceAccountsList = (props) => {
+const useServiceAccountColumns = () => {
   const { t } = useTranslation();
-  const ServiceAccountTableHeader = () => {
-    return [
+  return React.useMemo(
+    () => [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-        id: 'namespace',
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Secrets'),
-        sortField: 'secrets',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: 'secrets.length',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Created'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[4] },
+        id: tableColumnInfo[4].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
-    ];
-  };
-  ServiceAccountTableHeader.displayName = 'ServiceAccountTableHeader';
+    ],
+    [t],
+  );
+};
+
+const ServiceAccountsList = (props) => {
+  const { data, loaded } = props;
+  const { t } = useTranslation();
+  const columns = useServiceAccountColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~ServiceAccounts')}
-      Header={ServiceAccountTableHeader}
-      Row={ServiceAccountTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView
+        {...props}
+        data={data || []}
+        loaded={loaded}
+        label={t('public~ServiceAccounts')}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 const ServiceAccountsPage = (props) => (
-  <ListPage ListComponent={ServiceAccountsList} {...props} canCreate={true} />
+  <ListPage
+    ListComponent={ServiceAccountsList}
+    {...props}
+    canCreate={true}
+    omitFilterToolbar={true}
+  />
 );
 export { ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage };

@@ -2,7 +2,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { configureJobParallelismModal } from '@console/internal/components/modals';
+import {
+  useConfigureCountModal,
+  configureJobParallelismModal,
+} from '@console/internal/components/modals/configure-count-modal';
 import { asAccessReview } from '@console/internal/components/utils';
 import { JobModel } from '@console/internal/models';
 import { JobKind } from '@console/internal/module/k8s';
@@ -30,6 +33,7 @@ import { JobActionCreator } from './types';
  */
 export const useJobActions = (obj: JobKind, filterActions?: JobActionCreator[]): Action[] => {
   const { t } = useTranslation();
+  const launchModal = useConfigureCountModal();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
@@ -38,15 +42,17 @@ export const useJobActions = (obj: JobKind, filterActions?: JobActionCreator[]):
       [JobActionCreator.ModifyJobParallelism]: () => ({
         id: 'edit-parallelism',
         label: t('console-app~Edit parallelism'),
-        cta: () =>
-          configureJobParallelismModal({
+        cta: () => {
+          const modalProps = configureJobParallelismModal({
             resourceKind: JobModel,
             resource: obj,
-          }),
+          });
+          launchModal(modalProps);
+        },
         accessReview: asAccessReview(JobModel, obj, 'patch'),
       }),
     }),
-    [t, obj],
+    [t, obj, launchModal],
   );
 
   // filter and initialize requested actions or construct list of all PVCActions
