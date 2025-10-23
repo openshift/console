@@ -48,7 +48,7 @@ import {
   DynamicPluginInfo,
   isNotLoadedDynamicPluginInfo,
 } from '@console/plugin-sdk/src';
-import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import {
   consolePluginModal,
   CONSOLE_OPERATOR_CONFIG_NAME,
@@ -304,7 +304,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
 };
 
 const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
-  const [pluginInfo, pluginInfoLoaded] = useDynamicPluginInfo();
+  const [pluginInfo, pluginInfoLoaded] = usePluginInfo();
   const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
   );
@@ -327,7 +327,7 @@ const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
 };
 
 const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
-  const [pluginInfo] = useDynamicPluginInfo();
+  const [pluginInfo] = usePluginInfo();
   const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
     isList: true,
     kind: referenceForModel(ConsolePluginModel),

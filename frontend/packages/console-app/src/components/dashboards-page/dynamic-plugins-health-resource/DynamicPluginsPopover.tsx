@@ -9,13 +9,13 @@ import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/interna
 import { ConsolePluginKind, referenceForModel } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { isLoadedDynamicPluginInfo, isNotLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
-import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { StatusPopupSection } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import NotLoadedDynamicPlugins from './NotLoadedDynamicPlugins';
 
 const DynamicPluginsPopover: React.FC<DynamicPluginsPopoverProps> = ({ consolePlugins }) => {
   const { t } = useTranslation();
-  const [pluginInfoEntries] = useDynamicPluginInfo();
+  const [pluginInfoEntries] = usePluginInfo();
   const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
   );
