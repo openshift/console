@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react';
 import SinkPubsubModal from '../SinkPubsubModal';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/factory/modal', () => ({
   ModalTitle: jest.fn(() => null),

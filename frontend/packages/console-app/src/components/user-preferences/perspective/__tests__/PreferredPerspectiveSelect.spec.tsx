@@ -1,4 +1,4 @@
-import { screen, configure, act } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import { useExtensions } from '@console/plugin-sdk/src';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import PreferredPerspectiveSelect from '../PreferredPerspectiveSelect';
@@ -30,10 +30,6 @@ describe('PreferredPerspectiveSelect', () => {
     useExtensionsMock.mockReturnValue(mockPerspectiveExtensions);
     usePreferredPerspectiveMock.mockReturnValue([preferredPerspective, jest.fn(), loaded]);
   };
-
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();

@@ -1,10 +1,7 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/internal/components/factory', () => ({
   DetailsPage: () => 'DetailsPage',

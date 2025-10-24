@@ -12,7 +12,7 @@ import {
 import { ModalVariant } from '@patternfly/react-core/deprecated';
 import { StarIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Modal, useUserSettingsCompatibility } from '@console/shared';
+import { Modal, useTelemetry, useUserSettingsCompatibility } from '@console/shared';
 import { FAVORITES_CONFIG_MAP_KEY, FAVORITES_LOCAL_STORAGE_KEY } from '../../consts';
 import { FavoritesType } from '../../types';
 
@@ -25,6 +25,7 @@ type FavoriteButtonProps = {
 
 export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
   const { t } = useTranslation('console-app');
+  const triggerTelemetry = useTelemetry();
   const [isStarred, setIsStarred] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [name, setName] = React.useState<string>('');
@@ -54,6 +55,9 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
       const updatedFavorites = favorites?.filter((favorite) => favorite.url !== currentUrlPath);
       setFavorites(updatedFavorites);
       setIsStarred(false);
+      triggerTelemetry('remove-favorite', {
+        url: currentUrlPath,
+      });
     } else {
       const currentUrlSplit = currentUrlPath.includes('~')
         ? currentUrlPath.split('~')
@@ -100,6 +104,10 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
     setError('');
     setName('');
     setIsModalOpen(false);
+    triggerTelemetry('add-favorite', {
+      name: name.trim(),
+      url: currentUrlPath,
+    });
   };
 
   const handleNameChange = (value: string) => {

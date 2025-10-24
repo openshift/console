@@ -6,7 +6,6 @@ import {
   mockRevisionItems,
 } from '../../../utils/__mocks__/traffic-splitting-utils-mock';
 import TrafficSplittingModal from '../TrafficSplittingModal';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/factory/modal', () => ({
   ModalTitle: jest.fn(() => null),

@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import RoutesOverviewList from '../RoutesOverviewList';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/internal/components/utils/rbac', () => ({
   useAccessReview: jest.fn(() => true),

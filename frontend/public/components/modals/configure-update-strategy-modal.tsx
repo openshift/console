@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { useCallback, useState } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -31,10 +31,19 @@ export const getNumberOrPercent = (value) => {
   return _.toInteger(value);
 };
 
-export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (props) => {
-  const { showDescription = true } = props;
+export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = ({
+  showDescription = true,
+  strategyType,
+  uid,
+  onChangeStrategyType,
+  maxUnavailable,
+  onChangeMaxUnavailable,
+  replicas,
+  maxSurge,
+  onChangeMaxSurge,
+}) => {
   const { t } = useTranslation();
-  const strategyIsNotRollingUpdate = props.strategyType !== 'RollingUpdate';
+  const strategyIsNotRollingUpdate = strategyType !== 'RollingUpdate';
   return (
     <div className="pf-v6-c-form pf-m-horizontal">
       {showDescription && (
@@ -44,19 +53,19 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
       )}
 
       <Radio
-        id={`${props.uid || 'update-strategy'}-rolling-update`}
+        id={`${uid || 'update-strategy'}-rolling-update`}
         data-test="rolling-update-strategy-radio"
-        name={`${props.uid || 'update-strategy'}-type`}
+        name={`${uid || 'update-strategy'}-type`}
         onChange={(_e, value) => {
-          props.onChangeStrategyType(value ? 'RollingUpdate' : 'Recreate');
+          onChangeStrategyType(value ? 'RollingUpdate' : 'Recreate');
         }}
         value="RollingUpdate"
-        checked={props.strategyType === 'RollingUpdate'}
+        checked={strategyType === 'RollingUpdate'}
         label={`${t('public~RollingUpdate')} (${t('public~default')})`}
         description={t(
           'public~Execute a smooth roll out of the new revision, based on the settings below',
         )}
-        autoFocus={props.strategyType === 'RollingUpdate'}
+        autoFocus={strategyType === 'RollingUpdate'}
         body={
           <FormSection>
             <FormGroup label={t('public~Max unavailable')} fieldId="input-max-unavailable">
@@ -68,15 +77,15 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                     placeholder="25%"
                     name="maxUnavailable"
                     type="text"
-                    value={props.maxUnavailable}
-                    onChange={(_e, value) => props.onChangeMaxUnavailable(value)}
+                    value={maxUnavailable}
+                    onChange={(_e, value) => onChangeMaxUnavailable(value)}
                     aria-describedby="input-max-unavailable-help"
                     data-test="max-unavailable-input"
                   />
                 </InputGroupItem>
                 <Tooltip content={t('public~Current desired pod count')}>
                   <InputGroupText className="pf-v6-c-input-group__text">
-                    {t('public~of pod', { count: props.replicas })}
+                    {t('public~of pod', { count: replicas })}
                   </InputGroupText>
                 </Tooltip>
               </InputGroup>
@@ -101,15 +110,15 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                     name="max-surge"
                     type="text"
                     placeholder="25%"
-                    value={props.maxSurge}
-                    onChange={(_e, value) => props.onChangeMaxSurge(value)}
+                    value={maxSurge}
+                    onChange={(_e, value) => onChangeMaxSurge(value)}
                     aria-describedby="input-max-surge-help"
                     data-test="max-surge-input"
                   />
                 </InputGroupItem>
                 <Tooltip content={t('public~Current desired pod count')}>
                   <InputGroupText className="pf-v6-c-input-group__text">
-                    {t('public~greater than pod', { count: props.replicas })}
+                    {t('public~greater than pod', { count: replicas })}
                   </InputGroupText>
                 </Tooltip>
               </InputGroup>
@@ -129,36 +138,39 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
       />
 
       <Radio
-        id={`${props.uid || 'update-strategy'}-recreate`}
-        name={`${props.uid || 'update-strategy'}-type`}
+        id={`${uid || 'update-strategy'}-recreate`}
+        name={`${uid || 'update-strategy'}-type`}
         onChange={(_e, value) => {
-          props.onChangeStrategyType(value ? 'Recreate' : 'RollingUpdate');
+          onChangeStrategyType(value ? 'Recreate' : 'RollingUpdate');
         }}
         value="Recreate"
-        checked={props.strategyType === 'Recreate'}
+        checked={strategyType === 'Recreate'}
         label={t('public~Recreate')}
         description={t('public~Shut down all existing pods before creating new ones')}
-        autoFocus={props.strategyType === 'Recreate'}
+        autoFocus={strategyType === 'Recreate'}
         data-test="recreate-update-strategy-radio"
       />
     </div>
   );
 };
 
-export const ConfigureUpdateStrategyModal = (props: ConfigureUpdateStrategyModalProps) => {
-  const { deployment, close } = props;
-  const [strategyType, setStrategyType] = React.useState(_.get(deployment.spec, 'strategy.type'));
-  const [maxUnavailable, setMaxUnavailable] = React.useState(
+export const ConfigureUpdateStrategyModal = ({
+  deployment,
+  cancel,
+  close,
+}: ConfigureUpdateStrategyModalProps) => {
+  const [strategyType, setStrategyType] = useState(_.get(deployment.spec, 'strategy.type'));
+  const [maxUnavailable, setMaxUnavailable] = useState(
     _.get(deployment.spec, 'strategy.rollingUpdate.maxUnavailable', '25%'),
   );
-  const [maxSurge, setMaxSurge] = React.useState(
+  const [maxSurge, setMaxSurge] = useState(
     _.get(deployment.spec, 'strategy.rollingUpdate.maxSurge', '25%'),
   );
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const { t } = useTranslation();
 
-  const submit = React.useCallback(
+  const submit = useCallback(
     (event) => {
       event.preventDefault();
 
@@ -190,14 +202,14 @@ export const ConfigureUpdateStrategyModal = (props: ConfigureUpdateStrategyModal
           onChangeStrategyType={setStrategyType}
           onChangeMaxUnavailable={setMaxUnavailable}
           onChangeMaxSurge={setMaxSurge}
-          replicas={props.deployment.spec.replicas}
+          replicas={deployment.spec.replicas}
         />
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitText={t('public~Save')}
-        cancel={props.cancel}
+        cancel={cancel}
       />
     </form>
   );

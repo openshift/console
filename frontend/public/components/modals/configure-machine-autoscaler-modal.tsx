@@ -20,10 +20,12 @@ import { K8sResourceKind } from '../../module/k8s';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineAutoscalerModalProps> = (
-  props,
-) => {
-  const { machineSet, closeOverlay, close, cancel: cancelProp } = props;
+export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineAutoscalerModalProps> = ({
+  machineSet,
+  closeOverlay,
+  close,
+  cancel: cancelProp,
+}) => {
   const navigate = useNavigate();
   const [minReplicas, setMinReplicas] = useState(1);
   const [maxReplicas, setMaxReplicas] = useState(12);
@@ -101,10 +103,8 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
   );
 
   const {
-    machineSet: {
-      metadata: { name },
-    },
-  } = props;
+    metadata: { name },
+  } = machineSet;
   const { t } = useTranslation();
 
   return (

@@ -1,4 +1,4 @@
-import { screen, configure } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { AreaChart } from '@console/internal/components/graphs/area';
@@ -15,10 +15,6 @@ const MOCK_EMPTY_DATA = [];
 const MOCK_LOADING_DATA = [[]];
 
 describe('AreaChart', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   it('should render an area chart', () => {
     renderWithProviders(
       <AreaChart data={MOCK_AREA_DATA} loading={false} height={120} title="Test Area Chart" />,

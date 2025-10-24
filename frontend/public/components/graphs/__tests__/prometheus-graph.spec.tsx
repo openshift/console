@@ -1,4 +1,4 @@
-import { screen, configure } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { FLAGS } from '@console/shared';
@@ -24,10 +24,6 @@ const MOCK_CONTENT_TEXT = 'Test content';
 const MOCK_CHART_CONTENT = 'Chart content';
 
 describe('PrometheusGraph', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   it('should render a title', () => {
     renderWithProviders(<PrometheusGraph title={MOCK_GRAPH_TITLE} />);
 
@@ -53,10 +49,6 @@ describe('PrometheusGraph', () => {
 });
 
 describe('PrometheusGraphLink', () => {
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
-
   beforeEach(() => {
     window.SERVER_FLAGS.prometheusBaseURL = 'prometheusBaseURL';
     store.dispatch(UIActions.setActiveNamespace('default'));

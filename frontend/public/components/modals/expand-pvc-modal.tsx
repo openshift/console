@@ -15,8 +15,7 @@ import { getRequestedPVCSize } from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 // Modal for expanding persistent volume claims
-const ExpandPVCModal = (props: ExpandPVCModalProps) => {
-  const { kind, resource, close } = props;
+const ExpandPVCModal = ({ resource, kind, close, cancel }: ExpandPVCModalProps) => {
   const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
   const defaultSize = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
   const [requestSizeValue, setRequestSizeValue] = useState(defaultSize[0] || '');
@@ -42,9 +41,9 @@ const ExpandPVCModal = (props: ExpandPVCModalProps) => {
         },
       ];
 
-      handlePromise(k8sPatch(kind, resource, patch)).then((updatedResource) => {
+      handlePromise(k8sPatch(kind, resource, patch)).then((res) => {
         close();
-        navigate(resourceObjPath(updatedResource, referenceFor(updatedResource)));
+        navigate(resourceObjPath(res, referenceFor(res)));
       });
     },
     [requestSizeValue, requestSizeUnit, kind, resource, close, handlePromise, navigate],
@@ -84,7 +83,7 @@ const ExpandPVCModal = (props: ExpandPVCModalProps) => {
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitText={t('public~Expand')}
-        cancel={props.cancel}
+        cancel={cancel}
       />
     </form>
   );
