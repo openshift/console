@@ -13,7 +13,7 @@ const ConsolePluginDescriptionDetail: React.FC<DetailsItemComponentProps> = ({ o
     pluginName,
   ]);
 
-  return isLoadedDynamicPluginInfo(pluginInfo) ? (
+  return pluginInfo && isLoadedDynamicPluginInfo(pluginInfo) ? (
     <>{pluginInfo.metadata.customProperties?.console?.description || DASH}</>
   ) : (
     <>{DASH}</>
