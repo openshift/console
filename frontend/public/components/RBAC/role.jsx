@@ -393,6 +393,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
         },
       ]}
       title={t('public~Roles')}
+      mock={mock}
     />
   );
 };
