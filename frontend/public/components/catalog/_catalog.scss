@@ -1,3 +1,6 @@
+@use '../../../public/style/vars';
+@use '../../../public/style/mixin/catalog-logo-background';
+
 $catalog-capability-level-icon-left: -20px;
 $catalog-capability-level-icon-top: 4px;
 $catalog-capability-level-inactive-color: var(--pf-t--global--text--color--disabled);
@@ -35,7 +38,7 @@ $catalog-item-icon-size-sm: 24px;
 }
 
 .co-catalog-item-icon {
-  @include catalog-logo-background();
+  @include catalog-logo-background.catalog-logo-background();
   margin-right: 15px;
 
   &__bg {
@@ -146,6 +149,8 @@ $catalog-item-icon-size-sm: 24px;
 }
 
 .co-catalog-tile {
+  height: vars.$co-m-catalog-tile-height;
+  width: vars.$co-m-catalog-tile-width;
   overflow: hidden; // prevent scrollbars within a card
 }
 
@@ -194,4 +199,42 @@ $catalog-item-icon-size-sm: 24px;
 
 .properties-side-panel-pf-property-value__capability-levels {
   list-style: none;
+}
+
+.co-clusterserviceversion-link {
+  text-decoration: none;
+
+  .co-clusterserviceversion-logo__name__clusterserviceversion {
+    text-decoration: underline;
+  }
+}
+
+.co-clusterserviceversion-logo {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.co-clusterserviceversion-logo__icon {
+  @include catalog-logo-background();
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  margin-bottom: var(--pf-t--global--spacer--xs);
+}
+
+.co-clusterserviceversion-logo__name {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.co-clusterserviceversion-logo__name__clusterserviceversion {
+  font-size: 15px !important;
+  margin-bottom: 5px !important;
+}
+
+.co-page-heading .co-clusterserviceversion-logo__name {
+  margin: var(--pf-t--global--spacer--sm) 0;
 }

@@ -11,6 +11,7 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListDescription,
+  Flex,
   Grid,
   GridItem,
 } from '@patternfly/react-core';
@@ -131,6 +132,8 @@ import {
   catalogSourceForSubscription,
 } from './subscription';
 import { referenceForProvidedAPI, providedAPIsForCSV } from './index';
+
+import './clusterserviceversion.scss';
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
 const isCSV = (obj): obj is ClusterServiceVersionKind =>
@@ -860,7 +863,7 @@ export const CRDCard: React.FC<CRDCardProps> = ({ csv, crd, required, ...rest })
   );
 
   return (
-    <Card>
+    <Card style={{ width: '300px' }}>
       <CardTitle>
         <span className="co-resource-item">
           <ResourceLink
@@ -896,7 +899,7 @@ export const CRDCard: React.FC<CRDCardProps> = ({ csv, crd, required, ...rest })
 export const CRDCardRow = ({ csv, providedAPIs }: CRDCardRowProps) => {
   const { t } = useTranslation();
   return (
-    <div className="co-crd-card-row">
+    <Flex className="pf-v6-u-mb-md" gap={{ default: 'gapXl' }}>
       {providedAPIs.length ? (
         providedAPIs.map((crd) => (
           <CRDCard key={referenceForProvidedAPI(crd)} crd={crd} csv={csv} />
@@ -906,7 +909,7 @@ export const CRDCardRow = ({ csv, providedAPIs }: CRDCardRowProps) => {
           {t('olm~No Kubernetes APIs are being provided by this Operator.')}
         </span>
       )}
-    </div>
+    </Flex>
   );
 };
 
