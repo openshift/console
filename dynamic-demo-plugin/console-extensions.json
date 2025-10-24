@@ -25,6 +25,43 @@
     }
   },
   {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1alpha3",
+        "kind": "ExampleModel"
+      },
+      "badge": "dev",
+      "color": "#DEADBEEF",
+      "label": "ExampleModel",
+      "labelPlural": "ExampleModels",
+      "abbr": "EM"
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1alpha3",
+        "kind": "ExampleModel"
+      },
+      "component": { "$codeRef": "stubPages.DummyResourceListPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1alpha3",
+        "kind": "ExampleModel"
+      },
+      "component": { "$codeRef": "stubPages.DummyResourceDetailsPage" }
+    }
+  },
+  {
     "type": "console.telemetry/listener",
     "properties": {
       "listener": {
@@ -475,15 +512,42 @@
     }
   },
   {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "model": {
+        "group": "route.openshift.io",
+        "version": "v1",
+        "kind": "Route"
+      },
+      "mapper": { "$codeRef": "clusterInventoryOverview.getRouteStatusGroups" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item/group",
+    "properties": {
+      "id": "demo-inventory-group",
+      "icon": { "$codeRef": "clusterInventoryOverview.DemoGroupIcon" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/activity/resource",
+    "properties": {
+      "k8sResource": {
+        "isList": true,
+        "kind": "Node",
+        "prop": "nodes"
+      },
+      "isActivity": { "$codeRef": "clusterActivityOverview.isActivity" },
+      "getTimestamp": { "$codeRef": "clusterActivityOverview.getTimestamp" },
+      "component": { "$codeRef": "clusterActivityOverview.DemoActivity" }
+    }
+  },
+  {
     "type": "console.dashboards/overview/prometheus/activity/resource",
     "properties": {
       "queries": ["barQuery"],
-      "isActivity": {
-        "$codeRef": "PrometheusActivity.isDemoPrometheusActivity"
-      },
-      "component": {
-        "$codeRef": "PrometheusActivity.DemoPrometheusActivity"
-      }
+      "component": { "$codeRef": "clusterActivityOverview.DemoPrometheusActivity" },
+      "isActivity": { "$codeRef": "clusterActivityOverview.isAlwaysActivity" }
     }
   }
 ]
