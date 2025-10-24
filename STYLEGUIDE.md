@@ -31,3 +31,31 @@
 - Run the linter and follow all rules defined in .eslintrc
 - Never use absolute paths in code. The app should be able to run behind a proxy under an arbitrary path.
 - TESTS: Should follow a similar "test tables" convention as used in Go where applicable.
+
+### Additional OpenShift Console Specific Practices
+
+**React Component Patterns**:
+- Use `React.FCC` instead of `React.FC` for components (fixes legacy dependency issues)
+
+**Type Safety & Kubernetes Integration**:
+- Use specific Kubernetes resource types instead of generic `K8sResourceCommon` when possible
+- Avoid excessive use of `any` types
+- Avoid type assertions with `as any`
+- Use optional chaining for safe property access
+- Initialize with proper defaults instead of repeated null checks
+
+**Code Organization**:
+- Follow established directory structure patterns
+- Use consistent import organization
+- Maintain clear separation of concerns
+
+### Analysis Process
+
+1. **File Structure**: Check file naming and organization
+2. **Go Code Quality**: Verify gofmt formatting and import grouping
+3. **TypeScript Usage**: Verify modern TypeScript patterns
+4. **React Patterns**: Assess component structure and hooks usage
+5. **SCSS/CSS Patterns**: Check BEM naming, prefixing, and organization
+6. **Style Guide Compliance**: Check against official OpenShift Console style guide
+7. **Code Quality**: Evaluate maintainability and consistency
+8. **OpenShift Specific**: Review Kubernetes integration patterns
