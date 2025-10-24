@@ -2008,5 +2008,71 @@
     "flags": {
       "required": ["KNATIVE_EVENTING"]
     }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "knative-serving-topology-model-factory",
+      "priority": 100,
+      "resources": {
+        "$codeRef": "getKnativeResources.getKnativeServingResources"
+      },
+      "workloadKeys": ["ksservices"],
+      "getDataModel": {
+        "$codeRef": "dataTransformer.getKnativeServingTopologyDataModel"
+      },
+      "isResourceDepicted": {
+        "$codeRef": "isKnativeResource.isKnativeResource"
+      }
+    },
+    "flags": {
+      "required": [
+        "KNATIVE_SERVING_CONFIGURATION",
+        "KNATIVE_SERVING",
+        "KNATIVE_SERVING_REVISION",
+        "KNATIVE_SERVING_ROUTE",
+        "KNATIVE_SERVING_SERVICE"
+      ]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "knative-eventing-topology-model-factory",
+      "priority": 100,
+      "resources": {
+        "$codeRef": "getKnativeResources.getKnativeEventingResources"
+      },
+      "workloadKeys": ["eventingsubscription"],
+      "getDataModel": {
+        "$codeRef": "dataTransformer.getKnativeEventingTopologyDataModel"
+      },
+      "isResourceDepicted": {
+        "$codeRef": "isKnativeResource.isKnativeResource"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_ENABLED"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "knative-kamelets-topology-model-factory",
+      "priority": 100,
+      "resources": {
+        "$codeRef": "getKnativeResources.getKnativeEventingKameletsResources"
+      },
+      "workloadKeys": ["kameletbindings"],
+      "getDataModel": {
+        "$codeRef": "dataTransformer.getKnativeKameletsTopologyDataModel"
+      },
+      "isResourceDepicted": {
+        "$codeRef": "isKnativeResource.isKnativeResource"
+      }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_CAMEL_KAMELETS"]
+    }
   }
 ]
