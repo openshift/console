@@ -1,59 +1,86 @@
-import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { screen } from '@testing-library/react';
 import { ErrorBoundary, withFallback } from '..';
-import { ErrorBoundaryState } from '../error-boundary'; // not for public consumption
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 
-type ErrorBoundaryProps = React.ComponentProps<typeof ErrorBoundary>;
+const Child = () => <span>Child</span>;
+const ProblemChild = () => {
+  throw new Error('Test error');
+};
+const FallbackComponent = () => <p>Custom Fallback</p>;
 
-describe(ErrorBoundary.name, () => {
-  let wrapper: ShallowWrapper<ErrorBoundaryProps, ErrorBoundaryState>;
-  const Child = () => <span>childrens</span>;
+describe('ErrorBoundary', () => {
+  beforeAll(() => {
+    // Suppress console errors during while running the tests since they're expected when testing error boundaries
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
 
-  beforeEach(() => {
-    wrapper = shallow(
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should render its child components when there is no error', () => {
+    renderWithProviders(
       <ErrorBoundary>
         <Child />
       </ErrorBoundary>,
     );
+
+    expect(screen.getByText('Child')).toBeVisible();
+    expect(screen.queryByText('Custom Fallback')).not.toBeInTheDocument();
   });
 
-  it('renders child components if not in error state', () => {
-    expect(wrapper.find(Child).exists()).toBe(true);
+  it('should render the custom FallbackComponent when an error is caught', () => {
+    renderWithProviders(
+      <ErrorBoundary FallbackComponent={FallbackComponent}>
+        <ProblemChild />
+      </ErrorBoundary>,
+    );
+
+    expect(screen.getByText('Custom Fallback')).toBeVisible();
+    expect(screen.queryByText('Child')).not.toBeInTheDocument();
   });
 
-  it('renders fallback component if given when in error state', () => {
-    const FallbackComponent = () => <p>Custom Fallback</p>;
-    wrapper = wrapper.setProps({ FallbackComponent });
-    wrapper = wrapper.setState({ hasError: true });
+  it('should render the default fallback when an error is caught and no fallback is provided', () => {
+    const { container } = renderWithProviders(
+      <ErrorBoundary>
+        <ProblemChild />
+      </ErrorBoundary>,
+    );
 
-    expect(wrapper.find(Child).exists()).toBe(false);
-    expect(wrapper.find(FallbackComponent).exists()).toBe(true);
-  });
-
-  it('renders default fallback component if none given when in error state', () => {
-    wrapper = wrapper.setState({ hasError: true });
-
-    expect(wrapper.find(Child).exists()).toBe(false);
-    expect(wrapper.at(0).shallow().text()).toEqual('');
+    expect(container.firstChild).toBeInTheDocument();
+    expect(container.firstChild?.textContent).toBe('');
   });
 });
 
-describe('withFallback', () => {
-  const Component: React.FCC<{ size: number }> = (props) => <span>childrens: {props.size}</span>;
-
-  it('returns the given component wrapped in an `ErrorBoundary`', () => {
-    const WrappedComponent = withFallback(Component);
-    const wrapper = shallow(<WrappedComponent size={1} />);
-
-    expect(wrapper.find(ErrorBoundary).exists()).toBe(true);
-    expect(wrapper.find(Component).exists()).toBe(true);
+describe('withFallback HOC', () => {
+  beforeAll(() => {
+    // Suppress console errors during tests since they're expected when testing error boundaries
+    jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
-  it('passes fallback component to `ErrorBoundary`', () => {
-    const FallbackComponent = () => <p>Custom Fallback</p>;
-    const WrappedComponent = withFallback(Component, FallbackComponent);
-    const wrapper = shallow(<WrappedComponent size={1} />);
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
 
-    expect(wrapper.find(ErrorBoundary).props().FallbackComponent).toEqual(FallbackComponent);
+  it('should wrap the given component and render it normally when there is no error', () => {
+    const WrappedComponent = withFallback(Child);
+    renderWithProviders(<WrappedComponent />);
+
+    expect(screen.getByText('Child')).toBeVisible();
+  });
+
+  it('should render the default fallback when the wrapped component throws an error', () => {
+    const WrappedComponent = withFallback(ProblemChild);
+    const { container } = renderWithProviders(<WrappedComponent />);
+
+    expect(container.firstChild).toBeInTheDocument();
+    expect(container.firstChild?.textContent).toBe('');
+  });
+
+  it('should render the custom fallback when the wrapped component throws an error', () => {
+    const WrappedComponent = withFallback(ProblemChild, FallbackComponent);
+    renderWithProviders(<WrappedComponent />);
+
+    expect(screen.getByText('Custom Fallback')).toBeVisible();
   });
 });

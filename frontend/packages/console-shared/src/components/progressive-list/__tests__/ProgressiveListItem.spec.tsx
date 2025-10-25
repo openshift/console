@@ -1,24 +1,20 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import ProgressiveListItem from '../ProgressiveListItem';
 
-const DummyComponent: React.FC = () => <div id="dummy">Dummy Component</div>;
+// Mock scrollIntoView
+Element.prototype.scrollIntoView = jest.fn();
 
-describe(ProgressiveListItem.displayName, () => {
-  let wrapper;
-  beforeEach(() => {
-    wrapper = shallow(
+const DummyComponent: React.FCC = () => <div>Dummy Component</div>;
+
+describe('ProgressiveListItem', () => {
+  it('should render the child component correctly', () => {
+    renderWithProviders(
       <ProgressiveListItem name="Dummy">
         <DummyComponent />
       </ProgressiveListItem>,
     );
-  });
-  it('component should exist', () => {
-    expect(wrapper.exists()).toBe(true);
-  });
-
-  it('should render the child component correctly', () => {
-    expect(wrapper.find('div').text()).toEqual('<DummyComponent />');
-    expect(wrapper.find('div')).toHaveLength(1);
+    expect(screen.getByText('Dummy Component')).toBeInTheDocument();
   });
 });
