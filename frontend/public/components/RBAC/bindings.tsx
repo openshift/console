@@ -33,12 +33,12 @@ import { MultiListPageProps } from '../factory';
 import ListPageHeader from '../factory/ListPage/ListPageHeader';
 import { ListPageCreateLink } from '../factory/ListPage/ListPageCreate';
 import {
-  ResourceDataView,
+  ConsoleDataView,
   initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
-} from '@console/app/src/components/data-view/ResourceDataView';
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { TableColumn } from '@console/internal/module/k8s';
 import { GetDataViewRows, ResourceFilters } from '@console/app/src/components/data-view/types';
@@ -326,7 +326,7 @@ export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<BindingKind, undefined, BindingFilters>
+      <ConsoleDataView<BindingKind, undefined, BindingFilters>
         {...props}
         data={filteredData}
         loaded={loaded}

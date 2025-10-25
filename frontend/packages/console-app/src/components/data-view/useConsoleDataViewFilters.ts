@@ -7,20 +7,27 @@ import {
   exactMatch,
   fuzzyCaseInsensitive,
 } from '@console/internal/components/factory/table-filters';
-import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
-import { ResourceFilters } from './types';
+import { mapLabelsToStrings } from '@console/shared/src/utils/label-filter';
+import { ResourceFilters, ResourceMetadata } from './types';
 
-export const useResourceDataViewFilters = <
-  TData extends K8sResourceCommon = K8sResourceCommon,
+const getK8sResourceMetadata = (obj: K8sResourceCommon): ResourceMetadata => ({
+  name: obj.metadata?.name,
+  labels: obj.metadata?.labels,
+});
+
+export const useConsoleDataViewFilters = <
+  TData,
   TFilters extends ResourceFilters = ResourceFilters
 >({
   data,
   initialFilters,
+  getObjectMetadata = getK8sResourceMetadata,
   matchesAdditionalFilters,
 }: {
   data: TData[];
   initialFilters: TFilters;
-  matchesAdditionalFilters?: (resource: TData, filters: TFilters) => boolean;
+  getObjectMetadata?: (obj: TData) => ResourceMetadata;
+  matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isExactSearch] = useExactSearch();
@@ -34,16 +41,18 @@ export const useResourceDataViewFilters = <
   const filteredData = React.useMemo(
     () =>
       data.filter((resource) => {
+        const { name: resourceName, labels } = getObjectMetadata(resource);
+
         // Filter by K8s resource name
-        const resourceName = resource.metadata.name;
         const matchesName =
           !filters.name || isExactSearch
             ? exactMatch(filters.name, resourceName)
             : fuzzyCaseInsensitive(filters.name, resourceName);
 
-        // Filter by K8s resource labels
-        const resourceLabels = getLabelsAsString(resource);
+        const resourceLabels = mapLabelsToStrings(labels);
         const filterLabelsArray = filters.label?.split(',') ?? [];
+
+        // Filter by K8s resource labels
         const matchesLabels =
           !filters.label || filterLabelsArray.every((label) => resourceLabels.includes(label));
 
@@ -51,7 +60,7 @@ export const useResourceDataViewFilters = <
           matchesName && matchesLabels && (matchesAdditionalFilters?.(resource, filters) ?? true)
         );
       }),
-    [data, filters, isExactSearch, matchesAdditionalFilters],
+    [data, filters, isExactSearch, getObjectMetadata, matchesAdditionalFilters],
   );
 
   return { filters, onSetFilters, clearAllFilters, filteredData };

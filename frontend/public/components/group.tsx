@@ -25,16 +25,16 @@ import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMen
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import {
-  ResourceDataView,
+  ConsoleDataView,
   initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
-} from '@console/app/src/components/data-view/ResourceDataView';
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { TableColumn, K8sResourceKind } from '@console/internal/module/k8s';
 import {
-  ResourceDataViewColumn,
-  ResourceDataViewRow,
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
 import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -44,8 +44,8 @@ const tableColumnInfo = [{ id: 'name' }, { id: 'users' }, { id: 'created' }, { i
 
 const getDataViewRows: GetDataViewRows<GroupKind, undefined> = (
   data: RowProps<GroupKind, undefined>[],
-  columns: ResourceDataViewColumn<GroupKind>[],
-): ResourceDataViewRow[] => {
+  columns: ConsoleDataViewColumn<GroupKind>[],
+): ConsoleDataViewRow[] => {
   return data.map(({ obj }) => {
     const { metadata } = obj;
     const resourceKind = referenceForModel(GroupModel);
@@ -136,7 +136,7 @@ export const GroupList: React.FC<{ data: GroupKind[]; loaded: boolean }> = (prop
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<GroupKind>
+      <ConsoleDataView<GroupKind>
         {...props}
         data={data}
         loaded={loaded}

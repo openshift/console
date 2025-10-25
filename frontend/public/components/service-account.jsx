@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage } from './factory';
@@ -14,12 +14,12 @@ import {
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
 import {
-  ResourceDataView,
+  ConsoleDataView,
   initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
-} from '@console/app/src/components/data-view/ResourceDataView';
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { DASH } from '@console/shared/src';
 
 const { common } = Kebab.factory;
@@ -101,7 +101,7 @@ const ServiceAccountsDetailsPage = (props) => (
 
 const useServiceAccountColumns = () => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -154,8 +154,8 @@ const ServiceAccountsList = (props) => {
   const columns = useServiceAccountColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+    <Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView
         {...props}
         data={data || []}
         loaded={loaded}
@@ -165,7 +165,7 @@ const ServiceAccountsList = (props) => {
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 const ServiceAccountsPage = (props) => (

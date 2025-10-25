@@ -29,8 +29,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 
 const { common } = Kebab.factory;
@@ -134,7 +134,7 @@ const MachineHealthCheckList: React.FC<MachineHealthCheckListProps> = ({
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<MachineHealthCheckKind, typeof menuActions>
+      <ConsoleDataView<MachineHealthCheckKind, typeof menuActions>
         {...props}
         label={MachineHealthCheckModel.labelPlural}
         data={data}
