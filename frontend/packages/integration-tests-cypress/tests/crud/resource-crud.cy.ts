@@ -109,10 +109,12 @@ describe('Kubernetes resource CRUD operations', () => {
   const dataViewResources = new Set([
     'HorizontalPodAutoscaler',
     'Job',
+    'LimitRange',
     'Pod',
     'ReplicaSet',
-    'Role',
     'ReplicationController',
+    'ResourceQuota',
+    'Role',
     'ServiceAccount',
     'StatefulSet',
     'user.openshift.io~v1~Group',
