@@ -1,65 +1,121 @@
-import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
-import { Kebab } from '@console/internal/components/utils';
+import * as React from 'react';
+import { DataViewTh } from '@patternfly/react-data-view';
+import { ThProps, SortByDirection } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 
-export const tableColumnClasses = {
-  input: Kebab.columnClass,
-  revision: 'pf-v6-u-w-8-on-xl pf-v6-u-w-25-on-xs',
-  updated: 'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-40-on-xs',
-  status: 'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-16-on-xl pf-v6-u-w-16-on-lg',
-  chartName: 'pf-m-hidden pf-m-visible-on-xl',
-  chartVersion: 'pf-m-hidden pf-m-visible-on-xl',
-  appVersion: 'pf-m-hidden pf-m-visible-on-xl',
-  description: 'pf-m-hidden pf-m-visible-on-xl',
+export const tableColumnInfo = [
+  { id: 'input', index: 0 },
+  { id: 'revision', index: 1 },
+  { id: 'updated', index: 2 },
+  { id: 'status', index: 3 },
+  { id: 'chartName', index: 4 },
+  { id: 'chartVersion', index: 5 },
+  { id: 'appVersion', index: 6 },
+  { id: 'description', index: 7 },
+];
+
+// Helper function to get column index by ID
+export const getColumnIndexById = (columnId: string): number => {
+  const column = tableColumnInfo.find((col) => col.id === columnId);
+  return column?.index ?? 1; // Default to revision column
 };
 
-const RevisionListHeader = (t: TFunction) => () => {
-  return [
-    {
-      title: '',
-      props: { className: tableColumnClasses.input },
-    },
-    {
-      title: t('helm-plugin~Revision'),
-      sortField: 'version',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.revision },
-    },
-    {
-      title: t('helm-plugin~Updated'),
-      sortField: 'info.last_deployed',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.updated },
-    },
-    {
-      title: t('helm-plugin~Status'),
-      sortField: 'info.status',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.status },
-    },
-    {
-      title: t('helm-plugin~Chart name'),
-      sortField: 'chart.metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.chartName },
-    },
-    {
-      title: t('helm-plugin~Chart version'),
-      sortField: 'chart.metadata.version',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.chartVersion },
-    },
-    {
-      title: t('helm-plugin~App version'),
-      sortField: 'chart.metadata.appVersion',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.appVersion },
-    },
-    {
-      title: t('helm-plugin~Description'),
-      props: { className: tableColumnClasses.description },
-    },
-  ];
+// Helper function to get column ID by index
+export const getColumnIdByIndex = (index: number): string => {
+  const column = tableColumnInfo.find((col) => col.index === index);
+  return column?.id ?? 'revision'; // Default to revision column
 };
 
-export default RevisionListHeader;
+export const useRevisionListColumns = (
+  sortBy: { index: number; direction: SortByDirection },
+  onSort: (event: React.MouseEvent, columnId: string, direction: SortByDirection) => void,
+): DataViewTh[] => {
+  const { t } = useTranslation();
+  return React.useMemo(
+    () => [
+      {
+        cell: <span className="pf-v6-u-screen-reader">{t('helm-plugin~Select')}</span>,
+        props: {
+          modifier: 'nowrap',
+          isStickyColumn: true,
+          stickyMinWidth: '50px',
+        } as ThProps,
+      },
+      {
+        cell: t('helm-plugin~Revision'),
+        props: {
+          modifier: 'nowrap',
+          sort: {
+            columnIndex: 1,
+            sortBy,
+            onSort: (event, index, direction) => onSort(event, 'revision', direction),
+          },
+        } as ThProps,
+      },
+      {
+        cell: t('helm-plugin~Updated'),
+        props: {
+          modifier: 'nowrap',
+          sort: {
+            columnIndex: 2,
+            sortBy,
+            onSort: (event, index, direction) => onSort(event, 'updated', direction),
+          },
+        } as ThProps,
+      },
+      {
+        cell: t('helm-plugin~Status'),
+        props: {
+          modifier: 'nowrap',
+          sort: {
+            columnIndex: 3,
+            sortBy,
+            onSort: (event, index, direction) => onSort(event, 'status', direction),
+          },
+        } as ThProps,
+      },
+      {
+        cell: t('helm-plugin~Chart name'),
+        props: {
+          modifier: 'nowrap',
+          sort: {
+            columnIndex: 4,
+            sortBy,
+            onSort: (event, index, direction) => onSort(event, 'chartName', direction),
+          },
+        } as ThProps,
+      },
+      {
+        cell: t('helm-plugin~Chart version'),
+        props: {
+          modifier: 'nowrap',
+          sort: {
+            columnIndex: 5,
+            sortBy,
+            onSort: (event, index, direction) => onSort(event, 'chartVersion', direction),
+          },
+        } as ThProps,
+      },
+      {
+        cell: t('helm-plugin~App version'),
+        props: {
+          modifier: 'nowrap',
+          sort: {
+            columnIndex: 6,
+            sortBy,
+            onSort: (event, index, direction) => onSort(event, 'appVersion', direction),
+          },
+        } as ThProps,
+      },
+      {
+        cell: t('helm-plugin~Description'),
+        props: {
+          modifier: 'nowrap',
+        } as ThProps,
+      },
+    ],
+    [t, sortBy, onSort],
+  );
+};
+
+export default useRevisionListColumns;

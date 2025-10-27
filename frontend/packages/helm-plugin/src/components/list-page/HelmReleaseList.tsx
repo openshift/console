@@ -5,28 +5,119 @@ import {
   EmptyStateActions,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { SortByDirection } from '@patternfly/react-table';
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
+import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
-import { StatusBox } from '@console/internal/components/utils';
+import {
+  ConsoleDataView,
+  initialFiltersDefault,
+  cellIsStickyProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ResourceFilters } from '@console/app/src/components/data-view/types';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { isCatalogTypeEnabled, CustomResourceList } from '@console/shared';
+import { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
+import { isCatalogTypeEnabled } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { HELM_CHART_CATALOG_TYPE_ID } from '../../const';
+import { HelmRelease } from '../../types/helm-types';
 import {
-  helmReleasesRowFilters,
-  filterHelmReleasesByName,
-  filterHelmReleasesByStatus,
   fetchHelmReleases,
+  HelmReleaseStatusLabels,
+  releaseStatusReducer,
+  SelectedReleaseStatuses,
 } from '../../utils/helm-utils';
 import { HelmCatalogIcon } from '../../utils/icons';
-import HelmReleaseListHeader from './HelmReleaseListHeader';
-import HelmReleaseListRow from './HelmReleaseListRow';
+import { getDataViewRows, tableColumnInfo } from './HelmReleaseListRow';
 
-const getRowProps = (obj) => ({
-  id: obj.name,
+type HelmReleaseFilters = ResourceFilters & { status: string[] };
+
+export const useHelmReleasesColumns = (): TableColumn<HelmRelease>[] => {
+  const { t } = useTranslation();
+  return React.useMemo(
+    () => [
+      {
+        title: t('helm-plugin~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Revision'),
+        id: tableColumnInfo[2].id,
+        sort: 'version',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Updated'),
+        id: tableColumnInfo[3].id,
+        sort: 'info.last_deployed',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Status'),
+        id: tableColumnInfo[4].id,
+        sort: 'info.status',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Chart name'),
+        id: tableColumnInfo[5].id,
+        sort: 'chart.metadata.name',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Chart version'),
+        id: tableColumnInfo[6].id,
+        sort: 'chart.metadata.version',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~App version'),
+        id: tableColumnInfo[7].id,
+        sort: 'chart.metadata.appVersion',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[8].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ],
+    [t],
+  );
+};
+
+const getObjectMetadata = (release: HelmRelease) => ({
+  name: release.name,
 });
 
 const HelmReleaseList: React.FC = () => {
@@ -36,7 +127,7 @@ const HelmReleaseList: React.FC = () => {
   const secretsCountRef = React.useRef<number>(0);
   const [releasesLoaded, setReleasesLoaded] = React.useState<boolean>(false);
   const [loadError, setLoadError] = React.useState<string>();
-  const [releases, setReleases] = React.useState([]);
+  const [releases, setReleases] = React.useState<HelmRelease[]>([]);
   const secretResource = React.useMemo(
     () => ({
       isList: true,
@@ -93,15 +184,43 @@ const HelmReleaseList: React.FC = () => {
     };
   }, [namespace, newCount, secretsLoadError, secretsLoaded, t]);
 
-  if (secretsLoadError || loadError) {
-    return (
-      <StatusBox
-        loaded
-        loadError={secretsLoadError || loadError}
-        label={t('helm-plugin~Helm Releases')}
-      />
-    );
-  }
+  const columns = useHelmReleasesColumns();
+
+  const helmReleaseStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(() => {
+    return SelectedReleaseStatuses.map((status) => ({
+      value: status,
+      label: HelmReleaseStatusLabels[status],
+    }));
+  }, []);
+
+  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+    () => [
+      <DataViewCheckboxFilter
+        key="status"
+        filterId="status"
+        title={t('helm-plugin~Status')}
+        placeholder={t('helm-plugin~Filter by status')}
+        options={helmReleaseStatusFilterOptions}
+      />,
+    ],
+    [helmReleaseStatusFilterOptions, t],
+  );
+
+  const matchesAdditionalFilters = React.useCallback(
+    (release: HelmRelease, filters: HelmReleaseFilters) =>
+      filters.status.length === 0 ||
+      filters.status.includes(
+        String(
+          helmReleaseStatusFilterOptions.find(
+            (option) => option.value === releaseStatusReducer(release),
+          )?.value,
+        ),
+      ),
+    [helmReleaseStatusFilterOptions],
+  );
+
+  const isLoaded = secretsLoaded && releasesLoaded && newCount === secretsCountRef.current;
+  const hasNoReleases = isLoaded && releases.length === 0 && !loadError && !secretsLoadError;
 
   const emptyState = () => {
     const isHelmEnabled = isCatalogTypeEnabled(HELM_CHART_CATALOG_TYPE_ID);
@@ -132,21 +251,28 @@ const HelmReleaseList: React.FC = () => {
   return (
     <>
       <DocumentTitle>{t('helm-plugin~Helm Releases')}</DocumentTitle>
-      <CustomResourceList
-        resources={releases}
-        loaded={secretsLoaded && releasesLoaded && newCount === secretsCountRef.current}
-        EmptyMsg={emptyState}
-        queryArg="rowFilter-helm-release-status"
-        textFilter="name"
-        rowFilters={helmReleasesRowFilters(t)}
-        sortBy="name"
-        sortOrder={SortByDirection.asc}
-        rowFilterReducer={filterHelmReleasesByStatus}
-        textFilterReducer={filterHelmReleasesByName}
-        ResourceRow={HelmReleaseListRow}
-        resourceHeader={HelmReleaseListHeader(t)}
-        getRowProps={getRowProps}
-      />
+      <PaneBody>
+        <React.Suspense fallback={<LoadingBox />}>
+          {hasNoReleases ? (
+            emptyState()
+          ) : (
+            <ConsoleDataView<HelmRelease, { obj: HelmRelease }, HelmReleaseFilters>
+              label={t('helm-plugin~Helm Releases')}
+              data={releases}
+              loaded={isLoaded}
+              loadError={secretsLoadError || loadError}
+              columns={columns}
+              initialFilters={{ ...initialFiltersDefault, status: [] }}
+              additionalFilterNodes={additionalFilterNodes}
+              getObjectMetadata={getObjectMetadata}
+              matchesAdditionalFilters={matchesAdditionalFilters}
+              getDataViewRows={getDataViewRows}
+              hideLabelFilter
+              hideColumnManagement
+            />
+          )}
+        </React.Suspense>
+      </PaneBody>
     </>
   );
 };
