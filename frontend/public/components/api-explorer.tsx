@@ -66,11 +66,10 @@ import {
   setQueryArgument,
 } from './utils';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
+  ResourceListPage,
+  isResourceListPage,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { ErrorPage404 } from './error';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
@@ -464,13 +463,10 @@ const APIResourceInstances: React.FC<APIResourceTabProps> = ({
   customData: { kindObj, namespace },
 }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-    isDynamicResourceListPage,
+  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
+    referenceForModel(kindObj),
+    () => Promise.resolve(DefaultPage),
   );
-  const componentLoader = getResourceListPages(
-    resourceListPageExtensions,
-    dynamicResourceListPageExtensions,
-  ).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (

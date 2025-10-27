@@ -45,11 +45,10 @@ import { getResourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
 import { GreenCheckCircleIcon, DASH } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
+  ResourceListPage,
+  isResourceListPage,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   DescriptionList,
@@ -214,14 +213,10 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
 
 const Instances: React.FC<InstancesProps> = ({ obj, namespace }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-    isDynamicResourceListPage,
-  );
   const crdKind = referenceForCRD(obj);
-  const componentLoader = getResourceListPages(
-    resourceListPageExtensions,
-    dynamicResourceListPageExtensions,
-  ).get(crdKind, () => Promise.resolve(DefaultPage));
+  const componentLoader = getResourceListPages(resourceListPageExtensions).get(crdKind, () =>
+    Promise.resolve(DefaultPage),
+  );
   return (
     <AsyncComponent
       loader={componentLoader}
