@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { ExternalLinkWithCopy } from '@console/internal/components/utils';
+import { ExternalLinkWithCopy } from '@console/internal/components/utils/link';
 import { RouteKind, RouteIngress } from '@console/internal/module/k8s';
 
 const getSubdomain = (route: RouteKind): string => {

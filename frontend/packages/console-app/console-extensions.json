@@ -43,7 +43,6 @@
       "flag": "CONSOLE_QUICKSTART"
     }
   },
-
   {
     "type": "console.flag/model",
     "properties": {
@@ -143,7 +142,6 @@
       }
     }
   },
-
   {
     "type": "console.flag/model",
     "properties": {
@@ -164,6 +162,96 @@
         "version": "v1alpha2",
         "kind": "DevWorkspace"
       }
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsoleQuickStart"
+      },
+      "label": "ConsoleQuickStart",
+      "labelPlural": "ConsoleQuickStarts",
+      "abbr": "CQS"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "policy",
+        "version": "v1",
+        "kind": "PodDisruptionBudget"
+      },
+      "label": "%console-app~PodDisruptionBudget%",
+      "labelPlural": "%console-app~PodDisruptionBudgets%",
+      "abbr": "PDB"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "discovery.k8s.io",
+        "version": "v1",
+        "kind": "EndpointSlice"
+      },
+      "label": "EndpointSlice",
+      "labelPlural": "EndpointSlices",
+      "abbr": "EPS"
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeSnapshotContent"
+      },
+      "component": { "$codeRef": "volumeSnapshotContent.default" }
+    },
+    "flags": {
+      "required": ["CAN_LIST_VSC"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeSnapshotContent"
+      },
+      "component": { "$codeRef": "volumeSnapshotContentDetails.default" }
+    },
+    "flags": {
+      "required": ["CAN_LIST_VSC"]
+    }
+  },
+  {
+    "type": "console.page/resource/tab",
+    "properties": {
+      "href": "volumesnapshots",
+      "model": {
+        "version": "v1",
+        "kind": "PersistentVolumeClaim"
+      },
+      "name": "%console-app~VolumeSnapshots%",
+      "component": { "$codeRef": "volumeSnapshotPage.VolumeSnapshotPVCPage" }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "operator.openshift.io",
+        "version": "v1",
+        "kind": "Console"
+      },
+      "component": { "$codeRef": "ConsoleOperatorConfig.ConsoleOperatorConfigDetailsPage" }
     }
   },
   {
@@ -441,7 +529,22 @@
       "provider": { "$codeRef": "prometheusProvider.usePrometheusActionsProvider" }
     }
   },
-
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/quickstart/"],
+      "component": { "$codeRef": "QuickStartCatalogPageAsync.default" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/user-preferences", "/user-preferences/:group"],
+      "component": { "$codeRef": "UserPreferencePage.default" }
+    }
+  },
   {
     "type": "console.page/route",
     "properties": {
@@ -450,7 +553,6 @@
       "component": { "$codeRef": "ClusterConfigurationPage" }
     }
   },
-
   {
     "type": "console.page/route",
     "properties": {
@@ -459,7 +561,6 @@
       "component": { "$codeRef": "ClusterConfigurationPage" }
     }
   },
-
   {
     "type": "console.flag/hookProvider",
     "properties": {
@@ -1545,6 +1646,50 @@
     }
   },
   {
+    "type": "console.dashboards/overview/activity/resource",
+    "properties": {
+      "k8sResource": {
+        "isList": true,
+        "prop": "clusterVersion",
+        "kind": "ClusterVersion",
+        "namespaced": false
+      },
+      "isActivity": { "$codeRef": "dashboardsActivity.isClusterUpdateActivity" },
+      "getTimestamp": { "$codeRef": "dashboardsActivity.getClusterUpdateTimestamp" },
+      "component": { "$codeRef": "ClusterUpdateActivity.default" }
+    },
+    "flags": {
+      "required": ["CLUSTER_VERSION"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "model": { "$codeRef": "inventoryItems.NodeModel" },
+      "mapper": { "$codeRef": "inventoryItems.getNodeStatusGroups" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "model": { "$codeRef": "inventoryItems.PodModel" },
+      "mapper": { "$codeRef": "inventoryItems.getPodStatusGroups" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "model": { "$codeRef": "inventoryItems.StorageClassModel" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "model": { "$codeRef": "inventoryItems.PersistentVolumeClaimModel" },
+      "mapper": { "$codeRef": "inventoryItems.getPVCStatusGroups" }
+    }
+  },
+  {
     "type": "console.dashboards/overview/health/prometheus",
     "properties": {
       "title": "%console-app~Control Plane%",
@@ -1981,7 +2126,6 @@
       }
     }
   },
-
   {
     "type": "console.storage-class/provisioner",
     "properties": {
@@ -2037,7 +2181,6 @@
       }
     }
   },
-
   {
     "type": "console.storage-class/provisioner",
     "properties": {
@@ -2108,6 +2251,19 @@
       "provider": {
         "$codeRef": "nodeActions.useNodeActions"
       }
+    }
+  },
+  {
+    "type": "console.page/resource/tab",
+    "properties": {
+      "href": "plugin-manifest",
+      "model": {
+        "group": "console.openshift.io",
+        "version": "v1",
+        "kind": "ConsolePlugin"
+      },
+      "name": "%console-app~Plugin manifest%",
+      "component": { "$codeRef": "ConsolePluginManifestPage.ConsolePluginManifestPage" }
     }
   },
   {

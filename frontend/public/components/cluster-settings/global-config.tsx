@@ -23,7 +23,11 @@ import {
   modelFor,
   referenceForGroupVersionKind,
 } from '../../module/k8s';
-import { EmptyBox, ExpandableAlert, Kebab, LoadingBox, resourcePathFromModel } from '../utils';
+import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
+import { ExpandableAlert } from '../utils/alerts';
+import { Kebab } from '../utils/kebab';
+import { resourcePathFromModel } from '../utils/resource-link';
 import { TextFilter } from '../factory';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import i18next from 'i18next';
