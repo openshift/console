@@ -21,10 +21,7 @@ import {
   KafkaConnectionModel,
 } from '../models';
 import { Traffic } from '../types';
-import {
-  getDynamicEventSourcesWatchers,
-  getDynamicEventingChannelWatchers,
-} from './fetch-dynamic-eventsources-utils';
+import { fetchEventSourcesCrd, fetchChannelsCrd } from './fetch-dynamic-eventsources-utils';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -438,31 +435,87 @@ export const getSinkableResources = (namespace: string): FirehoseResource[] => {
     : [];
 };
 
-export const getKnativeServingResources = (namespace: string) => {
+export const getKnativeServingResources = () =>
+  Promise.resolve({
+    revisions: {
+      model: { group: 'serving.knative.dev', version: 'v1', kind: 'Revision' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    configurations: {
+      model: { group: 'serving.knative.dev', version: 'v1', kind: 'Configuration' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    ksroutes: {
+      model: { group: 'serving.knative.dev', version: 'v1', kind: 'Route' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    ksservices: {
+      model: { group: 'serving.knative.dev', version: 'v1', kind: 'Service' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    domainmappings: {
+      model: { group: 'serving.knative.dev', version: 'v1beta1', kind: 'DomainMapping' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+  });
+
+export const getKnativeEventingResources = async () => {
+  // Fetch dynamic event sources and channels at runtime
+  const eventSourceModels = await fetchEventSourcesCrd();
+  const eventingChannels = await fetchChannelsCrd();
+
+  const dynamicEventSources = eventSourceModels.reduce((acc, model) => {
+    const ref = referenceForModel(model);
+    acc[ref] = {
+      model: { group: model.apiGroup, version: model.apiVersion, kind: model.kind },
+      opts: { isList: true, optional: true, namespaced: true },
+    };
+    return acc;
+  }, {});
+
+  const dynamicChannels = eventingChannels.reduce((acc, model) => {
+    const ref = referenceForModel(model);
+    acc[ref] = {
+      model: { group: model.apiGroup, version: model.apiVersion, kind: model.kind },
+      opts: { isList: true, optional: true, namespaced: true },
+    };
+    return acc;
+  }, {});
+
   return {
-    ...knativeServingResourcesRevisionWatchers(namespace),
-    ...knativeServingResourcesConfigurationsWatchers(namespace),
-    ...knativeServingResourcesRoutesWatchers(namespace),
-    ...knativeServingResourcesServicesWatchers(namespace),
-    ...knativeCamelDomainMappingResourceWatchers(namespace),
+    eventingsubscription: {
+      model: { group: 'messaging.knative.dev', version: 'v1', kind: 'Subscription' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    brokers: {
+      model: { group: 'eventing.knative.dev', version: 'v1', kind: 'Broker' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    triggers: {
+      model: { group: 'eventing.knative.dev', version: 'v1', kind: 'Trigger' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    ...dynamicEventSources,
+    ...dynamicChannels,
   };
 };
 
-export const getKnativeEventingResources = (namespace: string) => {
-  return {
-    ...knativeEventingResourcesSubscriptionWatchers(namespace),
-    ...getDynamicEventSourcesWatchers(namespace),
-    ...getDynamicEventingChannelWatchers(namespace),
-    ...knativeEventingBrokerResourceWatchers(namespace),
-    ...knativeEventingTriggerResourceWatchers(namespace),
-  };
-};
-
-export const getKnativeEventingKameletsResources = (namespace: string) => {
-  return {
-    ...knativeCamelIntegrationsResourceWatchers(namespace),
-    ...knativeCamelKameletBindingResourceWatchers(namespace),
-    ...knativeCamelDomainMappingResourceWatchers(namespace),
-    ...knativeCamelKameletResourceWatchers(namespace),
-  };
-};
+export const getKnativeEventingKameletsResources = () =>
+  Promise.resolve({
+    integrations: {
+      model: { group: 'camel.apache.org', version: 'v1', kind: 'Integration' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    kameletbindings: {
+      model: { group: 'camel.apache.org', version: 'v1alpha1', kind: 'KameletBinding' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    domainmappings: {
+      model: { group: 'serving.knative.dev', version: 'v1beta1', kind: 'DomainMapping' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    kamelets: {
+      model: { group: 'camel.apache.org', version: 'v1alpha1', kind: 'Kamelet' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+  });

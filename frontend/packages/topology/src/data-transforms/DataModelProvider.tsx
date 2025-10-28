@@ -10,7 +10,7 @@ import {
   referenceForExtensionModel,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { LoadedExtension, useExtensions } from '@console/plugin-sdk/src';
+import { LoadedExtension, useExtensions } from '@console/plugin-sdk';
 import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../extensions/topology';
 import DataModelExtension from './DataModelExtension';
 import { ModelContext, ExtensibleModel } from './ModelContext';
@@ -58,12 +58,27 @@ export const getNamespacedDynamicModelFactories = (
   extensions: LoadedExtension<DynamicTopologyDataModelFactory>[],
 ) =>
   extensions.map((extension) => {
+    const { resources } = extension.properties;
+
+    //  If resources is a CodeRef (function), keep it as-is for resolution in DataModelExtension
+    if (typeof resources === 'function') {
+      return {
+        ...extension,
+        properties: {
+          ...extension.properties,
+          // Keep the original CodeRef - it will be resolved by useResolvedResources hook
+          resources,
+        },
+      };
+    }
+
+    // Static WatchK8sResourcesGeneric - convert to function format for legacy compatibility
     return {
       ...extension,
       properties: {
         ...extension.properties,
         resources: (namespace: string) =>
-          Object.entries(extension.properties.resources || {}).reduce((acc, [key, resource]) => {
+          Object.entries(resources || {}).reduce((acc, [key, resource]: [string, any]) => {
             const flattenedResource = flattenResource(
               namespace,
               extension,

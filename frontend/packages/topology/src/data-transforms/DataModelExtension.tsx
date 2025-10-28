@@ -1,29 +1,98 @@
-import * as React from 'react';
+import { useContext, useRef, useEffect, useMemo } from 'react';
+import {
+  WatchK8sResources,
+  WatchK8sResourcesGeneric,
+  WatchK8sResource,
+} from '@console/dynamic-plugin-sdk';
+import { referenceForModel, modelForGroupKind } from '@console/internal/module/k8s';
 import { useDeepCompareMemoize } from '@console/shared';
 import { TopologyDataModelFactory } from '../extensions/topology';
+import { useResolvedResources } from '../hooks/useTopologyDataModelFactory';
 import { ModelContext, ExtensibleModel, ModelExtensionContext } from './ModelContext';
 
 interface DataModelExtensionProps {
   dataModelFactory: TopologyDataModelFactory['properties'];
 }
 
+/**
+ * Converts a single resource from WatchK8sResourcesGeneric format to WatchK8sResource format.
+ * This handles the namespace injection and model reference resolution.
+ */
+const convertGenericResource = (
+  namespace: string,
+  model?: { group?: string; version?: string; kind: string },
+  opts?: Partial<WatchK8sResource>,
+): WatchK8sResource | null => {
+  if (!model) {
+    return { namespace, ...opts };
+  }
+
+  // Try to find the internal model
+  const internalModel = modelForGroupKind(model.group, model.kind);
+  if (!internalModel) {
+    // CRD not found - log warning and skip
+    // eslint-disable-next-line no-console
+    console.warn(
+      `Could not find model (CRD) for group "${model.group}" and kind "${model.kind}". Resource will be skipped.`,
+    );
+    return null;
+  }
+
+  const reference = referenceForModel(internalModel);
+  return { namespace, kind: reference, ...opts };
+};
+
 const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactory }) => {
-  const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
-  const { id, priority, resources } = dataModelFactory;
+  const dataModelContext = useContext<ExtensibleModel>(ModelContext);
+  const { id, priority, resources: rawResources } = dataModelFactory;
   const workloadKeys = useDeepCompareMemoize(dataModelFactory.workloadKeys);
-  const extensionContext = React.useRef<ModelExtensionContext>({
+  const { resolved: resolvedResources, isGeneric } = useResolvedResources(
+    rawResources,
+    dataModelContext.namespace,
+  );
+
+  // Convert WatchK8sResourcesGeneric to WatchK8sResources if needed
+  const finalResources = useMemo<WatchK8sResources<any> | undefined>(() => {
+    if (!resolvedResources) {
+      return undefined;
+    }
+
+    if (isGeneric) {
+      // Resources are in WatchK8sResourcesGeneric format, need to be converted
+      const genericResources = resolvedResources as WatchK8sResourcesGeneric;
+      const converted: WatchK8sResources<any> = {};
+
+      Object.entries(genericResources).forEach(([key, resource]) => {
+        const flattenedResource = convertGenericResource(
+          dataModelContext.namespace,
+          resource?.model,
+          resource?.opts,
+        );
+        if (flattenedResource) {
+          converted[key] = flattenedResource;
+        }
+      });
+
+      return converted;
+    }
+
+    // Already in the correct format
+    return resolvedResources as WatchK8sResources<any>;
+  }, [resolvedResources, isGeneric, dataModelContext.namespace]);
+
+  const extensionContext = useRef<ModelExtensionContext>({
     priority,
     workloadKeys,
-    resources,
+    resources: undefined,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const storedContext = dataModelContext.getExtension(id);
     if (!storedContext) {
       extensionContext.current = {
         priority,
         workloadKeys,
-        resources,
+        resources: finalResources,
       };
       dataModelContext.updateExtension(id, extensionContext.current);
 
@@ -73,7 +142,7 @@ const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactor
         dataModelContext.updateExtension(id, extensionContext.current);
       }
     }
-  }, [dataModelContext, dataModelFactory, id, priority, resources, workloadKeys]);
+  }, [dataModelContext, dataModelFactory, id, priority, finalResources, workloadKeys]);
 
   return null;
 };
