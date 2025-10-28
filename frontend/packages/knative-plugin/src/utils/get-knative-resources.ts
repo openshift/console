@@ -457,7 +457,7 @@ export const getKnativeServingResources = () =>
       model: { group: 'serving.knative.dev', version: 'v1beta1', kind: 'DomainMapping' },
       opts: { isList: true, optional: true, namespaced: true },
     },
-  });
+  } satisfies WatchK8sResourcesGeneric);
 
 export const getKnativeEventingResources = async () => {
   // Fetch dynamic event sources and channels at runtime
@@ -469,7 +469,7 @@ export const getKnativeEventingResources = async () => {
     acc[ref] = {
       model: { group: model.apiGroup, version: model.apiVersion, kind: model.kind },
       opts: { isList: true, optional: true, namespaced: true },
-    };
+    } satisfies WatchK8sResourcesGeneric;
     return acc;
   }, {});
 
@@ -478,7 +478,7 @@ export const getKnativeEventingResources = async () => {
     acc[ref] = {
       model: { group: model.apiGroup, version: model.apiVersion, kind: model.kind },
       opts: { isList: true, optional: true, namespaced: true },
-    };
+    } satisfies WatchK8sResourcesGeneric;
     return acc;
   }, {});
 
@@ -497,7 +497,7 @@ export const getKnativeEventingResources = async () => {
     },
     ...dynamicEventSources,
     ...dynamicChannels,
-  };
+  } satisfies WatchK8sResourcesGeneric;
 };
 
 export const getKnativeEventingKameletsResources = () =>
@@ -518,4 +518,4 @@ export const getKnativeEventingKameletsResources = () =>
       model: { group: 'camel.apache.org', version: 'v1alpha1', kind: 'Kamelet' },
       opts: { isList: true, optional: true, namespaced: true },
     },
-  });
+  } satisfies WatchK8sResourcesGeneric);
