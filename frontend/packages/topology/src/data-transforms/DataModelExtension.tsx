@@ -3,6 +3,7 @@ import {
   WatchK8sResources,
   WatchK8sResourcesGeneric,
   WatchK8sResource,
+  TopologyDataModelFactory as DynamicTopologyDataModelFactory,
 } from '@console/dynamic-plugin-sdk';
 import { referenceForModel, modelForGroupKind } from '@console/internal/module/k8s';
 import { useDeepCompareMemoize } from '@console/shared';
@@ -11,7 +12,9 @@ import { useResolvedResources } from '../hooks/useTopologyDataModelFactory';
 import { ModelContext, ExtensibleModel, ModelExtensionContext } from './ModelContext';
 
 interface DataModelExtensionProps {
-  dataModelFactory: TopologyDataModelFactory['properties'];
+  dataModelFactory:
+    | TopologyDataModelFactory['properties']
+    | DynamicTopologyDataModelFactory['properties'];
 }
 
 /**
