@@ -2,8 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
 import {
   Alert,
   Grid,
@@ -18,16 +16,17 @@ import { ONE_HOUR, ONE_MINUTE, Status, usePrometheusGate } from '@console/shared
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { LazyActionMenu, ActionMenuVariant } from '@console/shared/src/components/actions';
-import {
-  K8sResourceKindReference,
-  referenceFor,
-  referenceForModel,
-  K8sResourceKind,
-  K8sModel,
-} from '../module/k8s';
+import { K8sResourceKindReference, K8sResourceKind, TableColumn } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage } from './factory';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ResourceDataView,
+} from '@console/app/src/components/data-view/ResourceDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   AsyncComponent,
@@ -41,8 +40,8 @@ import {
   humanizeCpuCores,
   isManaged,
   isUpstream,
-  Kebab,
   navFactory,
+  ResourceKebab,
   ResourceLink,
   resourcePath,
   ResourceSummary,
@@ -57,8 +56,19 @@ import { BuildConfigModel } from '../models';
 import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { displayDurationInWords } from './utils/build-utils';
+import { LoadingBox } from './utils/status-box';
+import { menuActions } from './pod';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
+
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'status' },
+  { id: 'startTime' },
+  { id: 'duration' },
+  { id: 'actions' },
+];
 
 export enum BuildStrategyType {
   Docker = 'Docker',
@@ -350,10 +360,9 @@ export const BuildsDetailsPage: React.FCC = (props) => {
     <DetailsPage
       {...props}
       kind={BuildsReference}
-      customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) => {
-        const reference = referenceForModel(kindObj);
-        const context = { [reference]: obj };
-        return <LazyActionMenu context={context} variant={ActionMenuVariant.DROPDOWN} />;
+      menuActions={menuActions}
+      customActionMenu={(obj: K8sResourceKind) => {
+        return <ResourceKebab actions={menuActions} kind={BuildsReference} resource={obj} />;
       }}
       pages={[
         navFactory.details(BuildsDetails),
@@ -368,97 +377,120 @@ export const BuildsDetailsPage: React.FCC = (props) => {
 };
 BuildsDetailsPage.displayName = 'BuildsDetailsPage';
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  Kebab.columnClass,
-];
+const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
+  return data.map(({ obj: build }) => {
+    const { name, namespace } = build.metadata;
 
-const BuildsTableRow: React.FCC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
-  const kindReference = referenceFor(obj);
-  const context = { [kindReference]: obj };
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={BuildsReference} name={name} namespace={namespace} />,
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <Status status={build.status?.phase} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <Timestamp timestamp={build.status?.startTimestamp} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: displayDurationInWords(
+          build.status?.startTimestamp,
+          build.status?.completionTimestamp,
+        ),
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <ResourceKebab actions={menuActions} kind={BuildsReference} resource={build} />,
+        props: actionsCellProps,
+      },
+    };
 
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={BuildsReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Status status={obj.status?.phase} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <Timestamp timestamp={obj.status?.startTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {displayDurationInWords(obj.status?.startTimestamp, obj.status?.completionTimestamp)}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || '-';
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
-export const BuildsList: React.FCC = (props) => {
+const useBuildsColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  const BuildsTableHeader = () => {
+  const columns = React.useMemo(() => {
     return [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-        id: 'namespace',
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Status'),
-        sortField: 'status.phase',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: 'status.phase',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Start time'),
-        sortField: 'status.startTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        sort: 'status.startTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Duration'),
-        sortField: 'status.duration',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[4].id,
+        sort: 'status.duration',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[4] },
+        id: tableColumnInfo[5].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
     ];
-  };
-  BuildsTableHeader.displayName = 'BuildsTableHeader';
+  }, [t]);
+  return columns;
+};
+
+export const BuildsList: React.FCC<BuildsListProps> = ({ data, loaded, ...props }) => {
+  const columns = useBuildsColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~Builds')}
-      Header={BuildsTableHeader}
-      Row={BuildsTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ResourceDataView
+        {...props}
+        label="Builds"
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -488,6 +520,7 @@ export const BuildsPage: React.FCC<BuildsPageProps> = (props) => {
           })),
         },
       ]}
+      omitFilterToolbar={true}
     />
   );
 };
@@ -501,4 +534,10 @@ export type BuildsPageProps = {
   showTitle?: boolean;
   namespace?: string;
   selector?: any;
+};
+
+type BuildsListProps = {
+  data: K8sResourceKind[];
+  loaded: boolean;
+  [key: string]: any;
 };
