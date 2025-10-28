@@ -147,7 +147,6 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
       hideLabelFilter={hideLabelFilter}
       columnLayout={columnLayout}
       uniqueFilterName={name}
-      omitFilterToolbar={omitFilterToolbar}
       {...props}
     />
   );

@@ -52,7 +52,7 @@ describe('Filtering and Searching', () => {
     cy.deleteProjectWithCLI(testName);
   });
 
-  // disabled as listPage.dvRows.shouldExist isn't a valid test
+  // disabled as listPage.rows.shouldExist isn't a valid test
   xit('filters Pod from object detail', () => {
     cy.visit(`/k8s/ns/${testName}/deployments`);
     listPage.rows.shouldExist(WORKLOAD_NAME);

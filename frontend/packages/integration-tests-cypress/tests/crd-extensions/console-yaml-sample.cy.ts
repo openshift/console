@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { listPage } from '../../views/list-page';
-import { modal } from '../../views/modal';
 import * as resourceSidebar from '../../views/resource-sidebar';
 import * as yamlEditor from '../../views/yaml-editor';
 
@@ -76,7 +75,7 @@ metadata:
     });
 
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
     cy.log('Additional printer columns should not exist.');
     cy.get('[data-test^="additional-printer-column-header-"]').should('not.exist');
     cy.log('Created date should exist since Age does not.');
@@ -105,12 +104,6 @@ metadata:
     detailsPage.titleShouldContain(testJobName);
 
     // Delete CRD
-    cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}`);
-    listPage.rows.shouldBeLoaded();
-    listPage.rows.clickKebabAction(name, `Delete ${crd}`);
-    modal.shouldBeOpened();
-    modal.modalTitleShouldContain(`Delete ${crd}`);
-    modal.submit();
-    modal.shouldBeClosed();
+    cy.exec(`oc delete ${crd} ${name}`);
   });
 });

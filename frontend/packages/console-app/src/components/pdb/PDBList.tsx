@@ -7,47 +7,42 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
-import { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import {
+  TableColumn,
+  ColumnLayout,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink, Selector } from '@console/internal/components/utils';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
-import { referenceFor } from '@console/internal/module/k8s';
-import { LazyActionMenu, DASH } from '@console/shared';
+import { referenceForModel } from '@console/internal/module/k8s';
+import {
+  LazyActionMenu,
+  DASH,
+  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+} from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { PodDisruptionBudgetModel } from '../../models';
+import { getPDBTableColumns, tableColumnInfo } from './pdb-table-columns';
 import { PodDisruptionBudgetKind } from './types';
 import { isDisruptionViolated } from './utils/get-pdb-resources';
 
-const tableColumnInfo = [
-  { id: 'name' },
-  { id: 'namespace' },
-  { id: 'selector' },
-  { id: 'minAvailable' },
-  { id: 'disruptionsAllowed' },
-  { id: 'creationTimestamp' },
-  { id: 'actions' },
-];
+const pdbColumnManagementID = referenceForModel(PodDisruptionBudgetModel);
 
 const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind, undefined> = (data, columns) => {
   return data.map(({ obj: pdb }) => {
     const { name, namespace } = pdb.metadata;
-    const resourceKind = referenceFor(pdb);
+    const resourceKind = referenceForModel(PodDisruptionBudgetModel);
     const context = { [resourceKind]: pdb };
     const isPDBViolated = isDisruptionViolated(pdb);
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
-        cell: (
-          <ResourceLink
-            groupVersionKind={getGroupVersionKindForModel(PodDisruptionBudgetModel)}
-            name={name}
-            namespace={namespace}
-          />
-        ),
+        cell: <ResourceLink kind={resourceKind} name={name} namespace={namespace} />,
         props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
@@ -57,15 +52,12 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind, undefined> = (da
         cell: <Selector selector={pdb.spec.selector} namespace={namespace} />,
       },
       [tableColumnInfo[3].id]: {
-        cell: (
-          <span>
-            {_.isNil(pdb.spec.maxUnavailable) && _.isNil(pdb.spec.minAvailable)
-              ? DASH
-              : _.isNil(pdb.spec.maxUnavailable)
-              ? `Min available ${pdb.spec.minAvailable}`
-              : `Max unavailable ${pdb.spec.maxUnavailable}`}
-          </span>
-        ),
+        cell:
+          _.isNil(pdb.spec.maxUnavailable) && _.isNil(pdb.spec.minAvailable)
+            ? DASH
+            : _.isNil(pdb.spec.maxUnavailable)
+            ? `Min available ${pdb.spec.minAvailable}`
+            : `Max unavailable ${pdb.spec.maxUnavailable}`,
       },
       [tableColumnInfo[4].id]: {
         cell: (
@@ -99,69 +91,19 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind, undefined> = (da
   });
 };
 
-const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
-  const { t } = useTranslation();
-  const columns = React.useMemo(() => {
-    return [
-      {
-        title: t('console-app~Name'),
-        id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('console-app~Namespace'),
-        id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('console-app~Selector'),
-        id: tableColumnInfo[2].id,
-        sort: 'spec.selector',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('console-app~Availability'),
-        id: tableColumnInfo[3].id,
-        sort: 'spec.minAvailable',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('console-app~Disruptions allowed'),
-        id: tableColumnInfo[4].id,
-        sort: 'status.disruptionsAllowed',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('console-app~Created'),
-        id: tableColumnInfo[5].id,
-        sort: 'metadata.creationTimestamp',
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: '',
-        id: tableColumnInfo[6].id,
-        props: {
-          ...cellIsStickyProps,
-        },
-      },
-    ];
-  }, [t]);
-  return columns;
+const getPDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
+  const sharedColumns = getPDBTableColumns();
+
+  return sharedColumns.map((col, index) => ({
+    title: col.title,
+    id: col.id,
+    sort: col.sort,
+    props: {
+      ...cellIsStickyProps,
+      modifier: 'nowrap',
+      ...(index === sharedColumns.length - 1 && { ...cellIsStickyProps }),
+    },
+  }));
 };
 
 const PodDisruptionBudgetList: React.FCC<PodDisruptionBudgetsListProps> = ({
@@ -169,19 +111,43 @@ const PodDisruptionBudgetList: React.FCC<PodDisruptionBudgetsListProps> = ({
   loaded,
   ...props
 }) => {
-  const columns = usePDBColumns();
+  const { t } = useTranslation();
+  const columns = getPDBColumns();
+  const [selectedColumns] = useUserSettingsCompatibility(
+    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+    undefined,
+    true,
+  );
+
+  const columnLayout = React.useMemo<ColumnLayout>(
+    () => ({
+      columns: columns
+        .filter((column) => column.title && column.title.trim() !== '')
+        .map((column) => _.pick(column, ['title', 'additional', 'id'])),
+      id: pdbColumnManagementID,
+      selectedColumns:
+        selectedColumns?.[pdbColumnManagementID]?.length > 0
+          ? new Set(selectedColumns[pdbColumnManagementID])
+          : null,
+      type: t('console-app~PodDisruptionBudget'),
+      showNamespaceOverride: false,
+    }),
+    [columns, selectedColumns, t],
+  );
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<PodDisruptionBudgetKind>
+      <ConsoleDataView<PodDisruptionBudgetKind>
         {...props}
         label={PodDisruptionBudgetModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
+        columnLayout={columnLayout}
+        columnManagementID={pdbColumnManagementID}
         initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
-        hideColumnManagement
       />
     </React.Suspense>
   );

@@ -42,8 +42,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LoadingBox } from './utils/status-box';
@@ -84,20 +84,16 @@ const getDataViewRows: GetDataViewRows<CronJobKind, undefined> = (data, columns)
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [tableColumnInfo[2].id]: {
-        cell: <span>{cronjob.spec.schedule}</span>,
+        cell: cronjob.spec.schedule,
       },
       [tableColumnInfo[3].id]: {
-        cell: (
-          <span>
-            {cronjob.spec?.suspend ? i18next.t('public~True') : i18next.t('public~False')}
-          </span>
-        ),
+        cell: cronjob.spec?.suspend ? i18next.t('public~True') : i18next.t('public~False'),
       },
       [tableColumnInfo[4].id]: {
-        cell: <span>{cronjob.spec?.concurrencyPolicy || DASH}</span>,
+        cell: cronjob.spec?.concurrencyPolicy || DASH,
       },
       [tableColumnInfo[5].id]: {
-        cell: <span>{cronjob.spec?.startingDeadlineSeconds || DASH}</span>,
+        cell: cronjob.spec?.startingDeadlineSeconds || DASH,
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={context} />,
@@ -348,7 +344,7 @@ export const CronJobsList: React.FCC<CronJobsListProps> = ({ data, loaded, ...pr
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<CronJobKind>
+      <ConsoleDataView<CronJobKind>
         {...props}
         label={CronJobModel.labelPlural}
         data={data}

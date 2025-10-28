@@ -28,7 +28,6 @@ import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { LoadingBox } from '@console/shared/src/components/loading';
 import { sortResourceByValue } from './factory/Table/sort';
 import { sorts } from './factory/table';
-import { ConfigMapModel } from '../models';
 
 const menuActions = [...Kebab.factory.common];
 const kind = referenceForModel(ConfigMapModel);
@@ -60,7 +59,7 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind, undefined> = (data, column
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [tableColumnInfo[2].id]: {
-        cell: <span>{dataSize}</span>,
+        cell: dataSize,
       },
       [tableColumnInfo[3].id]: {
         cell: <Timestamp timestamp={configMap.metadata.creationTimestamp} />,

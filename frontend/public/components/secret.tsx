@@ -101,10 +101,10 @@ const getDataViewRows: GetDataViewRows<any, undefined> = (data, columns) => {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [tableColumnInfo[2].id]: {
-        cell: <span>{secret.type}</span>,
+        cell: secret.type,
       },
       [tableColumnInfo[3].id]: {
-        cell: <span>{sorts.dataSize(secret)}</span>,
+        cell: sorts.dataSize(secret),
       },
       [tableColumnInfo[4].id]: {
         cell: <Timestamp timestamp={secret.metadata.creationTimestamp} />,

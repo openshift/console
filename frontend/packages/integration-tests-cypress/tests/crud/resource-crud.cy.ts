@@ -33,28 +33,64 @@ describe('Kubernetes resource CRUD operations', () => {
   });
 
   const k8sObjs = OrderedMap<string, TestDefinition>()
+    .set('pods', { kind: 'Pod' })
+    .set('serviceaccounts', { kind: 'ServiceAccount', humanizeKind: false })
     .set('secrets', { kind: 'Secret', skipYamlReloadTest: true })
+    .set('persistentvolumes', {
+      kind: 'PersistentVolume',
+      namespaced: false,
+      humanizeKind: false,
+    })
+    .set('storageclasses', {
+      kind: 'StorageClass',
+      namespaced: false,
+      humanizeKind: false,
+    })
     .set('cronjobs', { kind: 'CronJob', humanizeKind: false })
+    .set('jobs', { kind: 'Job' })
     .set('daemonsets', { kind: 'DaemonSet', humanizeKind: false })
-    .set('deployments', { kind: 'Deployment', skipYamlReloadTest: true, skipYamlSaveTest: true });
+    .set('deployments', { kind: 'Deployment', skipYamlReloadTest: true, skipYamlSaveTest: true })
+    .set('replicasets', { kind: 'ReplicaSet', humanizeKind: false })
+    .set('replicationcontrollers', { kind: 'ReplicationController', humanizeKind: false })
+    .set('persistentvolumeclaims', {
+      kind: 'PersistentVolumeClaim',
+      humanizeKind: false,
+    })
+    .set('statefulsets', { kind: 'StatefulSet', humanizeKind: false })
+    .set('resourcequotas', { kind: 'ResourceQuota', humanizeKind: false })
+    .set('limitranges', { kind: 'LimitRange', humanizeKind: false })
+    .set('horizontalpodautoscalers', { kind: 'HorizontalPodAutoscaler', humanizeKind: false })
+    .set('roles', { kind: 'Role' })
+    .set('snapshot.storage.k8s.io~v1~VolumeSnapshot', {
+      kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshot',
+    })
+    .set('snapshot.storage.k8s.io~v1~VolumeSnapshotClass', {
+      kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotClass',
+      namespaced: false,
+    })
+    .set('snapshot.storage.k8s.io~v1~VolumeSnapshotContent', {
+      kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
+      namespaced: false,
+    });
 
-  const openshiftObjs = OrderedMap<string, TestDefinition>().set('deploymentconfigs', {
-    kind: 'DeploymentConfig',
-    humanizeKind: false,
-    skipYamlReloadTest: true,
-    skipYamlSaveTest: true,
-  });
-  // .set('buildconfigs', {
-  //   kind: 'BuildConfig',
-  //   humanizeKind: false,
-  //   skipYamlReloadTest: true,
-  //   skipYamlSaveTest: true,
-  // })
-  // .set('imagestreams', { kind: 'ImageStream', humanizeKind: false })
-  // .set('user.openshift.io~v1~Group', {
-  //   kind: 'user.openshift.io~v1~Group',
-  //   namespaced: false,
-  // });
+  const openshiftObjs = OrderedMap<string, TestDefinition>()
+    .set('deploymentconfigs', {
+      kind: 'DeploymentConfig',
+      humanizeKind: false,
+      skipYamlReloadTest: true,
+      skipYamlSaveTest: true,
+    })
+    .set('buildconfigs', {
+      kind: 'BuildConfig',
+      humanizeKind: false,
+      skipYamlReloadTest: true,
+      skipYamlSaveTest: true,
+    })
+    .set('imagestreams', { kind: 'ImageStream', humanizeKind: false })
+    .set('user.openshift.io~v1~Group', {
+      kind: 'user.openshift.io~v1~Group',
+      namespaced: false,
+    });
 
   const testObjs = Cypress.env('openshift') === true ? k8sObjs.merge(openshiftObjs) : k8sObjs;
   const testLabel = 'automated-test-name';
@@ -82,7 +118,12 @@ describe('Kubernetes resource CRUD operations', () => {
     'ServiceAccount',
     'DaemonSet',
     'PodDisruptionBudget',
-    'user.openshift.io~v1~Group',
+    'HorizontalPodAutoscaler',
+    'Job',
+    'Pod',
+    'ReplicaSet',
+    'ReplicationController',
+    'StatefulSet',
   ]);
 
   testObjs.forEach((testObj, resource) => {
