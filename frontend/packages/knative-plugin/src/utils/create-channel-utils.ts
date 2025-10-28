@@ -6,8 +6,8 @@ import {
   getAppLabels,
 } from '@console/dev-console/src/utils/resource-label-utils';
 import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
+import { checkAccess } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { checkAccess } from '@console/internal/components/utils/rbac';
 import { ConfigMapModel } from '@console/internal/models';
 import {
   getGroupVersionKind,

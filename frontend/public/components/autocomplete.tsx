@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
-import { useDocumentListener, KeyEventModes } from '@console/shared/src/hooks/document-listener';
-import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
+import { useDocumentListener, getLabelsAsString } from '@console/shared';
+import { KeyEventModes } from '@console/shared/src/hooks';
 import { fuzzyCaseInsensitive } from './factory/table-filters';
-import { TextFilter } from './factory/list-page';
+import { TextFilter } from './factory';
 import { Label, SelectList } from '@patternfly/react-core';
 
 const MAX_SUGGESTIONS = 5;

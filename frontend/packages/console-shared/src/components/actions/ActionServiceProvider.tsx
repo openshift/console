@@ -9,7 +9,7 @@ import {
   MenuOption,
 } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk';
-import { useDeepCompareMemoize } from '../../hooks/deep-compare-memoize';
+import { useDeepCompareMemoize } from '../../hooks';
 import ActionsLoader from './loader/ActionsLoader';
 import { ActionContext } from './types';
 import { createMenuOptions } from './utils';
