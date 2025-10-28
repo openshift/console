@@ -4,8 +4,7 @@ import { alertmanager, getGlobalsAndReceiverConfig } from '../../../../views/ale
 import * as yamlEditor from '../../../../views/yaml-editor';
 
 const receiverName = `EmailReceiver-${testName}`;
-const receiverType = 'email';
-const configName = `${receiverType}_configs`;
+const configName = 'email_configs';
 const localhost = 'localhost';
 const label = 'severity = warning';
 const emailTo = 'you@there.com';
@@ -49,7 +48,7 @@ describe('Alertmanager: Email Receiver Form', () => {
     alertmanager.save();
 
     cy.log('verify Email Receiver was created correctly');
-    alertmanager.validateCreation(receiverName);
+    alertmanager.validateCreation(receiverName, 'integration-types', 'routing-labels');
     alertmanager.visitYAMLPage();
     yamlEditor.getEditorContent().then((content) => {
       const configs = getGlobalsAndReceiverConfig(receiverName, configName, content);

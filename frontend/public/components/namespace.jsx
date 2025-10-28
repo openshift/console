@@ -15,7 +15,6 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -31,19 +30,12 @@ import {
   FLAGS,
   GreenCheckCircleIcon,
   getName,
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-  useUserSettingsCompatibility,
-  isModifiedEvent,
   REQUESTER_FILTER,
   useFlag,
   usePrometheusGate,
   DASH,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
@@ -56,14 +48,14 @@ import {
 import { coFetchJSON } from '../co-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
 import * as UIActions from '../actions/ui';
-import { DetailsPage, ListPage, Table, TableData } from './factory';
+import { DetailsPage, ListPage } from './factory';
 import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   DetailsItem,
@@ -71,8 +63,6 @@ import {
   LabelList,
   LoadingInline,
   LoadingBox,
-  ConsoleEmptyState,
-  ResourceIcon,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
@@ -88,8 +78,6 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, PROMETHEUS_BASE_PATH } from './graphs';
-import { flagPending } from '../reducers/features';
-import { OpenShiftGettingStarted } from './start-guide';
 import { OverviewListPage } from './overview';
 import {
   getNamespaceDashboardConsoleLinks,
@@ -304,7 +292,7 @@ const NamespacesTableHeader = () => {
   ];
 };
 NamespacesTableHeader.displayName = 'NamespacesTableHeader';
-
+const NamespacesColumnManagementID = referenceForModel(NamespaceModel);
 const useNamespacesColumns = () => {
   const { t } = useTranslation();
   const columns = React.useMemo(() => {
@@ -465,6 +453,7 @@ export const NamespacesList = (props) => {
   const dispatch = useDispatch();
   const columns = useNamespacesColumns();
   const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const { t } = useTranslation();
 
   // TODO Utilize usePoll hook
   useEffect(() => {
@@ -494,16 +483,30 @@ export const NamespacesList = (props) => {
     });
   }, [props.data, metrics]);
 
+  const columnLayout = useMemo(
+    () => ({
+      columns: columns
+        .filter((column) => column.title && column.title.trim() !== '')
+        .map((column) => _.pick(column, ['title', 'additional', 'id'])),
+      id: NamespacesColumnManagementID,
+      selectedColumns: null,
+      type: t('public~Namespace'),
+      showNamespaceOverride: false,
+    }),
+    [columns, t],
+  );
+
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ConsoleDataView
         {...props}
         data={enhancedData}
         label={NamespaceModel.labelPlural}
         columns={columns}
+        columnLayout={columnLayout}
+        columnManagementID={NamespacesColumnManagementID}
         initialFilters={initialFiltersDefault}
         getDataViewRows={getNamespacesDataViewRows}
-        hideColumnManagement={true}
       />
     </React.Suspense>
   );
@@ -524,344 +527,235 @@ export const NamespacesPage = (props) => {
 };
 
 export const projectMenuActions = [Kebab.factory.Edit, deleteModal];
+const projectColumnInfo = [
+  { id: 'name' },
+  { id: 'displayName' },
+  { id: 'status' },
+  { id: 'requester' },
+  { id: 'memory' },
+  { id: 'cpu' },
+  { id: 'created' },
+  { id: 'description' },
+  { id: 'labels' },
+  { id: 'actions' },
+];
+
+const useProjectsColumns = () => {
+  const { t } = useTranslation();
+  const columns = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Name'),
+        id: projectColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Display name'),
+        id: projectColumnInfo[1].id,
+        sort: 'metadata.annotations["openshift.io/display-name"]',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Status'),
+        id: projectColumnInfo[2].id,
+        sort: 'status.phase',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Requester'),
+        id: projectColumnInfo[3].id,
+        sort: "metadata.annotations.['openshift.io/requester']",
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Memory'),
+        id: projectColumnInfo[4].id,
+        sort: 'namespaceMemory',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~CPU'),
+        id: projectColumnInfo[5].id,
+        sort: 'namespaceCPU',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Created'),
+        id: projectColumnInfo[6].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Description'),
+        id: projectColumnInfo[7].id,
+        sort: "metadata.annotations.['openshift.io/description']",
+        props: {
+          modifier: 'nowrap',
+        },
+        additional: true,
+      },
+      {
+        title: t('public~Labels'),
+        id: projectColumnInfo[8].id,
+        sort: 'metadata.labels',
+        props: {
+          modifier: 'nowrap',
+        },
+        additional: true,
+      },
+      {
+        title: '',
+        id: 'actions',
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
+};
+
+const getProjectsDataViewRows = (data, columns) => {
+  return data.map(({ obj: project }) => {
+    const name = getName(project);
+    const requester = getRequester(project);
+    const description = getDescription(project);
+    const labels = project.metadata.labels;
+    const displayName = getDisplayName(project);
+    const bytes = project._metrics?.memory;
+    const cores = project._metrics?.cpu;
+
+    const rowCells = {
+      [projectColumnInfo[0].id]: {
+        cell: <ResourceLink kind="Project" name={project.metadata.name} />,
+        props: getNameCellProps(name),
+      },
+      [projectColumnInfo[1].id]: {
+        cell: (
+          <span className="co-break-word co-line-clamp">
+            {displayName || <span className="pf-v6-u-text-color-subtle">No display name</span>}
+          </span>
+        ),
+      },
+      [projectColumnInfo[2].id]: {
+        cell: <Status status={project.status?.phase} />,
+      },
+      [projectColumnInfo[3].id]: {
+        cell: requester || <span className="pf-v6-u-text-color-subtle">No requester</span>,
+      },
+      [projectColumnInfo[4].id]: {
+        cell: bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-',
+      },
+      [projectColumnInfo[5].id]: {
+        cell: cores ? `${formatCores(cores)} cores` : '-',
+      },
+      [projectColumnInfo[6].id]: {
+        cell: <Timestamp timestamp={project.metadata.creationTimestamp} />,
+      },
+      [projectColumnInfo[7].id]: {
+        cell: (
+          <span className="co-break-word co-line-clamp">
+            {description || <span className="pf-v6-u-text-color-subtle">No description</span>}
+          </span>
+        ),
+      },
+      [projectColumnInfo[8].id]: {
+        cell: <LabelList kind="Project" labels={labels} />,
+      },
+      [projectColumnInfo[9].id]: {
+        cell: <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
+};
 
 const projectColumnManagementID = referenceForModel(ProjectModel);
 
-const projectTableHeader = ({ showMetrics, showActions }) => {
-  return [
-    {
-      title: i18next.t('public~Name'),
-      id: namespaceColumnInfo.name.id,
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: namespaceColumnInfo.name.classes },
-    },
-    {
-      title: i18next.t('public~Display name'),
-      id: namespaceColumnInfo.displayName.id,
-      sortField: 'metadata.annotations["openshift.io/display-name"]',
-      transforms: [sortable],
-      props: { className: namespaceColumnInfo.displayName.classes },
-    },
-    {
-      title: i18next.t('public~Status'),
-      id: namespaceColumnInfo.status.id,
-      sortField: 'status.phase',
-      transforms: [sortable],
-      props: { className: namespaceColumnInfo.status.classes },
-    },
-    {
-      title: i18next.t('public~Requester'),
-      id: namespaceColumnInfo.requester.id,
-      sortField: "metadata.annotations.['openshift.io/requester']",
-      transforms: [sortable],
-      props: { className: namespaceColumnInfo.requester.classes },
-    },
-    ...(showMetrics
-      ? [
-          {
-            title: i18next.t('public~Memory'),
-            id: namespaceColumnInfo.memory.id,
-            sortFunc: 'namespaceMemory',
-            transforms: [sortable],
-            props: { className: namespaceColumnInfo.memory.classes },
-          },
-          {
-            title: i18next.t('public~CPU'),
-            id: namespaceColumnInfo.cpu.id,
-            sortFunc: 'namespaceCPU',
-            transforms: [sortable],
-            props: { className: namespaceColumnInfo.cpu.classes },
-          },
-        ]
-      : []),
-    {
-      title: i18next.t('public~Created'),
-      id: namespaceColumnInfo.created.id,
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: namespaceColumnInfo.created.classes },
-    },
-    {
-      title: i18next.t('public~Description'),
-      id: namespaceColumnInfo.description.id,
-      sortField: "metadata.annotations.['openshift.io/description']",
-      transforms: [sortable],
-      props: { className: namespaceColumnInfo.description.classes },
-      additional: true,
-    },
-    {
-      title: i18next.t('public~Labels'),
-      id: namespaceColumnInfo.labels.id,
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: namespaceColumnInfo.labels.classes },
-      additional: true,
-    },
-    ...(showActions ? [{ title: '', props: { className: Kebab.columnClass } }] : []),
-  ];
-};
-
-const getProjectSelectedColumns = ({ showMetrics, showActions }) => {
-  return new Set(
-    projectTableHeader({ showMetrics, showActions }).reduce((acc, column) => {
-      if (column.id && !column.additional) {
-        acc.push(column.id);
-      }
-      return acc;
-    }, []),
-  );
-};
-
-const ProjectLink = ({ project }) => {
+export const ProjectList = (props) => {
   const dispatch = useDispatch();
-  const [, setLastNamespace] = useUserSettingsCompatibility(
-    LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-    LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  );
-  const url = new URL(window.location.href);
-  const params = new URLSearchParams(url.search);
-  const basePath = url.pathname;
-  if (params.has('project-name')) {
-    // clear project-name query param from the url
-    params.delete('project-name');
-  }
-  const newUrl = {
-    search: `?${params.toString()}`,
-    hash: url.hash,
-  };
-  const namespacedPath = UIActions.formatNamespaceRoute(project.metadata.name, basePath, newUrl);
-
-  const handleClick = (e) => {
-    // Don't set last namespace if its modified click (Ctrl+Click).
-    if (isModifiedEvent(e)) {
-      return;
-    }
-    setLastNamespace(project.metadata.name);
-    // update last namespace in session storage (persisted only for current browser tab). Used to remember/restore if
-    // "All Projects" was selected when returning to the list view (typically from details view) via breadcrumb or
-    // sidebar navigation
-    sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, project.metadata.name);
-    // clear project-name filter when active namespace is changed
-    dispatch(k8sActions.filterList(referenceForModel(ProjectModel), 'project-name', ''));
-  };
-
-  return (
-    <span className="co-resource-item co-resource-item--truncate">
-      <ResourceIcon kind="Project" />
-      <Link to={namespacedPath} className="co-resource-item__resource-name" onClick={handleClick}>
-        {project.metadata.name}
-      </Link>
-    </span>
-  );
-};
-const projectHeaderWithoutActions = () =>
-  projectTableHeader({ showMetrics: false, showActions: false });
-
-const ProjectTableRow = ({ obj: project, customData = {} }) => {
-  const { t } = useTranslation();
+  const columns = useProjectsColumns();
   const metrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
-  const name = getName(project);
-  const requester = getRequester(project);
-  const {
-    ProjectLinkComponent,
-    actionsEnabled = true,
-    showMetrics,
-    showActions,
-    isColumnManagementEnabled = true,
-    tableColumns,
-  } = customData;
-  const bytes = metrics?.memory?.[name];
-  const cores = metrics?.cpu?.[name];
-  const description = getDescription(project);
-  const labels = project.metadata.labels;
-  const columns = isColumnManagementEnabled
-    ? tableColumns?.length > 0
-      ? new Set(tableColumns)
-      : getProjectSelectedColumns({ showMetrics, showActions })
-    : null;
-  return (
-    <>
-      <TableData className={namespaceColumnInfo.name.classes}>
-        {customData && ProjectLinkComponent ? (
-          <ProjectLinkComponent project={project} />
-        ) : (
-          <span className="co-resource-item">
-            <ResourceLink kind="Project" name={project.metadata.name} />
-          </span>
-        )}
-      </TableData>
-      <TableData
-        className={namespaceColumnInfo.displayName.classes}
-        columns={columns}
-        columnID={namespaceColumnInfo.displayName.id}
-      >
-        <span className="co-break-word co-line-clamp">
-          {getDisplayName(project) || (
-            <span className="pf-v6-u-text-color-subtle">{t('public~No display name')}</span>
-          )}
-        </span>
-      </TableData>
-      <TableData
-        className={namespaceColumnInfo.status.classes}
-        columns={columns}
-        columnID={namespaceColumnInfo.status.id}
-      >
-        <Status status={project.status?.phase} />
-      </TableData>
-      <TableData
-        className={css(namespaceColumnInfo.requester.classes, 'co-break-word')}
-        columns={columns}
-        columnID={namespaceColumnInfo.requester.id}
-      >
-        {requester || <span className="pf-v6-u-text-color-subtle">{t('public~No requester')}</span>}
-      </TableData>
-      {showMetrics && (
-        <>
-          <TableData
-            className={namespaceColumnInfo.memory.classes}
-            columns={columns}
-            columnID={namespaceColumnInfo.memory.id}
-          >
-            {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
-          </TableData>
-          <TableData
-            className={namespaceColumnInfo.cpu.classes}
-            columns={columns}
-            columnID={namespaceColumnInfo.cpu.id}
-          >
-            {cores ? t('public~{{cores}} cores', { cores: formatCores(cores) }) : '-'}
-          </TableData>
-        </>
-      )}
-      <TableData
-        className={namespaceColumnInfo.created.classes}
-        columns={columns}
-        columnID={namespaceColumnInfo.created.id}
-      >
-        <Timestamp timestamp={project.metadata.creationTimestamp} />
-      </TableData>
-      {isColumnManagementEnabled && (
-        <>
-          <TableData
-            className={namespaceColumnInfo.description.classes}
-            columns={columns}
-            columnID={namespaceColumnInfo.description.id}
-          >
-            <span className="co-break-word co-line-clamp">
-              {description || (
-                <span className="pf-v6-u-text-color-subtle">{t('public~No description')}</span>
-              )}
-            </span>
-          </TableData>
-          <TableData
-            className={namespaceColumnInfo.labels.classes}
-            columns={columns}
-            columnID={namespaceColumnInfo.labels.id}
-          >
-            <LabelList labels={labels} kind="Project" />
-          </TableData>
-        </>
-      )}
-      {actionsEnabled && (
-        <TableData className={Kebab.columnClass}>
-          <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
-        </TableData>
-      )}
-    </>
-  );
-};
-ProjectTableRow.displayName = 'ProjectTableRow';
-
-export const ProjectsTable = (props) => {
   const { t } = useTranslation();
-  const customData = useMemo(
-    () => ({
-      ProjectLinkComponent: ProjectLink,
-      actionsEnabled: false,
-      isColumnManagementEnabled: false,
-    }),
-    [],
-  );
-  return (
-    <Table
-      {...props}
-      aria-label={t('public~Projects')}
-      Header={projectHeaderWithoutActions}
-      Row={ProjectTableRow}
-      customData={customData}
-      virtualize
-    />
-  );
-};
-
-const headerWithMetrics = () => projectTableHeader({ showMetrics: true, showActions: true });
-const headerNoMetrics = () => projectTableHeader({ showMetrics: false, showActions: true });
-
-const ProjectEmptyMessage = () => {
-  const { t } = useTranslation();
-  return (
-    <ConsoleEmptyState title={t('public~No matching Projects')} icon={SearchIcon}>
-      {t('public~No results match the filter criteria.')}
-    </ConsoleEmptyState>
-  );
-};
-
-export const ProjectList = ({ data, ...tableProps }) => {
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const canGetNS = useFlag(FLAGS.CAN_GET_NS);
-  const [tableColumns] = useUserSettingsCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-    undefined,
-    true,
-  );
-  const isPrometheusAvailable = usePrometheusGate();
-  const showMetrics = isPrometheusAvailable && canGetNS && window.screen.width >= 1200;
-  const customData = useMemo(
-    () => ({
-      showMetrics,
-      tableColumns: tableColumns?.[projectColumnManagementID],
-    }),
-    [showMetrics, tableColumns],
-  );
 
   // TODO Utilize usePoll hook
   useEffect(() => {
-    if (showMetrics) {
-      const updateMetrics = () =>
-        fetchNamespaceMetrics().then((result) => dispatch(UIActions.setNamespaceMetrics(result)));
-      updateMetrics();
-      const id = setInterval(updateMetrics, 30 * 1000);
-      return () => clearInterval(id);
-    }
-  }, [dispatch, showMetrics]);
-  const selectedColumns =
-    tableColumns?.[projectColumnManagementID]?.length > 0
-      ? new Set(tableColumns[projectColumnManagementID])
-      : null;
+    const updateMetrics = () =>
+      fetchNamespaceMetrics().then((result) => dispatch(UIActions.setNamespaceMetrics(result)));
+    updateMetrics();
+    const id = setInterval(updateMetrics, 30 * 1000);
+    return () => clearInterval(id);
+  }, [dispatch]);
 
-  // Don't render the table until we know whether we can get metrics. It's
-  // not possible to change the table headers once the component is mounted.
-  if (flagPending(canGetNS)) {
-    return null;
-  }
+  const enhancedData = useMemo(() => {
+    if (!props.data) {
+      return [];
+    }
+    return props.data.map((item) => {
+      const name = getName(item);
+      const bytes = metrics?.memory?.[name];
+      const cores = metrics?.cpu?.[name];
+      return {
+        ...item,
+        obj: {
+          ...item.obj,
+          _metrics: { memory: bytes, cpu: cores },
+        },
+      };
+    });
+  }, [props.data, metrics]);
+
+  const columnLayout = useMemo(
+    () => ({
+      columns: columns
+        .filter((column) => column.title && column.title.trim() !== '')
+        .map((column) => _.pick(column, ['title', 'additional', 'id'])),
+      id: projectColumnManagementID,
+      selectedColumns: null,
+      type: t('public~Project'),
+      showNamespaceOverride: false,
+    }),
+    [columns, t],
+  );
 
   return (
-    <Table
-      {...tableProps}
-      activeColumns={selectedColumns}
-      columnManagementID={projectColumnManagementID}
-      aria-label={t('public~Projects')}
-      data={data}
-      Header={showMetrics ? headerWithMetrics : headerNoMetrics}
-      Row={ProjectTableRow}
-      NoDataEmptyMsg={OpenShiftGettingStarted}
-      EmptyMsg={ProjectEmptyMessage}
-      customData={customData}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView
+        {...props}
+        data={enhancedData}
+        label={ProjectModel.labelPlural}
+        columns={columns}
+        columnLayout={columnLayout}
+        columnManagementID={projectColumnManagementID}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getProjectsDataViewRows}
+      />
+    </React.Suspense>
   );
 };
 
@@ -869,18 +763,7 @@ export const ProjectsPage = (props) => {
   const { t } = useTranslation();
   const createProjectModal = useCreateProjectModal();
   // Skip self-subject access review for projects since they use a special project request API.
-  // `FLAGS.CAN_CREATE_PROJECT` determines if the user can create projects.
-  const canGetNS = useFlag(FLAGS.CAN_GET_NS);
   const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
-  const [tableColumns] = useUserSettingsCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-    undefined,
-    true,
-  );
-  const isPrometheusAvailable = usePrometheusGate();
-  const showMetrics = isPrometheusAvailable && canGetNS && window.screen.width >= 1200;
-  const showActions = showMetrics;
   return (
     <ListPage
       {...props}
@@ -892,17 +775,7 @@ export const ProjectsPage = (props) => {
       skipAccessReview
       textFilter="project-name"
       kind="Project"
-      columnLayout={{
-        columns: projectTableHeader({ showMetrics, showActions }).map((column) =>
-          _.pick(column, ['title', 'additional', 'id']),
-        ),
-        id: projectColumnManagementID,
-        selectedColumns:
-          tableColumns?.[projectColumnManagementID]?.length > 0
-            ? new Set(tableColumns[projectColumnManagementID])
-            : null,
-        type: t('public~Project'),
-      }}
+      omitFilterToolbar={true}
     />
   );
 };

@@ -30,7 +30,7 @@ describe('Namespace', () => {
     nav.sidenav.clickNavLink(['Administration', 'Namespaces']);
     listPage.dvRows.shouldNotExist(newName);
     listPage.dvFilter.byName(testName);
-    listPage.dvRows.shouldExistWithName(testName); // created via cy.createProjectWithCLI(testName) above
+    listPage.dvRows.shouldExist(testName); // created via cy.createProjectWithCLI(testName) above
     cy.testA11y('Namespace List page');
 
     cy.log('creates the Namespace');
@@ -45,7 +45,7 @@ describe('Namespace', () => {
     cy.log('delete the Namespace');
     nav.sidenav.clickNavLink(['Administration', 'Namespaces']);
     listPage.dvFilter.byName(newName);
-    listPage.dvRows.shouldExistWithName(newName);
+    listPage.dvRows.shouldExist(newName);
     listPage.dvRows.clickKebabAction(newName, 'Delete Namespace');
     modal.shouldBeOpened();
     cy.byTestID('project-name-input').type(newName);

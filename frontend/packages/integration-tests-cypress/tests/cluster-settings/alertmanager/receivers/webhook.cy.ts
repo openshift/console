@@ -4,8 +4,7 @@ import { alertmanager, getGlobalsAndReceiverConfig } from '../../../../views/ale
 import * as yamlEditor from '../../../../views/yaml-editor';
 
 const receiverName = `WebhookReceiver-${testName}`;
-const receiverType = 'webhook';
-const configName = `${receiverType}_configs`;
+const configName = 'webhook_configs';
 const label = 'severity = warning';
 const webhookURL = 'http://mywebhookurl';
 const updatedWebhookURL = 'http://myupdatedwebhookurl';
@@ -34,7 +33,7 @@ describe('Alertmanager: Webhook Receiver Form', () => {
     alertmanager.save();
 
     cy.log('verify Webhook Receiver was created correctly');
-    alertmanager.validateCreation(receiverName);
+    alertmanager.validateCreation(receiverName, 'integration-types', 'routing-labels');
     alertmanager.visitYAMLPage();
     yamlEditor.getEditorContent().then((content) => {
       const configs = getGlobalsAndReceiverConfig(receiverName, configName, content);

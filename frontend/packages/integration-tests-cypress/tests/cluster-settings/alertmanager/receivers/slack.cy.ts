@@ -4,8 +4,7 @@ import { alertmanager, getGlobalsAndReceiverConfig } from '../../../../views/ale
 import * as yamlEditor from '../../../../views/yaml-editor';
 
 const receiverName = `SlackReceiver-${testName}`;
-const receiverType = 'slack';
-const configName = `${receiverType}_configs`;
+const configName = 'slack_configs';
 const label = 'severity = warning';
 const slackAPIURL = 'http://myslackapi';
 const slackChannel = 'myslackchannel';
@@ -52,7 +51,7 @@ describe('Alertmanager: Slack Receiver Form', () => {
     alertmanager.save();
 
     cy.log('verify Slack Receiver was created correctly');
-    alertmanager.validateCreation(receiverName);
+    alertmanager.validateCreation(receiverName, 'integration-types', 'routing-labels');
     alertmanager.visitYAMLPage();
     yamlEditor.getEditorContent().then((content) => {
       const configs = getGlobalsAndReceiverConfig(receiverName, configName, content);

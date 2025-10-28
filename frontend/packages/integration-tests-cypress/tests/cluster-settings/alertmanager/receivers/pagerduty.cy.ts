@@ -5,8 +5,7 @@ import { listPage } from '../../../../views/list-page';
 import * as yamlEditor from '../../../../views/yaml-editor';
 
 const receiverName = `PagerDutyReceiver-${testName}`;
-const receiverType = 'pagerduty';
-const configName = `${receiverType}_configs`;
+const configName = 'pagerduty_configs';
 const severity = 'severity';
 const label = `${severity} = warning`;
 const pagerDutyClient = '{{ template "pagerduty.default.client" . }}';
@@ -50,7 +49,7 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
     alertmanager.save();
 
     cy.log('verify PagerDuty Receiver was created correctly');
-    alertmanager.validateCreation(receiverName);
+    alertmanager.validateCreation(receiverName, 'integration-types', 'routing-labels');
 
     cy.log('update pagerduty_url');
     listPage.dvRows.clickKebabAction(receiverName, 'Edit Receiver');

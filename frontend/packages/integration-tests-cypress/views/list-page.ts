@@ -131,12 +131,6 @@ export const listPage = {
     clickFirstLinkInFirstRow: () => {
       cy.get('[data-test^="data-view-cell-"]').first().find('a').first().click({ force: true }); // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
     },
-    shouldExistWithName: (resourceName: string) =>
-      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).contains(resourceName),
-    shouldNotExist: (resourceName: string) =>
-      cy
-        .get(`[data-test="data-view-cell-${resourceName}-name"]`, { timeout: 90000 })
-        .should('not.exist'),
     clickKebabAction: (resourceName: string, actionName: string) => {
       cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
         .contains(resourceName)
@@ -154,10 +148,12 @@ export const listPage = {
           cy.byTestID('popover-status-button').click();
         });
     },
-    shouldExist: (resourceName: string, cellName: string = 'name') => {
-      cy.get(`[data-test="data-view-cell-${resourceName}-${cellName}"]`).should('exist');
+    shouldExist: (resourceName: string) => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
+        .contains(resourceName)
+        .should('exist');
     },
-    shouldNotExistWithName: (resourceName: string) => {
+    shouldNotExist: (resourceName: string) => {
       cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).should('not.exist');
     },
     clickRowByName: (resourceName: string) =>

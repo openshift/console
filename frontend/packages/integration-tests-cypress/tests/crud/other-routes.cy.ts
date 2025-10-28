@@ -59,7 +59,7 @@ describe('Visiting other routes', () => {
       ? [
           {
             path: '/api-resource/ns/default/core~v1~Pod/access',
-            waitFor: () => cy.get('[data-test="page-heading"]').should('be.visible'),
+            waitFor: () => cy.get('[data-ouia-component-type$="TableRow"]').should('be.visible'),
           },
           {
             path: '/k8s/cluster/user.openshift.io~v1~User',
@@ -140,7 +140,7 @@ describe('Test perspective query parameters', () => {
   beforeEach(() => {
     cy.initAdmin();
     cy.visit('/k8s/cluster/projects');
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
     guidedTour.close();
     checkDeveloperPerspective();
   });

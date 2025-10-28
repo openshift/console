@@ -64,11 +64,9 @@ describe('Alertmanager', () => {
   it('creates and deletes a receiver', () => {
     cy.log('create Webhook Receiver');
     const receiverName = `WebhookReceiver-${testName}`;
-    const receiverType = 'webhook';
-    const configName = `${receiverType}_configs`;
     const label = 'severity = warning';
     const webhookURL = 'http://mywebhookurl';
-    alertmanager.createReceiver(receiverName, configName);
+    alertmanager.createReceiver(receiverName, 'webhook_configs');
     alertmanager.showAdvancedConfiguration();
     cy.byTestID('send-resolved-alerts').should('be.checked');
     cy.byTestID('webhook-url').type(webhookURL);
@@ -78,7 +76,7 @@ describe('Alertmanager', () => {
     listPage.dvRows.clickKebabAction(receiverName, 'Delete Receiver');
     warningModal.confirm('AlertmanagerDeleteReceiverConfirmation');
     warningModal.shouldBeClosed('AlertmanagerDeleteReceiverConfirmation');
-    listPage.dvRows.shouldNotExistWithName(receiverName);
+    listPage.dvRows.shouldNotExist(receiverName);
   });
 
   it('prevents deletion and form edit of a receiver with sub-route', () => {
@@ -179,7 +177,7 @@ route:
     yamlEditor.clickSaveCreateButton();
     cy.get('.yaml-editor__buttons .pf-m-success').should('exist');
     detailsPage.selectTab('Details');
-    listPage.dvRows.shouldExistWithName(receiverName);
+    listPage.dvRows.shouldExist(receiverName);
     alertmanager.visitEditPage(receiverName);
     cy.byTestID('label-0').should('have.value', matcher1);
     cy.byTestID('label-1').should('have.value', matcher2);

@@ -11,28 +11,18 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
-
+import { DASH } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { referenceForModel, K8sResourceKind, TableColumn } from '../module/k8s';
 import { ListPage, DetailsPage } from './factory';
 import {
-  actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import {
-  SectionHeading,
-  LabelList,
-  navFactory,
-  ResourceLink,
-  Selector,
-  pluralize,
-  ResourceKebab,
-  Kebab,
-} from './utils';
+import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluralize } from './utils';
 import { useConfigureCountModal } from './modals/configure-count-modal';
 import { AlertmanagerModel } from '../models';
 import { LoadingBox } from './utils/status-box';
@@ -126,7 +116,6 @@ const tableColumnInfo = [
   { id: 'labels' },
   { id: 'version' },
   { id: 'nodeSelector' },
-  { id: 'actions' },
 ];
 
 const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
@@ -158,7 +147,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
         },
       },
       [tableColumnInfo[3].id]: {
-        cell: spec.version || '-',
+        cell: spec.version || DASH,
       },
       [tableColumnInfo[4].id]: {
         cell: <Selector selector={spec.nodeSelector} kind="Node" />,
@@ -167,22 +156,10 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
           width: 20,
         },
       },
-      [tableColumnInfo[5].id]: {
-        cell: (
-          <ResourceKebab
-            actions={[...Kebab.factory.common]}
-            kind={referenceForModel(AlertmanagerModel)}
-            resource={alertManager}
-          />
-        ),
-        props: {
-          ...actionsCellProps,
-        },
-      },
     };
 
     return columns.map(({ id }) => {
-      const cell = rowCells[id]?.cell || '-';
+      const cell = rowCells[id]?.cell || DASH;
       return {
         id,
         props: rowCells[id]?.props,
@@ -237,13 +214,6 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
           modifier: 'nowrap',
         },
       },
-      {
-        title: '',
-        id: tableColumnInfo[5].id,
-        props: {
-          ...cellIsStickyProps,
-        },
-      },
     ];
   }, [t]);
   return columns;
@@ -254,7 +224,7 @@ const AlertManagersList: React.FCC<AlertManagersListProps> = ({ data, loaded, ..
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ConsoleDataView
         {...props}
         label={AlertmanagerModel.labelPlural}
         data={data}

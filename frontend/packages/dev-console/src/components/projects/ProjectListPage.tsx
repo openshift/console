@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
-import { ProjectsTable } from '@console/internal/components/namespace';
+import { ProjectList } from '@console/internal/components/namespace';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import './ProjectListPage.scss';
 
@@ -23,7 +23,7 @@ const ProjectListPage: React.FCC<ProjectListPageProps> = ({
       {...listPageProps}
       showTitle={false}
       kind="Project"
-      ListComponent={listComponent || ProjectsTable}
+      ListComponent={listComponent || ProjectList}
       canCreate={false}
       filterLabel="by name or display name"
       textFilter="project-name"
