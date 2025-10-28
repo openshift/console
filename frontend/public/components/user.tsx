@@ -29,12 +29,12 @@ import {
   LoadingBox,
 } from './utils';
 import {
-  ResourceDataView,
+  ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
   initialFiltersDefault,
-} from '@console/app/src/components/data-view/ResourceDataView';
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 import { DASH } from '@console/shared/src';
@@ -207,7 +207,7 @@ export const UserList: React.FCC<UserListProps> = (props) => {
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ConsoleDataView<UserKind>
         {...props}
         data={data}
         loaded={loaded}

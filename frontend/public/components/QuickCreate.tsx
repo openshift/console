@@ -8,7 +8,12 @@ import {
 } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { ALL_NAMESPACES_KEY, formatNamespacedRouteForResource, useFlag } from '@console/shared/src';
+import {
+  ALL_NAMESPACES_KEY,
+  formatNamespacedRouteForResource,
+  useFlag,
+  useTelemetry,
+} from '@console/shared/src';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FLAGS } from '@console/shared/src/constants';
@@ -66,6 +71,7 @@ const useCanCreateResource = () => {
 
 const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
 
   const canCreate = useCanCreateResource();
@@ -111,6 +117,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
           to={importYAMLURL}
           onClick={(ev: any) => {
             ev.preventDefault();
+            fireTelemetryEvent('quick-create-import-yaml');
             history.push(importYAMLURL);
           }}
           tooltipProps={{
@@ -129,6 +136,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
               to={getImportFromGitURL(namespace)}
               onClick={(ev: any) => {
                 ev.preventDefault();
+                fireTelemetryEvent('quick-create-import-from-git');
                 history.push(getImportFromGitURL(namespace));
               }}
               tooltipProps={{
@@ -145,6 +153,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
               to={getContainerImageURL(namespace)}
               onClick={(ev: any) => {
                 ev.preventDefault();
+                fireTelemetryEvent('quick-create-container-images');
                 history.push(getContainerImageURL(namespace));
               }}
               tooltipProps={{

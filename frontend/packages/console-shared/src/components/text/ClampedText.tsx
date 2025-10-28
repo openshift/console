@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Popover } from '@patternfly/react-core';
-import { useDebounceCallback } from '../../hooks';
+import { useDebounceCallback } from '../../hooks/debounce';
 import './ClampedText.scss';
 
 type ClampedTextProps = {

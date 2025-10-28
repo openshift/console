@@ -2,18 +2,17 @@ import * as React from 'react';
 import { SortByDirection, ISortBy } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useSearchParams } from 'react-router-dom-v5-compat';
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { ResourceDataViewColumn } from './types';
+import { ConsoleDataViewColumn } from './types';
 
 export const getSortByDirection = (value: string): SortByDirection =>
   value === SortByDirection.desc.valueOf() ? SortByDirection.desc : SortByDirection.asc;
 
-export const useResourceDataViewSort = <TData extends K8sResourceCommon = K8sResourceCommon>({
+export const useConsoleDataViewSort = <TData>({
   columns,
   sortColumnIndex,
   sortDirection,
 }: {
-  columns: ResourceDataViewColumn<TData>[];
+  columns: ConsoleDataViewColumn<TData>[];
   sortColumnIndex?: number;
   sortDirection?: SortByDirection;
 }) => {

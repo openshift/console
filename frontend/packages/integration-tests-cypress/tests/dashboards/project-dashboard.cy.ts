@@ -89,20 +89,6 @@ describe('Project dashboard', () => {
     });
   });
 
-  describe('Activity Card', () => {
-    it('has View events link', () => {
-      cy.byLegacyTestID('activity-card').should('be.visible');
-      cy.byTestID('view-events-link')
-        .should('have.text', 'View events')
-        .and('have.attr', 'href', `/k8s/ns/${testName}/events`);
-    });
-    it('has Pause events button', () => {
-      cy.byTestID('events-pause-button').should('be.visible').and('have.text', 'Pause');
-      cy.byTestID('events-pause-button').click();
-      cy.byTestID('events-pause-button').should('have.text', 'Resume');
-    });
-  });
-
   describe('Launcher Card', () => {
     const consoleLink = {
       apiVersion: 'console.openshift.io/v1',

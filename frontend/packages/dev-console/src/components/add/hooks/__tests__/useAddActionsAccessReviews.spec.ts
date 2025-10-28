@@ -1,5 +1,5 @@
 import { act } from 'react-dom/test-utils';
-import { checkAccess } from '@console/internal/components/utils';
+import { checkAccess } from '@console/internal/components/utils/rbac';
 import {
   AccessReviewResourceAttributes,
   SelfSubjectAccessReviewKind,
@@ -8,7 +8,7 @@ import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { addActionExtensions } from '../../__tests__/add-page-test-data';
 import { useAddActionsAccessReviews, AccessReviewStatus } from '../useAddActionsAccessReviews';
 
-jest.mock('@console/internal/components/utils', () => ({
+jest.mock('@console/internal/components/utils/rbac', () => ({
   checkAccess: jest.fn(),
 }));
 const createCheckAccessPromise = (val: boolean): Promise<SelfSubjectAccessReviewKind> =>

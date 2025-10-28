@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Menu, MenuContent, MenuList, Popper } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Action, MenuOption, useSafetyFirst } from '@console/dynamic-plugin-sdk';
-import { checkAccess } from '@console/internal/components/utils';
+import { checkAccess } from '@console/internal/components/utils/rbac';
 import { ActionMenuVariant } from '../types';
 import ActionMenuContent from './ActionMenuContent';
 import ActionMenuToggle from './ActionMenuToggle';
