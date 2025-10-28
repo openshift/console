@@ -9,11 +9,11 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import {
-  ResourceDataViewColumn,
-  ResourceDataViewRow,
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
   ResourceFilters,
 } from '@console/app/src/components/data-view/types';
 import {
@@ -280,10 +280,10 @@ const CPUCell: React.FC<{ cores: number; totalCores: number }> = ({ cores, total
 
 const getNodeDataViewRows = (
   rowData: RowProps<NodeRowItem, GetNodeStatusExtensions>[],
-  tableColumns: ResourceDataViewColumn<NodeRowItem>[],
+  tableColumns: ConsoleDataViewColumn<NodeRowItem>[],
   nodeMetrics: NodeMetrics,
   statusExtensions: GetNodeStatusExtensions,
-): ResourceDataViewRow[] => {
+): ConsoleDataViewRow[] => {
   return rowData.map(({ obj }) => {
     const isCSR = isCSRResource(obj);
     const node = isCSR ? null : (obj as NodeKind);
@@ -619,7 +619,7 @@ const NodeList: React.FC<NodeListProps> = ({
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<NodeRowItem, NodeFilters>
+      <ConsoleDataView<NodeRowItem, NodeFilters>
         label={NodeModel.labelPlural}
         data={data}
         loaded={loaded}

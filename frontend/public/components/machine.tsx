@@ -39,8 +39,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -284,7 +284,7 @@ export const MachineList: React.FC<MachineListProps> = ({ data, loaded, loadErro
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<MachineKind>
+      <ConsoleDataView<MachineKind>
         {...props}
         label={MachineModel.labelPlural}
         data={data}

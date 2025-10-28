@@ -11,12 +11,12 @@ import { BindingName, flatten as bindingsFlatten } from './bindings';
 import { RulesList } from './rules';
 import { DetailsPage, MultiListPage, TextFilter } from '../factory';
 import {
-  ResourceDataView,
+  ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
   initialFiltersDefault,
-} from '@console/app/src/components/data-view/ResourceDataView';
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { tableFilters } from '../factory/table-filters';
 import {
@@ -300,7 +300,7 @@ const BindingsListComponent = (props) => {
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ConsoleDataView
         {...props}
         data={filteredData}
         loaded={loaded}
@@ -508,7 +508,7 @@ const RolesList = (props) => {
           )}
         </ConsoleEmptyState>
       ) : (
-        <ResourceDataView
+        <ConsoleDataView
           {...props}
           data={data}
           label={t('public~Roles')}

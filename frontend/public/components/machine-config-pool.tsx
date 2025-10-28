@@ -24,8 +24,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { Conditions } from './conditions';
 import { MachineConfigPoolModel } from '../models';
@@ -445,7 +445,7 @@ const MachineConfigPoolList: React.FC<MachineConfigPoolListProps> = ({
     <>
       <MachineConfigPoolsArePausedAlert machineConfigPools={data} />
       <React.Suspense fallback={<LoadingBox />}>
-        <ResourceDataView<MachineConfigPoolKind, KebabAction[]>
+        <ConsoleDataView<MachineConfigPoolKind, KebabAction[]>
           {...props}
           label={MachineConfigPoolModel.labelPlural}
           data={data}
