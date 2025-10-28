@@ -1,9 +1,11 @@
 /* eslint-disable camelcase, tsdoc/syntax */
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import * as fuzzy from 'fuzzysearch';
 import { NavBar } from '@console/internal/components/utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { Link, useNavigate } from 'react-router-dom-v5-compat';
+import { sortable } from '@patternfly/react-table';
 import {
   Alert,
   Button,
@@ -16,6 +18,9 @@ import {
   EmptyStateVariant,
   Label as PfLabel,
   LabelGroup as PfLabelGroup,
+  Toolbar,
+  ToolbarContent,
+  ToolbarItem,
   Grid,
   GridItem,
   ButtonVariant,
@@ -28,28 +33,16 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
 import { K8sResourceKind } from '../../../module/k8s';
+import { Table, TableData, TextFilter, RowFunctionArgs } from '../../factory';
 import { createAlertRoutingModal } from '../../modals';
+
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { Firehose, Kebab, SectionHeading, StatusBox } from '../../utils';
+import { Firehose, ConsoleEmptyState, Kebab, SectionHeading, StatusBox } from '../../utils';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
   receiverTypes,
 } from './alertmanager-utils';
-import {
-  actionsCellProps,
-  cellIsStickyProps,
-  getNameCellProps,
-  initialFiltersDefault,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import {
-  ResourceFilters,
-  ConsoleDataViewColumn,
-  ConsoleDataViewRow,
-  ResourceMetadata,
-} from '@console/app/src/components/data-view/types';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export enum InitialReceivers {
   Critical = 'Critical',
@@ -115,6 +108,13 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
     </PaneBody>
   );
 };
+
+const tableColumnClasses = [
+  'pf-v6-u-w-50-on-xs pf-v6-u-w-25-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-v6-u-w-25-on-lg',
+  'pf-v6-u-w-50-on-xs',
+  Kebab.columnClass,
+];
 
 const getIntegrationTypes = (receiver: AlertmanagerReceiver): string[] => {
   /* Given receiver = {
@@ -243,247 +243,187 @@ const deleteReceiver = (
   receiverName: string,
   navigate: any,
 ) => {
-  // Create a deep copy of the config to avoid mutating the original
-  const updatedConfig = _.cloneDeep(config);
   // remove any routes which use receiverToDelete
-  _.update(updatedConfig, 'route.routes', (routes) => {
+  _.update(config, 'route.routes', (routes) => {
     _.remove(routes, (route: AlertmanagerRoute) => route.receiver === receiverName);
     return routes;
   });
   // delete receiver
-  _.update(updatedConfig, 'receivers', (receivers) => {
+  _.update(config, 'receivers', (receivers) => {
     _.remove(receivers, (receiver: AlertmanagerReceiver) => receiver.name === receiverName);
     return receivers;
   });
-  return patchAlertmanagerConfig(secret, updatedConfig).then(() => {
+  return patchAlertmanagerConfig(secret, config).then(() => {
     navigate('/settings/cluster/alertmanagerconfig');
   });
 };
 
-type ReceiverFilters = ResourceFilters;
+const ReceiverTableRow: React.FC<RowFunctionArgs<
+  AlertmanagerReceiver,
+  {
+    routingLabelsByReceivers: RoutingLabelsByReceivers[];
+    defaultReceiverName: string;
+    config: any;
+    secret: any;
+  }
+>> = ({
+  obj: receiver,
+  customData: { routingLabelsByReceivers, defaultReceiverName, config, secret },
+}) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  // filter to routing labels belonging to current Receiver
+  const receiverRoutingLabels = _.filter(routingLabelsByReceivers, { receiver: receiver.name });
+  const receiverIntegrationTypes = getIntegrationTypes(receiver);
+  const integrationTypesLabel = _.join(
+    _.map(receiverIntegrationTypes, (type) => type.substr(0, type.indexOf('_configs'))),
+    ', ',
+  );
+  const isDefaultReceiver = receiver.name === defaultReceiverName;
+  const receiverHasSimpleRoute = hasSimpleRoute(config, receiver, receiverRoutingLabels);
 
-type ReceiverRowData = {
-  secret: K8sResourceKind;
-  config: AlertmanagerConfig;
-  routingLabelsByReceivers: RoutingLabelsByReceivers[];
-  defaultReceiverName: string;
-  navigate: any;
-  openDeleteReceiverConfirm: any; // Not used directly, created per-row
-  t: any;
+  // Receiver form can only handle simple configurations. Can edit via form if receiver
+  // has a simple route and receiver
+  const canUseEditForm =
+    receiverHasSimpleRoute && hasSimpleReceiver(config, receiver, receiverIntegrationTypes);
+
+  // Receivers can be deleted if it has a simple route and not the default receiver
+  const canDelete = !isDefaultReceiver && receiverHasSimpleRoute;
+
+  const openDeleteReceiverConfirm = useWarningModal({
+    title: t('public~Delete Receiver'),
+    children: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
+      receiverName: receiver?.name,
+    }),
+    confirmButtonLabel: t('public~Delete Receiver'),
+    confirmButtonVariant: ButtonVariant.danger,
+    onConfirm: () => deleteReceiver(secret, config, receiver.name, navigate),
+    ouiaId: 'AlertmanagerDeleteReceiverConfirmation',
+  });
+
+  const receiverMenuItems = (receiverName: string) => [
+    {
+      label: t('public~Edit Receiver'),
+      callback: () => {
+        const targetUrl = canUseEditForm
+          ? `/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`
+          : `/settings/cluster/alertmanageryaml`;
+        return navigate(targetUrl);
+      },
+    },
+    {
+      label: t('public~Delete Receiver'),
+      isDisabled: !canDelete,
+      tooltip: !canDelete
+        ? t('public~Cannot delete the default receiver, or a receiver which has a sub-route')
+        : '',
+      callback: () => openDeleteReceiverConfirm(),
+    },
+  ];
+
+  return (
+    <>
+      <TableData
+        className={tableColumnClasses[0]}
+        data-test={`data-view-cell-${receiver.name}-name`}
+        data-receiver-name={receiver.name}
+      >
+        {receiver.name}
+      </TableData>
+      <TableData className={tableColumnClasses[1]}>
+        {(receiver.name === InitialReceivers.Critical ||
+          receiver.name === InitialReceivers.Default) &&
+        !integrationTypesLabel ? (
+          <Link to={`/settings/cluster/alertmanagerconfig/receivers/${receiver.name}/edit`}>
+            {t('public~Configure')}
+            <PencilAltIcon className="co-icon-space-l" />
+          </Link>
+        ) : (
+          integrationTypesLabel
+        )}
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        {isDefaultReceiver
+          ? t('public~All (default receiver)')
+          : _.map(receiverRoutingLabels, (rte, i) => {
+              return <RoutingLabels data={rte} key={i} />;
+            })}
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <Kebab options={receiverMenuItems(receiver.name)} />
+      </TableData>
+    </>
+  );
 };
 
 interface ReceiversTableProps {
   secret: K8sResourceKind;
   config: AlertmanagerConfig;
   data: AlertmanagerReceiver[];
+  filterValue?: string;
 }
 
-const tableColumnInfo = [
-  { id: 'name' },
-  { id: 'integration-type' },
-  { id: 'routing-labels' },
-  { id: 'actions' },
-];
-
-const getReceiverDataViewRows = (
-  rowData: RowProps<AlertmanagerReceiver, ReceiverRowData>[],
-  tableColumns: ConsoleDataViewColumn<AlertmanagerReceiver>[],
-): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj: receiver, rowData: customData }) => {
-    const {
-      secret,
-      config,
-      routingLabelsByReceivers,
-      defaultReceiverName,
-      navigate,
-      t,
-    } = customData;
-
-    // filter to routing labels belonging to current Receiver
-    const receiverRoutingLabels = _.filter(routingLabelsByReceivers, {
-      receiver: receiver.name,
-    });
-    const receiverIntegrationTypes = getIntegrationTypes(receiver);
-    const integrationTypesLabel = _.join(
-      _.map(receiverIntegrationTypes, (type) => type.substring(0, type.indexOf('_configs'))),
-      ', ',
-    );
-    const isDefaultReceiver = receiver.name === defaultReceiverName;
-    const receiverHasSimpleRoute = hasSimpleRoute(config, receiver, receiverRoutingLabels);
-
-    // Receiver form can only handle simple configurations. Can edit via form if receiver
-    // has a simple route and receiver
-    const canUseEditForm =
-      receiverHasSimpleRoute && hasSimpleReceiver(config, receiver, receiverIntegrationTypes);
-
-    // Receivers can be deleted if it has a simple route and not the default receiver
-    const canDelete = !isDefaultReceiver && receiverHasSimpleRoute;
-
-    const openDeleteReceiverConfirmWrapper = useWarningModal({
-      title: t('public~Delete Receiver'),
-      children: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
-        receiverName: receiver.name,
-      }),
-      confirmButtonLabel: t('public~Delete Receiver'),
-      confirmButtonVariant: ButtonVariant.danger,
-      onConfirm: () => deleteReceiver(secret, config, receiver.name, navigate),
-      ouiaId: 'AlertmanagerDeleteReceiverConfirmation',
-    });
-      // Receivers can be deleted if it has a simple route and not the default receiver
-
-    const receiverMenuItems = (receiverName: string) => [
-      {
-        label: t('public~Edit Receiver'),
-        callback: () => {
-          const targetUrl = canUseEditForm
-            ? `/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`
-            : `/settings/cluster/alertmanageryaml`;
-          return navigate(targetUrl);
-        },
-      },
-      {
-        label: t('public~Delete Receiver'),
-        isDisabled: !canDelete,
-        tooltip: !canDelete
-          ? t('public~Cannot delete the default receiver, or a receiver which has a sub-route')
-          : '',
-        callback: () => openDeleteReceiverConfirmWrapper(),
-      },
-    ];
-
-    const rowCells = {
-      [tableColumnInfo[0].id]: {
-        cell: receiver.name,
-        props: getNameCellProps(receiver.name),
-      },
-      [tableColumnInfo[1].id]: {
-        cell:
-          (receiver.name === InitialReceivers.Critical ||
-            receiver.name === InitialReceivers.Default) &&
-          !integrationTypesLabel ? (
-            <Link to={`/settings/cluster/alertmanagerconfig/receivers/${receiver.name}/edit`}>
-              {t('public~Configure')}
-              <PencilAltIcon className="co-icon-space-l" />
-            </Link>
-          ) : (
-            integrationTypesLabel
-          ),
-        props: {
-          'data-test': `data-view-cell-${receiver.name}-integration-types`,
-        },
-      },
-      [tableColumnInfo[2].id]: {
-        cell: isDefaultReceiver
-          ? t('public~All (default receiver)')
-          : _.map(receiverRoutingLabels, (rte, i) => {
-              return <RoutingLabels data={rte} key={i} />;
-            }),
-        props: {
-          'data-test': `data-view-cell-${receiver.name}-routing-labels`,
-        },
-      },
-      [tableColumnInfo[3].id]: {
-        cell: <Kebab options={receiverMenuItems(receiver.name)} />,
-        props: {
-          ...actionsCellProps,
-        },
-      },
-    };
-
-    return tableColumns.map(({ id }) => {
-      const cell = rowCells[id]?.cell || '';
-      return {
-        id,
-        props: rowCells[id]?.props,
-        cell,
-      };
-    });
-  });
-};
-
-const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
-  const { t } = useTranslation();
-  const columns = React.useMemo(() => {
-    return [
-      {
-        title: t('public~Name'),
-        id: tableColumnInfo[0].id,
-        sort: 'name',
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('public~Integration type'),
-        id: tableColumnInfo[1].id,
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: t('public~Routing labels'),
-        id: tableColumnInfo[2].id,
-        props: {
-          modifier: 'nowrap',
-        },
-      },
-      {
-        title: '',
-        id: tableColumnInfo[3].id,
-        props: {
-          ...cellIsStickyProps,
-          modifier: 'nowrap',
-        },
-      },
-    ];
-  }, [t]);
-  return columns;
-};
-
-const getObjectMetadata = (receiver: AlertmanagerReceiver): ResourceMetadata => {
-  return { name: receiver.name };
-};
-
 const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
-  const { secret, config, data } = props;
+  const { secret, config, filterValue } = props;
   const { route } = config;
   const { receiver: defaultReceiverName, routes } = route;
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const columns = useReceiverColumns();
 
   const routingLabelsByReceivers = React.useMemo(
     () => (_.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes)),
     [routes],
   );
 
-  const customRowData: ReceiverRowData = {
-    secret,
-    config,
-    routingLabelsByReceivers,
-    defaultReceiverName,
-    navigate,
-    openDeleteReceiverConfirm: null,
-    t,
+  const EmptyMsg = () => (
+    <ConsoleEmptyState
+      title={t('public~No Receivers match filter {{filterValue}}', { filterValue })}
+    />
+  );
+  const ReceiverTableHeader = () => {
+    return [
+      {
+        title: t('public~Name'),
+        sortField: 'name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('public~Integration type'),
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('public~Routing labels'),
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[3] },
+      },
+    ];
   };
 
+  const customData = React.useMemo(
+    () => ({
+      routingLabelsByReceivers,
+      defaultReceiverName,
+      config,
+      secret,
+    }),
+    [config, defaultReceiverName, routingLabelsByReceivers, secret],
+  );
+
   return (
-    <React.Suspense fallback={<div className="loading-skeleton--table" />}>
-      <ConsoleDataView<AlertmanagerReceiver, ReceiverRowData, ReceiverFilters>
-        label={t('public~Receivers')}
-        data={data}
-        loaded={true}
-        columns={columns}
-        initialFilters={initialFiltersDefault}
-        getObjectMetadata={getObjectMetadata}
-        getDataViewRows={getReceiverDataViewRows}
-        customRowData={customRowData}
-        hideColumnManagement={true}
-        hideNameLabelFilters={false}
-        hideLabelFilter={true}
-      />
-    </React.Suspense>
+    <Table
+      {...props}
+      aria-label={t('public~Receivers')}
+      customData={customData}
+      EmptyMsg={EmptyMsg}
+      Header={ReceiverTableHeader}
+      Row={ReceiverTableRow}
+      loaded={true}
+      defaultSortField="name"
+      virtualize
+    />
   );
 };
 ReceiversTable.displayName = 'ReceiversTable';
@@ -511,20 +451,37 @@ interface ReceiversProps {
 }
 
 const Receivers = ({ secret, config }: ReceiversProps) => {
-  const receivers = _.get(config, 'receivers', []);
+  const [receiverFilter, setReceiverFilter] = React.useState('');
+  let receivers = _.get(config, 'receivers', []);
+  if (receiverFilter) {
+    const filterStr = _.toLower(receiverFilter);
+    receivers = receivers.filter((receiver) => fuzzy(filterStr, _.toLower(receiver.name)));
+  }
 
   const numOfIncompleteReceivers = numberOfIncompleteReceivers(config);
   const { t } = useTranslation();
   const receiverString = t('public~receiver', { count: numOfIncompleteReceivers });
   return (
     <PaneBody>
-      <SectionHeading text={t('public~Receivers')}>
-        <Link to="/settings/cluster/alertmanagerconfig/receivers/~new">
-          <Button variant="primary" data-test="create-receiver">
-            {t('public~Create Receiver')}
-          </Button>
-        </Link>
-      </SectionHeading>
+      <SectionHeading text={t('public~Receivers')} />
+      <Toolbar>
+        <ToolbarContent>
+          <ToolbarItem>
+            <TextFilter
+              defaultValue=""
+              label={t('public~Receivers by name')}
+              onChange={(_event, val) => setReceiverFilter(val)}
+            />
+          </ToolbarItem>
+          <ToolbarItem align={{ default: 'alignEnd' }}>
+            <Link to="/settings/cluster/alertmanagerconfig/receivers/~new">
+              <Button variant="primary" data-test="create-receiver">
+                {t('public~Create Receiver')}
+              </Button>
+            </Link>
+          </ToolbarItem>
+        </ToolbarContent>
+      </Toolbar>
       {numOfIncompleteReceivers > 0 && (
         <Alert
           isInline
@@ -540,10 +497,15 @@ const Receivers = ({ secret, config }: ReceiversProps) => {
           </div>
         </Alert>
       )}
-      {_.isEmpty(receivers) ? (
+      {_.isEmpty(receivers) && !receiverFilter ? (
         <ReceiversEmptyState />
       ) : (
-        <ReceiversTable secret={secret} config={config} data={receivers} />
+        <ReceiversTable
+          secret={secret}
+          config={config}
+          filterValue={receiverFilter}
+          data={receivers}
+        />
       )}
     </PaneBody>
   );

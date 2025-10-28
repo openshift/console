@@ -148,10 +148,8 @@ export const listPage = {
           cy.byTestID('popover-status-button').click();
         });
     },
-    shouldExist: (resourceName: string) => {
-      cy.get(`[data-test="data-view-cell-${resourceName}-name"]`)
-        .contains(resourceName)
-        .should('exist');
+    shouldExist: (resourceName: string, cellName: string = 'name') => {
+      cy.get(`[data-test="data-view-cell-${resourceName}-${cellName}"]`).should('exist');
     },
     shouldNotExist: (resourceName: string) => {
       cy.get(`[data-test="data-view-cell-${resourceName}-name"]`).should('not.exist');

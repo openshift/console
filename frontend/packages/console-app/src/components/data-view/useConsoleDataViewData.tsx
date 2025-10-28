@@ -13,12 +13,12 @@ import { useConsoleDataViewSort, getSortByDirection } from './useConsoleDataView
 const isDataViewConfigurableColumn = (
   column: DataViewTh,
 ): column is Extract<DataViewTh, { cell: React.ReactNode }> => {
-  return typeof column === 'object' && column !== null && 'cell' in column;
+  return (column as any)?.cell !== undefined;
 };
 
 export const useConsoleDataViewData = <
   TData,
-  TCustomRowData = unknown,
+  TCustomRowData = any,
   TFilters extends ResourceFilters = ResourceFilters
 >({
   columns,
@@ -112,8 +112,16 @@ export const useConsoleDataViewData = <
     const sortColumn = dataViewColumns[sortBy.index];
     const sortDirection = getSortByDirection(sortBy.direction);
 
-    if (!sortColumn || !isDataViewConfigurableColumn(sortColumn)) {
+    if (!isDataViewConfigurableColumn(sortColumn)) {
       return filteredData;
+    }
+
+    if (typeof sortColumn.props.sort === 'string') {
+      return filteredData.sort(
+        sortResourceByValue(sortDirection, (obj) =>
+          _.get(obj, (sortColumn.props.sort as unknown) as string, ''),
+        ),
+      );
     }
 
     if (typeof sortColumn.sortFunction === 'string') {

@@ -73,8 +73,8 @@ export const alertmanager = {
   validateCreation: (receiverName: string, typeCellName: string, labelCellName: string) => {
     listPage.dvFilter.byName(receiverName);
     listPage.dvRows.shouldExist(receiverName);
-    listPage.dvRows.shouldExist(typeCellName);
-    listPage.dvRows.shouldExist(labelCellName);
+    listPage.dvRows.shouldExist(receiverName, typeCellName);
+    listPage.dvRows.shouldExist(receiverName, labelCellName);
   },
   visitAlertmanagerPage: () => {
     cy.visit('/settings/cluster/alertmanagerconfig');
