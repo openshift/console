@@ -9,8 +9,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import {
   Tooltip,
   Button,
@@ -420,7 +420,7 @@ const MachineSetListContent: React.FCC<MachineSetListProps> = ({
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<MachineSetKind>
+      <ConsoleDataView<MachineSetKind>
         {...props}
         label={MachineSetModel.labelPlural}
         data={data}

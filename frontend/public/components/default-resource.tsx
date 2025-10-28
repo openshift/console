@@ -38,11 +38,11 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import {
-  ResourceDataViewColumn,
-  ResourceDataViewRow,
+  ConsoleDataViewColumn,
+  ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
 import { DASH } from '@console/shared';
 import {
@@ -168,12 +168,12 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
 
 const getDataViewRows = (
   data: RowProps<K8sResourceKind, undefined>[],
-  columns: ResourceDataViewColumn<K8sResourceKind>[],
+  columns: ConsoleDataViewColumn<K8sResourceKind>[],
   additionalPrinterColumns: CRDAdditionalPrinterColumn[],
   kinds: string[],
   resourceProviderExtensions: ResolvedExtension<ResourceActionProvider>[],
   resourceProviderExtensionsResolved: boolean,
-): ResourceDataViewRow[] => {
+): ConsoleDataViewRow[] => {
   return data.map(({ obj }) => {
     const { name, namespace, creationTimestamp } = obj.metadata;
     const kind = referenceFor(obj) || kinds[0];
@@ -339,7 +339,7 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
       {!loaded && !additionalPrinterColumnsLoaded ? (
         <LoadingBox />
       ) : (
-        <ResourceDataView<K8sResourceKind>
+        <ConsoleDataView<K8sResourceKind>
           {...props}
           label={getAriaLabel()}
           data={data}

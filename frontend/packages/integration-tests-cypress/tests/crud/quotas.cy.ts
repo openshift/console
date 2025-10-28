@@ -72,9 +72,9 @@ const deleteClusterExamples = () => {
   cy.log('delete ClusterResourceQuota instance');
   projectDropdown.selectProject(allProjectsDropdownLabel);
   nav.sidenav.clickNavLink(['Administration', 'ResourceQuotas']);
-  listPage.rows.shouldBeLoaded();
-  listPage.filter.byName(clusterQuotaName);
-  listPage.rows.clickRowByName(clusterQuotaName);
+  listPage.dvRows.shouldBeLoaded();
+  listPage.dvFilter.byName(clusterQuotaName);
+  listPage.dvRows.clickRowByName(clusterQuotaName);
   detailsPage.isLoaded();
   detailsPage.clickPageActionFromDropdown('Delete ClusterResourceQuota');
   modal.shouldBeOpened();
@@ -103,18 +103,18 @@ describe('Quotas', () => {
   it(`'All Projects' shows ResourceQuotas`, () => {
     nav.sidenav.clickNavLink(['Administration', 'ResourceQuotas']);
     projectDropdown.selectProject(allProjectsDropdownLabel);
-    listPage.rows.shouldBeLoaded();
-    listPage.filter.byName(quotaName);
-    listPage.rows.shouldExist(quotaName);
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvFilter.byName(quotaName);
+    listPage.dvRows.shouldExist(quotaName);
   });
 
   it(`'All Projects' shows ClusterResourceQuotas`, () => {
     nav.sidenav.clickNavLink(['Administration', 'ResourceQuotas']);
     projectDropdown.selectProject(allProjectsDropdownLabel);
-    listPage.rows.shouldBeLoaded();
-    listPage.filter.byName(clusterQuotaName);
-    listPage.rows.shouldExist(clusterQuotaName);
-    listPage.rows.clickRowByName(clusterQuotaName);
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvFilter.byName(clusterQuotaName);
+    listPage.dvRows.shouldExist(clusterQuotaName);
+    listPage.dvRows.clickRowByName(clusterQuotaName);
     detailsPage.isLoaded();
     detailsPage.breadcrumb(0).contains('ClusterResourceQuota');
   });
@@ -122,18 +122,18 @@ describe('Quotas', () => {
   it(`Test namespace shows ResourceQuotas`, () => {
     nav.sidenav.clickNavLink(['Administration', 'ResourceQuotas']);
     projectDropdown.selectProject(testName);
-    listPage.rows.shouldBeLoaded();
-    listPage.filter.byName(quotaName);
-    listPage.rows.shouldExist(quotaName);
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvFilter.byName(quotaName);
+    listPage.dvRows.shouldExist(quotaName);
   });
 
   it(`Test namespace shows AppliedClusterResourceQuotas`, () => {
     nav.sidenav.clickNavLink(['Administration', 'ResourceQuotas']);
     projectDropdown.selectProject(testName);
-    listPage.rows.shouldBeLoaded();
-    listPage.filter.byName(clusterQuotaName);
-    listPage.rows.shouldExist(clusterQuotaName);
-    listPage.rows.clickRowByName(clusterQuotaName);
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvFilter.byName(clusterQuotaName);
+    listPage.dvRows.shouldExist(clusterQuotaName);
+    listPage.dvRows.clickRowByName(clusterQuotaName);
     detailsPage.isLoaded();
     detailsPage.breadcrumb(0).contains('AppliedClusterResourceQuota');
   });

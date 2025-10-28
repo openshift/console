@@ -25,6 +25,7 @@ const BaseInputField: React.FC<
   onBlur,
   helpTextInvalid,
   validated,
+  isReadOnly,
   ...props
 }) => {
   const [field, { touched, error }] = useField({ name, type: 'input' });
@@ -38,6 +39,7 @@ const BaseInputField: React.FC<
       {children({
         ...field,
         ...props,
+        ...(isReadOnly !== undefined && { readOnly: isReadOnly }),
         value: field.value || '',
         id: fieldId,
         label,

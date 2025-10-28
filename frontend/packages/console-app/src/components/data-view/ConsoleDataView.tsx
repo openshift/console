@@ -16,20 +16,17 @@ import DataViewFilters from '@patternfly/react-data-view/dist/cjs/DataViewFilter
 import { ColumnsIcon } from '@patternfly/react-icons';
 import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import {
-  ColumnLayout,
-  K8sResourceCommon,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { ColumnLayout } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { createColumnManagementModal } from '@console/internal/components/modals';
 import { TableColumn } from '@console/internal/module/k8s';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
-import { ResourceFilters, GetDataViewRows } from './types';
-import { useResourceDataViewData } from './useResourceDataViewData';
-import { useResourceDataViewFilters } from './useResourceDataViewFilters';
+import { ResourceFilters, ResourceMetadata, GetDataViewRows } from './types';
+import { useConsoleDataViewData } from './useConsoleDataViewData';
+import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
-export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
+export type ConsoleDataViewProps<TData, TCustomRowData, TFilters> = {
   label?: string;
   data: TData[];
   loaded: boolean;
@@ -39,7 +36,13 @@ export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
   columnManagementID?: string;
   initialFilters: TFilters;
   additionalFilterNodes?: React.ReactNode[];
-  matchesAdditionalFilters?: (resource: TData, filters: TFilters) => boolean;
+  /**
+   * By default, `TData` is assumed to be assignable to `K8sResourceCommon` type.
+   *
+   * This function overrides the default getters for the metadata of `TData` objects.
+   */
+  getObjectMetadata?: (obj: TData) => ResourceMetadata;
+  matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
   customRowData?: TCustomRowData;
   showNamespaceOverride?: boolean;
@@ -49,11 +52,30 @@ export type ResourceDataViewProps<TData, TCustomRowData, TFilters> = {
   mock?: boolean;
 };
 
+export const BodyLoading: React.FCC<{ columns: number }> = ({ columns }) => {
+  return <SkeletonTableBody rowsCount={5} columnsCount={columns} />;
+};
+
+export const BodyEmpty: React.FCC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
+  const { t } = useTranslation();
+  return (
+    <Tbody>
+      <Tr>
+        <Td colSpan={colSpan}>
+          <Bullseye>
+            {label ? t('public~No {{label}} found', { label }) : t('public~None found')}
+          </Bullseye>
+        </Td>
+      </Tr>
+    </Tbody>
+  );
+};
+
 /**
  * Console DataView component based on PatternFly DataView.
  */
-export const ResourceDataView = <
-  TData extends K8sResourceCommon = K8sResourceCommon,
+export const ConsoleDataView = <
+  TData,
   TCustomRowData = any,
   TFilters extends ResourceFilters = ResourceFilters
 >({
@@ -66,6 +88,7 @@ export const ResourceDataView = <
   columnManagementID,
   initialFilters,
   additionalFilterNodes,
+  getObjectMetadata,
   matchesAdditionalFilters,
   getDataViewRows,
   customRowData,
@@ -74,19 +97,20 @@ export const ResourceDataView = <
   hideLabelFilter,
   hideColumnManagement,
   mock,
-}: ResourceDataViewProps<TData, TCustomRowData, TFilters>) => {
+}: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation();
 
-  const { filters, onSetFilters, clearAllFilters, filteredData } = useResourceDataViewFilters<
+  const { filters, onSetFilters, clearAllFilters, filteredData } = useConsoleDataViewFilters<
     TData,
     TFilters
   >({
     data,
     initialFilters,
+    getObjectMetadata,
     matchesAdditionalFilters,
   });
 
-  const { dataViewColumns, dataViewRows, pagination } = useResourceDataViewData<
+  const { dataViewColumns, dataViewRows, pagination } = useConsoleDataViewData<
     TData,
     TCustomRowData,
     TFilters
@@ -100,24 +124,13 @@ export const ResourceDataView = <
     customRowData,
   });
 
-  const bodyLoading = React.useMemo(
-    () => <SkeletonTableBody rowsCount={5} columnsCount={dataViewColumns.length} />,
-    [dataViewColumns.length],
-  );
+  const bodyLoading = React.useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
+    dataViewColumns.length,
+  ]);
 
   const bodyEmpty = React.useMemo(
-    () => (
-      <Tbody>
-        <Tr>
-          <Td colSpan={dataViewColumns.length}>
-            <Bullseye>
-              {label ? t('public~No {{label}} found', { label }) : t('public~None found')}
-            </Bullseye>
-          </Td>
-        </Tr>
-      </Tbody>
-    ),
-    [t, dataViewColumns.length, label],
+    () => <BodyEmpty label={label} colSpan={dataViewColumns.length} />,
+    [dataViewColumns.length, label],
   );
 
   const activeState = React.useMemo(() => {

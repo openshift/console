@@ -4,7 +4,9 @@ import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage, Table, TableData } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { Table, TableData } from './factory/table';
 import { referenceFor, SecretKind, K8sModel, K8sResourceKind } from '../module/k8s';
 import { SecretData } from './configmap-and-secret-data';
 import {

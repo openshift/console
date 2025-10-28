@@ -204,6 +204,10 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
 
   const handleGuidedTourClick = (e) => {
     e.preventDefault();
+    fireTelemetryEvent('launch-guided-tour-form-help', {
+      id: 'guided-tour-help',
+      perspective: activePerspective,
+    });
     tourDispatch({ type: TourActions.start });
   };
 

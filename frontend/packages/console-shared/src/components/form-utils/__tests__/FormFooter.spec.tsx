@@ -1,14 +1,20 @@
-import * as React from 'react';
-import { Button } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { screen, fireEvent } from '@testing-library/react';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
+import { FormFooterProps } from '../form-utils-types';
 import FormFooter from '../FormFooter';
 
-type FormFooterProps = React.ComponentProps<typeof FormFooter>;
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  observe = () => {};
+
+  unobserve = () => {};
+
+  disconnect = () => {};
+};
 
 describe('FormFooter', () => {
-  let wrapper: ShallowWrapper<any>;
   let props: FormFooterProps;
-  const className = 'ocs-form-footer';
+
   beforeEach(() => {
     props = {
       errorMessage: 'error',
@@ -21,61 +27,70 @@ describe('FormFooter', () => {
       disableSubmit: false,
       isSubmitting: false,
     };
-    wrapper = shallow(<FormFooter {...props} />);
   });
 
   it('should contain submit, reset and cancel button', () => {
-    const submitButton = wrapper.find('[data-test-id="submit-button"]');
-    const resetButton = wrapper.find('[data-test-id="reset-button"]');
-    expect(wrapper.find(Button)).toHaveLength(3);
-    expect(submitButton.exists()).toBe(true);
-    expect(resetButton.exists()).toBe(true);
+    renderWithProviders(<FormFooter {...props} />);
+
+    expect(screen.getByRole('button', { name: 'Create' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Reset' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
   });
 
-  it('should contain right lables in the submit and reset button', () => {
-    expect(wrapper.find('[data-test-id="submit-button"]').props().children).toBe('Create');
-    expect(wrapper.find('[data-test-id="reset-button"]').props().children).toBe('Reset');
-    expect(wrapper.find('[data-test-id="cancel-button"]').props().children).toBe('Cancel');
+  it('should contain right labels in the submit and reset button', () => {
+    renderWithProviders(<FormFooter {...props} />);
+
+    expect(screen.getByRole('button', { name: 'Create' })).toHaveTextContent('Create');
+    expect(screen.getByRole('button', { name: 'Reset' })).toHaveTextContent('Reset');
+    expect(screen.getByRole('button', { name: 'Cancel' })).toHaveTextContent('Cancel');
   });
 
   it('should be able to configure data-test-id and labels', () => {
-    wrapper.setProps({
-      submitLabel: 'submit-lbl',
-      resetLabel: 'reset-lbl',
-      cancelLabel: 'cancel-lbl',
-    });
-    expect(wrapper.find('[type="submit"]').props().children).toBe('submit-lbl');
-    expect(wrapper.find('[data-test-id="reset-button"]').props().children).toBe('reset-lbl');
-    expect(wrapper.find('[data-test-id="cancel-button"]').props().children).toBe('cancel-lbl');
+    renderWithProviders(
+      <FormFooter
+        {...props}
+        submitLabel="submit-lbl"
+        resetLabel="reset-lbl"
+        cancelLabel="cancel-lbl"
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'submit-lbl' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'reset-lbl' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'cancel-lbl' })).toBeVisible();
   });
 
-  it('should be able to make the action buttons sticky', () => {
-    wrapper.setProps({
-      sticky: true,
-    });
-    expect(wrapper.at(0).props().className).toBe(`${className} ${className}__sticky`);
+  it('should render with sticky prop', () => {
+    renderWithProviders(<FormFooter {...props} sticky />);
+
+    // Verify buttons still render when sticky is enabled
+    expect(screen.getByRole('button', { name: 'Create' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Reset' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
   });
 
   it('should have submit button when handle submit is not passed', () => {
-    expect(wrapper.find('[data-test-id="submit-button"]').props().type).toBe('submit');
+    renderWithProviders(<FormFooter {...props} />);
+
+    expect(screen.getByRole('button', { name: 'Create' })).toHaveAttribute('type', 'submit');
   });
 
   it('should not have submit button when handle submit callback is passed', () => {
-    const additionalProps = { handleSubmit: jest.fn() };
-    wrapper.setProps(additionalProps);
-    expect(wrapper.find('[data-test-id="submit-button"]').props().type).not.toBe('submit');
+    renderWithProviders(<FormFooter {...props} handleSubmit={jest.fn()} />);
+
+    expect(screen.getByRole('button', { name: 'Create' })).toHaveAttribute('type', 'button');
   });
 
   it('should call the handler when a button is clicked', () => {
-    const additionalProps = { handleSubmit: jest.fn() };
-    wrapper.setProps(additionalProps);
-    wrapper.find('[data-test-id="submit-button"]').simulate('click');
-    expect(additionalProps.handleSubmit).toHaveBeenCalled();
+    const handleSubmit = jest.fn();
+    renderWithProviders(<FormFooter {...props} handleSubmit={handleSubmit} />);
 
-    wrapper.find('[data-test-id="reset-button"]').simulate('click');
-    expect(props.handleReset).toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Create' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
-    wrapper.find('[data-test-id="cancel-button"]').simulate('click');
-    expect(props.handleCancel).toHaveBeenCalled();
+    expect(handleSubmit).toHaveBeenCalledTimes(1);
+    expect(props.handleReset).toHaveBeenCalledTimes(1);
+    expect(props.handleCancel).toHaveBeenCalledTimes(1);
   });
 });

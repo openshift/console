@@ -1,15 +1,31 @@
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import CatalogDetailsPanel from '../details/CatalogDetailsPanel';
 import { eventSourceCatalogItems } from './catalog-item-data';
 
-describe('Catalog details panel', () => {
-  it('should show Support as Community', () => {
-    const wrapper = shallow(<CatalogDetailsPanel item={eventSourceCatalogItems[1]} />);
-    expect(wrapper.find('PropertyItem[label="Support"]').props().value).toBe('Community');
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...jest.requireActual('react-router-dom-v5-compat'),
+  useLocation: () => ({
+    pathname: '/test-path',
+    search: '',
+    hash: '',
+    state: null,
+  }),
+}));
+
+describe('CatalogDetailsPanel', () => {
+  const itemWithSupportProperty = eventSourceCatalogItems[1];
+
+  it('should show the correct support level', () => {
+    renderWithProviders(<CatalogDetailsPanel item={itemWithSupportProperty} />);
+
+    expect(screen.getByText('Support')).toBeVisible();
+    expect(screen.getByText('Community')).toBeVisible();
   });
 
-  it('should show one Support property in properties side panel', () => {
-    const wrapper = shallow(<CatalogDetailsPanel item={eventSourceCatalogItems[1]} />);
-    expect(wrapper.find('PropertyItem[label="Support"]').length).toBe(1);
+  it('should show only one "Support" property in the side panel', () => {
+    renderWithProviders(<CatalogDetailsPanel item={itemWithSupportProperty} />);
+
+    expect(screen.getAllByText('Support')).toHaveLength(1);
   });
 });

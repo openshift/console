@@ -1,14 +1,28 @@
 import * as React from 'react';
-import { EmptyState } from '@patternfly/react-core';
 import { SortByDirection, sortable } from '@patternfly/react-table';
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
 import * as fuzzy from 'fuzzysearch';
-import { TableData, Table, RowFunctionArgs } from '@console/internal/components/factory';
-import { RowFilter, FilterToolbar } from '@console/internal/components/filter-toolbar';
-import { LoadingBox } from '@console/internal/components/utils';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import CustomResourceList from '../CustomResourceList';
 
-let customResourceListProps: React.ComponentProps<typeof CustomResourceList>;
+// Mock only the child components that CustomResourceList uses
+jest.mock('@console/internal/components/factory/table', () => ({
+  Table: () => 'Table',
+}));
+
+jest.mock('@console/internal/components/filter-toolbar', () => ({
+  FilterToolbar: () => 'Filter Toolbar',
+}));
+
+jest.mock('@console/shared/src/components/loading/LoadingBox', () => ({
+  LoadingBox: () => 'Loading...',
+}));
+
+jest.mock('@console/shared/src/components/layout/PaneBody', () => ({
+  default: ({ children }) => children,
+}));
 
 const mockColumnClasses = {
   name: 'mock-name-column',
@@ -47,26 +61,18 @@ const MockTableRow: React.FC<RowFunctionArgs> = ({ obj }) => (
   </>
 );
 
-// Couldn't test scenarios that work around useEffect becuase it seems there is no way to trigger useEffect from within the tests.
-// More tests will be added once we find a way to do so. All the required mock-data is already added.
-describe('CustomeResourceList', () => {
+describe('CustomResourceList', () => {
+  let customResourceListProps: React.ComponentProps<typeof CustomResourceList>;
+
   const mockReducer = (item) => {
     return item.status;
   };
 
   const resources = [
     { name: 'item1', version: '1', status: 'successful' },
-    {
-      name: 'item2',
-      version: '2',
-      status: 'successful',
-    },
+    { name: 'item2', version: '2', status: 'successful' },
     { name: 'item3', version: '3', status: 'failed' },
-    {
-      name: 'item4',
-      version: '4',
-      status: 'failed',
-    },
+    { name: 'item4', version: '4', status: 'failed' },
   ];
 
   const getFilteredItemsByRow = (items: any, filters: string[]) => {
@@ -93,58 +99,67 @@ describe('CustomeResourceList', () => {
     },
   ];
 
-  customResourceListProps = {
-    queryArg: '',
-    resources,
-    textFilter: 'name',
-    rowFilters: mockRowFilters,
-    sortBy: 'version',
-    sortOrder: SortByDirection.desc,
-    rowFilterReducer: getFilteredItemsByRow,
-    textFilterReducer: getFilteredItemsByText,
-    ResourceRow: MockTableRow,
-    resourceHeader: MockTableHeader,
-  };
-
-  it('should render Table component', () => {
-    const customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
-    expect(customResourceList.find(Table).exists()).toBe(true);
+  beforeEach(() => {
+    customResourceListProps = {
+      queryArg: '',
+      resources,
+      textFilter: 'name',
+      rowFilters: mockRowFilters,
+      sortBy: 'version',
+      sortOrder: SortByDirection.desc,
+      rowFilterReducer: getFilteredItemsByRow,
+      textFilterReducer: getFilteredItemsByText,
+      ResourceRow: MockTableRow,
+      resourceHeader: MockTableHeader,
+    };
   });
 
-  it('should render FilterToolbar component when either rowFilters or textFilter is present', () => {
-    let customResourceList;
+  it('should render FilterToolbar when both rowFilters and textFilter are present', () => {
+    renderWithProviders(<CustomResourceList {...customResourceListProps} />);
 
-    // Both filters
-    customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
-    expect(customResourceList.find(FilterToolbar).exists()).toBe(true);
-
-    // Only text filter
-    customResourceListProps.rowFilters = undefined;
-    customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
-    expect(customResourceList.find(FilterToolbar).exists()).toBe(true);
-
-    // Neither text nor row filters
-    customResourceListProps.textFilter = undefined;
-    customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
-    expect(customResourceList.find(FilterToolbar).exists()).toBe(false);
-
-    // Only row filters
-    customResourceListProps.rowFilters = mockRowFilters;
-    customResourceList = shallow(<CustomResourceList {...customResourceListProps} />);
-    expect(customResourceList.find(FilterToolbar).exists()).toBe(true);
+    expect(screen.getByText(/Filter Toolbar/)).toBeVisible();
+    expect(screen.getByText(/Table/)).toBeVisible();
   });
 
-  it('should render the EmptyState component by default', () => {
-    const customResourceList = shallow(
-      <CustomResourceList {...customResourceListProps} resources={[]} />,
+  it('should render FilterToolbar when only textFilter is present', () => {
+    renderWithProviders(<CustomResourceList {...customResourceListProps} rowFilters={undefined} />);
+
+    expect(screen.getByText(/Filter Toolbar/)).toBeVisible();
+  });
+
+  it('should render FilterToolbar when only rowFilters is present', () => {
+    renderWithProviders(<CustomResourceList {...customResourceListProps} textFilter={undefined} />);
+
+    expect(screen.getByText(/Filter Toolbar/)).toBeVisible();
+  });
+
+  it('should not render FilterToolbar when neither rowFilters nor textFilter is present', () => {
+    renderWithProviders(
+      <CustomResourceList
+        {...customResourceListProps}
+        textFilter={undefined}
+        rowFilters={undefined}
+      />,
     );
-    expect(customResourceList.find(EmptyState).exists()).toBe(true);
+
+    expect(screen.queryByText('Filter Toolbar')).not.toBeInTheDocument();
+    expect(screen.getByText('Table')).toBeVisible();
   });
 
-  it('should render the loading box while loading', () => {
-    const customResourceList = shallow(
-      <CustomResourceList {...customResourceListProps} loaded={false} />,
-    );
-    expect(customResourceList.find(LoadingBox).exists()).toBe(true);
+  it('should render the EmptyState component when no resources are provided', () => {
+    renderWithProviders(<CustomResourceList {...customResourceListProps} resources={[]} />);
+
+    expect(screen.getByText('No resources found')).toBeVisible();
+    expect(screen.queryByText('Table')).not.toBeInTheDocument();
+  });
+
+  it('should render the LoadingBox while loading', () => {
+    renderWithProviders(<CustomResourceList {...customResourceListProps} loaded={false} />);
+
+    expect(screen.getByText('Loading...')).toBeVisible();
+
+    // When loading, Table and FilterToolbar should not render
+    expect(screen.queryByText('Table')).not.toBeInTheDocument();
+    expect(screen.queryByText('Filter Toolbar')).not.toBeInTheDocument();
   });
 });
