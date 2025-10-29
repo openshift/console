@@ -1,7 +1,8 @@
 package olm
 
 const (
-	CatalogdAllEndpoint = "/api/v1/all"
+	CatalogdAllEndpoint   = "/api/v1/all"
+	CatalogdMetasEndpoint = "/api/v1/metas"
 
 	// OLM annotations
 	CapabilitiesOLMAnnotationKey           = "capabilities"

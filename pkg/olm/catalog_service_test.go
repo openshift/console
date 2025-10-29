@@ -1,8 +1,10 @@
 package olm
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -16,16 +18,124 @@ import (
 )
 
 type mockCatalogdClient struct {
-	packages []*declcfg.Package
-	bundles  []*declcfg.Bundle
+	packages []declcfg.Package
+	bundles  []declcfg.Bundle
 	err      error
 }
 
-func (m *mockCatalogdClient) Fetch(catalog, baseURL string, ifNotModifiedSince *time.Time) ([]*declcfg.Package, []*declcfg.Bundle, *time.Time, error) {
+func (m *mockCatalogdClient) FetchMetas(catalog string, baseURL string, r *http.Request) (*http.Response, error) {
+	// This mock implementation is not used in these tests, but required by the interface
+	return nil, fmt.Errorf("FetchMetas not implemented in mock")
+}
+
+func (m *mockCatalogdClient) FetchAll(catalog, baseURL, ifNotModifiedSince string, maxAge time.Duration) (*http.Response, error) {
 	if m.err != nil {
-		return nil, nil, nil, m.err
+		return nil, m.err
 	}
-	return m.packages, m.bundles, nil, nil
+
+	var buf bytes.Buffer
+	encoder := json.NewEncoder(&buf)
+
+	// Write packages - Meta.MarshalJSON expands the blob, so we create the structure directly
+	for _, pkg := range m.packages {
+		// Create a map that includes the schema field and all package fields
+		pkgMap := map[string]any{
+			"schema":         declcfg.SchemaPackage,
+			"name":           pkg.Name,
+			"defaultChannel": pkg.DefaultChannel,
+			"description":    pkg.Description,
+			"icon":           pkg.Icon,
+		}
+		if err := encoder.Encode(pkgMap); err != nil {
+			return nil, err
+		}
+	}
+
+	// Write bundles
+	for _, bundle := range m.bundles {
+		bundleMap := map[string]any{
+			"schema":     declcfg.SchemaBundle,
+			"name":       bundle.Name,
+			"package":    bundle.Package,
+			"image":      bundle.Image,
+			"properties": bundle.Properties,
+		}
+		if err := encoder.Encode(bundleMap); err != nil {
+			return nil, err
+		}
+	}
+
+	header := http.Header{}
+	header.Set("Last-Modified", time.Now().UTC().Format(http.TimeFormat))
+	header.Set("Content-Type", "application/json")
+
+	return &http.Response{
+		StatusCode: http.StatusOK,
+		Header:     header,
+		Body:       io.NopCloser(bytes.NewReader(buf.Bytes())),
+	}, nil
+}
+
+func TestMockCatalogdClient(t *testing.T) {
+	csvMetadata, err := json.Marshal(property.CSVMetadata{
+		DisplayName: "Test Bundle",
+		Description: "This is a test bundle.",
+	})
+	require.NoError(t, err)
+
+	packages := []declcfg.Package{{Name: "test-package"}}
+	bundles := []declcfg.Bundle{{
+		Name:    "test-bundle",
+		Package: "test-package",
+		Properties: []property.Property{
+			{
+				Type:  property.TypeCSVMetadata,
+				Value: csvMetadata,
+			},
+		},
+	}}
+
+	client := &mockCatalogdClient{
+		packages: packages,
+		bundles:  bundles,
+	}
+
+	resp, err := client.FetchAll("test-catalog", "", "", 0)
+	require.NoError(t, err)
+	defer resp.Body.Close()
+
+	// Verify the response can be parsed by WalkMetasReader
+	packagesFound := []*declcfg.Package{}
+	bundlesFound := []*declcfg.Bundle{}
+
+	err = declcfg.WalkMetasReader(resp.Body, func(meta *declcfg.Meta, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+
+		switch meta.Schema {
+		case declcfg.SchemaPackage:
+			var pkg declcfg.Package
+			if err := json.Unmarshal(meta.Blob, &pkg); err != nil {
+				return err
+			}
+			packagesFound = append(packagesFound, &pkg)
+		case declcfg.SchemaBundle:
+			var bundle declcfg.Bundle
+			if err := json.Unmarshal(meta.Blob, &bundle); err != nil {
+				return err
+			}
+			bundlesFound = append(bundlesFound, &bundle)
+		}
+		return nil
+	})
+
+	require.NoError(t, err)
+	assert.Len(t, packagesFound, 1)
+	assert.Len(t, bundlesFound, 1)
+	assert.Equal(t, "test-package", packagesFound[0].Name)
+	assert.Equal(t, "test-bundle", bundlesFound[0].Name)
+	assert.Equal(t, "test-package", bundlesFound[0].Package)
 }
 
 func TestNewCatalogService(t *testing.T) {
@@ -44,8 +154,8 @@ func TestUpdateCatalog(t *testing.T) {
 			Description: "This is a test bundle.",
 		})
 		require.NoError(t, err)
-		packages := []*declcfg.Package{{Name: "test-package"}}
-		bundles := []*declcfg.Bundle{{Name: "test-bundle", Package: "test-package", Properties: []property.Property{
+		packages := []declcfg.Package{{Name: "test-package"}}
+		bundles := []declcfg.Bundle{{Name: "test-bundle", Package: "test-package", Properties: []property.Property{
 			{
 				Type:  property.TypeCSVMetadata,
 				Value: csvMetadata,
@@ -58,16 +168,15 @@ func TestUpdateCatalog(t *testing.T) {
 
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		service := &CatalogService{
-			cache:               c,
-			client:              client,
-			index:               make(map[string]string),
-			catalogLastModified: make(map[string]time.Time),
+			cache:  c,
+			client: client,
+			index:  make(map[string]struct{}),
 		}
 
 		err = service.UpdateCatalog("test-catalog", "")
 		require.NoError(t, err)
 
-		items, found := c.Get("olm:catalog-items:test-catalog")
+		items, found := c.Get("olm:catalog:test-catalog:items")
 		assert.True(t, found)
 		assert.NotEmpty(t, items)
 		assert.NotNil(t, service.LastModified)
@@ -79,10 +188,9 @@ func TestUpdateCatalog(t *testing.T) {
 		}
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		service := &CatalogService{
-			cache:               c,
-			client:              client,
-			index:               make(map[string]string),
-			catalogLastModified: make(map[string]time.Time),
+			cache:  c,
+			client: client,
+			index:  make(map[string]struct{}),
 		}
 
 		err := service.UpdateCatalog("test-catalog", "")
@@ -93,14 +201,13 @@ func TestUpdateCatalog(t *testing.T) {
 func TestGetCatalogItems(t *testing.T) {
 	c := cache.New(5*time.Minute, 10*time.Minute)
 	items := []ConsoleCatalogItem{{Name: "test-item"}}
-	c.Set("test-catalog", items, cache.DefaultExpiration)
+	c.Set("olm:catalog:test-catalog:items", items, cache.DefaultExpiration)
 
 	now := time.Now()
 	service := &CatalogService{
-		cache:               c,
-		index:               map[string]string{"test-catalog": "test-catalog"},
-		catalogLastModified: make(map[string]time.Time),
-		LastModified:        now.UTC().Format(http.TimeFormat),
+		cache:        c,
+		index:        map[string]struct{}{"test-catalog": {}},
+		LastModified: now.UTC().Format(http.TimeFormat),
 	}
 
 	t.Run("should return items from cache", func(t *testing.T) {
