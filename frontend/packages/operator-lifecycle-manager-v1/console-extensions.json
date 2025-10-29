@@ -128,5 +128,16 @@
       "type": "OLMv1CatalogItem",
       "provider": { "$codeRef": "useCatalogCategories" }
     }
+  },
+  {
+    "type": "console.catalog/toolbar-item",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "operator",
+      "component": { "$codeRef": "OLMv1ToolbarToggle" }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
   }
 ]
