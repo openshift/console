@@ -7,6 +7,7 @@ export const loadingCatalogService: CatalogService = {
   loaded: false,
   loadError: null,
   searchCatalog: () => [],
+  toolbarExtensions: [],
   catalogExtensions: [
     {
       type: 'console.catalog/item-type',
@@ -158,6 +159,7 @@ export const loadingCatalogService: CatalogService = {
 export const loadedCatalogService: CatalogService = {
   type: '',
   searchCatalog: () => [],
+  toolbarExtensions: [],
   categories: [],
   items: [
     {

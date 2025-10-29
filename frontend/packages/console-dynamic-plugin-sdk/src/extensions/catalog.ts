@@ -99,13 +99,27 @@ export type CatalogCategoriesProvider = ExtensionDeclaration<
   }
 >;
 
+/** This extension allows plugins to contribute toolbar items to the Catalog view for a specific catalog type. */
+export type CatalogToolbarItem = ExtensionDeclaration<
+  'console.catalog/toolbar-item',
+  {
+    /** The catalog ID the toolbar item is for. If not specified, the toolbar item will be available for all catalogs. */
+    catalogId?: string;
+    /** The catalog item type for this toolbar item. If not specified, the toolbar item will be available for all types. */
+    type?: string;
+    /** The component to render in the catalog toolbar. */
+    component: CodeRef<React.ComponentType>;
+  }
+>;
+
 export type SupportedCatalogExtensions =
   | CatalogItemType
   | CatalogItemTypeMetadata
   | CatalogItemProvider
   | CatalogItemFilter
   | CatalogItemMetadataProvider
-  | CatalogCategoriesProvider;
+  | CatalogCategoriesProvider
+  | CatalogToolbarItem;
 
 // Type guards
 
@@ -131,6 +145,10 @@ export const isCatalogItemMetadataProvider = (e: Extension): e is CatalogItemMet
 
 export const isCatalogCategoriesProvider = (e: Extension): e is CatalogCategoriesProvider => {
   return e.type === 'console.catalog/categories-provider';
+};
+
+export const isCatalogToolbarItem = (e: Extension): e is CatalogToolbarItem => {
+  return e.type === 'console.catalog/toolbar-item';
 };
 
 // Support types
