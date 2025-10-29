@@ -1018,7 +1018,6 @@
       "path": [
         "/add",
         "/import-sample",
-        "/catalog",
         "/samples",
         "/topology",
         "/deploy-image",
@@ -1063,7 +1062,15 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/catalog/all-namespaces", "/catalog/ns/:ns"],
+      "path": ["/catalog/all-namespaces"],
+      "component": { "$codeRef": "CatalogDefaultNamespaceRedirect" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/catalog/ns/:ns"],
       "component": { "$codeRef": "CatalogPage" }
     }
   },
