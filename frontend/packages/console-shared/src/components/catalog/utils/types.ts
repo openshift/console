@@ -2,6 +2,7 @@ import {
   CatalogItem,
   CatalogItemAttribute,
   CatalogItemType,
+  CatalogToolbarItem,
   CatalogCategory,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
@@ -58,5 +59,6 @@ export type CatalogService = {
   loadError: any;
   searchCatalog: (query: string) => CatalogItem[];
   catalogExtensions: ResolvedExtension<CatalogItemType>[];
+  toolbarExtensions: ResolvedExtension<CatalogToolbarItem>[];
   categories?: CatalogCategory[];
 };
