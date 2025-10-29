@@ -19,7 +19,7 @@ declare global {
 // ex: cy.createProject(name)
 Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false) => {
   cy.log(`create project`);
-  cy.visit(`/k8s/cluster/projects`);
+  cy.visit(`/k8s/cluster/project.openshift.io~v1~Project`);
   listPage.isCreateButtonVisible();
   listPage.clickCreateYAMLbutton();
   modal.shouldBeOpened();
@@ -38,7 +38,7 @@ Cypress.Commands.add('createProjectWithCLI', (name: string) => {
 
 Cypress.Commands.add('deleteProject', (name: string) => {
   cy.log(`delete project`);
-  cy.visit(`/k8s/cluster/projects/${name}`);
+  cy.visit(`/k8s/cluster/project.openshift.io~v1~Project/${name}`);
   detailsPage.isLoaded();
   detailsPage.clickPageActionFromDropdown('Delete Project');
   modal.shouldBeOpened();
