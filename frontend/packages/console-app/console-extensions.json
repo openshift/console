@@ -2528,6 +2528,12 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "useTechPreviewFlagProvider" }
+    }
+  },
+  {
     "type": "console.navigation/href",
     "properties": {
       "perspective": "admin",
