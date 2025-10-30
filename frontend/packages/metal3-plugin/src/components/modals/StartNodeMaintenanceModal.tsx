@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Alert, FormGroup, Stack, StackItem, TextInput } from '@patternfly/react-core';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import {
   ModalTitle,
   ModalBody,
@@ -57,12 +57,6 @@ const StartNodeMaintenanceModal = (props: StartNodeMaintenanceModalProps) => {
             {t(
               'metal3-plugin~All managed workloads will be moved off of this node. New workloads and data will not be added to this node until maintenance is stopped.',
             )}
-          </StackItem>
-          <StackItem>
-            <Trans ns="metal3-plugin">
-              If the node does not exit maintenance within <strong>30 minutes</strong>, the cluster
-              will automatically rebuild the node{"'"}s data using replicated copies
-            </Trans>
           </StackItem>
           <StackItem>
             <FormGroup label="Reason" fieldId="node-maintenance-reason">

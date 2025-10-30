@@ -139,7 +139,6 @@
   "Restart Bare Metal Host": "Restart Bare Metal Host",
   "The host will be powered off and on again.": "The host will be powered off and on again.",
   "All managed workloads will be moved off of this node. New workloads and data will not be added to this node until maintenance is stopped.": "All managed workloads will be moved off of this node. New workloads and data will not be added to this node until maintenance is stopped.",
-  "If the node does not exit maintenance within <1>30 minutes</1>, the cluster will automatically rebuild the node's data using replicated copies": "If the node does not exit maintenance within <1>30 minutes</1>, the cluster will automatically rebuild the node's data using replicated copies",
   "The Ceph storage cluster is not in a healthy state.": "The Ceph storage cluster is not in a healthy state.",
   "Maintenance should not be started until the health of the storage cluster is restored.": "Maintenance should not be started until the health of the storage cluster is restored.",
   "Are you sure you want to stop maintenance <1>{reasonLabel}</1> on node <4>{nodeName}</4>?": "Are you sure you want to stop maintenance <1>{reasonLabel}</1> on node <4>{nodeName}</4>?",
