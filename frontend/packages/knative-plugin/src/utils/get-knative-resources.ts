@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResources, WatchK8sResourcesGeneric } from '@console/dynamic-plugin-sdk';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { GLOBAL_OPERATOR_NS, KNATIVE_SERVING_LABEL } from '../const';
@@ -435,30 +435,6 @@ export const getSinkableResources = (namespace: string): FirehoseResource[] => {
     : [];
 };
 
-export const getKnativeServingResources = () =>
-  Promise.resolve({
-    revisions: {
-      model: { group: 'serving.knative.dev', version: 'v1', kind: 'Revision' },
-      opts: { isList: true, optional: true, namespaced: true },
-    },
-    configurations: {
-      model: { group: 'serving.knative.dev', version: 'v1', kind: 'Configuration' },
-      opts: { isList: true, optional: true, namespaced: true },
-    },
-    ksroutes: {
-      model: { group: 'serving.knative.dev', version: 'v1', kind: 'Route' },
-      opts: { isList: true, optional: true, namespaced: true },
-    },
-    ksservices: {
-      model: { group: 'serving.knative.dev', version: 'v1', kind: 'Service' },
-      opts: { isList: true, optional: true, namespaced: true },
-    },
-    domainmappings: {
-      model: { group: 'serving.knative.dev', version: 'v1beta1', kind: 'DomainMapping' },
-      opts: { isList: true, optional: true, namespaced: true },
-    },
-  } satisfies WatchK8sResourcesGeneric);
-
 export const getKnativeEventingResources = async () => {
   // Fetch dynamic event sources and channels at runtime
   const eventSourceModels = await fetchEventSourcesCrd();
@@ -469,18 +445,18 @@ export const getKnativeEventingResources = async () => {
     acc[ref] = {
       model: { group: model.apiGroup, version: model.apiVersion, kind: model.kind },
       opts: { isList: true, optional: true, namespaced: true },
-    } satisfies WatchK8sResourcesGeneric;
+    };
     return acc;
-  }, {});
+  }, {} as WatchK8sResourcesGeneric);
 
   const dynamicChannels = eventingChannels.reduce((acc, model) => {
     const ref = referenceForModel(model);
     acc[ref] = {
       model: { group: model.apiGroup, version: model.apiVersion, kind: model.kind },
       opts: { isList: true, optional: true, namespaced: true },
-    } satisfies WatchK8sResourcesGeneric;
+    };
     return acc;
-  }, {});
+  }, {} as WatchK8sResourcesGeneric);
 
   return {
     eventingsubscription: {
@@ -497,25 +473,5 @@ export const getKnativeEventingResources = async () => {
     },
     ...dynamicEventSources,
     ...dynamicChannels,
-  } satisfies WatchK8sResourcesGeneric;
+  };
 };
-
-export const getKnativeEventingKameletsResources = () =>
-  Promise.resolve({
-    integrations: {
-      model: { group: 'camel.apache.org', version: 'v1', kind: 'Integration' },
-      opts: { isList: true, optional: true, namespaced: true },
-    },
-    kameletbindings: {
-      model: { group: 'camel.apache.org', version: 'v1alpha1', kind: 'KameletBinding' },
-      opts: { isList: true, optional: true, namespaced: true },
-    },
-    domainmappings: {
-      model: { group: 'serving.knative.dev', version: 'v1beta1', kind: 'DomainMapping' },
-      opts: { isList: true, optional: true, namespaced: true },
-    },
-    kamelets: {
-      model: { group: 'camel.apache.org', version: 'v1alpha1', kind: 'Kamelet' },
-      opts: { isList: true, optional: true, namespaced: true },
-    },
-  } satisfies WatchK8sResourcesGeneric);

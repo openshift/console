@@ -2015,7 +2015,26 @@
       "id": "knative-serving-topology-model-factory",
       "priority": 100,
       "resources": {
-        "$codeRef": "getKnativeResources.getKnativeServingResources"
+        "revisions": {
+          "model": { "group": "serving.knative.dev", "version": "v1", "kind": "Revision" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "configurations": {
+          "model": { "group": "serving.knative.dev", "version": "v1", "kind": "Configuration" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "ksroutes": {
+          "model": { "group": "serving.knative.dev", "version": "v1", "kind": "Route" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "ksservices": {
+          "model": { "group": "serving.knative.dev", "version": "v1", "kind": "Service" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "domainmappings": {
+          "model": { "group": "serving.knative.dev", "version": "v1beta1", "kind": "DomainMapping" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        }
       },
       "workloadKeys": ["ksservices"],
       "getDataModel": {
@@ -2061,7 +2080,22 @@
       "id": "knative-kamelets-topology-model-factory",
       "priority": 100,
       "resources": {
-        "$codeRef": "getKnativeResources.getKnativeEventingKameletsResources"
+        "integrations": {
+          "model": { "group": "camel.apache.org", "version": "v1", "kind": "Integration" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "kameletbindings": {
+          "model": { "group": "camel.apache.org", "version": "v1alpha1", "kind": "KameletBinding" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "domainmappings": {
+          "model": { "group": "serving.knative.dev", "version": "v1beta1", "kind": "DomainMapping" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "kamelets": {
+          "model": { "group": "camel.apache.org", "version": "v1alpha1", "kind": "Kamelet" },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        }
       },
       "workloadKeys": ["kameletbindings"],
       "getDataModel": {
