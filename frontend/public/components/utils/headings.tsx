@@ -121,33 +121,34 @@ export const ConnectedPageHeading = connectToModel(
       {},
     );
 
-    const actions = hasExtensionActions ? (
-      <LazyActionMenu
-        context={{ [kind]: data }}
-        variant={ActionMenuVariant.DROPDOWN}
-        label={t('public~Actions')}
-      />
-    ) : (
-      <>
-        {hasButtonActions && hasData && (
-          <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-        )}
+    const actions =
+      hasExtensionActions && !customActionMenu ? (
+        <LazyActionMenu
+          context={{ [kind]: data }}
+          variant={ActionMenuVariant.DROPDOWN}
+          label={t('public~Actions')}
+        />
+      ) : (
+        <>
+          {hasButtonActions && hasData && (
+            <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+          )}
 
-        {hasMenuActions && hasData && (
-          <ActionListItem>
-            <ActionsMenu
-              actions={
-                _.isFunction(menuActions)
-                  ? menuActions(kindObj, data, extraResources, customData)
-                  : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-              }
-            />
-          </ActionListItem>
-        )}
+          {hasMenuActions && hasData && (
+            <ActionListItem>
+              <ActionsMenu
+                actions={
+                  _.isFunction(menuActions)
+                    ? menuActions(kindObj, data, extraResources, customData)
+                    : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+                }
+              />
+            </ActionListItem>
+          )}
 
-        {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
-      </>
-    );
+          {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
+        </>
+      );
 
     return (
       <PageHeading

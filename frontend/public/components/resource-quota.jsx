@@ -14,13 +14,11 @@ import ResourceQuotaCharts from '@console/app/src/components/resource-quota/Reso
 import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
-import { FLAGS, YellowExclamationTriangleIcon, DASH } from '@console/shared';
+import { FLAGS, YellowExclamationTriangleIcon, DASH, LazyActionMenu } from '@console/shared';
 import { DetailsPage, MultiListPage } from './factory';
 import {
-  Kebab,
   SectionHeading,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   convertToBaseValue,
@@ -57,50 +55,11 @@ import {
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 
-const { common } = Kebab.factory;
-
-const resourceQuotaMenuActions = [...common];
-const clusterResourceQuotaMenuActions = [...common];
-const appliedClusterResourceQuotaMenuActions = (namespace) => [
-  Kebab.factory.ModifyLabels,
-  Kebab.factory.ModifyAnnotations,
-  (kind, obj) => {
-    return {
-      // t('public~Edit AppliedClusterResourceQuota')
-      labelKey: 'public~Edit AppliedClusterResourceQuota',
-      href: `/k8s/ns/${namespace}/${referenceForModel(AppliedClusterResourceQuotaModel)}/${
-        obj.metadata.name
-      }/yaml`,
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        name: obj.metadata.name,
-        namespace,
-        verb: 'update',
-      },
-    };
-  },
-  Kebab.factory.Delete,
-];
-
 const isClusterQuota = (quota) => !quota.metadata.namespace;
 
+const resourceQuotaReference = referenceForModel(ResourceQuotaModel);
 const clusterQuotaReference = referenceForModel(ClusterResourceQuotaModel);
 const appliedClusterQuotaReference = referenceForModel(AppliedClusterResourceQuotaModel);
-
-const quotaActions = (quota, namespace = undefined) => {
-  if (quota.metadata.namespace) {
-    return resourceQuotaMenuActions;
-  }
-
-  if (quota.kind === 'ClusterResourceQuota') {
-    return clusterResourceQuotaMenuActions;
-  }
-
-  if (quota.kind === 'AppliedClusterResourceQuota') {
-    return appliedClusterResourceQuotaMenuActions(namespace);
-  }
-};
 
 export const getQuotaResourceTypes = (quota) => {
   const specHard = isClusterQuota(quota)
@@ -481,14 +440,7 @@ const getResourceQuotaDataViewRows = (data, columns, namespace) => {
         cell: <Timestamp timestamp={metadata.creationTimestamp} />,
       },
       [resourceQuotaTableColumnInfo[6].id]: {
-        cell: (
-          <ResourceKebab
-            customData={namespace}
-            actions={quotaActions(obj, namespace)}
-            kind={resourceKind}
-            resource={obj}
-          />
-        ),
+        cell: <LazyActionMenu context={{ [resourceQuotaReference]: obj }} />,
         props: {
           ...actionsCellProps,
         },
@@ -553,14 +505,7 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
         cell: <Timestamp timestamp={metadata.creationTimestamp} />,
       },
       [appliedClusterResourceQuotaTableColumnInfo[5].id]: {
-        cell: (
-          <ResourceKebab
-            customData={namespace}
-            actions={quotaActions(obj, namespace)}
-            kind={appliedClusterQuotaReference}
-            resource={obj}
-          />
-        ),
+        cell: <LazyActionMenu context={{ [appliedClusterQuotaReference]: obj }} />,
         props: {
           ...actionsCellProps,
         },
@@ -859,19 +804,23 @@ export const ResourceQuotasDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
-      menuActions={resourceQuotaMenuActions}
+      kind={referenceForModel(ResourceQuotaModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(ResourceQuotaModel)]: obj }} {...props} />
+      )}
       pages={[navFactory.details(Details), navFactory.editYaml()]}
     />
   );
 };
 
 export const AppliedClusterResourceQuotasDetailsPage = (props) => {
-  const params = useParams();
-  const actions = appliedClusterResourceQuotaMenuActions(params?.ns);
   return (
     <DetailsPage
       {...props}
-      menuActions={actions}
+      kind={appliedClusterQuotaReference}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [appliedClusterQuotaReference]: obj }} {...props} />
+      )}
       pages={[navFactory.details(Details), navFactory.editYaml()]}
     />
   );

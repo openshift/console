@@ -21,15 +21,7 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import { DetailsPage, ListPage } from './factory';
-import {
-  Kebab,
-  LoadingBox,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-} from './utils';
+import { LoadingBox, navFactory, ResourceLink, ResourceSummary, SectionHeading } from './utils';
 import {
   DescriptionListDescription,
   DescriptionListGroup,
@@ -37,9 +29,8 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { LazyActionMenu } from '@console/shared/src';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
 const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = ({ obj }) => {
@@ -88,9 +79,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
         cell: _.get(obj, 'spec.maxReplicas') || DASH,
       },
       [tableColumnInfo[5].id]: {
-        cell: (
-          <ResourceKebab actions={menuActions} kind={machineAutoscalerReference} resource={obj} />
-        ),
+        cell: <LazyActionMenu context={{ [machineAutoscalerReference]: obj }} />,
         props: {
           ...actionsCellProps,
         },
@@ -235,14 +224,18 @@ export const MachineAutoscalerPage: React.FC<MachineAutoscalerPageProps> = (prop
   />
 );
 
-export const MachineAutoscalerDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    kind={machineAutoscalerReference}
-    pages={[navFactory.details(MachineAutoscalerDetails), navFactory.editYaml()]}
-  />
-);
+export const MachineAutoscalerDetailsPage: React.FC = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [machineAutoscalerReference]: obj }} {...props} />
+      )}
+      kind={machineAutoscalerReference}
+      pages={[navFactory.details(MachineAutoscalerDetails), navFactory.editYaml()]}
+    />
+  );
+};
 
 type MachineAutoscalerListProps = {
   data: K8sResourceKind[];

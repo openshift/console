@@ -15,12 +15,15 @@ import {
   ResourceSummary,
   ResourceLink,
   navFactory,
-  Kebab,
   humanizeBinaryBytes,
 } from '@console/internal/components/utils';
-import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal/models';
+import {
+  VolumeSnapshotClassModel,
+  VolumeSnapshotContentModel,
+  VolumeSnapshotModel,
+} from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
+import { LazyActionMenu, Status } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { volumeSnapshotStatus } from '../../status';
 
@@ -117,8 +120,14 @@ const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => 
   return (
     <DetailsPage
       {...props}
+      kind={referenceForModel(VolumeSnapshotContentModel)}
       getResourceStatus={volumeSnapshotStatus}
-      menuActions={Kebab.factory.common}
+      customActionMenu={(obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(VolumeSnapshotContentModel)]: obj }}
+          {...props}
+        />
+      )}
       pages={pages}
     />
   );

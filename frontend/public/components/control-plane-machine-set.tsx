@@ -30,10 +30,8 @@ import { ControlPlaneMachineSetModel } from '../models';
 import { ControlPlaneMachineSetKind, referenceForModel } from '../module/k8s';
 import { DetailsPage, ListPage } from './factory';
 import {
-  Kebab,
   LoadingBox,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   resourcePath,
   ResourceSummary,
@@ -43,9 +41,9 @@ import {
 import { ResourceEventStream } from './events';
 import { MachinePage, machineReference } from './machine';
 import { MachineTabPageProps } from './machine-set';
+import { LazyActionMenu } from '@console/shared/src';
 
 const controlPlaneMachineSetReference = referenceForModel(ControlPlaneMachineSetModel);
-const controlPlaneMachineSetMenuActions = [...Kebab.factory.common];
 const getDesiredReplicas = (resource: ControlPlaneMachineSetKind) => {
   return resource.spec.replicas;
 };
@@ -196,14 +194,18 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const ControlPlaneMachineSetDetailsPage: React.FC<any> = (props) => (
-  <DetailsPage
-    {...props}
-    kind={controlPlaneMachineSetReference}
-    menuActions={controlPlaneMachineSetMenuActions}
-    pages={pages}
-  />
-);
+export const ControlPlaneMachineSetDetailsPage: React.FC<any> = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={controlPlaneMachineSetReference}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [controlPlaneMachineSetReference]: obj }} {...props} />
+      )}
+      pages={pages}
+    />
+  );
+};
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -319,13 +321,7 @@ const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind, undefined> = 
         cell: obj.spec?.state || DASH,
       },
       [tableColumnInfo[5].id]: {
-        cell: (
-          <ResourceKebab
-            actions={controlPlaneMachineSetMenuActions}
-            kind={controlPlaneMachineSetReference}
-            resource={obj}
-          />
-        ),
+        cell: <LazyActionMenu context={{ [controlPlaneMachineSetReference]: obj }} />,
         props: {
           ...actionsCellProps,
         },

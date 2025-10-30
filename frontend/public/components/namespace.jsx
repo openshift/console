@@ -35,6 +35,7 @@ import {
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+  LazyActionMenu,
   useUserSettingsCompatibility,
   isModifiedEvent,
   REQUESTER_FILTER,
@@ -64,7 +65,6 @@ import {
   LoadingInline,
   ConsoleEmptyState,
   ResourceIcon,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -149,13 +149,6 @@ export const deleteModal = (kind, ns) => {
   }
   return { label, labelKey, labelKind, weight, callback, accessReview };
 };
-
-const nsMenuActions = [
-  Kebab.factory.ModifyLabels,
-  Kebab.factory.ModifyAnnotations,
-  Kebab.factory.Edit,
-  deleteModal,
-];
 
 const fetchNamespaceMetrics = () => {
   const metrics = [
@@ -389,7 +382,7 @@ const NamespacesTableRow = ({ obj: ns, customData: { tableColumns } }) => {
         <LabelList kind="Namespace" labels={labels} />
       </TableData>
       <TableData className={Kebab.columnClass}>
-        <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
+        <LazyActionMenu context={{ [referenceForModel(NamespaceModel)]: ns }} />
       </TableData>
     </>
   );
@@ -490,8 +483,6 @@ export const NamespacesPage = (props) => {
     />
   );
 };
-
-export const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
 const projectColumnManagementID = referenceForModel(ProjectModel);
 
@@ -733,7 +724,7 @@ const ProjectTableRow = ({ obj: project, customData = {} }) => {
       )}
       {actionsEnabled && (
         <TableData className={Kebab.columnClass}>
-          <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
+          <LazyActionMenu context={{ [referenceForModel(ProjectModel)]: project }} />
         </TableData>
       )}
     </>
@@ -1117,23 +1108,31 @@ const RolesPage = ({ obj: { metadata } }) => {
   );
 };
 
-export const NamespacesDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={nsMenuActions}
-    pages={[
-      navFactory.details(NamespaceDetails),
-      navFactory.editYaml(),
-      navFactory.roles(RolesPage),
-    ]}
-  />
-);
+export const NamespacesDetailsPage = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={referenceForModel(NamespaceModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(NamespaceModel)]: obj }} {...props} />
+      )}
+      pages={[
+        navFactory.details(NamespaceDetails),
+        navFactory.editYaml(),
+        navFactory.roles(RolesPage),
+      ]}
+    />
+  );
+};
 
 export const ProjectsDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
-      menuActions={projectMenuActions}
+      kind={referenceForModel(ProjectModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu context={{ [referenceForModel(ProjectModel)]: obj }} {...props} />
+      )}
       pages={[
         {
           href: '',
