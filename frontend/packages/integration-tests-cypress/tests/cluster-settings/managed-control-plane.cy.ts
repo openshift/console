@@ -21,5 +21,26 @@ describe('Cluster Settings when control plane is managed', () => {
     cy.byTestID('cv-update-button').should('not.exist');
     cy.byTestID('cv-upstream-server-url').should('not.exist');
     cy.byTestID('cv-autoscaler').should('not.exist');
+    cy.contains('logged in as a temporary administrative user').should('not.exist');
+    cy.get('div').should('not.contain', 'allow others to log in');
+    // check on Configuration page
+    cy.byLegacyTestID('horizontal-link-Configuration').click();
+    cy.get('.loading-box__loaded').should('exist');
+    const configName = [
+      'APIServer',
+      'Authentication',
+      'DNS',
+      'FeatureGate',
+      'Networking',
+      'OAuth',
+      'Proxy',
+      'Scheduler',
+    ];
+    configName.forEach(function (name) {
+      cy.get(`[href="/k8s/cluster/config.openshift.io~v1~${name}/cluster"]`).should('not.exist');
+    });
+    // check on Overview page
+    cy.clickNavLink(['Home', 'Overview']);
+    cy.byTestID('Control Plane').should('not.exist');
   });
 });
