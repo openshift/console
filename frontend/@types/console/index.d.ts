@@ -71,6 +71,7 @@ declare interface Window {
     nodeOperatingSystems: string[];
     hubConsoleURL: string;
     k8sMode: string;
+    techPreview: boolean;
     capabilities: {
       name: string;
       visibility: { state: 'Enabled' | 'Disabled' };

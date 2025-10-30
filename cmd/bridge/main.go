@@ -358,6 +358,7 @@ func main() {
 		NodeOperatingSystems:         nodeOperatingSystems,
 		K8sMode:                      *fK8sMode,
 		CopiedCSVsDisabled:           *fCopiedCSVsDisabled,
+		TechPreview:                  *fTechPreview,
 		Capabilities:                 capabilities,
 	}
 
