@@ -35,6 +35,7 @@ import { GroupModel } from '../../models';
 import { GroupKind } from '../../module/k8s';
 
 const SELECT_ALL_KEY = '__select_all__';
+const MAX_VISIBLE_CHIPS = 5;
 
 export interface ImpersonateUserModalProps {
   isOpen: boolean;
@@ -58,9 +59,6 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
   const [isGroupSelectOpen, setIsGroupSelectOpen] = useState(false);
   const [showAllGroups, setShowAllGroups] = useState(false);
   const [groupSearchFilter, setGroupSearchFilter] = useState('');
-
-  // Show first 5 groups, then +N badge (unless expanded)
-  const MAX_VISIBLE_CHIPS = 5;
 
   // Fetch available groups from the cluster
   const [groups, groupsLoaded, groupsLoadError] = useK8sWatchResource<GroupKind[]>({
@@ -190,7 +188,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
       variant="typeahead"
       onClick={() => setIsGroupSelectOpen(!isGroupSelectOpen)}
       isExpanded={isGroupSelectOpen}
-      className="pf-v6-u-w-100"
+      isFullWidth
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain

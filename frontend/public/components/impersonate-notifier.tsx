@@ -64,32 +64,28 @@ export const ImpersonateNotifier = connect(
 
     const groupsElement = hasGroups ? (
       <>
-        {t('public~ with groups: ')}
-        <strong>
-          {visibleGroups.join(', ')}
-          {remainingCount > 0 && (
-            <>
-              {t('public~, and ')}
-              <Tooltip
-                content={
-                  <div>
-                    {groups.map((group, index) => (
-                      <div key={index}>{group}</div>
-                    ))}
-                  </div>
-                }
-              >
-                <Button
-                  variant="link"
-                  isInline
-                  className="pf-v6-u-text-decoration-underline-dotted"
-                >
-                  {t('public~{{count}} more', { count: remainingCount })}
-                </Button>
-              </Tooltip>
-            </>
-          )}
-        </strong>
+        {remainingCount > 0 ? (
+          <>
+            {t('public~ with groups: {{visibleGroups}}, and ', {
+              visibleGroups: visibleGroups.join(', '),
+            })}
+            <Tooltip
+              content={
+                <div>
+                  {groups.map((group, index) => (
+                    <div key={index}>{group}</div>
+                  ))}
+                </div>
+              }
+            >
+              <Button variant="link" isInline className="pf-v6-u-text-decoration-underline-dotted">
+                {t('public~{{count}} more', { count: remainingCount })}
+              </Button>
+            </Tooltip>
+          </>
+        ) : (
+          t('public~ with groups: {{groups}}', { groups: visibleGroups.join(', ') })
+        )}
       </>
     ) : null;
 
