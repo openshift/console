@@ -1,5 +1,16 @@
 [
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": {
+        "$codeRef": "useOLMv1EnabledFlagProvider"
+      }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
     "type": "console.flag/model",
     "properties": {
       "model": {
@@ -22,31 +33,6 @@
     }
   },
   {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "olm-v1-catalog",
-      "perspective": "admin",
-      "section": "ecosystem",
-      "name": "%olm-v1~OLM v1 Catalog%",
-      "href": "/olmv1/catalog"
-    },
-    "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "path": "/olmv1/catalog",
-      "component": {
-        "$codeRef": "Catalog"
-      }
-    },
-    "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
-    }
-  },
-  {
     "type": "console.navigation/resource-cluster",
     "properties": {
       "id": "installed-extensions",
@@ -60,73 +46,30 @@
       "startsWith": ["olm.operatorframework.io"]
     },
     "flags": {
-      "required": ["CLUSTER_EXTENSION_API"]
+      "required": ["CLUSTER_EXTENSION_API", "TECH_PREVIEW", "OLMV1_ENABLED"]
     }
   },
   {
     "type": "console.catalog/item-provider",
     "properties": {
-      "catalogId": "olm-v1-catalog",
-      "type": "OLMv1CatalogItem",
+      "catalogId": "dev-catalog",
+      "type": "operator",
+      "title": "%olm-v1~Operators%",
       "provider": { "$codeRef": "useCatalogItems" }
     },
     "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
-    }
-  },
-  {
-    "type": "console.catalog/item-type",
-    "properties": {
-      "type": "OLMv1CatalogItem",
-      "title": "%olm-v1~Operators (OLMv1)%",
-      "filters": [
-        {
-          "label": "%olm-v1~Source%",
-          "attribute": "source",
-          "comparator": {
-            "$codeRef": "filters.sourceComparator"
-          }
-        },
-        {
-          "label": "%olm-v1~Provider%",
-          "attribute": "provider",
-          "comparator": {
-            "$codeRef": "filters.providerComparator"
-          }
-        },
-        {
-          "label": "%olm-v1~Capability level%",
-          "attribute": "capabilities",
-          "comparator": {
-            "$codeRef": "filters.capabilityLevelComparator"
-          }
-        },
-        {
-          "label": "%olm-v1~Infrastructure features%",
-          "attribute": "infrastructureFeatures",
-          "comparator": {
-            "$codeRef": "filters.infrastructureFeatureComparator"
-          }
-        },
-        {
-          "label": "%olm-v1~Valid subscription%",
-          "attribute": "validSubscription",
-          "comparator": {
-            "$codeRef": "filters.validSubscriptionComparator"
-          }
-        }
-      ]
-    },
-    "flags": {
-      "required": ["CLUSTER_CATALOG_API"]
+      "required": ["CLUSTER_CATALOG_API", "TECH_PREVIEW", "OLMV1_ENABLED"]
     }
   },
   {
     "type": "console.catalog/categories-provider",
     "properties": {
-      "catalogId": "olm-v1-catalog",
-      "type": "OLMv1CatalogItem",
+      "catalogId": "dev-catalog",
+      "type": "operator",
       "provider": { "$codeRef": "useCatalogCategories" }
+    },
+    "flags": {
+      "required": ["CLUSTER_CATALOG_API", "TECH_PREVIEW", "OLMV1_ENABLED"]
     }
   },
   {
@@ -135,6 +78,36 @@
       "catalogId": "dev-catalog",
       "type": "operator",
       "component": { "$codeRef": "OLMv1ToolbarToggle" }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "olmv1-catalog",
+      "label": "%olm-v1~OLMV1 Catalog%"
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.olmv1.enabled",
+      "label": "%olm-v1~OLMv1 Catalog%",
+      "groupId": "olmv1-catalog",
+      "description": "%olm-v1~Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.olmv1.enabled",
+        "label": "%olm-v1~Enable OLMv1 catalog%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": false
+      }
     },
     "flags": {
       "required": ["TECH_PREVIEW"]

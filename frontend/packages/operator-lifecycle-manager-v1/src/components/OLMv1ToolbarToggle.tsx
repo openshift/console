@@ -3,6 +3,7 @@ import { Button, Flex, FlexItem, Label, Popover, Switch } from '@patternfly/reac
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { useUserSettings } from '@console/shared';
+import { OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
 
 /**
  * Toolbar component for toggling OLMv1 UI visibility in the operator catalog.
@@ -11,7 +12,7 @@ import { useUserSettings } from '@console/shared';
 const OLMv1ToolbarToggle: React.FC = () => {
   const { t } = useTranslation();
   const [olmv1Enabled, setOlmv1Enabled] = useUserSettings<boolean>(
-    'console.olmv1.enabled',
+    OLMV1_ENABLED_USER_SETTING_KEY,
     false,
     true,
   );

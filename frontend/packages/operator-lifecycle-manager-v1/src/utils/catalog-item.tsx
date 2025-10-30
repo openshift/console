@@ -96,7 +96,7 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (pkg) => {
     supportUrl: support,
     provider,
     tags,
-    type: 'OLMv1CatalogItem',
+    type: 'operator',
     typeLabel: source,
     uid: id,
   };
