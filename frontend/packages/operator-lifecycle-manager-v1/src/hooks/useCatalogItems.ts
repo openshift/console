@@ -44,6 +44,7 @@ const useCatalogItems: UseCatalogItems = () => {
       })
       .then((olmItems: OLMCatalogItem[] | null) => {
         setOLMCatalogItems((current) => olmItems ?? current);
+        setLoading(false);
       })
       .catch((err) => {
         setError(err.toString());

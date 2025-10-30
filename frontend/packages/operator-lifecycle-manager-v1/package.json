@@ -6,11 +6,10 @@
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "exposedModules": {
-      "Catalog": "src/components/Catalog.tsx",
       "useCatalogItems": "src/hooks/useCatalogItems.ts",
       "useCatalogCategories": "src/hooks/useCatalogCategories.ts",
-      "filters": "src/utils/filters.ts",
-      "OLMv1ToolbarToggle": "src/components/OLMv1ToolbarToggle.tsx"
+      "OLMv1ToolbarToggle": "src/components/OLMv1ToolbarToggle.tsx",
+      "useOLMv1EnabledFlagProvider": "src/hooks/useOLMv1EnabledFlagProvider.ts"
     }
   }
 }

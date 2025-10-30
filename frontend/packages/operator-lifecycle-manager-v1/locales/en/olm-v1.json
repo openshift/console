@@ -1,5 +1,4 @@
 {
-  "OLM v1 Catalog": "OLM v1 Catalog",
   "Installed Extensions": "Installed Extensions",
   "Operators (OLMv1)": "Operators (OLMv1)",
   "Source": "Source",
@@ -7,6 +6,15 @@
   "Capability level": "Capability level",
   "Infrastructure features": "Infrastructure features",
   "Valid subscription": "Valid subscription",
+  "OLMV1 Catalog": "OLMV1 Catalog",
+  "OLMv1 Catalog": "OLMv1 Catalog",
+  "Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.": "Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.",
+  "Enable OLMv1 catalog": "Enable OLMv1 catalog",
   "Extension Catalog": "Extension Catalog",
-  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers."
+  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.",
+  "The OLMv1 catalog is a technology preview feature. Enabling this will show only OLMv1-based operators in the catalog.": "The OLMv1 catalog is a technology preview feature. Enabling this will show only OLMv1-based operators in the catalog.",
+  "Enable OLMv1": "Enable OLMv1",
+  "Toggle OLMv1 UI": "Toggle OLMv1 UI",
+  "Tech Preview": "Tech Preview",
+  "OLMv1 information": "OLMv1 information"
 }
