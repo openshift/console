@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../../models';
+import { HelmChartRepositoryType } from '../../../../types/helm-types';
 import {
   convertToForm,
   convertToHelmChartRepository,
@@ -43,5 +44,36 @@ describe('HelmChartRepository create utils', () => {
     delete defaultHCR.metadata.namespace;
     defaultResource = getDefaultResource('test-ns', referenceForModel(HelmChartRepositoryModel));
     expect(defaultResource).toEqual(defaultHCR);
+  });
+  it('should include basicAuthConfig only for ProjectHelmChartRepository', () => {
+    // Test ProjectHelmChartRepository includes basicAuthConfig
+    const projectFormData = _.cloneDeep(sampleHelmChartRepositoryFormData);
+    projectFormData.scope = 'ProjectHelmChartRepository';
+    projectFormData.basicAuthConfig = 'test-basic-auth-secret';
+    const projectRepo = convertToHelmChartRepository(projectFormData, 'test-ns');
+    expect(projectRepo.spec.connectionConfig.basicAuthConfig).toEqual({
+      name: 'test-basic-auth-secret',
+    });
+
+    // Test cluster-scoped HelmChartRepository excludes basicAuthConfig
+    const clusterFormData = _.cloneDeep(sampleHelmChartRepositoryFormData);
+    clusterFormData.scope = 'HelmChartRepository';
+    clusterFormData.basicAuthConfig = 'test-basic-auth-secret';
+    const clusterRepo = convertToHelmChartRepository(clusterFormData, 'test-ns');
+    expect(clusterRepo.spec.connectionConfig.basicAuthConfig).toBeUndefined();
+  });
+  it('should convert form data with basicAuthConfig correctly', () => {
+    const repoWithBasicAuth: HelmChartRepositoryType = {
+      ...sampleProjectHelmChartRepository,
+      spec: {
+        ...sampleProjectHelmChartRepository.spec,
+        connectionConfig: {
+          ...sampleProjectHelmChartRepository.spec.connectionConfig,
+          basicAuthConfig: { name: 'my-basic-auth' },
+        },
+      },
+    };
+    const form = convertToForm(repoWithBasicAuth);
+    expect(form.basicAuthConfig).toEqual('my-basic-auth');
   });
 });
