@@ -4,8 +4,7 @@ import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-ic
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils';
-import { useScrollContainer } from '../../hooks/useScrollContainer';
-import { Shadows, useScrollShadows } from '../../hooks/useScrollShadows';
+import { Shadows, useScrollShadows, useScrollContainer } from '../../hooks';
 import { FormFooterProps } from './form-utils-types';
 
 import './FormFooter.scss';

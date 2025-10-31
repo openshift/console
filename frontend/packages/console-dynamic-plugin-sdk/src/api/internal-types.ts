@@ -17,7 +17,9 @@ type WithClassNameProps<R = {}> = R & {
   className?: string;
 };
 
-export type ActivityItemProps = WithClassNameProps;
+export type ActivityItemProps = WithClassNameProps<{
+  children?: React.ReactNode;
+}>;
 
 export type ActivityBodyProps = WithClassNameProps<{
   children: React.ReactNode;
@@ -25,6 +27,7 @@ export type ActivityBodyProps = WithClassNameProps<{
 
 export type AlertsBodyProps = WithClassNameProps<{
   error?: boolean;
+  children?: React.ReactNode;
 }>;
 
 export type RecentEventsBodyProps = {
@@ -65,6 +68,7 @@ export type HealthItemProps = WithClassNameProps<{
   popupKeepOnOutsideClick?: boolean;
   noIcon?: boolean;
   icon?: React.ReactNode;
+  children?: React.ReactNode;
 }>;
 
 export type ResourceInventoryItemProps = {

@@ -18,7 +18,7 @@ export const usePackageManifestCheck = (
       return;
     }
 
-    const url = `${window.SERVER_FLAGS.basePath}api/check-package-manifest/?name=${operatorName}&namespace=${operatorNamespace}`;
+    const url = `${window.SERVER_FLAGS.basePath}api/olm/check-package-manifests/?name=${operatorName}&namespace=${operatorNamespace}`;
     coFetchJSON(url)
       .then(() => {
         setPMExists(true);

@@ -21,10 +21,11 @@ import { MultiTabbedTerminal } from '@console/webterminal-plugin/src/components/
 
 import './CloudShellDrawer.scss';
 
-type CloudShellDrawerProps = React.PropsWithChildren<{
+interface CloudShellDrawerProps {
+  children: React.ReactNode;
   open?: boolean;
   onClose?: () => void;
-}>;
+}
 
 const getMastheadHeight = (): number => {
   const masthead = document.getElementById('page-main-header');

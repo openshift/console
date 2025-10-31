@@ -21,7 +21,7 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
-import { TextFilter } from './factory/list-page';
+import { TextFilter } from './factory';
 import {
   apiGroupForReference,
   isGroupVersionKind,

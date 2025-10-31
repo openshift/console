@@ -4,6 +4,7 @@ import { history } from '@console/internal/components/utils/router';
 
 type ErrorBoundaryProps = {
   FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackProps>;
+  children?: React.ReactNode;
 };
 
 /** Needed for tests -- should not be imported by application logic */

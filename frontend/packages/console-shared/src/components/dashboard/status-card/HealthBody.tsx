@@ -1,7 +1,11 @@
 import * as React from 'react';
 import './status-card.scss';
 
-const HealthBody: React.FC = ({ children }) => (
+interface HealthBodyProps {
+  children?: React.ReactNode;
+}
+
+const HealthBody: React.FCC<HealthBodyProps> = ({ children }) => (
   <div className="co-status-card__health-body">{children}</div>
 );
 

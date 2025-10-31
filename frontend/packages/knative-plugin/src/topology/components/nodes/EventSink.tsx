@@ -40,6 +40,7 @@ export type EventSinkProps = {
   canDrop?: boolean;
   dropTarget?: boolean;
   edgeOperation?: string;
+  children?: React.ReactNode;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &

@@ -482,6 +482,7 @@ type PageCommonProps<L = any, C = any> = {
   autoFocus?: boolean;
   mock?: boolean;
   data?: any;
+  children?: React.ReactNode;
 };
 
 export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {

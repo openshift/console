@@ -32,4 +32,5 @@ type ResourceQuotaBodyProps = {
   error: boolean;
   isLoading: boolean;
   noText?: string;
+  children?: React.ReactNode;
 };

@@ -18,7 +18,11 @@ interface ShortcutProps {
   dragNdrop?: boolean;
 }
 
-export const ShortcutCommand: React.FC = ({ children }) => (
+interface ShortcutCommandProps {
+  children?: React.ReactNode;
+}
+
+export const ShortcutCommand: React.FCC<ShortcutCommandProps> = ({ children }) => (
   <span className="ocs-shortcut__command">
     <kbd className="co-kbd">{children}</kbd>
   </span>
