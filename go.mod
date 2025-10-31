@@ -20,14 +20,18 @@ require (
 	github.com/openshift/api v3.9.0+incompatible
 	github.com/openshift/client-go v0.0.0-20230926161409-848405da69e1
 	github.com/openshift/library-go v0.0.0-20231020125034-5a2d9fe760b3
+	github.com/operator-framework/api v0.30.0
 	github.com/operator-framework/kubectl-operator v0.6.1-0.20250318134414-b496b1036eaf
 	github.com/operator-framework/operator-controller v1.2.0
 	github.com/operator-framework/operator-lifecycle-manager v0.31.0
+	github.com/operator-framework/operator-registry v1.50.0
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/prometheus/client_golang v1.22.0
 	github.com/prometheus/common v0.63.0
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
 	github.com/redhat-certification/chart-verifier v0.0.0-20250415162918-111669f9d053
 	github.com/stretchr/testify v1.10.0
+	golang.org/x/mod v0.25.0
 	golang.org/x/net v0.40.0
 	golang.org/x/oauth2 v0.30.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -38,7 +42,6 @@ require (
 	k8s.io/apimachinery v0.33.2
 	k8s.io/cli-runtime v0.33.2
 	k8s.io/client-go v0.33.2
-	k8s.io/klog v1.0.0
 	k8s.io/klog/v2 v2.130.1
 	k8s.io/utils v0.0.0-20241210054802-24370beab758
 	sigs.k8s.io/controller-runtime v0.20.4
@@ -124,6 +127,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jmoiron/sqlx v1.4.0 // indirect
+	github.com/joelanford/ignore v0.1.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
@@ -154,8 +158,6 @@ require (
 	github.com/opdev/getocprange v0.0.0-20250225145951-42123ecb365d // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
-	github.com/operator-framework/api v0.30.0 // indirect
-	github.com/operator-framework/operator-registry v1.50.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pjbgf/sha1cd v0.3.0 // indirect
@@ -195,7 +197,6 @@ require (
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.39.0 // indirect
 	golang.org/x/exp v0.0.0-20250228200357-dead58393ab7 // indirect
-	golang.org/x/mod v0.25.0 // indirect
 	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
@@ -212,6 +213,7 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	k8s.io/apiserver v0.33.2 // indirect
 	k8s.io/component-base v0.33.2 // indirect
+	k8s.io/klog v1.0.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff // indirect
 	k8s.io/kubectl v0.33.2 // indirect
 	k8s.io/pod-security-admission v0.31.1 // indirect
