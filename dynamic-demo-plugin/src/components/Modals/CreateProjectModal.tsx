@@ -19,7 +19,7 @@ import { k8sCreate, ModalComponent } from '@openshift-console/dynamic-plugin-sdk
 import { K8sModel } from '@openshift-console/dynamic-plugin-sdk/lib/api/common-types';
 
 const CreateProjectModal: ModalComponent = ({ closeModal }) => {
-  const { t } = useTranslation('plugin__console-plugin-template');
+  const { t } = useTranslation('plugin__console-demo-plugin');
   const [name, setName] = React.useState<string>('');
   const [displayName, setDisplayName] = React.useState('');
   const [description, setDescription] = React.useState('');
