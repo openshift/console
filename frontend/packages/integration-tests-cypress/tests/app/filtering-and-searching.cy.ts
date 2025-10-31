@@ -43,9 +43,9 @@ describe('Filtering and Searching', () => {
 
   after(() => {
     cy.visit(`/k8s/ns/${testName}/deployments`);
-    listPage.rows.shouldBeLoaded();
-    listPage.filter.byName(WORKLOAD_NAME);
-    listPage.rows.clickKebabAction(WORKLOAD_NAME, 'Delete Deployment');
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvFilter.byName(WORKLOAD_NAME);
+    listPage.dvRows.clickKebabAction(WORKLOAD_NAME, 'Delete Deployment');
     modal.shouldBeOpened();
     modal.submit();
     modal.shouldBeClosed();
@@ -70,7 +70,6 @@ describe('Filtering and Searching', () => {
       cy.get('.pf-v6-l-bullseye').should('contain', 'No Pods found');
     });
   });
-
   // disabled as listPage.rows.shouldExist isn't a valid test
   xit('filters from Pods list', () => {
     cy.visit(`/k8s/all-namespaces/pods`);
@@ -81,7 +80,7 @@ describe('Filtering and Searching', () => {
 
   it('searches for object by kind and label', () => {
     cy.visit(`/search/ns/${testName}`, { qs: { kind: 'Deployment', q: WORKLOAD_LABEL } });
-    listPage.rows.shouldExist(WORKLOAD_NAME);
+    listPage.dvRows.shouldExist(WORKLOAD_NAME);
   });
 
   // disabled as listPage.rows.shouldExist isn't a valid test

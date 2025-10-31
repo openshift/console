@@ -37,9 +37,9 @@ describe('Deployment resource details page', () => {
 
   after(() => {
     cy.visit(`/k8s/ns/${testName}/deployments`);
-    listPage.rows.shouldBeLoaded();
-    listPage.filter.byName(WORKLOAD_NAME);
-    listPage.rows.clickKebabAction(WORKLOAD_NAME, 'Delete Deployment');
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvFilter.byName(WORKLOAD_NAME);
+    listPage.dvRows.clickKebabAction(WORKLOAD_NAME, 'Delete Deployment');
     modal.shouldBeOpened();
     modal.submit();
     modal.shouldBeClosed();

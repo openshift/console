@@ -126,9 +126,9 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
             )
             .then(() => {
               cy.visit(`/k8s/ns/${PLUGIN_NAME}/deployments`);
-              listPage.rows.shouldBeLoaded();
-              listPage.filter.byName(PLUGIN_NAME);
-              listPage.rows.shouldExist(PLUGIN_NAME);
+              listPage.dvRows.shouldBeLoaded();
+              listPage.dvFilter.byName(PLUGIN_NAME);
+              listPage.dvRows.shouldExist(PLUGIN_NAME);
               enableDemoPlugin(true);
             });
         } else {
