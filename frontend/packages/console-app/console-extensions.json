@@ -143,28 +143,6 @@
     }
   },
   {
-    "type": "console.flag/model",
-    "properties": {
-      "flag": "DEVWORKSPACE",
-      "model": {
-        "group": "workspace.devfile.io",
-        "version": "v1alpha1",
-        "kind": "DevWorkspace"
-      }
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "flag": "v1alpha2DEVWORKSPACE",
-      "model": {
-        "group": "workspace.devfile.io",
-        "version": "v1alpha2",
-        "kind": "DevWorkspace"
-      }
-    }
-  },
-  {
     "type": "console.model-metadata",
     "properties": {
       "model": {

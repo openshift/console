@@ -1,5 +1,33 @@
 [
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "useWebTerminalProvider.useWebTerminalProvider" }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "DEVWORKSPACE",
+      "model": {
+        "group": "workspace.devfile.io",
+        "version": "v1alpha1",
+        "kind": "DevWorkspace"
+      }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "v1alpha2DEVWORKSPACE",
+      "model": {
+        "group": "workspace.devfile.io",
+        "version": "v1alpha2",
+        "kind": "DevWorkspace"
+      }
+    }
+  },
+  {
     "type": "console.redux-reducer",
     "properties": {
       "scope": "webterminal",
@@ -7,9 +35,11 @@
     }
   },
   {
-    "type": "console.flag/hookProvider",
+    "type": "console.page/route/standalone",
     "properties": {
-      "handler": { "$codeRef": "useWebTerminalProvider.useWebTerminalProvider" }
+      "path": "/terminal",
+      "component": { "$codeRef": "CloudShellTab" },
+      "exact": false
     }
   },
   {
