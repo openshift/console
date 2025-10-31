@@ -1,0 +1,23 @@
+@use '../../../../../public/style/vars';
+
+.co-operator-uninstall-alert__list {
+  list-style: none;
+}
+
+// Enable inner table to scroll if needed
+@media (min-width: vars.$pf-v6-global--breakpoint--md) and (min-height: 600px) {
+  .co-operator-uninstall__operands-section {
+    display: block;
+    max-height: calc(100vh - 400px);
+    overflow-y: auto;
+  }
+}
+
+.co-operator-uninstall__operands-section loading-skeleton--table::after {
+  min-height: 160px;
+}
+
+.co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
+  border: var(--pf-t--global--border--width--regular) solid
+    var(--pf-t--global--border--color--default);
+}

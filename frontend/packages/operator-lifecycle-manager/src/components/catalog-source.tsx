@@ -332,7 +332,9 @@ const tableColumnClasses = [
 ];
 
 const getRowProps = (obj) => ({
-  className: obj?.disabled ? 'catalog-source__table-row--disabled' : undefined,
+  className: obj?.disabled
+    ? 'pf-v6-u-background-color-disabled pf-v6-u-text-color-on-disabled'
+    : undefined,
 });
 
 const CatalogSourceTableRow: React.FC<RowFunctionArgs<CatalogSourceTableRowObj>> = ({

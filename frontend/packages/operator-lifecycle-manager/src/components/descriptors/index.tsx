@@ -115,7 +115,7 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
   return (
     <GridItem sm={span}>
       <DetailsItem description={description} label={label} obj={obj} path={`${type}.${groupPath}`}>
-        <DescriptionList className="olm-descriptors__group co-editable-label-group">
+        <DescriptionList className="co-editable-label-group">
           {!_.isEmpty(primitives) &&
             _.map(primitives, ({ descriptor: primitiveDescriptor }) => (
               <DescriptorDetailsItem

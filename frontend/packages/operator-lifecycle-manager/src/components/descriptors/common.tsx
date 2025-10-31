@@ -12,7 +12,7 @@ import { CapabilityProps, SpecCapability, StatusCapability } from './types';
 
 export const Invalid: React.FC<{ path: string }> = ({ path }) => {
   return (
-    <span className="pf-v6-u-text-color-subtle olm-descriptors__invalid-pod-descriptor">
+    <span className="pf-v6-u-text-color-subtle pf-v6-u-display-inline-block pf-v6-u-mb-xl">
       <YellowExclamationTriangleIcon />
       &nbsp;&nbsp;
       <Trans ns="olm">
