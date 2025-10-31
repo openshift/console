@@ -88,11 +88,12 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
   onClick,
   autoFocus,
   isAllowed,
+  Component = DropdownItem,
 }) => {
   const { t } = useTranslation();
   const isDisabled = !isAllowed || option.isDisabled || (!option.href && !option.callback);
   return (
-    <DropdownItem
+    <Component
       onClick={(e) => !isDisabled && onClick(e, option)}
       autoFocus={autoFocus}
       isDisabled={isDisabled}
@@ -100,7 +101,7 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
       icon={option.icon}
     >
       {option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
-    </DropdownItem>
+    </Component>
   );
 };
 export const KebabItemAccessReview_ = (
@@ -456,6 +457,12 @@ type KebabItemProps = {
   option: KebabOption;
   onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
   autoFocus?: boolean;
+  Component?: React.ComponentType<
+    Pick<
+      React.ComponentProps<typeof DropdownItem>,
+      'onClick' | 'isDisabled' | 'autoFocus' | 'children' | 'icon'
+    >
+  >;
 };
 
 export type KebabItemsProps = {
