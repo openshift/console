@@ -1,36 +1,48 @@
-import * as React from 'react';
-import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Status, RadioButtonField } from '@console/shared';
+import { DataViewTd } from '@patternfly/react-data-view';
+import { TdProps } from '@patternfly/react-table';
+import { Status, RadioButtonField, DASH } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { HelmRelease } from '../../../types/helm-types';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
-import { tableColumnClasses } from './RevisionListHeader';
 
-const RevisionListRow: React.FC<RowFunctionArgs> = ({ obj }) => {
-  return (
-    <>
-      <TableData className={tableColumnClasses.input}>
-        <RadioButtonField value={obj.version} name="revision" />
-      </TableData>
-      <TableData className={tableColumnClasses.revision}>{obj.version}</TableData>
-      <TableData className={tableColumnClasses.updated}>
-        <Timestamp timestamp={obj.info.last_deployed} />
-      </TableData>
-      <TableData className={tableColumnClasses.status}>
-        <Status
-          status={releaseStatus(obj.info.status)}
-          title={HelmReleaseStatusLabels[obj.info.status]}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses.chartName}>{obj.chart.metadata.name}</TableData>
-      <TableData className={tableColumnClasses.chartVersion}>
-        {obj.chart.metadata.version}
-      </TableData>
-      <TableData className={tableColumnClasses.appVersion}>
-        {obj.chart.metadata.appVersion || '-'}
-      </TableData>
-      <TableData className={tableColumnClasses.description}>{obj.info.description}</TableData>
-    </>
-  );
+export const getRevisionRows = (releaseHistory: HelmRelease[]): DataViewTd[][] => {
+  return releaseHistory.map((revision) => {
+    return [
+      {
+        cell: <RadioButtonField value={revision.version} name="revision" />,
+        props: {
+          isStickyColumn: true,
+          stickyMinWidth: '50px',
+        } as TdProps,
+      },
+      {
+        cell: revision.version,
+      },
+      {
+        cell: <Timestamp timestamp={revision.info.last_deployed} />,
+      },
+      {
+        cell: (
+          <Status
+            status={releaseStatus(revision.info.status)}
+            title={HelmReleaseStatusLabels[revision.info.status]}
+          />
+        ),
+      },
+      {
+        cell: revision.chart.metadata.name,
+      },
+      {
+        cell: revision.chart.metadata.version,
+      },
+      {
+        cell: revision.chart.metadata.appVersion || DASH,
+      },
+      {
+        cell: revision.info.description,
+      },
+    ];
+  });
 };
 
-export default RevisionListRow;
+export default getRevisionRows;

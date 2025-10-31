@@ -22,6 +22,7 @@ const ProjectHelmChartRepositoryListPage: React.FC<React.ComponentProps<typeof L
       aria-label={t('helm-plugin~ProjectHelmChartRepositories')}
       kind={referenceForModel(ProjectHelmChartRepositoryModel)}
       ListComponent={ProjectHelmChartRepositoryList}
+      omitFilterToolbar
     />
   );
 };

@@ -1,70 +1,87 @@
 import * as React from 'react';
-import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
+import { getNameCellProps } from '@console/app/src/components/data-view/ConsoleDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
-import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
-import { ResourceLink, Kebab } from '@console/internal/components/utils';
-import { referenceFor } from '@console/internal/module/k8s';
+import { ResourceLink } from '@console/internal/components/utils';
+import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import { DASH } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ProjectHelmChartRepositoryModel } from '../../models';
+import { tableColumnInfo } from './RepositoriesHeader';
 
-const tableColumnClasses = [
-  '', // Name
-  '', // Display Name
-  '', // Namespace
-  '', // Disabled
-  css('pf-m-hidden', 'pf-m-visible-on-xl'), // Repo URL
-  css('pf-m-hidden', 'pf-m-visible-on-xl'), // Created
-  Kebab.columnClass,
-];
-
-const ProjectHelmChartRepositoryRow: React.FC<RowFunctionArgs> = ({ obj }) => {
+const ProjectNamespaceCell: React.FC<{ kind: string; namespace: string }> = ({
+  kind,
+  namespace,
+}) => {
   const { t } = useTranslation();
-  const objReference = referenceFor(obj);
-  const context = { [objReference]: obj };
+  return kind === ProjectHelmChartRepositoryModel.kind ? (
+    <ResourceLink kind="Namespace" name={namespace} />
+  ) : (
+    <>{t('helm-plugin~All Namespaces')}</>
+  );
+};
 
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={objReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
-        {obj.spec?.name ? obj.spec.name : '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {obj.kind === ProjectHelmChartRepositoryModel.kind ? (
-          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-        ) : (
-          t('helm-plugin~All Namespaces')
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {obj.spec?.disabled ? t('helm-plugin~True') : t('helm-plugin~False')}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        {obj.spec?.connectionConfig?.url ? (
+const DisabledCell: React.FC<{ disabled?: boolean }> = ({ disabled }) => {
+  const { t } = useTranslation();
+  return <>{disabled ? t('helm-plugin~True') : t('helm-plugin~False')}</>;
+};
+
+export const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
+  return data.map(({ obj }) => {
+    const objReference = referenceFor(obj);
+    const context = { [objReference]: obj };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            kind={objReference}
+            name={obj.metadata.name}
+            namespace={obj.metadata.namespace}
+          />
+        ),
+        props: getNameCellProps(obj.metadata.name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: obj.spec?.name ?? DASH,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <ProjectNamespaceCell kind={obj.kind} namespace={obj.metadata.namespace} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <DisabledCell disabled={obj.spec?.disabled} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: obj.spec?.connectionConfig?.url ? (
           <ExternalLink
             href={obj.spec.connectionConfig.url}
             text={obj.spec.connectionConfig.url}
             displayBlock
           />
         ) : (
-          '-'
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={Kebab.columnClass}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
+          DASH
+        ),
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[6].id]: {
+        cell: <LazyActionMenu context={context} />,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
 };
 
-export default ProjectHelmChartRepositoryRow;
+export default getDataViewRows;

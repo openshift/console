@@ -1,19 +1,33 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Table, TableProps } from '@console/internal/components/factory';
-import HelmChartRepositoryRow from './HelmChartRepositoryRow';
-import RepositoriesHeader from './RepositoriesHeader';
+import {
+  ConsoleDataView,
+  initialFiltersDefault,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { TableProps } from '@console/internal/components/factory';
+import { LoadingBox } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { getDataViewRows } from './HelmChartRepositoryRow';
+import { useRepositoriesColumns } from './RepositoriesHeader';
 
 const HelmChartRepositoryList: React.FC<TableProps> = (props) => {
   const { t } = useTranslation();
+  const columns = useRepositoriesColumns();
+
   return (
-    <Table
-      {...props}
-      aria-label={t('helm-plugin~HelmChartRepositories')}
-      Header={RepositoriesHeader(t)}
-      Row={HelmChartRepositoryRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<K8sResourceKind>
+        {...props}
+        data={props.data}
+        loaded={props.loaded}
+        label={t('helm-plugin~HelmChartRepositories')}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement
+        data-test="helm-chart-repositories-list"
+      />
+    </React.Suspense>
   );
 };
 

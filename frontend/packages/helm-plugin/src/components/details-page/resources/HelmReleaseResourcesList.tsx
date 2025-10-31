@@ -1,23 +1,33 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TableProps, Table } from '@console/internal/components/factory';
-import { ConsoleEmptyState } from '@console/internal/components/utils';
-import HelmReleaseResourcesHeader from './HelmReleaseResourcesHeader';
-import HelmReleaseResourcesRow from './HelmReleaseResourcesRow';
+import {
+  ConsoleDataView,
+  initialFiltersDefault,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { TableProps } from '@console/internal/components/factory';
+import { LoadingBox } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useHelmReleaseResourcesColumns } from './HelmReleaseResourcesHeader';
+import { getDataViewRows } from './HelmReleaseResourcesRow';
 
 const HelmReleaseResourcesList: React.FC<TableProps> = (props) => {
   const { t } = useTranslation();
+  const columns = useHelmReleaseResourcesColumns();
+
   return (
-    <Table
-      {...props}
-      aria-label={t('helm-plugin~Resources')}
-      defaultSortField="kind"
-      Header={HelmReleaseResourcesHeader(t)}
-      Row={HelmReleaseResourcesRow}
-      data-test="helm-resources-list"
-      EmptyMsg={() => <ConsoleEmptyState title={t('helm-plugin~No resources found')} />}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<K8sResourceKind>
+        {...props}
+        data={props.data}
+        loaded={props.loaded}
+        label={t('helm-plugin~Resources')}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement
+        data-test="helm-resources-list"
+      />
+    </React.Suspense>
   );
 };
 

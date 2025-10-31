@@ -1,40 +1,55 @@
-import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { cellIsStickyProps } from '@console/app/src/components/data-view/ConsoleDataView';
+import { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
 
-export const tableColumnClasses = {
-  name: '',
-  type: '',
-  status: 'pf-m-hidden pf-m-visible-on-md',
-  created: 'pf-m-hidden pf-m-visible-on-lg',
+export const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'type' },
+  { id: 'status' },
+  { id: 'created' },
+];
+
+export const useHelmReleaseResourcesColumns = (): TableColumn<K8sResourceKind>[] => {
+  const { t } = useTranslation();
+  return React.useMemo(
+    () => [
+      {
+        title: t('helm-plugin~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Type'),
+        id: tableColumnInfo[1].id,
+        sort: 'kind',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Status'),
+        id: tableColumnInfo[2].id,
+        sort: 'status.phase',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Created'),
+        id: tableColumnInfo[3].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+    ],
+    [t],
+  );
 };
 
-const HelmReleaseResourcesHeader = (t: TFunction) => () => {
-  return [
-    {
-      title: t('helm-plugin~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.name },
-    },
-    {
-      title: t('helm-plugin~Type'),
-      sortField: 'kind',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.type },
-    },
-    {
-      title: t('helm-plugin~Status'),
-      sortField: 'status.phase',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.status },
-    },
-    {
-      title: t('helm-plugin~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.created },
-    },
-  ];
-};
-
-export default HelmReleaseResourcesHeader;
+export default useHelmReleaseResourcesColumns;

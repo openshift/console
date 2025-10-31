@@ -1,23 +1,23 @@
 import * as React from 'react';
-import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { StatusBox } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { CustomResourceList, useDeepCompareMemoize } from '@console/shared';
+import { useDeepCompareMemoize } from '@console/shared';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { HelmRelease } from '../../../types/helm-types';
 import { fetchHelmReleaseHistory } from '../../../utils/helm-utils';
-import HelmReleaseHistoryHeader from './HelmReleaseHistoryHeader';
-import HelmReleaseHistoryRow from './HelmReleaseHistoryRow';
+import HelmReleaseHistoryTable from './HelmReleaseHistoryTable';
+import {
+  useHelmReleaseHistoryColumns,
+  getHelmReleaseHistoryRows,
+  getHistoryColumnIndexById,
+} from './HelmReleaseHistoryTableHelpers';
 
 interface HelmReleaseHistoryProps {
   obj: K8sResourceKind;
   customData: HelmRelease;
 }
-
-const getRowProps = (obj) => ({
-  id: obj.revision,
-});
 
 const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
   obj,
@@ -53,15 +53,25 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
     };
   }, [helmReleaseName, namespace, memoizedObj, t]);
 
-  const totalRevisions = revisions?.length;
-  const latestHelmReleaseVersion = latestHelmRelease?.version;
+  const totalRevisions = revisions?.length || 0;
+  const latestHelmReleaseVersion = latestHelmRelease?.version || 0;
 
-  const customData = React.useMemo(
+  const customRowRenderer = React.useCallback(
+    (releaseHistory: HelmRelease[]) =>
+      getHelmReleaseHistoryRows(releaseHistory, totalRevisions, latestHelmReleaseVersion),
+    [totalRevisions, latestHelmReleaseVersion],
+  );
+
+  const customSortFunctions = React.useMemo(
     () => ({
-      totalRevisions,
-      latestHelmReleaseVersion,
+      0: (r: HelmRelease) => r.version, // Revision
+      1: (r: HelmRelease) => new Date(r.info.last_deployed).getTime(), // Updated
+      2: (r: HelmRelease) => r.info.status, // Status
+      3: (r: HelmRelease) => r.chart.metadata.name, // Chart name
+      4: (r: HelmRelease) => r.chart.metadata.version, // Chart version
+      5: (r: HelmRelease) => r.chart.metadata.appVersion || '', // App version
     }),
-    [latestHelmReleaseVersion, totalRevisions],
+    [],
   );
 
   if (loadError) {
@@ -69,16 +79,16 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
   }
 
   return (
-    <CustomResourceList
-      resources={revisions}
-      loaded={revisionsLoaded}
-      sortBy="version"
-      sortOrder={SortByDirection.desc}
-      customData={customData}
-      ResourceRow={HelmReleaseHistoryRow}
-      resourceHeader={HelmReleaseHistoryHeader(t)}
-      getRowProps={getRowProps}
-    />
+    <PaneBody>
+      <HelmReleaseHistoryTable
+        releaseHistory={revisions}
+        isLoading={!revisionsLoaded}
+        customColumns={useHelmReleaseHistoryColumns}
+        customRowRenderer={customRowRenderer}
+        customGetColumnIndexById={getHistoryColumnIndexById}
+        customSortFunctions={customSortFunctions}
+      />
+    </PaneBody>
   );
 };
 

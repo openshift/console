@@ -1,74 +1,103 @@
-import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
-import { Kebab } from '@console/internal/components/utils';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { cellIsStickyProps } from '@console/app/src/components/data-view/ConsoleDataView';
+import { TableColumn } from '@console/internal/module/k8s';
 
-export const tableColumnClasses = {
-  name: '',
-  revision: '',
-  updated: '',
-  status: 'pf-m-hidden pf-m-visible-on-lg',
-  chartName: 'pf-m-hidden pf-m-visible-on-xl',
-  chartVersion: 'pf-m-hidden pf-m-visible-on-xl',
-  appVersion: 'pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-5-on-xl',
-  kebab: Kebab.columnClass,
+export const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'revision' },
+  { id: 'updated' },
+  { id: 'status' },
+  { id: 'chartName' },
+  { id: 'chartVersion' },
+  { id: 'appVersion' },
+  { id: 'kebab' },
+];
+
+const useHelmReleaseListColumns = (): TableColumn<any>[] => {
+  const { t } = useTranslation();
+  return React.useMemo(
+    () => [
+      {
+        title: t('helm-plugin~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Revision'),
+        id: tableColumnInfo[2].id,
+        sort: 'version',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Updated'),
+        id: tableColumnInfo[3].id,
+        sort: 'info.last_deployed',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Status'),
+        id: tableColumnInfo[4].id,
+        sort: 'info.status',
+        props: {
+          modifier: 'nowrap',
+          visibility: ['hiddenOnMd', 'visibleOnLg'],
+        },
+      },
+      {
+        title: t('helm-plugin~Chart name'),
+        id: tableColumnInfo[5].id,
+        sort: 'chart.metadata.name',
+        props: {
+          modifier: 'nowrap',
+          visibility: ['hiddenOnMd', 'visibleOnXl'],
+        },
+      },
+      {
+        title: t('helm-plugin~Chart version'),
+        id: tableColumnInfo[6].id,
+        sort: 'chart.metadata.version',
+        props: {
+          modifier: 'nowrap',
+          visibility: ['hiddenOnMd', 'visibleOnXl'],
+        },
+      },
+      {
+        title: t('helm-plugin~App version'),
+        id: tableColumnInfo[7].id,
+        sort: 'chart.metadata.appVersion',
+        props: {
+          modifier: 'nowrap',
+          visibility: ['hiddenOnMd', 'visibleOnXl'],
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[8].id,
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+    ],
+    [t],
+  );
 };
 
-const HelmReleaseListHeader = (t: TFunction) => () => {
-  return [
-    {
-      title: t('helm-plugin~Name'),
-      sortField: 'name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.name, key: 'name' },
-    },
-    {
-      title: t('helm-plugin~Namespace'),
-      sortField: 'namespace',
-      transforms: [sortable],
-      props: { key: 'namespace' },
-      id: 'namespace',
-    },
-    {
-      title: t('helm-plugin~Revision'),
-      sortField: 'version',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.revision, key: 'revision' },
-    },
-    {
-      title: t('helm-plugin~Updated'),
-      sortField: 'info.last_deployed',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.updated, key: 'updated' },
-    },
-    {
-      title: t('helm-plugin~Status'),
-      sortField: 'info.status',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.status, key: 'status' },
-    },
-    {
-      title: t('helm-plugin~Chart name'),
-      sortField: 'chart.metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.chartName, key: 'chart-name' },
-    },
-    {
-      title: t('helm-plugin~Chart version'),
-      sortField: 'chart.metadata.version',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.chartVersion, key: 'chart-version' },
-    },
-    {
-      title: t('helm-plugin~App version'),
-      sortField: 'chart.metadata.appVersion',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.appVersion, key: 'app-version' },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses.kebab, 'aria-label': 'Menu', key: 'kebab-menu' },
-    },
-  ];
-};
-
-export default HelmReleaseListHeader;
+export default useHelmReleaseListColumns;
