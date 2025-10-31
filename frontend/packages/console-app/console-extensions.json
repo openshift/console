@@ -1,16 +1,5 @@
 [
   {
-    "type": "console.action/resource-provider",
-    "properties": {
-      "model": {
-        "group": "user.openshift.io",
-        "version": "v1",
-        "kind": "Group"
-      },
-      "provider": { "$codeRef": "groupProvider.useGroupActionsProvider" }
-    }
-  },
-  {
     "type": "console.perspective",
     "properties": {
       "id": "admin",
@@ -282,6 +271,17 @@
     },
     "flags": {
       "required": ["CAN_LIST_VSC"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "Group"
+      },
+      "provider": { "$codeRef": "groupProvider.useGroupActionsProvider" }
     }
   },
   {

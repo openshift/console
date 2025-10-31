@@ -40,6 +40,9 @@
       "path": "/terminal",
       "component": { "$codeRef": "CloudShellTab" },
       "exact": false
+    },
+    "flags": {
+      "required": ["DEVWORKSPACE"]
     }
   },
   {
