@@ -13,12 +13,11 @@ import {
   FLAGS,
   ALL_NAMESPACES_KEY,
   getBadgeFromType,
-  withPostFormSubmissionCallback,
   getResourceSidebarSamples,
   useTelemetry,
   useUserSettingsCompatibility,
-  WithPostFormSubmissionCallbackProps,
 } from '@console/shared';
+import { usePostFormSubmitAction } from '@console/shared/src/hooks/usePostFormSubmitAction';
 import {
   SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
   SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
@@ -61,6 +60,7 @@ import {
   AccessReviewResourceAttributes,
   CodeEditorRef,
   K8sModel,
+  K8sResourceCommon,
 } from '../module/k8s';
 import { ConsoleYAMLSampleModel } from '../models';
 import { getYAMLTemplates } from '../models/yaml-templates';
@@ -149,9 +149,7 @@ type EditYAMLProps = {
   fileUpload?: string;
 };
 
-type EditYAMLInnerProps = WithPostFormSubmissionCallbackProps<any> &
-  ReturnType<typeof stateToProps> &
-  EditYAMLProps;
+type EditYAMLInnerProps = ReturnType<typeof stateToProps> & EditYAMLProps;
 
 const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   const {
@@ -165,7 +163,6 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     header,
     genericYAML = false,
     children: customAlerts,
-    postFormSubmissionCallback,
     redirectURL,
     clearFileUpload,
     onSave,
@@ -174,6 +171,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
 
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
+  const postFormSubmissionCallback = usePostFormSubmitAction<K8sResourceCommon>();
   const [errors, setErrors] = React.useState<string[]>(null);
   const [success, setSuccess] = React.useState<string>(null);
   const [initialized, setInitialized] = React.useState(false);
@@ -1006,7 +1004,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
  * This component loads the entire Monaco editor library with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
-export const EditYAML_ = connect(stateToProps)(withPostFormSubmissionCallback(EditYAMLInner));
+export const EditYAML_ = connect(stateToProps)(EditYAMLInner);
 
 export const EditYAML = connectToFlags<WithFlagsProps & EditYAMLProps>(FLAGS.CONSOLE_YAML_SAMPLE)(
   ({ flags, ...props }) => {

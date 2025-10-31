@@ -18,7 +18,7 @@ jest.mock('react-i18next', () => ({
   withTranslation: () => (Component: React.ComponentType) => Component,
 }));
 
-jest.mock('@console/shared/src/hooks/post-form-submit-action', () => ({
+jest.mock('@console/shared/src/hooks/usePostFormSubmitAction', () => ({
   usePostFormSubmitAction: () => () => {},
 }));
 

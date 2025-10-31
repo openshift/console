@@ -269,10 +269,12 @@ const getSourceAndTargetForBinding = async (
   return { source, target };
 };
 
-export const doConnectsToBinding = async (
-  resources: K8sResourceKind[],
+export const doConnectsToBinding = async <
+  R extends K8sResourceKind[] | K8sResourceKind = K8sResourceKind[]
+>(
+  resources: R,
   contextualSource: string,
-): Promise<K8sResourceKind[]> => {
+): Promise<R> => {
   const { source, target } = await getSourceAndTargetForBinding(resources, contextualSource);
   if (!target) {
     // Not a resource we want to connect to

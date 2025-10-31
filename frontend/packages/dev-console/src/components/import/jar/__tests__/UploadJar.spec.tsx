@@ -28,7 +28,7 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
   WatchK8sResultsObject: {},
 }));
 
-jest.mock('@console/shared/src/hooks/post-form-submit-action', () => ({
+jest.mock('@console/shared/src/hooks/usePostFormSubmitAction', () => ({
   usePostFormSubmitAction: jest.fn(() => jest.fn()),
 }));
 
