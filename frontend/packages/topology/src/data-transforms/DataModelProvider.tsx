@@ -80,7 +80,7 @@ export const getNamespacedDynamicModelFactories = (
     };
   });
 
-const DataModelProvider: React.FC<DataModelProviderProps> = ({ namespace, children }) => {
+const DataModelProvider: React.FCC<DataModelProviderProps> = ({ namespace, children }) => {
   const [model, setModel] = React.useState<ExtensibleModel>(new ExtensibleModel(namespace));
 
   React.useEffect(() => {

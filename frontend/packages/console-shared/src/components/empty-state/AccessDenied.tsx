@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import { Alert, Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import restrictedSignImg from '@console/internal/imgs/restricted-sign.svg';
@@ -9,7 +10,11 @@ const RestrictedSignIcon = () => {
   return <img src={restrictedSignImg} alt={t('Restricted access')} />;
 };
 
-export const AccessDenied: React.FC = ({ children }) => {
+interface AccessDeniedProps {
+  children?: ReactNode;
+}
+
+export const AccessDenied: React.FCC<AccessDeniedProps> = ({ children }) => {
   const { t } = useTranslation('console-shared');
   return (
     <ConsoleEmptyState

@@ -14,7 +14,7 @@ import ActionsLoader from './loader/ActionsLoader';
 import { ActionContext } from './types';
 import { createMenuOptions } from './utils';
 
-const ActionServiceProvider: React.FC<ActionServiceProviderProps> = ({ context, children }) => {
+const ActionServiceProvider: React.FCC<ActionServiceProviderProps> = ({ context, children }) => {
   const [contextMap, setContextMap] = React.useState<ActionContext>(context);
   const [actionsMap, setActionsMap] = React.useState<{ [uid: string]: Action[] }>({});
   const [loadError, setLoadError] = React.useState<any>();

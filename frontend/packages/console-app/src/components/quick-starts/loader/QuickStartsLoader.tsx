@@ -4,7 +4,7 @@ import { QuickStartsLoaderProps } from '@console/dynamic-plugin-sdk/src/api/inte
 import { useQuickStarts } from '../utils/useQuickStarts';
 import QuickStartPermissionChecker from './QuickStartPermissionChecker';
 
-const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = ({ children }) => {
+const QuickStartsLoader: React.FCC<QuickStartsLoaderProps> = ({ children }) => {
   const [quickStarts, quickStartsLoaded] = useQuickStarts();
 
   const [allowedQuickStarts, setAllowedQuickStarts] = React.useState<QuickStart[]>([]);

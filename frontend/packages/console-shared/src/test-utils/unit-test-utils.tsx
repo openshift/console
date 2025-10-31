@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { Form } from '@patternfly/react-core';
 import {
   render,
@@ -55,19 +55,26 @@ export function renderWithProviders(
   return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
 }
 
+interface FormikWrapperProps {
+  children?: ReactNode;
+}
+
 export const mockFormikRenderer = (
   element: ReactElement,
   initialValues?: FormikValues,
   options?: Omit<RenderOptions, 'wrapper'>,
-) =>
-  render(element, {
-    wrapper: ({ children }) => (
-      <Formik initialValues={initialValues} onSubmit={() => {}}>
-        {({ handleSubmit }) => <Form onSubmit={handleSubmit}>{children}</Form>}
-      </Formik>
-    ),
+) => {
+  const FormikWrapper: React.FC<FormikWrapperProps> = ({ children }) => (
+    <Formik initialValues={initialValues} onSubmit={() => {}}>
+      {({ handleSubmit }) => <Form onSubmit={handleSubmit}>{children}</Form>}
+    </Formik>
+  );
+
+  return render(element, {
+    wrapper: FormikWrapper,
     ...options,
   });
+};
 
 // Helper function for verifying form input element visibility, type attribute, initial value and required status
 export const verifyFormElementBasics = (

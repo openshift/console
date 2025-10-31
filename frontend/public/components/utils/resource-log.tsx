@@ -1,6 +1,5 @@
 import {
   MouseEventHandler,
-  PropsWithChildren,
   ReactNode,
   Ref,
   useCallback,
@@ -502,7 +501,7 @@ const LogControls: React.FCC<LogControlsProps> = ({
 };
 
 /** helper for opening a new window with raw logs. this is so we don't mess with the previous i18n string */
-const LogLink: React.FCC<PropsWithChildren<{ href: string }>> = ({ children, href }) => (
+const LogLink: React.FCC<{ children: ReactNode; href: string }> = ({ children, href }) => (
   <ExternalLink component="button" onClick={handleRawLogs(href)}>
     {children}
   </ExternalLink>
