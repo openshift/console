@@ -19,6 +19,7 @@ export default (state: UIState, action: UIAction): UIState => {
       showOperandsInAllNamespaces: true,
       activeNamespace: ALL_NAMESPACES_KEY,
       activeApplication: ALL_APPLICATIONS_KEY,
+      pluginCSPViolations: {},
       createProjectMessage: '',
       serviceLevel: ImmutableMap({
         level: '',
@@ -154,6 +155,10 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['deprecatedOperator', 'channel'], action.payload.value);
     case ActionType.SetDeprecatedVersion:
       return state.setIn(['deprecatedOperator', 'version'], action.payload.value);
+    case ActionType.SetPluginCSPViolations:
+      return state.mergeIn(['pluginCSPViolations'], {
+        [action.payload.pluginName]: action.payload.hasViolation,
+      });
     default:
       break;
   }

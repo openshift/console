@@ -18,8 +18,8 @@ import {
   referenceForExtensionModel,
   referenceForModel,
 } from '../module/k8s';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  useExtensions,
   isResourceDetailsPage,
   ResourceDetailsPage as ResourceDetailsPageExt,
   ResourceListPage as ResourceListPageExt,

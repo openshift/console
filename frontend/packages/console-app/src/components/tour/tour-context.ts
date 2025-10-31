@@ -14,7 +14,7 @@ import { createSelector } from 'reselect';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { getFlagsObject } from '@console/internal/reducers/features';
 import { RootState } from '@console/internal/redux';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { isGuidedTour, GuidedTour } from '@console/plugin-sdk/src/typings/guided-tour';
 import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { TourActions, TOUR_LOCAL_STORAGE_KEY } from './const';

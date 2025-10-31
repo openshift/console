@@ -2,6 +2,10 @@ import { useCallback, useEffect } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPluginCSPViolations, PluginCSPViolations } from '@console/internal/actions/ui';
+import { RootState } from '@console/internal/redux';
+import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
 import { useToast } from '@console/shared/src/components/toast';
 import { IS_PRODUCTION } from '@console/shared/src/constants/common';
@@ -69,6 +73,10 @@ export const useCSPViolationDetector = () => {
   const toastContext = useToast();
   const fireTelemetryEvent = useTelemetry();
   const pluginStore = usePluginStore();
+  const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
+    UI.get('pluginCSPViolations'),
+  );
+  const dispatch = useDispatch();
   const [, cacheEvent] = useLocalStorageCache<PluginCSPViolationEvent>(
     LOCAL_STORAGE_CSP_VIOLATIONS_KEY,
     CSP_VIOLATION_EXPIRATION,
@@ -93,7 +101,14 @@ export const useCSPViolationDetector = () => {
       }
 
       if (pluginName) {
-        const pluginInfo = pluginStore.findDynamicPluginInfo(pluginName);
+        const pluginInfo = pluginStore
+          .getPluginInfo()
+          .find((entry) =>
+            isLoadedDynamicPluginInfo(entry)
+              ? entry.metadata.name === pluginName
+              : entry.pluginName === pluginName,
+          );
+
         const validPlugin = !!pluginInfo;
         const pluginIsLoaded = validPlugin && pluginInfo.status === 'Loaded';
 
@@ -105,10 +120,10 @@ export const useCSPViolationDetector = () => {
         );
 
         if (validPlugin) {
-          pluginStore.setCustomDynamicPluginInfo(pluginName, { hasCSPViolations: true });
+          dispatch(setPluginCSPViolations(pluginName, true));
         }
 
-        if (pluginIsLoaded && !IS_PRODUCTION && !pluginInfo.hasCSPViolations) {
+        if (pluginIsLoaded && !IS_PRODUCTION && !cspViolations[pluginName]) {
           toastContext.addToast({
             variant: AlertVariant.warning,
             title: t('public~Content Security Policy violation in Console plugin'),
@@ -124,7 +139,7 @@ export const useCSPViolationDetector = () => {
         }
       }
     },
-    [cacheEvent, fireTelemetryEvent, pluginStore, toastContext, t],
+    [cacheEvent, fireTelemetryEvent, pluginStore, toastContext, t, dispatch, cspViolations],
   );
 
   useEffect(() => {

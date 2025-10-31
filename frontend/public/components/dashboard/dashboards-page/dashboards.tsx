@@ -10,7 +10,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   DashboardsCard,
   DashboardsTab,

@@ -19,7 +19,7 @@ import {
   AccessReviewResourceAttributes,
 } from '@console/dynamic-plugin-sdk/src';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { useTelemetry } from '@console/shared/src';
 import {
   useDebounceCallback,

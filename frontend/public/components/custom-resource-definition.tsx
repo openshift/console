@@ -44,7 +44,8 @@ import { Conditions } from './conditions';
 import { getResourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
 import { GreenCheckCircleIcon, DASH } from '@console/shared';
-import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {
   ResourceListPage as DynamicResourceListPage,
   isResourceListPage as isDynamicResourceListPage,

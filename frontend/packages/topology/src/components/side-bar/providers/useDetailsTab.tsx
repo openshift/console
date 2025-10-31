@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { DetailsTab, isDetailsTab } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
 
 export const useDetailsTab = (): DetailsTab['properties'][] => {

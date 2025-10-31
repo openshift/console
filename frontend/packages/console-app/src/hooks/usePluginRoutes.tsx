@@ -9,9 +9,9 @@ import { AsyncComponent } from '@console/internal/components/utils';
 import {
   RoutePage as StaticRoutePageExtension,
   isRoutePage as isStaticRoutePageExtension,
-  useExtensions,
   LoadedExtension,
 } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 
 const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePerspective) =>
   (extension.properties.perspective ?? activePerspective) === activePerspective;
