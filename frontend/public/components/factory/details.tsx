@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useLocation, useParams, Location } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
-import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
-import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
+import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
 import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';

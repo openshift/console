@@ -3,7 +3,7 @@ import { Menu, Popper, MenuContent, MenuList } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { LazyActionMenuProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { checkAccess } from '@console/internal/components/utils/rbac';
+import { checkAccess } from '@console/internal/components/utils';
 import ActionServiceProvider from './ActionServiceProvider';
 import ActionMenuContent from './menu/ActionMenuContent';
 import ActionMenuToggle from './menu/ActionMenuToggle';
