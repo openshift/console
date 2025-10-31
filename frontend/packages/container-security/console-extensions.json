@@ -11,6 +11,19 @@
     }
   },
   {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "secscan.quay.redhat.com",
+        "version": "v1alpha1",
+        "kind": "ImageManifestVuln"
+      },
+      "label": "ImageManifestVuln",
+      "labelPlural": "ImageManifestVuln",
+      "abbr": "IMV"
+    }
+  },
+  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "id": "imagevulnerabilities",

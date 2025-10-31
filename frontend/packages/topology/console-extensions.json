@@ -11,10 +11,108 @@
     }
   },
   {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "",
+        "kind": "application"
+      },
+      "label": "Application",
+      "labelPlural": "Applications",
+      "abbr": "A"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "primer.gitops.io",
+        "version": "v1alpha1",
+        "kind": "Export"
+      },
+      "label": "Export",
+      "labelPlural": "Exports",
+      "abbr": "E"
+    }
+  },
+  {
     "type": "console.redux-reducer",
     "properties": {
       "scope": "devconsole",
       "reducer": { "$codeRef": "reduxReducer" }
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": { "$codeRef": "operatorsComponentFactory.getOperatorsComponentFactory" }
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "operators-topology-motel-factory",
+      "priority": 500,
+      "resources": {
+        "clusterServiceVersions": {
+          "model": {
+            "group": "operators.coreos.com",
+            "version": "v1alpha1",
+            "kind": "ClusterServiceVersion"
+          },
+          "opts": {
+            "isList": true,
+            "namespaced": true,
+            "optional": true
+          }
+        }
+      },
+      "getDataModel": { "$codeRef": "operatorsDataTransformer.getOperatorTopologyDataModel" },
+      "getDataModelReconciler": { "$codeRef": "operatorsDataModelReconciler.operatorsDataModelReconciler"}
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "edit-decorator",
+      "priority": 1000,
+      "quadrant": "lowerRight",
+      "decorator": { "$codeRef": "defaultDecorators.getEditDecorator" }
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "url-decorator",
+      "priority": 1000,
+      "quadrant": "upperRight",
+      "decorator": { "$codeRef": "defaultDecorators.getUrlDecorator" }
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "build-decorator",
+      "priority": 1000,
+      "quadrant": "lowerLeft",
+      "decorator": { "$codeRef": "defaultDecorators.getBuildDecorator" }
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "alerts-decorator",
+      "priority": 1000,
+      "quadrant": "upperLeft",
+      "decorator": { "$codeRef": "defaultDecorators.getAlertsDecorator" }
+    }
+  },
+  {
+    "type": "console.topology/display/filters",
+    "properties": {
+      "getTopologyFilters": { "$codeRef": "operatorFilters.getTopologyFilters" },
+      "applyDisplayOptions": { "$codeRef": "operatorFilters.applyOperatorDisplayOptions" }
     }
   },
   {
