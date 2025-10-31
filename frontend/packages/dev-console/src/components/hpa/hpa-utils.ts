@@ -50,17 +50,6 @@ const defaultHPAYAML = baseTemplates
   .get(referenceForModel(HorizontalPodAutoscalerModel))
   .get('default');
 
-const getDefaultMetric = (type: SupportedMetricTypes): HPAMetric => ({
-  type: 'Resource',
-  resource: {
-    name: type,
-    target: {
-      averageUtilization: 50,
-      type: 'Utilization',
-    },
-  },
-});
-
 const createScaleTargetRef = (resource: K8sResourceKind) => ({
   apiVersion: resource.apiVersion,
   kind: resource.kind,
@@ -72,10 +61,6 @@ export const getFormData = (
   existingHPA?: HorizontalPodAutoscalerKind,
 ): HorizontalPodAutoscalerKind => {
   const hpa: HorizontalPodAutoscalerKind = existingHPA || safeYAMLToJS(defaultHPAYAML);
-  if (!existingHPA) {
-    // If we are working off the default, zero out cpu metrics to make it easier to use non-cpu metrics with the default
-    hpa.spec.metrics = [getDefaultMetric('cpu')];
-  }
 
   return {
     ...hpa,
@@ -95,10 +80,10 @@ export const getYAMLData = (
 export const getMetricByType = (
   hpa: HorizontalPodAutoscalerKind,
   type: SupportedMetricTypes,
-): { metric: HPAMetric; index: number } => {
+): { metric: HPAMetric | null; index: number } => {
   const hpaMetrics = hpa.spec.metrics || [];
   const metricIndex = hpaMetrics.findIndex((m) => m.resource?.name?.toLowerCase() === type);
-  const metric: HPAMetric = hpaMetrics[metricIndex] || getDefaultMetric(type);
+  const metric: HPAMetric | null = hpaMetrics[metricIndex] || null;
 
   return { metric, index: metricIndex === -1 ? hpaMetrics.length : metricIndex };
 };
@@ -116,16 +101,17 @@ export const sanityForSubmit = (
   targetResource: K8sResourceKind,
   hpa: HorizontalPodAutoscalerKind,
 ): HorizontalPodAutoscalerKind => {
-  const validHPA = merge(
-    {},
-    hpa,
-    // Make sure it's against _this_ namespace
-    { metadata: { namespace: targetResource.metadata.namespace } },
-    // Make sure we kept the target we started with
-    { spec: { scaleTargetRef: createScaleTargetRef(targetResource) } },
-  );
-
-  return validHPA;
+  return {
+    ...hpa,
+    metadata: {
+      ...hpa.metadata,
+      namespace: targetResource.metadata.namespace,
+    },
+    spec: {
+      ...hpa.spec,
+      scaleTargetRef: createScaleTargetRef(targetResource),
+    },
+  };
 };
 
 export const hasCustomMetrics = (hpa?: HorizontalPodAutoscalerKind): boolean => {
