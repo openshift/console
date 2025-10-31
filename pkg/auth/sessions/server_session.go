@@ -24,19 +24,21 @@ type SessionStore struct {
 	byToken map[string]*LoginState
 	// TODO: implement delayed pruning (so that all clients with old refresh token can get the session correctly) when two instances are pointing to the same item (key != ls.refreshToken)
 	// TODO: maybe only store indexed by the old refresh tokens and have each item have lifespan of ~10s
-	byRefreshToken map[string]*LoginState
-	byAge          []*LoginState
-	maxSessions    int
-	now            nowFunc
-	mux            sync.Mutex
+	byRefreshToken   map[string]*LoginState
+	byRefreshTokenID map[string]string // Maps small reference ID -> actual refresh token
+	byAge            []*LoginState
+	maxSessions      int
+	now              nowFunc
+	mux              sync.Mutex
 }
 
 func NewServerSessionStore(maxSessions int) *SessionStore {
 	ss := &SessionStore{
-		byToken:        make(map[string]*LoginState),
-		byRefreshToken: make(map[string]*LoginState),
-		maxSessions:    maxSessions,
-		now:            time.Now,
+		byToken:          make(map[string]*LoginState),
+		byRefreshToken:   make(map[string]*LoginState),
+		byRefreshTokenID: make(map[string]string),
+		maxSessions:      maxSessions,
+		now:              time.Now,
 	}
 
 	go wait.Forever(ss.pruneSessions, sessionPruningPeriod)
@@ -56,8 +58,15 @@ func (ss *SessionStore) AddSession(tokenVerifier IDTokenVerifier, token *oauth2.
 		return nil, fmt.Errorf("session token collision! THIS SHOULD NEVER HAPPEN! Token: %s", sessionToken)
 	}
 	ls.sessionToken = sessionToken
+
+	// Generate a small reference ID for the refresh token (stored in cookie instead of full token)
+	ls.refreshTokenID = RandomString(32)
+
 	ss.mux.Lock()
 	ss.byToken[sessionToken] = ls
+	if ls.refreshToken != "" {
+		ss.byRefreshTokenID[ls.refreshTokenID] = ls.refreshToken
+	}
 
 	// Assume token expiration is always the same time in the future. Should be close enough for government work.
 	ss.byAge = append(ss.byAge, ls)
@@ -106,6 +115,7 @@ func (ss *SessionStore) DeleteByRefreshToken(refreshToken string) {
 
 	delete(ss.byRefreshToken, refreshToken)
 	delete(ss.byToken, session.sessionToken)
+	ss.deleteIDsForRefreshToken(refreshToken)
 
 	ss.byAge = spliceOut(ss.byAge, session)
 }
@@ -122,10 +132,39 @@ func (ss *SessionStore) DeleteBySessionToken(sessionToken string) {
 	delete(ss.byToken, sessionToken)
 	ss.byAge = spliceOut(ss.byAge, session)
 
-	for k, v := range ss.byRefreshToken {
-		if v == session {
-			delete(ss.byRefreshToken, k)
-			return
+	ss.deleteRefreshTokenIDsForSession(session)
+	ss.deleteRefreshTokensForSession(session)
+}
+
+// deleteRefreshTokenIDsForSession removes all refresh token IDs that point to the given session.
+// There can be multiple old IDs from previous token rotations.
+// Note: This method is not thread-safe and assumes the caller holds ss.mux.
+func (ss *SessionStore) deleteRefreshTokenIDsForSession(session *LoginState) {
+	for refreshTokenID, actualRefreshToken := range ss.byRefreshTokenID {
+		if ss.byRefreshToken[actualRefreshToken] == session {
+			delete(ss.byRefreshTokenID, refreshTokenID)
+		}
+	}
+}
+
+// deleteRefreshTokensForSession removes all refresh tokens that point to the given session.
+// There can be multiple old tokens from previous token rotations.
+// Note: This method is not thread-safe and assumes the caller holds ss.mux.
+func (ss *SessionStore) deleteRefreshTokensForSession(session *LoginState) {
+	for refreshToken, loginState := range ss.byRefreshToken {
+		if loginState == session {
+			delete(ss.byRefreshToken, refreshToken)
+		}
+	}
+}
+
+// deleteIDsForRefreshToken removes all refresh token IDs that point to the given refresh token.
+// There can be multiple old IDs from previous token rotations.
+// Note: This method is not thread-safe and assumes the caller holds ss.mux.
+func (ss *SessionStore) deleteIDsForRefreshToken(refreshToken string) {
+	for refreshTokenID, actualRefreshToken := range ss.byRefreshTokenID {
+		if actualRefreshToken == refreshToken {
+			delete(ss.byRefreshTokenID, refreshTokenID)
 		}
 	}
 }
@@ -157,12 +196,9 @@ func (ss *SessionStore) pruneSessions() {
 	if removalPivot < len(ss.byAge) {
 		// TODO: account for user ids when pruning old sessions. Otherwise one user could log in 16k times and boot out everyone else.
 		for _, s := range ss.byAge[removalPivot:] {
-			delete(ss.byToken, s.sessionToken) // FIXME: delete keys in ss.byRefreshToken ? (it's not that easy as it's indexed by previous refresh token)
-			for _, rt := range ss.byRefreshToken {
-				if rt == s {
-					delete(ss.byRefreshToken, rt.refreshToken)
-				}
-			}
+			delete(ss.byToken, s.sessionToken)
+			ss.deleteRefreshTokenIDsForSession(s)
+			ss.deleteRefreshTokensForSession(s)
 		}
 		ss.byAge = ss.byAge[:removalPivot]
 
