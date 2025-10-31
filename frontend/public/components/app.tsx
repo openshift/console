@@ -32,6 +32,7 @@ import FeatureFlagExtensionLoader from '@console/app/src/components/flags/Featur
 import { useExtensions } from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
+  ResolvedExtension,
   isContextProvider,
   isReduxReducer,
   isStandaloneRoutePage,
@@ -39,6 +40,7 @@ import {
   getUser,
   useActivePerspective,
   ReduxReducer,
+  ContextProvider,
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
@@ -77,14 +79,18 @@ initI18n();
 // Only linkify url strings beginning with a proper protocol scheme.
 linkify.set({ fuzzyLink: false });
 
-const EnhancedProvider = ({ provider: ContextProvider, useValueHook, children }) => {
+const EnhancedProvider: React.FC<{
+  provider: React.Provider<any>;
+  useValueHook: () => any;
+  children: React.ReactNode;
+}> = ({ provider: Component, useValueHook, children }) => {
   const value = useValueHook();
-  return <ContextProvider value={value}>{children}</ContextProvider>;
+  return <Component value={value}>{children}</Component>;
 };
 
-const App = (props) => {
-  const { contextProviderExtensions } = props;
-
+const App: React.FC<{
+  contextProviderExtensions: ResolvedExtension<ContextProvider>[];
+}> = ({ contextProviderExtensions }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const params = useParams();
@@ -199,7 +205,7 @@ const App = (props) => {
   };
 
   const onNavSelect = () => {
-    //close nav on mobile nav selects
+    // close nav on mobile nav selects
     if (!isDesktop()) {
       setIsNavOpen(false);
     }
@@ -301,15 +307,17 @@ const App = (props) => {
   );
 };
 
-const AppWithExtensions = (props) => {
+const AppWithExtensions: React.FC = () => {
   const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions<ReduxReducer>(
     isReduxReducer,
   );
-  const [contextProviderExtensions, providersResolved] = useResolvedExtensions(isContextProvider);
+  const [contextProviderExtensions, providersResolved] = useResolvedExtensions<ContextProvider>(
+    isContextProvider,
+  );
 
   if (reducersResolved && providersResolved) {
     applyReduxExtensions(reduxReducerExtensions);
-    return <App contextProviderExtensions={contextProviderExtensions} {...props} />;
+    return <App contextProviderExtensions={contextProviderExtensions} />;
   }
 
   return <LoadingBox />;
@@ -317,7 +325,7 @@ const AppWithExtensions = (props) => {
 
 render(<LoadingBox />, document.getElementById('app'));
 
-const AppRouter = () => {
+const AppRouter: React.FC = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
   // Treat the authentication error page as a standalone route. There is no need to render the rest
   // of the app if we know authentication has failed.
@@ -416,7 +424,7 @@ const updateSwaggerDefinitionContinual = () => {
   }, 5 * 60 * 1000);
 };
 
-const initPlugins = (storeInstance) => {
+const initPlugins = (storeInstance: typeof store) => {
   return initConsolePlugins(pluginStore, storeInstance);
 };
 // Load cached API resources from localStorage to speed up page load.
