@@ -887,7 +887,12 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
   );
 };
 
-const EnvironmentPage = (props: { obj: PodKind; envPath: string[]; readOnly: boolean }) => (
+const EnvironmentPage = (props: {
+  obj: PodKind;
+  rawEnvData?: any;
+  envPath: string[];
+  readOnly: boolean;
+}) => (
   <AsyncComponent
     loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
     {...(props as Record<string, unknown>)}
@@ -896,7 +901,7 @@ const EnvironmentPage = (props: { obj: PodKind; envPath: string[]; readOnly: boo
 
 const envPath = ['spec', 'containers'];
 const PodEnvironmentComponent = (props: { obj: PodKind }) => (
-  <EnvironmentPage obj={props.obj} envPath={envPath} readOnly={true} />
+  <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
 );
 
 export const PodConnectLoader: React.FC<PodConnectLoaderProps> = ({
