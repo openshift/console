@@ -281,7 +281,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
   ),
 );
 
-const ListItem: React.FC<ListItemProps> = ({ children, value }) => (
+const ListItem: React.FCC<ListItemProps> = ({ children, value }) => (
   <li className="co-utilization-card-popover__consumer-item">
     {children}
     <div className="co-utilization-card-popover__consumer-value">{value}</div>
@@ -290,6 +290,7 @@ const ListItem: React.FC<ListItemProps> = ({ children, value }) => (
 
 type ListItemProps = {
   value: React.ReactText;
+  children?: React.ReactNode;
 };
 
 type LimitsBodyProps = {
@@ -307,6 +308,7 @@ type PopoverProps = {
   consumers: { model: K8sKind; query: string; metric: string; fieldSelector?: string }[];
   namespace?: string;
   description?: string;
+  children?: React.ReactNode;
 };
 
 type PopoverBodyProps = PopoverProps & {
@@ -319,4 +321,5 @@ export type ConsumerPopoverProps = PopoverProps & {
   position?: PopoverPosition;
   title: string;
   current: string;
+  children?: React.ReactNode;
 };

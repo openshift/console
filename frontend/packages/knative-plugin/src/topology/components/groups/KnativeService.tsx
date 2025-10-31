@@ -30,7 +30,10 @@ export type KnativeServiceProps = {
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const KnativeService: React.FC<KnativeServiceProps> = ({ children, ...props }) => {
+const KnativeService: React.FC<KnativeServiceProps & { children?: React.ReactNode }> = ({
+  children,
+  ...props
+}) => {
   const { element } = props;
   const { data } = element.getData();
   const resourceObj = getResource(props.element);

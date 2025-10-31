@@ -187,6 +187,7 @@ export const TableData: React.FC<TableDataProps> = ({
 };
 TableData.displayName = 'TableData';
 export type TableDataProps = {
+  children?: React.ReactNode;
   className?: string;
   columnID?: string;
   columns?: Set<string>;

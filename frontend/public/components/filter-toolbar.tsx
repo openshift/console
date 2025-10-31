@@ -30,7 +30,7 @@ import {
   RowSearchFilter,
 } from '@console/dynamic-plugin-sdk';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { setOrRemoveQueryArgument } from '@console/internal/components/utils/router';
+import { setOrRemoveQueryArgument } from '@console/internal/components/utils';
 import { useTranslation } from 'react-i18next';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';

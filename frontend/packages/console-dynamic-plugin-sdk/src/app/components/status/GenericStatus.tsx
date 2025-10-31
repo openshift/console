@@ -4,6 +4,7 @@ import PopoverStatus from './PopoverStatus';
 import StatusIconAndText from './StatusIconAndText';
 
 type GenericStatusProps = StatusComponentProps & {
+  children?: React.ReactNode;
   Icon: React.ComponentType<{ title?: string }>;
   popoverTitle?: string;
   noTooltip?: boolean;

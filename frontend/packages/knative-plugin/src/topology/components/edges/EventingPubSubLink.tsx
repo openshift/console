@@ -15,6 +15,7 @@ import { EVENT_MARKER_RADIUS } from '../../const';
 type EventingPubSubLinkProps = {
   element: Edge;
   dragging: boolean;
+  children?: React.ReactNode;
 } & WithSourceDragProps &
   WithTargetDragProps &
   WithContextMenuProps;

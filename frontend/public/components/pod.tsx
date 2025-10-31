@@ -23,22 +23,22 @@ import {
   DescriptionListTerm,
   DescriptionListDescription,
 } from '@patternfly/react-core';
-import { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import {
-  ActionServiceProvider,
+  Status,
+  TableColumnsType,
   LazyActionMenu,
+  ActionServiceProvider,
   ActionMenu,
   ActionMenuVariant,
-} from '@console/shared/src/components/actions';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
-import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import { DASH } from '@console/shared/src/constants/ui';
+  useUserSettingsCompatibility,
+  usePrometheusGate,
+  DASH,
+} from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
-import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import { ListPageBody, RowFilter } from '@console/dynamic-plugin-sdk';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import * as UIActions from '../actions/ui';
@@ -887,7 +887,12 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
   );
 };
 
-const EnvironmentPage = (props: { obj: PodKind; envPath: string[]; readOnly: boolean }) => (
+const EnvironmentPage = (props: {
+  obj: PodKind;
+  rawEnvData?: any;
+  envPath: string[];
+  readOnly: boolean;
+}) => (
   <AsyncComponent
     loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
     {...(props as Record<string, unknown>)}
@@ -896,7 +901,7 @@ const EnvironmentPage = (props: { obj: PodKind; envPath: string[]; readOnly: boo
 
 const envPath = ['spec', 'containers'];
 const PodEnvironmentComponent = (props: { obj: PodKind }) => (
-  <EnvironmentPage obj={props.obj} envPath={envPath} readOnly={true} />
+  <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
 );
 
 export const PodConnectLoader: React.FC<PodConnectLoaderProps> = ({

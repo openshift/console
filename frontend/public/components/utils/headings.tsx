@@ -4,8 +4,12 @@ import {
   ResourceStatus,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
-import { ActionMenuVariant, LazyActionMenu } from '@console/shared/src/components/actions';
-import { Status, YellowExclamationTriangleIcon } from '@console/shared/src/components/status';
+import {
+  ActionMenuVariant,
+  LazyActionMenu,
+  Status,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { ActionListItem, Button, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -23,9 +27,7 @@ import {
   K8sResourceKindReference,
   referenceForExtensionModel,
 } from '../../module/k8s';
-import { FirehoseResult } from './types';
-import { KebabOption } from './kebab';
-import { ResourceIcon } from './resource-icon';
+import { FirehoseResult, KebabOption, ResourceIcon } from './index';
 import { ManagedByOperatorLink } from './managed-by';
 
 export const ResourceItemDeleting = () => {
