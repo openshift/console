@@ -191,6 +191,10 @@ $masthead-logo-max-height: 60px;
 .pf-v6-c-masthead__logo {
   --pf-v6-c-masthead__logo--MaxHeight: #{$masthead-logo-max-height}; // Restore the max-height from PageHeader to maintain backwards compatibility
   --pf-v6-c-masthead__logo--Width: auto; // Do not set a width to maintain backwards compatibility
+
+  img.pf-v6-c-brand {
+    max-height: #{$masthead-logo-max-height}; // Explicit image max height for browser compatibility
+  }
 }
 
 // PF components that calculate their correct height based on --pf-t--global--font--size--md: 1rem
