@@ -14,6 +14,7 @@ export const usePVCActionsProvider = (
     PVCActionCreator.ExpandPVC,
     PVCActionCreator.PVCSnapshot,
     PVCActionCreator.ClonePVC,
+    PVCActionCreator.ModifyVAC,
   ]);
   const pvcDeleteAction = usePVCActions(resource, [PVCActionCreator.DeletePVC]);
   const [commonActions] = useCommonActions(kindObj, resource, [
