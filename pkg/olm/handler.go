@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/operator-framework/kubectl-operator/pkg/action"
@@ -29,6 +30,7 @@ func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogSer
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/olm/catalog-items/", o.catalogItemsHandler)
+	mux.HandleFunc("/api/olm/catalogd/metas/{catalogName}", o.catalogdMetasHandler)
 	mux.HandleFunc("/api/olm/list-operands/", o.operandsListHandler)
 	mux.HandleFunc("/api/olm/check-package-manifests/", o.checkPackageManifestHandler)
 	o.mux = mux
@@ -37,6 +39,28 @@ func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogSer
 
 func (o *OLMHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	o.mux.ServeHTTP(w, r)
+}
+
+func (o *OLMHandler) catalogdMetasHandler(w http.ResponseWriter, r *http.Request) {
+	catalogName := r.PathValue("catalogName")
+	if catalogName == "" {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "catalog name is required"})
+		return
+	}
+
+	resp, err := o.catalogService.GetMetas(catalogName, r)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	defer resp.Body.Close()
+
+	w.WriteHeader(resp.StatusCode)
+	_, err = io.Copy(w, resp.Body)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 }
 
 func (o *OLMHandler) catalogItemsHandler(w http.ResponseWriter, r *http.Request) {

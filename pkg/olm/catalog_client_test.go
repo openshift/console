@@ -93,6 +93,82 @@ func TestCatalogdClient_FetchAll(t *testing.T) {
 	})
 }
 
+func TestCatalogdClient_FetchMetas(t *testing.T) {
+	t.Run("should fetch metas with base URL", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, "/api/v1/metas", r.URL.Path)
+			assert.Equal(t, http.MethodGet, r.Method)
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("{}"))
+		}))
+		defer server.Close()
+
+		req := httptest.NewRequest(http.MethodGet, "/test", nil)
+
+		client := NewCatalogdClient(server.Client(), nil)
+		resp, err := client.FetchMetas("test-catalog", server.URL, req)
+
+		require.NoError(t, err)
+		assert.NotNil(t, resp)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+		resp.Body.Close()
+	})
+
+	t.Run("should fetch metas with proxy config", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, "/catalogs/test-catalog/api/v1/metas", r.URL.Path)
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("{}"))
+		}))
+		defer server.Close()
+
+		proxyURL, err := url.Parse(server.URL)
+		require.NoError(t, err)
+
+		proxyConfig := &proxy.Config{
+			Endpoint: proxyURL,
+		}
+
+		req := httptest.NewRequest(http.MethodGet, "/test", nil)
+
+		client := NewCatalogdClient(server.Client(), proxyConfig)
+		resp, err := client.FetchMetas("test-catalog", "", req)
+
+		require.NoError(t, err)
+		assert.NotNil(t, resp)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+		resp.Body.Close()
+	})
+
+	t.Run("should preserve request method", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, http.MethodPost, r.Method)
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		req := httptest.NewRequest(http.MethodPost, "/test", nil)
+
+		client := NewCatalogdClient(server.Client(), nil)
+		resp, err := client.FetchMetas("test-catalog", server.URL, req)
+
+		require.NoError(t, err)
+		assert.NotNil(t, resp)
+		resp.Body.Close()
+	})
+
+	t.Run("should return error when baseURL is empty and no proxy config", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/test", nil)
+
+		client := NewCatalogdClient(&http.Client{}, nil)
+		resp, err := client.FetchMetas("test-catalog", "", req)
+
+		assert.Error(t, err)
+		assert.Nil(t, resp)
+		assert.Contains(t, err.Error(), "baseURL or proxy configuration is required")
+	})
+}
+
 func TestCatalogdClient_buildCatalogdURL(t *testing.T) {
 	t.Run("should build URL with proxy config", func(t *testing.T) {
 		proxyURL, err := url.Parse("http://proxy.example.com:8080")

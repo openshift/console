@@ -57,6 +57,17 @@ func NewCatalogService(serviceClient *http.Client, proxyConfig *proxy.Config, ca
 	return c
 }
 
+func (s *CatalogService) GetMetas(catalog string, r *http.Request) (*http.Response, error) {
+	var baseURL string
+	baseURLKey := getCatalogBaseURLKey(catalog)
+	if cachedBaseURL, ok := s.cache.Get(baseURLKey); ok {
+		if baseURL, ok = cachedBaseURL.(string); !ok {
+			return nil, fmt.Errorf("cached base URL for catalog %s is not a string", catalog)
+		}
+	}
+	return s.client.FetchMetas(catalog, baseURL, r)
+}
+
 // Start begins the polling process.
 func (s *CatalogService) UpdateCatalog(catalog string, baseURL string) error {
 	itemsKey := getCatalogItemsKey(catalog)

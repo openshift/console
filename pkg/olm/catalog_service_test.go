@@ -23,6 +23,11 @@ type mockCatalogdClient struct {
 	err      error
 }
 
+func (m *mockCatalogdClient) FetchMetas(catalog string, baseURL string, r *http.Request) (*http.Response, error) {
+	// This mock implementation is not used in these tests, but required by the interface
+	return nil, fmt.Errorf("FetchMetas not implemented in mock")
+}
+
 func (m *mockCatalogdClient) FetchAll(catalog, baseURL, ifNotModifiedSince string, maxAge time.Duration) (*http.Response, error) {
 	if m.err != nil {
 		return nil, m.err
