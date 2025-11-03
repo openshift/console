@@ -55,7 +55,7 @@ export const getTaskRunsOfPipelineRun = (
   taskRuns: TaskRunKind[],
   pipelineRunName: string,
 ): TaskRunKind[] => {
-  return taskRuns.filter(
+  return taskRuns?.filter(
     (taskRun) => taskRun.metadata?.labels[TektonResourceLabel.pipelinerun] === pipelineRunName,
   );
 };

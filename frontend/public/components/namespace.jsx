@@ -34,12 +34,14 @@ import {
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+  LazyActionMenu,
   useUserSettingsCompatibility,
   isModifiedEvent,
   REQUESTER_FILTER,
   useFlag,
   usePrometheusGate,
   DASH,
+  ActionMenuVariant,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
@@ -59,7 +61,7 @@ import { DetailsPage, ListPage, sorts } from './factory';
 import { sortResourceByValue } from './factory/Table/sort';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DetailsItem } from './utils/details-item';
-import { Kebab, ResourceKebab } from './utils/kebab';
+import { Kebab } from './utils/kebab';
 import { LabelList } from './utils/label-list';
 import { LoadingInline, LoadingBox } from './utils/status-box';
 import { ResourceIcon } from './utils/resource-icon';
@@ -159,13 +161,6 @@ export const deleteModal = (kind, ns) => {
   }
   return { label, labelKey, labelKind, weight, callback, accessReview };
 };
-
-const nsMenuActions = [
-  Kebab.factory.ModifyLabels,
-  Kebab.factory.ModifyAnnotations,
-  Kebab.factory.Edit,
-  deleteModal,
-];
 
 const fetchNamespaceMetrics = () => {
   const metrics = [
@@ -360,7 +355,7 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
         cell: <LabelList kind="Namespace" labels={labels} />,
       },
       [namespaceColumnInfo[9].id]: {
-        cell: <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />,
+        cell: <LazyActionMenu context={{ [referenceForModel(NamespaceModel)]: ns }} />,
         props: {
           ...actionsCellProps,
         },
@@ -491,8 +486,6 @@ export const NamespacesPage = (props) => {
     />
   );
 };
-
-export const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
 const projectColumnManagementID = referenceForModel(ProjectModel);
 
@@ -674,7 +667,7 @@ const getProjectDataViewRows = (
         cell: <LabelList labels={labels} kind="Project" />,
       },
       [projectColumnInfo[9].id]: {
-        cell: <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />,
+        cell: <LazyActionMenu context={{ [referenceForModel(ProjectModel)]: project }} />,
         props: {
           ...actionsCellProps,
         },
@@ -1134,23 +1127,37 @@ const RolesPage = ({ obj: { metadata } }) => {
   );
 };
 
-export const NamespacesDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={nsMenuActions}
-    pages={[
-      navFactory.details(NamespaceDetails),
-      navFactory.editYaml(),
-      navFactory.roles(RolesPage),
-    ]}
-  />
-);
+export const NamespacesDetailsPage = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={referenceForModel(NamespaceModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(NamespaceModel)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
+      pages={[
+        navFactory.details(NamespaceDetails),
+        navFactory.editYaml(),
+        navFactory.roles(RolesPage),
+      ]}
+    />
+  );
+};
 
 export const ProjectsDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
-      menuActions={projectMenuActions}
+      kind={referenceForModel(ProjectModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(ProjectModel)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={[
         {
           href: '',

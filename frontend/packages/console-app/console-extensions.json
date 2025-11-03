@@ -450,28 +450,28 @@
       "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
     }
   },
-      {
-      "type": "console.action/resource-provider",
-      "properties": {
-        "model": {
-          "version": "v1",
-          "kind": "ClusterRoleBinding",
-          "group": "rbac.authorization.k8s.io"
-        },
-        "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
-      }
-    },
-    {
-      "type": "console.action/resource-provider",
-      "properties": {
-        "model": {
-          "version": "v1",
-          "kind": "Build",
-          "group": "build.openshift.io"
-        },
-        "provider": { "$codeRef": "buildProvider.useBuildActionsProvider" }
-      }
-    },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "ClusterRoleBinding",
+        "group": "rbac.authorization.k8s.io"
+      },
+      "provider": { "$codeRef": "bindingProvider.useBindingActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Build",
+        "group": "build.openshift.io"
+      },
+      "provider": { "$codeRef": "buildProvider.useBuildActionsProvider" }
+    }
+  },
   {
     "type": "console.action/resource-provider",
     "properties": {
@@ -1308,6 +1308,305 @@
       }
     },
     "flags": { "required": ["OPENSHIFT_BUILD"] }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "BuildConfig"
+      },
+      "provider": { "$codeRef": "buildConfigProvider.useBuildConfigActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "project.openshift.io",
+        "version": "v1",
+        "kind": "Project"
+      },
+      "provider": { "$codeRef": "projectProvider.useProjectActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "Namespace"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OAuth"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "version": "v1",
+        "kind": "VolumeSnapshotContent"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "Role"
+      },
+      "provider": { "$codeRef": "roleProvider.useRoleActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "ClusterRole"
+      },
+      "provider": { "$codeRef": "roleProvider.useRoleActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "ConfigMap"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machine.openshift.io",
+        "version": "v1",
+        "kind": "ControlPlaneMachineSet"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apiextensions.k8s.io",
+        "version": "v1",
+        "kind": "CustomResourceDefinition"
+      },
+      "provider": {
+        "$codeRef": "customResourceDefinitionProvider.useCustomResourceDefinitionActionsProvider"
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "autoscaling",
+        "version": "v2",
+        "kind": "HorizontalPodAutoscaler"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStreamTag"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "image.openshift.io",
+        "version": "v1",
+        "kind": "ImageStream"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "autoscaling.openshift.io",
+        "version": "v1beta1",
+        "kind": "MachineAutoscaler"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machineconfiguration.openshift.io",
+        "version": "v1",
+        "kind": "MachineConfigPool"
+      },
+      "provider": { "$codeRef": "machineConfigPoolProvider.useMachineConfigPoolActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machineconfiguration.openshift.io",
+        "version": "v1",
+        "kind": "MachineConfig"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machine.openshift.io",
+        "version": "v1beta1",
+        "kind": "MachineHealthCheck"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machine.openshift.io",
+        "version": "v1beta1",
+        "kind": "Machine"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "PersistentVolume"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "ResourceQuota"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "quota.openshift.io",
+        "version": "v1",
+        "kind": "ClusterResourceQuota"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "quota.openshift.io",
+        "version": "v1",
+        "kind": "AppliedClusterResourceQuota"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "template.openshift.io",
+        "version": "v1",
+        "kind": "TemplateInstance"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "User"
+      },
+      "provider": { "$codeRef": "userProvider.useUserActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "LimitRange"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "ServiceAccount"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "monitoring.coreos.com",
+        "version": "v1",
+        "kind": "ServiceMonitor"
+      },
+      "provider": { "$codeRef": "serviceMonitorProvider.useServiceMonitorActionsProvider" }
+    }
   },
   {
     "type": "console.navigation/resource-ns",

@@ -19,7 +19,6 @@ import {
   ExtensionK8sGroupModel,
 } from '../module/k8s';
 import { DetailsItem } from './utils/details-item';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { kindObj } from './utils/inject';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
@@ -49,8 +48,10 @@ import {
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-
-const { common } = Kebab.factory;
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import { useK8sGet } from './utils/k8s-get-hook';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];
 
@@ -163,6 +164,15 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
   );
 };
 
+const ResourceActionsMenu: React.FC<{ resource: K8sResourceKind; variant: ActionMenuVariant }> = ({
+  resource,
+  variant,
+}) => {
+  const common = useCommonResourceActions(kindObj(referenceFor(resource)), resource);
+  const menuActions = [...common];
+  return <ActionMenu actions={menuActions} variant={variant} />;
+};
+
 const getDataViewRows = (
   data: RowProps<K8sResourceKind, undefined>[],
   columns: ConsoleDataViewColumn<K8sResourceKind>[],
@@ -174,7 +184,6 @@ const getDataViewRows = (
   return data.map(({ obj }) => {
     const { name, namespace, creationTimestamp } = obj.metadata;
     const kind = referenceFor(obj) || kinds[0];
-    const menuActions = [...common];
 
     const hasExtensionActions =
       resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
@@ -212,7 +221,7 @@ const getDataViewRows = (
             {hasExtensionActions ? (
               <LazyActionMenu context={{ [kind]: obj }} />
             ) : (
-              <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+              <ResourceActionsMenu resource={obj} variant={ActionMenuVariant.KEBAB} />
             )}
           </>
         ),
@@ -375,9 +384,22 @@ DefaultPage.displayName = 'DefaultPage';
 
 export const DefaultDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
-  const menuActions = [...common];
-
-  return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
+  const [resource, resourceLoaded, resourceError] = useK8sGet(
+    kindObj(props.kind),
+    props.name,
+    props.namespace,
+  );
+  return (
+    <DetailsPage
+      {...props}
+      customActionMenu={
+        resourceLoaded && !resourceError ? (
+          <ResourceActionsMenu resource={resource} variant={ActionMenuVariant.DROPDOWN} />
+        ) : null
+      }
+      pages={pages}
+    />
+  );
 };
 DefaultDetailsPage.displayName = 'DefaultDetailsPage';
 

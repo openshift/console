@@ -72,7 +72,6 @@ import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';
-import { Kebab } from './utils/kebab';
 import { OwnerReferences } from './utils/owner-references';
 import { ResourceIcon } from './utils/resource-icon';
 import { NodeLink, ResourceLink, resourcePath } from './utils/resource-link';
@@ -170,8 +169,6 @@ const fetchPodMetrics = (namespace: string): Promise<UIActions.PodMetrics> => {
   );
   return Promise.all(promises).then((data: unknown[]) => _.assign({}, ...data));
 };
-
-export const menuActions = [...(Kebab.factory.common || [])];
 
 const tableColumnInfo = [
   { id: 'name' },

@@ -31,6 +31,7 @@ import {
 } from '../utils/headings';
 import { FirehoseResource } from '../utils/types';
 import { KebabAction } from '../utils/kebab';
+import { Action } from '@console/dynamic-plugin-sdk';
 import { K8sKind } from '../../module/k8s/types';
 import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { referenceForExtensionModel } from '../../module/k8s/k8s';
@@ -166,7 +167,7 @@ export type DetailsPageProps = {
   obj?: FirehoseResult<K8sResourceKind>;
   title?: string | JSX.Element;
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
-  menuActions?: KebabAction[] | KebabOptionsCreator;
+  menuActions?: KebabAction[] | Action[] | KebabOptionsCreator;
   buttonActions?: any[];
   createRedirect?: boolean;
   customActionMenu?: ConnectedPageHeadingProps['customActionMenu'];

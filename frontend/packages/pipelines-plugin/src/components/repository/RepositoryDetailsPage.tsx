@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsPageProps, DetailsPage } from '@console/internal/components/factory';
-import { navFactory, Kebab } from '@console/internal/components/utils';
+import { navFactory } from '@console/internal/components/utils';
 import { useTabbedTableBreadcrumbsFor } from '@console/shared';
 import { pipelinesTab } from '../../utils/pipeline-utils';
 import RepositoryDetails from './RepositoryDetails';
@@ -28,7 +28,6 @@ const RepositoryDetailsPage: React.FC<DetailsPageProps> = (props) => {
       {...props}
       breadcrumbsFor={() => breadcrumbs}
       title={props.name}
-      menuActions={Kebab.factory.common}
       pages={[
         navFactory.details(RepositoryDetails),
         navFactory.editYaml(),

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import { KebabAction, navFactory, LoadingBox } from '@console/internal/components/utils';
+import { navFactory, LoadingBox } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ActionMenuVariant, LazyActionMenu } from '@console/shared/src';
 import { PipelineModel } from '../../models';
 import { PipelineKind } from '../../types';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
-import { getPipelineKebabActions } from '../../utils/pipeline-actions';
-import { useMenuActionsWithUserAnnotation } from '../pipelineruns/triggered-by';
 import {
   PipelineDetails,
   PipelineForm,
@@ -16,7 +16,7 @@ import {
   parametersValidationSchema,
 } from './detail-page-tabs';
 import { PipelineDetailsTabProps } from './detail-page-tabs/types';
-import { useDevPipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
+import { useDevPipelinesBreadcrumbsFor } from './hooks';
 import { usePipelineMetricsLevel } from './utils/pipeline-operator';
 import { usePipelineTriggerTemplateNames } from './utils/triggers';
 
@@ -25,13 +25,9 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
   const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj);
   const [, pipelineLoaded, pipelineError] = useK8sGet<PipelineKind>(PipelineModel, name, namespace);
-  const latestPipelineRun = useLatestPipelineRun(name, namespace);
   const badge = usePipelineTechPreviewBadge(namespace);
   const { hasUpdatePermission, queryPrefix, metricsLevel } = usePipelineMetricsLevel(namespace);
 
-  const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
-    getPipelineKebabActions(latestPipelineRun, templateNames.length > 0),
-  );
   if (pipelineLoaded && pipelineError?.response?.status === 404) {
     return <ErrorPage404 />;
   }
@@ -39,7 +35,13 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
     <DetailsPage
       {...props}
       badge={badge}
-      menuActions={augmentedMenuActions}
+      kind={referenceForModel(PipelineModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(PipelineModel)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       customData={{ templateNames, queryPrefix, metricsLevel, hasUpdatePermission }}
       breadcrumbsFor={() => breadcrumbsFor}
       pages={[

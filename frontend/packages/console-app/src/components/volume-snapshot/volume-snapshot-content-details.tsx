@@ -13,11 +13,16 @@ import { DetailsPage, DetailsPageProps } from '@console/internal/components/fact
 import { ResourceSummary } from '@console/internal/components/utils/details-page';
 import { SectionHeading } from '@console/internal/components/utils/headings';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
-import { Kebab } from '@console/internal/components/utils/kebab';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { humanizeBinaryBytes } from '@console/internal/components/utils/units';
-import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal/models';
+import {
+  VolumeSnapshotClassModel,
+  VolumeSnapshotContentModel,
+  VolumeSnapshotModel,
+} from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { volumeSnapshotStatus } from '../../status';
@@ -115,8 +120,14 @@ const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => 
   return (
     <DetailsPage
       {...props}
+      kind={referenceForModel(VolumeSnapshotContentModel)}
       getResourceStatus={volumeSnapshotStatus}
-      menuActions={Kebab.factory.common}
+      customActionMenu={(obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(VolumeSnapshotContentModel)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={pages}
     />
   );

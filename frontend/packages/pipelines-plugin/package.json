@@ -24,7 +24,10 @@
       "tasksComponent": "src/components/tasks-index.ts",
       "triggersComponent": "src/components/triggers-index.ts",
       "pacComponent": "src/components/pac/index.ts",
-      "resultsComponent": "src/components/shared/results/index.ts"
+      "resultsComponent": "src/components/shared/results/index.ts",
+      "defaultActionsProvider": "src/utils/default-actions-provider.ts",
+      "pipelineActionsProvider": "src/utils/pipeline-actions-provider.ts",
+      "pipelineRunActionsProvider": "src/utils/pipelineRun-actions-provider.tsx"
     }
   }
 }

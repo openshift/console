@@ -35,7 +35,6 @@ import {
   SectionHeading,
   ConsoleEmptyState,
   ResourceLink,
-  ResourceKebab,
   Kebab,
   ResourceIcon,
   navFactory,
@@ -54,7 +53,7 @@ import {
   UserInfo,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { FLAGS, GreenCheckCircleIcon, Status, useFlag } from '@console/shared';
+import { FLAGS, GreenCheckCircleIcon, LazyActionMenu, Status, useFlag } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   SubscriptionModel,
@@ -161,11 +160,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
 
       {/* Kebab */}
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab
-          actions={Kebab.factory.common}
-          kind={referenceForModel(InstallPlanModel)}
-          resource={obj}
-        />
+        <LazyActionMenu context={{ [referenceForModel(InstallPlanModel)]: obj }} />
       </TableData>
     </>
   );
@@ -547,7 +542,9 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   );
 };
 
-export const InstallPlanDetailsPage: React.FC = (props) => {
+export const InstallPlanDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
+  props,
+) => {
   const params = useParams();
   return (
     <DetailsPage
@@ -561,7 +558,6 @@ export const InstallPlanDetailsPage: React.FC = (props) => {
         // t('olm~Components')
         { href: 'components', nameKey: 'olm~Components', component: InstallPlanPreview },
       ]}
-      menuActions={[...Kebab.factory.common]}
     />
   );
 };

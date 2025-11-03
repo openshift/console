@@ -190,6 +190,9 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.ClusterRoleBindingsDetailsPage,
     ),
   )
+  .set(referenceForModel(RoleBindingModel), () =>
+    import('./RBAC/role' /* webpackChunkName: "role" */).then((m) => m.RoleBindingDetailsPage),
+  )
   .set(referenceForModel(UserModel), () =>
     import('./user' /* webpackChunkName: "user" */).then((m) => m.UserDetailsPage),
   )

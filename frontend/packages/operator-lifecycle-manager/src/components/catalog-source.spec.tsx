@@ -57,7 +57,7 @@ describe(CatalogSourceDetailsPage.displayName, () => {
   beforeEach(() => {
     (useK8sWatchResource as jest.Mock).mockReturnValue([dummyPackageManifest, true, null]);
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default', name: 'some-catalog' });
-    wrapper = shallow(<CatalogSourceDetailsPage />);
+    wrapper = shallow(<CatalogSourceDetailsPage kind={CatalogSourceModel.kind} />);
   });
 
   it('renders `DetailsPage` with correct props', () => {

@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { DetailsPageProps, DetailsPage } from '@console/internal/components/factory';
-import { navFactory, Kebab } from '@console/internal/components/utils';
+import { navFactory } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ActionMenuVariant, LazyActionMenu } from '@console/shared/src';
+import { TaskModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
 import TaskDetails from './TaskDetails';
@@ -13,8 +16,14 @@ const TaskDetailsPage: React.FC<DetailsPageProps> = (props) => {
   return (
     <DetailsPage
       {...props}
+      kind={referenceForModel(TaskModel)}
       badge={badge}
-      menuActions={Kebab.factory.common}
+      customActionMenu={(obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(TaskModel)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       breadcrumbsFor={() => breadcrumbsFor}
       pages={[navFactory.details(TaskDetails), navFactory.editYaml()]}
     />

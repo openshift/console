@@ -2,13 +2,15 @@ import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage } from './factory';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { LoadingBox } from './utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { DASH } from '@console/shared/src/constants/ui';
 import { Grid, GridItem } from '@patternfly/react-core';
 import {
   ConsoleDataView,
@@ -17,10 +19,8 @@ import {
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { DASH } from '@console/shared/src';
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
+import { referenceForModel } from '../module/k8s';
+import { ServiceAccountModel } from '../models';
 
 const kind = 'ServiceAccount';
 
@@ -54,7 +54,7 @@ const getDataViewRows = (data, columns) => {
         cell: <Timestamp timestamp={creationTimestamp} />,
       },
       [tableColumnInfo[4].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={kind} resource={obj} />,
+        cell: <LazyActionMenu context={{ [referenceForModel(ServiceAccountModel)]: obj }} />,
         props: {
           ...actionsCellProps,
         },
@@ -91,7 +91,13 @@ const Details = ({ obj: serviceaccount }) => {
 const ServiceAccountsDetailsPage = (props) => (
   <DetailsPage
     {...props}
-    menuActions={menuActions}
+    kind={referenceForModel(ServiceAccountModel)}
+    customActionMenu={(obj) => (
+      <LazyActionMenu
+        context={{ [referenceForModel(ServiceAccountModel)]: obj }}
+        variant={ActionMenuVariant.DROPDOWN}
+      />
+    )}
     pages={[navFactory.details(Details), navFactory.editYaml()]}
   />
 );

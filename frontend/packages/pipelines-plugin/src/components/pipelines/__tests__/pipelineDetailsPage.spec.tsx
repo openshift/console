@@ -16,9 +16,6 @@ import store from '@console/internal/redux';
 import { PipelineModel } from '../../../models';
 import { pipelineTestData, PipelineExampleNames } from '../../../test-data/pipeline-data';
 import { sampleTektonConfig } from '../../../test-data/tekon-config-data';
-import { PipelineRunKind } from '../../../types';
-import { getPipelineKebabActions } from '../../../utils/pipeline-actions';
-import * as triggerHooksModule from '../../pipelineruns/triggered-by/hooks';
 import * as hookUtils from '../hooks';
 import { MetricsQueryPrefix } from '../pipeline-metrics/pipeline-metrics-utils';
 import PipelineDetailsPage from '../PipelineDetailsPage';
@@ -26,7 +23,6 @@ import * as configUtils from '../utils/pipeline-config';
 import * as operatorUtils from '../utils/pipeline-operator';
 import * as triggerUtils from '../utils/triggers';
 
-const menuActions = jest.spyOn(triggerHooksModule, 'useMenuActionsWithUserAnnotation');
 const breadCrumbs = jest.spyOn(hookUtils, 'usePipelinesBreadcrumbsFor');
 const templateNames = jest.spyOn(triggerUtils, 'usePipelineTriggerTemplateNames');
 const latestPipelineRun = jest.spyOn(hookUtils, 'useLatestPipelineRun');
@@ -58,7 +54,6 @@ jest.mock('react-router-dom-v5-compat', () => ({
 
 type PipelineDetailsPageProps = React.ComponentProps<typeof PipelineDetailsPage>;
 const mockData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
-const pipelineRuns: PipelineRunKind[] = Object.values(mockData.pipelineRuns);
 const {
   metadata: { name: pipelineName, namespace },
 } = mockData.pipeline;
@@ -74,7 +69,6 @@ describe('PipelineDetailsPage:', () => {
       pathname: `k8s/ns/${namespace}/${referenceForModel(PipelineModel)}/${pipelineName}`,
     });
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: namespace });
-    menuActions.mockReturnValue(getPipelineKebabActions(pipelineRuns[0], true));
     breadCrumbs.mockReturnValue([{ label: 'Pipelines' }, { label: 'Pipeline Details' }]);
     templateNames.mockReturnValue([]);
     latestPipelineRun.mockReturnValue(null);
@@ -141,28 +135,5 @@ describe('PipelineDetailsPage:', () => {
     expect(wrapper.find(DetailsPage).props().customData.queryPrefix).toBe(
       MetricsQueryPrefix.TEKTON,
     );
-  });
-
-  it('should not contain Start last run menu item if the pipeline run is not present', async () => {
-    menuActions.mockReturnValue(getPipelineKebabActions(null, false));
-    const wrapper: ReactWrapper = await renderPipelineDetailsPage();
-    const menuItems: any = wrapper.find(DetailsPage).props().menuActions;
-    const startLastRun = menuItems.find(
-      (menu) =>
-        menu(PipelineModel, mockData.pipeline).labelKey === 'pipelines-plugin~Start last run',
-    );
-    expect(startLastRun).toBeUndefined();
-  });
-
-  it('should contain Start last run menu item if the pipeline run is present', async () => {
-    menuActions.mockReturnValue(getPipelineKebabActions(pipelineRuns[0], false));
-    const wrapper: ReactWrapper = await renderPipelineDetailsPage();
-
-    const menuItems: any = wrapper.find(DetailsPage).props().menuActions;
-    const startLastRun = menuItems.find(
-      (menu) =>
-        menu(PipelineModel, mockData.pipeline).labelKey === 'pipelines-plugin~Start last run',
-    );
-    expect(startLastRun).toBeDefined();
   });
 });

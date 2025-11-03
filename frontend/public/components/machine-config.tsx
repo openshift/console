@@ -31,7 +31,6 @@ import { MachineConfigKind, referenceForModel } from '../module/k8s';
 import { MachineConfigModel } from '../models';
 import { DetailsPage, ListPage } from './factory';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { LoadingBox } from './utils/status-box';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
@@ -39,9 +38,10 @@ import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
-const machineConfigMenuActions = [...Kebab.factory.common];
 
 const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>
@@ -132,7 +132,12 @@ export const MachineConfigDetailsPage: React.FCC<any> = (props) => {
     <DetailsPage
       {...props}
       kind={machineConfigReference}
-      menuActions={machineConfigMenuActions}
+      customActionMenu={(obj) => (
+        <LazyActionMenu
+          context={{ [machineConfigReference]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={pages}
     />
   );
@@ -183,13 +188,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind, undefined> = (data, co
         cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
       },
       [tableColumnInfo[5].id]: {
-        cell: (
-          <ResourceKebab
-            actions={machineConfigMenuActions}
-            kind={machineConfigReference}
-            resource={obj}
-          />
-        ),
+        cell: <LazyActionMenu context={{ [machineConfigReference]: obj }} />,
         props: {
           ...actionsCellProps,
         },

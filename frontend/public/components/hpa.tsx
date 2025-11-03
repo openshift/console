@@ -10,11 +10,9 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { HorizontalPodAutoscalerModel } from '../models';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage } from './factory';
 import { DetailsItem } from './utils/details-item';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { LabelList } from './utils/label-list';
 import { LoadingBox } from './utils/status-box';
 import { ResourceLink } from './utils/resource-link';
@@ -33,13 +31,13 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { DASH } from '@console/shared/src/constants/ui';
+import { HorizontalPodAutoscalerModel } from '../models';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = referenceForModel(
   HorizontalPodAutoscalerModel,
 );
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
 
 const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
   <Tr>
@@ -251,14 +249,21 @@ const pages = [
   navFactory.editYaml(),
   navFactory.events(ResourceEventStream),
 ];
-export const HorizontalPodAutoscalersDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    kind={HorizontalPodAutoscalersReference}
-    menuActions={menuActions}
-    pages={pages}
-  />
-);
+export const HorizontalPodAutoscalersDetailsPage: React.FC = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      kind={referenceForModel(HorizontalPodAutoscalerModel)}
+      customActionMenu={(obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(HorizontalPodAutoscalerModel)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
+      pages={pages}
+    />
+  );
+};
 HorizontalPodAutoscalersDetailsPage.displayName = 'HorizontalPodAutoscalersDetailsPage';
 
 const tableColumnInfo = [
@@ -313,11 +318,7 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind, undefined> =
       },
       [tableColumnInfo[6].id]: {
         cell: (
-          <ResourceKebab
-            actions={menuActions}
-            kind={HorizontalPodAutoscalersReference}
-            resource={obj}
-          />
+          <LazyActionMenu context={{ [referenceForModel(HorizontalPodAutoscalerModel)]: obj }} />
         ),
         props: {
           ...actionsCellProps,

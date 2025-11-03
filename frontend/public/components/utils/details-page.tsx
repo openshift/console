@@ -7,7 +7,6 @@ import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpg
 import { useAnnotationsModal } from '@console/shared/src/hooks/useAnnotationsModal';
 import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
 import { DetailsItem } from './details-item';
-import { Kebab } from './kebab';
 import { LabelList } from './label-list';
 import { OwnerReferences } from './owner-references';
 import { ResourceLink } from './resource-link';
@@ -23,6 +22,8 @@ import {
   Toleration,
 } from '../../module/k8s';
 import { configureClusterUpstreamModal } from '../modals';
+import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
+import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
 
 export const pluralize = (
   i: number,
@@ -73,6 +74,9 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
     namespace: metadata.namespace,
   });
   const canUpdate = canUpdateAccess && canUpdateResource;
+  const [modifyTolerationsAction] = useCommonActions(model, resource, [
+    CommonActionCreator.ModifyTolerations,
+  ]);
 
   return (
     <DescriptionList data-test-id="resource-summary">
@@ -122,7 +126,12 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
               iconPosition="end"
               type="button"
               isInline
-              onClick={Kebab.factory.ModifyTolerations(model, resource).callback}
+              onClick={() => {
+                const action = modifyTolerationsAction[CommonActionCreator.ModifyTolerations]?.cta;
+                if (typeof action === 'function') {
+                  action();
+                }
+              }}
               variant="link"
             >
               {t('public~{{count}} toleration', { count: _.size(tolerations) })}

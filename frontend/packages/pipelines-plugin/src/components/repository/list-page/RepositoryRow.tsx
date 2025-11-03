@@ -1,15 +1,10 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import {
-  Kebab,
-  ResourceIcon,
-  ResourceKebab,
-  ResourceLink,
-  resourcePath,
-} from '@console/internal/components/utils';
-import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { ResourceIcon, ResourceLink, resourcePath } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { getLatestRun } from '@console/pipelines-plugin/src/utils/pipeline-augment';
+import { LazyActionMenu } from '@console/shared/src';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PipelineRunModel, RepositoryModel } from '../../../models';
 import {
@@ -99,7 +94,7 @@ const RepositoryRow: React.FC<RowFunctionArgs<RepositoryKind>> = ({ obj, customD
         {pipelineRunDuration(latestRun)}
       </TableData>
       <TableData className={repositoriesTableColumnClasses[8]}>
-        <ResourceKebab actions={Kebab.factory.common} kind={referenceFor(obj)} resource={obj} />
+        <LazyActionMenu context={{ [referenceForModel(RepositoryModel)]: obj }} />
       </TableData>
     </>
   );

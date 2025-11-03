@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, truncateMiddle } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { LazyActionMenu } from '@console/shared/src';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
@@ -14,7 +15,6 @@ import {
 import SignedPipelinerunIcon from '../../images/signed-badge.svg';
 import { PipelineRunModel } from '../../models';
 import { PipelineRunKind, TaskRunKind } from '../../types';
-import { getPipelineRunKebabActions } from '../../utils/pipeline-actions';
 import {
   pipelineRunFilterReducer,
   pipelineRunTitleFilterReducer,
@@ -23,7 +23,6 @@ import { pipelineRunDuration } from '../../utils/pipeline-utils';
 import LinkedPipelineRunTaskStatus from '../pipelineruns/status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../pipelineruns/status/PipelineRunStatus';
 import PipelineRunVulnerabilities from '../pipelineruns/status/PipelineRunVulnerabilities';
-import { ResourceKebabWithUserLabel } from '../pipelineruns/triggered-by';
 import { chainsSignedAnnotation } from '../pipelines/const';
 import { getTaskRunsOfPipelineRun } from '../taskruns/useTaskRuns';
 import {
@@ -62,7 +61,7 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
   const { t } = useTranslation();
   const plrLabels = obj.metadata.labels;
   const plrAnnotations = obj.metadata.annotations;
-  const { operatorVersion, taskRuns, taskRunsLoaded } = customData;
+  const { taskRuns, taskRunsLoaded } = customData;
   const PLRTaskRuns = getTaskRunsOfPipelineRun(taskRuns, obj?.metadata?.name);
   const branchName =
     plrLabels?.[RepositoryAnnotations[RepoAnnotationFields.BRANCH]] ||
@@ -139,10 +138,13 @@ const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({
       <TableData className={tableColumnClasses[6]}>{pipelineRunDuration(obj)}</TableData>
       <TableData className={tableColumnClasses[7]}>{sanitizeBranchName(branchName)}</TableData>
       <TableData className={tableColumnClasses[8]}>
-        <ResourceKebabWithUserLabel
-          actions={getPipelineRunKebabActions(operatorVersion, PLRTaskRuns)}
-          kind={pipelinerunReference}
-          resource={obj}
+        <LazyActionMenu
+          context={{
+            [referenceForModel(PipelineRunModel)]: {
+              obj,
+              taskRuns: PLRTaskRuns,
+            },
+          }}
         />
       </TableData>
     </>
