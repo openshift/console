@@ -48,7 +48,7 @@ import {
   NodeAffinity as NodeAffinityType,
 } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { usePostFormSubmitAction } from '@console/shared/src/hooks/usePostFormSubmitAction';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { ProvidedAPI } from '../../types';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
 import {
@@ -510,7 +510,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   providedAPI,
   next,
 }) => {
-  const postFormCallback = usePostFormSubmitAction();
+  const postFormCallback = useResourceConnectionHandler();
   const { t } = useTranslation();
   const params = useParams();
   const immutableFormData = Immutable.fromJS(formData);

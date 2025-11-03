@@ -17,7 +17,7 @@ import { usePacInfo } from '@console/pipelines-plugin/src/components/repository/
 import { createRemoteWebhook } from '@console/pipelines-plugin/src/components/repository/repository-form-utils';
 import { ALL_APPLICATIONS_KEY, usePerspectives, useTelemetry } from '@console/shared';
 import { useToast } from '@console/shared/src/components/toast';
-import { usePostFormSubmitAction } from '@console/shared/src/hooks/usePostFormSubmitAction';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { startBuild as startShipwrightBuild } from '@console/shipwright-plugin/src/api';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import {
@@ -76,7 +76,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   const fireTelemetryEvent = useTelemetry();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
-  const postFormCallback = usePostFormSubmitAction();
+  const postFormCallback = useResourceConnectionHandler();
   const toastContext = useToast();
   const [pac, loaded] = usePacInfo();
   const defaultBuildOption = useDefaultBuildOption();

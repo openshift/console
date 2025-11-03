@@ -28,14 +28,14 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
   WatchK8sResultsObject: {},
 }));
 
-jest.mock('@console/shared/src/hooks/usePostFormSubmitAction', () => ({
-  usePostFormSubmitAction: jest.fn(() => jest.fn()),
+jest.mock('@console/shared/src/hooks/useResourceConnectionHandler', () => ({
+  useResourceConnectionHandler: jest.fn(() => jest.fn()),
 }));
 
 jest.mock('@console/shared/src', () => ({
   ALL_APPLICATIONS_KEY: '',
   usePerspectives: jest.fn(() => []),
-  usePostFormSubmitAction: jest.fn(() => jest.fn()),
+  useResourceConnectionHandler: jest.fn(() => jest.fn()),
 }));
 
 jest.mock('../useUploadJarFormToast', () => ({

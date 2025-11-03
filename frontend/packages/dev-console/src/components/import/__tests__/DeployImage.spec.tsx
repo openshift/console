@@ -18,8 +18,8 @@ jest.mock('react-i18next', () => ({
   withTranslation: () => (Component: React.ComponentType) => Component,
 }));
 
-jest.mock('@console/shared/src/hooks/usePostFormSubmitAction', () => ({
-  usePostFormSubmitAction: () => () => {},
+jest.mock('@console/shared/src/hooks/useResourceConnectionHandler', () => ({
+  useResourceConnectionHandler: () => () => {},
 }));
 
 jest.mock('@console/internal/components/utils/rbac', () => ({

@@ -17,7 +17,7 @@ import {
   useTelemetry,
   useUserSettingsCompatibility,
 } from '@console/shared';
-import { usePostFormSubmitAction } from '@console/shared/src/hooks/usePostFormSubmitAction';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import {
   SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
   SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
@@ -171,7 +171,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
 
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
-  const postFormSubmissionCallback = usePostFormSubmitAction<K8sResourceCommon>();
+  const postFormSubmissionCallback = useResourceConnectionHandler<K8sResourceCommon>();
   const [errors, setErrors] = React.useState<string[]>(null);
   const [success, setSuccess] = React.useState<string>(null);
   const [initialized, setInitialized] = React.useState(false);

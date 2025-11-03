@@ -8,7 +8,7 @@ import { useQueryParams } from './useQueryParams';
  * Reads an action from the current query params and return a callback to
  * connect a newly created resource to an existing one in the topology view
  */
-export const usePostFormSubmitAction = <
+export const useResourceConnectionHandler = <
   R extends K8sResourceCommon[] | K8sResourceCommon = K8sResourceCommon[]
 >(
   key: string = 'action',

@@ -6,7 +6,7 @@ import { WatchK8sResultsObject, useActivePerspective } from '@console/dynamic-pl
 import { history } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ALL_APPLICATIONS_KEY, usePerspectives } from '@console/shared/src';
-import { usePostFormSubmitAction } from '@console/shared/src/hooks/usePostFormSubmitAction';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { sanitizeApplicationValue } from '@console/topology/src/utils';
 import { BuilderImage } from '../../../utils/imagestream-utils';
 import { getBaseInitialValues } from '../form-initial-values';
@@ -32,7 +32,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
   forApplication,
   contextualSource,
 }) => {
-  const postFormCallback = usePostFormSubmitAction();
+  const postFormCallback = useResourceConnectionHandler();
   const toastCallback = useUploadJarFormToast();
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
