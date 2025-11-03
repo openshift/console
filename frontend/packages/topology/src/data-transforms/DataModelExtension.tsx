@@ -7,14 +7,11 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { referenceForModel, modelForGroupKind } from '@console/internal/module/k8s';
 import { useDeepCompareMemoize } from '@console/shared';
-import { TopologyDataModelFactory } from '../extensions/topology';
 import { useResolvedResources } from '../hooks/useTopologyDataModelFactory';
 import { ModelContext, ExtensibleModel, ModelExtensionContext } from './ModelContext';
 
 interface DataModelExtensionProps {
-  dataModelFactory:
-    | TopologyDataModelFactory['properties']
-    | DynamicTopologyDataModelFactory['properties'];
+  dataModelFactory: DynamicTopologyDataModelFactory['properties'];
 }
 
 /**
@@ -49,12 +46,9 @@ const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactor
   const dataModelContext = useContext<ExtensibleModel>(ModelContext);
   const { id, priority, resources: rawResources } = dataModelFactory;
   const workloadKeys = useDeepCompareMemoize(dataModelFactory.workloadKeys);
-  const { resolved: resolvedResources, isGeneric } = useResolvedResources(
-    rawResources,
-    dataModelContext.namespace,
-  );
+  const { resolved: resolvedResources, isGeneric } = useResolvedResources(rawResources);
 
-  // Convert WatchK8sResourcesGeneric to WatchK8sResources if needed
+  // Convert WatchK8sResourcesGeneric to WatchK8sResources
   const finalResources = useMemo<WatchK8sResources<any> | undefined>(() => {
     if (!resolvedResources) {
       return undefined;
@@ -79,7 +73,7 @@ const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactor
       return converted;
     }
 
-    // Already in the correct format
+    // Should not reach here as isGeneric is always true now
     return resolvedResources as WatchK8sResources<any>;
   }, [resolvedResources, isGeneric, dataModelContext.namespace]);
 
