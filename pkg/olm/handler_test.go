@@ -22,10 +22,10 @@ func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 		items := []ConsoleCatalogItem{{Name: "test-item"}}
 		lastModified := time.Now()
 		c := cache.New(5*time.Minute, 10*time.Minute)
-		c.Set("test-catalog", items, cache.NoExpiration)
+		c.Set("olm:catalog:test-catalog:items", items, cache.NoExpiration)
 		service := NewCatalogService(&http.Client{}, nil, c)
 		service.LastModified = lastModified.UTC().Format(http.TimeFormat)
-		service.index["test-catalog"] = "test-catalog"
+		service.index["test-catalog"] = struct{}{}
 
 		handler := NewOLMHandler("", nil, service)
 
@@ -57,8 +57,3 @@ func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 		assert.Equal(t, http.StatusNotModified, rr.Code)
 	})
 }
-
-// Note: Testing checkPackageManifestHandler and operandsListHandler is complex
-// due to their dependencies on a live Kubernetes cluster and other external services.
-// Mocking these dependencies is possible but would require a significant amount of setup.
-// For the purpose of this exercise, we'll focus on the simpler handlers.
