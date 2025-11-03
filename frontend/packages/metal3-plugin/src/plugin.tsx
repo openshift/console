@@ -6,11 +6,6 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import {
   DashboardsOverviewInventoryItem,
   Plugin,
-  ResourceListPage,
-  ResourceDetailsPage,
-  RoutePage,
-  ModelFeatureFlag,
-  ModelDefinition,
   DashboardsOverviewResourceActivity,
   DashboardsOverviewInventoryItemReplacement,
   DashboardsInventoryItemGroup,
@@ -37,15 +32,10 @@ import { getHostPowerStatus, hasPowerManagement, isDetached } from './selectors'
 import { BareMetalHostKind } from './types';
 
 type ConsumedExtensions =
+  | CustomFeatureFlag
+  | DashboardsInventoryItemGroup
   | DashboardsOverviewInventoryItem
   | DashboardsOverviewInventoryItemReplacement
-  | DashboardsInventoryItemGroup
-  | ResourceListPage
-  | ResourceDetailsPage
-  | RoutePage
-  | ModelFeatureFlag
-  | ModelDefinition
-  | CustomFeatureFlag
   | DashboardsOverviewResourceActivity;
 
 const METAL3_FLAG = 'METAL3';
