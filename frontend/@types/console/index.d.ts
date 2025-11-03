@@ -83,7 +83,7 @@ declare interface Window {
   store?: {}; // Redux store, only available in development builds for debugging
   pluginStore?: {}; // Console plugin store
   loadPluginEntry?: Function; // Console plugin entry callback, used to load dynamic plugins
-  webpackSharedScope?: {}; // webpack shared scope object, contains modules shared across plugins
+  webpackSharedScope?: {}; // webpack shared scope object
   Cypress?: {};
   monaco?: {};
 }

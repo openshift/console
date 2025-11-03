@@ -208,7 +208,7 @@
     "react-svg": "^16.2.0",
     "react-tagsinput": "3.20.x",
     "react-virtualized": "9.x",
-    "redux": "4.0.1",
+    "redux": "^4.0.4",
     "redux-thunk": "2.4.0",
     "reselect": "4.x",
     "sanitize-html": "^2.3.2",
