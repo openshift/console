@@ -23,11 +23,11 @@ import {
 import * as _ from 'lodash';
 import { action } from 'mobx';
 import { connect } from 'react-redux';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import {
-  useResolvedExtensions,
-  isTopologyComponentFactory as isDynamicTopologyComponentFactory,
-  TopologyComponentFactory as DynamicTopologyComponentFactory,
-} from '@console/dynamic-plugin-sdk';
+  isTopologyComponentFactory,
+  TopologyComponentFactory,
+} from '@console/dynamic-plugin-sdk/src/extensions/topology';
 import { RootState } from '@console/internal/redux';
 import {
   useQueryParams,
@@ -37,7 +37,6 @@ import {
 import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
 import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
 import { odcElementFactory } from '../../elements';
-import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
 import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from '../../topology-types';
 import { componentFactory } from './components';
@@ -148,12 +147,9 @@ const Topology: React.FC<
   const storedLayoutApplied = React.useRef<boolean>(false);
   const queryParams = useQueryParams();
   const selectedId = queryParams.get('selectId');
-  const [componentFactoryExtensions, isStaticResolved] = useResolvedExtensions<
+  const [componentFactoryExtensions, extensionsResolved] = useResolvedExtensions<
     TopologyComponentFactory
   >(isTopologyComponentFactory);
-  const [dynamicComponentFactoryExtensions, isDynamicResolved] = useResolvedExtensions<
-    DynamicTopologyComponentFactory
-  >(isDynamicTopologyComponentFactory);
 
   const createVisualization = React.useCallback(() => {
     const storedLayout = topologyLayoutDataJson?.[namespace];
@@ -296,12 +292,12 @@ const Topology: React.FC<
   }, [model, visualization, visualizationReady]);
 
   React.useEffect(() => {
-    if (!isStaticResolved || !isDynamicResolved) {
+    if (!extensionsResolved) {
       return;
     }
 
     visualization.registerComponentFactory(componentFactory);
-    [...componentFactoryExtensions, ...dynamicComponentFactoryExtensions].forEach((factory) => {
+    componentFactoryExtensions.forEach((factory) => {
       visualization.registerComponentFactory(factory.properties.getFactory);
     });
 
@@ -312,13 +308,7 @@ const Topology: React.FC<
       },
     );
     setVisualizationReady(true);
-  }, [
-    visualization,
-    isStaticResolved,
-    isDynamicResolved,
-    componentFactoryExtensions,
-    dynamicComponentFactoryExtensions,
-  ]);
+  }, [visualization, extensionsResolved, componentFactoryExtensions]);
 
   React.useEffect(() => {
     if (!applicationRef.current) {

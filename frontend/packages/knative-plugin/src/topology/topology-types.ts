@@ -1,5 +1,6 @@
+import { PodControllerOverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { OverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { OverviewItem, PodControllerOverviewItem } from '@console/shared/src';
 import { TopologyDataObject } from '@console/topology/src/topology-types';
 import { KnativeItem } from '../utils/get-knative-resources';
 
