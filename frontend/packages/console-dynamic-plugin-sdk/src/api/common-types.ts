@@ -1,5 +1,3 @@
-import { Extension } from '../types';
-
 export type { ResolvedExtension } from '../types';
 
 // Type for extension hook
@@ -221,8 +219,6 @@ export type DiscoveryResources = {
     };
   };
 };
-
-export type AlwaysOnExtension<P extends {} = any> = Omit<Extension<P>, 'flags'>;
 
 export enum PrometheusEndpoint {
   LABEL = 'api/v1/label',
