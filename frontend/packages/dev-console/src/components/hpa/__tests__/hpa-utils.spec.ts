@@ -103,18 +103,15 @@ describe('getYAMLData gets back an hpa structured editor string', () => {
 });
 
 describe('getMetricByType returns an appropriate metric and the index it is at', () => {
-  it('expect no metrics to return a default metric as a new metric on the end', () => {
-    const { metric } = getMetricByType(hpaExamples.noMetrics, 'memory');
-    expect(metric).toBeTruthy();
-    expect(metric.resource.name).toBe('memory');
-    expect(metric.resource.target.averageUtilization).toBe(50);
+  it('expect to return null when HPA has no metrics defined', () => {
+    const { metric, index } = getMetricByType(hpaExamples.noMetrics, 'memory');
+    expect(metric).toBeNull();
+    expect(index).toBe(0);
   });
 
-  it('expect to get back a default memory metric when only cpu metric is available', () => {
+  it('expect to get back no default memory metric when only cpu metric is available', () => {
     const { metric, index } = getMetricByType(hpaExamples.cpuScaled, 'memory');
-    expect(metric).toBeTruthy();
-    expect(metric.resource.name).toBe('memory');
-    expect(metric.resource.target.averageUtilization).toBe(50);
+    expect(metric).toBeNull();
     expect(index).toBe(1);
   });
 
