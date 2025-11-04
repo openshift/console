@@ -3,7 +3,7 @@ import {
   WatchK8sResources,
   WatchK8sResourcesGeneric,
   WatchK8sResource,
-  TopologyDataModelFactory as DynamicTopologyDataModelFactory,
+  TopologyDataModelFactory,
 } from '@console/dynamic-plugin-sdk';
 import { referenceForModel, modelForGroupKind } from '@console/internal/module/k8s';
 import { useDeepCompareMemoize } from '@console/shared';

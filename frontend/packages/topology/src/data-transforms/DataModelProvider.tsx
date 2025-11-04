@@ -28,7 +28,7 @@ const DataModelProvider: React.FC<DataModelProviderProps> = ({ namespace, childr
     <ModelContext.Provider value={model}>
       {namespace && (
         <>
-          {dynamicModelFactories.map((factory) => (
+          {modelFactories.map((factory) => (
             <DataModelExtension key={factory.properties.id} dataModelFactory={factory.properties} />
           ))}
         </>
