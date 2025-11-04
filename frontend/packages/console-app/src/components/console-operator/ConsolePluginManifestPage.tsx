@@ -12,10 +12,10 @@ export const ConsolePluginManifestPage: React.FC<PageComponentProps> = ({ obj })
   const pluginStore = usePluginStore();
   const pluginName = React.useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
-  const pluginManifest = React.useMemo(() => pluginStore.getDynamicPluginManifest(pluginName), [
-    pluginStore,
-    pluginName,
-  ]);
+  const pluginManifest = React.useMemo(
+    () => (pluginName ? pluginStore.getDynamicPluginManifest(pluginName) : undefined),
+    [pluginStore, pluginName],
+  );
 
   const manifestJson = React.useMemo(() => {
     return pluginManifest ? JSON.stringify(pluginManifest, null, 2) : '';

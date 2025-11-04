@@ -207,7 +207,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
 
   const compare = React.useCallback<Comparator<ConsolePluginTableRow>>(
     (a, b) => {
-      const { index, direction } = sortBy;
+      const { index = 0, direction } = sortBy;
       const { id } = columns[index];
       const desc = direction === SortByDirection.desc;
       const left = (desc ? b : a)[id];
@@ -256,7 +256,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
           <Thead>
             <Tr>
               {columns.map(({ id, name, sortable }, columnIndex) => (
-                <Th key={id} sort={sortable ? { sortBy, onSort, columnIndex } : null}>
+                <Th key={id} sort={sortable ? { sortBy, onSort, columnIndex } : undefined}>
                   {name}
                 </Th>
               ))}
@@ -343,7 +343,7 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
         .find((i) => i?.pluginName === pluginName);
       if (loadedPluginInfo) {
         return {
-          name: plugin?.metadata?.name,
+          name: pluginName,
           version: loadedPluginInfo?.metadata?.version,
           description: loadedPluginInfo?.metadata?.customProperties?.console?.description,
           enabled,
@@ -352,9 +352,9 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
         };
       }
       return {
-        name: plugin?.metadata?.name,
+        name: pluginName,
         enabled,
-        status: notLoadedPluginInfo?.status,
+        status: notLoadedPluginInfo?.status || 'Pending',
         errorMessage:
           notLoadedPluginInfo?.status === 'Failed' ? notLoadedPluginInfo?.errorMessage : undefined,
         errorCause:
@@ -416,7 +416,7 @@ export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
 };
 
 export type ConsolePluginTableRow = {
-  name: string;
+  name?: string;
   version?: string;
   description?: string;
   status: DynamicPluginInfo['status'];
@@ -442,7 +442,7 @@ type ConsolePluginStatusProps = {
 };
 
 type ConsolePluginEnabledStatusProps = {
-  pluginName: string;
+  pluginName?: string;
   enabled: boolean;
 };
 
