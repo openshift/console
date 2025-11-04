@@ -12,6 +12,7 @@ import {
   GetTopologyNodeItem,
   GetWorkloadResources,
   MergeGroup,
+  OverviewItem,
 } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { Alerts } from '@console/internal/components/monitoring/types';
@@ -28,7 +29,7 @@ import {
   TYPE_EVENT_SOURCE_KAFKA,
   TYPE_KNATIVE_REVISION,
 } from '@console/knative-plugin/src/topology/const';
-import { isKnativeServing, OverviewItem } from '@console/shared';
+import { isKnativeServing } from '@console/shared/src/utils/pod-utils';
 import { returnIfValidURL } from '@console/shared/src/utils/utils';
 import {
   TYPE_APPLICATION_GROUP,

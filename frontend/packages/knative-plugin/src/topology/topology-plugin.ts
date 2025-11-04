@@ -1,6 +1,6 @@
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { Plugin } from '@console/plugin-sdk';
-import { TopologyDataModelFactory } from '@console/topology/src/extensions';
+import { TopologyDataModelFactory } from '@console/topology/src/extensions/topology';
 import {
   FLAG_CAMEL_KAMELETS,
   FLAG_KNATIVE_EVENTING,

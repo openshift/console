@@ -18,6 +18,7 @@ table in [Console dynamic plugins README](./README.md).
 - Begin alignment of plugin SDK types with `@openshift/dynamic-plugin-sdk` ([CONSOLE-3769], [#15509])
 - Add optional `fetch` property to extension `console.dashboards/overview/health/url` ([CONSOLE-4796], [#15526])
 - Add optional `infrastructure` parameter to `PrometheusHealthHandler` type ([CONSOLE-4796], [#15526])
+- Allow `K8sResourceKind` in `TopologyDataObject`, `TopologyResourcesObject`, and `OverviewItem` types ([CONSOLE-4840], [#15699])
 
 ## 4.20.0-prerelease.1 - 2025-08-15
 
@@ -195,3 +196,4 @@ table in [Console dynamic plugins README](./README.md).
 [#15509]: https://github.com/openshift/console/pull/15509
 [#15526]: https://github.com/openshift/console/pull/15526
 [#15671]: https://github.com/openshift/console/pull/15671
+[#15699]: https://github.com/openshift/console/pull/15699
