@@ -435,7 +435,7 @@ export const getSinkableResources = (namespace: string): FirehoseResource[] => {
     : [];
 };
 
-export const getKnativeEventingResources = async () => {
+export const getKnativeEventingResources = async (): Promise<WatchK8sResourcesGeneric> => {
   // Fetch dynamic event sources and channels at runtime
   const eventSourceModels = await fetchEventSourcesCrd();
   const eventingChannels = await fetchChannelsCrd();
@@ -447,7 +447,7 @@ export const getKnativeEventingResources = async () => {
       opts: { isList: true, optional: true, namespaced: true },
     };
     return acc;
-  }, {} as WatchK8sResourcesGeneric);
+  }, {});
 
   const dynamicChannels = eventingChannels.reduce((acc, model) => {
     const ref = referenceForModel(model);
@@ -456,7 +456,7 @@ export const getKnativeEventingResources = async () => {
       opts: { isList: true, optional: true, namespaced: true },
     };
     return acc;
-  }, {} as WatchK8sResourcesGeneric);
+  }, {});
 
   return {
     eventingsubscription: {
