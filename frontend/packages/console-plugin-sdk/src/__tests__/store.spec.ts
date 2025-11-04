@@ -12,7 +12,7 @@ import {
   getGatingFlagNames,
   PluginStore,
 } from '../store';
-import { Extension, ModelDefinition } from '../typings';
+import { Extension } from '../typings';
 
 describe('sanitizeExtension', () => {
   it('sanitizes the flags object for both gated and always-on extensions', () => {
@@ -79,14 +79,14 @@ describe('sanitizeExtension', () => {
       },
     });
 
-    const alwaysOnExtension: ModelDefinition = {
-      type: 'ModelDefinition',
+    const alwaysOnExtension = {
+      type: 'FooExtension',
       properties: {
         models: [PodModel],
       },
     };
     expect(sanitizeExtension(alwaysOnExtension)).toEqual({
-      type: 'ModelDefinition',
+      type: 'FooExtension',
       properties: {
         models: [PodModel],
       },
@@ -199,13 +199,7 @@ describe('isExtensionInUse', () => {
 
 describe('getGatingFlagNames', () => {
   it('returns an array of flag names used for gating given extensions', () => {
-    const extensions: (ModelDefinition | Extension)[] = [
-      {
-        type: 'ModelDefinition',
-        properties: {
-          models: [PodModel],
-        },
-      },
+    const extensions: Extension[] = [
       {
         type: 'Foo',
         properties: {},

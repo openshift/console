@@ -224,17 +224,6 @@ export type DiscoveryResources = {
 
 export type AlwaysOnExtension<P extends {} = any> = Omit<Extension<P>, 'flags'>;
 
-namespace ExtensionProperties {
-  export interface ModelDefinition {
-    /** Additional Kubernetes model definitions to register with Console. */
-    models: K8sModel[];
-  }
-}
-
-export interface ModelDefinition extends AlwaysOnExtension<ExtensionProperties.ModelDefinition> {
-  type: 'ModelDefinition';
-}
-
 export enum PrometheusEndpoint {
   LABEL = 'api/v1/label',
   QUERY = 'api/v1/query',

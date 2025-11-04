@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { act, cleanup, render } from '@testing-library/react';
 import { SDKReducers } from '@console/dynamic-plugin-sdk/src/app';
 import { k8sList, k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import { setPluginStore, k8sWatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { k8sWatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { WatchK8sResources } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResources';
 import { receivedResources } from '../../../actions/k8s';
@@ -191,7 +191,6 @@ describe('Firehose', () => {
 
   beforeEach(() => {
     // Init k8s redux store with just one model
-    setPluginStore({ getExtensions: () => [] });
     store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));
     store.dispatch(
       receivedResources({
@@ -937,7 +936,6 @@ describe('Firehose together with useK8sWatchResources', () => {
 
   beforeEach(() => {
     // Init k8s redux store with just one model
-    setPluginStore({ getExtensions: () => [] });
     store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));
     store.dispatch(
       receivedResources({
