@@ -55,7 +55,8 @@ import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 import { OperandLink } from '../operand/operand-link';
 import { OLMAnnotation } from '../operator-hub';
 import { getClusterServiceVersionPlugins } from '../operator-hub/operator-hub-utils';
-import Timeout = NodeJS.Timeout;
+
+import './uninstall-operator-modal.scss';
 
 const deleteOptions = {
   kind: 'DeleteOptions',
@@ -212,7 +213,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     [uninstallOperator],
   );
 
-  const pollOperands = React.useCallback((): Timeout => {
+  const pollOperands = React.useCallback((): NodeJS.Timeout => {
     const url = `${window.SERVER_FLAGS.basePath}api/olm/list-operands?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
     const interval = setInterval(() => {
       coFetchJSON(url)
@@ -645,7 +646,7 @@ const OperandErrorList: React.FC<OperandErrorListProps> = ({ operandErrors, csvN
       {_.map(operandErrors, (operandError) => (
         <li
           key={operandError.operand.metadata.uid}
-          className="pf-v6-c-list pf-m-plain co-operator-uninstall-alert__list-item"
+          className="pf-v6-c-list pf-m-plain pf-v6-u-pb-sm"
         >
           <OperandLink obj={operandError.operand} csvName={csvName} onClick={cancel} />{' '}
           {operandError.operand.kind}

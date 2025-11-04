@@ -20,6 +20,8 @@ import {
 } from '@console/internal/module/k8s';
 import { MatchExpressions } from './match-expressions';
 
+import './affinity.scss';
+
 enum AffinityRuleType {
   Preferred = 'Preferred',
   Required = 'Required',

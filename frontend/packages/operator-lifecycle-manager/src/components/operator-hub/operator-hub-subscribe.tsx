@@ -5,6 +5,7 @@ import {
   AlertVariant,
   Button,
   Checkbox,
+  Flex,
   FormGroup,
   Grid,
   GridItem,
@@ -1197,7 +1198,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             <Title headingLevel="h4" className="pf-v6-u-mb-sm">
               {t('olm~Provided APIs')}
             </Title>
-            <div className="co-crd-card-row">
+            <Flex className="pf-v6-u-mb-md" gap={{ default: 'gapXl' }}>
               {!providedAPIs.length ? (
                 <span className="pf-v6-u-text-color-subtle">
                   {t('olm~No Kubernetes APIs are provided by this Operator.')}
@@ -1213,7 +1214,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                   />
                 ))
               )}
-            </div>
+            </Flex>
           </GridItem>
         </Grid>
       </PaneBody>
