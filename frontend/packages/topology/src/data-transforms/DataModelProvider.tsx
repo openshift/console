@@ -2,8 +2,8 @@ import * as React from 'react';
 import {
   isTopologyDataModelFactory as isDynamicTopologyDataModelFactory,
   TopologyDataModelFactory as DynamicTopologyDataModelFactory,
+  useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk';
 import DataModelExtension from './DataModelExtension';
 import { ModelContext, ExtensibleModel } from './ModelContext';
 import TopologyDataRetriever from './TopologyDataRetriever';
@@ -20,16 +20,21 @@ const DataModelProvider: React.FC<DataModelProviderProps> = ({ namespace, childr
     setModel(new ExtensibleModel(namespace));
   }, [namespace]);
 
-  const dynamicModelFactories = useExtensions<DynamicTopologyDataModelFactory>(
-    isDynamicTopologyDataModelFactory,
-  );
+  // Use useResolvedExtensions to automatically resolve all CodeRefs in the extensions
+  const [dynamicModelFactories, dynamicResolved] = useResolvedExtensions<
+    DynamicTopologyDataModelFactory
+  >(isDynamicTopologyDataModelFactory);
 
   return (
     <ModelContext.Provider value={model}>
-      {namespace && (
+      {namespace && dynamicResolved && (
         <>
-          {modelFactories.map((factory) => (
-            <DataModelExtension key={factory.properties.id} dataModelFactory={factory.properties} />
+          {dynamicModelFactories.map((factory) => (
+            <DataModelExtension
+              key={factory.properties.id}
+              dataModelFactory={factory.properties}
+              pluginID={factory.pluginID}
+            />
           ))}
         </>
       )}

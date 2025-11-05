@@ -18,8 +18,8 @@ import {
 
 export type ModelExtensionContext = {
   priority: number;
-  resources?: WatchK8sResources<any>;
   workloadKeys?: string[];
+  resources?: WatchK8sResources<any>;
   dataModelGetter?: TopologyDataModelGetter;
   dataModelDepicter?: TopologyDataModelDepicted;
   dataModelReconciler?: TopologyDataModelReconciler;
