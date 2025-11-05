@@ -41,7 +41,7 @@ describe('Visiting other routes', () => {
     },
     {
       path: '/api-explorer',
-      waitFor: () => cy.get('[data-ouia-component-type$="TableRow"]').should('be.visible'),
+      waitFor: () => cy.get('[data-test="data-view-table"]').should('be.visible'),
     },
     {
       path: '/api-resource/ns/default/core~v1~Pod',

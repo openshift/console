@@ -235,7 +235,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
             selected={ai.actionKey === selectedKey}
           />
         ))}
-        <Divider component="li" />
+        <Divider key="action-items-divider" component="li" />
       </>
     );
   }, [actionItems, selectedKey]);
@@ -261,7 +261,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
       }
 
       if (spacerBefore.has(key)) {
-        accRows.push(<Divider component="li" />);
+        accRows.push(<Divider key={`divider-${key}`} component="li" />);
       }
 
       if (headerBefore[key]) {
@@ -358,7 +358,9 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
               <SelectGroup label="Favorites" labelHeadingLevel="h3">
                 {bookmarkRows}
               </SelectGroup>
-              {renderedActionItems || rows.length ? <Divider component="li" /> : null}
+              {renderedActionItems || rows.length ? (
+                <Divider key="bookmarks-divider" component="li" />
+              ) : null}
             </>
           ) : null}
 
