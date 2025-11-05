@@ -56,7 +56,6 @@ describe('PrometheusGraphLink', () => {
   });
 
   it('should not render a link when query is empty', () => {
-    store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
     useActivePerspectiveMock.mockReturnValue(['dev', () => {}]);
 
     renderWithProviders(
@@ -74,33 +73,18 @@ describe('PrometheusGraphLink', () => {
     const testScenarios = [
       {
         perspective: 'admin',
-        canGetNS: false,
-        expectedUrl: '/dev-monitoring/ns/default/metrics?query0=test',
-        description: 'admin perspective with CAN_GET_NS=false',
-      },
-      {
-        perspective: 'admin',
-        canGetNS: true,
-        expectedUrl: '/monitoring/query-browser?query0=test',
-        description: 'admin perspective with CAN_GET_NS=true',
+        expectedUrl: '/monitoring/query-browser?query0=test&namespace=default',
+        description: 'admin perspective graph link',
       },
       {
         perspective: 'dev',
-        canGetNS: false,
-        expectedUrl: '/dev-monitoring/ns/default/metrics?query0=test',
-        description: 'dev perspective with CAN_GET_NS=false',
-      },
-      {
-        perspective: 'dev',
-        canGetNS: true,
-        expectedUrl: '/dev-monitoring/ns/default/metrics?query0=test',
-        description: 'dev perspective with CAN_GET_NS=true',
+        expectedUrl: '/monitoring/query-browser?query0=test&namespace=default',
+        description: 'dev perspective graph link',
       },
     ];
 
-    testScenarios.forEach(({ perspective, canGetNS, expectedUrl, description }) => {
+    testScenarios.forEach(({ perspective, expectedUrl, description }) => {
       it(`should generate correct URL for ${description}`, () => {
-        store.dispatch(setFlag(FLAGS.CAN_GET_NS, canGetNS));
         useActivePerspectiveMock.mockReturnValue([perspective, () => {}]);
 
         renderWithProviders(
