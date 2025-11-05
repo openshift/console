@@ -2,7 +2,6 @@ import { useContext, useRef, useEffect, useMemo } from 'react';
 import {
   WatchK8sResources,
   WatchK8sResourcesGeneric,
-  WatchK8sResource,
   TopologyDataModelFactory,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
@@ -18,46 +17,6 @@ interface DataModelExtensionProps {
   dataModelFactory: ResolvedExtension<TopologyDataModelFactory>['properties'];
   pluginID: string;
 }
-
-/**
- * Converts a single resource from WatchK8sResourcesGeneric format to WatchK8sResource format.
- * This handles the namespace injection and model reference resolution.
- */
-const convertGenericResource = (
-  namespace: string,
-  pluginID: string,
-  resourceKey: string,
-  model?: { group?: string; version?: string; kind: string },
-  opts?: Partial<WatchK8sResource>,
-): WatchK8sResource | null => {
-  if (!model) {
-    return { namespace, ...opts };
-  }
-
-  // If version is provided, use referenceForExtensionModel directly
-  if (model.version && model.group) {
-    const extensionReference = referenceForExtensionModel({
-      group: model.group,
-      version: model.version,
-      kind: model.kind,
-    });
-    return { namespace, kind: extensionReference, ...opts };
-  }
-
-  // Fall back to internal model reference resolution
-  const internalModel = modelForGroupKind(model.group, model.kind);
-  if (!internalModel) {
-    // CRD not found - log warning and skip
-    // eslint-disable-next-line no-console
-    console.warn(
-      `Plugin "${pluginID}": Could not find model (CRD) for group "${model.group}" and kind "${model.kind}" to determine version. Please add a required flag to the extension to suppress this warning. The resource "${resourceKey}" will not be loaded and ignored in the topology view for now.`,
-    );
-    return null;
-  }
-
-  const internalReference = referenceForModel(internalModel);
-  return { namespace, kind: internalReference, ...opts };
-};
 
 const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactory, pluginID }) => {
   const dataModelContext = useContext<ExtensibleModel>(ModelContext);
@@ -82,16 +41,43 @@ const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactor
     const converted: WatchK8sResources<any> = {};
 
     Object.entries(genericResources).forEach(([key, resource]) => {
-      const flattenedResource = convertGenericResource(
-        dataModelContext.namespace,
-        pluginID,
-        key,
-        resource?.model,
-        resource?.opts,
-      );
-      if (flattenedResource) {
-        converted[key] = flattenedResource;
+      const { model, opts } = resource;
+
+      if (!model) {
+        // No model specified, just use opts with namespace
+        converted[key] = { namespace: dataModelContext.namespace, ...opts };
+        return;
       }
+
+      // Convert model to kind reference
+      let kindReference: string | undefined;
+
+      if (model.version && model.group) {
+        // Use referenceForExtensionModel for models with full GVK
+        kindReference = referenceForExtensionModel({
+          group: model.group,
+          version: model.version,
+          kind: model.kind,
+        });
+      } else {
+        // Fall back to internal model reference resolution
+        const internalModel = modelForGroupKind(model.group, model.kind);
+        if (!internalModel) {
+          // CRD not found - log warning and skip
+          // eslint-disable-next-line no-console
+          console.warn(
+            `Plugin "${pluginID}": Could not find model (CRD) for group "${model.group}" and kind "${model.kind}" to determine version. Please add a required flag to the extension to suppress this warning. The resource "${key}" will not be loaded and ignored in the topology view for now.`,
+          );
+          return;
+        }
+        kindReference = referenceForModel(internalModel);
+      }
+
+      converted[key] = {
+        namespace: dataModelContext.namespace,
+        kind: kindReference,
+        ...opts,
+      };
     });
 
     return converted;
