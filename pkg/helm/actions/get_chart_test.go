@@ -248,6 +248,7 @@ func TestGetChartWithTlsData(t *testing.T) {
 				require.NoError(t, err)
 				require.NotNil(t, chart.Metadata)
 				require.Equal(t, chart.Metadata.Name, test.chartName)
+				require.NotEmpty(t, chart.Templates, "Chart must have templates")
 			}
 		})
 	}

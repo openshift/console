@@ -1,9 +1,7 @@
-import { GuidedTour, Plugin, PostFormSubmissionAction } from '@console/plugin-sdk';
-import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
+import { GuidedTour, Plugin } from '@console/plugin-sdk';
 import { getGuidedTour } from './components/guided-tour';
-import { INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
 
-type ConsumedExtensions = GuidedTour | PostFormSubmissionAction;
+type ConsumedExtensions = GuidedTour;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -11,13 +9,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       perspective: 'dev',
       tour: getGuidedTour(),
-    },
-  },
-  {
-    type: 'PostFormSubmissionAction',
-    properties: {
-      type: INCONTEXT_ACTIONS_CONNECTS_TO,
-      callback: doConnectsToBinding,
     },
   },
 ];

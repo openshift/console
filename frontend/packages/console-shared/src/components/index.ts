@@ -20,7 +20,6 @@ export * from './modals';
 export * from './hpa';
 export * from './multi-tab-list';
 export * from './spotlight';
-export * from './custom-resource-list';
 export * from './toast';
 export * from './markdown-extensions';
 export * from './actions';

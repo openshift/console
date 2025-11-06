@@ -5,7 +5,7 @@ Feature: Configure perspectives
 
         Background:
             Given user has logged in as admin user
- 
+
         @regression @manual
         Scenario: Configuring available perspectives: P-01-TC01
             Given user is at cluster YAML of "operator.openshift.io/v1" console
@@ -45,9 +45,8 @@ Feature: Configure perspectives
               And user searches "console"
               And user clicks on cluster
             #   And user selects "operator.openshift.io" console
-              And user selects "Customize" from actions menu
+              And user clicks the "Customize" button in the page heading
               And user selects "Enabled" in the Developer under perspective section of general customisation
              Then user will see Saved alert
               And user refreshes the page to see developer option
               And user will see developer perspective in the perspective switcher
-

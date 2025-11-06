@@ -1,0 +1,37 @@
+$co-affinity-row-margin: 15px;
+
+.co-affinity-term {
+  border: var(--pf-t--global--border--width--regular) solid
+    var(--pf-t--global--border--color--default);
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  padding: 10px 0 5px 15px;
+}
+
+.co-affinity-term__remove {
+  margin-left: auto !important;
+}
+
+.co-affinity-term__topology {
+  display: flex;
+}
+
+.co-affinity-term__topology-input,
+.co-affinity-term__weight-input {
+  margin-bottom: $co-affinity-row-margin;
+}
+
+.co-affinity-term__topology-input {
+  display: flex;
+  flex-direction: column;
+  padding-right: 15px;
+  width: 100%;
+}
+
+.co-affinity-term__weight-input {
+  display: flex;
+  flex-direction: column;
+  padding-right: 20px;
+  width: 100px;
+}

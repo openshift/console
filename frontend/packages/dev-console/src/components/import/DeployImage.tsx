@@ -7,7 +7,8 @@ import { history } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';
 import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
@@ -35,7 +36,7 @@ const DeployImage: React.FC<Props> = ({
   activeApplication,
   contextualSource,
 }) => {
-  const postFormCallback = usePostFormSubmitAction();
+  const postFormCallback = useResourceConnectionHandler();
   const { t } = useTranslation();
   const initialValues: DeployImageFormData = {
     project: {
