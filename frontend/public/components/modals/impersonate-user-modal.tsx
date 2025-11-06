@@ -102,7 +102,7 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
     );
   }, [groupSearchFilter, availableGroups]);
 
-  const handleSelectAll = () => {
+  const handleSelectAll = useCallback(() => {
     if (selectedGroups.length === filteredGroups.length) {
       // If all filtered groups are selected, deselect all
       setSelectedGroups(selectedGroups.filter((g) => !filteredGroups.includes(g)));
@@ -111,26 +111,29 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
       const newSelections = new Set([...selectedGroups, ...filteredGroups]);
       setSelectedGroups(Array.from(newSelections));
     }
-  };
+  }, [selectedGroups, filteredGroups]);
 
-  const handleGroupSelect = (_event: MouseEvent | undefined, value: string | number) => {
-    const group = value as string;
+  const handleGroupSelect = useCallback(
+    (_event: MouseEvent | undefined, value: string | number) => {
+      const group = value as string;
 
-    // Handle "Select all" option
-    if (group === SELECT_ALL_KEY) {
-      handleSelectAll();
-      return;
-    }
+      // Handle "Select all" option
+      if (group === SELECT_ALL_KEY) {
+        handleSelectAll();
+        return;
+      }
 
-    if (selectedGroups.includes(group)) {
-      // Deselect if already selected
-      setSelectedGroups(selectedGroups.filter((g) => g !== group));
-    } else {
-      // Add to selection
-      setSelectedGroups([...selectedGroups, group]);
-    }
-    // Keep dropdown open - don't call setIsGroupSelectOpen(false)
-  };
+      if (selectedGroups.includes(group)) {
+        // Deselect if already selected
+        setSelectedGroups(selectedGroups.filter((g) => g !== group));
+      } else {
+        // Add to selection
+        setSelectedGroups([...selectedGroups, group]);
+      }
+      // Keep dropdown open - don't call setIsGroupSelectOpen(false)
+    },
+    [selectedGroups, handleSelectAll],
+  );
 
   const handleGroupRemove = (groupToRemove: string) => {
     setSelectedGroups(selectedGroups.filter((g) => g !== groupToRemove));
