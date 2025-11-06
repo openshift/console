@@ -121,33 +121,36 @@ export const ConnectedPageHeading = connectToModel(
       {},
     );
 
-    const actions = hasExtensionActions ? (
-      <LazyActionMenu
-        context={{ [kind]: data }}
-        variant={ActionMenuVariant.DROPDOWN}
-        label={t('public~Actions')}
-      />
-    ) : (
-      <>
-        {hasButtonActions && hasData && (
-          <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-        )}
+    const actions =
+      hasExtensionActions && !_.isFunction(customActionMenu) ? (
+        <LazyActionMenu
+          context={{ [kind]: data }}
+          variant={ActionMenuVariant.DROPDOWN}
+          label={t('public~Actions')}
+        />
+      ) : (
+        <>
+          {hasButtonActions && hasData && (
+            <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+          )}
 
-        {hasMenuActions && hasData && (
-          <ActionListItem>
-            <ActionsMenu
-              actions={
-                _.isFunction(menuActions)
-                  ? menuActions(kindObj, data, extraResources, customData)
-                  : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-              }
-            />
-          </ActionListItem>
-        )}
+          {hasMenuActions && hasData && (
+            <ActionListItem>
+              <ActionsMenu
+                actions={
+                  _.isFunction(menuActions)
+                    ? menuActions(kindObj, data, extraResources, customData)
+                    : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+                }
+              />
+            </ActionListItem>
+          )}
 
-        {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
-      </>
-    );
+          {_.isFunction(customActionMenu)
+            ? customActionMenu(kindObj, data, extraResources)
+            : customActionMenu}
+        </>
+      );
 
     return (
       <PageHeading
@@ -236,7 +239,11 @@ export type ConnectedPageHeadingProps = Omit<PageHeadingProps, 'primaryAction'> 
   /** Renders a custom action menu if the `obj` prop is passed with `data` */
   customActionMenu?:
     | React.ReactNode
-    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode);
+    | ((
+        kindObj: K8sKind,
+        obj: K8sResourceKind,
+        extraResources?: { [prop: string]: K8sResourceKind | K8sResourceKind[] },
+      ) => React.ReactNode);
   customData?: any;
   getResourceStatus?: (resource: K8sResourceKind) => string;
   kind?: K8sResourceKindReference;
