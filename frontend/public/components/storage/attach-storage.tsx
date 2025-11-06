@@ -3,7 +3,7 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { useParams } from 'react-router-dom-v5-compat';
 import { Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/shared';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';

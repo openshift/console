@@ -6,7 +6,8 @@ import {
   AccessReviewResourceAttributes,
   checkAccess,
 } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension, useExtensions } from '@console/plugin-sdk/src';
+import { LoadedExtension } from '@console/plugin-sdk/src';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { USERSETTINGS_PREFIX } from '../constants';
 
 const PERSPECTIVE_VISITED_FEATURE_KEY = 'perspective.visited';

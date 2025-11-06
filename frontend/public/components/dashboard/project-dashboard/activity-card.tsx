@@ -11,8 +11,8 @@ import { DashboardItemProps, withDashboardResources } from '../with-dashboard-re
 import { FirehoseResource, FirehoseResult } from '../../utils';
 import { EventModel } from '../../../models';
 import { EventKind, K8sKind } from '../../../module/k8s';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  useExtensions,
   DashboardsOverviewResourceActivity,
   isDashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';

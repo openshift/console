@@ -191,7 +191,7 @@ describe('Firehose', () => {
 
   beforeEach(() => {
     // Init k8s redux store with just one model
-    setPluginStore({ getExtensionsInUse: () => [] });
+    setPluginStore({ getExtensions: () => [] });
     store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));
     store.dispatch(
       receivedResources({
@@ -937,7 +937,7 @@ describe('Firehose together with useK8sWatchResources', () => {
 
   beforeEach(() => {
     // Init k8s redux store with just one model
-    setPluginStore({ getExtensionsInUse: () => [] });
+    setPluginStore({ getExtensions: () => [] });
     store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));
     store.dispatch(
       receivedResources({

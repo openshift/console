@@ -179,7 +179,7 @@ export const k8sWatch = (
 };
 
 interface PluginStore {
-  getExtensionsInUse: () => Extension[];
+  getExtensions: () => Extension[];
 }
 
 let pluginStore: PluginStore;
@@ -221,7 +221,7 @@ const getK8sModels = () => {
     k8sModels = k8sModels.withMutations((map) => {
       const pluginModels = _.flatMap(
         pluginStore
-          .getExtensionsInUse()
+          .getExtensions()
           .filter(isModelDefinition)
           .map((md) => md.properties.models),
       );

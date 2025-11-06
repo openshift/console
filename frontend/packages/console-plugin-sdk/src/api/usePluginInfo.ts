@@ -13,7 +13,7 @@ import { subscribeToDynamicPlugins } from './pluginSubscriptionService';
  *
  * ```ts
  * const Example = () => {
- *   const [pluginInfoEntries, allPluginsProcessed] = useDynamicPluginInfo();
+ *   const [pluginInfoEntries, allPluginsProcessed] = usePluginInfo();
  *   // process plugin entries and render your component
  * };
  * ```
@@ -22,7 +22,7 @@ import { subscribeToDynamicPlugins } from './pluginSubscriptionService';
  *
  * @returns Console dynamic plugin runtime information.
  */
-export const useDynamicPluginInfo = (): [DynamicPluginInfo[], boolean] => {
+export const usePluginInfo = (): [DynamicPluginInfo[], boolean] => {
   const forceRender = useForceRender();
 
   const isMountedRef = useRef(true);
