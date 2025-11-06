@@ -96,7 +96,7 @@ describe('Visiting other routes', () => {
           },
           {
             path: '/k8s/all-namespaces/monitoring.coreos.com~v1~Alertmanager',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/ns/openshift-monitoring/monitoring.coreos.com~v1~Alertmanager/main',
@@ -140,7 +140,7 @@ describe('Test perspective query parameters', () => {
   beforeEach(() => {
     cy.initAdmin();
     cy.visit('/k8s/cluster/projects');
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
     guidedTour.close();
     checkDeveloperPerspective();
   });
