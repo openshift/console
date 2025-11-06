@@ -1,63 +1,78 @@
-import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
-import { Kebab } from '@console/internal/components/utils';
+import { TableColumn } from '@console/internal/module/k8s';
+import { HelmRelease } from '../../../types/helm-types';
 
-export const tableColumnClasses = {
-  revision: '',
-  updated: '',
-  status: 'pf-m-hidden pf-m-visible-on-lg',
-  chartName: 'pf-m-hidden pf-m-visible-on-xl',
-  chartVersion: 'pf-m-hidden pf-m-visible-on-xl',
-  appVersion: 'pf-m-hidden pf-m-visible-on-xl',
-  description: 'pf-m-hidden pf-m-visible-on-xl',
-  kebab: Kebab.columnClass,
-};
+export const tableColumnInfo = [
+  { id: 'revision' },
+  { id: 'updated' },
+  { id: 'status' },
+  { id: 'chartName' },
+  { id: 'chartVersion' },
+  { id: 'appVersion' },
+  { id: 'description' },
+  { id: 'kebab' },
+];
 
-const HelmReleaseHistoryHeader = (t: TFunction) => () => {
+const HelmReleaseHistoryHeader = (t: TFunction): TableColumn<HelmRelease>[] => {
   return [
     {
       title: t('helm-plugin~Revision'),
-      sortField: 'version',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.revision },
+      id: tableColumnInfo[0].id,
+      sort: 'version',
+      props: {
+        modifier: 'nowrap',
+      },
     },
     {
       title: t('helm-plugin~Updated'),
-      sortField: 'info.last_deployed',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.updated },
+      id: tableColumnInfo[1].id,
+      sort: 'info.last_deployed',
+      props: {
+        modifier: 'nowrap',
+      },
     },
     {
       title: t('helm-plugin~Status'),
-      sortField: 'info.status',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.status },
+      id: tableColumnInfo[2].id,
+      sort: 'info.status',
+      props: {
+        modifier: 'nowrap',
+      },
     },
     {
       title: t('helm-plugin~Chart name'),
-      sortField: 'chart.metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.chartName },
+      id: tableColumnInfo[3].id,
+      sort: 'chart.metadata.name',
+      props: {
+        modifier: 'nowrap',
+      },
     },
     {
       title: t('helm-plugin~Chart version'),
-      sortField: 'chart.metadata.version',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.chartVersion },
+      id: tableColumnInfo[4].id,
+      sort: 'chart.metadata.version',
+      props: {
+        modifier: 'nowrap',
+      },
     },
     {
       title: t('helm-plugin~App version'),
-      sortField: 'chart.metadata.appVersion',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.appVersion },
+      id: tableColumnInfo[5].id,
+      sort: 'chart.metadata.appVersion',
+      props: {
+        modifier: 'nowrap',
+      },
     },
     {
       title: t('helm-plugin~Description'),
-      props: { className: tableColumnClasses.description },
+      id: tableColumnInfo[6].id,
+      props: {
+        modifier: 'nowrap',
+      },
     },
     {
       title: '',
-      props: { className: tableColumnClasses.kebab },
+      id: tableColumnInfo[7].id,
     },
   ];
 };

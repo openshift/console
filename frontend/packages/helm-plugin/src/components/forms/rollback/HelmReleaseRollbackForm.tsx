@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { Form, FormGroup } from '@patternfly/react-core';
-import { SortByDirection } from '@patternfly/react-table';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { Table } from '@console/internal/components/factory';
 import { FormFooter, FormHeader, FormBody } from '@console/shared';
 import { HelmRelease, HelmActionConfigType } from '../../../types/helm-types';
 import { helmActionString } from '../../../utils/helm-utils';
-import RevisionListHeader from './RevisionListHeader';
-import RevisionListRow from './RevisionListRow';
+import HelmReleaseHistoryTable from '../../details-page/history/HelmReleaseHistoryTable';
 
 interface HelmReleaseRollbackFormProps {
   releaseName: string;
@@ -18,10 +15,6 @@ interface HelmReleaseRollbackFormProps {
 }
 
 type Props = FormikProps<FormikValues> & HelmReleaseRollbackFormProps;
-
-const getRowProps = (obj) => ({
-  id: obj.revision,
-});
 
 const HelmReleaseRollbackForm: React.FC<Props> = ({
   errors,
@@ -52,7 +45,8 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
   );
 
   return (
-    <Form onSubmit={handleSubmit}>
+    // display block so table horizontal scrolling works
+    <Form onSubmit={handleSubmit} className="pf-v6-u-display-block">
       <FormBody>
         <FormHeader title={title} helpText={formHelpText} />
         <FormGroup
@@ -60,17 +54,7 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
           label={t('helm-plugin~Revision history')}
           isRequired
         >
-          <Table
-            data={releaseHistory}
-            defaultSortField="version"
-            defaultSortOrder={SortByDirection.desc}
-            aria-label={t('helm-plugin~CustomResources')}
-            Header={RevisionListHeader(t)}
-            Row={RevisionListRow}
-            loaded={!!releaseHistory}
-            virtualize
-            getRowProps={getRowProps}
-          />
+          <HelmReleaseHistoryTable releaseHistory={releaseHistory} />
         </FormGroup>
       </FormBody>
       <FormFooter

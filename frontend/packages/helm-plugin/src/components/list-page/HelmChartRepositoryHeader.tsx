@@ -1,44 +1,81 @@
-import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
-import { Kebab } from '@console/internal/components/utils';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { cellIsStickyProps } from '@console/app/src/components/data-view/ConsoleDataView';
+import { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
 
-const HelmChartRepositoryHeader = (t: TFunction) => () => {
-  return [
-    {
-      title: t('helm-plugin~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-    },
-    {
-      title: t('helm-plugin~Display Name'),
-      sortField: 'spec.name',
-      transforms: [sortable],
-    },
-    {
-      title: t('helm-plugin~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-    },
-    {
-      title: t('helm-plugin~Disabled'),
-      sortField: 'spec.disabled',
-      transforms: [sortable],
-    },
-    {
-      title: t('helm-plugin~Repo URL'),
-      sortField: 'spec.connectionConfig.url',
-      transforms: [sortable],
-    },
-    {
-      title: t('helm-plugin~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-    },
-    {
-      title: '',
-      props: { className: Kebab.columnClass },
-    },
-  ];
+export const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'displayName' },
+  { id: 'namespace' },
+  { id: 'disabled' },
+  { id: 'repoUrl' },
+  { id: 'created' },
+  { id: 'kebab' },
+];
+
+const useHelmChartRepositoryColumns = (): TableColumn<K8sResourceKind>[] => {
+  const { t } = useTranslation();
+  return React.useMemo(
+    () => [
+      {
+        title: t('helm-plugin~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Display Name'),
+        id: tableColumnInfo[1].id,
+        sort: 'spec.name',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Namespace'),
+        id: tableColumnInfo[2].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Disabled'),
+        id: tableColumnInfo[3].id,
+        sort: 'spec.disabled',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Repo URL'),
+        id: tableColumnInfo[4].id,
+        sort: 'spec.connectionConfig.url',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('helm-plugin~Created'),
+        id: tableColumnInfo[5].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[6].id,
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+    ],
+    [t],
+  );
 };
 
-export default HelmChartRepositoryHeader;
+export default useHelmChartRepositoryColumns;
