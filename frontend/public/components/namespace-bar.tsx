@@ -4,14 +4,11 @@ import * as _ from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { NamespaceBarProps, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import {
-  ALL_NAMESPACES_KEY,
-  FLAGS,
-  KEYBOARD_SHORTCUTS,
-  NamespaceDropdown,
-  useActiveNamespace,
-  useFlag,
-} from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
+import { FLAGS, KEYBOARD_SHORTCUTS } from '@console/shared/src/constants/common';
+import { NamespaceDropdown } from '@console/shared/src/components/namespace/NamespaceDropdown';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { k8sGet } from '@console/internal/module/k8s';
 import { setFlag } from '../actions/flags';
 import { NamespaceModel, ProjectModel } from '../models';

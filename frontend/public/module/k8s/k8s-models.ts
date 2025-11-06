@@ -4,12 +4,9 @@ import { useSelector } from 'react-redux';
 
 import { getModelExtensionMetadata } from './get-resources';
 import * as staticModels from '../../models';
-import {
-  apiVersionCompare,
-  kindForReference,
-  referenceForModel,
-} from '@console/internal/module/k8s/k8s';
-import { referenceForGroupVersionKind } from './k8s-ref';
+import { apiVersionCompare } from '@console/internal/module/k8s/crd-versions';
+import { kindForReference } from '@console/internal/module/k8s/for-ref';
+import { referenceForModel, referenceForGroupVersionKind } from './k8s-ref';
 import store, { RootState } from '../../redux';
 import { pluginStore } from '../../plugins';
 import { isModelDefinition, LoadedExtension } from '@console/plugin-sdk';
