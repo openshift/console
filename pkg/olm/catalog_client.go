@@ -41,10 +41,7 @@ func (c *CatalogdClient) FetchMetas(catalog string, baseURL string, r *http.Requ
 	}
 
 	query := r.URL.Query()
-	queryParams := ""
-	if len(queryParams) > 0 {
-		queryParams = query.Encode()
-	}
+	queryParams := query.Encode()
 
 	if queryParams != "" {
 		requestURL = fmt.Sprintf("%s?%s", requestURL, queryParams)

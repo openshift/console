@@ -1,4 +1,4 @@
-package server
+package middleware
 
 import (
 	"compress/gzip"
@@ -19,7 +19,7 @@ type HandlerWithUser func(*auth.User, http.ResponseWriter, *http.Request)
 
 // Middleware generates a middleware wrapper for request handlers.
 // Responds with 401 for requests with missing/invalid/incomplete token with verified email address.
-func authMiddleware(authenticator auth.Authenticator, csrfVerifier *csrfverifier.CSRFVerifier, h http.HandlerFunc) http.HandlerFunc {
+func AuthMiddleware(authenticator auth.Authenticator, csrfVerifier *csrfverifier.CSRFVerifier, h http.HandlerFunc) http.HandlerFunc {
 	return csrfVerifier.WithCSRFVerification(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			user, err := authenticator.Authenticate(w, r)
@@ -35,7 +35,7 @@ func authMiddleware(authenticator auth.Authenticator, csrfVerifier *csrfverifier
 	)
 }
 
-func withBearerTokenReview(tokenReviewer *auth.TokenReviewer, h http.HandlerFunc) http.HandlerFunc {
+func WithBearerTokenReview(tokenReviewer *auth.TokenReviewer, h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			authorizationHeader := r.Header.Get("Authorization")
@@ -69,7 +69,7 @@ func withBearerTokenReview(tokenReviewer *auth.TokenReviewer, h http.HandlerFunc
 		})
 }
 
-func allowMethods(methods []string, h http.HandlerFunc) http.HandlerFunc {
+func AllowMethods(methods []string, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		for _, method := range methods {
 			if r.Method == method {
@@ -83,8 +83,8 @@ func allowMethods(methods []string, h http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func allowMethod(method string, h http.HandlerFunc) http.HandlerFunc {
-	return allowMethods([]string{method}, h)
+func AllowMethod(method string, h http.HandlerFunc) http.HandlerFunc {
+	return AllowMethods([]string{method}, h)
 }
 
 type gzipResponseWriter struct {
@@ -103,8 +103,8 @@ func (w *gzipResponseWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
 }
 
-// gzipHandler wraps a http.Handler to support transparent gzip encoding.
-func gzipHandler(h http.Handler) http.HandlerFunc {
+// WithGZIPEncoding wraps a http.Handler to support transparent gzip encoding.
+func WithGZIPEncoding(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Accept-Encoding")
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
@@ -118,7 +118,7 @@ func gzipHandler(h http.Handler) http.HandlerFunc {
 	}
 }
 
-func securityHeadersMiddleware(hdlr http.Handler) http.HandlerFunc {
+func WithSecurityHeaders(hdlr http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Prevent MIME sniffing (https://en.wikipedia.org/wiki/Content_sniffing)
 		w.Header().Set("X-Content-Type-Options", "nosniff")

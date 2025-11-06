@@ -36,7 +36,7 @@ type CatalogService struct {
 	LastModified string
 }
 
-func getCatlogLastModifiedKey(catalog string) string {
+func getCatalogLastModifiedKey(catalog string) string {
 	return keyPrefix + catalog + ":last-modified"
 }
 
@@ -71,7 +71,7 @@ func (s *CatalogService) GetMetas(catalog string, r *http.Request) (*http.Respon
 // Start begins the polling process.
 func (s *CatalogService) UpdateCatalog(catalog string, baseURL string) error {
 	itemsKey := getCatalogItemsKey(catalog)
-	lastModifiedKey := getCatlogLastModifiedKey(catalog)
+	lastModifiedKey := getCatalogLastModifiedKey(catalog)
 	baseURLKey := getCatalogBaseURLKey(catalog)
 	now := time.Now().UTC().Format(http.TimeFormat)
 
@@ -130,7 +130,7 @@ func (s *CatalogService) UpdateCatalog(catalog string, baseURL string) error {
 
 func (s *CatalogService) RemoveCatalog(catalogName string) {
 	itemsKey := getCatalogItemsKey(catalogName)
-	lastModifiedKey := getCatlogLastModifiedKey(catalogName)
+	lastModifiedKey := getCatalogLastModifiedKey(catalogName)
 	baseURLKey := getCatalogBaseURLKey(catalogName)
 	s.cache.Delete(itemsKey)
 	s.cache.Delete(lastModifiedKey)

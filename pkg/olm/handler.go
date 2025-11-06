@@ -12,6 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/klog/v2"
 
+	"github.com/openshift/console/pkg/middleware"
 	"github.com/openshift/console/pkg/serverutils"
 )
 
@@ -30,7 +31,7 @@ func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogSer
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/olm/catalog-items/", o.catalogItemsHandler)
-	mux.HandleFunc("/api/olm/catalogd/metas/{catalogName}", o.catalogdMetasHandler)
+	mux.HandleFunc("/api/olm/catalogd/metas/{catalogName}", middleware.AllowMethod(http.MethodGet, o.catalogdMetasHandler))
 	mux.HandleFunc("/api/olm/list-operands/", o.operandsListHandler)
 	mux.HandleFunc("/api/olm/check-package-manifests/", o.checkPackageManifestHandler)
 	o.mux = mux
