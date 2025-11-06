@@ -264,6 +264,8 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
               placeholder={t('public~Enter a username')}
               data-test="username-input"
               validated={usernameError ? 'error' : 'default'}
+              aria-label={t('public~Username to impersonate')}
+              aria-describedby="username-help-text"
             />
             {usernameError && (
               <FormHelperText>
@@ -299,6 +301,8 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
                 enableFlip: false,
                 direction: 'down',
               }}
+              aria-label={t('public~Select groups to impersonate')}
+              aria-describedby="groups-help-text"
             >
               <SelectList id="impersonate-groups-listbox">
                 {filteredGroups.length === 0 ? (
