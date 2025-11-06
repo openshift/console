@@ -239,6 +239,12 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
             title={t('public~Impersonating a user or group grants you their exact permissions.')}
           />
 
+          {groupsLoadError && (
+            <Alert variant={AlertVariant.danger} isInline title={t('public~Failed to load groups')}>
+              {groupsLoadError.message}
+            </Alert>
+          )}
+
           <FormGroup
             label={
               <>
