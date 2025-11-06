@@ -33,9 +33,41 @@ func contextToHeaders(ctx context.Context, request *http.Request) {
 }
 
 type initPayload struct {
-	ImpersonateUser   string   `json:"Impersonate-User"`
-	ImpersonateGroup  string   `json:"Impersonate-Group"`
-	ImpersonateGroups []string `json:"Impersonate-Groups"`
+	ImpersonateUser  string   `json:"Impersonate-User"`
+	ImpersonateGroup []string `json:"-"` // Populated by UnmarshalJSON
+}
+
+// UnmarshalJSON implements custom unmarshaling to handle Impersonate-Group
+// as either a string (single group) or array (multiple groups)
+func (ip *initPayload) UnmarshalJSON(data []byte) error {
+	type Alias initPayload
+	aux := &struct {
+		ImpersonateGroupRaw json.RawMessage `json:"Impersonate-Group"`
+		*Alias
+	}{
+		Alias: (*Alias)(ip),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	// Handle Impersonate-Group as string or array
+	if len(aux.ImpersonateGroupRaw) > 0 {
+		// Try array first
+		var groups []string
+		if err := json.Unmarshal(aux.ImpersonateGroupRaw, &groups); err == nil {
+			ip.ImpersonateGroup = groups
+		} else {
+			// Try string
+			var group string
+			if err := json.Unmarshal(aux.ImpersonateGroupRaw, &group); err == nil && group != "" {
+				ip.ImpersonateGroup = []string{group}
+			}
+		}
+	}
+
+	return nil
 }
 
 func InitPayload(ctx context.Context, payload json.RawMessage) context.Context {
@@ -49,13 +81,11 @@ func InitPayload(ctx context.Context, payload json.RawMessage) context.Context {
 		if initPayload.ImpersonateUser != "" {
 			headers["Impersonate-User"] = initPayload.ImpersonateUser
 		}
-		// Support both single group (backward compatibility) and multiple groups
-		if len(initPayload.ImpersonateGroups) > 0 {
-			groups := initPayload.ImpersonateGroups
+		// Handle groups (supports both single and multiple groups)
+		if len(initPayload.ImpersonateGroup) > 0 {
+			groups := initPayload.ImpersonateGroup
 			groups = append(groups, "system:authenticated")
 			headers["Impersonate-Group"] = groups
-		} else if initPayload.ImpersonateGroup != "" {
-			headers["Impersonate-Group"] = []string{initPayload.ImpersonateGroup, "system:authenticated"}
 		}
 		ctx = context.WithValue(ctx, HeadersKey, headers)
 	}
