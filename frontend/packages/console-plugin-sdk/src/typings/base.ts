@@ -9,11 +9,6 @@ import {
 export type { ExtensionFlags, Extension, ExtensionTypeGuard, LoadedExtension };
 
 /**
- * An extension that is always effective, regardless of feature flags.
- */
-export type AlwaysOnExtension<P extends {} = any> = Omit<Extension<P>, 'flags'>;
-
-/**
  * From plugin author perspective, a plugin is simply a list of extensions.
  *
  * Plugin metadata is stored in the `package.json` file of the corresponding

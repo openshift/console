@@ -1,15 +1,8 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import {
-  K8sModel,
-  MatchExpression,
-  MatchLabels,
-  ModelDefinition,
-  Selector,
-} from '../../api/common-types';
+import { K8sModel, MatchExpression, MatchLabels, Selector } from '../../api/common-types';
 import { Options } from '../../api/internal-types';
 import { QueryParams, K8sResourceKindReference } from '../../extensions/console-types';
-import { Extension } from '../../types';
 import { k8sBasePath } from './k8s';
 import { getReferenceForModel } from './k8s-ref';
 import { WSFactory, WSOptions } from './ws-factory';
@@ -178,14 +171,10 @@ export const k8sWatch = (
   return new WSFactory(path, wsOptionsUpdated as WSOptions);
 };
 
-interface PluginStore {
-  getExtensions: () => Extension[];
-}
-
-let pluginStore: PluginStore;
-
-export const setPluginStore = (store: PluginStore): void => {
-  pluginStore = store;
+/** @deprecated - This function is now a noop and will be removed in future releases. */
+export const setPluginStore = (store: any) => {
+  // eslint-disable-next-line no-void
+  void store;
 };
 
 const modelKey = (model: K8sModel): string => {
@@ -201,10 +190,6 @@ export const modelsToMap = (
   });
 };
 
-export const isModelDefinition = (e: Extension): e is ModelDefinition => {
-  return e.type === 'ModelDefinition';
-};
-
 /**
  * Contains static resource definitions for Kubernetes objects.
  * Keys are of type `group:version:Kind`, but TypeScript doesn't support regex types (https://github.com/Microsoft/TypeScript/issues/6579).
@@ -215,18 +200,6 @@ const getK8sModels = () => {
   if (!k8sModels) {
     // TODO this was migrated from console and is only used for the fallback API discovery and can likely be removed
     k8sModels = modelsToMap(_.values(staticModels));
-
-    const hasModel = (model: K8sModel) => k8sModels.has(modelKey(model));
-
-    k8sModels = k8sModels.withMutations((map) => {
-      const pluginModels = _.flatMap(
-        pluginStore
-          .getExtensions()
-          .filter(isModelDefinition)
-          .map((md) => md.properties.models),
-      );
-      map.merge(modelsToMap(pluginModels.filter((model) => !hasModel(model))));
-    });
   }
   return k8sModels;
 };

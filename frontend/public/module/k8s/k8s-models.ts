@@ -12,7 +12,7 @@ import {
 import { referenceForGroupVersionKind } from './k8s-ref';
 import store, { RootState } from '../../redux';
 import { pluginStore } from '../../plugins';
-import { isModelDefinition, LoadedExtension } from '@console/plugin-sdk';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import {
   isModelMetadata,
   K8sResourceKindReference,
@@ -44,18 +44,6 @@ let k8sModels;
 const getK8sModels = () => {
   if (!k8sModels) {
     k8sModels = modelsToMap(_.values(staticModels));
-
-    const hasModel = (model: K8sKind) => k8sModels.has(modelKey(model));
-
-    k8sModels = k8sModels.withMutations((map) => {
-      const pluginModels = _.flatMap(
-        pluginStore
-          .getExtensions()
-          .filter(isModelDefinition)
-          .map((md) => md.properties.models),
-      );
-      map.merge(modelsToMap(pluginModels.filter((model) => !hasModel(model))));
-    });
   }
   return k8sModels;
 };

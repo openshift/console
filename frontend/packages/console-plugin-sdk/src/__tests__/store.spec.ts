@@ -4,7 +4,6 @@ import {
   getPluginManifest,
   getExecutableCodeRefMock,
 } from '@console/dynamic-plugin-sdk/src/utils/test-utils';
-import { PodModel } from '@console/internal/models';
 import {
   sanitizeExtension,
   augmentExtension,
@@ -12,10 +11,10 @@ import {
   getGatingFlagNames,
   PluginStore,
 } from '../store';
-import { Extension, ModelDefinition } from '../typings';
+import { Extension } from '../typings';
 
 describe('sanitizeExtension', () => {
-  it('sanitizes the flags object for both gated and always-on extensions', () => {
+  it('sanitizes the flags object for gated extensions', () => {
     expect(
       sanitizeExtension({
         type: 'Foo/Bar',
@@ -76,23 +75,6 @@ describe('sanitizeExtension', () => {
       flags: {
         required: [],
         disallowed: ['foo', 'bar'],
-      },
-    });
-
-    const alwaysOnExtension: ModelDefinition = {
-      type: 'ModelDefinition',
-      properties: {
-        models: [PodModel],
-      },
-    };
-    expect(sanitizeExtension(alwaysOnExtension)).toEqual({
-      type: 'ModelDefinition',
-      properties: {
-        models: [PodModel],
-      },
-      flags: {
-        required: [],
-        disallowed: [],
       },
     });
   });
@@ -199,13 +181,7 @@ describe('isExtensionInUse', () => {
 
 describe('getGatingFlagNames', () => {
   it('returns an array of flag names used for gating given extensions', () => {
-    const extensions: (ModelDefinition | Extension)[] = [
-      {
-        type: 'ModelDefinition',
-        properties: {
-          models: [PodModel],
-        },
-      },
+    const extensions: Extension[] = [
       {
         type: 'Foo',
         properties: {},

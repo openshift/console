@@ -9,10 +9,10 @@ import {
   extensionDiffListener,
 } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import {
-  FeatureFlag as DynamicFeatureFlag,
-  isFeatureFlag as isDynamicFeatureFlag,
-  isModelFeatureFlag as isDynamicModelFeatureFlag,
-  ModelFeatureFlag as DynamicModelFeatureFlag,
+  FeatureFlag,
+  isFeatureFlag,
+  isModelFeatureFlag,
+  ModelFeatureFlag,
   SetFeatureFlag,
 } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
 import { setUser } from '@console/dynamic-plugin-sdk/src/app/core/actions/core';
@@ -148,7 +148,7 @@ export const featureFlagController: SetFeatureFlag = (flag, enabled) => {
   store.dispatch(setFlag(flag, enabled));
 };
 
-subscribeToExtensions<DynamicFeatureFlag>(
+subscribeToExtensions<FeatureFlag>(
   extensionDiffListener((added) => {
     added.forEach((e) => {
       resolveExtension(e)
@@ -161,15 +161,15 @@ subscribeToExtensions<DynamicFeatureFlag>(
         });
     });
   }),
-  isDynamicFeatureFlag,
+  isFeatureFlag,
 );
 
-subscribeToExtensions<DynamicModelFeatureFlag>(
+subscribeToExtensions<ModelFeatureFlag>(
   extensionDiffListener((added, removed) => {
     // The feature reducer can't access state from the k8s reducer, so get the
     // models here and include them in the action payload.
     const models: K8sModel[] = store.getState().k8s.getIn(['RESOURCES', 'models']);
     store.dispatch(updateModelFlags(added, removed, models));
   }),
-  isDynamicModelFeatureFlag,
+  isModelFeatureFlag,
 );
