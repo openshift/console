@@ -21,7 +21,7 @@ import {
 } from '../models';
 import { K8sModel } from '../module/k8s';
 import { referenceForGroupVersionKind, referenceForModel } from '../module/k8s/k8s-ref';
-import { RootState } from '../redux';
+import type { RootState } from '../redux';
 import { ActionType as K8sActionType } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { FeatureState } from '@console/dynamic-plugin-sdk/src/app/features';
 import { FeatureAction, ActionType } from '../actions/flags';

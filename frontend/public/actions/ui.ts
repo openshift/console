@@ -4,11 +4,11 @@ import * as _ from 'lodash-es';
 
 // FIXME(alecmerdler): Do not `import store`
 import store from '../redux';
-import { OverviewItem } from '@console/shared';
+import { OverviewItem } from '@console/shared/src/types/resource';
 import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants';
+} from '@console/shared/src/constants/common';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures } from './features';
