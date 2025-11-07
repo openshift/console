@@ -13,7 +13,7 @@ jest.mock('../utils/async', () => ({
     )}`,
 }));
 
-jest.mock('../utils', () => ({
+jest.mock('../utils/status-box', () => ({
   LoadingBox: () => 'Loading...',
 }));
 

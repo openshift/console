@@ -19,7 +19,7 @@ import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/quest
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
-import { DOC_URL_PODMAN } from './utils';
+import { DOC_URL_PODMAN } from './utils/documentation';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
@@ -31,7 +31,7 @@ import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';

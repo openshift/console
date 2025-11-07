@@ -40,21 +40,15 @@ import {
 } from '../module/k8s';
 import { DetailsPage, ListPage } from './factory';
 import { DASH } from '@console/shared/src/constants';
-import {
-  DetailsItem,
-  Kebab,
-  KebabAction,
-  LoadingBox,
-  LoadingInline,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  Selector,
-  togglePaused,
-  WorkloadPausedAlert,
-} from './utils';
+import { DetailsItem } from './utils/details-item';
+import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
+import { LoadingBox, LoadingInline } from './utils/status-box';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { Selector } from './utils/selector';
+import { togglePaused, WorkloadPausedAlert } from './utils/workload-pause';
 import { ResourceEventStream } from './events';
 import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-settings';
 import { UpToDateMessage } from './cluster-settings/cluster-status';

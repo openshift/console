@@ -1,25 +1,20 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
-import {
-  ActionMenu,
-  ActionMenuVariant,
-  ActionServiceProvider,
-  LazyActionMenu,
-} from '@console/shared';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { useTranslation } from 'react-i18next';
 import { css } from '@patternfly/react-styles';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
-import {
-  DetailsItem,
-  Kebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  detailsPage,
-  navFactory,
-} from './utils';
+import { DetailsItem } from './utils/details-item';
+import { Kebab } from './utils/kebab';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary, detailsPage } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
 import {
   StorageClassResourceKind,
   K8sResourceKind,

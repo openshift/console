@@ -13,17 +13,14 @@ import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/uti
 import { HorizontalPodAutoscalerModel } from '../models';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage } from './factory';
-import {
-  DetailsItem,
-  Kebab,
-  LabelList,
-  LoadingBox,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  navFactory,
-} from './utils';
+import { DetailsItem } from './utils/details-item';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { LabelList } from './utils/label-list';
+import { LoadingBox } from './utils/status-box';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
@@ -35,7 +32,7 @@ import {
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { DASH } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = referenceForModel(
   HorizontalPodAutoscalerModel,

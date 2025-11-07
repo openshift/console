@@ -1,11 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
-import {
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-} from '@console/shared/src/components/actions';
+import { Status } from '@console/shared/src/components/status/Status';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -29,19 +27,14 @@ import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { LoadingBox } from './utils/status-box';
 
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import {
-  AsyncComponent,
-  ContainerTable,
-  DetailsItem,
-  ResourceSummary,
-  SectionHeading,
-  WorkloadPausedAlert,
-  navFactory,
-  RuntimeClass,
-  getDocumentationURL,
-  documentationURLs,
-  isManaged,
-} from './utils';
+import { AsyncComponent } from './utils/async';
+import { ContainerTable } from './utils/container-table';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary, RuntimeClass } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { WorkloadPausedAlert } from './utils/workload-pause';
+import { navFactory } from './utils/horizontal-nav';
+import { getDocumentationURL, documentationURLs, isManaged } from './utils/documentation';
 import { ReplicationControllersPage } from './replication-controller';
 import { WorkloadTableHeader, useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';

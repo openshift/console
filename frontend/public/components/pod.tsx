@@ -70,37 +70,32 @@ import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
+import { AsyncComponent } from './utils/async';
+import { DetailsItem } from './utils/details-item';
+import { Kebab } from './utils/kebab';
+import { OwnerReferences } from './utils/owner-references';
+import { ResourceIcon } from './utils/resource-icon';
+import { NodeLink, ResourceLink, resourcePath } from './utils/resource-link';
+import { ResourceSummary, RuntimeClass } from './utils/details-page';
+import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import {
-  AsyncComponent,
-  DetailsItem,
-  Kebab,
-  NodeLink,
-  OwnerReferences,
-  ResourceIcon,
-  ResourceLink,
-  ResourceSummary,
-  ScrollToTopOnMount,
   formatBytesAsMiB,
   formatCores,
-  SectionHeading,
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
   humanizeCpuCores,
-  navFactory,
   units,
-  LabelList,
-  RuntimeClass,
-  LoadingBox,
-} from './utils';
+} from './utils/units';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { LoadingBox } from './utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PodLogs } from './pod-logs';
-import {
-  Area,
-  Stack,
-  PROMETHEUS_BASE_PATH,
-  PROMETHEUS_TENANCY_BASE_PATH,
-  PrometheusResult,
-} from './graphs';
+import { Area } from './graphs/area';
+import { Stack } from './graphs/stack';
+import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from './graphs/consts';
+import type { PrometheusResult } from './graphs';
 import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
@@ -114,7 +109,6 @@ import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 // t('public~Login is required. Please try again.')
 // t('public~Could not check CSRF token. Please try again.')
 // t('public~Invalid login or password. Please try again.')
-import { resourcePath } from './utils/resource-link';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { sortResourceByValue } from './factory/Table/sort';
 import {
@@ -127,7 +121,7 @@ import {
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { PodTraffic } from './pod-traffic';
-import { RootState } from '../redux';
+import type { RootState } from '../redux';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import {
   ResourceFilters,

@@ -5,15 +5,12 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
 import { LimitRangeModel } from '../models';
 import { DetailsPage, ListPage } from './factory';
-import {
-  Kebab,
-  navFactory,
-  SectionHeading,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  LoadingBox,
-} from './utils';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { navFactory } from './utils/horizontal-nav';
+import { SectionHeading } from './utils/headings';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { LoadingBox } from './utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';

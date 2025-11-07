@@ -7,17 +7,19 @@ import {
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
-import { useClusterVersion, BlueArrowCircleUpIcon, useCanClusterUpgrade } from '@console/shared';
+import { useClusterVersion } from '@console/shared/src/hooks/version';
+import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { getBrandingDetails, MASTHEAD_TYPE, useCustomLogoURL } from './utils/branding';
+import { ReleaseNotesLink } from './utils/release-notes-link';
 import {
-  ReleaseNotesLink,
   ServiceLevel,
   useServiceLevelTitle,
   ServiceLevelText,
   ServiceLevelLoading,
-} from './utils';
+} from './utils/service-level';
 import { k8sVersion } from '../module/status';
 import {
   getClusterID,

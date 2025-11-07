@@ -33,20 +33,18 @@ import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
 import { connectToFlags } from '../reducers/connectToFlags';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import {
-  Loading,
-  ConsoleEmptyState,
-  ResourceIcon,
-  ResourceLink,
-  resourcePathFromModel,
-  TogglePlay,
-} from './utils';
+import { Loading, ConsoleEmptyState } from './utils/status-box';
+import { ResourceIcon } from './utils/resource-icon';
+import { ResourceLink, resourcePathFromModel } from './utils/resource-link';
+import { TogglePlay } from './utils/toggle-play';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventStreamList } from './utils/event-stream';
-import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 

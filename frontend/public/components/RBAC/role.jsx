@@ -19,16 +19,12 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { tableFilters } from '../factory/table-filters';
-import {
-  Kebab,
-  SectionHeading,
-  ConsoleEmptyState,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  resourceListPathFromModel,
-  LoadingBox,
-} from '../utils';
+import { Kebab, ResourceKebab } from '../utils/kebab';
+import { SectionHeading } from '../utils/headings';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
+import { navFactory } from '../utils/horizontal-nav';
+import { ResourceLink, resourceListPathFromModel } from '../utils/resource-link';
+import { LoadingBox } from '../utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';

@@ -58,28 +58,28 @@ import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, sorts } from './factory';
 import { sortResourceByValue } from './factory/Table/sort';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { DetailsItem } from './utils/details-item';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { LabelList } from './utils/label-list';
+import { LoadingInline, LoadingBox } from './utils/status-box';
+import { ResourceIcon } from './utils/resource-icon';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import {
-  DetailsItem,
-  Kebab,
-  LabelList,
-  LoadingInline,
-  ResourceIcon,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
   formatBytesAsMiB,
   formatCores,
   humanizeBinaryBytes,
   humanizeCpuCores,
-  navFactory,
-  useAccessReview,
-  LoadingBox,
-} from './utils';
+} from './utils/units';
+import { navFactory } from './utils/horizontal-nav';
+import { useAccessReview } from './utils/rbac';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
-import { Bar, Area, PROMETHEUS_BASE_PATH } from './graphs';
+import { Bar } from './graphs/bar';
+import { Area } from './graphs/area';
+import { PROMETHEUS_BASE_PATH } from './graphs/consts';
 import { flagPending } from '../reducers/features';
 import { OpenShiftGettingStarted } from './start-guide';
 import { OverviewListPage } from './overview';

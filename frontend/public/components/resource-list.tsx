@@ -1,12 +1,14 @@
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { connectToPlural } from '../kinds';
 import { ErrorPage404 } from './error';
 import { withStartGuide } from './start-guide';
-import { AsyncComponent, LoadingBox } from './utils';
+import { AsyncComponent } from './utils/async';
+import { LoadingBox } from './utils/status-box';
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
 import { getResourceListPages, getResourceDetailsPages } from './resource-pages';
 import {

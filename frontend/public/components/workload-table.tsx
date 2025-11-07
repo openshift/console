@@ -1,13 +1,3 @@
-import * as React from 'react';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
-import { Link } from 'react-router-dom-v5-compat';
-import { K8sResourceKind, referenceForModel } from '../module/k8s';
-import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import { Kebab, LabelList, ResourceLink, resourcePath, Selector } from './utils';
-import { DASH } from '@console/shared/src/constants/ui';
-import { LazyActionMenu } from '@console/shared/src/components/actions';
 import {
   actionsCellProps,
   cellIsStickyProps,
@@ -17,9 +7,22 @@ import {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { DASH } from '@console/shared/src/constants/ui';
+import { css } from '@patternfly/react-styles';
+import { sortable } from '@patternfly/react-table';
+import i18next from 'i18next';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom-v5-compat';
+import { K8sResourceKind, referenceForModel } from '../module/k8s';
+import { Kebab } from './utils/kebab';
+import { LabelList } from './utils/label-list';
+import { ResourceLink, resourcePath } from './utils/resource-link';
+import { Selector } from './utils/selector';
 
 const tableColumnClasses = [
   '',

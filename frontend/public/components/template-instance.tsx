@@ -8,16 +8,12 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, sorts } from './factory';
 import { Conditions } from './conditions';
 import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';
-import {
-  EmptyBox,
-  Kebab,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  LoadingBox,
-} from './utils';
+import { EmptyBox, LoadingBox } from './utils/status-box';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import {
   DescriptionList,
   DescriptionListDescription,

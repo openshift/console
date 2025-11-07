@@ -6,7 +6,7 @@ import {
   MenuToggleElement,
   Tooltip,
 } from '@patternfly/react-core';
-import { history } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils/router';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import {
   ALL_NAMESPACES_KEY,
