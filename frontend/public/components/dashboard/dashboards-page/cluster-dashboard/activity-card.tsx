@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom-v5-compat';
 import { Card, CardHeader, CardTitle, CardFooter, Divider } from '@patternfly/react-core';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { EventModel } from '../../../../models';
-import { FirehoseResource, FirehoseResult } from '../../../utils';
+import { FirehoseResource, FirehoseResult } from '../../../utils/types';
 import { EventKind, K8sKind } from '../../../../module/k8s';
 import ActivityBody, {
   RecentEventsBody,
