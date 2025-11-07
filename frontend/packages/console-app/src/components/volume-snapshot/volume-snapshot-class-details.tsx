@@ -11,7 +11,9 @@ import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { SectionHeading, ResourceSummary, navFactory } from '@console/internal/components/utils';
 import { referenceForModel, VolumeSnapshotClassKind } from '@console/internal/module/k8s';
-import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 const { editYaml, events } = navFactory;

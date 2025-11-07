@@ -20,8 +20,8 @@ import {
 } from '@console/internal/components/utils';
 import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
 import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;
