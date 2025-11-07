@@ -14,7 +14,9 @@ import {
   CardTitle,
 } from '@patternfly/react-core';
 
-import { ONE_HOUR, ONE_MINUTE, Status, usePrometheusGate } from '@console/shared';
+import { ONE_HOUR, ONE_MINUTE } from '@console/shared/src/constants/time';
+import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
