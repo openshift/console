@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sCreate } from '@console/internal/module/k8s';
-import { getRandomChars } from '@console/shared/src/utils';
+import { getRandomChars } from '@console/shared/src/utils/utils';
 import { EventingBrokerModel, EventingTriggerModel, EventingSubscriptionModel } from '../../models';
 import { craftResourceKey, sanitizeResourceName } from './pub-sub-utils';
 import { pubsubValidationSchema } from './pubsub-validation-utils';
