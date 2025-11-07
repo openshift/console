@@ -1,7 +1,7 @@
 /* eslint-disable camelcase, tsdoc/syntax */
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { NavBar } from '@console/internal/components/utils';
+import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import {
