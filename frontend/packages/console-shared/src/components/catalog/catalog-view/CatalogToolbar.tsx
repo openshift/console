@@ -2,6 +2,8 @@ import { forwardRef } from 'react';
 import { Flex, FlexItem, SearchInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { CatalogToolbarItem } from '@console/dynamic-plugin-sdk/src/extensions';
+import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useDebounceCallback } from '@console/shared';
 import { NO_GROUPING } from '../utils/category-utils';
@@ -18,6 +20,7 @@ type CatalogToolbarProps = {
   sortOrder: CatalogSortOrder;
   groupings: CatalogStringMap;
   activeGrouping: string;
+  toolbarExtensions?: ResolvedExtension<CatalogToolbarItem>[];
   onGroupingChange: (grouping: string) => void;
   onSearchKeywordChange: (searchKeyword: string) => void;
   onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
@@ -32,6 +35,7 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
       sortOrder,
       groupings,
       activeGrouping,
+      toolbarExtensions,
       onGroupingChange,
       onSearchKeywordChange,
       onSortOrderChange,
@@ -94,6 +98,14 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
                 />
               </FlexItem>
             )}
+            {toolbarExtensions?.map((extension) => {
+              const Component = extension.properties.component;
+              return (
+                <FlexItem key={extension.uid}>
+                  <Component />
+                </FlexItem>
+              );
+            })}
           </Flex>
           <CatalogPageNumItems>
             {t('console-shared~{{totalItems}} items', { totalItems })}

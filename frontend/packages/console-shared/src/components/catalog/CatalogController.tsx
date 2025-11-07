@@ -43,6 +43,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   loaded,
   loadError,
   catalogExtensions,
+  toolbarExtensions,
   enableDetailsPanel,
   title: defaultTitle,
   description: defaultDescription,
@@ -202,6 +203,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
             filterGroups={filterGroups}
             filterGroupMap={filterGroupMap}
             groupings={groupings}
+            toolbarExtensions={toolbarExtensions}
             renderTile={renderTile}
             hideSidebar={hideSidebar}
             sortFilterGroups={sortFilterGroups}
