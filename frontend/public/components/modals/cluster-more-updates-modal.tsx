@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-import { isClusterExternallyManaged } from '@console/shared';
+import { isClusterExternallyManaged } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import {
   ClusterVersionKind,
   getConditionUpgradeableFalse,
@@ -23,7 +23,7 @@ import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,
 } from '../cluster-settings/cluster-settings';
-import { ReleaseNotesLink } from '../utils';
+import { ReleaseNotesLink } from '../utils/release-notes-link';
 
 export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
   const availableUpdates = getSortedAvailableUpdates(cv);
