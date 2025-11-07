@@ -99,13 +99,29 @@ export type CatalogCategoriesProvider = ExtensionDeclaration<
   }
 >;
 
+/** This extension allows plugins to contribute alert banners to catalog pages. */
+export type CatalogAlert = ExtensionDeclaration<
+  'console.catalog/alert',
+  {
+    /** The catalog ID the alert is for. */
+    catalogId: string;
+    /** The catalog item type for this alert. If not specified, the alert will be displayed for all types. */
+    type?: string;
+    /** The component to render as the alert. */
+    component: CodeRef<React.ComponentType>;
+    /** Priority for this alert. Higher priority alerts are displayed first. Defaults to 0. */
+    priority?: number;
+  }
+>;
+
 export type SupportedCatalogExtensions =
   | CatalogItemType
   | CatalogItemTypeMetadata
   | CatalogItemProvider
   | CatalogItemFilter
   | CatalogItemMetadataProvider
-  | CatalogCategoriesProvider;
+  | CatalogCategoriesProvider
+  | CatalogAlert;
 
 // Type guards
 
@@ -131,6 +147,10 @@ export const isCatalogItemMetadataProvider = (e: Extension): e is CatalogItemMet
 
 export const isCatalogCategoriesProvider = (e: Extension): e is CatalogCategoriesProvider => {
   return e.type === 'console.catalog/categories-provider';
+};
+
+export const isCatalogAlert = (e: Extension): e is CatalogAlert => {
+  return e.type === 'console.catalog/alert';
 };
 
 // Support types

@@ -153,6 +153,7 @@ export const loadingCatalogService: CatalogService = {
       uid: '@console/operator-lifecycle-manager[23]',
     },
   ],
+  alertExtensions: [],
 };
 
 export const loadedCatalogService: CatalogService = {
@@ -771,4 +772,5 @@ export const loadedCatalogService: CatalogService = {
       uid: '@console/operator-lifecycle-manager[23]',
     },
   ],
+  alertExtensions: [],
 };
