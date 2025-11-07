@@ -46,16 +46,12 @@ import {
   StorageClassResourceKind,
   PersistentVolumeClaimKind,
 } from '@console/internal/module/k8s';
-import {
-  getName,
-  getNamespace,
-  Status,
-  isCephProvisioner,
-  getAnnotations,
-  onlyPvcSCs,
-} from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { Status } from '@console/shared/src/components/status/Status';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { getName, getNamespace, getAnnotations } from '@console/shared/src/selectors/common';
+import { onlyPvcSCs } from '@console/shared/src/selectors/storage';
+import { isCephProvisioner } from '@console/shared/src/utils/storage-utils';
 import { AccessModeSelector } from '../../access-modes/access-mode';
 
 import './restore-pvc-modal.scss';
