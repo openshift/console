@@ -6,7 +6,7 @@ import {
   ClusterOperatorObjectReference,
   useModelFinder,
 } from '../../module/k8s';
-import { ResourceLink } from '../utils';
+import { ResourceLink } from '../utils/resource-link';
 import { DASH } from '@console/shared/src/constants';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {

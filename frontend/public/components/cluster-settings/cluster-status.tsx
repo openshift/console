@@ -10,7 +10,7 @@ import {
   BlueInfoCircleIcon,
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
-} from '@console/shared';
+} from '@console/shared/src/components/status/icons';
 import { ClusterVersionModel } from '../../models';
 import {
   ClusterUpdateStatus,
@@ -23,7 +23,8 @@ import {
   K8sResourceConditionStatus,
 } from '../../module/k8s';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { resourcePathFromModel, truncateMiddle } from '../utils';
+import { resourcePathFromModel } from '../utils/resource-link';
+import { truncateMiddle } from '../utils/truncate-middle';
 import { ErrorModal, ErrorModalProps } from '../modals/error-modal';
 
 export const ClusterVersionConditionsLink: React.FC<ClusterVersionConditionsLinkProps> = ({
