@@ -807,6 +807,22 @@ export const StorageClassModel: K8sKind = {
   id: 'storageclass',
 };
 
+export const VolumeAttributesClassModel: K8sKind = {
+  label: 'VolumeAttributesClass',
+  // t('public~VolumeAttributesClass')
+  labelKey: 'public~VolumeAttributesClass',
+  labelPlural: 'VolumeAttributesClasses',
+  // t('public~VolumeAttributesClasses')
+  labelPluralKey: 'public~VolumeAttributesClasses',
+  apiVersion: 'v1',
+  apiGroup: 'storage.k8s.io',
+  plural: 'volumeattributesclasses',
+  abbr: 'VAC',
+  namespaced: false,
+  kind: 'VolumeAttributesClass',
+  id: 'volumeattributesclass',
+};
+
 export const LimitRangeModel: K8sKind = {
   label: 'LimitRange',
   // t('public~LimitRange')

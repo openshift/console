@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { modifyVACModal } from '@console/app/src/components/modals/modify-vac-modal';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { clonePVCModal, expandPVCModal } from '@console/internal/components/modals';
@@ -70,6 +71,17 @@ export const usePVCActions = (
             resource: obj,
           }),
         accessReview: asAccessReview(PersistentVolumeClaimModel, obj, 'create'),
+      }),
+      [PVCActionCreator.ModifyVAC]: () => ({
+        id: 'modify-vac',
+        label: t('console-app~Modify VolumeAttributesClass'),
+        disabled: obj?.status?.phase !== 'Bound',
+        tooltip:
+          obj?.status?.phase !== 'Bound'
+            ? t('console-app~PVC must be Bound to modify VolumeAttributesClass')
+            : '',
+        cta: () => modifyVACModal({ resource: obj }),
+        accessReview: asAccessReview(PersistentVolumeClaimModel, obj, 'patch'),
       }),
       [PVCActionCreator.DeletePVC]: () => ({
         id: 'delete-pvc',

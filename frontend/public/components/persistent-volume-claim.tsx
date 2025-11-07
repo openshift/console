@@ -27,9 +27,14 @@ import {
   LazyActionMenu,
   useFlag,
 } from '@console/shared';
-import { PersistentVolumeClaimKind, referenceFor } from '@console/internal/module/k8s';
+import {
+  PersistentVolumeClaimKind,
+  referenceFor,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Conditions } from './conditions';
+import { VolumeAttributesClassModel } from '../models';
 import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
@@ -155,6 +160,7 @@ const Details: React.FC<PVCDetailsProps> = ({ obj: pvc }) => {
   const namespace = pvc?.metadata?.namespace;
   const labelSelector = pvc?.spec?.selector;
   const storageClassName = pvc?.spec?.storageClassName;
+  const volumeAttributesClassName = pvc?.spec?.volumeAttributesClassName;
   const volumeName = pvc?.spec?.volumeName;
   const storage = pvc?.status?.capacity?.storage;
   const requestedStorage = getRequestedPVCSize(pvc);
@@ -286,6 +292,19 @@ const Details: React.FC<PVCDetailsProps> = ({ obj: pvc }) => {
                 <DescriptionListDescription data-test-id="pvc-storageclass">
                   {storageClassName ? (
                     <ResourceLink kind="StorageClass" name={storageClassName} />
+                  ) : (
+                    '-'
+                  )}
+                </DescriptionListDescription>
+              </DescriptionListGroup>
+              <DescriptionListGroup>
+                <DescriptionListTerm>{t('public~VolumeAttributesClass')}</DescriptionListTerm>
+                <DescriptionListDescription>
+                  {volumeAttributesClassName ? (
+                    <ResourceLink
+                      kind={referenceForModel(VolumeAttributesClassModel)}
+                      name={volumeAttributesClassName}
+                    />
                   ) : (
                     '-'
                   )}

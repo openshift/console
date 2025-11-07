@@ -47,6 +47,8 @@
       "prometheusProvider": "src/actions/providers/prometheus-provider.ts",
       "groupProvider": "src/actions/providers/group-provider.ts",
       "volumeSnapshotProvider": "src/actions/providers/volume-snaphot-provider.ts",
+      "volumeAttributesClassProvider": "src/actions/providers/volumeattributesclass-provider.ts",
+      "vacPlatformSupport": "src/features/vac-platform-support.ts",
       "podProvider": "src/actions/providers/pod-provider.ts",
       "podDisruptionBudgetProvider": "src/actions/providers/pdb-provider.ts",
       "perspectiveStateProvider": "src/actions/providers/perspective-state-provider.ts",
