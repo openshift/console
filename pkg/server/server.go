@@ -140,6 +140,7 @@ type jsGlobals struct {
 	StatuspageID                    string                     `json:"statuspageID"`
 	Telemetry                       serverconfig.MultiKeyValue `json:"telemetry"`
 	ThanosPublicURL                 string                     `json:"thanosPublicURL"`
+	TechPreview                     bool                       `json:"techPreview"`
 	UserSettingsLocation            string                     `json:"userSettingsLocation"`
 	DevConsoleProxyAvailable        bool                       `json:"devConsoleProxyAvailable"`
 }
@@ -170,6 +171,7 @@ type Server struct {
 	CopiedCSVsDisabled                  bool
 	CSRFVerifier                        *csrfverifier.CSRFVerifier
 	CustomLogoFiles                     serverconfig.LogosKeyValue
+	TechPreview                         bool
 	CustomFaviconFiles                  serverconfig.LogosKeyValue
 	CustomProductName                   string
 	DevCatalogCategories                string
@@ -771,6 +773,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		StatuspageID:              s.StatuspageID,
 		Telemetry:                 s.Telemetry,
 		ThanosPublicURL:           s.ThanosPublicURL.String(),
+		TechPreview:               s.TechPreview,
 		UserSettingsLocation:      s.UserSettingsLocation,
 		DevConsoleProxyAvailable:  true,
 	}
