@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { DASH } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
 import { PodDisruptionBudgetKind } from './types';
 
 const AvailabilityDisplay: React.FC<AvailabilityDisplayProps> = ({ pdb }) => {

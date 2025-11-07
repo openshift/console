@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage } from './factory';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
-import { DASH } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   Kebab,
   SectionHeading,

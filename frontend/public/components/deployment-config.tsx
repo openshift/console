@@ -1,6 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Status, ActionServiceProvider, ActionMenu, ActionMenuVariant } from '@console/shared';
+import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
+import {
+  ActionServiceProvider,
+  ActionMenu,
+  ActionMenuVariant,
+} from '@console/shared/src/components/actions';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

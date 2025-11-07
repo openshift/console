@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import {
   ActionServiceProvider,
   ActionMenu,
   ActionMenuVariant,
-  Status,
-  usePrometheusGate,
-} from '@console/shared';
+} from '@console/shared/src/components/actions';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 
 import { DeploymentModel } from '../models';

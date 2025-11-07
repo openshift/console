@@ -12,8 +12,9 @@ import { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-
 import { ResourceLink, Selector } from '@console/internal/components/utils';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { LazyActionMenu, DASH } from '@console/shared';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { DASH } from '@console/shared/src/constants/ui';
 import { PodDisruptionBudgetModel } from '../../models';
 import AvailabilityDisplay from './AvailabilityDisplay';
 import DisruptionsAllowed from './DisruptionsAllowed';

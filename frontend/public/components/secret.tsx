@@ -13,7 +13,8 @@ import {
 } from '../module/k8s';
 import { SecretData } from './configmap-and-secret-data';
 import { SectionHeading, ResourceLink, ResourceSummary, detailsPage, navFactory } from './utils';
-import { ActionMenuVariant, DASH, LazyActionMenu } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
+import { LazyActionMenu, ActionMenuVariant } from '@console/shared/src/components/actions';
 import { SecretType } from './secrets/create-secret/types';
 import { useAddSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';

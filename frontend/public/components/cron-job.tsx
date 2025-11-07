@@ -6,8 +6,8 @@ import {
   ActionMenu,
   ActionMenuVariant,
   LazyActionMenu,
-  DASH,
 } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, ListPageWrapper } from './factory';
 import {

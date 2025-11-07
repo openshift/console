@@ -6,7 +6,8 @@ import { K8sResourceKind, referenceForModel } from '../module/k8s';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { Kebab, LabelList, ResourceLink, resourcePath, Selector } from './utils';
-import { DASH, LazyActionMenu } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
+import { LazyActionMenu } from '@console/shared/src/components/actions';
 import {
   actionsCellProps,
   cellIsStickyProps,
