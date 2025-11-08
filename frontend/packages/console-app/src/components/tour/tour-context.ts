@@ -12,10 +12,11 @@ import { pick, union, isEqual } from 'lodash';
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { getFlagsObject } from '@console/internal/reducers/features';
-import { RootState } from '@console/internal/redux';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { isGuidedTour, GuidedTour } from '@console/plugin-sdk/src/typings/guided-tour';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import {
+  INTERNAL_DO_NOT_USE_isGuidedTour as isGuidedTour,
+  INTERNAL_DO_NOT_USE_GuidedTour as GuidedTour,
+} from '@console/plugin-sdk/src/typings/guided-tour';
 import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { TourActions, TOUR_LOCAL_STORAGE_KEY } from './const';
 import { TourDataType, Step } from './type';
@@ -123,7 +124,7 @@ export const useTourValuesForContext = (): TourContextType => {
   // Uncaught ReferenceError: Cannot access 'allModels' before initialization and this hook is used in plugin extension for ContextProvider
   const [activePerspective] = useActivePerspective();
   const [perspective, setPerspective] = useState<string>(activePerspective);
-  const tourExtension = useExtensions<GuidedTour>(isGuidedTour);
+  const [tourExtension] = useResolvedExtensions<GuidedTour>(isGuidedTour);
   const tour = tourExtension.find(({ properties }) => properties.perspective === perspective);
   const selectorSteps = tour?.properties?.tour?.steps ?? [];
   const flags = useSelector(

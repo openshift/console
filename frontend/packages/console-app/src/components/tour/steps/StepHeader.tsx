@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Title } from '@patternfly/react-core';
 
 type StepHeaderProps = {
-  children: string;
+  children: React.ReactNode;
 };
 
 const StepHeader: React.FCC<StepHeaderProps> = ({ children }) => (

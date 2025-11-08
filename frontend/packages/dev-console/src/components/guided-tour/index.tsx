@@ -1,4 +1,6 @@
+import { ReactNode } from 'react';
 import { ModalVariant } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   finishTourText,
   helpTourText,
@@ -14,12 +16,20 @@ import {
   webTerminalGuidedTourText,
 } from './GuidedTourText';
 
+/** Generate a react node for translation strings */
+const t = (string: string): ReactNode => {
+  const TranslatedString = () => {
+    const { t: tFunction } = useTranslation();
+    return <>{tFunction(string)}</>;
+  };
+  return <TranslatedString />;
+};
+
 const getSelector = (id: string): string => `[data-tour-id="${id}"]`;
 
 export const getGuidedTour = (): TourDataType => ({
   intro: {
-    // t('devconsole~Welcome to the Developer Perspective!')
-    heading: '%devconsole~Welcome to the Developer Perspective!%',
+    heading: t('devconsole~Welcome to the Developer Perspective!'),
     content: devPerspectiveTourText,
     introBannerLight: <GuidedTourIntroBanner />,
     introBannerDark: <GuidedTourIntroBannerDark />,
@@ -28,56 +38,51 @@ export const getGuidedTour = (): TourDataType => ({
   steps: [
     {
       placement: 'right',
-      // t('devconsole~Perspective Switcher')
-      heading: '%devconsole~Perspective Switcher%',
+      heading: t('devconsole~Perspective Switcher'),
       content: perspectiveSwitcherTourText,
       selector: getSelector('tour-perspective-dropdown'),
     },
     {
       placement: 'right',
-      // t('devconsole~Observe')
-      heading: '%devconsole~Observe%',
-      // t('devconsole~Monitor application metrics, create custom metrics queries and view and silence alerts in your project.')
-      content:
-        '%devconsole~Monitor application metrics, create custom metrics queries and view and silence alerts in your project.%',
+      heading: t('devconsole~Observe'),
+      content: t(
+        'devconsole~Monitor application metrics, create custom metrics queries and view and silence alerts in your project.',
+      ),
       selector: getSelector('tour-software-catalog-nav'),
     },
     {
       placement: 'right',
-      // t('devconsole~Search')
-      heading: '%devconsole~Search%',
+      heading: t('devconsole~Search'),
       content: searchTourText,
       selector: getSelector('tour-search-nav'),
     },
     {
       flags: ['DEVWORKSPACE'],
       placement: 'bottom',
-      // t('devconsole~Web Terminal')
-      heading: '%devconsole~Web Terminal%',
+      heading: t('devconsole~Web Terminal'),
       content: webTerminalGuidedTourText,
       selector: getSelector('tour-cloud-shell-button'),
     },
     {
       placement: 'bottom',
-      // t('devconsole~Help')
-      heading: '%devconsole~Help%',
+      heading: t('devconsole~Help'),
       content: helpTourText,
       selector: getSelector('tour-help-button'),
     },
     {
       placement: 'bottom',
-      // t('devconsole~User Preferences')
-      heading: '%devconsole~User Preferences%',
+      heading: t('devconsole~User Preferences'),
       content: userPreferencesTourText,
       selector: getSelector('tour-user-button'),
     },
   ],
   end: {
-    // t('devconsole~You’re ready to go!')
-    heading: '%devconsole~You’re ready to go!%',
+    heading: t('devconsole~You’re ready to go!'),
     content: finishTourText,
     introBannerLight: <GuidedTourIntroBanner />,
     introBannerDark: <GuidedTourIntroBannerDark />,
     modalVariant: ModalVariant.medium,
   },
 });
+
+export default getGuidedTour();

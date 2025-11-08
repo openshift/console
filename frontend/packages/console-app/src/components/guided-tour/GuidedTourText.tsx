@@ -1,9 +1,28 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { Content, ContentVariants } from '@patternfly/react-core';
+import { useTranslation, Trans } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+
+const IntroductionText: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Content component={ContentVariants.p}>
+        {t(
+          'console-app~Introducing a fresh modern look to the console! With this update, we made changes to the user interface to enhance usability and streamline your workflow. This includes improved navigation and visual refinement to help manage your applications and infrastructure more easily.',
+        )}
+      </Content>
+      <Content component={ContentVariants.h6}>
+        {t('console-app~What do you want to do next?')}
+      </Content>
+    </>
+  );
+};
+
+export const introductionText = <IntroductionText />;
 
 const HelpTourText: React.FC = () => {
   const { t } = useTranslation();

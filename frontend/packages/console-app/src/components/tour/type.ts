@@ -7,7 +7,7 @@ export type Step = {
   access?: () => boolean;
   flags?: string[];
   placement?: string;
-  heading: string;
+  heading: StepContentType;
   content: StepContentType;
   selector?: string;
   showStepBadge?: boolean;

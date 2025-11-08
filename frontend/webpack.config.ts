@@ -340,7 +340,7 @@ const config: Configuration = {
 if (CHECK_CYCLES === 'true') {
   new CircularDependencyPreset({
     exclude: /node_modules|public\/dist|\.(gql|html)$/,
-    thresholds: { totalCycles: 21 }, // TODO(CONSOLE-4806): Set threshold to 0
+    thresholds: { totalCycles: 14 }, // TODO(CONSOLE-4806): Set threshold to 0
     reportFile: '.webpack-cycles',
   }).apply(config.plugins);
 }

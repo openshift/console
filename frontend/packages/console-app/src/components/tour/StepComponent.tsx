@@ -8,7 +8,7 @@ import TourStepComponent from './TourStepComponent';
 import { StepContentType } from './type';
 
 type StepComponentProps = {
-  heading: string;
+  heading: StepContentType;
   content: StepContentType;
   selector?: string;
   placement?: string;
