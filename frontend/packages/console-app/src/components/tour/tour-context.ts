@@ -16,7 +16,10 @@ import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useRe
 import {
   INTERNAL_DO_NOT_USE_isGuidedTour as isGuidedTour,
   INTERNAL_DO_NOT_USE_GuidedTour as GuidedTour,
-} from '@console/plugin-sdk/src/typings/guided-tour';
+} from '@console/dynamic-plugin-sdk/src/extensions/guided-tour';
+import { getFlagsObject } from '@console/internal/reducers/features';
+import { RootState } from '@console/internal/redux';
+import { useTranslatedExtensions } from '@console/plugin-sdk/src/utils/useTranslatedExtensions';
 import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { TourActions, TOUR_LOCAL_STORAGE_KEY } from './const';
 import { TourDataType, Step } from './type';
@@ -118,13 +121,24 @@ export const useTourStateForPerspective = (
   ];
 };
 
+/**
+ * Hook to get translated guided tour extensions.
+ *
+ * As the translated strings of format `%namespace~string%` are behind a codeRef,
+ * `useResolvedExtensions` does not translate the extensions.
+ *
+ * `useTranslatedExtensions` utility is only called in `useExtensions`. We do not
+ * have the tour strings at this point as the codeRef is not resolved yet.
+ */
+const useTranslatedTourExtensions = () => {
+  const [tourExtensionsRaw] = useResolvedExtensions<GuidedTour>(isGuidedTour);
+  return useTranslatedExtensions(tourExtensionsRaw);
+};
+
 export const useTourValuesForContext = (): TourContextType => {
-  // declaring a method for the perspective instead of using getActivePerspective
-  // because importing getActivePerspective in this file throws error
-  // Uncaught ReferenceError: Cannot access 'allModels' before initialization and this hook is used in plugin extension for ContextProvider
   const [activePerspective] = useActivePerspective();
   const [perspective, setPerspective] = useState<string>(activePerspective);
-  const [tourExtension] = useResolvedExtensions<GuidedTour>(isGuidedTour);
+  const tourExtension = useTranslatedTourExtensions();
   const tour = tourExtension.find(({ properties }) => properties.perspective === perspective);
   const selectorSteps = tour?.properties?.tour?.steps ?? [];
   const flags = useSelector(

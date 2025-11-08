@@ -17,15 +17,14 @@ import StepBadge from './steps/StepBadge';
 import StepContent from './steps/StepContent';
 import StepFooter from './steps/StepFooter';
 import StepHeader from './steps/StepHeader';
-import { StepContentType } from './type';
 import './TourStepComponent.scss';
 
 type TourStepComponentProps = {
   expandableSelector?: string;
   selector?: string;
   placement?: string;
-  heading: StepContentType;
-  content: StepContentType;
+  heading: string;
+  content: React.ReactNode;
   introBannerLight?: React.ReactNode;
   introBannerDark?: React.ReactNode;
   modalVariant?: ModalVariant;
