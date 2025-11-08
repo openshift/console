@@ -20,17 +20,11 @@ import {
 } from '../module/k8s';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  isResourceDetailsPage,
   ResourceDetailsPage as ResourceDetailsPageExt,
+  isResourceDetailsPage,
   ResourceListPage as ResourceListPageExt,
   isResourceListPage,
-} from '@console/plugin-sdk';
-import {
-  ResourceDetailsPage as DynamicResourceDetailsPage,
-  isResourceDetailsPage as isDynamicResourceDetailsPage,
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = (props) => Object.assign({}, _.get(props, 'params'), props);
@@ -38,9 +32,6 @@ const allParams = (props) => Object.assign({}, _.get(props, 'params'), props);
 const ResourceListPage_ = connectToPlural(
   withStartGuide((props: ResourceListPageProps) => {
     const resourceListPageExtensions = useExtensions<ResourceListPageExt>(isResourceListPage);
-    const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-      isDynamicResourceListPage,
-    );
     const { kindObj, kindsInFlight, modelRef, noProjectsAvailable, ns, plural } = allParams(props);
 
     if (!kindObj) {
@@ -57,10 +48,9 @@ const ResourceListPage_ = connectToPlural(
       );
     }
     const ref = referenceForModel(kindObj);
-    const componentLoader = getResourceListPages(
-      resourceListPageExtensions,
-      dynamicResourceListPageExtensions,
-    ).get(ref, () => Promise.resolve(DefaultPage));
+    const componentLoader = getResourceListPages(resourceListPageExtensions).get(ref, () =>
+      Promise.resolve(DefaultPage),
+    );
 
     return (
       <div className="co-m-list">
@@ -85,9 +75,6 @@ export const ResourceListPage = (props) => {
 
 const ResourceDetailsPage_ = connectToPlural((props: ResourceDetailsPageProps) => {
   const detailsPageExtensions = useExtensions<ResourceDetailsPageExt>(isResourceDetailsPage);
-  const dynamicResourceDetailsPageExtensions = useExtensions<DynamicResourceDetailsPage>(
-    isDynamicResourceDetailsPage,
-  );
   const location = useLocation();
 
   const { name, ns, kindObj, kindsInFlight } = allParams(props);
@@ -105,8 +92,8 @@ const ResourceDetailsPage_ = connectToPlural((props: ResourceDetailsPageProps) =
       ? referenceForModel(kindObj)
       : null;
   const componentLoader =
-    getResourceDetailsPages(detailsPageExtensions, dynamicResourceDetailsPageExtensions).get(ref) ||
-    getResourceDetailsPages(detailsPageExtensions, dynamicResourceDetailsPageExtensions).get(
+    getResourceDetailsPages(detailsPageExtensions).get(ref) ||
+    getResourceDetailsPages(detailsPageExtensions).get(
       referenceForExtensionModel({
         group: kindObj.apiGroup,
         version: kindObj.apiVersion,

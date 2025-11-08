@@ -1,20 +1,14 @@
 import { useMemo } from 'react';
 import {
-  ResourceDetailsPage as DynamicResourceDetailsPage,
-  isResourceDetailsPage as isDynamicResourceDetailsPage,
-} from '@console/dynamic-plugin-sdk/src';
+  ResourceDetailsPage,
+  isResourceDetailsPage,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { getResourceDetailsPages } from '@console/internal/components/resource-pages';
-import { isResourceDetailsPage, ResourceDetailsPage } from '@console/plugin-sdk/src';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 
 export const useResourceDetailsPages = () => {
   const resourceDetailsPageExtensions = useExtensions<ResourceDetailsPage>(isResourceDetailsPage);
-  const dynamicResourceDetailsPageExtensions = useExtensions<DynamicResourceDetailsPage>(
-    isDynamicResourceDetailsPage,
-  );
-  return useMemo(
-    () =>
-      getResourceDetailsPages(resourceDetailsPageExtensions, dynamicResourceDetailsPageExtensions),
-    [resourceDetailsPageExtensions, dynamicResourceDetailsPageExtensions],
-  );
+  return useMemo(() => getResourceDetailsPages(resourceDetailsPageExtensions), [
+    resourceDetailsPageExtensions,
+  ]);
 };

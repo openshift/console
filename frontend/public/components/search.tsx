@@ -44,29 +44,25 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-  useActivePerspective,
-} from '@console/dynamic-plugin-sdk';
+  ResourceListPage,
+  isResourceListPage,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
   const { plural } = useParams<{ plural?: string }>();
   const [kindObj] = useK8sModel(kind || plural);
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-    isDynamicResourceListPage,
-  );
   if (!kindObj) {
     return <LoadingBox />;
   }
 
-  const componentLoader = getResourceListPages(
-    resourceListPageExtensions,
-    dynamicResourceListPageExtensions,
-  ).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
+  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
+    referenceForModel(kindObj),
+    () => Promise.resolve(DefaultPage),
+  );
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (
