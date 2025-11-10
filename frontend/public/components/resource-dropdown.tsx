@@ -5,10 +5,10 @@ import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 import { css } from '@patternfly/react-styles';
 import { CloseButton } from '@patternfly/react-component-groups';
 import { useTranslation } from 'react-i18next';
-import { ResourceIcon } from './utils';
+import { ResourceIcon } from './utils/resource-icon';
 import { K8sKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';
 import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { useUserSettings } from '@console/shared/src';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import {
   Button,
   Divider,

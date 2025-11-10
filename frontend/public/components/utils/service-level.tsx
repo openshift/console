@@ -15,7 +15,7 @@ import { getDuration, dateFormatter } from './datetime';
 import { getOCMLink } from '../../module/k8s';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SecretModel } from '../../models';
-import { FieldLevelHelp } from './index';
+import { FieldLevelHelp } from './field-level-help';
 import { RootState } from '../../redux';
 import { NotificationTypes } from '../notification-drawer';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
