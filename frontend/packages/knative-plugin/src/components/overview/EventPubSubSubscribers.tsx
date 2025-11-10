@@ -61,7 +61,7 @@ const EventPubSubSubscribers: React.FC<EventPubSubSubscribersProps> = ({
                         )}
                       </Grid>
                       {r?.filters && expanded === r.name && (
-                        <Grid className="row kn-event-subscriber-list__relationship-table">
+                        <Grid className="kn-event-subscriber-list__relationship-table">
                           <GridItem>
                             <FilterTable filters={r?.filters} paddingLeft />
                           </GridItem>
