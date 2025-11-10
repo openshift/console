@@ -28,6 +28,10 @@ import {
   resourcePathFromModel,
   LoadingBox,
 } from './utils';
+import { DASH } from '@console/shared/src/constants/ui';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
+import { RootState } from '../redux';
+import { ImpersonateUserModal } from './modals/impersonate-user-modal';
 import {
   ConsoleDataView,
   getNameCellProps,
@@ -51,7 +55,6 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const impersonateFlag = useFlag(FLAGS.IMPERSONATE);
   const impersonate = useSelector((state: RootState) => getImpersonate(state));
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -66,14 +69,8 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
-      if (impersonateFlag) {
-        // New behavior: show modal for multi-group impersonation
-        setIsModalOpen(true);
-      } else {
-        // Old behavior: directly impersonate as user
-        dispatch(UIActions.startImpersonate('User', obj.metadata.name));
-        navigate(window.SERVER_FLAGS.basePath);
-      }
+      // Show modal for multi-group impersonation
+      setIsModalOpen(true);
     },
     // Must use API group authorization.k8s.io, NOT user.openshift.io
     // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
@@ -104,7 +101,7 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
         kind={referenceForModel(UserModel)}
         resource={user}
       />
-      {impersonateFlag && !impersonate && (
+      {!impersonate && (
         <ImpersonateUserModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -317,7 +314,6 @@ export const UserDetailsPage: React.FC = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const impersonateFlag = useFlag(FLAGS.IMPERSONATE);
   const impersonate = useSelector((state: RootState) => getImpersonate(state));
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<string>('');
@@ -333,15 +329,9 @@ export const UserDetailsPage: React.FC = (props) => {
   const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
     label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => {
-      if (impersonateFlag) {
-        // New behavior: show modal for multi-group impersonation
-        setSelectedUser(obj.metadata.name);
-        setIsModalOpen(true);
-      } else {
-        // Old behavior: directly impersonate as user
-        dispatch(UIActions.startImpersonate('User', obj.metadata.name));
-        navigate(window.SERVER_FLAGS.basePath);
-      }
+      // Show modal for multi-group impersonation
+      setSelectedUser(obj.metadata.name);
+      setIsModalOpen(true);
     },
     // Must use API group authorization.k8s.io, NOT user.openshift.io
     // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
@@ -377,7 +367,7 @@ export const UserDetailsPage: React.FC = (props) => {
           navFactory.roles(RoleBindingsTab),
         ]}
       />
-      {impersonateFlag && !impersonate && (
+      {!impersonate && (
         <ImpersonateUserModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

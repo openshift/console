@@ -152,7 +152,6 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
   const consoleCLIDownloadFlag = useFlag(FLAGS.CONSOLE_CLI_DOWNLOAD);
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const quickstartFlag = useFlag(FLAGS.CONSOLE_QUICKSTART);
-  const impersonateFlag = useFlag(FLAGS.IMPERSONATE);
   const dispatch = useDispatch();
   const [activeNamespace] = useActiveNamespace();
   const [activePerspective] = useActivePerspective();
@@ -522,8 +521,8 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
       },
     ];
 
-    // Add impersonate option if impersonation is enabled and user is currently impersonating
-    if (impersonateFlag && !flagPending(impersonateFlag) && impersonate) {
+    // Add impersonate option if user is currently impersonating
+    if (impersonate) {
       userActions.unshift({
         label: t('public~Stop impersonating'),
         callback: () => dispatch(UIActions.stopImpersonate()),
@@ -531,8 +530,8 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
       });
     }
 
-    // Add impersonate option if impersonation is enabled
-    if (impersonateFlag && !flagPending(impersonateFlag) && !impersonate) {
+    // Add impersonate option if not currently impersonating
+    if (!impersonate) {
       userActions.unshift({
         label: t('public~Impersonate User'),
         callback: () => setIsImpersonateModalOpen(true),
@@ -834,22 +833,20 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
           onClose={() => setIsFeedbackModalOpen(false)}
         />
       ) : null}
-      {impersonateFlag && (
-        <ImpersonateUserModal
-          isOpen={isImpersonateModalOpen}
-          onClose={() => setIsImpersonateModalOpen(false)}
-          onImpersonate={(userName: string, groups: string[]) => {
-            if (groups && groups.length > 0) {
-              dispatch(UIActions.startImpersonate('UserWithGroups', userName, groups));
-            } else {
-              dispatch(UIActions.startImpersonate('User', userName));
-            }
-            setIsImpersonateModalOpen(false);
-          }}
-          prefilledUsername=""
-          isUsernameReadonly={false}
-        />
-      )}
+      <ImpersonateUserModal
+        isOpen={isImpersonateModalOpen}
+        onClose={() => setIsImpersonateModalOpen(false)}
+        onImpersonate={(userName: string, groups: string[]) => {
+          if (groups && groups.length > 0) {
+            dispatch(UIActions.startImpersonate('UserWithGroups', userName, groups));
+          } else {
+            dispatch(UIActions.startImpersonate('User', userName));
+          }
+          setIsImpersonateModalOpen(false);
+        }}
+        prefilledUsername=""
+        isUsernameReadonly={false}
+      />
     </>
   );
 };
