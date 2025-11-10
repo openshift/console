@@ -14,6 +14,7 @@ import {
   Select,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
+import { useTranslation } from 'react-i18next';
 
 export type ActionItem = {
   actionKey: string;
@@ -141,6 +142,7 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   const [selectedKey, setSelectedKey] = React.useState<string>(props.selectedKey ?? '');
   const [autocompleteText, setAutocompleteText] = React.useState<string>('');
   const [items, setItems] = React.useState<Record<string, React.ReactNode>>(props.items);
+  const { t } = useTranslation();
 
   /* Dropdown bookmark state and helpers */
   // Should be undefined so that we don't save undefined-xxx.
@@ -353,6 +355,12 @@ export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
           className={css(menuClassName, { 'pf-v6-u-pt-0': autocompleteFilter })}
           data-test="console-select-menu-list"
         >
+          {!bookmarkRows.length && !renderedActionItems && !rows.length && autocompleteText && (
+            <SelectOption isDisabled data-test="console-select-no-results">
+              {t('public~No results found')}
+            </SelectOption>
+          )}
+
           {bookmarkRows.length ? (
             <>
               <SelectGroup label="Favorites" labelHeadingLevel="h3">
