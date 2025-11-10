@@ -25,10 +25,7 @@ import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage } from './factory';
 import { ReplicaSetsPage } from './replicaset';
-import {
-  initialFiltersDefault,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { LoadingBox } from './utils/status-box';
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
@@ -222,7 +219,7 @@ const DeploymentTableHeader = () => {
 };
 DeploymentTableHeader.displayName = 'DeploymentTableHeader';
 
-const getDataViewRows: GetDataViewRows<DeploymentKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<DeploymentKind> = (data, columns) => {
   return getWorkloadDataViewRows(data, columns, DeploymentModel);
 };
 
@@ -237,7 +234,6 @@ export const DeploymentsList: React.FCC<DeploymentsListProps> = ({ data, loaded,
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
       />
     </React.Suspense>

@@ -18,7 +18,6 @@ import { ListPage, DetailsPage } from './factory';
 import {
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -123,7 +122,7 @@ const tableColumnInfo = [
   { id: 'nodeSelector' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
   return data.map(({ obj: alertManager }) => {
     const { metadata, spec } = alertManager;
 
@@ -235,7 +234,6 @@ const AlertManagersList: React.FCC<AlertManagersListProps> = ({ data, loaded, ..
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

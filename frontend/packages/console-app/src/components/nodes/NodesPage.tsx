@@ -552,6 +552,11 @@ const NodeList: React.FC<NodeListProps> = ({
     [],
   );
 
+  const initialFilters = React.useMemo<NodeFilters>(
+    () => ({ ...initialFiltersDefault, status: [], roles: [], architecture: [] }),
+    [],
+  );
+
   // Create stable filter nodes with stable option references to prevent filter resets
   const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
     () => [
@@ -629,9 +634,7 @@ const NodeList: React.FC<NodeListProps> = ({
         columns={columns}
         columnLayout={columnLayout}
         columnManagementID={columnManagementID}
-        initialFilters={
-          { ...initialFiltersDefault, status: [], roles: [], architecture: [] } as NodeFilters
-        }
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={(rowData, tableColumns) =>

@@ -5,7 +5,7 @@ import { getDataViewRows, HelmReleaseResourceStatus } from '../HelmReleaseResour
 
 configure({ testIdAttribute: 'data-test' });
 
-let testData: RowProps<K8sResourceKind, undefined>[];
+let testData: RowProps<K8sResourceKind>[];
 let testColumns: TableColumn<K8sResourceKind>[];
 
 describe('getDataViewRows', () => {

@@ -27,7 +27,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -48,7 +47,7 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<any, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<any> = (data, columns) => {
   return data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const resourceKind = referenceFor(obj);
@@ -189,7 +188,6 @@ const SecretsList: React.FCC<SecretsListProps> = ({ data, loaded, ...props }) =>
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

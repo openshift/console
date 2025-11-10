@@ -27,7 +27,6 @@ import {
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
-  initialFiltersDefault,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
@@ -70,7 +69,7 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   );
 };
 
-const getDataViewRows: GetDataViewRows<UserKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) => {
   return data.map(({ obj: user }) => {
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -207,7 +206,6 @@ export const UserList: React.FCC<UserListProps> = (props) => {
         loaded={loaded}
         label={t('public~Users')}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

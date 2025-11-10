@@ -40,7 +40,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import {
@@ -478,7 +477,6 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
         data={data}
         loaded={true}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getObjectMetadata={getObjectMetadata}
         getDataViewRows={getReceiverDataViewRows}
         customRowData={customRowData}

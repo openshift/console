@@ -19,10 +19,7 @@ import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DetailsPage, ListPage } from './factory';
-import {
-  initialFiltersDefault,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { LoadingBox } from './utils/status-box';
 
@@ -298,7 +295,7 @@ const DeploymentConfigTableHeader = () => {
 };
 DeploymentConfigTableHeader.displayName = 'DeploymentConfigTableHeader';
 
-const getDataViewRows: GetDataViewRows<DeploymentConfigKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) => {
   return getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
 };
 
@@ -317,7 +314,6 @@ export const DeploymentConfigsList: React.FCC<DeploymentConfigsListProps> = ({
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
