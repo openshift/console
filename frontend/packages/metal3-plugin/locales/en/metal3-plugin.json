@@ -1,5 +1,8 @@
 {
+  "Bare Metal Host": "Bare Metal Host",
   "Bare Metal Hosts": "Bare Metal Hosts",
+  "Node Maintenance": "Node Maintenance",
+  "Node Maintenances": "Node Maintenances",
   "resources": "resources",
   "Name \"${value}\" is already taken.": "Name \"${value}\" is already taken.",
   "Value provided is not a valid BMC address": "Value provided is not a valid BMC address",
