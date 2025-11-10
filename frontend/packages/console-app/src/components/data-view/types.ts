@@ -23,7 +23,7 @@ export type ConsoleDataViewRow = DataViewTd[];
 /**
  * Maps Console `RowProps` data to DataView compatible format.
  */
-export type GetDataViewRows<TData, TCustomRowData> = (
+export type GetDataViewRows<TData, TCustomRowData = any> = (
   data: RowProps<TData, TCustomRowData>[],
   columns: ConsoleDataViewColumn<TData>[],
 ) => ConsoleDataViewRow[];

@@ -24,7 +24,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -34,7 +33,7 @@ const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: '' }];
 
-const getDataViewRows: GetDataViewRows<MachineHealthCheckKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
 
@@ -124,7 +123,6 @@ const MachineHealthCheckList: React.FC<MachineHealthCheckListProps> = ({
         loaded={loaded}
         loadError={loadError}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

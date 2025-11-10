@@ -190,7 +190,7 @@ const bindingType = (binding: BindingKind) => {
   return binding.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-const getDataViewRows: GetDataViewRows<BindingKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
   return data.map(({ obj: binding }) => {
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -266,6 +266,8 @@ export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
     return options;
   }, [hasCRBindings, t]);
 
+  const initialFilters = React.useMemo(() => ({ ...initialFiltersDefault, 'role-kind': [] }), []);
+
   const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
@@ -318,7 +320,7 @@ export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
         loaded={loaded}
         label={t('public~RoleBindings')}
         columns={columns}
-        initialFilters={{ ...initialFiltersDefault, 'role-kind': [] }}
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getDataViewRows}

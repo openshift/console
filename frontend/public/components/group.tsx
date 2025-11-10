@@ -23,26 +23,17 @@ import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import {
   ConsoleDataView,
-  initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { TableColumn, K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  ConsoleDataViewColumn,
-  ConsoleDataViewRow,
-  GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { DASH } from '@console/shared/src/constants/ui';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'users' }, { id: 'created' }, { id: 'actions' }];
 
-const getDataViewRows: GetDataViewRows<GroupKind, undefined> = (
-  data: RowProps<GroupKind, undefined>[],
-  columns: ConsoleDataViewColumn<GroupKind>[],
-): ConsoleDataViewRow[] => {
+const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { metadata } = obj;
     const resourceKind = referenceForModel(GroupModel);
@@ -137,7 +128,6 @@ export const GroupList: React.FC<{ data: GroupKind[]; loaded: boolean }> = (prop
         loaded={loaded}
         label={t('public~Groups')}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

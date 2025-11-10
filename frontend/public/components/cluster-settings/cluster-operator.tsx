@@ -185,6 +185,7 @@ export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
 }) => {
   const { t } = useTranslation();
   const columns = useClusterOperatorColumns();
+
   const clusterOperatorStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(() => {
     return [
       {
@@ -213,6 +214,9 @@ export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
       },
     ];
   }, [t]);
+
+  const initialFilters = React.useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+
   const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
@@ -225,6 +229,7 @@ export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
     ],
     [t, clusterOperatorStatusFilterOptions],
   );
+
   const matchesAdditionalFilters = React.useCallback(
     (resource: ClusterOperator, filters: ClusterOperatorFilters) =>
       filters.status.length === 0 || filters.status.includes(getClusterOperatorStatus(resource)),
@@ -239,7 +244,7 @@ export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={{ ...initialFiltersDefault, status: [] }}
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getClusterOperatorDataViewRows}

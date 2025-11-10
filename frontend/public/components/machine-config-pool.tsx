@@ -21,7 +21,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -414,7 +413,6 @@ const MachineConfigPoolList: React.FC<MachineConfigPoolListProps> = ({
           loaded={loaded}
           loadError={loadError}
           columns={columns}
-          initialFilters={initialFiltersDefault}
           getDataViewRows={getDataViewRows}
           hideColumnManagement={true}
         />

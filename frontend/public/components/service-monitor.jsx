@@ -11,7 +11,6 @@ import { referenceForModel } from '../module/k8s';
 import { useTranslation } from 'react-i18next';
 import {
   ConsoleDataView,
-  initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
@@ -160,7 +159,6 @@ export const ServiceMonitorsList = (props) => {
         loaded={loaded}
         label={ServiceMonitorModel.labelPlural}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getServiceMonitorDataViewRows}
         hideColumnManagement={true}
       />

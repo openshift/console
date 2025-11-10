@@ -36,7 +36,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import {
@@ -166,7 +165,7 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
 };
 
 const getDataViewRows = (
-  data: RowProps<K8sResourceKind, undefined>[],
+  data: RowProps<K8sResourceKind>[],
   columns: ConsoleDataViewColumn<K8sResourceKind>[],
   additionalPrinterColumns: CRDAdditionalPrinterColumn[],
   kinds: string[],
@@ -342,7 +341,6 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
           data={data}
           loaded={loaded}
           columns={columns}
-          initialFilters={initialFiltersDefault}
           getDataViewRows={(dvData, dvColumns) =>
             getDataViewRows(
               dvData,
