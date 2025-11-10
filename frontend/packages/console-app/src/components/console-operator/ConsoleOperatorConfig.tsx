@@ -25,16 +25,12 @@ import { PluginCSPViolations } from '@console/internal/actions/ui';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
-import {
-  asAccessReview,
-  EmptyBox,
-  KebabAction,
-  LoadingBox,
-  navFactory,
-  RequireCreatePermission,
-  ResourceLink,
-} from '@console/internal/components/utils';
+import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { KebabAction } from '@console/internal/components/utils/kebab';
+import { asAccessReview, RequireCreatePermission } from '@console/internal/components/utils/rbac';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { EmptyBox, LoadingBox } from '@console/internal/components/utils/status-box';
 import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';
 import {
   ConsolePluginKind,

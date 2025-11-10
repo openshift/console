@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { ReactNode } from 'react';
 import { QuickStartDrawer as PfQuickStartDrawer } from '@patternfly/quickstarts';
-import { LoadingBox } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
 import QuickStartsLoader from './loader/QuickStartsLoader';
 import './QuickStartDrawer.scss';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { ReactNode } from 'react';
-import { AsyncComponent } from '@console/internal/components/utils';
+import { AsyncComponent } from '@console/internal/components/utils/async';
 
 interface QuickStartDrawerAsyncProps {
   children?: ReactNode;

@@ -16,11 +16,9 @@ import {
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom-v5-compat';
-import {
-  resourcePathFromModel,
-  ResourceSummary,
-  SectionHeading,
-} from '@console/internal/components/utils';
+import { ResourceSummary } from '@console/internal/components/utils/details-page';
+import { SectionHeading } from '@console/internal/components/utils/headings';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { ClusterOperatorModel } from '@console/internal/models';
 import { OAuthKind } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

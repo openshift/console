@@ -3,12 +3,10 @@ import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage } from '@console/internal/components/factory';
-import {
-  ResourceSummary,
-  SectionHeading,
-  navFactory,
-  DetailsItem,
-} from '@console/internal/components/utils';
+import { DetailsItem } from '@console/internal/components/utils/details-item';
+import { ResourceSummary } from '@console/internal/components/utils/details-page';
+import { SectionHeading } from '@console/internal/components/utils/headings';
+import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';

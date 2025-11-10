@@ -8,7 +8,8 @@ import {
   RemoveIdentityProviderModal,
   RemoveIdentityProvider,
 } from '@console/internal/components/modals/remove-idp-modal';
-import { Kebab, EmptyBox } from '@console/internal/components/utils';
+import { Kebab } from '@console/internal/components/utils/kebab';
+import { EmptyBox } from '@console/internal/components/utils/status-box';
 import { IdentityProvider, OAuthKind } from '@console/internal/module/k8s';
 
 export const IdentityProviders: React.FC<IdentityProvidersProps> = ({ identityProviders, obj }) => {

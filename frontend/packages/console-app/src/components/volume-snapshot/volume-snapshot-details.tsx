@@ -10,14 +10,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import {
-  SectionHeading,
-  ResourceSummary,
-  ResourceLink,
-  navFactory,
-  convertToBaseValue,
-  humanizeBinaryBytes,
-} from '@console/internal/components/utils';
+import { ResourceSummary } from '@console/internal/components/utils/details-page';
+import { SectionHeading } from '@console/internal/components/utils/headings';
+import { navFactory } from '@console/internal/components/utils/horizontal-nav';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import {
   PersistentVolumeClaimModel,
   VolumeSnapshotContentModel,

@@ -14,14 +14,11 @@ import {
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
-import {
-  ResourceLink,
-  ResourceKebab,
-  Kebab,
-  humanizeBinaryBytes,
-  PageComponentProps,
-} from '@console/internal/components/utils';
+import type { PageComponentProps } from '@console/internal/components/utils/horizontal-nav';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { Kebab, ResourceKebab } from '@console/internal/components/utils/kebab';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import {
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,

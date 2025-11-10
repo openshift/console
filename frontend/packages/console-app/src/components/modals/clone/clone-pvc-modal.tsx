@@ -19,19 +19,19 @@ import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers'
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { dropdownUnits } from '@console/internal/components/storage/shared';
-import {
-  LoadingInline,
-  ResourceIcon,
-  humanizeBinaryBytes,
-  history,
-  RequestSizeInput,
-  validate,
-  resourceObjPath,
-  convertToBaseValue,
-  humanizeBinaryBytesWithoutB,
-} from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { RequestSizeInput } from '@console/internal/components/utils/request-size-input';
+import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
+import { resourceObjPath } from '@console/internal/components/utils/resource-link';
+import { history } from '@console/internal/components/utils/router';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
+import {
+  humanizeBinaryBytes,
+  humanizeBinaryBytesWithoutB,
+  convertToBaseValue,
+  validate,
+} from '@console/internal/components/utils/units';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,

@@ -16,13 +16,10 @@ import {
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
-import {
-  ResourceLink,
-  Kebab,
-  convertToBaseValue,
-  humanizeBinaryBytes,
-} from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { Kebab } from '@console/internal/components/utils/kebab';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,

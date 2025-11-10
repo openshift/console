@@ -10,7 +10,8 @@ import {
   tolerationsModal,
 } from '@console/internal/components/modals';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
-import { resourceObjPath, asAccessReview } from '@console/internal/components/utils';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
+import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { CommonActionCreator, ActionObject } from './types';
 

@@ -9,7 +9,10 @@ import {
   removeAdmissionWebhookWarning,
   SDKStoreState,
 } from '@console/dynamic-plugin-sdk/src';
-import { documentationURLs, getDocumentationURL } from '@console/internal/components/utils';
+import {
+  documentationURLs,
+  getDocumentationURL,
+} from '@console/internal/components/utils/documentation';
 import { useToast } from '@console/shared/src';
 
 type UseAdmissionWebhookWarnings = () => Map<string, AdmissionWebhookWarning>;

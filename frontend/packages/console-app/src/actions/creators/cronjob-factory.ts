@@ -1,5 +1,6 @@
 import i18next from 'i18next';
-import { history, resourceObjPath } from '@console/internal/components/utils';
+import { resourceObjPath } from '@console/internal/components/utils/resource-link';
+import { history } from '@console/internal/components/utils/router';
 import { JobModel } from '@console/internal/models';
 import {
   K8sKind,
