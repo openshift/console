@@ -525,7 +525,12 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
     if (impersonate) {
       userActions.unshift({
         label: t('public~Stop impersonating'),
-        callback: () => dispatch(UIActions.stopImpersonate()),
+        callback: () => {
+          dispatch(UIActions.stopImpersonate());
+          setTimeout(() => {
+            window.location.href = window.SERVER_FLAGS.basePath || '/';
+          }, 0);
+        },
         dataTest: 'stop-impersonate',
       });
     }
@@ -843,6 +848,10 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
             dispatch(UIActions.startImpersonate('User', userName));
           }
           setIsImpersonateModalOpen(false);
+          // Navigate to refresh the page after starting impersonation
+          setTimeout(() => {
+            window.location.href = window.SERVER_FLAGS.basePath || '/';
+          }, 0);
         }}
         prefilledUsername=""
         isUsernameReadonly={false}
