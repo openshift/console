@@ -28,10 +28,6 @@ import {
   resourcePathFromModel,
   LoadingBox,
 } from './utils';
-import { ImpersonateUserModal } from './modals/impersonate-user-modal';
-import { FLAGS, useFlag, DASH } from '@console/shared';
-import { getImpersonate } from '@console/dynamic-plugin-sdk';
-import { RootState } from '@console/internal/redux';
 import {
   ConsoleDataView,
   getNameCellProps,

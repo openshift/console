@@ -5,7 +5,7 @@ import {
   TopologyDataModelFactory as DynamicTopologyDataModelFactory,
 } from '@console/dynamic-plugin-sdk';
 import { Firehose } from '@console/internal/components/utils';
-import { useExtensions } from '@console/plugin-sdk/src';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { ResourceDropdown } from '@console/shared';
 import { ResourceDropdownProps } from '../../../../console-shared/src/components/dropdown/ResourceDropdown';
 import { getNamespacedDynamicModelFactories } from '../../data-transforms/DataModelProvider';

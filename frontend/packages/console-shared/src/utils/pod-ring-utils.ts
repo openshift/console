@@ -11,7 +11,7 @@ import {
   SelfSubjectAccessReviewKind,
   HorizontalPodAutoscalerKind,
 } from '@console/internal/module/k8s';
-import { RevisionModel } from '@console/knative-plugin';
+import { RevisionModel } from '@console/knative-plugin/src/models';
 import { AllPodStatus } from '../constants';
 import { ExtPodKind } from '../types';
 import { checkPodEditAccess, getPodStatus } from './pod-utils';

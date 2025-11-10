@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
-import {
-  Status,
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-  DASH,
-  LazyActionMenu,
-} from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { DASH } from '@console/shared/src/constants/ui';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   getJobTypeAndCompletions,
@@ -20,17 +18,15 @@ import {
 } from '../module/k8s';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage } from './factory';
-import {
-  ContainerTable,
-  DetailsItem,
-  LabelList,
-  LoadingBox,
-  PodsComponent,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  navFactory,
-} from './utils';
+import { ContainerTable } from './utils/container-table';
+import { DetailsItem } from './utils/details-item';
+import { LabelList } from './utils/label-list';
+import { LoadingBox } from './utils/status-box';
+import { PodsComponent, navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { JobModel } from '../models';

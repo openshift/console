@@ -9,8 +9,13 @@ import {
   matchRoutes,
 } from 'react-router-dom-v5-compat';
 import { useActivePerspective, Perspective } from '@console/dynamic-plugin-sdk';
-import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import { FLAGS, useUserSettings, getPerspectiveVisitedKey, usePerspectives } from '@console/shared';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import {
+  getPerspectiveVisitedKey,
+  usePerspectives,
+} from '@console/shared/src/hooks/perspective-utils';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
@@ -19,7 +24,8 @@ import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace-bar';
 import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { AsyncComponent, LoadingBox } from './utils';
+import { AsyncComponent } from './utils/async';
+import { LoadingBox } from './utils/status-box';
 import { namespacedPrefixes } from './utils/link';
 import {
   AlertmanagerModel,
@@ -149,7 +155,7 @@ const HorizontalPodRedirect = () => {
 };
 
 const AppContents: React.FC<{}> = () => {
-  const [, allPluginsProcessed] = useDynamicPluginInfo();
+  const [, allPluginsProcessed] = usePluginInfo();
   const location = useLocation();
   const [pluginPageRoutes, inactivePluginPageRoutes] = usePluginRoutes();
 

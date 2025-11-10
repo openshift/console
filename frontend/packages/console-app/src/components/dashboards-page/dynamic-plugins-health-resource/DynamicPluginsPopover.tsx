@@ -1,24 +1,30 @@
 import * as React from 'react';
 import { Alert, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import { WatchK8sResults, WatchK8sResources } from '@console/dynamic-plugin-sdk';
+import { PluginCSPViolations } from '@console/internal/actions/ui';
 import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';
 import { ConsolePluginKind, referenceForModel } from '@console/internal/module/k8s';
+import { RootState } from '@console/internal/redux';
 import { isLoadedDynamicPluginInfo, isNotLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
-import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { StatusPopupSection } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import NotLoadedDynamicPlugins from './NotLoadedDynamicPlugins';
 
 const DynamicPluginsPopover: React.FC<DynamicPluginsPopoverProps> = ({ consolePlugins }) => {
   const { t } = useTranslation();
-  const [pluginInfoEntries] = useDynamicPluginInfo();
+  const [pluginInfoEntries] = usePluginInfo();
+  const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
+    UI.get('pluginCSPViolations'),
+  );
   const notLoadedDynamicPluginInfo = pluginInfoEntries.filter(isNotLoadedDynamicPluginInfo);
   const failedPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'Failed');
   const pendingPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'Pending');
   const loadedPlugins = pluginInfoEntries.filter(isLoadedDynamicPluginInfo);
   const loadedPluginsWithCSPViolations = loadedPlugins.filter(
-    (plugin) => plugin.hasCSPViolations === true,
+    (plugin) => cspViolations[plugin.metadata.name] ?? false,
   );
   const enabledPlugins = loadedPlugins.filter((plugin) => plugin.enabled === true);
   const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';

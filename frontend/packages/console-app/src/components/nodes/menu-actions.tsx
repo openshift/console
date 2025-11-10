@@ -12,7 +12,7 @@ import {
   NodeKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { isNodeUnschedulable } from '@console/shared';
+import { isNodeUnschedulable } from '@console/shared/src/selectors/node';
 import { makeNodeSchedulable } from '../../k8s/requests/nodes';
 import { createConfigureUnschedulableModal } from './modals';
 

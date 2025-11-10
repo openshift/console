@@ -12,14 +12,9 @@ jest.mock('react-router-dom-v5-compat', () => ({
 }));
 
 // Mock Firehose
-jest.mock('../utils', () => {
-  const actualUtils = jest.requireActual('../utils');
-
-  return {
-    ...actualUtils,
-    Firehose: ({ children }) => children,
-  };
-});
+jest.mock('../utils/firehose', () => ({
+  Firehose: ({ children }) => children,
+}));
 
 describe('StorageClassForm', () => {
   let onClose: jest.Mock;

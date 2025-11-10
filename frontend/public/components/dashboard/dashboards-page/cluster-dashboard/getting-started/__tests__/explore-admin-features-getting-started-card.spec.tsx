@@ -5,8 +5,7 @@ import { useFlag } from '@console/shared/src/hooks/flag';
 import { expectExternalLinkAttributes } from '../../../../getting-started-test-utils';
 import { ExploreAdminFeaturesGettingStartedCard } from '../explore-admin-features-getting-started-card';
 
-jest.mock('@console/shared/src', () => ({
-  ...jest.requireActual('@console/shared/src'),
+jest.mock('@console/shared/src/hooks/version', () => ({
   useOpenShiftVersion: () => '4.16.0',
 }));
 

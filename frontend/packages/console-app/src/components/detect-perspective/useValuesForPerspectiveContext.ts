@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { PerspectiveType } from '@console/dynamic-plugin-sdk';
-import { usePerspectiveExtension, usePerspectives, useTelemetry } from '@console/shared';
+import {
+  usePerspectiveExtension,
+  usePerspectives,
+} from '@console/shared/src/hooks/perspective-utils';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { ACM_PERSPECTIVE_ID } from '../../consts';
 import { usePreferredPerspective } from '../user-preferences/perspective/usePreferredPerspective';
 import { useLastPerspective } from './useLastPerspective';

@@ -9,7 +9,7 @@ import {
 } from '@console/shared';
 import { Table, TableGridBreakpoint, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
-import { ResourceLink } from './utils';
+import { ResourceLink } from './utils/resource-link';
 import { referenceFor } from '../module/k8s';
 
 /**

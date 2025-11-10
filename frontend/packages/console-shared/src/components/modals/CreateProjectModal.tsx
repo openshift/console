@@ -20,8 +20,8 @@ import { FieldLevelHelp } from '@console/internal/components/utils/field-level-h
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
-import { FLAGS } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
 const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({

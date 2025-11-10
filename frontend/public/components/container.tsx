@@ -14,7 +14,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { Status } from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   ContainerLifecycle,
@@ -35,18 +35,12 @@ import {
   getContainerStatus,
   getPullPolicyLabel,
 } from '../module/k8s/container';
-import {
-  Firehose,
-  HorizontalNav,
-  ConsoleEmptyState,
-  NodeLink,
-  ConnectedPageHeading,
-  resourcePath,
-  ResourceLink,
-  ScrollToTopOnMount,
-  SectionHeading,
-  LoadingBox,
-} from './utils';
+import { Firehose } from './utils/firehose';
+import { HorizontalNav } from './utils/horizontal-nav';
+import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
+import { NodeLink, resourcePath, ResourceLink } from './utils/resource-link';
+import { ConnectedPageHeading, SectionHeading } from './utils/headings';
+import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import i18n from 'i18next';

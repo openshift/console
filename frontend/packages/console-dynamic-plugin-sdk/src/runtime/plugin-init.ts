@@ -7,7 +7,6 @@ import {
 import { RootState } from '@console/internal/redux';
 import { initSubscriptionService } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import { PluginStore } from '@console/plugin-sdk/src/store';
-import { setPluginStore } from '../utils/k8s';
 import { registerPluginEntryCallback, loadAndEnablePlugin } from './plugin-loader';
 
 export const initConsolePlugins = _.once(
@@ -15,7 +14,6 @@ export const initConsolePlugins = _.once(
     // Initialize dynamic plugin infrastructure
     initSubscriptionService(pluginStore, reduxStore);
     registerPluginEntryCallback(pluginStore);
-    setPluginStore(pluginStore);
 
     // Initialize webpack share scope object and start loading plugins
     initSharedScope()

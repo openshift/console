@@ -21,15 +21,12 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import { DetailsPage, ListPage } from './factory';
-import {
-  Kebab,
-  LoadingBox,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-} from './utils';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { LoadingBox } from './utils/status-box';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import {
   DescriptionListDescription,
   DescriptionListGroup,

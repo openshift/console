@@ -25,10 +25,13 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
-import { ALL_NAMESPACES_KEY, FLAGS, APIError, getTitleForNodeKind } from '@console/shared';
+import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { APIError } from '@console/shared/src/types/resource';
+import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { Page, useAccessReview } from '@console/internal/components/utils';
+import { Page } from '@console/internal/components/utils/horizontal-nav';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
@@ -45,7 +48,7 @@ import {
   ResourceAccessReviewResponse,
 } from '../module/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
-import { RootState } from '../redux';
+import type { RootState } from '../redux';
 import { RowFilter } from './row-filter';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';
@@ -53,23 +56,18 @@ import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
 import { getResourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { AsyncComponent } from './utils/async';
+import { EmptyBox, LoadError, LoadingBox } from './utils/status-box';
+import { HorizontalNav } from './utils/horizontal-nav';
+import { LinkifyExternal } from './utils/link';
+import { removeQueryArgument, setQueryArgument } from './utils/router';
+import { ResourceIcon } from './utils/resource-icon';
+import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  AsyncComponent,
-  EmptyBox,
-  HorizontalNav,
-  LinkifyExternal,
-  LoadError,
-  LoadingBox,
-  removeQueryArgument,
-  ResourceIcon,
-  ScrollToTopOnMount,
-  setQueryArgument,
-} from './utils';
-import { isResourceListPage, useExtensions, ResourceListPage } from '@console/plugin-sdk';
-import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
+  ResourceListPage,
+  isResourceListPage,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { ErrorPage404 } from './error';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
@@ -463,13 +461,10 @@ const APIResourceInstances: React.FC<APIResourceTabProps> = ({
   customData: { kindObj, namespace },
 }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-    isDynamicResourceListPage,
+  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
+    referenceForModel(kindObj),
+    () => Promise.resolve(DefaultPage),
   );
-  const componentLoader = getResourceListPages(
-    resourceListPageExtensions,
-    dynamicResourceListPageExtensions,
-  ).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (

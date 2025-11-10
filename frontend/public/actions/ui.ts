@@ -4,11 +4,11 @@ import * as _ from 'lodash-es';
 
 // FIXME(alecmerdler): Do not `import store`
 import store from '../redux';
-import { OverviewItem } from '@console/shared';
+import { OverviewItem } from '@console/shared/src/types/resource';
 import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants';
+} from '@console/shared/src/constants/common';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures } from './features';
@@ -59,6 +59,7 @@ export enum ActionType {
   SetDeprecatedPackage = 'setDeprecatedPackage',
   SetDeprecatedChannel = 'setDeprecatedChannel',
   SetDeprecatedVersion = 'setDeprecatedVersion',
+  SetPluginCSPViolations = 'setPluginCSPViolations',
 }
 
 type MetricValuesByNamespace = {
@@ -82,6 +83,10 @@ export type NodeMetrics = {
 
 export type PVCMetrics = {
   usedCapacity?: MetricValuesByName;
+};
+
+export type PluginCSPViolations = {
+  [pluginName: string]: boolean;
 };
 
 // URL routes that can be namespaced
@@ -320,6 +325,9 @@ export const setDeprecatedChannel = (value: DeprecatedOperatorWarning) => {
 export const setDeprecatedVersion = (value: DeprecatedOperatorWarning) => {
   return action(ActionType.SetDeprecatedVersion, { value });
 };
+export const setPluginCSPViolations = (pluginName: string, hasViolation: boolean) => {
+  return action(ActionType.SetPluginCSPViolations, { pluginName, hasViolation });
+};
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
@@ -351,6 +359,7 @@ const uiActions = {
   setDeprecatedPackage,
   setDeprecatedChannel,
   setDeprecatedVersion,
+  setPluginCSPViolations,
 };
 
 export type UIAction = Action<typeof uiActions>;

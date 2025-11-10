@@ -1,16 +1,5 @@
 [
   {
-    "type": "console.action/resource-provider",
-    "properties": {
-      "model": {
-        "group": "user.openshift.io",
-        "version": "v1",
-        "kind": "Group"
-      },
-      "provider": { "$codeRef": "groupProvider.useGroupActionsProvider" }
-    }
-  },
-  {
     "type": "console.perspective",
     "properties": {
       "id": "admin",
@@ -139,28 +128,6 @@
         "group": "config.openshift.io",
         "version": "v1",
         "kind": "OAuth"
-      }
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "flag": "DEVWORKSPACE",
-      "model": {
-        "group": "workspace.devfile.io",
-        "version": "v1alpha1",
-        "kind": "DevWorkspace"
-      }
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "flag": "v1alpha2DEVWORKSPACE",
-      "model": {
-        "group": "workspace.devfile.io",
-        "version": "v1alpha2",
-        "kind": "DevWorkspace"
       }
     }
   },
@@ -304,6 +271,17 @@
     },
     "flags": {
       "required": ["CAN_LIST_VSC"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "Group"
+      },
+      "provider": { "$codeRef": "groupProvider.useGroupActionsProvider" }
     }
   },
   {

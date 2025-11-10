@@ -32,6 +32,7 @@ import (
 	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
+	"github.com/openshift/console/pkg/middleware"
 	"github.com/openshift/console/pkg/olm"
 	"github.com/openshift/console/pkg/plugins"
 	"github.com/openshift/console/pkg/proxy"
@@ -299,14 +300,14 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	authenticator := s.Authenticator
 	authHandler := func(h http.HandlerFunc) http.HandlerFunc {
-		return authMiddleware(authenticator, s.CSRFVerifier, h)
+		return middleware.AuthMiddleware(authenticator, s.CSRFVerifier, h)
 	}
 
 	// Deprecated: Use authMiddleware and auth.GetUserFromContext instead so that we can make better
 	// use of the ServeHTTP function on the http.Handler interface, and make it easier to pass around
 	// handler functions with the correct signature.
-	authHandlerWithUser := func(h HandlerWithUser) http.HandlerFunc {
-		return authMiddleware(s.Authenticator, s.CSRFVerifier, func(w http.ResponseWriter, r *http.Request) {
+	authHandlerWithUser := func(h middleware.HandlerWithUser) http.HandlerFunc {
+		return middleware.AuthMiddleware(s.Authenticator, s.CSRFVerifier, func(w http.ResponseWriter, r *http.Request) {
 			user := auth.GetUserFromRequestContext(r)
 			if user == nil {
 				klog.Errorf("user not found in context")
@@ -319,18 +320,18 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	// For requests where Authorization header with valid Bearer token is expected
 	bearerTokenReviewHandler := func(h http.HandlerFunc) http.HandlerFunc {
-		return withBearerTokenReview(s.TokenReviewer, h)
+		return middleware.WithBearerTokenReview(s.TokenReviewer, h)
 	}
 
 	handleFunc(authLoginEndpoint, s.Authenticator.LoginFunc)
-	handleFunc(authLogoutEndpoint, allowMethod(http.MethodPost, s.handleLogout))
+	handleFunc(authLogoutEndpoint, middleware.AllowMethod(http.MethodPost, s.handleLogout))
 	handleFunc(AuthLoginCallbackEndpoint, s.Authenticator.CallbackFunc(fn))
 	handle(copyLoginEndpoint, authHandler(s.handleCopyLogin))
 
 	handleFunc("/api/", notFoundHandler)
 
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), disableDirectoryListing(http.FileServer(http.Dir(s.PublicDir))))
-	handle("/static/", gzipHandler(securityHeadersMiddleware(staticHandler)))
+	handle("/static/", middleware.WithGZIPEncoding(middleware.WithSecurityHeaders(staticHandler)))
 
 	if s.CustomLogoFiles != nil {
 		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
@@ -690,7 +691,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
-	return securityHeadersMiddleware(http.Handler(mux)), nil
+	return middleware.WithSecurityHeaders(http.Handler(mux)), nil
 }
 
 func (s *Server) handleMonitoringDashboardConfigmaps(w http.ResponseWriter, r *http.Request) {
@@ -852,7 +853,7 @@ func (s *Server) NoAuthConfiguredHandler() http.Handler {
 		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprint(w, "Please configure authentication to use the web console.")
 	}))
-	return securityHeadersMiddleware(mux)
+	return middleware.WithSecurityHeaders(mux)
 }
 
 func (s *Server) CatalogdHandler() http.Handler {

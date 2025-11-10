@@ -14,7 +14,7 @@ import {
   VolumeMount,
 } from '../../module/k8s/';
 import { RowVolumeData } from '../volumes-table';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { ModalCallback } from './types';
 
 export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {

@@ -3,8 +3,7 @@ import { isCSRResource } from '@console/app/src/components/nodes/csr';
 import * as UIActions from '@console/internal/actions/ui';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { NodeCertificateSigningRequestKind, NodeKind } from '@console/internal/module/k8s';
-import { getNodeUptime } from '@console/shared/src';
-import { getNodeMachineName, getNodeRoles } from '../selectors/node';
+import { getNodeUptime, getNodeMachineName, getNodeRoles } from '../selectors/node';
 
 export const nodeMemory = (node: NodeKind): number => {
   const used = UIActions.getNodeMetric(node, 'usedMemory');

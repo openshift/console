@@ -33,21 +33,18 @@ import {
   OperatorStatus,
   referenceForModel,
 } from '../../module/k8s';
-import {
-  navFactory,
-  EmptyBox,
-  LinkifyExternal,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  LoadingBox,
-} from '../utils';
+import { navFactory } from '../utils/horizontal-nav';
+import { EmptyBox, LoadingBox } from '../utils/status-box';
+import { LinkifyExternal } from '../utils/link';
+import { ResourceLink } from '../utils/resource-link';
+import { ResourceSummary } from '../utils/details-page';
+import { SectionHeading } from '../utils/headings';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
-  DASH,
-} from '@console/shared';
+} from '@console/shared/src/components/status/icons';
+import { DASH } from '@console/shared/src/constants/ui';
 import RelatedObjectsPage from './related-objects';
 import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-status';
 import {

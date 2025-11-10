@@ -1,27 +1,21 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import {
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-  usePrometheusGate,
-} from '@console/shared';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DeploymentKind, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage } from './factory';
 
-import {
-  AsyncComponent,
-  ContainerTable,
-  ResourceSummary,
-  SectionHeading,
-  navFactory,
-  PodsComponent,
-  RuntimeClass,
-  LoadingBox,
-} from './utils';
+import { AsyncComponent } from './utils/async';
+import { ContainerTable } from './utils/container-table';
+import { ResourceSummary, RuntimeClass } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory, PodsComponent } from './utils/horizontal-nav';
+import { LoadingBox } from './utils/status-box';
 import { VolumesTable } from './volumes-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';

@@ -13,12 +13,10 @@ import {
 } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { podPhase, PodKind, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
-import {
-  usePodsWatcher,
-  getPodsForResource,
-  getResourcesToWatchForPods,
-  BuildConfigData,
-} from '@console/shared';
+import { BuildConfigData } from '@console/shared/src/hooks/useBuildConfigsWatcher';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
+import { getResourcesToWatchForPods } from '@console/shared/src/utils/pod-resource-utils';
+import { getPodsForResource } from '@console/shared/src/utils/resource-utils';
 
 const kind: string = 'Pod';
 const MAX_PODS: number = 3;

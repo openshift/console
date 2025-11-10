@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { resourceListPathFromModel } from '../utils';
-import { getName, YellowExclamationTriangleIcon } from '@console/shared';
+import { resourceListPathFromModel } from '../utils/resource-link';
+import { getName } from '@console/shared/src/selectors/common';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { isPVCDelete, PVCDelete } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import {

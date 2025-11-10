@@ -8,7 +8,8 @@ import { K8sKind, k8sList, k8sPatch, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
 import { ModalTitle, ModalBody, ModalSubmitFooter, ModalWrapper } from '../factory/modal';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { ResourceIcon, ResourceName, resourcePathFromModel } from '../utils';
+import { ResourceIcon, ResourceName } from '../utils/resource-icon';
+import { resourcePathFromModel } from '../utils/resource-link';
 /* eslint-disable import/named */
 import { Trans, useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';

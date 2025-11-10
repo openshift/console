@@ -1330,3 +1330,13 @@ export const MultiNetworkPolicyModel: K8sKind = {
   plural: 'multi-networkpolicies',
   crd: true,
 };
+
+// Export models which have legacy plural URLs that need to be maintained.
+// This is imported by `../module/k8s/k8s-models.ts` and thus `connectToPlural`.
+export {
+  ClusterServiceVersionModel,
+  InstallPlanModel,
+  SubscriptionModel,
+} from '@console/operator-lifecycle-manager/src/models';
+
+export { PodDisruptionBudgetModel, EndPointSliceModel } from '@console/app/src/models/index';

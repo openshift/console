@@ -11,8 +11,8 @@ import { DashboardItemProps, withDashboardResources } from '../with-dashboard-re
 import { FirehoseResource, FirehoseResult } from '../../utils';
 import { EventModel } from '../../../models';
 import { EventKind, K8sKind } from '../../../module/k8s';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  useExtensions,
   DashboardsOverviewResourceActivity,
   isDashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
@@ -25,7 +25,7 @@ import {
 import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
 import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import { getName } from '@console/shared';
+import { getName } from '@console/shared/src/selectors/common';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 

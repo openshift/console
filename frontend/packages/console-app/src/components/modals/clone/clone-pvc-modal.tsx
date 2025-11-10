@@ -43,9 +43,9 @@ import {
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { isCephProvisioner } from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { getName, getRequestedPVCSize, onlyPvcSCs } from '@console/shared/src/selectors';
+import { isCephProvisioner } from '@console/shared/src/utils/storage-utils';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
 
 import './_clone-pvc-modal.scss';

@@ -6,17 +6,13 @@ import { GroupModel, UserModel } from '../models';
 import { referenceForModel, GroupKind } from '../module/k8s';
 import { DetailsPage, ListPage } from './factory';
 import { RoleBindingsPage } from './RBAC';
-import {
-  asAccessReview,
-  EmptyBox,
-  Kebab,
-  KebabOption,
-  LoadingBox,
-  navFactory,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-} from './utils';
+import { asAccessReview } from './utils/rbac';
+import { EmptyBox, LoadingBox } from './utils/status-box';
+import { Kebab, KebabOption } from './utils/kebab';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useTranslation } from 'react-i18next';
 import { Grid, GridItem, ButtonVariant } from '@patternfly/react-core';

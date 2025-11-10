@@ -13,6 +13,7 @@ import {
   Tr,
 } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { useAccessReview, WatchK8sResource } from '@console/dynamic-plugin-sdk';
@@ -20,6 +21,7 @@ import {
   getGroupVersionKindForModel,
   getReferenceForModel,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { PluginCSPViolations } from '@console/internal/actions/ui';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -40,21 +42,22 @@ import {
   K8sResourceKindReference,
   referenceForModel,
 } from '@console/internal/module/k8s';
+import { RootState } from '@console/internal/redux';
 import {
   isLoadedDynamicPluginInfo,
   DynamicPluginInfo,
   isNotLoadedDynamicPluginInfo,
 } from '@console/plugin-sdk/src';
-import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { consolePluginModal } from '@console/shared/src/components/modals/ConsolePluginModal';
 import {
-  consolePluginModal,
-  CONSOLE_OPERATOR_CONFIG_NAME,
-  DASH,
-  Status,
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
+} from '@console/shared/src/components/status/icons';
+import { Status } from '@console/shared/src/components/status/Status';
+import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   boolComparator,
   localeComparator,
@@ -301,7 +304,11 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
 };
 
 const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
-  const [pluginInfo, pluginInfoLoaded] = useDynamicPluginInfo();
+  const [pluginInfo, pluginInfoLoaded] = usePluginInfo();
+  const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
+    UI.get('pluginCSPViolations'),
+  );
+
   const rows = React.useMemo<ConsolePluginTableRow[]>(
     () =>
       !pluginInfoLoaded
@@ -312,15 +319,15 @@ const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
             description: plugin.metadata?.customProperties?.console?.description,
             enabled: plugin.enabled,
             status: plugin.status,
-            hasCSPViolations: plugin.hasCSPViolations,
+            hasCSPViolations: cspViolations[plugin.metadata.name] ?? false,
           })),
-    [pluginInfo, pluginInfoLoaded],
+    [pluginInfo, pluginInfoLoaded, cspViolations],
   );
   return <ConsolePluginsTable {...props} rows={rows} loaded={pluginInfoLoaded} />;
 };
 
 const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
-  const [pluginInfo] = useDynamicPluginInfo();
+  const [pluginInfo] = usePluginInfo();
   const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
     isList: true,
     kind: referenceForModel(ConsolePluginModel),
@@ -328,6 +335,9 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
   const enabledPlugins = React.useMemo(() => props?.obj?.spec?.plugins ?? [], [
     props?.obj?.spec?.plugins,
   ]);
+  const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
+    UI.get('pluginCSPViolations'),
+  );
   const rows = React.useMemo<ConsolePluginTableRow[]>(() => {
     if (!consolePluginsLoaded) {
       return [];
@@ -348,7 +358,7 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
           description: loadedPluginInfo?.metadata?.customProperties?.console?.description,
           enabled,
           status: loadedPluginInfo?.status,
-          hasCSPViolations: loadedPluginInfo?.hasCSPViolations,
+          hasCSPViolations: cspViolations[plugin.metadata.name] ?? false,
         };
       }
       return {
@@ -363,7 +373,7 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
             : undefined,
       };
     });
-  }, [consolePluginsLoaded, consolePlugins, pluginInfo, enabledPlugins]);
+  }, [consolePluginsLoaded, consolePlugins, pluginInfo, enabledPlugins, cspViolations]);
   return <ConsolePluginsTable {...props} rows={rows} loaded={consolePluginsLoaded} />;
 };
 

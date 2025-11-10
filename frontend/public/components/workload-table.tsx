@@ -1,21 +1,3 @@
-import * as React from 'react';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
-import { Link } from 'react-router-dom-v5-compat';
-import { K8sResourceKind, referenceForModel } from '../module/k8s';
-import { TableData } from './factory';
-import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import {
-  Kebab,
-  KebabAction,
-  LabelList,
-  ResourceKebab,
-  ResourceLink,
-  resourcePath,
-  Selector,
-} from './utils';
-import { DASH, LazyActionMenu } from '@console/shared';
 import {
   actionsCellProps,
   cellIsStickyProps,
@@ -25,9 +7,22 @@ import {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { DASH } from '@console/shared/src/constants/ui';
+import { css } from '@patternfly/react-styles';
+import { sortable } from '@patternfly/react-table';
+import i18next from 'i18next';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom-v5-compat';
+import { K8sResourceKind, referenceForModel } from '../module/k8s';
+import { Kebab } from './utils/kebab';
+import { LabelList } from './utils/label-list';
+import { ResourceLink, resourcePath } from './utils/resource-link';
+import { Selector } from './utils/selector';
 
 const tableColumnClasses = [
   '',
@@ -37,56 +32,6 @@ const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
-
-export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
-  obj,
-  kind,
-  menuActions,
-  customActionMenu,
-  customData,
-}) => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Link
-          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
-          title="pods"
-        >
-          {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
-            statusReplicas: obj.status.replicas || 0,
-            specReplicas: obj.spec.replicas,
-          })}
-        </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <LabelList kind={kind} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        {customActionMenu || (
-          <ResourceKebab actions={menuActions} kind={kind} resource={obj} customData={customData} />
-        )}
-      </TableData>
-    </>
-  );
-};
-WorkloadTableRow.displayName = 'WorkloadTableRow';
-type WorkloadTableRowProps = {
-  obj: K8sResourceKind;
-  kind: string;
-  menuActions?: KebabAction[];
-  customActionMenu?: React.ReactNode; // Renders a custom action menu.
-  customData?: { [key: string]: any };
-};
 
 export const WorkloadTableHeader = () => {
   return [

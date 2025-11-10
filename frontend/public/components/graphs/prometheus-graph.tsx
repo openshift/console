@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom-v5-compat';
 import { Title } from '@patternfly/react-core';
 
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { featureReducerName } from '../../reducers/features';
 import { getActiveNamespace } from '../../reducers/ui';
 import { RootState } from '../../redux';

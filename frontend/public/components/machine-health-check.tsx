@@ -8,18 +8,14 @@ import { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
 import { referenceForModel } from '../module/k8s/k8s';
 import { DetailsPage, ListPage } from './factory';
 import { DASH } from '@console/shared/src/constants';
-import {
-  DetailsItem,
-  EmptyBox,
-  Kebab,
-  LoadingBox,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  Selector,
-  navFactory,
-} from './utils';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary } from './utils/details-page';
+import { EmptyBox, LoadingBox } from './utils/status-box';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { ResourceLink } from './utils/resource-link';
+import { SectionHeading } from './utils/headings';
+import { Selector } from './utils/selector';
+import { navFactory } from './utils/horizontal-nav';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
