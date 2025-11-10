@@ -6,7 +6,8 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
 
 import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
-import { FieldLevelHelp, LinkifyExternal } from '../utils';
+import { FieldLevelHelp } from '../utils/field-level-help';
+import { LinkifyExternal } from '../utils/link';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import {
   ClusterVersionKind,

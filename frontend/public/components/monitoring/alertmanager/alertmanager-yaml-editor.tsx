@@ -9,7 +9,9 @@ import { useTranslation } from 'react-i18next';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
 import { K8sResourceKind } from '../../../module/k8s';
-import { AsyncComponent, Firehose, StatusBox } from '../../utils';
+import { AsyncComponent } from '../../utils/async';
+import { Firehose } from '../../utils/firehose';
+import { StatusBox } from '../../utils/status-box';
 import { patchAlertmanagerConfig, getAlertmanagerYAML } from './alertmanager-utils';
 
 const EditAlertmanagerYAML = (props) => (

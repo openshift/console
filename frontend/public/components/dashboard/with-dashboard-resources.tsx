@@ -16,7 +16,8 @@ import {
   getQueryKey,
 } from '../../actions/dashboards';
 import { RootState } from '../../redux';
-import { Firehose, FirehoseResource, FirehoseResult } from '../utils';
+import { Firehose } from '../utils/firehose';
+import type { FirehoseResource, FirehoseResult } from '../utils/types';
 import { K8sResourceKind, AppliedClusterResourceQuotaKind } from '../../module/k8s';
 import { PrometheusResponse } from '../graphs';
 import { Fetch, RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';

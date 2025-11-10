@@ -3,7 +3,7 @@ import i18n from 'i18next';
 import { chart_color_orange_300 as requestedColor } from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
 
 import { PrometheusResponse, DataPoint, PrometheusResult } from '.';
-import { Humanize } from '../utils';
+import type { Humanize } from '../utils/types';
 
 export const defaultXMutator: XMutator = (x) => new Date(x * 1000);
 export const defaultYMutator: YMutator = (y) => parseFloat(y);
