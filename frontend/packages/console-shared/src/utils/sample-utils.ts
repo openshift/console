@@ -11,7 +11,7 @@ import {
   isPerspective,
   Perspective,
 } from '@console/dynamic-plugin-sdk';
-import { FirehoseResult } from '@console/internal/components/utils';
+import { FirehoseResult } from '@console/internal/components/utils/types';
 import {
   BuildConfigModel,
   ClusterRoleModel,

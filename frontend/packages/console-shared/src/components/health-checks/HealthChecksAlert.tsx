@@ -3,7 +3,7 @@ import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { useAccessReview } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
 import {
   DeploymentConfigModel,
   DeploymentModel,

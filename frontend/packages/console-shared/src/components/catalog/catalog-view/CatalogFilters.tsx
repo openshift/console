@@ -7,7 +7,7 @@ import {
 import * as _ from 'lodash';
 import { CatalogItemAttribute } from '@console/dynamic-plugin-sdk';
 import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
-import { FieldLevelHelp } from '@console/internal/components/utils';
+import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { alphanumericCompare } from '@console/shared/src/utils/utils';
 import {
   CatalogFilter,

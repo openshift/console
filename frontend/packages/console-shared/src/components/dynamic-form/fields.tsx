@@ -16,11 +16,12 @@ import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
-import { LinkifyExternal, SelectorInput } from '@console/internal/components/utils';
 import {
   ConsoleSelect,
   ConsoleSelectProps,
 } from '@console/internal/components/utils/console-select';
+import { LinkifyExternal } from '@console/internal/components/utils/link';
+import { SelectorInput } from '@console/internal/components/utils/selector-input';
 import {
   NodeAffinity,
   PodAffinity,
