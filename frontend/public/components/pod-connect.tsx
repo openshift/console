@@ -17,8 +17,10 @@ import {
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
 import store from '../redux';
-import { ContainerLabel, ContainerSelect, LoadingBox } from './utils';
-import { FLAGS, useFlag } from '@console/shared';
+import { ContainerLabel, ContainerSelect } from './utils/container-select';
+import { LoadingBox } from './utils/status-box';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
 import { Terminal, ImperativeTerminalType } from './terminal';
 import { WSFactory } from '../module/ws-factory';

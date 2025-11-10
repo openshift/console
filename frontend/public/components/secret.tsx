@@ -3,18 +3,21 @@ import { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage } from './factory';
-import {
-  K8sModel,
-  K8sResourceKind,
-  referenceFor,
-  referenceForModel,
-  SecretKind,
-  TableColumn,
-} from '../module/k8s';
 import { SecretData } from './configmap-and-secret-data';
-import { SectionHeading, ResourceLink, ResourceSummary, detailsPage, navFactory } from './utils';
 import { DASH } from '@console/shared/src/constants/ui';
 import { LazyActionMenu, ActionMenuVariant } from '@console/shared/src/components/actions';
+import {
+  referenceFor,
+  SecretKind,
+  K8sModel,
+  K8sResourceKind,
+  referenceForModel,
+  TableColumn,
+} from '../module/k8s';
+import { SectionHeading } from './utils/headings';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary, detailsPage } from './utils/details-page';
+import { navFactory } from './utils/horizontal-nav';
 import { SecretType } from './secrets/create-secret/types';
 import { useAddSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';

@@ -7,7 +7,7 @@ import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat'
 import { isNotLoadedDynamicPluginInfo, DynamicPluginInfo } from '@console/plugin-sdk';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import * as UIActions from '@console/internal/actions/ui';
-import { resourcePath } from '@console/internal/components/utils';
+import { resourcePath } from '@console/internal/components/utils/resource-link';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 import { getClusterID } from '@console/internal/module/k8s/cluster-settings';
@@ -20,8 +20,8 @@ import { alertURL } from '@console/internal/components/monitoring/utils';
 import {
   BlueArrowCircleUpIcon,
   RedExclamationCircleIcon,
-  useCanClusterUpgrade,
-} from '@console/shared';
+} from '@console/shared/src/components/status/icons';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import {
   getAlertDescription,
   getAlertMessage,
@@ -65,7 +65,7 @@ import {
   splitClusterVersionChannel,
   VersionUpdate,
 } from '../module/k8s';
-import { LinkifyExternal } from './utils';
+import { LinkifyExternal } from './utils/link';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';

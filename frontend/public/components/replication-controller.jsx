@@ -12,19 +12,14 @@ import {
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, sorts } from './factory';
-import {
-  ContainerTable,
-  navFactory,
-  SectionHeading,
-  ResourceSummary,
-  ResourcePodCount,
-  AsyncComponent,
-  ResourceLink,
-  OwnerReferences,
-  PodsComponent,
-  RuntimeClass,
-  LoadingBox,
-} from './utils';
+import { ContainerTable } from './utils/container-table';
+import { navFactory, PodsComponent } from './utils/horizontal-nav';
+import { SectionHeading } from './utils/headings';
+import { ResourceSummary, ResourcePodCount, RuntimeClass } from './utils/details-page';
+import { AsyncComponent } from './utils/async';
+import { ResourceLink } from './utils/resource-link';
+import { OwnerReferences } from './utils/owner-references';
+import { LoadingBox } from './utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { referenceForModel } from '../module/k8s';
 import { VolumesTable } from './volumes-table';

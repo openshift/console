@@ -52,12 +52,12 @@ import {
   apiVersionForModel,
   ListKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace, getAnnotations } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { getName, getNamespace, getAnnotations } from '@console/shared/src/selectors/common';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (

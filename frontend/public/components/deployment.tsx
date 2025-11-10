@@ -1,37 +1,13 @@
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { Status } from '@console/shared/src/components/status/Status';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
-import {
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-} from '@console/shared/src/components/actions';
-import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 
-import { DeploymentModel } from '../models';
-import { DeploymentKind, referenceForModel } from '../module/k8s';
-import { Conditions } from './conditions';
-import { ResourceEventStream } from './events';
-import { VolumesTable } from './volumes-table';
-import { DetailsPage, ListPage } from './factory';
-import {
-  initialFiltersDefault,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
-import { LoadingBox } from './utils/status-box';
-import {
-  AsyncComponent,
-  DetailsItem,
-  ContainerTable,
-  navFactory,
-  ResourceSummary,
-  SectionHeading,
-  WorkloadPausedAlert,
-  RuntimeClass,
-} from './utils';
-import { ReplicaSetsPage } from './replicaset';
-import { WorkloadTableHeader, useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { VerticalPodAutoscalerRecommendations } from '@console/app/src/components/vpa/VerticalPodAutoscalerRecommendations';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -43,7 +19,26 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { DeploymentModel } from '../models';
+import { DeploymentKind, referenceForModel } from '../module/k8s';
+import { Conditions } from './conditions';
+import { ResourceEventStream } from './events';
+import { DetailsPage, ListPage } from './factory';
+import { ReplicaSetsPage } from './replicaset';
+import {
+  initialFiltersDefault,
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { LoadingBox } from './utils/status-box';
+import { AsyncComponent } from './utils/async';
+import { ContainerTable } from './utils/container-table';
+import { DetailsItem } from './utils/details-item';
+import { ResourceSummary, RuntimeClass } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { WorkloadPausedAlert } from './utils/workload-pause';
+import { VolumesTable } from './volumes-table';
+import { WorkloadTableHeader, getWorkloadDataViewRows, useWorkloadColumns } from './workload-table';
 
 const kind = referenceForModel(DeploymentModel);
 

@@ -49,15 +49,15 @@ import {
   isNotLoadedDynamicPluginInfo,
 } from '@console/plugin-sdk/src';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { consolePluginModal } from '@console/shared/src/components/modals/ConsolePluginModal';
 import {
-  consolePluginModal,
-  CONSOLE_OPERATOR_CONFIG_NAME,
-  DASH,
-  Status,
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
+} from '@console/shared/src/components/status/icons';
+import { Status } from '@console/shared/src/components/status/Status';
+import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   boolComparator,
   localeComparator,

@@ -38,7 +38,9 @@ import {
 import { RowFilter } from '../filter-toolbar';
 import * as UIActions from '../../actions/ui';
 import { alertingRuleStateOrder, alertSeverityOrder } from '../monitoring/utils';
-import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
+import { convertToBaseValue } from '../utils/units';
+import { WithScrollContainer } from '../utils/dom-utils';
+import { EmptyBox, StatusBox } from '../utils/status-box';
 import {
   CustomResourceDefinitionKind,
   K8sResourceKind,

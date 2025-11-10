@@ -21,7 +21,9 @@ import {
   WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
 import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
-import { BlueArrowCircleUpIcon, FLAGS, useCanClusterUpgrade } from '@console/shared';
+import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';

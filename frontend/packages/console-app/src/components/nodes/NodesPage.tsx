@@ -47,17 +47,21 @@ import {
   Selector,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import {
-  getName,
-  getUID,
-  getLabels,
-  getNodeMachineNameAndNamespace,
-  TableColumnsType,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+} from '@console/shared/src/constants/common';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { getName, getUID, getLabels } from '@console/shared/src/selectors/common';
+import {
   getNodeArchitecture,
   getNodeRoles,
-  useUserSettingsCompatibility,
+  getNodeMachineNameAndNamespace,
+} from '@console/shared/src/selectors/node';
+import {
   nodeUptime,
   nodeZone,
   nodeMachine,
@@ -70,10 +74,8 @@ import {
   nodeReadiness,
   nodeRoles as nodeRolesSort,
   sortWithCSRResource,
-  LazyActionMenu,
-  DASH,
-} from '@console/shared';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+} from '@console/shared/src/sorts/nodes';
+import { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { nodeStatus } from '../../status';
 import { getNodeClientCSRs, isCSRResource } from './csr';
 import NodeUptime from './node-dashboard/NodeUptime';

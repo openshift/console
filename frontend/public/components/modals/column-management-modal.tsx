@@ -15,10 +15,12 @@ import { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
 
 import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+} from '@console/shared/src/constants/common';
+import {
   WithUserSettingsCompatibilityProps,
   withUserSettingsCompatibility,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-} from '@console/shared';
+} from '@console/shared/src/hoc/withUserSettingsCompatibility';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
 
 export const MAX_VIEW_COLS = 9;

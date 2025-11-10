@@ -7,10 +7,10 @@ import {
   getMachineRegion,
   getMachineRole,
   getMachineZone,
-  Status,
   getMachinePhase,
-} from '@console/shared';
-import { DASH } from '@console/shared/src/constants';
+} from '@console/shared/src/selectors/machine';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
 import { ListPageBody, TableColumn } from '@console/dynamic-plugin-sdk';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel, Selector } from '../module/k8s';
@@ -20,17 +20,13 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage } from './factory';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
-import {
-  DetailsItem,
-  Kebab,
-  NodeLink,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  navFactory,
-  LoadingBox,
-  ResourceKebab,
-} from './utils';
+import { DetailsItem } from './utils/details-item';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { NodeLink, ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LoadingBox } from './utils/status-box';
 import { ResourceEventStream } from './events';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { sortResourceByValue } from './factory/Table/sort';

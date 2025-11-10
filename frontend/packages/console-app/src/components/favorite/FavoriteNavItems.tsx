@@ -3,7 +3,8 @@ import { NavExpandable, Button, FlexItem, Flex, Truncate } from '@patternfly/rea
 import { StarIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-import { useTelemetry, useUserSettingsCompatibility } from '@console/shared';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { FAVORITES_CONFIG_MAP_KEY, FAVORITES_LOCAL_STORAGE_KEY } from '../../consts';
 import { FavoritesType } from '../../types';
 import { FavoriteNavItem } from './FavoriteNavItem';

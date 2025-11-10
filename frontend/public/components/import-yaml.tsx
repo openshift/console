@@ -1,7 +1,7 @@
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { AsyncComponent } from './utils';
+import { AsyncComponent } from './utils/async';
 import { useTranslation } from 'react-i18next';
-import { useQueryParams } from '@console/shared';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 
 export const ImportYamlPage = () => {
   const { t } = useTranslation();

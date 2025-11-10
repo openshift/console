@@ -29,17 +29,13 @@ import { Conditions } from './conditions';
 import { ControlPlaneMachineSetModel } from '../models';
 import { ControlPlaneMachineSetKind, referenceForModel } from '../module/k8s';
 import { DetailsPage, ListPage } from './factory';
-import {
-  Kebab,
-  LoadingBox,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  resourcePath,
-  ResourceSummary,
-  SectionHeading,
-  Selector,
-} from './utils';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { LoadingBox } from './utils/status-box';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink, resourcePath } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { Selector } from './utils/selector';
 import { ResourceEventStream } from './events';
 import { MachinePage, machineReference } from './machine';
 import { MachineTabPageProps } from './machine-set';

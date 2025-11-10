@@ -10,7 +10,8 @@ import {
   DetailsItem,
 } from '@console/internal/components/utils';
 import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { LazyActionMenu, ActionMenuVariant } from '@console/shared';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PodDisruptionBudgetKind } from './types';
 

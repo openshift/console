@@ -5,14 +5,11 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage } from './factory';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
 import { DASH } from '@console/shared/src/constants/ui';
-import {
-  Kebab,
-  SectionHeading,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-} from './utils';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ConfigMapModel } from '../models/index';
 import { Grid, GridItem } from '@patternfly/react-core';

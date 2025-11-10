@@ -3,7 +3,7 @@ import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternf
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useFormikValidationFix } from '../../hooks';
+import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { ResourceDropdown, ResourceDropdownItems } from '../dropdown/ResourceDropdown';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';

@@ -15,19 +15,14 @@ import { useTranslation } from 'react-i18next';
 
 import { DetailsPage, ListPage } from './factory';
 import { sortResourceByValue } from './factory/Table/sort';
-import {
-  AsyncComponent,
-  DetailsItem,
-  EmptyBox,
-  Kebab,
-  KebabAction,
-  LoadingBox,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-} from './utils';
+import { AsyncComponent } from './utils/async';
+import { DetailsItem } from './utils/details-item';
+import { EmptyBox, LoadingBox } from './utils/status-box';
+import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import {
   apiVersionCompare,
   CRDVersion,
@@ -43,7 +38,8 @@ import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
 import { getResourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
-import { GreenCheckCircleIcon, DASH } from '@console/shared';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { DASH } from '@console/shared/src/constants/ui';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   ResourceListPage,

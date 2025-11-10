@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  getPodsForResource,
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-  LazyActionMenu,
-} from '@console/shared';
 import { DASH } from '@console/shared/src/constants/ui';
+import { getPodsForResource } from '@console/shared/src/utils/resource-utils';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, ListPageWrapper } from './factory';
 import {
@@ -18,17 +16,15 @@ import {
   referenceFor,
   TableColumn,
 } from '../module/k8s';
-import {
-  ContainerTable,
-  DetailsItem,
-  Firehose,
-  Kebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  navFactory,
-  FirehoseResourcesResult,
-} from './utils';
+import { ContainerTable } from './utils/container-table';
+import { DetailsItem } from './utils/details-item';
+import { Firehose } from './utils/firehose';
+import { FirehoseResourcesResult } from './utils/types';
+import { Kebab } from './utils/kebab';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';

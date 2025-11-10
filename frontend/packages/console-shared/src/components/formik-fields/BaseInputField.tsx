@@ -7,7 +7,7 @@ import {
   ValidatedOptions,
 } from '@patternfly/react-core';
 import { useField } from 'formik';
-import { useFormikValidationFix } from '../../hooks';
+import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { BaseInputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

@@ -11,7 +11,7 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
-import { DASH } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { referenceForModel, K8sResourceKind, TableColumn } from '../module/k8s';
 import { ListPage, DetailsPage } from './factory';
@@ -22,7 +22,12 @@ import {
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluralize } from './utils';
+import { SectionHeading } from './utils/headings';
+import { LabelList } from './utils/label-list';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { pluralize } from './utils/details-page';
 import { useConfigureCountModal } from './modals/configure-count-modal';
 import { AlertmanagerModel } from '../models';
 import { LoadingBox } from './utils/status-box';

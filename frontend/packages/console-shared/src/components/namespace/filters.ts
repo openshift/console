@@ -1,5 +1,9 @@
 import { getActiveUserName } from '@console/internal/actions/ui';
-import { SYSTEM_NAMESPACES_PREFIX, SYSTEM_NAMESPACES, REQUESTER_FILTER } from '@console/shared';
+import {
+  SYSTEM_NAMESPACES_PREFIX,
+  SYSTEM_NAMESPACES,
+  REQUESTER_FILTER,
+} from '@console/shared/src/constants/common';
 
 export const isCurrentUser = (user: string): boolean => user === getActiveUserName();
 

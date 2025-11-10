@@ -16,18 +16,12 @@ import { OAuthModel, UserModel } from '../models';
 import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
 import { DetailsPage, ListPage } from './factory';
 import { RoleBindingsPage } from './RBAC';
-import {
-  ConsoleEmptyState,
-  Kebab,
-  KebabAction,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  resourcePathFromModel,
-  LoadingBox,
-} from './utils';
+import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
+import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink, resourcePathFromModel } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import {
   ConsoleDataView,
   getNameCellProps,

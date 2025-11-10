@@ -33,7 +33,10 @@ import {
   getTemplateIconClass,
   normalizeIconClass,
 } from './catalog/catalog-item-icon';
-import { ButtonBar, Firehose, LoadError, LoadingBox, NsDropdown } from './utils';
+import { ButtonBar } from './utils/button-bar';
+import { Firehose } from './utils/firehose';
+import { LoadError, LoadingBox } from './utils/status-box';
+import { NsDropdown } from './utils/list-dropdown';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {

@@ -23,7 +23,8 @@ import {
   Selector,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { getAnnotations, LazyActionMenu } from '@console/shared';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { getAnnotations } from '@console/shared/src/selectors/common';
 
 const tableColumnInfo = [
   { id: 'name' },

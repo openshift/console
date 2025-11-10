@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { NavBar } from '@console/internal/components/utils';
+import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { Alert, Content, ContentVariants, PageSection } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';

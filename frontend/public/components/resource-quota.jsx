@@ -16,20 +16,17 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { FLAGS, YellowExclamationTriangleIcon, DASH } from '@console/shared';
 import { DetailsPage, MultiListPage } from './factory';
-import {
-  Kebab,
-  SectionHeading,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  convertToBaseValue,
-  FieldLevelHelp,
-  useAccessReview,
-  LabelList,
-  Selector,
-  DetailsItem,
-} from './utils';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { convertToBaseValue } from './utils/units';
+import { FieldLevelHelp } from './utils/field-level-help';
+import { useAccessReview } from './utils/rbac';
+import { LabelList } from './utils/label-list';
+import { Selector } from './utils/selector';
+import { DetailsItem } from './utils/details-item';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending } from '../reducers/features';

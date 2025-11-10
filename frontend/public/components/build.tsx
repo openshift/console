@@ -31,25 +31,23 @@ import {
 import { getBuildNumber } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { AsyncComponent } from './utils/async';
+import { BuildHooks } from './utils/build-hooks';
+import { BuildStrategy } from './utils/build-strategy';
+import { ConsoleEmptyState } from './utils/status-box';
+import { DetailsItem } from './utils/details-item';
 import {
-  AsyncComponent,
-  BuildHooks,
-  BuildStrategy,
-  ConsoleEmptyState,
-  DetailsItem,
   documentationURLs,
   getDocumentationURL,
-  humanizeBinaryBytes,
-  humanizeCpuCores,
   isManaged,
   isUpstream,
-  Kebab,
-  navFactory,
-  ResourceLink,
-  resourcePath,
-  ResourceSummary,
-  SectionHeading,
-} from './utils';
+} from './utils/documentation';
+import { humanizeBinaryBytes, humanizeCpuCores } from './utils/units';
+import { Kebab } from './utils/kebab';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink, resourcePath } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { BuildLogs } from './build-logs';

@@ -2,21 +2,16 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom-v5-compat';
-import { useCanClusterUpgrade } from '@console/shared';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { ClusterVersionModel } from '../../models';
 import { DetailsPage } from '../factory';
 import { Conditions } from '../conditions';
 import { ClusterVersionKind, K8sResourceKindReference, referenceForModel } from '../../module/k8s';
-import {
-  editYamlComponent,
-  navFactory,
-  ResourceSummary,
-  SectionHeading,
-  UpstreamConfigDetailsItem,
-  viewYamlComponent,
-} from '../utils';
+import { editYamlComponent, navFactory, viewYamlComponent } from '../utils/horizontal-nav';
+import { ResourceSummary, UpstreamConfigDetailsItem } from '../utils/details-page';
+import { SectionHeading } from '../utils/headings';
 import { breadcrumbsForGlobalConfig } from './global-config';
 
 const clusterVersionReference: K8sResourceKindReference = referenceForModel(ClusterVersionModel);

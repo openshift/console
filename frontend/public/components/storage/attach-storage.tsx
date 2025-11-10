@@ -5,12 +5,14 @@ import { Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
-import { useDeepCompareMemoize } from '@console/shared';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sKind } from '../../module/k8s';
-import { AsyncComponent, ResourceLink, LoadingBox } from '../utils';
+import { AsyncComponent } from '../utils/async';
+import { ResourceLink } from '../utils/resource-link';
+import { LoadingBox } from '../utils/status-box';
 import { connectToPlural } from '../../kinds';
 
 export type AttachStorageFormProps = {

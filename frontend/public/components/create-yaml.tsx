@@ -9,7 +9,8 @@ import {
 import { getYAMLTemplates } from '../models/yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
-import { Firehose, LoadingBox } from './utils';
+import { Firehose } from './utils/firehose';
+import { LoadingBox } from './utils/status-box';
 import {
   K8sKind,
   apiVersionForModel,

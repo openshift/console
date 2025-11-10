@@ -12,18 +12,17 @@ import { useNavigate } from 'react-router-dom-v5-compat';
 import {
   FLAGS,
   ALL_NAMESPACES_KEY,
-  getBadgeFromType,
-  getResourceSidebarSamples,
-  useTelemetry,
-  useUserSettingsCompatibility,
-} from '@console/shared';
-import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
-import {
   SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
   SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
   SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
   SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import { getResourceSidebarSamples } from '@console/shared/src/utils/sample-utils';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
+
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
@@ -41,14 +40,11 @@ import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useRe
 import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
 import { managedResourceSaveModal } from './modals';
 import ReplaceCodeModal from './modals/replace-code-modal';
-import {
-  checkAccess,
-  Firehose,
-  Loading,
-  resourceObjPath,
-  resourceListPathFromModel,
-  FirehoseResult,
-} from './utils';
+import { checkAccess } from './utils/rbac';
+import { Firehose } from './utils/firehose';
+import { Loading } from './utils/status-box';
+import { resourceObjPath, resourceListPathFromModel } from './utils/resource-link';
+import { FirehoseResult } from './utils/types';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
   referenceForModel,

@@ -13,9 +13,11 @@ import { k8sGet } from '@console/internal/module/k8s';
 import { setFlag } from '../actions/flags';
 import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
-import { Firehose, FirehoseResult, removeQueryArgument } from './utils';
+import { Firehose } from './utils/firehose';
+import { FirehoseResult } from './utils/types';
+import { removeQueryArgument } from './utils/router';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
-import { RootState } from '../redux';
+import type { RootState } from '../redux';
 
 export type NamespaceBarDropdownsProps = {
   children: React.ReactNode;

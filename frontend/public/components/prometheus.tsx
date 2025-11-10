@@ -2,7 +2,10 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ListPage, ListPageProps } from './factory';
-import { LabelList, ResourceLink, Selector, LoadingBox } from './utils';
+import { LabelList } from './utils/label-list';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox } from './utils/status-box';
 import { PrometheusModel } from '../models';
 import { referenceForModel, referenceFor, K8sResourceKind } from '../module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';

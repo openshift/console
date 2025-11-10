@@ -20,7 +20,9 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { getBadgeFromType, usePinnedResources, useTelemetry } from '@console/shared';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
 import { ResourceListDropdown } from './resource-dropdown';
@@ -33,13 +35,10 @@ import {
   referenceForModel,
   K8sResourceKindReference,
 } from '../module/k8s';
-import {
-  LoadingBox,
-  ConsoleEmptyState,
-  ResourceIcon,
-  setQueryArgument,
-  AsyncComponent,
-} from './utils';
+import { LoadingBox, ConsoleEmptyState } from './utils/status-box';
+import { ResourceIcon } from './utils/resource-icon';
+import { setQueryArgument } from './utils/router';
+import { AsyncComponent } from './utils/async';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';

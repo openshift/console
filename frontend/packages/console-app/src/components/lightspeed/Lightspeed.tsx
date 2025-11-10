@@ -15,8 +15,9 @@ import { useHideLightspeed } from '@console/app/src/components/user-preferences/
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { history } from '@console/internal/components/utils';
 import { ConsolePluginModel } from '@console/internal/models';
-import { FLAGS, useTelemetry } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import './Lightspeed.scss';
 
 const getLightspeedInstallationStatus = async () => {

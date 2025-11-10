@@ -1,5 +1,5 @@
 import { PerspectiveType } from '@console/dynamic-plugin-sdk';
-import { useUserSettingsCompatibility } from '@console/shared';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import {
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_USER_SETTINGS_KEY,

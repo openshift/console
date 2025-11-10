@@ -2,14 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import {
-  FlexForm,
-  FormBody,
-  FormFooter,
-  FormHeader,
-  SyncedEditorField,
-  CodeEditorField,
-} from '@console/shared';
+import FlexForm from '@console/shared/src/components/form-utils/FlexForm';
+import FormBody from '@console/shared/src/components/form-utils/FormBody';
+import FormFooter from '@console/shared/src/components/form-utils/FormFooter';
+import FormHeader from '@console/shared/src/components/form-utils/FormHeader';
+import SyncedEditorField from '@console/shared/src/components/formik-fields/SyncedEditorField';
+import CodeEditorField from '@console/shared/src/components/formik-fields/CodeEditorField';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { ConfigMapModel } from '@console/internal/models';
 import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
