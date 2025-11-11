@@ -1008,6 +1008,9 @@
         "group": "operators.coreos.com"
       },
       "startsWith": ["operators.coreos.com", "clusterserviceversions"]
+    },
+    "flags": {
+      "disallowed": ["OLMV1_ENABLED"]
     }
   },
   {

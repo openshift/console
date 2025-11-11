@@ -157,7 +157,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     const allCategory = { id: ALL_CATEGORY, label: t('console-shared~All items') };
     const otherCategory = { id: OTHER_CATEGORY, label: t('console-shared~Other') };
     const sortedCategories = (categories ?? [])
-      .filter((cat) => cat.id !== ALL_CATEGORY && cat.id !== OTHER_CATEGORY)
+      .filter((cat) => cat && cat.id !== ALL_CATEGORY && cat.id !== OTHER_CATEGORY)
       .sort((a, b) => a.label.localeCompare(b.label));
     return [allCategory, ...sortedCategories, otherCategory];
   }, [categories, t]);

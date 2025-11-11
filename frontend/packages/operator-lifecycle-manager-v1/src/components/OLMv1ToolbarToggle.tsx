@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Button, Flex, FlexItem, Label, Popover, Switch } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
-import { useUserSettings } from '@console/shared';
+import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
+import { useFlag, useUserSettings } from '@console/shared';
 import { OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
 
 /**
@@ -11,9 +12,10 @@ import { OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
  */
 const OLMv1ToolbarToggle: React.FC = () => {
   const { t } = useTranslation();
+  const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
   const [olmv1Enabled, setOlmv1Enabled] = useUserSettings<boolean>(
     OLMV1_ENABLED_USER_SETTING_KEY,
-    false,
+    techPreviewEnabled ?? false,
     true,
   );
 
@@ -27,7 +29,7 @@ const OLMv1ToolbarToggle: React.FC = () => {
   const popoverContent = (
     <div>
       {t(
-        'olm-v1~The OLMv1 catalog is a technology preview feature. Enabling this will show only OLMv1-based operators in the catalog.',
+        'olm-v1~Lets you use OLMv1 (Tech Preview), a streamlined redesign of OLMv0. OLMv1 simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.',
       )}
     </div>
   );

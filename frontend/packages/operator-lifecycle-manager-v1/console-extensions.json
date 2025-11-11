@@ -3,7 +3,7 @@
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": {
-        "$codeRef": "useOLMv1EnabledFlagProvider"
+        "$codeRef": "useOLMv1FlagProvider"
       }
     },
     "flags": {
@@ -37,7 +37,7 @@
     "properties": {
       "id": "installed-extensions",
       "section": "ecosystem",
-      "name": "%olm-v1~Installed Extensions%",
+      "name": "%olm-v1~Installed Operators%",
       "model": {
         "kind": "ClusterExtension",
         "version": "v1",
