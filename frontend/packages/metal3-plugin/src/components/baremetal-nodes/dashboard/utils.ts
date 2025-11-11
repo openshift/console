@@ -9,6 +9,8 @@ import { getNodeServerCSR } from '../../../selectors/csr';
 import { bareMetalNodeStatus, NODE_STATUS_SERVER_CSR } from '../../../status/baremetal-node-status';
 import { CertificateSigningRequestKind } from '../../../types';
 
+export { NodeModel } from '@console/internal/models';
+
 const BMN_STATUS_GROUP_MAPPER = {
   [InventoryStatusGroup.PROGRESS]: ['Not Ready', NODE_STATUS_SERVER_CSR],
   [InventoryStatusGroup.NOT_MAPPED]: ['Ready'],
