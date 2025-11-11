@@ -41,6 +41,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   loadError,
   catalogExtensions,
   toolbarExtensions,
+  alertExtensions,
   enableDetailsPanel,
   title: defaultTitle,
   description: defaultDescription,
@@ -184,6 +185,14 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
           breadcrumbs={type ? breadcrumbs : null}
           helpText={getCatalogTypeDescription()}
         />
+        {alertExtensions?.length > 0 && (
+          <div className="pf-v6-u-mx-md">
+            {alertExtensions?.map((extension) => {
+              const AlertComponent = extension.properties.component;
+              return <AlertComponent key={extension.uid} />;
+            })}
+          </div>
+        )}
         <StatusBox
           skeleton={skeletonCatalog}
           data={items}

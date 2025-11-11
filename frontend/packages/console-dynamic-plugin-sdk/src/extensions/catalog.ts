@@ -112,6 +112,19 @@ export type CatalogToolbarItem = ExtensionDeclaration<
   }
 >;
 
+/** This extension allows plugins to contribute alerts to the Catalog view for a specific catalog type. */
+export type CatalogAlert = ExtensionDeclaration<
+  'console.catalog/alert',
+  {
+    /** The catalog ID the alert is for. If not specified, the alert will be available for all catalogs. */
+    catalogId?: string;
+    /** The catalog item type for this alert. If not specified, the alert will be available for all types. */
+    type?: string;
+    /** The component to render as a catalog alert. */
+    component: CodeRef<React.ComponentType>;
+  }
+>;
+
 export type SupportedCatalogExtensions =
   | CatalogItemType
   | CatalogItemTypeMetadata
@@ -119,7 +132,8 @@ export type SupportedCatalogExtensions =
   | CatalogItemFilter
   | CatalogItemMetadataProvider
   | CatalogCategoriesProvider
-  | CatalogToolbarItem;
+  | CatalogToolbarItem
+  | CatalogAlert;
 
 // Type guards
 
@@ -149,6 +163,10 @@ export const isCatalogCategoriesProvider = (e: Extension): e is CatalogCategorie
 
 export const isCatalogToolbarItem = (e: Extension): e is CatalogToolbarItem => {
   return e.type === 'console.catalog/toolbar-item';
+};
+
+export const isCatalogAlert = (e: Extension): e is CatalogAlert => {
+  return e.type === 'console.catalog/alert';
 };
 
 // Support types
