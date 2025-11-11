@@ -9,7 +9,8 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { ResourceLink, Selector } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { Selector } from '@console/internal/components/utils/selector';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { referenceForModel } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';

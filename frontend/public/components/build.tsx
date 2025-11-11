@@ -56,17 +56,8 @@ import { Area } from './graphs';
 import { BuildConfigModel } from '../models';
 import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { displayDurationInWords } from './utils/build-utils';
-
+import { BuildStrategyType, getStrategyType, displayDurationInWords } from './utils/build-utils';
 const BuildsReference: K8sResourceKindReference = 'Build';
-
-export enum BuildStrategyType {
-  Docker = 'Docker',
-  Devfile = 'Devfile',
-  Custom = 'Custom',
-  JenkinsPipeline = 'JenkinsPipeline',
-  Source = 'Source',
-}
 
 export const BuildLogLink = ({ build }) => {
   const {
@@ -287,23 +278,6 @@ export const BuildsDetails: React.FCC<BuildsDetailsProps> = ({ obj: build }) => 
       <BuildHooks resource={build} />
     </>
   );
-};
-
-export const getStrategyType = (strategy: BuildStrategyType) => {
-  switch (strategy) {
-    case BuildStrategyType.Docker:
-      return 'dockerStrategy';
-    case BuildStrategyType.Devfile:
-      return 'devfileStrategy';
-    case BuildStrategyType.Custom:
-      return 'customStrategy';
-    case BuildStrategyType.JenkinsPipeline:
-      return 'jenkinsPipelineStrategy';
-    case BuildStrategyType.Source:
-      return 'sourceStrategy';
-    default:
-      return null;
-  }
 };
 
 export const getEnvPath = (props) => {

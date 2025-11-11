@@ -11,7 +11,7 @@ import {
   GettingStartedLink,
 } from '@console/shared/src/components/getting-started';
 import { lightspeedOperatorURL } from '@console/app/src/components/lightspeed/Lightspeed';
-import { DOC_URL_OPENSHIFT_WHATS_NEW } from '../../../../utils';
+import { DOC_URL_OPENSHIFT_WHATS_NEW } from '../../../../utils/documentation';
 
 export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FormikValues, useFormikContext, useField } from 'formik';
-import { SelectorInput } from '@console/internal/components/utils';
+import { SelectorInput } from '@console/internal/components/utils/selector-input';
 import { FieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

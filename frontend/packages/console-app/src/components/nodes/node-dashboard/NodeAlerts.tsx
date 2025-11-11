@@ -10,8 +10,8 @@ import {
 } from '@console/app/src/components/nodes/node-dashboard/queries';
 import { LIMIT_STATE, Humanize } from '@console/dynamic-plugin-sdk';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { humanizeCpuCores, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { humanizeCpuCores, humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import { MachineModel } from '@console/internal/models';
 import { MachineKind, MachineHealthCheckKind } from '@console/internal/module/k8s';
 import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';

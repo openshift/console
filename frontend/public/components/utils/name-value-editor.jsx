@@ -20,7 +20,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circ
 
 import { withTranslation } from 'react-i18next';
 
-import { NameValueEditorPair, EnvFromPair, EnvType } from './index';
+import { NameValueEditorPair, EnvFromPair, EnvType } from './types';
 import { ValueFromPair } from './value-from-pair';
 import withDragDropContext from './drag-drop-context';
 

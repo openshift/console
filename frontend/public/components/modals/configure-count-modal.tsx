@@ -17,7 +17,7 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { K8sResourceKind, K8sModel } from '../../module/k8s';
-import { NumberSpinner } from '../utils';
+import { NumberSpinner } from '../utils/number-spinner';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (props) => {

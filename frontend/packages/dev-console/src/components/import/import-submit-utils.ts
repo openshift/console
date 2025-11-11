@@ -3,9 +3,9 @@ import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Perspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src';
-import { BuildStrategyType } from '@console/internal/components/build';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { history } from '@console/internal/components/utils';
+import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import {
   ImageStreamModel,
   BuildConfigModel,

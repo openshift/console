@@ -19,8 +19,7 @@ jest.mock('@console/shared', () => ({
   Spotlight: () => null,
 }));
 
-jest.mock('@console/internal/components/utils', () => ({
-  ...jest.requireActual('@console/internal/components/utils'),
+jest.mock('@console/internal/components/utils/status-box', () => ({
   LoadingBox: () => 'Loading...',
 }));
 

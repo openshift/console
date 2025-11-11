@@ -3,7 +3,7 @@ import { Modal, Button, ModalBody, ModalFooter, ModalHeader } from '@patternfly/
 import { useTranslation } from 'react-i18next';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { ListInput } from '@console/internal/components/utils';
+import { ListInput } from '@console/internal/components/utils/list-input';
 import { GroupModel } from '@console/internal/models';
 import { GroupKind } from '@console/internal/module/k8s';
 import { ModalComponentProps } from 'public/components/factory/modal';

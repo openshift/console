@@ -6,7 +6,9 @@ import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { configureUpdateStrategyModal } from '@console/internal/components/modals';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
-import { togglePaused, asAccessReview, resourceObjPath } from '@console/internal/components/utils';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
+import { resourceObjPath } from '@console/internal/components/utils/resource-link';
+import { togglePaused } from '@console/internal/components/utils/workload-pause';
 import { DeploymentConfigModel } from '@console/internal/models';
 import {
   K8sResourceKind,

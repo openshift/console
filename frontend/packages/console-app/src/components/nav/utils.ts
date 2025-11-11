@@ -1,7 +1,7 @@
 import { NavExtension, isNavSection, K8sModel } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { stripBasePath } from '@console/internal/components/utils';
+import { stripBasePath } from '@console/internal/components/utils/link';
 import { startsWithSome } from '@console/shared/src/utils/utils';
 
 const toArray = (val) => (val ? (Array.isArray(val) ? val : [val]) : []);

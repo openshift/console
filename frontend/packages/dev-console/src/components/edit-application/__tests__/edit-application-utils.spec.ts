@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { BuildStrategyType } from '@console/internal/components/build';
+import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
 import { BuildOptions, GitImportFormData, Resources } from '../../import/import-types';

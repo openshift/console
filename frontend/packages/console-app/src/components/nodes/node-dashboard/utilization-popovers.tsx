@@ -6,7 +6,7 @@ import {
   humanizeCpuCores,
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
-} from '@console/internal/components/utils';
+} from '@console/internal/components/utils/units';
 import { PodModel, ProjectModel } from '@console/internal/models';
 import ConsumerPopover, {
   LimitsBody,

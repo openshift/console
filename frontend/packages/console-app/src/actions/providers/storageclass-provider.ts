@@ -9,7 +9,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { defaultClassAnnotation } from '@console/internal/components/storage-class';
-import { asAccessReview } from '@console/internal/components/utils';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { K8sResourceCommon, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';

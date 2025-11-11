@@ -9,7 +9,7 @@ import {
   YAMLTemplate,
   WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
-import { AsyncComponent } from '@console/internal/components/utils';
+import { AsyncComponent } from '@console/internal/components/utils/async';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleYAMLSampleModel } from '@console/internal/models';
 import { getYAMLTemplates } from '@console/internal/models/yaml-templates';

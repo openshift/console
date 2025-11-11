@@ -5,9 +5,9 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { WatchK8sResource, WatchK8sResult } from '@console/dynamic-plugin-sdk';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { ResourceLink } from '@console/internal/components/utils';
 import { pluralize } from '@console/internal/components/utils/details-page';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { MachineModel, MachineHealthCheckModel } from '@console/internal/models';
 import {
   referenceForModel,

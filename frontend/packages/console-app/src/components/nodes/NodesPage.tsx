@@ -30,14 +30,11 @@ import { coFetchJSON } from '@console/internal/co-fetch';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
 import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
-import {
-  ResourceLink,
-  humanizeBinaryBytes,
-  formatCores,
-  LabelList,
-  LoadingBox,
-} from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { LabelList } from '@console/internal/components/utils/label-list';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
+import { humanizeBinaryBytes, formatCores } from '@console/internal/components/utils/units';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import {
   NodeKind,
