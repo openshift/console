@@ -53,6 +53,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     catalogBadgeProviderExtensions,
     categoryProviderExtensions,
     toolbarItemExtensions,
+    alertExtensions,
     extensionsResolved,
   ] = useCatalogExtensions(catalogId, catalogType);
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
@@ -177,6 +178,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     searchCatalog,
     catalogExtensions: catalogTypeExtensions,
     toolbarExtensions: toolbarItemExtensions,
+    alertExtensions,
     categories,
   };
 

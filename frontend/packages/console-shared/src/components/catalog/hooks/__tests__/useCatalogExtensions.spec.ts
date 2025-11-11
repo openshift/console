@@ -5,6 +5,7 @@ import {
   CatalogItemFilter,
   CatalogItemMetadataProvider,
   CatalogToolbarItem,
+  CatalogAlert,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import useCatalogExtensions from '../useCatalogExtensions';
@@ -16,6 +17,7 @@ let mockExtensions: (
   | CatalogItemFilter
   | CatalogItemMetadataProvider
   | CatalogToolbarItem
+  | CatalogAlert
 )[] = [];
 
 jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
@@ -362,5 +364,94 @@ describe('useCatalogExtensions', () => {
 
     const extensions = testHook(() => useCatalogExtensions('test-catalog')).result.current[5];
     expect(extensions).toEqual([mockExtensions[0]]);
+  });
+
+  it('should return alert extensions', () => {
+    mockExtensions = [
+      {
+        type: 'console.catalog/alert',
+        properties: {
+          catalogId: 'test-catalog',
+          component: jest.fn() as any,
+        },
+      },
+      {
+        type: 'console.catalog/alert',
+        properties: {
+          catalogId: 'test-catalog',
+          type: 'type1',
+          component: jest.fn() as any,
+        },
+      },
+      {
+        type: 'console.catalog/alert',
+        properties: {
+          catalogId: 'test-catalog',
+          type: 'type2',
+          component: jest.fn() as any,
+        },
+      },
+    ];
+
+    const allExtensions = testHook(() => useCatalogExtensions('test-catalog')).result.current[6];
+    expect(allExtensions).toEqual([mockExtensions[0]]);
+
+    const extensions = testHook(() => useCatalogExtensions('test-catalog', 'type2')).result
+      .current[6];
+    expect(extensions).toEqual([mockExtensions[0], mockExtensions[2]]);
+  });
+
+  it('should filter alerts by catalogId', () => {
+    mockExtensions = [
+      {
+        type: 'console.catalog/alert',
+        properties: {
+          catalogId: 'test-catalog',
+          type: 'type1',
+          component: jest.fn() as any,
+        },
+      },
+      {
+        type: 'console.catalog/alert',
+        properties: {
+          catalogId: 'other-catalog',
+          type: 'type1',
+          component: jest.fn() as any,
+        },
+      },
+    ];
+
+    const extensions = testHook(() => useCatalogExtensions('test-catalog', 'type1')).result
+      .current[6];
+    expect(extensions).toEqual([mockExtensions[0]]);
+  });
+
+  it('should include alerts without catalogId or type specified', () => {
+    mockExtensions = [
+      {
+        type: 'console.catalog/alert',
+        properties: {
+          component: jest.fn() as any,
+        },
+      },
+      {
+        type: 'console.catalog/alert',
+        properties: {
+          catalogId: 'test-catalog',
+          component: jest.fn() as any,
+        },
+      },
+      {
+        type: 'console.catalog/alert',
+        properties: {
+          type: 'type1',
+          component: jest.fn() as any,
+        },
+      },
+    ];
+
+    const extensions = testHook(() => useCatalogExtensions('test-catalog', 'type1')).result
+      .current[6];
+    expect(extensions).toEqual([mockExtensions[0], mockExtensions[1], mockExtensions[2]]);
   });
 });

@@ -8,6 +8,7 @@ import {
   CatalogItemMetadataProvider,
   CatalogItemTypeMetadata,
   CatalogToolbarItem,
+  CatalogAlert,
   isCatalogItemFilter,
   isCatalogItemProvider,
   isCatalogItemType,
@@ -15,6 +16,7 @@ import {
   isCatalogItemMetadataProvider,
   isCatalogCategoriesProvider,
   isCatalogToolbarItem,
+  isCatalogAlert,
   CatalogCategoriesProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 
@@ -28,6 +30,7 @@ const useCatalogExtensions = (
   ResolvedExtension<CatalogItemMetadataProvider>[],
   ResolvedExtension<CatalogCategoriesProvider>[],
   ResolvedExtension<CatalogToolbarItem>[],
+  ResolvedExtension<CatalogAlert>[],
   boolean,
 ] => {
   const [itemTypeExtensions, itemTypesResolved] = useResolvedExtensions<CatalogItemType>(
@@ -104,6 +107,16 @@ const useCatalogExtensions = (
     ),
   );
 
+  const [alertExtensions, alertsResolved] = useResolvedExtensions<CatalogAlert>(
+    useCallback(
+      (e): e is CatalogAlert =>
+        isCatalogAlert(e) &&
+        (!e.properties.catalogId || e.properties.catalogId === catalogId) &&
+        (!e.properties.type || e.properties.type === catalogType),
+      [catalogId, catalogType],
+    ),
+  );
+
   const catalogTypeExtensions = useMemo<ResolvedExtension<CatalogItemType>[]>(
     () =>
       (catalogType
@@ -154,13 +167,15 @@ const useCatalogExtensions = (
     catalogMetadataProviderExtensions,
     categoryProviderExtensions,
     toolbarItemExtensions,
+    alertExtensions,
     providersResolved &&
       filtersResolved &&
       itemTypesResolved &&
       itemTypeMetadataResolved &&
       metadataProvidersResolved &&
       categoryProvidersResolved &&
-      toolbarItemsResolved,
+      toolbarItemsResolved &&
+      alertsResolved,
   ];
 };
 
