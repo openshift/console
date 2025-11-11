@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { configure, screen } from '@testing-library/react';
+import { configure, screen, cleanup } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { PageContents as AddPage } from '../AddPage';
@@ -63,6 +63,10 @@ jest.mock('@console/topology/src/components/quick-search/TopologyQuickSearchButt
 }));
 
 describe('AddPage', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   it('should render AddCardsLoader if namespace exists', () => {
     jest.spyOn(Router, 'useParams').mockReturnValue({
       ns: 'ns',

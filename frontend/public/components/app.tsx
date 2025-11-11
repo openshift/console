@@ -25,7 +25,6 @@ import { receivedResources, startAPIDiscovery } from '../actions/k8s';
 import { pluginStore } from '../plugins';
 // cloud shell imports must come later than features
 import CloudShellDrawer from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
-import CloudShellTab from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
@@ -334,7 +333,6 @@ const AppRouter = () => {
               path={`${e.properties.path}${e.properties.exact ? '' : '/*'}`}
             />
           ))}
-          <Route path="/terminal/*" element={<CloudShellTab />} />
           <Route path="/*" element={<AppWithExtensions />} />
         </Routes>
       </CompatRouter>

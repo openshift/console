@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import { cleanup } from '@testing-library/react';
 import {
   renderWithProviders,
   verifyInputField,
@@ -9,6 +10,10 @@ import { AddGooglePage } from '../../cluster-settings/google-idp-form';
 describe('Add Identity Provider: Google', () => {
   beforeEach(() => {
     renderWithProviders(<AddGooglePage />);
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   it('should render page title and sub title', () => {
