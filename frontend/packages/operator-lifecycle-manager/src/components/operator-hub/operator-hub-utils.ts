@@ -7,7 +7,7 @@ import {
   ObjectMetadata,
 } from '@console/internal/module/k8s';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
-import { DefaultCatalogSource, DefaultClusterCatalog, PackageSource } from '../../const';
+import { DefaultCatalogSource, DefaultClusterCatalog, OperatorSource } from '../../const';
 import { PackageManifestKind } from '../../types';
 import {
   CapabilityLevel,
@@ -18,22 +18,26 @@ import {
 } from './index';
 
 export const defaultPackageSourceMap = {
-  [DefaultCatalogSource.RedHatOperators]: PackageSource.RedHatOperators,
-  [DefaultCatalogSource.RedHatMarketPlace]: PackageSource.RedHatMarketplace,
-  [DefaultCatalogSource.CertifiedOperators]: PackageSource.CertifiedOperators,
-  [DefaultCatalogSource.CommunityOperators]: PackageSource.CommunityOperators,
+  [DefaultCatalogSource.RedHatOperators]: OperatorSource.RedHatOperators,
+  [DefaultCatalogSource.RedHatMarketPlace]: OperatorSource.RedHatMarketplace,
+  [DefaultCatalogSource.CertifiedOperators]: OperatorSource.CertifiedOperators,
+  [DefaultCatalogSource.CommunityOperators]: OperatorSource.CommunityOperators,
 };
 
 export const defaultClusterCatalogSourceMap = {
-  [DefaultClusterCatalog.OpenShiftRedHatOperators]: PackageSource.RedHatOperators,
-  [DefaultClusterCatalog.OpenShiftRedHatMarketPlace]: PackageSource.RedHatMarketplace,
-  [DefaultClusterCatalog.OpenShiftCertifiedOperators]: PackageSource.CertifiedOperators,
-  [DefaultClusterCatalog.OpenShiftCommunityOperators]: PackageSource.CommunityOperators,
+  [DefaultClusterCatalog.OpenShiftRedHatOperators]: OperatorSource.RedHatOperators,
+  [DefaultClusterCatalog.OpenShiftRedHatMarketPlace]: OperatorSource.RedHatMarketplace,
+  [DefaultClusterCatalog.OpenShiftCertifiedOperators]: OperatorSource.CertifiedOperators,
+  [DefaultClusterCatalog.OpenShiftCommunityOperators]: OperatorSource.CommunityOperators,
 };
 
-export const getPackageSource = (packageManifest: PackageManifestKind): PackageSource => {
+export const getPackageSource = (packageManifest: PackageManifestKind): OperatorSource => {
   const { catalogSource, catalogSourceDisplayName } = packageManifest?.status ?? {};
   return defaultPackageSourceMap?.[catalogSource] || catalogSourceDisplayName || catalogSource;
+};
+
+export const getClusterCatalogSource = (clusterCatalog?: string): OperatorSource => {
+  return defaultClusterCatalogSourceMap?.[clusterCatalog] || OperatorSource.Custom;
 };
 
 export const isAWSSTSCluster = (
@@ -279,13 +283,13 @@ export const providerSort = (provider: string): string => {
 
 export const sourceSort = (source: string): number => {
   switch (source) {
-    case PackageSource.RedHatOperators:
+    case OperatorSource.RedHatOperators:
       return 0;
-    case PackageSource.CertifiedOperators:
+    case OperatorSource.CertifiedOperators:
       return 1;
-    case PackageSource.CommunityOperators:
+    case OperatorSource.CommunityOperators:
       return 2;
-    case PackageSource.RedHatMarketplace:
+    case OperatorSource.RedHatMarketplace:
       return 3;
     default:
       return 4;

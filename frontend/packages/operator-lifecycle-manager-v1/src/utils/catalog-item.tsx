@@ -2,6 +2,7 @@ import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { CapabilityLevel } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-item-details';
 import {
+  getClusterCatalogSource,
   infrastructureFeatureMap,
   validSubscriptionReducer,
 } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-utils';
@@ -11,7 +12,7 @@ import PlainList from '@console/shared/src/components/lists/PlainList';
 import { OLMCatalogItem, OLMCatalogItemData } from '../types';
 
 type NormalizeExtensionCatalogItem = (item: OLMCatalogItem) => CatalogItem<OLMCatalogItemData>;
-export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (pkg) => {
+export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
   const {
     id,
     capabilities,
@@ -27,11 +28,10 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (pkg) => {
     name,
     provider,
     repository,
-    source,
     support,
     validSubscription,
     version,
-  } = pkg;
+  } = item;
   const [validSubscriptions, validSubscriptionFilters] = validSubscriptionReducer(
     validSubscription,
   );
@@ -41,6 +41,8 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (pkg) => {
     [],
   );
   const tags = (categories ?? []).map((cat) => cat.toLowerCase().trim()).filter(Boolean);
+  const source = getClusterCatalogSource(catalog);
+  const installUrl = '/k8s/cluster/olm.operatorframework.io~v1~ClusterExtension/~new'; // TODO: build from model
   return {
     attributes: {
       keywords,
@@ -53,7 +55,7 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (pkg) => {
     creationTimestamp: createdAt,
     cta: {
       label: 'Install',
-      href: `/ecosystem/catalog/install/${catalog}/${name}`,
+      href: installUrl,
     },
     description: description || markdownDescription,
     data: {
