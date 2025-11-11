@@ -4,6 +4,7 @@ import { isLocalDevEnvironment } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
 import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
+import { masthead } from '../../views/masthead';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
 import { getEditorContent } from '../../views/yaml-editor';
@@ -185,6 +186,35 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
       apiIDs.forEach((id) => k8sAPINavTest(id));
     });
 
+    it('add Dynamic Plugins to Cluster Overview Status card', () => {
+      nav.sidenav.clickNavLink(['Home', 'Overview']);
+      cy.get('button[data-test="Dynamic Plugins"]').click();
+      cy.contains('Loaded plugins').should('exist');
+      cy.get('.pf-v6-c-popover').within(() => {
+        cy.get('a:contains(View all)').should(
+          'have.attr',
+          'href',
+          '/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins',
+        );
+      });
+    });
+
+    it('add Dynamic Plugins in About modal', () => {
+      masthead.clickMastheadLink('help-dropdown-toggle');
+      cy.get('span').contains('About').click();
+      cy.get('dt').contains('Dynamic plugins').should('exist');
+      cy.contains('console-demo-plugin (0.0.0)').should('exist');
+      cy.get('button[aria-label="Close Dialog"]').click();
+    });
+
+    it('add extension point to enable customized create project modal', () => {
+      nav.sidenav.clickNavLink(['Home', 'Projects']);
+      listPage.dvRows.shouldBeLoaded();
+      listPage.clickCreateYAMLbutton();
+      cy.get('div').contains('This modal is created with an extension').should('exist');
+      cy.byButtonText('Cancel').click();
+    });
+
     it('should display manifest tab in ConsolePlugin details page', () => {
       // Navigate to the demo plugin details page
       cy.visit(`/k8s/cluster/console.openshift.io~v1~ConsolePlugin/${PLUGIN_NAME}`);
@@ -240,6 +270,39 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
           cy.log('Manifest tab loaded but no code editor or empty state found');
         }
       });
+    });
+
+    it('console plugin proxy should directly copy the plugin service proxy response status code', () => {
+      if (!isLocalDevEnvironment) {
+        let pluginStatusCode;
+        cy.exec(`oc -n console-demo-plugin create route passthrough --service console-demo-plugin`);
+        cy.exec(
+          `oc get route console-demo-plugin -n console-demo-plugin -o jsonpath='{.spec.host}'`,
+        ).then((result) => {
+          const consoleDemoPluginHost = result.stdout;
+          cy.request(`https://${consoleDemoPluginHost}/plugin-manifest.json`).then((resp) => {
+            pluginStatusCode = resp.status;
+          });
+        });
+        cy.request('/api/plugins/console-demo-plugin/plugin-manifest.json').then((resp) => {
+          expect(resp.status).to.eq(pluginStatusCode);
+        });
+      }
+    });
+
+    it('allow disabling dynamic plugins through a query parameter', () => {
+      // disable non-existing plugin will make no changes
+      cy.visit('?disable-plugins=foo,bar');
+      cy.byTestID('nav').as('dynamic_nav').should('include.text', 'Dynamic Nav');
+
+      // disable one plugin
+      cy.visit('?disable-plugins=console-demo-plugin');
+      cy.get('@dynamic_nav').should('not.have.text', 'Dynamic Nav');
+
+      // disable all plugins
+      cy.visit('?disable-plugins');
+      cy.get('@dynamic_nav').should('not.have.text', 'Dynamic Nav');
+      cy.visit('/api-explorer');
     });
   });
 } else {
