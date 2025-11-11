@@ -24,6 +24,7 @@ import {
 } from './factory';
 import { BuildHooks } from './utils/build-hooks';
 import { BuildStrategy } from './utils/build-strategy';
+import { BuildStrategyType, displayDurationInWords } from './utils/build-utils';
 import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink, resourceObjPath } from './utils/resource-link';
@@ -31,18 +32,13 @@ import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { WebhookTriggers } from './utils/webhooks';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import {
-  BuildsPage,
-  BuildEnvironmentComponent,
-  BuildStrategyType,
-  PipelineBuildStrategyAlert,
-} from './build';
+import { BuildsPage, BuildEnvironmentComponent, PipelineBuildStrategyAlert } from './build';
 import { ResourceEventStream } from './events';
 import { BuildModel } from '../models';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { Status } from '@console/shared/src/components/status/Status';
-import { displayDurationInWords } from './utils/build-utils';
+
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ErrorModal } from './modals/error-modal';

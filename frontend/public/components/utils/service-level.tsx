@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FC, ReactNode, useEffect, useState } from 'react';
 import {
   Alert,
   Label,
@@ -17,8 +17,9 @@ import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SecretModel } from '../../models';
 import { FieldLevelHelp } from './field-level-help';
 import { RootState } from '../../redux';
-import { NotificationTypes } from '../notification-drawer';
+import { NotificationTypes } from './types';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+
 const useServiceLevelText = (level: string): string => {
   const { t } = useTranslation();
   const levels = {
@@ -42,7 +43,7 @@ const showServiceLevel = (clusterID: string) =>
   window.SERVER_FLAGS.branding !== 'azure' &&
   window.SERVER_FLAGS.branding !== 'dedicated';
 
-const TrialDaysLeft: React.FC<{
+const TrialDaysLeft: FC<{
   level: string;
   trialDaysLeft: number | null;
   label?: boolean;
@@ -87,8 +88,8 @@ const TrialDaysLeft: React.FC<{
 
 const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] => {
   const dispatch = useDispatch();
-  const [loadingSecret, setLoadingSecret] = React.useState(false);
-  const [loadingServiceLevel, setLoadingServiceLevel] = React.useState(false);
+  const [loadingSecret, setLoadingSecret] = useState(false);
+  const [loadingServiceLevel, setLoadingServiceLevel] = useState(false);
 
   let hasSecretAccess = false;
 
@@ -182,7 +183,7 @@ const useGetServiceLevel = (
   } = useSelector(({ UI }: RootState) => UI.get('serviceLevel'));
   const [loadingSecret, loadingServiceLevel, loadServiceLevel] = useLoadServiceLevel();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (clusterID !== clusterIDParam && !loadingSecret && !loadingServiceLevel) {
       loadServiceLevel(clusterIDParam);
     }
@@ -200,15 +201,15 @@ const useGetServiceLevel = (
   };
 };
 
-export const ServiceLevelLoading: React.FC = () => {
+export const ServiceLevelLoading: FC = () => {
   const { t } = useTranslation();
   return <Skeleton screenreaderText={t('public~Loading')} />;
 };
 
-export const ServiceLevel: React.FC<{
+export const ServiceLevel: FC<{
   clusterID: string;
-  loading: React.ReactNode;
-  children: React.ReactNode;
+  loading: ReactNode;
+  children: ReactNode;
 }> = ({ clusterID, loading, children }) => {
   const { hasSecretAccess, loadingSecret, loadingServiceLevel } = useGetServiceLevel(clusterID);
 
@@ -224,11 +225,12 @@ export const ServiceLevel: React.FC<{
 
   return <>{children}</>;
 };
+
 type ServiceLevelTextProps = {
   clusterID?: string;
   inline?: boolean;
 };
-export const ServiceLevelText: React.FC<ServiceLevelTextProps> = ({ clusterID, inline }) => {
+export const ServiceLevelText: FC<ServiceLevelTextProps> = ({ clusterID, inline }) => {
   const { t } = useTranslation();
   const { level, daysRemaining } = useGetServiceLevel(clusterID);
   const levelText = (
@@ -280,7 +282,7 @@ export const useShowServiceLevelNotifications = (clusterID: string): boolean => 
   return level && (level === 'Eval' || level === 'None');
 };
 
-export const ServiceLevelNotification: React.FC<{
+export const ServiceLevelNotification: FC<{
   clusterID?: string;
 }> = ({ clusterID }) => {
   const { t } = useTranslation();

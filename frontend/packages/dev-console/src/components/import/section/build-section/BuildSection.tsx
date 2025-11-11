@@ -3,8 +3,8 @@ import { ExpandableSection } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ImportStrategy, getGitService } from '@console/git-service/src';
-import { getStrategyType } from '@console/internal/components/build';
 import { LoadingBox } from '@console/internal/components/utils';
+import { getStrategyType } from '@console/internal/components/utils/build-utils';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
 import { EnvironmentField, useDebounceCallback, useFlag } from '@console/shared/src';
 import {
