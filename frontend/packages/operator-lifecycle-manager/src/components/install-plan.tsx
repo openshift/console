@@ -20,7 +20,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom-v5-compat';
-import { getUser } from '@console/dynamic-plugin-sdk';
+import { getUser, GreenCheckCircleIcon } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { Conditions } from '@console/internal/components/conditions';
 import {
@@ -35,7 +35,6 @@ import {
   SectionHeading,
   ConsoleEmptyState,
   ResourceLink,
-  ResourceKebab,
   Kebab,
   ResourceIcon,
   navFactory,
@@ -54,8 +53,11 @@ import {
   UserInfo,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { FLAGS, GreenCheckCircleIcon, Status, useFlag } from '@console/shared';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -161,11 +163,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
 
       {/* Kebab */}
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab
-          actions={Kebab.factory.common}
-          kind={referenceForModel(InstallPlanModel)}
-          resource={obj}
-        />
+        <LazyActionMenu context={{ [referenceForModel(InstallPlanModel)]: obj }} />
       </TableData>
     </>
   );
@@ -561,7 +559,6 @@ export const InstallPlanDetailsPage: React.FC = (props) => {
         // t('olm~Components')
         { href: 'components', nameKey: 'olm~Components', component: InstallPlanPreview },
       ]}
-      menuActions={[...Kebab.factory.common]}
     />
   );
 };
