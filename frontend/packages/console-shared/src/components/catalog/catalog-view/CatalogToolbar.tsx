@@ -3,7 +3,7 @@ import { Flex, FlexItem, SearchInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { useDebounceCallback } from '@console/shared';
+import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { NO_GROUPING } from '../utils/category-utils';
 import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
 import CatalogPageHeader from './CatalogPageHeader';

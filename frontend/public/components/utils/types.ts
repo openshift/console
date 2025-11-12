@@ -1,9 +1,9 @@
-import {
+import type {
   K8sResourceKindReference,
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { K8sResourceKind } from '../../module/k8s/types';
+import type { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { K8sResourceKind } from '../../module/k8s/types';
 
 export type FirehoseResult<
   R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceKind[]
@@ -69,3 +69,10 @@ export type HumanizeResult = {
 export type Humanize = {
   (v: React.ReactText, initialUnit?: string, preferredUnit?: string): HumanizeResult;
 };
+
+export enum NotificationTypes {
+  info = 'info',
+  warning = 'warning',
+  critical = 'danger',
+  success = 'success',
+}

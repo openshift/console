@@ -15,9 +15,9 @@ import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-  useUserSettingsCompatibility,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
+} from '@console/shared/src/constants/common';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { getActiveNamespace } from '../../reducers/ui';
 import { setActiveNamespace, formatNamespaceRoute } from '../../actions/ui';

@@ -2,7 +2,7 @@ import {
   ExtPodKind,
   PodControllerOverviewItem,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { FirehoseResult } from '@console/internal/components/utils';
+import { FirehoseResult } from '@console/internal/components/utils/types';
 import { DeploymentKind, PodKind } from '@console/internal/module/k8s';
 
 export type {

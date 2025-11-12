@@ -14,8 +14,9 @@ import {
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { Kebab } from '@console/internal/components/utils/kebab';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
 import {
   referenceForModel,
@@ -23,7 +24,8 @@ import {
   Selector,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { getAnnotations, LazyActionMenu } from '@console/shared';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { getAnnotations } from '@console/shared/src/selectors/common';
 
 const tableColumnInfo = [
   { id: 'name' },

@@ -1,176 +1,228 @@
 package olm
 
 import (
-	"bytes"
-	"encoding/json"
-	"io"
 	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"testing"
 	"time"
 
-	"github.com/operator-framework/operator-registry/alpha/declcfg"
-	"github.com/operator-framework/operator-registry/alpha/property"
+	"github.com/openshift/console/pkg/proxy"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-// mockRoundTripper is a mock implementation of http.RoundTripper.
-type mockRoundTripper struct {
-	resp *http.Response
-	err  error
-}
-
-func (m *mockRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
-	return m.resp, m.err
-}
-
-func TestNewCatalogClient(t *testing.T) {
+func TestNewCatalogdClient(t *testing.T) {
 	client := NewCatalogdClient(&http.Client{}, nil)
 	assert.NotNil(t, client)
 	assert.NotNil(t, client.httpClient)
+	assert.Nil(t, client.proxyConfig)
 }
 
-func TestFetch(t *testing.T) {
-	now := time.Now()
-	t.Run("should return packages and bundles on successful fetch", func(t *testing.T) {
-		pkg := declcfg.Package{
-			Schema: "olm.package",
-			Name:   "test-package",
-		}
-		bundle := declcfg.Bundle{
-			Schema:  "olm.bundle",
-			Name:    "test-bundle",
-			Package: "test-package",
-			Properties: []property.Property{
-				{
-					Type:  property.TypePackage,
-					Value: json.RawMessage(`{"version":"1.0.0"}`),
-				},
-				{
-					Type:  property.TypeCSVMetadata,
-					Value: json.RawMessage(`{}`),
-				},
-			},
-		}
+func TestCatalogdClient_FetchAll(t *testing.T) {
+	t.Run("should fetch with base URL", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, "/api/v1/all", r.URL.Path)
+			assert.Equal(t, http.MethodGet, r.Method)
+			w.Header().Set("Last-Modified", time.Now().UTC().Format(http.TimeFormat))
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("{}"))
+		}))
+		defer server.Close()
 
-		fbc := declcfg.DeclarativeConfig{
-			Packages: []declcfg.Package{pkg},
-			Bundles:  []declcfg.Bundle{bundle},
-		}
+		client := NewCatalogdClient(server.Client(), nil)
+		resp, err := client.FetchAll("test-catalog", server.URL, "", 0)
 
-		var buf bytes.Buffer
-		require.NoError(t, declcfg.WriteJSON(fbc, &buf))
-
-		resp := &http.Response{
-			StatusCode: http.StatusOK,
-			Body:       io.NopCloser(&buf),
-		}
-
-		client := &CatalogdClient{
-			httpClient: &http.Client{
-				Transport: &mockRoundTripper{resp: resp},
-			},
-		}
-
-		packages, fetchedBundles, _, err := client.Fetch("test-catalog", "", &now)
 		require.NoError(t, err)
-		assert.Equal(t, pkg, *packages[0])
-		assert.Equal(t, bundle, *fetchedBundles[0])
+		assert.NotNil(t, resp)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+		resp.Body.Close()
 	})
-	t.Run("should return an error when the http client fails", func(t *testing.T) {
-		client := &CatalogdClient{
-			httpClient: &http.Client{
-				Transport: &mockRoundTripper{err: assert.AnError},
-			},
-		}
 
-		_, _, _, err := client.Fetch("test-catalog", "", &now)
-		assert.Error(t, err)
-	})
-	t.Run("should return an error when the status code is not OK", func(t *testing.T) {
-		resp := &http.Response{
-			StatusCode: http.StatusInternalServerError,
-			Body:       io.NopCloser(&bytes.Buffer{}),
-		}
+	t.Run("should fetch with If-Modified-Since header", func(t *testing.T) {
+		lastModified := time.Now().Add(-1 * time.Hour).UTC().Format(http.TimeFormat)
+		maxAge := 24 * time.Hour
 
-		client := &CatalogdClient{
-			httpClient: &http.Client{
-				Transport: &mockRoundTripper{resp: resp},
-			},
-		}
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, lastModified, r.Header.Get("If-Modified-Since"))
+			assert.Equal(t, "max-age=86400", r.Header.Get("Cache-Control"))
+			w.WriteHeader(http.StatusNotModified)
+		}))
+		defer server.Close()
 
-		_, _, _, err := client.Fetch("test-catalog", "", &now)
-		assert.Error(t, err)
-	})
-	t.Run("should return an error when the response body is invalid", func(t *testing.T) {
-		resp := &http.Response{
-			StatusCode: http.StatusOK,
-			Body:       io.NopCloser(bytes.NewBufferString("invalid json")),
-		}
+		client := NewCatalogdClient(server.Client(), nil)
+		resp, err := client.FetchAll("test-catalog", server.URL, lastModified, maxAge)
 
-		client := &CatalogdClient{
-			httpClient: &http.Client{
-				Transport: &mockRoundTripper{resp: resp},
-			},
-		}
-
-		_, _, _, err := client.Fetch("test-catalog", "", &now)
-		assert.Error(t, err)
-	})
-	t.Run("should return nil if content is not modified", func(t *testing.T) {
-		resp := &http.Response{
-			StatusCode: http.StatusNotModified,
-			Body:       io.NopCloser(&bytes.Buffer{}),
-		}
-
-		client := &CatalogdClient{
-			httpClient: &http.Client{
-				Transport: &mockRoundTripper{resp: resp},
-			},
-		}
-
-		packages, bundles, _, err := client.Fetch("test-catalog", "", &now)
 		require.NoError(t, err)
-		assert.Nil(t, packages)
-		assert.Nil(t, bundles)
+		assert.NotNil(t, resp)
+		assert.Equal(t, http.StatusNotModified, resp.StatusCode)
+		resp.Body.Close()
+	})
+
+	t.Run("should fetch with proxy config", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, "/catalogs/test-catalog/api/v1/all", r.URL.Path)
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("{}"))
+		}))
+		defer server.Close()
+
+		proxyURL, err := url.Parse(server.URL)
+		require.NoError(t, err)
+
+		proxyConfig := &proxy.Config{
+			Endpoint: proxyURL,
+		}
+
+		client := NewCatalogdClient(server.Client(), proxyConfig)
+		resp, err := client.FetchAll("test-catalog", "", "", 0)
+
+		require.NoError(t, err)
+		assert.NotNil(t, resp)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+		resp.Body.Close()
+	})
+
+	t.Run("should return error when baseURL is empty and no proxy config", func(t *testing.T) {
+		client := NewCatalogdClient(&http.Client{}, nil)
+		resp, err := client.FetchAll("test-catalog", "", "", 0)
+
+		assert.Error(t, err)
+		assert.Nil(t, resp)
+		assert.Contains(t, err.Error(), "baseURL or proxy configuration is required")
 	})
 }
-func TestGetBundleVersion(t *testing.T) {
-	t.Run("should return the version from the package property", func(t *testing.T) {
-		bundle := &declcfg.Bundle{
-			Properties: []property.Property{
-				{
-					Type:  "olm.package",
-					Value: json.RawMessage(`{"version": "1.0.0"}`),
-				},
-			},
-		}
 
-		version, err := getBundleVersion(bundle)
+func TestCatalogdClient_FetchMetas(t *testing.T) {
+	t.Run("should fetch metas with base URL", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, "/api/v1/metas", r.URL.Path)
+			assert.Equal(t, http.MethodGet, r.Method)
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("{}"))
+		}))
+		defer server.Close()
+
+		req := httptest.NewRequest(http.MethodGet, "/test", nil)
+
+		client := NewCatalogdClient(server.Client(), nil)
+		resp, err := client.FetchMetas("test-catalog", server.URL, req)
+
 		require.NoError(t, err)
-		assert.Equal(t, "1.0.0", version)
+		assert.NotNil(t, resp)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+		resp.Body.Close()
 	})
 
-	t.Run("should return an error if the package property is not found", func(t *testing.T) {
-		bundle := &declcfg.Bundle{
-			Properties: []property.Property{},
+	t.Run("should fetch metas with proxy config", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, "/catalogs/test-catalog/api/v1/metas", r.URL.Path)
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("{}"))
+		}))
+		defer server.Close()
+
+		proxyURL, err := url.Parse(server.URL)
+		require.NoError(t, err)
+
+		proxyConfig := &proxy.Config{
+			Endpoint: proxyURL,
 		}
 
-		_, err := getBundleVersion(bundle)
-		assert.Error(t, err)
+		req := httptest.NewRequest(http.MethodGet, "/test", nil)
+
+		client := NewCatalogdClient(server.Client(), proxyConfig)
+		resp, err := client.FetchMetas("test-catalog", "", req)
+
+		require.NoError(t, err)
+		assert.NotNil(t, resp)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+		resp.Body.Close()
 	})
 
-	t.Run("should return an error if the package property is malformed", func(t *testing.T) {
-		bundle := &declcfg.Bundle{
-			Properties: []property.Property{
-				{
-					Type:  "olm.package",
-					Value: json.RawMessage(`{"version":}`),
-				},
-			},
+	t.Run("should preserve request method", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, http.MethodPost, r.Method)
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		req := httptest.NewRequest(http.MethodPost, "/test", nil)
+
+		client := NewCatalogdClient(server.Client(), nil)
+		resp, err := client.FetchMetas("test-catalog", server.URL, req)
+
+		require.NoError(t, err)
+		assert.NotNil(t, resp)
+		resp.Body.Close()
+	})
+
+	t.Run("should return error when baseURL is empty and no proxy config", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/test", nil)
+
+		client := NewCatalogdClient(&http.Client{}, nil)
+		resp, err := client.FetchMetas("test-catalog", "", req)
+
+		assert.Error(t, err)
+		assert.Nil(t, resp)
+		assert.Contains(t, err.Error(), "baseURL or proxy configuration is required")
+	})
+}
+
+func TestCatalogdClient_buildCatalogdURL(t *testing.T) {
+	t.Run("should build URL with proxy config", func(t *testing.T) {
+		proxyURL, err := url.Parse("http://proxy.example.com:8080")
+		require.NoError(t, err)
+
+		proxyConfig := &proxy.Config{
+			Endpoint: proxyURL,
 		}
 
-		_, err := getBundleVersion(bundle)
+		client := &CatalogdClient{
+			proxyConfig: proxyConfig,
+		}
+
+		result, err := client.buildCatalogdURL("my-catalog", "", "/api/v1/all")
+
+		require.NoError(t, err)
+		assert.Equal(t, "http://proxy.example.com:8080/catalogs/my-catalog/api/v1/all", result)
+	})
+
+	t.Run("should build URL with base URL", func(t *testing.T) {
+		client := &CatalogdClient{}
+
+		result, err := client.buildCatalogdURL("my-catalog", "http://catalogd.example.com", "/api/v1/all")
+
+		require.NoError(t, err)
+		assert.Equal(t, "http://catalogd.example.com/api/v1/all", result)
+	})
+
+	t.Run("should return error when both baseURL and proxy config are missing", func(t *testing.T) {
+		client := &CatalogdClient{}
+
+		result, err := client.buildCatalogdURL("my-catalog", "", "/api/v1/all")
+
 		assert.Error(t, err)
+		assert.Equal(t, "", result)
+		assert.Contains(t, err.Error(), "baseURL or proxy configuration is required")
+	})
+
+	t.Run("should prefer proxy config over base URL", func(t *testing.T) {
+		proxyURL, err := url.Parse("http://proxy.example.com")
+		require.NoError(t, err)
+
+		proxyConfig := &proxy.Config{
+			Endpoint: proxyURL,
+		}
+
+		client := &CatalogdClient{
+			proxyConfig: proxyConfig,
+		}
+
+		result, err := client.buildCatalogdURL("my-catalog", "http://catalogd.example.com", "/api/v1/all")
+
+		require.NoError(t, err)
+		assert.Equal(t, "http://proxy.example.com/catalogs/my-catalog/api/v1/all", result)
+		assert.NotContains(t, result, "catalogd.example.com")
 	})
 }

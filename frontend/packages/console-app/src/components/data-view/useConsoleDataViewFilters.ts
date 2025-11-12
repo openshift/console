@@ -40,7 +40,7 @@ export const useConsoleDataViewFilters = <
 
   const filteredData = React.useMemo(
     () =>
-      data.filter((resource) => {
+      data?.filter((resource) => {
         const { name: resourceName, labels } = getObjectMetadata(resource);
 
         // Filter by K8s resource name
@@ -59,7 +59,7 @@ export const useConsoleDataViewFilters = <
         return (
           matchesName && matchesLabels && (matchesAdditionalFilters?.(resource, filters) ?? true)
         );
-      }),
+      }) ?? [],
     [data, filters, isExactSearch, getObjectMetadata, matchesAdditionalFilters],
   );
 

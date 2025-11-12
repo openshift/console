@@ -12,19 +12,17 @@ import { useNavigate } from 'react-router-dom-v5-compat';
 import {
   FLAGS,
   ALL_NAMESPACES_KEY,
-  getBadgeFromType,
-  withPostFormSubmissionCallback,
-  getResourceSidebarSamples,
-  useTelemetry,
-  useUserSettingsCompatibility,
-  WithPostFormSubmissionCallbackProps,
-} from '@console/shared';
-import {
   SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
   SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
   SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
   SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import { getResourceSidebarSamples } from '@console/shared/src/utils/sample-utils';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
+
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
@@ -42,14 +40,11 @@ import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useRe
 import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
 import { managedResourceSaveModal } from './modals';
 import ReplaceCodeModal from './modals/replace-code-modal';
-import {
-  checkAccess,
-  Firehose,
-  Loading,
-  resourceObjPath,
-  resourceListPathFromModel,
-  FirehoseResult,
-} from './utils';
+import { checkAccess } from './utils/rbac';
+import { Firehose } from './utils/firehose';
+import { Loading } from './utils/status-box';
+import { resourceObjPath, resourceListPathFromModel } from './utils/resource-link';
+import { FirehoseResult } from './utils/types';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
   referenceForModel,
@@ -61,6 +56,7 @@ import {
   AccessReviewResourceAttributes,
   CodeEditorRef,
   K8sModel,
+  K8sResourceCommon,
 } from '../module/k8s';
 import { ConsoleYAMLSampleModel } from '../models';
 import { getYAMLTemplates } from '../models/yaml-templates';
@@ -149,9 +145,7 @@ type EditYAMLProps = {
   fileUpload?: string;
 };
 
-type EditYAMLInnerProps = WithPostFormSubmissionCallbackProps<any> &
-  ReturnType<typeof stateToProps> &
-  EditYAMLProps;
+type EditYAMLInnerProps = ReturnType<typeof stateToProps> & EditYAMLProps;
 
 const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   const {
@@ -165,7 +159,6 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     header,
     genericYAML = false,
     children: customAlerts,
-    postFormSubmissionCallback,
     redirectURL,
     clearFileUpload,
     onSave,
@@ -174,6 +167,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
 
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
+  const postFormSubmissionCallback = useResourceConnectionHandler<K8sResourceCommon>();
   const [errors, setErrors] = React.useState<string[]>(null);
   const [success, setSuccess] = React.useState<string>(null);
   const [initialized, setInitialized] = React.useState(false);
@@ -1006,7 +1000,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
  * This component loads the entire Monaco editor library with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
-export const EditYAML_ = connect(stateToProps)(withPostFormSubmissionCallback(EditYAMLInner));
+export const EditYAML_ = connect(stateToProps)(EditYAMLInner);
 
 export const EditYAML = connectToFlags<WithFlagsProps & EditYAMLProps>(FLAGS.CONSOLE_YAML_SAMPLE)(
   ({ flags, ...props }) => {

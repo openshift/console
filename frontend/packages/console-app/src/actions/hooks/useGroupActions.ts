@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom-v5-compat';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import * as UIActions from '@console/internal/actions/ui';
-import { asAccessReview } from '@console/internal/components/utils';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { GroupModel } from '@console/internal/models';
 import { GroupKind } from '@console/internal/module/k8s';
 import AddGroupUsersModal from '../../components/modals/add-group-users-modal';

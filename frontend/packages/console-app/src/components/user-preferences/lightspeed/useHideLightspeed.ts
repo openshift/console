@@ -1,4 +1,4 @@
-import { useUserSettings } from '@console/shared';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 
 // duplicated in openshift/lightspeed-operator, so be mindful of changing
 const PREFERRED_LIGHTSPEED_USER_SETTING_KEY: string = 'console.hideLightspeedButton';

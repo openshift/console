@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { getMachineAWSPlacement, getMachineRole, getMachineSetInstanceType } from '@console/shared';
-import { DASH } from '@console/shared/src/constants';
+import { getMachineAWSPlacement, getMachineRole } from '@console/shared/src/selectors/machine';
+import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
+import { DASH } from '@console/shared/src/constants/ui';
 import { ListPageBody, TableColumn } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
@@ -49,18 +50,14 @@ import { DetailsPage } from './factory';
 import { sortResourceByValue } from './factory/Table/sort';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
-import {
-  LoadingBox,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  Selector,
-  navFactory,
-  resourcePath,
-  useAccessReview,
-  convertToBaseValue,
-  formatBytesAsGiB,
-} from './utils';
+import { LoadingBox } from './utils/status-box';
+import { ResourceLink, resourcePath } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { Selector } from './utils/selector';
+import { navFactory } from './utils/horizontal-nav';
+import { useAccessReview } from './utils/rbac';
+import { convertToBaseValue, formatBytesAsGiB } from './utils/units';
 import { ResourceEventStream } from './events';
 import { MachinesCell } from './control-plane-machine-set';
 

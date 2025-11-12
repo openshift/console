@@ -6,7 +6,7 @@ import {
   useConfigureCountModal,
   configureJobParallelismModal,
 } from '@console/internal/components/modals/configure-count-modal';
-import { asAccessReview } from '@console/internal/components/utils';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { JobModel } from '@console/internal/models';
 import { JobKind } from '@console/internal/module/k8s';
 import { JobActionCreator } from './types';

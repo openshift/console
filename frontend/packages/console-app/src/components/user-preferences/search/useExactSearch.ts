@@ -1,4 +1,4 @@
-import { useUserSettings } from '@console/shared';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 
 const PREFERRED_EXACT_SEARCH_USER_SETTING_KEY: string = 'console.enableExactSearch';
 

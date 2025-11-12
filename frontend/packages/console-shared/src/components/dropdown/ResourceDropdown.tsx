@@ -3,11 +3,13 @@ import * as fuzzy from 'fuzzysearch';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
-import { FirehoseResult, LoadingInline, ResourceIcon } from '@console/internal/components/utils';
 import {
   ConsoleSelect,
   ConsoleSelectProps,
 } from '@console/internal/components/utils/console-select';
+import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
+import { FirehoseResult } from '@console/internal/components/utils/types';
 import {
   K8sResourceKind,
   referenceForModel,

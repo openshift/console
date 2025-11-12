@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import useMirroredLocalState, { UseMirroredLocalStateReturn } from './useMirroredLocalState';
-import { setOrRemoveQueryArgument } from './utils';
+import { setOrRemoveQueryArgument } from './utils/router';
 
 /**
  * Handles a state management hack-fix around the label filters auto complete field.

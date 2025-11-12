@@ -53,7 +53,8 @@ import {
 } from '@console/shared/src/constants';
 import { useUserSettings } from '@console/shared';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
-import { Loading, TogglePlay } from './';
+import { Loading } from '@console/shared/src/components/loading/Loading';
+import { TogglePlay } from './toggle-play';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';

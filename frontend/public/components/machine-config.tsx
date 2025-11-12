@@ -30,16 +30,13 @@ import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
 import { MachineConfigModel } from '../models';
 import { DetailsPage, ListPage } from './factory';
-import {
-  CopyToClipboard,
-  Kebab,
-  LoadingBox,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-} from './utils';
+import { CopyToClipboard } from './utils/copy-to-clipboard';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { LoadingBox } from './utils/status-box';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 

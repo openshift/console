@@ -7,7 +7,11 @@ import {
   getTopConsumerQueries,
 } from '@console/shared/src/promql/project-dashboard';
 import { PodModel } from '../../../models';
-import { humanizeCpuCores, humanizeBinaryBytes, humanizeDecimalBytesPerSec } from '../../utils';
+import {
+  humanizeCpuCores,
+  humanizeBinaryBytes,
+  humanizeDecimalBytesPerSec,
+} from '../../utils/units';
 
 export const ProjectUtilizationContext = React.createContext('');
 

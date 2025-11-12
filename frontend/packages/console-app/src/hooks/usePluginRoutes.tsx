@@ -1,17 +1,9 @@
 import * as React from 'react';
 import { createPath, Route, useLocation } from 'react-router-dom-v5-compat';
-import {
-  useActivePerspective,
-  RoutePage as DynamicRoutePageExtension,
-  isRoutePage as isDynamicRoutePageExtension,
-} from '@console/dynamic-plugin-sdk';
-import { AsyncComponent } from '@console/internal/components/utils';
-import {
-  RoutePage as StaticRoutePageExtension,
-  isRoutePage as isStaticRoutePageExtension,
-  useExtensions,
-  LoadedExtension,
-} from '@console/plugin-sdk';
+import { RoutePage, isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 
 const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePerspective) =>
   (extension.properties.perspective ?? activePerspective) === activePerspective;
@@ -30,11 +22,6 @@ const LazyDynamicRoutePage: React.FCC<LazyDynamicRoutePageProps> = ({ component 
 };
 
 const LazyRoutePage: React.FCC<LazyRoutePageProps> = ({ extension }) => {
-  if (isStaticRoutePageExtension(extension)) {
-    return extension.properties.loader ? (
-      <AsyncComponent loader={extension.properties.loader} />
-    ) : null;
-  }
   return <LazyDynamicRoutePage component={extension.properties.component} />;
 };
 
@@ -68,8 +55,7 @@ const RoutePage: React.FCC<RoutePageProps> = ({
 };
 
 export const usePluginRoutes: UsePluginRoutes = () => {
-  const staticExtensions = useExtensions<StaticRoutePageExtension>(isStaticRoutePageExtension);
-  const dynamicExtensions = useExtensions<DynamicRoutePageExtension>(isDynamicRoutePageExtension);
+  const routePages = useExtensions<RoutePage>(isRoutePage);
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const getRoutesForExtension = React.useCallback(
     (extension: LoadedRoutePageExtension): React.ReactElement[] => {
@@ -96,7 +82,7 @@ export const usePluginRoutes: UsePluginRoutes = () => {
 
   return React.useMemo(
     () =>
-      [...staticExtensions, ...dynamicExtensions].reduce(
+      routePages.reduce(
         ([activeAcc, inactiveAcc], extension) => {
           const active = isRoutePageExtensionActive(extension, activePerspective);
           const routes = getRoutesForExtension(extension);
@@ -106,13 +92,11 @@ export const usePluginRoutes: UsePluginRoutes = () => {
         },
         [[], []],
       ),
-    [staticExtensions, dynamicExtensions, getRoutesForExtension, activePerspective],
+    [routePages, getRoutesForExtension, activePerspective],
   );
 };
 
-type RoutePageExtension = StaticRoutePageExtension | DynamicRoutePageExtension;
-
-type LoadedRoutePageExtension = LoadedExtension<RoutePageExtension>;
+type LoadedRoutePageExtension = LoadedExtension<RoutePage>;
 
 type SetActivePerspective = (perspective: string, next: string) => void;
 
@@ -122,7 +106,7 @@ type IsRouteExtensionActive = (
 ) => boolean;
 
 type LazyDynamicRoutePageProps = {
-  component: DynamicRoutePageExtension['properties']['component'];
+  component: RoutePage['properties']['component'];
 };
 
 type LazyRoutePageProps = { extension: LoadedRoutePageExtension };

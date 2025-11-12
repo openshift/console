@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { KebabOption } from '@console/internal/components/utils';
+import { KebabOption } from '@console/internal/components/utils/kebab';
 import { K8sKind, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 
 const healthChecksAdded = (resource: K8sResourceKind): boolean => {

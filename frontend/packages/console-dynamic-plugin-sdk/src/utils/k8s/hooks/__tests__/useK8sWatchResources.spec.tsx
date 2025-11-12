@@ -8,7 +8,7 @@ import { receivedResources } from '@console/internal/actions/k8s';
 import { SDKReducers } from '../../../../app';
 import { WatchK8sResources } from '../../../../extensions/console-types';
 import { k8sList, k8sGet } from '../../k8s-resource';
-import { setPluginStore, k8sWatch } from '../../k8s-utils';
+import { k8sWatch } from '../../k8s-utils';
 import { useK8sWatchResources } from '../useK8sWatchResources';
 import { PodModel, podData, podList } from './useK8sWatchResource.data';
 
@@ -43,7 +43,6 @@ const WatchResource: React.FC<{ initResources: WatchK8sResources<{}> }> = ({ ini
 
 beforeEach(() => {
   // Init k8s redux store with just one model
-  setPluginStore({ getExtensionsInUse: () => [] });
   store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));
   store.dispatch(
     receivedResources({

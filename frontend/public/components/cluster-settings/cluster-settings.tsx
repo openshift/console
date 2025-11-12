@@ -85,30 +85,25 @@ import {
   UpdateHistory,
 } from '../../module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import {
-  documentationURLs,
-  EmptyBox,
-  FieldLevelHelp,
-  Firehose,
-  FirehoseResource,
-  getDocumentationURL,
-  HorizontalNav,
-  isManaged,
-  ReleaseNotesLink,
-  ResourceLink,
-  resourcePathFromModel,
-  SectionHeading,
-  togglePaused,
-  UpstreamConfigDetailsItem,
-  useAccessReview,
-} from '../utils';
+import { documentationURLs, getDocumentationURL, isManaged } from '../utils/documentation';
+import { EmptyBox } from '../utils/status-box';
+import { FieldLevelHelp } from '../utils/field-level-help';
+import { Firehose } from '../utils/firehose';
+import type { FirehoseResource } from '../utils/types';
+import { HorizontalNav } from '../utils/horizontal-nav';
+import { ReleaseNotesLink } from '../utils/release-notes-link';
+import { ResourceLink, resourcePathFromModel } from '../utils/resource-link';
+import { SectionHeading } from '../utils/headings';
+import { togglePaused } from '../utils/workload-pause';
+import { UpstreamConfigDetailsItem } from '../utils/details-page';
+import { useAccessReview } from '../utils/rbac';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   isClusterExternallyManaged,
   useCanClusterUpgrade,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
+} from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';

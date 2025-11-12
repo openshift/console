@@ -26,7 +26,9 @@ import {
   healthStateMessage,
 } from '@console/shared/src/components/dashboard/status-card/states';
 import { K8sKind } from '../../../../module/k8s';
-import { FirehoseResourcesResult, AsyncComponent, resourcePath } from '../../../utils';
+import { FirehoseResourcesResult } from '../../../utils/types';
+import { AsyncComponent } from '../../../utils/async';
+import { resourcePath } from '../../../utils/resource-link';
 import { useK8sWatchResources } from '../../../utils/k8s-watch-hook';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
 import { uniqueResource } from './utils';

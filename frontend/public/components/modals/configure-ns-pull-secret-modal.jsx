@@ -16,7 +16,8 @@ import { CONST } from '@console/shared';
 import { k8sPatchByName, k8sCreate } from '../../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { PromiseComponent, ResourceIcon } from '../utils';
+import { PromiseComponent } from '../utils/promise-component';
+import { ResourceIcon } from '../utils/resource-icon';
 
 const generateSecretData = (formData) => {
   const config = {

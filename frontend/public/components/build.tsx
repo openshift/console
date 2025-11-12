@@ -14,7 +14,9 @@ import {
   CardTitle,
 } from '@patternfly/react-core';
 
-import { ONE_HOUR, ONE_MINUTE, Status, usePrometheusGate } from '@console/shared';
+import { ONE_HOUR, ONE_MINUTE } from '@console/shared/src/constants/time';
+import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -29,25 +31,23 @@ import {
 import { getBuildNumber } from '../module/k8s/builds';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { AsyncComponent } from './utils/async';
+import { BuildHooks } from './utils/build-hooks';
+import { BuildStrategy } from './utils/build-strategy';
+import { ConsoleEmptyState } from './utils/status-box';
+import { DetailsItem } from './utils/details-item';
 import {
-  AsyncComponent,
-  BuildHooks,
-  BuildStrategy,
-  ConsoleEmptyState,
-  DetailsItem,
   documentationURLs,
   getDocumentationURL,
-  humanizeBinaryBytes,
-  humanizeCpuCores,
   isManaged,
   isUpstream,
-  Kebab,
-  navFactory,
-  ResourceLink,
-  resourcePath,
-  ResourceSummary,
-  SectionHeading,
-} from './utils';
+} from './utils/documentation';
+import { humanizeBinaryBytes, humanizeCpuCores } from './utils/units';
+import { Kebab } from './utils/kebab';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink, resourcePath } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { BuildLogs } from './build-logs';
@@ -56,17 +56,8 @@ import { Area } from './graphs';
 import { BuildConfigModel } from '../models';
 import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { displayDurationInWords } from './utils/build-utils';
-
+import { BuildStrategyType, getStrategyType, displayDurationInWords } from './utils/build-utils';
 const BuildsReference: K8sResourceKindReference = 'Build';
-
-export enum BuildStrategyType {
-  Docker = 'Docker',
-  Devfile = 'Devfile',
-  Custom = 'Custom',
-  JenkinsPipeline = 'JenkinsPipeline',
-  Source = 'Source',
-}
 
 export const BuildLogLink = ({ build }) => {
   const {
@@ -287,23 +278,6 @@ export const BuildsDetails: React.FCC<BuildsDetailsProps> = ({ obj: build }) => 
       <BuildHooks resource={build} />
     </>
   );
-};
-
-export const getStrategyType = (strategy: BuildStrategyType) => {
-  switch (strategy) {
-    case BuildStrategyType.Docker:
-      return 'dockerStrategy';
-    case BuildStrategyType.Devfile:
-      return 'devfileStrategy';
-    case BuildStrategyType.Custom:
-      return 'customStrategy';
-    case BuildStrategyType.JenkinsPipeline:
-      return 'jenkinsPipelineStrategy';
-    case BuildStrategyType.Source:
-      return 'sourceStrategy';
-    default:
-      return null;
-  }
 };
 
 export const getEnvPath = (props) => {

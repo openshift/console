@@ -2,12 +2,9 @@ import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { PodConnectLoader } from '@console/internal/components/pod';
-import {
-  Firehose,
-  FirehoseResource,
-  FirehoseResult,
-  LoadingBox,
-} from '@console/internal/components/utils';
+import { Firehose } from '@console/internal/components/utils/firehose';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
+import type { FirehoseResource, FirehoseResult } from '@console/internal/components/utils/types';
 import { ImageStreamTagModel, NamespaceModel, PodModel } from '@console/internal/models';
 import { NodeKind, PodKind, k8sCreate, k8sGet, k8sKillByName } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

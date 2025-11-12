@@ -16,19 +16,14 @@ import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
-import {
-  AsyncComponent,
-  checkAccess,
-  ContainerSelect,
-  EnvFromPair,
-  EnvType,
-  FieldLevelHelp,
-  LoadingBox,
-  LoadingInline,
-  NameValueEditorPair,
-  PromiseComponent,
-  ResourceLink,
-} from './utils';
+import { AsyncComponent } from './utils/async';
+import { checkAccess } from './utils/rbac';
+import { ContainerSelect } from './utils/container-select';
+import { EnvFromPair, EnvType, NameValueEditorPair } from './utils/types';
+import { FieldLevelHelp } from './utils/field-level-help';
+import { LoadingBox, LoadingInline } from './utils/status-box';
+import { PromiseComponent } from './utils/promise-component';
+import { ResourceLink } from './utils/resource-link';
 import { ConfigMapModel, SecretModel } from '../models';
 
 /**

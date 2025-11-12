@@ -1,4 +1,4 @@
-import { FirehoseResource } from '../../../utils';
+import type { FirehoseResource } from '../../../utils/types';
 
 export const uniqueResource = (
   resource: FirehoseResource,

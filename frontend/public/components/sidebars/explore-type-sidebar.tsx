@@ -20,7 +20,8 @@ import {
   SwaggerDefinitions,
   fetchSwagger,
 } from '../../module/k8s';
-import { EmptyBox, LinkifyExternal } from '../utils';
+import { EmptyBox } from '../utils/status-box';
+import { LinkifyExternal } from '../utils/link';
 
 const getRef = (definition: SwaggerDefinition): string => {
   const ref = definition.$ref || _.get(definition, 'items.$ref');

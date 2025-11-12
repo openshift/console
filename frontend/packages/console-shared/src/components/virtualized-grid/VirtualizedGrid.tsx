@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { WindowScroller, AutoSizer, Size, CellMeasurerCache } from 'react-virtualized';
 import { VirtualizedGridProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { WithScrollContainer } from '@console/internal/components/utils';
+import { WithScrollContainer } from '@console/internal/components/utils/dom-utils';
 import Cell from './Cell';
 import {
   IDEAL_SPACE_BW_TILES,

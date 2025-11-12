@@ -10,7 +10,7 @@ import {
   CatalogItemMetadataProviderFunction,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { history } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils/router';
 import catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
 import { CatalogSortOrder, CatalogType, CatalogTypeCounts } from './types';
 

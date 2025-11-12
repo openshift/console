@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
-import { Firehose, FirehoseResource } from '@console/internal/components/utils';
+import { Firehose } from '@console/internal/components/utils/firehose';
+import type { FirehoseResource } from '@console/internal/components/utils/types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useFormikValidationFix } from '../../hooks';
+import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { ResourceDropdown, ResourceDropdownItems } from '../dropdown/ResourceDropdown';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';

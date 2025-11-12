@@ -23,7 +23,10 @@ import {
   modelFor,
   referenceForGroupVersionKind,
 } from '../../module/k8s';
-import { EmptyBox, ExpandableAlert, Kebab, LoadingBox, resourcePathFromModel } from '../utils';
+import { EmptyBox, LoadingBox } from '../utils/status-box';
+import { ExpandableAlert } from '../utils/alerts';
+import { Kebab } from '../utils/kebab';
+import { resourcePathFromModel } from '../utils/resource-link';
 import { TextFilter } from '../factory';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import i18next from 'i18next';
@@ -31,7 +34,7 @@ import {
   ClusterGlobalConfig,
   isClusterGlobalConfig,
 } from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
-import { useCanClusterUpgrade } from '@console/shared';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import filterNonUpgradableResources from './filterNonUpgradableResources';
 import { IDP_TYPES } from '@console/shared/src/constants/auth';
 

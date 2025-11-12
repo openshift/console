@@ -27,7 +27,7 @@ jest.mock('../RadioGroupField', () => ({
   default: jest.fn(() => null),
 }));
 
-jest.mock('@console/internal/components/utils', () => ({
+jest.mock('@console/internal/components/utils/status-box', () => ({
   LoadingBox: jest.fn(() => null),
 }));
 

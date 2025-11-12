@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { useFormikValidationFix } from '../../hooks';
+import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

@@ -1,6 +1,6 @@
 import { act } from 'react-dom/test-utils';
 import { checkAccess } from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { usePerspectives } from '..';
 import { Perspective, PerspectiveVisibilityState } from '../perspective-utils';

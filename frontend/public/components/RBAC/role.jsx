@@ -19,16 +19,12 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { tableFilters } from '../factory/table-filters';
-import {
-  Kebab,
-  SectionHeading,
-  ConsoleEmptyState,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  resourceListPathFromModel,
-  LoadingBox,
-} from '../utils';
+import { Kebab, ResourceKebab } from '../utils/kebab';
+import { SectionHeading } from '../utils/headings';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
+import { navFactory } from '../utils/horizontal-nav';
+import { ResourceLink, resourceListPathFromModel } from '../utils/resource-link';
+import { LoadingBox } from '../utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
@@ -445,40 +441,31 @@ export const roleType = (role) => {
   return role.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-const useRoleFilterOptions = (data) => {
+const useRoleFilterOptions = () => {
   const { t } = useTranslation();
   return React.useMemo(() => {
-    // Calculate counts for each role type
-    const counts = data.reduce((acc, role) => {
-      const type = roleType(role);
-      if (type) {
-        acc[type] = (acc[type] || 0) + 1;
-      }
-      return acc;
-    }, {});
-
     return [
       {
         value: 'cluster',
-        label: `${t('public~Cluster-wide Roles')} (${counts.cluster || 0})`,
+        label: t('public~Cluster-wide Roles'),
       },
       {
         value: 'namespace',
-        label: `${t('public~Namespace Roles')} (${counts.namespace || 0})`,
+        label: t('public~Namespace Roles'),
       },
       {
         value: 'system',
-        label: `${t('public~System Roles')} (${counts.system || 0})`,
+        label: t('public~System Roles'),
       },
     ];
-  }, [data, t]);
+  }, [t]);
 };
 
 const RolesList = (props) => {
   const { t } = useTranslation();
   const { data } = props;
   const columns = useRolesColumns();
-  const roleFilterOptions = useRoleFilterOptions(props.data || []);
+  const roleFilterOptions = useRoleFilterOptions();
 
   const additionalFilterNodes = React.useMemo(
     () => [

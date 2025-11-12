@@ -1,7 +1,7 @@
 import { Translation } from 'react-i18next';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { PromiseComponent } from '../utils';
+import { PromiseComponent } from '../utils/promise-component';
 
 interface ConfirmModalProps {
   btnText: string | React.ReactNode;
