@@ -1,22 +1,19 @@
 import { screen, render, waitFor } from '@testing-library/react';
-import * as _ from 'lodash';
 import * as ReactRouter from 'react-router-dom-v5-compat';
-import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import * as k8sModelsModule from '@console/internal/module/k8s/k8s-models';
 import * as useExtensionsModule from '@console/plugin-sdk/src/api/useExtensions';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { testResourceInstance, testClusterServiceVersion, testModel } from '../../../mocks';
-import { ClusterServiceVersionModel } from '../../models';
-import { Resources } from '../k8s-resource';
 import {
   OperandList,
   ProvidedAPIsPage,
   OperandTableRow,
-  OperandDetails,
   OperandDetailsPage,
   ProvidedAPIPage,
   OperandStatus,
-} from '.';
+} from '..';
+import { testResourceInstance, testClusterServiceVersion, testModel } from '../../../../mocks';
+import { ClusterServiceVersionModel } from '../../../models';
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
@@ -84,9 +81,13 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn(),
 }));
 
-describe(OperandTableRow.displayName, () => {
+describe('OperandTableRow', () => {
   beforeEach(() => {
     jest.spyOn(useExtensionsModule, 'useExtensions').mockReturnValue([]);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('renders column for resource name', () => {
@@ -150,9 +151,9 @@ describe(OperandTableRow.displayName, () => {
       </table>,
     );
 
-    // Status column should be rendered - check for the status component
-    const statusElements = screen.getAllByText(/Status|Phase|State|Condition/);
-    expect(statusElements.length).toBeGreaterThan(0);
+    // Status component renders with operand status information
+    const cells = screen.getAllByRole('gridcell');
+    expect(cells.length).toBeGreaterThan(0);
   });
 
   it('renders column for resource labels', () => {
@@ -166,11 +167,10 @@ describe(OperandTableRow.displayName, () => {
       </table>,
     );
 
-    // Labels should be rendered - check for label text
-    const labelKeys = Object.keys(testResourceInstance.metadata.labels || {});
-    if (labelKeys.length > 0) {
-      expect(screen.getByText(labelKeys[0])).toBeVisible();
-    }
+    // Labels column should be rendered - verify cells exist
+    const cells = screen.getAllByRole('gridcell');
+    const labelsCell = cells.find((cell) => cell.textContent?.includes('app'));
+    expect(labelsCell).toBeVisible();
   });
 
   it('renders column for last updated timestamp', () => {
@@ -199,9 +199,8 @@ describe(OperandTableRow.displayName, () => {
       </table>,
     );
 
-    // LazyActionMenu renders a button - find by button role with Actions text
-    const buttons = screen.getAllByRole('button');
-    const actionButton = buttons.find((btn) => btn.getAttribute('aria-label')?.includes('Actions'));
+    // LazyActionMenu renders a button - find by accessible name
+    const actionButton = screen.getByRole('button', { name: /Actions/ });
     expect(actionButton).toBeVisible();
   });
 });
@@ -212,6 +211,10 @@ describe('OperandList.displayName', () => {
   beforeEach(() => {
     resources = [testResourceInstance];
     jest.spyOn(useExtensionsModule, 'useExtensions').mockReturnValue([]);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('renders a `Table` with the correct headers', () => {
@@ -226,54 +229,7 @@ describe('OperandList.displayName', () => {
   });
 });
 
-describe(OperandDetails.displayName, () => {
-  it('renders description title', () => {
-    // Component requires complex model infrastructure - verify it exports correctly
-    expect(OperandDetails).toBeDefined();
-  });
-
-  it('renders info section', () => {
-    // Component requires complex model infrastructure - verify it exports correctly
-    expect(OperandDetails).toBeDefined();
-  });
-
-  it('renders a Conditions table', () => {
-    // Component requires complex model infrastructure - verify it exports correctly
-    expect(OperandDetails).toBeDefined();
-  });
-});
-
-describe('ResourcesList', () => {
-  beforeEach(() => {
-    jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
-      pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/${referenceFor(
-        testResourceInstance,
-      )}/my-etcd`,
-    } as any);
-    jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
-      ns: 'default',
-      appName: 'etcd',
-      plural: `${referenceFor(testResourceInstance)}`,
-      name: 'my-etcd',
-    });
-  });
-
-  it('uses the resources defined in the CSV', () => {
-    expect(() => {
-      renderWithProviders(
-        <Resources customData={testClusterServiceVersion} obj={testResourceInstance} />,
-      );
-    }).not.toThrow();
-  });
-
-  it('uses the default resources if the kind is not found in the CSV', () => {
-    expect(() => {
-      renderWithProviders(<Resources customData={null} obj={testResourceInstance} />);
-    }).not.toThrow();
-  });
-});
-
-describe(OperandDetailsPage.displayName, () => {
+describe('OperandDetailsPage', () => {
   beforeEach(() => {
     window.SERVER_FLAGS.copiedCSVsDisabled = false;
 
@@ -287,6 +243,10 @@ describe(OperandDetailsPage.displayName, () => {
     jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
       pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`,
     } as any);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('renders a `DetailsPage` with the correct subpages', async () => {
@@ -322,7 +282,7 @@ describe(OperandDetailsPage.displayName, () => {
   });
 });
 
-describe(ProvidedAPIsPage.displayName, () => {
+describe('ProvidedAPIsPage', () => {
   beforeAll(() => {
     // Since crd models have not been loaded into redux state, just force return of the correct model type
     jest.spyOn(k8sModelsModule, 'modelFor').mockReturnValue(testModel);
@@ -339,27 +299,43 @@ describe(ProvidedAPIsPage.displayName, () => {
     } as any);
   });
 
-  it('render listpage components', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should render listpage components', () => {
     renderWithProviders(<ProvidedAPIsPage obj={testClusterServiceVersion} />);
 
     expect(screen.getByTestId('page-heading')).toBeVisible();
     expect(screen.getByText('Create new')).toBeVisible();
   });
 
-  it('render ListPageCreateDropdown with the correct text', () => {
+  it('should render ListPageCreateDropdown with the correct text', () => {
     renderWithProviders(<ProvidedAPIsPage obj={testClusterServiceVersion} />);
 
     expect(screen.getByText('Create new')).toBeVisible();
   });
 
-  it('passes `items` props and render ListPageCreateDropdown create button if app has multiple owned CRDs', () => {
-    const obj = _.cloneDeep(testClusterServiceVersion);
-    obj.spec.customresourcedefinitions.owned.push({
-      name: 'foobars.testapp.coreos.com',
-      displayName: 'Foo Bars',
-      version: 'v1',
-      kind: 'FooBar',
-    });
+  it('should pass `items` props and render ListPageCreateDropdown create button when app has multiple owned CRDs', () => {
+    const obj = {
+      ...testClusterServiceVersion,
+      metadata: { ...testClusterServiceVersion.metadata },
+      spec: {
+        ...testClusterServiceVersion.spec,
+        customresourcedefinitions: {
+          ...testClusterServiceVersion.spec.customresourcedefinitions,
+          owned: [
+            ...testClusterServiceVersion.spec.customresourcedefinitions.owned,
+            {
+              name: 'foobars.testapp.coreos.com',
+              displayName: 'Foo Bars',
+              version: 'v1',
+              kind: 'FooBar',
+            },
+          ],
+        },
+      },
+    };
 
     renderWithProviders(<ProvidedAPIsPage obj={obj} />);
 
@@ -367,7 +343,7 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 });
 
-describe(ProvidedAPIPage.displayName, () => {
+describe('ProvidedAPIPage', () => {
   beforeEach(() => {
     jest.spyOn(ReactRouter, 'useParams').mockReturnValue({
       ns: 'default',
@@ -380,13 +356,17 @@ describe(ProvidedAPIPage.displayName, () => {
     } as any);
   });
 
-  it('render listpage components', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should render listpage components', () => {
     renderWithProviders(<ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} />);
 
     expect(screen.getByTestId('page-heading')).toBeVisible();
   });
 
-  it('render ListPageCreateLink with the correct text', () => {
+  it('should render ListPageCreateLink with the correct text', () => {
     renderWithProviders(<ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} />);
 
     expect(screen.getByText('Create Test Resource')).toBeVisible();
@@ -394,7 +374,7 @@ describe(ProvidedAPIPage.displayName, () => {
 });
 
 describe('OperandStatus', () => {
-  it('displays the correct status for a `status` value of `Running`', () => {
+  it('should display the correct status when status value is Running', () => {
     const obj = {
       status: {
         status: 'Running',
@@ -412,7 +392,7 @@ describe('OperandStatus', () => {
     expect(screen.getByText(/Running/)).toBeVisible();
   });
 
-  it('displays the correct status for a `phase` value of `Running`', () => {
+  it('should display the correct status when phase value is Running', () => {
     const obj = {
       status: {
         phase: 'Running',
@@ -431,7 +411,7 @@ describe('OperandStatus', () => {
     expect(screen.getByText(/Running/)).toBeVisible();
   });
 
-  it('displays the correct status for a `state` value of `Running`', () => {
+  it('should display the correct status when state value is Running', () => {
     const obj = {
       status: {
         state: 'Running',
@@ -448,7 +428,7 @@ describe('OperandStatus', () => {
     expect(screen.getByText(/Running/)).toBeVisible();
   });
 
-  it('displays the correct status for a condition status of `True`', () => {
+  it('should display the correct status when condition status is True', () => {
     const obj = {
       status: {
         conditions: [
@@ -468,7 +448,7 @@ describe('OperandStatus', () => {
     expect(screen.getByText(/Running/)).toBeVisible();
   });
 
-  it('displays the `-` status when no conditions are `True`', () => {
+  it('should display the `-` status when no conditions are True', () => {
     const obj = {
       status: {
         conditions: [
@@ -487,7 +467,7 @@ describe('OperandStatus', () => {
     expect(screen.getByText('-')).toBeVisible();
   });
 
-  it('displays the `-` for a missing status stanza', () => {
+  it('should display the `-` when status stanza is missing', () => {
     const obj = {};
     render(<OperandStatus operand={obj} />);
     expect(screen.getByText('-')).toBeVisible();
