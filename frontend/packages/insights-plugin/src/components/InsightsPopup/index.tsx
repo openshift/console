@@ -98,7 +98,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
       </StackItem>
       <StackItem className="pf-v6-u-text-color-subtle">
         {t(
-          'insights-plugin~Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.',
+          'insights-plugin~Red Hat Lightspeed Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.',
         )}
       </StackItem>
       {error ? (
@@ -166,7 +166,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
               <div>
                 <ExternalLink
                   href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}`}
-                  text={t('insights-plugin~View all recommendations in Insights Advisor')}
+                  text={t('insights-plugin~View all recommendations in Red Hat Lightspeed Advisor')}
                 />
               </div>
             </>
@@ -174,7 +174,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
             <div>
               <ExternalLink
                 href={`https://console.redhat.com/openshift/insights/advisor`}
-                text={t('insights-plugin~View more in Insights Advisor')}
+                text={t('insights-plugin~View more in Red Hat Lightspeed Advisor')}
               />
             </div>
           )}
