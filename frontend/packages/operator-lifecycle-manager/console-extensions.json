@@ -466,5 +466,38 @@
     "flags": {
       "required": ["CAN_LIST_OPERATOR_GROUP"]
     }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "InstallPlan"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "config.openshift.io",
+        "version": "v1",
+        "kind": "OperatorHub"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "CatalogSource"
+      },
+      "provider": { "$codeRef": "catalogSourceActionsProvider.useCatalogSourceActionsProvider" }
+    }
   }
 ]
