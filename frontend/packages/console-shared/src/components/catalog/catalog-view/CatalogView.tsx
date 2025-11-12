@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { CatalogCategory, CatalogToolbarItem } from '@console/dynamic-plugin-sdk/src';
+import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { isModalOpen } from '@console/internal/components/modals';
 import { useQueryParams } from '../../../hooks/useQueryParams';
 import PaneBody from '../../layout/PaneBody';
@@ -58,7 +57,6 @@ type CatalogViewProps = {
   filterGroups: string[];
   filterGroupMap: CatalogFilterGroupMap;
   groupings: CatalogStringMap;
-  toolbarExtensions?: ResolvedExtension<CatalogToolbarItem>[];
   renderTile: (item: CatalogItem) => React.ReactNode;
   hideSidebar?: boolean;
   sortFilterGroups: boolean;
@@ -73,7 +71,6 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   filterGroups,
   filterGroupMap,
   groupings,
-  toolbarExtensions,
   renderTile,
   hideSidebar,
   sortFilterGroups,
@@ -344,7 +341,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
             sortOrder={sortOrder}
             groupings={groupings}
             activeGrouping={activeGrouping}
-            toolbarExtensions={toolbarExtensions}
+            catalogType={catalogType}
             onGroupingChange={handleGroupingChange}
             onSortOrderChange={handleSortOrderChange}
             onSearchKeywordChange={handleSearchKeywordChange}
