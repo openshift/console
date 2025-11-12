@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AsyncComponent } from '../utils';
+import { AsyncComponent } from '../utils/async';
 
 const DroppableFileInput = (props: any) => (
   <AsyncComponent

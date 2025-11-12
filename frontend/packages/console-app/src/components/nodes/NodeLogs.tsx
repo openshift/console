@@ -22,16 +22,15 @@ import { coFetch } from '@console/internal/co-fetch';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import {
   getQueryArgument,
-  LoadingBox,
-  LoadingInline,
   removeQueryArgument,
   setQueryArgument,
-} from '@console/internal/components/utils';
+} from '@console/internal/components/utils/router';
+import { LoadingBox, LoadingInline } from '@console/internal/components/utils/status-box';
 import { modelFor, NodeKind, resourceURL } from '@console/internal/module/k8s';
-import { useUserSettings } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import NodeLogsUnitFilter from './NodeLogsUnitFilter';
 import './node-logs.scss';
 

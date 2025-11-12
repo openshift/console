@@ -18,17 +18,14 @@ import {
   referenceForExtensionModel,
   ExtensionK8sGroupModel,
 } from '../module/k8s';
-import {
-  DetailsItem,
-  Kebab,
-  kindObj,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  LoadingBox,
-} from './utils';
+import { DetailsItem } from './utils/details-item';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { kindObj } from './utils/inject';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { LoadingBox } from './utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useCRDAdditionalPrinterColumns } from '@console/shared/src/hooks/useCRDAdditionalPrinterColumns';
@@ -44,7 +41,7 @@ import {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import { DASH } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   isResourceActionProvider,
   ResourceActionProvider,

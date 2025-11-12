@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
+	"github.com/openshift/console/pkg/olm"
 	ocv1 "github.com/operator-framework/operator-controller/api/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,10 +36,13 @@ func (m *mockCatalogService) UpdateCatalog(catalogName string, baseURL string) e
 	return m.updateError
 }
 
-func (m *mockCatalogService) RemoveCatalog(catalogName string) error {
+func (m *mockCatalogService) RemoveCatalog(catalogName string) {
 	m.removeCatalogCalled = true
 	m.lastCatalogName = catalogName
-	return m.removeError
+}
+
+func (m *mockCatalogService) GetCatalogItems() ([]olm.ConsoleCatalogItem, error) {
+	return nil, nil
 }
 
 func createTestReconciler(objects ...client.Object) (*ClusterCatalogReconciler, *mockCatalogService) {
@@ -178,23 +183,8 @@ func TestReconcileUpdateCatalogError(t *testing.T) {
 	result, err := reconciler.Reconcile(context.Background(), req)
 
 	require.Error(t, err)
-	assert.Equal(t, reconcile.Result{}, result)
+	assert.Equal(t, reconcile.Result{
+		RequeueAfter: 30 * time.Second,
+	}, result)
 	assert.True(t, mockService.updateCatalogCalled)
-}
-
-func TestReconcileRemoveCatalogError(t *testing.T) {
-	reconciler, mockService := createTestReconciler()
-	mockService.removeError = errors.New("mock remove failed")
-
-	req := reconcile.Request{
-		NamespacedName: types.NamespacedName{
-			Name: testCatalogName,
-		},
-	}
-
-	result, err := reconciler.Reconcile(context.Background(), req)
-
-	require.Error(t, err)
-	assert.Equal(t, reconcile.Result{}, result)
-	assert.True(t, mockService.removeCatalogCalled)
 }

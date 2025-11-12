@@ -5,20 +5,15 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage, sorts } from './factory';
-import {
-  ContainerTable,
-  navFactory,
-  SectionHeading,
-  ResourceSummary,
-  ResourcePodCount,
-  AsyncComponent,
-  ResourceLink,
-  LabelList,
-  OwnerReferences,
-  PodsComponent,
-  RuntimeClass,
-  LoadingBox,
-} from './utils';
+import { ContainerTable } from './utils/container-table';
+import { navFactory, PodsComponent } from './utils/horizontal-nav';
+import { SectionHeading } from './utils/headings';
+import { ResourceSummary, ResourcePodCount, RuntimeClass } from './utils/details-page';
+import { AsyncComponent } from './utils/async';
+import { ResourceLink } from './utils/resource-link';
+import { LabelList } from './utils/label-list';
+import { OwnerReferences } from './utils/owner-references';
+import { LoadingBox } from './utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';

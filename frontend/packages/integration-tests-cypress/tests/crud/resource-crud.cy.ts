@@ -107,14 +107,21 @@ describe('Kubernetes resource CRUD operations', () => {
   ]);
 
   const dataViewResources = new Set([
+    'ConfigMap',
+    'CronJob',
+    'DaemonSet',
+    'Deployment',
+    'DeploymentConfig',
     'HorizontalPodAutoscaler',
     'Job',
     'LimitRange',
     'Pod',
+    'PodDisruptionBudget',
     'ReplicaSet',
     'ReplicationController',
     'ResourceQuota',
     'Role',
+    'Secret',
     'ServiceAccount',
     'StatefulSet',
     'user.openshift.io~v1~Group',

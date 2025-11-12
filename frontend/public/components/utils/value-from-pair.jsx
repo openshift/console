@@ -5,7 +5,7 @@ import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { ResourceName } from './';
+import { ResourceName } from './resource-icon';
 
 // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#envvarsource-v1-core
 //   valueFrom:

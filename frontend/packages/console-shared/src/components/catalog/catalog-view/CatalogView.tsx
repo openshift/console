@@ -107,8 +107,6 @@ const CatalogView: React.FC<CatalogViewProps> = ({
 
   const catalogToolbarRef = React.useRef<HTMLInputElement>();
 
-  // Removed itemsSorter - now using enhanced sorting from keywordCompare function
-
   const clearFilters = React.useCallback(() => {
     const params = new URLSearchParams();
     catalogType && items.length > 0 && params.set('catalogType', catalogType);
@@ -155,7 +153,9 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   const catalogCategories = React.useMemo<CatalogCategory[]>(() => {
     const allCategory = { id: ALL_CATEGORY, label: t('console-shared~All items') };
     const otherCategory = { id: OTHER_CATEGORY, label: t('console-shared~Other') };
-    const sortedCategories = [...(categories ?? [])].sort((a, b) => a.label.localeCompare(b.label));
+    const sortedCategories = (categories ?? [])
+      .filter((cat) => cat.id !== ALL_CATEGORY && cat.id !== OTHER_CATEGORY)
+      .sort((a, b) => a.label.localeCompare(b.label));
     return [allCategory, ...sortedCategories, otherCategory];
   }, [categories, t]);
 

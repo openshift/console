@@ -1,7 +1,7 @@
 /* eslint-disable camelcase, tsdoc/syntax */
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { NavBar } from '@console/internal/components/utils';
+import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import {
@@ -30,7 +30,10 @@ import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config
 import { K8sResourceKind } from '../../../module/k8s';
 import { createAlertRoutingModal } from '../../modals';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { Firehose, Kebab, SectionHeading, StatusBox } from '../../utils';
+import { Firehose } from '../../utils/firehose';
+import { Kebab } from '../../utils/kebab';
+import { SectionHeading } from '../../utils/headings';
+import { StatusBox } from '../../utils/status-box';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,

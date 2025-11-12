@@ -59,6 +59,8 @@ import {
 } from './operator-hub/operator-hub-utils';
 import { iconFor, InstallPlanReview } from './index';
 
+import './operator-install-page.scss';
+
 const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ namespace }) => {
   const { t } = useTranslation();
   const singleNamespaceText = t('olm~View installed Operators in Namespace {{namespace}}', {

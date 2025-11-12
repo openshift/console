@@ -118,6 +118,7 @@ const RepositoriesPage: React.FC<RepositoriesPageProps> = ({
         createProps={createProps}
         canCreate={canCreate}
         createButtonText={createButtonText}
+        omitFilterToolbar
       />
     </>
   );

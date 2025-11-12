@@ -3,7 +3,10 @@ import * as _ from 'lodash-es';
 import { DASH } from '@console/shared';
 
 import { ListPage } from './factory';
-import { Kebab, ResourceKebab, ResourceLink, Selector, LoadingBox } from './utils';
+import { Kebab, ResourceKebab } from './utils/kebab';
+import { ResourceLink } from './utils/resource-link';
+import { Selector } from './utils/selector';
+import { LoadingBox } from './utils/status-box';
 import { ServiceMonitorModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { useTranslation } from 'react-i18next';

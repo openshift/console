@@ -33,7 +33,7 @@ import {
   HorizontalNavProps as HorizontalNavFacadeProps,
   NavPage,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { useExtensions } from '@console/plugin-sdk/src';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 
 export const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />

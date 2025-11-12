@@ -3,7 +3,7 @@ import { ActionGroup, Alert, Button, ButtonVariant } from '@patternfly/react-cor
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-import { ButtonBar } from '@console/internal/components/utils';
+import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { useScrollContainer } from '../../hooks/useScrollContainer';
 import { Shadows, useScrollShadows } from '../../hooks/useScrollShadows';
 import { FormFooterProps } from './form-utils-types';

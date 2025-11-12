@@ -19,6 +19,6 @@ describe('HelmReleaseResources', () => {
     jest.spyOn(ReactRouter, 'useParams').mockReturnValue({ ns: 'test-helm' });
     renderWithProviders(<HelmReleaseResources {...helmReleaseResourcesProps} />);
     // MultiListPage typically renders a list/table of resources
-    expect(screen.getByText('No resources found')).toBeTruthy();
+    expect(screen.getByText('No Resources found')).toBeTruthy();
   });
 });

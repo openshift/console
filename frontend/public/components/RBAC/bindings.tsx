@@ -18,7 +18,9 @@ import { FLAGS } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { LazyActionMenu, useFlag, DASH } from '@console/shared';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { DASH } from '@console/shared/src/constants/ui';
 import { ClusterRoleBindingModel } from '../../models';
 import {
   ClusterRoleBindingKind,
@@ -43,21 +45,16 @@ import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { TableColumn } from '@console/internal/module/k8s';
 import { GetDataViewRows, ResourceFilters } from '@console/app/src/components/data-view/types';
 import { tableFilters } from '../factory/table-filters';
-import {
-  ButtonBar,
-  Firehose,
-  getQueryArgument,
-  kindObj,
-  ListDropdown,
-  NsDropdown,
-  ResourceLink,
-  ResourceName,
-  resourceObjPath,
-  StatusBox,
-  useAccessReview,
-  ListDropdownProps,
-  LoadingBox,
-} from '../utils';
+import { ButtonBar } from '../utils/button-bar';
+import { Firehose } from '../utils/firehose';
+import { getQueryArgument } from '../utils/router';
+import { kindObj } from '../utils/inject';
+import type { ListDropdownProps } from '../utils/list-dropdown';
+import { ListDropdown, NsDropdown } from '../utils/list-dropdown';
+import { ResourceLink, resourceObjPath } from '../utils/resource-link';
+import { ResourceName } from '../utils/resource-icon';
+import { StatusBox, LoadingBox } from '../utils/status-box';
+import { useAccessReview } from '../utils/rbac';
 import { flagPending } from '../../reducers/features';
 import { useK8sWatchResources } from '../utils/k8s-watch-hook';
 
@@ -243,42 +240,33 @@ export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
   const hasCRBindings = props.data.some((binding) => !binding.metadata.namespace);
 
   const kindFilterOptions = React.useMemo(() => {
-    // Calculate counts for each binding type
-    const counts = props.data.reduce((acc, binding) => {
-      const type = bindingType(binding);
-      if (type) {
-        acc[type] = (acc[type] || 0) + 1;
-      }
-      return acc;
-    }, {} as Record<string, number>);
-
     const options = hasCRBindings
       ? [
           {
             value: 'cluster',
-            label: `${t('public~Cluster-wide RoleBindings')} (${counts.cluster || 0})`,
+            label: t('public~Cluster-wide RoleBindings'),
           },
           {
             value: 'namespace',
-            label: `${t('public~Namespace RoleBindings')} (${counts.namespace || 0})`,
+            label: t('public~Namespace RoleBindings'),
           },
           {
             value: 'system',
-            label: `${t('public~System RoleBindings')} (${counts.system || 0})`,
+            label: t('public~System RoleBindings'),
           },
         ]
       : [
           {
             value: 'namespace',
-            label: `${t('public~Namespace RoleBindings')} (${counts.namespace || 0})`,
+            label: t('public~Namespace RoleBindings'),
           },
           {
             value: 'system',
-            label: `${t('public~System RoleBindings')} (${counts.system || 0})`,
+            label: t('public~System RoleBindings'),
           },
         ];
     return options;
-  }, [hasCRBindings, props.data, t]);
+  }, [hasCRBindings, t]);
 
   const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
     () => [

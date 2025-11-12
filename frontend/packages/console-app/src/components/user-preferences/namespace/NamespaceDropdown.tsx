@@ -12,11 +12,10 @@ import {
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import fuzzysearch from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
-import { useProjectOrNamespaceModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useProjectOrNamespaceModel } from '@console/internal/components/utils/list-dropdown';
 import { ProjectModel } from '@console/internal/models';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { alphanumericCompare } from '@console/shared';
 import {
   Filter,
   Footer,
@@ -26,6 +25,7 @@ import {
 import NamespaceMenuToggle from '@console/shared/src/components/namespace/NamespaceMenuToggle';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { alphanumericCompare } from '@console/shared/src/utils/utils';
 import {
   PREFERRED_NAMESPACE_USER_SETTING_KEY,
   usePreferredNamespace,

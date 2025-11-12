@@ -1,17 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom-v5-compat';
-import { useFlag } from '@console/shared';
-import { FLAG_DEVWORKSPACE } from '../../const';
 import { MultiTabbedTerminal } from './MultiTabbedTerminal';
 
 import './CloudShellTab.scss';
 
 const CloudShellTab: React.FCC = () => {
   const { t } = useTranslation('webterminal-plugin');
-  const devWorkspaceFlag = useFlag(FLAG_DEVWORKSPACE);
-
-  if (devWorkspaceFlag === false) return <Navigate to="/" replace />;
 
   return (
     <>

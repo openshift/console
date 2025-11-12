@@ -5,7 +5,7 @@ type CatalogPageTabsProps = {
   children: React.ReactNode;
 };
 
-const CatalogPageTabs: React.FC<CatalogPageTabsProps> = ({ children }) => (
+const CatalogPageTabs: React.FCC<CatalogPageTabsProps> = ({ children }) => (
   <FlexItem className="co-catalog-page__tabs" order={{ default: '2', md: '1' }}>
     {children}
   </FlexItem>

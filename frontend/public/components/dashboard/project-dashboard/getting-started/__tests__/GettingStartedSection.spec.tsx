@@ -1,79 +1,111 @@
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { useUserSettings } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import {
-  GettingStartedExpandableGrid,
   GettingStartedShowState,
   useGettingStartedShowState,
 } from '@console/shared/src/components/getting-started';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { expectTextsNotInDocument } from '../../../getting-started-test-utils';
+
 import { GettingStartedSection } from '../GettingStartedSection';
+
+jest.mock('../SampleGettingStartedCard', () => ({
+  SampleGettingStartedCard: () => 'Sample getting started',
+}));
+
+jest.mock('../DeveloperFeaturesGettingStartedCard', () => ({
+  DeveloperFeaturesGettingStartedCard: () => 'Developer features',
+}));
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
   ...jest.requireActual('@console/shared/src/hooks/flag'),
   useFlag: jest.fn(),
 }));
 
+jest.mock('@console/shared/src', () => ({
+  ...jest.requireActual('@console/shared/src'),
+  useUserSettings: jest.fn(() => [true, jest.fn()]),
+}));
+
 jest.mock('@console/shared/src/components/getting-started', () => ({
   ...jest.requireActual('@console/shared/src/components/getting-started'),
   useGettingStartedShowState: jest.fn(),
-}));
-
-// Workaround because getting-started exports also useGettingStartedShowState
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
-}));
-
-// Workaround because getting-started exports also QuickStartGettingStartedCard
-jest.mock(
-  '@console/app/src/components/quick-starts/loader/QuickStartsLoader',
-  () =>
-    function QuickStartsLoaderMock({ children }) {
-      return children;
-    },
-);
-
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
+  QuickStartGettingStartedCard: () => 'Quick start tutorials',
 }));
 
 const mockUserSettings = useUserSettings as jest.Mock;
-
 const useFlagMock = useFlag as jest.Mock;
 const useGettingStartedShowStateMock = useGettingStartedShowState as jest.Mock;
 
 describe('GettingStartedSection', () => {
-  it('should render with three child elements', () => {
+  beforeEach(() => {
+    mockUserSettings.mockReset();
+    useFlagMock.mockReset();
+    useGettingStartedShowStateMock.mockReset();
+
+    // Default mock setup for most tests
+    mockUserSettings.mockReturnValue([true, jest.fn()]);
     useFlagMock.mockReturnValue(true);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
-    mockUserSettings.mockReturnValue([true, jest.fn()]);
-
-    const wrapper = shallow(
-      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
-    );
-
-    expect(wrapper.find(GettingStartedExpandableGrid).props().children.length).toEqual(3);
   });
 
-  it('should render nothing when useFlag(FLAGS.OPENSHIFT) return false', () => {
-    useFlagMock.mockReturnValue(false);
-    mockUserSettings.mockReturnValue([true, jest.fn()]);
-    useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
-
-    const wrapper = shallow(
+  it('should render with three child cards when all conditions are met', () => {
+    renderWithProviders(
       <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
     );
 
-    expect(wrapper.find(GettingStartedExpandableGrid).length).toEqual(0);
+    // Check that all three cards are present by looking for their mocked components
+    const contentContainer = screen.getByTestId('getting-started-content');
+    expect(contentContainer).toHaveTextContent('Sample getting started');
+    expect(contentContainer).toHaveTextContent('Quick start tutorials');
+    expect(contentContainer).toHaveTextContent('Developer features');
+  });
+
+  it('should render nothing when useFlag(FLAGS.OPENSHIFT) returns false', () => {
+    useFlagMock.mockReturnValue(false);
+
+    renderWithProviders(
+      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+    );
+
+    expectTextsNotInDocument([
+      'Sample getting started',
+      'Quick start tutorials',
+      'Developer features',
+    ]);
   });
 
   it('should render nothing if user settings hide them', () => {
-    useFlagMock.mockReturnValue(true);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
 
-    const wrapper = shallow(
+    renderWithProviders(
       <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
     );
 
-    expect(wrapper.find(GettingStartedExpandableGrid).length).toEqual(0);
+    expectTextsNotInDocument([
+      'Sample getting started',
+      'Quick start tutorials',
+      'Developer features',
+    ]);
+  });
+
+  it('should render nothing if showStateLoaded is false', () => {
+    useGettingStartedShowStateMock.mockReturnValue([
+      GettingStartedShowState.SHOW,
+      jest.fn(),
+      false,
+    ]);
+
+    renderWithProviders(
+      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+    );
+
+    expectTextsNotInDocument([
+      'Sample getting started',
+      'Quick start tutorials',
+      'Developer features',
+    ]);
   });
 });

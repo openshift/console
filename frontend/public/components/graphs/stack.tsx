@@ -10,7 +10,8 @@ import {
 } from '@patternfly/react-charts/victory';
 import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { timeFormatter } from '../utils/datetime';
-import { humanizeNumber, useRefWidth } from '../utils';
+import { humanizeNumber } from '../utils/units';
+import { useRefWidth } from '../utils/ref-width-hook';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';

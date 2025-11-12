@@ -13,12 +13,13 @@ import {
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 
 interface KnativeRevisionListViewNodeProps {
+  children?: React.ReactNode;
   item: Node;
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
 }
 
-const ObservedKnativeRevisionListViewNode: React.FC<KnativeRevisionListViewNodeProps> = ({
+const ObservedKnativeRevisionListViewNode: React.FCC<KnativeRevisionListViewNodeProps> = ({
   item,
   selectedIds,
   onSelect,

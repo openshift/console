@@ -10,7 +10,7 @@ import {
   MultipleFileUploadProps,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { units } from './utils';
+import { units } from './utils/units';
 
 // Maximal file size, in bytes, that user can upload
 const maxFileUploadSize = 4000000;

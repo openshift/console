@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { setFlag } from '@console/internal/actions/flags';
 import * as UIActions from '@console/internal/actions/ui';

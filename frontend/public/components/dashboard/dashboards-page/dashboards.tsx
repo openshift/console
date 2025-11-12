@@ -5,12 +5,15 @@ import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
 
 import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
-import { HorizontalNav, LoadingBox, Page, AsyncComponent } from '../../utils';
+import { HorizontalNav } from '../../utils/horizontal-nav';
+import { LoadingBox } from '../../utils/status-box';
+import type { Page } from '../../utils/horizontal-nav';
+import { AsyncComponent } from '../../utils/async';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   DashboardsCard,
   DashboardsTab,

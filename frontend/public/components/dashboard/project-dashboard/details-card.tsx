@@ -11,8 +11,11 @@ import {
   DescriptionList,
 } from '@patternfly/react-core';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
-import { getName, getRequester, GreenCheckCircleIcon } from '@console/shared';
-import { LabelList, resourcePathFromModel } from '../../utils';
+import { getName } from '@console/shared/src/selectors/common';
+import { getRequester } from '@console/shared/src/selectors/namespace';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { LabelList } from '../../utils/label-list';
+import { resourcePathFromModel } from '../../utils/resource-link';
 import { ProjectModel } from '../../../models';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { Link } from 'react-router-dom-v5-compat';

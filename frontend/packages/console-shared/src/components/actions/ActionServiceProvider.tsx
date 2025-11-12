@@ -8,13 +8,13 @@ import {
   isActionGroup,
   MenuOption,
 } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { useDeepCompareMemoize } from '../../hooks/deep-compare-memoize';
 import ActionsLoader from './loader/ActionsLoader';
 import { ActionContext } from './types';
 import { createMenuOptions } from './utils';
 
-const ActionServiceProvider: React.FC<ActionServiceProviderProps> = ({ context, children }) => {
+const ActionServiceProvider: React.FCC<ActionServiceProviderProps> = ({ context, children }) => {
   const [contextMap, setContextMap] = React.useState<ActionContext>(context);
   const [actionsMap, setActionsMap] = React.useState<{ [uid: string]: Action[] }>({});
   const [loadError, setLoadError] = React.useState<any>();

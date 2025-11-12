@@ -23,8 +23,8 @@ import {
   K8sResourceKindReference,
   referenceForExtensionModel,
 } from '../../module/k8s';
-import { FirehoseResult } from './types';
-import { KebabOption } from './kebab';
+import type { FirehoseResult } from './types';
+import type { KebabOption } from './kebab';
 import { ResourceIcon } from './resource-icon';
 import { ManagedByOperatorLink } from './managed-by';
 

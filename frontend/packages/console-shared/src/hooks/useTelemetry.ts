@@ -71,7 +71,7 @@ let clusterProperties = getClusterProperties();
 export const updateClusterPropertiesFromTests = () => (clusterProperties = getClusterProperties());
 
 export const useTelemetry = () => {
-  // TODO use useDynamicPluginInfo() hook to tell whether all dynamic plugins have been processed
+  // TODO use usePluginInfo() hook to tell whether all dynamic plugins have been processed
   // to avoid firing telemetry events multiple times whenever a dynamic plugin loads asynchronously
 
   const [currentUserPreferenceTelemetryValue] = useUserSettings<USER_TELEMETRY_ANALYTICS>(

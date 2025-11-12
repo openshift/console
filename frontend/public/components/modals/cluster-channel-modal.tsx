@@ -7,7 +7,7 @@ import * as semver from 'semver';
 import { ChannelDocLink } from '../cluster-settings/cluster-settings';
 import { ClusterVersionModel } from '../../models';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { isManaged } from '../utils';
+import { isManaged } from '../utils/documentation';
 import {
   createModalLauncher,
   ModalBody,

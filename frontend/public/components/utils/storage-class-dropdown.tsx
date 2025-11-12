@@ -6,7 +6,9 @@ import * as fuzzy from 'fuzzysearch';
 import { WithTranslation, withTranslation } from 'react-i18next';
 
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { Firehose, LoadingInline, ResourceName, ResourceIcon } from '.';
+import { Firehose } from './firehose';
+import { LoadingInline } from './status-box';
+import { ResourceName, ResourceIcon } from './resource-icon';
 import { isDefaultClass } from '../storage-class';
 import { css } from '@patternfly/react-styles';
 

@@ -15,7 +15,8 @@ import {
 } from '@patternfly/react-core';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { MachineAutoscalerModel } from '../../models';
-import { NumberSpinner, resourcePathFromModel } from '../utils';
+import { NumberSpinner } from '../utils/number-spinner';
+import { resourcePathFromModel } from '../utils/resource-link';
 import { K8sResourceKind } from '../../module/k8s';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';

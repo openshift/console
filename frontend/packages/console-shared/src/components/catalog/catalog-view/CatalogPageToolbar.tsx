@@ -5,7 +5,7 @@ type CatalogPageToolbarProps = {
   children: React.ReactNode;
 };
 
-const CatalogPageToolbar: React.FC<CatalogPageToolbarProps> = ({ children }) => (
+const CatalogPageToolbar: React.FCC<CatalogPageToolbarProps> = ({ children }) => (
   <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>{children}</Flex>
 );
 

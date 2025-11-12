@@ -10,10 +10,10 @@ import {
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { getJenkinsLogURL, BuildPipelineLogLink } from './build-pipeline';
-import { BuildStrategyType } from './build';
+import { BuildStrategyType } from './utils/build-utils';
 import { BuildPhase } from '../module/k8s/builds';
 import { PageComponentProps } from './utils/horizontal-nav';
-import { K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
+import { K8sResourceKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const PipelineLogMessage: React.FCC<{
   build: K8sResourceKind;

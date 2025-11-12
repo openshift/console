@@ -7,7 +7,7 @@ import {
   getVolumeModeForProvisioner,
   initialVolumeModes,
 } from '@console/internal/components/storage/shared';
-import { FieldLevelHelp } from '@console/internal/components/utils';
+import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 
 export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => {

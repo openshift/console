@@ -24,23 +24,47 @@ const HPADetailsForm: React.FC = () => {
     _event: React.FormEvent<HTMLInputElement>,
     value: string,
   ) => {
-    const numValue = parseInt(value, 10);
-
     const hpa: HorizontalPodAutoscalerKind = field.value;
     const { metric, index } = getMetricByType(hpa, type);
     const hpaMetrics = hpa.spec.metrics || [];
 
-    const updatedMetrics = [...hpaMetrics];
-    updatedMetrics[index] = {
-      ...metric,
-      resource: {
-        ...metric.resource,
-        target: {
-          ...metric.resource.target,
-          averageUtilization: numValue,
+    // If field is undefined, remove metric
+    if (!value) {
+      const updatedMetrics = hpaMetrics.filter((_, i) => i !== index);
+      setFieldValue(name, {
+        ...hpa,
+        spec: {
+          ...hpa.spec,
+          metrics: updatedMetrics,
         },
-      },
-    };
+      });
+      return;
+    }
+
+    // Create or update metric
+    const numValue = parseInt(value, 10);
+    const updatedMetrics = [...hpaMetrics];
+    updatedMetrics[index] = metric
+      ? {
+          ...metric,
+          resource: {
+            ...metric.resource,
+            target: {
+              ...metric.resource.target,
+              averageUtilization: numValue,
+            },
+          },
+        }
+      : {
+          type: 'Resource',
+          resource: {
+            name: type,
+            target: {
+              type: 'Utilization',
+              averageUtilization: numValue,
+            },
+          },
+        };
 
     setFieldValue(name, {
       ...hpa,

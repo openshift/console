@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { GettingStartedLink } from '@console/shared/src/components/getting-started';
 
 import { OAuthModel } from '@console/internal/models';
-import { resourcePathFromModel } from '@console/internal/components/utils';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 
 export const useIdentityProviderLink = (): GettingStartedLink | null => {

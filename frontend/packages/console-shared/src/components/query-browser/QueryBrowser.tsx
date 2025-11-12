@@ -55,18 +55,16 @@ import { formatNumber } from '@console/internal/components/monitoring/format';
 import { useBoolean } from '@console/internal/components/monitoring/hooks/useBoolean';
 import { PrometheusAPIError } from '@console/internal/components/monitoring/types';
 import {
-  humanizeNumberSI,
-  LoadingInline,
-  usePoll,
-  useRefWidth,
-  useSafeFetch,
-} from '@console/internal/components/utils';
-import {
   dateFormatterNoYear,
   dateTimeFormatterWithSeconds,
   timeFormatter,
   timeFormatterWithSeconds,
 } from '@console/internal/components/utils/datetime';
+import { usePoll } from '@console/internal/components/utils/poll-hook';
+import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
+import { useSafeFetch } from '@console/internal/components/utils/safe-fetch-hook';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
+import { humanizeNumberSI } from '@console/internal/components/utils/units';
 import { RootState } from '@console/internal/redux';
 import withFallback from '../error/fallbacks/withFallback';
 import { queryBrowserTheme } from './theme';
@@ -90,7 +88,7 @@ const Error: React.FC<ErrorProps> = ({ error, title = 'An error occurred' }) => 
   </Alert>
 );
 
-const GraphEmptyState: React.FC<GraphEmptyStateProps> = ({ children, title }) => (
+const GraphEmptyState: React.FCC<GraphEmptyStateProps> = ({ children, title }) => (
   <div className="query-browser__wrapper graph-empty-state">
     <EmptyState
       headingLevel="h2"

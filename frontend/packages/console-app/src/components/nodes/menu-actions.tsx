@@ -4,7 +4,7 @@ import { useCommonResourceActions } from '@console/app/src/actions//hooks/useCom
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { asAccessReview } from '@console/internal/components/utils';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { CertificateSigningRequestModel } from '@console/internal/models';
 import {
   CertificateSigningRequestKind,
@@ -12,7 +12,7 @@ import {
   NodeKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { isNodeUnschedulable } from '@console/shared';
+import { isNodeUnschedulable } from '@console/shared/src/selectors/node';
 import { makeNodeSchedulable } from '../../k8s/requests/nodes';
 import { createConfigureUnschedulableModal } from './modals';
 

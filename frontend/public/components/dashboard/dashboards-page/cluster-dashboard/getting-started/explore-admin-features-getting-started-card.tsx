@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as semver from 'semver';
 import { useTranslation } from 'react-i18next';
 import { FlagIcon } from '@patternfly/react-icons/dist/esm/icons/flag-icon';
-import { FLAGS, useOpenShiftVersion } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useOpenShiftVersion } from '@console/shared/src/hooks/version';
 import { useFlag } from '@console/shared/src/hooks/flag';
 
 import {
@@ -10,7 +11,7 @@ import {
   GettingStartedLink,
 } from '@console/shared/src/components/getting-started';
 import { lightspeedOperatorURL } from '@console/app/src/components/lightspeed/Lightspeed';
-import { DOC_URL_OPENSHIFT_WHATS_NEW } from '../../../../utils';
+import { DOC_URL_OPENSHIFT_WHATS_NEW } from '../../../../utils/documentation';
 
 export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();

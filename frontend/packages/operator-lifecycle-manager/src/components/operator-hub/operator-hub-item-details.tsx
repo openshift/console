@@ -18,6 +18,7 @@ import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DismissableAlert, RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import CatalogPageOverlay from '@console/shared/src/components/catalog/catalog-view/CatalogPageOverlay';
@@ -26,7 +27,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DefaultCatalogSource } from '../../const';
 import { useCurrentCSVDescription } from '../../hooks/useCurrentCSVDescription';
-import { ClusterServiceVersionModel } from '../../models';
+import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { MarkdownView } from '../clusterserviceversion';
 import { DeprecatedOperatorWarningAlert } from '../deprecated-operator-warnings/deprecated-operator-warnings';
@@ -96,10 +97,17 @@ const InstalledHint: React.FCC<InstalledHintProps> = ({
     isList: false,
     namespaced: true,
   });
-  const nsPath = `/k8s/ns/${subscription.metadata.namespace}`;
   const to = installedCSV
-    ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name ?? ''}`
-    : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
+    ? resourcePathFromModel(
+        ClusterServiceVersionModel,
+        installedCSV?.metadata?.name,
+        subscription?.metadata?.namespace,
+      )
+    : resourcePathFromModel(
+        SubscriptionModel,
+        subscription.metadata.name,
+        subscription.metadata.namespace,
+      );
   const installedVersion = installedCSV?.spec?.version;
   return (
     <Hint>
@@ -139,10 +147,17 @@ const InstallingHint: React.FCC<InstallingHintProps> = ({ subscription }) => {
         }
       : null,
   );
-  const nsPath = `/k8s/ns/${subscription.metadata.namespace}`;
   const to = installedCSV
-    ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name}/subscription`
-    : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
+    ? `${resourcePathFromModel(
+        ClusterServiceVersionModel,
+        installedCSV?.metadata?.name,
+        subscription?.metadata?.namespace,
+      )}/subscription`
+    : resourcePathFromModel(
+        SubscriptionModel,
+        subscription.metadata.name,
+        subscription.metadata.namespace,
+      );
   return (
     <Hint>
       <HintTitle>{t('olm~Installing Operator')}</HintTitle>

@@ -13,7 +13,7 @@ import {
   humanizeCpuCores,
   humanizeDecimalBytesPerSec,
   humanizeNumber,
-} from '../../utils';
+} from '../../utils/units';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import {
   getUtilizationQueries,

@@ -1,9 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
-import { ResourceDetailsPage, ResourcePage, ResourceListPage } from '@console/plugin-sdk';
-import {
-  ResourceDetailsPage as DynamicResourceDetailsPage,
-  ResourceListPage as DynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
+import { ResourceDetailsPage, ResourceListPage } from '@console/dynamic-plugin-sdk';
 import { referenceForModel, GroupVersionKind, referenceForExtensionModel } from '../module/k8s';
 import {
   AlertmanagerModel,
@@ -59,21 +55,9 @@ import {
 } from '../models';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
 
-const addResourcePage = (
-  map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
-  page: ResourcePage,
-) => {
-  const key = page.properties?.modelParser
-    ? page.properties?.modelParser(page.properties.model)
-    : referenceForModel(page.properties.model);
-  if (!map.has(key)) {
-    map.set(key, page.properties.loader);
-  }
-};
-
 const addDynamicResourcePage = (
   map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
-  page: DynamicResourcePage,
+  page: ResourceDetailsPage | ResourceListPage,
 ) => {
   const key = referenceForExtensionModel(page.properties.model);
   if (!map.has(key)) {
@@ -83,7 +67,6 @@ const addDynamicResourcePage = (
 
 type ResourceMapKey = GroupVersionKind | string;
 type ResourceMapValue = () => Promise<React.ComponentType<any>>;
-type DynamicResourcePage = DynamicResourceListPage | DynamicResourceDetailsPage;
 
 export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ConfigMapModel), () =>
@@ -299,17 +282,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ).then((m) => m.default),
   );
 
-export const getResourceDetailsPages = (
-  pluginPages: ResourceDetailsPage[] = [],
-  dynamicPluginPages: DynamicResourceDetailsPage[] = [],
-) =>
+export const getResourceDetailsPages = (pluginPages: ResourceDetailsPage[] = []) =>
   ImmutableMap<ResourceMapKey, ResourceMapValue>()
     .merge(baseDetailsPages)
     .withMutations((map) => {
       pluginPages.forEach((page) => {
-        addResourcePage(map, page);
-      });
-      dynamicPluginPages.forEach((page) => {
         addDynamicResourcePage(map, page);
       });
     });
@@ -497,17 +474,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ).then((m) => m.default),
   );
 
-export const getResourceListPages = (
-  pluginPages: ResourceListPage[] = [],
-  dynamicPluginPages: DynamicResourceListPage[] = [],
-) =>
+export const getResourceListPages = (pluginPages: ResourceListPage[] = []) =>
   ImmutableMap<ResourceMapKey, ResourceMapValue>()
     .merge(baseListPages)
     .withMutations((map) => {
       pluginPages.forEach((page) => {
-        addResourcePage(map, page);
-      });
-      dynamicPluginPages.forEach((page) => {
         addDynamicResourcePage(map, page);
       });
     });

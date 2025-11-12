@@ -7,8 +7,12 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage, Table } from './factory';
-import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
+import { Kebab } from './utils/kebab';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceSummary } from './utils/details-page';
 import { humanizeBinaryBytes } from './utils/units';
+import { resourcePath } from './utils/resource-link';
 import { ExampleDockerCommandPopover } from './image-stream';
 import { ImageStreamTimeline } from './image-stream-timeline';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
@@ -341,7 +345,7 @@ export const ImageStreamTagsDetailsPage: React.FCC<ImageStreamTagsDetailsPagePro
           },
           {
             name: imageStreamName,
-            path: `${getBreadcrumbPath(params, 'imagestreams')}/${imageStreamName}`,
+            path: resourcePath('ImageStream', imageStreamName, params.ns),
           },
           {
             name: t('public~ImageStreamTag details'),

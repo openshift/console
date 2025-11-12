@@ -23,22 +23,22 @@ import {
   DescriptionListTerm,
   DescriptionListDescription,
 } from '@patternfly/react-core';
-import { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import {
-  ActionServiceProvider,
+  Status,
+  TableColumnsType,
   LazyActionMenu,
+  ActionServiceProvider,
   ActionMenu,
   ActionMenuVariant,
-} from '@console/shared/src/components/actions';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
-import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import { DASH } from '@console/shared/src/constants/ui';
+  useUserSettingsCompatibility,
+  usePrometheusGate,
+  DASH,
+} from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
-import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import { ListPageBody, RowFilter } from '@console/dynamic-plugin-sdk';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import * as UIActions from '../actions/ui';
@@ -70,37 +70,32 @@ import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
+import { AsyncComponent } from './utils/async';
+import { DetailsItem } from './utils/details-item';
+import { Kebab } from './utils/kebab';
+import { OwnerReferences } from './utils/owner-references';
+import { ResourceIcon } from './utils/resource-icon';
+import { NodeLink, ResourceLink, resourcePath } from './utils/resource-link';
+import { ResourceSummary, RuntimeClass } from './utils/details-page';
+import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import {
-  AsyncComponent,
-  DetailsItem,
-  Kebab,
-  NodeLink,
-  OwnerReferences,
-  ResourceIcon,
-  ResourceLink,
-  ResourceSummary,
-  ScrollToTopOnMount,
   formatBytesAsMiB,
   formatCores,
-  SectionHeading,
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
   humanizeCpuCores,
-  navFactory,
   units,
-  LabelList,
-  RuntimeClass,
-  LoadingBox,
-} from './utils';
+} from './utils/units';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { LabelList } from './utils/label-list';
+import { LoadingBox } from './utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PodLogs } from './pod-logs';
-import {
-  Area,
-  Stack,
-  PROMETHEUS_BASE_PATH,
-  PROMETHEUS_TENANCY_BASE_PATH,
-  PrometheusResult,
-} from './graphs';
+import { Area } from './graphs/area';
+import { Stack } from './graphs/stack';
+import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from './graphs/consts';
+import type { PrometheusResult } from './graphs';
 import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
@@ -114,7 +109,6 @@ import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 // t('public~Login is required. Please try again.')
 // t('public~Could not check CSRF token. Please try again.')
 // t('public~Invalid login or password. Please try again.')
-import { resourcePath } from './utils/resource-link';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { sortResourceByValue } from './factory/Table/sort';
 import {
@@ -127,7 +121,7 @@ import {
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { PodTraffic } from './pod-traffic';
-import { RootState } from '../redux';
+import type { RootState } from '../redux';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import {
   ResourceFilters,
@@ -887,7 +881,12 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
   );
 };
 
-const EnvironmentPage = (props: { obj: PodKind; envPath: string[]; readOnly: boolean }) => (
+const EnvironmentPage = (props: {
+  obj: PodKind;
+  rawEnvData?: any;
+  envPath: string[];
+  readOnly: boolean;
+}) => (
   <AsyncComponent
     loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
     {...(props as Record<string, unknown>)}
@@ -896,7 +895,7 @@ const EnvironmentPage = (props: { obj: PodKind; envPath: string[]; readOnly: boo
 
 const envPath = ['spec', 'containers'];
 const PodEnvironmentComponent = (props: { obj: PodKind }) => (
-  <EnvironmentPage obj={props.obj} envPath={envPath} readOnly={true} />
+  <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
 );
 
 export const PodConnectLoader: React.FC<PodConnectLoaderProps> = ({

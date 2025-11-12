@@ -169,6 +169,14 @@ describe('registerPluginEntryCallback', () => {
 });
 
 describe('window.loadPluginEntry', () => {
+  beforeEach(() => {
+    /* eslint-disable no-underscore-dangle */
+    global.__webpack_init_sharing__ = jest.fn(() => Promise.resolve());
+    // @ts-expect-error - incorrectly defined webpack global (should use declare var)
+    global.__webpack_share_scopes__ = { default: {} };
+    /* eslint-enable no-underscore-dangle */
+  });
+
   it('marks the plugin as loaded, resolves its extensions and adds it to plugin store', () => {
     const pluginStore = new PluginStore();
     const addDynamicPlugin = jest.spyOn(pluginStore, 'addDynamicPlugin');
@@ -199,20 +207,13 @@ describe('window.loadPluginEntry', () => {
     const [, entryModule] = getEntryModuleMocks({});
     const { pluginMap } = getStateForTestPurposes();
 
-    const initSharedPluginModules = jest.fn();
     const resolveEncodedCodeRefs = jest.fn(() => resolvedExtensions);
 
     pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
 
-    getPluginEntryCallback(
-      pluginStore,
-      initSharedPluginModules,
-      resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs)('Test@1.2.3', entryModule);
 
     expect(pluginMap.get('Test@1.2.3').entryCallbackFired).toBe(true);
-    expect(initSharedPluginModules).toHaveBeenCalledWith(entryModule);
-
     expect(resolveEncodedCodeRefs).toHaveBeenCalledWith(
       manifest.extensions,
       entryModule,
@@ -230,17 +231,11 @@ describe('window.loadPluginEntry', () => {
     const [, entryModule] = getEntryModuleMocks({});
     const { pluginMap } = getStateForTestPurposes();
 
-    const initSharedPluginModules = jest.fn();
     const resolveEncodedCodeRefs = jest.fn(() => []);
 
-    getPluginEntryCallback(
-      pluginStore,
-      initSharedPluginModules,
-      resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs)('Test@1.2.3', entryModule);
 
     expect(pluginMap.size).toBe(0);
-    expect(initSharedPluginModules).not.toHaveBeenCalled();
     expect(resolveEncodedCodeRefs).not.toHaveBeenCalled();
     expect(addDynamicPlugin).not.toHaveBeenCalled();
   });
@@ -253,30 +248,19 @@ describe('window.loadPluginEntry', () => {
     const [, entryModule] = getEntryModuleMocks({});
     const { pluginMap } = getStateForTestPurposes();
 
-    const initSharedPluginModules = jest.fn();
     const resolveEncodedCodeRefs = jest.fn(() => []);
 
     pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
 
-    getPluginEntryCallback(
-      pluginStore,
-      initSharedPluginModules,
-      resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
-
-    getPluginEntryCallback(
-      pluginStore,
-      initSharedPluginModules,
-      resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs)('Test@1.2.3', entryModule);
+    getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs)('Test@1.2.3', entryModule);
 
     expect(pluginMap.size).toBe(1);
-    expect(initSharedPluginModules).toHaveBeenCalledTimes(1);
     expect(resolveEncodedCodeRefs).toHaveBeenCalledTimes(1);
     expect(addDynamicPlugin).toHaveBeenCalledTimes(1);
   });
 
-  it('does nothing if overriding shared modules throws an error', () => {
+  it('does nothing if entry module init function throws an error', () => {
     const pluginStore = new PluginStore();
     const addDynamicPlugin = jest.spyOn(pluginStore, 'addDynamicPlugin');
 
@@ -284,21 +268,17 @@ describe('window.loadPluginEntry', () => {
     const [, entryModule] = getEntryModuleMocks({});
     const { pluginMap } = getStateForTestPurposes();
 
-    const initSharedPluginModules = jest.fn(() => {
-      throw new Error('boom');
-    });
     const resolveEncodedCodeRefs = jest.fn(() => []);
 
     pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
 
-    getPluginEntryCallback(
-      pluginStore,
-      initSharedPluginModules,
-      resolveEncodedCodeRefs,
-    )('Test@1.2.3', entryModule);
+    entryModule.init.mockImplementation(() => {
+      throw new Error('boom');
+    });
+
+    getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs)('Test@1.2.3', entryModule);
 
     expect(pluginMap.size).toBe(1);
-    expect(initSharedPluginModules).toHaveBeenCalledWith(entryModule);
     expect(resolveEncodedCodeRefs).not.toHaveBeenCalled();
     expect(addDynamicPlugin).not.toHaveBeenCalled();
   });

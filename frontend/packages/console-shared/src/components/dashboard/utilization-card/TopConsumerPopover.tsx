@@ -11,9 +11,9 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { DataPoint } from '@console/internal/components/graphs';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { resourcePathFromModel } from '@console/internal/components/utils';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
 import { getName, getNamespace, useFlag } from '../../..';
 import { FLAGS } from '../../../constants';
@@ -281,7 +281,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
   ),
 );
 
-const ListItem: React.FC<ListItemProps> = ({ children, value }) => (
+const ListItem: React.FCC<ListItemProps> = ({ children, value }) => (
   <li className="co-utilization-card-popover__consumer-item">
     {children}
     <div className="co-utilization-card-popover__consumer-value">{value}</div>
@@ -290,6 +290,7 @@ const ListItem: React.FC<ListItemProps> = ({ children, value }) => (
 
 type ListItemProps = {
   value: React.ReactText;
+  children?: React.ReactNode;
 };
 
 type LimitsBodyProps = {
@@ -307,6 +308,7 @@ type PopoverProps = {
   consumers: { model: K8sKind; query: string; metric: string; fieldSelector?: string }[];
   namespace?: string;
   description?: string;
+  children?: React.ReactNode;
 };
 
 type PopoverBodyProps = PopoverProps & {
@@ -319,4 +321,5 @@ export type ConsumerPopoverProps = PopoverProps & {
   position?: PopoverPosition;
   title: string;
   current: string;
+  children?: React.ReactNode;
 };

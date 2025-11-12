@@ -4,12 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { ResolvedExtension, CatalogItemType, CatalogCategory } from '@console/dynamic-plugin-sdk';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import {
-  skeletonCatalog,
-  StatusBox,
-  removeQueryArgument,
-  setQueryArgument,
-} from '@console/internal/components/utils';
+import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils/router';
+import { skeletonCatalog } from '@console/internal/components/utils/skeleton-catalog';
+import { StatusBox } from '@console/internal/components/utils/status-box';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { useQueryParams } from '../../hooks';

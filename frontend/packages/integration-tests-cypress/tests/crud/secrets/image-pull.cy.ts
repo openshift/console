@@ -89,20 +89,20 @@ describe('Image pull secrets', () => {
     cy.log('Verify secret');
     secrets.checkSecret(credentialsToCheck, true);
 
-    cy.log('Edit secret');
+    cy.log('Edit secret with whitespace in input values');
     detailsPage.clickPageActionFromDropdown('Edit Secret');
     secrets.clickRemoveEntryButton();
     cy.byTestID('image-secret-address').clear();
-    cy.byTestID('image-secret-address').type(addressUpdated);
+    cy.byTestID('image-secret-address').type(`  ${addressUpdated}  `);
     cy.byTestID('image-secret-username').clear();
-    cy.byTestID('image-secret-username').type(usernameUpdated);
+    cy.byTestID('image-secret-username').type(`  ${usernameUpdated}  `);
     cy.byTestID('image-secret-password').clear();
-    cy.byTestID('image-secret-password').type(passwordUpdated);
+    cy.byTestID('image-secret-password').type(`  ${passwordUpdated}  `);
     cy.byTestID('image-secret-email').clear();
-    cy.byTestID('image-secret-email').type(mailUpdated);
+    cy.byTestID('image-secret-email').type(`  ${mailUpdated}  `);
     secrets.save();
 
-    cy.log('Verify edit');
+    cy.log('Verify edit, whitespace in input values are removed');
     secrets.detailsPageIsLoaded(credentialsImageSecretName);
     secrets.checkSecret(updatedCredentialsToCheck, true);
 
@@ -146,5 +146,11 @@ describe('Image pull secrets', () => {
 
     cy.log('Delete secret');
     secrets.deleteSecret(uploadConfigFileImageSecretName);
+  });
+  it(`Passwords entered on the console are obfuscated`, () => {
+    cy.get('input[data-test="image-secret-password"]').should('have.attr', 'type', 'password');
+    cy.get('button[id="cancel"]').click();
+    secrets.clickCreateSecretDropdownButton('source');
+    cy.get('input[data-test="secret-password"]').should('have.attr', 'type', 'password');
   });
 });

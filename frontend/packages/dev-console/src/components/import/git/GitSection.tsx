@@ -9,7 +9,7 @@ import { RepoStatus, ImportStrategy, getGitService, GitProvider } from '@console
 import { DetectedBuildType } from '@console/git-service/src/utils/build-tool-type-detector';
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { BuildStrategyType } from '@console/internal/components/build';
+import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import {
   FLAG_KNATIVE_SERVING_SERVICE,
   ServerlessBuildStrategyType,
