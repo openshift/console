@@ -8,8 +8,6 @@
     "exposedModules": {
       "useCatalogItems": "src/hooks/useCatalogItems.ts",
       "useCatalogCategories": "src/hooks/useCatalogCategories.ts",
-      "OLMv1ToolbarToggle": "src/components/OLMv1ToolbarToggle.tsx",
-      "OLMv1Alert": "src/components/OLMv1Alert.tsx",
       "useOLMv1FlagProvider": "src/hooks/useOLMv1FlagProvider.ts"
     }
   }

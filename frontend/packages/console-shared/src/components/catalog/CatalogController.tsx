@@ -2,13 +2,17 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom-v5-compat';
+import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { ResolvedExtension, CatalogItemType, CatalogCategory } from '@console/dynamic-plugin-sdk';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils/router';
 import { skeletonCatalog } from '@console/internal/components/utils/skeleton-catalog';
 import { StatusBox } from '@console/internal/components/utils/status-box';
+import OLMv1Alert from '@console/operator-lifecycle-manager-v1/src/components/OLMv1Alert';
+import { FLAG_OLMV1_ENABLED } from '@console/operator-lifecycle-manager-v1/src/const';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { useFlag } from '../../hooks/flag';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import PageBody from '../layout/PageBody';
 import CatalogView from './catalog-view/CatalogView';
@@ -40,8 +44,6 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   loaded,
   loadError,
   catalogExtensions,
-  toolbarExtensions,
-  alertExtensions,
   enableDetailsPanel,
   title: defaultTitle,
   description: defaultDescription,
@@ -52,6 +54,11 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   const { pathname } = useLocation();
   const queryParams = useQueryParams();
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
+  const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
+  const olmv1Enabled = useFlag(FLAG_OLMV1_ENABLED);
+
+  // TODO(CONSOLE-4823): Remove this hard-coded alert when OLMv1 GAs
+  const showOLMv1Alert = techPreviewEnabled && olmv1Enabled && type === 'operator';
 
   const typeExtension: ResolvedExtension<CatalogItemType> = React.useMemo(
     () => catalogExtensions?.find((extension) => extension.properties.type === type),
@@ -185,12 +192,10 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
           breadcrumbs={type ? breadcrumbs : null}
           helpText={getCatalogTypeDescription()}
         />
-        {alertExtensions?.length > 0 && (
+        {/* TODO(CONSOLE-4823): Remove this hard-coded alert when OLMv1 GAs */}
+        {showOLMv1Alert && (
           <div className="pf-v6-u-mx-md">
-            {alertExtensions?.map((extension) => {
-              const AlertComponent = extension.properties.component;
-              return <AlertComponent key={extension.uid} />;
-            })}
+            <OLMv1Alert />
           </div>
         )}
         <StatusBox
@@ -209,7 +214,6 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
             filterGroups={filterGroups}
             filterGroupMap={filterGroupMap}
             groupings={groupings}
-            toolbarExtensions={toolbarExtensions}
             renderTile={renderTile}
             hideSidebar={hideSidebar}
             sortFilterGroups={sortFilterGroups}

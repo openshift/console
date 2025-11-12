@@ -1,17 +1,23 @@
-import { forwardRef } from 'react';
+import { forwardRef, lazy, Suspense } from 'react';
 import { Flex, FlexItem, SearchInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { CatalogToolbarItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import { useDebounceCallback, useFlag } from '@console/shared/src/hooks';
 import { NO_GROUPING } from '../utils/category-utils';
 import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
 import CatalogPageHeader from './CatalogPageHeader';
 import CatalogPageHeading from './CatalogPageHeading';
 import CatalogPageNumItems from './CatalogPageNumItems';
 import CatalogPageToolbar from './CatalogPageToolbar';
+
+// TODO(CONSOLE-4823): Remove this hard-coded component when OLMv1 GAs
+const OLMv1ToolbarToggle = lazy(() =>
+  import(
+    '@console/operator-lifecycle-manager-v1/src/components/OLMv1ToolbarToggle' /* webpackChunkName: "olmv1-toolbar-toggle" */
+  ),
+);
 
 type CatalogToolbarProps = {
   title: string;
@@ -20,7 +26,7 @@ type CatalogToolbarProps = {
   sortOrder: CatalogSortOrder;
   groupings: CatalogStringMap;
   activeGrouping: string;
-  toolbarExtensions?: ResolvedExtension<CatalogToolbarItem>[];
+  catalogType?: string;
   onGroupingChange: (grouping: string) => void;
   onSearchKeywordChange: (searchKeyword: string) => void;
   onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
@@ -35,7 +41,7 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
       sortOrder,
       groupings,
       activeGrouping,
-      toolbarExtensions,
+      catalogType,
       onGroupingChange,
       onSearchKeywordChange,
       onSortOrderChange,
@@ -43,6 +49,10 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
     inputRef,
   ) => {
     const { t } = useTranslation();
+    const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
+
+    // TODO(CONSOLE-4823): Remove this hard-coded toggle when OLMv1 GAs
+    const showOLMv1Toggle = techPreviewEnabled && catalogType === 'operator';
 
     const catalogSortItems = {
       [CatalogSortOrder.RELEVANCE]: t('console-shared~Relevance'),
@@ -98,14 +108,14 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
                 />
               </FlexItem>
             )}
-            {toolbarExtensions?.map((extension) => {
-              const Component = extension.properties.component;
-              return (
-                <FlexItem key={extension.uid}>
-                  <Component />
-                </FlexItem>
-              );
-            })}
+            {/* TODO(CONSOLE-4823): Remove this hard-coded toggle when OLMv1 GAs */}
+            {showOLMv1Toggle && (
+              <FlexItem>
+                <Suspense fallback={null}>
+                  <OLMv1ToolbarToggle />
+                </Suspense>
+              </FlexItem>
+            )}
           </Flex>
           <CatalogPageNumItems>
             {t('console-shared~{{totalItems}} items', { totalItems })}

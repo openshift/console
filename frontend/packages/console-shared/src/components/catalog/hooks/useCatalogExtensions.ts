@@ -7,16 +7,12 @@ import {
   CatalogItemType,
   CatalogItemMetadataProvider,
   CatalogItemTypeMetadata,
-  CatalogToolbarItem,
-  CatalogAlert,
   isCatalogItemFilter,
   isCatalogItemProvider,
   isCatalogItemType,
   isCatalogItemTypeMetadata,
   isCatalogItemMetadataProvider,
   isCatalogCategoriesProvider,
-  isCatalogToolbarItem,
-  isCatalogAlert,
   CatalogCategoriesProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 
@@ -29,8 +25,6 @@ const useCatalogExtensions = (
   ResolvedExtension<CatalogItemFilter>[],
   ResolvedExtension<CatalogItemMetadataProvider>[],
   ResolvedExtension<CatalogCategoriesProvider>[],
-  ResolvedExtension<CatalogToolbarItem>[],
-  ResolvedExtension<CatalogAlert>[],
   boolean,
 ] => {
   const [itemTypeExtensions, itemTypesResolved] = useResolvedExtensions<CatalogItemType>(
@@ -97,26 +91,6 @@ const useCatalogExtensions = (
     ),
   );
 
-  const [toolbarItemExtensions, toolbarItemsResolved] = useResolvedExtensions<CatalogToolbarItem>(
-    useCallback(
-      (e): e is CatalogToolbarItem =>
-        isCatalogToolbarItem(e) &&
-        (!e.properties.catalogId || e.properties.catalogId === catalogId) &&
-        (!e.properties.type || e.properties.type === catalogType),
-      [catalogId, catalogType],
-    ),
-  );
-
-  const [alertExtensions, alertsResolved] = useResolvedExtensions<CatalogAlert>(
-    useCallback(
-      (e): e is CatalogAlert =>
-        isCatalogAlert(e) &&
-        (!e.properties.catalogId || e.properties.catalogId === catalogId) &&
-        (!e.properties.type || e.properties.type === catalogType),
-      [catalogId, catalogType],
-    ),
-  );
-
   const catalogTypeExtensions = useMemo<ResolvedExtension<CatalogItemType>[]>(
     () =>
       (catalogType
@@ -166,16 +140,12 @@ const useCatalogExtensions = (
     catalogFilterExtensions,
     catalogMetadataProviderExtensions,
     categoryProviderExtensions,
-    toolbarItemExtensions,
-    alertExtensions,
     providersResolved &&
       filtersResolved &&
       itemTypesResolved &&
       itemTypeMetadataResolved &&
       metadataProvidersResolved &&
-      categoryProvidersResolved &&
-      toolbarItemsResolved &&
-      alertsResolved,
+      categoryProvidersResolved,
   ];
 };
 

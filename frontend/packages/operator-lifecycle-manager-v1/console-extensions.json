@@ -73,28 +73,6 @@
     }
   },
   {
-    "type": "console.catalog/toolbar-item",
-    "properties": {
-      "catalogId": "dev-catalog",
-      "type": "operator",
-      "component": { "$codeRef": "OLMv1ToolbarToggle" }
-    },
-    "flags": {
-      "required": ["TECH_PREVIEW"]
-    }
-  },
-  {
-    "type": "console.catalog/alert",
-    "properties": {
-      "catalogId": "dev-catalog",
-      "type": "operator",
-      "component": { "$codeRef": "OLMv1Alert" }
-    },
-    "flags": {
-      "required": ["TECH_PREVIEW", "OLMV1_ENABLED"]
-    }
-  },
-  {
     "type": "console.user-preference/group",
     "properties": {
       "id": "olmv1-catalog",

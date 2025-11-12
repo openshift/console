@@ -5,83 +5,81 @@
 3.  [console.action/provider](#consoleactionprovider)
 4.  [console.action/resource-provider](#consoleactionresource-provider)
 5.  [console.alert-action](#consolealert-action)
-6.  [console.catalog/alert](#consolecatalogalert)
-7.  [console.catalog/categories-provider](#consolecatalogcategories-provider)
-8.  [console.catalog/item-filter](#consolecatalogitem-filter)
-9.  [console.catalog/item-metadata](#consolecatalogitem-metadata)
-10.  [console.catalog/item-provider](#consolecatalogitem-provider)
-11.  [console.catalog/item-type](#consolecatalogitem-type)
-12.  [console.catalog/item-type-metadata](#consolecatalogitem-type-metadata)
-13.  [console.catalog/toolbar-item](#consolecatalogtoolbar-item)
-14.  [console.cluster-overview/inventory-item](#consolecluster-overviewinventory-item)
-15.  [console.cluster-overview/multiline-utilization-item](#consolecluster-overviewmultiline-utilization-item)
-16.  [console.cluster-overview/utilization-item](#consolecluster-overviewutilization-item)
-17.  [console.context-provider](#consolecontext-provider)
-18.  [console.create-project-modal](#consolecreate-project-modal)
-19.  [console.dashboards/card](#consoledashboardscard)
-20.  [console.dashboards/custom/overview/detail/item](#consoledashboardscustomoverviewdetailitem)
-21.  [console.dashboards/overview/activity/resource](#consoledashboardsoverviewactivityresource)
-22.  [console.dashboards/overview/health/operator](#consoledashboardsoverviewhealthoperator)
-23.  [console.dashboards/overview/health/prometheus](#consoledashboardsoverviewhealthprometheus)
-24.  [console.dashboards/overview/health/resource](#consoledashboardsoverviewhealthresource)
-25.  [console.dashboards/overview/health/url](#consoledashboardsoverviewhealthurl)
-26.  [console.dashboards/overview/inventory/item](#consoledashboardsoverviewinventoryitem)
-27.  [console.dashboards/overview/inventory/item/group](#consoledashboardsoverviewinventoryitemgroup)
-28.  [console.dashboards/overview/inventory/item/replacement](#consoledashboardsoverviewinventoryitemreplacement)
-29.  [console.dashboards/overview/prometheus/activity/resource](#consoledashboardsoverviewprometheusactivityresource)
-30.  [console.dashboards/project/overview/item](#consoledashboardsprojectoverviewitem)
-31.  [console.dashboards/tab](#consoledashboardstab)
-32.  [console.file-upload](#consolefile-upload)
-33.  [console.flag](#consoleflag)
-34.  [console.flag/hookProvider](#consoleflaghookProvider)
-35.  [console.flag/model](#consoleflagmodel)
-36.  [console.global-config](#consoleglobal-config)
-37.  [console.model-metadata](#consolemodel-metadata)
-38.  [console.navigation/href](#consolenavigationhref)
-39.  [console.navigation/resource-cluster](#consolenavigationresource-cluster)
-40.  [console.navigation/resource-ns](#consolenavigationresource-ns)
-41.  [console.navigation/section](#consolenavigationsection)
-42.  [console.navigation/separator](#consolenavigationseparator)
-43.  [console.page/resource/details](#consolepageresourcedetails)
-44.  [console.page/resource/list](#consolepageresourcelist)
-45.  [console.page/route](#consolepageroute)
-46.  [console.page/route/standalone](#consolepageroutestandalone)
-47.  [console.perspective](#consoleperspective)
-48.  [console.project-overview/inventory-item](#consoleproject-overviewinventory-item)
-49.  [console.project-overview/utilization-item](#consoleproject-overviewutilization-item)
-50.  [console.pvc/alert](#consolepvcalert)
-51.  [console.pvc/create-prop](#consolepvccreate-prop)
-52.  [console.pvc/delete](#consolepvcdelete)
-53.  [console.pvc/status](#consolepvcstatus)
-54.  [console.redux-reducer](#consoleredux-reducer)
-55.  [console.resource/create](#consoleresourcecreate)
-56.  [console.resource/details-item](#consoleresourcedetails-item)
-57.  [console.storage-class/provisioner](#consolestorage-classprovisioner)
-58.  [console.storage-provider](#consolestorage-provider)
-59.  [console.tab](#consoletab)
-60.  [console.tab/horizontalNav](#consoletabhorizontalNav)
-61.  [console.telemetry/listener](#consoletelemetrylistener)
-62.  [console.topology/adapter/build](#consoletopologyadapterbuild)
-63.  [console.topology/adapter/network](#consoletopologyadapternetwork)
-64.  [console.topology/adapter/pod](#consoletopologyadapterpod)
-65.  [console.topology/component/factory](#consoletopologycomponentfactory)
-66.  [console.topology/create/connector](#consoletopologycreateconnector)
-67.  [console.topology/data/factory](#consoletopologydatafactory)
-68.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
-69.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
-70.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
-71.  [console.topology/details/tab](#consoletopologydetailstab)
-72.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
-73.  [console.topology/display/filters](#consoletopologydisplayfilters)
-74.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
-75.  [console.user-preference/group](#consoleuser-preferencegroup)
-76.  [console.user-preference/item](#consoleuser-preferenceitem)
-77.  [console.yaml-template](#consoleyaml-template)
-78.  [dev-console.add/action](#dev-consoleaddaction)
-79.  [dev-console.add/action-group](#dev-consoleaddaction-group)
-80.  [dev-console.import/environment](#dev-consoleimportenvironment)
-81. [DEPRECATED] [console.dashboards/overview/detail/item](#consoledashboardsoverviewdetailitem)
-82. [DEPRECATED] [console.page/resource/tab](#consolepageresourcetab)
+6.  [console.catalog/categories-provider](#consolecatalogcategories-provider)
+7.  [console.catalog/item-filter](#consolecatalogitem-filter)
+8.  [console.catalog/item-metadata](#consolecatalogitem-metadata)
+9.  [console.catalog/item-provider](#consolecatalogitem-provider)
+10.  [console.catalog/item-type](#consolecatalogitem-type)
+11.  [console.catalog/item-type-metadata](#consolecatalogitem-type-metadata)
+12.  [console.cluster-overview/inventory-item](#consolecluster-overviewinventory-item)
+13.  [console.cluster-overview/multiline-utilization-item](#consolecluster-overviewmultiline-utilization-item)
+14.  [console.cluster-overview/utilization-item](#consolecluster-overviewutilization-item)
+15.  [console.context-provider](#consolecontext-provider)
+16.  [console.create-project-modal](#consolecreate-project-modal)
+17.  [console.dashboards/card](#consoledashboardscard)
+18.  [console.dashboards/custom/overview/detail/item](#consoledashboardscustomoverviewdetailitem)
+19.  [console.dashboards/overview/activity/resource](#consoledashboardsoverviewactivityresource)
+20.  [console.dashboards/overview/health/operator](#consoledashboardsoverviewhealthoperator)
+21.  [console.dashboards/overview/health/prometheus](#consoledashboardsoverviewhealthprometheus)
+22.  [console.dashboards/overview/health/resource](#consoledashboardsoverviewhealthresource)
+23.  [console.dashboards/overview/health/url](#consoledashboardsoverviewhealthurl)
+24.  [console.dashboards/overview/inventory/item](#consoledashboardsoverviewinventoryitem)
+25.  [console.dashboards/overview/inventory/item/group](#consoledashboardsoverviewinventoryitemgroup)
+26.  [console.dashboards/overview/inventory/item/replacement](#consoledashboardsoverviewinventoryitemreplacement)
+27.  [console.dashboards/overview/prometheus/activity/resource](#consoledashboardsoverviewprometheusactivityresource)
+28.  [console.dashboards/project/overview/item](#consoledashboardsprojectoverviewitem)
+29.  [console.dashboards/tab](#consoledashboardstab)
+30.  [console.file-upload](#consolefile-upload)
+31.  [console.flag](#consoleflag)
+32.  [console.flag/hookProvider](#consoleflaghookProvider)
+33.  [console.flag/model](#consoleflagmodel)
+34.  [console.global-config](#consoleglobal-config)
+35.  [console.model-metadata](#consolemodel-metadata)
+36.  [console.navigation/href](#consolenavigationhref)
+37.  [console.navigation/resource-cluster](#consolenavigationresource-cluster)
+38.  [console.navigation/resource-ns](#consolenavigationresource-ns)
+39.  [console.navigation/section](#consolenavigationsection)
+40.  [console.navigation/separator](#consolenavigationseparator)
+41.  [console.page/resource/details](#consolepageresourcedetails)
+42.  [console.page/resource/list](#consolepageresourcelist)
+43.  [console.page/route](#consolepageroute)
+44.  [console.page/route/standalone](#consolepageroutestandalone)
+45.  [console.perspective](#consoleperspective)
+46.  [console.project-overview/inventory-item](#consoleproject-overviewinventory-item)
+47.  [console.project-overview/utilization-item](#consoleproject-overviewutilization-item)
+48.  [console.pvc/alert](#consolepvcalert)
+49.  [console.pvc/create-prop](#consolepvccreate-prop)
+50.  [console.pvc/delete](#consolepvcdelete)
+51.  [console.pvc/status](#consolepvcstatus)
+52.  [console.redux-reducer](#consoleredux-reducer)
+53.  [console.resource/create](#consoleresourcecreate)
+54.  [console.resource/details-item](#consoleresourcedetails-item)
+55.  [console.storage-class/provisioner](#consolestorage-classprovisioner)
+56.  [console.storage-provider](#consolestorage-provider)
+57.  [console.tab](#consoletab)
+58.  [console.tab/horizontalNav](#consoletabhorizontalNav)
+59.  [console.telemetry/listener](#consoletelemetrylistener)
+60.  [console.topology/adapter/build](#consoletopologyadapterbuild)
+61.  [console.topology/adapter/network](#consoletopologyadapternetwork)
+62.  [console.topology/adapter/pod](#consoletopologyadapterpod)
+63.  [console.topology/component/factory](#consoletopologycomponentfactory)
+64.  [console.topology/create/connector](#consoletopologycreateconnector)
+65.  [console.topology/data/factory](#consoletopologydatafactory)
+66.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
+67.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
+68.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
+69.  [console.topology/details/tab](#consoletopologydetailstab)
+70.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
+71.  [console.topology/display/filters](#consoletopologydisplayfilters)
+72.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
+73.  [console.user-preference/group](#consoleuser-preferencegroup)
+74.  [console.user-preference/item](#consoleuser-preferenceitem)
+75.  [console.yaml-template](#consoleyaml-template)
+76.  [dev-console.add/action](#dev-consoleaddaction)
+77.  [dev-console.add/action-group](#dev-consoleaddaction-group)
+78.  [dev-console.import/environment](#dev-consoleimportenvironment)
+79. [DEPRECATED] [console.dashboards/overview/detail/item](#consoledashboardsoverviewdetailitem)
+80. [DEPRECATED] [console.page/resource/tab](#consolepageresourcetab)
 
 ---
 
@@ -161,22 +159,6 @@ This extension can be used to trigger a specific action when a specific Promethe
 | `alert` | `string` | no | Alert name as defined by `alert.rule.name` property |
 | `text` | `string` | no | Action text |
 | `action` | `CodeRef<(alert: Alert, launchModal: LaunchModal) => void>` | no | Function to perform side effect |
-
----
-
-## `console.catalog/alert`
-
-### Summary 
-
-This extension allows plugins to contribute alerts to the Catalog view for a specific catalog type.
-
-### Properties
-
-| Name | Value Type | Optional | Description |
-| ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to render as a catalog alert. |
-| `catalogId` | `string` | yes | The catalog ID the alert is for. If not specified, the alert will be available for all catalogs. |
-| `type` | `string` | yes | The catalog item type for this alert. If not specified, the alert will be available for all types. |
 
 ---
 
@@ -279,22 +261,6 @@ This extension allows plugins to contribute extra metadata like custom filters o
 | `type` | `string` | no | Type for the catalog item. |
 | `filters` | `CatalogItemAttribute[]` | yes | Custom filters specific to the catalog item. |
 | `groupings` | `CatalogItemAttribute[]` | yes | Custom groupings specific to the catalog item. |
-
----
-
-## `console.catalog/toolbar-item`
-
-### Summary 
-
-This extension allows plugins to contribute toolbar items to the Catalog view for a specific catalog type.
-
-### Properties
-
-| Name | Value Type | Optional | Description |
-| ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to render in the catalog toolbar. |
-| `catalogId` | `string` | yes | The catalog ID the toolbar item is for. If not specified, the toolbar item will be available for all catalogs. |
-| `type` | `string` | yes | The catalog item type for this toolbar item. If not specified, the toolbar item will be available for all types. |
 
 ---
 
@@ -860,8 +826,8 @@ Adds new standalone page (rendered outside the common page layout) to Console ro
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
 | `path` | `string \| string[]` | no | Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. |
+| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
 | `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
 
 ---
