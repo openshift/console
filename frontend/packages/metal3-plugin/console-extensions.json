@@ -50,6 +50,18 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "features.useDetectBaremetalPlatform" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "features.useDetectBMOEnabled" }
+    }
+  },
+  {
     "type": "console.model-metadata",
     "properties": {
       "model": {
