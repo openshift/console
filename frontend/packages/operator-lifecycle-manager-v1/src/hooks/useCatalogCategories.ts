@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { CatalogCategory } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import useCatalogItems from './useCatalogItems';
@@ -6,7 +6,7 @@ import useCatalogItems from './useCatalogItems';
 type UseCatalogCategories = () => [CatalogCategory[], boolean, string];
 const useCatalogCategories: UseCatalogCategories = () => {
   const [items, loading, error] = useCatalogItems();
-  const categories = React.useMemo(() => {
+  const categories = useMemo(() => {
     if (loading || error) {
       return [];
     }

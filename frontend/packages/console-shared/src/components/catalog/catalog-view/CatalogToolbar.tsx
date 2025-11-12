@@ -1,9 +1,11 @@
-import { forwardRef, lazy, Suspense } from 'react';
+import { forwardRef, Suspense } from 'react';
 import { Flex, FlexItem, SearchInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+// TODO(CONSOLE-4823): Remove this hard-coded component when OLMv1 GAs
+import { OLMv1Switch } from '@console/operator-lifecycle-manager-v1/src/components/OLMv1Switch';
 import { useDebounceCallback, useFlag } from '@console/shared/src/hooks';
 import { NO_GROUPING } from '../utils/category-utils';
 import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
@@ -11,13 +13,6 @@ import CatalogPageHeader from './CatalogPageHeader';
 import CatalogPageHeading from './CatalogPageHeading';
 import CatalogPageNumItems from './CatalogPageNumItems';
 import CatalogPageToolbar from './CatalogPageToolbar';
-
-// TODO(CONSOLE-4823): Remove this hard-coded component when OLMv1 GAs
-const OLMv1ToolbarToggle = lazy(() =>
-  import(
-    '@console/operator-lifecycle-manager-v1/src/components/OLMv1ToolbarToggle' /* webpackChunkName: "olmv1-toolbar-toggle" */
-  ),
-);
 
 type CatalogToolbarProps = {
   title: string;
@@ -112,7 +107,7 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
             {showOLMv1Toggle && (
               <FlexItem>
                 <Suspense fallback={null}>
-                  <OLMv1ToolbarToggle />
+                  <OLMv1Switch />
                 </Suspense>
               </FlexItem>
             )}

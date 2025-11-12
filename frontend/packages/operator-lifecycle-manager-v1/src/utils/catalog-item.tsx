@@ -1,4 +1,4 @@
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { CapabilityLevel } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-item-details';
 import {
@@ -93,7 +93,9 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
       descriptions: [{ value: <SyncMarkdownView content={markdownDescription || description} /> }],
     },
     displayName,
-    // icon: icon ? { url: `data:${icon.mediatype};base64,${icon.base64data}` } : null,
+    // Remove icon until we have an endpoint to lazy load cached icons.
+    // TODO Add icon back once https://issues.redhat.com/browse/CONSOLE-4728 is completed.
+    // icon: { url: '/api/olm/catalog-icons/<catalog-name>/<package-name> },
     name: displayName || name,
     supportUrl: support,
     provider,

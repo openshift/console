@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { consoleFetch } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { getConsoleRequestHeaders } from '@console/dynamic-plugin-sdk/src/utils/fetch';
@@ -14,12 +14,12 @@ export type OLMCatalogItemData = {
 
 type UseCatalogItems = () => [CatalogItem<OLMCatalogItemData>[], boolean, string];
 const useCatalogItems: UseCatalogItems = () => {
-  const [olmCatalogItems, setOLMCatalogItems] = React.useState<OLMCatalogItem[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState('');
-  const [lastModified, setLastModified] = React.useState('');
+  const [olmCatalogItems, setOLMCatalogItems] = useState<OLMCatalogItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [lastModified, setLastModified] = useState('');
 
-  const headers = React.useMemo(() => {
+  const headers = useMemo(() => {
     const consoleHeaders = getConsoleRequestHeaders();
     return {
       ...consoleHeaders,
@@ -29,7 +29,7 @@ const useCatalogItems: UseCatalogItems = () => {
   }, [lastModified]);
 
   // Fetch function that only updates state on 200 responses
-  const fetchItems = React.useCallback(() => {
+  const fetchItems = useCallback(() => {
     consoleFetch('/api/olm/catalog-items/', { headers })
       .then((response) => {
         if (response.status === 304) {
@@ -57,7 +57,7 @@ const useCatalogItems: UseCatalogItems = () => {
 
   usePoll(fetchItems, 30 * ONE_SECOND);
 
-  const items = React.useMemo(() => olmCatalogItems.map(normalizeCatalogItem), [olmCatalogItems]);
+  const items = useMemo(() => olmCatalogItems.map(normalizeCatalogItem), [olmCatalogItems]);
 
   return [items, loading, error];
 };

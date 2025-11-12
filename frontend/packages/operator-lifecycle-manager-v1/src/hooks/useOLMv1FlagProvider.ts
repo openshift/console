@@ -1,6 +1,7 @@
 import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { SetFeatureFlag } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
-import { useFlag, useUserSettings } from '@console/shared';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { FLAG_OLMV1_ENABLED, OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
 
 /**

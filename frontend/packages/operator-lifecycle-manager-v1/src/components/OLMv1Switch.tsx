@@ -1,16 +1,17 @@
-import * as React from 'react';
+import { useCallback, FormEvent } from 'react';
 import { Button, Flex, FlexItem, Label, Popover, Switch } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
-import { useFlag, useUserSettings } from '@console/shared';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
 
 /**
  * Toolbar component for toggling OLMv1 UI visibility in the operator catalog.
  * Uses user settings to persist the toggle state.
  */
-const OLMv1ToolbarToggle: React.FC = () => {
+export const OLMv1Switch: React.FC = () => {
   const { t } = useTranslation();
   const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
   const [olmv1Enabled, setOlmv1Enabled] = useUserSettings<boolean>(
@@ -19,8 +20,8 @@ const OLMv1ToolbarToggle: React.FC = () => {
     true,
   );
 
-  const handleToggle = React.useCallback(
-    (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+  const handleToggle = useCallback(
+    (_event: FormEvent<HTMLInputElement>, checked: boolean) => {
       setOlmv1Enabled(checked);
     },
     [setOlmv1Enabled],
@@ -63,5 +64,3 @@ const OLMv1ToolbarToggle: React.FC = () => {
     </Flex>
   );
 };
-
-export default OLMv1ToolbarToggle;
