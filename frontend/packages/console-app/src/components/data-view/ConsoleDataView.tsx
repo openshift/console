@@ -26,7 +26,13 @@ import { ResourceFilters, ResourceMetadata, GetDataViewRows } from './types';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
-export type ConsoleDataViewProps<TData, TCustomRowData, TFilters> = {
+export const initialFiltersDefault: ResourceFilters = { name: '', label: '' };
+
+export type ConsoleDataViewProps<
+  TData,
+  TCustomRowData = any,
+  TFilters extends ResourceFilters = ResourceFilters
+> = {
   label?: string;
   data: TData[];
   loaded: boolean;
@@ -34,7 +40,7 @@ export type ConsoleDataViewProps<TData, TCustomRowData, TFilters> = {
   columns: TableColumn<TData>[];
   columnLayout?: ColumnLayout;
   columnManagementID?: string;
-  initialFilters: TFilters;
+  initialFilters?: TFilters;
   additionalFilterNodes?: React.ReactNode[];
   /**
    * By default, `TData` is assumed to be assignable to `K8sResourceCommon` type.
@@ -100,12 +106,17 @@ export const ConsoleDataView = <
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation();
 
+  const initialFiltersOrDefault = React.useMemo(
+    () => initialFilters ?? (initialFiltersDefault as TFilters),
+    [initialFilters],
+  );
+
   const { filters, onSetFilters, clearAllFilters, filteredData } = useConsoleDataViewFilters<
     TData,
     TFilters
   >({
     data,
-    initialFilters,
+    initialFilters: initialFiltersOrDefault,
     getObjectMetadata,
     matchesAdditionalFilters,
   });
@@ -253,5 +264,3 @@ export const actionsCellProps = {
   hasLeftBorder: true,
   isActionCell: true,
 };
-
-export const initialFiltersDefault = { name: '', label: '' };

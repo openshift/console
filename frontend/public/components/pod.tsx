@@ -991,6 +991,7 @@ export const PodList: React.FCC<PodListProps> = ({
     }),
     [columns, columnManagementID, selectedColumns, showNamespaceOverride, t],
   );
+
   const podStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(
     () => [
       {
@@ -1027,6 +1028,8 @@ export const PodList: React.FCC<PodListProps> = ({
     [t],
   );
 
+  const initialFilters = React.useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+
   const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
@@ -1039,6 +1042,7 @@ export const PodList: React.FCC<PodListProps> = ({
     ],
     [t, podStatusFilterOptions],
   );
+
   const matchesAdditionalFilters = React.useCallback(
     (resource: PodKind, filters: PodFilters) =>
       filters.status.length === 0 ||
@@ -1062,7 +1066,7 @@ export const PodList: React.FCC<PodListProps> = ({
         columns={columns}
         columnLayout={columnLayout}
         columnManagementID={columnManagementID}
-        initialFilters={{ ...initialFiltersDefault, status: [] }}
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={(rowData, tableColumns) =>

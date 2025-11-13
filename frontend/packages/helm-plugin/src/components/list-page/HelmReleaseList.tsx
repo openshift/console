@@ -193,6 +193,8 @@ const HelmReleaseList: React.FC = () => {
     }));
   }, []);
 
+  const initialFilters = React.useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+
   const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
@@ -262,7 +264,7 @@ const HelmReleaseList: React.FC = () => {
               loaded={isLoaded}
               loadError={secretsLoadError || loadError}
               columns={columns}
-              initialFilters={{ ...initialFiltersDefault, status: [] }}
+              initialFilters={initialFilters}
               additionalFilterNodes={additionalFilterNodes}
               getObjectMetadata={getObjectMetadata}
               matchesAdditionalFilters={matchesAdditionalFilters}

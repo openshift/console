@@ -16,18 +16,12 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import {
   ConsoleDataView,
-  initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { TableColumn } from '@console/internal/module/k8s';
-import {
-  ConsoleDataViewColumn,
-  ConsoleDataViewRow,
-  GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { DASH } from '@console/shared/src';
 
 const { common } = Kebab.factory;
@@ -37,10 +31,7 @@ const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
-  data: RowProps<K8sResourceKind, undefined>[],
-  columns: ConsoleDataViewColumn<K8sResourceKind>[],
-): ConsoleDataViewRow[] => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { name, namespace, creationTimestamp } = obj.metadata;
 
@@ -127,7 +118,6 @@ export const LimitRangeList: React.FC<{ data: K8sResourceKind[]; loaded: boolean
         loaded={loaded}
         label={LimitRangeModel.labelPlural}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

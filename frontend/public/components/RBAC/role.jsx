@@ -302,7 +302,6 @@ const BindingsListComponent = (props) => {
         loaded={loaded}
         label={t('public~RoleBindings')}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getBindingsDataViewRows}
         hideColumnManagement={true}
       />
@@ -467,6 +466,8 @@ const RolesList = (props) => {
   const columns = useRolesColumns();
   const roleFilterOptions = useRoleFilterOptions();
 
+  const initialFilters = React.useMemo(() => ({ ...initialFiltersDefault, 'role-kind': [] }), []);
+
   const additionalFilterNodes = React.useMemo(
     () => [
       <DataViewCheckboxFilter
@@ -501,7 +502,7 @@ const RolesList = (props) => {
           label={t('public~Roles')}
           columns={columns}
           getDataViewRows={getDataViewRows}
-          initialFilters={{ ...initialFiltersDefault, 'role-kind': [] }}
+          initialFilters={initialFilters}
           additionalFilterNodes={additionalFilterNodes}
           matchesAdditionalFilters={matchesAdditionalFilters}
           hideColumnManagement={true}

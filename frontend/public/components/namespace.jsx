@@ -425,6 +425,8 @@ export const NamespacesList = (props) => {
     [t],
   );
 
+  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, requester: [] }), []);
+
   const additionalFilterNodes = useMemo(
     () => [
       <DataViewCheckboxFilter
@@ -467,7 +469,7 @@ export const NamespacesList = (props) => {
         columns={columns}
         columnLayout={columnLayout}
         columnManagementID={NamespacesColumnManagementID}
-        initialFilters={{ ...initialFiltersDefault, requester: [] }}
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={(rowData, tableColumns) =>
@@ -807,6 +809,8 @@ export const ProjectList = (props) => {
     [t],
   );
 
+  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, requester: [] }), []);
+
   const additionalFilterNodes = useMemo(
     () => [
       <DataViewCheckboxFilter
@@ -851,7 +855,7 @@ export const ProjectList = (props) => {
         columns={columns}
         columnLayout={columnLayout}
         columnManagementID={projectColumnManagementID}
-        initialFilters={{ ...initialFiltersDefault, requester: [] }}
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={(rowData, tableColumns) =>
