@@ -12,7 +12,8 @@ import {
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { HorizontalPodAutoscalerModel } from '../models';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { DetailsItem } from './utils/details-item';
 import { Kebab, ResourceKebab } from './utils/kebab';
 import { LabelList } from './utils/label-list';
