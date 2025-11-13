@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ListPage, ListPageProps } from './factory';
+import { ListPage } from './factory/list-page';
+import type { ListPageProps } from './factory/list-page';
 import { LabelList } from './utils/label-list';
 import { ResourceLink } from './utils/resource-link';
 import { Selector } from './utils/selector';

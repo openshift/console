@@ -9,7 +9,8 @@ import i18next from 'i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { BindingName, flatten as bindingsFlatten } from './bindings';
 import { RulesList } from './rules';
-import { DetailsPage, MultiListPage, TextFilter } from '../factory';
+import { DetailsPage } from '../factory/details';
+import { MultiListPage, TextFilter } from '../factory/list-page';
 import {
   ConsoleDataView,
   getNameCellProps,

@@ -46,7 +46,7 @@ import {
   useConfigureCountModal,
   ConfigureCountModalProps,
 } from '@console/internal/components/modals/configure-count-modal';
-import { DetailsPage } from './factory';
+import { DetailsPage } from './factory/details';
 import { sortResourceByValue } from './factory/Table/sort';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';

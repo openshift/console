@@ -20,7 +20,7 @@ import { Kebab, KebabOption } from './utils/kebab';
 import { ResourceIcon } from './utils/resource-icon';
 import { SectionHeading } from './utils/headings';
 import { VolumeType } from './utils/volume-type';
-import { Table } from './factory';
+import { Table } from './factory/table';
 import { sortable } from '@patternfly/react-table';
 import { connectToModel } from '../kinds';
 import { useRemoveModalLauncher } from './modals/remove-volume-modal';

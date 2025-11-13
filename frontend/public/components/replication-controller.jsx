@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Status } from '@console/shared/src/components/status/Status';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';

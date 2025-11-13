@@ -25,7 +25,7 @@ import {
 } from '@patternfly/react-core';
 import { Status } from '@console/shared/src/components/status/Status';
 import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
-import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -65,7 +65,7 @@ import {
   getContainerStatus,
 } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
-import { DetailsPage } from './factory';
+import { DetailsPage } from './factory/details';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import { AsyncComponent } from './utils/async';

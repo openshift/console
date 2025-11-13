@@ -17,7 +17,7 @@ import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage } from './factory';
+import { DetailsPage } from './factory/details';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import { DetailsItem } from './utils/details-item';

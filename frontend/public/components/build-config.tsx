@@ -13,15 +13,11 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import { cloneBuild, startBuild } from '../module/k8s/builds';
-import {
-  DetailsPage,
-  ListPage,
-  Table,
-  TableData,
-  RowFunctionArgs,
-  TableProps,
-  DetailsPageProps,
-} from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { Table, TableData } from './factory/table';
+import type { RowFunctionArgs, TableProps } from './factory/table';
+import type { DetailsPageProps } from './factory/details';
 import { BuildHooks } from './utils/build-hooks';
 import { BuildStrategy } from './utils/build-strategy';
 import { BuildStrategyType, displayDurationInWords } from './utils/build-utils';
