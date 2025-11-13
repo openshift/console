@@ -10,13 +10,19 @@
     "pkijs": "^2.1.90"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx",
+    "entry": "src/plugin.ts",
     "exposedModules": {
       "nodeActions": "src/components/maintenance/actions.tsx",
       "features": "src/features.ts",
       "baremetalHostsDetailsPage": "src/components/baremetal-hosts/BareMetalHostDetailsPage.tsx",
       "baremetalHostsPage": "src/components/baremetal-hosts/BareMetalHostsPage.tsx",
-      "addBareMetalHostPage": "src/components/baremetal-hosts/add-baremetal-host/AddBareMetalHostPage.tsx"
+      "addBareMetalHostPage": "src/components/baremetal-hosts/add-baremetal-host/AddBareMetalHostPage.tsx",
+      "getBMNStatusGroups": "src/components/baremetal-nodes/dashboard/utils.ts",
+      "getBMHStatusGroups": "src/components/baremetal-hosts/dashboard/utils.ts",
+      "maintenanceIcon": "src/components/maintenance/MaintenanceIcon.tsx",
+      "dashboardActivity": "src/components/maintenance/DashboardActivity.ts",
+      "maintenanceDashboardActivity": "src/components/maintenance/MaintenanceDashboardActivity.tsx",
+      "baremetalHostsDashboardActivity": "src/components/baremetal-hosts/dashboard/BareMetalStatusActivity.tsx"
     }
   }
 }

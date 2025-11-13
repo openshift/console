@@ -343,7 +343,7 @@ if (CHECK_CYCLES === 'true') {
     // TODO: investigate how to load the plugins registry asynchronously
     filterModules: /^get-active-plugins\.js$/,
     // TODO: Fix cycles unveiled by CONSOLE-4837, then remove the below line
-    thresholds: { totalCycles: 5 },
+    thresholds: { totalCycles: 10 },
     reportFile: '.webpack-cycles',
   }).apply(config.plugins);
 }

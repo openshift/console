@@ -50,6 +50,18 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "features.useDetectBaremetalPlatform" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "features.useDetectBMOEnabled" }
+    }
+  },
+  {
     "type": "console.model-metadata",
     "properties": {
       "model": {
@@ -174,6 +186,180 @@
         "/k8s/ns/:ns/metal3.io~v1alpha1~BareMetalHost/:name/edit"
       ],
       "component": { "$codeRef": "addBareMetalHostPage" }
+    },
+    "flags": {
+      "required": ["BAREMETAL", "METAL3"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item/replacement",
+    "properties": {
+      "model": {
+        "$codeRef": "getBMNStatusGroups.NodeModel"
+      },
+      "additionalResources": {
+        "kvAlphaMaintenances": {
+          "isList": true,
+          "groupVersionKind": {
+            "group": "kubevirt.io",
+            "version": "v1alpha1",
+            "kind": "NodeMaintenance"
+          },
+          "optional": true
+        },
+        "kvBetaMaintenances": {
+          "isList": true,
+          "groupVersionKind": {
+            "group": "nodemaintenance.kubevirt.io",
+            "version": "v1beta1",
+            "kind": "NodeMaintenance"
+          },
+          "optional": true
+        },
+        "maintenances": {
+          "isList": true,
+          "groupVersionKind": {
+            "group": "nodemaintenance.medik8s.io",
+            "version": "v1beta1",
+            "kind": "NodeMaintenance"
+          },
+          "optional": true
+        },
+        "csrs": {
+          "isList": true,
+          "groupVersionKind": {
+            "group": "certificates.k8s.io",
+            "version": "v1",
+            "kind": "CertificateSigningRequest"
+          },
+          "optional": true
+        }
+      },
+      "mapper": { "$codeRef": "getBMNStatusGroups.getBMNStatusGroups" }
+    },
+    "flags": {
+      "required": ["BAREMETAL", "METAL3"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "model": { "$codeRef": "getBMHStatusGroups.BareMetalHostModel" },
+      "additionalResources": {
+        "machines": {
+          "isList": true,
+          "groupVersionKind": {
+            "group": "machine.openshift.io",
+            "version": "v1beta1",
+            "kind": "Machine"
+          }
+        },
+        "nodes": {
+          "isList": true,
+          "groupVersionKind": {
+            "version": "v1",
+            "kind": "Node"
+          }
+        },
+        "kvAlphaMaintenances": {
+          "isList": true,
+          "groupVersionKind": {
+            "group": "kubevirt.io",
+            "version": "v1alpha1",
+            "kind": "NodeMaintenance"
+          },
+          "optional": true
+        },
+        "kvBetaMaintenances": {
+          "isList": true,
+          "groupVersionKind": {
+            "group": "nodemaintenance.kubevirt.io",
+            "version": "v1beta1",
+            "kind": "NodeMaintenance"
+          },
+          "optional": true
+        },
+        "maintenances": {
+          "isList": true,
+          "groupVersionKind": {
+            "group": "nodemaintenance.medik8s.io",
+            "version": "v1beta1",
+            "kind": "NodeMaintenance"
+          },
+          "optional": true
+        }
+      },
+      "mapper": { "$codeRef": "getBMHStatusGroups.getBMHStatusGroups" }
+    },
+    "flags": {
+      "required": ["BAREMETAL", "METAL3"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item/group",
+    "properties": {
+      "id": "node-maintenance",
+      "icon": { "$codeRef": "maintenanceIcon.NodeMaintenanceIcon" }
+    }
+  },
+  {
+    "type": "console.dashboards/overview/activity/resource",
+    "properties": {
+      "k8sResource": {
+        "isList": true,
+        "kind": "NodeMaintenance",
+        "prop": "maintenances"
+      },
+      "isActivity": { "$codeRef": "dashboardActivity.isActivity" },
+      "getTimestamp": { "$codeRef": "dashboardActivity.getTimestamp" },
+      "component": { "$codeRef": "maintenanceDashboardActivity.default" }
+    },
+    "flags": {
+      "required": ["BAREMETAL", "METAL3", "NODE_MAINTENANCE"]
+    }
+  },
+  {
+    "type": "console.dashboards/activity/resource",
+    "properties": {
+      "k8sResource": {
+        "isList": true,
+        "kind": "NodeMaintenance",
+        "prop": "maintenances"
+      },
+      "isActivity": { "$codeRef": "dashboardActivity.isActivity" },
+      "getTimestamp": { "$codeRef": "dashboardActivity.getTimestamp" },
+      "component": { "$codeRef": "maintenanceDashboardActivity.default" }
+    },
+    "flags": {
+      "required": ["BAREMETAL", "METAL3", "NODE_MAINTENANCE_KV_ALPHA"]
+    }
+  },
+  {
+    "type": "console.dashboards/activity/resource",
+    "properties": {
+      "k8sResource": {
+        "isList": true,
+        "kind": "NodeMaintenance",
+        "prop": "maintenances"
+      },
+      "isActivity": { "$codeRef": "dashboardActivity.isActivity" },
+      "getTimestamp": { "$codeRef": "dashboardActivity.getTimestamp" },
+      "component": { "$codeRef": "maintenanceDashboardActivity.default" }
+    },
+    "flags": {
+      "required": ["BAREMETAL", "METAL3", "NODE_MAINTENANCE_KV_BETA"]
+    }
+  },
+  {
+    "type": "console.dashboards/activity/resource",
+    "properties": {
+      "k8sResource": {
+        "isList": true,
+        "kind": "BareMetalHost",
+        "prop": "bmhs"
+      },
+      "isActivity": { "$codeRef": "getBMHStatusGroups.isBMHActivity" },
+      "component": { "$codeRef": "baremetalHostsDashboardActivity.default" }
     },
     "flags": {
       "required": ["BAREMETAL", "METAL3"]
