@@ -854,14 +854,7 @@ export const ProjectList = (props) => {
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={(rowData, tableColumns) =>
-          getProjectDataViewRows(
-            rowData,
-            tableColumns,
-            namespaceMetrics,
-            showMetrics,
-            ProjectLink,
-            t,
-          )
+          getProjectDataViewRows(rowData, tableColumns, namespaceMetrics, showMetrics, undefined, t)
         }
         NoDataEmptyMsg={OpenShiftGettingStarted}
       />
