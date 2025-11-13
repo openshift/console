@@ -29,6 +29,7 @@ import { LoadingBox } from '../utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
+import { roleKind, roleType } from './role-type';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
 import {
@@ -41,12 +42,6 @@ import {
 } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
-
-export const isSystemRole = (role) => _.startsWith(role.metadata.name, 'system:');
-
-// const addHref = (name, ns) => ns ? `/k8s/ns/${ns}/roles/${name}/add-rule` : `/k8s/cluster/clusterroles/${name}/add-rule`;
-
-export const roleKind = (role) => (role.metadata.namespace ? 'Role' : 'ClusterRole');
 
 const menuActions = [
   // This page is temporarily disabled until we update the safe resources list.
@@ -431,16 +426,6 @@ const useRolesColumns = () => {
       },
     },
   ];
-};
-
-export const roleType = (role) => {
-  if (!role) {
-    return undefined;
-  }
-  if (isSystemRole(role)) {
-    return 'system';
-  }
-  return role.metadata.namespace ? 'namespace' : 'cluster';
 };
 
 const useRoleFilterOptions = () => {
