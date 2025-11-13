@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { css } from '@patternfly/react-styles';
-import { useDocumentListener } from '@console/shared/src/hooks/document-listener';
+import { useDocumentListener, KeyEventModes } from '@console/shared/src/hooks/document-listener';
 import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
-import { KeyEventModes } from '@console/shared/src/hooks';
+
 import { fuzzyCaseInsensitive } from './factory/table-filters';
 import { TextFilter } from './factory/list-page';
 import { Label, SelectList } from '@patternfly/react-core';

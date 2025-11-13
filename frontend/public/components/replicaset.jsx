@@ -19,13 +19,11 @@ import { LoadingBox } from './utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
-import {
-  LazyActionMenu,
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-  DASH,
-} from '@console/shared/src';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { DASH } from '@console/shared/src/constants/ui';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
 import { referenceFor, referenceForModel } from '../module/k8s';

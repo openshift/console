@@ -8,12 +8,10 @@ import {
 } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import {
-  ALL_NAMESPACES_KEY,
-  formatNamespacedRouteForResource,
-  useFlag,
-  useTelemetry,
-} from '@console/shared/src';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FLAGS } from '@console/shared/src/constants';

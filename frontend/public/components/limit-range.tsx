@@ -29,7 +29,7 @@ import {
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
 import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { DASH } from '@console/shared/src';
+import { DASH } from '@console/shared/src/constants/ui';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
