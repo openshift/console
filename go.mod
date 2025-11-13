@@ -12,7 +12,6 @@ require (
 	github.com/devfile/library/v2 v2.2.3-0.20250502201248-d0fa9c11591d
 	github.com/devfile/registry-support/index/generator v0.0.0-20240419194226-cca4c9a81f8d
 	github.com/devfile/registry-support/registry-library v0.0.0-20240521161747-89fc566cb024
-	github.com/golang/mock v1.6.0
 	github.com/gorilla/securecookie v1.1.2
 	github.com/gorilla/sessions v1.4.0
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
@@ -31,7 +30,8 @@ require (
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
 	github.com/redhat-certification/chart-verifier v0.0.0-20250415162918-111669f9d053
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/mod v0.25.0
+	go.uber.org/mock v0.6.0
+	golang.org/x/mod v0.27.0
 	golang.org/x/net v0.41.0
 	golang.org/x/oauth2 v0.30.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -106,6 +106,7 @@ require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/cel-go v0.23.2 // indirect
 	github.com/google/gnostic-models v0.6.9 // indirect
