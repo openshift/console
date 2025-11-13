@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { DASH } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
 
 import { ListPage } from './factory';
 import { Kebab, ResourceKebab } from './utils/kebab';

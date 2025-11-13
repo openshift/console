@@ -23,17 +23,15 @@ import {
   DescriptionListTerm,
   DescriptionListDescription,
 } from '@patternfly/react-core';
-import {
-  Status,
-  TableColumnsType,
-  LazyActionMenu,
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-  useUserSettingsCompatibility,
-  usePrometheusGate,
-  DASH,
-} from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
+import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import { DASH } from '@console/shared/src/constants/ui';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,

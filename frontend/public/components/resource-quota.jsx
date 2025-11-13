@@ -14,7 +14,9 @@ import ResourceQuotaCharts from '@console/app/src/components/resource-quota/Reso
 import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
-import { FLAGS, YellowExclamationTriangleIcon, DASH } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { DASH } from '@console/shared/src/constants/ui';
 import { DetailsPage, MultiListPage } from './factory';
 import { Kebab, ResourceKebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';

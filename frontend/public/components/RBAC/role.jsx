@@ -28,7 +28,8 @@ import { LoadingBox } from '../utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
-import { ALL_NAMESPACES_KEY, DASH } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   DescriptionList,
   DescriptionListDescription,

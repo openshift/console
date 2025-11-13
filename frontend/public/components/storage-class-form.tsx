@@ -6,7 +6,7 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { ActionGroup, Button, Checkbox } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { getName } from '@console/shared';
+import { getName } from '@console/shared/src/selectors/common';
 import {
   isStorageClassProvisioner,
   StorageClassProvisioner,

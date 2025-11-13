@@ -23,24 +23,23 @@ import i18next from 'i18next';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { Link } from 'react-router-dom';
 
+import { Status } from '@console/shared/src/components/status/Status';
+import { getRequester, getDescription } from '@console/shared/src/selectors/namespace';
 import {
-  Status,
-  getRequester,
-  getDescription,
   FLAGS,
-  GreenCheckCircleIcon,
-  getName,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-  useUserSettingsCompatibility,
-  isModifiedEvent,
   REQUESTER_FILTER,
-  useFlag,
-  usePrometheusGate,
-  DASH,
-} from '@console/shared';
+} from '@console/shared/src/constants/common';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { getName } from '@console/shared/src/selectors/common';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { isModifiedEvent } from '@console/shared/src/utils/utils';
+import { useFlag } from '@console/shared/src/hooks';
+import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
+import { DASH } from '@console/shared/src/constants/ui';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
