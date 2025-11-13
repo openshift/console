@@ -219,6 +219,17 @@ export const setActiveNamespace = (namespace: string = '') => {
   return action(ActionType.SetActiveNamespace, { namespace });
 };
 
+/**
+ * Encodes a string for use in Kubernetes impersonation subprotocols.
+ * Subprotocols are comma-separated, so commas aren't allowed. Also "="
+ * and "/" aren't allowed, so we base64 encode and replace illegal chars.
+ */
+const encodeImpersonationValue = (value: string, textEncoder: TextEncoder): string => {
+  return Base64.encode(String.fromCharCode.apply(String, textEncoder.encode(value)))
+    .replace(/=/g, '_')
+    .replace(/\//g, '-');
+};
+
 export const startImpersonate = (kind: string, name: string, groups?: string[]) => async (
   dispatch,
   getState,
@@ -232,13 +243,7 @@ export const startImpersonate = (kind: string, name: string, groups?: string[]) 
     return;
   }
 
-  /**
-   * Subprotocols are comma-separated, so commas aren't allowed. Also "="
-   * and "/" aren't allowed, so base64 but replace illegal chars.
-   */
-  const encodedName = Base64.encode(String.fromCharCode.apply(String, textEncoder.encode(name)))
-    .replace(/=/g, '_')
-    .replace(/\//g, '-');
+  const encodedName = encodeImpersonationValue(name, textEncoder);
 
   let subprotocols;
   if (kind === 'User') {
@@ -251,11 +256,7 @@ export const startImpersonate = (kind: string, name: string, groups?: string[]) 
     subprotocols = [`Impersonate-User.${encodedName}`];
     // Encode each group as a separate subprotocol
     groups.forEach((group) => {
-      const encodedGroup = Base64.encode(
-        String.fromCharCode.apply(String, textEncoder.encode(group)),
-      )
-        .replace(/=/g, '_')
-        .replace(/\//g, '-');
+      const encodedGroup = encodeImpersonationValue(group, textEncoder);
       subprotocols.push(`Impersonate-Group.${encodedGroup}`);
     });
   }

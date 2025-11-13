@@ -4,20 +4,12 @@ import { consoleFetchJSON as coFetchJSON } from '@console/dynamic-plugin-sdk/src
 export const usePackageManifestCheck = (
   operatorName: string,
   operatorNamespace: string,
-  enabled: boolean = true,
 ): [boolean, boolean, string] => {
   const [pmExists, setPMExists] = useState<boolean>(false);
   const [loaded, setLoaded] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    if (!enabled) {
-      setPMExists(false);
-      setLoaded(true);
-      setErrorMessage('');
-      return;
-    }
-
     const url = `${window.SERVER_FLAGS.basePath}api/olm/check-package-manifests/?name=${operatorName}&namespace=${operatorNamespace}`;
     coFetchJSON(url)
       .then(() => {
@@ -32,7 +24,7 @@ export const usePackageManifestCheck = (
           `Error loading PackageManifest for ${operatorName} in ${operatorNamespace}: ${err}`,
         );
       });
-  }, [operatorName, operatorNamespace, enabled]);
+  }, [operatorName, operatorNamespace]);
 
   return [pmExists, loaded, errorMessage];
 };
