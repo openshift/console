@@ -19,7 +19,8 @@ import { SectionHeading } from './utils/headings';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary, detailsPage } from './utils/details-page';
 import { navFactory } from './utils/horizontal-nav';
-import { SecretType } from './secrets/create-secret/types';
+import { SecretFilterValues } from './secrets/create-secret/types';
+import { secretTypeFilterReducer } from './secrets/create-secret';
 import { useAddSecretToWorkloadModalLauncher } from './modals/add-secret-to-workload';
 import { DetailsItem } from './utils/details-item';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
@@ -199,35 +200,6 @@ const SecretsList: React.FCC<SecretsListProps> = ({ data, loaded, ...props }) =>
 };
 SecretsList.displayName = 'SecretsList';
 
-const IMAGE_FILTER_VALUE = 'Image';
-const SOURCE_FILTER_VALUE = 'Source';
-const TLS_FILTER_VALUE = 'TLS';
-const SA_TOKEN_FILTER_VALUE = 'Service Account Token';
-const OPAQUE_FILTER_VALUE = 'Opaque';
-
-export const secretTypeFilterReducer = (secret): string => {
-  switch (secret.type) {
-    case SecretType.dockercfg:
-    case SecretType.dockerconfigjson:
-      return IMAGE_FILTER_VALUE;
-
-    case SecretType.basicAuth:
-    case SecretType.sshAuth:
-      return SOURCE_FILTER_VALUE;
-
-    case SecretType.tls:
-      return TLS_FILTER_VALUE;
-
-    case SecretType.serviceAccountToken:
-      return SA_TOKEN_FILTER_VALUE;
-
-    default:
-      // This puts all unrecognized types under "Opaque". Since unrecognized types should be uncommon,
-      // it avoids an "Other" category that is usually empty.
-      return OPAQUE_FILTER_VALUE;
-  }
-};
-
 const SecretsPage: React.FCC<SecretsPageProps> = (props) => {
   const { t } = useTranslation();
   const createItems = {
@@ -246,23 +218,23 @@ const SecretsPage: React.FCC<SecretsPageProps> = (props) => {
 
   const secretTypeFilterValues = [
     {
-      id: IMAGE_FILTER_VALUE,
+      id: SecretFilterValues.image,
       title: t('public~Image'),
     },
     {
-      id: SOURCE_FILTER_VALUE,
+      id: SecretFilterValues.source,
       title: t('public~Source'),
     },
     {
-      id: TLS_FILTER_VALUE,
+      id: SecretFilterValues.tls,
       title: t('public~TLS'),
     },
     {
-      id: SA_TOKEN_FILTER_VALUE,
+      id: SecretFilterValues.sa,
       title: t('public~Service Account Token'),
     },
     {
-      id: OPAQUE_FILTER_VALUE,
+      id: SecretFilterValues.opaque,
       title: t('public~Opaque'),
     },
   ];
