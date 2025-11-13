@@ -16,7 +16,7 @@ import {
   referenceFor,
   modelFor,
 } from '@console/internal/module/k8s';
-import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
+import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
 import { STORAGE_PREFIX, USERSETTINGS_PREFIX } from '../../constants';
 import { useUserSettingsCompatibility } from '../../hooks/useUserSettingsCompatibility';
 
