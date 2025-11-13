@@ -70,3 +70,8 @@ export enum MachineSetActionCreator {
   EditMachineCount = 'EditMachineCount',
   CreateMachineAutoscaler = 'CreateMachineAutoscaler',
 }
+
+export enum BuildConfigActionCreator {
+  StartBuild = 'StartBuild',
+  StartLastRun = 'StartLastRun',
+}

@@ -3,7 +3,6 @@ import * as _ from 'lodash-es';
 import { DASH } from '@console/shared/src/constants/ui';
 
 import { ListPage } from './factory';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { ResourceLink } from './utils/resource-link';
 import { Selector } from './utils/selector';
 import { LoadingBox } from './utils/status-box';
@@ -17,9 +16,7 @@ import {
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-
-const { Edit, Delete } = Kebab.factory;
-const menuActions = [Edit, Delete];
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const serviceMonitorTableColumnInfo = [
   { id: 'name' },
@@ -84,7 +81,7 @@ const getServiceMonitorDataViewRows = (data, columns) => {
         cell: namespaceSelectorLinks(obj),
       },
       [serviceMonitorTableColumnInfo[4].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={resourceKind} resource={obj} />,
+        cell: <LazyActionMenu context={{ [referenceForModel(ServiceMonitorModel)]: obj }} />,
         props: actionsCellProps,
       },
     };

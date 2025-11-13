@@ -1,6 +1,5 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Card,
@@ -17,7 +16,6 @@ import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-ico
 import { TableColumn } from '@console/dynamic-plugin-sdk';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import {
   actionsCellProps,
@@ -42,44 +40,21 @@ import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { DASH } from '@console/shared/src/constants';
 import { DetailsItem } from './utils/details-item';
-import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
+import { KebabAction } from './utils/kebab';
 import { LoadingBox, LoadingInline } from './utils/status-box';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { Selector } from './utils/selector';
-import { togglePaused, WorkloadPausedAlert } from './utils/workload-pause';
+import { WorkloadPausedAlert } from './utils/workload-pause';
 import { ResourceEventStream } from './events';
 import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-settings';
 import { UpToDateMessage } from './cluster-settings/cluster-status';
-import { ErrorModal } from './modals/error-modal';
-
-const usePauseAction = (): KebabAction => {
-  const { t } = useTranslation();
-  const launchModal = useOverlay();
-  return useMemo(
-    () => (kind: K8sModel, obj: MachineConfigPoolKind) => ({
-      labelKey: obj.spec?.paused ? t('public~Resume updates') : t('public~Pause updates'),
-      callback: () =>
-        togglePaused(kind, obj).catch((err) => launchModal(ErrorModal, { error: err.message })),
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        name: obj.metadata.name,
-        verb: 'patch',
-      },
-    }),
-    [launchModal, t],
-  );
-};
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
-
-const useMachineConfigPoolMenuActions = (): KebabAction[] => {
-  const pauseAction = usePauseAction();
-  return useMemo(() => [pauseAction, ...Kebab.factory.common], [pauseAction]);
-};
 
 const getConditionStatus = (
   mcp: MachineConfigPoolKind,
@@ -307,12 +282,16 @@ const MachineConfigPoolUpdateStatus: React.FC<MachineConfigPoolUpdateStatusProps
 };
 
 export const MachineConfigPoolDetailsPage: React.FCC<any> = (props) => {
-  const machineConfigPoolMenuActions = useMachineConfigPoolMenuActions();
   return (
     <DetailsPage
       {...props}
       kind={machineConfigPoolReference}
-      menuActions={machineConfigPoolMenuActions}
+      customActionMenu={(k8sObj: K8sModel, obj: MachineConfigPoolKind) => (
+        <LazyActionMenu
+          context={{ [machineConfigPoolReference]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={pages}
     />
   );
@@ -374,9 +353,8 @@ const useMachineConfigPoolColumns = (): TableColumn<MachineConfigPoolKind>[] => 
 };
 
 const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, KebabAction[]> = (data, columns) => {
-  return data.map(({ obj, rowData }) => {
+  return data.map(({ obj }) => {
     const { name } = obj.metadata;
-    const menuActions = rowData;
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -401,9 +379,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, KebabAction[]> = (
         cell: <MachineConfigPoolUpdateStatus obj={obj} />,
       },
       [tableColumnInfo[4].id]: {
-        cell: (
-          <ResourceKebab actions={menuActions} kind={machineConfigPoolReference} resource={obj} />
-        ),
+        cell: <LazyActionMenu context={{ [machineConfigPoolReference]: obj }} />,
         props: actionsCellProps,
       },
     };
@@ -426,7 +402,6 @@ const MachineConfigPoolList: React.FC<MachineConfigPoolListProps> = ({
   ...props
 }) => {
   const columns = useMachineConfigPoolColumns();
-  const machineConfigPoolMenuActions = useMachineConfigPoolMenuActions();
 
   return (
     <>
@@ -441,7 +416,6 @@ const MachineConfigPoolList: React.FC<MachineConfigPoolListProps> = ({
           columns={columns}
           initialFilters={initialFiltersDefault}
           getDataViewRows={getDataViewRows}
-          customRowData={machineConfigPoolMenuActions}
           hideColumnManagement={true}
         />
       </React.Suspense>
