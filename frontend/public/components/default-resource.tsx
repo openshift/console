@@ -10,7 +10,9 @@ import { useDetailsItemExtensionsForResource } from '@console/shared/src/hooks/u
 import { ExtensionDetailsItem } from '@console/shared/src/components/details-page/ExtensionDetailsItem';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, TableProps } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import type { TableProps } from './factory/table';
 import {
   referenceFor,
   K8sResourceKind,

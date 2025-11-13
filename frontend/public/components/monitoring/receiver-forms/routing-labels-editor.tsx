@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { DOC_URL_PROMETHEUS_MATCHERS } from '../../utils';
+import { DOC_URL_PROMETHEUS_MATCHERS } from '../../utils/documentation';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 
 const DEFAULT_RECEIVER_LABEL = 'All (default receiver)';

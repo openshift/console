@@ -11,9 +11,9 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { DataPoint } from '@console/internal/components/graphs';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { resourcePathFromModel } from '@console/internal/components/utils';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
 import { getName, getNamespace, useFlag } from '../../..';
 import { FLAGS } from '../../../constants';

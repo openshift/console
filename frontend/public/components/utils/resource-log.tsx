@@ -51,7 +51,7 @@ import {
   LOG_WRAP_LINES_USERSETTINGS_KEY,
   SHOW_FULL_LOG_USERSETTINGS_KEY,
 } from '@console/shared/src/constants';
-import { useUserSettings } from '@console/shared';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { Loading } from '@console/shared/src/components/loading/Loading';
 import { TogglePlay } from './toggle-play';
@@ -64,7 +64,7 @@ import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
 import { RootState } from '@console/internal/redux';
 import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
-import { useFlag } from '@console/shared/src/hooks';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { usePrevious } from '@console/shared/src/hooks/previous';
 import { resourcePath } from './resource-link';
 import { isWindowsPod } from '../../module/k8s/pods';

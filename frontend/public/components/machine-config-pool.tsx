@@ -38,7 +38,8 @@ import {
   MachineConfigPoolKind,
   referenceForModel,
 } from '../module/k8s';
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { DASH } from '@console/shared/src/constants';
 import { DetailsItem } from './utils/details-item';
 import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';

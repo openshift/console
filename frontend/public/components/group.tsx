@@ -4,7 +4,8 @@ import * as _ from 'lodash-es';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { GroupModel, UserModel } from '../models';
 import { referenceForModel, GroupKind } from '../module/k8s';
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { RoleBindingsPage } from './RBAC';
 import { asAccessReview } from './utils/rbac';
 import { EmptyBox, LoadingBox } from './utils/status-box';
@@ -34,7 +35,7 @@ import {
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
 import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { DASH } from '@console/shared/src';
+import { DASH } from '@console/shared/src/constants/ui';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'users' }, { id: 'created' }, { id: 'actions' }];
 

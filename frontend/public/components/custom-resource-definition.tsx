@@ -13,7 +13,8 @@ import {
 import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
 import { useTranslation } from 'react-i18next';
 
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { sortResourceByValue } from './factory/Table/sort';
 import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';

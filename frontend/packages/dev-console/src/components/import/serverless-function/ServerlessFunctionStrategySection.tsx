@@ -1,7 +1,7 @@
 import { Alert, ValidatedOptions } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { ServerlessBuildStrategyType } from '@console/knative-plugin/src';
+import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
 import { notSupportedRuntime } from '../../../utils/serverless-functions';
 import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
 import FormSection from '../section/FormSection';

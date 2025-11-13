@@ -3,7 +3,8 @@ import {
   CloudCredentialKind,
   InfrastructureKind,
 } from '@console/internal/module/k8s';
-import { PackageManifestKind } from '../../types';
+import { PackageManifestKind } from '../../../types';
+import { InfrastructureFeature, OLMAnnotation, ValidSubscriptionValue } from '../index';
 import {
   defaultPackageSourceMap,
   getPackageSource,
@@ -18,8 +19,7 @@ import {
   getInitializationResource,
   getValidSubscription,
   getInfrastructureFeatures,
-} from './operator-hub-utils';
-import { InfrastructureFeature, OLMAnnotation, ValidSubscriptionValue } from '.';
+} from '../operator-hub-utils';
 
 describe('getPackageSource', () => {
   it('should handle undefined argument', () => {

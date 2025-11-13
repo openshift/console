@@ -7,7 +7,8 @@ import * as staticModels from '../../models';
 import { apiVersionCompare } from '@console/internal/module/k8s/crd-versions';
 import { kindForReference } from '@console/internal/module/k8s/for-ref';
 import { referenceForModel, referenceForGroupVersionKind } from './k8s-ref';
-import store, { RootState } from '../../redux';
+import store from '../../redux';
+import type { RootState } from '../../redux';
 import { pluginStore } from '../../plugins';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import {

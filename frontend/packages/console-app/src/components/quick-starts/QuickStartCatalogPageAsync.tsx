@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AsyncComponent } from '@console/internal/components/utils';
+import { AsyncComponent } from '@console/internal/components/utils/async';
 
 const QuickStartCatalogPageAsync: React.FC = () => (
   <AsyncComponent

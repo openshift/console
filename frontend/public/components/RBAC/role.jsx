@@ -9,7 +9,8 @@ import i18next from 'i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { BindingName, flatten as bindingsFlatten } from './bindings';
 import { RulesList } from './rules';
-import { DetailsPage, MultiListPage, TextFilter } from '../factory';
+import { DetailsPage } from '../factory/details';
+import { MultiListPage, TextFilter } from '../factory/list-page';
 import {
   ConsoleDataView,
   getNameCellProps,
@@ -28,7 +29,8 @@ import { LoadingBox } from '../utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
-import { ALL_NAMESPACES_KEY, DASH } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   DescriptionList,
   DescriptionListDescription,

@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
 import { LimitRangeModel } from '../models';
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { Kebab, ResourceKebab } from './utils/kebab';
 import { navFactory } from './utils/horizontal-nav';
 import { SectionHeading } from './utils/headings';
@@ -28,7 +29,7 @@ import {
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
 import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { DASH } from '@console/shared/src';
+import { DASH } from '@console/shared/src/constants/ui';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];

@@ -22,11 +22,10 @@ import { coFetch } from '@console/internal/co-fetch';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import {
   getQueryArgument,
-  LoadingBox,
-  LoadingInline,
   removeQueryArgument,
   setQueryArgument,
-} from '@console/internal/components/utils';
+} from '@console/internal/components/utils/router';
+import { LoadingBox, LoadingInline } from '@console/internal/components/utils/status-box';
 import { modelFor, NodeKind, resourceURL } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';

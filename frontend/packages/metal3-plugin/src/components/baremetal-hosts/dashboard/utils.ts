@@ -4,11 +4,25 @@ import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/i
 import { getName } from '@console/shared/src/selectors/common';
 import { getNodeMachineName } from '@console/shared/src/selectors/node';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
-import { HOST_ERROR_STATES, HOST_PROGRESS_STATES, HOST_SUCCESS_STATES } from '../../../constants';
-import { getHostMachine, getNodeMaintenanceNodeName } from '../../../selectors';
+import {
+  HOST_ERROR_STATES,
+  HOST_POWER_STATUS_POWERING_OFF,
+  HOST_POWER_STATUS_POWERING_ON,
+  HOST_PROGRESS_STATES,
+  HOST_SUCCESS_STATES,
+} from '../../../constants';
+import {
+  getHostMachine,
+  getHostPowerStatus,
+  getNodeMaintenanceNodeName,
+  hasPowerManagement,
+  isDetached,
+} from '../../../selectors';
 import { getHostStatus } from '../../../status/host-status';
 import { BareMetalHostKind } from '../../../types';
 import { getHostFilterStatus } from '../table-filters';
+
+export { BareMetalHostModel } from '../../../models';
 
 const BMH_STATUS_GROUP_MAPPER = {
   [InventoryStatusGroup.NOT_MAPPED]: HOST_SUCCESS_STATES,
@@ -87,3 +101,10 @@ export const getBMHStatusGroups: StatusGroupMapper = (
 
   return groups;
 };
+
+export const isBMHActivity = (resource: BareMetalHostKind) =>
+  [HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON].includes(
+    getHostPowerStatus(resource),
+  ) &&
+  hasPowerManagement(resource) &&
+  !isDetached(resource);

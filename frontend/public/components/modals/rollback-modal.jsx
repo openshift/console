@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
-import { getDeploymentConfigVersion, getOwnerNameByKind } from '@console/shared/src';
+import {
+  getDeploymentConfigVersion,
+  getOwnerNameByKind,
+} from '@console/shared/src/utils/resource-utils';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { LoadingInline } from '../utils/status-box';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';

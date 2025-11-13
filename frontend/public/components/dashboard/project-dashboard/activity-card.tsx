@@ -8,7 +8,7 @@ import ActivityBody, {
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
-import { FirehoseResource, FirehoseResult } from '../../utils';
+import type { FirehoseResource, FirehoseResult } from '../../utils/types';
 import { EventModel } from '../../../models';
 import { EventKind, K8sKind } from '../../../module/k8s';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';

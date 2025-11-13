@@ -1,5 +1,5 @@
-import { determineCategories, orderAndSortByRelevance } from './operator-hub-items';
-import { OperatorHubItem } from './index';
+import { OperatorHubItem } from '../index';
+import { determineCategories, orderAndSortByRelevance } from '../operator-hub-items';
 
 describe('determineCategories', () => {
   it('should merge categories by name', () => {

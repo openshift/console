@@ -4,7 +4,7 @@ import {
   PROMETHEUS_TENANCY_BASE_PATH,
   DEFAULT_PROMETHEUS_SAMPLES,
   DEFAULT_PROMETHEUS_TIMESPAN,
-} from './index';
+} from './consts';
 import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/common-types';
 export { PrometheusEndpoint };
 

@@ -8,7 +8,8 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { PromiseComponent, history } from '@console/internal/components/utils';
+import { PromiseComponent } from '@console/internal/components/utils/promise-component';
+import { history } from '@console/internal/components/utils/router';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { InputField } from '../formik-fields';
 import { YellowExclamationTriangleIcon } from '../status';

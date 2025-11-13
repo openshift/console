@@ -3,9 +3,12 @@ import * as _ from 'lodash-es';
 import { Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-import { Status, DASH } from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage, sorts } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sorts } from './factory/table';
 import { Conditions } from './conditions';
 import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';
 import { EmptyBox, LoadingBox } from './utils/status-box';

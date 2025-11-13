@@ -9,7 +9,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import { SectionHeading, ResourceSummary, navFactory } from '@console/internal/components/utils';
+import { ResourceSummary } from '@console/internal/components/utils/details-page';
+import { SectionHeading } from '@console/internal/components/utils/headings';
+import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import { referenceForModel, VolumeSnapshotClassKind } from '@console/internal/module/k8s';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';

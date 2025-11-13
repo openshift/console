@@ -5,13 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { PodStatus } from '@console/internal/components/pod';
 import { PodTraffic } from '@console/internal/components/pod-traffic';
-import {
-  ResourceLink,
-  resourcePath,
-  SidebarSectionHeading,
-  LoadingBox,
-} from '@console/internal/components/utils';
+import { SidebarSectionHeading } from '@console/internal/components/utils/headings';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { ResourceLink, resourcePath } from '@console/internal/components/utils/resource-link';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { podPhase, PodKind, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { BuildConfigData } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';

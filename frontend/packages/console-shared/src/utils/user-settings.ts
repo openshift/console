@@ -1,6 +1,7 @@
+import { resourceURL } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { coFetch } from '@console/internal/co-fetch';
 import { ConfigMapModel } from '@console/internal/models';
-import { ConfigMapKind, resourceURL } from '@console/internal/module/k8s';
+import type { ConfigMapKind } from '@console/internal/module/k8s/types';
 
 export const USER_SETTING_CONFIGMAP_NAMESPACE = 'openshift-console-user-settings';
 

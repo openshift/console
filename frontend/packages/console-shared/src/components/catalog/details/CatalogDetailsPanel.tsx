@@ -3,7 +3,7 @@ import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-vie
 import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { SectionHeading } from '@console/internal/components/utils';
+import { SectionHeading } from '@console/internal/components/utils/headings';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import CatalogPageOverlay from '../catalog-view/CatalogPageOverlay';

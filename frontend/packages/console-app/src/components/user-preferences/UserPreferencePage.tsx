@@ -17,7 +17,8 @@ import {
   UserPreferenceItem,
   isUserPreferenceItem,
 } from '@console/dynamic-plugin-sdk';
-import { LoadingBox, history } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils/router';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';

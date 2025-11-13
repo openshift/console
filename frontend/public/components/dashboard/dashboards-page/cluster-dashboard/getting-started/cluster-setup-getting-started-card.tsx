@@ -12,7 +12,7 @@ import {
 
 import { useIdentityProviderLink } from './cluster-setup-identity-provider-link';
 import { useAlertReceiverLink } from './cluster-setup-alert-receiver-link';
-import { documentationURLs, getDocumentationURL, isManaged } from '../../../../utils';
+import { documentationURLs, getDocumentationURL, isManaged } from '../../../../utils/documentation';
 import { TourActions, TourContext } from '@console/app/src/components/tour';
 
 export const ClusterSetupGettingStartedCard: React.FC = () => {

@@ -8,7 +8,8 @@ import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DeploymentKind, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
