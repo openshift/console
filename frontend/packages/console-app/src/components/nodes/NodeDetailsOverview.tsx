@@ -17,7 +17,6 @@ import {
 } from '@console/internal/components/utils/cloud-provider';
 import { DetailsItem } from '@console/internal/components/utils/details-item';
 import { SectionHeading } from '@console/internal/components/utils/headings';
-import { Kebab } from '@console/internal/components/utils/kebab';
 import { LabelList } from '@console/internal/components/utils/label-list';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
@@ -30,6 +29,8 @@ import {
   getNodeMachineNameAndNamespace,
   getNodeAddresses,
 } from '@console/shared/src/selectors/node';
+import { CommonActionCreator } from '../../actions/hooks/types';
+import { useCommonActions } from '../../actions/hooks/useCommonActions';
 import NodeUptime from './node-dashboard/NodeUptime';
 import NodeIPList from './NodeIPList';
 import NodeStatus from './NodeStatus';
@@ -49,6 +50,10 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
     namespace: node.metadata.namespace,
   });
   const { t } = useTranslation();
+  const [modifyTaints] = useCommonActions(NodeModel, node, [CommonActionCreator.ModifyTaints]);
+  const [modifyAnnotations] = useCommonActions(NodeModel, node, [
+    CommonActionCreator.ModifyAnnotations,
+  ]);
 
   return (
     <PaneBody>
@@ -104,7 +109,12 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
                     variant="link"
                     type="button"
                     isInline
-                    onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}
+                    onClick={() => {
+                      const action = modifyTaints[CommonActionCreator.ModifyTaints]?.cta;
+                      if (typeof action === 'function') {
+                        action();
+                      }
+                    }}
                   >
                     {_.size(node.spec.taints)}{' '}
                     {t('console-app~Taint', { count: _.size(node.spec.taints) })}
@@ -127,7 +137,12 @@ const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
                     variant="link"
                     type="button"
                     isInline
-                    onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}
+                    onClick={() => {
+                      const action = modifyAnnotations[CommonActionCreator.ModifyAnnotations]?.cta;
+                      if (typeof action === 'function') {
+                        action();
+                      }
+                    }}
                   >
                     {_.size(node.metadata.annotations)}{' '}
                     {t('console-app~Annotation', { count: _.size(node.metadata.annotations) })}

@@ -211,6 +211,7 @@
   "Edit Pod count": "Edit Pod count",
   "Edit Pod selector": "Edit Pod selector",
   "Edit tolerations": "Edit tolerations",
+  "Edit taints": "Edit taints",
   "Add storage": "Add storage",
   "Edit update strategy": "Edit update strategy",
   "Resume rollouts": "Resume rollouts",
