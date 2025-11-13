@@ -11,6 +11,7 @@ import { K8sKind, K8sResourceKind } from './types';
 export * from './crd-versions';
 export * from './k8s-ref';
 export * from './for-ref';
+export { k8sBasePath } from './consts';
 
 export const getQN: (obj: K8sResourceKind) => string = (obj) => {
   const { name, namespace } = obj.metadata;
@@ -22,8 +23,6 @@ export const getQN: (obj: K8sResourceKind) => string = (obj) => {
   }
   return (namespace ? `(${namespace})-` : '') + name;
 };
-
-export const k8sBasePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
 
 export const getGroupVersionKind = (
   ref: GroupVersionKind | string,
