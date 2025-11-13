@@ -7,7 +7,7 @@ import {
 } from '@console/internal/actions/dashboards';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { Humanize, HumanizeResult } from '@console/internal/components/utils/types';
-import { RESULTS_TYPE } from '@console/internal/reducers/dashboards';
+import { RESULTS_TYPE } from '@console/internal/reducers/dashboard-results';
 import { RootState } from '@console/internal/redux';
 
 /** @deprecated use usePrometheusPoll() instead */

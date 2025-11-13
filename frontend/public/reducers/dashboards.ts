@@ -1,12 +1,7 @@
 import { ActionType, DashboardsAction } from '../actions/dashboards';
 import { fromJS, Map as ImmutableMap } from 'immutable';
 import { RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-
-export enum RESULTS_TYPE {
-  PROMETHEUS = 'PROMETHEUS',
-  URL = 'URL',
-  ALERTS = 'ALERTS',
-}
+import { RESULTS_TYPE } from './dashboard-results';
 
 export const defaults = {
   [RESULTS_TYPE.PROMETHEUS]: fromJS({}),
@@ -14,9 +9,6 @@ export const defaults = {
 };
 
 export type DashboardsState = ImmutableMap<string, RequestMap<any>>;
-
-export const isWatchActive = (state: DashboardsState, type: string, key: string): boolean =>
-  state.getIn([type, key, 'active']) > 0 || state.getIn([type, key, 'inFlight']);
 
 export const dashboardsReducer = (
   state: DashboardsState,

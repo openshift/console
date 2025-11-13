@@ -11,7 +11,7 @@ import {
   watchURL,
 } from '@console/internal/actions/dashboards';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { RESULTS_TYPE } from '@console/internal/reducers/dashboards';
+import { RESULTS_TYPE } from '@console/internal/reducers/dashboard-results';
 import { RootState } from 'public/redux';
 import { useNotificationAlerts } from './useNotificationAlerts';
 
