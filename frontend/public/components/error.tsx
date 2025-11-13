@@ -11,7 +11,9 @@ import {
   StackItem,
   EmptyStateHeader,
   EmptyStateActions,
+  EmptyStateFooter,
   Icon,
+  Button,
   Title,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
@@ -99,20 +101,28 @@ const LoginErrorMessage: React.FC = () => {
     case 'login_state_error':
       return t('public~There was an error generating login state.');
     case 'cookie_error':
-      return t('public~There was an error setting login state cookie');
-    case 'missing_code':
-      return t('public~Auth code is missing in query param.');
-    case 'missing_state':
-      return t('public~There was an error parsing your state cookie');
-    case 'invalid_code':
-      return t('public~There was an error logging you in. Please log out and try again.');
-    case 'invalid_state':
-      return t('public~There was an error verifying your session. Please log out and try again.');
+      return t('public~There was an error setting login state cookie.');
     case 'logout_error':
       return t('public~There was an error logging you out. Please try again.');
+    case 'auth':
+      // When the error type is set as auth
+      switch (error) {
+        case 'missing_state':
+          return t('public~There was an error parsing your state cookie.');
+        case 'invalid_state':
+          return t(
+            'public~There was an error verifying your session. Please log out and try again.',
+          );
+        case 'missing_code':
+          return t('public~Auth code is missing in query param.');
+        case 'invalid_code':
+          return t('public~There was an error logging you in. Please log out and try again.');
+        default:
+          return t('public~There was an authentication error. Please log out and try again.');
+      }
     default:
       return (
-        <Trans>
+        <Trans ns="public">
           There was an authentication error with the system:
           <CodeBlock>
             <CodeBlockCode>{error}</CodeBlockCode>
@@ -125,6 +135,7 @@ const LoginErrorMessage: React.FC = () => {
 export const AuthenticationErrorPage: React.FC = () => {
   const { t } = useTranslation();
   const title = t('public~Authentication error');
+
   return (
     <>
       <Helmet>
@@ -143,9 +154,13 @@ export const AuthenticationErrorPage: React.FC = () => {
             </StackItem>
           </Stack>
         </EmptyStateBody>
-        <EmptyStateActions>
-          <a href="/logout">{t('public~Try again')}</a>
-        </EmptyStateActions>
+        <EmptyStateFooter>
+          <EmptyStateActions>
+            <Button component="a" variant="primary" href="/">
+              {t('public~Try again')}
+            </Button>
+          </EmptyStateActions>
+        </EmptyStateFooter>
       </EmptyState>
     </>
   );
