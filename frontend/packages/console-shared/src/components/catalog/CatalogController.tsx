@@ -9,7 +9,7 @@ import { skeletonCatalog } from '@console/internal/components/utils/skeleton-cat
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { useQueryParams } from '../../hooks';
+import { useQueryParams } from '../../hooks/useQueryParams';
 import PageBody from '../layout/PageBody';
 import CatalogView from './catalog-view/CatalogView';
 import CatalogTile from './CatalogTile';

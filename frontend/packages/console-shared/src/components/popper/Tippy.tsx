@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PopperJS, { PopperOptions } from 'popper.js';
-import { useEventListener } from '../../hooks';
+import { useEventListener } from '../../hooks/useEventListener';
 import Portal from './Portal';
 
 type TippyProps = {
