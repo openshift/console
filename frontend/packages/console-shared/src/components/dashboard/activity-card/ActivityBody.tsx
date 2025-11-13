@@ -4,7 +4,6 @@ import { PauseIcon } from '@patternfly/react-icons/dist/esm/icons/pause-icon';
 import { PlayIcon } from '@patternfly/react-icons/dist/esm/icons/play-icon';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
 import {
   ActivityBodyProps,
   OngoingActivityBodyProps,
@@ -18,7 +17,7 @@ import EventItem from './EventItem';
 
 import './activity-card.scss';
 
-export const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => {
+export const Activity: React.FCC<ActivityProps> = ({ timestamp, children }) => {
   const { t } = useTranslation();
   return (
     <div className="co-activity-item__ongoing" data-test="activity">
@@ -40,7 +39,6 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
   filter,
   paused,
   setPaused,
-  moreLink,
 }) => {
   const { t } = useTranslation();
   const ref = React.useRef<EventKind[]>([]);
@@ -111,15 +109,6 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
           <EventItem key={e.metadata.uid} isExpanded={isExpanded} onToggle={onToggle} event={e} />
         ))}
       </Accordion>
-      {sortedEvents.length > 50 && !!moreLink && (
-        <Link
-          className="co-activity-card__recent-more-link"
-          to={moreLink}
-          data-test="events-view-all-link"
-        >
-          {t('console-shared~View all events')}
-        </Link>
-      )}
     </>
   );
 };
@@ -211,7 +200,7 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
   );
 };
 
-const ActivityBody: React.FC<ActivityBodyProps> = ({ children, className }) => (
+const ActivityBody: React.FCC<ActivityBodyProps> = ({ children, className }) => (
   <div className={css('co-activity-card__body', className)} id="activity-body">
     {children}
   </div>

@@ -34,7 +34,6 @@
     "@topology",
     "@knative",
     "@guided-tour",
-    "@gitops",
     "@helm",
     "@monitoring",
     "@pipelines",

@@ -6,9 +6,10 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 type ModelStatusBoxProps = {
   groupVersionKind: GroupVersionKind;
+  children?: React.ReactNode;
 };
 
-const ModelStatusBox: React.FC<ModelStatusBoxProps> = ({ groupVersionKind, children }) => {
+const ModelStatusBox: React.FCC<ModelStatusBoxProps> = ({ groupVersionKind, children }) => {
   const { t } = useTranslation();
   const [model, inFlight] = useK8sModel(groupVersionKind);
 

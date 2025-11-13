@@ -10,7 +10,8 @@ import {
   referenceForExtensionModel,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { LoadedExtension, useExtensions } from '@console/plugin-sdk/src';
+import { LoadedExtension } from '@console/plugin-sdk/src';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../extensions/topology';
 import DataModelExtension from './DataModelExtension';
 import { ModelContext, ExtensibleModel } from './ModelContext';
@@ -80,7 +81,7 @@ export const getNamespacedDynamicModelFactories = (
     };
   });
 
-const DataModelProvider: React.FC<DataModelProviderProps> = ({ namespace, children }) => {
+const DataModelProvider: React.FCC<DataModelProviderProps> = ({ namespace, children }) => {
   const [model, setModel] = React.useState<ExtensibleModel>(new ExtensibleModel(namespace));
 
   React.useEffect(() => {

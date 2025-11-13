@@ -3,7 +3,7 @@ import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { useAccessReview } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -16,7 +16,7 @@ import {
   referenceFor,
   modelFor,
 } from '@console/internal/module/k8s';
-import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
+import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
 import { STORAGE_PREFIX, USERSETTINGS_PREFIX } from '../../constants';
 import { useUserSettingsCompatibility } from '../../hooks/useUserSettingsCompatibility';
 

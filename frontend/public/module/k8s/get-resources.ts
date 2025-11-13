@@ -179,7 +179,7 @@ export const getResources = (): Promise<DiscoveryResources> =>
 
       const defineModels = (list: APIResourceList): K8sKind[] => {
         const metadataExtensions = pluginStore
-          .getExtensionsInUse()
+          .getExtensions()
           .filter(isModelMetadata) as LoadedExtension<ModelMetadata>[];
         const groupVersionParts = list.groupVersion.split('/');
         const apiGroup = groupVersionParts.length > 1 ? groupVersionParts[0] : null;

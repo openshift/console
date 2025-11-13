@@ -30,13 +30,14 @@ import {
   RowSearchFilter,
 } from '@console/dynamic-plugin-sdk';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { setOrRemoveQueryArgument } from '@console/internal/components/utils';
+import { setOrRemoveQueryArgument } from '@console/internal/components/utils/router';
 import { useTranslation } from 'react-i18next';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
 import { createColumnManagementModal } from './modals';
-import { useDebounceCallback, useDeepCompareMemoize } from '@console/shared/src';
-import { TextFilter } from './factory';
+import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import { TextFilter } from './factory/list-page';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import useRowFilterFix from './useRowFilterFix';
 import useLabelSelectionFix from './useLabelSelectionFix';

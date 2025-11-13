@@ -1,10 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { css } from '@patternfly/react-styles';
 import {
   ActionGroup,
   Button,
@@ -14,13 +12,15 @@ import {
   Radio,
   TextInput,
 } from '@patternfly/react-core';
-import { sortable } from '@patternfly/react-table';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
+import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { FLAGS } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { LazyActionMenu, useFlag } from '@console/shared';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { DASH } from '@console/shared/src/constants/ui';
 import { ClusterRoleBindingModel } from '../../models';
 import {
   ClusterRoleBindingKind,
@@ -31,27 +31,30 @@ import {
   RoleBindingKind,
   Subject,
 } from '../../module/k8s';
-import { MultiListPageProps, RowFunctionArgs, Table, TableData } from '../factory';
-import ListPageFilter from '../factory/ListPage/ListPageFilter';
+import type { MultiListPageProps } from '../factory/list-page';
 import ListPageHeader from '../factory/ListPage/ListPageHeader';
-import { useListPageFilter } from '../factory/ListPage/filter-hook';
 import { ListPageCreateLink } from '../factory/ListPage/ListPageCreate';
 import {
-  ButtonBar,
-  Firehose,
-  getQueryArgument,
-  Kebab,
-  kindObj,
-  ListDropdown,
-  ConsoleEmptyState,
-  NsDropdown,
-  ResourceLink,
-  ResourceName,
-  resourceObjPath,
-  StatusBox,
-  useAccessReview,
-  ListDropdownProps,
-} from '../utils';
+  ConsoleDataView,
+  initialFiltersDefault,
+  getNameCellProps,
+  actionsCellProps,
+  cellIsStickyProps,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
+import { TableColumn } from '@console/internal/module/k8s';
+import { GetDataViewRows, ResourceFilters } from '@console/app/src/components/data-view/types';
+import { tableFilters } from '../factory/table-filters';
+import { ButtonBar } from '../utils/button-bar';
+import { Firehose } from '../utils/firehose';
+import { getQueryArgument } from '../utils/router';
+import { kindObj } from '../utils/inject';
+import type { ListDropdownProps } from '../utils/list-dropdown';
+import { ListDropdown, NsDropdown } from '../utils/list-dropdown';
+import { ResourceLink, resourceObjPath } from '../utils/resource-link';
+import { ResourceName } from '../utils/resource-icon';
+import { StatusBox, LoadingBox } from '../utils/status-box';
+import { useAccessReview } from '../utils/rbac';
 import { flagPending } from '../../reducers/features';
 import { useK8sWatchResources } from '../utils/k8s-watch-hook';
 
@@ -84,52 +87,70 @@ export const flatten = (resources): BindingKind[] =>
     return ret;
   });
 
-const tableColumnClasses = [
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-xl',
-  '',
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'roleRef' },
+  { id: 'subjectKind' },
+  { id: 'subjectName' },
+  { id: 'namespace' },
+  { id: 'actions' },
 ];
 
-const RoleBindingsTableHeader = () => {
-  return [
-    {
-      title: i18next.t('public~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: i18next.t('public~Role ref'),
-      sortField: 'roleRef.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: i18next.t('public~Subject kind'),
-      sortField: 'subject.kind',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: i18next.t('public~Subject name'),
-      sortField: 'subject.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: i18next.t('public~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
+const useRoleBindingsColumns = (): TableColumn<BindingKind>[] => {
+  const { t } = useTranslation();
+  return React.useMemo(
+    () => [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Role ref'),
+        id: tableColumnInfo[1].id,
+        sort: 'roleRef.name',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Subject kind'),
+        id: tableColumnInfo[2].id,
+        sort: 'subject.kind',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Subject name'),
+        id: tableColumnInfo[3].id,
+        sort: 'subject.name',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[4].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[5].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ],
+    [t],
+  );
 };
 
 export const BindingName: React.FCC<BindingProps> = ({ binding }) => (
@@ -159,61 +180,7 @@ export const RoleLink: React.FCC<BindingProps> = ({ binding }) => {
   return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
 };
 
-const RoleBindingsTableRow: React.FCC<RowFunctionArgs<BindingKind>> = ({ obj: binding }) => {
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <BindingName binding={binding} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
-        <RoleLink binding={binding} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[2], 'co-break-word')}>
-        {binding.subject.kind}
-      </TableData>
-      <TableData className={css(tableColumnClasses[3], 'co-break-word')}>
-        {binding.subject.name}
-      </TableData>
-      <TableData className={css(tableColumnClasses[4], 'co-break-word')}>
-        {binding.metadata.namespace ? (
-          <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
-        ) : (
-          i18next.t('public~All namespaces')
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <BindingKebab binding={binding} />
-      </TableData>
-    </>
-  );
-};
-
-const EmptyMsg: React.FCC = () => {
-  const { t } = useTranslation();
-  return (
-    <ConsoleEmptyState title={t('public~No RoleBindings found')}>
-      {t(
-        'public~Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a RoleBinding.',
-      )}
-    </ConsoleEmptyState>
-  );
-};
-
-export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
-  const { t } = useTranslation();
-  return (
-    <Table
-      aria-label={t('public~RoleBindings')}
-      EmptyMsg={EmptyMsg}
-      Header={RoleBindingsTableHeader}
-      Row={RoleBindingsTableRow}
-      virtualize
-      {...props}
-    />
-  );
-};
-
-export const bindingType = (binding: BindingKind) => {
+const bindingType = (binding: BindingKind) => {
   if (!binding) {
     return undefined;
   }
@@ -221,6 +188,146 @@ export const bindingType = (binding: BindingKind) => {
     return 'system';
   }
   return binding.metadata.namespace ? 'namespace' : 'cluster';
+};
+
+const getDataViewRows: GetDataViewRows<BindingKind, undefined> = (data, columns) => {
+  return data.map(({ obj: binding }) => {
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <BindingName binding={binding} />,
+        props: getNameCellProps(binding.metadata.name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <RoleLink binding={binding} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: binding.subject.kind,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: binding.subject.name,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: binding.metadata.namespace ? (
+          <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
+        ) : (
+          i18next.t('public~All namespaces')
+        ),
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <BindingKebab binding={binding} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
+};
+
+export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
+  const { t } = useTranslation();
+  const columns = useRoleBindingsColumns();
+
+  const hasCRBindings = props.data.some((binding) => !binding.metadata.namespace);
+
+  const kindFilterOptions = React.useMemo(() => {
+    const options = hasCRBindings
+      ? [
+          {
+            value: 'cluster',
+            label: t('public~Cluster-wide RoleBindings'),
+          },
+          {
+            value: 'namespace',
+            label: t('public~Namespace RoleBindings'),
+          },
+          {
+            value: 'system',
+            label: t('public~System RoleBindings'),
+          },
+        ]
+      : [
+          {
+            value: 'namespace',
+            label: t('public~Namespace RoleBindings'),
+          },
+          {
+            value: 'system',
+            label: t('public~System RoleBindings'),
+          },
+        ];
+    return options;
+  }, [hasCRBindings, t]);
+
+  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+    () => [
+      <DataViewCheckboxFilter
+        key="role-kind"
+        filterId="role-kind"
+        title={t('public~Kind')}
+        placeholder={t('public~Filter by kind')}
+        options={kindFilterOptions}
+      />,
+    ],
+    [kindFilterOptions, t],
+  );
+
+  const matchesAdditionalFilters = React.useCallback(
+    (binding: BindingKind, filters: BindingFilters) =>
+      !filters['role-kind'] ||
+      filters['role-kind'].length === 0 ||
+      filters['role-kind'].includes(bindingType(binding)),
+    [],
+  );
+
+  const { data, loaded, staticFilters } = props;
+
+  // Apply staticFilters to filter the data using table filters
+  const filteredData = React.useMemo(() => {
+    if (!staticFilters || !data) {
+      return data;
+    }
+
+    const filtersMap = tableFilters(false); // false for fuzzy search
+
+    return data.filter((binding) => {
+      return staticFilters.every((filter) => {
+        const filterKey = Object.keys(filter)[0];
+        const filterValue = filter[filterKey];
+
+        // Use the table filter function if it exists
+        if (filtersMap[filterKey]) {
+          return filtersMap[filterKey](filterValue, binding);
+        }
+      });
+    });
+  }, [data, staticFilters]);
+
+  return (
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<BindingKind, undefined, BindingFilters>
+        {...props}
+        data={filteredData}
+        loaded={loaded}
+        label={t('public~RoleBindings')}
+        columns={columns}
+        initialFilters={{ ...initialFiltersDefault, 'role-kind': [] }}
+        additionalFilterNodes={additionalFilterNodes}
+        matchesAdditionalFilters={matchesAdditionalFilters}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
+  );
 };
 
 export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
@@ -233,9 +340,6 @@ export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
   createPath = `/k8s/cluster/rolebindings/~new${
     name && kind ? `?subjectName=${encodeURIComponent(name)}&subjectKind=${kind}` : ''
   }`,
-  hideLabelFilter = false,
-  hideNameLabelFilters = false,
-  hideColumnManagement = false,
 }) => {
   const { t } = useTranslation();
   const resources = useK8sWatchResources({
@@ -258,44 +362,6 @@ export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
     .filter((r) => !r.loadError)
     .every((r) => r.loaded);
 
-  const hasCRBindings =
-    Array.isArray(resources.ClusterRoleBinding.data) &&
-    resources.ClusterRoleBinding.data.length > 0 &&
-    resources.ClusterRoleBinding.loaded &&
-    !resources.ClusterRoleBinding.loadError;
-
-  const rowFilters = React.useMemo(
-    () => [
-      {
-        filterGroupName: t('public~Kind'),
-        type: 'role-binding-kind',
-        reducer: bindingType,
-        filter: (filter, binding) =>
-          filter.selected?.includes(bindingType(binding)) || !filter.selected?.length,
-        items: hasCRBindings
-          ? [
-              {
-                id: 'cluster',
-                title: t('public~Cluster-wide RoleBindings'),
-              },
-              { id: 'namespace', title: t('public~Namespace RoleBindings') },
-              { id: 'system', title: t('public~System RoleBindings') },
-            ]
-          : [
-              { id: 'namespace', title: t('public~Namespace RoleBindings') },
-              { id: 'system', title: t('public~System RoleBindings') },
-            ],
-      },
-    ],
-    [hasCRBindings, t],
-  );
-
-  const [staticData, filteredData, onFilterChange] = useListPageFilter(
-    data,
-    rowFilters,
-    staticFilters,
-  );
-
   return (
     <>
       <ListPageHeader title={showTitle ? t('public~RoleBindings') : undefined}>
@@ -304,20 +370,11 @@ export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
         )}
       </ListPageHeader>
       <ListPageBody>
-        <ListPageFilter
-          data={staticData}
-          loaded={loaded}
-          rowFilters={rowFilters}
-          onFilterChange={onFilterChange}
-          hideNameLabelFilters={hideNameLabelFilters}
-          hideLabelFilter={hideLabelFilter}
-          hideColumnManagement={hideColumnManagement}
-        />
         <BindingsList
-          data={filteredData}
+          data={data}
           loaded={loaded}
           loadError={resources.RoleBinding.loadError}
-          mock={mock}
+          staticFilters={staticFilters}
         />
       </ListPageBody>
     </>
@@ -774,6 +831,8 @@ export const CopyRoleBinding: React.FCC<EditRoleBindingProps> = ({ kind }) => {
 
 type BindingKind = (RoleBindingKind | ClusterRoleBindingKind) & { subject: Subject };
 
+type BindingFilters = ResourceFilters & { 'role-kind': string[] };
+
 type BindingProps = {
   binding: BindingKind;
 };
@@ -783,6 +842,7 @@ type BindingsListTableProps = {
   loaded: boolean;
   loadError: string;
   mock?: boolean;
+  staticFilters?: any;
 };
 
 type RoleBindingsPageProps = {

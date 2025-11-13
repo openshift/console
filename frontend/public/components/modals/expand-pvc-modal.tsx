@@ -3,20 +3,16 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import {
-  RequestSizeInput,
-  resourceObjPath,
-  validate,
-  convertToBaseValue,
-  humanizeBinaryBytesWithoutB,
-} from '../utils';
+import { RequestSizeInput } from '../utils/request-size-input';
+import { resourceObjPath } from '../utils/resource-link';
+import { validate, convertToBaseValue, humanizeBinaryBytesWithoutB } from '../utils/units';
 import { k8sPatch, referenceFor, K8sKind, K8sResourceKind } from '../../module/k8s/';
-import { getRequestedPVCSize } from '@console/shared';
+import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 // Modal for expanding persistent volume claims
-const ExpandPVCModal = (props: ExpandPVCModalProps) => {
-  const baseValue = convertToBaseValue(getRequestedPVCSize(props.resource));
+const ExpandPVCModal = ({ resource, kind, close, cancel }: ExpandPVCModalProps) => {
+  const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
   const defaultSize = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
   const [requestSizeValue, setRequestSizeValue] = useState(defaultSize[0] || '');
   const [requestSizeUnit, setRequestSizeUnit] = useState(defaultSize[1] || 'Gi');
@@ -41,23 +37,13 @@ const ExpandPVCModal = (props: ExpandPVCModalProps) => {
         },
       ];
 
-      handlePromise(k8sPatch(props.kind, props.resource, patch)).then((resource) => {
-        props.close();
-        navigate(resourceObjPath(resource, referenceFor(resource)));
+      handlePromise(k8sPatch(kind, resource, patch)).then((res) => {
+        close();
+        navigate(resourceObjPath(res, referenceFor(res)));
       });
     },
-    [
-      requestSizeValue,
-      requestSizeUnit,
-      props.kind,
-      props.resource,
-      props.close,
-      handlePromise,
-      navigate,
-    ],
+    [requestSizeValue, requestSizeUnit, kind, resource, close, handlePromise, navigate],
   );
-
-  const { kind, resource } = props;
 
   const dropdownUnits = {
     Mi: 'MiB',
@@ -93,7 +79,7 @@ const ExpandPVCModal = (props: ExpandPVCModalProps) => {
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitText={t('public~Expand')}
-        cancel={props.cancel}
+        cancel={cancel}
       />
     </form>
   );

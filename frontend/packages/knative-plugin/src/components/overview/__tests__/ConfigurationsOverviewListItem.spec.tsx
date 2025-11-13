@@ -3,7 +3,6 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { ConfigurationModel } from '../../../models';
 import { sampleKnativeConfigurations } from '../../../topology/__tests__/topology-knative-test-data';
 import ConfigurationsOverviewListItem from '../ConfigurationsOverviewListItem';
-import '@testing-library/jest-dom';
 
 jest.mock('@patternfly/react-core', () => ({
   ListItem: 'ListItem',

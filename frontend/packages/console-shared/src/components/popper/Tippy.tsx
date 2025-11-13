@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PopperJS, { PopperOptions } from 'popper.js';
-import { useEventListener } from '../../hooks';
+import { useEventListener } from '../../hooks/useEventListener';
 import Portal from './Portal';
 
 type TippyProps = {
@@ -23,6 +23,7 @@ type TippyProps = {
   tippyOptions?: PopperOptions;
   onShow?: (event: Event) => void;
   onHide?: (event: Event) => void;
+  children?: React.ReactNode;
 };
 
 export const Tippy: React.FC<TippyProps> = ({

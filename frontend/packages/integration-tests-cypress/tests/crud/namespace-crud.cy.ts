@@ -28,9 +28,9 @@ describe('Namespace', () => {
   it('lists, creates, and deletes', () => {
     cy.log('test Namespace list page');
     nav.sidenav.clickNavLink(['Administration', 'Namespaces']);
-    listPage.rows.shouldNotExist(newName);
-    listPage.filter.byName(testName);
-    listPage.rows.shouldExist(testName); // created via cy.createProjectWithCLI(testName) above
+    listPage.dvRows.shouldNotExist(newName);
+    listPage.dvFilter.byName(testName);
+    listPage.dvRows.shouldExist(testName); // created via cy.createProjectWithCLI(testName) above
     cy.testA11y('Namespace List page');
 
     cy.log('creates the Namespace');
@@ -44,9 +44,9 @@ describe('Namespace', () => {
 
     cy.log('delete the Namespace');
     nav.sidenav.clickNavLink(['Administration', 'Namespaces']);
-    listPage.filter.byName(newName);
-    listPage.rows.shouldExist(newName);
-    listPage.rows.clickKebabAction(newName, 'Delete Namespace');
+    listPage.dvFilter.byName(newName);
+    listPage.dvRows.shouldExist(newName);
+    listPage.dvRows.clickKebabAction(newName, 'Delete Namespace');
     modal.shouldBeOpened();
     cy.byTestID('project-name-input').type(newName);
     cy.testA11y('Delete Namespace modal');
@@ -59,34 +59,34 @@ describe('Namespace', () => {
     nav.sidenav.clickNavLink(['Workloads', 'Pods']);
     projectDropdown.selectProject(allProjectsDropdownLabel);
     projectDropdown.shouldContain(allProjectsDropdownLabel);
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
 
     cy.log(
       'List page to details page should change Project from "All Projects" to resource specific project',
     );
 
-    listPage.rows
+    listPage.dvRows
       .getFirstElementName()
       .invoke('text')
       .then((text) => {
-        listPage.filter.byName(text);
-        listPage.rows.countShouldBeWithin(1, 3);
-        listPage.rows.clickRowByName(text);
+        listPage.dvFilter.byName(text);
+        listPage.dvRows.countShouldBeWithin(1, 3);
+        listPage.dvRows.clickRowByName(text);
         detailsPage.isLoaded();
         projectDropdown.shouldNotContain(allProjectsDropdownLabel);
         nav.sidenav.clickNavLink(['Workloads', 'Pods']);
-        listPage.rows.shouldBeLoaded();
+        listPage.dvRows.shouldBeLoaded();
         projectDropdown.shouldContain(allProjectsDropdownLabel);
         cy.log(
           'Details page to list page via breadcrumb should change Project back to "All Projects"',
         );
-        listPage.filter.byName(text);
-        listPage.rows.countShouldBeWithin(1, 3);
-        listPage.rows.clickRowByName(text);
+        listPage.dvFilter.byName(text);
+        listPage.dvRows.countShouldBeWithin(1, 3);
+        listPage.dvRows.clickRowByName(text);
         detailsPage.isLoaded();
         projectDropdown.shouldNotContain(allProjectsDropdownLabel);
         detailsPage.breadcrumb(0).contains('Pods').click();
-        listPage.rows.shouldBeLoaded();
+        listPage.dvRows.shouldBeLoaded();
         projectDropdown.shouldContain(allProjectsDropdownLabel);
       });
   });
@@ -95,16 +95,16 @@ describe('Namespace', () => {
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     projectDropdown.selectProject(defaultProjectName);
     projectDropdown.shouldContain(defaultProjectName);
-    listPage.rows.clickFirstLinkInFirstRow();
+    listPage.dvRows.clickFirstLinkInFirstRow();
     detailsPage.isLoaded();
     projectDropdown.shouldContain(defaultProjectName);
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     projectDropdown.shouldContain(defaultProjectName);
-    listPage.rows.clickFirstLinkInFirstRow();
+    listPage.dvRows.clickFirstLinkInFirstRow();
     detailsPage.isLoaded();
     projectDropdown.shouldContain(defaultProjectName);
     detailsPage.breadcrumb(0).contains('Secrets').click();
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
     projectDropdown.shouldContain(defaultProjectName);
   });
 });

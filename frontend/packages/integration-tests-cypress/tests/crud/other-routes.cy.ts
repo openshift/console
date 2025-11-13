@@ -29,7 +29,7 @@ describe('Visiting other routes', () => {
     },
     {
       path: '/k8s/cluster/nodes',
-      waitFor: () => listPage.rows.shouldBeLoaded(),
+      waitFor: () => listPage.dvRows.shouldBeLoaded(),
     },
     {
       path: '/k8s/all-namespaces/events',
@@ -41,7 +41,7 @@ describe('Visiting other routes', () => {
     },
     {
       path: '/api-explorer',
-      waitFor: () => cy.get('[data-ouia-component-type$="TableRow"]').should('be.visible'),
+      waitFor: () => cy.get('[data-test="data-view-table"]').should('be.visible'),
     },
     {
       path: '/api-resource/ns/default/core~v1~Pod',
@@ -67,15 +67,15 @@ describe('Visiting other routes', () => {
           },
           {
             path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~Machine',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/cluster/machine.openshift.io~v1~ControlPlaneMachineSet',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineSet',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path:
@@ -84,19 +84,19 @@ describe('Visiting other routes', () => {
           },
           {
             path: '/k8s/ns/openshift-machine-api/machine.openshift.io~v1beta1~MachineHealthCheck',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfig',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfigPool',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/all-namespaces/monitoring.coreos.com~v1~Alertmanager',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
           {
             path: '/k8s/ns/openshift-monitoring/monitoring.coreos.com~v1~Alertmanager/main',
@@ -112,7 +112,7 @@ describe('Visiting other routes', () => {
           {
             // Test loading search page for a kind with no static model.
             path: '/search/all-namespaces?kind=config.openshift.io~v1~Console',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
+            waitFor: () => listPage.dvRows.shouldBeLoaded(),
           },
         ]
       : []),
@@ -140,7 +140,7 @@ describe('Test perspective query parameters', () => {
   beforeEach(() => {
     cy.initAdmin();
     cy.visit('/k8s/cluster/projects');
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
     guidedTour.close();
     checkDeveloperPerspective();
   });

@@ -12,7 +12,7 @@ import {
   humanizeBinaryBytes,
   humanizeNumber,
   humanizeDecimalBytesPerSec,
-} from '../../../utils';
+} from '../../../utils/units';
 
 export const ClusterUtilizationContext = React.createContext('.+');
 

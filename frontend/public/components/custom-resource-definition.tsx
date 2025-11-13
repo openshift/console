@@ -13,21 +13,17 @@ import {
 import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
 import { useTranslation } from 'react-i18next';
 
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { sortResourceByValue } from './factory/Table/sort';
-import {
-  AsyncComponent,
-  DetailsItem,
-  EmptyBox,
-  Kebab,
-  KebabAction,
-  LoadingBox,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-} from './utils';
+import { AsyncComponent } from './utils/async';
+import { DetailsItem } from './utils/details-item';
+import { EmptyBox, LoadingBox } from './utils/status-box';
+import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import {
   apiVersionCompare,
   CRDVersion,
@@ -35,18 +31,21 @@ import {
   getLatestVersionForCRD,
   K8sKind,
   referenceForCRD,
+  referenceForModel,
   TableColumn,
 } from '../module/k8s';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
 import { getResourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
-import { GreenCheckCircleIcon, DASH } from '@console/shared';
-import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
+  ResourceListPage,
+  isResourceListPage,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   DescriptionList,
@@ -61,8 +60,8 @@ import {
   cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 
 const { common } = Kebab.factory;
@@ -86,6 +85,8 @@ const isEstablished = (conditions: any[]) => {
 };
 
 const namespaced = (crd: CustomResourceDefinitionKind) => crd.spec.scope === 'Namespaced';
+
+const kind = referenceForModel(CustomResourceDefinitionModel);
 
 const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
   const { t } = useTranslation();
@@ -209,14 +210,10 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
 
 const Instances: React.FC<InstancesProps> = ({ obj, namespace }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-    isDynamicResourceListPage,
-  );
   const crdKind = referenceForCRD(obj);
-  const componentLoader = getResourceListPages(
-    resourceListPageExtensions,
-    dynamicResourceListPageExtensions,
-  ).get(crdKind, () => Promise.resolve(DefaultPage));
+  const componentLoader = getResourceListPages(resourceListPageExtensions).get(crdKind, () =>
+    Promise.resolve(DefaultPage),
+  );
   return (
     <AsyncComponent
       loader={componentLoader}
@@ -237,7 +234,7 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const useCustomResourceDefinitionsColumns = () => {
+const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefinitionKind>[] => {
   const { t } = useTranslation();
   const columns: TableColumn<CustomResourceDefinitionKind>[] = React.useMemo(() => {
     return [
@@ -314,7 +311,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> 
         cell: (
           <span className="co-resource-item">
             <ResourceLink
-              kind="CustomResourceDefinition"
+              groupVersionKind={getGroupVersionKindForModel(CustomResourceDefinitionModel)}
               name={name}
               namespace={namespace}
               displayName={displayName}
@@ -337,7 +334,11 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> 
       },
       [tableColumnInfo[5].id]: {
         cell: (
-          <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={obj} />
+          <ResourceKebab
+            actions={menuActions}
+            kind={CustomResourceDefinitionModel}
+            resource={obj}
+          />
         ),
         props: {
           ...actionsCellProps,
@@ -365,7 +366,7 @@ export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsL
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ConsoleDataView<CustomResourceDefinitionKind>
         {...props}
         label={CustomResourceDefinitionModel.labelPlural}
         data={data}
@@ -385,7 +386,7 @@ export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPa
   <ListPage
     {...props}
     ListComponent={CustomResourceDefinitionsList}
-    kind="CustomResourceDefinition"
+    kind={kind}
     canCreate={true}
     omitFilterToolbar={true}
   />
@@ -395,7 +396,7 @@ export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
   return (
     <DetailsPage
       {...props}
-      kind="CustomResourceDefinition"
+      kind={kind}
       menuActions={menuActions}
       pages={[
         navFactory.details(Details),

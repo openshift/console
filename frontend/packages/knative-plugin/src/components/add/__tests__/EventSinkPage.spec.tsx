@@ -7,7 +7,6 @@ import {
   mockNormalizedSink,
 } from '../__mocks__/Kamelet-data';
 import EventSinkPage from '../EventSinkPage';
-import '@testing-library/jest-dom';
 
 jest.mock('../../../hooks/useEventSinkStatus', () => ({
   useEventSinkStatus: jest.fn(),

@@ -3,18 +3,19 @@ import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom-v5-compat';
 
-import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardHeader, CardTitle, CardFooter, Divider } from '@patternfly/react-core';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { EventModel } from '../../../../models';
-import { FirehoseResource, FirehoseResult } from '../../../utils';
+import { FirehoseResource, FirehoseResult } from '../../../utils/types';
 import { EventKind, K8sKind } from '../../../../module/k8s';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  useExtensions,
   DashboardsOverviewResourceActivity,
   isDashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
@@ -28,7 +29,6 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from './utils';
 import { PrometheusResponse } from '../../../graphs';
-import { Link } from 'react-router-dom-v5-compat';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 const viewEvents = '/k8s/all-namespaces/events';
@@ -183,29 +183,49 @@ const OngoingActivity = connect(mapStateToProps)(
   ),
 );
 
+const RecentEventFooter = withDashboardResources(
+  ({ watchK8sResource, stopWatchK8sResource, resources }) => {
+    const { t } = useTranslation();
+    React.useEffect(() => {
+      watchK8sResource(eventsResource);
+      return () => {
+        stopWatchK8sResource(eventsResource);
+      };
+    }, [watchK8sResource, stopWatchK8sResource]);
+
+    const events = resources.events as FirehoseResult<EventKind[]>;
+    const shouldShowFooter = events?.loaded && events?.data && events.data.length > 50;
+
+    if (!shouldShowFooter) {
+      return null;
+    }
+
+    return (
+      <>
+        <Divider />
+        <CardFooter>
+          <Link to={viewEvents} data-test="events-view-all-link">
+            {t('console-shared~View all events')}
+          </Link>
+        </CardFooter>
+      </>
+    );
+  },
+);
+
 export const ActivityCard: React.FC<{}> = React.memo(() => {
   const { t } = useTranslation();
+
   return (
     <Card data-test-id="activity-card">
-      <CardHeader
-        actions={{
-          actions: (
-            <>
-              <Link to={viewEvents} data-test="view-events-link">
-                {t('public~View events')}
-              </Link>
-            </>
-          ),
-          hasNoOffset: false,
-          className: 'co-overview-card__actions',
-        }}
-      >
+      <CardHeader>
         <CardTitle>{t('public~Activity')}</CardTitle>
       </CardHeader>
       <ActivityBody className="co-overview-dashboard__activity-body">
         <OngoingActivity />
         <RecentEvent />
       </ActivityBody>
+      <RecentEventFooter />
     </Card>
   );
 });

@@ -19,17 +19,14 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import {
-  ACM_LINK_ID,
-  FLAGS,
-  useActiveNamespace,
-  useCopyCodeModal,
-  useCopyLoginCommands,
-  useFlag,
-  useTelemetry,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import { ACM_LINK_ID, FLAGS } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
+import { useCopyLoginCommands } from '@console/shared/src/hooks/useCopyLoginCommands';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { CloudShellMastheadButton } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
@@ -197,6 +194,10 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
 
   const handleGuidedTourClick = (e) => {
     e.preventDefault();
+    fireTelemetryEvent('launch-guided-tour-form-help', {
+      id: 'guided-tour-help',
+      perspective: activePerspective,
+    });
     tourDispatch({ type: TourActions.start });
   };
 

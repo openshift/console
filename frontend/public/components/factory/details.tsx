@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { useLocation, useParams, Location } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
-import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
 import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { ResourceTabPage, isResourceTabPage } from '@console/plugin-sdk/src/typings/pages';
 import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import {
-  ResourceTabPage as DynamicResourceTabPage,
-  isResourceTabPage as isDynamicResourceTabPage,
+  ResourceTabPage,
+  isResourceTabPage,
 } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import {
@@ -24,14 +23,14 @@ import {
   K8sResourceKind,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { Firehose } from '../utils/firehose';
-import { HorizontalNav, Page, PageComponentProps } from '../utils/horizontal-nav';
+import { HorizontalNav } from '../utils/horizontal-nav';
+import type { Page } from '../utils/horizontal-nav';
 import {
   ConnectedPageHeading,
   ConnectedPageHeadingProps,
   KebabOptionsCreator,
 } from '../utils/headings';
 import { FirehoseResource } from '../utils/types';
-import { AsyncComponent } from '../utils/async';
 import { KebabAction } from '../utils/kebab';
 import { K8sKind } from '../../module/k8s/types';
 import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -65,33 +64,16 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   const [pluginBreadcrumbs, setPluginBreadcrumbs] = React.useState(undefined);
   const [model] = useK8sModel(props.kind);
   const kindObj: K8sModel = props.kindObj ?? model;
-  const renderAsyncComponent = (page: ResourceTabPage, cProps: PageComponentProps) => (
-    <AsyncComponent loader={page.properties.loader} {...cProps} />
-  );
 
   const params = useParams();
   const location = useLocation();
 
-  const resourcePageExtensions = useExtensions<ResourceTabPage>(isResourceTabPage);
-  const [dynamicResourcePageExtensions] = useResolvedExtensions<DynamicResourceTabPage>(
-    isDynamicResourceTabPage,
-  );
+  const [resourcePageExtensions] = useResolvedExtensions<ResourceTabPage>(isResourceTabPage);
 
   const pluginPages = React.useMemo(
     () => [
-      ...resourcePageExtensions
-        .filter(
-          (p) =>
-            referenceForModel(p.properties.model) ===
-            (kindObj ? referenceForModel(kindObj) : props.kind),
-        )
-        .map((p) => ({
-          href: p.properties.href,
-          name: p.properties.name,
-          component: (cProps) => renderAsyncComponent(p, cProps),
-        })),
       /** @deprecated -- if there is a bug here, encourage `console.tab/horizontalNav` usage instead */
-      ...dynamicResourcePageExtensions
+      ...resourcePageExtensions
         .filter((p) => {
           if (p.properties.model.version) {
             return (
@@ -110,7 +92,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           component: (cProps) => <Component {...cProps} />,
         })),
     ],
-    [resourcePageExtensions, dynamicResourcePageExtensions, kindObj, props.kind],
+    [resourcePageExtensions, kindObj, props.kind],
   );
   const resolvedBreadcrumbExtension = useBreadCrumbsForDetailPage(kindObj);
   const onBreadcrumbsResolved = React.useCallback((breadcrumbs) => {

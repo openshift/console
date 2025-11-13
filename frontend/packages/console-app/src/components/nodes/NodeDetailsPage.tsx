@@ -2,7 +2,8 @@ import * as React from 'react';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { PodsPage } from '@console/internal/components/pod';
-import { navFactory, PageComponentProps } from '@console/internal/components/utils';
+import { navFactory } from '@console/internal/components/utils/horizontal-nav';
+import type { PageComponentProps } from '@console/internal/components/utils/horizontal-nav';
 import { K8sModel, NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   ActionMenu,

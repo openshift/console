@@ -1,10 +1,7 @@
-import { configure, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { ImageTag } from '@console/dev-console/src/utils/imagestream-utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import UploadJar from '../UploadJar';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('formik', () => ({
   Formik: (props) => `Formik initialValues=${JSON.stringify(props.initialValues)}`,
@@ -31,14 +28,14 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
   WatchK8sResultsObject: {},
 }));
 
-jest.mock('@console/shared/src/hooks/post-form-submit-action', () => ({
-  usePostFormSubmitAction: jest.fn(() => jest.fn()),
+jest.mock('@console/shared/src/hooks/useResourceConnectionHandler', () => ({
+  useResourceConnectionHandler: jest.fn(() => jest.fn()),
 }));
 
 jest.mock('@console/shared/src', () => ({
   ALL_APPLICATIONS_KEY: '',
   usePerspectives: jest.fn(() => []),
-  usePostFormSubmitAction: jest.fn(() => jest.fn()),
+  useResourceConnectionHandler: jest.fn(() => jest.fn()),
 }));
 
 jest.mock('../useUploadJarFormToast', () => ({

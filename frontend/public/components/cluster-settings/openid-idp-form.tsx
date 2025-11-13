@@ -7,7 +7,8 @@ import { ActionGroup, Button, Title } from '@patternfly/react-core';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, OAuthKind } from '../../module/k8s';
-import { ButtonBar, ListInput } from '../utils';
+import { ButtonBar } from '../utils/button-bar';
+import { ListInput } from '../utils/list-input';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
@@ -253,7 +254,7 @@ export const AddOpenIDIDPPage = () => {
             />
           </div>
           <div className="co-form-section__separator" />
-          <div data-testid="openid-more-options-list-input">
+          <div data-test="openid-more-options-list-input">
             <Title headingLevel="h3" className="pf-v6-u-mb-sm">
               {t('public~More options')}
             </Title>

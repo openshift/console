@@ -2,7 +2,6 @@ import { render } from '@testing-library/react';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import { getKnativeRoutesLinks } from '../../../utils/resource-overview-utils';
 import KSRouteSplitListItem from '../KSRouteSplitListItem';
-import '@testing-library/jest-dom';
 
 jest.mock('@patternfly/react-core', () => ({
   ListItem: 'ListItem',

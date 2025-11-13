@@ -31,3 +31,28 @@ export const displayDurationInWords = (start: string, stop: string): string => {
   }
   return durationInWords.trim();
 };
+
+export enum BuildStrategyType {
+  Docker = 'Docker',
+  Devfile = 'Devfile',
+  Custom = 'Custom',
+  JenkinsPipeline = 'JenkinsPipeline',
+  Source = 'Source',
+}
+
+export const getStrategyType = (strategy: BuildStrategyType) => {
+  switch (strategy) {
+    case BuildStrategyType.Docker:
+      return 'dockerStrategy';
+    case BuildStrategyType.Devfile:
+      return 'devfileStrategy';
+    case BuildStrategyType.Custom:
+      return 'customStrategy';
+    case BuildStrategyType.JenkinsPipeline:
+      return 'jenkinsPipelineStrategy';
+    case BuildStrategyType.Source:
+      return 'sourceStrategy';
+    default:
+      return null;
+  }
+};

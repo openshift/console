@@ -7,7 +7,7 @@ import {
   ValidatedOptions,
 } from '@patternfly/react-core';
 import { useField } from 'formik';
-import { useFormikValidationFix } from '../../hooks';
+import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { BaseInputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -25,6 +25,7 @@ const BaseInputField: React.FC<
   onBlur,
   helpTextInvalid,
   validated,
+  isReadOnly,
   ...props
 }) => {
   const [field, { touched, error }] = useField({ name, type: 'input' });
@@ -38,6 +39,7 @@ const BaseInputField: React.FC<
       {children({
         ...field,
         ...props,
+        ...(isReadOnly !== undefined && { readOnly: isReadOnly }),
         value: field.value || '',
         id: fieldId,
         label,

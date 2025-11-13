@@ -10,7 +10,7 @@ import {
 } from '@console/internal/components/factory/modal';
 import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { K8sModel, OAuthKind } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 const RemoveIdentityProviderModalComponent = ({

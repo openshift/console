@@ -59,7 +59,7 @@ const getCycleStats = (cycles: DetectedCycle[]): string => {
       return acc;
     }, {} as ItemCount);
 
-  const topIndexFiles = cycles.reduce((acc, c) => {
+  const topBarrelFiles = cycles.reduce((acc, c) => {
     c.modulePaths
       .slice(1, -1) // exclude outer edges
       .filter((p) => /\/index\.tsx?$/.test(p))
@@ -74,8 +74,10 @@ const getCycleStats = (cycles: DetectedCycle[]): string => {
   lines.push('\nCycle count per directory:\n');
   lines.push(...sortedEntries(cycleCountByDir).map(([dir, count]) => `  ${dir} (${count})\n`));
 
-  lines.push('\nBarrel files occurring within cycles:\n');
-  lines.push(...sortedEntries(topIndexFiles).map(([file, count]) => `  ${file} (${count})\n`));
+  if (Object.keys(topBarrelFiles).length > 0) {
+    lines.push('\nBarrel files occurring within cycles:\n');
+    lines.push(...sortedEntries(topBarrelFiles).map(([file, count]) => `  ${file} (${count})\n`));
+  }
 
   return lines.join('');
 };

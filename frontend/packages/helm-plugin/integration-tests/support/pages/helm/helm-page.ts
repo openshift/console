@@ -10,7 +10,9 @@ export const helmPage = {
       .contains('Browse the catalog to discover available Helm Charts')
       .should('be.visible'),
   search: (name: string) => {
-    cy.get(helmPO.search).clear().type(name);
+    cy.get(helmPO.filters).within(() => cy.get('.pf-v6-c-menu-toggle').first().click());
+    cy.get('.pf-v6-c-menu__list-item').contains('Name').click();
+    cy.get('[aria-label="Name filter"]').clear().type(name);
   },
   verifyHelmReleasesDisplayed: () => cy.get(helmPO.table).should('be.visible'),
   clickHelmReleaseName: (name: string) => cy.get(`a[title="${name}"]`).click(),
@@ -70,23 +72,27 @@ export const helmPage = {
   verifySearchMessage: (message: string) =>
     cy.get(helmPO.noHelmSearchMessage).should('contain.text', message),
   selectHelmFilterDropDown: () => {
-    // eslint-disable-next-line promise/catch-or-return
-    cy.get(helmPO.filterToolBar).then((body) => {
-      if (body.find(helmPO.filterDropdownDialog).length <= 0) {
-        cy.get(helmPO.filterDropdown).click();
-      }
-    });
+    cy.get(helmPO.filters).within(() => cy.get('.pf-v6-c-menu-toggle').first().click());
+    cy.get('.pf-v6-c-menu__list-item').contains('Status').click();
   },
-
+  selectHelmFilterOption: (filterName: string) => {
+    cy.get(helmPO.filterDropdown).click();
+    cy.get(`[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${filterName}"]`).click();
+    cy.url().should('include', `=${filterName}`);
+    cy.get(helmPO.filterDropdown).click();
+  },
   getItemFromReleaseTable: (header: string) => {
     cy.get(helmPO.table)
-      .find(`[data-index="0"]`)
+      .find('[data-test="data-view-cell-helm-release-name"]')
+      .first()
       .should('be.visible')
-      .find(`[role=gridcell]`)
+      .parent()
+      .find('[data-test="status-text"]')
       .should('contain.text', header);
   },
   verifyHelmFilterUnSelected: (filterName: string) => {
     helmPage.selectHelmFilterDropDown();
+    cy.get(helmPO.filterDropdown).click();
     switch (filterName) {
       case 'Deployed': {
         cy.get(helmPO.deployedCheckbox).uncheck().should('not.be.checked');
@@ -113,6 +119,7 @@ export const helmPage = {
   },
   verifyHelmFilterSelected: (filterName: string) => {
     helmPage.selectHelmFilterDropDown();
+    cy.get(helmPO.filterDropdown).click();
     switch (filterName) {
       case 'Deployed': {
         cy.get(helmPO.deployedCheckbox).should('be.checked');
@@ -169,14 +176,8 @@ export const helmPage = {
     cy.get('a').contains(installLink).should('be.visible'),
   verifyDropdownItem: (item1: string, item2: string, item3: string) => {
     cy.get(helmPO.filterDropdown).click();
-    cy.get(helmPO.filter.pendingInstall).within(() => {
-      cy.get(helmPO.filterDropdownItem).should('contain.text', item1);
-    });
-    cy.get(helmPO.filter.pendingUpgrade).within(() => {
-      cy.get(helmPO.filterDropdownItem).should('contain.text', item2);
-    });
-    cy.get(helmPO.filter.pendingRollback).within(() => {
-      cy.get(helmPO.filterDropdownItem).should('contain.text', item3);
-    });
+    cy.get(helmPO.filter.pendingInstall).should('contain.text', item1);
+    cy.get(helmPO.filter.pendingUpgrade).should('contain.text', item2);
+    cy.get(helmPO.filter.pendingRollback).should('contain.text', item3);
   },
 };

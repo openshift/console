@@ -17,16 +17,15 @@ import {
   UserPreferenceItem,
   isUserPreferenceItem,
 } from '@console/dynamic-plugin-sdk';
-import { LoadingBox, history } from '@console/internal/components/utils';
-import { useExtensions } from '@console/plugin-sdk/src';
-import {
-  isModifiedEvent,
-  orderExtensionBasedOnInsertBeforeAndAfter,
-  useQueryParams,
-  Spotlight,
-} from '@console/shared';
+import { history } from '@console/internal/components/utils/router';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import Spotlight from '@console/shared/src/components/spotlight/Spotlight';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
+import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
+import { isModifiedEvent } from '@console/shared/src/utils/utils';
 import { USER_PREFERENCES_BASE_URL } from './const';
 import {
   UserPreferenceTabGroup,
@@ -62,14 +61,20 @@ const UserPreferencePage: React.FC = () => {
   const [activeTabId, setActiveTabId] = useState<string>(initialTabId);
 
   const [userPreferenceTabs, userPreferenceTabContents] = useMemo<
-    [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]]
+    [
+      React.ReactElement<TabProps, React.JSXElementConstructor<TabProps>>[],
+      React.ReactElement<TabContentProps>[],
+    ]
   >(() => {
     const populatedUserPreferenceGroups: UserPreferenceTabGroup[] = getUserPreferenceGroups(
       sortedUserPreferenceGroups,
       sortedUserPreferenceItems,
     );
     const [tabs, tabContents] = populatedUserPreferenceGroups.reduce<
-      [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]]
+      [
+        React.ReactElement<TabProps, React.JSXElementConstructor<TabProps>>[],
+        React.ReactElement<TabContentProps>[],
+      ]
     >(
       (acc, currGroup) => {
         const { id, label, items } = currGroup;
@@ -151,7 +156,7 @@ const UserPreferencePage: React.FC = () => {
                 variant="secondary"
                 data-test="user-preferences tabs"
               >
-                <>{userPreferenceTabs}</>
+                {userPreferenceTabs}
               </Tabs>
             </div>
             <div className="co-user-preference-page-content__tab-content">

@@ -45,11 +45,7 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 		}
 	}
 
-	if len(tlsFiles) == 0 {
-		chartLocation = url
-	} else {
-		chartLocation = chartInfo.Name
-	}
+	chartLocation = url
 
 	cmd.ChartPathOptions.Version = chartInfo.Version
 	chartPath, err = cmd.ChartPathOptions.LocateChart(chartLocation, settings)

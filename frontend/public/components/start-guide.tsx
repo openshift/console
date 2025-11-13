@@ -7,12 +7,14 @@ import { useTranslation } from 'react-i18next';
 import { FLAGS } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { openshiftHelpBase, LinkifyExternal, ConsoleEmptyState } from './utils';
+import { openshiftHelpBase } from './utils/documentation';
+import { LinkifyExternal } from './utils/link';
+import { ConsoleEmptyState } from './utils/status-box';
 import { ProjectModel } from '../models';
 import { K8sResourceKind } from '../module/k8s/types';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
-import { RootState } from '../redux';
-import { useFlag } from '@console/shared/src';
+import type { RootState } from '../redux';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterIcon } from '@patternfly/react-icons/dist/esm/icons/cluster-icon';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 

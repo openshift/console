@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-core';
 
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
-import { TextFilter } from './factory';
+import { TextFilter } from './factory/list-page';
 
 export enum searchFilterValues {
   // t('public~Label')

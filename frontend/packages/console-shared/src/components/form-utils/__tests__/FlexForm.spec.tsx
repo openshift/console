@@ -1,36 +1,62 @@
-import { TextInputTypes } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
-import InputField from '../../formik-fields/InputField';
+import { screen, fireEvent } from '@testing-library/react';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import FlexForm from '../FlexForm';
 
 describe('FlexForm', () => {
-  let wrapper: ShallowWrapper<any>;
-  beforeEach(() => {
-    wrapper = shallow(
-      <FlexForm onSubmit={() => {}}>
-        <InputField type={TextInputTypes.text} name="test-input" required />
-      </FlexForm>,
-    );
+  it('should render a form element', () => {
+    renderWithProviders(<FlexForm onSubmit={() => {}} aria-label="flex form" />);
+
+    const formElement = screen.getByRole('form', { name: 'flex form' });
+    expect(formElement).toBeVisible();
+    expect(formElement.tagName).toBe('FORM');
   });
 
-  it('it should add styles for flex layout', () => {
-    expect(wrapper.getElement().props.style).toEqual({
+  it('should add styles for flex layout', () => {
+    renderWithProviders(<FlexForm onSubmit={() => {}} aria-label="flex form" />);
+
+    const formElement = screen.getByRole('form', { name: 'flex form' });
+    expect(formElement).toHaveStyle({
       display: 'flex',
-      flex: 1,
+      flex: '1',
       flexDirection: 'column',
     });
   });
 
-  it('it should return original form props', () => {
-    expect(wrapper.getElement().props).toHaveProperty('onSubmit');
+  it('should preserve form props including onSubmit', () => {
+    const handleSubmit = jest.fn((e) => e.preventDefault());
+    renderWithProviders(<FlexForm onSubmit={handleSubmit} aria-label="flex form" />);
+
+    const formElement = screen.getByRole('form', { name: 'flex form' });
+    expect(formElement).toHaveAttribute('style');
+
+    fireEvent.submit(formElement);
+    expect(handleSubmit).toHaveBeenCalledTimes(1);
   });
 
-  it('it should return form component as a wrapper', () => {
-    expect(wrapper.is('form')).toEqual(true);
+  it('should render children correctly', () => {
+    renderWithProviders(
+      <FlexForm onSubmit={() => {}}>
+        <input type="text" name="test-input" />
+        <button type="submit">Submit</button>
+      </FlexForm>,
+    );
+
+    expect(screen.getByRole('textbox')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Submit' })).toBeVisible();
   });
 
-  it('it should contain inputfield as a children of content wrapper', () => {
-    const content = wrapper.children().at(0);
-    expect(content.is(InputField)).toEqual(true);
+  it('should handle form submission', () => {
+    const handleSubmit = jest.fn((e) => e.preventDefault());
+
+    renderWithProviders(
+      <FlexForm onSubmit={handleSubmit}>
+        <button type="submit">Submit</button>
+      </FlexForm>,
+    );
+
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
+    fireEvent.click(submitButton);
+
+    expect(handleSubmit).toHaveBeenCalledTimes(1);
   });
 });

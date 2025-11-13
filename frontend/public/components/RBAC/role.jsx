@@ -1,29 +1,36 @@
 import * as _ from 'lodash-es';
+import * as React from 'react';
 import { Component, useState, useMemo, useEffect } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import { RoleModel, RoleBindingModel } from '../../models';
-import { css } from '@patternfly/react-styles';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { sortable } from '@patternfly/react-table';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { BindingName, BindingsList, flatten as bindingsFlatten } from './bindings';
+import { BindingName, flatten as bindingsFlatten } from './bindings';
 import { RulesList } from './rules';
-import { DetailsPage, MultiListPage, TextFilter, Table, TableData } from '../factory';
+import { DetailsPage } from '../factory/details';
+import { MultiListPage, TextFilter } from '../factory/list-page';
 import {
-  Kebab,
-  SectionHeading,
-  ConsoleEmptyState,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  resourceListPathFromModel,
-} from '../utils';
+  ConsoleDataView,
+  getNameCellProps,
+  actionsCellProps,
+  cellIsStickyProps,
+  initialFiltersDefault,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
+import { tableFilters } from '../factory/table-filters';
+import { Kebab, ResourceKebab } from '../utils/kebab';
+import { SectionHeading } from '../utils/headings';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
+import { navFactory } from '../utils/horizontal-nav';
+import { ResourceLink, resourceListPathFromModel } from '../utils/resource-link';
+import { LoadingBox } from '../utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -61,30 +68,44 @@ const menuActions = [
   Kebab.factory.Delete,
 ];
 
-const roleColumnClasses = ['', '', Kebab.columnClass];
+const tableColumnInfo = [{ id: 'name' }, { id: 'namespace-always-show' }, { id: 'actions' }];
 
-const RolesTableRow = ({ obj: role }) => {
-  return (
-    <>
-      <TableData className={roleColumnClasses[0]}>
-        <ResourceLink
-          kind={roleKind(role)}
-          name={role.metadata.name}
-          namespace={role.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(roleColumnClasses[1], 'co-break-word')}>
-        {role.metadata.namespace ? (
+const getDataViewRows = (data, columns) => {
+  return data.map(({ obj: role }) => {
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            kind={roleKind(role)}
+            name={role.metadata.name}
+            namespace={role.metadata.namespace}
+          />
+        ),
+        props: getNameCellProps(role.metadata.name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: role.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={role.metadata.namespace} />
         ) : (
           i18next.t('public~All namespaces')
-        )}
-      </TableData>
-      <TableData className={roleColumnClasses[2]}>
-        <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />
-      </TableData>
-    </>
-  );
+        ),
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || null;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
 };
 
 class Details extends Component {
@@ -165,66 +186,130 @@ class Details extends Component {
 }
 const DetailsWithTranslation = withTranslation()(Details);
 
-const bindingsColumnClasses = [
-  'pf-v6-u-w-33-on-sm',
-  'pf-v6-u-w-16-on-sm',
-  'pf-v6-u-w-33-on-sm',
-  'pf-v6-u-w-16-on-sm',
+const bindingsTableColumnInfo = [
+  { id: 'name' },
+  { id: 'subjectKind' },
+  { id: 'subjectName' },
+  { id: 'namespace-always-show' },
 ];
 
-const BindingsTableRow = ({ obj: binding }) => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <TableData className={bindingsColumnClasses[0]}>
-        <BindingName binding={binding} />
-      </TableData>
-      <TableData className={bindingsColumnClasses[1]}>{binding.subject.kind}</TableData>
-      <TableData className={bindingsColumnClasses[2]}>{binding.subject.name}</TableData>
-      <TableData className={bindingsColumnClasses[3]}>
-        {binding.metadata.namespace ? (
+const getBindingsDataViewRows = (data, columns) => {
+  return data.map(({ obj: binding }) => {
+    const rowCells = {
+      [bindingsTableColumnInfo[0].id]: {
+        cell: <BindingName binding={binding} />,
+        props: getNameCellProps(binding.metadata.name),
+      },
+      [bindingsTableColumnInfo[1].id]: {
+        cell: binding.subject.kind,
+      },
+      [bindingsTableColumnInfo[2].id]: {
+        cell: binding.subject.name,
+      },
+      [bindingsTableColumnInfo[3].id]: {
+        cell: binding.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
         ) : (
-          t('public~All namespaces')
-        )}
-      </TableData>
-    </>
+          i18next.t('public~All namespaces')
+        ),
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
+};
+
+const useBindingsColumns = () => {
+  const { t } = useTranslation();
+  return React.useMemo(
+    () => [
+      {
+        title: t('public~Name'),
+        id: bindingsTableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Subject kind'),
+        id: bindingsTableColumnInfo[1].id,
+        sort: 'subject.kind',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Subject name'),
+        id: bindingsTableColumnInfo[2].id,
+        sort: 'subject.name',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: bindingsTableColumnInfo[3].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+    ],
+    [t],
   );
 };
 
 const BindingsListComponent = (props) => {
   const { t } = useTranslation();
-  const BindingsTableHeader = () => {
-    return [
-      {
-        title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: bindingsColumnClasses[0] },
-      },
-      {
-        title: t('public~Subject kind'),
-        sortField: 'subject.kind',
-        transforms: [sortable],
-        props: { className: bindingsColumnClasses[1] },
-      },
-      {
-        title: t('public~Subject name'),
-        sortField: 'subject.name',
-        transforms: [sortable],
-        props: { className: bindingsColumnClasses[2] },
-      },
-      {
-        title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: bindingsColumnClasses[3] },
-      },
-    ];
-  };
-  BindingsTableHeader.displayName = 'BindingsTableHeader';
+  const columns = useBindingsColumns();
 
-  return <BindingsList {...props} Header={BindingsTableHeader} Row={BindingsTableRow} />;
+  const { data, loaded, staticFilters } = props;
+
+  // Apply staticFilters to filter the data using table filters
+  const filteredData = React.useMemo(() => {
+    if (!staticFilters || !data) {
+      return data;
+    }
+
+    const filtersMap = tableFilters(false); // false for fuzzy search
+
+    return data.filter((binding) => {
+      return staticFilters.every((filter) => {
+        const filterKey = Object.keys(filter)[0];
+        const filterValue = filter[filterKey];
+
+        // Use the table filter function if it exists
+        if (filtersMap[filterKey]) {
+          return filtersMap[filterKey](filterValue, binding);
+        }
+      });
+    });
+  }, [data, staticFilters]);
+
+  return (
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView
+        {...props}
+        data={filteredData}
+        loaded={loaded}
+        label={t('public~RoleBindings')}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getBindingsDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
+  );
 };
 
 export const BindingsForRolePage = (props) => {
@@ -254,10 +339,9 @@ export const BindingsForRolePage = (props) => {
         { 'role-binding-roleRef-kind': kind },
       ]}
       resources={resources}
-      textFilter="role-binding"
-      filterLabel={t('public~by role or subject')}
       namespace={ns}
       flatten={bindingsFlatten}
+      omitFilterToolbar={true}
     />
   );
 };
@@ -319,46 +403,34 @@ export const ClusterRoleBindingsDetailsPage = (props) => {
   );
 };
 
-const EmptyMsg = () => {
+const useRolesColumns = () => {
   const { t } = useTranslation();
-  return (
-    <ConsoleEmptyState title={t('public~No Roles found')}>
-      {t(
-        'public~Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a RoleBinding.',
-      )}
-    </ConsoleEmptyState>
-  );
-};
-
-const RolesList = (props) => {
-  const { t } = useTranslation();
-  const RolesTableHeader = () => {
-    return [
-      {
-        title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: roleColumnClasses[0] },
+  return [
+    {
+      title: t('public~Name'),
+      id: tableColumnInfo[0].id,
+      sort: 'metadata.name',
+      props: {
+        ...cellIsStickyProps,
+        modifier: 'nowrap',
       },
-      {
-        title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: roleColumnClasses[1] },
+    },
+    {
+      title: t('public~Namespace'),
+      id: tableColumnInfo[1].id,
+      sort: 'metadata.namespace',
+      props: {
+        modifier: 'nowrap',
       },
-      { title: '', props: { className: roleColumnClasses[2] } },
-    ];
-  };
-  return (
-    <Table
-      {...props}
-      aria-label={t('public~Roles')}
-      EmptyMsg={EmptyMsg}
-      Header={RolesTableHeader}
-      Row={RolesTableRow}
-      virtualize
-    />
-  );
+    },
+    {
+      title: '',
+      id: tableColumnInfo[2].id,
+      props: {
+        ...cellIsStickyProps,
+      },
+    },
+  ];
 };
 
 export const roleType = (role) => {
@@ -369,6 +441,76 @@ export const roleType = (role) => {
     return 'system';
   }
   return role.metadata.namespace ? 'namespace' : 'cluster';
+};
+
+const useRoleFilterOptions = () => {
+  const { t } = useTranslation();
+  return React.useMemo(() => {
+    return [
+      {
+        value: 'cluster',
+        label: t('public~Cluster-wide Roles'),
+      },
+      {
+        value: 'namespace',
+        label: t('public~Namespace Roles'),
+      },
+      {
+        value: 'system',
+        label: t('public~System Roles'),
+      },
+    ];
+  }, [t]);
+};
+
+const RolesList = (props) => {
+  const { t } = useTranslation();
+  const { data } = props;
+  const columns = useRolesColumns();
+  const roleFilterOptions = useRoleFilterOptions();
+
+  const additionalFilterNodes = React.useMemo(
+    () => [
+      <DataViewCheckboxFilter
+        key="role-kind"
+        filterId="role-kind"
+        title={t('public~Role')}
+        placeholder={t('public~Filter by role')}
+        options={roleFilterOptions}
+      />,
+    ],
+    [roleFilterOptions, t],
+  );
+
+  const matchesAdditionalFilters = React.useCallback(
+    (resource, filters) =>
+      filters['role-kind'].length === 0 || filters['role-kind'].includes(roleType(resource)),
+    [],
+  );
+
+  return (
+    <React.Suspense fallback={<LoadingBox />}>
+      {data.length === 0 ? (
+        <ConsoleEmptyState title={t('public~No Roles found')}>
+          {t(
+            'public~Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a RoleBinding.',
+          )}
+        </ConsoleEmptyState>
+      ) : (
+        <ConsoleDataView
+          {...props}
+          data={data}
+          label={t('public~Roles')}
+          columns={columns}
+          getDataViewRows={getDataViewRows}
+          initialFilters={{ ...initialFiltersDefault, 'role-kind': [] }}
+          additionalFilterNodes={additionalFilterNodes}
+          matchesAdditionalFilters={matchesAdditionalFilters}
+          hideColumnManagement={true}
+        />
+      )}
+    </React.Suspense>
+  );
 };
 
 export const RolesPage = ({ namespace, mock, showTitle }) => {
@@ -431,20 +573,9 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
       createProps={{ to: `/k8s/ns/${createNS}/roles/~new` }}
       flatten={(resourcesData) => _.flatMap(resourcesData, 'data').filter((r) => !!r)}
       resources={resources}
-      rowFilters={[
-        {
-          filterGroupName: t('public~Role'),
-          type: 'role-kind',
-          reducer: roleType,
-          items: [
-            { id: 'cluster', title: t('public~Cluster-wide Roles') },
-            { id: 'namespace', title: t('public~Namespace Roles') },
-            { id: 'system', title: t('public~System Roles') },
-          ],
-        },
-      ]}
       title={t('public~Roles')}
       mock={mock}
+      omitFilterToolbar={true}
     />
   );
 };

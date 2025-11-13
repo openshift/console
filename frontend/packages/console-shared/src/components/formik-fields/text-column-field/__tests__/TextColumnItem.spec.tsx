@@ -1,14 +1,15 @@
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import { Formik } from 'formik';
+import { renderWithProviders } from '../../../../test-utils/unit-test-utils';
 import TextColumnItem from '../TextColumnItem';
-import TextColumnItemContent from '../TextColumnItemContent';
 import TextColumnItemWithDnd from '../TextColumnItemWithDnd';
 
 jest.mock('react-dnd', () => {
   const reactDnd = jest.requireActual('react-dnd');
   return {
     ...reactDnd,
-    useDrag: jest.fn(() => [{}, {}]),
-    useDrop: jest.fn(() => [{}, {}]),
+    useDrag: jest.fn(() => [{}, jest.fn(), jest.fn()]),
+    useDrop: jest.fn(() => [{ opacity: 1 }, jest.fn()]),
   };
 });
 
@@ -31,9 +32,17 @@ const mockArrayHelper = {
   pop: jest.fn(),
 };
 
+const renderInFormik = (component: React.ReactElement) => {
+  return renderWithProviders(
+    <Formik initialValues={{ fieldName: [''] }} onSubmit={jest.fn()}>
+      {component}
+    </Formik>,
+  );
+};
+
 describe('TextColumnItem', () => {
-  it('should render TextColumnItem', () => {
-    const wrapper = shallow(
+  it('should render TextColumnItem with input field and remove button', () => {
+    renderInFormik(
       <TextColumnItem
         name={'fieldName'}
         label={'label value'}
@@ -42,11 +51,13 @@ describe('TextColumnItem', () => {
         arrayHelpers={mockArrayHelper}
       />,
     );
-    expect(wrapper.isEmptyRender()).toBe(false);
+
+    expect(screen.getByRole('textbox')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Remove' })).toBeVisible();
   });
 
-  it('should not contain dndEnabled if the props is not passed', () => {
-    const wrapper = shallow(
+  it('should not show drag handle when dndEnabled is not passed', () => {
+    const { container } = renderInFormik(
       <TextColumnItem
         name={'fieldName'}
         label={'label value'}
@@ -55,14 +66,16 @@ describe('TextColumnItem', () => {
         arrayHelpers={mockArrayHelper}
       />,
     );
-    expect(wrapper.find(TextColumnItemContent).exists()).toBe(true);
-    expect(wrapper.find(TextColumnItemContent).props().dndEnabled).toBeUndefined();
+
+    // Drag handle is wrapped in a div with cursor: move style
+    const dragHandle = container.querySelector('[style*="cursor: move"]');
+    expect(dragHandle).not.toBeInTheDocument();
   });
 });
 
 describe('TextColumnItemWithDnd', () => {
-  it('should render TextColumnItemWithDnd', () => {
-    const wrapper = shallow(
+  it('should render TextColumnItemWithDnd with input field and remove button', () => {
+    renderInFormik(
       <TextColumnItemWithDnd
         name={'fieldName'}
         label={'label value'}
@@ -70,17 +83,14 @@ describe('TextColumnItemWithDnd', () => {
         rowValues={['']}
         arrayHelpers={mockArrayHelper}
       />,
-    )
-      .shallow()
-      .childAt(0)
-      .shallow();
+    );
 
-    expect(wrapper.isEmptyRender()).toBe(false);
-    expect(wrapper.find(TextColumnItemContent).exists()).toBe(true);
+    expect(screen.getByRole('textbox')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Remove' })).toBeVisible();
   });
 
-  it('should pass dndEnabled props to TextColumnItemContent', () => {
-    const wrapper = shallow(
+  it('should show drag handle when dndEnabled prop is passed', () => {
+    const { container } = renderInFormik(
       <TextColumnItemWithDnd
         name={'fieldName'}
         label={'label value'}
@@ -89,13 +99,9 @@ describe('TextColumnItemWithDnd', () => {
         dndEnabled
         arrayHelpers={mockArrayHelper}
       />,
-    )
-      .shallow()
-      .childAt(0)
-      .shallow();
-    expect(wrapper.find(TextColumnItemContent).exists()).toBe(true);
-    expect(wrapper.find(TextColumnItemContent).props().dndEnabled).toBe(true);
-    expect(wrapper.find(TextColumnItemContent).props().previewDropRef).not.toBe(null);
-    expect(wrapper.find(TextColumnItemContent).props().dragRef).not.toBe(null);
+    );
+
+    // Drag handle is wrapped in a div with cursor: move style
+    expect(container.querySelector('[style*="cursor: move"]')).toBeInTheDocument();
   });
 });

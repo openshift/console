@@ -1,4 +1,4 @@
-import { configure, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { useLocation } from 'react-router';
 import {
   IncompleteDataError,
@@ -6,8 +6,6 @@ import {
 } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { useFavoritesOptions } from '@console/internal/components/useFavoritesOptions';
 import { StatusBox } from '..';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('react-router-dom-v5-compat', () => ({
   useNavigate: jest.fn(),

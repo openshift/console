@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import * as _ from 'lodash';
 import { UnknownProps } from '../common-types';
 
@@ -29,7 +30,11 @@ type ComponentMap = {
   };
 };
 
-export const OverlayProvider: React.FC = ({ children }) => {
+interface OverlayProviderProps {
+  children?: ReactNode;
+}
+
+export const OverlayProvider: React.FC<OverlayProviderProps> = ({ children }) => {
   const [componentsMap, setComponentsMap] = React.useState<ComponentMap>({});
 
   const launchOverlay = React.useCallback<LaunchOverlay>((component, componentProps) => {

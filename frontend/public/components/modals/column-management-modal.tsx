@@ -15,10 +15,12 @@ import { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
 
 import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+} from '@console/shared/src/constants/common';
+import {
   WithUserSettingsCompatibilityProps,
   withUserSettingsCompatibility,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-} from '@console/shared';
+} from '@console/shared/src/hoc/withUserSettingsCompatibility';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
 
 export const MAX_VIEW_COLS = 9;
@@ -61,6 +63,11 @@ const DataListRow: React.FC<DataListRowProps> = ({
     </DataListItemRow>
   </DataListItem>
 );
+
+const NamespaceColumnHelpText: React.FCC = () => {
+  const { t } = useTranslation();
+  return t('public~The namespace column is only shown when in "All projects"');
+};
 
 export const ColumnManagementModal: React.FC<
   ColumnManagementModalProps & WithUserSettingsCompatibilityProps<object>
@@ -110,7 +117,7 @@ export const ColumnManagementModal: React.FC<
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle className="modal-header">{t('public~Manage columns')}</ModalTitle>
       <ModalBody>
-        {!noLimit && (
+        {!noLimit ? (
           <>
             <div className="co-m-form-row">
               <p>{t('public~Selected columns will appear in the table.')}</p>
@@ -124,11 +131,16 @@ export const ColumnManagementModal: React.FC<
                 })}
                 variant="info"
               >
-                {!columnLayout?.showNamespaceOverride &&
-                  t('public~The namespace column is only shown when in "All projects"')}
+                {!columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />}
               </Alert>
             </div>
           </>
+        ) : (
+          !columnLayout?.showNamespaceOverride && (
+            <div className="co-m-form-row">
+              <NamespaceColumnHelpText />
+            </div>
+          )
         )}
         <Grid hasGutter className="co-m-form-row">
           <GridItem sm={6}>

@@ -85,30 +85,25 @@ import {
   UpdateHistory,
 } from '../../module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import {
-  documentationURLs,
-  EmptyBox,
-  FieldLevelHelp,
-  Firehose,
-  FirehoseResource,
-  getDocumentationURL,
-  HorizontalNav,
-  isManaged,
-  ReleaseNotesLink,
-  ResourceLink,
-  resourcePathFromModel,
-  SectionHeading,
-  togglePaused,
-  UpstreamConfigDetailsItem,
-  useAccessReview,
-} from '../utils';
+import { documentationURLs, getDocumentationURL, isManaged } from '../utils/documentation';
+import { EmptyBox } from '../utils/status-box';
+import { FieldLevelHelp } from '../utils/field-level-help';
+import { Firehose } from '../utils/firehose';
+import type { FirehoseResource } from '../utils/types';
+import { HorizontalNav } from '../utils/horizontal-nav';
+import { ReleaseNotesLink } from '../utils/release-notes-link';
+import { ResourceLink, resourcePathFromModel } from '../utils/resource-link';
+import { SectionHeading } from '../utils/headings';
+import { togglePaused } from '../utils/workload-pause';
+import { UpstreamConfigDetailsItem } from '../utils/details-page';
+import { useAccessReview } from '../utils/rbac';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   isClusterExternallyManaged,
   useCanClusterUpgrade,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
+} from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
@@ -303,7 +298,7 @@ const ChannelHeader: React.FC<{}> = () => {
   );
 };
 
-const Channel: React.FC<ChannelProps> = ({ children, endOfLife }) => {
+const Channel: React.FCC<ChannelProps> = ({ children, endOfLife }) => {
   return (
     <div
       className={css('co-channel', {
@@ -316,11 +311,11 @@ const Channel: React.FC<ChannelProps> = ({ children, endOfLife }) => {
   );
 };
 
-const ChannelLine: React.FC<ChannelLineProps> = ({ children, start }) => {
+const ChannelLine: React.FCC<ChannelLineProps> = ({ children, start }) => {
   return <li className={css('co-channel-line', { 'co-channel-start': start })}>{children}</li>;
 };
 
-export const ChannelName: React.FC<ChannelNameProps> = ({ children, current }) => {
+export const ChannelName: React.FCC<ChannelNameProps> = ({ children, current }) => {
   return (
     <span
       className={css('co-channel-name', {
@@ -333,7 +328,7 @@ export const ChannelName: React.FC<ChannelNameProps> = ({ children, current }) =
   );
 };
 
-const ChannelPath: React.FC<ChannelPathProps> = ({ children, current }) => {
+const ChannelPath: React.FCC<ChannelPathProps> = ({ children, current }) => {
   return (
     <ul
       className={css('co-channel-path', {
@@ -432,11 +427,11 @@ const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({
   );
 };
 
-const UpdatesBar: React.FC<UpdatesBarProps> = ({ children }) => {
+const UpdatesBar: React.FCC<UpdatesBarProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-bar">{children}</div>;
 };
 
-export const UpdatesGroup: React.FC<UpdatesGroupProps> = ({ children, divided }) => {
+export const UpdatesGroup: React.FCC<UpdatesGroupProps> = ({ children, divided }) => {
   return (
     <div
       className={css('co-cluster-settings__updates-group', {
@@ -449,7 +444,7 @@ export const UpdatesGroup: React.FC<UpdatesGroupProps> = ({ children, divided })
   );
 };
 
-export const UpdatesProgress: React.FC<UpdatesProgressProps> = ({ children }) => {
+export const UpdatesProgress: React.FCC<UpdatesProgressProps> = ({ children }) => {
   return (
     <div className="co-cluster-settings__updates-progress" data-test="cv-updates-progress">
       {children}
@@ -457,7 +452,7 @@ export const UpdatesProgress: React.FC<UpdatesProgressProps> = ({ children }) =>
   );
 };
 
-const UpdatesType: React.FC<UpdatesTypeProps> = ({ children }) => {
+const UpdatesType: React.FCC<UpdatesTypeProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-type">{children}</div>;
 };
 

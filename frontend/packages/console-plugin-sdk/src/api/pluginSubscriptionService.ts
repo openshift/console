@@ -35,7 +35,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
   subscriptionServiceInitialized = true;
   getPluginStoreInstance = () => pluginStore;
 
-  const getExtensionsInUse = () => pluginStore.getExtensionsInUse();
+  const getExtensions = () => pluginStore.getExtensions();
   const getFlags = () => reduxStore.getState().FLAGS;
 
   type FeatureFlags = ReturnType<typeof getFlags>;
@@ -61,11 +61,11 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
   };
 
   onExtensionSubscriptionAdded = (sub) => {
-    invokeExtensionListener(sub, getExtensionsInUse(), getFlags());
+    invokeExtensionListener(sub, getExtensions(), getFlags());
   };
 
   onDynamicPluginListenerAdded = (listener) => {
-    listener(pluginStore.getDynamicPluginInfo());
+    listener(pluginStore.getPluginInfo());
   };
 
   let lastExtensions: Extension[] = null;
@@ -76,7 +76,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
       return;
     }
 
-    const nextExtensions = getExtensionsInUse();
+    const nextExtensions = getExtensions();
     const nextFlags = getFlags();
 
     if (_.isEqual(nextExtensions, lastExtensions) && nextFlags === lastFlags) {
@@ -98,7 +98,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
       return;
     }
 
-    const nextPluginEntries = pluginStore.getDynamicPluginInfo();
+    const nextPluginEntries = pluginStore.getPluginInfo();
 
     if (_.isEqual(nextPluginEntries, lastPluginEntries)) {
       return;
@@ -136,8 +136,7 @@ export const getPluginStore = (): PluginStore => {
  *
  * _Tip: need to access extensions in a React component?_
  * - **Yes**
- *   - Functional components: use `useExtensions` hook.
- *   - Class components: use `withExtensions` higher-order component.
+ *   - Use `useExtensions` hook.
  * - **No**
  *   - Use `subscribeToExtensions` function.
  *

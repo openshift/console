@@ -388,7 +388,7 @@ const NamespaceMenu: React.FC<{
 
 /* ****************************************** */
 
-const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
+export const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
   disabled,
   isProjects,
   onSelect,
@@ -443,5 +443,3 @@ type NamespaceDropdownProps = {
   shortCut?: string;
   selected?: string;
 };
-
-export default NamespaceDropdown;

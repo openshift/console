@@ -1,16 +1,23 @@
 import * as _ from 'lodash';
-import * as React from 'react';
+import {
+  FC,
+  ReactElement,
+  ReactNode,
+  MouseEvent,
+  Ref,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useDispatch } from 'react-redux';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
-import {
-  isNotLoadedDynamicPluginInfo,
-  useDynamicPluginInfo,
-  DynamicPluginInfo,
-} from '@console/plugin-sdk';
+import { isNotLoadedDynamicPluginInfo, DynamicPluginInfo } from '@console/plugin-sdk';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import * as UIActions from '@console/internal/actions/ui';
-import { resourcePath } from '@console/internal/components/utils';
+import { resourcePath } from '@console/internal/components/utils/resource-link';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 
 import { getClusterID } from '@console/internal/module/k8s/cluster-settings';
@@ -23,8 +30,8 @@ import { alertURL } from '@console/internal/components/monitoring/utils';
 import {
   BlueArrowCircleUpIcon,
   RedExclamationCircleIcon,
-  useCanClusterUpgrade,
-} from '@console/shared';
+} from '@console/shared/src/components/status/icons';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import {
   getAlertDescription,
   getAlertMessage,
@@ -68,19 +75,13 @@ import {
   splitClusterVersionChannel,
   VersionUpdate,
 } from '../module/k8s';
-import { LinkifyExternal } from './utils';
+import { LinkifyExternal } from './utils/link';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { NotificationTypes } from './utils/types';
 
-export enum NotificationTypes {
-  info = 'info',
-  warning = 'warning',
-  critical = 'danger',
-  success = 'success',
-}
-
-const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
+const AlertErrorState: FC<AlertErrorProps> = ({ errorText }) => {
   const { t } = useTranslation();
   return (
     <EmptyState
@@ -96,7 +97,7 @@ const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
   );
 };
 
-const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => {
+const AlertEmptyState: FC<AlertEmptyProps> = ({ drawerToggle }) => {
   const { t } = useTranslation();
   return (
     <EmptyState
@@ -149,7 +150,7 @@ const getUpdateNotificationEntries = (
   cv: ClusterVersionKind,
   pluginInfoEntries: DynamicPluginInfo[],
   itemOnClick: (location: string) => void,
-): React.ReactNode[] => {
+): ReactNode[] => {
   if (!cv || !canUpgrade) {
     return [];
   }
@@ -236,7 +237,7 @@ const getUpdateNotificationEntries = (
   return entries;
 };
 
-export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
+export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   isDrawerExpanded,
   onDrawerChange,
   drawerRef,
@@ -244,14 +245,14 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   const { t } = useTranslation();
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
-  const [pluginInfoEntries] = useDynamicPluginInfo();
+  const [pluginInfoEntries] = usePluginInfo();
   const dispatch = useDispatch();
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
   const launchModal = useModal();
-  const alertIds = React.useMemo(() => alerts?.map((alert) => alert.rule.name) || [], [alerts]);
+  const alertIds = useMemo(() => alerts?.map((alert) => alert.rule.name) || [], [alerts]);
   const [alertActionExtensions] = useResolvedExtensions<AlertAction>(
-    React.useCallback(
+    useCallback(
       (e): e is AlertAction => isAlertAction(e) && alertIds.includes(e.properties.alert),
       [alertIds],
     ),
@@ -266,20 +267,20 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     navigate(location);
   };
 
-  const alertActionExtensionsMap = React.useMemo(
-    () => getAlertActions(alertActionExtensions, navigate),
-    [alertActionExtensions, navigate],
-  );
+  const alertActionExtensionsMap = useMemo(() => getAlertActions(alertActionExtensions, navigate), [
+    alertActionExtensions,
+    navigate,
+  ]);
 
   const canUpgrade = useCanClusterUpgrade();
-  const updateList: React.ReactNode[] = getUpdateNotificationEntries(
+  const updateList: ReactNode[] = getUpdateNotificationEntries(
     canUpgrade,
     clusterVersion,
     pluginInfoEntries,
     itemOnClick,
   );
 
-  const [criticalAlerts, nonCriticalAlerts] = React.useMemo(() => {
+  const [criticalAlerts, nonCriticalAlerts] = useMemo(() => {
     const criticalAlertLabelSelector = new LabelSelector({ severity: AlertSeverity.Critical });
     return alerts.reduce<AlertAccumulator>(
       ([criticalAlertAcc, nonCriticalAlertAcc], alert) => {
@@ -293,10 +294,10 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
 
   const hasCriticalAlerts = criticalAlerts.length > 0;
   const hasNonCriticalAlerts = nonCriticalAlerts.length > 0;
-  const [isAlertExpanded, toggleAlertExpanded] = React.useState(hasCriticalAlerts);
-  const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = React.useState(true);
-  const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = React.useState(true);
-  React.useEffect(() => {
+  const [isAlertExpanded, toggleAlertExpanded] = useState(hasCriticalAlerts);
+  const [isNonCriticalAlertExpanded, toggleNonCriticalAlertExpanded] = useState(true);
+  const [isClusterUpdateExpanded, toggleClusterUpdateExpanded] = useState(true);
+  useEffect(() => {
     if (hasCriticalAlerts && isDrawerExpanded) {
       toggleAlertExpanded(true);
     }
@@ -305,7 +306,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     }
   }, [hasCriticalAlerts, hasNonCriticalAlerts, isDrawerExpanded]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     onDrawerChange();
   }, [isDrawerExpanded, onDrawerChange]);
 
@@ -315,7 +316,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     <AlertEmptyState drawerToggle={toggleNotificationDrawer} />
   );
 
-  const ItemActionButton: React.FC<ItemActionButtonProps> = ({ alert }) => {
+  const ItemActionButton: FC<ItemActionButtonProps> = ({ alert }) => {
     const action = alertActionExtensionsMap.get(alert.rule.name);
     if (!action?.action && !action?.text) {
       return null;
@@ -324,8 +325,8 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     return (
       <Button
         variant="link"
-        onClick={(_event: React.MouseEvent<Element, MouseEvent> | undefined) => {
-          _event.stopPropagation();
+        onClick={(event) => {
+          event.stopPropagation();
           toggleNotificationDrawer();
           action.action?.(alert, launchModal);
         }}
@@ -335,7 +336,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     );
   };
 
-  const criticalAlertCategory: React.ReactElement = (
+  const criticalAlertCategory: ReactElement = (
     <NotificationDrawerGroup
       key="critical-alerts"
       isExpanded={isAlertExpanded}
@@ -381,7 +382,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
       </NotificationDrawerList>
     </NotificationDrawerGroup>
   );
-  const nonCriticalAlertCategory: React.ReactElement =
+  const nonCriticalAlertCategory: ReactElement =
     nonCriticalAlerts.length > 0 ? (
       <NotificationDrawerGroup
         key="other-alerts"
@@ -432,7 +433,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
       <ServiceLevelNotification key="service-level-notification" clusterID={clusterID} />,
     );
   }
-  const recommendationsCategory: React.ReactElement = !_.isEmpty(updateList) ? (
+  const recommendationsCategory: ReactElement = !_.isEmpty(updateList) ? (
     <NotificationDrawerGroup
       key="recommendations"
       isExpanded={isClusterUpdateExpanded}
@@ -466,7 +467,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
 export type NotificationDrawerProps = {
   isDrawerExpanded: boolean;
   onDrawerChange: () => void;
-  drawerRef: React.Ref<HTMLElement>;
+  drawerRef: Ref<HTMLElement>;
 };
 
 type AlertErrorProps = {
@@ -474,7 +475,7 @@ type AlertErrorProps = {
 };
 
 type AlertEmptyProps = {
-  drawerToggle: (event: React.MouseEvent<HTMLElement>) => void;
+  drawerToggle: (event: MouseEvent<HTMLElement>) => void;
 };
 
 type AlertAccumulator = [Alert[], Alert[]];

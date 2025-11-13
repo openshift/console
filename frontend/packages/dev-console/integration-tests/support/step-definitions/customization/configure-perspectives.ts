@@ -60,6 +60,8 @@ When('user searches {string}', (value: string) => {
     if ($el.text().includes('operator.openshift.io')) {
       cy.wrap($el).contains('operator.openshift.io').click();
       cy.get('button[aria-label="Clear input value"]').should('be.visible').click();
+      // close the select so it doesn't block the items on the page
+      cy.get('body').click();
     }
   });
 });
@@ -68,9 +70,8 @@ When('user clicks on cluster', () => {
   cy.byTestID('cluster').should('be.visible').click({ force: true });
 });
 
-When('user selects {string} from actions menu', (item: string) => {
-  cy.byLegacyTestID('actions-menu-button').should('be.visible').click();
-  cy.get(`[data-test-action="${item}"] button`).should('be.visible').click();
+When('user clicks the {string} button in the page heading', (item: string) => {
+  cy.get(`button[data-test-action="${item}"]`).should('be.visible').click();
   cy.get('[data-test="page-heading"] h1').should('have.text', 'Cluster configuration');
 });
 

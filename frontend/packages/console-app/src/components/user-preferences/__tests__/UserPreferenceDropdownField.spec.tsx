@@ -1,13 +1,15 @@
-import { screen, configure, act } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
-import { useUserSettings } from '@console/shared';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import UserPreferenceDropdownField from '../UserPreferenceDropdownField';
 
-jest.mock('@console/shared', () => ({
-  ...jest.requireActual('@console/shared'),
-  useUserSettings: jest.fn(),
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: jest.fn(() => jest.fn()),
+}));
+
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  useUserSettings: jest.fn(),
 }));
 
 const mockUserSettings = useUserSettings as jest.Mock;
@@ -31,10 +33,6 @@ describe('UserPreferenceDropdownField', () => {
   ) => {
     mockUserSettings.mockReturnValue([userPreference, setValue, loaded]);
   };
-
-  beforeAll(() => {
-    configure({ testIdAttribute: 'data-test' });
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();

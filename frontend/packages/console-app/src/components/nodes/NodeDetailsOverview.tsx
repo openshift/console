@@ -12,15 +12,15 @@ import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
-  useAccessReview,
-  SectionHeading,
-  LabelList,
-  Kebab,
-  ResourceLink,
   cloudProviderNames,
   cloudProviderID,
-} from '@console/internal/components/utils';
+} from '@console/internal/components/utils/cloud-provider';
 import { DetailsItem } from '@console/internal/components/utils/details-item';
+import { SectionHeading } from '@console/internal/components/utils/headings';
+import { Kebab } from '@console/internal/components/utils/kebab';
+import { LabelList } from '@console/internal/components/utils/label-list';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ChartDonut } from '@patternfly/react-charts/victory';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   isPVCAlert,
   isPVCCreateProp,
@@ -14,33 +14,29 @@ import {
   PVCAlert,
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import {
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-  Status,
-  FLAGS,
-  calculateRadius,
-  getNamespace,
-  getName,
-  getRequestedPVCSize,
-  LazyActionMenu,
-  useFlag,
-} from '@console/shared';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Status } from '@console/shared/src/components/status/Status';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { calculateRadius } from '@console/shared/src/utils/pod-utils';
+import { getNamespace, getName } from '@console/shared/src/selectors/common';
+import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { PersistentVolumeClaimKind, referenceFor } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableData } from './factory';
-import {
-  Kebab,
-  navFactory,
-  SectionHeading,
-  ResourceLink,
-  ResourceSummary,
-  Selector,
-  humanizeBinaryBytes,
-  convertToBaseValue,
-} from './utils';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { Table, TableData } from './factory/table';
+import { Kebab } from './utils/kebab';
+import { navFactory } from './utils/horizontal-nav';
+import { SectionHeading } from './utils/headings';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { Selector } from './utils/selector';
+import { humanizeBinaryBytes, convertToBaseValue } from './utils/units';
 import { ResourceEventStream } from './events';
 import { PVCMetrics, setPVCMetrics } from '@console/internal/actions/ui';
 import { PrometheusEndpoint } from './graphs/helpers';

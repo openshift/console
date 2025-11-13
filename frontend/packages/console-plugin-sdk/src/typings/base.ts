@@ -9,11 +9,6 @@ import {
 export type { ExtensionFlags, Extension, ExtensionTypeGuard, LoadedExtension };
 
 /**
- * An extension that is always effective, regardless of feature flags.
- */
-export type AlwaysOnExtension<P extends {} = any> = Omit<Extension<P>, 'flags'>;
-
-/**
  * From plugin author perspective, a plugin is simply a list of extensions.
  *
  * Plugin metadata is stored in the `package.json` file of the corresponding
@@ -22,7 +17,7 @@ export type AlwaysOnExtension<P extends {} = any> = Omit<Extension<P>, 'flags'>;
  *
  * ```json
  *  {
- *    "name": "@console/demo-plugin",
+ *    "name": "@console/my-cool-plugin",
  *    "version": "0.0.0-fixed",
  *    // scripts, dependencies, etc.
  *    "consolePlugin": {
@@ -35,7 +30,7 @@ export type AlwaysOnExtension<P extends {} = any> = Omit<Extension<P>, 'flags'>;
  * represents the union of all the extension types consumed by the plugin:
  *
  * ```ts
- *  // packages/console-demo-plugin/src/plugin.ts
+ *  // packages/my-cool-plugin/src/plugin.ts
  *  import { Plugin } from '@console/plugin-sdk';
  *
  *  const plugin: Plugin<FooExtension | BarExtension> = [

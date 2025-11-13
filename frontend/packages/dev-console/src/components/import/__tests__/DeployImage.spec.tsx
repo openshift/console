@@ -1,11 +1,8 @@
-import { configure, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import DeployImage from '../DeployImage';
 import DeployImagePage from '../DeployImagePage';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-testid' });
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
@@ -21,8 +18,8 @@ jest.mock('react-i18next', () => ({
   withTranslation: () => (Component: React.ComponentType) => Component,
 }));
 
-jest.mock('@console/shared/src/hooks/post-form-submit-action', () => ({
-  usePostFormSubmitAction: () => () => {},
+jest.mock('@console/shared/src/hooks/useResourceConnectionHandler', () => ({
+  useResourceConnectionHandler: () => () => {},
 }));
 
 jest.mock('@console/internal/components/utils/rbac', () => ({

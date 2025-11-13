@@ -20,7 +20,9 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { getBadgeFromType, usePinnedResources } from '@console/shared';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
 import { ResourceListDropdown } from './resource-dropdown';
@@ -33,39 +35,33 @@ import {
   referenceForModel,
   K8sResourceKindReference,
 } from '../module/k8s';
-import {
-  LoadingBox,
-  ConsoleEmptyState,
-  ResourceIcon,
-  setQueryArgument,
-  AsyncComponent,
-} from './utils';
+import { LoadingBox, ConsoleEmptyState } from './utils/status-box';
+import { ResourceIcon } from './utils/resource-icon';
+import { setQueryArgument } from './utils/router';
+import { AsyncComponent } from './utils/async';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
-import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-  useActivePerspective,
-} from '@console/dynamic-plugin-sdk';
+  ResourceListPage,
+  isResourceListPage,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
   const { plural } = useParams<{ plural?: string }>();
   const [kindObj] = useK8sModel(kind || plural);
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-    isDynamicResourceListPage,
-  );
   if (!kindObj) {
     return <LoadingBox />;
   }
 
-  const componentLoader = getResourceListPages(
-    resourceListPageExtensions,
-    dynamicResourceListPageExtensions,
-  ).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
+  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
+    referenceForModel(kindObj),
+    () => Promise.resolve(DefaultPage),
+  );
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (
@@ -88,6 +84,7 @@ const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
 
 const SearchPage_: React.FC<SearchProps> = (props) => {
   const [perspective] = useActivePerspective();
+  const fireTelemetryEvent = useTelemetry();
   const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
   const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
   const [labelFilter, setLabelFilter] = React.useState([]);
@@ -130,6 +127,9 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 
   const updateSelectedItems = (selection: string) => {
     const updateItems = selectedItems;
+    fireTelemetryEvent('search-resource-selected', {
+      resource: selection,
+    });
     updateItems.has(selection) ? updateItems.delete(selection) : updateItems.add(selection);
     setSelectedItems(updateItems);
     setQueryArgument('kind', [...updateItems].join(','));

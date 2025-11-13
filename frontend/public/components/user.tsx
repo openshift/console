@@ -9,30 +9,39 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-import { sortable } from '@patternfly/react-table';
 
-import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
 import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { RoleBindingsPage } from './RBAC';
+import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
+import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink, resourcePathFromModel } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import {
-  Kebab,
-  KebabAction,
-  ConsoleEmptyState,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  resourcePathFromModel,
-} from './utils';
+  ConsoleDataView,
+  getNameCellProps,
+  actionsCellProps,
+  cellIsStickyProps,
+  initialFiltersDefault,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
+import { DASH } from '@console/shared/src/constants/ui';
 
 import { useTranslation } from 'react-i18next';
 
-const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'fullName' },
+  { id: 'identities' },
+  { id: 'actions' },
+];
 
 const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   const { t } = useTranslation();
@@ -62,23 +71,35 @@ const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
   );
 };
 
-const UserTableRow: React.FC<RowFunctionArgs<UserKind>> = ({ obj }) => {
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={referenceForModel(UserModel)} name={obj.metadata.name} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>{obj.fullName || '-'}</TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {_.map(obj.identities, (identity: string) => (
-          <div key={identity}>{identity}</div>
-        ))}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <UserKebab user={obj} />
-      </TableData>
-    </>
-  );
+const getDataViewRows: GetDataViewRows<UserKind, undefined> = (data, columns) => {
+  return data.map(({ obj: user }) => {
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={referenceForModel(UserModel)} name={user.metadata.name} />,
+        props: getNameCellProps(user.metadata.name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: user.fullName || DASH,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: _.map(user.identities, (identity: string) => <div key={identity}>{identity}</div>),
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <UserKebab user={user} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
 };
 
 const UsersHelpText = () => {
@@ -86,10 +107,6 @@ const UsersHelpText = () => {
   return <>{t('public~Users are automatically added the first time they log in.')}</>;
 };
 
-const EmptyMsg = () => {
-  const { t } = useTranslation();
-  return <ConsoleEmptyState title={t('public~No Users found')} />;
-};
 const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
 const NoDataEmptyMsgDetail = () => {
@@ -135,45 +152,67 @@ const NoDataEmptyMsg = () => {
   );
 };
 
-export const UserList: React.FC = (props) => {
+const useUsersColumns = () => {
   const { t } = useTranslation();
-  const UserTableHeader = () => {
-    return [
+  return React.useMemo(
+    () => [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Full name'),
-        sortField: 'fullName',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
+        id: tableColumnInfo[1].id,
+        sort: 'fullName',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Identities'),
-        sortField: 'identities[0]',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: 'identities[0]',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
       },
-    ];
-  };
-  UserTableHeader.displayName = 'UserTableHeader';
+    ],
+    [t],
+  );
+};
+
+export const UserList: React.FCC<UserListProps> = (props) => {
+  const { t } = useTranslation();
+  const columns = useUsersColumns();
+  const { data, loaded } = props;
+
+  // Show custom empty state when no users exist
+  if (loaded && (!data || data.length === 0)) {
+    return <NoDataEmptyMsg />;
+  }
+
   return (
-    <Table
-      {...props}
-      aria-label={t('public~Users')}
-      Header={UserTableHeader}
-      Row={UserTableRow}
-      EmptyMsg={EmptyMsg}
-      NoDataEmptyMsg={NoDataEmptyMsg}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<UserKind>
+        {...props}
+        data={data}
+        loaded={loaded}
+        label={t('public~Users')}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -187,6 +226,7 @@ export const UserPage: React.FC<UserPageProps> = (props) => {
       kind={referenceForModel(UserModel)}
       ListComponent={UserList}
       canCreate={false}
+      omitFilterToolbar={true}
     />
   );
 };
@@ -194,7 +234,7 @@ export const UserPage: React.FC<UserPageProps> = (props) => {
 const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   <RoleBindingsPage
     showTitle={false}
-    staticFilters={{ 'role-binding-user': obj.metadata.name }}
+    staticFilters={[{ 'role-binding-user': obj.metadata.name }]}
     name={obj.metadata.name}
     kind={obj.kind}
   />
@@ -271,4 +311,9 @@ type RoleBindingsTabProps = {
 
 type UserDetailsProps = {
   obj: UserKind;
+};
+
+type UserListProps = {
+  data: UserKind[];
+  loaded: boolean;
 };

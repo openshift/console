@@ -6,12 +6,17 @@ import thunk from 'redux-thunk';
 import { receivedResources } from '@console/internal/actions/k8s';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
 import { SDKReducers } from '../../../../app';
-import { setPluginStore } from '../../k8s-utils';
 import { useK8sModels } from '../useK8sModels';
 
 // Redux wrapper
 let store;
-const Wrapper: React.FC = ({ children }) => <Provider store={store}>{children}</Provider>;
+interface WrapperProps {
+  children?: React.ReactNode;
+}
+
+const Wrapper: React.FC<WrapperProps> = ({ children }) => (
+  <Provider store={store}>{children}</Provider>
+);
 
 // Object under test
 const modelUpdate = jest.fn();
@@ -19,8 +24,6 @@ const WatchModels: React.FC<{}> = () => {
   modelUpdate(...useK8sModels());
   return null;
 };
-
-setPluginStore({ getExtensionsInUse: () => [] });
 
 beforeEach(() => {
   store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));

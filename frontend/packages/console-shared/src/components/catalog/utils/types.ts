@@ -19,6 +19,7 @@ export enum CatalogQueryParams {
 }
 
 export enum CatalogSortOrder {
+  RELEVANCE = 'relevance',
   ASC = 'asc',
   DESC = 'desc',
 }

@@ -1,3 +1,4 @@
+import { cleanup } from '@testing-library/react';
 import {
   renderWithProviders,
   verifyInputField,
@@ -12,12 +13,16 @@ import {
 import { AddKeystonePage } from '../../cluster-settings/keystone-idp-form';
 
 describe('Add Identity Provider: Keystone Authentication', () => {
+  beforeAll(() => {
+    setupFileReaderMock();
+  });
+
   beforeEach(() => {
     renderWithProviders(<AddKeystonePage />);
   });
 
-  beforeAll(() => {
-    setupFileReaderMock();
+  afterEach(() => {
+    cleanup();
   });
 
   afterAll(() => {

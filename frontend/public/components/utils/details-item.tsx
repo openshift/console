@@ -141,6 +141,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
 
 export type DetailsItemProps = {
   canEdit?: boolean;
+  children?: React.ReactNode;
   defaultValue?: React.ReactNode;
   description?: string;
   editAsGroup?: boolean;

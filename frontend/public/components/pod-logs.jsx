@@ -2,16 +2,15 @@ import * as _ from 'lodash-es';
 import { Component } from 'react';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ContainerSelect } from './utils/container-select';
+import { getQueryArgument, setQueryArgument } from './utils/router';
 import {
-  ContainerSelect,
-  getQueryArgument,
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
   LOG_SOURCE_WAITING,
   ResourceLog,
-  setQueryArgument,
-} from './utils';
+} from './utils/resource-log';
 
 const containersToStatuses = ({ status }, containers) => {
   return _.reduce(

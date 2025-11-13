@@ -45,7 +45,7 @@ export const EndpointList: React.FC<EndpointListProps> = (props) => {
       </Thead>
       <Tbody>
         {props.endpoints ? (
-          props.endpoints.map((e) => <EndpointRow endpoint={e} key={e.port} />)
+          props.endpoints.map((e) => <EndpointRow endpoint={e} key={`${e.port}-${e.interval}`} />)
         ) : (
           <span className="pf-v6-u-text-color-subtle">{t('No endpoints')}</span>
         )}

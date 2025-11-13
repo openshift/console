@@ -9,6 +9,7 @@ interface KnativeServiceListViewNodeProps {
   item: Node;
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
+  children?: React.ReactNode;
 }
 
 const ObservedKnativeServiceListViewNode: React.FC<KnativeServiceListViewNodeProps> = ({

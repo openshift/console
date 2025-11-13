@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FC, MouseEvent, useEffect, useMemo, useRef, FormEvent, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { useLocation, useParams, Link, useSearchParams } from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
@@ -19,18 +19,24 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListDescription,
+  Pagination,
+  Bullseye,
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
-import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
-import { ALL_NAMESPACES_KEY, FLAGS, APIError, getTitleForNodeKind } from '@console/shared';
+import { ALL_NAMESPACES_KEY, FLAGS } from '@console/shared/src/constants/common';
+import { APIError } from '@console/shared/src/types/resource';
+import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
-import { Page, useAccessReview } from '@console/internal/components/utils';
+import { Page } from '@console/internal/components/utils/horizontal-nav';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DataView, DataViewTable, useDataViewPagination } from '@patternfly/react-data-view';
+import { InnerScrollContainer, Tbody, Tr, Td } from '@patternfly/react-table';
 
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
 import {
@@ -45,31 +51,26 @@ import {
   ResourceAccessReviewResponse,
 } from '../module/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
-import { RootState } from '../redux';
+import type { RootState } from '../redux';
 import { RowFilter } from './row-filter';
 import { DefaultPage } from './default-resource';
-import { Table, TextFilter } from './factory';
+import { TextFilter } from './factory/list-page';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
 import { getResourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
+import { AsyncComponent } from './utils/async';
+import { LoadError, LoadingBox } from './utils/status-box';
+import { HorizontalNav } from './utils/horizontal-nav';
+import { LinkifyExternal } from './utils/link';
+import { removeQueryArgument, setQueryArgument } from './utils/router';
+import { ResourceIcon } from './utils/resource-icon';
+import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  AsyncComponent,
-  EmptyBox,
-  HorizontalNav,
-  LinkifyExternal,
-  LoadError,
-  LoadingBox,
-  removeQueryArgument,
-  ResourceIcon,
-  ScrollToTopOnMount,
-  setQueryArgument,
-} from './utils';
-import { isResourceListPage, useExtensions, ResourceListPage } from '@console/plugin-sdk';
-import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
+  ResourceListPage,
+  isResourceListPage,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { getK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { ErrorPage404 } from './error';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
@@ -93,7 +94,7 @@ const getAPIResourceLink = (activeNamespace: string, model: K8sKind) => {
   return `/api-resource/ns/${activeNamespace}/${ref}`;
 };
 
-const APIResourceLink_: React.FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> = ({
+const APIResourceLink_: FC<APIResourceLinkStateProps & APIResourceLinkOwnProps> = ({
   activeNamespace,
   model,
 }) => {
@@ -114,12 +115,7 @@ const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOw
   mapStateToProps,
 )(APIResourceLink_);
 
-const EmptyAPIResourcesMsg: React.FC<{}> = () => {
-  const { t } = useTranslation();
-  return <EmptyBox label={t('public~API resources')} />;
-};
-
-const Group: React.FC<{ value: string }> = ({ value }) => {
+const Group: FC<{ value: string }> = ({ value }) => {
   if (!value) {
     return <>-</>;
   }
@@ -134,46 +130,24 @@ const Group: React.FC<{ value: string }> = ({ value }) => {
     </span>
   );
 };
-
-const tableClasses = [
-  'pf-v6-u-w-25-on-2xl',
-  'pf-v6-u-w-16-on-2xl',
-  'pf-v6-u-w-16-on-lg pf-v6-u-w-10-on-2xl',
-  'pf-m-hidden pf-m-visible-on-xl pf-v6-u-w-16-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg',
-];
-
-const APIResourceRows = ({ componentProps: { data } }) =>
-  _.map(data, (model: K8sKind) => [
-    {
-      title: <APIResourceLink model={model} />,
-      props: { className: tableClasses[0] },
-    },
-    {
-      title: (
-        <span className="co-select-to-copy">
-          <Group value={model.apiGroup} />
-        </span>
-      ),
-      props: { className: tableClasses[1] },
-    },
-    {
-      title: model.apiVersion,
-      props: { className: tableClasses[2] },
-    },
-    {
-      title: model.namespaced ? i18next.t('public~true') : i18next.t('public~false'),
-      props: { className: tableClasses[3] },
-    },
-    {
-      title: <div className="co-line-clamp">{getResourceDescription(model)}</div>,
-      props: { className: tableClasses[4] },
-    },
-  ]);
-
 const stateToProps = ({ k8s }) => ({
   models: k8s.getIn(['RESOURCES', 'models']),
 });
+
+const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
+  const { t } = useTranslation();
+  return (
+    <Tbody>
+      <Tr>
+        <Td colSpan={colSpan}>
+          <Bullseye>
+            {label ? t('public~No {{label}} found', { label }) : t('public~None found')}
+          </Bullseye>
+        </Td>
+      </Tr>
+    </Tbody>
+  );
+};
 
 const APIResourcesList = compose(
   withRouter,
@@ -184,6 +158,8 @@ const APIResourcesList = compose(
   const VERSION_PARAM = 'v';
   const TEXT_FILTER_PARAM = 'q';
   const SCOPE_PARAM = 's';
+  const SORT_BY_PARAM = 'sortBy';
+  const ORDER_BY_PARAM = 'orderBy';
   const search = new URLSearchParams(location.search);
   // Differentiate between an empty group and an unspecified param.
   const groupFilter = search.has(GROUP_PARAM) ? search.get(GROUP_PARAM) : ALL;
@@ -191,6 +167,48 @@ const APIResourcesList = compose(
   const textFilter = search.get(TEXT_FILTER_PARAM) || '';
   const scopeFilter = search.get(SCOPE_PARAM) || ALL;
   const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Pagination
+  const pagination = useDataViewPagination({
+    perPage: 50,
+    searchParams,
+    setSearchParams,
+  });
+
+  // Sorting state from URL
+  const sortByParam = search.get(SORT_BY_PARAM) || '0';
+  const orderByParam = search.get(ORDER_BY_PARAM) || 'asc';
+  const sortBy = useMemo(
+    () => ({
+      index: parseInt(sortByParam, 10),
+      direction: orderByParam === 'desc' ? 'desc' : ('asc' as 'asc' | 'desc'),
+    }),
+    [sortByParam, orderByParam],
+  );
+
+  // Reset pagination to page 1 when filters change
+  const prevFiltersRef = useRef({ groupFilter, versionFilter, textFilter, scopeFilter });
+  useEffect(() => {
+    const currentFilters = { groupFilter, versionFilter, textFilter, scopeFilter };
+    const prevFilters = prevFiltersRef.current;
+    const filtersChanged =
+      currentFilters.groupFilter !== prevFilters.groupFilter ||
+      currentFilters.versionFilter !== prevFilters.versionFilter ||
+      currentFilters.textFilter !== prevFilters.textFilter ||
+      currentFilters.scopeFilter !== prevFilters.scopeFilter;
+
+    if (filtersChanged && pagination.page > 1) {
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set('page', '1');
+        return newParams;
+      });
+    }
+
+    prevFiltersRef.current = currentFilters;
+  }, [groupFilter, versionFilter, textFilter, scopeFilter, pagination.page, setSearchParams]);
+
   // group options
   const groups: Set<string> = models.reduce((result: Set<string>, { apiGroup }) => {
     return apiGroup ? result.add(apiGroup) : result;
@@ -265,12 +283,76 @@ const APIResourcesList = compose(
     return true;
   });
 
-  // Put models with no API group (core k8s resources) at the top.
-  const sortedResources = _.sortBy(filteredResources.toArray(), [
-    ({ apiGroup }) => apiGroup || '1',
-    'apiVersion',
-    'kind',
-  ]);
+  // Sorting
+  const getSortableValue = (model: K8sKind, columnIndex: number) => {
+    switch (columnIndex) {
+      case 0: // Kind
+        return model.kind;
+      case 1: // Group
+        return model.apiGroup || '';
+      case 2: // Version
+        return model.apiVersion;
+      case 3: // Namespaced
+        return model.namespaced ? 'true' : 'false';
+      case 4: // Description
+        return getResourceDescription(model);
+      default:
+        return '';
+    }
+  };
+
+  const sortedResources = useMemo(() => {
+    const sorted = [...filteredResources.toArray()];
+
+    // Check if user has manually sorted (sortBy params exist in URL)
+    const hasUserSort = sortByParam !== '0' || orderByParam !== 'asc';
+
+    if (hasUserSort) {
+      // User-initiated sort
+      sorted.sort((a, b) => {
+        const aValue = getSortableValue(a, sortBy.index);
+        const bValue = getSortableValue(b, sortBy.index);
+        const compareResult = aValue.localeCompare(bValue);
+        return sortBy.direction === 'asc' ? compareResult : -compareResult;
+      });
+    } else {
+      // Default sort: resources with API group at top, then by version, then by kind
+      sorted.sort((a, b) => {
+        // First sort by presence of API group (resources with apiGroup come first)
+        const aGroup = a.apiGroup || '~'; // '~' sorts after alphanumeric
+        const bGroup = b.apiGroup || '~';
+        const groupCompare = aGroup.localeCompare(bGroup);
+        if (groupCompare !== 0) {
+          return groupCompare;
+        }
+
+        // Then by version
+        const versionCompare = a.apiVersion.localeCompare(b.apiVersion);
+        if (versionCompare !== 0) {
+          return versionCompare;
+        }
+
+        // Finally by kind
+        return a.kind.localeCompare(b.kind);
+      });
+    }
+
+    return sorted;
+  }, [filteredResources, sortBy, sortByParam, orderByParam]);
+
+  const paginatedResources = useMemo(() => {
+    return sortedResources.slice(
+      (pagination.page - 1) * pagination.perPage,
+      (pagination.page - 1) * pagination.perPage + pagination.perPage,
+    );
+  }, [sortedResources, pagination.page, pagination.perPage]);
+
+  const onSort = (_event: MouseEvent, index: number, direction: 'asc' | 'desc') => {
+    setQueryArgument(SORT_BY_PARAM, String(index));
+    setQueryArgument(ORDER_BY_PARAM, direction);
+  };
+
+  const bodyEmpty = useMemo(() => <BodyEmpty label={t('public~API resources')} colSpan={5} />, [t]);
 
   const updateURL = (k: string, v: string) => {
     if (v === ALL) {
@@ -289,37 +371,6 @@ const APIResourcesList = compose(
       setQueryArgument(TEXT_FILTER_PARAM, text);
     }
   };
-
-  const APIResourceHeader = () => [
-    {
-      title: t('public~Kind'),
-      sortField: 'kind',
-      transforms: [sortable],
-      props: { className: tableClasses[0] },
-    },
-    {
-      title: t('public~Group'),
-      sortField: 'apiGroup',
-      transforms: [sortable],
-      props: { className: tableClasses[1] },
-    },
-    {
-      title: t('public~Version'),
-      sortField: 'apiVersion',
-      transforms: [sortable],
-      props: { className: tableClasses[2] },
-    },
-    {
-      title: t('public~Namespaced'),
-      sortField: 'namespaced',
-      transforms: [sortable],
-      props: { className: tableClasses[3] },
-    },
-    {
-      title: t('public~Description'),
-      props: { className: tableClasses[4] },
-    },
-  ];
 
   return (
     <PaneBody>
@@ -368,23 +419,97 @@ const APIResourcesList = compose(
               onChange={(_event, value) => setTextFilter(value)}
             />
           </ToolbarItem>
+          <ToolbarItem variant="pagination">
+            <Pagination itemCount={sortedResources.length} {...pagination} isCompact />
+          </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
-      <Table
-        EmptyMsg={EmptyAPIResourcesMsg}
-        Header={APIResourceHeader}
-        Rows={APIResourceRows}
-        aria-label={t('public~API resources')}
-        data={sortedResources}
-        loaded={!!models.size}
-        virtualize={false}
-      />
+      <DataView
+        activeState={!models.size ? 'loading' : sortedResources.length === 0 ? 'empty' : undefined}
+      >
+        <InnerScrollContainer>
+          <DataViewTable
+            aria-label={t('public~API resources')}
+            columns={[
+              {
+                cell: t('public~Kind'),
+                props: {
+                  modifier: 'nowrap',
+                  width: 20,
+                  sort: {
+                    sortBy,
+                    onSort,
+                    columnIndex: 0,
+                  },
+                },
+              },
+              {
+                cell: t('public~Group'),
+                props: {
+                  modifier: 'nowrap',
+                  width: 15,
+                  sort: {
+                    sortBy,
+                    onSort,
+                    columnIndex: 1,
+                  },
+                },
+              },
+              {
+                cell: t('public~Version'),
+                props: {
+                  modifier: 'nowrap',
+                  sort: {
+                    sortBy,
+                    onSort,
+                    columnIndex: 2,
+                  },
+                },
+              },
+              {
+                cell: t('public~Namespaced'),
+                props: {
+                  modifier: 'nowrap',
+                  sort: {
+                    sortBy,
+                    onSort,
+                    columnIndex: 3,
+                  },
+                },
+              },
+              { cell: t('public~Description'), props: { modifier: 'nowrap' } },
+            ]}
+            rows={paginatedResources.map((model: K8sKind) => [
+              <APIResourceLink key={model.kind} model={model} />,
+              <span key="group" className="co-select-to-copy">
+                <Group value={model.apiGroup} />
+              </span>,
+              model.apiVersion,
+              model.namespaced ? t('public~true') : t('public~false'),
+              <div key="description" className="co-line-clamp">
+                {getResourceDescription(model)}
+              </div>,
+            ])}
+            bodyStates={{ empty: bodyEmpty }}
+            gridBreakPoint=""
+            variant="compact"
+            data-test="data-view-table"
+          />
+        </InnerScrollContainer>
+      </DataView>
+      <Toolbar>
+        <ToolbarContent>
+          <ToolbarItem variant="pagination">
+            <Pagination itemCount={sortedResources.length} {...pagination} variant="bottom" />
+          </ToolbarItem>
+        </ToolbarContent>
+      </Toolbar>
     </PaneBody>
   );
 });
 APIResourcesList.displayName = 'APIResourcesList';
 
-export const APIExplorerPage: React.FC<{}> = () => {
+export const APIExplorerPage: FC<{}> = () => {
   const { t } = useTranslation();
   const title = t('public~API Explorer');
   return (
@@ -397,7 +522,7 @@ export const APIExplorerPage: React.FC<{}> = () => {
 };
 APIExplorerPage.displayName = 'APIExplorerPage';
 
-const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
+const APIResourceDetails: FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
   const { kind, apiGroup, apiVersion, namespaced, verbs, shortNames } = kindObj;
   const description = getResourceDescription(kindObj);
   const { t } = useTranslation();
@@ -451,7 +576,7 @@ const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindO
 };
 
 const scrollTop = () => (document.getElementById('content-scrollable').scrollTop = 0);
-const APIResourceSchema: React.FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
+const APIResourceSchema: FC<APIResourceTabProps> = ({ customData: { kindObj } }) => {
   return (
     <PaneBody>
       <ExploreType kindObj={kindObj} scrollTop={scrollTop} />
@@ -459,17 +584,12 @@ const APIResourceSchema: React.FC<APIResourceTabProps> = ({ customData: { kindOb
   );
 };
 
-const APIResourceInstances: React.FC<APIResourceTabProps> = ({
-  customData: { kindObj, namespace },
-}) => {
+const APIResourceInstances: FC<APIResourceTabProps> = ({ customData: { kindObj, namespace } }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-    isDynamicResourceListPage,
+  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
+    referenceForModel(kindObj),
+    () => Promise.resolve(DefaultPage),
   );
-  const componentLoader = getResourceListPages(
-    resourceListPageExtensions,
-    dynamicResourceListPageExtensions,
-  ).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (
@@ -483,7 +603,7 @@ const APIResourceInstances: React.FC<APIResourceTabProps> = ({
   );
 };
 
-const Subject: React.FC<{ value: string }> = ({ value }) => {
+const Subject: FC<{ value: string }> = ({ value }) => {
   const [first, ...rest] = value.split(':');
   return first === 'system' && !_.isEmpty(rest) ? (
     <>
@@ -495,29 +615,78 @@ const Subject: React.FC<{ value: string }> = ({ value }) => {
   );
 };
 
-const EmptyAccessReviewMsg: React.FC<{}> = () => {
-  const { t } = useTranslation();
-  return <EmptyBox label={t('public~Subjects')} />;
+const getSubjectTypeLabel = (type: string) => {
+  switch (type) {
+    case 'User':
+      return i18next.t('public~User');
+    case 'Group':
+      return i18next.t('public~Group');
+    case 'ServiceAccount':
+      return i18next.t('public~ServiceAccount');
+    default:
+      return type;
+  }
 };
 
-const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
+const APIResourceAccessReview: FC<APIResourceTabProps> = ({
   customData: { kindObj, namespace },
 }) => {
   const { apiGroup, apiVersion, namespaced, plural, verbs } = kindObj;
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // state
-  const [verb, setVerb] = React.useState(_.first(verbs));
-  const [filter, setFilter] = React.useState('');
-  const [showUsers, setShowUsers] = React.useState(true);
-  const [showGroups, setShowGroups] = React.useState(true);
-  const [showServiceAccounts, setShowServiceAccounts] = React.useState(false);
-  const [accessResponse, setAccessResponse] = React.useState<ResourceAccessReviewResponse>();
-  const [error, setError] = React.useState<APIError>();
+  const [verb, setVerb] = useState(_.first(verbs));
+  const [filter, setFilter] = useState('');
+  const [showUsers, setShowUsers] = useState(true);
+  const [showGroups, setShowGroups] = useState(true);
+  const [showServiceAccounts, setShowServiceAccounts] = useState(false);
+  const [accessResponse, setAccessResponse] = useState<ResourceAccessReviewResponse>();
+  const [error, setError] = useState<APIError>();
   const { t } = useTranslation();
 
+  // Pagination
+  const pagination = useDataViewPagination({
+    perPage: 50,
+    searchParams,
+    setSearchParams,
+  });
+
+  // Sorting state from URL
+  const sortByParam = searchParams.get('sortBy') || '0';
+  const orderByParam = searchParams.get('orderBy') || 'asc';
+  const sortBy = useMemo(
+    () => ({
+      index: parseInt(sortByParam, 10),
+      direction: orderByParam === 'desc' ? 'desc' : ('asc' as 'asc' | 'desc'),
+    }),
+    [sortByParam, orderByParam],
+  );
+
+  // Reset pagination to page 1 when filters change
+  const prevFiltersRef = useRef({ verb, filter, showUsers, showGroups, showServiceAccounts });
+  useEffect(() => {
+    const currentFilters = { verb, filter, showUsers, showGroups, showServiceAccounts };
+    const prevFilters = prevFiltersRef.current;
+    const filtersChanged =
+      currentFilters.verb !== prevFilters.verb ||
+      currentFilters.filter !== prevFilters.filter ||
+      currentFilters.showUsers !== prevFilters.showUsers ||
+      currentFilters.showGroups !== prevFilters.showGroups ||
+      currentFilters.showServiceAccounts !== prevFilters.showServiceAccounts;
+
+    if (filtersChanged && pagination.page > 1) {
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set('page', '1');
+        return newParams;
+      });
+    }
+
+    prevFiltersRef.current = currentFilters;
+  }, [verb, filter, showUsers, showGroups, showServiceAccounts, pagination.page, setSearchParams]);
+
   // perform the access review
-  React.useEffect(() => {
+  useEffect(() => {
     setError(null);
     const accessReviewModel = namespace
       ? LocalResourceAccessReviewsModel
@@ -534,6 +703,79 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
     k8sCreate(accessReviewModel, req, { ns: namespace }).then(setAccessResponse).catch(setError);
   }, [apiGroup, apiVersion, plural, namespace, verb]);
 
+  // Prepare data for rendering (must be before early returns to satisfy hooks rules)
+  const { users, groups, serviceAccounts, allData, filteredData, paginatedData } = useMemo(() => {
+    if (!accessResponse) {
+      return {
+        users: [],
+        groups: [],
+        serviceAccounts: [],
+        allData: [],
+        filteredData: [],
+        paginatedData: [],
+      };
+    }
+
+    const usersList = [];
+    const serviceAccountsList = [];
+    _.each(accessResponse.users, (name: string) => {
+      if (name.startsWith('system:serviceaccount:')) {
+        serviceAccountsList.push({ name, type: 'ServiceAccount' });
+      } else {
+        usersList.push({ name, type: 'User' });
+      }
+    });
+    const groupsList = _.map(accessResponse.groups, (name: string) => ({
+      name,
+      type: 'Group',
+    }));
+
+    // Build data array based on filter switches
+    const data = [
+      ...(showUsers ? usersList : []),
+      ...(showGroups ? groupsList : []),
+      ...(showServiceAccounts ? serviceAccountsList : []),
+    ];
+
+    // Apply text filter
+    const textFiltered = data.filter(({ name }: { name: string }) => fuzzy(filter, name));
+
+    // Apply sorting
+    const sorted = [...textFiltered];
+    sorted.sort((a, b) => {
+      const aValue = sortBy.index === 0 ? a.name : a.type;
+      const bValue = sortBy.index === 0 ? b.name : b.type;
+      const compareResult = aValue.localeCompare(bValue);
+      return sortBy.direction === 'asc' ? compareResult : -compareResult;
+    });
+
+    // Apply pagination
+    const paginated = sorted.slice(
+      (pagination.page - 1) * pagination.perPage,
+      (pagination.page - 1) * pagination.perPage + pagination.perPage,
+    );
+
+    return {
+      users: usersList,
+      groups: groupsList,
+      serviceAccounts: serviceAccountsList,
+      allData: data,
+      filteredData: sorted,
+      paginatedData: paginated,
+    };
+  }, [accessResponse, showUsers, showGroups, showServiceAccounts, filter, sortBy, pagination]);
+
+  const onSort = (_event: MouseEvent, index: number, direction: 'asc' | 'desc') => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set('sortBy', String(index));
+      newParams.set('orderBy', direction);
+      return newParams;
+    });
+  };
+
+  const bodyEmpty = useMemo(() => <BodyEmpty label={t('public~Subjects')} colSpan={2} />, [t]);
+
   if (error) {
     return <LoadError label={t('public~Access review')}>{error.message}</LoadError>;
   }
@@ -542,84 +784,23 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
     return <LoadingBox />;
   }
 
-  // break into users, groups, and service accounts
-  const users = [];
-  const serviceAccounts = [];
-  _.each(accessResponse.users, (name: string) => {
-    if (name.startsWith('system:serviceaccount:')) {
-      serviceAccounts.push({ name, type: 'ServiceAccount' });
-    } else {
-      users.push({ name, type: 'User' });
-    }
-  });
-  const groups = _.map(accessResponse.groups, (name: string) => ({ name, type: 'Group' }));
-  // filter and sort
-  const verbOptions = _.zipObject(verbs, verbs);
-  const data = [
-    ...(showUsers ? users : []),
-    ...(showGroups ? groups : []),
-    ...(showServiceAccounts ? serviceAccounts : []),
-  ];
   const allSelected = showUsers && showGroups && showServiceAccounts;
   const itemCount = accessResponse.users.length + accessResponse.groups.length;
-  const selectedCount = data.length;
-  const filteredData = data.filter(({ name }: { name: string }) => fuzzy(filter, name));
-  const orderBy = searchParams.get('orderBy');
-  const sortByParam = searchParams.get('sortBy');
-  const sortBy = sortByParam === 'Type' ? 'type' : 'name';
-  const sortedData = _.orderBy(filteredData, [sortBy], [orderBy]);
+  const selectedCount = allData.length;
 
-  const AccessTableHeader = () => [
-    {
-      title: t('public~Subject'),
-      sortField: 'name',
-      transforms: [sortable],
-    },
-    {
-      title: t('public~Type'),
-      sortField: 'type',
-      transforms: [sortable],
-    },
-  ];
-
-  const getSubjectTypeLabel = (type: string) => {
-    switch (type) {
-      case 'User':
-        return t('public~User');
-      case 'Group':
-        return t('public~Group');
-      case 'ServiceAccount':
-        return t('public~ServiceAccount');
-      default:
-        return type;
-    }
-  };
-
-  const AccessTableRows = () =>
-    sortedData.map((subject) => [
-      {
-        title: (
-          <span className="co-break-word co-select-to-copy">
-            <Subject value={subject.name} />
-          </span>
-        ),
-      },
-      {
-        title: getSubjectTypeLabel(subject.type),
-      },
-    ]);
+  const verbOptions = _.zipObject(verbs, verbs);
 
   // event handlers
-  const toggleShowUsers = (e: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+  const toggleShowUsers = (e: FormEvent<HTMLInputElement>, checked: boolean) => {
     setShowUsers(checked);
   };
-  const toggleShowGroups = (e: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+  const toggleShowGroups = (e: FormEvent<HTMLInputElement>, checked: boolean) => {
     setShowGroups(checked);
   };
-  const toggleShowServiceAccounts = (e: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+  const toggleShowServiceAccounts = (e: FormEvent<HTMLInputElement>, checked: boolean) => {
     setShowServiceAccounts(checked);
   };
-  const onSelectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onSelectAll = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setShowUsers(true);
     setShowGroups(true);
@@ -644,6 +825,9 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
               label={t('public~by subject')}
               onChange={(_event, val) => setFilter(val)}
             />
+          </FlexItem>
+          <FlexItem align={{ default: 'alignRight' }}>
+            <Pagination itemCount={filteredData.length} {...pagination} isCompact />
           </FlexItem>
         </Flex>
         <RowFilter
@@ -701,15 +885,52 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
               plural,
             })}
         </p>
-        <Table
-          EmptyMsg={EmptyAccessReviewMsg}
-          Header={AccessTableHeader}
-          Rows={AccessTableRows}
-          aria-label={t('public~API resources')}
-          data={sortedData}
-          loaded
-          virtualize={false}
-        />
+        <DataView activeState={filteredData.length === 0 ? 'empty' : undefined}>
+          <InnerScrollContainer>
+            <DataViewTable
+              aria-label={t('public~API resources')}
+              columns={[
+                {
+                  cell: t('public~Subject'),
+                  props: {
+                    modifier: 'nowrap',
+                    sort: {
+                      sortBy,
+                      onSort,
+                      columnIndex: 0,
+                    },
+                  },
+                },
+                {
+                  cell: t('public~Type'),
+                  props: {
+                    modifier: 'nowrap',
+                    sort: {
+                      sortBy,
+                      onSort,
+                      columnIndex: 1,
+                    },
+                  },
+                },
+              ]}
+              rows={paginatedData.map((subject) => [
+                <Subject key={subject.name} value={subject.name} />,
+                getSubjectTypeLabel(subject.type),
+              ])}
+              bodyStates={{ empty: bodyEmpty }}
+              gridBreakPoint=""
+              variant="compact"
+              data-test="data-view-table"
+            />
+          </InnerScrollContainer>
+        </DataView>
+        <Toolbar>
+          <ToolbarContent>
+            <ToolbarItem variant="pagination">
+              <Pagination itemCount={filteredData.length} {...pagination} variant="bottom" />
+            </ToolbarItem>
+          </ToolbarContent>
+        </Toolbar>
       </PaneBody>
     </>
   );

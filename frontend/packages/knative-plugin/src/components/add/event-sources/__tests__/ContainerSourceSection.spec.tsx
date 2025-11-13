@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import ContainerSourceSection from '../ContainerSourceSection';
-import '@testing-library/jest-dom';
 
 jest.mock('@console/dev-console/src/components/import/section/FormSection', () => ({
   __esModule: true,

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResourceLink, DetailsItem } from '@console/internal/components/utils';
+import { DetailsItem } from '@console/internal/components/utils/details-item';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import {
   K8sPodControllerKind,
   referenceForModel,

@@ -106,13 +106,6 @@ Feature: Navigations on Helm Chart
 
 
         @smoke
-        Scenario: Search for the not available Helm Chart: HR-05-TC12
-            Given user is at the Helm page
-             When user searches for a helm chart "Nodejs"
-             Then user is able to see message on the Helm page as "Not found"
-
-
-        @smoke
         Scenario: Helm release details page: HR-05-TC13
             Given user is at the Helm page
              When user clicks on the helm release name "nodejs"

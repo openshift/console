@@ -2,7 +2,7 @@ import { ObjectMetadata, ObjectReference } from '@console/dynamic-plugin-sdk';
 import { NameValueFromPair, NameValuePair } from '@console/shared';
 
 export { BuildConfigModel } from '@console/internal/models';
-export { BuildStrategyType } from '@console/internal/components/build';
+export { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 
 type LocalObjectReference = { name: string };
 

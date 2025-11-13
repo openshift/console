@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { configure, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import AddCardItem from '../AddCardItem';
 import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';
 import { addActionExtensions } from './add-page-test-data';
-import '@testing-library/jest-dom';
-
-configure({ testIdAttribute: 'data-test' });
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},

@@ -928,7 +928,7 @@
   "Enter the name of the {{label}} to delete": "削除する {{label}} の名前を入力します",
   "Delete PersistentVolumeClaim": "PersistentVolumeClaim の削除",
   "Are you sure you want to delete <2>{{pvcName}}</2> PersistentVolumeClaim?": "<2>{{pvcName}}</2> PersistentVolumeClaim を削除してもよろしいですか?",
-  "On": "ON",
+  "On": "オン",
   "Off": "オフ",
   "Tooltips": "ツールチップ",
   "Show tooltips for Resource and Field names and definitions.": "リソースとフィールドの名前と定義のツールヒントを表示します。",

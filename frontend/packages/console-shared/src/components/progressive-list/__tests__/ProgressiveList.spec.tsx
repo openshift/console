@@ -1,41 +1,23 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
-import { shallow } from 'enzyme';
-import { Trans, useTranslation } from 'react-i18next';
+import { screen, fireEvent } from '@testing-library/react';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import ProgressiveList from '../ProgressiveList';
-import ProgressiveListFooter from '../ProgressiveListFooter';
 import ProgressiveListItem from '../ProgressiveListItem';
 
-const DummyComponent: React.FC = () => <div id="dummy">Dummy Component</div>;
-const BarComponent: React.FC = () => <div id="bar">Bar Component</div>;
-const FooComponent: React.FC = () => <div id="foo">Foo Component</div>;
+// Mock scrollIntoView
+Element.prototype.scrollIntoView = jest.fn();
 
-const Footer = ({ children }) => {
-  const { t } = useTranslation();
-  return (
-    <Trans
-      t={t}
-      ns="console-shared"
-      defaults="Click on the names to access advanced options for <0></0>."
-      components={[children]}
-    />
-  );
+const DummyComponent: React.FCC = () => <div>Dummy Component</div>;
+const BarComponent: React.FCC = () => <div>Bar Component</div>;
+const FooComponent: React.FCC = () => <div>Foo Component</div>;
+
+const Footer: React.FCC<{ children?: React.ReactNode }> = ({ children }) => {
+  return <div>Click on the names to access advanced options for {children}.</div>;
 };
 
-describe(ProgressiveList.displayName, () => {
-  it('component should exist', () => {
-    const wrapper = shallow(
-      <ProgressiveList Footer={Footer} visibleItems={[]} onVisibleItemChange={() => {}}>
-        <ProgressiveListItem name="Dummy">
-          <DummyComponent />
-        </ProgressiveListItem>
-      </ProgressiveList>,
-    );
-    expect(wrapper.exists()).toBe(true);
-  });
-
+describe('ProgressiveList', () => {
   it('should only display component related to item name mentioned in the visibleItems array', () => {
-    const wrapper = shallow(
+    renderWithProviders(
       <ProgressiveList Footer={Footer} visibleItems={['Bar', 'Foo']} onVisibleItemChange={() => {}}>
         <ProgressiveListItem name="Dummy">
           <DummyComponent />
@@ -48,38 +30,59 @@ describe(ProgressiveList.displayName, () => {
         </ProgressiveListItem>
       </ProgressiveList>,
     );
-    expect(wrapper.find(BarComponent).exists()).toBe(true);
-    expect(wrapper.find(FooComponent).exists()).toBe(true);
-    expect(wrapper.find(DummyComponent).exists()).toBe(false);
+
+    expect(screen.getByText('Bar Component')).toBeVisible();
+    expect(screen.getByText('Foo Component')).toBeVisible();
+    expect(screen.queryByText('Dummy Component')).not.toBeInTheDocument();
+  });
+
+  it('should render footer with correct text for hidden items', () => {
+    renderWithProviders(
+      <ProgressiveList Footer={Footer} visibleItems={[]} onVisibleItemChange={() => {}}>
+        <ProgressiveListItem name="Dummy">
+          <DummyComponent />
+        </ProgressiveListItem>
+      </ProgressiveList>,
+    );
+
+    expect(screen.getByText(/Click on the names to access advanced options for/)).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Dummy' })).toBeVisible();
   });
 
   it('clicking on a button should add that component related to it to visibleItems list', () => {
-    const visibleItems = [];
-    const callback = (item: string) => {
+    const visibleItems: string[] = [];
+    const callback = jest.fn((item: string) => {
       visibleItems.push(item);
-    };
-    const wrapper = shallow(
+    });
+
+    const { rerender } = renderWithProviders(
       <ProgressiveList Footer={Footer} visibleItems={visibleItems} onVisibleItemChange={callback}>
         <ProgressiveListItem name="Dummy">
           <DummyComponent />
         </ProgressiveListItem>
       </ProgressiveList>,
     );
-    expect(wrapper.find(ProgressiveListFooter).shallow().find(Button).render().text()).toEqual(
-      'Dummy',
-    );
-    expect(wrapper.find(ProgressiveListFooter).shallow().find(Button)).toHaveLength(1);
-    expect(wrapper.find(DummyComponent).exists()).toBe(false);
+
+    expect(screen.getByRole('button', { name: 'Dummy' })).toBeVisible();
+    expect(screen.queryByText('Dummy Component')).not.toBeInTheDocument();
     expect(visibleItems).toHaveLength(0);
-    wrapper
-      .find(ProgressiveListFooter)
-      .shallow()
-      .find(Button)
-      .simulate('click', { target: { innerText: 'Dummy' } });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Dummy' }));
+
+    expect(callback).toHaveBeenCalledWith('Dummy');
     expect(visibleItems).toHaveLength(1);
     expect(visibleItems.includes('Dummy')).toBe(true);
-    wrapper.setProps({ visibleItems });
-    expect(wrapper.find(DummyComponent).exists()).toBe(true);
-    expect(wrapper.find(ProgressiveListFooter).shallow().find(Button)).toHaveLength(0);
+
+    // Re-render with updated visibleItems
+    rerender(
+      <ProgressiveList Footer={Footer} visibleItems={visibleItems} onVisibleItemChange={callback}>
+        <ProgressiveListItem name="Dummy">
+          <DummyComponent />
+        </ProgressiveListItem>
+      </ProgressiveList>,
+    );
+
+    expect(screen.getByText('Dummy Component')).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Dummy' })).not.toBeInTheDocument();
   });
 });

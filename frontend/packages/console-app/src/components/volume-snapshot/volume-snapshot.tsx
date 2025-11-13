@@ -16,13 +16,10 @@ import {
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
-import {
-  ResourceLink,
-  Kebab,
-  convertToBaseValue,
-  humanizeBinaryBytes,
-} from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { Kebab } from '@console/internal/components/utils/kebab';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,
@@ -38,16 +35,13 @@ import {
   Selector,
   referenceFor,
 } from '@console/internal/module/k8s';
-import {
-  LazyActionMenu,
-  Status,
-  getName,
-  getNamespace,
-  snapshotSource,
-  FLAGS,
-} from '@console/shared';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { Status } from '@console/shared/src/components/status/Status';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
+import { snapshotSource } from '@console/shared/src/sorts/snapshot';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 const tableColumnInfo = [

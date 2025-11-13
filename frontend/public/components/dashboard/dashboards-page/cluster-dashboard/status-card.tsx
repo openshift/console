@@ -21,7 +21,9 @@ import {
   WatchK8sResource,
 } from '@console/dynamic-plugin-sdk';
 import { Gallery, GalleryItem, Card, CardHeader, CardTitle } from '@patternfly/react-core';
-import { BlueArrowCircleUpIcon, FLAGS, useCanClusterUpgrade } from '@console/shared';
+import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
@@ -46,7 +48,10 @@ import {
 } from './health-item';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
+import {
+  useNamespacedNotificationAlerts,
+  useNotificationAlerts,
+} from '@console/shared/src/hooks/useNotificationAlerts';
 
 const filterSubsystems = (
   subsystems: (
@@ -101,6 +106,20 @@ export const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ labelSelector 
         </StatusItem>
       )}
       {alerts.map((alert) => (
+        <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
+      ))}
+    </AlertsBody>
+  );
+};
+
+export const DashboardNamespacedAlerts: React.FC<DashboardNamespacedAlertsProps> = ({
+  namespace,
+}) => {
+  const [namespacedAlerts, , loadError] = useNamespacedNotificationAlerts(namespace);
+
+  return (
+    <AlertsBody error={!_.isEmpty(loadError)}>
+      {namespacedAlerts.map((alert) => (
         <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />
       ))}
     </AlertsBody>
@@ -205,4 +224,8 @@ type StatusCardProps = {
 
 type DashboardAlertsProps = {
   labelSelector?: ObjectMetadata['labels'];
+};
+
+type DashboardNamespacedAlertsProps = {
+  namespace: string;
 };

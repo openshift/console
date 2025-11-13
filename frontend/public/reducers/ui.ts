@@ -5,7 +5,7 @@ import { ActionType, UIAction } from '../actions/ui';
 import { ALL_APPLICATIONS_KEY, ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import { getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
-import { RootState } from '../redux';
+import type { RootState } from '../redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
 
 export type UIState = ImmutableMap<string, any>;
@@ -19,6 +19,7 @@ export default (state: UIState, action: UIAction): UIState => {
       showOperandsInAllNamespaces: true,
       activeNamespace: ALL_NAMESPACES_KEY,
       activeApplication: ALL_APPLICATIONS_KEY,
+      pluginCSPViolations: {},
       createProjectMessage: '',
       serviceLevel: ImmutableMap({
         level: '',
@@ -154,6 +155,10 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['deprecatedOperator', 'channel'], action.payload.value);
     case ActionType.SetDeprecatedVersion:
       return state.setIn(['deprecatedOperator', 'version'], action.payload.value);
+    case ActionType.SetPluginCSPViolations:
+      return state.mergeIn(['pluginCSPViolations'], {
+        [action.payload.pluginName]: action.payload.hasViolation,
+      });
     default:
       break;
   }

@@ -1,43 +1,85 @@
 import { screen, configure } from '@testing-library/react';
-import { RowFunctionArgs } from '@console/internal/components/factory';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, TableColumn, RowProps } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import HelmReleaseResourcesRow, { HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';
+import { getDataViewRows, HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';
 
 configure({ testIdAttribute: 'data-test' });
 
-let rowArgs: RowFunctionArgs<K8sResourceKind>;
+let testData: RowProps<K8sResourceKind, undefined>[];
+let testColumns: TableColumn<K8sResourceKind>[];
 
-describe('helmReleaseResourcesRow', () => {
+describe('getDataViewRows', () => {
   beforeEach(() => {
-    rowArgs = {
-      obj: {
-        kind: 'Secret',
-        metadata: {
-          creationTimestamp: '2020-01-20T05:37:13Z',
-          name: 'sh.helm.release.v1.helm-mysql.v1',
-          namespace: 'deb',
+    testData = [
+      {
+        obj: {
+          kind: 'Secret',
+          metadata: {
+            creationTimestamp: '2020-01-20T05:37:13Z',
+            name: 'sh.helm.release.v1.helm-mysql.v1',
+            namespace: 'deb',
+          },
         },
+        rowData: undefined,
+        activeColumnIDs: new Set(['name', 'type', 'status', 'created']),
+        index: 0,
       },
-    } as any;
+    ];
+
+    testColumns = [
+      { id: 'name', title: 'Name' },
+      { id: 'type', title: 'Type' },
+      { id: 'status', title: 'Status' },
+      { id: 'created', title: 'Created' },
+    ] as TableColumn<K8sResourceKind>[];
   });
 
-  it('should render the TableData component', () => {
-    renderWithProviders(<HelmReleaseResourcesRow {...rowArgs} />);
-    // Check for table row content - Secret name should be displayed
+  it('should return data view rows with correct structure', () => {
+    const rows = getDataViewRows(testData, testColumns);
+
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toHaveLength(4); // Should have 4 columns
+
+    // Check that each row has the expected structure
+    rows[0].forEach((cell) => {
+      expect(cell).toHaveProperty('id');
+      expect(cell).toHaveProperty('cell');
+    });
+  });
+
+  it('should render resource data correctly', () => {
+    const rows = getDataViewRows(testData, testColumns);
+    const nameCell = rows[0].find((cell: any) => cell.id === 'name') as any;
+
+    // Test name cell content
+    renderWithProviders(nameCell.cell);
     expect(screen.getByText('sh.helm.release.v1.helm-mysql.v1')).toBeTruthy();
   });
 
+  it('should render type cell correctly', () => {
+    const rows = getDataViewRows(testData, testColumns);
+    const typeCell = rows[0].find((cell: any) => cell.id === 'type') as any;
+
+    // Test type cell content
+    renderWithProviders(typeCell.cell);
+    expect(screen.getByText('Secret')).toBeTruthy();
+  });
+
   it('should render the number of pods deployed for resources that support it', () => {
-    renderWithProviders(<HelmReleaseResourceStatus resource={rowArgs.obj} />);
+    const testResource = testData[0].obj;
+    renderWithProviders(<HelmReleaseResourceStatus resource={testResource} />);
     // Check for status display
     expect(screen.getByText('Created')).toBeTruthy();
 
-    rowArgs.obj.kind = 'Deployment';
-    rowArgs.obj.spec = { replicas: 1 };
-    rowArgs.obj.status = { replicas: 1 };
+    // Test with deployment resource
+    const deploymentResource = {
+      ...testResource,
+      kind: 'Deployment',
+      spec: { replicas: 1 },
+      status: { replicas: 1 },
+    };
 
-    renderWithProviders(<HelmReleaseResourceStatus resource={rowArgs.obj} />);
+    renderWithProviders(<HelmReleaseResourceStatus resource={deploymentResource} />);
     // Check for deployment-specific content like replica count
     expect(screen.getByText('1 of 1 pods')).toBeTruthy();
   });

@@ -1,34 +1,25 @@
 import * as _ from 'lodash-es';
-import { css } from '@patternfly/react-styles';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
-import { sortable } from '@patternfly/react-table';
-import {
-  Status,
-  LazyActionMenu,
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-} from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { DASH } from '@console/shared/src/constants/ui';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table, TableData } from './factory';
-import {
-  ContainerTable,
-  navFactory,
-  SectionHeading,
-  ResourceSummary,
-  ResourcePodCount,
-  AsyncComponent,
-  Kebab,
-  ResourceLink,
-  resourcePath,
-  OwnerReferences,
-  PodsComponent,
-  RuntimeClass,
-} from './utils';
+import { DetailsPage, ListPage, sorts } from './factory';
+import { ContainerTable } from './utils/container-table';
+import { navFactory, PodsComponent } from './utils/horizontal-nav';
+import { SectionHeading } from './utils/headings';
+import { ResourceSummary, ResourcePodCount, RuntimeClass } from './utils/details-page';
+import { AsyncComponent } from './utils/async';
+import { ResourceLink } from './utils/resource-link';
+import { OwnerReferences } from './utils/owner-references';
+import { LoadingBox } from './utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { referenceFor, referenceForModel } from '../module/k8s';
+import { referenceForModel } from '../module/k8s';
 import { VolumesTable } from './volumes-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import {
@@ -39,6 +30,17 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
+import { ReplicationControllerModel } from '../models';
+import { sortResourceByValue } from './factory/Table/sort';
+import { ReplicasCount } from './workload-table';
 
 const EnvironmentPage = (props) => (
   <AsyncComponent
@@ -154,114 +156,148 @@ export const ReplicationControllersDetailsPage = (props) => {
   );
 };
 
-const kind = 'ReplicationController';
-
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-xl',
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'status' },
+  { id: 'phase' },
+  { id: 'owner' },
+  { id: 'created' },
+  { id: '' },
 ];
 
-const ReplicationControllerTableRow = ({ obj }) => {
-  const { t } = useTranslation();
-  const phase = obj?.metadata?.annotations?.['openshift.io/deployment.phase'];
-  const resourceKind = referenceFor(obj);
-  const context = { [resourceKind]: obj };
+const getDataViewRows = (data, columns) => {
+  return data.map(({ obj }) => {
+    const { name, namespace } = obj.metadata;
+    const phase = obj?.metadata?.annotations?.['openshift.io/deployment.phase'];
+    const context = { [referenceForModel(ReplicationControllerModel)]: obj };
 
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Link
-          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
-          title="pods"
-        >
-          {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
-            statusReplicas: obj.status.replicas || 0,
-            specReplicas: obj.spec.replicas,
-          })}
-        </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <Status status={phase} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <OwnerReferences resource={obj} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(ReplicationControllerModel)}
+            name={name}
+            namespace={namespace}
+          />
+        ),
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <ReplicasCount obj={obj} kind={referenceForModel(ReplicationControllerModel)} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <Status status={phase} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <OwnerReferences resource={obj} />,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
+      },
+      [tableColumnInfo[6].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: {
+          ...actionsCellProps,
+        },
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
-export const ReplicationControllersList = (props) => {
+const useReplicationControllersColumns = () => {
   const { t } = useTranslation();
+  const columns = React.useMemo(() => {
+    return [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Status'),
+        id: tableColumnInfo[2].id,
+        sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.numReplicas)),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Phase'),
+        id: tableColumnInfo[3].id,
+        sort: 'metadata.annotations["openshift.io/deployment.phase"]',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Owner'),
+        id: tableColumnInfo[4].id,
+        sort: 'metadata.ownerReferences[0].name',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('public~Created'),
+        id: tableColumnInfo[5].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[6].id,
+        props: {
+          ...cellIsStickyProps,
+        },
+      },
+    ];
+  }, [t]);
+  return columns;
+};
 
-  const ReplicationControllerTableHeader = () => [
-    {
-      title: t('public~Name'),
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: t('public~Namespace'),
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: t('public~Status'),
-      sortFunc: 'numReplicas',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: t('public~Phase'),
-      sortField: 'metadata.annotations["openshift.io/deployment.phase"]',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: t('public~Owner'),
-      sortField: 'metadata.ownerReferences[0].name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: t('public~Created'),
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[6] },
-    },
-  ];
+const ReplicationControllersList = ({ data, loaded, ...props }) => {
+  const columns = useReplicationControllersColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~ReplicationControllers')}
-      Header={ReplicationControllerTableHeader}
-      Row={ReplicationControllerTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView
+        {...props}
+        label={ReplicationControllerModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -269,10 +305,11 @@ export const ReplicationControllersPage = (props) => {
   const { canCreate = true } = props;
   return (
     <ListPage
-      canCreate={canCreate}
-      kind="ReplicationController"
-      ListComponent={ReplicationControllersList}
       {...props}
+      kind={referenceForModel(ReplicationControllerModel)}
+      ListComponent={ReplicationControllersList}
+      canCreate={canCreate}
+      omitFilterToolbar={true}
     />
   );
 };
