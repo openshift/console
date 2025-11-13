@@ -23,7 +23,8 @@ import {
   K8sResourceKind,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { Firehose } from '../utils/firehose';
-import { HorizontalNav, Page } from '../utils/horizontal-nav';
+import { HorizontalNav } from '../utils/horizontal-nav';
+import type { Page } from '../utils/horizontal-nav';
 import {
   ConnectedPageHeading,
   ConnectedPageHeadingProps,

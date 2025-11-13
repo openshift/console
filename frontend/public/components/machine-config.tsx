@@ -29,7 +29,8 @@ import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 
 import { MachineConfigKind, referenceForModel } from '../module/k8s';
 import { MachineConfigModel } from '../models';
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { Kebab, ResourceKebab } from './utils/kebab';
 import { LoadingBox } from './utils/status-box';

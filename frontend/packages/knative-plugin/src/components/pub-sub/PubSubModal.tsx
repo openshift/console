@@ -9,7 +9,7 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { InputField } from '@console/shared';
+import InputField from '@console/shared/src/components/formik-fields/InputField';
 import PubSubFilter from './form-fields/PubSubFilter';
 import PubSubSubscriber from './form-fields/PubSubSubscriber';
 

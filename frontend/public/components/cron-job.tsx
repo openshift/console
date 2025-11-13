@@ -7,7 +7,8 @@ import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage, ListPageWrapper } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage, ListPageWrapper } from './factory/list-page';
 import {
   CronJobKind,
   K8sResourceCommon,

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalTitle, ModalBody, ModalSubmitFooter, ModalWrapper } from '../factory';
+import { ModalTitle, ModalBody, ModalSubmitFooter, ModalWrapper } from '../factory/modal';
 import {
   ContainerSpec,
   getVolumeType,

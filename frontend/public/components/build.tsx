@@ -29,7 +29,10 @@ import {
   K8sModel,
 } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { Table, TableData } from './factory/table';
+import type { RowFunctionArgs } from './factory/table';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { AsyncComponent } from './utils/async';
 import { BuildHooks } from './utils/build-hooks';

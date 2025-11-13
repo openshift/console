@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ListPage, ListPageProps } from './factory';
+import { ListPage } from './factory/list-page';
+import type { ListPageProps } from './factory/list-page';
 import { LabelList } from './utils/label-list';
 import { ResourceLink } from './utils/resource-link';
 import { Selector } from './utils/selector';
@@ -23,7 +24,7 @@ import {
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
 import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { DASH } from '@console/shared/src';
+import { DASH } from '@console/shared/src/constants/ui';
 
 const tableColumnInfo = [
   { id: 'name' },

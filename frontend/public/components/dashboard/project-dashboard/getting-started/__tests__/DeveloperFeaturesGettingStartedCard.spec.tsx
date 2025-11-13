@@ -1,7 +1,9 @@
 import { screen, waitFor } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { ALL_NAMESPACES_KEY, useActiveNamespace, useFlag } from '@console/shared/src';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   expectExternalLinkAttributes,
   cleanupServerFlag,
@@ -9,10 +11,15 @@ import {
 
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 
-jest.mock('@console/shared/src', () => ({
-  ...jest.requireActual('@console/shared/src'),
+jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/version', () => ({
   useOpenShiftVersion: () => '4.8.0',
+}));
+
+jest.mock('@console/shared/src/hooks/flag', () => ({
   useFlag: jest.fn<boolean>(),
 }));
 

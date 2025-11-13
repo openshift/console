@@ -10,7 +10,7 @@ import {
   FilterValue,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { routeStatus } from '@console/shared/src/components/utils/routes';
-import { secretTypeFilterReducer } from '../secret';
+import { secretTypeFilterReducer } from '../secrets/create-secret';
 import { roleType } from '../RBAC/role';
 import {
   K8sResourceKind,

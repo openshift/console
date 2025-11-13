@@ -18,7 +18,10 @@ import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/quest
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { Table, TableData } from './factory/table';
+import type { RowFunctionArgs } from './factory/table';
 import { DOC_URL_PODMAN } from './utils/documentation';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';

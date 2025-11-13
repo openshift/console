@@ -14,7 +14,8 @@ import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt
 import { DASH } from '@console/shared/src/constants/ui';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { referenceForModel, K8sResourceKind, TableColumn } from '../module/k8s';
-import { ListPage, DetailsPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import {
   cellIsStickyProps,
   getNameCellProps,

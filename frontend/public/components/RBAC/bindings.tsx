@@ -31,7 +31,7 @@ import {
   RoleBindingKind,
   Subject,
 } from '../../module/k8s';
-import { MultiListPageProps } from '../factory';
+import type { MultiListPageProps } from '../factory/list-page';
 import ListPageHeader from '../factory/ListPage/ListPageHeader';
 import { ListPageCreateLink } from '../factory/ListPage/ListPageCreate';
 import {

@@ -6,7 +6,7 @@ import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
+} from '@console/shared/src/components/status/icons';
 import { Table, TableGridBreakpoint, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { ResourceLink } from './utils/resource-link';

@@ -1,7 +1,8 @@
 import { screen, waitFor } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { useActiveNamespace, CatalogServiceProvider } from '@console/shared/src';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import CatalogServiceProvider from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
 import { loadingCatalogService, loadedCatalogService } from './SampleGettingStartedCard.data';
 import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
 import { cleanupServerFlag } from '../../../getting-started-test-utils';

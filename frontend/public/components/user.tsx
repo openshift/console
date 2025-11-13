@@ -14,7 +14,8 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
 import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { RoleBindingsPage } from './RBAC';
 import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
 import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
@@ -31,7 +32,7 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
-import { DASH } from '@console/shared/src';
+import { DASH } from '@console/shared/src/constants/ui';
 
 import { useTranslation } from 'react-i18next';
 

@@ -4,15 +4,12 @@ import { Status } from '@console/shared/src/components/status/Status';
 import { useTranslation } from 'react-i18next';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  DetailsPage,
-  DetailsPageProps,
-  ListPage,
-  ListPageProps,
-  Table,
-  TableData,
-  TableProps,
-} from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { Table, TableData } from './factory/table';
+import type { DetailsPageProps } from './factory/details';
+import type { ListPageProps } from './factory/list-page';
+import type { TableProps } from './factory/table';
 import { Kebab, ResourceKebab } from './utils/kebab';
 import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';

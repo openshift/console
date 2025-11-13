@@ -17,7 +17,8 @@ import {
   TableColumn,
 } from '../module/k8s';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';
 import { LabelList } from './utils/label-list';

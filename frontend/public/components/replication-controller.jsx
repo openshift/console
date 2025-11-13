@@ -1,14 +1,12 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Status,
-  LazyActionMenu,
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-  DASH,
-} from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { DASH } from '@console/shared/src/constants/ui';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, sorts } from './factory';

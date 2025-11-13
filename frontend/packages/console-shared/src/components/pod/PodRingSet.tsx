@@ -5,7 +5,7 @@ import { t_color_gray_50 as color200 } from '@patternfly/react-tokens';
 import { PodRingSetProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { modelFor } from '@console/internal/module/k8s';
-import { usePodsWatcher } from '../../hooks';
+import { usePodsWatcher } from '../../hooks/usePodsWatcher';
 import { getPodData } from '../../utils';
 import PodRing from './PodRing';
 

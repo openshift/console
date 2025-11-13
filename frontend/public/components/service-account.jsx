@@ -17,7 +17,7 @@ import {
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { DASH } from '@console/shared/src';
+import { DASH } from '@console/shared/src/constants/ui';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];

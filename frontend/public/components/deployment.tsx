@@ -23,7 +23,8 @@ import { DeploymentModel } from '../models';
 import { DeploymentKind, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { ReplicaSetsPage } from './replicaset';
 import {
   initialFiltersDefault,
