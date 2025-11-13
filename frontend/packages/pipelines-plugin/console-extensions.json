@@ -302,9 +302,6 @@
         "kind": "Repository"
       },
       "flag": "OPENSHIFT_PIPELINE_AS_CODE"
-    },
-    "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
     }
   },
   {
@@ -316,9 +313,6 @@
         "kind": "Pipeline"
       },
       "flag": "OPENSHIFT_PIPELINE_V1BETA1"
-    },
-    "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
     }
   },
   {
@@ -330,9 +324,6 @@
         "kind": "Pipeline"
       },
       "flag": "OPENSHIFT_PIPELINE"
-    },
-    "flags": {
-      "disallowed": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
     }
   },
   {
