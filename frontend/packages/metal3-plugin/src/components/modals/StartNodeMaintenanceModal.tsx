@@ -1,13 +1,21 @@
-import { useState } from 'react';
-import { Alert, FormGroup, Stack, StackItem, TextInput } from '@patternfly/react-core';
-import { Trans, useTranslation } from 'react-i18next';
+import { useCallback, useState } from 'react';
 import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  createModalLauncher,
-  ModalComponentProps,
-} from '@console/internal/components/factory';
+  Alert,
+  FormGroup,
+  Modal,
+  ModalHeader,
+  ModalVariant,
+  Stack,
+  StackItem,
+  TextInput,
+  ModalBody as PfModalBody,
+  ModalFooter as PfModalFooter,
+  Button,
+} from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
+import { OverlayComponent, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ModalComponentProps } from '@console/internal/components/factory';
+import { ErrorMessage } from '@console/internal/components/utils/button-bar';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
@@ -25,9 +33,11 @@ export type StartNodeMaintenanceModalProps = ModalComponentProps & {
   nodeName: string;
 };
 
-const StartNodeMaintenanceModal = (props: StartNodeMaintenanceModalProps) => {
+export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps> = (
+  props,
+) => {
   const { t } = useTranslation();
-  const { nodeName, close, cancel } = props;
+  const { nodeName, closeOverlay } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [model] = useMaintenanceCapability();
 
@@ -38,7 +48,7 @@ const StartNodeMaintenanceModal = (props: StartNodeMaintenanceModalProps) => {
     const promise = startNodeMaintenance(nodeName, reason, model);
     handlePromise(promise)
       .then(() => {
-        close();
+        closeOverlay();
       })
       .catch(() => {});
   };
@@ -47,11 +57,10 @@ const StartNodeMaintenanceModal = (props: StartNodeMaintenanceModalProps) => {
   const cephCluster = cephClusters?.[0];
   const cephClusterHealthy = cephCluster?.status?.ceph?.health === 'HEALTH_OK';
 
-  const action = t('metal3-plugin~Start Maintenance');
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>{action}</ModalTitle>
-      <ModalBody>
+    <Modal isOpen onClose={closeOverlay} variant={ModalVariant.small}>
+      <ModalHeader title={t('metal3-plugin~Start Maintenance')} />
+      <PfModalBody>
         <Stack hasGutter>
           <StackItem>
             {t(
@@ -88,16 +97,24 @@ const StartNodeMaintenanceModal = (props: StartNodeMaintenanceModalProps) => {
             </StackItem>
           )}
         </Stack>
-      </ModalBody>
-      <ModalSubmitFooter
-        submitDisabled={!loaded}
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitText={action}
-        cancel={cancel}
-      />
-    </form>
+      </PfModalBody>
+      <PfModalFooter>
+        {errorMessage && <ErrorMessage message={errorMessage} />}
+        <Button variant="primary" onClick={submit} isLoading={inProgress} isDisabled={!loaded}>
+          {t('metal3-plugin~Start Maintenance')}
+        </Button>
+        <Button variant="secondary" onClick={closeOverlay}>
+          {t('metal3-plugin~Cancel')}
+        </Button>
+      </PfModalFooter>
+    </Modal>
   );
 };
 
-export const startNodeMaintenanceModal = createModalLauncher(StartNodeMaintenanceModal);
+export const useStartNodeMaintenanceModalLauncher = (props: StartNodeMaintenanceModalProps) => {
+  const launcher = useOverlay();
+  return useCallback(
+    () => launcher<StartNodeMaintenanceModalProps>(StartNodeMaintenanceModal, props),
+    [launcher, props],
+  );
+};

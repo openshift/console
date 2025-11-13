@@ -79,7 +79,7 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
       </ExpandableSection>
       <br />
       <Button variant="link" onClick={() => stopNodeMaintenanceModal(nodeMaintenance, t)} isInline>
-        {t('metal3-plugin~Stop')}
+        {t('metal3-plugin~Stop maintenance')}
       </Button>
     </>
   );

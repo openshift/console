@@ -5,13 +5,15 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { NodeKind } from '@console/internal/module/k8s';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { findNodeMaintenance } from '../../selectors';
-import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
+import { useStartNodeMaintenanceModalLauncher } from '../modals/StartNodeMaintenanceModal';
 import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
 
 export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (resource) => {
   const { t } = useTranslation();
   const [maintenanceModel] = useMaintenanceCapability();
-
+  const startNodeMaintenanceModal = useStartNodeMaintenanceModalLauncher({
+    nodeName: resource.metadata.name,
+  });
   const [maintenances, loading, loadError] = useK8sWatchResource<K8sResourceCommon[]>({
     isList: true,
     groupVersionKind: {
@@ -28,7 +30,7 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
     let action: Action = {
       id: 'start-node-maintenance',
       label: t('metal3-plugin~Start Maintenance'),
-      cta: () => startNodeMaintenanceModal({ nodeName: resource.metadata.name }),
+      cta: startNodeMaintenanceModal,
       insertBefore: 'edit-labels',
     };
 
@@ -41,6 +43,7 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
       };
     }
     return [action];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maintenances, resource.metadata.name, t]);
 
   return [actions, loading, loadError];
