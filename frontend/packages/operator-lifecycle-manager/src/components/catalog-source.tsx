@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import { K8sResourceKind, PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import {
   DetailsPage,
@@ -22,7 +22,6 @@ import {
   LoadingBox,
   ConsoleEmptyState,
   navFactory,
-  ResourceKebab,
   ResourceLink,
   SectionHeading,
   asAccessReview,
@@ -33,7 +32,8 @@ import {
 } from '@console/internal/components/utils';
 import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
-import { referenceForModel, K8sKind, k8sPatch } from '@console/internal/module/k8s';
+import { referenceForModel, K8sKind, k8sPatch, K8sModel } from '@console/internal/module/k8s';
+import { ActionMenuVariant, LazyActionMenu } from '@console/shared/src';
 import { withFallback } from '@console/shared/src/components/error';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DEFAULT_SOURCE_NAMESPACE } from '../const';
@@ -45,31 +45,12 @@ import {
   OperatorHubModel,
 } from '../models';
 import { CatalogSourceKind, PackageManifestKind, OperatorGroupKind } from '../types';
-import useOperatorHubConfig from '../utils/useOperatorHubConfig';
-import { deleteCatalogSourceModal } from './modals/delete-catalog-source-modal';
-import { disableDefaultSourceModal } from './modals/disable-default-source-modal';
 import { requireOperatorGroup } from './operator-group';
 import { OperatorHubKind } from './operator-hub';
 import { PackageManifestsPage } from './package-manifest';
 import { RegistryPollIntervalDetailItem } from './registry-poll-interval-details';
 
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
-
-const deleteModal = (kind: K8sKind, catalogSource: CatalogSourceKind): KebabOption => ({
-  ...Kebab.factory.Delete(kind, catalogSource),
-  callback: () => deleteCatalogSourceModal({ kind, resource: catalogSource }),
-});
-
-const disableSourceModal = (
-  kind: K8sKind,
-  operatorHub: OperatorHubKind,
-  sourceName: string,
-): KebabOption => ({
-  // t('olm~Disable')
-  labelKey: 'olm~Disable',
-  callback: () => disableDefaultSourceModal({ kind, operatorHub, sourceName }),
-  accessReview: asAccessReview(kind, operatorHub, 'patch'),
-});
 
 const enableSource = (
   kind: K8sKind,
@@ -91,22 +72,6 @@ const enableSource = (
   },
   accessReview: asAccessReview(kind, operatorHub, 'patch'),
 });
-
-const DefaultSourceKebab: React.FC<DefaultSourceKebabProps> = ({
-  kind,
-  operatorHub,
-  sourceName,
-  sourceDisabled,
-  source,
-}) => {
-  const options = sourceDisabled
-    ? [enableSource(kind, operatorHub, sourceName)]
-    : [
-        disableSourceModal(kind, operatorHub, sourceName),
-        ...(source ? [Kebab.factory.Edit(CatalogSourceModel, source)] : []),
-      ];
-  return <Kebab options={options} />;
-};
 
 const getOperatorCount = (
   catalogSource: CatalogSourceKind,
@@ -208,26 +173,31 @@ export const CatalogSourceOperatorsPage: React.FC<CatalogSourceOperatorsPageProp
   return <PackageManifestsPage catalogSource={props.obj} showTitle={false} {...props} />;
 };
 
-export const CatalogSourceDetailsPage: React.FC = (props) => {
-  const [operatorHub, operatorHubLoaded, operatorHubLoadError] = useOperatorHubConfig();
+export const CatalogSourceDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
+  props,
+) => {
+  const { t } = useTranslation();
   const params = useParams();
-
-  const isDefaultSource = React.useMemo(
-    () =>
-      DEFAULT_SOURCE_NAMESPACE === params.ns &&
-      operatorHub?.status?.sources?.some((source) => source.name === params.name),
-    [operatorHub, params.name, params.ns],
-  );
-
-  const menuActions = isDefaultSource
-    ? [Kebab.factory.Edit, () => disableSourceModal(OperatorHubModel, operatorHub, params.name)]
-    : Kebab.factory.common;
 
   return (
     <DetailsPage
       {...props}
       namespace={params.ns}
       kind={referenceForModel(CatalogSourceModel)}
+      customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) => (
+        <LazyActionMenu
+          {...props}
+          context={{
+            [referenceForModel(CatalogSourceModel)]: {
+              obj,
+              namespace: params.ns,
+              name: params.name,
+            },
+          }}
+          variant={ActionMenuVariant.DROPDOWN}
+          label={t('public~Actions')}
+        />
+      )}
       name={params.name}
       pages={[
         navFactory.details(CatalogSourceDetails),
@@ -239,7 +209,6 @@ export const CatalogSourceDetailsPage: React.FC = (props) => {
           component: CatalogSourceOperatorsPage,
         },
       ]}
-      menuActions={operatorHubLoaded && !operatorHubLoadError ? menuActions : []}
       resources={[
         {
           kind: referenceForModel(PackageManifestModel),
@@ -340,12 +309,9 @@ const getRowProps = (obj) => ({
 const CatalogSourceTableRow: React.FC<RowFunctionArgs<CatalogSourceTableRowObj>> = ({
   obj: {
     availability = '-',
-    disabled = false,
     endpoint = '-',
-    isDefault = false,
     name,
     operatorCount = 0,
-    operatorHub,
     publisher = '-',
     registryPollInterval = '-',
     status = '',
@@ -373,26 +339,15 @@ const CatalogSourceTableRow: React.FC<RowFunctionArgs<CatalogSourceTableRowObj>>
     <TableData className={tableColumnClasses[5]}>{registryPollInterval}</TableData>
     <TableData className={tableColumnClasses[6]}>{operatorCount || '-'}</TableData>
     <TableData className={tableColumnClasses[7]}>
-      {isDefault ? (
-        <DefaultSourceKebab
-          kind={OperatorHubModel}
-          operatorHub={operatorHub}
-          sourceName={name}
-          sourceDisabled={disabled}
-          source={source}
-        />
-      ) : (
-        <ResourceKebab
-          actions={[
-            Kebab.factory.ModifyLabels,
-            Kebab.factory.ModifyAnnotations,
-            Kebab.factory.Edit,
-            deleteModal,
-          ]}
-          kind={catalogSourceModelReference}
-          resource={source}
-        />
-      )}
+      <LazyActionMenu
+        context={{
+          [referenceForModel(CatalogSourceModel)]: {
+            obj: source,
+            namespace: source?.metadata?.namespace,
+            name: source?.metadata?.name,
+          },
+        }}
+      />
     </TableData>
   </>
 );
@@ -594,14 +549,6 @@ type CatalogSourceTableRowObj = {
   publisher?: string;
   registryPollInterval?: string;
   status?: string;
-  source?: CatalogSourceKind;
-};
-
-type DefaultSourceKebabProps = {
-  kind: K8sKind;
-  operatorHub: OperatorHubKind;
-  sourceName: string;
-  sourceDisabled: boolean;
   source?: CatalogSourceKind;
 };
 

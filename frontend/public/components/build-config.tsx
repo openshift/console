@@ -1,18 +1,10 @@
 import * as React from 'react';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, redirect } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom-v5-compat';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import {
-  K8sModel,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceFor,
-  referenceForModel,
-} from '../module/k8s';
-import { cloneBuild, startBuild } from '../module/k8s/builds';
+import { K8sResourceKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';
 import {
   DetailsPage,
   ListPage,
@@ -25,94 +17,25 @@ import {
 import { BuildHooks } from './utils/build-hooks';
 import { BuildStrategy } from './utils/build-strategy';
 import { BuildStrategyType, displayDurationInWords } from './utils/build-utils';
-import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
+import { Kebab } from './utils/kebab';
 import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink, resourceObjPath } from './utils/resource-link';
+import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { WebhookTriggers } from './utils/webhooks';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildsPage, BuildEnvironmentComponent, PipelineBuildStrategyAlert } from './build';
 import { ResourceEventStream } from './events';
-import { BuildModel } from '../models';
+import { BuildConfigModel, BuildModel } from '../models';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { Status } from '@console/shared/src/components/status/Status';
-
 import { Grid, GridItem } from '@patternfly/react-core';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { ErrorModal } from './modals/error-modal';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
-const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
+const BuildConfigsReference: K8sResourceKindReference = referenceForModel(BuildConfigModel);
 const BuildsReference: K8sResourceKindReference = 'Build';
-
-const useStartBuildAction = (): KebabAction => {
-  const { t } = useTranslation();
-  const launchModal = useOverlay();
-
-  return useMemo(
-    () => (kind: K8sModel, buildConfig: BuildConfig) => ({
-      labelKey: t('public~Start build'),
-      callback: () =>
-        startBuild(buildConfig)
-          .then((build) => {
-            return redirect(resourceObjPath(build, referenceFor(build)));
-          })
-          .catch((err) => {
-            const error = err.message;
-            launchModal(ErrorModal, { error });
-          }),
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        subresource: 'instantiate',
-        name: buildConfig.metadata.name,
-        namespace: buildConfig.metadata.namespace,
-        verb: 'create',
-      },
-    }),
-    [launchModal, t],
-  );
-};
-
-const useStartLastBuildAction = (latestBuild: K8sResourceKind): KebabAction => {
-  const { t } = useTranslation();
-  const launchModal = useOverlay();
-
-  return useMemo(
-    () => (kind: K8sModel, buildConfig: BuildConfig) => ({
-      labelKey: t('public~Start last run'),
-      callback: () =>
-        cloneBuild(latestBuild)
-          .then((clone) => {
-            return redirect(resourceObjPath(clone, referenceFor(clone)));
-          })
-          .catch((err) => {
-            const error = err.message;
-            launchModal(ErrorModal, { error });
-          }),
-      hidden: !latestBuild,
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        subresource: 'instantiate',
-        name: buildConfig.metadata.name,
-        namespace: buildConfig.metadata.namespace,
-        verb: 'create',
-      },
-    }),
-    [latestBuild, launchModal, t],
-  );
-};
-
-const useBuildConfigKebabActions = (latestBuild?: K8sResourceKind): KebabAction[] => {
-  const startBuildAction = useStartBuildAction();
-  const startLastBuildAction = useStartLastBuildAction(latestBuild);
-  return useMemo(() => [startBuildAction, startLastBuildAction, ...Kebab.factory.common], [
-    startBuildAction,
-    startLastBuildAction,
-  ]);
-};
 
 export const BuildConfigsDetails: React.FCC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {
   const hasPipeline = buildConfig.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
@@ -163,6 +86,7 @@ const getLatestBuild = (builds) => {
 };
 
 export const BuildConfigsDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const { t } = useTranslation();
   const buildModel = referenceForModel(BuildModel);
   const [builds, buildsLoaded, buildsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
     kind: buildModel,
@@ -175,12 +99,18 @@ export const BuildConfigsDetailsPage: React.FC<DetailsPageProps> = (props) => {
     isList: true,
   });
   const latestBuild = buildsLoaded && !buildsLoadError ? getLatestBuild(builds) : null;
-  const menuActions: KebabAction[] = useBuildConfigKebabActions(latestBuild);
   return (
     <DetailsPage
       {...props}
       kind={BuildConfigsReference}
-      menuActions={menuActions}
+      customActionMenu={(obj: K8sResourceKind) => (
+        <LazyActionMenu
+          {...props}
+          context={{ [BuildConfigsReference]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+          label={t('public~Actions')}
+        />
+      )}
       pages={pages}
       customData={latestBuild}
     />
@@ -200,7 +130,6 @@ const tableColumnClasses = [
 
 const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) => {
   const latestBuild = obj?.latestBuild;
-  const menuActions: KebabAction[] = useBuildConfigKebabActions(latestBuild);
 
   return (
     <>
@@ -238,7 +167,7 @@ const BuildConfigsTableRow: React.FC<RowFunctionArgs<BuildConfig>> = ({ obj }) =
         )}
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={menuActions} kind={BuildConfigsReference} resource={obj} />
+        <LazyActionMenu context={{ [referenceForModel(BuildConfigModel)]: obj }} />
       </TableData>
     </>
   );
@@ -451,6 +380,6 @@ type CustomData = {
   };
 };
 
-type BuildConfig = K8sResourceKind & {
+export type BuildConfig = K8sResourceKind & {
   latestBuild?: K8sResourceKind;
 };

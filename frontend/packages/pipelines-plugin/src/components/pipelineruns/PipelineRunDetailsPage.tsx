@@ -3,37 +3,33 @@ import { Tooltip } from '@patternfly/react-core';
 import { ArchiveIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import { KebabAction, navFactory, viewYamlComponent } from '@console/internal/components/utils';
+import { navFactory, viewYamlComponent } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ActionMenuVariant, LazyActionMenu } from '@console/shared/src';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
 } from '../../const';
 import SignedPipelinerunIcon from '../../images/signed-badge.svg';
+import { PipelineRunModel } from '../../models';
 import { PipelineRunKind } from '../../types';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
-import { getPipelineRunKebabActions } from '../../utils/pipeline-actions';
 import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
 import { chainsSignedAnnotation } from '../pipelines/const';
 import { useDevPipelinesBreadcrumbsFor } from '../pipelines/hooks';
-import { usePipelineOperatorVersion } from '../pipelines/utils/pipeline-operator';
 import { PipelineRunDetails } from './detail-page-tabs/PipelineRunDetails';
 import { PipelineRunLogsWithActiveTask } from './detail-page-tabs/PipelineRunLogs';
 import PipelineRunEvents from './events/PipelineRunEvents';
 import { usePipelineRun } from './hooks/usePipelineRuns';
 import { useTaskRuns } from './hooks/useTaskRuns';
 import PipelineRunParametersForm from './PipelineRunParametersForm';
-import { useMenuActionsWithUserAnnotation } from './triggered-by';
 
 import './PipelineRunDetailsPage.scss';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { kindObj, namespace, name } = props;
   const { t } = useTranslation();
-  const operatorVersion = usePipelineOperatorVersion(namespace);
   const [taskRuns] = useTaskRuns(namespace, name);
-  const menuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
-    getPipelineRunKebabActions(operatorVersion, taskRuns, true),
-  );
   const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj);
   const badge = usePipelineTechPreviewBadge(props.namespace);
   const resourceTitleFunc = (obj: PipelineRunKind): string | JSX.Element => {
@@ -66,7 +62,20 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
         loadError: error,
       }}
       badge={badge}
-      menuActions={menuActions}
+      kind={referenceForModel(PipelineRunModel)}
+      customActionMenu={() => (
+        <LazyActionMenu
+          context={{
+            [referenceForModel(PipelineRunModel)]: {
+              obj: pipelineRun,
+              taskRuns,
+              redirect: true,
+            },
+          }}
+          variant={ActionMenuVariant.DROPDOWN}
+          label={t('pipelines-plugin~Actions')}
+        />
+      )}
       getResourceStatus={pipelineRunStatus}
       breadcrumbsFor={() => breadcrumbsFor}
       titleFunc={resourceTitleFunc}

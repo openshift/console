@@ -20,7 +20,6 @@ import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';
 import { Firehose } from './utils/firehose';
 import { FirehoseResourcesResult } from './utils/types';
-import { Kebab } from './utils/kebab';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
@@ -42,9 +41,6 @@ import {
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LoadingBox } from './utils/status-box';
-
-const { common } = Kebab.factory;
-export const menuActions = [...common];
 
 const kind = referenceForModel(CronJobModel);
 
