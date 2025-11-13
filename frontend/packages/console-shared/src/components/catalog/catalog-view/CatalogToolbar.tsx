@@ -1,9 +1,12 @@
-import { forwardRef } from 'react';
+import { forwardRef, Suspense } from 'react';
 import { Flex, FlexItem, SearchInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+// TODO(CONSOLE-4823): Remove this hard-coded component when OLMv1 GAs
+import { OLMv1Switch } from '@console/operator-lifecycle-manager-v1/src/components/OLMv1Switch';
+import { useDebounceCallback, useFlag } from '@console/shared/src/hooks';
 import { NO_GROUPING } from '../utils/category-utils';
 import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
 import CatalogPageHeader from './CatalogPageHeader';
@@ -18,6 +21,7 @@ type CatalogToolbarProps = {
   sortOrder: CatalogSortOrder;
   groupings: CatalogStringMap;
   activeGrouping: string;
+  catalogType?: string;
   onGroupingChange: (grouping: string) => void;
   onSearchKeywordChange: (searchKeyword: string) => void;
   onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
@@ -32,6 +36,7 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
       sortOrder,
       groupings,
       activeGrouping,
+      catalogType,
       onGroupingChange,
       onSearchKeywordChange,
       onSortOrderChange,
@@ -39,6 +44,10 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
     inputRef,
   ) => {
     const { t } = useTranslation();
+    const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
+
+    // TODO(CONSOLE-4823): Remove this hard-coded toggle when OLMv1 GAs
+    const showOLMv1Toggle = techPreviewEnabled && catalogType === 'operator';
 
     const catalogSortItems = {
       [CatalogSortOrder.RELEVANCE]: t('console-shared~Relevance'),
@@ -92,6 +101,14 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
                   title={catalogGroupItems[activeGrouping]}
                   alwaysShowTitle
                 />
+              </FlexItem>
+            )}
+            {/* TODO(CONSOLE-4823): Remove this hard-coded toggle when OLMv1 GAs */}
+            {showOLMv1Toggle && (
+              <FlexItem>
+                <Suspense fallback={null}>
+                  <OLMv1Switch />
+                </Suspense>
               </FlexItem>
             )}
           </Flex>
