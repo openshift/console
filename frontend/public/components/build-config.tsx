@@ -258,9 +258,7 @@ const getDataViewRows: GetDataViewRows<BuildConfig, undefined> = (data, columns)
       },
       [tableColumnInfo[6].id]: {
         cell: <BuildConfigKebabActions buildConfig={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

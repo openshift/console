@@ -215,9 +215,7 @@ const getDataViewRows: GetDataViewRows<BindingKind, undefined> = (data, columns)
       },
       [tableColumnInfo[5].id]: {
         cell: <BindingKebab binding={binding} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

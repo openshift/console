@@ -147,20 +147,12 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
       },
       [tableColumnInfo[2].id]: {
         cell: <LabelList kind={AlertmanagerModel.kind} labels={metadata.labels} />,
-        props: {
-          modifier: 'nowrap',
-          width: 20,
-        },
       },
       [tableColumnInfo[3].id]: {
         cell: spec.version || DASH,
       },
       [tableColumnInfo[4].id]: {
         cell: <Selector selector={spec.nodeSelector} kind="Node" />,
-        props: {
-          modifier: 'nowrap',
-          width: 20,
-        },
       },
     };
 
@@ -202,6 +194,7 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         sort: 'metadata.labels',
         props: {
           modifier: 'nowrap',
+          width: 20,
         },
       },
       {
@@ -210,6 +203,7 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
         sort: 'spec.version',
         props: {
           modifier: 'nowrap',
+          width: 20,
         },
       },
       {

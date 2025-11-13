@@ -67,9 +67,7 @@ const getDataViewRows: GetDataViewRows<GroupKind, undefined> = (
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

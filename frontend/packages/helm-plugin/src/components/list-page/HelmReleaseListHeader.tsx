@@ -58,7 +58,6 @@ const useHelmReleaseListColumns = (): TableColumn<any>[] => {
         sort: 'info.status',
         props: {
           modifier: 'nowrap',
-          visibility: ['hiddenOnMd', 'visibleOnLg'],
         },
       },
       {
@@ -67,7 +66,6 @@ const useHelmReleaseListColumns = (): TableColumn<any>[] => {
         sort: 'chart.metadata.name',
         props: {
           modifier: 'nowrap',
-          visibility: ['hiddenOnMd', 'visibleOnXl'],
         },
       },
       {
@@ -76,7 +74,6 @@ const useHelmReleaseListColumns = (): TableColumn<any>[] => {
         sort: 'chart.metadata.version',
         props: {
           modifier: 'nowrap',
-          visibility: ['hiddenOnMd', 'visibleOnXl'],
         },
       },
       {
@@ -85,7 +82,6 @@ const useHelmReleaseListColumns = (): TableColumn<any>[] => {
         sort: 'chart.metadata.appVersion',
         props: {
           modifier: 'nowrap',
-          visibility: ['hiddenOnMd', 'visibleOnXl'],
         },
       },
       {

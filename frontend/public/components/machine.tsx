@@ -97,9 +97,7 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
       },
       [tableColumnInfo[7].id]: {
         cell: <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

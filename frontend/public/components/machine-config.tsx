@@ -191,9 +191,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind, undefined> = (data, co
             resource={obj}
           />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

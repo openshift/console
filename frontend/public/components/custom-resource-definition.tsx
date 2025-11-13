@@ -340,9 +340,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> 
             resource={obj}
           />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

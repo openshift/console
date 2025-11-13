@@ -132,9 +132,7 @@ export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
