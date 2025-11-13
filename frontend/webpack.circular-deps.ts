@@ -12,8 +12,6 @@ const HandleCyclesPluginName = 'HandleCyclesPlugin';
 type PresetOptions = {
   /** Exclude modules that match the given regex */
   exclude?: RegExp;
-  /** Ignores cycles that involve modules matching the given regex */
-  filterModules?: RegExp;
   /** Path to write the cycle report to */
   reportFile: string;
   /** Thresholds for the number of cycles detected before emitting an error */
@@ -120,12 +118,7 @@ export class CircularDependencyPreset {
       new CircularDependencyPlugin({
         exclude: this.options.exclude,
         onDetected: ({ module: { resource }, paths: modulePaths }) => {
-          if (
-            !this.options.filterModules ||
-            !modulePaths.some((p) => this.options.filterModules.test(p))
-          ) {
-            cycles.push({ causedBy: resource, modulePaths });
-          }
+          cycles.push({ causedBy: resource, modulePaths });
         },
       }),
       {
