@@ -10,7 +10,8 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { BindingName, flatten as bindingsFlatten } from './bindings';
 import { RulesList } from './rules';
 import { DetailsPage } from '../factory/details';
-import { MultiListPage, TextFilter } from '../factory/list-page';
+import { MultiListPage } from '../factory/list-page';
+import { TextFilter } from '../factory/text-filter';
 import {
   ConsoleDataView,
   getNameCellProps,

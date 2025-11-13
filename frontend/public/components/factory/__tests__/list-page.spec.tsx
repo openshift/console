@@ -1,7 +1,7 @@
 import { screen, fireEvent } from '@testing-library/react';
 
+import { TextFilter } from '@console/internal/components/factory/text-filter';
 import {
-  TextFilter,
   ListPageWrapper,
   FireMan,
   MultiListPage,

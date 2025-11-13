@@ -4,7 +4,7 @@ import { useDocumentListener, KeyEventModes } from '@console/shared/src/hooks/do
 import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
 
 import { fuzzyCaseInsensitive } from './factory/table-filters';
-import { TextFilter } from './factory/list-page';
+import { TextFilter } from './factory/text-filter';
 import { Label, SelectList } from '@patternfly/react-core';
 
 const MAX_SUGGESTIONS = 5;
