@@ -66,10 +66,13 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
     },
     [dispatch],
   );
+
+  const titleSlug = title.toLowerCase().replace(/\s+/g, '-');
+
   return (
     <Card
       className="monitoring-dashboards__card odc-monitoring-dashboard-graph"
-      data-test={title.toLowerCase().replace(/\s+/g, '-')}
+      data-test={titleSlug}
       isClickable
       isSelectable
     >
@@ -87,8 +90,11 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
           hasNoOffset: false,
           className: 'co-overview-card__actions',
         }}
+        selectableActions={{
+          selectableActionAriaLabelledby: titleSlug,
+        }}
       >
-        <CardTitle>{title}</CardTitle>
+        <CardTitle id={titleSlug}>{title}</CardTitle>
       </CardHeader>
       <CardBody>
         <QueryBrowser
