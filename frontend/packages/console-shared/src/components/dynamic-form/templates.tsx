@@ -127,7 +127,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
           <div className="co-dynamic-form__array-field-group-item" key={item.key}>
             {item.index > 0 && <Divider className="co-divider" />}
             {item.hasRemove && (
-              <div className="row co-dynamic-form__array-field-group-remove">
+              <div className="co-dynamic-form__array-field-group-remove">
                 <Button
                   icon={<MinusCircleIcon className="co-icon-space-r" />}
                   id={`${item.key}_remove-btn`}
@@ -143,7 +143,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
           </div>
         );
       })}
-      <div className="row">
+      <div>
         <Button
           icon={<PlusCircleIcon className="co-icon-space-r" />}
           id={`${idSchema.$id}_add-btn`}
