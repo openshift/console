@@ -32,7 +32,7 @@ FORMATTABLE=(cmd pkg)
 echo "Verifying go deps..."
 go mod tidy
 go mod vendor
-CHANGES=$(git status --porcelain --ignored)
+CHANGES=$(git status --porcelain)
 if [ -n "$CHANGES" ] ; then
     echo "ERROR: detected vendor inconsistency after 'go mod tidy; go mod vendor':"
     echo "$CHANGES"
