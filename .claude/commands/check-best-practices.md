@@ -1,6 +1,6 @@
 # /check-best-practices
 
-Analyze code files for adherence to OpenShift Console best practices and style guide compliance.
+Analyze code files for adherence to OpenShift Console conventions and style guide compliance.
 
 ## Instructions
 
@@ -33,7 +33,7 @@ When analyzing code, follow this systematic approach:
    - Verify imports are grouped: stdlib, external dependency, current project
    - Ensure tests follow "test tables" convention
 
-3. **TypeScript Usage**: Verify modern TypeScript patterns
+3. **TypeScript Usage**: Verify TypeScript patterns
    - Check that new code is TypeScript, not JavaScript
    - Verify use of specific types over `any`
    - Check for proper type assertions (avoid `as any`)
@@ -71,17 +71,17 @@ When analyzing code, follow this systematic approach:
 
 ### Report Format
 
-**Best Practices Status**: ✅ Compliant / ⚠️ Needs Improvement / ❌ Non-Compliant
+**Status**: ✅ Compliant / ⚠️ Needs Improvement / ❌ Non-Compliant
 
 **Summary**: Brief overview of code quality and style guide adherence
 
 **Findings**:
 - **Style Guide Compliance**: Specific adherence to OpenShift Console style guide
-- **Best Practices Found**: Positive patterns and good practices
+- **Patterns Found**: Positive patterns and good practices
 - **Issues Identified**: Areas not following established guidelines
 - **Recommendations**: Specific actionable improvements
 
-**Compliance Score**: X/10 (based on style guide and best practices adherence)
+**Compliance Score**: X/10 (based on style guide and context adherence)
 
 ### Example Analysis
 
@@ -100,7 +100,7 @@ Style Guide Compliance:
 ❌ Contains absolute path imports
 ❌ Missing BEM class naming convention
 
-Best Practices Found:
+Correct Patterns Identified:
 - Uses React.FCC for component typing
 - Proper composition over inheritance
 - Good separation of concerns
