@@ -2,7 +2,7 @@ import { getImpersonate } from '../../app/core/reducers';
 import storeHandler from '../../app/storeHandler';
 
 type ConsoleRequestHeaders = {
-  'Impersonate-Group'?: string;
+  'Impersonate-Group'?: string | string[];
   'Impersonate-User'?: string;
   'X-CSRFToken'?: string;
 };
@@ -35,12 +35,24 @@ export const getConsoleRequestHeaders = (): ConsoleRequestHeaders => {
   };
 
   // Set impersonation headers
-  const { kind, name } = getImpersonate(state) || {};
-  if ((kind === 'User' || kind === 'Group') && name) {
-    // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
-    headers['Impersonate-User'] = name;
-    if (kind === 'Group') {
+  const impersonateData = getImpersonate(state);
+  if (impersonateData) {
+    const { kind, name, groups } = impersonateData;
+
+    if (kind === 'User' && name) {
+      // Simple user impersonation
+      headers['Impersonate-User'] = name;
+    } else if (kind === 'Group' && name) {
+      // Single group impersonation (backward compatibility)
+      // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
+      headers['Impersonate-User'] = name;
       headers['Impersonate-Group'] = name;
+    } else if (kind === 'UserWithGroups' && name && groups && groups.length > 0) {
+      // User with multiple groups impersonation
+      headers['Impersonate-User'] = name;
+      // Set multiple Impersonate-Group headers - one for each group
+      // Note: This creates an array of values for the same header key
+      headers['Impersonate-Group'] = groups;
     }
   }
 
