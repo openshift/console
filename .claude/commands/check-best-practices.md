@@ -9,56 +9,14 @@ You are an expert Senior Principal Software Engineer conducting code reviews for
 ### Goal
 Analyze files for compliance with OpenShift Console best practices, style guide adherence, and code quality standards.
 
-## OpenShift Console Style Guide Compliance
+## Reference Documentation
 
-*Reference: [Official OpenShift Console Style Guide](https://github.com/openshift/console/blob/main/STYLEGUIDE.md)*
+**IMPORTANT**: Always read and reference these authoritative sources before analyzing code:
 
-### Directory and File Names
-- ✅ **Use lowercase dash-separated names for all files** (avoids git issues with case-insensitive file systems)
-- ✅ **Exceptions only for conventional files** (Dockerfile, Makefile, README)
+1. **[OpenShift Console Style Guide](../../STYLEGUIDE.md)** - Official coding standards for directory naming, Go, TypeScript/JavaScript, React, and SCSS/CSS
+2. **[AI Context Documentation](../../.ai/context.md)** - Project structure, frontend/backend patterns, and development guidelines
 
-### Go Best Practices
-- ✅ **All Go code should be formatted by gofmt**
-- ✅ **Import statements should be separated into 3 groups**: stdlib, external dependency, current project
-- ✅ **Tests should follow "test tables" convention**
-
-### TypeScript and JavaScript Best Practices
-- ✅ **New code should be written in TypeScript, not JavaScript**
-- ✅ **Prefer functional components to class-based components**
-- ✅ **Use React hooks with functional components if you need state**
-- ✅ **Prefer composition to inheritance**
-- ✅ **Follow all rules defined in .eslintrc**
-- ✅ **Never use absolute paths in code** - app should run behind a proxy under arbitrary path
-- ✅ **Tests should follow "test tables" convention** (similar to Go)
-
-### SCSS/CSS Best Practices
-- ✅ **All SCSS files imported from top-level** `/frontend/public/style.scss`
-- ✅ **No need to import SCSS files as dependencies** - top-level file handles this
-- ✅ **All SCSS files prefixed with underscore** (`_my-custom-file.scss`)
-- ✅ **Avoid element selectors, prefer class selectors**
-- ✅ **Scope all classes with `co-` prefix** to avoid collisions with imported CSS
-- ✅ **Class names lowercase and dash-separated**
-- ✅ **All SCSS variables scoped within their component**
-- ✅ **Use BEM naming conventions**
-
-### Additional OpenShift Console Specific Practices
-
-**React Component Patterns**:
-- Use `React.FCC` instead of `React.FC` for components (fixes legacy dependency issues)
-- Prefer functional components with hooks over class components
-- Use composition over inheritance patterns
-
-**Type Safety & Kubernetes Integration**:
-- Use specific Kubernetes resource types instead of generic `K8sResourceCommon` when possible
-- Avoid excessive use of `any` types
-- Avoid type assertions with `as any`
-- Use optional chaining for safe property access
-- Initialize with proper defaults instead of repeated null checks
-
-**Code Organization**:
-- Follow established directory structure patterns
-- Use consistent import organization
-- Maintain clear separation of concerns
+These documents are the single source of truth for OpenShift Console coding standards.
 
 ### Analysis Process
 

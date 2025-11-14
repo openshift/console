@@ -1,5 +1,7 @@
 # OpenShift Console Styleguide
 
+This document outlines the core style conventions for the OpenShift Console codebase. For comprehensive project structure, development workflows, and additional context, see [.ai/context.md](./.ai/context.md).
+
 ## Directory and File Names
 
 - Use lowercase dash-separated names for all files (to avoid git issues with case-insensitive file systems)
@@ -34,17 +36,17 @@
 
 ### Additional OpenShift Console Specific Practices
 
-**React Component Patterns**:
-- Use `React.FCC` instead of `React.FC` for components (fixes legacy dependency issues)
+#### React Component Patterns
+- Use `React.FCC` instead of `React.FC` for components (fixes an issue with implicit 'children' in React.FC)
 
-**Type Safety & Kubernetes Integration**:
+#### Type Safety & Kubernetes Integration
 - Use specific Kubernetes resource types instead of generic `K8sResourceCommon` when possible
 - Avoid excessive use of `any` types
 - Avoid type assertions with `as any`
 - Use optional chaining for safe property access
 - Initialize with proper defaults instead of repeated null checks
 
-**Code Organization**:
+#### Code Organization
 - Follow established directory structure patterns
 - Use consistent import organization
 - Maintain clear separation of concerns
