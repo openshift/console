@@ -1,10 +1,11 @@
 # OpenShift Console Styleguide
 
-This document outlines the core style conventions for the OpenShift Console codebase. For comprehensive project structure, development workflows, and additional context, see [.ai/context.md](./.ai/context.md).
+This document outlines the core style conventions for the OpenShift Console codebase.
 
 ## Directory and File Names
 
-- Use lowercase dash-separated names for all files (to avoid git issues with case-insensitive file systems)
+- Follow the existing naming pattern in the directory you're working in
+- Directory names use lowercase dash-separated format
 - Exceptions are files which have their own naming conventions (eg Dockerfile, Makefile, README)
 
 ## Go
@@ -17,7 +18,6 @@ This document outlines the core style conventions for the OpenShift Console code
 
 - All SCSS files are imported from the top-level file: `/frontend/public/style.scss`
 - No need to import SCSS files as dependencies of others, top-level file handles this.
-- All SCSS files should be prefixed with an underscore, (eg `_my-custom-file.scss`).
 - When possible, avoid element selectors. Class selectors are preferred.
 - Scope all classes with a recognizable prefix to avoid collisions with any imported CSS (this project uses `co-` by convention).
 - Class names should be all lowercase and dash-separated.
@@ -50,14 +50,3 @@ This document outlines the core style conventions for the OpenShift Console code
 - Follow established directory structure patterns
 - Use consistent import organization
 - Maintain clear separation of concerns
-
-### Analysis Process
-
-1. **File Structure**: Check file naming and organization
-2. **Go Code Quality**: Verify gofmt formatting and import grouping
-3. **TypeScript Usage**: Verify modern TypeScript patterns
-4. **React Patterns**: Assess component structure and hooks usage
-5. **SCSS/CSS Patterns**: Check BEM naming, prefixing, and organization
-6. **Style Guide Compliance**: Check against official OpenShift Console style guide
-7. **Code Quality**: Evaluate maintainability and consistency
-8. **OpenShift Specific**: Review Kubernetes integration patterns

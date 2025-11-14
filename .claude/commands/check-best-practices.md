@@ -18,16 +18,56 @@ Analyze files for compliance with OpenShift Console best practices, style guide 
 
 These documents are the single source of truth for OpenShift Console coding standards.
 
-### Analysis Process
+## Analysis Process
+
+When analyzing code, follow this systematic approach:
 
 1. **File Structure**: Check file naming and organization
-2. **Go Code Quality**: Verify gofmt formatting and import grouping
+   - Verify file names follow existing patterns in the directory
+   - Check that directory structure follows established conventions
+   - Ensure SCSS files are prefixed with underscore
+   - Verify component SCSS files use PascalCase naming
+
+2. **Go Code Quality** (if applicable): Verify gofmt formatting and import grouping
+   - Check proper gofmt formatting
+   - Verify imports are grouped: stdlib, external dependency, current project
+   - Ensure tests follow "test tables" convention
+
 3. **TypeScript Usage**: Verify modern TypeScript patterns
+   - Check that new code is TypeScript, not JavaScript
+   - Verify use of specific types over `any`
+   - Check for proper type assertions (avoid `as any`)
+   - Ensure optional chaining for safe property access
+
 4. **React Patterns**: Assess component structure and hooks usage
+   - Verify functional components over class-based components
+   - Check use of React hooks for state management
+   - Ensure composition over inheritance
+   - Verify `React.FCC` usage instead of `React.FC`
+   - Check for specific K8s resource types instead of generic `K8sResourceCommon`
+
 5. **SCSS/CSS Patterns**: Check BEM naming, prefixing, and organization
+   - Verify all classes use `co-` prefix
+   - Check BEM naming conventions are followed
+   - Ensure class names are lowercase and dash-separated
+   - Verify SCSS variables are scoped within components
+
 6. **Style Guide Compliance**: Check against official OpenShift Console style guide
+   - No absolute paths in code (app must run behind proxy)
+   - Follow established directory structure
+   - Consistent import organization
+   - Maintain clear separation of concerns
+
 7. **Code Quality**: Evaluate maintainability and consistency
+   - Check for proper error handling
+   - Verify meaningful variable/function names
+   - Assess code readability and documentation
+   - Check for code duplication
+
 8. **OpenShift Specific**: Review Kubernetes integration patterns
+   - Verify proper use of K8s resource types
+   - Check integration with OpenShift-specific APIs
+   - Review use of console-shared hooks and utilities
 
 ### Report Format
 
@@ -56,10 +96,9 @@ Style Guide Compliance:
 ✅ Uses TypeScript instead of JavaScript
 ✅ Functional component with hooks
 ✅ Uses composition over inheritance
-❌ File name uses camelCase instead of dash-separated
+❌ File name doesn't follow existing naming convention
 ❌ Contains absolute path imports
 ❌ Missing BEM class naming convention
-❌ SCSS file not prefixed with underscore
 
 Best Practices Found:
 - Uses React.FCC for component typing
