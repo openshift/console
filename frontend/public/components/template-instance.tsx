@@ -10,9 +10,13 @@ import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { sorts } from './factory/table';
 import { Conditions } from './conditions';
-import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';
+import {
+  getTemplateInstanceStatus,
+  referenceFor,
+  referenceForModel,
+  TemplateInstanceKind,
+} from '../module/k8s';
 import { EmptyBox, LoadingBox } from './utils/status-box';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
@@ -43,8 +47,9 @@ import {
 import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { sortResourceByValue } from './factory/Table/sort';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
-const menuActions = Kebab.factory.common;
+const templateInstanceReference = referenceForModel(TemplateInstanceModel);
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'status' }, { id: '' }];
 
@@ -74,7 +79,7 @@ const getTemplateInstanceDataViewRows = (
         cell: <Status status={status} />,
       },
       [tableColumnInfo[3].id]: {
-        cell: <ResourceKebab actions={menuActions} kind="TemplateInstance" resource={obj} />,
+        cell: <LazyActionMenu context={{ [templateInstanceReference]: obj }} />,
         props: actionsCellProps,
       },
     };
@@ -293,8 +298,7 @@ const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj 
 export const TemplateInstanceDetailsPage: React.FCC = (props) => (
   <DetailsPage
     {...props}
-    kind="TemplateInstance"
-    menuActions={menuActions}
+    kind={templateInstanceReference}
     pages={[navFactory.details(TemplateInstanceDetails), navFactory.editYaml()]}
   />
 );

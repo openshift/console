@@ -1112,7 +1112,6 @@
   "StorageClass": "StorageClass",
   "PersistentVolumeClaims": "PersistentVolumeClaims",
   "No claim": "No claim",
-  "The corresponding PersistentVolumeClaim must be deleted first.": "The corresponding PersistentVolumeClaim must be deleted first.",
   "PersistentVolume details": "PersistentVolume details",
   "Reclaim policy": "Reclaim policy",
   "PersistentVolumeClaim": "PersistentVolumeClaim",

@@ -38,7 +38,6 @@ import { DOC_URL_PODMAN } from './utils/documentation';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
@@ -48,6 +47,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { LoadingBox } from './utils/status-box';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
@@ -99,9 +99,6 @@ export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
 // - It has a spec tag annotated with `builder` and not `hidden`
 // - It has a corresponding status tag
 export const isBuilder = (imageStream: K8sResourceKind) => !_.isEmpty(getBuilderTags(imageStream));
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
 
 const ImageStreamTagsRow: React.FCC<ImageStreamTagsRowProps> = ({
   imageStream,
@@ -338,7 +335,7 @@ const pages = [
   navFactory.history(ImageStreamHistory),
 ];
 export const ImageStreamsDetailsPage: React.FCC = (props) => (
-  <DetailsPage {...props} kind={ImageStreamsReference} menuActions={menuActions} pages={pages} />
+  <DetailsPage {...props} kind={referenceForModel(ImageStreamModel)} pages={pages} />
 );
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
 
@@ -369,13 +366,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
         cell: <Timestamp timestamp={creationTimestamp} />,
       },
       [tableColumnInfo[4].id]: {
-        cell: (
-          <ResourceKebab
-            actions={menuActions}
-            kind={ImageStreamsReference}
-            resource={imageStream}
-          />
-        ),
+        cell: <LazyActionMenu context={{ [referenceForModel(ImageStreamModel)]: imageStream }} />,
         props: actionsCellProps,
       },
     };

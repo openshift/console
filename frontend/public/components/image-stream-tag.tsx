@@ -16,7 +16,6 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage } from './factory/details';
-import { Kebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceSummary } from './utils/details-page';
@@ -28,9 +27,6 @@ import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumb
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
 
 // Splits a name/value pair separated by an `=`
 const splitEnv = (nameValue: string) => {
@@ -311,7 +307,6 @@ export const ImageStreamTagsDetailsPage: React.FCC<ImageStreamTagsDetailsPagePro
         ];
       }}
       kind={ImageStreamTagsReference}
-      menuActions={menuActions}
       resources={[
         {
           kind: ImageStreamsReference,

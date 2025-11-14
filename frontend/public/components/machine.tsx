@@ -21,7 +21,6 @@ import { DetailsPage } from './factory/details';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import { DetailsItem } from './utils/details-item';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { NodeLink, ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
@@ -45,9 +44,8 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 export const machineReference = referenceForModel(MachineModel);
 
 const tableColumnInfo = [
@@ -96,7 +94,7 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
         cell: zone || DASH,
       },
       [tableColumnInfo[7].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />,
+        cell: <LazyActionMenu context={{ [machineReference]: obj }} />,
         props: actionsCellProps,
       },
     };
@@ -341,7 +339,6 @@ export const MachineDetailsPage: React.FCC = (props) => (
   <DetailsPage
     {...props}
     kind={machineReference}
-    menuActions={menuActions}
     pages={[
       navFactory.details(MachineDetails),
       navFactory.editYaml(),
