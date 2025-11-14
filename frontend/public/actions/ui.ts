@@ -14,7 +14,7 @@ import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures } from './features';
 import { clearSSARFlags } from './flags';
 import { OverviewSpecialGroup } from '../components/overview/constants';
-import { setClusterID, setCreateProjectMessage } from './common';
+import { setClusterID, setCreateProjectMessage, ActionType } from './common';
 import { subsClient } from '../graphql/client';
 import {
   beginImpersonate,
@@ -29,38 +29,7 @@ import {
 import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
 
 export type { NamespaceMetrics } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-
-export enum ActionType {
-  DismissOverviewDetails = 'dismissOverviewDetails',
-  SelectOverviewDetailsTab = 'selectOverviewDetailsTab',
-  SelectOverviewItem = 'selectOverviewItem',
-  SetActiveApplication = 'setActiveApplication',
-  SetActiveNamespace = 'setActiveNamespace',
-  SetCreateProjectMessage = 'setCreateProjectMessage',
-  SetCurrentLocation = 'setCurrentLocation',
-  SetServiceLevel = 'setServiceLevel',
-  NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
-  SetClusterID = 'setClusterID',
-  SortList = 'sortList',
-  UpdateOverviewMetrics = 'updateOverviewMetrics',
-  UpdateOverviewResources = 'updateOverviewResources',
-  UpdateOverviewSelectedGroup = 'updateOverviewSelectedGroup',
-  UpdateOverviewLabels = 'updateOverviewLabels',
-  UpdateOverviewFilterValue = 'updateOverviewFilterValue',
-  UpdateTimestamps = 'updateTimestamps',
-  SetPodMetrics = 'setPodMetrics',
-  SetNamespaceMetrics = 'setNamespaceMetrics',
-  SetNodeMetrics = 'setNodeMetrics',
-  SetPVCMetrics = 'setPVCMetrics',
-  SetUtilizationDuration = 'SetUtilizationDuration',
-  SetUtilizationDurationSelectedKey = 'SetUtilizationDurationSelectedKey',
-  SetUtilizationDurationEndTime = 'SetUtilizationDurationEndTime',
-  SetShowOperandsInAllNamespaces = 'setShowOperandsInAllNamespaces',
-  SetDeprecatedPackage = 'setDeprecatedPackage',
-  SetDeprecatedChannel = 'setDeprecatedChannel',
-  SetDeprecatedVersion = 'setDeprecatedVersion',
-  SetPluginCSPViolations = 'setPluginCSPViolations',
-}
+export { ActionType } from './common';
 
 type MetricValuesByNamespace = {
   [namespace: string]: MetricValuesByName;

@@ -11,7 +11,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { routeStatus } from '@console/shared/src/components/utils/routes';
 import { secretTypeFilterReducer } from '../secrets/create-secret';
-import { roleType } from '../RBAC/role';
+import { roleType } from '../RBAC/role-type';
 import {
   K8sResourceKind,
   MachineKind,

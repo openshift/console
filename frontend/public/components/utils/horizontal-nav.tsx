@@ -25,7 +25,7 @@ import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceFor, referenceForExtensionModel } from '../../module/k8s/k8s';
-import { PodsPage } from '../pod';
+import { PodsPage } from '../pod-list';
 import { AsyncComponent } from './async';
 import { ResourceMetricsDashboard } from './resource-metrics';
 import { EmptyBox, LoadingBox, StatusBox } from './status-box';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 
-import { RESULTS_TYPE } from '../../reducers/dashboards';
+import { RESULTS_TYPE } from '../../reducers/dashboard-results';
 import { NotificationAlerts } from '../../reducers/observe';
 import {
   StopWatchPrometheusAction,

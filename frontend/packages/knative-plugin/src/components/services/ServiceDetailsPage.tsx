@@ -6,7 +6,7 @@ import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import { DetailsPage } from '@console/internal/components/factory';
-import { PodsPage } from '@console/internal/components/pod';
+import { PodsPage } from '@console/internal/components/pod-list';
 import {
   ContainerTable,
   DetailsItem,

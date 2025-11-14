@@ -364,7 +364,7 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ),
   )
   .set(referenceForModel(PodModel), () =>
-    import('./pod' /* webpackChunkName: "pod" */).then((m) => m.PodsPage),
+    import('./pod-list' /* webpackChunkName: "pod" */).then((m) => m.PodsPage),
   )
   .set(referenceForModel(ReplicaSetModel), () =>
     import('./replicaset' /* webpackChunkName: "replicaset" */).then((m) => m.ReplicaSetsPage),

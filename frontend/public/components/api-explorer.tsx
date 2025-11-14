@@ -54,7 +54,7 @@ import { connectToFlags } from '../reducers/connectToFlags';
 import type { RootState } from '../redux';
 import { RowFilter } from './row-filter';
 import { DefaultPage } from './default-resource';
-import { TextFilter } from './factory/list-page';
+import { TextFilter } from './factory/text-filter';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
 import { getResourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
