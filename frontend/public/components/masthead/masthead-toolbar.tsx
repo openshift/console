@@ -25,13 +25,14 @@ import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
 import { useCopyLoginCommands } from '@console/shared/src/hooks/useCopyLoginCommands';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useUser } from '@console/shared/src/hooks/useUser';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { CloudShellMastheadButton } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import { CloudShellMastheadAction } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
-import { getUser, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../../actions/ui';
 import { flagPending, featureReducerName } from '../../reducers/features';
 import { authSvc } from '../../module/auth';
@@ -159,12 +160,15 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
     t('public~Login with this command'),
     externalLoginCommand,
   );
-  const { clusterID, user, alertCount, canAccessNS } = useSelector((state: RootState) => ({
+  const { clusterID, alertCount, canAccessNS } = useSelector((state: RootState) => ({
     clusterID: state.UI.get('clusterID'),
-    user: getUser(state),
     alertCount: state.observe.getIn(['alertCount']),
     canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
   }));
+
+  // Use centralized user hook for user data
+  const { displayName, username } = useUser();
+
   const [isAppLauncherDropdownOpen, setIsAppLauncherDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isKebabDropdownOpen, setIsKebabDropdownOpen] = useState(false);
@@ -178,7 +182,6 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
   const kebabMenuRef = useRef(null);
   const reportBugLink = cv ? getReportBugLink(cv) : null;
   const userInactivityTimeout = useRef(null);
-  const username = user?.username ?? '';
   const isKubeAdmin = username === 'kube:admin';
 
   const drawerToggle = useCallback(() => dispatch(UIActions.notificationDrawerToggleExpanded()), [
@@ -615,7 +618,7 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
 
     const userToggle = (
       <span className="co-username" data-test="username">
-        {authEnabledFlag ? username : t('public~Auth disabled')}
+        {authEnabledFlag ? displayName : t('public~Auth disabled')}
       </span>
     );
 

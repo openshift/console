@@ -1,4 +1,4 @@
-import { screen, render, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import * as _ from 'lodash';
 import { act } from 'react-dom/test-utils';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
@@ -32,7 +32,7 @@ describe('ExportApplicationModal', () => {
   });
 
   it('should show cancel and  ok buttons when export app resource is not found', async () => {
-    render(<ExportApplicationModal name="my-export" namespace="my-app" />);
+    renderWithProviders(<ExportApplicationModal name="my-export" namespace="my-app" />);
     expect(screen.getByTestId('cancel-btn')).toBeInTheDocument();
     expect(screen.getByTestId('close-btn')).toBeInTheDocument();
   });
@@ -58,7 +58,7 @@ describe('ExportApplicationModal', () => {
   });
 
   it('should show cancel and ok buttons when export app resource is created', async () => {
-    render(
+    renderWithProviders(
       <ExportApplicationModal
         name="my-export"
         namespace="my-app"
@@ -71,7 +71,9 @@ describe('ExportApplicationModal', () => {
 
   it('should call k8sCreate with correct data on click of Ok button when the export resource is not created', async () => {
     const spyk8sCreate = jest.spyOn(k8sResourceModule, 'k8sCreate');
-    render(<ExportApplicationModal namespace="my-app" name="my-export" cancel={jest.fn()} />);
+    renderWithProviders(
+      <ExportApplicationModal namespace="my-app" name="my-export" cancel={jest.fn()} />,
+    );
     await act(async () => {
       fireEvent.click(screen.getByTestId('close-btn'));
     });
@@ -84,7 +86,7 @@ describe('ExportApplicationModal', () => {
     const spyk8sKill = jest.spyOn(k8sResourceModule, 'k8sKill');
     const spyk8sCreate = jest.spyOn(k8sResourceModule, 'k8sCreate');
 
-    render(
+    renderWithProviders(
       <ExportApplicationModal
         name="my-export"
         namespace="my-app"
