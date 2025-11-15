@@ -437,7 +437,7 @@ const APIResourcesList = compose(
             />
           </ToolbarItem>
           <ToolbarItem variant="pagination">
-            <Pagination itemCount={sortedResources.length} {...pagination} isCompact />
+            <Pagination itemCount={sortedResources.length} {...pagination} />
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
@@ -514,13 +514,6 @@ const APIResourcesList = compose(
           />
         </InnerScrollContainer>
       </DataView>
-      <Toolbar>
-        <ToolbarContent>
-          <ToolbarItem variant="pagination">
-            <Pagination itemCount={sortedResources.length} {...pagination} variant="bottom" />
-          </ToolbarItem>
-        </ToolbarContent>
-      </Toolbar>
     </PaneBody>
   );
 });
@@ -844,7 +837,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             />
           </FlexItem>
           <FlexItem align={{ default: 'alignRight' }}>
-            <Pagination itemCount={filteredData.length} {...pagination} isCompact />
+            <Pagination itemCount={filteredData.length} {...pagination} />
           </FlexItem>
         </Flex>
         <RowFilter
@@ -941,13 +934,6 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             />
           </InnerScrollContainer>
         </DataView>
-        <Toolbar>
-          <ToolbarContent>
-            <ToolbarItem variant="pagination">
-              <Pagination itemCount={filteredData.length} {...pagination} variant="bottom" />
-            </ToolbarItem>
-          </ToolbarContent>
-        </Toolbar>
       </PaneBody>
     </>
   );
