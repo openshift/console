@@ -11,16 +11,10 @@ import { DashboardItemProps, withDashboardResources } from '../with-dashboard-re
 import type { FirehoseResource, FirehoseResult } from '../../utils/types';
 import { EventModel } from '../../../models';
 import { EventKind, K8sKind } from '../../../module/k8s';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  DashboardsOverviewResourceActivity,
-  isDashboardsOverviewResourceActivity,
-} from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
-  DashboardsOverviewResourceActivity as DynamicDashboardsOverviewResourceActivity,
-  isDashboardsOverviewResourceActivity as isDynamicDashboardsOverviewResourceActivity,
-  ResolvedExtension,
+  DashboardsOverviewResourceActivity,
+  isDashboardsOverviewResourceActivity,
 } from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
 import { RootState } from '../../../redux';
@@ -69,20 +63,17 @@ const OngoingActivity = connect(mapStateToProps)(
       projectName,
       models,
     }: DashboardItemProps & OngoingActivityProps) => {
-      const resourceActivityExtensions = useExtensions<DashboardsOverviewResourceActivity>(
-        isDashboardsOverviewResourceActivity,
-      );
-      const [dynamicResourceActivityExtensions] = useResolvedExtensions<
-        DynamicDashboardsOverviewResourceActivity
-      >(isDynamicDashboardsOverviewResourceActivity);
+      const [resourceActivityExtensions] = useResolvedExtensions<
+        DashboardsOverviewResourceActivity
+      >(isDashboardsOverviewResourceActivity);
 
       const resourceActivities = React.useMemo(
         () =>
-          [...resourceActivityExtensions, ...dynamicResourceActivityExtensions].filter((e) => {
+          resourceActivityExtensions.filter((e) => {
             const model = models.get(e.properties.k8sResource.kind);
             return model && model.namespaced;
           }),
-        [resourceActivityExtensions, dynamicResourceActivityExtensions, models],
+        [resourceActivityExtensions, models],
       );
 
       React.useEffect(() => {
@@ -114,9 +105,7 @@ const OngoingActivity = connect(mapStateToProps)(
                 .map((r) => ({
                   resource: r,
                   timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
-                  loader: (a as DashboardsOverviewResourceActivity)?.properties?.loader,
-                  component: (a as ResolvedExtension<DynamicDashboardsOverviewResourceActivity>)
-                    ?.properties?.component,
+                  component: a.properties.component,
                 }));
             }),
           ),
