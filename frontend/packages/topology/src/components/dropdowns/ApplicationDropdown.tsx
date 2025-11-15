@@ -10,7 +10,7 @@ import { ResourceDropdown } from '@console/shared';
 import { ResourceDropdownProps } from '../../../../console-shared/src/components/dropdown/ResourceDropdown';
 import { getNamespacedDynamicModelFactories } from '../../data-transforms/DataModelProvider';
 import { getBaseWatchedResources } from '../../data-transforms/transform-utils';
-import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions';
+import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions/topology';
 
 type ApplicationDropdownProps = Omit<ResourceDropdownProps, 'dataSelector' | 'placeholder'> & {
   namespace?: string;

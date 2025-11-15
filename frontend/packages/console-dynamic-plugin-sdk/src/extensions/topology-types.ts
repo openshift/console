@@ -47,7 +47,7 @@ export interface OdcEdgeModel extends EdgeModel {
   resourceKind?: K8sResourceKindReference;
 }
 
-export type TopologyResourcesObject = { [key: string]: K8sResourceCommon[] };
+export type TopologyResourcesObject = { [key: string]: K8sResourceKind[] };
 
 export type TopologyDataResources = WatchK8sResults<TopologyResourcesObject>;
 
@@ -101,9 +101,9 @@ export type TopologyDisplayOption = {
   value: boolean;
 };
 
-export type OverviewItem<T = K8sResourceCommon> = {
+export type OverviewItem<T = K8sResourceKind> = {
   obj: T;
-  hpas?: K8sResourceCommon[];
+  hpas?: K8sResourceKind[];
   isOperatorBackedService?: boolean;
   isMonitorable?: boolean;
   monitoringAlerts?: PrometheusAlert[];
@@ -133,9 +133,9 @@ export interface TopologyDataObject<D = {}> {
   name: string;
   type: string;
   resources: OverviewItem;
-  pods?: K8sResourceCommon[];
+  pods?: K8sResourceKind[];
   data: D;
-  resource: K8sResourceCommon | null;
+  resource: K8sResourceKind | null;
   groupResources?: OdcNodeModel[];
 }
 
