@@ -81,3 +81,5 @@ export const getGuidedTour = (): TourDataType => ({
     modalVariant: ModalVariant.medium,
   },
 });
+
+export default getGuidedTour();

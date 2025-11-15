@@ -11,6 +11,13 @@
     }
   },
   {
+    "type": "INTERNAL_DO_NOT_USE.guided-tour",
+    "properties": {
+      "perspective": "admin",
+      "tour": { "$codeRef": "getGuidedTour" }
+    }
+  },
+  {
     "type": "console.flag/model",
     "properties": {
       "model": {
