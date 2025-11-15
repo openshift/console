@@ -27,7 +27,20 @@ export const createHelmChartRepositoryValidationSchema = (t: TFunction) =>
         message: t('helm-plugin~Invalid Repo URL.'),
       })
       .max(2048, t('helm-plugin~Please enter a URL that is less then 2048 characters.'))
-      .required(t('helm-plugin~Required')),
+      .required(t('helm-plugin~Required'))
+      .test(
+        'https-with-basic-auth',
+        t(
+          'helm-plugin~Basic authentication requires HTTPS. Using HTTP with credentials is insecure.',
+        ),
+        function (value) {
+          const { basicAuthConfig } = this.parent;
+          if (basicAuthConfig && value) {
+            return value.startsWith('https://');
+          }
+          return true;
+        },
+      ),
   });
 
 export const validationSchema = (t: TFunction) =>
