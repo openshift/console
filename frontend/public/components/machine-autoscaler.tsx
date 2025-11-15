@@ -89,9 +89,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
         cell: (
           <ResourceKebab actions={menuActions} kind={machineAutoscalerReference} resource={obj} />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

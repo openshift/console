@@ -75,9 +75,7 @@ const getTemplateInstanceDataViewRows = (
       },
       [tableColumnInfo[3].id]: {
         cell: <ResourceKebab actions={menuActions} kind="TemplateInstance" resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

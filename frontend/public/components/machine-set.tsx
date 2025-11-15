@@ -390,9 +390,7 @@ const getDataViewRows = (
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={{ [machineSetReference]: obj }} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

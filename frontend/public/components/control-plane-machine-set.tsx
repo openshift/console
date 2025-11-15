@@ -323,9 +323,7 @@ const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind, undefined> = 
             resource={obj}
           />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

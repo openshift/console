@@ -58,9 +58,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
       },
       [tableColumnInfo[3].id]: {
         cell: <ResourceKebab actions={menuActions} kind={LimitRangeReference} resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

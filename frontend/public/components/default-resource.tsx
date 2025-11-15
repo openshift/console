@@ -218,9 +218,7 @@ const getDataViewRows = (
             )}
           </>
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

@@ -64,9 +64,7 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind, undefined> = (data, column
       },
       [tableColumnInfo[4].id]: {
         cell: <ResourceKebab actions={menuActions} kind={kind} resource={configMap} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

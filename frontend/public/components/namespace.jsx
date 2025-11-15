@@ -360,9 +360,7 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
       },
       [namespaceColumnInfo[9].id]: {
         cell: <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -674,9 +672,7 @@ const getProjectDataViewRows = (
       },
       [projectColumnInfo[9].id]: {
         cell: <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

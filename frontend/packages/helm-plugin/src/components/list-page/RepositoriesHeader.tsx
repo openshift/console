@@ -56,7 +56,6 @@ export const useRepositoriesColumns = (): TableColumn<K8sResourceKind>[] => {
         sort: 'spec.connectionConfig.url',
         props: {
           modifier: 'nowrap',
-          visibility: ['hiddenOnMd', 'visibleOnXl'],
         },
       },
       {
@@ -65,7 +64,6 @@ export const useRepositoriesColumns = (): TableColumn<K8sResourceKind>[] => {
         sort: 'metadata.creationTimestamp',
         props: {
           modifier: 'nowrap',
-          visibility: ['hiddenOnMd', 'visibleOnXl'],
         },
       },
       {

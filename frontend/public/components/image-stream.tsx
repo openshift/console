@@ -376,9 +376,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
             resource={imageStream}
           />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

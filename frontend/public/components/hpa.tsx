@@ -320,9 +320,7 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind, undefined> =
             resource={obj}
           />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

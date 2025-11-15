@@ -55,9 +55,7 @@ const getDataViewRows = (data, columns) => {
       },
       [tableColumnInfo[4].id]: {
         cell: <ResourceKebab actions={menuActions} kind={kind} resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

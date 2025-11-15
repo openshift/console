@@ -419,9 +419,7 @@ const getPodDataViewRows = (
       },
       [tableColumnInfo[13].id]: {
         cell: <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

@@ -51,21 +51,13 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind, typeof menuAction
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
-        props: {
-          modifier: 'nowrap',
-        },
       },
       [tableColumnInfo[2].id]: {
         cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
-        props: {
-          modifier: 'nowrap',
-        },
       },
       [tableColumnInfo[3].id]: {
         cell: <ResourceKebab actions={actions} kind={machineHealthCheckReference} resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
