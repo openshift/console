@@ -1,101 +1,154 @@
-import { Radio } from '@patternfly/react-core';
-import { ShallowWrapper, shallow } from 'enzyme';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import * as _ from 'lodash';
-import {
-  ModalTitle,
-  ModalSubmitFooter,
-  ModalBody,
-} from '@console/internal/components/factory/modal';
-import * as k8sModelsModule from '@console/internal/module/k8s/k8s-models';
+import { modelFor } from '@console/internal/module/k8s';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testSubscription, testInstallPlan } from '../../../mocks';
 import { SubscriptionModel, InstallPlanModel } from '../../models';
-import { SubscriptionKind, InstallPlanApproval } from '../../types';
+import { InstallPlanApproval } from '../../types';
 import {
   InstallPlanApprovalModal,
   InstallPlanApprovalModalProps,
 } from './installplan-approval-modal';
-import Spy = jasmine.Spy;
 
-describe(InstallPlanApprovalModal.name, () => {
-  let wrapper: ShallowWrapper<InstallPlanApprovalModalProps>;
-  let k8sUpdate: Spy;
-  let close: Spy;
-  let cancel: Spy;
-  let subscription: SubscriptionKind;
+jest.mock('@console/internal/module/k8s', () => ({
+  ...jest.requireActual('@console/internal/module/k8s'),
+  modelFor: jest.fn(),
+}));
+
+jest.mock('@console/internal/components/factory/modal', () => ({
+  ...jest.requireActual('@console/internal/components/factory/modal'),
+  ModalTitle: jest.fn(({ children }) => children),
+  ModalBody: jest.fn(({ children }) => children),
+  ModalSubmitFooter: jest.fn(() => null),
+}));
+
+const mockModelFor = modelFor as jest.Mock;
+
+describe('InstallPlanApprovalModal', () => {
+  let installPlanApprovalModalProps: InstallPlanApprovalModalProps;
 
   beforeEach(() => {
-    k8sUpdate = jasmine.createSpy().and.returnValue(Promise.resolve());
-    close = jasmine.createSpy();
-    cancel = jasmine.createSpy();
-    subscription = _.cloneDeep(testSubscription);
+    jest.clearAllMocks();
 
-    wrapper = shallow(
-      <InstallPlanApprovalModal
-        obj={subscription}
-        k8sUpdate={k8sUpdate}
-        close={close}
-        cancel={cancel}
-      />,
+    installPlanApprovalModalProps = {
+      obj: _.cloneDeep(testSubscription),
+      k8sUpdate: jest.fn(() => Promise.resolve()),
+      close: jest.fn(),
+      cancel: jest.fn(),
+    };
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('renders modal with correct title', () => {
+    renderWithProviders(<InstallPlanApprovalModal {...installPlanApprovalModalProps} />);
+
+    expect(screen.getByText('Change update approval strategy')).toBeVisible();
+  });
+
+  it('renders two radio buttons for approval strategies', () => {
+    renderWithProviders(<InstallPlanApprovalModal {...installPlanApprovalModalProps} />);
+
+    const radios = screen.getAllByRole('radio');
+    expect(radios).toHaveLength(2);
+    expect(screen.getByRole('radio', { name: /automatic \(default\)/i })).toBeVisible();
+    expect(screen.getByRole('radio', { name: /manual/i })).toBeVisible();
+  });
+
+  it('pre-selects Automatic when subscription uses automatic approval', () => {
+    renderWithProviders(<InstallPlanApprovalModal {...installPlanApprovalModalProps} />);
+
+    const automaticRadio = screen.getByRole('radio', { name: /automatic \(default\)/i });
+    const manualRadio = screen.getByRole('radio', { name: /manual/i });
+
+    expect(automaticRadio).toBeChecked();
+    expect(manualRadio).not.toBeChecked();
+  });
+
+  it('pre-selects Manual when install plan uses manual approval', () => {
+    const installPlan = _.cloneDeep(testInstallPlan);
+    installPlan.spec.approval = InstallPlanApproval.Manual;
+
+    renderWithProviders(
+      <InstallPlanApprovalModal {...installPlanApprovalModalProps} obj={installPlan} />,
+    );
+
+    const automaticRadio = screen.getByRole('radio', { name: /automatic \(default\)/i });
+    const manualRadio = screen.getByRole('radio', { name: /manual/i });
+
+    expect(automaticRadio).not.toBeChecked();
+    expect(manualRadio).toBeChecked();
+  });
+
+  it('calls k8sUpdate with updated subscription when form is submitted', async () => {
+    mockModelFor.mockReturnValue(SubscriptionModel);
+
+    renderWithProviders(<InstallPlanApprovalModal {...installPlanApprovalModalProps} />);
+
+    const manualRadio = screen.getByRole('radio', { name: /manual/i });
+    fireEvent.click(manualRadio);
+
+    const form = screen.getByRole('radio', { name: /manual/i }).closest('form');
+    if (form) {
+      fireEvent.submit(form);
+    }
+
+    await waitFor(() => {
+      expect(installPlanApprovalModalProps.k8sUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    expect(installPlanApprovalModalProps.k8sUpdate).toHaveBeenCalledWith(
+      SubscriptionModel,
+      expect.objectContaining({
+        spec: expect.objectContaining({
+          installPlanApproval: InstallPlanApproval.Manual,
+        }),
+      }),
     );
   });
 
-  it('renders a modal form', () => {
-    expect(wrapper.find('form').props().name).toEqual('form');
-    expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Save');
-  });
+  it('calls k8sUpdate with updated install plan when form is submitted', async () => {
+    const installPlan = _.cloneDeep(testInstallPlan);
+    mockModelFor.mockReturnValue(InstallPlanModel);
 
-  it('renders a radio button for each available approval strategy', () => {
-    expect(wrapper.find(ModalBody).find(Radio).length).toEqual(2);
-  });
+    renderWithProviders(
+      <InstallPlanApprovalModal {...installPlanApprovalModalProps} obj={installPlan} />,
+    );
 
-  it('pre-selects the approval strategy option that is currently being used by a subscription', () => {
-    expect(wrapper.find(ModalBody).find(Radio).at(0).props().isChecked).toBe(true);
-  });
+    const manualRadio = screen.getByRole('radio', { name: /manual/i });
+    fireEvent.click(manualRadio);
 
-  it('pre-selects the approval strategy option that is currently being used by an install plan', () => {
-    wrapper = wrapper.setProps({ obj: _.cloneDeep(testInstallPlan) });
-    expect(wrapper.find(ModalBody).find(Radio).at(0).props().isChecked).toBe(true);
-  });
+    const form = screen.getByRole('radio', { name: /manual/i }).closest('form');
+    if (form) {
+      fireEvent.submit(form);
+    }
 
-  it('calls `props.k8sUpdate` to update the subscription when form is submitted', () => {
-    spyOn(k8sModelsModule, 'modelFor').and.returnValue(SubscriptionModel);
-    k8sUpdate.and.callFake((modelArg, subscriptionArg) => {
-      expect(modelArg).toEqual(SubscriptionModel);
-      expect(subscriptionArg?.spec?.installPlanApproval).toEqual(InstallPlanApproval.Manual);
-      return Promise.resolve();
-    });
-    wrapper
-      .find(ModalBody)
-      .find(Radio)
-      .at(1)
-      .props()
-      .onChange({ target: { value: InstallPlanApproval.Manual } } as any, true);
-    wrapper.find('form').simulate('submit', new Event('submit'));
-  });
-
-  it('calls `props.k8sUpdate` to update the install plan when form is submitted', () => {
-    wrapper = wrapper.setProps({ obj: _.cloneDeep(testInstallPlan) });
-    spyOn(k8sModelsModule, 'modelFor').and.returnValue(InstallPlanModel);
-    k8sUpdate.and.callFake((modelArg, installPlanArg) => {
-      expect(modelArg).toEqual(InstallPlanModel);
-      expect(installPlanArg?.spec?.approval).toEqual(InstallPlanApproval.Manual);
-      return Promise.resolve();
-    });
-    wrapper
-      .find(ModalBody)
-      .find(Radio)
-      .at(1)
-      .props()
-      .onChange({ target: { value: InstallPlanApproval.Manual } } as any, true);
-    wrapper.find('form').simulate('submit', new Event('submit'));
-  });
-
-  it('calls `props.close` after successful submit', (done) => {
-    close.and.callFake(() => {
-      done();
+    await waitFor(() => {
+      expect(installPlanApprovalModalProps.k8sUpdate).toHaveBeenCalledTimes(1);
     });
 
-    wrapper.find('form').simulate('submit', new Event('submit'));
+    expect(installPlanApprovalModalProps.k8sUpdate).toHaveBeenCalledWith(
+      InstallPlanModel,
+      expect.objectContaining({
+        spec: expect.objectContaining({
+          approval: InstallPlanApproval.Manual,
+        }),
+      }),
+    );
+  });
+
+  it('calls close callback after successful submit', async () => {
+    renderWithProviders(<InstallPlanApprovalModal {...installPlanApprovalModalProps} />);
+
+    const form = screen.getByRole('radio', { name: /automatic/i }).closest('form');
+    if (form) {
+      fireEvent.submit(form);
+    }
+
+    await waitFor(() => {
+      expect(installPlanApprovalModalProps.close).toHaveBeenCalledTimes(1);
+    });
   });
 });

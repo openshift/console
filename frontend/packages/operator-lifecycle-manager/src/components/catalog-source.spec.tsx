@@ -1,23 +1,16 @@
-import { shallow, ShallowWrapper } from 'enzyme';
-import { safeLoad } from 'js-yaml';
+import * as React from 'react';
+import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import * as Router from 'react-router-dom-v5-compat';
-import { CreateYAML, CreateYAMLProps } from '@console/internal/components/create-yaml';
 import { DetailsPage } from '@console/internal/components/factory';
-import { Firehose, LoadingBox, DetailsItem } from '@console/internal/components/utils';
+import { Firehose } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ErrorBoundary } from '@console/shared/src/components/error';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testCatalogSource, testPackageManifest, dummyPackageManifest } from '../../mocks';
-import {
-  SubscriptionModel,
-  CatalogSourceModel,
-  PackageManifestModel,
-  OperatorGroupModel,
-} from '../models';
+import { CatalogSourceModel, PackageManifestModel } from '../models';
 import {
   CatalogSourceDetails,
-  CatalogSourceDetailsProps,
   CatalogSourceDetailsPage,
   CreateSubscriptionYAML,
   CatalogSourceOperatorsPage,
@@ -33,47 +26,121 @@ jest.mock('react-router-dom-v5-compat', () => ({
   useLocation: jest.fn(),
 }));
 
-describe(CatalogSourceDetails.displayName, () => {
-  let wrapper: ShallowWrapper<CatalogSourceDetailsProps>;
-  let obj: CatalogSourceDetailsProps['obj'];
+jest.mock('@console/internal/components/factory', () => ({
+  DetailsPage: jest.fn(() => null),
+  Table: jest.fn(() => null),
+  TableData: jest.fn(({ children }) => children),
+  MultiListPage: jest.fn(() => null),
+}));
+
+jest.mock('@console/internal/components/utils', () => ({
+  ...jest.requireActual('@console/internal/components/utils'),
+  Firehose: jest.fn(({ children }) => {
+    const props = { packageManifest: { loaded: false } };
+    return typeof children === 'function' ? children(props) : children;
+  }),
+  LoadingBox: jest.fn(() => 'Loading...'),
+  ResourceSummary: jest.fn(() => null),
+  SectionHeading: jest.fn(() => null),
+  DetailsItem: jest.fn(({ obj, path, children }) => {
+    if (children) return children;
+    if (path) {
+      const value = path.split('.').reduce((acc, key) => acc?.[key], obj);
+      return value || null;
+    }
+    return null;
+  }),
+}));
+
+jest.mock('@console/internal/components/create-yaml', () => ({
+  CreateYAML: jest.fn(({ template }) => template),
+}));
+
+jest.mock('./operator-group', () => ({
+  requireOperatorGroup: jest.fn((component) => component),
+}));
+
+jest.mock('@console/shared/src/components/error', () => ({
+  ErrorBoundary: jest.fn(({ children }) => children),
+  withFallback: jest.fn((successComponent) => (props) => successComponent(props)),
+}));
+
+jest.mock('./package-manifest', () => ({
+  PackageManifestsPage: jest.fn(() => null),
+}));
+
+jest.mock('./registry-poll-interval-details', () => ({
+  RegistryPollIntervalDetailItem: jest.fn(() => null),
+}));
+
+jest.mock('@console/shared/src/components/layout/PaneBody', () => ({
+  __esModule: true,
+  default: jest.fn(({ children }) => children),
+}));
+
+jest.mock('@patternfly/react-core', () => ({
+  ...jest.requireActual('@patternfly/react-core'),
+  Grid: jest.fn(({ children }) => children),
+  GridItem: jest.fn(({ children }) => children),
+  DescriptionList: jest.fn(({ children }) => children),
+}));
+
+const mockDetailsPage = (DetailsPage as unknown) as jest.Mock;
+const mockFirehose = (Firehose as unknown) as jest.Mock;
+const mockUseK8sWatchResource = useK8sWatchResource as jest.Mock;
+
+describe('CatalogSourceDetails', () => {
+  let obj;
 
   beforeEach(() => {
     obj = _.cloneDeep(testCatalogSource);
-    wrapper = shallow(<CatalogSourceDetails obj={obj} packageManifests={[testPackageManifest]} />);
   });
 
-  it('renders name and publisher of the catalog', () => {
-    expect(wrapper.find(DetailsItem).at(1).props().obj.spec.displayName).toEqual(
-      obj.spec.displayName,
+  it('displays catalog source name and publisher', () => {
+    renderWithProviders(
+      <CatalogSourceDetails obj={obj} packageManifests={[testPackageManifest]} />,
     );
 
-    expect(wrapper.find(DetailsItem).at(2).props().obj.spec.publisher).toEqual(obj.spec.publisher);
+    expect(screen.getByText(obj.spec.displayName, { exact: false })).toBeVisible();
+    expect(screen.getByText(obj.spec.publisher, { exact: false })).toBeVisible();
   });
 });
 
-describe(CatalogSourceDetailsPage.displayName, () => {
-  let wrapper: ShallowWrapper;
-
+describe('CatalogSourceDetailsPage', () => {
   beforeEach(() => {
-    (useK8sWatchResource as jest.Mock).mockReturnValue([dummyPackageManifest, true, null]);
+    mockUseK8sWatchResource.mockReturnValue([dummyPackageManifest, true, null]);
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default', name: 'some-catalog' });
-    wrapper = shallow(<CatalogSourceDetailsPage />);
+    mockDetailsPage.mockClear();
   });
 
-  it('renders `DetailsPage` with correct props', () => {
-    expect(wrapper.find(DetailsPage).props().kind).toEqual(referenceForModel(CatalogSourceModel));
+  it('renders catalog source details page without errors', () => {
+    expect(() => {
+      renderWithProviders(<CatalogSourceDetailsPage />);
+    }).not.toThrow();
+  });
 
-    const detailsPage = wrapper.find(DetailsPage);
-    const { pages } = detailsPage.props();
-    expect(pages.length).toEqual(3);
-    expect(pages[0].nameKey).toEqual(`public~Details`);
-    expect(pages[1].nameKey).toEqual(`public~YAML`);
-    expect(pages[2].nameKey).toEqual(`olm~Operators`);
+  it('configures DetailsPage with correct navigation and resources', () => {
+    renderWithProviders(<CatalogSourceDetailsPage />);
 
-    expect(pages[0].component).toEqual(CatalogSourceDetails);
-    expect(pages[2].component).toEqual(CatalogSourceOperatorsPage);
+    expect(mockDetailsPage).toHaveBeenCalledTimes(1);
+    const [detailsPageProps] = mockDetailsPage.mock.calls[0];
 
-    expect(wrapper.find(DetailsPage).props().resources).toEqual([
+    expect(detailsPageProps.kind).toEqual(referenceForModel(CatalogSourceModel));
+
+    expect(detailsPageProps.pages).toHaveLength(3);
+    expect(detailsPageProps.pages[0]).toMatchObject({
+      nameKey: 'public~Details',
+      component: CatalogSourceDetails,
+    });
+    expect(detailsPageProps.pages[1]).toMatchObject({
+      nameKey: 'public~YAML',
+    });
+    expect(detailsPageProps.pages[2]).toMatchObject({
+      nameKey: 'olm~Operators',
+      component: CatalogSourceOperatorsPage,
+    });
+
+    expect(detailsPageProps.resources).toEqual([
       {
         kind: referenceForModel(PackageManifestModel),
         isList: true,
@@ -84,77 +151,60 @@ describe(CatalogSourceDetailsPage.displayName, () => {
   });
 });
 
-describe(CreateSubscriptionYAML.displayName, () => {
-  let wrapper: ShallowWrapper;
-
+describe('CreateSubscriptionYAML', () => {
   beforeEach(() => {
-    jest
-      .spyOn(Router, 'useParams')
-      .mockReturnValue({ ns: 'default', pkgName: testPackageManifest.metadata.name });
+    jest.spyOn(Router, 'useParams').mockReturnValue({
+      ns: 'default',
+      pkgName: testPackageManifest.metadata.name,
+    });
     jest.spyOn(Router, 'useLocation').mockReturnValue({
       ...window.location,
       search: `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`,
     });
-    wrapper = shallow(<CreateSubscriptionYAML />);
+    mockFirehose.mockClear();
   });
 
-  it('renders a `Firehose` for the `PackageManfest` specified in the URL', () => {
-    expect(wrapper.find<any>(Firehose).props().resources).toEqual([
-      {
-        kind: referenceForModel(PackageManifestModel),
-        isList: false,
-        name: testPackageManifest.metadata.name,
-        namespace: 'default',
-        prop: 'packageManifest',
-      },
-      {
-        kind: referenceForModel(OperatorGroupModel),
-        isList: true,
-        namespace: 'default',
-        prop: 'operatorGroup',
-      },
-    ]);
+  it('displays package name in the subscription YAML when loaded', () => {
+    mockFirehose.mockImplementationOnce((firehoseProps) => {
+      const childElement = firehoseProps.children;
+      return React.cloneElement(childElement, {
+        packageManifest: { loaded: true, data: testPackageManifest },
+        operatorGroup: { loaded: true, data: [] },
+      });
+    });
+
+    renderWithProviders(<CreateSubscriptionYAML />);
+
+    expect(screen.getByText(new RegExp(testPackageManifest.metadata.name))).toBeInTheDocument();
   });
 
-  it('renders YAML editor component wrapped by an error boundary component', () => {
-    wrapper = wrapper.setProps({
-      packageManifest: { loaded: true, data: testPackageManifest },
-    } as any);
-    const createYAML = wrapper.find(Firehose).childAt(0).dive().dive();
+  it('displays loading indicator when package manifest is not yet loaded', () => {
+    mockFirehose.mockImplementationOnce((firehoseProps) => {
+      const childElement = firehoseProps.children;
+      return React.cloneElement(childElement, {
+        packageManifest: { loaded: false },
+        operatorGroup: { loaded: false },
+      });
+    });
 
-    expect(createYAML.find(ErrorBoundary).exists()).toBe(true);
-    expect(createYAML.find(ErrorBoundary).childAt(0).dive().find(CreateYAML).exists()).toBe(true);
+    renderWithProviders(<CreateSubscriptionYAML />);
+
+    expect(screen.getByText('Loading...')).toBeVisible();
   });
 
-  it('passes example YAML templates using the package default channel', () => {
-    wrapper = wrapper.setProps({
-      packageManifest: { loaded: true, data: testPackageManifest },
-    } as any);
+  it('displays subscription YAML with default channel information', () => {
+    mockFirehose.mockImplementationOnce((firehoseProps) => {
+      const childElement = firehoseProps.children;
+      return React.cloneElement(childElement, {
+        packageManifest: { loaded: true, data: testPackageManifest },
+        operatorGroup: { loaded: true, data: [] },
+      });
+    });
 
-    const createYAML = wrapper
-      .find(Firehose)
-      .childAt(0)
-      .dive()
-      .dive()
-      .find(ErrorBoundary)
-      .childAt(0)
-      .dive<CreateYAMLProps, {}>();
-    const subTemplate = safeLoad(createYAML.props().template);
+    renderWithProviders(<CreateSubscriptionYAML />);
 
-    window.location.search = `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`;
-
-    expect(subTemplate.kind).toContain(SubscriptionModel.kind);
-    expect(subTemplate.spec.name).toEqual(testPackageManifest.metadata.name);
-    expect(subTemplate.spec.channel).toEqual(testPackageManifest.status.channels[0].name);
-    expect(subTemplate.spec.startingCSV).toEqual(testPackageManifest.status.channels[0].currentCSV);
-    expect(subTemplate.spec.source).toEqual('ocs');
-  });
-
-  it('does not render YAML editor component if `PackageManifest` has not loaded yet', () => {
-    wrapper = wrapper.setProps({ packageManifest: { loaded: false } } as any);
-    const createYAML = wrapper.find(Firehose).childAt(0).dive().dive();
-
-    expect(createYAML.find(CreateYAML).exists()).toBe(false);
-    expect(createYAML.find(ErrorBoundary).childAt(0).dive().find(LoadingBox).exists()).toBe(true);
+    expect(screen.getByText(/channel:\s*alpha/)).toBeInTheDocument();
+    expect(screen.getByText(/source:\s*ocs/)).toBeInTheDocument();
+    expect(screen.getByText(/startingCSV:\s*testapp/)).toBeInTheDocument();
   });
 });

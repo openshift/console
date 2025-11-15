@@ -1,11 +1,6 @@
-import { Radio } from '@patternfly/react-core';
-import { ShallowWrapper, shallow } from 'enzyme';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import * as _ from 'lodash';
-import {
-  ModalTitle,
-  ModalSubmitFooter,
-  ModalBody,
-} from '@console/internal/components/factory/modal';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testSubscription, testPackageManifest } from '../../../mocks';
 import { SubscriptionModel } from '../../models';
 import { SubscriptionKind, PackageManifestKind } from '../../types';
@@ -13,20 +8,21 @@ import {
   SubscriptionChannelModal,
   SubscriptionChannelModalProps,
 } from './subscription-channel-modal';
-import Spy = jasmine.Spy;
 
 describe('SubscriptionChannelModal', () => {
-  let wrapper: ShallowWrapper<SubscriptionChannelModalProps>;
-  let k8sUpdate: Spy;
-  let close: Spy;
-  let cancel: Spy;
+  let subscriptionChannelModalProps: SubscriptionChannelModalProps;
+  let k8sUpdate: jest.Mock;
+  let close: jest.Mock;
+  let cancel: jest.Mock;
   let subscription: SubscriptionKind;
   let pkg: PackageManifestKind;
 
   beforeEach(() => {
-    k8sUpdate = jasmine.createSpy('k8sUpdate').and.returnValue(Promise.resolve());
-    close = jasmine.createSpy('close');
-    cancel = jasmine.createSpy('cancel');
+    jest.clearAllMocks();
+
+    k8sUpdate = jest.fn().mockResolvedValue({});
+    close = jest.fn();
+    cancel = jest.fn();
     subscription = _.cloneDeep(testSubscription);
     pkg = _.cloneDeep(testPackageManifest);
     pkg.status.defaultChannel = 'stable';
@@ -59,47 +55,88 @@ describe('SubscriptionChannelModal', () => {
       },
     ];
 
-    wrapper = shallow(
-      <SubscriptionChannelModal
-        subscription={subscription}
-        pkg={pkg}
-        k8sUpdate={k8sUpdate}
-        close={close}
-        cancel={cancel}
-      />,
+    subscriptionChannelModalProps = {
+      subscription,
+      pkg,
+      k8sUpdate,
+      close,
+      cancel,
+    };
+  });
+
+  it('displays modal title and save button', () => {
+    renderWithProviders(<SubscriptionChannelModal {...subscriptionChannelModalProps} />);
+
+    expect(screen.getByText('Change Subscription update channel')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Save' })).toBeVisible();
+  });
+
+  it('displays radio button for each available channel', () => {
+    renderWithProviders(<SubscriptionChannelModal {...subscriptionChannelModalProps} />);
+
+    const radioButtons = screen.getAllByRole('radio');
+    expect(radioButtons).toHaveLength(pkg.status.channels.length);
+    expect(screen.getByRole('radio', { name: /stable/i })).toBeVisible();
+    expect(screen.getByRole('radio', { name: /nightly/i })).toBeVisible();
+  });
+
+  it('updates subscription when different channel is selected and form is submitted', async () => {
+    renderWithProviders(<SubscriptionChannelModal {...subscriptionChannelModalProps} />);
+
+    const nightlyRadio = screen.getByRole('radio', { name: /nightly/i });
+    fireEvent.click(nightlyRadio);
+
+    const form = screen.getByRole('button', { name: 'Save' }).closest('form');
+    if (form) {
+      fireEvent.submit(form);
+    }
+
+    await waitFor(() => {
+      expect(k8sUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    expect(k8sUpdate).toHaveBeenCalledWith(
+      SubscriptionModel,
+      expect.objectContaining({
+        spec: expect.objectContaining({
+          channel: 'nightly',
+        }),
+      }),
     );
   });
 
-  it('renders a modal form', () => {
-    expect(wrapper.find('form').props().name).toEqual('form');
-    expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Save');
-  });
+  it('calls close callback after successful form submission', async () => {
+    renderWithProviders(<SubscriptionChannelModal {...subscriptionChannelModalProps} />);
 
-  it('renders a radio button for each available channel in the package', () => {
-    expect(wrapper.find(ModalBody).find(Radio).length).toEqual(pkg.status.channels.length);
-  });
+    const nightlyRadio = screen.getByRole('radio', { name: /nightly/i });
+    fireEvent.click(nightlyRadio);
 
-  it('calls `props.k8sUpdate` to update the subscription when form is submitted', (done) => {
-    k8sUpdate.and.callFake((model, obj) => {
-      expect(model).toEqual(SubscriptionModel);
-      expect(obj.spec.channel).toEqual('nightly');
-      done();
-      return Promise.resolve();
+    const form = screen.getByRole('button', { name: 'Save' }).closest('form');
+    if (form) {
+      fireEvent.submit(form);
+    }
+
+    await waitFor(() => {
+      expect(close).toHaveBeenCalledTimes(1);
     });
-    wrapper
-      .find(Radio)
-      .at(1)
-      .props()
-      .onChange({ target: { value: 'nightly' } } as any, true);
-    wrapper.find('form').simulate('submit', new Event('submit'));
   });
 
-  it('calls `props.close` after successful submit', (done) => {
-    close.and.callFake(() => {
-      done();
-    });
+  it('disables submit button when no channel change is made', () => {
+    renderWithProviders(<SubscriptionChannelModal {...subscriptionChannelModalProps} />);
 
-    wrapper.find('form').simulate('submit', new Event('submit'));
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    expect(saveButton).toBeDisabled();
+  });
+
+  it('enables submit button when channel selection changes', () => {
+    renderWithProviders(<SubscriptionChannelModal {...subscriptionChannelModalProps} />);
+
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    expect(saveButton).toBeDisabled();
+
+    const nightlyRadio = screen.getByRole('radio', { name: /nightly/i });
+    fireEvent.click(nightlyRadio);
+
+    expect(saveButton).not.toBeDisabled();
   });
 });

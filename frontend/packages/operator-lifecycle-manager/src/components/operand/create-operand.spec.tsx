@@ -1,29 +1,15 @@
-import { Alert, Button } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { safeDump } from 'js-yaml';
-import * as _ from 'lodash';
 import * as Router from 'react-router-dom-v5-compat';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { CustomResourceDefinitionModel } from '@console/internal/models';
-import * as k8s from '@console/internal/module/k8s';
+import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { referenceForProvidedAPI } from '..';
-import {
-  testClusterServiceVersion,
-  testResourceInstance,
-  testModel,
-  testCRD,
-} from '../../../mocks';
-import { CreateOperand, CreateOperandProps } from './create-operand';
-import { OperandForm, OperandFormProps } from './operand-form';
-import { OperandYAML, OperandYAMLProps } from './operand-yaml';
-import Spy = jasmine.Spy;
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { testClusterServiceVersion, testModel, testCRD } from '../../../mocks';
+import { CreateOperand } from './create-operand';
+import { OperandYAML } from './operand-yaml';
 
 jest.mock('@console/shared/src/hooks/useK8sModel', () => ({ useK8sModel: jest.fn() }));
-
-(useK8sModel as jest.Mock).mockImplementation(() => [testModel, false]);
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
@@ -34,17 +20,42 @@ jest.mock('react-router-dom-v5-compat', () => ({
   useParams: jest.fn(),
 }));
 
-(useK8sWatchResource as jest.Mock).mockImplementation((res) => [
-  res.kind === CustomResourceDefinitionModel.kind ? testCRD : testClusterServiceVersion,
-  true,
-  undefined,
-]);
+jest.mock('@console/dynamic-plugin-sdk', () => ({
+  useActivePerspective: jest.fn(() => ['admin']),
+}));
 
-xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () => {
-  let wrapper: ShallowWrapper<CreateOperandProps>;
+jest.mock('@console/shared/src/components/synced-editor', () => ({
+  SyncedEditor: jest.fn(() => null),
+}));
 
+jest.mock('@console/internal/components/create-yaml', () => ({
+  CreateYAML: jest.fn(() => null),
+}));
+
+jest.mock('@console/shared/src/components/heading/PageHeading', () => ({
+  PageHeading: jest.fn(() => null),
+}));
+
+const mockUseK8sModel = useK8sModel as jest.Mock;
+const mockUseK8sWatchResource = useK8sWatchResource as jest.Mock;
+const mockSyncedEditor = (SyncedEditor as unknown) as jest.Mock;
+const mockCreateYAML = (CreateYAML as unknown) as jest.Mock;
+
+describe('CreateOperand', () => {
   beforeEach(() => {
-    wrapper = shallow(
+    jest.clearAllMocks();
+    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default', plural: 'testresources' });
+    mockUseK8sModel.mockReturnValue([testModel, true]);
+    mockUseK8sWatchResource.mockReturnValue([testCRD, true, undefined]);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('configures SyncedEditor with YAML as initialType when initialEditorType is YAML', () => {
+    // Arrange
+    renderWithProviders(
       <CreateOperand
         initialEditorType={EditorType.YAML}
         csv={testClusterServiceVersion}
@@ -52,119 +63,154 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
         loadError={undefined}
       />,
     );
+
+    // Assert
+    expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
+    const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
+    expect(syncedEditorProps.initialType).toEqual(EditorType.YAML);
   });
 
-  it('renders YAML editor by default', () => {
-    expect(wrapper.find(Button).childAt(0).text()).toEqual('Edit Form');
-    expect(wrapper.find(OperandYAML).exists()).toBe(true);
-    expect(wrapper.find(OperandForm).exists()).toBe(false);
-  });
-
-  it('passes correct YAML to YAML editor', () => {
-    const data = _.cloneDeep(testClusterServiceVersion);
-    const testResourceInstanceYAML = safeDump(testResourceInstance);
-    data.metadata.annotations = { 'alm-examples': JSON.stringify([testResourceInstance]) };
-    wrapper = wrapper.setProps({ csv: data, loaded: true, loadError: null });
-    expect(wrapper.find(OperandYAML).props().initialYAML).toEqual(testResourceInstanceYAML);
-  });
-
-  it('switches to form component when button is clicked', () => {
-    wrapper.find(Button).simulate('click');
-
-    expect(wrapper.find(Button).childAt(0).text()).toEqual('Edit YAML');
-    expect(wrapper.find(OperandYAML).exists()).toBe(false);
-    expect(wrapper.find(OperandForm).exists()).toBe(true);
-  });
-});
-
-xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] CreateOperandForm', () => {
-  let wrapper: ShallowWrapper<OperandFormProps>;
-
-  const spyAndExpect = (spy: Spy) => (returnValue: any) =>
-    new Promise((resolve) =>
-      spy.and.callFake((...args) => {
-        resolve(args);
-        return returnValue;
-      }),
-    );
-
-  beforeEach(() => {
-    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default' });
-    wrapper = shallow(
-      <OperandForm
-        model={testModel}
-        providedAPI={testClusterServiceVersion.spec.customresourcedefinitions.owned[0]}
+  it('configures SyncedEditor with Form as initialType when initialEditorType is Form', () => {
+    // Arrange
+    renderWithProviders(
+      <CreateOperand
+        initialEditorType={EditorType.Form}
         csv={testClusterServiceVersion}
-        schema={testCRD.spec.versions[0].schema.openAPIV3Schema}
+        loaded
+        loadError={undefined}
       />,
     );
+
+    // Assert
+    expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
+    const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
+    expect(syncedEditorProps.initialType).toEqual(EditorType.Form);
   });
 
-  it('renders form', () => {
-    expect(
-      referenceForProvidedAPI(testClusterServiceVersion.spec.customresourcedefinitions.owned[0]),
-    ).toEqual(k8s.referenceForModel(testModel));
+  it('passes sample data to SyncedEditor when CSV contains alm-examples annotation', () => {
+    // Arrange
+    const csvWithExamples = {
+      ...testClusterServiceVersion,
+      metadata: {
+        ...testClusterServiceVersion.metadata,
+        annotations: {
+          ...testClusterServiceVersion.metadata.annotations,
+          'alm-examples': JSON.stringify([
+            {
+              apiVersion: 'testapp.coreos.com/v1alpha1',
+              kind: 'TestResource',
+              metadata: { name: 'example-resource' },
+              spec: { size: 3 },
+            },
+          ]),
+        },
+      },
+    };
 
-    expect(wrapper.find('form').exists()).toBe(true);
-  });
+    renderWithProviders(
+      <CreateOperand
+        initialEditorType={EditorType.YAML}
+        csv={csvWithExamples}
+        loaded
+        loadError={undefined}
+      />,
+    );
 
-  it('renders input component for each field', () => {
-    wrapper.find('.co-dynamic-form__form-group').forEach((formGroup) => {
-      const descriptor = testClusterServiceVersion.spec.customresourcedefinitions.owned[0].specDescriptors.find(
-        (d) => d.displayName === formGroup.find('.form-label').text(),
-      );
-
-      expect(descriptor).toBeDefined();
+    // Assert
+    expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
+    const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
+    expect(syncedEditorProps.initialData).toMatchObject({
+      kind: 'TestResource',
+      metadata: expect.objectContaining({
+        name: 'example-resource',
+      }),
+      spec: expect.objectContaining({
+        size: 3,
+      }),
     });
   });
 
-  it('renders alert to use YAML editor for full control over all operand fields', () => {
-    expect(wrapper.find(Alert).props().title).toEqual(
-      'Note: Some fields may not be represented in this form. Please select "Edit YAML" for full control of object creation.',
+  it('provides onChangeEditorType callback to SyncedEditor', () => {
+    // Arrange
+    renderWithProviders(
+      <CreateOperand
+        initialEditorType={EditorType.Form}
+        csv={testClusterServiceVersion}
+        loaded
+        loadError={undefined}
+      />,
     );
-    expect(wrapper.find(Alert).props().variant).toEqual('info');
-  });
 
-  it('calls `k8sCreate` to create new operand if form is valid', (done) => {
-    spyAndExpect(spyOn(k8s, 'k8sCreate'))(Promise.resolve({}))
-      .then(([model, obj]: [k8s.K8sKind, k8s.K8sResourceKind]) => {
-        expect(model).toEqual(testModel);
-        expect(obj.apiVersion).toEqual(k8s.apiVersionForModel(testModel));
-        expect(obj.kind).toEqual(testModel.kind);
-        expect(obj.metadata.name).toEqual('example');
-        expect(obj.metadata.namespace).toEqual('default');
-        done();
-      })
-      .catch((err) => fail(err));
-
-    wrapper.find({ type: 'submit' }).simulate('click', new Event('click'));
-  });
-
-  it('displays errors if calling `k8sCreate` fails', (done) => {
-    const error = { message: 'Failed to create' } as k8s.Status;
-    /* eslint-disable-next-line prefer-promise-reject-errors */
-    spyAndExpect(spyOn(k8s, 'k8sCreate'))(Promise.reject({ json: error }))
-      .then(
-        () => new Promise<void>((resolve) => setTimeout(() => resolve(), 10)),
-      )
-      .then(() => {
-        expect(wrapper.find(Alert).at(0).props().title).toEqual(error.message);
-        done();
-      })
-      .catch((err) => fail(err));
-
-    wrapper.find({ type: 'submit' }).simulate('click', new Event('click'));
+    // Assert
+    expect(mockSyncedEditor).toHaveBeenCalledTimes(1);
+    const [syncedEditorProps] = mockSyncedEditor.mock.calls[0];
+    expect(syncedEditorProps.onChangeEditorType).toBeDefined();
+    expect(typeof syncedEditorProps.onChangeEditorType).toBe('function');
   });
 });
 
-describe(OperandYAML.displayName, () => {
-  let wrapper: ShallowWrapper<OperandYAMLProps>;
-
+describe('OperandYAML', () => {
   beforeEach(() => {
-    wrapper = shallow(<OperandYAML />);
+    jest.clearAllMocks();
   });
 
-  it('renders `CreateYAML` component with correct props', () => {
-    expect(wrapper.find(CreateYAML).props().hideHeader).toBe(true);
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('renders CreateYAML with hideHeader prop set to true', () => {
+    renderWithProviders(<OperandYAML />);
+
+    expect(mockCreateYAML).toHaveBeenCalledTimes(1);
+    const [createYAMLProps] = mockCreateYAML.mock.calls[0];
+    expect(createYAMLProps.hideHeader).toBe(true);
+  });
+
+  it('passes initialYAML as template prop to CreateYAML', () => {
+    const initialYAML = 'apiVersion: v1\nkind: Pod';
+
+    renderWithProviders(<OperandYAML initialYAML={initialYAML} />);
+
+    expect(mockCreateYAML).toHaveBeenCalledTimes(1);
+    const [createYAMLProps] = mockCreateYAML.mock.calls[0];
+    expect(createYAMLProps.template).toEqual(initialYAML);
+  });
+
+  it('defaults initialYAML to empty string when not provided', () => {
+    renderWithProviders(<OperandYAML />);
+
+    expect(mockCreateYAML).toHaveBeenCalledTimes(1);
+    const [createYAMLProps] = mockCreateYAML.mock.calls[0];
+    expect(createYAMLProps.template).toEqual('');
+  });
+
+  it('passes onChange callback to CreateYAML', () => {
+    const onChange = jest.fn();
+
+    renderWithProviders(<OperandYAML onChange={onChange} />);
+
+    expect(mockCreateYAML).toHaveBeenCalledTimes(1);
+    const [createYAMLProps] = mockCreateYAML.mock.calls[0];
+    expect(createYAMLProps.onChange).toEqual(onChange);
+  });
+
+  it('passes resourceObjPath function when next prop is provided', () => {
+    const next = '/next-path';
+
+    renderWithProviders(<OperandYAML next={next} />);
+
+    expect(mockCreateYAML).toHaveBeenCalledTimes(1);
+    const [createYAMLProps] = mockCreateYAML.mock.calls[0];
+    expect(createYAMLProps.resourceObjPath).toBeDefined();
+    expect(typeof createYAMLProps.resourceObjPath).toBe('function');
+    expect(createYAMLProps.resourceObjPath()).toEqual(next);
+  });
+
+  it('does not pass resourceObjPath when next prop is not provided', () => {
+    renderWithProviders(<OperandYAML />);
+
+    expect(mockCreateYAML).toHaveBeenCalledTimes(1);
+    const [createYAMLProps] = mockCreateYAML.mock.calls[0];
+    expect(createYAMLProps.resourceObjPath).toBeUndefined();
   });
 });

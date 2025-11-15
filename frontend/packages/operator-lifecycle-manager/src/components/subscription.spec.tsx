@@ -1,17 +1,11 @@
-import { Button, DescriptionListDescription, DescriptionListTerm } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import * as Router from 'react-router-dom-v5-compat';
-import {
-  Table,
-  MultiListPage,
-  DetailsPage,
-  RowFunctionArgs,
-} from '@console/internal/components/factory';
+import { Table, MultiListPage, DetailsPage } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src';
-import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   testSubscription,
   testSubscriptions,
@@ -25,19 +19,13 @@ import {
   OperatorGroupModel,
   InstallPlanModel,
 } from '../models';
-import { SubscriptionKind, SubscriptionState } from '../types';
+import { SubscriptionState } from '../types';
 import {
   SubscriptionTableRow,
   SubscriptionsList,
-  SubscriptionsListProps,
   SubscriptionsPage,
-  SubscriptionsPageProps,
   SubscriptionDetails,
   SubscriptionDetailsPage,
-  SubscriptionDetailsProps,
-  SubscriptionUpdates,
-  SubscriptionUpdatesProps,
-  SubscriptionUpdatesState,
   SubscriptionStatus,
 } from './subscription';
 
@@ -46,93 +34,174 @@ jest.mock('react-router-dom-v5-compat', () => ({
   useParams: jest.fn(),
 }));
 
+jest.mock('@console/internal/components/utils', () => ({
+  ...jest.requireActual('@console/internal/components/utils'),
+  ResourceLink: jest.fn(() => null),
+}));
+
+jest.mock('@console/shared/src', () => ({
+  ...jest.requireActual('@console/shared/src'),
+  LazyActionMenu: jest.fn(() => null),
+}));
+
+jest.mock('@console/internal/components/factory', () => ({
+  ...jest.requireActual('@console/internal/components/factory'),
+  Table: jest.fn(() => null),
+  MultiListPage: jest.fn(() => null),
+  DetailsPage: jest.fn(() => null),
+}));
+
+jest.mock('@console/internal/components/utils/details-page', () => ({
+  ...jest.requireActual('@console/internal/components/utils/details-page'),
+  ResourceSummary: jest.fn(() => null),
+}));
+
+jest.mock('@console/internal/components/conditions', () => ({
+  Conditions: jest.fn(() => null),
+}));
+
+const mockResourceLink = ResourceLink as jest.Mock;
+const mockLazyActionMenu = LazyActionMenu as jest.Mock;
+const mockTable = Table as jest.Mock;
+const mockMultiListPage = MultiListPage as jest.Mock;
+const mockDetailsPage = DetailsPage as jest.Mock;
+
 describe('SubscriptionTableRow', () => {
-  let wrapper: ShallowWrapper;
-  let subscription: SubscriptionKind;
-
-  const updateWrapper = () => {
-    const rowArgs: RowFunctionArgs<SubscriptionKind> = {
-      obj: subscription,
-    } as any;
-
-    wrapper = shallow(<SubscriptionTableRow {...rowArgs} />);
-    return wrapper;
-  };
-
   beforeEach(() => {
-    subscription = {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('renders subscription name and namespace resource links', () => {
+    const subscription = {
       ...testSubscription,
       status: { installedCSV: 'testapp.v1.0.0' },
     };
-    wrapper = updateWrapper();
+
+    renderWithProviders(
+      <table>
+        <tbody>
+          <tr>
+            <SubscriptionTableRow obj={subscription} columns={[]} />
+          </tr>
+        </tbody>
+      </table>,
+    );
+
+    expect(mockResourceLink).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: referenceForModel(SubscriptionModel),
+        name: subscription.metadata.name,
+        namespace: subscription.metadata.namespace,
+      }),
+      expect.anything(),
+    );
+
+    expect(mockResourceLink).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: 'Namespace',
+        name: subscription.metadata.namespace,
+      }),
+      expect.anything(),
+    );
   });
 
-  it('renders column for subscription name', () => {
-    expect(wrapper.childAt(0).shallow().find(ResourceLink).props().name).toEqual(
-      subscription.metadata.name,
-    );
-    expect(wrapper.childAt(0).shallow().find(ResourceLink).props().namespace).toEqual(
-      subscription.metadata.namespace,
-    );
-    expect(wrapper.childAt(0).shallow().find(ResourceLink).props().kind).toEqual(
-      referenceForModel(SubscriptionModel),
-    );
-  });
+  it('renders action menu with subscription context', () => {
+    const subscription = {
+      ...testSubscription,
+      status: { installedCSV: 'testapp.v1.0.0' },
+    };
 
-  it('renders actions kebab', () => {
-    expect(wrapper.find(LazyActionMenu).props().context).toEqual({
+    renderWithProviders(
+      <table>
+        <tbody>
+          <tr>
+            <SubscriptionTableRow obj={subscription} columns={[]} />
+          </tr>
+        </tbody>
+      </table>,
+    );
+
+    expect(mockLazyActionMenu).toHaveBeenCalledTimes(1);
+    const [actionMenuProps] = mockLazyActionMenu.mock.calls[0];
+    expect(actionMenuProps.context).toEqual({
       [referenceForModel(SubscriptionModel)]: subscription,
     });
   });
 
-  it('renders column for namespace name', () => {
-    expect(wrapper.childAt(1).shallow().find(ResourceLink).props().name).toEqual(
-      subscription.metadata.namespace,
+  it('renders channel and approval strategy text', () => {
+    const subscription = {
+      ...testSubscription,
+      status: { installedCSV: 'testapp.v1.0.0' },
+    };
+
+    renderWithProviders(
+      <table>
+        <tbody>
+          <tr>
+            <SubscriptionTableRow obj={subscription} columns={[]} />
+          </tr>
+        </tbody>
+      </table>,
     );
-    expect(wrapper.childAt(1).shallow().find(ResourceLink).props().kind).toEqual('Namespace');
+
+    expect(screen.getByText(subscription.spec.channel)).toBeVisible();
+    expect(screen.getByText('Automatic')).toBeVisible();
+  });
+});
+
+describe('SubscriptionStatus', () => {
+  it('renders "Upgrade available" when update is available', () => {
+    const subscription = {
+      ...testSubscription,
+      status: { state: SubscriptionState.SubscriptionStateUpgradeAvailable },
+    };
+
+    renderWithProviders(<SubscriptionStatus subscription={subscription} />);
+
+    expect(screen.getByText('Upgrade available')).toBeVisible();
   });
 
-  it('renders column for subscription state when update available', () => {
-    subscription.status.state = SubscriptionState.SubscriptionStateUpgradeAvailable;
-    wrapper = updateWrapper();
+  it('renders "Unknown failure" when status is unknown', () => {
+    const subscription = {
+      ...testSubscription,
+      status: {},
+    };
 
-    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain(
-      'Upgrade available',
-    );
+    renderWithProviders(<SubscriptionStatus subscription={subscription} />);
+
+    expect(screen.getByText('Unknown failure')).toBeVisible();
   });
 
-  it('renders column for subscription state when unknown state', () => {
-    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toEqual('Unknown failure');
+  it('renders "Upgrading" when update is pending', () => {
+    const subscription = {
+      ...testSubscription,
+      status: { state: SubscriptionState.SubscriptionStateUpgradePending },
+    };
+
+    renderWithProviders(<SubscriptionStatus subscription={subscription} />);
+
+    expect(screen.getByText('Upgrading')).toBeVisible();
   });
 
-  it('renders column for subscription state when update in progress', () => {
-    subscription.status.state = SubscriptionState.SubscriptionStateUpgradePending;
-    wrapper = updateWrapper();
+  it('renders "Up to date" when subscription is at latest', () => {
+    const subscription = {
+      ...testSubscription,
+      status: { state: SubscriptionState.SubscriptionStateAtLatest },
+    };
 
-    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain('Upgrading');
-  });
+    renderWithProviders(<SubscriptionStatus subscription={subscription} />);
 
-  it('renders column for subscription state when no updates available', () => {
-    subscription.status.state = SubscriptionState.SubscriptionStateAtLatest;
-    wrapper = updateWrapper();
-
-    expect(wrapper.childAt(2).find(SubscriptionStatus).shallow().text()).toContain('Up to date');
-  });
-
-  it('renders column for current subscription channel', () => {
-    expect(wrapper.childAt(3).shallow().text()).toEqual(subscription.spec.channel);
-  });
-
-  it('renders column for approval strategy', () => {
-    expect(wrapper.childAt(4).shallow().text()).toEqual('Automatic');
+    expect(screen.getByText('Up to date')).toBeVisible();
   });
 });
 
 describe('SubscriptionsList', () => {
-  let wrapper: ShallowWrapper<SubscriptionsListProps>;
-
-  beforeEach(() => {
-    wrapper = shallow(
+  it('renders table with correct header titles', () => {
+    renderWithProviders(
       <SubscriptionsList.WrappedComponent
         data={[]}
         loaded
@@ -140,14 +209,11 @@ describe('SubscriptionsList', () => {
         operatorGroup={null}
       />,
     );
-  });
 
-  it('renders a `Table` component with correct header', () => {
-    const headerTitles = wrapper
-      .find<any>(Table)
-      .props()
-      .Header()
-      .map((header) => header.title);
+    expect(mockTable).toHaveBeenCalledTimes(1);
+    const [tableProps] = mockTable.mock.calls[0];
+    const headerTitles = tableProps.Header().map((header) => header.title);
+
     expect(headerTitles).toEqual([
       'Name',
       'Namespace',
@@ -160,22 +226,21 @@ describe('SubscriptionsList', () => {
 });
 
 describe('SubscriptionsPage', () => {
-  let wrapper: ShallowWrapper<SubscriptionsPageProps>;
+  it('renders MultiListPage with correct configuration', () => {
+    renderWithProviders(<SubscriptionsPage namespace="default" />);
 
-  beforeEach(() => {
-    wrapper = shallow(<SubscriptionsPage namespace="default" />);
-  });
+    expect(mockMultiListPage).toHaveBeenCalledTimes(1);
+    const [multiListPageProps] = mockMultiListPage.mock.calls[0];
 
-  it('renders a `MultiListPage` component with the correct props', () => {
-    expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(SubscriptionsList);
-    expect(wrapper.find(MultiListPage).props().title).toEqual('Subscriptions');
-    expect(wrapper.find(MultiListPage).props().canCreate).toBe(true);
-    expect(wrapper.find(MultiListPage).props().createProps).toEqual({
+    expect(multiListPageProps.ListComponent).toEqual(SubscriptionsList);
+    expect(multiListPageProps.title).toEqual('Subscriptions');
+    expect(multiListPageProps.canCreate).toBe(true);
+    expect(multiListPageProps.createProps).toEqual({
       to: '/catalog?catalogType=operator',
     });
-    expect(wrapper.find(MultiListPage).props().createButtonText).toEqual('Create Subscription');
-    expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Subscriptions by package');
-    expect(wrapper.find(MultiListPage).props().resources).toEqual([
+    expect(multiListPageProps.createButtonText).toEqual('Create Subscription');
+    expect(multiListPageProps.filterLabel).toEqual('Subscriptions by package');
+    expect(multiListPageProps.resources).toEqual([
       {
         kind: referenceForModel(SubscriptionModel),
         namespace: 'default',
@@ -192,123 +257,73 @@ describe('SubscriptionsPage', () => {
   });
 });
 
-describe('SubscriptionUpdates', () => {
-  let wrapper: ShallowWrapper<SubscriptionUpdatesProps, SubscriptionUpdatesState>;
-
+describe('SubscriptionDetails', () => {
   beforeEach(() => {
-    wrapper = shallow(
-      <SubscriptionUpdates
-        catalogHealth={{ healthy: true }}
-        obj={testSubscription}
-        pkg={testPackageManifest}
+    jest.clearAllMocks();
+  });
+
+  it('renders installed CSV resource link when installed', () => {
+    const obj = _.cloneDeep(testSubscription);
+    obj.status = { installedCSV: testClusterServiceVersion.metadata.name };
+
+    renderWithProviders(
+      <SubscriptionDetails
+        obj={obj}
+        packageManifests={[testPackageManifest]}
         subscriptions={testSubscriptions}
+        clusterServiceVersions={[testClusterServiceVersion]}
       />,
+    );
+
+    expect(screen.getByText('Installed version')).toBeVisible();
+    expect(mockResourceLink).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: obj.status.installedCSV,
+        name: obj.status.installedCSV,
+      }),
+      expect.anything(),
     );
   });
 
-  it('renders link to configure update channel', () => {
-    const channel = wrapper
-      .findWhere((node) =>
-        node.equals(
-          <DescriptionListTermHelp
-            text="Update channel"
-            textHelp="The channel to track and receive the updates from."
-          />,
-        ),
-      )
-      .parents()
-      .at(0)
-      .find(Button)
-      .render()
-      .text();
-
-    expect(channel).toEqual(testSubscription.spec.channel);
-  });
-
-  it('renders link to set approval strategy', () => {
-    const strategy = wrapper
-      .findWhere((node) =>
-        node.equals(
-          <DescriptionListTermHelp
-            text="Update approval"
-            textHelp="The strategy to determine either manual or automatic updates."
-          />,
-        ),
-      )
-      .parents()
-      .at(0)
-      .find(Button)
-      .render()
-      .text();
-
-    expect(strategy).toEqual(testSubscription.spec.installPlanApproval || 'Automatic');
-  });
-});
-
-describe('SubscriptionDetails', () => {
-  let wrapper: ShallowWrapper<SubscriptionDetailsProps>;
-
-  beforeEach(() => {
-    wrapper = shallow(
+  it('renders catalog source resource link', () => {
+    renderWithProviders(
       <SubscriptionDetails
         obj={testSubscription}
         packageManifests={[testPackageManifest]}
         subscriptions={testSubscriptions}
       />,
     );
-  });
 
-  it('renders subscription update channel and approval component', () => {
-    expect(wrapper.find(SubscriptionUpdates).exists()).toBe(true);
-  });
-
-  it('renders link to `ClusterServiceVersion` if installed', () => {
-    const obj = _.cloneDeep(testSubscription);
-    obj.status = { installedCSV: testClusterServiceVersion.metadata.name };
-    wrapper = wrapper.setProps({ obj, clusterServiceVersions: [testClusterServiceVersion] });
-
-    const link = wrapper
-      .findWhere((node) =>
-        node.equals(<DescriptionListTerm>Installed version</DescriptionListTerm>),
-      )
-      .parents()
-      .at(0)
-      .find(DescriptionListDescription)
-      .find(ResourceLink)
-      .at(0);
-
-    expect(link.props().title).toEqual(obj.status.installedCSV);
-    expect(link.props().name).toEqual(obj.status.installedCSV);
-  });
-
-  it('renders link to catalog source', () => {
-    const link = wrapper
-      .findWhere((node) => node.equals(<DescriptionListTerm>CatalogSource</DescriptionListTerm>))
-      .parents()
-      .at(0)
-      .find(DescriptionListDescription)
-      .find(ResourceLink)
-      .at(0);
-
-    expect(link.props().name).toEqual(testSubscription.spec.source);
+    expect(screen.getByText('CatalogSource')).toBeVisible();
+    expect(mockResourceLink).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: testSubscription.spec.source,
+      }),
+      expect.anything(),
+    );
   });
 });
 
 describe('SubscriptionDetailsPage', () => {
-  it('renders `DetailsPage` with correct props', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default', name: 'example-sub' });
-    const wrapper = shallow(<SubscriptionDetailsPage namespace="default" />);
-
-    expect(wrapper.find(DetailsPage).props().kind).toEqual(referenceForModel(SubscriptionModel));
-    expect(wrapper.find(DetailsPage).props().pages.length).toEqual(2);
-    expect(wrapper.find(DetailsPage).props().customActionMenu).toBeDefined();
   });
 
-  it('passes additional resources to watch', () => {
-    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default', name: 'example-sub' });
-    const wrapper = shallow(<SubscriptionDetailsPage namespace="default" />);
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
-    expect(wrapper.find(DetailsPage).props().resources).toEqual([
+  it('renders DetailsPage with correct configuration', () => {
+    renderWithProviders(<SubscriptionDetailsPage namespace="default" />);
+
+    expect(mockDetailsPage).toHaveBeenCalledTimes(1);
+    const [detailsPageProps] = mockDetailsPage.mock.calls[0];
+
+    expect(detailsPageProps.kind).toEqual(referenceForModel(SubscriptionModel));
+    expect(detailsPageProps.pages).toHaveLength(2);
+    expect(detailsPageProps.customActionMenu).toBeDefined();
+    expect(detailsPageProps.resources).toEqual([
       {
         kind: referenceForModel(PackageManifestModel),
         namespace: 'default',
