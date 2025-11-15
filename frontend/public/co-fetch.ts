@@ -2,6 +2,8 @@ import * as _ from 'lodash';
 import { HttpError, RetryError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { authSvc } from './module/auth';
 import { getCSRFToken } from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch-utils';
+import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
+import { getUser } from '@console/dynamic-plugin-sdk/src/app/core/reducers/coreSelectors';
 
 export const applyConsoleHeaders = (url, options) => {
   const token = getCSRFToken();
@@ -55,7 +57,11 @@ export const validateStatus = async (
 
   if (response.status === 401 && shouldLogout(url)) {
     const next = window.location.pathname + window.location.search + window.location.hash;
-    authSvc.logout(next);
+    // Check if the current user is kube:admin using Redux store
+    const store = storeHandler.getStore();
+    const user = store ? getUser(store.getState()) : null;
+    const isKubeAdmin = user?.username === 'kube:admin';
+    authSvc.logout(next, isKubeAdmin);
   }
 
   const contentType = response.headers.get('content-type');
