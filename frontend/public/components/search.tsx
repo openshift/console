@@ -48,7 +48,7 @@ import {
   isResourceListPage,
 } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
-import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useActiveNamespace, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
   const { plural } = useParams<{ plural?: string }>();
@@ -94,7 +94,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const { noProjectsAvailable } = props;
   const { t } = useTranslation();
-  const { ns: namespace } = useParams<{ ns?: string }>();
+  const [namespace] = useActiveNamespace();
   const confirmNavUnpinModal = useConfirmNavUnpinModal(pinnedResources, setPinnedResources);
   // Set state variables from the URL
   React.useEffect(() => {
