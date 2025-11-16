@@ -1,8 +1,11 @@
 # OpenShift Console Styleguide
 
+This document outlines the core style conventions for the OpenShift Console codebase.
+
 ## Directory and File Names
 
-- Use lowercase dash-separated names for all files (to avoid git issues with case-insensitive file systems)
+- Follow the existing naming pattern in the directory you're working in
+- Directory names use lowercase dash-separated format
 - Exceptions are files which have their own naming conventions (eg Dockerfile, Makefile, README)
 
 ## Go
@@ -15,7 +18,6 @@
 
 - All SCSS files are imported from the top-level file: `/frontend/public/style.scss`
 - No need to import SCSS files as dependencies of others, top-level file handles this.
-- All SCSS files should be prefixed with an underscore, (eg `_my-custom-file.scss`).
 - When possible, avoid element selectors. Class selectors are preferred.
 - Scope all classes with a recognizable prefix to avoid collisions with any imported CSS (this project uses `co-` by convention).
 - Class names should be all lowercase and dash-separated.
@@ -31,3 +33,20 @@
 - Run the linter and follow all rules defined in .eslintrc
 - Never use absolute paths in code. The app should be able to run behind a proxy under an arbitrary path.
 - TESTS: Should follow a similar "test tables" convention as used in Go where applicable.
+
+### Additional OpenShift Console Specific Practices
+
+#### React Component Patterns
+- Use `React.FCC` instead of `React.FC` for components (fixes an issue with implicit 'children' in React.FC)
+
+#### Type Safety & Kubernetes Integration
+- Use specific Kubernetes resource types instead of generic `K8sResourceCommon` when possible
+- Avoid excessive use of `any` types
+- Avoid type assertions with `as any`
+- Use optional chaining for safe property access
+- Initialize with proper defaults instead of repeated null checks
+
+#### Code Organization
+- Follow established directory structure patterns
+- Use consistent import organization
+- Maintain clear separation of concerns
