@@ -14,7 +14,7 @@ import {
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { ResourceHealthItem } from '../dashboards-page/cluster-dashboard/health-item';
 
-import { DashboardAlerts } from '../dashboards-page/cluster-dashboard/status-card';
+import { DashboardNamespacedAlerts } from '../dashboards-page/cluster-dashboard/status-card';
 
 export const StatusCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
@@ -52,7 +52,7 @@ export const StatusCard: React.FC = () => {
               )}
             </Gallery>
           </HealthBody>
-          <DashboardAlerts labelSelector={{ namespace }} />
+          {namespace && <DashboardNamespacedAlerts namespace={namespace} />}
         </>
       ) : (
         <LoadingInline />
