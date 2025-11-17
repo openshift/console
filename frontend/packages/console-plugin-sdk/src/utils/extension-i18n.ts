@@ -4,7 +4,7 @@ import {
   PredicateCheck,
   ValueCallback,
 } from '@console/dynamic-plugin-sdk/src/utils/object';
-import { Extension } from '../typings';
+import type { Extension } from '../typings';
 
 export const isTranslatableString = (value): value is string => {
   return (

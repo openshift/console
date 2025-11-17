@@ -1,5 +1,7 @@
-import { app, topologyPage } from '@console/dev-console/integration-tests/support/pages';
+import { app } from '@console/dev-console/integration-tests/support/pages/app';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
+// eslint-disable-next-line import/no-cycle
+import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 
 export const topologyHelper = {
   search: (name: string) => cy.get(topologyPO.search).clear().type(name),

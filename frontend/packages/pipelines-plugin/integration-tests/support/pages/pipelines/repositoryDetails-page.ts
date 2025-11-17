@@ -1,4 +1,4 @@
-import { yamlEditor } from '@console/dev-console/integration-tests/support/pages';
+import { yamlEditor } from '@console/dev-console/integration-tests/support/pages/app';
 import { repositoryDetailsTabs } from '../../constants';
 import { repositoryDetailsPO } from '../../page-objects';
 

@@ -1,6 +1,5 @@
 import i18n from 'i18next';
-// eslint-disable-next-line import/no-cycle
-import { PipelineBuilderFormValues } from './types';
+import type { PipelineBuilderFormValues } from './types';
 
 export const STATUS_KEY_NAME_ERROR = 'taskError';
 

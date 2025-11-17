@@ -6,13 +6,15 @@ import {
   sideBarTabs,
 } from '@console/dev-console/integration-tests/support/constants';
 import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow/git-page';
 import {
-  createHelmRelease,
   app,
   createForm,
   navigateTo,
-} from '@console/dev-console/integration-tests/support/pages';
-import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow';
+} from '@console/dev-console/integration-tests/support/pages/app';
+// eslint-disable-next-line import/no-cycle
+import { createHelmRelease } from '@console/dev-console/integration-tests/support/pages/functions/createHelmRelease';
+// eslint-disable-next-line import/no-cycle
 import { topologyHelper } from './topology-helper-page';
 
 export const topologyPage = {
