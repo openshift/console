@@ -2,6 +2,7 @@ import { Fragment, useContext, useState, useRef, useCallback, useEffect } from '
 import * as _ from 'lodash-es';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { ThIcon } from '@patternfly/react-icons/dist/esm/icons/th-icon';
@@ -146,6 +147,7 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
   isMastheadStacked,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const { tourDispatch, tour } = useContext(TourContext);
   const authEnabledFlag = useFlag(FLAGS.AUTH_ENABLED);
@@ -527,6 +529,7 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
         label: t('public~Stop impersonating'),
         callback: () => {
           dispatch(UIActions.stopImpersonate());
+          // Use full page reload when stopping to ensure clean state
           setTimeout(() => {
             window.location.href = window.SERVER_FLAGS.basePath || '/';
           }, 0);
@@ -848,10 +851,8 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
             dispatch(UIActions.startImpersonate('User', userName));
           }
           setIsImpersonateModalOpen(false);
-          // Navigate to refresh the page after starting impersonation
-          setTimeout(() => {
-            window.location.href = window.SERVER_FLAGS.basePath || '/';
-          }, 0);
+          // Use navigate instead of window.location to preserve Redux state
+          navigate(window.SERVER_FLAGS.basePath || '/');
         }}
         prefilledUsername=""
         isUsernameReadonly={false}
