@@ -21,6 +21,8 @@ import {
   ModalVariant,
   ModalBody,
   ModalFooter,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { OverlayComponent, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { ErrorMessage } from '../utils/button-bar';
@@ -80,19 +82,19 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
         titleIconVariant="warning"
       />
       <ModalBody>
-        <p className="pf-v6-u-mb-md">
+        <Content component={ContentVariants.p}>
           <Trans t={t} ns="public">
             This action cannot be undone. It will destroy all pods, services and other objects in
             the namespace{' '}
             <strong className="co-break-word">{{ name: resource.metadata.name }}</strong>.
           </Trans>
-        </p>
-        <p className="pf-v6-u-mb-md">
+        </Content>
+        <Content component={ContentVariants.p}>
           <Trans t={t} ns="public">
             Confirm deletion by typing{' '}
             <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
           </Trans>
-        </p>
+        </Content>
         <span className="pf-v6-c-form-control">
           <input
             type="text"

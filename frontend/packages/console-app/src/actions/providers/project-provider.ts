@@ -16,11 +16,12 @@ const useDeleteAction = (kindObj: K8sModel, resource: K8sResourceKind) => {
     () => ({
       delete: () => ({
         id: 'delete-project',
-        label: t('console-app~Delete Project'),
+        label: t('console-app~Delete {{label}}', { label: t(kindObj.labelKey) }),
         cta: launchDeleteModal,
         accessReview: asAccessReview(kindObj, resource, 'delete'),
       }),
     }),
+    // missing launchDeleteModal dependency, that causes max depth exceeded error
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [kindObj, resource, t],
   );
