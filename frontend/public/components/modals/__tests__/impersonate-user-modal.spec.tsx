@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ImpersonateUserModal } from '../impersonate-user-modal';
 import { useK8sWatchResource } from '../../utils/k8s-watch-hook';

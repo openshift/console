@@ -3,7 +3,6 @@
  * Tests the modal integrated with Redux actions and state
  */
 
-import * as React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
