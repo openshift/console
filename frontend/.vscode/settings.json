@@ -45,6 +45,8 @@
     "json",
     "graphql"
   ],
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
   "javascript.validate.enable": false,
   "typescript.tsdk": "./node_modules/typescript/lib",
   "search.exclude": {
@@ -77,14 +79,18 @@
   },
   "json.schemas": [
     {
-      "fileMatch": ["**/console-extensions.json"],
+      "fileMatch": [
+        "**/console-extensions.json"
+      ],
       "url": "./packages/console-dynamic-plugin-sdk/dist/webpack/schema/console-extensions.json"
     }
   ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "cucumberautocomplete.steps": ["./packages/*/integration-tests/support/step-definitions/*/*.ts"],
+  "cucumberautocomplete.steps": [
+    "./packages/*/integration-tests/support/step-definitions/*/*.ts"
+  ],
   "cucumberautocomplete.strictGherkinCompletion": true,
   "editor.quickSuggestions": {
     "comments": "on",
