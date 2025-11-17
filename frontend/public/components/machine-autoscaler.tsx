@@ -22,7 +22,6 @@ import {
 } from '../module/k8s';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { LoadingBox } from './utils/status-box';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
@@ -35,9 +34,8 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
 const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = ({ obj }) => {
@@ -86,9 +84,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, colu
         cell: _.get(obj, 'spec.maxReplicas') || DASH,
       },
       [tableColumnInfo[5].id]: {
-        cell: (
-          <ResourceKebab actions={menuActions} kind={machineAutoscalerReference} resource={obj} />
-        ),
+        cell: <LazyActionMenu context={{ [machineAutoscalerReference]: obj }} />,
         props: actionsCellProps,
       },
     };
@@ -234,7 +230,6 @@ export const MachineAutoscalerPage: React.FC<MachineAutoscalerPageProps> = (prop
 export const MachineAutoscalerDetailsPage: React.FC = (props) => (
   <DetailsPage
     {...props}
-    menuActions={menuActions}
     kind={machineAutoscalerReference}
     pages={[navFactory.details(MachineAutoscalerDetails), navFactory.editYaml()]}
   />
