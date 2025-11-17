@@ -113,32 +113,35 @@ export const editDeploymentFormSchema = (formValues: EditDeploymentFormData) =>
       : {}),
     imageStream: yup.object().when('fromImageStreamTag', {
       is: true,
-      then: yup.object({
-        namespace: yup.string().required(i18n.t('devconsole~Required')),
-        image: yup.string().required(i18n.t('devconsole~Required')),
-        tag: yup.string().required(i18n.t('devconsole~Required')),
-      }),
+      then: (schema) =>
+        schema.shape({
+          namespace: yup.string().required(i18n.t('devconsole~Required')),
+          image: yup.string().required(i18n.t('devconsole~Required')),
+          tag: yup.string().required(i18n.t('devconsole~Required')),
+        }),
     }),
     isi: yup.object().when('fromImageStreamTag', {
       is: true,
-      then: yup.object({
-        name: yup.string().required(i18n.t('devconsole~Required')),
-      }),
+      then: (schema) =>
+        schema.shape({
+          name: yup.string().required(i18n.t('devconsole~Required')),
+        }),
     }),
   });
 
 export const validationSchema = () =>
   yup.mixed().test({
-    test(formValues: EditDeploymentData) {
+    async test(formValues: EditDeploymentData) {
       const formYamlDefinition = yup.object({
         editorType: yup.string().oneOf(Object.values(EditorType)),
         yamlData: yup.string(),
         formData: yup.mixed().when('editorType', {
           is: EditorType.Form,
-          then: editDeploymentFormSchema(formValues.formData),
+          then: (schema) => schema.concat(editDeploymentFormSchema(formValues.formData)),
         }),
       });
 
-      return formYamlDefinition.validate(formValues, { abortEarly: false });
+      await formYamlDefinition.validate(formValues, { abortEarly: false });
+      return true;
     },
   });
