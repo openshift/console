@@ -43,7 +43,6 @@ When analyzing code, follow this systematic approach:
    - Verify functional components over class-based components
    - Check use of React hooks for state management
    - Ensure composition over inheritance
-   - Verify `React.FCC` usage instead of `React.FC`
    - Check for specific K8s resource types instead of generic `K8sResourceCommon`
 
 5. **SCSS/CSS Patterns**: Check BEM naming, prefixing, and organization
@@ -101,7 +100,6 @@ Style Guide Compliance:
 ❌ Missing BEM class naming convention
 
 Correct Patterns Identified:
-- Uses React.FCC for component typing
 - Proper composition over inheritance
 - Good separation of concerns
 - Follows functional component patterns

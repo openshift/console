@@ -34,12 +34,7 @@ This document outlines the core style conventions for the OpenShift Console code
 - Never use absolute paths in code. The app should be able to run behind a proxy under an arbitrary path.
 - TESTS: Should follow a similar "test tables" convention as used in Go where applicable.
 
-### Additional OpenShift Console Specific Practices
-
-#### React Component Patterns
-- Use `React.FCC` instead of `React.FC` for components (fixes an issue with implicit 'children' in React.FC)
-
-#### Type Safety & Kubernetes Integration
+#### Type Safety
 - Use specific Kubernetes resource types instead of generic `K8sResourceCommon` when possible
 - Avoid excessive use of `any` types
 - Avoid type assertions with `as any`
@@ -49,4 +44,3 @@ This document outlines the core style conventions for the OpenShift Console code
 #### Code Organization
 - Follow established directory structure patterns
 - Use consistent import organization
-- Maintain clear separation of concerns
