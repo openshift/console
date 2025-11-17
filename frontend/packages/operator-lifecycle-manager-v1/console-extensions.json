@@ -76,7 +76,7 @@
     "type": "console.user-preference/group",
     "properties": {
       "id": "olmv1-catalog",
-      "label": "%olm-v1~OLMV1 Catalog%"
+      "label": "%olm-v1~OLMv1 Catalog%"
     },
     "flags": {
       "required": ["TECH_PREVIEW"]
