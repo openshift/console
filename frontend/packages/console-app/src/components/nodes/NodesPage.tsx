@@ -232,6 +232,7 @@ const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
         sort: 'metadata.labels',
         props: {
           modifier: 'nowrap',
+          width: 15,
         },
         additional: true,
       },
@@ -385,9 +386,6 @@ const getNodeDataViewRows = (
       },
       [nodeColumnInfo.labels.id]: {
         cell: <LabelList kind={kind} labels={labels} />,
-        props: {
-          width: 15,
-        },
       },
       [nodeColumnInfo.zone.id]: {
         cell: zone,
@@ -397,9 +395,7 @@ const getNodeDataViewRows = (
       },
       [nodeColumnInfo.actions.id]: {
         cell: node ? <LazyActionMenu context={context} /> : null,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

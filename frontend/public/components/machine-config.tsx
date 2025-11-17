@@ -32,7 +32,6 @@ import { MachineConfigModel } from '../models';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { LoadingBox } from './utils/status-box';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
@@ -40,9 +39,9 @@ import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
-const machineConfigMenuActions = [...Kebab.factory.common];
 
 const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>
@@ -129,14 +128,7 @@ const pages = [
 ];
 
 export const MachineConfigDetailsPage: React.FCC<any> = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={machineConfigReference}
-      menuActions={machineConfigMenuActions}
-      pages={pages}
-    />
-  );
+  return <DetailsPage {...props} kind={machineConfigReference} pages={pages} />;
 };
 
 const tableColumnInfo = [
@@ -184,16 +176,8 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind, undefined> = (data, co
         cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
       },
       [tableColumnInfo[5].id]: {
-        cell: (
-          <ResourceKebab
-            actions={machineConfigMenuActions}
-            kind={machineConfigReference}
-            resource={obj}
-          />
-        ),
-        props: {
-          ...actionsCellProps,
-        },
+        cell: <LazyActionMenu context={{ [machineConfigReference]: obj }} />,
+        props: actionsCellProps,
       },
     };
 

@@ -6,7 +6,6 @@ import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
 import { DASH } from '@console/shared/src/constants/ui';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
@@ -27,8 +26,8 @@ import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { LoadingBox } from '@console/shared/src/components/loading';
 import { sortResourceByValue } from './factory/Table/sort';
 import { sorts } from './factory/table';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
-const menuActions = [...Kebab.factory.common];
 const kind = referenceForModel(ConfigMapModel);
 const tableColumnInfo = [
   { id: 'name' },
@@ -63,10 +62,8 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind, undefined> = (data, column
         cell: <Timestamp timestamp={configMap.metadata.creationTimestamp} />,
       },
       [tableColumnInfo[4].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={kind} resource={configMap} />,
-        props: {
-          ...actionsCellProps,
-        },
+        cell: <LazyActionMenu context={{ [kind]: configMap }} />,
+        props: actionsCellProps,
       },
     };
 
@@ -194,7 +191,6 @@ export const ConfigMapsDetailsPage: React.FCC = (props) => {
     <DetailsPage
       {...props}
       kind={kind}
-      menuActions={menuActions}
       pages={[navFactory.details(ConfigMapDetails), navFactory.editYaml()]}
     />
   );

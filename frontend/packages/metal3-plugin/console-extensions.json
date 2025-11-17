@@ -364,5 +364,16 @@
     "flags": {
       "required": ["BAREMETAL", "METAL3"]
     }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "metal3.io",
+        "version": "v1alpha1",
+        "kind": "BareMetalHost"
+      },
+      "provider": { "$codeRef": "hostActionsProvider.useHostActionsProvider" }
+    }
   }
 ]

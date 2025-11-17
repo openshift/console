@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import * as semver from 'semver';
-import { css } from '@patternfly/react-styles';
-import { sortable, Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import { Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import {
   AlertVariant,
   Button,
@@ -17,16 +16,28 @@ import {
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import {
+  K8sResourceKind,
+  K8sResourceKindReference,
+  referenceForModel,
+  TableColumn,
+} from '../module/k8s';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import { Table, TableData } from './factory/table';
-import type { RowFunctionArgs } from './factory/table';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  initialFiltersDefault,
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+
+import { ImageStreamModel } from '../models';
 import { DOC_URL_PODMAN } from './utils/documentation';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { ExpandableAlert } from './utils/alerts';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
@@ -35,9 +46,12 @@ import { ResourceSummary } from './utils/details-page';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { LoadingBox } from './utils/status-box';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
+const kind = referenceForModel(ImageStreamModel);
 
 export const getAnnotationTags = (specTag: any) =>
   _.get(specTag, 'annotations.tags', '').split(/\s*,\s*/);
@@ -85,9 +99,6 @@ export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
 // - It has a spec tag annotated with `builder` and not `hidden`
 // - It has a corresponding status tag
 export const isBuilder = (imageStream: K8sResourceKind) => !_.isEmpty(getBuilderTags(imageStream));
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
 
 const ImageStreamTagsRow: React.FCC<ImageStreamTagsRowProps> = ({
   imageStream,
@@ -155,7 +166,7 @@ const ImageStreamTagsRow: React.FCC<ImageStreamTagsRowProps> = ({
   );
 };
 
-export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpProps> = ({
+export const ExampleDockerCommandPopover: React.FCC<ImageStreamManipulationHelpProps> = ({
   imageStream,
   tag,
 }) => {
@@ -306,7 +317,7 @@ export const ImageStreamsDetails: React.FCC<ImageStreamsDetailsProps> = ({ obj: 
   );
 };
 
-const ImageStreamHistory: React.FC<ImageStreamHistoryProps> = ({ obj: imageStream }) => {
+const ImageStreamHistory: React.FCC<ImageStreamHistoryProps> = ({ obj: imageStream }) => {
   const imageStreamStatusTags = _.get(imageStream, 'status.tags');
   return (
     <ImageStreamTimeline
@@ -324,89 +335,119 @@ const pages = [
   navFactory.history(ImageStreamHistory),
 ];
 export const ImageStreamsDetailsPage: React.FCC = (props) => (
-  <DetailsPage {...props} kind={ImageStreamsReference} menuActions={menuActions} pages={pages} />
+  <DetailsPage {...props} kind={referenceForModel(ImageStreamModel)} pages={pages} />
 );
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
 
-const tableColumnClasses = [
-  '',
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  Kebab.columnClass,
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'labels' },
+  { id: 'created' },
+  { id: 'actions' },
 ];
 
-const ImageStreamsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={ImageStreamsReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')} columnID="namespace">
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <LabelList kind={ImageStreamsReference} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <ResourceKebab actions={menuActions} kind={ImageStreamsReference} resource={obj} />
-      </TableData>
-    </>
-  );
+const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
+  return data.map(({ obj: imageStream }) => {
+    const { name, namespace, labels, creationTimestamp } = imageStream.metadata;
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={ImageStreamsReference} name={name} namespace={namespace} />,
+        props: { ...getNameCellProps(name) },
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <ResourceLink kind="Namespace" name={namespace} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: <LabelList kind={ImageStreamsReference} labels={labels} />,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <Timestamp timestamp={creationTimestamp} />,
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <LazyActionMenu context={{ [referenceForModel(ImageStreamModel)]: imageStream }} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || '-';
+      return {
+        id,
+        props: rowCells[id]?.props,
+        cell,
+      };
+    });
+  });
 };
 
-export const ImageStreamsList: React.FCC = (props) => {
+const useImageStreamColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  const ImageStreamsTableHeader = () => {
+  const columns: TableColumn<K8sResourceKind>[] = React.useMemo(() => {
     return [
       {
         title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        props: {
+          ...cellIsStickyProps,
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Namespace'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-        id: 'namespace',
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: t('public~Labels'),
-        sortField: 'metadata.labels',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        id: tableColumnInfo[2].id,
+        sort: 'metadata.labels',
+        props: {
+          modifier: 'nowrap',
+          width: 20,
+        },
       },
       {
         title: t('public~Created'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
+        id: tableColumnInfo[3].id,
+        sort: 'metadata.creationTimestamp',
+        props: {
+          modifier: 'nowrap',
+        },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[4] },
+        id: tableColumnInfo[4].id,
+        props: {
+          ...cellIsStickyProps,
+        },
       },
     ];
-  };
-  ImageStreamsTableHeader.displayName = 'ImageStreamsTableHeader';
+  }, [t]);
+  return columns;
+};
+
+export const ImageStreamsList: React.FCC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
+  const columns: TableColumn<K8sResourceKind>[] = useImageStreamColumns();
 
   return (
-    <Table
-      {...props}
-      aria-label={t('public~ImageStreams')}
-      Header={ImageStreamsTableHeader}
-      Row={ImageStreamsTableRow}
-      virtualize
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<K8sResourceKind>
+        {...props}
+        label={ImageStreamModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        initialFilters={initialFiltersDefault}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </React.Suspense>
   );
 };
 
@@ -420,9 +461,10 @@ export const ImageStreamsPage: React.FCC<ImageStreamsPageProps> = (props) => {
     <ListPage
       {...props}
       title={t('public~ImageStreams')}
-      kind={ImageStreamsReference}
+      kind={kind}
       ListComponent={ImageStreamsList}
       canCreate={true}
+      omitFilterToolbar={true}
     />
   );
 };
@@ -450,4 +492,9 @@ export type ImageStreamsDetailsProps = {
 
 export type ImageStreamsPageProps = {
   filterLabel: string;
+};
+
+type ImageStreamsListProps = {
+  data: K8sResourceKind[];
+  loaded: boolean;
 };

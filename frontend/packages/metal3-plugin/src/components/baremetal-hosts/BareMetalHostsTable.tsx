@@ -2,11 +2,13 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import { TableData, Table, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { getName, getUID, getNamespace, DASH } from '@console/shared';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { BMO_ENABLED_FLAG } from '../../features';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
@@ -15,7 +17,6 @@ import { BareMetalHostBundle } from '../types';
 import BareMetalHostRole from './BareMetalHostRole';
 import BareMetalHostSecondaryStatus from './BareMetalHostSecondaryStatus';
 import BareMetalHostStatus from './BareMetalHostStatus';
-import { menuActions } from './host-menu-actions';
 import NodeLink from './NodeLink';
 
 const tableColumnClasses = {
@@ -74,13 +75,11 @@ const HostsTableHeader = (t: TFunction) => () => [
 const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
   obj: { host, node, nodeMaintenance, machine, machineSet, status },
 }) => {
-  const { t } = useTranslation();
   const [maintenanceModel] = useMaintenanceCapability();
   const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
   const name = getName(host);
   const namespace = getNamespace(host);
   const address = getHostBMCAddress(host);
-  const uid = getUID(host);
   const nodeName = getName(node);
   const { serialNumber } = getHostVendorInfo(host);
 
@@ -106,22 +105,19 @@ const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
       <TableData className={tableColumnClasses.address}>{address || DASH}</TableData>
       <TableData className={tableColumnClasses.serialNumber}>{serialNumber || DASH}</TableData>
       <TableData className={tableColumnClasses.kebab}>
-        <Kebab
-          options={menuActions.map((action) =>
-            action(BareMetalHostModel, host, {
-              nodeMaintenance,
-              nodeName,
-              hasNodeMaintenanceCapability: !!maintenanceModel,
-              machine,
+        <LazyActionMenu
+          context={{
+            [referenceForModel(BareMetalHostModel)]: {
+              host,
               machineSet,
-              status,
+              machine,
               bmoEnabled,
+              nodeName,
+              status,
               maintenanceModel,
-              t,
-            }),
-          )}
-          key={`kebab-for-${uid}`}
-          id={`kebab-for-${uid}`}
+              nodeMaintenance,
+            },
+          }}
         />
       </TableData>
     </>

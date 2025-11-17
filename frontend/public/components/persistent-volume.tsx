@@ -10,7 +10,7 @@ import { Table, TableData } from './factory/table';
 import type { DetailsPageProps } from './factory/details';
 import type { ListPageProps } from './factory/list-page';
 import type { TableProps } from './factory/table';
-import { Kebab, ResourceKebab } from './utils/kebab';
+import { Kebab } from './utils/kebab';
 import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
 import { SectionHeading } from './utils/headings';
@@ -26,10 +26,10 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { PersistentVolumeKind } from '@console/internal/module/k8s';
+import { PersistentVolumeKind, referenceForModel } from '@console/internal/module/k8s';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
+const persistentVolumeReference = referenceForModel(PersistentVolumeModel);
 
 const PVStatus = ({ pv }: { pv: PersistentVolumeKind }) => (
   <Status status={pv.metadata.deletionTimestamp ? 'Terminating' : pv.status.phase} />
@@ -79,14 +79,7 @@ const PVTableRow = ({ obj }: { obj: PersistentVolumeKind }) => {
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab
-          actions={menuActions}
-          kind={kind}
-          resource={obj}
-          terminatingTooltip={t(
-            'public~The corresponding PersistentVolumeClaim must be deleted first.',
-          )}
-        />
+        <LazyActionMenu context={{ [persistentVolumeReference]: obj }} />
       </TableData>
     </>
   );
@@ -235,7 +228,7 @@ export const PersistentVolumesPage = (props: ListPageProps) => (
 export const PersistentVolumesDetailsPage = (props: DetailsPageProps) => (
   <DetailsPage
     {...props}
-    menuActions={menuActions}
+    kind={persistentVolumeReference}
     pages={[navFactory.details(Details), navFactory.editYaml()]}
   />
 );

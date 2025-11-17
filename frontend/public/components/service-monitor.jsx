@@ -85,9 +85,7 @@ const getServiceMonitorDataViewRows = (data, columns) => {
       },
       [serviceMonitorTableColumnInfo[4].id]: {
         cell: <ResourceKebab actions={menuActions} kind={resourceKind} resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

@@ -488,9 +488,7 @@ const getResourceQuotaDataViewRows = (data, columns, namespace) => {
             resource={obj}
           />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -560,9 +558,7 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
             resource={obj}
           />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

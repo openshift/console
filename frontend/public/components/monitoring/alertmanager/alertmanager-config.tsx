@@ -389,9 +389,7 @@ const getReceiverDataViewRows = (
       },
       [tableColumnInfo[3].id]: {
         cell: <Kebab options={receiverMenuItems(receiver.name)} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

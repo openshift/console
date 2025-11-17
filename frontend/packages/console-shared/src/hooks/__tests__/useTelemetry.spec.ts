@@ -24,6 +24,18 @@ jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useUser', () => ({
+  useUser: jest.fn(() => ({
+    user: {},
+    userResource: {},
+    userResourceLoaded: true,
+    userResourceError: null,
+    username: 'testuser',
+    fullName: 'Test User',
+    displayName: 'Test User',
+  })),
+}));
+
 const mockUserResource = {};
 
 const exampleReturnValue = {

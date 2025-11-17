@@ -78,9 +78,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

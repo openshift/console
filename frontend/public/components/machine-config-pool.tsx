@@ -396,23 +396,15 @@ const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, KebabAction[]> = (
       },
       [tableColumnInfo[2].id]: {
         cell: getConditionStatus(obj, MachineConfigPoolConditionType.Degraded),
-        props: {
-          modifier: 'nowrap',
-        },
       },
       [tableColumnInfo[3].id]: {
         cell: <MachineConfigPoolUpdateStatus obj={obj} />,
-        props: {
-          modifier: 'nowrap',
-        },
       },
       [tableColumnInfo[4].id]: {
         cell: (
           <ResourceKebab actions={menuActions} kind={machineConfigPoolReference} resource={obj} />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

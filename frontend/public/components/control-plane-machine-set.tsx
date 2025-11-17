@@ -24,13 +24,11 @@ import {
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-
 import { Conditions } from './conditions';
 import { ControlPlaneMachineSetModel } from '../models';
 import { ControlPlaneMachineSetKind, referenceForModel } from '../module/k8s';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { LoadingBox } from './utils/status-box';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink, resourcePath } from './utils/resource-link';
@@ -40,9 +38,9 @@ import { Selector } from './utils/selector';
 import { ResourceEventStream } from './events';
 import { MachinePage, machineReference } from './machine';
 import { MachineTabPageProps } from './machine-set';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const controlPlaneMachineSetReference = referenceForModel(ControlPlaneMachineSetModel);
-const controlPlaneMachineSetMenuActions = [...Kebab.factory.common];
 const getDesiredReplicas = (resource: ControlPlaneMachineSetKind) => {
   return resource.spec.replicas;
 };
@@ -194,12 +192,7 @@ const pages = [
 ];
 
 export const ControlPlaneMachineSetDetailsPage: React.FC<any> = (props) => (
-  <DetailsPage
-    {...props}
-    kind={controlPlaneMachineSetReference}
-    menuActions={controlPlaneMachineSetMenuActions}
-    pages={pages}
-  />
+  <DetailsPage {...props} kind={controlPlaneMachineSetReference} pages={pages} />
 );
 
 const tableColumnInfo = [
@@ -316,16 +309,8 @@ const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind, undefined> = 
         cell: obj.spec?.state || DASH,
       },
       [tableColumnInfo[5].id]: {
-        cell: (
-          <ResourceKebab
-            actions={controlPlaneMachineSetMenuActions}
-            kind={controlPlaneMachineSetReference}
-            resource={obj}
-          />
-        ),
-        props: {
-          ...actionsCellProps,
-        },
+        cell: <LazyActionMenu context={{ [controlPlaneMachineSetReference]: obj }} />,
+        props: actionsCellProps,
       },
     };
 

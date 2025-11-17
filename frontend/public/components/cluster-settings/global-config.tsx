@@ -27,7 +27,7 @@ import { EmptyBox, LoadingBox } from '../utils/status-box';
 import { ExpandableAlert } from '../utils/alerts';
 import { Kebab } from '../utils/kebab';
 import { resourcePathFromModel } from '../utils/resource-link';
-import { TextFilter } from '../factory/list-page';
+import { TextFilter } from '../factory/text-filter';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import i18next from 'i18next';
 import {

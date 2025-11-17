@@ -340,10 +340,7 @@ const config: Configuration = {
 if (CHECK_CYCLES === 'true') {
   new CircularDependencyPreset({
     exclude: /node_modules|public\/dist|\.(gql|html)$/,
-    // TODO: investigate how to load the plugins registry asynchronously
-    filterModules: /^get-active-plugins\.js$/,
-    // TODO: Fix cycles unveiled by CONSOLE-4837, then remove the below line
-    thresholds: { totalCycles: 10 },
+    thresholds: { totalCycles: 14 }, // TODO(CONSOLE-4806): Set threshold to 0
     reportFile: '.webpack-cycles',
   }).apply(config.plugins);
 }

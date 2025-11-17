@@ -15,7 +15,6 @@ import { Conditions } from './conditions';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { DetailsItem } from './utils/details-item';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { LabelList } from './utils/label-list';
 import { LoadingBox } from './utils/status-box';
 import { ResourceLink } from './utils/resource-link';
@@ -34,13 +33,11 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { DASH } from '@console/shared/src/constants/ui';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = referenceForModel(
   HorizontalPodAutoscalerModel,
 );
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
 
 const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
   <Tr>
@@ -253,12 +250,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 export const HorizontalPodAutoscalersDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    kind={HorizontalPodAutoscalersReference}
-    menuActions={menuActions}
-    pages={pages}
-  />
+  <DetailsPage {...props} kind={HorizontalPodAutoscalersReference} pages={pages} />
 );
 HorizontalPodAutoscalersDetailsPage.displayName = 'HorizontalPodAutoscalersDetailsPage';
 
@@ -314,15 +306,9 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind, undefined> =
       },
       [tableColumnInfo[6].id]: {
         cell: (
-          <ResourceKebab
-            actions={menuActions}
-            kind={HorizontalPodAutoscalersReference}
-            resource={obj}
-          />
+          <LazyActionMenu context={{ [referenceForModel(HorizontalPodAutoscalerModel)]: obj }} />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 

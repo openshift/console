@@ -14,6 +14,7 @@ import { ActionType, CoreAction } from '../actions/core';
 export const coreReducer = (
   state: CoreState = {
     user: {},
+    userResource: null,
     admissionWebhookWarnings: ImmutableMap<string, AdmissionWebhookWarning>(),
   },
   action: CoreAction,
@@ -46,6 +47,12 @@ export const coreReducer = (
       return {
         ...state,
         user: action.payload.userInfo,
+      };
+
+    case ActionType.SetUserResource:
+      return {
+        ...state,
+        userResource: action.payload.userResource,
       };
 
     case ActionType.SetAdmissionWebhookWarning:

@@ -14,7 +14,7 @@ const injectDisabled = (children, disabled) => {
   });
 };
 
-const ErrorMessage = ({ message }) => {
+export const ErrorMessage = ({ message }) => {
   const { t } = useTranslation();
   return (
     <Alert

@@ -37,7 +37,7 @@ import { storagePrefix } from './row-filter';
 import { createColumnManagementModal } from './modals';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
-import { TextFilter } from './factory/list-page';
+import { TextFilter } from './factory/text-filter';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import useRowFilterFix from './useRowFilterFix';
 import useLabelSelectionFix from './useLabelSelectionFix';

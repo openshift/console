@@ -2,11 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
+import { K8sResourceKindReference, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { LimitRangeModel } from '../models';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { navFactory } from './utils/horizontal-nav';
 import { SectionHeading } from './utils/headings';
 import { ResourceLink } from './utils/resource-link';
@@ -30,9 +29,7 @@ import {
 } from '@console/app/src/components/data-view/types';
 import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { DASH } from '@console/shared/src/constants/ui';
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
@@ -57,10 +54,8 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
         cell: <Timestamp timestamp={creationTimestamp} />,
       },
       [tableColumnInfo[3].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={LimitRangeReference} resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        cell: <LazyActionMenu context={{ [referenceForModel(LimitRangeModel)]: obj }} />,
+        props: actionsCellProps,
       },
     };
 
@@ -230,7 +225,7 @@ export const LimitRangeDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
-      menuActions={menuActions}
+      kind={referenceForModel(LimitRangeModel)}
       pages={[navFactory.details(Details), navFactory.editYaml()]}
     />
   );

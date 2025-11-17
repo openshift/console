@@ -1,9 +1,11 @@
 import { action, ActionType as Action } from 'typesafe-actions';
+import type { UserKind } from '@console/internal/module/k8s/types';
 import { UserInfo } from '../../../extensions';
 import { AdmissionWebhookWarning } from '../../redux-types';
 
 export enum ActionType {
   SetUser = 'setUser',
+  SetUserResource = 'setUserResource',
   BeginImpersonate = 'beginImpersonate',
   EndImpersonate = 'endImpersonate',
   SetActiveCluster = 'setActiveCluster',
@@ -12,7 +14,8 @@ export enum ActionType {
 }
 
 export const setUser = (userInfo: UserInfo) => action(ActionType.SetUser, { userInfo });
-
+export const setUserResource = (userResource: UserKind) =>
+  action(ActionType.SetUserResource, { userResource });
 export const beginImpersonate = (
   kind: string,
   name: string,
@@ -26,6 +29,7 @@ export const removeAdmissionWebhookWarning = (id) =>
   action(ActionType.RemoveAdmissionWebhookWarning, { id });
 const coreActions = {
   setUser,
+  setUserResource,
   beginImpersonate,
   endImpersonate,
   setAdmissionWebhookWarning,

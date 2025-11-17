@@ -1,58 +1,72 @@
 import { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
-  createModalLauncher,
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-} from '@console/internal/components/factory';
+  Modal,
+  ModalHeader,
+  ModalVariant,
+  ModalBody as PfModalBody,
+  ModalFooter as PfModalFooter,
+  Button,
+} from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { OverlayComponent, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ModalComponentProps } from '@console/internal/components/factory';
+import { ErrorMessage } from '@console/internal/components/utils';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { restartHost } from '../../k8s/requests/bare-metal-host';
 import { BareMetalHostKind } from '../../types';
 import { PowerOffWarning } from './PowerOffHostModal';
 
-export type RestartHostModalProps = {
+export type RestartHostModalProps1 = {
   host: BareMetalHostKind;
   cancel?: () => void;
   close?: () => void;
 };
 
-const RestartHostModal = ({
-  host,
-  close = undefined,
-  cancel = undefined,
-}: RestartHostModalProps) => {
-  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
+export type RestartHostModalProps = {
+  host: BareMetalHostKind;
+} & ModalComponentProps;
+
+const RestartHostModal: OverlayComponent<RestartHostModalProps> = (props) => {
   const { t } = useTranslation();
+  const { host, closeOverlay } = props;
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const onSubmit = useCallback(
     async (event) => {
       event.preventDefault();
       const promise = restartHost(host);
       handlePromise(promise)
         .then(() => {
-          close();
+          closeOverlay();
         })
         .catch(() => {});
     },
-    [host, close, handlePromise],
+    [host, closeOverlay, handlePromise],
   );
 
   return (
-    <form onSubmit={onSubmit} name="form" className="modal-content">
-      <ModalTitle>{t('metal3-plugin~Restart Bare Metal Host')}</ModalTitle>
-      <ModalBody>
+    <Modal isOpen onClose={props.closeOverlay} variant={ModalVariant.small}>
+      <ModalHeader title={t('metal3-plugin~Restart Bare Metal Host')} />
+      <PfModalBody>
         <p>{t('metal3-plugin~The host will be powered off and on again.')}</p>
         <PowerOffWarning restart />
-      </ModalBody>
-      <ModalSubmitFooter
-        cancel={cancel}
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitDisabled={false}
-        submitText={t('metal3-plugin~Restart')}
-      />
-    </form>
+      </PfModalBody>
+      <PfModalFooter>
+        {errorMessage && <ErrorMessage message={errorMessage} />}
+        <Button variant="primary" onClick={onSubmit} isLoading={inProgress}>
+          {t('metal3-plugin~Restart')}
+        </Button>
+        <Button variant="secondary" onClick={closeOverlay}>
+          {t('metal3-plugin~Cancel')}
+        </Button>
+      </PfModalFooter>
+    </Modal>
   );
 };
 
-export const restartHostModal = createModalLauncher(RestartHostModal);
+export const useRestartHostModalLauncher = (props: RestartHostModalProps) => {
+  const launcher = useOverlay();
+  return useCallback(() => launcher<RestartHostModalProps>(RestartHostModal, props), [
+    launcher,
+    props,
+  ]);
+};
