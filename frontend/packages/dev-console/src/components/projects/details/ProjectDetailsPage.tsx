@@ -40,7 +40,7 @@ const ProjectDetails = (props) => {
       ]}
       name={activeNamespace}
       kind={referenceForModel(ProjectModel)}
-      customActionMenu={(obj) => (
+      customActionMenu={(k8sObj, obj) => (
         <LazyActionMenu
           context={{ [referenceForModel(ProjectModel)]: obj }}
           variant={ActionMenuVariant.DROPDOWN}
