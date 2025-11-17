@@ -11,41 +11,46 @@ export const validateResourceType = () =>
       .object()
       .when('type', {
         is: PipelineResourceType.git,
-        then: yup.object({
-          url: yup.string().required(i18next.t('pipelines-plugin~Required')),
-          revision: yup.string(),
-        }),
+        then: (schema) =>
+          schema.shape({
+            url: yup.string().required(i18next.t('pipelines-plugin~Required')),
+            revision: yup.string(),
+          }),
       })
       .when('type', {
         is: PipelineResourceType.image,
-        then: yup.object({
-          url: yup.string().required(i18next.t('pipelines-plugin~Required')),
-        }),
+        then: (schema) =>
+          schema.shape({
+            url: yup.string().required(i18next.t('pipelines-plugin~Required')),
+          }),
       })
       .when('type', {
         is: PipelineResourceType.storage,
-        then: yup.object({
-          type: yup.string().required(i18next.t('pipelines-plugin~Required')),
-          location: yup.string().required(i18next.t('pipelines-plugin~Required')),
-          dir: yup.string(),
-        }),
+        then: (schema) =>
+          schema.shape({
+            type: yup.string().required(i18next.t('pipelines-plugin~Required')),
+            location: yup.string().required(i18next.t('pipelines-plugin~Required')),
+            dir: yup.string(),
+          }),
       })
       .when('type', {
         is: PipelineResourceType.cluster,
-        then: yup.object({
-          name: yup.string().required(i18next.t('pipelines-plugin~Required')),
-          url: yup.string().required(i18next.t('pipelines-plugin~Required')),
-          username: yup.string().required(i18next.t('pipelines-plugin~Required')),
-          password: yup.string(),
-          insecure: yup.string(),
-        }),
+        then: (schema) =>
+          schema.shape({
+            name: yup.string().required(i18next.t('pipelines-plugin~Required')),
+            url: yup.string().required(i18next.t('pipelines-plugin~Required')),
+            username: yup.string().required(i18next.t('pipelines-plugin~Required')),
+            password: yup.string(),
+            insecure: yup.string(),
+          }),
       }),
     secrets: yup.object().when('type', {
       is: PipelineResourceType.cluster,
-      then: yup.object({
-        cadata: yup.string().required(i18next.t('pipelines-plugin~Required')),
-        token: yup.string(),
-      }),
+      then: (schema) =>
+        schema.shape({
+          cadata: yup.string().required(i18next.t('pipelines-plugin~Required')),
+          token: yup.string(),
+        }),
     }),
   });
 
@@ -56,7 +61,7 @@ export const formResources = () =>
       selection: yup.string().required(i18next.t('pipelines-plugin~Required')),
       data: yup.object().when('selection', {
         is: CREATE_PIPELINE_RESOURCE,
-        then: validateResourceType(),
+        then: (schema) => schema.concat(validateResourceType()),
       }),
     }),
   );
@@ -66,58 +71,62 @@ const volumeTypeSchema = () =>
     .object()
     .when('type', {
       is: (type) => VolumeTypes[type] === VolumeTypes.Secret,
-      then: yup.object().shape({
-        secret: yup.object().shape({
-          secretName: yup.string().required(i18next.t('pipelines-plugin~Required')),
-          items: yup.array().of(
-            yup.object().shape({
-              key: yup.string().required(i18next.t('pipelines-plugin~Required')),
-              path: yup.string().required(i18next.t('pipelines-plugin~Required')),
-            }),
-          ),
+      then: (schema) =>
+        schema.shape({
+          secret: yup.object().shape({
+            secretName: yup.string().required(i18next.t('pipelines-plugin~Required')),
+            items: yup.array().of(
+              yup.object().shape({
+                key: yup.string().required(i18next.t('pipelines-plugin~Required')),
+                path: yup.string().required(i18next.t('pipelines-plugin~Required')),
+              }),
+            ),
+          }),
         }),
-      }),
     })
     .when('type', {
       is: (type) => VolumeTypes[type] === VolumeTypes.ConfigMap,
-      then: yup.object().shape({
-        configMap: yup.object().shape({
-          name: yup.string().required(i18next.t('pipelines-plugin~Required')),
-          items: yup.array().of(
-            yup.object().shape({
-              key: yup.string().required(i18next.t('pipelines-plugin~Required')),
-              path: yup.string().required(i18next.t('pipelines-plugin~Required')),
-            }),
-          ),
+      then: (schema) =>
+        schema.shape({
+          configMap: yup.object().shape({
+            name: yup.string().required(i18next.t('pipelines-plugin~Required')),
+            items: yup.array().of(
+              yup.object().shape({
+                key: yup.string().required(i18next.t('pipelines-plugin~Required')),
+                path: yup.string().required(i18next.t('pipelines-plugin~Required')),
+              }),
+            ),
+          }),
         }),
-      }),
     })
     .when('type', {
       is: (type) => VolumeTypes[type] === VolumeTypes.PVC,
-      then: yup.object().shape({
-        persistentVolumeClaim: yup.object().shape({
-          claimName: yup.string().required(i18next.t('pipelines-plugin~Required')),
+      then: (schema) =>
+        schema.shape({
+          persistentVolumeClaim: yup.object().shape({
+            claimName: yup.string().required(i18next.t('pipelines-plugin~Required')),
+          }),
         }),
-      }),
     })
     .when('type', {
       is: (type) => VolumeTypes[type] === VolumeTypes.VolumeClaimTemplate,
-      then: yup.object().shape({
-        volumeClaimTemplate: yup.object().shape({
-          spec: yup.object().shape({
-            accessModes: yup
-              .array()
-              .of(yup.string().required(i18next.t('pipelines-plugin~Required'))),
-            resources: yup.object().shape({
-              requests: yup
-                .object()
-                .shape({ storage: yup.string().required(i18next.t('pipelines-plugin~Required')) }),
+      then: (schema) =>
+        schema.shape({
+          volumeClaimTemplate: yup.object().shape({
+            spec: yup.object().shape({
+              accessModes: yup
+                .array()
+                .of(yup.string().required(i18next.t('pipelines-plugin~Required'))),
+              resources: yup.object().shape({
+                requests: yup.object().shape({
+                  storage: yup.string().required(i18next.t('pipelines-plugin~Required')),
+                }),
+              }),
+              storageClassName: yup.string().required(i18next.t('pipelines-plugin~Required')),
+              volumeMode: yup.string().required(i18next.t('pipelines-plugin~Required')),
             }),
-            storageClassName: yup.string().required(i18next.t('pipelines-plugin~Required')),
-            volumeMode: yup.string().required(i18next.t('pipelines-plugin~Required')),
           }),
         }),
-      }),
     });
 
 const commonPipelineSchema = () =>

@@ -45,29 +45,31 @@ export const repositoryValidationSchema = (t: TFunction) =>
       .object()
       .when('gitProvider', {
         is: GitProvider.BITBUCKET,
-        then: yup.object().shape({
-          user: yup
-            .string()
-            .matches(bitBucketUserNameRegex, {
-              message: t(
-                'pipelines-plugin~Name must consist of lower-case letters, numbers, underscores and hyphens. It must start with a letter and end with a letter or number.',
-              ),
-              excludeEmptyString: true,
-            })
-            .required(t('pipelines-plugin~Required')),
-        }),
+        then: (schema) =>
+          schema.shape({
+            user: yup
+              .string()
+              .matches(bitBucketUserNameRegex, {
+                message: t(
+                  'pipelines-plugin~Name must consist of lower-case letters, numbers, underscores and hyphens. It must start with a letter and end with a letter or number.',
+                ),
+                excludeEmptyString: true,
+              })
+              .required(t('pipelines-plugin~Required')),
+          }),
       })
       .when(['method', 'gitProvider', 'gitUrl'], {
         is: (method, gitProvider, gitUrl) =>
           gitUrl && !(gitProvider === GitProvider.GITHUB && method === GitProvider.GITHUB),
-        then: yup.object().shape({
-          token: yup.string().test('oneOfRequired', 'Required', function () {
-            return this.parent.token || this.parent.secretRef;
+        then: (schema) =>
+          schema.shape({
+            token: yup.string().test('oneOfRequired', 'Required', function () {
+              return this.parent.token || this.parent.secretRef;
+            }),
+            secretRef: yup.string().test('oneOfRequired', 'Required', function () {
+              return this.parent.token || this.parent.secretRef;
+            }),
           }),
-          secretRef: yup.string().test('oneOfRequired', 'Required', function () {
-            return this.parent.token || this.parent.secretRef;
-          }),
-        }),
       }),
   });
 
@@ -77,31 +79,33 @@ export const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
       .object()
       .when('gitProvider', {
         is: GitProvider.BITBUCKET,
-        then: yup.object().shape({
-          user: yup
-            .string()
-            .matches(nameRegex, {
-              message: t(
-                'pipelines-plugin~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
-              ),
-              excludeEmptyString: true,
-            })
-            .required(t('pipelines-plugin~Required')),
-        }),
+        then: (schema) =>
+          schema.shape({
+            user: yup
+              .string()
+              .matches(nameRegex, {
+                message: t(
+                  'pipelines-plugin~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+                ),
+                excludeEmptyString: true,
+              })
+              .required(t('pipelines-plugin~Required')),
+          }),
       })
       .when(['method', 'gitProvider', 'gitUrl'], {
         is: (method, gitProvider, gitUrl) =>
           gitUrl &&
           gitProvider &&
           !(gitProvider === GitProvider.GITHUB && method === GitProvider.GITHUB),
-        then: yup.object().shape({
-          token: yup.string().test('oneOfRequired', 'Required', function () {
-            return this.parent.token || this.parent.secretRef;
+        then: (schema) =>
+          schema.shape({
+            token: yup.string().test('oneOfRequired', 'Required', function () {
+              return this.parent.token || this.parent.secretRef;
+            }),
+            secretRef: yup.string().test('oneOfRequired', 'Required', function () {
+              return this.parent.token || this.parent.secretRef;
+            }),
           }),
-          secretRef: yup.string().test('oneOfRequired', 'Required', function () {
-            return this.parent.token || this.parent.secretRef;
-          }),
-        }),
       }),
   });
 
@@ -109,7 +113,7 @@ export const importFlowRepositoryValidationSchema = (t: TFunction) => {
   return yup.object().shape({
     repository: yup.object().when(['pipelineType', 'pipelineEnabled'], {
       is: (pipelineType, pipelineEnabled) => pipelineType === PipelineType.PAC && pipelineEnabled,
-      then: pipelinesAccessTokenValidationSchema(t),
+      then: (schema) => schema.concat(pipelinesAccessTokenValidationSchema(t)),
     }),
   });
 };

@@ -15,13 +15,14 @@ const sourceServiceSchema = (t: TFunction) =>
     .object()
     .when('sourceType', {
       is: SinkType.Resource,
-      then: yup.object().shape({
-        name: yup.string().required(t('knative-plugin~Required')),
-      }),
+      then: (schema) =>
+        schema.shape({
+          name: yup.string().required(t('knative-plugin~Required')),
+        }),
     })
     .when('sourceType', {
       is: SinkType.Uri,
-      then: sinkTypeUriValidation(t),
+      then: (schema) => schema.concat(sinkTypeUriValidation(t)),
     });
 
 const sinkDataSpecSchema = (t: TFunction) =>
@@ -29,23 +30,24 @@ const sinkDataSpecSchema = (t: TFunction) =>
     .object()
     .when('type', {
       is: KafkaSinkModel.kind,
-      then: yup.object().shape({
-        [KafkaSinkModel.kind]: yup.object().shape({
-          bootstrapServers: yup.array().of(yup.string()).min(1, t('knative-plugin~Required')),
-          topic: yup.string().required(t('knative-plugin~Required')),
-          auth: yup.object().shape({
-            secret: yup.object().shape({
-              ref: yup.object().shape({
-                name: yup.string(),
+      then: (schema) =>
+        schema.shape({
+          [KafkaSinkModel.kind]: yup.object().shape({
+            bootstrapServers: yup.array().of(yup.string()).min(1, t('knative-plugin~Required')),
+            topic: yup.string().required(t('knative-plugin~Required')),
+            auth: yup.object().shape({
+              secret: yup.object().shape({
+                ref: yup.object().shape({
+                  name: yup.string(),
+                }),
               }),
             }),
           }),
         }),
-      }),
     })
     .when('type', {
       is: CamelKameletBindingModel.kind,
-      then: yup.object(),
+      then: (schema) => schema,
     });
 
 export const eventSinkValidationSchema = (t: TFunction) =>
@@ -53,13 +55,14 @@ export const eventSinkValidationSchema = (t: TFunction) =>
     editorType: yup.string(),
     formData: yup.object().when('editorType', {
       is: EditorType.Form,
-      then: yup.object().shape({
-        project: projectNameValidationSchema,
-        application: applicationNameValidationSchema,
-        name: nameValidationSchema(t),
-        source: sourceServiceSchema(t),
-        data: sinkDataSpecSchema(t),
-      }),
+      then: (schema) =>
+        schema.shape({
+          project: projectNameValidationSchema,
+          application: applicationNameValidationSchema,
+          name: nameValidationSchema(t),
+          source: sourceServiceSchema(t),
+          data: sinkDataSpecSchema(t),
+        }),
     }),
     yamlData: yup.string(),
   });

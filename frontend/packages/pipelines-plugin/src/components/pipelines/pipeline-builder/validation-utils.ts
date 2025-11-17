@@ -279,7 +279,7 @@ const resourceDefinition = (formValues: PipelineBuilderFormYamlValues, taskType:
           resourceValue?: string,
         ) {
           const resource = findResource(formValues, this.path, this.parent.name, taskType);
-          return !resource || resource.optional || resourceValue;
+          return !resource || resource.optional || !!resourceValue;
         })
         .test(
           'is-resource-link-broken',
@@ -391,7 +391,7 @@ const taskValidation = (formValues: PipelineBuilderFormYamlValues, taskType: Tas
                   workspaceValue?: string,
                 ) {
                   const workspace = findWorkspace(formValues, this.path, this.parent.name);
-                  return !workspace || workspace.optional || workspaceValue;
+                  return !workspace || workspace.optional || !!workspaceValue;
                 })
                 .test(
                   'are-workspaces-available',
@@ -476,16 +476,17 @@ const pipelineBuilderFormSchema = (formValues: PipelineBuilderFormYamlValues) =>
 
 export const validationSchema = () =>
   yup.mixed().test({
-    test(formValues: PipelineBuilderFormYamlValues) {
+    async test(formValues: PipelineBuilderFormYamlValues) {
       const formYamlDefinition = yup.object({
         editorType: yup.string().oneOf(Object.values(EditorType)),
         yamlData: yup.string(),
         formData: yup.mixed().when('editorType', {
           is: EditorType.Form,
-          then: pipelineBuilderFormSchema(formValues),
+          then: (schema) => schema.concat(pipelineBuilderFormSchema(formValues)),
         }),
       });
 
-      return formYamlDefinition.validate(formValues, { abortEarly: false });
+      await formYamlDefinition.validate(formValues, { abortEarly: false });
+      return true;
     },
   });
