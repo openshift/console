@@ -140,7 +140,10 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
       result[e.properties.type] = [];
     });
     catalogItems.forEach((item) => {
-      (result[item.type] ?? []).push(item);
+      if (!result[item.type]) {
+        result[item.type] = [];
+      }
+      result[item.type].push(item);
     });
     return result;
   }, [catalogProviderExtensions, catalogItems]);
