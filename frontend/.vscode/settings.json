@@ -1,31 +1,39 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[javascript]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "never",
-      "source.sortImports": "never"
+      "source.sortImports": "never",
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.ts": "explicit"
     }
   },
   "[javascriptreact]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "never",
-      "source.sortImports": "never"
+      "source.sortImports": "never",
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.ts": "explicit"
     }
   },
   "[typescript]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "never",
-      "source.sortImports": "never"
+      "source.sortImports": "never",
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.ts": "explicit"
     }
   },
   "[typescriptreact]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "never",
-      "source.sortImports": "never"
+      "source.sortImports": "never",
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.ts": "explicit"
     }
   },
   "[json]": {
