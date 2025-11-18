@@ -16,7 +16,6 @@
     "@console/dev-console": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts",
     "exposedModules": {
       "BuildTabSection": "src/components/workload/build-tab-section.tsx",
       "CronJobSideBarDetails": "src/components/workload/CronJobSideBarDetails.tsx",

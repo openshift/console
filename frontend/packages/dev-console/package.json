@@ -17,7 +17,6 @@
     "@console/plugin-sdk": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts",
     "exposedModules": {
       "providers": "src/actions/providers.tsx",
       "useDevfile": "src/components/catalog/providers/useDevfile.tsx",

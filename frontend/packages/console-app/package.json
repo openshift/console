@@ -27,7 +27,6 @@
     "@console/webterminal-plugin": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts",
     "exposedModules": {
       "tourContext": "src/components/tour/tour-context.ts",
       "quickStartContext": "src/components/quick-starts/utils/quick-start-context.tsx",
