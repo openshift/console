@@ -103,7 +103,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     return applyCatalogItemMetadata(preCatalogItems, metadataProviderMap);
   }, [loaded, preCatalogItems, metadataProviderMap]);
 
-  const onCategoryValueResolved = React.useCallback(([newCategories], id) => {
+  const onCategoryValueResolved = React.useCallback((newCategories, id) => {
     setCategoryProviderMap((prev) => {
       if (_.isEqual(prev[id], newCategories)) {
         return prev;
