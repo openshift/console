@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Banner, Flex, Button, Tooltip } from '@patternfly/react-core';
@@ -23,22 +23,11 @@ export const ImpersonateNotifier = connect(
   }) => {
     const { t } = useTranslation();
 
-    // Memory leak prevention - track component mount state
-    const isMountedRef = useRef(true);
-    useEffect(() => {
-      return () => {
-        isMountedRef.current = false;
-      };
-    }, []);
-
-    // Safe handler to prevent memory leaks
     const handleStopImpersonate = useCallback(() => {
       stopImpersonate();
-      // Use window.location to avoid React state updates on unmounted component
+      // Navigate after dispatch to ensure impersonation state is reset.
       setTimeout(() => {
-        if (isMountedRef.current) {
-          window.location.href = window.SERVER_FLAGS.basePath || '/';
-        }
+        window.location.href = window.SERVER_FLAGS.basePath || '/';
       }, 0);
     }, [stopImpersonate]);
 
