@@ -14,18 +14,12 @@ import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  DashboardsOverviewResourceActivity,
-  isDashboardsOverviewResourceActivity,
-} from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
-  DashboardsOverviewResourceActivity as DynamicDashboardsOverviewResourceActivity,
+  DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
-  isDashboardsOverviewResourceActivity as isDynamicDashboardsOverviewResourceActivity,
+  isDashboardsOverviewResourceActivity,
   isDashboardsOverviewPrometheusActivity,
-  ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from './utils';
 import { PrometheusResponse } from '../../../graphs';
@@ -65,19 +59,13 @@ const OngoingActivity = connect(mapStateToProps)(
       prometheusResults,
       models,
     }: DashboardItemProps & OngoingActivityProps) => {
-      const resourceActivityExtensions = useExtensions<DashboardsOverviewResourceActivity>(
-        isDashboardsOverviewResourceActivity,
-      );
-      const [dynamicResourceActivityExtensions] = useResolvedExtensions<
-        DynamicDashboardsOverviewResourceActivity
-      >(isDynamicDashboardsOverviewResourceActivity);
+      const [resourceActivityExtensions] = useResolvedExtensions<
+        DashboardsOverviewResourceActivity
+      >(isDashboardsOverviewResourceActivity);
 
       const resourceActivities = React.useMemo(
-        () =>
-          [...resourceActivityExtensions, ...dynamicResourceActivityExtensions].filter(
-            (e) => !!models.get(e.properties.k8sResource.kind),
-          ),
-        [dynamicResourceActivityExtensions, models, resourceActivityExtensions],
+        () => resourceActivityExtensions.filter((e) => !!models.get(e.properties.k8sResource.kind)),
+        [resourceActivityExtensions, models],
       );
 
       const [prometheusActivities] = useResolvedExtensions<DashboardsOverviewPrometheusActivity>(
@@ -122,9 +110,7 @@ const OngoingActivity = connect(mapStateToProps)(
                 .map((r) => ({
                   resource: r,
                   timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
-                  loader: (a as DashboardsOverviewResourceActivity)?.properties?.loader,
-                  component: (a as ResolvedExtension<DynamicDashboardsOverviewResourceActivity>)
-                    ?.properties?.component,
+                  component: a.properties.component,
                 }));
             }),
           ),
