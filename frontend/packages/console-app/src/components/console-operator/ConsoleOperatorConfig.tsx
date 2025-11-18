@@ -94,7 +94,7 @@ export const useConsoleOperatorConfigData = () => {
 export const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({
   status,
   errorMessage,
-}) => <Status status={status} title={status === 'Failed' ? errorMessage : undefined} />;
+}) => <Status status={status} title={status === 'failed' ? errorMessage : undefined} />;
 
 export const ConsolePluginEnabledStatus: React.FC<ConsolePluginEnabledStatusProps> = ({
   pluginName,
@@ -362,9 +362,9 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
         enabled,
         status: notLoadedPluginInfo?.status,
         errorMessage:
-          notLoadedPluginInfo?.status === 'Failed' ? notLoadedPluginInfo?.errorMessage : undefined,
+          notLoadedPluginInfo?.status === 'failed' ? notLoadedPluginInfo?.errorMessage : undefined,
         errorCause:
-          notLoadedPluginInfo?.status === 'Failed'
+          notLoadedPluginInfo?.status === 'failed'
             ? notLoadedPluginInfo?.errorCause?.toString()
             : undefined,
       };

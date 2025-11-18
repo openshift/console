@@ -164,7 +164,7 @@ const getUpdateNotificationEntries = (
 
   const failedPlugins = pluginInfoEntries
     .filter(isNotLoadedDynamicPluginInfo)
-    .filter((plugin) => plugin.status === 'Failed');
+    .filter((plugin) => plugin.status === 'failed');
 
   if (!_.isEmpty(updateData)) {
     entries.push(
