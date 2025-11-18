@@ -66,7 +66,6 @@ export const init = () => {
         'helm-plugin',
         'insights-plugin',
         'knative-plugin',
-        'lso-plugin',
         'metal3-plugin',
         'notification-drawer',
         'olm',
