@@ -216,12 +216,13 @@ export const limitsValidationSchema = (t: TFunction) =>
     cpu: yup.object().shape({
       request: yup
         .number()
+        .nullable()
         .transform((request) => (_.isNaN(request) ? undefined : request))
         .min(0, t('devconsole~Request must be greater than or equal to 0.'))
         .test({
           test(request) {
             const { requestUnit, limit, limitUnit } = this.parent;
-            if (limit !== undefined) {
+            if (limit !== undefined && limit !== null) {
               return (
                 convertToBaseValue(`${request}${requestUnit}`) <=
                 convertToBaseValue(`${limit}${limitUnit}`)
@@ -235,12 +236,13 @@ export const limitsValidationSchema = (t: TFunction) =>
       limitUnit: yup.string().ensure(),
       limit: yup
         .number()
+        .nullable()
         .transform((limit) => (_.isNaN(limit) ? undefined : limit))
         .min(0, t('devconsole~Limit must be greater than or equal to 0.'))
         .test({
           test(limit) {
             const { request, requestUnit, limitUnit } = this.parent;
-            if (limit !== undefined) {
+            if (limit !== undefined && limit !== null) {
               return (
                 convertToBaseValue(`${limit}${limitUnit}`) >=
                 convertToBaseValue(`${request}${requestUnit}`)
@@ -254,12 +256,13 @@ export const limitsValidationSchema = (t: TFunction) =>
     memory: yup.object().shape({
       request: yup
         .number()
+        .nullable()
         .transform((request) => (_.isNaN(request) ? undefined : request))
         .min(0, t('devconsole~Request must be greater than or equal to 0.'))
         .test({
           test(request) {
             const { requestUnit, limit, limitUnit } = this.parent;
-            if (limit !== undefined) {
+            if (limit !== undefined && limit !== null) {
               return (
                 convertToBaseValue(`${request}${requestUnit}`) <=
                 convertToBaseValue(`${limit}${limitUnit}`)
@@ -272,12 +275,13 @@ export const limitsValidationSchema = (t: TFunction) =>
       requestUnit: yup.string(),
       limit: yup
         .number()
+        .nullable()
         .transform((limit) => (_.isNaN(limit) ? undefined : limit))
         .min(0, t('devconsole~Limit must be greater than or equal to 0.'))
         .test({
           test(limit) {
             const { request, requestUnit, limitUnit } = this.parent;
-            if (limit !== undefined) {
+            if (limit !== undefined && limit !== null) {
               return (
                 convertToBaseValue(`${request}${requestUnit}`) <=
                 convertToBaseValue(`${limit}${limitUnit}`)
@@ -357,7 +361,9 @@ export const isiValidationSchema = (t: TFunction) =>
     name: yup.string().required(t('devconsole~Required')),
     image: yup.object().required(t('devconsole~Required')),
     tag: yup.string(),
-    status: yup.string().required(t('devconsole~Required')),
+    status: yup.object().shape({
+      status: yup.string().required(t('devconsole~Required')),
+    }),
   });
 
 export const importFlowPipelineTemplateValidationSchema = yup
