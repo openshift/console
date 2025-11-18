@@ -677,7 +677,7 @@
   "Last updated": "Last updated",
   " with groups: {{visibleGroups}}, and ": " with groups: {{visibleGroups}}, and ",
   "{{count}} more_one": "{{count}} more",
-  "{{count}} more_other": "{{count}} mores",
+  "{{count}} more_other": "{{count}} more",
   " with groups: {{groups}}": " with groups: {{groups}}",
   "You are impersonating {{kind}} ": "You are impersonating {{kind}} ",
   ". You are viewing all resources and roles this {{kind}} can access. ": ". You are viewing all resources and roles this {{kind}} can access. ",
