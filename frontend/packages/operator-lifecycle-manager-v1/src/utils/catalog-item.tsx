@@ -42,7 +42,13 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
   );
   const tags = (categories ?? []).map((cat) => cat.toLowerCase().trim()).filter(Boolean);
   const source = getClusterCatalogSource(catalog);
-  const installUrl = '/k8s/cluster/olm.operatorframework.io~v1~ClusterExtension/~new'; // TODO: build from model
+  // Build install URL with query parameters for pre-filling the ClusterExtension YAML
+  const installUrlParams = new URLSearchParams({
+    packageName: name,
+    ...(version && { version }),
+    catalog,
+  });
+  const installUrl = `/k8s/cluster/olm.operatorframework.io~v1~ClusterExtension/~new?${installUrlParams.toString()}`;
   return {
     attributes: {
       keywords,
