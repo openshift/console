@@ -110,7 +110,7 @@ export const useCSPViolationDetector = () => {
           );
 
         const validPlugin = !!pluginInfo;
-        const pluginIsLoaded = validPlugin && pluginInfo.status === 'Loaded';
+        const pluginIsLoaded = validPlugin && pluginInfo.status === 'loaded';
 
         // eslint-disable-next-line no-console
         console.warn(

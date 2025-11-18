@@ -22,7 +22,7 @@ const ConsolePluginStatusDetail: React.FC<DetailsItemComponentProps> = ({ obj })
   return pluginInfo ? (
     <ConsolePluginStatus
       status={pluginInfo.status}
-      errorMessage={pluginInfo.status === 'Failed' ? pluginInfo.errorMessage : undefined}
+      errorMessage={pluginInfo.status === 'failed' ? pluginInfo.errorMessage : undefined}
     />
   ) : (
     <>{DASH}</>

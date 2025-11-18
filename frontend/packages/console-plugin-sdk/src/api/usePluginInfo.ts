@@ -34,7 +34,7 @@ export const usePluginInfo = (): [DynamicPluginInfo[], boolean] => {
     if (unsubscribeRef.current === null) {
       unsubscribeRef.current = subscribeToDynamicPlugins((pluginInfoEntries) => {
         pluginInfoEntriesRef.current = pluginInfoEntries;
-        allPluginsProcessedRef.current = pluginInfoEntries.every((i) => i.status !== 'Pending');
+        allPluginsProcessedRef.current = pluginInfoEntries.every((i) => i.status !== 'pending');
         isMountedRef.current && forceRender();
       });
     }

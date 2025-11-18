@@ -33,11 +33,11 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
   ]);
 
 export const isLoadedDynamicPluginInfo = (i: DynamicPluginInfo): i is LoadedDynamicPluginInfo =>
-  i?.status === 'Loaded';
+  i?.status === 'loaded';
 
 export const isNotLoadedDynamicPluginInfo = (
   i: DynamicPluginInfo,
-): i is NotLoadedDynamicPluginInfo => i.status === 'Failed' || i.status === 'Pending';
+): i is NotLoadedDynamicPluginInfo => i.status === 'failed' || i.status === 'pending';
 
 /**
  * Provides access to Console plugins and their extensions.
@@ -245,7 +245,7 @@ export class PluginStore {
     const loadedPluginEntries = Array.from(this.loadedDynamicPlugins.entries()).reduce(
       (acc, [pluginID, plugin]) => {
         acc.push({
-          status: 'Loaded',
+          status: 'loaded',
           pluginID,
           metadata: _.omit(plugin.manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: plugin.enabled,
@@ -258,7 +258,7 @@ export class PluginStore {
     const failedPluginEntries = Array.from(this.failedDynamicPlugins.entries()).reduce(
       (acc, [pluginName, plugin]) => {
         acc.push({
-          status: 'Failed',
+          status: 'failed',
           pluginName,
           errorMessage: plugin.errorMessage,
           errorCause: plugin.errorCause,
@@ -275,7 +275,7 @@ export class PluginStore {
       )
       .reduce((acc, pluginName) => {
         acc.push({
-          status: 'Pending',
+          status: 'pending',
           pluginName,
         });
         return acc;
@@ -327,7 +327,7 @@ type FailedDynamicPlugin = {
 };
 
 export type LoadedDynamicPluginInfo = {
-  status: 'Loaded';
+  status: 'loaded';
   pluginID: string;
   metadata: DynamicPluginMetadata;
   enabled: boolean;
@@ -335,11 +335,11 @@ export type LoadedDynamicPluginInfo = {
 
 export type NotLoadedDynamicPluginInfo =
   | {
-      status: 'Pending';
+      status: 'pending';
       pluginName: string;
     }
   | {
-      status: 'Failed';
+      status: 'failed';
       pluginName: string;
       errorMessage: string;
       errorCause?: unknown;
