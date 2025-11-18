@@ -64,19 +64,7 @@ describe('CatalogController', () => {
       type: 'HelmChart',
       title: 'Default title',
       description: 'Default description',
-      catalogExtensions: [
-        {
-          pluginID: '@console/helm-plugin',
-          pluginName: '@console/helm-plugin',
-          properties: {
-            catalogDescription: null,
-            title: null,
-            type: 'HelmChart',
-          },
-          type: 'console.catalog/item-type',
-          uid: '@console/helm-plugin[9]',
-        },
-      ],
+      catalogExtensions: [],
       items: [],
       itemsMap: { HelmChart: [] },
       loaded: true,
