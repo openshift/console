@@ -44,7 +44,7 @@ Update the specified package to its latest compatible version, ensuring builds a
     - Files modified, errors fixed, breaking changes
     - Build ✓ | Tests ✓
 14. **Commit**:
-    ```
+    ```git
     Update <package> from <old> to <new>
 
     - Updated package.json and yarn.lock
@@ -68,7 +68,7 @@ Update the specified package to its latest compatible version, ensuring builds a
 - **Interactive approach**: Ask user for migration docs, changelogs, or specific fixes when needed
 - Use WebFetch to analyze provided documentation URLs
 - Provide progress updates during long operations (build: 2-5min, tests: 1-3min)
-- Use TodoWrite to track phases
+- Use TodoWrite to track phases (TodoWrite is a Claude Code tool for tracking workflow phases with states: pending, in_progress, completed)
 
 **Special Cases**:
 - **PatternFly**: May need coordinated @patternfly/* updates; check peer deps
@@ -89,7 +89,7 @@ Update the specified package to its latest compatible version, ensuring builds a
 4. Suggest rollback if critical
 
 ## Example: Interactive Flow
-```
+```text
 User: /console-assist update @patternfly/react-core
 Assistant: Current version: 6.2.2, Latest: 6.3.0
 
