@@ -58,8 +58,6 @@ export class PluginStore {
   // Extensions contributed by dynamic plugins which are currently in use
   private dynamicPluginExtensions: LoadedExtension[];
 
-  private i18nNamespaces: Set<string>;
-
   private readonly staticPlugins: StaticPlugin[];
 
   // Static plugins that were disabled by loading replacement dynamic plugins
@@ -76,11 +74,7 @@ export class PluginStore {
 
   private readonly listeners: VoidFunction[] = [];
 
-  constructor(
-    staticPlugins: ActivePlugin[] = [],
-    allowedDynamicPluginNames: string[] = [],
-    i18nNamespaces: string[] = [],
-  ) {
+  constructor(staticPlugins: ActivePlugin[] = [], allowedDynamicPluginNames: string[] = []) {
     this.staticPlugins = staticPlugins.map((plugin) => ({
       name: plugin.name,
       extensions: plugin.extensions.map((e, index) =>
@@ -91,7 +85,6 @@ export class PluginStore {
     }));
 
     this.allowedDynamicPluginNames = _.uniq(allowedDynamicPluginNames);
-    this.i18nNamespaces = new Set(i18nNamespaces);
     this.updateExtensions();
   }
 
@@ -101,10 +94,6 @@ export class PluginStore {
 
   getAllowedDynamicPluginNames() {
     return [...this.allowedDynamicPluginNames];
-  }
-
-  getI18nNamespaces() {
-    return Array.from(this.i18nNamespaces);
   }
 
   subscribe(listener: VoidFunction): VoidFunction {
