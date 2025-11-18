@@ -6,7 +6,7 @@ import { DASH } from '@console/shared/src/constants';
 const ConsolePluginDescriptionDetail: React.FC<DetailsItemComponentProps> = ({ obj }) => {
   const pluginName = React.useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
-  const [pluginInfoEntries] = usePluginInfo();
+  const pluginInfoEntries = usePluginInfo();
   const pluginInfo = React.useMemo(
     () =>
       pluginInfoEntries.find((entry) =>

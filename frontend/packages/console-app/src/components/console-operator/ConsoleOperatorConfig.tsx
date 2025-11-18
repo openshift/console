@@ -31,7 +31,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { KebabAction } from '@console/internal/components/utils/kebab';
 import { asAccessReview, RequireCreatePermission } from '@console/internal/components/utils/rbac';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
-import { EmptyBox, LoadingBox } from '@console/internal/components/utils/status-box';
+import { EmptyBox } from '@console/internal/components/utils/status-box';
 import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';
 import {
   ConsolePluginKind,
@@ -155,7 +155,7 @@ export const ConsolePluginCSPStatus: React.FC<ConsolePluginCSPStatusProps> = ({
   );
 };
 
-const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, loaded }) => {
+const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows }) => {
   const { t } = useTranslation();
 
   const [sortBy, setSortBy] = React.useState<ISortBy>(() => ({
@@ -219,9 +219,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
 
   const sortedRows = React.useMemo(() => rows.sort(compare), [rows, compare]);
 
-  return !loaded ? (
-    <LoadingBox />
-  ) : (
+  return (
     <PaneBody>
       {obj.spec?.managementState === 'Unmanaged' && (
         <Alert
@@ -296,32 +294,30 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
 };
 
 const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
-  const [pluginInfo, pluginInfoLoaded] = usePluginInfo();
+  const pluginInfo = usePluginInfo();
   const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
   );
 
   const rows = React.useMemo<ConsolePluginTableRow[]>(
     () =>
-      !pluginInfoLoaded
-        ? []
-        : pluginInfo
-            .filter((plugin) => plugin?.status === 'loaded')
-            .map((plugin) => ({
-              name: plugin.metadata.name,
-              version: plugin.metadata.version,
-              description: plugin.metadata?.customProperties?.console?.description,
-              enabled: plugin.enabled,
-              status: plugin.status,
-              hasCSPViolations: cspViolations[plugin.metadata.name] ?? false,
-            })),
-    [pluginInfo, pluginInfoLoaded, cspViolations],
+      pluginInfo
+        .filter((plugin) => plugin?.status === 'loaded')
+        .map((plugin) => ({
+          name: plugin.metadata.name,
+          version: plugin.metadata.version,
+          description: plugin.metadata?.customProperties?.console?.description,
+          enabled: plugin.enabled,
+          status: plugin.status,
+          hasCSPViolations: cspViolations[plugin.metadata.name] ?? false,
+        })),
+    [pluginInfo, cspViolations],
   );
-  return <ConsolePluginsTable {...props} rows={rows} loaded={pluginInfoLoaded} />;
+  return <ConsolePluginsTable {...props} rows={rows} />;
 };
 
 const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
-  const [pluginInfo] = usePluginInfo();
+  const pluginInfo = usePluginInfo();
   const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
     isList: true,
     kind: referenceForModel(ConsolePluginModel),
@@ -368,7 +364,7 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
       };
     });
   }, [consolePluginsLoaded, consolePlugins, pluginInfo, enabledPlugins, cspViolations]);
-  return <ConsolePluginsTable {...props} rows={rows} loaded={consolePluginsLoaded} />;
+  return <ConsolePluginsTable {...props} rows={rows} />;
 };
 
 const ConsoleOperatorConfigPluginsPage: React.FC<ConsoleOperatorConfigPageProps> = developmentMode
@@ -423,7 +419,7 @@ export type ConsolePluginTableRow = {
   name: string;
   version?: string;
   description?: string;
-  status: DynamicPluginInfo['status'];
+  status: PluginInfoEntry['status'];
   enabled: boolean;
   errorMessage?: string;
   hasCSPViolations?: boolean;
@@ -437,7 +433,6 @@ type TableColumn = {
 
 type ConsolePluginsTableProps = ConsoleOperatorConfigPageProps & {
   rows: ConsolePluginTableRow[];
-  loaded: boolean;
 };
 
 type ConsolePluginStatusProps = {
