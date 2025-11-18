@@ -71,12 +71,12 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
 
   // query params:
   // namespace - used within dashboard logic for variables
-  // openshift-project - used for namespace dropdown for console
+  // project-dropdown-value - used for namespace dropdown for console
 
   const dashboardLinkParams = new URLSearchParams({
     workload: resource?.metadata?.name ?? '',
     type: resource?.kind?.toLowerCase() ?? '',
-    'openshift-project': resource?.metadata?.namespace ?? '',
+    'project-dropdown-value': resource?.metadata?.namespace ?? '',
     namespace: resource?.metadata?.namespace ?? '',
   });
 
