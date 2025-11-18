@@ -10,7 +10,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion } from '@console/shared/src/hooks/version';
 import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { getBrandingDetails, MASTHEAD_TYPE, useCustomLogoURL } from './utils/branding';
 import { ReleaseNotesLink } from './utils/release-notes-link';
@@ -37,7 +36,7 @@ const DynamicPlugins: React.FC = () => {
   const [items, setItems] = React.useState([]);
 
   React.useEffect(() => {
-    const loadedPlugins = pluginInfoEntries.filter(isLoadedDynamicPluginInfo);
+    const loadedPlugins = pluginInfoEntries.filter((plugin) => plugin?.status === 'loaded');
     const sortedLoadedPlugins = loadedPlugins.sort((a, b) =>
       a.metadata.name.localeCompare(b.metadata.name),
     );

@@ -32,13 +32,6 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
     ..._.flatMap(extensions.map((e) => e.flags.disallowed)),
   ]);
 
-export const isLoadedDynamicPluginInfo = (i: DynamicPluginInfo): i is LoadedDynamicPluginInfo =>
-  i?.status === 'loaded';
-
-export const isNotLoadedDynamicPluginInfo = (
-  i: DynamicPluginInfo,
-): i is NotLoadedDynamicPluginInfo => i.status === 'failed' || i.status === 'pending';
-
 /**
  * Provides access to Console plugins and their extensions.
  *

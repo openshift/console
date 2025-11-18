@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { PluginInfoEntry } from '@openshift/dynamic-plugin-sdk';
 import { Alert, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import {
@@ -39,11 +40,6 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import {
-  isLoadedDynamicPluginInfo,
-  DynamicPluginInfo,
-  isNotLoadedDynamicPluginInfo,
-} from '@console/plugin-sdk/src';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { consolePluginModal } from '@console/shared/src/components/modals/ConsolePluginModal';
@@ -309,14 +305,16 @@ const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
     () =>
       !pluginInfoLoaded
         ? []
-        : pluginInfo.filter(isLoadedDynamicPluginInfo).map((plugin) => ({
-            name: plugin.metadata.name,
-            version: plugin.metadata.version,
-            description: plugin.metadata?.customProperties?.console?.description,
-            enabled: plugin.enabled,
-            status: plugin.status,
-            hasCSPViolations: cspViolations[plugin.metadata.name] ?? false,
-          })),
+        : pluginInfo
+            .filter((plugin) => plugin?.status === 'loaded')
+            .map((plugin) => ({
+              name: plugin.metadata.name,
+              version: plugin.metadata.version,
+              description: plugin.metadata?.customProperties?.console?.description,
+              enabled: plugin.enabled,
+              status: plugin.status,
+              hasCSPViolations: cspViolations[plugin.metadata.name] ?? false,
+            })),
     [pluginInfo, pluginInfoLoaded, cspViolations],
   );
   return <ConsolePluginsTable {...props} rows={rows} loaded={pluginInfoLoaded} />;
@@ -342,10 +340,10 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
       const pluginName = plugin?.metadata?.name;
       const enabled = enabledPlugins.includes(pluginName);
       const loadedPluginInfo = pluginInfo
-        .filter(isLoadedDynamicPluginInfo)
+        .filter((p) => p?.status === 'loaded')
         .find((i) => i?.metadata?.name === pluginName);
       const notLoadedPluginInfo = pluginInfo
-        .filter(isNotLoadedDynamicPluginInfo)
+        .filter((p) => p?.status !== 'loaded')
         .find((i) => i?.pluginName === pluginName);
       if (loadedPluginInfo) {
         return {
@@ -443,7 +441,7 @@ type ConsolePluginsTableProps = ConsoleOperatorConfigPageProps & {
 };
 
 type ConsolePluginStatusProps = {
-  status: DynamicPluginInfo['status'];
+  status: PluginInfoEntry['status'];
   errorMessage?: string;
 };
 
