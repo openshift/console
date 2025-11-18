@@ -10,7 +10,7 @@ describe('ValidationUtils', () => {
     await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
     await validationSchema.validate(mockData).catch((err) => {
       expect(err.message).toBe('Required');
-      expect(err.type).toBe('required');
+      expect(err.type).toBe('optionality');
     });
   });
 
