@@ -32,7 +32,7 @@ import redHatFedoraWatermarkImg from '../imgs/red-hat-fedora-watermark.svg';
 
 const DynamicPlugins: React.FC = () => {
   const { t } = useTranslation();
-  const [pluginInfoEntries] = usePluginInfo();
+  const pluginInfoEntries = usePluginInfo();
   const [items, setItems] = React.useState([]);
 
   React.useEffect(() => {

@@ -155,9 +155,14 @@ const HorizontalPodRedirect = () => {
 };
 
 const AppContents: React.FC<{}> = () => {
-  const [, allPluginsProcessed] = usePluginInfo();
+  const pluginInfoEntries = usePluginInfo();
   const location = useLocation();
   const [pluginPageRoutes, inactivePluginPageRoutes] = usePluginRoutes();
+
+  const allPluginsProcessed = React.useMemo(
+    () => pluginInfoEntries.every((i) => i?.status !== 'pending'),
+    [pluginInfoEntries],
+  );
 
   const contentRouter = (
     <Routes>

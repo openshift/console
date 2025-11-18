@@ -9,7 +9,7 @@ import {
 } from './ConsoleOperatorConfig';
 
 const ConsolePluginEnabledStatusDetail: React.FC<DetailsItemComponentProps> = ({ obj }) => {
-  const [pluginInfoEntries] = usePluginInfo();
+  const pluginInfoEntries = usePluginInfo();
   const { consoleOperatorConfig, consoleOperatorConfigLoaded } = useConsoleOperatorConfigData();
 
   const pluginName = React.useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);

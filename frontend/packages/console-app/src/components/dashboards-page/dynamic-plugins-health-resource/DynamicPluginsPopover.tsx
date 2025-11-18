@@ -14,7 +14,7 @@ import NotLoadedDynamicPlugins from './NotLoadedDynamicPlugins';
 
 const DynamicPluginsPopover: React.FC<DynamicPluginsPopoverProps> = ({ consolePlugins }) => {
   const { t } = useTranslation();
-  const [pluginInfoEntries] = usePluginInfo();
+  const pluginInfoEntries = usePluginInfo();
   const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
   );
