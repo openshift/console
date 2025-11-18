@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { consoleFetch } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { getConsoleRequestHeaders } from '@console/dynamic-plugin-sdk/src/utils/fetch';
@@ -18,6 +18,7 @@ const useCatalogItems: UseCatalogItems = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [lastModified, setLastModified] = useState('');
+  const abortControllerRef = useRef<AbortController>();
 
   const headers = useMemo(() => {
     const consoleHeaders = getConsoleRequestHeaders();
@@ -28,9 +29,11 @@ const useCatalogItems: UseCatalogItems = () => {
     };
   }, [lastModified]);
 
-  // Fetch function that only updates state on 200 responses
   const fetchItems = useCallback(() => {
-    consoleFetch('/api/olm/catalog-items/', { headers })
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+
+    consoleFetch('/api/olm/catalog-items/', { headers, signal: abortControllerRef.current.signal })
       .then((response) => {
         if (response.status === 304) {
           return null;
@@ -50,10 +53,17 @@ const useCatalogItems: UseCatalogItems = () => {
         setLoading(false);
       })
       .catch((err) => {
+        if (err.name === 'AbortError') return;
         setError(err.toString());
         setLoading(false);
       });
   }, [headers]);
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   usePoll(fetchItems, 30 * ONE_SECOND);
 
