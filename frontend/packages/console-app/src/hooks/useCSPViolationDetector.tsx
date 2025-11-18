@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPluginCSPViolations, PluginCSPViolations } from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
-import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
 import { useToast } from '@console/shared/src/components/toast';
 import { IS_PRODUCTION } from '@console/shared/src/constants/common';
@@ -104,7 +103,7 @@ export const useCSPViolationDetector = () => {
         const pluginInfo = pluginStore
           .getPluginInfo()
           .find((entry) =>
-            isLoadedDynamicPluginInfo(entry)
+            entry?.status === 'loaded'
               ? entry.metadata.name === pluginName
               : entry.pluginName === pluginName,
           );
