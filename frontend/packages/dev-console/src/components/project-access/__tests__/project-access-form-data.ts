@@ -3,7 +3,10 @@ import { UserRoleBinding, RoleBinding } from '../project-access-form-utils-types
 export const mockProjectAccessData = {
   projectAccess: [
     {
-      user: 'abc',
+      subject: {
+        name: 'abc',
+        kind: 'User',
+      },
       role: 'view',
     },
   ],
