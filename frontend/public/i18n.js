@@ -6,7 +6,6 @@ import Pseudo from 'i18next-pseudo';
 import { transformNamespace } from 'i18next-v4-format-converter';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
-import { pluginStore } from './plugins';
 import { dateTimeFormatter, fromNow } from './components/utils/datetime';
 
 const params = new URLSearchParams(window.location.search);
@@ -76,7 +75,7 @@ export const init = () => {
         'topology',
         'vsphere-plugin',
         'webterminal-plugin',
-        ...pluginStore.getI18nNamespaces(),
+        ...Array.from(new Set(window.SERVER_FLAGS.i18nNamespaces ?? [])),
       ],
       defaultNS: 'public',
       nsSeparator: '~',
