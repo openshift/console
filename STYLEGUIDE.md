@@ -34,13 +34,10 @@ This document outlines the core style conventions for the OpenShift Console code
 - Never use absolute paths in code. The app should be able to run behind a proxy under an arbitrary path.
 - TESTS: Should follow a similar "test tables" convention as used in Go where applicable.
 
-#### Type Safety
-- Use specific Kubernetes resource types instead of generic `K8sResourceCommon` when possible
+### Type Safety
+- Use specific Kubernetes resource types instead of generic `K8sResourceCommon` when you need resource-specific properties (if you only need basic properties, `K8sResourceCommon` is reasonable)
 - Avoid excessive use of `any` types
-- Avoid type assertions with `as any`
-- Use optional chaining for safe property access
-- Initialize with proper defaults instead of repeated null checks
+- Avoid type assertions with `as` unless really needed (usually indicates a problem with types somewhere)
+- Use optional chaining for safe property access where fallback behavior makes sense
+- Initialize with proper defaults instead of repeated null checks where appropriate
 
-#### Code Organization
-- Follow established directory structure patterns
-- Use consistent import organization

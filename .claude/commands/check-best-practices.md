@@ -25,7 +25,6 @@ When analyzing code, follow this systematic approach:
 1. **File Structure**: Check file naming and organization
    - Verify file names follow existing patterns in the directory
    - Check that directory structure follows established conventions
-   - Ensure SCSS files are prefixed with underscore
    - Verify component SCSS files use PascalCase naming
 
 2. **Go Code Quality** (if applicable): Verify gofmt formatting and import grouping
@@ -36,14 +35,14 @@ When analyzing code, follow this systematic approach:
 3. **TypeScript Usage**: Verify TypeScript patterns
    - Check that new code is TypeScript, not JavaScript
    - Verify use of specific types over `any`
-   - Check for proper type assertions (avoid `as any`)
-   - Ensure optional chaining for safe property access
+   - Check for proper type assertions (avoid `as` unless really needed, as it usually indicates a type system problem)
+   - Ensure optional chaining for safe property access where fallback behavior makes sense
 
 4. **React Patterns**: Assess component structure and hooks usage
    - Verify functional components over class-based components
-   - Check use of React hooks for state management
-   - Ensure composition over inheritance
-   - Check for specific K8s resource types instead of generic `K8sResourceCommon`
+   - Check use of React hooks for state management (useState, useReducer, custom hooks) instead of class-based setState or Redux for local component state
+   - Ensure composition over inheritance (components should compose other components rather than extending base classes)
+   - Check for specific K8s resource types instead of generic `K8sResourceCommon` when you only need basic properties
 
 5. **SCSS/CSS Patterns**: Check BEM naming, prefixing, and organization
    - Verify all classes use `co-` prefix
@@ -52,7 +51,7 @@ When analyzing code, follow this systematic approach:
    - Verify SCSS variables are scoped within components
 
 6. **Style Guide Compliance**: Check against official OpenShift Console style guide
-   - No absolute paths in code (app must run behind proxy)
+   - No absolute paths in code
    - Follow established directory structure
    - Consistent import organization
    - Maintain clear separation of concerns
@@ -62,11 +61,6 @@ When analyzing code, follow this systematic approach:
    - Verify meaningful variable/function names
    - Assess code readability and documentation
    - Check for code duplication
-
-8. **OpenShift Specific**: Review Kubernetes integration patterns
-   - Verify proper use of K8s resource types
-   - Check integration with OpenShift-specific APIs
-   - Review use of console-shared hooks and utilities
 
 ### Report Format
 
@@ -108,14 +102,14 @@ Issues Identified:
 - File should be named 'my-dashboard-component.tsx' (dash-separated)
 - Import uses '/src/components/...' (absolute path)
 - CSS classes missing 'co-' prefix and BEM naming
-- SCSS file should be '_my-dashboard-component.scss'
+- SCSS file should be 'my-dashboard-component.scss'
 - Could use more specific K8s resource types
 
 Recommendations:
 - Rename file to use dash-separated naming
 - Replace absolute imports with relative paths
 - Apply BEM naming and 'co-' prefix to CSS classes
-- Rename SCSS file with underscore prefix
+- Rename SCSS file to match component name
 - Create specific interface extending K8sResourceCommon
 
 Compliance Score: 5/10
