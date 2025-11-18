@@ -172,7 +172,9 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
       const monitoringParams = React.useMemo(() => {
         const params = new URLSearchParams();
         params.set('query0', currentConsumer.query);
-        params.set('namespace', namespace);
+        if (namespace) {
+          params.set('namespace', namespace);
+        }
         return params;
       }, [currentConsumer.query, namespace]);
 

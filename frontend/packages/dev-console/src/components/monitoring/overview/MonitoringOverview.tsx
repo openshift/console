@@ -69,6 +69,17 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
     setExpanded(newExpanded);
   };
 
+  // query params:
+  // namespace - used within dashboard logic for variables
+  // openshift-project - used for namespace dropdown for console
+
+  const dashboardLinkParams = new URLSearchParams({
+    workload: resource?.metadata?.name ?? '',
+    type: resource?.kind?.toLowerCase() ?? '',
+    'openshift-project': resource?.metadata?.namespace ?? '',
+    namespace: resource?.metadata?.namespace ?? '',
+  });
+
   return (
     <div className="odc-monitoring-overview">
       <Accordion
@@ -128,16 +139,8 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
             ) : (
               <>
                 <div className="odc-monitoring-overview__view-monitoring-dashboards">
-                  {/* query params:
-                    namespace - used within dashboard logic
-                    openshift-project - used for namespace dropdown for console
-                  */}
                   <Link
-                    to={`/monitoring/dashboards/dashboard-k8s-resources-workload?workload=${
-                      resource?.metadata?.name
-                    }&type=${resource?.kind?.toLowerCase()}&openshift-project=${
-                      resource?.metadata?.namespace
-                    }&namespace=${resource?.metadata?.namespace}`}
+                    to={`/monitoring/dashboards/dashboard-k8s-resources-workload?${dashboardLinkParams.toString()}`}
                     data-test="observe-dashboards-link"
                   >
                     {t('devconsole~View dashboards')}
