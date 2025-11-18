@@ -279,8 +279,11 @@ const BindingsListComponent = (props) => {
 
     const filtersMap = tableFilters(false); // false for fuzzy search
 
+    // Convert staticFilters to array format if it's an object
+    const filtersArray = Array.isArray(staticFilters) ? staticFilters : [staticFilters];
+
     return data.filter((binding) => {
-      return staticFilters.every((filter) => {
+      return filtersArray.every((filter) => {
         const filterKey = Object.keys(filter)[0];
         const filterValue = filter[filterKey];
 
