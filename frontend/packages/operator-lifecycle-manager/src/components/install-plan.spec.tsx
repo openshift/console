@@ -12,10 +12,8 @@ import {
   ComponentProps,
 } from '@console/internal/components/factory';
 import {
-  ResourceKebab,
   ResourceLink,
   ResourceIcon,
-  Kebab,
   ConsoleEmptyState,
   useAccessReview,
 } from '@console/internal/components/utils';
@@ -69,10 +67,6 @@ describe('InstallPlanTableRow', () => {
   beforeEach(() => {
     obj = _.cloneDeep(testInstallPlan);
     wrapper = updateWrapper();
-  });
-
-  it('renders resource kebab for performing common actions', () => {
-    expect(wrapper.find(ResourceKebab).props().actions).toEqual(Kebab.factory.common);
   });
 
   it('renders column for install plan name', () => {

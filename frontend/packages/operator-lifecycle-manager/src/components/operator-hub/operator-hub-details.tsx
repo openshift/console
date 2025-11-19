@@ -6,7 +6,6 @@ import {
   navFactory,
   SectionHeading,
   ResourceSummary,
-  Kebab,
   DetailsItem,
   useAccessReview,
 } from '@console/internal/components/utils';
@@ -87,7 +86,7 @@ export const OperatorHubDetailsPage: React.FC<DetailsPageProps> = (props) => {
       component: Sources,
     },
   ];
-  return <DetailsPage {...props} menuActions={Kebab.factory.common} pages={pages} />;
+  return <DetailsPage {...props} pages={pages} />;
 };
 
 type OperatorHubDetailsProps = {
