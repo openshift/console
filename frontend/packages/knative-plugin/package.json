@@ -14,7 +14,7 @@
     "@console/topology": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx",
+    "entry": "src/plugin.ts",
     "exposedModules": {
       "actions": "src/actions/providers.ts",
       "icons": "src/utils/icons.tsx",
@@ -65,7 +65,9 @@
       "fetchDynamicEventSourcesUtils": "src/utils/fetch-dynamic-eventsources-utils.ts",
       "EventSourceBreadcrumbs": "src/providers/useEventSourceDetailPageBreadcrumbs.ts",
       "ChannelBreadcrumbs": "src/providers/useChannelDetailPageBreadcrumbs.ts",
-      "BrokerBreadcrumbs": "src/providers/useBrokerDetailPageBreadcrumbs.ts"
+      "BrokerBreadcrumbs": "src/providers/useBrokerDetailPageBreadcrumbs.ts",
+      "getKnativeResources": "src/utils/get-knative-resources.ts",
+      "isKnativeResource": "src/topology/isKnativeResource.ts"
     }
   }
 }
