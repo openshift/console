@@ -32,6 +32,12 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
         href:
           '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
       },
+      {
+        id: 'trusted-software-supply-chain',
+        title: t('public~Trusted Software Supply Chain'),
+        description: t('public~Assess risk, validate integrity, secure artifacts, release safely.'),
+        href: '/quickstart?keyword=trusted',
+      },
       ...(showLightSpeedLink
         ? [
             {
