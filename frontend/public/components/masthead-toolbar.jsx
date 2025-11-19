@@ -19,22 +19,20 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import {
-  ACM_LINK_ID,
-  FLAGS,
-  useActiveNamespace,
-  useCopyCodeModal,
-  useCopyLoginCommands,
-  useFlag,
-  useTelemetry,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import { ACM_LINK_ID, FLAGS } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
+import { useCopyLoginCommands } from '@console/shared/src/hooks/useCopyLoginCommands';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useUser } from '@console/shared/src/hooks/useUser';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { CloudShellMastheadButton } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import { CloudShellMastheadAction } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
-import { getUser, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
 import { flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
@@ -43,7 +41,6 @@ import { Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
-
 import redhatLogoImg from '../imgs/logos/redhat.svg';
 import { TourContext, TourActions } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
@@ -119,12 +116,15 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     t('public~Login with this command'),
     externalLoginCommand,
   );
-  const { clusterID, user, alertCount, canAccessNS } = useSelector((state) => ({
+  const { clusterID, alertCount, canAccessNS } = useSelector((state) => ({
     clusterID: state.UI.get('clusterID'),
-    user: getUser(state),
     alertCount: state.observe.getIn(['alertCount']),
     canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
   }));
+
+  // Use centralized user hook for user data
+  const { displayName, username } = useUser();
+
   const [isAppLauncherDropdownOpen, setIsAppLauncherDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isKebabDropdownOpen, setIsKebabDropdownOpen] = useState(false);
@@ -138,7 +138,6 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   const kebabMenuRef = useRef(null);
   const reportBugLink = cv?.data ? getReportBugLink(cv.data, t) : null;
   const userInactivityTimeout = useRef(null);
-  const username = user?.username ?? '';
   const isKubeAdmin = username === 'kube:admin';
 
   const drawerToggle = useCallback(() => dispatch(UIActions.notificationDrawerToggleExpanded()), [
@@ -561,7 +560,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
 
     const userToggle = (
       <span className="co-username" data-test="username">
-        {authEnabledFlag ? username : t('public~Auth disabled')}
+        {authEnabledFlag ? displayName : t('public~Auth disabled')}
       </span>
     );
 
