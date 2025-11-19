@@ -40,6 +40,7 @@ import {
   isStandaloneRoutePage,
   AppInitSDK,
   getUser,
+  getImpersonate,
   useActivePerspective,
   ReduxReducer,
   ContextProvider,
@@ -155,6 +156,29 @@ const App: React.FC<{
   }, [location, params, prevLocation, prevParams]);
 
   const dispatch = useDispatch();
+
+  // Handle feature refresh after impersonation changes
+  const impersonate = useSelector(getImpersonate);
+  const prevImpersonate = useRef(impersonate);
+
+  useEffect(() => {
+    const prev = prevImpersonate.current;
+    const current = impersonate;
+
+    // Check if impersonation state actually changed
+    const impersonateChanged =
+      prev?.name !== current?.name ||
+      prev?.kind !== current?.kind ||
+      !_.isEqual(prev?.groups, current?.groups);
+
+    if (impersonateChanged) {
+      // Impersonation changed - refresh feature flags in the background
+      // We don't clear flags (no PENDING state), just re-detect them
+      // This prevents loading spinners while allowing permissions to update
+      dispatch(UIActions.refreshFeaturesAfterImpersonation());
+      prevImpersonate.current = current;
+    }
+  }, [impersonate, dispatch]);
   const [, , errorMessage] = usePackageManifestCheck(
     'lightspeed-operator',
     'openshift-marketplace',

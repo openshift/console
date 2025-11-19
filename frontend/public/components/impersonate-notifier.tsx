@@ -51,32 +51,40 @@ export const ImpersonateNotifier = connect(
     const visibleGroups = groups.slice(0, MAX_GROUPS_DISPLAY);
     const remainingCount = Math.max(0, groups.length - MAX_GROUPS_DISPLAY);
 
-    const groupsElement = hasGroups ? (
-      <>
-        {remainingCount > 0 ? (
-          <>
-            {t('public~ with groups: {{visibleGroups}}, and ', {
-              visibleGroups: visibleGroups.join(', '),
-            })}
-            <Tooltip
-              content={
-                <div>
-                  {groups.map((group, index) => (
-                    <div key={index}>{group}</div>
-                  ))}
-                </div>
+    const groupsText = hasGroups
+      ? remainingCount > 0
+        ? t('public~ with groups: {{visibleGroups}}, and', {
+            visibleGroups: visibleGroups.join(', '),
+          })
+        : t('public~ with groups: {{groups}}', { groups: visibleGroups.join(', ') })
+      : '';
+
+    const groupsTooltip =
+      hasGroups && remainingCount > 0 ? (
+        <Tooltip
+          content={
+            <div>
+              {groups.map((group, index) => (
+                <div key={index}>{group}</div>
+              ))}
+            </div>
+          }
+        >
+          <span
+            role="button"
+            tabIndex={0}
+            className="pf-v6-u-text-decoration-underline-dotted pf-v6-u-cursor-pointer"
+            style={{ color: 'var(--pf-t--global--color--brand--default)' }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
               }
-            >
-              <Button variant="link" isInline className="pf-v6-u-text-decoration-underline-dotted">
-                {t('public~{{count}} more', { count: remainingCount })}
-              </Button>
-            </Tooltip>
-          </>
-        ) : (
-          t('public~ with groups: {{groups}}', { groups: visibleGroups.join(', ') })
-        )}
-      </>
-    ) : null;
+            }}
+          >
+            {t('public~{{count}} more', { count: remainingCount })}
+          </span>
+        </Tooltip>
+      ) : null;
 
     return (
       <Banner color="blue">
@@ -88,17 +96,12 @@ export const ImpersonateNotifier = connect(
           <div>
             {t('public~You are impersonating {{kind}} ', { kind: displayKind })}
             <strong>{impersonateName}</strong>
-            {groupsElement}
+            {groupsText}
+            {groupsTooltip && <> {groupsTooltip}</>}
             {t('public~. You are viewing all resources and roles this {{kind}} can access. ', {
               kind: displayKindForAccess,
             })}
-            <Button
-              isInline
-              type="button"
-              variant="link"
-              style={{ color: 'inherit' }}
-              onClick={handleStopImpersonate}
-            >
+            <Button isInline type="button" variant="link" onClick={handleStopImpersonate}>
               {t('public~Stop impersonating')}
             </Button>
           </div>

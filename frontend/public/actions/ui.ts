@@ -231,8 +231,19 @@ export const startImpersonate = (kind: string, name: string, groups?: string[]) 
   }
 
   dispatch(beginImpersonate(kind, name, subprotocols, groups));
+
+  // Close WebSocket to trigger reconnection with new impersonation headers
+  // Wait for the close to complete before proceeding
   subsClient.close(false, true);
-  dispatch(clearSSARFlags());
+
+  // Don't clear/refresh flags here - the App component's useLayoutEffect will handle it
+  // This ensures flags refresh happens in sync with React's render cycle
+};
+
+// Action to refresh features after impersonation change
+// Don't clear flags - just re-detect them. Old values remain until new ones are fetched.
+// This prevents components from seeing PENDING state and showing loading spinners.
+export const refreshFeaturesAfterImpersonation = () => (dispatch) => {
   dispatch(detectFeatures());
 };
 export const stopImpersonate = () => (dispatch) => {
