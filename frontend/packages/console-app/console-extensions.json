@@ -2559,5 +2559,84 @@
       "href": "/k8s/cluster/operator.openshift.io~v1~Console/cluster/console-plugins"
     },
     "flags": { "required": ["CAN_GET_CONSOLE_OPERATOR_CONFIG"] }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "Role"
+      },
+      "provider": { "$codeRef": "roleProvider.useRoleActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "rbac.authorization.k8s.io",
+        "version": "v1",
+        "kind": "ClusterRole"
+      },
+      "provider": { "$codeRef": "roleProvider.useRoleActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "build.openshift.io",
+        "version": "v1",
+        "kind": "BuildConfig"
+      },
+      "provider": { "$codeRef": "buildConfigProvider.useBuildConfigActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apiextensions.k8s.io",
+        "version": "v1",
+        "kind": "CustomResourceDefinition"
+      },
+      "provider": {
+        "$codeRef": "customResourceDefinitionProvider.useCustomResourceDefinitionActionsProvider"
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "machineconfiguration.openshift.io",
+        "version": "v1",
+        "kind": "MachineConfigPool"
+      },
+      "provider": { "$codeRef": "machineConfigPoolProvider.useMachineConfigPoolActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "monitoring.coreos.com",
+        "version": "v1",
+        "kind": "ServiceMonitor"
+      },
+      "provider": { "$codeRef": "serviceMonitorProvider.useServiceMonitorActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "user.openshift.io",
+        "version": "v1",
+        "kind": "User"
+      },
+      "provider": { "$codeRef": "userProvider.useUserActionsProvider" }
+    }
   }
 ]

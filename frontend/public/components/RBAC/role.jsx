@@ -21,7 +21,6 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { tableFilters } from '../factory/table-filters';
-import { Kebab, ResourceKebab } from '../utils/kebab';
 import { SectionHeading } from '../utils/headings';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { navFactory } from '../utils/horizontal-nav';
@@ -41,28 +40,9 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-
-const { common } = Kebab.factory;
-
-const menuActions = [
-  // This page is temporarily disabled until we update the safe resources list.
-  // (kind, role) => ({
-  //   label: 'Add Rule',
-  //   href: addHref(role.metadata.name, role.metadata.namespace),
-  // }),
-  (kind, role) => ({
-    label: i18next.t('public~Add RoleBinding'),
-    href: `/k8s/${
-      role.metadata.namespace
-        ? `ns/${role.metadata.namespace}/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${
-            role.metadata.name
-          }&namespace=${role.metadata.namespace}`
-        : `cluster/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}`
-    }`,
-  }),
-  Kebab.factory.Edit,
-  Kebab.factory.Delete,
-];
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { referenceForModel, referenceFor } from '../../module/k8s';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace-always-show' }, { id: 'actions' }];
 
@@ -87,7 +67,7 @@ const getDataViewRows = (data, columns) => {
         ),
       },
       [tableColumnInfo[2].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />,
+        cell: <LazyActionMenu context={{ [referenceFor(role)]: role }} />,
         props: actionsCellProps,
       },
     };
@@ -366,6 +346,13 @@ export const RolesDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
+      kind={referenceForModel(props.kindObj)}
+      customActionMenu={(k8sObj, obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(props.kindObj)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={[
         navFactory.details(DetailsWithTranslation),
         navFactory.editYaml(),
@@ -376,7 +363,6 @@ export const RolesDetailsPage = (props) => {
           component: BindingsForRolePage,
         },
       ]}
-      menuActions={menuActions}
       breadcrumbsFor={() => getBreadcrumbs(RoleModel, props.kindObj, location)}
     />
   );
@@ -386,13 +372,18 @@ export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 export const ClusterRoleBindingsDetailsPage = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
-  const actions = [...common];
   const location = useLocation();
 
   return (
     <DetailsPage
       {...props}
-      menuActions={actions}
+      kind={referenceForModel(props.kindObj)}
+      customActionMenu={(k8sObj, obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(props.kindObj)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={pages}
       breadcrumbsFor={() => getBreadcrumbs(RoleBindingModel, props.kindObj, location)}
     />

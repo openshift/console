@@ -1,26 +1,22 @@
 import * as React from 'react';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, redirect } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom-v5-compat';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   K8sModel,
   K8sResourceKind,
   K8sResourceKindReference,
-  referenceFor,
   referenceForModel,
   TableColumn,
 } from '../module/k8s';
-import { cloneBuild, startBuild } from '../module/k8s/builds';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import type { DetailsPageProps } from './factory/details';
 import { BuildHooks } from './utils/build-hooks';
 import { BuildStrategy } from './utils/build-strategy';
 import { BuildStrategyType, displayDurationInWords } from './utils/build-utils';
-import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
 import { navFactory } from './utils/horizontal-nav';
-import { ResourceLink, resourceObjPath } from './utils/resource-link';
+import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { WebhookTriggers } from './utils/webhooks';
@@ -31,10 +27,7 @@ import { BuildModel, BuildConfigModel } from '../models';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { Status } from '@console/shared/src/components/status/Status';
-
 import { Grid, GridItem } from '@patternfly/react-core';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { ErrorModal } from './modals/error-modal';
 import { DASH } from '@console/shared/src/constants/ui';
 import {
   actionsCellProps,
@@ -48,76 +41,10 @@ import { LoadingBox } from './utils/status-box';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { sortResourceByValue } from './factory/Table/sort';
 import { sorts } from './factory/table';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
-const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
-
-const useStartBuildAction = (): KebabAction => {
-  const { t } = useTranslation();
-  const launchModal = useOverlay();
-
-  return useMemo(
-    () => (kind: K8sModel, buildConfig: BuildConfig) => ({
-      labelKey: t('public~Start build'),
-      callback: () =>
-        startBuild(buildConfig)
-          .then((build) => {
-            return redirect(resourceObjPath(build, referenceFor(build)));
-          })
-          .catch((err) => {
-            const error = err.message;
-            launchModal(ErrorModal, { error });
-          }),
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        subresource: 'instantiate',
-        name: buildConfig.metadata.name,
-        namespace: buildConfig.metadata.namespace,
-        verb: 'create',
-      },
-    }),
-    [launchModal, t],
-  );
-};
-
-const useStartLastBuildAction = (latestBuild: K8sResourceKind): KebabAction => {
-  const { t } = useTranslation();
-  const launchModal = useOverlay();
-
-  return useMemo(
-    () => (kind: K8sModel, buildConfig: BuildConfig) => ({
-      labelKey: t('public~Start last run'),
-      callback: () =>
-        cloneBuild(latestBuild)
-          .then((clone) => {
-            return redirect(resourceObjPath(clone, referenceFor(clone)));
-          })
-          .catch((err) => {
-            const error = err.message;
-            launchModal(ErrorModal, { error });
-          }),
-      hidden: !latestBuild,
-      accessReview: {
-        group: kind.apiGroup,
-        resource: kind.plural,
-        subresource: 'instantiate',
-        name: buildConfig.metadata.name,
-        namespace: buildConfig.metadata.namespace,
-        verb: 'create',
-      },
-    }),
-    [latestBuild, launchModal, t],
-  );
-};
-
-const useBuildConfigKebabActions = (latestBuild?: K8sResourceKind): KebabAction[] => {
-  const startBuildAction = useStartBuildAction();
-  const startLastBuildAction = useStartLastBuildAction(latestBuild);
-  return useMemo(() => [startBuildAction, startLastBuildAction, ...Kebab.factory.common], [
-    startBuildAction,
-    startLastBuildAction,
-  ]);
-};
+const BuildConfigsReference: K8sResourceKindReference = referenceForModel(BuildConfigModel);
 
 export const BuildConfigsDetails: React.FCC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {
   const hasPipeline = buildConfig.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
@@ -180,12 +107,16 @@ export const BuildConfigsDetailsPage: React.FC<DetailsPageProps> = (props) => {
     isList: true,
   });
   const latestBuild = buildsLoaded && !buildsLoadError ? getLatestBuild(builds) : null;
-  const menuActions: KebabAction[] = useBuildConfigKebabActions(latestBuild);
   return (
     <DetailsPage
       {...props}
       kind={BuildConfigsReference}
-      menuActions={menuActions}
+      customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) => (
+        <LazyActionMenu
+          context={{ [BuildConfigsReference]: { buildConfig: obj, latestBuild } }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={pages}
       customData={latestBuild}
     />
@@ -202,13 +133,6 @@ const tableColumnInfo = [
   { id: 'lastRunDuration' },
   { id: 'actions' },
 ];
-
-const BuildConfigKebabActions: React.FC<{ buildConfig: BuildConfig }> = ({ buildConfig }) => {
-  const menuActions: KebabAction[] = useBuildConfigKebabActions(buildConfig?.latestBuild);
-  return (
-    <ResourceKebab actions={menuActions} kind={BuildConfigsReference} resource={buildConfig} />
-  );
-};
 
 const getDataViewRows: GetDataViewRows<BuildConfig, undefined> = (data, columns) => {
   return data.map(({ obj }) => {
@@ -257,7 +181,11 @@ const getDataViewRows: GetDataViewRows<BuildConfig, undefined> = (data, columns)
         ),
       },
       [tableColumnInfo[6].id]: {
-        cell: <BuildConfigKebabActions buildConfig={obj} />,
+        cell: (
+          <LazyActionMenu
+            context={{ [referenceForModel(BuildConfigModel)]: { buildConfig: obj, latestBuild } }}
+          />
+        ),
         props: actionsCellProps,
       },
     };
@@ -501,6 +429,6 @@ type CustomData = {
   };
 };
 
-type BuildConfig = K8sResourceKind & {
+export type BuildConfig = K8sResourceKind & {
   latestBuild?: K8sResourceKind;
 };

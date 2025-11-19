@@ -236,6 +236,7 @@
   "This action is only enabled when the latest revision of the ReplicationController resource is in a failed state.": "This action is only enabled when the latest revision of the ReplicationController resource is in a failed state.",
   "Restore as new PVC": "Restore as new PVC",
   "Volume Snapshot is not Ready": "Volume Snapshot is not Ready",
+  "View instances": "View instances",
   "Current default StorageClass": "Current default StorageClass",
   "Set as default": "Set as default",
   "Access mode": "Access mode",
