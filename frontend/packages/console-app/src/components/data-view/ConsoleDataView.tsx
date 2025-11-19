@@ -92,7 +92,7 @@ export const ConsoleDataView = <
   columns,
   columnLayout,
   columnManagementID,
-  initialFilters,
+  initialFilters = initialFiltersDefault as TFilters,
   additionalFilterNodes,
   getObjectMetadata,
   matchesAdditionalFilters,
@@ -106,17 +106,12 @@ export const ConsoleDataView = <
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation();
 
-  const initialFiltersOrDefault = React.useMemo(
-    () => initialFilters ?? (initialFiltersDefault as TFilters),
-    [initialFilters],
-  );
-
   const { filters, onSetFilters, clearAllFilters, filteredData } = useConsoleDataViewFilters<
     TData,
     TFilters
   >({
     data,
-    initialFilters: initialFiltersOrDefault,
+    initialFilters,
     getObjectMetadata,
     matchesAdditionalFilters,
   });
