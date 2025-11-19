@@ -141,6 +141,11 @@ interface MastheadToolbarContentsProps {
   isMastheadStacked: boolean;
 }
 
+// TODO remove this code, the plugin should use an appropriate extension
+const isTroubleshootingPanelPluginActive =
+  Array.isArray(window.SERVER_FLAGS.consolePlugins) &&
+  window.SERVER_FLAGS.consolePlugins.includes('troubleshooting-panel-console-plugin');
+
 // TODO break this down into smaller components and hooks
 const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
   consoleLinks,
@@ -247,9 +252,6 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
   };
 
   const getLaunchActions = () => {
-    const isTroubleshootingPanelEnabled = Array.isArray(window.SERVER_FLAGS.consolePlugins)
-      ? window.SERVER_FLAGS.consolePlugins.includes('troubleshooting-panel-console-plugin')
-      : false;
     const launcherItems = getAdditionalLinks(consoleLinks, 'ApplicationMenu');
 
     const sections: MastheadSection[] = [];
@@ -291,7 +293,7 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
     }
 
     // This should be removed when the extension to add items to the masthead is implemented: https://issues.redhat.com/browse/OU-488
-    if (isTroubleshootingPanelEnabled && activePerspective === 'admin') {
+    if (isTroubleshootingPanelPluginActive && activePerspective === 'admin') {
       sections.push({
         name: t('public~Troubleshooting'),
         isSection: true,
