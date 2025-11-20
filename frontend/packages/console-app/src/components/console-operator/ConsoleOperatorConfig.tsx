@@ -302,7 +302,7 @@ const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
   const rows = React.useMemo<ConsolePluginTableRow[]>(
     () =>
       pluginInfo
-        .filter((plugin) => plugin?.status === 'loaded')
+        .filter((plugin) => plugin.status === 'loaded')
         .map((plugin) => ({
           name: plugin.metadata.name,
           version: plugin.metadata.version,
@@ -336,10 +336,10 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
       const pluginName = plugin?.metadata?.name;
       const enabled = enabledPlugins.includes(pluginName);
       const loadedPluginInfo = pluginInfo
-        .filter((p) => p?.status === 'loaded')
+        .filter((p) => p.status === 'loaded')
         .find((i) => i?.metadata?.name === pluginName);
       const notLoadedPluginInfo = pluginInfo
-        .filter((p) => p?.status !== 'loaded')
+        .filter((p) => p.status !== 'loaded')
         .find((i) => i?.pluginName === pluginName);
       if (loadedPluginInfo) {
         return {

@@ -36,7 +36,7 @@ const DynamicPlugins: React.FC = () => {
   const [items, setItems] = React.useState([]);
 
   React.useEffect(() => {
-    const loadedPlugins = pluginInfoEntries.filter((plugin) => plugin?.status === 'loaded');
+    const loadedPlugins = pluginInfoEntries.filter((plugin) => plugin.status === 'loaded');
     const sortedLoadedPlugins = loadedPlugins.sort((a, b) =>
       a.metadata.name.localeCompare(b.metadata.name),
     );

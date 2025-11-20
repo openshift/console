@@ -160,7 +160,7 @@ const AppContents: React.FC<{}> = () => {
   const [pluginPageRoutes, inactivePluginPageRoutes] = usePluginRoutes();
 
   const allPluginsProcessed = React.useMemo(
-    () => pluginInfoEntries.every((i) => i?.status !== 'pending'),
+    () => pluginInfoEntries.every((i) => i.status !== 'pending'),
     [pluginInfoEntries],
   );
 

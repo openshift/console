@@ -19,11 +19,11 @@ const DynamicPluginsPopover: React.FC<DynamicPluginsPopoverProps> = ({ consolePl
     UI.get('pluginCSPViolations'),
   );
   const notLoadedDynamicPluginInfo = pluginInfoEntries.filter(
-    (plugin) => plugin?.status !== 'loaded',
+    (plugin) => plugin.status !== 'loaded',
   );
   const failedPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'failed');
   const pendingPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'pending');
-  const loadedPlugins = pluginInfoEntries.filter((plugin) => plugin?.status === 'loaded');
+  const loadedPlugins = pluginInfoEntries.filter((plugin) => plugin.status === 'loaded');
   const loadedPluginsWithCSPViolations = loadedPlugins.filter(
     (plugin) => cspViolations[plugin.metadata.name] ?? false,
   );
