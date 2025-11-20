@@ -10,7 +10,6 @@ import {
 } from '@patternfly/react-core';
 import { Edge, Node } from '@patternfly/react-topology';
 import { Formik, FormikProps, FormikValues } from 'formik';
-import { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -20,7 +19,7 @@ import {
   ModalSubmitFooter,
   ModalWrapper,
 } from '@console/internal/components/factory/modal';
-import { PromiseComponent, ResourceIcon } from '@console/internal/components/utils';
+import { ResourceIcon } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   TYPE_EVENT_SOURCE_LINK,
@@ -30,6 +29,7 @@ import {
   createEventSourceKafkaConnection,
   createSinkConnection,
 } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { TYPE_CONNECTS_TO } from '../../const';
 import { createConnection } from '../../utils';
 
@@ -38,11 +38,6 @@ type MoveConnectionModalProps = {
   availableTargets: Node[];
   cancel?: () => void;
   close?: () => void;
-};
-
-type MoveConnectionModalState = {
-  inProgress: boolean;
-  errorMessage: string;
 };
 
 const nodeItem = (node: Node) => (
@@ -54,12 +49,9 @@ const nodeItem = (node: Node) => (
   </span>
 );
 
-const MoveConnectionForm: React.FC<
-  FormikProps<FormikValues> & MoveConnectionModalProps & { setTranslator: (t: TFunction) => void }
-> = ({
+const MoveConnectionForm: React.FC<FormikProps<FormikValues> & MoveConnectionModalProps> = ({
   handleSubmit,
   isSubmitting,
-  setTranslator,
   cancel,
   values,
   edge,
@@ -69,7 +61,6 @@ const MoveConnectionForm: React.FC<
   const { t } = useTranslation();
   const [isOpen, setOpen] = React.useState<boolean>(false);
   const isDirty = values.target.getId() !== edge.getTarget().getId();
-  setTranslator(t);
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
@@ -134,61 +125,56 @@ const MoveConnectionForm: React.FC<
   );
 };
 
-class MoveConnectionModal extends PromiseComponent<
-  MoveConnectionModalProps,
-  MoveConnectionModalState
-> {
-  private t: TFunction;
+const MoveConnectionModal: React.FC<MoveConnectionModalProps> = (props) => {
+  const { edge, close } = props;
+  const { t } = useTranslation();
+  const [handlePromise] = usePromiseHandler();
 
-  private onSubmit = (newTarget: Node): Promise<K8sResourceKind[] | K8sResourceKind> => {
-    const { edge } = this.props;
-    switch (edge.getType()) {
-      case TYPE_CONNECTS_TO:
-        return createConnection(edge.getSource(), newTarget, edge.getTarget());
-      case TYPE_EVENT_SOURCE_LINK:
-        return createSinkConnection(edge.getSource(), newTarget);
-      case TYPE_KAFKA_CONNECTION_LINK:
-        return createEventSourceKafkaConnection(edge.getSource(), newTarget);
-      default:
-        return Promise.reject(
-          new Error(
-            this.t('topology~Unable to move connector of type {{type}}.', {
-              type: edge.getType(),
-            }),
-          ),
-        );
-    }
+  const onSubmit = React.useCallback(
+    (newTarget: Node): Promise<K8sResourceKind[] | K8sResourceKind> => {
+      switch (edge.getType()) {
+        case TYPE_CONNECTS_TO:
+          return createConnection(edge.getSource(), newTarget, edge.getTarget());
+        case TYPE_EVENT_SOURCE_LINK:
+          return createSinkConnection(edge.getSource(), newTarget);
+        case TYPE_KAFKA_CONNECTION_LINK:
+          return createEventSourceKafkaConnection(edge.getSource(), newTarget);
+        default:
+          return Promise.reject(
+            new Error(
+              t('topology~Unable to move connector of type {{type}}.', {
+                type: edge.getType(),
+              }),
+            ),
+          );
+      }
+    },
+    [edge, t],
+  );
+
+  const handleSubmit = React.useCallback(
+    (values, actions) => {
+      return handlePromise(onSubmit(values.target))
+        .then(() => {
+          close();
+        })
+        .catch((err) => {
+          actions.setStatus({ submitError: err });
+        });
+    },
+    [handlePromise, onSubmit, close],
+  );
+
+  const initialValues = {
+    target: edge.getTarget(),
   };
 
-  private handleSubmit = (values, actions) => {
-    const { close } = this.props;
-    return this.handlePromise(this.onSubmit(values.target))
-      .then(() => {
-        close();
-      })
-      .catch((err) => {
-        actions.setStatus({ submitError: err });
-      });
-  };
-
-  private setTranslator = (t: TFunction) => {
-    this.t = t;
-  };
-
-  render() {
-    const { edge } = this.props;
-    const initialValues = {
-      target: edge.getTarget(),
-    };
-    return (
-      <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
-        {(formikProps) => (
-          <MoveConnectionForm setTranslator={this.setTranslator} {...formikProps} {...this.props} />
-        )}
-      </Formik>
-    );
-  }
-}
+  return (
+    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      {(formikProps) => <MoveConnectionForm {...formikProps} {...props} />}
+    </Formik>
+  );
+};
 
 const MoveConnectionModalProvider: OverlayComponent<MoveConnectionModalProps> = (props) => {
   return (
