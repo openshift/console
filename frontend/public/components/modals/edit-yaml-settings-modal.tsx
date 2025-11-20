@@ -285,7 +285,7 @@ const TooltipConfigItem = () => {
   return (
     <ConfigModalSwitch
       title={t('Tooltips')}
-      description={t('Show tooltips for Resource names, Field names, and definitions.')}
+      description={t('Show tooltips for Resource names, Field names, and definitions')}
       onChange={(_e, checked) => setShowTooltips(checked)}
       isChecked={showTooltips}
       icon={<ICursorIcon />}
@@ -305,7 +305,7 @@ const StickyScrollConfigItem = () => {
   return (
     <ConfigModalSwitch
       title={t('Sticky scroll')}
-      description={t('Pin scopes to the top of the editor so they are always visible.')}
+      description={t('Pin scopes to the top of the editor so they are always visible')}
       onChange={(_e, checked) => setStickyScrollEnabled(checked)}
       isChecked={stickyScrollEnabled}
       icon={<MouseIcon />}
@@ -338,7 +338,7 @@ export const EditYamlSettingsModal: FC<AppendToProps> = ({ appendTo }) => {
       >
         <ModalHeader
           title={t('Editor settings')}
-          description={t('Changes apply immediately.')}
+          description={t('Changes apply immediately')}
           labelId={`${EDIT_YAML_SETTINGS_MODAL_ID}-title`}
         />
         <ModalBody id={`${EDIT_YAML_SETTINGS_MODAL_ID}-body`}>
