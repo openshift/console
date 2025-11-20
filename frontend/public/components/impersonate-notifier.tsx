@@ -70,17 +70,7 @@ export const ImpersonateNotifier = connect(
             </div>
           }
         >
-          <span
-            role="button"
-            tabIndex={0}
-            className="pf-v6-u-text-decoration-underline-dotted pf-v6-u-cursor-pointer"
-            style={{ color: 'var(--pf-t--global--color--brand--default)' }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-              }
-            }}
-          >
+          <span className="pf-v6-u-text-decoration-underline-dotted pf-v6-u-color-brand">
             {t('public~{{count}} more', { count: remainingCount })}
           </span>
         </Tooltip>
