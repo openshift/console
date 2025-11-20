@@ -16,7 +16,7 @@ Feature: Entire pipeline flow from Builder page
              When user enters pipeline name as "flow"
               And user clicks Add task button under Tasks section
               And user searches "kn" in quick search bar
-              And user selects "kn" from "Red Hat"
+              And user selects "kn" from "Community"
               And user clicks on Add button
               And user clicks on Add workspace
               And user adds the Workspace name as "git"
