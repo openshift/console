@@ -2,7 +2,7 @@ import { detailsPage } from '@console/cypress-integration-tests/views/details-pa
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import * as yamlEditor from '@console/cypress-integration-tests/views/yaml-editor';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants';
-import { app } from '@console/dev-console/integration-tests/support/pages';
+import { app } from '@console/dev-console/integration-tests/support/pages/app';
 import { pipelineActions, pipelineTabs } from '../../constants/pipelines';
 import { pipelinesPO, pipelineBuilderPO } from '../../page-objects/pipelines-po';
 

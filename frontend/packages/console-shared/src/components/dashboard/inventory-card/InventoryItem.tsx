@@ -295,8 +295,6 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   );
 };
 
-export default InventoryItem;
-
 type StatusGroup = {
   [key in InventoryStatusGroup | string]: {
     filterType?: string;

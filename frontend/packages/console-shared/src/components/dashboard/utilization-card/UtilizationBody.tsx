@@ -63,5 +63,3 @@ export const UtilizationBody: React.FCC<UtilizationBodyProps> = ({ children }) =
     </div>
   );
 };
-
-export default UtilizationBody;

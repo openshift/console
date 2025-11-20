@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Label, Alert, Tooltip, AlertActionCloseButton } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk/src/api/core-api';
-import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
-import { SubscriptionKind } from '../../types';
+import type { DeprecatedOperatorWarning, SubscriptionKind } from '../../types';
 
 export enum DeprecatedOperatorType {
   PackageDeprecated = 'PackageDeprecated',

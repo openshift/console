@@ -9,7 +9,6 @@ import {
   WhenExpression,
 } from '../../../types';
 import { AddNodeDirection } from '../pipeline-topology/const';
-// eslint-disable-next-line import/no-cycle
 import { UpdateOperationType } from './const';
 
 export type TaskType = 'tasks' | 'finallyTasks';

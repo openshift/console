@@ -1,31 +1,39 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[javascript]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "never",
-      "source.sortImports": "never"
+      "source.sortImports": "never",
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.ts": "explicit"
     }
   },
   "[javascriptreact]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "never",
-      "source.sortImports": "never"
+      "source.sortImports": "never",
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.ts": "explicit"
     }
   },
   "[typescript]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "never",
-      "source.sortImports": "never"
+      "source.sortImports": "never",
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.ts": "explicit"
     }
   },
   "[typescriptreact]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "never",
-      "source.sortImports": "never"
+      "source.sortImports": "never",
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.ts": "explicit"
     }
   },
   "[json]": {
@@ -45,6 +53,8 @@
     "json",
     "graphql"
   ],
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
   "javascript.validate.enable": false,
   "typescript.tsdk": "./node_modules/typescript/lib",
   "search.exclude": {
@@ -77,14 +87,18 @@
   },
   "json.schemas": [
     {
-      "fileMatch": ["**/console-extensions.json"],
+      "fileMatch": [
+        "**/console-extensions.json"
+      ],
       "url": "./packages/console-dynamic-plugin-sdk/dist/webpack/schema/console-extensions.json"
     }
   ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "cucumberautocomplete.steps": ["./packages/*/integration-tests/support/step-definitions/*/*.ts"],
+  "cucumberautocomplete.steps": [
+    "./packages/*/integration-tests/support/step-definitions/*/*.ts"
+  ],
   "cucumberautocomplete.strictGherkinCompletion": true,
   "editor.quickSuggestions": {
     "comments": "on",

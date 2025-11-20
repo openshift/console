@@ -1,6 +1,6 @@
 import { nodeActions, resources } from '@console/dev-console/integration-tests/support/constants';
 import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import { app } from '@console/dev-console/integration-tests/support/pages';
+import { app } from '@console/dev-console/integration-tests/support/pages/app';
 import { topologyActions } from './topology-actions-page';
 
 export const topologySidePane = {

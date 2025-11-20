@@ -2,16 +2,11 @@ import { detailsPage } from '@console/cypress-integration-tests/views/details-pa
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
+import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import * as yamlView from '../../../../integration-tests-cypress/views/yaml-editor';
 import { devNavigationMenu, switchPerspective, pageTitle, adminNavigationBar } from '../constants';
-import {
-  devNavigationMenuPO,
-  formPO,
-  gitPO,
-  yamlPO,
-  topologyPO,
-  adminNavigationMenuPO,
-} from '../pageObjects';
+import { gitPO, yamlPO } from '../pageObjects/add-flow-po';
+import { adminNavigationMenuPO, formPO, devNavigationMenuPO } from '../pageObjects/global-po';
 import { userPreferencePO } from '../pageObjects/userPreference-po';
 
 export const app = {
