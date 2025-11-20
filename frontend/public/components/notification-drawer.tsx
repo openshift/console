@@ -162,7 +162,7 @@ const getUpdateNotificationEntries = (
   const newerChannelVersion = splitClusterVersionChannel(newerChannel)?.version;
   const entries = [];
 
-  const failedPlugins = pluginInfoEntries.filter((plugin) => plugin?.status === 'failed');
+  const failedPlugins = pluginInfoEntries.filter((plugin) => plugin.status === 'failed');
 
   if (!_.isEmpty(updateData)) {
     entries.push(

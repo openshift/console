@@ -103,7 +103,7 @@ export const useCSPViolationDetector = () => {
         const pluginInfo = pluginStore
           .getPluginInfo()
           .find((entry) =>
-            entry?.status === 'loaded'
+            entry.status === 'loaded'
               ? entry.metadata.name === pluginName
               : entry.pluginName === pluginName,
           );

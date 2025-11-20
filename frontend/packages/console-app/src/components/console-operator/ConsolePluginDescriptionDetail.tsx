@@ -10,7 +10,7 @@ const ConsolePluginDescriptionDetail: React.FC<DetailsItemComponentProps> = ({ o
   const pluginInfo = React.useMemo(
     () =>
       pluginInfoEntries.find((entry) =>
-        entry?.status === 'loaded'
+        entry.status === 'loaded'
           ? entry.metadata.name === pluginName
           : entry.pluginName === pluginName,
       ),
