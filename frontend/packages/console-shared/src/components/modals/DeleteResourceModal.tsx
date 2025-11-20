@@ -8,9 +8,9 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { PromiseComponent } from '@console/internal/components/utils/promise-component';
 import { history } from '@console/internal/components/utils/router';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { usePromiseHandler } from '../../hooks/promise-handler';
 import { InputField } from '../formik-fields';
 import { YellowExclamationTriangleIcon } from '../status';
 
@@ -23,11 +23,6 @@ type DeleteResourceModalProps = {
   onSubmit: (values: FormikValues) => Promise<K8sResourceKind[]>;
   cancel?: () => void;
   close?: () => void;
-};
-
-type DeleteResourceModalState = {
-  inProgress: boolean;
-  errorMessage: string;
 };
 
 const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProps> = ({
@@ -76,15 +71,14 @@ const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProp
   );
 };
 
-class DeleteResourceModal extends PromiseComponent<
-  DeleteResourceModalProps,
-  DeleteResourceModalState
-> {
-  private handleSubmit = (values, actions) => {
-    const { onSubmit, close, redirect } = this.props;
+const DeleteResourceModal: React.FC<DeleteResourceModalProps> = (props) => {
+  const [handlePromise] = usePromiseHandler();
+
+  const handleSubmit = (values: FormikValues, actions) => {
+    const { onSubmit, close, redirect } = props;
     return (
       onSubmit &&
-      this.handlePromise(onSubmit(values))
+      handlePromise(onSubmit(values))
         .then(() => {
           close();
           redirect && history.push(redirect);
@@ -95,17 +89,16 @@ class DeleteResourceModal extends PromiseComponent<
     );
   };
 
-  render() {
-    const initialValues = {
-      resourceName: '',
-    };
-    return (
-      <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
-        {(formikProps) => <DeleteResourceForm {...formikProps} {...this.props} />}
-      </Formik>
-    );
-  }
-}
+  const initialValues = {
+    resourceName: '',
+  };
+
+  return (
+    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      {(formikProps) => <DeleteResourceForm {...formikProps} {...props} />}
+    </Formik>
+  );
+};
 
 export const deleteResourceModal = createModalLauncher((props: DeleteResourceModalProps) => (
   <DeleteResourceModal {...props} />
