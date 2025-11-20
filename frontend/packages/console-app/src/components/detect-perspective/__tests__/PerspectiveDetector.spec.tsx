@@ -1,4 +1,5 @@
 import { render, waitFor } from '@testing-library/react';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { Perspective } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/plugin-sdk';
 import { usePerspectives } from '@console/shared/src';
@@ -12,8 +13,8 @@ jest.mock('@console/shared/src', () => ({
   usePerspectives: jest.fn(),
 }));
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...jest.requireActual('react-router-dom-v5-compat'),
   useLocation: jest.fn(() => ({ pathname: '' })),
 }));
 
@@ -37,6 +38,8 @@ const mockPerspectives = [
 ] as LoadedExtension<Perspective>[];
 
 const setActivePerspective = jest.fn();
+
+const useLocationMock = useLocation as jest.Mock;
 
 describe('PerspectiveDetector', () => {
   beforeEach(() => {
@@ -134,6 +137,29 @@ describe('PerspectiveDetector', () => {
 
     await waitFor(() => {
       expect(setActivePerspective).toHaveBeenCalledWith('admin', '');
+    });
+  });
+
+  it('preserves query and hash when setting perspective', async () => {
+    let promiseResolver: (value: () => [boolean, boolean]) => void;
+    const testPromise = new Promise<() => [boolean, boolean]>(
+      (resolver) => (promiseResolver = resolver),
+    );
+    mockPerspectives[1].properties.usePerspectiveDetection = () => testPromise;
+
+    (usePerspectives as jest.Mock).mockImplementation(() => mockPerspectives);
+    useLocationMock.mockImplementation(() => ({
+      pathname: '/some/path',
+      search: '?query=param',
+      hash: '#some-hash',
+    }));
+
+    render(<PerspectiveDetector setActivePerspective={setActivePerspective} />);
+
+    promiseResolver(() => [true, false]);
+
+    await waitFor(() => {
+      expect(setActivePerspective).toHaveBeenCalledWith('dev', '/some/path?query=param#some-hash');
     });
   });
 });

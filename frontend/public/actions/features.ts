@@ -3,7 +3,6 @@ import * as _ from 'lodash-es';
 
 import { FLAGS } from '@console/shared/src/constants/common';
 import { K8sModel, UserInfo } from '@console/internal/module/k8s';
-import { isCustomFeatureFlag, CustomFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,
   extensionDiffListener,
@@ -129,12 +128,6 @@ const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) =>
 });
 
 export const detectFeatures = () => (dispatch: Dispatch) => {
-  subscribeToExtensions<CustomFeatureFlag>(
-    extensionDiffListener((added) =>
-      added.forEach((detector) => detector.properties.detect(dispatch)),
-    ),
-    isCustomFeatureFlag,
-  );
   [
     detectOpenShift,
     detectCanCreateProject,

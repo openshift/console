@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResources, WatchK8sResourcesGeneric } from '@console/dynamic-plugin-sdk';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { GLOBAL_OPERATOR_NS, KNATIVE_SERVING_LABEL } from '../const';
@@ -21,10 +21,7 @@ import {
   KafkaConnectionModel,
 } from '../models';
 import { Traffic } from '../types';
-import {
-  getDynamicEventSourcesWatchers,
-  getDynamicEventingChannelWatchers,
-} from './fetch-dynamic-eventsources-utils';
+import { fetchEventSourcesCrd, fetchChannelsCrd } from './fetch-dynamic-eventsources-utils';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -438,31 +435,43 @@ export const getSinkableResources = (namespace: string): FirehoseResource[] => {
     : [];
 };
 
-export const getKnativeServingResources = (namespace: string) => {
-  return {
-    ...knativeServingResourcesRevisionWatchers(namespace),
-    ...knativeServingResourcesConfigurationsWatchers(namespace),
-    ...knativeServingResourcesRoutesWatchers(namespace),
-    ...knativeServingResourcesServicesWatchers(namespace),
-    ...knativeCamelDomainMappingResourceWatchers(namespace),
-  };
-};
+export const getKnativeEventingResources = async (): Promise<WatchK8sResourcesGeneric> => {
+  // Fetch dynamic event sources and channels at runtime
+  const eventSourceModels = await fetchEventSourcesCrd();
+  const eventingChannels = await fetchChannelsCrd();
 
-export const getKnativeEventingResources = (namespace: string) => {
-  return {
-    ...knativeEventingResourcesSubscriptionWatchers(namespace),
-    ...getDynamicEventSourcesWatchers(namespace),
-    ...getDynamicEventingChannelWatchers(namespace),
-    ...knativeEventingBrokerResourceWatchers(namespace),
-    ...knativeEventingTriggerResourceWatchers(namespace),
-  };
-};
+  const dynamicEventSources = eventSourceModels.reduce((acc, model) => {
+    const ref = referenceForModel(model);
+    acc[ref] = {
+      model: { group: model.apiGroup, version: model.apiVersion, kind: model.kind },
+      opts: { isList: true, optional: true, namespaced: true },
+    };
+    return acc;
+  }, {});
 
-export const getKnativeEventingKameletsResources = (namespace: string) => {
+  const dynamicChannels = eventingChannels.reduce((acc, model) => {
+    const ref = referenceForModel(model);
+    acc[ref] = {
+      model: { group: model.apiGroup, version: model.apiVersion, kind: model.kind },
+      opts: { isList: true, optional: true, namespaced: true },
+    };
+    return acc;
+  }, {});
+
   return {
-    ...knativeCamelIntegrationsResourceWatchers(namespace),
-    ...knativeCamelKameletBindingResourceWatchers(namespace),
-    ...knativeCamelDomainMappingResourceWatchers(namespace),
-    ...knativeCamelKameletResourceWatchers(namespace),
+    eventingsubscription: {
+      model: { group: 'messaging.knative.dev', version: 'v1', kind: 'Subscription' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    brokers: {
+      model: { group: 'eventing.knative.dev', version: 'v1', kind: 'Broker' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    triggers: {
+      model: { group: 'eventing.knative.dev', version: 'v1', kind: 'Trigger' },
+      opts: { isList: true, optional: true, namespaced: true },
+    },
+    ...dynamicEventSources,
+    ...dynamicChannels,
   };
 };

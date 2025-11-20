@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import {
   Button,
@@ -11,28 +10,16 @@ import {
 } from '@patternfly/react-core';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
-import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
+import { K8sModel, referenceForModel, UserKind } from '../module/k8s';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { RoleBindingsPage } from './RBAC';
-import {
-  ConsoleEmptyState,
-  Kebab,
-  KebabAction,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  resourcePathFromModel,
-  LoadingBox,
-} from './utils';
-import { DASH } from '@console/shared/src/constants/ui';
-import { getImpersonate } from '@console/dynamic-plugin-sdk';
-import { RootState } from '../redux';
-import { ImpersonateUserModal } from './modals/impersonate-user-modal';
+import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink, resourcePathFromModel } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import {
   ConsoleDataView,
   getNameCellProps,
@@ -42,8 +29,10 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
-
+import { DASH } from '@console/shared/src/constants/ui';
 import { useTranslation } from 'react-i18next';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -51,69 +40,6 @@ const tableColumnInfo = [
   { id: 'identities' },
   { id: 'actions' },
 ];
-
-const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const impersonate = useSelector((state: RootState) => getImpersonate(state));
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-
-  const stopImpersonateAction: KebabAction = () => ({
-    label: t('public~Stop impersonating'),
-    callback: () => {
-      dispatch(UIActions.stopImpersonate());
-      navigate(window.SERVER_FLAGS.basePath);
-    },
-  });
-
-  const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
-    label: t('public~Impersonate User {{name}}', obj.metadata),
-    callback: () => {
-      // Show modal for multi-group impersonation
-      setIsModalOpen(true);
-    },
-    // Must use API group authorization.k8s.io, NOT user.openshift.io
-    // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
-    accessReview: {
-      group: 'authorization.k8s.io',
-      resource: 'users',
-      name: obj.metadata.name,
-      verb: 'impersonate',
-    },
-  });
-
-  const handleImpersonate = (username: string, groups: string[]) => {
-    if (groups && groups.length > 0) {
-      dispatch(UIActions.startImpersonate('UserWithGroups', username, groups));
-    } else {
-      dispatch(UIActions.startImpersonate('User', username));
-    }
-    navigate(window.SERVER_FLAGS.basePath);
-  };
-
-  // Determine which action to show based on impersonation state
-  const impersonationAction = impersonate ? stopImpersonateAction : impersonateAction;
-
-  return (
-    <>
-      <ResourceKebab
-        actions={[impersonationAction, ...Kebab.factory.common]}
-        kind={referenceForModel(UserModel)}
-        resource={user}
-      />
-      {!impersonate && (
-        <ImpersonateUserModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onImpersonate={handleImpersonate}
-          prefilledUsername={user.metadata.name}
-          isUsernameReadonly={true}
-        />
-      )}
-    </>
-  );
-};
 
 const getDataViewRows: GetDataViewRows<UserKind, undefined> = (data, columns) => {
   return data.map(({ obj: user }) => {
@@ -129,7 +55,7 @@ const getDataViewRows: GetDataViewRows<UserKind, undefined> = (data, columns) =>
         cell: _.map(user.identities, (identity: string) => <div key={identity}>{identity}</div>),
       },
       [tableColumnInfo[3].id]: {
-        cell: <UserKebab user={user} />,
+        cell: <LazyActionMenu context={{ [referenceForModel(UserModel)]: user }} />,
         props: actionsCellProps,
       },
     };
@@ -307,77 +233,23 @@ const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
   );
 };
 
-type UserKebabProps = {
-  user: UserKind;
-};
-
 export const UserDetailsPage: React.FC = (props) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const impersonate = useSelector((state: RootState) => getImpersonate(state));
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedUser, setSelectedUser] = React.useState<string>('');
-
-  const stopImpersonateAction: KebabAction = () => ({
-    label: t('public~Stop impersonating'),
-    callback: () => {
-      dispatch(UIActions.stopImpersonate());
-      navigate(window.SERVER_FLAGS.basePath);
-    },
-  });
-
-  const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
-    label: t('public~Impersonate User {{name}}', obj.metadata),
-    callback: () => {
-      // Show modal for multi-group impersonation
-      setSelectedUser(obj.metadata.name);
-      setIsModalOpen(true);
-    },
-    // Must use API group authorization.k8s.io, NOT user.openshift.io
-    // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
-    accessReview: {
-      group: 'authorization.k8s.io',
-      resource: 'users',
-      name: obj.metadata.name,
-      verb: 'impersonate',
-    },
-  });
-
-  const handleImpersonate = (username: string, groups: string[]) => {
-    if (groups && groups.length > 0) {
-      dispatch(UIActions.startImpersonate('UserWithGroups', username, groups));
-    } else {
-      dispatch(UIActions.startImpersonate('User', username));
-    }
-    navigate(window.SERVER_FLAGS.basePath);
-  };
-
-  // Determine which action to show based on impersonation state
-  const impersonationAction = impersonate ? stopImpersonateAction : impersonateAction;
-
   return (
-    <>
-      <DetailsPage
-        {...props}
-        kind={referenceForModel(UserModel)}
-        menuActions={[impersonationAction, ...Kebab.factory.common]}
-        pages={[
-          navFactory.details(UserDetails),
-          navFactory.editYaml(),
-          navFactory.roles(RoleBindingsTab),
-        ]}
-      />
-      {!impersonate && (
-        <ImpersonateUserModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onImpersonate={handleImpersonate}
-          prefilledUsername={selectedUser}
-          isUsernameReadonly={true}
+    <DetailsPage
+      {...props}
+      kind={referenceForModel(UserModel)}
+      customActionMenu={(k8sObj: K8sModel, obj: UserKind) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(UserModel)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
         />
       )}
-    </>
+      pages={[
+        navFactory.details(UserDetails),
+        navFactory.editYaml(),
+        navFactory.roles(RoleBindingsTab),
+      ]}
+    />
   );
 };
 

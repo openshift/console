@@ -19,7 +19,6 @@ import { sortResourceByValue } from './factory/Table/sort';
 import { AsyncComponent } from './utils/async';
 import { DetailsItem } from './utils/details-item';
 import { EmptyBox, LoadingBox } from './utils/status-box';
-import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
@@ -29,7 +28,7 @@ import {
   CRDVersion,
   CustomResourceDefinitionKind,
   getLatestVersionForCRD,
-  K8sKind,
+  K8sModel,
   referenceForCRD,
   referenceForModel,
   TableColumn,
@@ -63,21 +62,8 @@ import {
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-
-const { common } = Kebab.factory;
-
-const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>
-  _.get(crd, 'spec.scope') === 'Namespaced'
-    ? `/k8s/all-namespaces/${referenceForCRD(crd)}`
-    : `/k8s/cluster/${referenceForCRD(crd)}`;
-
-const instances = (kind: K8sKind, obj: CustomResourceDefinitionKind) => ({
-  // t('public~View instances')
-  labelKey: 'public~View instances',
-  href: crdInstancesPath(obj),
-});
-
-const menuActions: KebabAction[] = [instances, ...common];
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const isEstablished = (conditions: any[]) => {
   const condition = _.find(conditions, (c) => c.type === 'Established');
@@ -334,11 +320,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> 
       },
       [tableColumnInfo[5].id]: {
         cell: (
-          <ResourceKebab
-            actions={menuActions}
-            kind={CustomResourceDefinitionModel}
-            resource={obj}
-          />
+          <LazyActionMenu context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }} />
         ),
         props: actionsCellProps,
       },
@@ -394,8 +376,13 @@ export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
   return (
     <DetailsPage
       {...props}
-      kind={kind}
-      menuActions={menuActions}
+      kind={referenceForModel(CustomResourceDefinitionModel)}
+      customActionMenu={(k8sObj: K8sModel, obj: CustomResourceDefinitionKind) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={[
         navFactory.details(Details),
         navFactory.editYaml(),
