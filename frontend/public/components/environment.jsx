@@ -1,5 +1,6 @@
 /* eslint-disable tsdoc/syntax */
-import * as _ from 'lodash';
+import * as React from 'react';
+import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { css } from '@patternfly/react-styles';
@@ -15,6 +16,7 @@ import { Trans, withTranslation } from 'react-i18next';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
 import { AsyncComponent } from './utils/async';
 import { checkAccess } from './utils/rbac';
@@ -22,7 +24,6 @@ import { ContainerSelect } from './utils/container-select';
 import { EnvFromPair, EnvType, NameValueEditorPair } from './utils/types';
 import { FieldLevelHelp } from './utils/field-level-help';
 import { LoadingBox, LoadingInline } from './utils/status-box';
-import { PromiseComponent } from './utils/promise-component';
 import { ResourceLink } from './utils/resource-link';
 import { ConfigMapModel, SecretModel } from '../models';
 
@@ -296,86 +297,38 @@ const stateToProps = (state, { obj }) => ({
   impersonate: getImpersonate(state),
 });
 
-export class UnconnectedEnvironmentPage extends PromiseComponent {
-  /**
-   * Set initial state and decide which kind of env we are setting up
-   *
-   * @param props
-   */
-  constructor(props) {
-    super(props);
+export const UnconnectedEnvironmentPage = (props) => {
+  const {
+    rawEnvData,
+    obj,
+    model,
+    impersonate,
+    readOnly,
+    addConfigMapSecret,
+    onChange,
+    t,
+    envPath,
+    useLoadingInline,
+  } = props;
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-    this.reload = this._reload.bind(this);
-    this.saveChanges = this._saveChanges.bind(this);
-    this.updateEnvVars = this._updateEnvVars.bind(this);
-    this.selectContainer = this._selectContainer.bind(this);
-    const currentEnvVars = new CurrentEnvVars(this.props.rawEnvData);
-    this.state = {
-      currentEnvVars,
-      success: null,
-      containerIndex: 0,
-      containerType:
-        currentEnvVars.isContainerArray || currentEnvVars.isCreate ? 'containers' : 'buildObject',
-    };
-  }
+  const initialCurrentEnvVars = React.useMemo(() => new CurrentEnvVars(rawEnvData), [rawEnvData]);
 
-  componentDidMount() {
-    this._checkEditAccess();
-    const { addConfigMapSecret, readOnly, t } = this.props;
-    if (!addConfigMapSecret || readOnly) {
-      const configMaps = {},
-        secrets = {};
-      this.setState({ configMaps, secrets });
-      return;
-    }
-    const envNamespace = _.get(this.props, 'obj.metadata.namespace');
+  const [currentEnvVars, setCurrentEnvVars] = React.useState(initialCurrentEnvVars);
+  const [success, setSuccess] = React.useState(null);
+  const [containerIndex, setContainerIndex] = React.useState(0);
+  const [containerType, setContainerType] = React.useState(
+    initialCurrentEnvVars.isContainerArray || initialCurrentEnvVars.isCreate
+      ? 'containers'
+      : 'buildObject',
+  );
+  const [stale, setStale] = React.useState(false);
+  const [configMaps, setConfigMaps] = React.useState(null);
+  const [secrets, setSecrets] = React.useState(null);
+  const [allowed, setAllowed] = React.useState(!obj || _.isEmpty(obj) || !model);
+  const [localErrorMessage, setLocalErrorMessage] = React.useState(null);
 
-    Promise.all([
-      k8sGet(ConfigMapModel, null, envNamespace).catch((err) => {
-        if (err.response.status !== 403) {
-          const errorMessage = err.message || t('public~Could not load ConfigMaps.');
-          this.setState({ errorMessage });
-        }
-        return {
-          configMaps: {},
-        };
-      }),
-      k8sGet(SecretModel, null, envNamespace).catch((err) => {
-        if (err.response.status !== 403) {
-          const errorMessage = err.message || t('public~Could not load Secrets.');
-          this.setState({ errorMessage });
-        }
-        return {
-          secrets: {},
-        };
-      }),
-    ]).then(([configMaps, secrets]) => this.setState({ configMaps, secrets }));
-  }
-
-  componentDidUpdate(prevProps) {
-    const { obj, model, impersonate, readOnly, rawEnvData } = this.props;
-    const { dirty } = this.state;
-
-    if (!_.isEqual(rawEnvData, prevProps.rawEnvData)) {
-      this.setState({
-        ...(!dirty && { currentEnvVars: new CurrentEnvVars(rawEnvData) }),
-        stale: dirty,
-      });
-    }
-
-    if (
-      _.get(prevProps.obj, 'metadata.uid') !== _.get(obj, 'metadata.uid') ||
-      _.get(prevProps.model, 'apiGroup') !== _.get(model, 'apiGroup') ||
-      _.get(prevProps.model, 'path') !== _.get(model, 'path') ||
-      prevProps.impersonate !== impersonate ||
-      prevProps.readOnly !== readOnly
-    ) {
-      this._checkEditAccess();
-    }
-  }
-
-  _checkEditAccess() {
-    const { obj, model, impersonate, readOnly } = this.props;
+  const checkEditAccess = React.useCallback(() => {
     if (readOnly) {
       return;
     }
@@ -383,7 +336,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     // Only check RBAC if editing an existing resource. The form will always
     // be enabled when creating a new application (git import / deploy image).
     if (_.isEmpty(obj) || !model) {
-      this.setState({ allowed: true });
+      setAllowed(true);
       return;
     }
 
@@ -396,63 +349,89 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
       namespace,
     };
     checkAccess(resourceAttributes, impersonate)
-      .then((resp) => this.setState({ allowed: resp.status.allowed }))
+      .then((resp) => setAllowed(resp.status.allowed))
       .catch((e) => {
         // eslint-disable-next-line no-console
         console.warn('Error while check edit access for environment variables', e);
       });
-  }
+  }, [obj, model, impersonate, readOnly]);
+
+  React.useEffect(() => {
+    checkEditAccess();
+    if (!addConfigMapSecret || readOnly) {
+      setConfigMaps({});
+      setSecrets({});
+      return;
+    }
+    const envNamespace = _.get(obj, 'metadata.namespace');
+
+    Promise.all([
+      k8sGet(ConfigMapModel, null, envNamespace).catch((err) => {
+        if (err.response.status !== 403) {
+          const errorMsg = err.message || t('public~Could not load ConfigMaps.');
+          setLocalErrorMessage(errorMsg);
+        }
+        return {
+          configMaps: {},
+        };
+      }),
+      k8sGet(SecretModel, null, envNamespace).catch((err) => {
+        if (err.response.status !== 403) {
+          const errorMsg = err.message || t('public~Could not load Secrets.');
+          setLocalErrorMessage(errorMsg);
+        }
+        return {
+          secrets: {},
+        };
+      }),
+    ]).then(([cmaps, secs]) => {
+      setConfigMaps(cmaps);
+      setSecrets(secs);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Callback for NVEditor update our state with new values
    * @param env
    * @param i
    */
-  _updateEnvVars(env, i = 0, type = EnvType.ENV) {
-    const { onChange } = this.props;
-    const { currentEnvVars, containerType } = this.state;
-    const currentEnv = _.cloneDeep(currentEnvVars);
-    currentEnv.setFormattedVars(containerType, i, type, env.nameValuePairs);
-    this.setState({
-      currentEnvVars: currentEnv,
-      dirty: true,
-      success: null,
-    });
-    _.isFunction(onChange) && onChange(currentEnv.dispatchNewEnvironmentVariables());
-  }
+  const updateEnvVars = React.useCallback(
+    (env, i = 0, type = EnvType.ENV) => {
+      const currentEnv = _.cloneDeep(currentEnvVars);
+      currentEnv.setFormattedVars(containerType, i, type, env.nameValuePairs);
+      setCurrentEnvVars(currentEnv);
+      setSuccess(null);
+      _.isFunction(onChange) && onChange(currentEnv.dispatchNewEnvironmentVariables());
+    },
+    [currentEnvVars, containerType, onChange],
+  );
 
   /**
    * Reset the page to initial state
-   * @private
    */
-  _reload() {
-    const { rawEnvData } = this.props;
-    this.setState({
-      currentEnvVars: new CurrentEnvVars(rawEnvData),
-      dirty: false,
-      errorMessage: null,
-      stale: false,
-      success: null,
-    });
-  }
+  const reload = React.useCallback(() => {
+    setCurrentEnvVars(new CurrentEnvVars(rawEnvData));
+    setLocalErrorMessage(null);
+    setStale(false);
+    setSuccess(null);
+  }, [rawEnvData]);
 
-  _selectContainer(containerName) {
-    const { rawEnvData } = this.props;
-    let containerIndex = _.findIndex(rawEnvData.containers, { name: containerName });
-    if (containerIndex !== -1) {
-      return this.setState({
-        containerIndex,
-        containerType: 'containers',
-      });
-    }
-    containerIndex = _.findIndex(rawEnvData.initContainers, { name: containerName });
-    if (containerIndex !== -1) {
-      return this.setState({
-        containerIndex,
-        containerType: 'initContainers',
-      });
-    }
-  }
+  const selectContainer = React.useCallback(
+    (containerName) => {
+      let index = _.findIndex(rawEnvData.containers, { name: containerName });
+      if (index !== -1) {
+        setContainerIndex(index);
+        setContainerType('containers');
+        return;
+      }
+      index = _.findIndex(rawEnvData.initContainers, { name: containerName });
+      if (index !== -1) {
+        setContainerIndex(index);
+        setContainerType('initContainers');
+      }
+    },
+    [rawEnvData],
+  );
 
   /**
    * Make it so. Patch the values for the env var changes made on the page.
@@ -463,204 +442,180 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
    *
    * @param e
    */
-  _saveChanges(e) {
-    const { envPath, obj, model, t } = this.props;
-    const { currentEnvVars } = this.state;
+  const saveChanges = React.useCallback(
+    (e) => {
+      e.preventDefault();
 
-    e.preventDefault();
-
-    const patches = currentEnvVars.getPatches(envPath);
-    const promise = k8sPatch(model, obj, patches);
-    this.handlePromise(promise).then((res) => {
-      this.setState({
-        currentEnvVars: new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath),
-        dirty: false,
-        errorMessage: null,
-        stale: false,
-        success: t('public~Successfully updated the environment variables.'),
+      const patches = currentEnvVars.getPatches(envPath);
+      const promise = k8sPatch(model, obj, patches);
+      handlePromise(promise).then((res) => {
+        setCurrentEnvVars(new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath));
+        setLocalErrorMessage(null);
+        setStale(false);
+        setSuccess(t('public~Successfully updated the environment variables.'));
       });
-    });
+    },
+    [currentEnvVars, envPath, model, obj, handlePromise, t],
+  );
+
+  const dismissSuccess = React.useCallback(() => {
+    setSuccess(null);
+  }, []);
+
+  const isReadOnly = readOnly || !allowed;
+  const displayErrorMessage = errorMessage || localErrorMessage;
+
+  if (!configMaps || !currentEnvVars || !secrets) {
+    if (useLoadingInline) {
+      return <LoadingInline />;
+    }
+    return <LoadingBox />;
   }
 
-  dismissSuccess = () => {
-    this.setState({ success: null });
-  };
+  const envVar = currentEnvVars.getEnvVarByTypeAndIndex(containerType, containerIndex);
 
-  render() {
-    const {
-      errorMessage,
-      success,
-      inProgress,
-      currentEnvVars,
-      stale,
-      configMaps,
-      secrets,
-      containerIndex,
-      containerType,
-      allowed,
-    } = this.state;
-    const { rawEnvData, obj, addConfigMapSecret, useLoadingInline, t } = this.props;
-    const readOnly = this.props.readOnly || !allowed;
+  const containerDropdown = currentEnvVars.isContainerArray ? (
+    <ContainerSelect
+      currentKey={rawEnvData[containerType][containerIndex].name}
+      containers={getContainersObjectForDropdown(rawEnvData.containers)}
+      initContainers={getContainersObjectForDropdown(rawEnvData.initContainers)}
+      onChange={selectContainer}
+    />
+  ) : null;
 
-    if (!configMaps || !currentEnvVars || !secrets) {
-      if (useLoadingInline) {
-        return <LoadingInline />;
-      }
-      return <LoadingBox />;
-    }
-
-    const envVar = currentEnvVars.getEnvVarByTypeAndIndex(containerType, containerIndex);
-
-    const containerDropdown = currentEnvVars.isContainerArray ? (
-      <ContainerSelect
-        currentKey={rawEnvData[containerType][containerIndex].name}
-        containers={getContainersObjectForDropdown(rawEnvData.containers)}
-        initContainers={getContainersObjectForDropdown(rawEnvData.initContainers)}
-        onChange={this.selectContainer}
+  const owners = _.get(obj.metadata, 'ownerReferences', []).map((o, i) => (
+    <ResourceLink
+      key={i}
+      kind={referenceForOwnerRef(o)}
+      name={o.name}
+      namespace={obj.metadata.namespace}
+      title={o.uid}
+      inline
+    />
+  ));
+  const containerVars = (
+    <>
+      {isReadOnly && !_.isEmpty(owners) && (
+        <Alert isInline variant="info" title={t('public~Environment variables set from parent')}>
+          {t('public~View environment for resource')}{' '}
+          {owners.length > 1 ? <>t('public~owners:') {owners}</> : owners}
+        </Alert>
+      )}
+      {currentEnvVars.isContainerArray && (
+        <Flex>
+          <FlexItem>
+            {containerType === 'containers' ? t('public~Container:') : t('public~Init container:')}
+          </FlexItem>
+          <FlexItem>{containerDropdown}</FlexItem>
+        </Flex>
+      )}
+      {!currentEnvVars.isCreate && (
+        <TertiaryHeading>
+          {t('public~Single values (env)')}
+          {!isReadOnly && (
+            <FieldLevelHelp>
+              <Trans t={t} ns="public">
+                Define environment variables as key-value pairs to store configuration settings. You
+                can enter text or add values from a ConfigMap or Secret. Drag and drop environment
+                variables to change the order in which they are run. A variable can reference any
+                other variables that come before it in the list, for example{' '}
+                <code className="co-code">FULLDOMAIN = $(SUBDOMAIN).example.com</code>.
+              </Trans>
+            </FieldLevelHelp>
+          )}
+        </TertiaryHeading>
+      )}
+      <NameValueEditorComponent
+        nameValueId={containerIndex}
+        nameValuePairs={envVar[EnvType.ENV]}
+        updateParentData={updateEnvVars}
+        nameString={t('public~Name')}
+        readOnly={isReadOnly}
+        allowSorting={true}
+        configMaps={configMaps}
+        secrets={secrets}
+        addConfigMapSecret={addConfigMapSecret}
       />
-    ) : null;
-
-    const owners = _.get(obj.metadata, 'ownerReferences', []).map((o, i) => (
-      <ResourceLink
-        key={i}
-        kind={referenceForOwnerRef(o)}
-        name={o.name}
-        namespace={obj.metadata.namespace}
-        title={o.uid}
-        inline
-      />
-    ));
-    const containerVars = (
-      <>
-        {readOnly && !_.isEmpty(owners) && (
-          <Alert isInline variant="info" title={t('public~Environment variables set from parent')}>
-            {t('public~View environment for resource')}{' '}
-            {owners.length > 1 ? <>t('public~owners:') {owners}</> : owners}
-          </Alert>
-        )}
-        {currentEnvVars.isContainerArray && (
-          <Flex>
-            <FlexItem>
-              {containerType === 'containers'
-                ? t('public~Container:')
-                : t('public~Init container:')}
-            </FlexItem>
-            <FlexItem>{containerDropdown}</FlexItem>
-          </Flex>
-        )}
-        {!currentEnvVars.isCreate && (
+      {currentEnvVars.isContainerArray && (
+        <div className="environment-buttons">
           <TertiaryHeading>
-            {t('public~Single values (env)')}
-            {!readOnly && (
+            {t('public~All values from existing ConfigMaps or Secrets (envFrom)')}
+            {!isReadOnly && (
               <FieldLevelHelp>
-                <Trans t={t} ns="public">
-                  Define environment variables as key-value pairs to store configuration settings.
-                  You can enter text or add values from a ConfigMap or Secret. Drag and drop
-                  environment variables to change the order in which they are run. A variable can
-                  reference any other variables that come before it in the list, for example{' '}
-                  <code className="co-code">FULLDOMAIN = $(SUBDOMAIN).example.com</code>.
-                </Trans>
+                <>
+                  {t(
+                    'public~Add new values by referencing an existing ConfigMap or Secret. Drag and drop environment variables within this section to change the order in which they are run.',
+                  )}
+                  <br />
+                  <strong>{t('public~Note:')}</strong>{' '}
+                  {t(
+                    'public~If identical values exist in both lists, the single value in the list above will take precedence.',
+                  )}
+                </>
               </FieldLevelHelp>
             )}
           </TertiaryHeading>
-        )}
-        <NameValueEditorComponent
-          nameValueId={containerIndex}
-          nameValuePairs={envVar[EnvType.ENV]}
-          updateParentData={this.updateEnvVars}
-          nameString={t('public~Name')}
-          readOnly={readOnly}
-          allowSorting={true}
-          configMaps={configMaps}
-          secrets={secrets}
-          addConfigMapSecret={addConfigMapSecret}
-        />
-        {currentEnvVars.isContainerArray && (
-          <div className="environment-buttons">
-            <TertiaryHeading>
-              {t('public~All values from existing ConfigMaps or Secrets (envFrom)')}
-              {!readOnly && (
-                <FieldLevelHelp>
-                  <>
-                    {t(
-                      'public~Add new values by referencing an existing ConfigMap or Secret. Drag and drop environment variables within this section to change the order in which they are run.',
-                    )}
-                    <br />
-                    <strong>{t('public~Note:')}</strong>{' '}
-                    {t(
-                      'public~If identical values exist in both lists, the single value in the list above will take precedence.',
-                    )}
-                  </>
-                </FieldLevelHelp>
-              )}
-            </TertiaryHeading>
-            <EnvFromEditorComponent
-              nameValueId={containerIndex}
-              nameValuePairs={envVar[EnvType.ENV_FROM]}
-              updateParentData={this.updateEnvVars}
-              readOnly={readOnly}
-              configMaps={configMaps}
-              secrets={secrets}
-            />
-          </div>
-        )}
-      </>
-    );
+          <EnvFromEditorComponent
+            nameValueId={containerIndex}
+            nameValuePairs={envVar[EnvType.ENV_FROM]}
+            updateParentData={updateEnvVars}
+            readOnly={isReadOnly}
+            configMaps={configMaps}
+            secrets={secrets}
+          />
+        </div>
+      )}
+    </>
+  );
 
-    return (
-      <div className={css({ 'pf-v6-c-page__main-section': !currentEnvVars.isCreate })}>
-        {containerVars}
-        {!currentEnvVars.isCreate && (
-          <div className="pf-v6-c-form environment-buttons">
-            {errorMessage && (
-              <Alert isInline className="co-alert" variant="danger" title={errorMessage} />
-            )}
-            {stale && (
-              <Alert
-                isInline
-                className="co-alert"
-                variant="info"
-                title={t('public~The information on this page is no longer current.')}
+  return (
+    <div className={css({ 'pf-v6-c-page__main-section': !currentEnvVars.isCreate })}>
+      {containerVars}
+      {!currentEnvVars.isCreate && (
+        <div className="pf-v6-c-form environment-buttons">
+          {displayErrorMessage && (
+            <Alert isInline className="co-alert" variant="danger" title={displayErrorMessage} />
+          )}
+          {stale && (
+            <Alert
+              isInline
+              className="co-alert"
+              variant="info"
+              title={t('public~The information on this page is no longer current.')}
+            >
+              {t('public~Click Reload to update and lose edits, or Save Changes to overwrite.')}
+            </Alert>
+          )}
+          {success && (
+            <Alert
+              isInline
+              className="co-alert"
+              variant="success"
+              title={success}
+              actionClose={<AlertActionCloseButton onClose={dismissSuccess} />}
+            />
+          )}
+          {!isReadOnly && (
+            <ActionGroup>
+              <Button
+                isDisabled={inProgress}
+                type="submit"
+                variant="primary"
+                onClick={saveChanges}
+                data-test="environment-save"
               >
-                {t('public~Click Reload to update and lose edits, or Save Changes to overwrite.')}
-              </Alert>
-            )}
-            {success && (
-              <Alert
-                isInline
-                className="co-alert"
-                variant="success"
-                title={success}
-                actionClose={<AlertActionCloseButton onClose={this.dismissSuccess} />}
-              />
-            )}
-            {!readOnly && (
-              <ActionGroup>
-                <Button
-                  isDisabled={inProgress}
-                  type="submit"
-                  variant="primary"
-                  onClick={this.saveChanges}
-                  data-test="environment-save"
-                >
-                  {t('public~Save')}
-                </Button>
-                <Button
-                  isDisabled={inProgress}
-                  type="button"
-                  variant="secondary"
-                  onClick={this.reload}
-                >
-                  {t('public~Reload')}
-                </Button>
-              </ActionGroup>
-            )}
-          </div>
-        )}
-      </div>
-    );
-  }
-}
+                {t('public~Save')}
+              </Button>
+              <Button isDisabled={inProgress} type="button" variant="secondary" onClick={reload}>
+                {t('public~Reload')}
+              </Button>
+            </ActionGroup>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const EnvironmentPage_ = connect(stateToProps)(UnconnectedEnvironmentPage);
 export const EnvironmentPage = withTranslation()(EnvironmentPage_);
