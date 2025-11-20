@@ -1,6 +1,6 @@
 ---
 description: Find all usage patterns of a specified component across the OpenShift Console codebase and identify inconsistencies
-argument-hint: [--show-recommendations] [--scope=SCOPE]
+argument-hint: [component-name] [--show-recommendations] [--scope=SCOPE]
 ---
 
 # Find Component Usage Pattern
@@ -10,7 +10,7 @@ Find all usage patterns of a specified component across the OpenShift Console co
 ## Usage
 
 ```
-/find-component-pattern [--show-recommendations] [--scope=SCOPE]
+/find-component-pattern [component-name] [--show-recommendations] [--scope=SCOPE]
 ```
 
 ## Arguments
@@ -29,27 +29,68 @@ Find all usage patterns of a specified component across the OpenShift Console co
 
 ## Prompts
 
-After invoking this command, prompt the user for:
+**Check `$ARGUMENTS` for component name and scope:**
 
-1. **Component name** to analyze
-   - Ask the user to type the component name as free-form text
-   - **Do NOT** use AskUserQuestion tool with pre-filled component options
-   - Display the prompt with scope options in this format:
+### Scenario 1: Component name provided in `$ARGUMENTS`
 
-   ```
-   Which component would you like me analyze?
+**If the first argument (non-flag) is a component name:**
+- Extract the component name from `$ARGUMENTS`
+- Skip the component prompt entirely
+- Proceed directly to Phase 1 with the provided component name
 
-   Use --scope=SCOPE to limit scope (optional): 
-   - all - Search entire frontend (default)
-   - core - Only core components (frontend/public/components/)
-   - package:NAME - Specific package (e.g., package:dev-console)
-   ```
+**Example:** `/find-component-pattern ResourceLink --scope=core`
+- Component name: `ResourceLink` (no prompt needed)
+- Scope: `core` (from flag)
 
-   - The user should enter any component name (e.g., "ResourceLink", "Button", "StatusBox")
+### Scenario 2: Component name NOT provided, but `--scope` IS provided
+
+**If `$ARGUMENTS` contains `--scope=` but no component name:**
+- Display simplified prompt without scope usage instructions:
+
+```
+Which component would you like me to analyze?
+```
+
+- **Do NOT** show scope options (user already specified scope)
+- Wait for user to enter component name
+- Then proceed to Phase 1
+
+**Example:** `/find-component-pattern --scope=package:dev-console`
+- Prompt: "Which component would you like me to analyze?"
+- User enters: "ResourceLink"
+
+### Scenario 3: Neither component name nor scope provided
+
+**If `$ARGUMENTS` is empty or contains only `--show-recommendations`:**
+- Display full prompt with scope options:
+
+```
+Which component would you like me to analyze?
+
+Use --scope=SCOPE to limit scope (optional):
+- all - Search entire frontend (default)
+- core - Only core components (frontend/public/components/)
+- package:NAME - Specific package (e.g., package:dev-console)
+```
+
+- Wait for user to enter component name
+- Then proceed to Phase 1
+
+**Example:** `/find-component-pattern`
+- Show full prompt with scope options
+- User enters: "ResourceLink"
+
+---
+
+**Important:**
+- **Do NOT** use AskUserQuestion tool with pre-filled component options
+- Ask the user to type the component name as free-form text
+- Component name examples: "ResourceLink", "Button", "StatusBox"
 
 **Note:**
-- Check if `$ARGUMENTS` contains `--show-recommendations` to determine whether to include the recommendations section in Phase 3.
-- Check if `$ARGUMENTS` contains `--scope=` to determine the search scope. If not present, default to searching all frontend code.
+- Check if `$ARGUMENTS` contains a component name as the first non-flag argument
+- Check if `$ARGUMENTS` contains `--show-recommendations` to determine whether to include the recommendations section in Phase 3
+- Check if `$ARGUMENTS` contains `--scope=` to determine the search scope. If not present, default to searching all frontend code
 
 Then proceed with the phased analysis below.
 
@@ -161,9 +202,10 @@ For each file containing component usages:
 
 3. **Analyze against component interface:**
    - Are required props always provided?
-   - Are optional props used consistently?
-   - Are there type mismatches?
+   - How consistently are optional props used?
+   - Do type mismatches occur?
    - Are deprecated props being used?
+
 
 ### 2.3 Identify Outliers
 
@@ -585,13 +627,10 @@ Use --scope=SCOPE to limit scope (optional):
 **User:** `/find-component-pattern --scope=core`
 **Assistant:**
 ```
-Which component would you like me analyze?
-
-Use --scope=SCOPE to limit scope (optional):
-- all - Search entire frontend (default)
-- core - Only core components (frontend/public/components/)
-- package:NAME - Specific package (e.g., package:dev-console)
+Which component would you like me to analyze?
 ```
+*(Note: Scope options are NOT shown because user already specified --scope=core)*
+
 **User:** "ResourceLink"
 
 **Assistant proceeds:**
@@ -609,13 +648,10 @@ Use --scope=SCOPE to limit scope (optional):
 **User:** `/find-component-pattern --scope=package:dev-console`
 **Assistant:**
 ```
-Which component would you like me analyze?
-
-Use --scope=SCOPE to limit scope (optional):
-- all - Search entire frontend (default)
-- core - Only core components (frontend/public/components/)
-- package:NAME - Specific package (e.g., package:dev-console)
+Which component would you like me to analyze?
 ```
+*(Note: Scope options are NOT shown because user already specified --scope=package:dev-console)*
+
 **User:** "EnvironmentPage"
 
 **Assistant proceeds:**
@@ -633,13 +669,10 @@ Use --scope=SCOPE to limit scope (optional):
 **User:** `/find-component-pattern --show-recommendations --scope=package:topology`
 **Assistant:**
 ```
-Which component would you like me analyze?
-
-Use --scope=SCOPE to limit scope (optional):
-- all - Search entire frontend (default)
-- core - Only core components (frontend/public/components/)
-- package:NAME - Specific package (e.g., package:dev-console)
+Which component would you like me to analyze?
 ```
+*(Note: Scope options are NOT shown because user already specified --scope=package:topology)*
+
 **User:** "TopologyView"
 
 **Assistant proceeds:**
@@ -649,3 +682,18 @@ Use --scope=SCOPE to limit scope (optional):
 4. **Phase 4:** Skips prompt (since `--show-recommendations` flag was passed) and automatically displays recommendations
 
 **Output:** Full analysis with patterns, outliers, statistics, AND prioritized recommendations for standardization within the topology package.
+
+---
+
+### Example 6: Component Name Provided in Arguments (No Prompts)
+
+**User:** `/find-component-pattern ResourceLink --scope=core --show-recommendations`
+**Assistant:** *(No component prompt shown - proceeds directly to analysis)*
+
+**Assistant proceeds:**
+1. **Phase 1:** Finds ResourceLink component definition, searches only `frontend/public/components/` for usages
+2. **Phase 2:** Groups into patterns from core components only
+3. **Phase 3:** Generates comprehensive report
+4. **Phase 4:** Skips prompt (since `--show-recommendations` flag was passed) and automatically displays recommendations
+
+**Output:** Full analysis with patterns, outliers, statistics, AND prioritized recommendations for ResourceLink in core components. No user prompts were needed since all arguments were provided upfront.
