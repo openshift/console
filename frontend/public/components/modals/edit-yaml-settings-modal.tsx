@@ -68,7 +68,11 @@ const ConfigModalItem: React.FCC<ConfigModalItemProps> = ({
   return (
     <Split hasGutter>
       <SplitItem isFilled>
-        <Flex alignItems={{ default: 'alignItemsCenter' }} spaceItems={{ default: 'spaceItemsMd' }}>
+        <Flex
+          alignItems={{ default: 'alignItemsCenter' }}
+          spaceItems={{ default: 'spaceItemsMd' }}
+          style={{ flexWrap: 'nowrap' }}
+        >
           <FlexItem>
             <Icon />
           </FlexItem>
@@ -78,7 +82,7 @@ const ConfigModalItem: React.FCC<ConfigModalItemProps> = ({
           </FlexItem>
         </Flex>
       </SplitItem>
-      <SplitItem>
+      <SplitItem style={{ whiteSpace: 'nowrap' }}>
         <Switch
           id={title}
           isReversed
