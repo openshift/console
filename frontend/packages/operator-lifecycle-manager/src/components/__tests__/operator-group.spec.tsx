@@ -1,48 +1,51 @@
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   testOperatorGroup,
   testSubscription,
   testPackageManifest,
   dummyPackageManifest,
-} from '../../mocks';
-import { OperatorGroupKind, SubscriptionKind, InstallModeType } from '../types';
+} from '../../../mocks';
+import { OperatorGroupKind, SubscriptionKind, InstallModeType } from '../../types';
 import {
   requireOperatorGroup,
-  NoOperatorGroupMsg,
   supports,
   InstallModeSet,
   installedFor,
   subscriptionFor,
-} from './operator-group';
+} from '../operator-group';
 
 describe('requireOperatorGroup', () => {
   const SomeComponent = () => <div>Requires OperatorGroup</div>;
 
-  it('renders given component if `OperatorGroups` has not loaded yet', () => {
+  it('renders given component if OperatorGroups has not loaded yet', () => {
     const WrappedComponent = requireOperatorGroup(SomeComponent);
-    const wrapper = shallow(<WrappedComponent operatorGroup={{ loaded: false }} />);
 
-    expect(wrapper.find(SomeComponent).exists()).toBe(true);
-    expect(wrapper.find(NoOperatorGroupMsg).exists()).toBe(false);
+    renderWithProviders(<WrappedComponent operatorGroup={{ loaded: false }} />);
+
+    expect(screen.getByText('Requires OperatorGroup')).toBeVisible();
+    expect(screen.queryByText('Namespace not enabled')).not.toBeInTheDocument();
   });
 
-  it('renders message if no `OperatorGroups` loaded', () => {
+  it('renders message if no OperatorGroups loaded', () => {
     const WrappedComponent = requireOperatorGroup(SomeComponent);
-    const wrapper = shallow(<WrappedComponent operatorGroup={{ loaded: true, data: [] }} />);
 
-    expect(wrapper.find(NoOperatorGroupMsg).exists()).toBe(true);
-    expect(wrapper.find(SomeComponent).exists()).toBe(false);
+    renderWithProviders(<WrappedComponent operatorGroup={{ loaded: true, data: [] }} />);
+
+    expect(screen.getByText('Namespace not enabled')).toBeVisible();
+    expect(screen.queryByText('Requires OperatorGroup')).not.toBeInTheDocument();
   });
 
-  it('renders given component if `OperatorGroups` loaded and present', () => {
+  it('renders given component if OperatorGroups loaded and present', () => {
     const WrappedComponent = requireOperatorGroup(SomeComponent);
-    const wrapper = shallow(
+
+    renderWithProviders(
       <WrappedComponent operatorGroup={{ loaded: true, data: [testOperatorGroup] }} />,
     );
 
-    expect(wrapper.find(SomeComponent).exists()).toBe(true);
-    expect(wrapper.find(NoOperatorGroupMsg).exists()).toBe(false);
+    expect(screen.getByText('Requires OperatorGroup')).toBeVisible();
+    expect(screen.queryByText('Namespace not enabled')).not.toBeInTheDocument();
   });
 });
 
@@ -57,7 +60,7 @@ describe('subscriptionFor', () => {
     operatorGroups = [];
   });
 
-  it('returns nothing if no `Subscriptions` exist for the given package', () => {
+  it('returns nothing if no Subscriptions exist for the given package', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
 
@@ -66,7 +69,7 @@ describe('subscriptionFor', () => {
     ).toBeUndefined();
   });
 
-  it('returns nothing if no `OperatorGroups` target the given namespace', () => {
+  it('returns nothing if no OperatorGroups target the given namespace', () => {
     subscriptions = [testSubscription];
     operatorGroups = [
       { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: null } },
@@ -75,7 +78,7 @@ describe('subscriptionFor', () => {
     expect(subscriptionFor(subscriptions)(operatorGroups)(pkg)(ns)).toBeUndefined();
   });
 
-  it('returns nothing if no `Subscriptions` share the package namespace', () => {
+  it('returns nothing if no Subscriptions share the package namespace', () => {
     subscriptions = [testSubscription];
     operatorGroups = [
       { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: null } },
@@ -86,7 +89,7 @@ describe('subscriptionFor', () => {
     ).toBeUndefined();
   });
 
-  it('returns nothing if no `Subscriptions` share the package catalog source', () => {
+  it('returns nothing if no Subscriptions share the package catalog source', () => {
     subscriptions = [testSubscription];
     operatorGroups = [
       { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: null } },
@@ -97,21 +100,21 @@ describe('subscriptionFor', () => {
     ).toBeUndefined();
   });
 
-  it('returns nothing if checking for `all-namespaces`', () => {
+  it('returns nothing if checking for all-namespaces', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
 
     expect(subscriptionFor(subscriptions)(operatorGroups)(pkg)('')).toBeUndefined();
   });
 
-  it('returns `Subscription` when it exists in the "global" `OperatorGroup`', () => {
+  it('returns Subscription when it exists in the global OperatorGroup', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [''], lastUpdated: null } }];
 
     expect(subscriptionFor(subscriptions)(operatorGroups)(pkg)(ns)).toEqual(testSubscription);
   });
 
-  it('returns `Subscription` when it exists in an `OperatorGroup` that targets given namespace', () => {
+  it('returns Subscription when it exists in an OperatorGroup that targets given namespace', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
 
@@ -130,14 +133,14 @@ describe('installedFor', () => {
     operatorGroups = [];
   });
 
-  it('returns false if no `Subscriptions` exist for the given package', () => {
+  it('returns false if no Subscriptions exist for the given package', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
 
     expect(installedFor(subscriptions)(operatorGroups)(dummyPackageManifest)(ns)).toBe(false);
   });
 
-  it('returns false if no `OperatorGroups` target the given namespace', () => {
+  it('returns false if no OperatorGroups target the given namespace', () => {
     subscriptions = [testSubscription];
     operatorGroups = [
       { ...testOperatorGroup, status: { namespaces: ['prod-a', 'prod-b'], lastUpdated: null } },
@@ -146,35 +149,35 @@ describe('installedFor', () => {
     expect(installedFor(subscriptions)(operatorGroups)(pkg)(ns)).toBe(false);
   });
 
-  it('returns false if checking for `all-namespaces`', () => {
+  it('returns false if checking for all-namespaces', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
 
     expect(installedFor(subscriptions)(operatorGroups)(pkg)('')).toBe(false);
   });
 
-  it('returns false if `Subscription` is in a different namespace than the given package', () => {
+  it('returns false if Subscription is in a different namespace than the given package', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
 
     expect(installedFor(subscriptions)(operatorGroups)(dummyPackageManifest)(ns)).toBe(false);
   });
 
-  it('returns false if `Subscription` is from a different catalog source than the given package', () => {
+  it('returns false if Subscription is from a different catalog source than the given package', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
 
     expect(installedFor(subscriptions)(operatorGroups)(dummyPackageManifest)(ns)).toBe(false);
   });
 
-  it('returns true if `Subscription` exists in the "global" `OperatorGroup`', () => {
+  it('returns true if Subscription exists in the global OperatorGroup', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [''], lastUpdated: null } }];
 
     expect(installedFor(subscriptions)(operatorGroups)(pkg)(ns)).toBe(true);
   });
 
-  it('returns true if `Subscription` exists in an `OperatorGroup` that targets given namespace', () => {
+  it('returns true if Subscription exists in an OperatorGroup that targets given namespace', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
 
