@@ -28,7 +28,7 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
     selectedCategoryID: string,
     toplevelCategory: boolean,
   ) => {
-    if (!categorizedIds[category.id]) return null;
+    if (!category || !categorizedIds[category.id]) return null;
 
     const { id, label, subcategories } = category;
     const active = id === selectedCategory;

@@ -9,8 +9,8 @@ export const matchSubcategories = (
   category: CatalogCategory,
   item: CatalogItem,
 ): (CatalogCategory | CatalogSubcategory)[] => {
-  if (!category.subcategories) {
-    if (!category.tags) {
+  if (!category?.subcategories) {
+    if (!category?.tags) {
       return [];
     }
 

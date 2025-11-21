@@ -1022,6 +1022,9 @@
         "group": "operators.coreos.com"
       },
       "startsWith": ["operators.coreos.com", "clusterserviceversions"]
+    },
+    "flags": {
+      "disallowed": ["OLMV1_ENABLED"]
     }
   },
   {
@@ -2585,6 +2588,12 @@
         "kind": "TemplateInstance"
       },
       "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "useTechPreviewFlagProvider" }
     }
   },
   {

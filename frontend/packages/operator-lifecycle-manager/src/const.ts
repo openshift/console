@@ -18,7 +18,7 @@ export enum DefaultClusterCatalog {
   OpenShiftCommunityOperators = 'openshift-community-operators',
 }
 
-export enum PackageSource {
+export enum OperatorSource {
   RedHatOperators = 'Red Hat',
   RedHatMarketplace = 'Marketplace',
   CertifiedOperators = 'Certified',

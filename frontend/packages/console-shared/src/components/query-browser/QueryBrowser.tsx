@@ -60,12 +60,12 @@ import {
   timeFormatter,
   timeFormatterWithSeconds,
 } from '@console/internal/components/utils/datetime';
-import { usePoll } from '@console/internal/components/utils/poll-hook';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 import { useSafeFetch } from '@console/internal/components/utils/safe-fetch-hook';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { humanizeNumberSI } from '@console/internal/components/utils/units';
 import { RootState } from '@console/internal/redux';
+import { usePoll } from '../../hooks/usePoll';
 import withFallback from '../error/fallbacks/withFallback';
 import { queryBrowserTheme } from './theme';
 
