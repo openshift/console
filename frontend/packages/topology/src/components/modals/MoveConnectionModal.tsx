@@ -54,6 +54,7 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> & MoveConnectionMod
   isSubmitting,
   cancel,
   values,
+  setFieldValue,
   edge,
   availableTargets,
   status,
@@ -91,7 +92,7 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> & MoveConnectionMod
               // @ts-expect-error FIXME: PatternFly's onSelect is typed wrong (value should be any)
               onSelect={(_, value: Node) => {
                 if (value) {
-                  values.target = value;
+                  setFieldValue('target', value);
                 }
                 setOpen(false);
               }}
