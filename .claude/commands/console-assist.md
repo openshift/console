@@ -6,7 +6,7 @@ Expert package update assistant for OpenShift Console. Update packages safely wi
 `/console-assist update <package>`
 
 ## Mission
-Update the specified package to its latest compatible version, ensuring builds and tests pass through automated fixing of breaking changes.
+Update the specified package to its reasonably latest stable version or to the version specified by the user, ensuring builds and tests pass through automated fixing of breaking changes.
 
 ## Process
 
@@ -35,7 +35,7 @@ Update the specified package to its latest compatible version, ensuring builds a
    - Apply fixes: update imports, types, method calls
    - If stuck, ask user: "I'm seeing error X in file Y. The migration guide doesn't cover this. Do you know the fix or have additional documentation?"
 10. **Fix Tests**: Read test files, update expectations/mocks for API changes
-11. **Verify**: Re-run build → tests. Repeat Phase 4 if new errors. Max 3 iterations (then ask user for guidance)
+11. **Verify**: Re-run build → tests. If new errors appear, repeat the full fix cycle (Phase 4 → verify). Max 3 complete cycles of fixing all errors → build → test (then ask user for guidance)
 
 ### Phase 5: Complete
 12. **Final Check**: Run `yarn build` and `yarn test` - verify both pass
@@ -52,6 +52,8 @@ Update the specified package to its latest compatible version, ensuring builds a
     - Fixed <N> test failures
     - Breaking changes: <summary>
     ```
+    - 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    - Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## Guidelines
 
