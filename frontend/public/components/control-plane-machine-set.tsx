@@ -20,7 +20,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -277,7 +276,7 @@ export const MachinesCell: React.FCC<MachinesCellProps> = ({
   );
 };
 
-const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const desiredReplicas = getDesiredReplicas(obj);
@@ -335,14 +334,13 @@ const ControlPlaneMachineSetList: React.FC<ControlPlaneMachineSetListProps> = ({
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ConsoleDataView<ControlPlaneMachineSetKind, undefined>
+      <ConsoleDataView<ControlPlaneMachineSetKind>
         {...props}
         label={ControlPlaneMachineSetModel.labelPlural}
         data={data}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

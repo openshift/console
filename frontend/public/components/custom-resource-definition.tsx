@@ -58,7 +58,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -284,10 +283,7 @@ const IsNamespaced: React.FCC<{ obj: CustomResourceDefinitionKind }> = ({ obj })
   return namespaced(obj) ? t('public~Yes') : t('public~No');
 };
 
-const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> = (
-  data,
-  columns,
-) => {
+const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const displayName = _.get(obj, 'spec.names.kind');
@@ -352,7 +348,6 @@ export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsL
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

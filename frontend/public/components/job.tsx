@@ -44,7 +44,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -76,7 +75,7 @@ const Completions: React.FCC<CompletionsCellProps> = ({ obj, completions }) => {
   );
 };
 
-const getDataViewRows: GetDataViewRows<JobKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const { type, completions } = getJobTypeAndCompletions(obj);
@@ -317,7 +316,6 @@ const JobsList: React.FCC<JobsListProps> = ({ data, loaded, ...props }) => {
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

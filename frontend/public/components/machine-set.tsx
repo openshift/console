@@ -9,7 +9,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import {
@@ -422,7 +421,6 @@ const MachineSetListContent: React.FCC<MachineSetListProps> = ({
         loaded={loaded}
         loadError={loadError}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

@@ -12,18 +12,12 @@ import { referenceForModel, referenceFor, K8sResourceKind } from '../module/k8s'
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import {
   ConsoleDataView,
-  initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { TableColumn } from '@console/internal/module/k8s';
-import {
-  ConsoleDataViewColumn,
-  ConsoleDataViewRow,
-  GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { DASH } from '@console/shared/src/constants/ui';
 
 const tableColumnInfo = [
@@ -35,10 +29,7 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
-  data: RowProps<K8sResourceKind, undefined>[],
-  columns: ConsoleDataViewColumn<K8sResourceKind>[],
-): ConsoleDataViewRow[] => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { metadata, spec } = obj;
     const resourceKind = referenceFor(obj);
@@ -167,7 +158,6 @@ export const PrometheusInstancesList: React.FC<{ data: K8sResourceKind[]; loaded
         loaded={loaded}
         label={PrometheusModel.labelPlural}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

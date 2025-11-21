@@ -545,6 +545,11 @@ const NodeList: React.FC<NodeListProps> = ({
     [],
   );
 
+  const initialFilters = React.useMemo<NodeFilters>(
+    () => ({ ...initialFiltersDefault, status: [], roles: [], architecture: [] }),
+    [],
+  );
+
   // Create stable filter nodes with stable option references to prevent filter resets
   const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
     () => [
@@ -622,9 +627,7 @@ const NodeList: React.FC<NodeListProps> = ({
         columns={columns}
         columnLayout={columnLayout}
         columnManagementID={columnManagementID}
-        initialFilters={
-          { ...initialFiltersDefault, status: [], roles: [], architecture: [] } as NodeFilters
-        }
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={(rowData, tableColumns) =>
@@ -645,11 +648,11 @@ const NodeList: React.FC<NodeListProps> = ({
 
 type NodeRowItem = NodeKind | NodeCertificateSigningRequestKind;
 
-interface NodeFilters extends ResourceFilters {
+type NodeFilters = ResourceFilters & {
   status: string[];
   roles: string[];
   architecture: string[];
-}
+};
 
 const useWatchCSRs = (): [CertificateSigningRequestKind[], boolean, unknown] => {
   const [isAllowed, checkIsLoading] = useAccessReview({

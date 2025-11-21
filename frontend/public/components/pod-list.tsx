@@ -448,10 +448,13 @@ export const PodList: FC<PodListProps> = ({
 }) => {
   const { t } = useTranslation();
   const columns = usePodsColumns(showNodes);
+
   const podMetrics = useSelector<RootState, UIActions.PodMetrics>(({ UI }) => {
     return UI.getIn(['metrics', 'pod']);
   });
+
   const columnManagementID = referenceForModel(PodModel);
+
   const columnLayout = useMemo<ColumnLayout>(
     () => ({
       id: columnManagementID,
@@ -469,6 +472,7 @@ export const PodList: FC<PodListProps> = ({
     }),
     [columns, columnManagementID, selectedColumns, showNamespaceOverride, t],
   );
+
   const podStatusFilterOptions = useMemo<DataViewFilterOption[]>(
     () => [
       {
@@ -505,6 +509,8 @@ export const PodList: FC<PodListProps> = ({
     [t],
   );
 
+  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+
   const additionalFilterNodes = useMemo<ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
@@ -517,6 +523,7 @@ export const PodList: FC<PodListProps> = ({
     ],
     [t, podStatusFilterOptions],
   );
+
   const matchesAdditionalFilters = useCallback(
     (resource: PodKind, filters: PodFilters) =>
       filters.status.length === 0 ||
@@ -540,7 +547,7 @@ export const PodList: FC<PodListProps> = ({
         columns={columns}
         columnLayout={columnLayout}
         columnManagementID={columnManagementID}
-        initialFilters={{ ...initialFiltersDefault, status: [] }}
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={(rowData, tableColumns) =>

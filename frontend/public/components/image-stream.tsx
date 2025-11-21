@@ -28,7 +28,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -347,7 +346,7 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
   return data.map(({ obj: imageStream }) => {
     const { name, namespace, labels, creationTimestamp } = imageStream.metadata;
 
@@ -443,7 +442,6 @@ export const ImageStreamsList: React.FCC<ImageStreamsListProps> = ({ data, loade
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

@@ -146,6 +146,7 @@ export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
 }) => {
   const { t } = useTranslation();
   const columns = useTemplateInstanceColumns();
+
   const templateInstanceStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(() => {
     return [
       {
@@ -162,6 +163,9 @@ export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
       },
     ];
   }, [t]);
+
+  const initialFilters = React.useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+
   const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
@@ -174,6 +178,7 @@ export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
     ],
     [t, templateInstanceStatusFilterOptions],
   );
+
   const matchesAdditionalFilters = React.useCallback(
     (resource: TemplateInstanceKind, filters: TemplateInstanceFilters) =>
       filters.status.length === 0 || filters.status.includes(getTemplateInstanceStatus(resource)),
@@ -188,7 +193,7 @@ export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={{ ...initialFiltersDefault, status: [] }}
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getTemplateInstanceDataViewRows}

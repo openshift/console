@@ -12,7 +12,6 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   getNameCellProps,
   cellIsStickyProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import {
@@ -140,7 +139,6 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = ({ data }) => {
         data={data}
         loaded={true}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getObjectMetadata={getObjectMetadata}
         getDataViewRows={getRelatedObjectsDataViewRows}
         customRowData={customRowData}
