@@ -76,6 +76,87 @@ func (m *Metrics) MonitorUsers(
 	}()
 }
 
+func sarWithRetry(client kubernetes.Interface, sar *authv1.SubjectAccessReview, maxRetries int) (*authv1.SubjectAccessReview, error) {
+	ctx := context.TODO()
+	var lastErr error
+
+	for i := 0; i < maxRetries; i++ {
+		res, err := client.AuthorizationV1().SubjectAccessReviews().Create(ctx, sar, metav1.CreateOptions{})
+		if err == nil {
+			return res, nil
+		}
+		lastErr = err
+
+		if i < maxRetries-1 {
+			backoffDuration := time.Duration(i+1) * 100 * time.Millisecond
+			klog.V(4).Infof("SAR retry %d/%d failed, retrying in %v: %v", i+1, maxRetries, backoffDuration, err)
+			time.Sleep(backoffDuration)
+		}
+	}
+	return nil, lastErr
+}
+
+func (m *Metrics) classifyUsers(client kubernetes.Interface, userNames []string) map[string]UserRole {
+	if len(userNames) == 0 {
+		return make(map[string]UserRole)
+	}
+
+	results := make(map[string]UserRole)
+	for _, userName := range userNames {
+		time.Sleep(delayBetweenConsoleUserPermissionChecks)
+		role := classifyUserRole(client, userName)
+		results[userName] = role
+	}
+
+	return results
+}
+
+func classifyUserRole(client kubernetes.Interface, userName string) UserRole {
+	if userName == "kube:admin" {
+		return KubeadminUserRole
+	}
+
+	adminChecks := []authv1.ResourceAttributes{
+		{Verb: "get", Resource: "nodes"},
+		{Verb: "list", Resource: "clusteroperators", Group: "config.openshift.io"},
+		{Verb: "create", Resource: "namespaces"},
+		{Verb: "get", Resource: "namespaces"},
+	}
+
+	adminScore := 0
+	totalChecks := 0
+
+	for _, resourceAttr := range adminChecks {
+		sar := &authv1.SubjectAccessReview{
+			Spec: authv1.SubjectAccessReviewSpec{
+				User:               userName,
+				ResourceAttributes: &resourceAttr,
+			},
+		}
+
+		res, err := sarWithRetry(client, sar, 3)
+		if err != nil {
+			klog.V(4).Infof("SAR check failed for %s on %s/%s after retries: %v", userName, resourceAttr.Resource, resourceAttr.Verb, err)
+			continue
+		}
+
+		totalChecks++
+		if res.Status.Allowed {
+			adminScore++
+		}
+	}
+
+	if totalChecks == 0 {
+		return DeveloperUserRole
+	}
+
+	if float64(adminScore)/float64(totalChecks) >= 0.5 {
+		return ClusterAdminUserRole
+	}
+
+	return DeveloperUserRole
+}
+
 func (m *Metrics) updateUsersMetric(internalProxiedK8SClient kubernetes.Interface) error {
 	klog.Info("usage.Metrics: Count console users...\n")
 	startTime := time.Now()
@@ -90,10 +171,8 @@ func (m *Metrics) updateUsersMetric(internalProxiedK8SClient kubernetes.Interfac
 
 	var kubeAdmin, clusterAdmins, developers, unknowns int
 
+	var validUserNames []string
 	for _, roleBinding := range roleBindingList.Items {
-		// Reduce load for clusters with hunders of console users (role bindings)
-		time.Sleep(delayBetweenConsoleUserPermissionChecks)
-
 		if !strings.HasPrefix(roleBinding.Name, "user-settings-") || !strings.HasSuffix(roleBinding.Name, "-rolebinding") {
 			if klog.V(4).Enabled() {
 				klog.Infof("usage.Metrics: Ignore role binding: %q (name doesn't match user-settings-*-rolebinding)\n", roleBinding.Name)
@@ -112,44 +191,31 @@ func (m *Metrics) updateUsersMetric(internalProxiedK8SClient kubernetes.Interfac
 			continue
 		}
 
-		if user.Name == "kube:admin" {
+		validUserNames = append(validUserNames, user.Name)
+	}
+
+	userRoles := m.classifyUsers(internalProxiedK8SClient, validUserNames)
+
+	for userName, role := range userRoles {
+		switch role {
+		case KubeadminUserRole:
 			if klog.V(4).Enabled() {
-				klog.Infof("usage.Metrics: Count %q as %q...\n", user.Name, KubeadminUserRole)
+				klog.Infof("usage.Metrics: Count %q as %q...\n", userName, KubeadminUserRole)
 			}
 			kubeAdmin++
-			continue
-		}
-
-		canGetNamespacesAccessReview := &authv1.SubjectAccessReview{
-			Spec: authv1.SubjectAccessReviewSpec{
-				User: user.Name,
-				ResourceAttributes: &authv1.ResourceAttributes{
-					Verb:     "get",
-					Resource: "namespaces",
-				},
-			},
-		}
-		res, err := internalProxiedK8SClient.AuthorizationV1().SubjectAccessReviews().Create(
-			ctx,
-			canGetNamespacesAccessReview,
-			metav1.CreateOptions{},
-		)
-		if err != nil {
-			klog.Errorf("usage.Metrics: Error when checking permissions for %q: %v\n", user.Name, err)
-			unknowns++
-			continue
-		}
-
-		if res.Status.Allowed {
+		case ClusterAdminUserRole:
 			if klog.V(4).Enabled() && clusterAdmins < 10 {
-				klog.Infof("usage.Metrics: Count %q as %q...\n", user.Name, ClusterAdminUserRole)
+				klog.Infof("usage.Metrics: Count %q as %q...\n", userName, ClusterAdminUserRole)
 			}
 			clusterAdmins++
-		} else {
+		case DeveloperUserRole:
 			if klog.V(4).Enabled() && developers < 10 {
-				klog.Infof("usage.Metrics: Count %q as %q...\n", user.Name, DeveloperUserRole)
+				klog.Infof("usage.Metrics: Count %q as %q...\n", userName, DeveloperUserRole)
 			}
 			developers++
+		default:
+			klog.Errorf("usage.Metrics: Unexpected role %q for user %q\n", role, userName)
+			unknowns++
 		}
 	}
 
