@@ -322,7 +322,6 @@ export const UnconnectedEnvironmentPage = (props) => {
       ? 'containers'
       : 'buildObject',
   );
-  const [stale, setStale] = React.useState(false);
   const [configMaps, setConfigMaps] = React.useState(null);
   const [secrets, setSecrets] = React.useState(null);
   const [allowed, setAllowed] = React.useState(!obj || _.isEmpty(obj) || !model);
@@ -412,7 +411,6 @@ export const UnconnectedEnvironmentPage = (props) => {
   const reload = React.useCallback(() => {
     setCurrentEnvVars(new CurrentEnvVars(rawEnvData));
     setLocalErrorMessage(null);
-    setStale(false);
     setSuccess(null);
   }, [rawEnvData]);
 
@@ -451,7 +449,6 @@ export const UnconnectedEnvironmentPage = (props) => {
       handlePromise(promise).then((res) => {
         setCurrentEnvVars(new CurrentEnvVars(res, currentEnvVars.isContainerArray, envPath));
         setLocalErrorMessage(null);
-        setStale(false);
         setSuccess(t('public~Successfully updated the environment variables.'));
       });
     },
@@ -483,7 +480,7 @@ export const UnconnectedEnvironmentPage = (props) => {
     />
   ) : null;
 
-  const owners = _.get(obj.metadata, 'ownerReferences', []).map((o, i) => (
+  const owners = _.get(obj, 'metadata.ownerReferences', []).map((o, i) => (
     <ResourceLink
       key={i}
       kind={referenceForOwnerRef(o)}
@@ -498,7 +495,13 @@ export const UnconnectedEnvironmentPage = (props) => {
       {isReadOnly && !_.isEmpty(owners) && (
         <Alert isInline variant="info" title={t('public~Environment variables set from parent')}>
           {t('public~View environment for resource')}{' '}
-          {owners.length > 1 ? <>t('public~owners:') {owners}</> : owners}
+          {owners.length > 1 ? (
+            <>
+              {t('public~owners:')} {owners}
+            </>
+          ) : (
+            owners
+          )}
         </Alert>
       )}
       {currentEnvVars.isContainerArray && (
@@ -575,16 +578,6 @@ export const UnconnectedEnvironmentPage = (props) => {
         <div className="pf-v6-c-form environment-buttons">
           {displayErrorMessage && (
             <Alert isInline className="co-alert" variant="danger" title={displayErrorMessage} />
-          )}
-          {stale && (
-            <Alert
-              isInline
-              className="co-alert"
-              variant="info"
-              title={t('public~The information on this page is no longer current.')}
-            >
-              {t('public~Click Reload to update and lose edits, or Save Changes to overwrite.')}
-            </Alert>
           )}
           {success && (
             <Alert
