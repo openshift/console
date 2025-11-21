@@ -268,7 +268,7 @@ const ConfigureNamespacePullSecret = (props) => {
                   aria-describedby="namespace-pull-secret-file-help"
                 />
                 <p
-                  className="help-block epf-v6-u-text-color-subtle"
+                  className="help-block pf-v6-u-text-color-subtle"
                   id="namespace-pull-secret-file-help"
                 >
                   {t(

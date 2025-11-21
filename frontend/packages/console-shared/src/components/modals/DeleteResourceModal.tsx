@@ -76,6 +76,7 @@ const DeleteResourceModal: React.FC<DeleteResourceModalProps> = (props) => {
 
   const handleSubmit = (values: FormikValues, actions) => {
     const { onSubmit, close, redirect } = props;
+    actions.setStatus({ submitError: null });
     return (
       onSubmit &&
       handlePromise(onSubmit(values))
