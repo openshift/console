@@ -81,35 +81,13 @@ func CreateCatalogItem(catalogName string, pkg *declcfg.Package, bundle *declcfg
 	withImage(item, bundle)
 	withInfrastructureFeatures(item, csvMetadata)
 	withKeywords(item, csvMetadata)
-	withMarkdownDescription(item, csvMetadata, pkg)
+	withMarkdownDescription(item, csvMetadata)
 	withProvider(item, csvMetadata)
 	withRepository(item, csvMetadata)
 	withSupport(item, csvMetadata)
 	withValidSubscription(item, csvMetadata)
 	withVersion(item, bundle)
 	return item
-}
-
-// Get plain text description from CSV metadata or package description
-func getPlainTextDescription(csvMetadata *property.CSVMetadata, pkg *declcfg.Package) string {
-	if csvMetadata == nil || csvMetadata.Description == "" {
-		return pkg.Description
-	}
-
-	return csvMetadata.Description
-}
-
-// Get description from CSV metadata annotations, wich can be formatted as markdown
-func getMarkdownDescription(csvMetadata *property.CSVMetadata) string {
-	if csvMetadata == nil {
-		return ""
-	}
-
-	if csvMetadata.Annotations == nil {
-		return ""
-	}
-
-	return csvMetadata.Annotations[DescriptionOLMAnnotationKey]
 }
 
 func getCSVMetadata(bundle *declcfg.Bundle) (*property.CSVMetadata, error) {
@@ -207,11 +185,18 @@ func withCreatedAt(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata) 
 
 // Plain text description takes precedence, fall back to markdown description if empty
 func withDescription(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata, pkg *declcfg.Package) {
+	item.Description = pkg.Description
+	if csvMetadata == nil {
+		return
+	}
 
-	item.Description = getPlainTextDescription(csvMetadata, pkg)
+	if csvMetadata.Annotations == nil {
+		return
+	}
 
+	item.Description = csvMetadata.Annotations[DescriptionOLMAnnotationKey]
 	if item.Description == "" {
-		item.Description = getMarkdownDescription(csvMetadata)
+		item.Description = pkg.Description
 	}
 }
 
@@ -257,13 +242,14 @@ func withKeywords(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata) {
 	}
 }
 
-// Markdown description takes precedence, fall back to plain text description if empty
-func withMarkdownDescription(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata, pkg *declcfg.Package) {
-	item.MarkdownDescription = getMarkdownDescription(csvMetadata)
-
-	if item.MarkdownDescription == "" {
-		item.MarkdownDescription = getPlainTextDescription(csvMetadata, pkg)
+// Markdown description from CSV metadata
+func withMarkdownDescription(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata) {
+	if csvMetadata == nil {
+		item.MarkdownDescription = ""
+		return
 	}
+
+	item.MarkdownDescription = csvMetadata.Description
 }
 
 func withProvider(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata) {
