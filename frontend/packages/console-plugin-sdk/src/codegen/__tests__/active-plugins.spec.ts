@@ -35,14 +35,14 @@ describe('getActivePluginsModule', () => {
       ...getTemplatePackage({
         name: 'foo',
       }),
-      consolePlugin: { entry: 'src/plugin.ts' },
+      consolePlugin: {},
     };
 
     const barPluginPackage: PluginPackage = {
       ...getTemplatePackage({
         name: 'bar-plugin',
       }),
-      consolePlugin: { entry: 'index.ts' },
+      consolePlugin: {},
     };
 
     const fooDynamicExtensions: Extension[] = [{ type: 'Dynamic/Foo', properties: { test: true } }];
@@ -80,18 +80,12 @@ describe('getActivePluginsModule', () => {
 
         activePlugins.push({
           name: 'foo',
-          extensions: [
-            ...require('foo/src/plugin.ts').default,
-            ...${JSON.stringify(fooDynamicExtensions)},
-          ],
+          extensions: ${JSON.stringify(fooDynamicExtensions)},
         });
 
         activePlugins.push({
           name: 'bar-plugin',
-          extensions: [
-            ...require('bar-plugin/index.ts').default,
-            ...${JSON.stringify(barDynamicExtensions)},
-          ],
+          extensions: ${JSON.stringify(barDynamicExtensions)},
         });
 
         export default activePlugins;
@@ -118,20 +112,15 @@ describe('loadActivePluginsForTestPurposes', () => {
       ...getTemplatePackage({
         name: 'foo',
       }),
-      consolePlugin: { entry: 'src/plugin.ts' },
+      consolePlugin: {},
     };
 
     const barPluginPackage: PluginPackage = {
       ...getTemplatePackage({
         name: 'bar-plugin',
       }),
-      consolePlugin: { entry: 'index.ts' },
+      consolePlugin: {},
     };
-
-    const fooStaticExtensions: Extension[] = [{ type: 'Static/Foo', properties: { test: true } }];
-    const barStaticExtensions: Extension[] = [
-      { type: 'Static/Bar', properties: { baz: 1, qux: () => true } },
-    ];
 
     const fooDynamicExtensions: Extension[] = [{ type: 'Dynamic/Foo', properties: { test: true } }];
     const barDynamicExtensions: Extension[] = [
@@ -151,9 +140,6 @@ describe('loadActivePluginsForTestPurposes', () => {
       }
     });
 
-    jest.doMock('foo/src/plugin.ts', () => ({ default: fooStaticExtensions }), { virtual: true });
-    jest.doMock('bar-plugin/index.ts', () => ({ default: barStaticExtensions }), { virtual: true });
-
     expect(
       loadActivePluginsForTestPurposes(
         [fooPluginPackage, barPluginPackage],
@@ -163,11 +149,11 @@ describe('loadActivePluginsForTestPurposes', () => {
     ).toEqual([
       {
         name: 'foo',
-        extensions: [...fooStaticExtensions, ...fooDynamicExtensions],
+        extensions: fooDynamicExtensions,
       },
       {
         name: 'bar-plugin',
-        extensions: [...barStaticExtensions, ...barDynamicExtensions],
+        extensions: barDynamicExtensions,
       },
     ]);
 
@@ -186,7 +172,7 @@ describe('getExecutableCodeRefSource', () => {
     exposedModules: { [moduleName: string]: string } = {},
   ): PluginPackage => ({
     ...getTemplatePackage({ name }),
-    consolePlugin: { entry: 'src/plugin.ts', exposedModules },
+    consolePlugin: { exposedModules },
   });
 
   it('transforms encoded code reference into CodeRef function source', () => {
@@ -270,7 +256,7 @@ describe('getDynamicExtensions', () => {
       ...getTemplatePackage({
         name: 'test-plugin',
       }),
-      consolePlugin: { entry: 'src/plugin.ts' },
+      consolePlugin: {},
     };
 
     const extensionsJSON: Extension[] = [
@@ -357,7 +343,7 @@ describe('getDynamicExtensions', () => {
       ...getTemplatePackage({
         name: 'test-plugin',
       }),
-      consolePlugin: { entry: 'src/plugin.ts' },
+      consolePlugin: {},
     };
 
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
@@ -383,7 +369,7 @@ describe('getDynamicExtensions', () => {
       ...getTemplatePackage({
         name: 'test-plugin',
       }),
-      consolePlugin: { entry: 'src/plugin.ts' },
+      consolePlugin: {},
     };
 
     const extensionsJSON: Extension[] = [];
@@ -419,7 +405,7 @@ describe('getDynamicExtensions', () => {
       ...getTemplatePackage({
         name: 'test-plugin',
       }),
-      consolePlugin: { entry: 'src/plugin.ts' },
+      consolePlugin: {},
     };
 
     const extensionsJSON: Extension[] = [

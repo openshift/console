@@ -9,7 +9,8 @@ import {
 } from '@patternfly/react-topology/dist/esm/types';
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { OverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentModel, PodModel, ServiceModel } from '@console/internal/models';
 import {
@@ -25,7 +26,7 @@ import {
   groupVersionFor,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { getOwnedResources, OverviewItem } from '@console/shared';
+import { getOwnedResources } from '@console/shared';
 import { NODE_WIDTH, NODE_HEIGHT, NODE_PADDING } from '@console/topology/src/const';
 import {
   getTopologyGroupItems,

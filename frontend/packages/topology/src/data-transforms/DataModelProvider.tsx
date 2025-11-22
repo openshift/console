@@ -1,8 +1,10 @@
-import * as React from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
-  isTopologyDataModelFactory as isDynamicTopologyDataModelFactory,
-  TopologyDataModelFactory as DynamicTopologyDataModelFactory,
+  isTopologyDataModelFactory,
+  ResolvedExtension,
+  TopologyDataModelFactory,
   useResolvedExtensions,
+  WatchK8sResourcesGeneric,
 } from '@console/dynamic-plugin-sdk';
 import DataModelExtension from './DataModelExtension';
 import { ModelContext, ExtensibleModel } from './ModelContext';
@@ -13,43 +15,45 @@ interface DataModelProviderProps {
   children?: React.ReactNode;
 }
 
-const DataModelProvider: React.FC<DataModelProviderProps> = ({ namespace, children }) => {
-  const [model, setModel] = React.useState<ExtensibleModel>(new ExtensibleModel(namespace));
+const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) => {
+  const [model, setModel] = useState<ExtensibleModel>(new ExtensibleModel(namespace));
 
-  React.useEffect(() => {
+  useEffect(() => {
     setModel(new ExtensibleModel(namespace));
   }, [namespace]);
 
   // Use useResolvedExtensions to automatically resolve all CodeRefs in the extensions
-  const [dynamicModelFactories, dynamicResolved] = useResolvedExtensions<
-    DynamicTopologyDataModelFactory
-  >(isDynamicTopologyDataModelFactory);
+  const [modelFactories, factoriesResolved] = useResolvedExtensions<TopologyDataModelFactory>(
+    isTopologyDataModelFactory,
+  );
 
   // State to track resolved factories (with async resources resolved)
-  const [resolvedFactories, setResolvedFactories] = React.useState<
+  const [resolvedFactories, setResolvedFactories] = useState<
     | {
-        properties: any;
+        properties: ResolvedExtension<TopologyDataModelFactory>['properties'] & {
+          resources?: WatchK8sResourcesGeneric;
+        };
         pluginID: string;
       }[]
     | null
   >(null);
 
   // Resolve any async resources from factories
-  React.useEffect(() => {
-    if (!dynamicResolved || !dynamicModelFactories) {
+  useEffect(() => {
+    if (!modelFactories || !factoriesResolved) {
       setResolvedFactories(null);
       return;
     }
 
     const resolveFactories = async () => {
       const resolved = await Promise.all(
-        dynamicModelFactories.map(async (factory) => {
+        modelFactories.map(async (factory) => {
           const { resources, ...rest } = factory.properties;
 
           // Check if resources is a function (CodeRef that returns Promise)
           if (typeof resources === 'function') {
             try {
-              const resolvedResources = await resources();
+              const resolvedResources: WatchK8sResourcesGeneric = await resources();
               return {
                 properties: { ...rest, resources: resolvedResources },
                 pluginID: factory.pluginID,
@@ -76,7 +80,7 @@ const DataModelProvider: React.FC<DataModelProviderProps> = ({ namespace, childr
     };
 
     resolveFactories();
-  }, [dynamicModelFactories, dynamicResolved]);
+  }, [modelFactories, factoriesResolved]);
 
   return (
     <ModelContext.Provider value={model}>
