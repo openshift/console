@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import * as webpack from 'webpack';
 import { ConsolePluginBuildMetadata } from '../build-types';
 import { isEncodedCodeRef, parseEncodedCodeRefValue } from '../coderefs/coderef-resolver';
-import { Extension, EncodedCodeRef } from '../types';
+import { ExtensionDeclaration, EncodedCodeRef } from '../types';
 import { deepForOwn } from '../utils/object';
 import { BaseValidator } from './BaseValidator';
 
@@ -59,7 +59,7 @@ export const guessModuleFilePath = (
   return basePath;
 };
 
-export const collectCodeRefData = (extensions: Extension[]) =>
+export const collectCodeRefData = (extensions: ExtensionDeclaration[]) =>
   extensions.reduce((acc, e, index) => {
     const data: ExtensionCodeRefData = { index, propToCodeRefValue: {} };
 
@@ -106,7 +106,7 @@ export const findWebpackModules = (
 export class ExtensionValidator extends BaseValidator {
   validate(
     compilation: webpack.Compilation,
-    extensions: Extension[],
+    extensions: ExtensionDeclaration[],
     exposedModules: ConsolePluginBuildMetadata['exposedModules'],
     pluginBasePath?: string,
   ) {

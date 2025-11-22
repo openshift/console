@@ -15,11 +15,19 @@ table in [Console dynamic plugins README](./README.md).
 - Deprecated `setPluginStore` function in `k8s-utils.ts`. The function is now a noop and the export
   will be removed in a future release. ([CONSOLE-4840], [#15671])
 - Fix `popupComponent` prop type in extension `console.dashboards/overview/health/resource` ([CONSOLE-4796], [#15526])
-- Begin alignment of plugin SDK types with `@openshift/dynamic-plugin-sdk` ([CONSOLE-3769], [#15509])
+- Increase alignment with `@openshift/dynamic-plugin-sdk` types ([CONSOLE-3769], [#15509], [#15738])
+  - `Extension` type is now based on `@openshift/dynamic-plugin-sdk`'s `Extension` type, which is similar to
+    our `ExtensionDeclaration` in terms of structure and type parameters.
+  - `AlwaysOnExtension` and `ModelDefinition` types are removed from `api/common-types` because they referred
+    to a legacy system which the console dynamic plugins never supported.
+  - The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
+    locally: `ExtensionFlags`, `ExtensionTypeGuard`, `ResolvedCodeRefProperties`, `RemoteEntryModule`, `Update`.
 - Add optional `fetch` property to extension `console.dashboards/overview/health/url` ([CONSOLE-4796], [#15526])
 - Add optional `infrastructure` parameter to `PrometheusHealthHandler` type ([CONSOLE-4796], [#15526])
 - Allow `K8sResourceKind` in `TopologyDataObject`, `TopologyResourcesObject`, and `OverviewItem` types ([CONSOLE-4840], [#15699])
 - Allow async functions for the `resources` property of `console.topology/data/factory` extension ([CONSOLE-4806], [#15641])
+- Add color theme and font size customization to `ResourceYAMLEditor` component ([CONSOLE-4701], [#15735])
+- Ensure proper pass-through of `props.editorProps.theme` and `props.options.fontFamily` to `CodeEditor` component ([CONSOLE-4701], [#15735])
 
 ## 4.20.0-prerelease.1 - 2025-08-15
 
@@ -136,6 +144,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4499]: https://issues.redhat.com/browse/CONSOLE-4499
 [CONSOLE-4654]: https://issues.redhat.com/browse/CONSOLE-4654
 [CONSOLE-4656]: https://issues.redhat.com/browse/CONSOLE-4656
+[CONSOLE-4701]: https://issues.redhat.com/browse/CONSOLE-4701
 [CONSOLE-4796]: https://issues.redhat.com/browse/CONSOLE-4796
 [CONSOLE-4806]: https://issues.redhat.com/browse/CONSOLE-4806
 [CONSOLE-4840]: https://issues.redhat.com/browse/CONSOLE-4840
@@ -200,3 +209,5 @@ table in [Console dynamic plugins README](./README.md).
 [#15641]: https://github.com/openshift/console/pull/15641
 [#15671]: https://github.com/openshift/console/pull/15671
 [#15699]: https://github.com/openshift/console/pull/15699
+[#15735]: https://github.com/openshift/console/pull/15735
+[#15738]: https://github.com/openshift/console/pull/15738
