@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FC, useContext } from 'react';
 import { loader } from '@monaco-editor/react';
 import { CodeEditor } from '@patternfly/react-code-editor';
 import { css } from '@patternfly/react-styles';
@@ -20,9 +20,9 @@ loader.config({ monaco });
  * Note that it is important that this is the only component that imports
  * monaco-editor, to avoid fetching files from a 3rd-party CDN.
  */
-export const BasicCodeEditor: React.FC<BasicCodeEditorProps> = (props) => {
+export const BasicCodeEditor: FC<BasicCodeEditorProps> = (props) => {
   const { t } = useTranslation('console-shared');
-  const theme = React.useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
 
   return (
     <ErrorBoundaryInline>
@@ -42,8 +42,8 @@ export const BasicCodeEditor: React.FC<BasicCodeEditorProps> = (props) => {
         {...props}
         className={css('co-code-editor', props.className)}
         editorProps={{
-          ...props?.editorProps,
           theme: `console-${theme}`,
+          ...props?.editorProps,
           beforeMount: (monacoInstance) => {
             defineThemes(monacoInstance?.editor);
             window.monaco = monacoInstance; // for e2e tests
@@ -51,8 +51,8 @@ export const BasicCodeEditor: React.FC<BasicCodeEditorProps> = (props) => {
           },
         }}
         options={{
-          ...props?.options,
           fontFamily: 'var(--pf-t--global--font--family--mono)',
+          ...props?.options,
         }}
       />
     </ErrorBoundaryInline>

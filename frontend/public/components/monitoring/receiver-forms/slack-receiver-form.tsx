@@ -253,7 +253,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           <FormHelperText>
             <HelperText>
               <HelperTextItem id="slack-title-help">
-                {t('public~The title of the Slack message.')}
+                {t('public~Slack message title')}
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
@@ -270,9 +270,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           />
           <FormHelperText>
             <HelperText>
-              <HelperTextItem id="slack-text-help">
-                {t('public~The text of the Slack message.')}
-              </HelperTextItem>
+              <HelperTextItem id="slack-text-help">{t('public~Slack message text')}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>
