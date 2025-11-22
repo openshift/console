@@ -157,11 +157,14 @@ const RecentEventFooter = withDashboardResources(
     }
 
     return (
-      <CardFooter>
-        <Link to={viewEvents} data-test="events-view-all-link">
-          {t('console-shared~View all events')}
-        </Link>
-      </CardFooter>
+      <>
+        <Divider />
+        <CardFooter>
+          <Link to={viewEvents} data-test="events-view-all-link">
+            {t('console-shared~View all events')}
+          </Link>
+        </CardFooter>
+      </>
     );
   },
 );
@@ -173,7 +176,6 @@ export const ActivityCard: React.FC = () => {
   const { t } = useTranslation();
   return (
     <>
-      <Divider />
       <Card data-test-id="activity-card">
         <CardHeader>
           <CardTitle>{t('public~Activity')}</CardTitle>
