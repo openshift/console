@@ -1,8 +1,11 @@
 import { useRef, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
-import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
+import type {
+  Extension,
+  ExtensionTypeGuard,
+  LoadedExtension,
+} from '@console/dynamic-plugin-sdk/src/types';
 import { useForceRender } from '@console/shared/src/hooks/useForceRender';
-import type { ExtensionTypeGuard, LoadedExtension } from '../typings';
 import { useTranslatedExtensions } from '../utils/useTranslatedExtensions';
 import { subscribeToExtensions } from './pluginSubscriptionService';
 

@@ -1,13 +1,6 @@
 import type { ComponentType } from 'react';
 import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
 
-export type {
-  ExtensionFlags,
-  Extension,
-  ExtensionTypeGuard,
-  LoadedExtension,
-} from '@console/dynamic-plugin-sdk/src/types';
-
 /**
  * Common interface for loading async React components.
  */

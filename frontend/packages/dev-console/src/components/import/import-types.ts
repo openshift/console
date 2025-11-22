@@ -6,7 +6,7 @@ import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { PipelineData } from '@console/pipelines-plugin/src/components/import/import-types';
 import { RepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/types';
-import { LazyLoader } from '@console/plugin-sdk';
+import type { LazyLoader } from '@console/plugin-sdk/src/typings/base';
 import { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
 import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';

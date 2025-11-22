@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
-import { LazyLoader } from '@console/plugin-sdk';
+import { LazyLoader } from '@console/plugin-sdk/src/typings/base';
 import {
   ResolvedExtension,
   DashboardsOverviewHealthOperator,
