@@ -1,10 +1,4 @@
-import type { ComponentType } from 'react';
 import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
-
-/**
- * Common interface for loading async React components.
- */
-export type LazyLoader<T extends {} = {}> = () => Promise<ComponentType<Partial<T>>>;
 
 /**
  * From Console application perspective, a plugin is a list of extensions
