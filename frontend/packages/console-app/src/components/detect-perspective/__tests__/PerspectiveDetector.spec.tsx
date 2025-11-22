@@ -1,7 +1,7 @@
 import { render, waitFor } from '@testing-library/react';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { Perspective } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/plugin-sdk';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { usePerspectives } from '@console/shared/src';
 import {
   Perspective as PerspectiveType,
