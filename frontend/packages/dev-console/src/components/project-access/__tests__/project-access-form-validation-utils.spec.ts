@@ -5,7 +5,7 @@ import { mockProjectAccessData } from './project-access-form-data';
 describe('ValidationUtils', () => {
   it('should throw an error if Name field is empty', async () => {
     const mockData = cloneDeep(mockProjectAccessData);
-    mockData.projectAccess[0].user = '';
+    mockData.projectAccess[0].subject.name = '';
 
     await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
     await validationSchema.validate(mockData).catch((err) => {

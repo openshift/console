@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { ValidationError } from 'yup';
 import { initialPipelineFormData } from '../const';
 import {
   getFormData,
@@ -103,7 +104,7 @@ describe('getValidatedFormAndYaml', () => {
     const invalidYaml = updateYAML('spec.tasks', [
       { notName: 'test', taskRef: { name: 'external-task' } },
     ]);
-    const error = { inner: [{ path: 'spec.tasks[0].name' }] };
+    const error = { inner: [{ path: 'spec.tasks[0].name' }] } as ValidationError;
     const finalFormData = getFormData(formDataBasicPassState, updateYAML('spec.tasks', []));
     const [sanitizedFormData] = await getValidatedFormAndYaml(
       formDataBasicPassState,
@@ -119,7 +120,7 @@ describe('getValidatedFormAndYaml', () => {
       { name: 'task2', taskRef: { name: 'external-task2' }, runAfter: ['task2'] },
     ];
     const invalidYaml = updateYAML('spec.tasks', tasks);
-    const error = { inner: [{ path: 'spec.tasks[1].runAfter[0]' }] };
+    const error = { inner: [{ path: 'spec.tasks[1].runAfter[0]' }] } as ValidationError;
     const finalFormData = getFormData(formDataBasicPassState, updateYAML('spec.tasks', tasks));
     const [sanitizedFormData] = await getValidatedFormAndYaml(
       formDataBasicPassState,
@@ -137,7 +138,7 @@ describe('handleSanitizeToFormError', () => {
       { name: 'task2', taskRef: { name: 'external-task2' }, runAfter: ['task2'] },
     ];
     const invalidYaml = updateYAML('spec.tasks', tasks);
-    const error = { inner: [{ path: 'spec.tasks[1].runAfter[0]' }] };
+    const error = { inner: [{ path: 'spec.tasks[1].runAfter[0]' }] } as ValidationError;
     const finalFormData = getFormData(formDataBasicPassState, updateYAML('spec.tasks', tasks));
     const sanitizedFormData = await handleSanitizeToFormError(
       formDataBasicPassState,
@@ -160,7 +161,7 @@ describe('handleSanitizeToFormError', () => {
     ];
 
     const invalidYaml = updateYAML('spec.tasks', tasks);
-    const error = { inner: [{ path: 'spec.tasks[1].name' }] };
+    const error = { inner: [{ path: 'spec.tasks[1].name' }] } as ValidationError;
     const finalFormData = getFormData(
       formDataBasicPassState,
       updateYAML('spec.tasks', sanitizedTasks),
