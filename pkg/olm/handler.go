@@ -109,7 +109,7 @@ func (o *OLMHandler) checkPackageManifestHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	client, _, err := o.getClientWithScheme(nil)
+	client, _, err := o.getClientWithScheme(r)
 	if err != nil {
 		klog.Error(err)
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprint(err)})
