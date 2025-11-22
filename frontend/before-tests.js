@@ -1,7 +1,7 @@
 /* eslint-env node */
 
 import { configure } from 'enzyme';
-import * as Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import Adapter from '@cfaester/enzyme-adapter-react-18';
 import { URLSearchParams } from 'url';
 import fetch, { Headers } from 'node-fetch';
 
@@ -53,7 +53,8 @@ if (!window.fetch) {
   });
 }
 
-// http://airbnb.io/enzyme/docs/installation/index.html#working-with-react-16
+// TODO: Migrate all enzyme tests to React Testing Library due to abandonment of Enzyme
+// https://github.com/cfaester/enzyme-adapter-react-18
 configure({ adapter: new Adapter() });
 
 /**
