@@ -20,10 +20,7 @@ import { LoadingBox } from './utils/status-box';
 import { VolumesTable } from './volumes-table';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
-import {
-  initialFiltersDefault,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { StatefulSetModel } from '../models';
 import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 
@@ -86,7 +83,6 @@ const StatefulSetsList: React.FCC<StatefulSetsListProps> = ({ data, loaded, ...p
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={(dvData, dvColumns) =>
           getWorkloadDataViewRows(dvData, dvColumns, StatefulSetModel)
         }

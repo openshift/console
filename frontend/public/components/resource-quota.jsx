@@ -50,7 +50,6 @@ import {
 } from '@patternfly/react-core';
 import {
   ConsoleDataView,
-  initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
@@ -651,7 +650,6 @@ export const ResourceQuotasList = (props) => {
         loaded={loaded}
         label={ResourceQuotaModel.labelPlural}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={(dvData, dvColumns) =>
           getResourceQuotaDataViewRows(dvData, dvColumns, namespace)
         }
@@ -731,7 +729,6 @@ export const AppliedClusterResourceQuotasList = (props) => {
         loaded={loaded}
         label={AppliedClusterResourceQuotaModel.labelPlural}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={(dvData, dvColumns) =>
           getAppliedClusterResourceQuotaDataViewRows(dvData, dvColumns, namespace)
         }

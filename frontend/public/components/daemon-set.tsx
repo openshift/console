@@ -6,10 +6,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PodRing from '@console/shared/src/components/pod/PodRing';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import {
-  initialFiltersDefault,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useTranslation } from 'react-i18next';
@@ -32,7 +29,7 @@ import { VolumesTable } from './volumes-table';
 
 const kind = referenceForModel(DaemonSetModel);
 
-const getDataViewRows: GetDataViewRows<DaemonSetKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<DaemonSetKind> = (data, columns) => {
   return getWorkloadDataViewRows(data, columns, DaemonSetModel);
 };
 
@@ -126,7 +123,6 @@ export const DaemonSetsList: React.FCC<DaemonSetsListProps> = ({ data, loaded, .
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
