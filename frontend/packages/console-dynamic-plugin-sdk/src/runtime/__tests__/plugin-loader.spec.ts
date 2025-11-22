@@ -1,7 +1,7 @@
 import { PluginStore } from '@console/plugin-sdk/src/store';
 import * as utilsModule from '@console/shared/src/utils/utils';
 import { StandardConsolePluginManifest, LegacyConsolePluginManifest } from '../../build-types';
-import { Extension } from '../../types';
+import { ExtensionDeclaration } from '../../types';
 import {
   getPluginManifest,
   getExecutableCodeRefMock,
@@ -181,7 +181,7 @@ describe('window.loadPluginEntry', () => {
     const pluginStore = new PluginStore();
     const addDynamicPlugin = jest.spyOn(pluginStore, 'addDynamicPlugin');
 
-    const extensions: Extension[] = [
+    const extensions: ExtensionDeclaration[] = [
       {
         type: 'Foo',
         properties: { test: true },
@@ -192,7 +192,7 @@ describe('window.loadPluginEntry', () => {
       },
     ];
 
-    const resolvedExtensions: Extension[] = [
+    const resolvedExtensions: ExtensionDeclaration[] = [
       {
         type: 'Foo',
         properties: { test: true },

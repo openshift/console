@@ -1,5 +1,5 @@
 import { ExtensionK8sModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration } from '../types';
+import { ExtensionDeclaration } from '../types';
 
 type NavItemProperties = {
   /** A unique identifier for this item. */
@@ -90,29 +90,29 @@ export type NavExtension =
 
 // Type guards
 
-export const isHrefNavItem = (e: Extension): e is HrefNavItem =>
+export const isHrefNavItem = (e: ExtensionDeclaration): e is HrefNavItem =>
   e.type === 'console.navigation/href';
 
-export const isResourceNSNavItem = (e: Extension): e is ResourceNSNavItem =>
+export const isResourceNSNavItem = (e: ExtensionDeclaration): e is ResourceNSNavItem =>
   e.type === 'console.navigation/resource-ns';
 
-export const isResourceClusterNavItem = (e: Extension): e is ResourceClusterNavItem =>
+export const isResourceClusterNavItem = (e: ExtensionDeclaration): e is ResourceClusterNavItem =>
   e.type === 'console.navigation/resource-cluster';
 
-export const isResourceNavItem = (e: Extension): e is ResourceNavItem =>
+export const isResourceNavItem = (e: ExtensionDeclaration): e is ResourceNavItem =>
   isResourceNSNavItem(e) || isResourceClusterNavItem(e);
 
-export const isSeparator = (e: Extension): e is Separator =>
+export const isSeparator = (e: ExtensionDeclaration): e is Separator =>
   e.type === 'console.navigation/separator';
 
-export const isNavSection = (e: Extension): e is NavSection =>
+export const isNavSection = (e: ExtensionDeclaration): e is NavSection =>
   e.type === 'console.navigation/section';
 
-export const isNavItem = (e: Extension): e is NavItem =>
+export const isNavItem = (e: ExtensionDeclaration): e is NavItem =>
   isHrefNavItem(e) || isResourceNSNavItem(e) || isResourceClusterNavItem(e);
 
-export const isNavItemOrSeparator = (e: Extension): e is NavItem | Separator =>
+export const isNavItemOrSeparator = (e: ExtensionDeclaration): e is NavItem | Separator =>
   isNavItem(e) || isSeparator(e);
 
-export const isNavExtension = (e: Extension): e is NavExtension =>
+export const isNavExtension = (e: ExtensionDeclaration): e is NavExtension =>
   isNavItem(e) || isSeparator(e) || isNavSection(e);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
 /** This extension allows plugins to contribute an add action item to the add page of developer perspective.
@@ -48,10 +48,10 @@ export type AddActionGroup = ExtensionDeclaration<
 
 // Type guards
 
-export const isAddAction = (e: Extension): e is AddAction => {
+export const isAddAction = (e: ExtensionDeclaration): e is AddAction => {
   return e.type === 'dev-console.add/action';
 };
 
-export const isAddActionGroup = (e: Extension): e is AddActionGroup => {
+export const isAddActionGroup = (e: ExtensionDeclaration): e is AddActionGroup => {
   return e.type === 'dev-console.add/action-group';
 };

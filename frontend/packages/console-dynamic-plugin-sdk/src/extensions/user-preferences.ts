@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { JSONSchema7Type } from 'json-schema';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 
 export enum UserPreferenceFieldType {
   dropdown = 'dropdown',
@@ -82,10 +82,10 @@ export type UserPreferenceItem = ExtensionDeclaration<
 
 // Type guards
 
-export const isUserPreferenceGroup = (e: Extension): e is UserPreferenceGroup => {
+export const isUserPreferenceGroup = (e: ExtensionDeclaration): e is UserPreferenceGroup => {
   return e.type === 'console.user-preference/group';
 };
 
-export const isUserPreferenceItem = (e: Extension): e is UserPreferenceItem => {
+export const isUserPreferenceItem = (e: ExtensionDeclaration): e is UserPreferenceItem => {
   return e.type === 'console.user-preference/item';
 };

@@ -1,5 +1,5 @@
 import { Rule, PrometheusRulesResponse } from '../api/common-types';
-import { CodeRef, Extension, ExtensionDeclaration } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 
 type AlertingRulesFetch = (namespace?: string) => Promise<PrometheusRulesResponse>;
 
@@ -31,8 +31,8 @@ export type AlertingRuleChartExtension = ExtensionDeclaration<
 
 // Type guards
 
-export const isAlertingRulesSource = (e: Extension): e is AlertingRulesSourceExtension =>
+export const isAlertingRulesSource = (e: ExtensionDeclaration): e is AlertingRulesSourceExtension =>
   e.type === 'console.alerts/rules-source';
 
-export const isAlertingRuleChart = (e: Extension): e is AlertingRuleChartExtension =>
+export const isAlertingRuleChart = (e: ExtensionDeclaration): e is AlertingRuleChartExtension =>
   e.type === 'console.alerts/rules-chart';
