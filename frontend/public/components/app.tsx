@@ -74,6 +74,7 @@ import { AdmissionWebhookWarningNotifications } from '@console/app/src/component
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
+import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
 
 initI18n();
 
@@ -155,6 +156,10 @@ const App: React.FC<{
   }, [location, params, prevLocation, prevParams]);
 
   const dispatch = useDispatch();
+
+  // Handle feature refresh after impersonation changes
+  useImpersonateRefreshFeatures();
+
   const [, , errorMessage] = usePackageManifestCheck(
     'lightspeed-operator',
     'openshift-marketplace',

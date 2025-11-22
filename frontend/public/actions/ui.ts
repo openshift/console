@@ -188,7 +188,21 @@ export const setActiveNamespace = (namespace: string = '') => {
   return action(ActionType.SetActiveNamespace, { namespace });
 };
 
-export const startImpersonate = (kind: string, name: string) => async (dispatch, getState) => {
+/**
+ * Encodes a string for use in Kubernetes impersonation subprotocols.
+ * Subprotocols are comma-separated, so commas aren't allowed. Also "="
+ * and "/" aren't allowed, so we base64 encode and replace illegal chars.
+ */
+const encodeImpersonationValue = (value: string, textEncoder: TextEncoder): string => {
+  return Base64.encode(String.fromCharCode.apply(String, textEncoder.encode(value)))
+    .replace(/=/g, '_')
+    .replace(/\//g, '-');
+};
+
+export const startImpersonate = (kind: string, name: string, groups?: string[]) => async (
+  dispatch,
+  getState,
+) => {
   const textEncoder = new TextEncoder();
 
   const imp = getImpersonate(getState());
@@ -198,25 +212,38 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
     return;
   }
 
-  /**
-   * Subprotocols are comma-separated, so commas aren't allowed. Also "="
-   * and "/" aren't allowed, so base64 but replace illegal chars.
-   */
-  const encodedName = Base64.encode(String.fromCharCode.apply(String, textEncoder.encode(name)))
-    .replace(/=/g, '_')
-    .replace(/\//g, '-');
+  const encodedName = encodeImpersonationValue(name, textEncoder);
 
   let subprotocols;
   if (kind === 'User') {
     subprotocols = [`Impersonate-User.${encodedName}`];
-  }
-  if (kind === 'Group') {
+  } else if (kind === 'Group') {
     subprotocols = [`Impersonate-Group.${encodedName}`];
+  } else if (kind === 'UserWithGroups' && groups && groups.length > 0) {
+    // User with multiple groups impersonation
+    // Encode user subprotocol
+    subprotocols = [`Impersonate-User.${encodedName}`];
+    // Encode each group as a separate subprotocol
+    groups.forEach((group) => {
+      const encodedGroup = encodeImpersonationValue(group, textEncoder);
+      subprotocols.push(`Impersonate-Group.${encodedGroup}`);
+    });
   }
 
-  dispatch(beginImpersonate(kind, name, subprotocols));
+  dispatch(beginImpersonate(kind, name, subprotocols, groups));
+
+  // Close WebSocket to trigger reconnection with new impersonation headers
+  // Wait for the close to complete before proceeding
   subsClient.close(false, true);
-  dispatch(clearSSARFlags());
+
+  // Don't clear/refresh flags here - the App component's useLayoutEffect will handle it
+  // This ensures flags refresh happens in sync with React's render cycle
+};
+
+// Action to refresh features after impersonation change
+// Don't clear flags - just re-detect them. Old values remain until new ones are fetched.
+// This prevents components from seeing PENDING state and showing loading spinners.
+export const refreshFeaturesAfterImpersonation = () => (dispatch) => {
   dispatch(detectFeatures());
 };
 export const stopImpersonate = () => (dispatch) => {
