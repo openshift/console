@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { OverviewDetailItemProps } from '@openshift-console/plugin-shared/src';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 import { Humanize, TopConsumerPopoverProps, QueryWithDescription } from './console-types';
 
 /** Adds a new inventory item into cluster overview page. */
-export type ClusterOverviewInventoryItem = ExtensionDeclaration<
+export type ClusterOverviewInventoryItem = Extension<
   'console.cluster-overview/inventory-item',
   {
     /** The component to be rendered. */
@@ -16,7 +16,7 @@ export type GetQuery = (nodeType: string[]) => string;
 export type GetMultilineQueries = (nodeType: string[]) => QueryWithDescription[];
 
 /** Adds a new cluster overview utilization item. */
-export type ClusterOverviewUtilizationItem = ExtensionDeclaration<
+export type ClusterOverviewUtilizationItem = Extension<
   'console.cluster-overview/utilization-item',
   {
     /** The title of the utilization item. */
@@ -37,7 +37,7 @@ export type ClusterOverviewUtilizationItem = ExtensionDeclaration<
 >;
 
 /** Adds a new cluster overview multiline utilization item. */
-export type ClusterOverviewMultilineUtilizationItem = ExtensionDeclaration<
+export type ClusterOverviewMultilineUtilizationItem = Extension<
   'console.cluster-overview/multiline-utilization-item',
   {
     /** The title of the utilization item. */
@@ -54,7 +54,7 @@ export type ClusterOverviewMultilineUtilizationItem = ExtensionDeclaration<
 /**
  * @deprecated use CustomOverviewDetailItem type instead
  */
-export type OverviewDetailItem = ExtensionDeclaration<
+export type OverviewDetailItem = Extension<
   'console.dashboards/overview/detail/item',
   {
     /** The value, based on the DetailItem component */
@@ -63,7 +63,7 @@ export type OverviewDetailItem = ExtensionDeclaration<
 >;
 
 /** Adds an item to the Details card of Overview Dashboard */
-export type CustomOverviewDetailItem = ExtensionDeclaration<
+export type CustomOverviewDetailItem = Extension<
   'console.dashboards/custom/overview/detail/item',
   Omit<OverviewDetailItemProps, 'children' | 'isLoading' | 'error'> & {
     /** The value, rendered by the OverviewDetailItem component */
@@ -77,22 +77,20 @@ export type CustomOverviewDetailItem = ExtensionDeclaration<
 
 // Type guards
 
-export const isClusterOverviewInventoryItem = (
-  e: ExtensionDeclaration,
-): e is ClusterOverviewInventoryItem => e.type === 'console.cluster-overview/inventory-item';
+export const isClusterOverviewInventoryItem = (e: Extension): e is ClusterOverviewInventoryItem =>
+  e.type === 'console.cluster-overview/inventory-item';
 
 export const isClusterOverviewUtilizationItem = (
-  e: ExtensionDeclaration,
+  e: Extension,
 ): e is ClusterOverviewUtilizationItem => e.type === 'console.cluster-overview/utilization-item';
 
 export const isClusterOverviewMultilineUtilizationItem = (
-  e: ExtensionDeclaration,
+  e: Extension,
 ): e is ClusterOverviewMultilineUtilizationItem =>
   e.type === 'console.cluster-overview/multiline-utilization-item';
 
-export const isOverviewDetailItem = (e: ExtensionDeclaration): e is OverviewDetailItem =>
+export const isOverviewDetailItem = (e: Extension): e is OverviewDetailItem =>
   e.type === 'console.dashboards/overview/detail/item';
 
-export const isCustomOverviewDetailItem = (
-  e: ExtensionDeclaration,
-): e is CustomOverviewDetailItem => e.type === 'console.dashboards/custom/overview/detail/item';
+export const isCustomOverviewDetailItem = (e: Extension): e is CustomOverviewDetailItem =>
+  e.type === 'console.dashboards/custom/overview/detail/item';

@@ -1,8 +1,8 @@
 import { Provider } from 'react';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 
 /** Adds new React context provider to Console application root. */
-export type ContextProvider<T = any> = ExtensionDeclaration<
+export type ContextProvider<T = any> = Extension<
   'console.context-provider',
   {
     /** Context Provider component. */
@@ -14,5 +14,5 @@ export type ContextProvider<T = any> = ExtensionDeclaration<
 
 // Type guards
 
-export const isContextProvider = (e: ExtensionDeclaration): e is ContextProvider =>
+export const isContextProvider = (e: Extension): e is ContextProvider =>
   e.type === 'console.context-provider';

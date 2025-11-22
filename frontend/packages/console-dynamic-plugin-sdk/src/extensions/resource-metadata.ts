@@ -1,5 +1,5 @@
 import { ExtensionK8sGroupModel } from '../api/common-types';
-import { ExtensionDeclaration } from '../types';
+import { Extension } from '../types';
 
 export enum ModelBadge {
   DEV = 'dev',
@@ -7,7 +7,7 @@ export enum ModelBadge {
 }
 
 /** Customize the display of models by overriding values retrieved and generated through API discovery. */
-export type ModelMetadata = ExtensionDeclaration<
+export type ModelMetadata = Extension<
   'console.model-metadata',
   {
     /** The model to customize. May specify only a group, or optional version and kind. */
@@ -27,5 +27,5 @@ export type ModelMetadata = ExtensionDeclaration<
 
 // Type guards
 
-export const isModelMetadata = (e: ExtensionDeclaration): e is ModelMetadata =>
+export const isModelMetadata = (e: Extension): e is ModelMetadata =>
   e.type === 'console.model-metadata';

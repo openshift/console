@@ -18,6 +18,7 @@ table in [Console dynamic plugins README](./README.md).
 - Increase alignment with `@openshift/dynamic-plugin-sdk` types ([CONSOLE-3769], [#15509], [#15738])
   - `Extension` type is now based on `@openshift/dynamic-plugin-sdk`'s `Extension` type, which is similar to
     our `ExtensionDeclaration` in terms of structure and type parameters.
+  - `ExtensionDeclaration` is removed in favor of new `Extension` type.
   - `AlwaysOnExtension` and `ModelDefinition` types are removed from `api/common-types` because they referred
     to a legacy system which the console dynamic plugins never supported.
   - The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined

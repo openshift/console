@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
-import type { ExtensionDeclaration, EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
+import type { Extension, EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import * as jsoncModule from '@console/dynamic-plugin-sdk/src/utils/jsonc';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import * as remotePluginModule from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
@@ -21,7 +21,7 @@ const {
   getActivePluginsModule,
   loadActivePluginsForTestPurposes,
   getExecutableCodeRefSource,
-  getDynamicExtensions,
+  getExtensions,
 } = activePluginsModule;
 
 beforeEach(() => {
@@ -44,10 +44,8 @@ describe('getActivePluginsModule', () => {
       consolePlugin: {},
     };
 
-    const fooDynamicExtensions: ExtensionDeclaration[] = [
-      { type: 'Dynamic/Foo', properties: { test: true } },
-    ];
-    const barDynamicExtensions: ExtensionDeclaration[] = [
+    const fooExtensions: Extension[] = [{ type: 'Dynamic/Foo', properties: { test: true } }];
+    const barExtensions: Extension[] = [
       { type: 'Dynamic/Bar', properties: { baz: 1, qux: { $codeRef: 'a.b' } } },
     ];
 
@@ -61,9 +59,9 @@ describe('getActivePluginsModule', () => {
     const extensionHook = jest.fn((pkg: PluginPackage) => {
       switch (pkg) {
         case fooPluginPackage:
-          return JSON.stringify(fooDynamicExtensions);
+          return JSON.stringify(fooExtensions);
         case barPluginPackage:
-          return JSON.stringify(barDynamicExtensions);
+          return JSON.stringify(barExtensions);
         default:
           throw new Error('invalid arguments');
       }
@@ -81,12 +79,12 @@ describe('getActivePluginsModule', () => {
 
         activePlugins.push({
           name: 'foo',
-          extensions: ${JSON.stringify(fooDynamicExtensions)},
+          extensions: ${JSON.stringify(fooExtensions)},
         });
 
         activePlugins.push({
           name: 'bar-plugin',
-          extensions: ${JSON.stringify(barDynamicExtensions)},
+          extensions: ${JSON.stringify(barExtensions)},
         });
 
         export default activePlugins;
@@ -123,10 +121,8 @@ describe('loadActivePluginsForTestPurposes', () => {
       consolePlugin: {},
     };
 
-    const fooDynamicExtensions: ExtensionDeclaration[] = [
-      { type: 'Dynamic/Foo', properties: { test: true } },
-    ];
-    const barDynamicExtensions: ExtensionDeclaration[] = [
+    const fooExtensions: Extension[] = [{ type: 'Dynamic/Foo', properties: { test: true } }];
+    const barExtensions: Extension[] = [
       { type: 'Dynamic/Bar', properties: { baz: 1, qux: { $codeRef: 'a.b' } } },
     ];
 
@@ -135,9 +131,9 @@ describe('loadActivePluginsForTestPurposes', () => {
     const extensionHook = jest.fn((pkg: PluginPackage) => {
       switch (pkg) {
         case fooPluginPackage:
-          return fooDynamicExtensions;
+          return fooExtensions;
         case barPluginPackage:
-          return barDynamicExtensions;
+          return barExtensions;
         default:
           throw new Error('invalid arguments');
       }
@@ -152,11 +148,11 @@ describe('loadActivePluginsForTestPurposes', () => {
     ).toEqual([
       {
         name: 'foo',
-        extensions: fooDynamicExtensions,
+        extensions: fooExtensions,
       },
       {
         name: 'bar-plugin',
-        extensions: barDynamicExtensions,
+        extensions: barExtensions,
       },
     ]);
 
@@ -241,7 +237,7 @@ describe('getExecutableCodeRefSource', () => {
   });
 });
 
-describe('getDynamicExtensions', () => {
+describe('getExtensions', () => {
   let fsExistsSync: jest.SpyInstance<typeof fs.existsSync>;
   let getExecutableCodeRefSourceMock: jest.SpyInstance<typeof getExecutableCodeRefSource>;
 
@@ -254,7 +250,7 @@ describe('getDynamicExtensions', () => {
     [fsExistsSync, getExecutableCodeRefSourceMock].forEach((mock) => mock.mockRestore());
   });
 
-  it('returns an array of dynamic extensions with transformed code references', () => {
+  it('returns an array of extensions with transformed code references', () => {
     const pluginPackage: PluginPackage = {
       ...getTemplatePackage({
         name: 'test-plugin',
@@ -262,7 +258,7 @@ describe('getDynamicExtensions', () => {
       consolePlugin: {},
     };
 
-    const extensionsJSON: ExtensionDeclaration[] = [
+    const extensionsJSON: Extension[] = [
       { type: 'Dynamic/Foo', properties: { test: true, mux: { $codeRef: 'a.b' } } },
       { type: 'Dynamic/Bar', properties: { baz: 1, qux: { $codeRef: 'foo.bar' } } },
     ];
@@ -286,7 +282,7 @@ describe('getDynamicExtensions', () => {
     });
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
     ).toBe(
       trimStartMultiLine(
         `
@@ -356,7 +352,7 @@ describe('getDynamicExtensions', () => {
     fsExistsSync.mockImplementation(() => false);
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
     ).toBe('[]');
 
     expect(errorCallback).not.toHaveBeenCalled();
@@ -375,7 +371,7 @@ describe('getDynamicExtensions', () => {
       consolePlugin: {},
     };
 
-    const extensionsJSON: ExtensionDeclaration[] = [];
+    const extensionsJSON: Extension[] = [];
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
     const codeRefTransformer = jest.fn<string>(_.identity);
@@ -389,7 +385,7 @@ describe('getDynamicExtensions', () => {
     });
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
     ).toBe('[]');
 
     expect(errorCallback).toHaveBeenCalledWith(expect.any(String));
@@ -411,7 +407,7 @@ describe('getDynamicExtensions', () => {
       consolePlugin: {},
     };
 
-    const extensionsJSON: ExtensionDeclaration[] = [
+    const extensionsJSON: Extension[] = [
       { type: 'Dynamic/Foo', properties: { test: true, mux: { $codeRef: 'a.b' } } },
       { type: 'Dynamic/Bar', properties: { baz: 1, qux: { $codeRef: 'foo.bar' } } },
     ];
@@ -443,7 +439,7 @@ describe('getDynamicExtensions', () => {
     );
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
     ).toBe('[]');
 
     expect(errorCallback).toHaveBeenCalledWith(expect.any(String));

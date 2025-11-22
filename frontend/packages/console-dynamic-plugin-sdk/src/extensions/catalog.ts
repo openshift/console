@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { ExtensionHook } from '../api/common-types';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 
 /** This extension allows plugins to contribute a new type of catalog item. For example, a Helm plugin can define
     a new catalog item type as HelmCharts that it wants to contribute to the Software Catalog. */
-export type CatalogItemType = ExtensionDeclaration<
+export type CatalogItemType = Extension<
   'console.catalog/item-type',
   {
     /** Type for the catalog item. */
@@ -26,7 +26,7 @@ export type CatalogItemType = ExtensionDeclaration<
 
 /** This extension allows plugins to contribute extra metadata like custom filters or groupings for any catalog item type.
     For example, a plugin can attach a custom filter for HelmCharts that can filter based on chart provider. */
-export type CatalogItemTypeMetadata = ExtensionDeclaration<
+export type CatalogItemTypeMetadata = Extension<
   'console.catalog/item-type-metadata',
   {
     /** Type for the catalog item. */
@@ -40,7 +40,7 @@ export type CatalogItemTypeMetadata = ExtensionDeclaration<
 
 /** This extension allows plugins to contribute a provider for a catalog item type. For example, a Helm Plugin can add a provider
     that fetches all the Helm Charts. This extension can also be used by other plugins to add more items to a specific catalog item type. */
-export type CatalogItemProvider = ExtensionDeclaration<
+export type CatalogItemProvider = Extension<
   'console.catalog/item-provider',
   {
     /** The unique identifier for the catalog this provider contributes to. */
@@ -59,7 +59,7 @@ export type CatalogItemProvider = ExtensionDeclaration<
 
 /** This extension can be used for plugins to contribute a handler that can filter specific catalog items.
     For example, the plugin can contribute a filter that filters helm charts from specific provider. */
-export type CatalogItemFilter = ExtensionDeclaration<
+export type CatalogItemFilter = Extension<
   'console.catalog/item-filter',
   {
     /** The unique identifier for the catalog this provider contributes to. */
@@ -72,7 +72,7 @@ export type CatalogItemFilter = ExtensionDeclaration<
 >;
 
 /** This extension can be used to contribute a provider that adds extra metadata to specific catalog items. */
-export type CatalogItemMetadataProvider = ExtensionDeclaration<
+export type CatalogItemMetadataProvider = Extension<
   'console.catalog/item-metadata',
   {
     /** The unique identifier for the catalog this provider contributes to. */
@@ -87,7 +87,7 @@ export type CatalogItemMetadataProvider = ExtensionDeclaration<
 >;
 
 /** This extension allows plugins to contribute a set of categories for a specific catalog item type. */
-export type CatalogCategoriesProvider = ExtensionDeclaration<
+export type CatalogCategoriesProvider = Extension<
   'console.catalog/categories-provider',
   {
     /** The catalog ID the categories are for. If not specified, the categories will be available for all catalogs. */
@@ -109,33 +109,27 @@ export type SupportedCatalogExtensions =
 
 // Type guards
 
-export const isCatalogItemType = (e: ExtensionDeclaration): e is CatalogItemType => {
+export const isCatalogItemType = (e: Extension): e is CatalogItemType => {
   return e.type === 'console.catalog/item-type';
 };
 
-export const isCatalogItemTypeMetadata = (
-  e: ExtensionDeclaration,
-): e is CatalogItemTypeMetadata => {
+export const isCatalogItemTypeMetadata = (e: Extension): e is CatalogItemTypeMetadata => {
   return e.type === 'console.catalog/item-type-metadata';
 };
 
-export const isCatalogItemProvider = (e: ExtensionDeclaration): e is CatalogItemProvider => {
+export const isCatalogItemProvider = (e: Extension): e is CatalogItemProvider => {
   return e.type === 'console.catalog/item-provider';
 };
 
-export const isCatalogItemFilter = (e: ExtensionDeclaration): e is CatalogItemFilter => {
+export const isCatalogItemFilter = (e: Extension): e is CatalogItemFilter => {
   return e.type === 'console.catalog/item-filter';
 };
 
-export const isCatalogItemMetadataProvider = (
-  e: ExtensionDeclaration,
-): e is CatalogItemMetadataProvider => {
+export const isCatalogItemMetadataProvider = (e: Extension): e is CatalogItemMetadataProvider => {
   return e.type === 'console.catalog/item-metadata';
 };
 
-export const isCatalogCategoriesProvider = (
-  e: ExtensionDeclaration,
-): e is CatalogCategoriesProvider => {
+export const isCatalogCategoriesProvider = (e: Extension): e is CatalogCategoriesProvider => {
   return e.type === 'console.catalog/categories-provider';
 };
 

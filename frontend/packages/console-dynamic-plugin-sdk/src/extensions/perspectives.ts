@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { ExtensionK8sModel } from '../api/common-types';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 
 // Align type with React.lazy
 type LazyComponent = { default: React.ComponentType };
 
 /** This extension contributes a new perspective to the console which enables customization of the navigation menu. */
-export type Perspective = ExtensionDeclaration<
+export type Perspective = Extension<
   'console.perspective',
   {
     /** The perspective identifier. */
@@ -28,6 +28,6 @@ export type Perspective = ExtensionDeclaration<
   }
 >;
 
-export const isPerspective = (e: ExtensionDeclaration): e is Perspective => {
+export const isPerspective = (e: Extension): e is Perspective => {
   return e.type === 'console.perspective';
 };

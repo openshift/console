@@ -1,6 +1,6 @@
 import { List as ImmutableList } from 'immutable';
 import * as _ from 'lodash';
-import type { ExtensionDeclaration } from '@console/dynamic-plugin-sdk/src/types';
+import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
 import { PluginStore } from '@console/plugin-sdk';
 import { loadActivePluginsForTestPurposes } from '@console/plugin-sdk/src/codegen/active-plugins';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
@@ -8,9 +8,7 @@ import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-re
 const testedPlugins = loadActivePluginsForTestPurposes(resolvePluginPackages());
 const testedPluginStore = new PluginStore(testedPlugins);
 
-export const testedExtensions = ImmutableList<ExtensionDeclaration>(
-  testedPluginStore.getExtensions(),
-);
+export const testedExtensions = ImmutableList<Extension>(testedPluginStore.getExtensions());
 
 export const getDuplicates = (values: string[]) => {
   return _.transform(

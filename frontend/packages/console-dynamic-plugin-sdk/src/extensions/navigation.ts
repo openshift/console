@@ -1,5 +1,5 @@
 import { ExtensionK8sModel } from '../api/common-types';
-import { ExtensionDeclaration } from '../types';
+import { Extension } from '../types';
 
 type NavItemProperties = {
   /** A unique identifier for this item. */
@@ -18,7 +18,7 @@ type NavItemProperties = {
   insertAfter?: string | string[];
 };
 
-export type NavItem = ExtensionDeclaration<
+export type NavItem = Extension<
   'console.navigation/href',
   NavItemProperties & {
     name: string;
@@ -26,7 +26,7 @@ export type NavItem = ExtensionDeclaration<
 >;
 
 /** This extension can be used to contribute a navigation item that points to a specific link in the UI. */
-export type HrefNavItem = ExtensionDeclaration<
+export type HrefNavItem = Extension<
   'console.navigation/href',
   NavItemProperties & {
     /** The name of this item. */
@@ -42,7 +42,7 @@ export type HrefNavItem = ExtensionDeclaration<
 
 /** This extension can be used to contribute a navigation item that points to a namespaced resource details page.
     The K8s model of that resource can be used to define the navigation item. */
-export type ResourceNSNavItem = ExtensionDeclaration<
+export type ResourceNSNavItem = Extension<
   'console.navigation/resource-ns',
   NavItemProperties & {
     /** Overrides the default name. If not supplied the name of the link will equal the plural value of the model. */
@@ -54,7 +54,7 @@ export type ResourceNSNavItem = ExtensionDeclaration<
 
 /** This extension can be used to contribute a navigation item that points to a cluster resource details page.
     The K8s model of that resource can be used to define the navigation item. */
-export type ResourceClusterNavItem = ExtensionDeclaration<
+export type ResourceClusterNavItem = Extension<
   'console.navigation/resource-cluster',
   NavItemProperties & {
     /** Overrides the default name. If not supplied the name of the link will equal the plural value of the model. */
@@ -65,13 +65,13 @@ export type ResourceClusterNavItem = ExtensionDeclaration<
 >;
 
 /** This extension can be used to add a separator between navigation items in the navigation. */
-export type Separator = ExtensionDeclaration<
+export type Separator = Extension<
   'console.navigation/separator',
   Omit<NavItemProperties, 'startsWith'>
 >;
 
 /** This extension can be used to define a new section of navigation items in the navigation tab. */
-export type NavSection = ExtensionDeclaration<
+export type NavSection = Extension<
   'console.navigation/section',
   Omit<NavItemProperties, 'startsWith' | 'section'> & {
     /** Name of this section. If not supplied, only a separator will be shown above the section. */
@@ -90,29 +90,29 @@ export type NavExtension =
 
 // Type guards
 
-export const isHrefNavItem = (e: ExtensionDeclaration): e is HrefNavItem =>
+export const isHrefNavItem = (e: Extension): e is HrefNavItem =>
   e.type === 'console.navigation/href';
 
-export const isResourceNSNavItem = (e: ExtensionDeclaration): e is ResourceNSNavItem =>
+export const isResourceNSNavItem = (e: Extension): e is ResourceNSNavItem =>
   e.type === 'console.navigation/resource-ns';
 
-export const isResourceClusterNavItem = (e: ExtensionDeclaration): e is ResourceClusterNavItem =>
+export const isResourceClusterNavItem = (e: Extension): e is ResourceClusterNavItem =>
   e.type === 'console.navigation/resource-cluster';
 
-export const isResourceNavItem = (e: ExtensionDeclaration): e is ResourceNavItem =>
+export const isResourceNavItem = (e: Extension): e is ResourceNavItem =>
   isResourceNSNavItem(e) || isResourceClusterNavItem(e);
 
-export const isSeparator = (e: ExtensionDeclaration): e is Separator =>
+export const isSeparator = (e: Extension): e is Separator =>
   e.type === 'console.navigation/separator';
 
-export const isNavSection = (e: ExtensionDeclaration): e is NavSection =>
+export const isNavSection = (e: Extension): e is NavSection =>
   e.type === 'console.navigation/section';
 
-export const isNavItem = (e: ExtensionDeclaration): e is NavItem =>
+export const isNavItem = (e: Extension): e is NavItem =>
   isHrefNavItem(e) || isResourceNSNavItem(e) || isResourceClusterNavItem(e);
 
-export const isNavItemOrSeparator = (e: ExtensionDeclaration): e is NavItem | Separator =>
+export const isNavItemOrSeparator = (e: Extension): e is NavItem | Separator =>
   isNavItem(e) || isSeparator(e);
 
-export const isNavExtension = (e: ExtensionDeclaration): e is NavExtension =>
+export const isNavExtension = (e: Extension): e is NavExtension =>
   isNavItem(e) || isSeparator(e) || isNavSection(e);

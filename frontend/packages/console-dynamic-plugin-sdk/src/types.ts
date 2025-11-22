@@ -1,7 +1,6 @@
 import type {
   CodeRef as SDKCodeRef,
   Extension as SDKExtension,
-  ExtensionPredicate,
   LoadedExtension as SDKLoadedExtension,
   ReplaceProperties as Update,
   MapCodeRefsToValues,
@@ -10,33 +9,30 @@ import type {
 
 export type {
   ExtensionFlags,
+  ExtensionPredicate as ExtensionTypeGuard,
   MapCodeRefsToValues as ResolvedCodeRefProperties,
   PluginEntryModule as RemoteEntryModule,
   ReplaceProperties as Update,
 } from '@openshift/dynamic-plugin-sdk';
 
 /**
- * An Extension
+ * An extension of OpenShift console.
+ *
+ * Each extension extends the console's functionality in a specific way, defined
+ * by its `type`. Console plugins contribute one or more extension instances, which
+ * are loaded and processed by the console at runtime to extend its capabilities.
+ *
+ * The `type` property determines the kind of extension, while the `properties`
+ * object contains the data and/or {@link CodeRef}`s necessary to interpret the given
+ * extension type.
+ *
+ * Extensions can also use the optional `flags` property to specify which feature
+ * flags must be enabled for the extension to be active.
  */
 export type Extension<
   TType extends string = string,
   TProperties extends AnyObject = AnyObject
 > = Pick<SDKExtension<TType, TProperties>, 'type' | 'properties' | 'flags'>;
-
-/**
- * An alias of `Extension` type.
- *
- * @deprecated - use ExtensionDeclaration instead
- */
-export type ExtensionDeclaration<
-  TType extends string = string,
-  TProperties extends AnyObject = AnyObject
-> = Extension<TType, TProperties>;
-
-/**
- * TS type guard to narrow type of the given extension to `E`.
- */
-export type ExtensionTypeGuard<E extends Extension> = ExtensionPredicate<E>;
 
 /**
  * Runtime extension interface, exposing additional metadata.

@@ -125,11 +125,11 @@ export const getExecutableCodeRefSource = (
 };
 
 /**
- * Returns the array source containing the given plugin's dynamic extensions.
+ * Returns the array source containing the given plugin's extensions.
  *
  * If an error occurs, calls `errorCallback` and returns an empty array.
  */
-export const getDynamicExtensions = (
+export const getExtensions = (
   pkg: PluginPackage,
   extensionsFilePath: string,
   errorCallback: (errorMessage: string) => void,
@@ -182,7 +182,7 @@ export const getActivePluginsModuleData = (
       import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
     `,
     (pkg) =>
-      getDynamicExtensions(
+      getExtensions(
         pkg,
         getExtensionsFilePath(pkg),
         (errorMessage) => {
