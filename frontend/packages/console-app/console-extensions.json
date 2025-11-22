@@ -1374,6 +1374,28 @@
     }
   },
   {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "project.openshift.io",
+        "version": "v1",
+        "kind": "Project"
+      },
+      "provider": { "$codeRef": "projectProvider.useProjectActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "Namespace"
+      },
+      "provider": { "$codeRef": "projectProvider.useNamespaceActionsProvider" }
+    }
+  },
+  {
     "type": "console.navigation/resource-ns",
     "properties": {
       "perspective": "admin",

@@ -15,11 +15,6 @@ export const confirmModal = (props) =>
     m.confirmModal(props),
   );
 
-export const deleteNamespaceModal = (props) =>
-  import('./delete-namespace-modal' /* webpackChunkName: "delete-namespace-modal" */).then((m) =>
-    m.deleteNamespaceModal(props),
-  );
-
 /** @deprecated Use useErrorModalLauncher hook instead */
 export const errorModal = (props) =>
   import('./error-modal' /* webpackChunkName: "error-modal" */).then((m) => m.errorModal(props));

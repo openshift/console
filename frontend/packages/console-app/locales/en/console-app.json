@@ -240,6 +240,7 @@
   "Restore as new PVC": "Restore as new PVC",
   "Volume Snapshot is not Ready": "Volume Snapshot is not Ready",
   "View instances": "View instances",
+  "Delete {{label}}": "Delete {{label}}",
   "Current default StorageClass": "Current default StorageClass",
   "Set as default": "Set as default",
   "Access mode": "Access mode",
