@@ -1,6 +1,6 @@
 import { K8sModel } from '../api/common-types';
 import { Fetch } from '../api/internal-types';
-import { Extension, ExtensionDeclaration, CodeRef, ResolvedExtension } from '../types';
+import { ExtensionDeclaration, CodeRef, ResolvedExtension } from '../types';
 import {
   K8sResourceCommon,
   PrometheusResponse,
@@ -218,75 +218,77 @@ export type DashboardsOverviewPrometheusActivity = ExtensionDeclaration<
 
 // Type guards
 
-export const isDashboardsTab = (e: Extension): e is DashboardsTab =>
+export const isDashboardsTab = (e: ExtensionDeclaration): e is DashboardsTab =>
   e.type === 'console.dashboards/tab';
 
-export const isDashboardsCard = (e: Extension): e is DashboardsCard =>
+export const isDashboardsCard = (e: ExtensionDeclaration): e is DashboardsCard =>
   e.type === 'console.dashboards/card';
 
 export const isDashboardsOverviewHealthPrometheusSubsystem = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is DashboardsOverviewHealthPrometheusSubsystem =>
   e.type === 'console.dashboards/overview/health/prometheus';
 
 export const isResolvedDashboardsOverviewHealthPrometheusSubsystem = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is ResolvedExtension<DashboardsOverviewHealthPrometheusSubsystem> =>
   e.type === 'console.dashboards/overview/health/prometheus';
 
 export const isDashboardsOverviewHealthURLSubsystem = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is DashboardsOverviewHealthURLSubsystem => e.type === 'console.dashboards/overview/health/url';
 
 export const isResolvedDashboardsOverviewHealthURLSubsystem = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is ResolvedExtension<DashboardsOverviewHealthURLSubsystem> =>
   e.type === 'console.dashboards/overview/health/url';
 
 export const isDashboardsOverviewHealthResourceSubsystem = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is DashboardsOverviewHealthResourceSubsystem =>
   e.type === 'console.dashboards/overview/health/resource';
 
 export const isResolvedDashboardsOverviewHealthResourceSubsystem = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is ResolvedExtension<DashboardsOverviewHealthResourceSubsystem> =>
   e.type === 'console.dashboards/overview/health/resource';
 
 export const isDashboardsOverviewHealthOperator = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is DashboardsOverviewHealthOperator =>
   e.type === 'console.dashboards/overview/health/operator';
 
 export const isResolvedDashboardsOverviewHealthOperator = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is ResolvedExtension<DashboardsOverviewHealthOperator> =>
   e.type === 'console.dashboards/overview/health/operator';
 
-export const isDashboardsInventoryItemGroup = (e: Extension): e is DashboardsInventoryItemGroup =>
+export const isDashboardsInventoryItemGroup = (
+  e: ExtensionDeclaration,
+): e is DashboardsInventoryItemGroup =>
   e.type === 'console.dashboards/overview/inventory/item/group';
 
 export const isDashboardsOverviewInventoryItem = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is DashboardsOverviewInventoryItem => e.type === 'console.dashboards/overview/inventory/item';
 
 export const isDashboardsOverviewInventoryItemReplacement = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is DashboardsOverviewInventoryItemReplacement =>
   e.type === 'console.dashboards/overview/inventory/item/replacement';
 
 export const isDashboardsProjectOverviewInventoryItem = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is DashboardsProjectOverviewInventoryItem =>
   e.type === 'console.dashboards/project/overview/item';
 
 export const isDashboardsOverviewResourceActivity = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is DashboardsOverviewResourceActivity =>
   e.type === 'console.dashboards/overview/activity/resource';
 
 export const isDashboardsOverviewPrometheusActivity = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is DashboardsOverviewPrometheusActivity =>
   e.type === 'console.dashboards/overview/prometheus/activity/resource';
 
@@ -297,7 +299,7 @@ export type DashboardsOverviewHealthSubsystem =
   | DashboardsOverviewHealthOperator;
 
 export const isDashboardsOverviewHealthSubsystem = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is DashboardsOverviewHealthSubsystem =>
   isDashboardsOverviewHealthURLSubsystem(e) ||
   isDashboardsOverviewHealthPrometheusSubsystem(e) ||

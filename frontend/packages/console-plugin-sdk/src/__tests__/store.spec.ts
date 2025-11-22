@@ -1,5 +1,6 @@
 import * as Combinatorics from 'js-combinatorics';
 import * as _ from 'lodash';
+import type { ExtensionDeclaration } from '@console/dynamic-plugin-sdk/src/types';
 import {
   getPluginManifest,
   getExecutableCodeRefMock,
@@ -11,7 +12,6 @@ import {
   getGatingFlagNames,
   PluginStore,
 } from '../store';
-import { Extension } from '../typings';
 
 describe('sanitizeExtension', () => {
   it('sanitizes the flags object for gated extensions', () => {
@@ -80,7 +80,7 @@ describe('sanitizeExtension', () => {
   });
 
   it('returns the same extension instance', () => {
-    const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
+    const testExtension: ExtensionDeclaration = { type: 'Foo/Bar', properties: {} };
 
     expect(sanitizeExtension(testExtension)).toBe(testExtension);
   });
@@ -126,14 +126,14 @@ describe('augmentExtension', () => {
   });
 
   it('returns the same extension instance', () => {
-    const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
+    const testExtension: ExtensionDeclaration = { type: 'Foo/Bar', properties: {} };
 
     expect(augmentExtension(testExtension, 'Test@1.2.3', 'Test', 0)).toBe(testExtension);
   });
 });
 
 describe('isExtensionInUse', () => {
-  const gatedExtension: Extension = {
+  const gatedExtension: ExtensionDeclaration = {
     type: 'Foo/Bar',
     properties: {},
     flags: {
@@ -181,7 +181,7 @@ describe('isExtensionInUse', () => {
 
 describe('getGatingFlagNames', () => {
   it('returns an array of flag names used for gating given extensions', () => {
-    const extensions: Extension[] = [
+    const extensions: ExtensionDeclaration[] = [
       {
         type: 'Foo',
         properties: {},
@@ -208,7 +208,7 @@ describe('PluginStore', () => {
   const addDynamicPluginToStore = (
     store: PluginStore,
     manifest: ReturnType<typeof getPluginManifest>,
-    resolvedExtensions: Extension[] = manifest.extensions,
+    resolvedExtensions: ExtensionDeclaration[] = manifest.extensions,
   ) => {
     store.addDynamicPlugin(`${manifest.name}@${manifest.version}`, manifest, resolvedExtensions);
   };
@@ -327,15 +327,15 @@ describe('PluginStore', () => {
         },
       ]);
 
-      const dynamicPluginExtensionsA: Extension[] = [
+      const dynamicPluginExtensionsA: ExtensionDeclaration[] = [
         { type: 'Baz', properties: {}, flags: { disallowed: ['foo', 'bar'] } },
       ];
 
-      const dynamicPluginExtensionsB: Extension[] = [
+      const dynamicPluginExtensionsB: ExtensionDeclaration[] = [
         { type: 'Qux', properties: { value: 'test' }, flags: { required: ['foo', 'bar'] } },
       ];
 
-      const dynamicPluginExtensionsC: Extension[] = [
+      const dynamicPluginExtensionsC: ExtensionDeclaration[] = [
         { type: 'Mux', properties: {}, flags: { required: ['foo'], disallowed: ['bar'] } },
       ];
 
@@ -527,7 +527,7 @@ describe('PluginStore', () => {
 
       const ref = getExecutableCodeRefMock('value');
 
-      const resolvedExtensions: Extension[] = [
+      const resolvedExtensions: ExtensionDeclaration[] = [
         {
           type: 'Foo',
           properties: { test: true },

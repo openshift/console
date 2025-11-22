@@ -1,5 +1,5 @@
 import { K8sModel } from '../api/common-types';
-import { CodeRef, Extension, ExtensionDeclaration } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 
 export type DetailsPageBreadCrumbsHook = (
   kind: K8sModel,
@@ -22,5 +22,5 @@ export type DetailPageBreadCrumbs = ExtensionDeclaration<
 
 // Type guards
 
-export const isDetailPageBreadCrumbs = (e: Extension): e is DetailPageBreadCrumbs =>
+export const isDetailPageBreadCrumbs = (e: ExtensionDeclaration): e is DetailPageBreadCrumbs =>
   e.type === 'dev-console.detailsPage/breadcrumbs';

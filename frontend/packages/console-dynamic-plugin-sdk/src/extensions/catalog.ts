@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ExtensionHook } from '../api/common-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 
 /** This extension allows plugins to contribute a new type of catalog item. For example, a Helm plugin can define
     a new catalog item type as HelmCharts that it wants to contribute to the Software Catalog. */
@@ -109,27 +109,33 @@ export type SupportedCatalogExtensions =
 
 // Type guards
 
-export const isCatalogItemType = (e: Extension): e is CatalogItemType => {
+export const isCatalogItemType = (e: ExtensionDeclaration): e is CatalogItemType => {
   return e.type === 'console.catalog/item-type';
 };
 
-export const isCatalogItemTypeMetadata = (e: Extension): e is CatalogItemTypeMetadata => {
+export const isCatalogItemTypeMetadata = (
+  e: ExtensionDeclaration,
+): e is CatalogItemTypeMetadata => {
   return e.type === 'console.catalog/item-type-metadata';
 };
 
-export const isCatalogItemProvider = (e: Extension): e is CatalogItemProvider => {
+export const isCatalogItemProvider = (e: ExtensionDeclaration): e is CatalogItemProvider => {
   return e.type === 'console.catalog/item-provider';
 };
 
-export const isCatalogItemFilter = (e: Extension): e is CatalogItemFilter => {
+export const isCatalogItemFilter = (e: ExtensionDeclaration): e is CatalogItemFilter => {
   return e.type === 'console.catalog/item-filter';
 };
 
-export const isCatalogItemMetadataProvider = (e: Extension): e is CatalogItemMetadataProvider => {
+export const isCatalogItemMetadataProvider = (
+  e: ExtensionDeclaration,
+): e is CatalogItemMetadataProvider => {
   return e.type === 'console.catalog/item-metadata';
 };
 
-export const isCatalogCategoriesProvider = (e: Extension): e is CatalogCategoriesProvider => {
+export const isCatalogCategoriesProvider = (
+  e: ExtensionDeclaration,
+): e is CatalogCategoriesProvider => {
   return e.type === 'console.catalog/categories-provider';
 };
 

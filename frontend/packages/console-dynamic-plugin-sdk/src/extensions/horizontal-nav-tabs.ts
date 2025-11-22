@@ -1,5 +1,5 @@
 import { ExtensionK8sKindVersionModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 import { K8sResourceCommon } from './console-types';
 
 export type PageComponentProps<R extends K8sResourceCommon = K8sResourceCommon> = {
@@ -50,6 +50,6 @@ export type NavTab = ExtensionDeclaration<
 >;
 
 // Type Guards
-export const isHorizontalNavTab = (e: Extension): e is HorizontalNavTab =>
+export const isHorizontalNavTab = (e: ExtensionDeclaration): e is HorizontalNavTab =>
   e.type === 'console.tab/horizontalNav';
-export const isTab = (e: Extension): e is NavTab => e.type === 'console.tab';
+export const isTab = (e: ExtensionDeclaration): e is NavTab => e.type === 'console.tab';

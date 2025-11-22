@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { ExtensionHook } from '../api/common-types';
-import { Extension, CodeRef, ExtensionDeclaration } from '../types';
+import { CodeRef, ExtensionDeclaration } from '../types';
 import { K8sResourceCommon } from './console-types';
 import { BuildConfigData } from './topology-types';
 
@@ -118,31 +118,31 @@ export type SupportedTopologyDetailsExtensions =
 
 // Type guards
 
-export const isDetailsTab = (e: Extension): e is DetailsTab => {
+export const isDetailsTab = (e: ExtensionDeclaration): e is DetailsTab => {
   return e.type === 'console.topology/details/tab';
 };
 
-export const isDetailsTabSection = (e: Extension): e is DetailsTabSection => {
+export const isDetailsTabSection = (e: ExtensionDeclaration): e is DetailsTabSection => {
   return e.type === 'console.topology/details/tab-section';
 };
 
-export const isDetailsResourceLink = (e: Extension): e is DetailsResourceLink => {
+export const isDetailsResourceLink = (e: ExtensionDeclaration): e is DetailsResourceLink => {
   return e.type === 'console.topology/details/resource-link';
 };
 
-export const isDetailsResourceAlert = (e: Extension): e is DetailsResourceAlert => {
+export const isDetailsResourceAlert = (e: ExtensionDeclaration): e is DetailsResourceAlert => {
   return e.type === 'console.topology/details/resource-alert';
 };
 
-export const isPodAdapter = (e: Extension): e is PodAdapter => {
+export const isPodAdapter = (e: ExtensionDeclaration): e is PodAdapter => {
   return e.type === 'console.topology/adapter/pod';
 };
 
-export const isBuildAdapter = (e: Extension): e is BuildAdapter => {
+export const isBuildAdapter = (e: ExtensionDeclaration): e is BuildAdapter => {
   return e.type === 'console.topology/adapter/build';
 };
 
-export const isNetworkAdapter = (e: Extension): e is NetworkAdapter => {
+export const isNetworkAdapter = (e: ExtensionDeclaration): e is NetworkAdapter => {
   return e.type === 'console.topology/adapter/network';
 };
 
