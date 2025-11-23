@@ -1,5 +1,5 @@
 import { ExtensionK8sModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 import { K8sResourceCommon } from './console-types';
 
 export type DetailsItemColumn = 'right' | 'left';
@@ -16,7 +16,7 @@ export type DetailsItemComponentProps<R extends K8sResourceCommon = K8sResourceC
 };
 
 /** Adds a new details item to the default resource summary on the details page. */
-export type DetailsItem = ExtensionDeclaration<
+export type DetailsItem = Extension<
   'console.resource/details-item',
   {
     /** The subject resource's API group, version, and kind. */

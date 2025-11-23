@@ -1,41 +1,38 @@
 import type {
   CodeRef as SDKCodeRef,
-  ExtensionFlags,
-  ExtensionPredicate,
+  Extension as SDKExtension,
   LoadedExtension as SDKLoadedExtension,
   ReplaceProperties as Update,
   MapCodeRefsToValues,
+  AnyObject,
 } from '@openshift/dynamic-plugin-sdk';
 
 export type {
   ExtensionFlags,
-  Extension as ExtensionDeclaration,
+  ExtensionPredicate as ExtensionTypeGuard,
   MapCodeRefsToValues as ResolvedCodeRefProperties,
   PluginEntryModule as RemoteEntryModule,
   ReplaceProperties as Update,
 } from '@openshift/dynamic-plugin-sdk';
 
 /**
- * A legacy type for static extensions that should not be used anymore.
+ * An extension of OpenShift console.
  *
- * Each extension instance has a `type` and the corresponding parameters
- * represented by the `properties` object.
+ * Each extension extends the console's functionality in a specific way, defined
+ * by its `type`. Console plugins contribute one or more extension instances, which
+ * are loaded and processed by the console at runtime to extend its capabilities.
  *
- * Each extension may specify `flags` referencing Console feature flags which
- * are required and/or disallowed in order to put this extension into effect.
+ * The `type` property determines the kind of extension, while the `properties`
+ * object contains the data and/or {@link CodeRef}`s necessary to interpret the given
+ * extension type.
  *
- * @deprecated - Use `ExtensionDeclaration` instead.
+ * Extensions can also use the optional `flags` property to specify which feature
+ * flags must be enabled for the extension to be active.
  */
-export type Extension<P extends {} = any> = {
-  type: string;
-  properties: P;
-  flags?: ExtensionFlags;
-};
-
-/**
- * TS type guard to narrow type of the given extension to `E`.
- */
-export type ExtensionTypeGuard<E extends Extension> = ExtensionPredicate<E>;
+export type Extension<
+  TType extends string = string,
+  TProperties extends AnyObject = AnyObject
+> = Pick<SDKExtension<TType, TProperties>, 'type' | 'properties' | 'flags'>;
 
 /**
  * Runtime extension interface, exposing additional metadata.
@@ -65,15 +62,15 @@ export type ExtractCodeRefType<R> = R extends CodeRef<infer T> ? T : never;
 /**
  * Infer the properties of extension `E`.
  */
-export type ExtensionProperties<E> = E extends Extension<infer P> ? P : never;
+export type ExtensionProperties<E> = E extends Extension<string, infer P> ? P : never;
 
 /**
  * Update existing properties of extension `E` with ones declared in object `U`.
  */
 export type UpdateExtensionProperties<
-  E extends Extension<P>,
+  E extends Extension,
   U extends {},
-  P = ExtensionProperties<E>
+  P extends AnyObject = ExtensionProperties<E>
 > = Update<
   E,
   {
@@ -86,6 +83,6 @@ export type UpdateExtensionProperties<
  *
  * This also coerces `E` type to `LoadedExtension` interface for runtime consumption.
  */
-export type ResolvedExtension<E extends Extension<P>, P = ExtensionProperties<E>> = LoadedExtension<
-  UpdateExtensionProperties<E, MapCodeRefsToValues<P>, P>
+export type ResolvedExtension<E extends Extension> = LoadedExtension<
+  UpdateExtensionProperties<E, MapCodeRefsToValues<ExtensionProperties<E>>>
 >;

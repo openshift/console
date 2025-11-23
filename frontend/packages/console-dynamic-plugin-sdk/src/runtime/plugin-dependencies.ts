@@ -119,14 +119,14 @@ export const resolvePluginDependencies = (
 
     const unsubListener = subscribeToDynamicPlugins((entries) => {
       const loadedPlugins = entries.reduce<Record<string, string>>((acc, e) => {
-        if (e.status === 'Loaded' && preloadPluginNames.includes(e.metadata.name)) {
+        if (e.status === 'loaded' && preloadPluginNames.includes(e.metadata.name)) {
           acc[e.metadata.name] = e.metadata.version;
         }
         return acc;
       }, {});
 
       const failedPluginNames = entries.reduce<string[]>((acc, e) => {
-        if (e.status === 'Failed' && preloadPluginNames.includes(e.pluginName)) {
+        if (e.status === 'failed' && preloadPluginNames.includes(e.pluginName)) {
           acc.push(e.pluginName);
         }
         return acc;

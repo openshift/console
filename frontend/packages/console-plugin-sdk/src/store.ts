@@ -2,7 +2,8 @@
 
 import * as _ from 'lodash';
 import { StandardConsolePluginManifest } from '@console/dynamic-plugin-sdk/src/build-types';
-import { Extension, LoadedExtension, ActivePlugin } from './typings';
+import { Extension, LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { ActivePlugin } from './typings/base';
 
 export const sanitizeExtension = <E extends Extension>(e: E): E => {
   e.flags = e.flags || {};
@@ -32,13 +33,6 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
     ..._.flatMap(extensions.map((e) => e.flags.disallowed)),
   ]);
 
-export const isLoadedDynamicPluginInfo = (i: DynamicPluginInfo): i is LoadedDynamicPluginInfo =>
-  i?.status === 'Loaded';
-
-export const isNotLoadedDynamicPluginInfo = (
-  i: DynamicPluginInfo,
-): i is NotLoadedDynamicPluginInfo => i.status === 'Failed' || i.status === 'Pending';
-
 /**
  * Provides access to Console plugins and their extensions.
  *
@@ -58,8 +52,6 @@ export class PluginStore {
   // Extensions contributed by dynamic plugins which are currently in use
   private dynamicPluginExtensions: LoadedExtension[];
 
-  private i18nNamespaces: Set<string>;
-
   private readonly staticPlugins: StaticPlugin[];
 
   // Static plugins that were disabled by loading replacement dynamic plugins
@@ -76,11 +68,7 @@ export class PluginStore {
 
   private readonly listeners: VoidFunction[] = [];
 
-  constructor(
-    staticPlugins: ActivePlugin[] = [],
-    allowedDynamicPluginNames: string[] = [],
-    i18nNamespaces: string[] = [],
-  ) {
+  constructor(staticPlugins: ActivePlugin[] = [], allowedDynamicPluginNames: string[] = []) {
     this.staticPlugins = staticPlugins.map((plugin) => ({
       name: plugin.name,
       extensions: plugin.extensions.map((e, index) =>
@@ -91,7 +79,6 @@ export class PluginStore {
     }));
 
     this.allowedDynamicPluginNames = _.uniq(allowedDynamicPluginNames);
-    this.i18nNamespaces = new Set(i18nNamespaces);
     this.updateExtensions();
   }
 
@@ -101,10 +88,6 @@ export class PluginStore {
 
   getAllowedDynamicPluginNames() {
     return [...this.allowedDynamicPluginNames];
-  }
-
-  getI18nNamespaces() {
-    return Array.from(this.i18nNamespaces);
   }
 
   subscribe(listener: VoidFunction): VoidFunction {
@@ -245,7 +228,7 @@ export class PluginStore {
     const loadedPluginEntries = Array.from(this.loadedDynamicPlugins.entries()).reduce(
       (acc, [pluginID, plugin]) => {
         acc.push({
-          status: 'Loaded',
+          status: 'loaded',
           pluginID,
           metadata: _.omit(plugin.manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: plugin.enabled,
@@ -258,7 +241,7 @@ export class PluginStore {
     const failedPluginEntries = Array.from(this.failedDynamicPlugins.entries()).reduce(
       (acc, [pluginName, plugin]) => {
         acc.push({
-          status: 'Failed',
+          status: 'failed',
           pluginName,
           errorMessage: plugin.errorMessage,
           errorCause: plugin.errorCause,
@@ -275,7 +258,7 @@ export class PluginStore {
       )
       .reduce((acc, pluginName) => {
         acc.push({
-          status: 'Pending',
+          status: 'pending',
           pluginName,
         });
         return acc;
@@ -327,7 +310,7 @@ type FailedDynamicPlugin = {
 };
 
 export type LoadedDynamicPluginInfo = {
-  status: 'Loaded';
+  status: 'loaded';
   pluginID: string;
   metadata: DynamicPluginMetadata;
   enabled: boolean;
@@ -335,11 +318,11 @@ export type LoadedDynamicPluginInfo = {
 
 export type NotLoadedDynamicPluginInfo =
   | {
-      status: 'Pending';
+      status: 'pending';
       pluginName: string;
     }
   | {
-      status: 'Failed';
+      status: 'failed';
       pluginName: string;
       errorMessage: string;
       errorCause?: unknown;

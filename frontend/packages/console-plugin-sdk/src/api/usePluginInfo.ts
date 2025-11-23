@@ -13,7 +13,7 @@ import { subscribeToDynamicPlugins } from './pluginSubscriptionService';
  *
  * ```ts
  * const Example = () => {
- *   const [pluginInfoEntries, allPluginsProcessed] = usePluginInfo();
+ *   const pluginInfoEntries = usePluginInfo();
  *   // process plugin entries and render your component
  * };
  * ```
@@ -22,19 +22,17 @@ import { subscribeToDynamicPlugins } from './pluginSubscriptionService';
  *
  * @returns Console dynamic plugin runtime information.
  */
-export const usePluginInfo = (): [DynamicPluginInfo[], boolean] => {
+export const usePluginInfo = (): DynamicPluginInfo[] => {
   const forceRender = useForceRender();
 
   const isMountedRef = useRef(true);
   const unsubscribeRef = useRef<VoidFunction>(null);
   const pluginInfoEntriesRef = useRef<DynamicPluginInfo[]>([]);
-  const allPluginsProcessedRef = useRef<boolean>(false);
 
   const trySubscribe = useCallback(() => {
     if (unsubscribeRef.current === null) {
       unsubscribeRef.current = subscribeToDynamicPlugins((pluginInfoEntries) => {
         pluginInfoEntriesRef.current = pluginInfoEntries;
-        allPluginsProcessedRef.current = pluginInfoEntries.every((i) => i.status !== 'Pending');
         isMountedRef.current && forceRender();
       });
     }
@@ -57,5 +55,5 @@ export const usePluginInfo = (): [DynamicPluginInfo[], boolean] => {
     [tryUnsubscribe],
   );
 
-  return [pluginInfoEntriesRef.current, allPluginsProcessedRef.current];
+  return pluginInfoEntriesRef.current;
 };

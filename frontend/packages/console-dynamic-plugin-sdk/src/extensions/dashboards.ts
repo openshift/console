@@ -1,6 +1,6 @@
 import { K8sModel } from '../api/common-types';
 import { Fetch } from '../api/internal-types';
-import { Extension, ExtensionDeclaration, CodeRef, ResolvedExtension } from '../types';
+import { Extension, CodeRef, ResolvedExtension } from '../types';
 import {
   K8sResourceCommon,
   PrometheusResponse,
@@ -24,7 +24,7 @@ import {
 } from './dashboard-types';
 
 /** Adds a new dashboard tab, placed after the Overview tab. */
-export type DashboardsTab = ExtensionDeclaration<
+export type DashboardsTab = Extension<
   'console.dashboards/tab',
   {
     /** A unique tab identifier, used as tab link `href` and when adding cards to this tab. */
@@ -37,7 +37,7 @@ export type DashboardsTab = ExtensionDeclaration<
 >;
 
 /** Adds a new dashboard card. */
-export type DashboardsCard = ExtensionDeclaration<
+export type DashboardsCard = Extension<
   'console.dashboards/card',
   {
     /** The id of the dashboard tab to which the card will be added. */
@@ -52,7 +52,7 @@ export type DashboardsCard = ExtensionDeclaration<
 >;
 
 /** Adds a health subsystem to the status card of Overview dashboard where the source of status is Prometheus. */
-export type DashboardsOverviewHealthPrometheusSubsystem = ExtensionDeclaration<
+export type DashboardsOverviewHealthPrometheusSubsystem = Extension<
   'console.dashboards/overview/health/prometheus',
   {
     /** The display name of the subsystem. */
@@ -80,7 +80,7 @@ export type DashboardsOverviewHealthPrometheusSubsystem = ExtensionDeclaration<
 export type DashboardsOverviewHealthURLSubsystem<
   T = any,
   R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon | K8sResourceCommon[]
-> = ExtensionDeclaration<
+> = Extension<
   'console.dashboards/overview/health/url',
   {
     /** The display name of the subsystem. */
@@ -113,7 +113,7 @@ export type DashboardsOverviewHealthURLSubsystem<
 /** Adds a health subsystem to the status card of Overview dashboard where the source of status is a K8s Resource. */
 export type DashboardsOverviewHealthResourceSubsystem<
   T extends ResourcesObject = ResourcesObject
-> = ExtensionDeclaration<
+> = Extension<
   'console.dashboards/overview/health/resource',
   {
     /** The display name of the subsystem. */
@@ -132,7 +132,7 @@ export type DashboardsOverviewHealthResourceSubsystem<
 /** Adds a health subsystem to the status card of Overview dashboard where the source of status is a K8s REST API. */
 export type DashboardsOverviewHealthOperator<
   T extends K8sResourceCommon = K8sResourceCommon
-> = ExtensionDeclaration<
+> = Extension<
   'console.dashboards/overview/health/operator',
   {
     /** Title of operators section in the popup. */
@@ -149,7 +149,7 @@ export type DashboardsOverviewHealthOperator<
 >;
 
 /** Adds an inventory status group. */
-export type DashboardsInventoryItemGroup = ExtensionDeclaration<
+export type DashboardsInventoryItemGroup = Extension<
   'console.dashboards/overview/inventory/item/group',
   {
     /** The id of the status group. */
@@ -163,7 +163,7 @@ export type DashboardsInventoryItemGroup = ExtensionDeclaration<
 export type DashboardsOverviewInventoryItem<
   T extends K8sModel = K8sModel,
   R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
-> = ExtensionDeclaration<
+> = Extension<
   'console.dashboards/overview/inventory/item',
   DashboardsOverviewInventoryItemProperties<T, R> & {}
 >;
@@ -172,7 +172,7 @@ export type DashboardsOverviewInventoryItem<
 export type DashboardsOverviewInventoryItemReplacement<
   T extends K8sModel = K8sModel,
   R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
-> = ExtensionDeclaration<
+> = Extension<
   'console.dashboards/overview/inventory/item/replacement',
   DashboardsOverviewInventoryItemProperties<T, R> & {}
 >;
@@ -181,7 +181,7 @@ export type DashboardsOverviewInventoryItemReplacement<
 export type DashboardsProjectOverviewInventoryItem<
   T extends K8sModel = K8sModel,
   R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
-> = ExtensionDeclaration<
+> = Extension<
   'console.dashboards/project/overview/item',
   DashboardsOverviewInventoryItemProperties<T, R> & {}
 >;
@@ -189,7 +189,7 @@ export type DashboardsProjectOverviewInventoryItem<
 /** Adds an activity to the Activity Card of Overview Dashboard where the triggering of activity is based on watching a K8s resource. */
 export type DashboardsOverviewResourceActivity<
   T extends K8sResourceCommon = K8sResourceCommon
-> = ExtensionDeclaration<
+> = Extension<
   'console.dashboards/overview/activity/resource',
   {
     /** The utilization item to be replaced. */
@@ -204,7 +204,7 @@ export type DashboardsOverviewResourceActivity<
 >;
 
 /** Adds an activity to the Activity Card of Prometheus Overview Dashboard where the triggering of activity is based on watching a K8s resource. */
-export type DashboardsOverviewPrometheusActivity = ExtensionDeclaration<
+export type DashboardsOverviewPrometheusActivity = Extension<
   'console.dashboards/overview/prometheus/activity/resource',
   {
     /** Queries to watch */

@@ -239,11 +239,11 @@ describe('resolveEncodedCodeRefs', () => {
 
     expect(resolvedExtensions[0].properties.test).toBe(true);
     expect(isExecutableCodeRef(resolvedExtensions[0].properties.qux)).toBe(true);
-    expect(await resolvedExtensions[0].properties.qux()).toBe('value1');
+    expect(await (resolvedExtensions[0].properties as any).qux()).toBe('value1');
 
     expect(resolvedExtensions[1].properties.test).toEqual([1]);
-    expect(isExecutableCodeRef(resolvedExtensions[1].properties.baz.test)).toBe(true);
-    expect(await resolvedExtensions[1].properties.baz.test()).toBe('value2');
+    expect(isExecutableCodeRef((resolvedExtensions[1].properties.baz as any).test)).toBe(true);
+    expect(await (resolvedExtensions[1].properties as any).baz.test()).toBe('value2');
   });
 
   it('clones the provided extensions array and its elements', () => {

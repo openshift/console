@@ -72,12 +72,12 @@ const getModelRef = (e: ModelFeatureFlag) => {
   return referenceForGroupVersionKind(model.group)(model.version)(model.kind);
 };
 
-pluginStore
-  .getExtensions()
-  .filter(isModelFeatureFlag)
-  .forEach((ff) => {
-    addToCRDs(referenceForModel(ff.properties.model), ff.properties.flag);
-  });
+(pluginStore.getExtensions().filter(isModelFeatureFlag) as any).forEach((ff) => {
+  // This is incorrect (for `ExtensionK8sModel` we should use `referenceFor`),
+  // but given that this was not likely working this entire time, we should consider
+  // removing this use of `pluginStore` entirely in the future.
+  addToCRDs(referenceForModel(ff.properties.model), ff.properties.flag);
+});
 
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state: FeatureState, action: FeatureAction): FeatureState => {

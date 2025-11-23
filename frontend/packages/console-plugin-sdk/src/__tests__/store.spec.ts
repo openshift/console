@@ -1,5 +1,6 @@
 import * as Combinatorics from 'js-combinatorics';
 import * as _ from 'lodash';
+import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
 import {
   getPluginManifest,
   getExecutableCodeRefMock,
@@ -11,7 +12,6 @@ import {
   getGatingFlagNames,
   PluginStore,
 } from '../store';
-import { Extension } from '../typings';
 
 describe('sanitizeExtension', () => {
   it('sanitizes the flags object for gated extensions', () => {
@@ -282,11 +282,11 @@ describe('PluginStore', () => {
       expect(store.getAllowedDynamicPluginNames()).toEqual(['TestA', 'TestB']);
       expect(store.getPluginInfo()).toEqual([
         {
-          status: 'Pending',
+          status: 'pending',
           pluginName: 'TestA',
         },
         {
-          status: 'Pending',
+          status: 'pending',
           pluginName: 'TestB',
         },
       ]);
@@ -294,7 +294,7 @@ describe('PluginStore', () => {
   });
 
   describe('getExtensions', () => {
-    it('returns a list of static and dynamic extensions currently in use', () => {
+    it('returns a list of extensions currently in use', () => {
       const store = new PluginStore(
         [
           {
@@ -582,7 +582,7 @@ describe('PluginStore', () => {
       expect(store.getExtensions()).toEqual([]);
       expect(store.getPluginInfo()).toEqual([
         {
-          status: 'Loaded',
+          status: 'loaded',
           pluginID: 'Test@1.2.3',
           metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: false,
@@ -954,11 +954,11 @@ describe('PluginStore', () => {
 
       expect(store.getPluginInfo()).toEqual([
         {
-          status: 'Pending',
+          status: 'pending',
           pluginName: 'TestA',
         },
         {
-          status: 'Pending',
+          status: 'pending',
           pluginName: 'TestB',
         },
       ]);
@@ -967,13 +967,13 @@ describe('PluginStore', () => {
 
       expect(store.getPluginInfo()).toEqual([
         {
-          status: 'Loaded',
+          status: 'loaded',
           pluginID: 'TestA@1.2.3',
           metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: false,
         },
         {
-          status: 'Pending',
+          status: 'pending',
           pluginName: 'TestB',
         },
       ]);
@@ -982,26 +982,26 @@ describe('PluginStore', () => {
 
       expect(store.getPluginInfo()).toEqual([
         {
-          status: 'Loaded',
+          status: 'loaded',
           pluginID: 'TestA@1.2.3',
           metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: true,
         },
         {
-          status: 'Pending',
+          status: 'pending',
           pluginName: 'TestB',
         },
       ]);
 
       expect(store.getPluginInfo()).toEqual([
         {
-          status: 'Loaded',
+          status: 'loaded',
           pluginID: 'TestA@1.2.3',
           metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: true,
         },
         {
-          status: 'Pending',
+          status: 'pending',
           pluginName: 'TestB',
         },
       ]);
@@ -1010,13 +1010,13 @@ describe('PluginStore', () => {
 
       expect(store.getPluginInfo()).toEqual([
         {
-          status: 'Loaded',
+          status: 'loaded',
           pluginID: 'TestA@1.2.3',
           metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
           enabled: true,
         },
         {
-          status: 'Failed',
+          status: 'failed',
           pluginName: 'TestB',
           errorMessage: 'Test error message',
           errorCause: new Error('Boom'),
