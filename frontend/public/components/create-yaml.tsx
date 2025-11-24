@@ -63,7 +63,8 @@ export const CreateYAMLInner = ({
 
     const { metadata, spec } = parsed;
     const { crd, kind, namespaced } = kindObj;
-    const isDefaultTemplate = crd && template === yamlTemplates.getIn(['DEFAULT', 'default']);
+    const isDefaultTemplate =
+      crd && resolvedTemplate === yamlTemplates.getIn(['DEFAULT', 'default']);
     return {
       ...parsed,
       kind,
