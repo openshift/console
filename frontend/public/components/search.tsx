@@ -3,7 +3,7 @@ import * as React from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import {
   Accordion,
   AccordionContent,
@@ -95,13 +95,14 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   const { noProjectsAvailable } = props;
   const { t } = useTranslation();
   const [namespace] = useActiveNamespace();
+  const location = useLocation();
   const confirmNavUnpinModal = useConfirmNavUnpinModal(pinnedResources, setPinnedResources);
   // Set state variables from the URL
   React.useEffect(() => {
     let kind: string, q: string, name: string;
 
-    if (window.location.search) {
-      const sp = new URLSearchParams(window.location.search);
+    if (location.search) {
+      const sp = new URLSearchParams(location.search);
       kind = sp.get('kind');
       q = sp.get('q');
       name = sp.get('name');
@@ -110,12 +111,14 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     kind = kind || '';
     if (kind !== '') {
       setSelectedItems(new Set(kind.split(',')));
+    } else {
+      setSelectedItems(new Set([]));
     }
     const tags = split(q || '');
     const validTags = _.reject(tags, (tag) => requirementFromString(tag) === undefined);
     setLabelFilter(validTags);
     setTypeaheadNameFilter(name || '');
-  }, []);
+  }, [location.search]);
 
   const debouncedNameFilterCallback = useDebounceCallback((nameFilter: string) => {
     setDebouncedNameFilter(nameFilter);
