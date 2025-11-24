@@ -6,7 +6,17 @@ import { IBuild as IBuildV1Beta1 } from '@kubernetes-models/shipwright/shipwrigh
 import { IBuildRun as IBuildRunV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/BuildRun';
 import { IBuildStrategy as IBuildStrategyV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/BuildStrategy';
 import { IClusterBuildStrategy as IClusterBuildStrategyV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/ClusterBuildStrategy';
-import { K8sResourceCondition } from '@console/internal/module/k8s';
+import {
+  TektonResource,
+  TektonResultsRun,
+  TektonTaskSpec,
+} from '@console/dev-console/src/types/coreTekton';
+import { PipelineTaskParam, PipelineTaskRef } from '@console/dev-console/src/types/pipeline';
+import {
+  K8sResourceCommon,
+  K8sResourceCondition,
+  PersistentVolumeClaimKind,
+} from '@console/internal/module/k8s';
 
 // Add missing latestBuild to Build
 export type Build =
@@ -53,4 +63,71 @@ export const ReadableClusterBuildStrategies: Record<ClusterBuildStrategy, string
   // t('shipwright-plugin~Source-to-Image')
   [ClusterBuildStrategy.S2I]: `shipwright-plugin~Source-to-Image`,
   [ClusterBuildStrategy.UNKNOWN]: `shipwright-plugin~Unknown`,
+};
+
+export type PLRTaskRunStep = {
+  container: string;
+  imageID?: string;
+  name: string;
+  waiting?: {
+    reason: string;
+  };
+  running?: {
+    startedAt: string;
+  };
+  terminated?: {
+    containerID: string;
+    exitCode: number;
+    finishedAt: string;
+    reason: string;
+    startedAt: string;
+    message?: string;
+  };
+};
+
+export type TaskRunWorkspace = {
+  name: string;
+  volumeClaimTemplate?: PersistentVolumeClaimKind;
+  persistentVolumeClaim?: {
+    claimName: string;
+  };
+  configMap?: {
+    name: string;
+    items?: {
+      key: string;
+      path: string;
+    }[];
+  };
+  emptyDir?: {};
+  secret?: {
+    secretName: string;
+    items?: {
+      key: string;
+      path: string;
+    }[];
+  };
+  subPath?: string;
+};
+
+export type TaskRunStatus = {
+  completionTime?: string;
+  conditions?: K8sResourceCondition[];
+  podName?: string;
+  startTime?: string;
+  steps?: PLRTaskRunStep[];
+  taskResults?: TektonResultsRun[]; // in tekton v1 taskResults is renamed to results
+  results?: TektonResultsRun[];
+};
+
+export type TaskRunKind = K8sResourceCommon & {
+  spec: {
+    taskRef?: PipelineTaskRef;
+    taskSpec?: TektonTaskSpec;
+    serviceAccountName?: string;
+    params?: PipelineTaskParam[];
+    resources?: TektonResource[];
+    timeout?: string;
+    workspaces?: TaskRunWorkspace[];
+  };
+  status?: TaskRunStatus;
 };

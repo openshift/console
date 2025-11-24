@@ -39,3 +39,14 @@ export const JAVA_IMAGESTREAM_NAME = 'java';
 
 export const FLAG_OPENSHIFT_DEPLOYMENTCONFIG = 'OPENSHIFT_DEPLOYMENTCONFIG';
 export const FLAG_OPENSHIFT_BUILDCONFIG = 'OPENSHIFT_BUILDCONFIG';
+export const FLAG_OPENSHIFT_PIPELINE = 'OPENSHIFT_PIPELINE';
+
+// Pipeline constants
+export const CLUSTER_PIPELINE_NS = 'openshift';
+export const PIPELINE_RUNTIME_LABEL = 'pipeline.openshift.io/runtime';
+export const FLAG_OPENSHIFT_PIPELINE_AS_CODE = 'OPENSHIFT_PIPELINE_AS_CODE';
+export const FUNC_PIPELINE_RUNTIME_LABEL = 'function.knative.dev/runtime';
+export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';
+export const PIPELINE_RUNTIME_VERSION_LABEL = 'pipeline.openshift.io/runtime-version';
+export const PIPELINE_STRATEGY_LABEL = 'pipeline.openshift.io/strategy';
+export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';

@@ -1,3 +1,4 @@
+import { chart_color_green_400 as tektonGroupColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { API_GROUP, API_VERSION_LATEST } from './const';
 
@@ -143,4 +144,22 @@ export const BuildRunModel: K8sModel = {
   // t('shipwright-plugin~BuildRuns')
   labelPluralKey: 'shipwright-plugin~BuildRuns',
   abbr: 'BR',
+};
+
+export const TaskRunModel: K8sModel = {
+  apiGroup: 'tekton.dev',
+  apiVersion: 'v1',
+  label: 'TaskRun',
+  // t('pipelines-plugin~TaskRun')
+  labelKey: 'pipelines-plugin~TaskRun',
+  // t('pipelines-plugin~TaskRuns')
+  labelPluralKey: 'pipelines-plugin~TaskRuns',
+  plural: 'taskruns',
+  abbr: 'TR',
+  namespaced: true,
+  kind: 'TaskRun',
+  id: 'taskrun',
+  labelPlural: 'TaskRuns',
+  crd: true,
+  color: tektonGroupColor.value,
 };

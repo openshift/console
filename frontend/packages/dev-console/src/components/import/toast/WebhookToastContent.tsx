@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { RepositoryModel } from '@console/pipelines-plugin/src/models';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { RepositoryModel } from '../../../models/pipelines';
 import { GitData, GitReadableTypes } from '../import-types';
 
 interface WebhookToastContentProps {

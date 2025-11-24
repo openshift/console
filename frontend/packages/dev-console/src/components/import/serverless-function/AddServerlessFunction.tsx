@@ -13,11 +13,11 @@ import { LoadingBox, history } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { ALL_APPLICATIONS_KEY, usePerspectives, useTelemetry } from '@console/shared/src';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { normalizeBuilderImages, NormalizedBuilderImages } from '../../../utils/imagestream-utils';
+import { defaultRepositoryFormValues } from '../../pipeline-section/pipeline/utils';
 import { getBaseInitialValues } from '../form-initial-values';
 import {
   createOrUpdateResources,

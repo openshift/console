@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { ConfigMapModel } from '@console/internal/models';
 import { ConfigMapKind, k8sList } from '@console/internal/module/k8s';
-import { RepositoryModel } from '@console/pipelines-plugin/src/models';
+import { RepositoryModel } from '../../../models/pipelines';
 import { PAC_INFO } from '../../pac/const';
 import { PIPELINE_NAMESPACE } from '../../pipelines/const';
 

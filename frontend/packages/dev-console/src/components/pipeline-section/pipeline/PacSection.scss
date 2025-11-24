@@ -1,0 +1,24 @@
+.odc-pipeline-section-pac {
+  &__radio-intent {
+    position: relative;
+    left: var(--pf-t--global--spacer--md);
+  }
+  &__error-alert {
+    margin: var(--pf-t--global--spacer--2xl) 0 0;
+  }
+  &__config-type {
+    margin-top: var(--pf-t--global--spacer--md);
+  }
+  &__info-panel {
+    color: var(--pf-t--global--text--color--regular);
+    border: var(--pf-t--global--border--width--regular) solid
+      var(--pf-t--global--border--color--default);
+    padding: var(--pf-t--global--spacer--md);
+  }
+  &__clipboard {
+    margin-top: var(--pf-t--global--spacer--md);
+  }
+  &__info-text {
+    margin-bottom: var(--pf-t--global--spacer--md);
+  }
+}

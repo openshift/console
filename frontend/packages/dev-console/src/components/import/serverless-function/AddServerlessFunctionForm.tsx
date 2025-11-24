@@ -10,19 +10,19 @@ import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy
 import { DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED } from '@console/internal/components/utils/documentation';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
-import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
-import {
-  CLUSTER_PIPELINE_NS,
-  FLAG_OPENSHIFT_PIPELINE,
-  FUNC_PIPELINE_RUNTIME_LABEL,
-} from '@console/pipelines-plugin/src/const';
-import { PipelineModel } from '@console/pipelines-plugin/src/models';
-import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { useFlag } from '@console/shared/src';
 import { FlexForm, FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import {
+  CLUSTER_PIPELINE_NS,
+  FUNC_PIPELINE_RUNTIME_LABEL,
+  FLAG_OPENSHIFT_PIPELINE,
+} from '../../../const';
+import { PipelineModel } from '../../../models/pipelines';
+import { PipelineKind } from '../../../types/pipeline';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import { notSupportedRuntime } from '../../../utils/serverless-functions';
+import PipelineSection from '../../pipeline-section/pipeline/PipelineSection';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import GitSection from '../git/GitSection';
@@ -111,7 +111,7 @@ const AddServerlessFunctionForm: React.FC<
                 );
                 setStatus({ errors: 'Builder strategy not supported' });
               }
-              if (builderImages[SupportedRuntime[res?.values?.runtime]] === undefined) {
+              if (builderImages?.[SupportedRuntime[res?.values?.runtime]] === undefined) {
                 setHelpText(
                   t('devconsole~Support for {{runtime}} is not yet available.', {
                     runtime: res?.values?.runtime,

@@ -18,7 +18,7 @@ const TaskRunLog: React.FC<TaskRunLogProps> = ({ obj }) => {
       kind: PodModel.kind,
       isList: false,
       prop: `obj`,
-      namespace: obj.metadata.namespace,
+      namespace: obj?.metadata?.namespace || '',
       name: obj.status.podName,
     };
     return (

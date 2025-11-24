@@ -1,0 +1,17 @@
+{
+  "Download all TaskRun logs": "Download all TaskRun logs",
+  "TaskRun log": "TaskRun log",
+  "Pod not found": "Pod not found",
+  "Unknown failure condition": "Unknown failure condition",
+  "Failure on task {{taskName}} - check logs for details.": "Failure on task {{taskName}} - check logs for details.",
+  "Error downloading logs.": "Error downloading logs.",
+  "An error occurred while retrieving the requested logs.": "An error occurred while retrieving the requested logs.",
+  "Unknown error retrieving logs": "Unknown error retrieving logs",
+  "Download": "Download",
+  "Download all": "Download all",
+  "Collapse": "Collapse",
+  "Expand": "Expand",
+  "Failure - check logs for details.": "Failure - check logs for details.",
+  "Message": "Message",
+  "Log snippet": "Log snippet"
+}

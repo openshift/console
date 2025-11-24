@@ -1,0 +1,49 @@
+.odc-multi-stream-logs {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+
+  &--fullscreen {
+    background-color: var(--pf-t--global--background--color--primary--default);
+    padding: var(--pf-t--global--spacer--sm);
+  }
+
+  &__icon {
+    margin-right: var(--pf-t--global--spacer--xs);
+  }
+
+  &__divider {
+    color: var(--pf-t--global--border--color--default);
+    margin: 0 var(--pf-t--global--spacer--sm);
+  }
+
+  &__button {
+    margin-right: 0;
+  }
+
+  &__container {
+    background-color: var(--pf-t--global--background--color--primary--default);
+    border: 1px solid var(--pf-t--global--border--color--default);
+    color: var(--pf-t--global--text--color--regular);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    font-family: var(--pf-t--global--font--family--mono);
+    font-size: var(--pf-t--global--font--size--body--sm);
+    overflow-y: scroll;
+    position: relative;
+    &__logs {
+      position: absolute;
+      width: 100%;
+    }
+  }
+  &__taskName {
+    background-color: var(--pf-t--global--color--nonstatus--gray--default);
+    padding: var(--pf-t--global--spacer--xs) var(--pf-t--global--spacer--lg);
+    color: var(--pf-t--global--text--color--regular);
+  }
+  &__taskName__loading-indicator {
+    margin-left: var(--pf-t--global--spacer--sm);
+  }
+}

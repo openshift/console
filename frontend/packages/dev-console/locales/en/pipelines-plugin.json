@@ -1,0 +1,19 @@
+{
+  "Once your Pipeline Repository is configured, in order to update your {{translatedResourceName}} <4>{{name}}</4> automatically, update the following in your <6>.tekton</6> PipelineRun:": "Once your Pipeline Repository is configured, in order to update your {{translatedResourceName}} <4>{{name}}</4> automatically, update the following in your <6>.tekton</6> PipelineRun:",
+  "Internal image registry:": "Internal image registry:",
+  "View details": "View details",
+  "Hide details": "Hide details",
+  "Select a Builder Image and resource to see if there is a pipeline template available for this runtime.": "Select a Builder Image and resource to see if there is a pipeline template available for this runtime.",
+  "The pipeline template for Dockerfiles is not available at this time.": "The pipeline template for Dockerfiles is not available at this time.",
+  "There are no pipeline templates available for {{builderImage}} and {{resourceType}} combination.": "There are no pipeline templates available for {{builderImage}} and {{resourceType}} combination.",
+  "this Builder Image": "this Builder Image",
+  "Add pipeline": "Add pipeline",
+  "Pipeline": "Pipeline",
+  "Build, deploy and configure a Pipeline Repository": "Build, deploy and configure a Pipeline Repository",
+  "Automatically configure a new Pipeline Repository for your Git repository. This will automatically trigger new PipelineRuns on new commits or Pull Requests based on your configuration in your source code.": "Automatically configure a new Pipeline Repository for your Git repository. This will automatically trigger new PipelineRuns on new commits or Pull Requests based on your configuration in your source code.",
+  "Use Pipeline from this cluster": "Use Pipeline from this cluster",
+  "Use an installed Pipeline from your cluster to build and deploy your component. Pipelines are from \"openshift\" namespace that support the relevant runtime are shown below.": "Use an installed Pipeline from your cluster to build and deploy your component. Pipelines are from \"openshift\" namespace that support the relevant runtime are shown below.",
+  "Hide": "Hide",
+  "Show": "Show",
+  "pipeline visualization": "pipeline visualization"
+}
