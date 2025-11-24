@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Navigate, useLocation } from 'react-router-dom-v5-compat';
+import { createPath, Navigate, useLocation } from 'react-router-dom-v5-compat';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 
@@ -15,7 +15,10 @@ export const NamespaceRedirect: React.FC = () => {
   const [activeNamespace] = useActiveNamespace();
   return (
     <Navigate
-      to={appendActiveNamespace(activeNamespace, location.pathname) + location.search}
+      to={createPath({
+        ...location,
+        pathname: appendActiveNamespace(activeNamespace, location.pathname),
+      })}
       replace
     />
   );
