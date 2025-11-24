@@ -7,8 +7,12 @@ particular package.
 For released (GA) versions of Console, use `4.x.z` packages.
 For current development version of Console, use `4.x.0-prerelease.n` packages.
 
-For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
-in [Console dynamic plugins README](./README.md).
+For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
+table in [Console dynamic plugins README](./README.md).
+
+## 4.20.0 - 2025-11-24
+
+> Initial release for OCP Console 4.20.
 
 ## 4.20.0-prerelease.1 - 2025-08-15
 
@@ -33,6 +37,16 @@ in [Console dynamic plugins README](./README.md).
 
 - Remove Console provided PatternFly 4 shared modules ([CONSOLE-4379], [#14615])
 - Change generated JS build target from `es2016` to `es2021` ([CONSOLE-4400], [#14620])
+
+## 4.18.1 - 2025-09-22
+
+- Fix bug when processing Console provided PatternFly shared modules ([OCPBUGS-61569], [#15479])
+
+## 4.18.0 - 2025-09-04
+
+> Initial release for OCP Console 4.18.
+
+- Add `@patternfly/react-topology` to Console provided shared modules ([OCPBUGS-55323], [#14993])
 
 ## 1.3.0 - 2024-10-31
 
@@ -83,6 +97,7 @@ in [Console dynamic plugins README](./README.md).
 [OCPBUGS-42985]: https://issues.redhat.com/browse/OCPBUGS-42985
 [OCPBUGS-53030]: https://issues.redhat.com/browse/OCPBUGS-53030
 [OCPBUGS-55323]: https://issues.redhat.com/browse/OCPBUGS-55323
+[OCPBUGS-61569]: https://issues.redhat.com/browse/OCPBUGS-61569
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -99,3 +114,4 @@ in [Console dynamic plugins README](./README.md).
 [#14861]: https://github.com/openshift/console/pull/14861
 [#14993]: https://github.com/openshift/console/pull/14993
 [#15183]: https://github.com/openshift/console/pull/15183
+[#15479]: https://github.com/openshift/console/pull/15479
