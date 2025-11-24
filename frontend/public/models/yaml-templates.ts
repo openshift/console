@@ -792,6 +792,28 @@ spec:
 `,
   )
   .setIn(
+    [referenceForModel(k8sModels.MachineConfigModel), 'default'],
+    `
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker
+  name: example
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      files:
+      - path: /etc/example-config
+        mode: 0644
+        overwrite: true
+        contents:
+          source: data:,example%20content
+`,
+  )
+  .setIn(
     [referenceForModel(k8sModels.MachineConfigPoolModel), 'default'],
     `
 apiVersion: machineconfiguration.openshift.io/v1
@@ -1139,6 +1161,23 @@ spec:
  selector:
     matchLabels:
       app: hello-openShift
+`,
+  )
+  .setIn(
+    [referenceForModel(k8sModels.ServiceMonitorModel), 'default'],
+    `
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: example
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: example
+  endpoints:
+  - port: web
+    interval: 30s
 `,
   );
 
