@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { isCreateResource, CreateResource, GroupVersionKind } from '@console/dynamic-plugin-sdk';
-import { Extension, LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { ExtensionDeclaration, LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 
@@ -8,7 +8,7 @@ export const useCreateResourceExtension = (
   modelReference: GroupVersionKind,
 ): LoadedExtension<CreateResource> => {
   const createResourceTypeGuard = useCallback(
-    (e: Extension): e is CreateResource =>
+    (e: ExtensionDeclaration): e is CreateResource =>
       isCreateResource(e) && referenceForExtensionModel(e.properties.model) === modelReference,
     [modelReference],
   );

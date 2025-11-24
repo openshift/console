@@ -12,15 +12,12 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.21.0-prerelease.x - TBD
 
-- **Deprecated** `setPluginStore` function in `k8s-utils.ts`. The function is now a noop and the export
+- **Deprecated**: `setPluginStore` function in `k8s-utils.ts`. The function is now a noop and the export
   will be removed in a future release. ([CONSOLE-4840], [#15671])
-- **Type-only breaking change**: Fix `popupComponent` prop type in extension `console.dashboards/overview/health/resource` ([CONSOLE-4796], [#15526])
-- Increased alignment with `@openshift/dynamic-plugin-sdk` types ([CONSOLE-3769], [#15509], [#15738])
-  - `AlwaysOnExtension` and `ModelDefinition` types are removed from `api/common-types` because they referred
-    to a legacy system which console dynamic plugins never supported. There is no direct replacement for these
-    types, and plugins should remove all uses of them. ([#15671])
-  - The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
-    locally: `ExtensionFlags`, `ExtensionTypeGuard`, `ResolvedCodeRefProperties`, `RemoteEntryModule`, and `Update`. ([#15509], [#15738])
+- **Type breaking**: Fix `popupComponent` prop type in extension `console.dashboards/overview/health/resource` ([CONSOLE-4796], [#15526])
+- **Type breaking**: `AlwaysOnExtension` and `ModelDefinition` types are removed from `api/common-types`. ([CONSOLE-3769], [#15509])
+- The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
+  locally: `ExtensionFlags`, `ExtensionTypeGuard`, `ResolvedCodeRefProperties`, `RemoteEntryModule`, and `Update`. ([CONSOLE-4840], [#15509], [#15671])
 - Add optional `fetch` property to extension `console.dashboards/overview/health/url` ([CONSOLE-4796], [#15526])
 - Add optional `infrastructure` parameter to `PrometheusHealthHandler` type ([CONSOLE-4796], [#15526])
 - Allow `K8sResourceKind` in `TopologyDataObject`, `TopologyResourcesObject`, and `OverviewItem` types ([CONSOLE-4840], [#15699])
@@ -221,4 +218,3 @@ table in [Console dynamic plugins README](./README.md).
 [#15671]: https://github.com/openshift/console/pull/15671
 [#15699]: https://github.com/openshift/console/pull/15699
 [#15735]: https://github.com/openshift/console/pull/15735
-[#15738]: https://github.com/openshift/console/pull/15738

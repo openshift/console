@@ -1,15 +1,17 @@
 import type {
   CodeRef as SDKCodeRef,
+  Extension as ExtensionDeclaration,
   ExtensionFlags,
-  ExtensionPredicate,
   LoadedExtension as SDKLoadedExtension,
   ReplaceProperties as Update,
   MapCodeRefsToValues,
+  AnyObject,
 } from '@openshift/dynamic-plugin-sdk';
 
 export type {
   ExtensionFlags,
   Extension as ExtensionDeclaration,
+  ExtensionPredicate as ExtensionTypeGuard,
   MapCodeRefsToValues as ResolvedCodeRefProperties,
   PluginEntryModule as RemoteEntryModule,
   ReplaceProperties as Update,
@@ -33,14 +35,11 @@ export type Extension<P extends {} = any> = {
 };
 
 /**
- * TS type guard to narrow type of the given extension to `E`.
- */
-export type ExtensionTypeGuard<E extends Extension> = ExtensionPredicate<E>;
-
-/**
  * Runtime extension interface, exposing additional metadata.
  */
-export type LoadedExtension<E extends Extension = Extension> = SDKLoadedExtension<E> & {
+export type LoadedExtension<
+  E extends ExtensionDeclaration = ExtensionDeclaration
+> = SDKLoadedExtension<E> & {
   pluginID: string;
 };
 
@@ -65,15 +64,15 @@ export type ExtractCodeRefType<R> = R extends CodeRef<infer T> ? T : never;
 /**
  * Infer the properties of extension `E`.
  */
-export type ExtensionProperties<E> = E extends Extension<infer P> ? P : never;
+export type ExtensionProperties<E> = E extends ExtensionDeclaration<string, infer P> ? P : never;
 
 /**
  * Update existing properties of extension `E` with ones declared in object `U`.
  */
 export type UpdateExtensionProperties<
-  E extends Extension<P>,
+  E extends ExtensionDeclaration,
   U extends {},
-  P = ExtensionProperties<E>
+  P extends AnyObject = ExtensionProperties<E>
 > = Update<
   E,
   {
@@ -86,6 +85,7 @@ export type UpdateExtensionProperties<
  *
  * This also coerces `E` type to `LoadedExtension` interface for runtime consumption.
  */
-export type ResolvedExtension<E extends Extension<P>, P = ExtensionProperties<E>> = LoadedExtension<
-  UpdateExtensionProperties<E, MapCodeRefsToValues<P>, P>
->;
+export type ResolvedExtension<
+  E extends ExtensionDeclaration,
+  P extends AnyObject = ExtensionProperties<E>
+> = LoadedExtension<UpdateExtensionProperties<E, MapCodeRefsToValues<P>, P>>;

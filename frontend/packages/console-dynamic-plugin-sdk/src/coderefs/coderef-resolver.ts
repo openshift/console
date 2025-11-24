@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
 
+import { AnyObject } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
-import {
-  Extension,
+import type {
+  ExtensionDeclaration,
   RemoteEntryModule,
   EncodedCodeRef,
   CodeRef,
@@ -94,11 +95,11 @@ export const loadReferencedObject = async <TExport = any>(
  * _Does not execute `CodeRef` functions to load the referenced objects._
  */
 export const resolveEncodedCodeRefs = (
-  extensions: Extension[],
+  extensions: ExtensionDeclaration[],
   entryModule: RemoteEntryModule,
   pluginID: string,
   errorCallback: VoidFunction,
-): Extension[] =>
+): ExtensionDeclaration[] =>
   _.cloneDeep(extensions).map((e) => {
     deepForOwn<EncodedCodeRef>(e.properties, isEncodedCodeRef, (ref, key, obj) => {
       const loader = applyCodeRefSymbol(async () =>
@@ -114,8 +115,8 @@ export const resolveEncodedCodeRefs = (
  * Returns an extension with its `CodeRef` properties replaced with referenced objects.
  */
 export const resolveExtension = async <
-  E extends Extension<P>,
-  P = ExtensionProperties<E>,
+  E extends ExtensionDeclaration<string, P>,
+  P extends AnyObject = ExtensionProperties<E>,
   R = UpdateExtensionProperties<E, ResolvedCodeRefProperties<P>, P>
 >(
   extension: E,
