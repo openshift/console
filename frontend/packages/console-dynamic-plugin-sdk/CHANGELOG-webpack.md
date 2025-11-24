@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.20.0 - 2025-11-24
+
+> Initial release for OCP Console 4.20.
+
 ## 4.20.0-prerelease.1 - 2025-08-15
 
 - Add support for optional plugin dependencies ([CONSOLE-4623], [#15183])
