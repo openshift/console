@@ -21,6 +21,14 @@ table in [Console dynamic plugins README](./README.md).
 - Allow `K8sResourceKind` in `TopologyDataObject`, `TopologyResourcesObject`, and `OverviewItem` types ([CONSOLE-4840], [#15699])
 - Allow async functions for the `resources` property of `console.topology/data/factory` extension ([CONSOLE-4806], [#15641])
 
+## 4.20.0 - 2025-11-24
+
+> Initial release for OCP Console 4.20.
+
+- Add new `console.catalog/categories-provider` extension ([CONSOLE-4576], [#15269])
+- Add optional `sortFilterGroups` property to extension `console.catalog/item-type` ([CONSOLE-4576], [#15269])
+- Fixed namespaced path generation for non-namespaced resources in `getK8sResourcePath` utility ([OCPBUGS-58118], [#15498])
+
 ## 4.20.0-prerelease.1 - 2025-08-15
 
 - Add fullscreen toggle button to `ResourceYAMLEditor` component ([CONSOLE-4656], [#15254])
@@ -134,6 +142,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
 [CONSOLE-4407]: https://issues.redhat.com/browse/CONSOLE-4407
 [CONSOLE-4499]: https://issues.redhat.com/browse/CONSOLE-4499
+[CONSOLE-4576]: https://issues.redhat.com/browse/CONSOLE-4576
 [CONSOLE-4654]: https://issues.redhat.com/browse/CONSOLE-4654
 [CONSOLE-4656]: https://issues.redhat.com/browse/CONSOLE-4656
 [CONSOLE-4796]: https://issues.redhat.com/browse/CONSOLE-4796
@@ -158,6 +167,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-55368]: https://issues.redhat.com/browse/OCPBUGS-55368
 [OCPBUGS-56248]: https://issues.redhat.com/browse/OCPBUGS-56248
 [OCPBUGS-57755]: https://issues.redhat.com/browse/OCPBUGS-57755
+[OCPBUGS-58118]: https://issues.redhat.com/browse/OCPBUGS-58118
 [OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [OCPBUGS-58375]: https://issues.redhat.com/browse/OCPBUGS-58375
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
@@ -194,7 +204,9 @@ table in [Console dynamic plugins README](./README.md).
 [#15167]: https://github.com/openshift/console/pull/15167
 [#15231]: https://github.com/openshift/console/pull/15231
 [#15254]: https://github.com/openshift/console/pull/15254
+[#15269]: https://github.com/openshift/console/pull/15269
 [#15386]: https://github.com/openshift/console/pull/15386
+[#15498]: https://github.com/openshift/console/pull/15498
 [#15509]: https://github.com/openshift/console/pull/15509
 [#15526]: https://github.com/openshift/console/pull/15526
 [#15641]: https://github.com/openshift/console/pull/15641
