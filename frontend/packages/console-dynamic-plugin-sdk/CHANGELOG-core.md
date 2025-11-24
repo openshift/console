@@ -7,8 +7,16 @@ particular package.
 For released (GA) versions of Console, use `4.x.z` packages.
 For current development version of Console, use `4.x.0-prerelease.n` packages.
 
-For 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility table
-in [Console dynamic plugins README](./README.md).
+For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
+table in [Console dynamic plugins README](./README.md).
+
+## 4.20.0 - 2025-11-24
+
+> Initial release for OCP Console 4.20.
+
+- Add new extension type `console.catalog/categories-provider` ([CONSOLE-4576], [#15269])
+- Add optional `sortFilterGroups` property to extension `console.catalog/item-type` ([CONSOLE-4576], [#15269])
+- Fixed path generation for non-namespaced resources in `getK8sResourcePath` ([OCPBUGS-58118], [#15498])
 
 ## 4.20.0-prerelease.1 - 2025-08-15
 
@@ -48,6 +56,14 @@ in [Console dynamic plugins README](./README.md).
 - Add `customData` prop to `HorizontalNav` component ([OCPBUGS-45319], [#14575])
 - Allow custom popover description in extension type `console.resource/details-item` ([CONSOLE-4269], [#14487])
 - Change generated JS build target from `es2016` to `es2021` ([CONSOLE-4400], [#14620])
+
+## 4.18.0 - 2025-09-04
+
+> Initial release for OCP Console 4.18.
+
+- Fix `href` handling bug for extension type `console.tab/horizontalNav` ([OCPBUGS-58258], [#15231])
+- Improve `useModal` hook to support multiple modals and prop pass-through ([OCPBUGS-49709], [#15139])
+- Allow custom popover description in extension type `console.resource/details-item` ([CONSOLE-4269], [#14487])
 
 ## 1.8.0 - 2024-11-04
 
@@ -114,6 +130,7 @@ in [Console dynamic plugins README](./README.md).
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
 [CONSOLE-4407]: https://issues.redhat.com/browse/CONSOLE-4407
 [CONSOLE-4499]: https://issues.redhat.com/browse/CONSOLE-4499
+[CONSOLE-4576]: https://issues.redhat.com/browse/CONSOLE-4576
 [CONSOLE-4654]: https://issues.redhat.com/browse/CONSOLE-4654
 [CONSOLE-4656]: https://issues.redhat.com/browse/CONSOLE-4656
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
@@ -135,6 +152,7 @@ in [Console dynamic plugins README](./README.md).
 [OCPBUGS-55368]: https://issues.redhat.com/browse/OCPBUGS-55368
 [OCPBUGS-56248]: https://issues.redhat.com/browse/OCPBUGS-56248
 [OCPBUGS-57755]: https://issues.redhat.com/browse/OCPBUGS-57755
+[OCPBUGS-58118]: https://issues.redhat.com/browse/OCPBUGS-58118
 [OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [OCPBUGS-58375]: https://issues.redhat.com/browse/OCPBUGS-58375
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
@@ -171,4 +189,6 @@ in [Console dynamic plugins README](./README.md).
 [#15167]: https://github.com/openshift/console/pull/15167
 [#15231]: https://github.com/openshift/console/pull/15231
 [#15254]: https://github.com/openshift/console/pull/15254
+[#15269]: https://github.com/openshift/console/pull/15269
 [#15386]: https://github.com/openshift/console/pull/15386
+[#15498]: https://github.com/openshift/console/pull/15498
