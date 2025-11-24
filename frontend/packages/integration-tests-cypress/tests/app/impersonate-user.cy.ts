@@ -19,6 +19,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 
 import { checkErrors } from '../../support';
+import { guidedTour } from '../../views/guided-tour';
 import { nav } from '../../views/nav';
 
 describe('Multi-Group Impersonation RBAC E2E', () => {
@@ -33,16 +34,8 @@ describe('Multi-Group Impersonation RBAC E2E', () => {
 
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.visit('/');
-
-    // Wait for page to load then close guided tour if it appears
-    cy.get('body', { timeout: 10000 }).should('be.visible');
-    cy.wait(1000);
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-      }
-    });
 
     // Create test resources via kubectl/oc commands
     cy.log('Setting up test resources: namespaces, groups, and RBAC');
@@ -222,11 +215,6 @@ EOF`,
               if ($body2.find('[data-test="stop-impersonate"]').length > 0) {
                 cy.byTestID('stop-impersonate').click();
                 cy.contains('You are impersonating', { timeout: 10000 }).should('not.exist');
-                cy.get('body').then(($body3) => {
-                  if ($body3.find('[data-test="guided-tour-modal"]').length > 0) {
-                    cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-                  }
-                });
               }
             });
           }
@@ -280,13 +268,6 @@ EOF`,
     cy.byTestID('impersonate-button').should('not.be.disabled').should('be.visible').click();
     cy.wait(1000);
 
-    // Close guided tour if present
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-      }
-    });
-
     cy.contains('You are impersonating', { timeout: 10000 }).should('be.visible');
   };
 
@@ -295,13 +276,6 @@ EOF`,
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('stop-impersonate').should('be.visible').click();
     cy.contains('You are impersonating', { timeout: 10000 }).should('not.exist');
-
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-        cy.wait(500);
-      }
-    });
   };
 
   describe('Single Group Access Control', () => {
@@ -752,7 +726,6 @@ EOF`,
 
       cy.wait(2000);
 
-      // Verify impersonation banner (don't close guided tour - it might cause page reload)
       cy.contains('You are impersonating', { timeout: 10000 }).should('be.visible');
       cy.contains(specialUser).should('be.visible');
       cy.contains(testGroupA).should('be.visible');

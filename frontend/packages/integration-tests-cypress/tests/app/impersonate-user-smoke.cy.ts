@@ -23,20 +23,14 @@
  */
 
 import { checkErrors } from '../../support';
+import { guidedTour } from '../../views/guided-tour';
 
 /* eslint-disable cypress/no-unnecessary-waiting */
 describe('Impersonation Smoke Tests', () => {
   before(() => {
     cy.login();
+    guidedTour.close();
     cy.visit('/');
-    // Wait for page to load then close guided tour if it appears
-    cy.get('body', { timeout: 10000 }).should('be.visible');
-    cy.wait(1000); // Give the tour time to appear
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-      }
-    });
   });
 
   afterEach(() => {
@@ -60,13 +54,6 @@ describe('Impersonation Smoke Tests', () => {
 
                 // Wait for impersonation banner to disappear
                 cy.contains('You are impersonating', { timeout: 10000 }).should('not.exist');
-
-                // Close guided tour after stopping
-                cy.get('body').then(($body3) => {
-                  if ($body3.find('[data-test="guided-tour-modal"]').length > 0) {
-                    cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-                  }
-                });
               }
             });
           }
@@ -102,13 +89,6 @@ describe('Impersonation Smoke Tests', () => {
 
     // Wait for navigation to happen (URL may not change but page reloads)
     cy.wait(1000);
-
-    // Close guided tour if present
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-      }
-    });
 
     // Verify impersonation banner appears
     cy.contains('You are impersonating', { timeout: 10000 }).should('be.visible');
@@ -157,14 +137,6 @@ describe('Impersonation Smoke Tests', () => {
 
     // Wait for impersonation banner to disappear (Redux state cleared and page reloaded)
     cy.contains('You are impersonating', { timeout: 10000 }).should('not.exist');
-
-    // Close guided tour if present after reload
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-        cy.wait(500);
-      }
-    });
   });
 
   it('SMOKE: Submit button disabled when username empty', () => {
@@ -214,13 +186,6 @@ describe('Impersonation Smoke Tests', () => {
 
     cy.wait(1000);
 
-    // Close guided tour if present
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-      }
-    });
-
     cy.contains('You are impersonating', { timeout: 10000 }).should('be.visible');
 
     // Cleanup - use dropdown for more reliable stop
@@ -229,14 +194,6 @@ describe('Impersonation Smoke Tests', () => {
 
     // Wait for impersonation banner to disappear (Redux state cleared and page reloaded)
     cy.contains('You are impersonating', { timeout: 10000 }).should('not.exist');
-
-    // Close guided tour if present after reload
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-        cy.wait(500);
-      }
-    });
   });
 
   it('SMOKE: Group selection UI with mocked data', () => {
@@ -418,13 +375,6 @@ describe('Impersonation Smoke Tests', () => {
     cy.byTestID('impersonate-button').should('not.be.disabled').should('be.visible').click();
     cy.wait(1000);
 
-    // Close guided tour if present
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-      }
-    });
-
     // Verify impersonation banner with groups
     cy.contains('You are impersonating', { timeout: 10000 }).should('be.visible');
     cy.contains('groups-persist-user').should('be.visible');
@@ -463,14 +413,6 @@ describe('Impersonation Smoke Tests', () => {
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('stop-impersonate').should('be.visible').click();
     cy.contains('You are impersonating', { timeout: 10000 }).should('not.exist');
-
-    // Close guided tour if present after reload
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-        cy.wait(500);
-      }
-    });
   });
 
   it('SMOKE: Can stop from user dropdown', () => {
@@ -482,13 +424,6 @@ describe('Impersonation Smoke Tests', () => {
 
     cy.wait(1000);
 
-    // Close guided tour if present
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-      }
-    });
-
     cy.contains('You are impersonating', { timeout: 10000 }).should('be.visible');
 
     // Stop from dropdown
@@ -497,14 +432,6 @@ describe('Impersonation Smoke Tests', () => {
 
     // Wait for impersonation banner to disappear (Redux state cleared and page reloaded)
     cy.contains('You are impersonating', { timeout: 10000 }).should('not.exist');
-
-    // Close guided tour if present after reload
-    cy.get('body').then(($body) => {
-      if ($body.find('[data-test="guided-tour-modal"]').length > 0) {
-        cy.byTestID('tour-step-footer-secondary').contains('Skip tour').click();
-        cy.wait(500);
-      }
-    });
 
     // Extra wait to ensure page has fully reloaded before next test
     cy.wait(1000);
