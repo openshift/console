@@ -4,7 +4,7 @@ import { setAdmissionWebhookWarning } from '../../app/core/actions';
 import storeHandler from '../../app/storeHandler';
 import { ConsoleFetchText, ConsoleFetchJSON, ConsoleFetch } from '../../extensions/console-types';
 import { TimeoutError } from '../error/http-error';
-import { getConsoleRequestHeaders } from './console-fetch-utils';
+import { getConsoleRequestHeaders, normalizeConsoleHeaders } from './console-fetch-utils';
 
 /**
  * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
@@ -51,9 +51,10 @@ const consoleFetchCommon = async (
   timeout?: number,
 ): Promise<Response | string> => {
   const consoleHeaders = getConsoleRequestHeaders();
+  const normalizedConsoleHeaders = normalizeConsoleHeaders(consoleHeaders);
 
   // Merge headers properly - console headers first, then let options override
-  const mergedHeaders = { ...consoleHeaders, ...options.headers };
+  const mergedHeaders = { ...normalizedConsoleHeaders, ...options.headers };
   const allOptions = _.defaultsDeep({ method, headers: mergedHeaders }, options);
 
   const response = await consoleFetch(url, allOptions, timeout);

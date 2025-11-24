@@ -1,7 +1,10 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { consoleFetch } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { getConsoleRequestHeaders } from '@console/dynamic-plugin-sdk/src/utils/fetch';
+import {
+  getConsoleRequestHeaders,
+  normalizeConsoleHeaders,
+} from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { ONE_SECOND } from '@console/shared/src/constants/time';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
 import { OLMCatalogItem } from '../types';
@@ -22,8 +25,9 @@ const useCatalogItems: UseCatalogItems = () => {
 
   const headers = useMemo(() => {
     const consoleHeaders = getConsoleRequestHeaders();
+    const normalizedHeaders = normalizeConsoleHeaders(consoleHeaders);
     return {
-      ...consoleHeaders,
+      ...normalizedHeaders,
       'If-Modified-Since': lastModified,
       'Cache-Control': 'max-age=300',
     };
