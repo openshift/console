@@ -51,6 +51,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { VolumeAttributesClassModel } from '../models';
 
 export const PVCStatusComponent: React.FC<PVCStatusProps> = ({ pvc }) => {
   const { t } = useTranslation();
@@ -147,10 +148,12 @@ const PVCTableRow: React.FC<PVCTableRowProps> = ({ obj }) => {
 const Details: React.FC<PVCDetailsProps> = ({ obj: pvc }) => {
   const flags = useFlag(FLAGS.CAN_LIST_PV);
   const canListPV = flags[FLAGS.CAN_LIST_PV];
+  const isVACSupported = useFlag(FLAGS.VAC_PLATFORM_SUPPORT);
   const name = pvc?.metadata?.name;
   const namespace = pvc?.metadata?.namespace;
   const labelSelector = pvc?.spec?.selector;
   const storageClassName = pvc?.spec?.storageClassName;
+  const volumeAttributesClassName = pvc?.spec?.volumeAttributesClassName;
   const volumeName = pvc?.spec?.volumeName;
   const storage = pvc?.status?.capacity?.storage;
   const requestedStorage = getRequestedPVCSize(pvc);
@@ -287,6 +290,17 @@ const Details: React.FC<PVCDetailsProps> = ({ obj: pvc }) => {
                   )}
                 </DescriptionListDescription>
               </DescriptionListGroup>
+              {isVACSupported && volumeAttributesClassName && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~VolumeAttributesClass')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    <ResourceLink
+                      kind={referenceFor(VolumeAttributesClassModel)}
+                      name={volumeAttributesClassName}
+                    />
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
               {volumeName && canListPV && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('public~PersistentVolumes')}</DescriptionListTerm>

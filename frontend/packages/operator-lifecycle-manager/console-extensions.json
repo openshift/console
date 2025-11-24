@@ -380,6 +380,9 @@
       "catalogId": "dev-catalog",
       "type": "operator",
       "provider": { "$codeRef": "useOperatorCatalogItems" }
+    },
+    "flags": {
+      "disallowed": ["OLMV1_ENABLED"]
     }
   },
   {
@@ -438,6 +441,9 @@
     "properties": {
       "catalogId": "dev-catalog",
       "provider": { "$codeRef": "useOperatorCatalogCategories" }
+    },
+    "flags": {
+      "disallowed": ["OLMV1_ENABLED"]
     }
   },
   {

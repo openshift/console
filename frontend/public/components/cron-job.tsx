@@ -40,7 +40,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -91,7 +90,7 @@ const BooleanDisplay: React.FCC<{ value?: boolean }> = ({ value }) => {
   return value ? t('public~True') : t('public~False');
 };
 
-const getDataViewRows: GetDataViewRows<CronJobKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) => {
   return data.map(({ obj: cronjob }) => {
     const { name, namespace } = cronjob.metadata;
     const resourceKind = referenceFor(cronjob);
@@ -378,7 +377,6 @@ export const CronJobsList: React.FCC<CronJobsListProps> = ({ data, loaded, ...pr
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

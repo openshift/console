@@ -167,14 +167,6 @@ const isPowerOffSafe = (status: string) => {
   return safeStates.includes(status);
 };
 
-export type PowerOffHostModalProps1 = {
-  host: BareMetalHostKind;
-  nodeName: string;
-  status: StatusProps;
-  cancel?: () => void;
-  close?: () => void;
-};
-
 export type PowerOffHostModalProps = {
   host: BareMetalHostKind;
   nodeName: string;

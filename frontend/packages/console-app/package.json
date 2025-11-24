@@ -27,7 +27,6 @@
     "@console/webterminal-plugin": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts",
     "exposedModules": {
       "tourContext": "src/components/tour/tour-context.ts",
       "quickStartContext": "src/components/quick-starts/utils/quick-start-context.tsx",
@@ -47,6 +46,8 @@
       "prometheusProvider": "src/actions/providers/prometheus-provider.ts",
       "groupProvider": "src/actions/providers/group-provider.ts",
       "volumeSnapshotProvider": "src/actions/providers/volume-snaphot-provider.ts",
+      "volumeAttributesClassProvider": "src/actions/providers/volumeattributesclass-provider.ts",
+      "vacPlatformSupport": "src/features/vac-platform-support.ts",
       "podProvider": "src/actions/providers/pod-provider.ts",
       "podDisruptionBudgetProvider": "src/actions/providers/pdb-provider.ts",
       "perspectiveStateProvider": "src/actions/providers/perspective-state-provider.ts",
@@ -77,6 +78,7 @@
       "consolePluginBackendDetail": "src/components/console-operator/ConsolePluginBackendDetail.tsx",
       "consolePluginProxyDetail": "src/components/console-operator/ConsolePluginProxyDetail.tsx",
       "getConsoleOperatorConfigFlag": "src/hooks/useCanGetConsoleOperatorConfig.ts",
+      "useTechPreviewFlagProvider": "src/hooks/useTechPreviewFlagProvider.ts",
       "usePerspectivesAvailable": "src/components/user-preferences/perspective/usePerspectivesAvailable.ts",
       "defaultProvider": "src/actions/providers/default-provider.ts",
       "OperatorStatus": "src/components/dashboards-page/OperatorStatus.tsx",

@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { Store } from 'redux';
-import { RootState } from '@console/internal/redux';
+import type { RootState } from '@console/internal/redux';
 import { isExtensionInUse, PluginStore, DynamicPluginInfo } from '../store';
-import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
+import type { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 
 let subscriptionServiceInitialized = false;
 let getPluginStoreInstance: () => PluginStore = () => undefined;

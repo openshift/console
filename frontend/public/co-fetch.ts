@@ -62,7 +62,7 @@ export const validateStatus = async (
   method: string,
   retry: boolean,
 ) => {
-  if (response.ok) {
+  if (response.ok || response.status === 304) {
     return response;
   }
 

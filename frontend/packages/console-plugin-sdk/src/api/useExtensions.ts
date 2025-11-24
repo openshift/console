@@ -1,7 +1,7 @@
 import { useRef, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useForceRender } from '@console/shared/src/hooks/useForceRender';
-import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
+import type { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 import { useTranslatedExtensions } from '../utils/useTranslatedExtensions';
 import { subscribeToExtensions } from './pluginSubscriptionService';
 

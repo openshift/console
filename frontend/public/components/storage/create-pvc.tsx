@@ -17,6 +17,7 @@ import { ButtonBar } from '../utils/button-bar';
 import { RequestSizeInput } from '../utils/request-size-input';
 import { resourceObjPath } from '../utils/resource-link';
 import { StorageClassDropdown } from '../utils/storage-class-dropdown';
+import { VolumeAttributesClassDropdown } from '../utils/volume-attributes-class-dropdown';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models';
 import { StorageClass } from '../storage-class-form';
@@ -34,6 +35,7 @@ const NameValueEditorComponent = (props) => (
 export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   const [accessModeHelp, setAccessModeHelp] = React.useState('Permissions to the mounted drive.');
   const [storageClass, setStorageClass] = React.useState('');
+  const [volumeAttributesClass, setVolumeAttributesClass] = React.useState('');
   const [pvcName, setPvcName] = React.useState('');
   const [accessMode, setAccessMode] = React.useState('ReadWriteOnce');
   const [volumeMode, setVolumeMode] = React.useState('Filesystem');
@@ -90,6 +92,10 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         obj.spec.volumeMode = volumeMode;
       }
 
+      if (volumeAttributesClass) {
+        obj.spec.volumeAttributesClassName = volumeAttributesClass;
+      }
+
       return obj;
     };
     onChange(updatePVC);
@@ -100,6 +106,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
     pvcName,
     onChange,
     storageClass,
+    volumeAttributesClass,
     requestSizeValue,
     requestSizeUnit,
     useSelector,
@@ -123,6 +130,10 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
     //setting accessMode to default with the change to Storage Class selection
     setStorageClass(updatedStorageClass?.metadata?.name);
     setStorageProvisioner(provisioner);
+  };
+
+  const handleVolumeAttributesClass = (updatedVolumeAttributesClassName) => {
+    setVolumeAttributesClass(updatedVolumeAttributesClassName);
   };
 
   const handleRequestSizeInputChange = (obj) => {
@@ -151,6 +162,16 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           required={false}
           name="storageClass"
           filter={onlyPvcSCs}
+        />
+      </div>
+      <div className="form-group">
+        <VolumeAttributesClassDropdown
+          onChange={handleVolumeAttributesClass}
+          id="volumeattributesclass-dropdown"
+          dataTest="volumeattributesclass-dropdown"
+          describedBy="volumeattributesclass-dropdown-help"
+          required={false}
+          selectedKey={volumeAttributesClass}
         />
       </div>
       <label className="co-required" htmlFor="pvc-name">

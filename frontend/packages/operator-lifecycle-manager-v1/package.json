@@ -4,14 +4,10 @@
   "description": "A management framework for extending Kubernetes with Operators",
   "private": true,
   "consolePlugin": {
-    "entry": "src/plugin.ts",
     "exposedModules": {
-      "ExtensionCatalog": "src/components/ExtensionCatalog.tsx",
-      "useExtensionCatalogDatabaseContextValues": "src/contexts/useExtensionCatalogDatabaseContextValues.ts",
-      "ExtensionCatalogDatabaseContextProvider": "src/contexts/ExtensionCatalogDatabaseContext.ts",
-      "useExtensionCatalogItems": "src/hooks/useExtensionCatalogItems.ts",
-      "useExtensionCatalogCategories": "src/hooks/useExtensionCatalogCategories.ts",
-      "filters": "src/utils/filters.ts"
+      "useCatalogItems": "src/hooks/useCatalogItems.ts",
+      "useCatalogCategories": "src/hooks/useCatalogCategories.ts",
+      "useOLMv1FlagProvider": "src/hooks/useOLMv1FlagProvider.ts"
     }
   }
 }

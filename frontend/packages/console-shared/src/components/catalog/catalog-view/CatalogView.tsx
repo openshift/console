@@ -118,7 +118,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     }
   }, [catalogType, items.length]);
 
-  const handleCategoryChange = (categoryId) => {
+  const handleCategoryChange = (categoryId: string) => {
     updateURLParams(CatalogQueryParams.CATEGORY, categoryId);
   };
 
@@ -154,8 +154,8 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     const allCategory = { id: ALL_CATEGORY, label: t('console-shared~All items') };
     const otherCategory = { id: OTHER_CATEGORY, label: t('console-shared~Other') };
     const sortedCategories = (categories ?? [])
-      .filter((cat) => cat.id !== ALL_CATEGORY && cat.id !== OTHER_CATEGORY)
-      .sort((a, b) => a.label.localeCompare(b.label));
+      .filter((cat) => cat && cat.id !== ALL_CATEGORY && cat.id !== OTHER_CATEGORY)
+      .sort((a, b) => (a.label ?? '').localeCompare(b.label ?? '') ?? 0);
     return [allCategory, ...sortedCategories, otherCategory];
   }, [categories, t]);
 
@@ -341,6 +341,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
             sortOrder={sortOrder}
             groupings={groupings}
             activeGrouping={activeGrouping}
+            catalogType={catalogType}
             onGroupingChange={handleGroupingChange}
             onSortOrderChange={handleSortOrderChange}
             onSearchKeywordChange={handleSearchKeywordChange}

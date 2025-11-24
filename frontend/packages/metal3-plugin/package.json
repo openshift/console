@@ -10,7 +10,6 @@
     "pkijs": "^2.1.90"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts",
     "exposedModules": {
       "nodeActions": "src/components/maintenance/actions.tsx",
       "features": "src/features.ts",

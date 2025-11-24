@@ -28,7 +28,7 @@ const DisabledCell: React.FC<{ disabled?: boolean }> = ({ disabled }) => {
   return <>{disabled ? t('helm-plugin~True') : t('helm-plugin~False')}</>;
 };
 
-export const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
+export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const objReference = referenceFor(obj);
     const context = { [objReference]: obj };

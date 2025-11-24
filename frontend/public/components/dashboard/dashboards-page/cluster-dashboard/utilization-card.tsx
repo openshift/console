@@ -29,7 +29,7 @@ import UtilizationItem, {
   LimitRequested,
   trimSecondsXMutator,
 } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';

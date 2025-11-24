@@ -1,6 +1,6 @@
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { actionsMenu } from '@console/dev-console/integration-tests/support/pageObjects';
-import { app } from '@console/dev-console/integration-tests/support/pages';
+import { app } from '@console/dev-console/integration-tests/support/pages/app';
 
 export const actionsDropdownMenu = {
   verifyActionsMenu: () => cy.get(actionsMenu).should('be.visible'),

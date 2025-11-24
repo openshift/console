@@ -14,7 +14,6 @@
     "@console/topology": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts",
     "exposedModules": {
       "actions": "src/actions/providers.ts",
       "icons": "src/utils/icons.tsx",

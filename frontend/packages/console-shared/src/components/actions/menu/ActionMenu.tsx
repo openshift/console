@@ -14,6 +14,7 @@ type ActionMenuProps = {
   variant?: ActionMenuVariant;
   label?: string;
   className?: string;
+  appendTo?: React.ComponentProps<typeof Popper>['appendTo'];
 };
 
 const ActionMenu: React.FC<ActionMenuProps> = ({
@@ -23,6 +24,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   variant = ActionMenuVariant.KEBAB,
   label,
   className,
+  appendTo,
 }) => {
   const isKebabVariant = variant === ActionMenuVariant.KEBAB;
   const [isVisible, setVisible] = useSafetyFirst(isKebabVariant);
@@ -103,7 +105,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
           popper={menu}
           placement="bottom-end"
           isVisible={isOpen}
-          appendTo={containerRef.current}
+          appendTo={appendTo || containerRef.current}
         />
       </div>
     )

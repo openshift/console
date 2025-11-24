@@ -1,5 +1,6 @@
 import { switchPerspective } from '@console/dev-console/integration-tests/support/constants';
-import { app } from '@console/dev-console/integration-tests/support/pages';
+// eslint-disable-next-line import/no-cycle
+import { app } from '@console/dev-console/integration-tests/support/pages/app';
 import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 
 export const nav = {

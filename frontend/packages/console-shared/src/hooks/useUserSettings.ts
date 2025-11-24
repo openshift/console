@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 import { UseUserSettings, getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { RootState } from '@console/internal/redux';
 import {
   createConfigMap,
   deserializeData,

@@ -514,6 +514,19 @@ reclaimPolicy: Delete
 `,
   )
   .setIn(
+    [referenceForModel(k8sModels.VolumeAttributesClassModel), 'default'],
+    `
+apiVersion: storage.k8s.io/v1
+kind: VolumeAttributesClass
+metadata:
+  name: example
+driverName: my-driver
+parameters:
+  provisioned-iops: "3000"
+  provisioned-throughput: "50"
+`,
+  )
+  .setIn(
     [referenceForModel(k8sModels.ServiceAccountModel), 'default'],
     `
 apiVersion: v1

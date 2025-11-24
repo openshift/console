@@ -20,33 +20,6 @@ describe('isPluginPackage', () => {
       }),
     ).toBe(false);
   });
-
-  it('returns false if package.consolePlugin.entry is missing', () => {
-    expect(
-      isPluginPackage({
-        ...getTemplatePackage(),
-        consolePlugin: {},
-      }),
-    ).toBe(false);
-  });
-
-  it('returns false if package.consolePlugin.entry is an empty string', () => {
-    expect(
-      isPluginPackage({
-        ...getTemplatePackage(),
-        consolePlugin: { entry: '' },
-      }),
-    ).toBe(false);
-  });
-
-  it('returns true if package.consolePlugin.entry is a non-empty string', () => {
-    expect(
-      isPluginPackage({
-        ...getTemplatePackage(),
-        consolePlugin: { entry: 'plugin.ts' },
-      }),
-    ).toBe(true);
-  });
 });
 
 describe('readPackages', () => {
@@ -75,7 +48,7 @@ describe('readPackages', () => {
         name: '@console/foo-plugin',
         _path: pluginPackagePath,
       }),
-      consolePlugin: { entry: 'plugin.ts' },
+      consolePlugin: {},
     };
 
     const utilsPackagePath = '/test/packages/bar-utils';
@@ -132,14 +105,14 @@ describe('filterActivePluginPackages', () => {
           name: 'bar',
           version: '1.2.3',
         }),
-        consolePlugin: { entry: 'plugin.ts' },
+        consolePlugin: {},
       },
       {
         ...getTemplatePackage({
           name: 'qux',
           version: '2.3.4',
         }),
-        consolePlugin: { entry: 'plugin.ts' },
+        consolePlugin: {},
       },
     ];
 
@@ -152,7 +125,7 @@ describe('filterActivePluginPackages', () => {
         name: 'app',
       }),
       dependencies: {},
-      consolePlugin: { entry: 'plugin.ts' },
+      consolePlugin: {},
     };
 
     expect(filterActivePluginPackages(appPackage, [appPackage])).toEqual([appPackage]);
@@ -167,7 +140,7 @@ describe('filterActivePluginPackages', () => {
         bar: '1.2.3',
         qux: '2.3.4',
       },
-      consolePlugin: { entry: 'plugin.ts' },
+      consolePlugin: {},
     };
 
     const pluginPackages: PluginPackage[] = [
@@ -176,14 +149,14 @@ describe('filterActivePluginPackages', () => {
           name: 'bar',
           version: '1.2.3',
         }),
-        consolePlugin: { entry: 'plugin.ts' },
+        consolePlugin: {},
       },
       {
         ...getTemplatePackage({
           name: 'qux',
           version: '2.3.4',
         }),
-        consolePlugin: { entry: 'plugin.ts' },
+        consolePlugin: {},
       },
     ];
 
