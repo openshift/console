@@ -14,8 +14,9 @@ table in [Console dynamic plugins README](./README.md).
 
 > Initial release for OCP Console 4.20.
 
-- Add new `console.catalog/categories-provider` extension ([CONSOLE-4576], [#15269])
-- Fixed namespaced path generation for non-namespaced resources in `getK8sResourcePath` utility ([OCPBUGS-58118], [#15498])
+- Add new extension type `console.catalog/categories-provider` ([CONSOLE-4576], [#15269])
+- Add optional `sortFilterGroups` property to extension `console.catalog/item-type` ([CONSOLE-4576], [#15269])
+- Fixed path generation for non-namespaced resources in `getK8sResourcePath` ([OCPBUGS-58118], [#15498])
 
 ## 4.20.0-prerelease.1 - 2025-08-15
 
