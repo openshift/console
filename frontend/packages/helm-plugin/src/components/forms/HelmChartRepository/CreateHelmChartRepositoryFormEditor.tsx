@@ -117,7 +117,11 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
               {
                 isList: true,
                 kind: ConfigMapModel.kind,
-                namespace: 'openshift-config',
+                namespace:
+                  formData.scope === 'ProjectHelmChartRepository' ||
+                  existingRepo?.kind === 'ProjectHelmChartRepository'
+                    ? namespace
+                    : 'openshift-config',
                 optional: true,
                 prop: ConfigMapModel.id,
               },
@@ -136,7 +140,11 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
               {
                 isList: true,
                 kind: SecretModel.kind,
-                namespace: 'openshift-config',
+                namespace:
+                  formData.scope === 'ProjectHelmChartRepository' ||
+                  existingRepo?.kind === 'ProjectHelmChartRepository'
+                    ? namespace
+                    : 'openshift-config',
                 optional: true,
                 prop: SecretModel.id,
               },
