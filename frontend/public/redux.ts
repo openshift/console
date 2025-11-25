@@ -1,4 +1,5 @@
 import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObject } from 'redux';
+import { featureFlagMiddleware } from '@console/internal/plugins';
 import * as _ from 'lodash';
 import thunk from 'redux-thunk';
 import {
@@ -37,7 +38,7 @@ export const baseReducers = Object.freeze({
 const store = createStore(
   combineReducers<RootState>(baseReducers),
   {},
-  composeEnhancers(applyMiddleware(thunk)),
+  composeEnhancers(applyMiddleware(thunk, featureFlagMiddleware)),
 );
 
 export const applyReduxExtensions = (reducerExtensions: ResolvedExtension<ReduxReducer>[]) => {
