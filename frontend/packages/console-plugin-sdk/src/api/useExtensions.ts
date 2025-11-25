@@ -1,7 +1,7 @@
 import { useRef, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import type {
-  ExtensionDeclaration,
+  Extension,
   ExtensionTypeGuard,
   LoadedExtension,
 } from '@console/dynamic-plugin-sdk/src/types';
@@ -41,7 +41,7 @@ import { subscribeToExtensions } from './pluginSubscriptionService';
  * @returns List of extension instances which are currently in use, narrowed by the
  * given type guard(s).
  */
-export const useExtensions = <E extends ExtensionDeclaration>(
+export const useExtensions = <E extends Extension>(
   ...typeGuards: ExtensionTypeGuard<E>[]
 ): LoadedExtension<E>[] => {
   if (typeGuards.length === 0) {

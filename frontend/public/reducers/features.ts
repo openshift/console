@@ -72,12 +72,12 @@ const getModelRef = (e: ModelFeatureFlag) => {
   return referenceForGroupVersionKind(model.group)(model.version)(model.kind);
 };
 
-// TODO: When migrating to @openshift/dynamic-plugin-sdk, use the type parameter from
-// pluginStore.getExtensions<...>() to avoid `as any` cast.
-(pluginStore.getExtensions().filter(isModelFeatureFlag) as any).forEach((ff) => {
-  // This is incorrect (for `ExtensionK8sModel` we should use `referenceForExtensionModel`).
-  addToCRDs(referenceForModel(ff.properties.model), ff.properties.flag);
-});
+pluginStore
+  .getExtensions()
+  .filter(isModelFeatureFlag)
+  .forEach((ff) => {
+    addToCRDs(referenceForModel(ff.properties.model), ff.properties.flag);
+  });
 
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state: FeatureState, action: FeatureAction): FeatureState => {

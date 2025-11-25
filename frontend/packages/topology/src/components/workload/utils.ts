@@ -7,7 +7,7 @@ import {
   PodsAdapterDataType,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
-import type { ExtensionDeclaration } from '@console/dynamic-plugin-sdk/src/types';
+import { Extension } from '@console/dynamic-plugin-sdk/src/types';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   DeploymentConfigModel,
@@ -28,10 +28,7 @@ import {
 } from '@console/shared';
 import { getResource } from '../../utils';
 
-export const getDataFromAdapter = <
-  T extends { resource: K8sResourceCommon },
-  E extends ExtensionDeclaration
->(
+export const getDataFromAdapter = <T extends { resource: K8sResourceCommon }, E extends Extension>(
   element: GraphElement,
   [resolvedExtensions, loaded]: [ResolvedExtension<E>[], boolean],
 ): T | undefined =>

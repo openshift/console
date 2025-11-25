@@ -2,17 +2,17 @@
 
 import * as _ from 'lodash';
 import { StandardConsolePluginManifest } from '@console/dynamic-plugin-sdk/src/build-types';
-import type { ExtensionDeclaration, LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { Extension, LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { ActivePlugin } from './typings/base';
 
-export const sanitizeExtension = <E extends ExtensionDeclaration>(e: E): E => {
+export const sanitizeExtension = <E extends Extension>(e: E): E => {
   e.flags = e.flags || {};
   e.flags.required = _.uniq(e.flags.required || []);
   e.flags.disallowed = _.uniq(e.flags.disallowed || []);
   return e;
 };
 
-export const augmentExtension = <E extends ExtensionDeclaration>(
+export const augmentExtension = <E extends Extension>(
   e: E,
   pluginID: string,
   pluginName: string,
@@ -24,10 +24,10 @@ export const augmentExtension = <E extends ExtensionDeclaration>(
     uid: `${pluginID}[${index}]`,
   });
 
-export const isExtensionInUse = (e: ExtensionDeclaration, flags: FlagsObject): boolean =>
+export const isExtensionInUse = (e: Extension, flags: FlagsObject): boolean =>
   e.flags.required.every((f) => flags[f]) && e.flags.disallowed.every((f) => !flags[f]);
 
-export const getGatingFlagNames = (extensions: ExtensionDeclaration[]): string[] =>
+export const getGatingFlagNames = (extensions: Extension[]): string[] =>
   _.uniq([
     ..._.flatMap(extensions.map((e) => e.flags.required)),
     ..._.flatMap(extensions.map((e) => e.flags.disallowed)),
@@ -111,7 +111,7 @@ export class PluginStore {
   addDynamicPlugin(
     pluginID: string,
     manifest: StandardConsolePluginManifest,
-    resolvedExtensions: ExtensionDeclaration[],
+    resolvedExtensions: Extension[],
   ) {
     if (this.loadedDynamicPlugins.has(pluginID)) {
       console.warn(`Attempt to re-add plugin ${pluginID}`);
