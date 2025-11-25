@@ -70,8 +70,8 @@ describe('Impersonation Smoke Tests', () => {
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
 
     // Wait for dropdown menu to be visible and click impersonate option
-    guidedTour.close();
     cy.byTestID('impersonate-user').should('be.visible').click();
+    guidedTour.close();
 
     // Modal should appear
     cy.byTestID('username-input', { timeout: 5000 }).should('be.visible');
@@ -82,9 +82,9 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Can impersonate a user', () => {
-    guidedTour.close();
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
+    guidedTour.close();
 
     // Fill in username
     cy.byTestID('username-input').should('be.visible').clear().type('smoke-test-user');
@@ -148,9 +148,9 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Submit button disabled when username empty', () => {
-    guidedTour.close();
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
+    guidedTour.close();
 
     // Button should be disabled
     cy.byTestID('impersonate-button').should('be.disabled');
@@ -165,9 +165,9 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Can select groups if available', () => {
-    guidedTour.close();
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
+    guidedTour.close();
 
     cy.byTestID('username-input').should('be.visible').type('group-smoke-user');
 
@@ -255,6 +255,7 @@ describe('Impersonation Smoke Tests', () => {
     // Open impersonation modal
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
+    guidedTour.close();
 
     cy.byTestID('username-input').should('be.visible').type('mock-groups-user');
 
@@ -366,6 +367,7 @@ describe('Impersonation Smoke Tests', () => {
     // Start impersonation with groups
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
+    guidedTour.close();
 
     cy.byTestID('username-input').should('be.visible').type('groups-persist-user');
 
@@ -432,6 +434,7 @@ describe('Impersonation Smoke Tests', () => {
     // Start impersonation
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
+    guidedTour.close();
     cy.byTestID('username-input').should('be.visible').type('dropdown-smoke');
     cy.byTestID('impersonate-button').should('not.be.disabled').should('be.visible').click();
 
@@ -472,6 +475,7 @@ describe('Impersonation Smoke Tests', () => {
 
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
+    guidedTour.close();
 
     cy.byTestID('username-input').should('be.visible').type('cancel-smoke');
     cy.byTestID('cancel-button').should('be.visible').click();

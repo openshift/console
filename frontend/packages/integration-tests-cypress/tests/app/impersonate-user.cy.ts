@@ -249,9 +249,9 @@ EOF`,
 
   // Helper function to start impersonation
   const startImpersonation = (username: string, groups: string[] = []) => {
-    guidedTour.close();
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
+    guidedTour.close();
     cy.byTestID('username-input').should('be.visible').clear().type(username);
 
     if (groups.length > 0) {
@@ -572,9 +572,9 @@ EOF`,
 
   describe('Group Search and Filter with Real Groups', () => {
     it('should filter and find our test groups', () => {
-      guidedTour.close();
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
       cy.byTestID('impersonate-user').should('be.visible').click();
+      guidedTour.close();
 
       // Type to filter for our test groups
       cy.get('[placeholder="Enter groups"]')
@@ -602,9 +602,9 @@ EOF`,
     });
 
     it('should show "No results found" when filter matches nothing', () => {
-      guidedTour.close();
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
       cy.byTestID('impersonate-user').should('be.visible').click();
+      guidedTour.close();
 
       cy.get('[placeholder="Enter groups"]')
         .should('be.visible')
@@ -623,9 +623,9 @@ EOF`,
 
   describe('Group Selection and Deselection', () => {
     it('should allow removing selected groups and verify access changes', () => {
-      guidedTour.close();
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
       cy.byTestID('impersonate-user').should('be.visible').click();
+      guidedTour.close();
 
       cy.byTestID('username-input').should('be.visible').type(testUser);
 
@@ -698,9 +698,9 @@ EOF`,
 
   describe('Edge Cases and Security', () => {
     it('should not allow impersonating with empty groups array after selection', () => {
-      guidedTour.close();
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
       cy.byTestID('impersonate-user').should('be.visible').click();
+      guidedTour.close();
 
       cy.byTestID('username-input').should('be.visible').type(testUser);
 
@@ -721,11 +721,11 @@ EOF`,
     });
 
     it('should handle special characters in username with group impersonation', () => {
-      guidedTour.close();
       const specialUser = 'user@example-org.com';
 
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
       cy.byTestID('impersonate-user').should('be.visible').click();
+      guidedTour.close();
 
       cy.byTestID('username-input').should('be.visible').type(specialUser);
 
