@@ -99,6 +99,7 @@
       "customResourceDefinitionProvider": "src/actions/providers/custom-resource-definition-provider.ts",
       "machineConfigPoolProvider": "src/actions/providers/machine-config-pool-provider.ts",
       "serviceMonitorProvider": "src/actions/providers/service-monitor-provider.ts",
+      "appliedClusterResourceQuotaProvider": "src/actions/providers/applied-cluster-resource-quota-provider.ts",
       "userProvider": "src/actions/providers/user-provider.ts"
     }
   }

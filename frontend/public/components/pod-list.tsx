@@ -54,7 +54,6 @@ import { sortResourceByValue } from './factory/Table/sort';
 import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from './graphs/consts';
 import { PodTraffic } from './pod-traffic';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { Kebab } from './utils/kebab';
 import { LabelList } from './utils/label-list';
 import { OwnerReferences } from './utils/owner-references';
 import { ResourceLink, resourcePath } from './utils/resource-link';
@@ -96,8 +95,6 @@ const fetchPodMetrics = (namespace: string): Promise<UIActions.PodMetrics> => {
   );
   return Promise.all(promises).then((data: unknown[]) => _.assign({}, ...data));
 };
-
-export const menuActions = [...(Kebab.factory.common || [])];
 
 const tableColumnInfo = [
   { id: 'name' },

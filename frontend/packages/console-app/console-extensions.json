@@ -432,7 +432,9 @@
         "kind": "VolumeAttributesClass",
         "group": "storage.k8s.io"
       },
-      "provider": { "$codeRef": "volumeAttributesClassProvider.useVolumeAttributesClassActionsProvider" }
+      "provider": {
+        "$codeRef": "volumeAttributesClassProvider.useVolumeAttributesClassActionsProvider"
+      }
     },
     "flags": {
       "required": ["VAC_PLATFORM_SUPPORT"]
@@ -526,6 +528,41 @@
         "kind": "Prometheus"
       },
       "provider": { "$codeRef": "prometheusProvider.usePrometheusActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "",
+        "version": "v1",
+        "kind": "ResourceQuota"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "quota.openshift.io",
+        "version": "v1",
+        "kind": "ClusterResourceQuota"
+      },
+      "provider": { "$codeRef": "defaultProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "quota.openshift.io",
+        "version": "v1",
+        "kind": "AppliedClusterResourceQuota"
+      },
+      "provider": {
+        "$codeRef": "appliedClusterResourceQuotaProvider.useAppliedClusterResourceQuotaActionsProvider"
+      }
     }
   },
   {
@@ -1286,8 +1323,8 @@
         "kind": "VolumeAttributesClass"
       }
     },
-    "flags": { 
-      "required": ["VAC_PLATFORM_SUPPORT"] 
+    "flags": {
+      "required": ["VAC_PLATFORM_SUPPORT"]
     }
   },
   {
