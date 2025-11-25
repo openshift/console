@@ -1,3 +1,4 @@
+import { PluginEventType } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import { Store } from 'redux';
 import type {
@@ -6,16 +7,14 @@ import type {
   LoadedExtension,
 } from '@console/dynamic-plugin-sdk/src/types';
 import type { RootState } from '@console/internal/redux';
-import { isExtensionInUse, PluginStore, DynamicPluginInfo } from '../store';
+import { PluginStore } from '../store';
 
 let subscriptionServiceInitialized = false;
 let getPluginStoreInstance: () => PluginStore = () => undefined;
 
 const extensionSubscriptions: ExtensionSubscription[] = [];
-const dynamicPluginListeners: DynamicPluginListener[] = [];
 
 let onExtensionSubscriptionAdded: (sub: ExtensionSubscription) => void = _.noop;
-let onDynamicPluginListenerAdded: (listener: DynamicPluginListener) => void = _.noop;
 
 const subscribe = <T>(sub: T, subList: T[], invokeListener: VoidFunction): VoidFunction => {
   let isSubscribed = true;
@@ -44,32 +43,19 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
 
   type FeatureFlags = ReturnType<typeof getFlags>;
 
-  const invokeExtensionListener = (
-    sub: ExtensionSubscription,
-    currentExtensions: Extension[],
-    currentFlags: FeatureFlags,
-  ) => {
+  const invokeExtensionListener = (sub: ExtensionSubscription, currentExtensions: Extension[]) => {
     // Narrow extensions according to type guards
     const matchedExtensions = _.flatMap(sub.typeGuards.map((tg) => currentExtensions.filter(tg)));
 
-    // Gate matched extensions by relevant feature flags
-    const extensionsInUse = matchedExtensions.filter((e) =>
-      isExtensionInUse(e, currentFlags.toObject()),
-    );
-
     // Invoke listener only if the extension list has changed
-    if (!_.isEqual(extensionsInUse, sub.listenerLastArgs)) {
-      sub.listenerLastArgs = extensionsInUse;
-      sub.listener(extensionsInUse);
+    if (!_.isEqual(matchedExtensions, sub.listenerLastArgs)) {
+      sub.listenerLastArgs = matchedExtensions;
+      sub.listener(matchedExtensions);
     }
   };
 
   onExtensionSubscriptionAdded = (sub) => {
-    invokeExtensionListener(sub, getExtensions(), getFlags());
-  };
-
-  onDynamicPluginListenerAdded = (listener) => {
-    listener(pluginStore.getPluginInfo());
+    invokeExtensionListener(sub, getExtensions());
   };
 
   let lastExtensions: Extension[] = null;
@@ -91,38 +77,16 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
     lastFlags = nextFlags;
 
     extensionSubscriptions.forEach((sub) => {
-      invokeExtensionListener(sub, nextExtensions, nextFlags);
-    });
-  };
-
-  let lastPluginEntries: DynamicPluginInfo[] = null;
-
-  const invokeAllDynamicPluginListeners = () => {
-    if (dynamicPluginListeners.length === 0) {
-      return;
-    }
-
-    const nextPluginEntries = pluginStore.getPluginInfo();
-
-    if (_.isEqual(nextPluginEntries, lastPluginEntries)) {
-      return;
-    }
-
-    lastPluginEntries = nextPluginEntries;
-
-    dynamicPluginListeners.forEach((listener) => {
-      listener(nextPluginEntries);
+      invokeExtensionListener(sub, nextExtensions);
     });
   };
 
   // Subscribe to changes in Console plugins and Redux
-  pluginStore.subscribe(invokeAllExtensionListeners);
-  pluginStore.subscribe(invokeAllDynamicPluginListeners);
+  pluginStore.subscribe([PluginEventType.ExtensionsChanged], invokeAllExtensionListeners);
   reduxStore.subscribe(invokeAllExtensionListeners);
 
   // Invoke listeners registered prior to initializing subscription service
   invokeAllExtensionListeners();
-  invokeAllDynamicPluginListeners();
 };
 
 /**
@@ -149,6 +113,8 @@ export const getPluginStore = (): PluginStore => {
  *
  * @param typeGuards Type guard(s) used to narrow the extension instances.
  *
+ * @deprecated - Use the `useExtensions`/`useResolvedExtensions` hooks only.
+ *
  * @returns Function that unsubscribes the listener.
  */
 export const subscribeToExtensions = <E extends Extension>(
@@ -163,19 +129,6 @@ export const subscribeToExtensions = <E extends Extension>(
 
   return subscribe<ExtensionSubscription>(sub, extensionSubscriptions, () => {
     onExtensionSubscriptionAdded(sub);
-  });
-};
-
-/**
- * Subscribe to changes related to processing Console dynamic plugins.
- *
- * @param listener Listener invoked when the runtime status of a dynamic plugin changes.
- *
- * @returns Function that unsubscribes the listener.
- */
-export const subscribeToDynamicPlugins = (listener: DynamicPluginListener) => {
-  return subscribe<DynamicPluginListener>(listener, dynamicPluginListeners, () => {
-    onDynamicPluginListenerAdded(listener);
   });
 };
 
@@ -204,5 +157,3 @@ type ExtensionSubscription<E extends Extension = Extension> = {
   typeGuards: ExtensionTypeGuard<E>[];
   listenerLastArgs?: E[];
 };
-
-type DynamicPluginListener = (pluginInfoEntries: DynamicPluginInfo[]) => void;

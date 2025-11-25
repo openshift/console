@@ -137,7 +137,10 @@ export const getPluginEntryCallback = (
     },
   );
 
-  pluginStore.addDynamicPlugin(pluginID, pluginData.manifest, resolvedExtensions);
+  // eslint-disable-next-line
+  void resolvedExtensions;
+
+  pluginStore.enablePlugins([pluginID]);
 };
 
 export const registerPluginEntryCallback = (pluginStore: PluginStore) => {
@@ -177,7 +180,7 @@ export const loadAndEnablePlugin = async (
     return;
   }
 
-  pluginStore.setDynamicPluginEnabled(getPluginID(manifest), true);
+  pluginStore.loadPlugin(manifest);
 };
 
 export const getStateForTestPurposes = () => ({

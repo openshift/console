@@ -6,7 +6,11 @@ import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-re
 import { PluginStore } from '@console/plugin-sdk/src/store';
 
 const testedPlugins = loadActivePluginsForTestPurposes(resolvePluginPackages());
-const testedPluginStore = new PluginStore(testedPlugins);
+const testedPluginStore = new PluginStore();
+
+testedPlugins.forEach((plugin) => {
+  testedPluginStore.addActivePlugin(plugin);
+});
 
 export const testedExtensions = ImmutableList<Extension>(testedPluginStore.getExtensions());
 
