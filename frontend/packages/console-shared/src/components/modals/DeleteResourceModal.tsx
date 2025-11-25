@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';

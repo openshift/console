@@ -1,16 +1,19 @@
-import * as React from 'react';
 import { Translation } from 'react-i18next';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import {
+  createModalLauncher,
+  ModalTitle,
+  ModalBody,
+  ModalSubmitFooter,
+  ModalComponentProps,
+} from '../factory/modal';
 
-interface ConfirmModalProps {
+interface ConfirmModalProps extends ModalComponentProps {
   btnText?: string | React.ReactNode;
   btnTextKey?: string;
-  cancel?: () => void;
   cancelText?: string | React.ReactNode;
   cancelTextKey?: string;
-  close?: () => void;
   executeFn: (
     e?: React.FormEvent<EventTarget>,
     opts?: { supressNotifications: boolean },

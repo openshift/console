@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Title } from '@patternfly/react-core';
 import { Formik, FormikProps, FormikValues } from 'formik';
-import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -38,7 +37,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
   status,
 }) => {
   const { t } = useTranslation();
-  const dirty = _.get(values, 'application.selectedKey') !== initialApplication;
+  const dirty = values?.application?.selectedKey !== initialApplication;
   return (
     <form onSubmit={handleSubmit} className="modal-content">
       <ModalTitle>{t('topology~Edit application grouping')}</ModalTitle>
@@ -84,7 +83,7 @@ const EditApplicationModal: React.FC<EditApplicationModalProps> = (props) => {
     [resourceKind, resource, handlePromise, close],
   );
 
-  const application = _.get(resource, ['metadata', 'labels', 'app.kubernetes.io/part-of']);
+  const application = resource?.metadata?.labels?.['app.kubernetes.io/part-of'];
 
   const initialValues = {
     application: {
