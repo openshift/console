@@ -9,7 +9,6 @@ import {
 } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import type { Extension, LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { ActivePlugin } from './typings/base';
 
 export const sanitizeExtension = <E extends Extension>(e: E): E => {
   e.flags = e.flags || {};
@@ -48,9 +47,6 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
  *
  * In development, this object is exposed as `window.pluginStore` for easier debugging.
  */
-/**
- * `PluginStore` implementation intended for testing purposes.
- */
 export class PluginStore extends SDKPluginStore {
   private readonly allowedDynamicPluginNames: string[];
 
@@ -61,23 +57,6 @@ export class PluginStore extends SDKPluginStore {
 
   getAllowedDynamicPluginNames() {
     return [...this.allowedDynamicPluginNames];
-  }
-
-  /** HACK */
-  addActivePlugin(plugin: ActivePlugin): void {
-    super.addLoadedPlugin(
-      {
-        ...plugin,
-        version: '0.0.0',
-        baseURL: `/static/plugins/${plugin.name}`,
-        loadScripts: [],
-        registrationMethod: 'callback',
-      },
-      {
-        init: _.noop,
-        get: () => Promise.resolve(() => undefined as any),
-      },
-    );
   }
 }
 

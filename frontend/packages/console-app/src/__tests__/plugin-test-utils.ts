@@ -1,15 +1,15 @@
 import { List as ImmutableList } from 'immutable';
 import * as _ from 'lodash';
 import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
-import { loadActivePluginsForTestPurposes } from '@console/plugin-sdk/src/codegen/active-plugins';
+import { loadLocalPluginsForTestPurposes } from '@console/plugin-sdk/src/codegen/local-plugins';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { PluginStore } from '@console/plugin-sdk/src/store';
 
-const testedPlugins = loadActivePluginsForTestPurposes(resolvePluginPackages());
+const testedPlugins = loadLocalPluginsForTestPurposes(resolvePluginPackages());
 const testedPluginStore = new PluginStore();
 
 testedPlugins.forEach((plugin) => {
-  testedPluginStore.addActivePlugin(plugin);
+  testedPluginStore.loadPlugin(plugin);
 });
 
 export const testedExtensions = ImmutableList<Extension>(testedPluginStore.getExtensions());

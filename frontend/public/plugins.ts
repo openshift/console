@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { PluginStore } from '@console/plugin-sdk/src/store';
-import type { ActivePlugin } from '@console/plugin-sdk/src/typings/base';
+import type { LocalPluginManifest } from '@openshift/dynamic-plugin-sdk';
 import { getURLSearchParams } from './components/utils/link';
 import type { Middleware } from 'redux';
 import type { RootState } from './redux';
@@ -19,21 +19,18 @@ const getEnabledDynamicPluginNames = () => {
   return allPluginNames.filter((pluginName) => !disabledPluginNames.includes(pluginName));
 };
 
-// Console active plugins module has its source generated during webpack build,
-// so we use dynamic require() instead of the usual static import statement.
-const activePlugins =
-  process.env.NODE_ENV !== 'test'
-    ? (require('../get-active-plugins').default as ActivePlugin[])
-    : [];
-
 const dynamicPluginNames = getEnabledDynamicPluginNames();
 
 export const pluginStore = new PluginStore(undefined, dynamicPluginNames);
 
-activePlugins.forEach((plugin) => {
-  pluginStore.addActivePlugin(plugin);
-  pluginStore.enablePlugins([plugin.name]);
-});
+// Console local plugins module has its source generated during webpack build,
+// so we use dynamic require() instead of the usual static import statement.
+const localPlugins =
+  process.env.NODE_ENV !== 'test'
+    ? (require('../get-local-plugins').default as LocalPluginManifest[])
+    : [];
+
+localPlugins.forEach((plugin) => pluginStore.loadPlugin(plugin));
 
 /**
  * Redux middleware to update plugin store feature flags when actions are dispatched.
@@ -61,7 +58,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 if (process.env.NODE_ENV !== 'test') {
   // eslint-disable-next-line no-console
-  console.info(`Static plugins: [${activePlugins.map((p) => p.name).join(', ')}]`);
+  console.info(`Static plugins: [${localPlugins.map((p) => p.name).join(', ')}]`);
   // eslint-disable-next-line no-console
   console.info(`Dynamic plugins: [${dynamicPluginNames.join(', ')}]`);
 }

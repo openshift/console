@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import type { LocalPluginManifest } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import {
   isEncodedCodeRef,
@@ -12,14 +13,13 @@ import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
 import { guessModuleFilePath } from '@console/dynamic-plugin-sdk/src/validation/ExtensionValidator';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import { validateConsoleExtensionsFileSchema } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
-import { ActivePlugin } from '../typings/base';
 import { trimStartMultiLine } from '../utils/string';
 import { consolePkgScope, PluginPackage } from './plugin-resolver';
 
 export const getExtensionsFilePath = (pkg: PluginPackage) =>
   path.resolve(pkg._path, extensionsFile);
 
-export type ActivePluginsModuleData = {
+export type LocalPluginsModuleData = {
   /** Generated module source code. */
   code: string;
   /** Diagnostics collected while generating module source code. */
@@ -31,7 +31,7 @@ export type ActivePluginsModuleData = {
 const getExposedModuleFilePath = (
   pkg: PluginPackage,
   moduleName: string,
-  diagnostics: ActivePluginsModuleData['diagnostics'],
+  diagnostics: LocalPluginsModuleData['diagnostics'],
 ) => {
   const modulePath = path.resolve(pkg._path, pkg.consolePlugin.exposedModules[moduleName]);
   return guessModuleFilePath(modulePath, (msg) =>
@@ -40,55 +40,59 @@ const getExposedModuleFilePath = (
 };
 
 /**
- * Generate the Console active plugins virtual module source.
+ * Generate the Console local plugins virtual module source.
  */
-export const getActivePluginsModule = (
+export const getLocalPluginsModule = (
   pluginPackages: PluginPackage[],
   moduleHook: () => string = _.constant(''),
   extensionHook: (pkg: PluginPackage) => string = _.constant('[]'),
 ) => {
   let output = `
     ${moduleHook()}
-    const activePlugins = [];
+    const localPlugins = [];
   `;
 
   for (const pkg of pluginPackages) {
     output = `
       ${output}
-      activePlugins.push({
+      localPlugins.push({
         name: '${pkg.name}',
+        version: '${pkg.version}',
         extensions: ${extensionHook(pkg)},
+        registrationMethod: 'local',
       });
     `;
   }
 
   output = `
     ${output}
-    export default activePlugins;
+    export default localPlugins;
   `;
 
   return trimStartMultiLine(output);
 };
 
 /**
- * Important: keep this in sync with `getActivePluginsModule` above.
+ * Important: keep this in sync with `getLocalPluginsModule` above.
  */
-export const loadActivePluginsForTestPurposes = (
+export const loadLocalPluginsForTestPurposes = (
   pluginPackages: PluginPackage[],
   moduleHook: VoidFunction = _.noop,
   extensionHook: (pkg: PluginPackage) => Extension[] = _.constant([]),
 ) => {
   moduleHook();
-  const activePlugins: ActivePlugin[] = [];
+  const localPlugins: LocalPluginManifest[] = [];
 
   for (const pkg of pluginPackages) {
-    activePlugins.push({
+    localPlugins.push({
       name: pkg.name,
+      version: pkg.version,
       extensions: extensionHook(pkg),
+      registrationMethod: 'local',
     });
   }
 
-  return activePlugins;
+  return localPlugins;
 };
 
 /**
@@ -134,6 +138,7 @@ export const getDynamicExtensions = (
   extensionsFilePath: string,
   errorCallback: (errorMessage: string) => void,
   codeRefTransformer: (codeRefSource: string) => string = _.identity,
+  codeRefSourceGetter: typeof getExecutableCodeRefSource = getExecutableCodeRefSource,
 ) => {
   const emptyArraySource = '[]';
 
@@ -154,9 +159,7 @@ export const getDynamicExtensions = (
     ext,
     (key, value) =>
       isEncodedCodeRef(value)
-        ? `@${codeRefTransformer(
-            getExecutableCodeRefSource(value, key, pkg, codeRefValidationResult),
-          )}@`
+        ? `@${codeRefTransformer(codeRefSourceGetter(value, key, pkg, codeRefValidationResult))}@`
         : value,
     2,
   ).replace(/"@(.*)@"/g, '$1');
@@ -169,14 +172,17 @@ export const getDynamicExtensions = (
   return trimStartMultiLine(source);
 };
 
-export const getActivePluginsModuleData = (
+/**
+ * Get Console local plugins virtual module data and diagnostics.
+ */
+export const getLocalPluginsModuleData = (
   pluginPackages: PluginPackage[],
-): ActivePluginsModuleData => {
+): LocalPluginsModuleData => {
   const errors: string[] = [];
   const warnings: string[] = [];
   const fileDependencies: string[] = [];
 
-  const code = getActivePluginsModule(
+  const code = getLocalPluginsModule(
     pluginPackages,
     () => `
       import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';

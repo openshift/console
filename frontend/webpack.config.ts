@@ -128,7 +128,7 @@ const config: Configuration = {
         sideEffects: true,
       },
       {
-        test: path.resolve(__dirname, 'get-active-plugins.js'),
+        test: path.resolve(__dirname, 'get-local-plugins.js'),
         loader: 'val-loader',
         options: { pluginPackages },
       },
