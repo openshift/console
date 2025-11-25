@@ -9,9 +9,17 @@ const (
 )
 
 func GetUserFromRequestContext(r *http.Request) *User {
-	user, ok := r.Context().Value(UserContextKey).(*User)
-	if !ok {
+	if r == nil {
 		return nil
 	}
-	return user
+
+	userValue := r.Context().Value(UserContextKey)
+	if userValue == nil {
+		return nil
+	}
+
+	if user, ok := userValue.(*User); ok {
+		return user
+	}
+	return nil
 }
