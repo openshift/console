@@ -63,10 +63,14 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Can open impersonation modal', () => {
+    // Close guided tour if present
+    guidedTour.close();
+
     // Click dropdown and wait for it to open
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
 
     // Wait for dropdown menu to be visible and click impersonate option
+    guidedTour.close();
     cy.byTestID('impersonate-user').should('be.visible').click();
 
     // Modal should appear
@@ -78,13 +82,15 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Can impersonate a user', () => {
+    guidedTour.close();
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
 
     // Fill in username
     cy.byTestID('username-input').should('be.visible').clear().type('smoke-test-user');
 
-    // Click impersonate button
+    // Close guided tour if present
+    guidedTour.close();
     cy.byTestID('impersonate-button').should('not.be.disabled').click();
 
     // Wait for navigation to happen (URL may not change but page reloads)
@@ -96,6 +102,7 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Banner persists across page navigation', () => {
+    guidedTour.close();
     // Impersonation should be active from previous test
     // Check specifically for the impersonation banner, not other banners (e.g., kubeadmin)
     cy.contains('.pf-v6-c-banner', 'You are impersonating', { timeout: 5000 }).should('be.visible');
@@ -129,6 +136,7 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Can stop impersonation', () => {
+    guidedTour.close();
     cy.contains('You are impersonating', { timeout: 5000 }).should('be.visible');
 
     // Use dropdown to stop (more reliable than banner button)
@@ -140,6 +148,7 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Submit button disabled when username empty', () => {
+    guidedTour.close();
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
 
@@ -156,6 +165,7 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Can select groups if available', () => {
+    guidedTour.close();
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
 
@@ -197,6 +207,7 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Group selection UI with mocked data', () => {
+    guidedTour.close();
     // Mock groups API right before opening modal to ensure it's used
     cy.intercept('GET', '**/apis/user.openshift.io/v1/groups*', {
       statusCode: 200,
@@ -317,6 +328,7 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Banner persists across navigation with groups', () => {
+    guidedTour.close();
     // Mock groups API right before opening modal to ensure it's used
     cy.intercept('GET', '**/apis/user.openshift.io/v1/groups*', {
       statusCode: 200,
@@ -416,6 +428,7 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Can stop from user dropdown', () => {
+    guidedTour.close();
     // Start impersonation
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
@@ -438,6 +451,7 @@ describe('Impersonation Smoke Tests', () => {
   });
 
   it('SMOKE: Cancel does not start impersonation', () => {
+    guidedTour.close();
     // Ensure we start from a clean state (no active impersonation)
     cy.get('body').then(($body) => {
       // Only clean up if there's an impersonation banner (not other cluster banners)

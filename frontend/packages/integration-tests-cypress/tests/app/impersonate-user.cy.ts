@@ -249,6 +249,7 @@ EOF`,
 
   // Helper function to start impersonation
   const startImpersonation = (username: string, groups: string[] = []) => {
+    guidedTour.close();
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('impersonate-user').should('be.visible').click();
     cy.byTestID('username-input').should('be.visible').clear().type(username);
@@ -273,6 +274,7 @@ EOF`,
 
   // Helper function to stop impersonation
   const stopImpersonation = () => {
+    guidedTour.close();
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
     cy.byTestID('stop-impersonate').should('be.visible').click();
     cy.contains('You are impersonating', { timeout: 10000 }).should('not.exist');
@@ -280,6 +282,7 @@ EOF`,
 
   describe('Single Group Access Control', () => {
     it('should have access to namespace A resources when impersonating with Group A', () => {
+      guidedTour.close();
       startImpersonation(testUser, [testGroupA]);
 
       // Verify impersonation is active
@@ -310,6 +313,7 @@ EOF`,
     });
 
     it('should NOT have access to namespace B when impersonating with only Group A', () => {
+      guidedTour.close();
       startImpersonation(testUser, [testGroupA]);
 
       // Verify impersonation is active
@@ -351,6 +355,7 @@ EOF`,
     });
 
     it('should have edit access in namespace B when impersonating with Group B', () => {
+      guidedTour.close();
       startImpersonation(testUser, [testGroupB]);
 
       // Verify impersonation is active
@@ -390,6 +395,7 @@ EOF`,
 
   describe('Multi-Group Combined Access', () => {
     it('should have access to both namespace A and B when impersonating with Groups A+B', () => {
+      guidedTour.close();
       startImpersonation(testUser, [testGroupA, testGroupB]);
 
       // Verify banner shows groups (may be collapsed in "more" tooltip if too many)
@@ -451,6 +457,7 @@ EOF`,
     });
 
     it('should have admin access in namespace C when impersonating with Group C', () => {
+      guidedTour.close();
       startImpersonation(testUser, [testGroupC]);
 
       // Verify impersonation with Group C
@@ -492,6 +499,7 @@ EOF`,
     });
 
     it('should combine all three groups permissions correctly', () => {
+      guidedTour.close();
       startImpersonation(testUser, [testGroupA, testGroupB, testGroupC]);
 
       // Verify groups shown in banner (some may be in "X more" tooltip)
@@ -564,6 +572,7 @@ EOF`,
 
   describe('Group Search and Filter with Real Groups', () => {
     it('should filter and find our test groups', () => {
+      guidedTour.close();
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
       cy.byTestID('impersonate-user').should('be.visible').click();
 
@@ -593,6 +602,7 @@ EOF`,
     });
 
     it('should show "No results found" when filter matches nothing', () => {
+      guidedTour.close();
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
       cy.byTestID('impersonate-user').should('be.visible').click();
 
@@ -613,6 +623,7 @@ EOF`,
 
   describe('Group Selection and Deselection', () => {
     it('should allow removing selected groups and verify access changes', () => {
+      guidedTour.close();
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
       cy.byTestID('impersonate-user').should('be.visible').click();
 
@@ -653,6 +664,7 @@ EOF`,
 
   describe('Permission Persistence and Verification', () => {
     it('should maintain impersonation state while staying on current page', () => {
+      guidedTour.close();
       startImpersonation(testUser, [testGroupB]);
 
       // Verify impersonation is active
@@ -686,6 +698,7 @@ EOF`,
 
   describe('Edge Cases and Security', () => {
     it('should not allow impersonating with empty groups array after selection', () => {
+      guidedTour.close();
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
       cy.byTestID('impersonate-user').should('be.visible').click();
 
@@ -708,6 +721,7 @@ EOF`,
     });
 
     it('should handle special characters in username with group impersonation', () => {
+      guidedTour.close();
       const specialUser = 'user@example-org.com';
 
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
