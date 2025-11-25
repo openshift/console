@@ -1,5 +1,5 @@
 import { Action, ActionGroup } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { LoadedExtension } from '@console/plugin-sdk';
 
 export const mockActions: Action[] = [
   {

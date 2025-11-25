@@ -1,10 +1,10 @@
 import { TFunction } from 'i18next';
-import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
 import {
   deepForOwn,
   PredicateCheck,
   ValueCallback,
 } from '@console/dynamic-plugin-sdk/src/utils/object';
+import type { Extension } from '../typings';
 
 export const isTranslatableString = (value): value is string => {
   return (

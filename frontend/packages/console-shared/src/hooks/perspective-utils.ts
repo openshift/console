@@ -6,7 +6,7 @@ import {
   AccessReviewResourceAttributes,
   checkAccess,
 } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { LoadedExtension } from '@console/plugin-sdk/src';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { USERSETTINGS_PREFIX } from '../constants';
 

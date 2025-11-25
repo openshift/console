@@ -2,8 +2,7 @@
 
 import * as _ from 'lodash';
 import { StandardConsolePluginManifest } from '@console/dynamic-plugin-sdk/src/build-types';
-import { Extension, LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { ActivePlugin } from './typings/base';
+import { Extension, LoadedExtension, ActivePlugin } from './typings';
 
 export const sanitizeExtension = <E extends Extension>(e: E): E => {
   e.flags = e.flags || {};
