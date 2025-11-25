@@ -1,4 +1,4 @@
-import { ExtensionDeclaration } from '../types';
+import { Extension, ExtensionDeclaration } from '../types';
 
 export type ImageEnvironment = {
   /** Environment variable key */
@@ -28,6 +28,6 @@ export type ImportEnvironment = ExtensionDeclaration<
 
 // Type guards
 
-export const isImportEnvironment = (e: ExtensionDeclaration): e is ImportEnvironment => {
+export const isImportEnvironment = (e: Extension): e is ImportEnvironment => {
   return e.type === 'dev-console.import/environment';
 };

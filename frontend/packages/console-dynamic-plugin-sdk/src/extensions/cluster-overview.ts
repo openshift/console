@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { OverviewDetailItemProps } from '@openshift-console/plugin-shared/src';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { CodeRef, Extension, ExtensionDeclaration } from '../types';
 import { Humanize, TopConsumerPopoverProps, QueryWithDescription } from './console-types';
 
 /** Adds a new inventory item into cluster overview page. */
@@ -77,22 +77,20 @@ export type CustomOverviewDetailItem = ExtensionDeclaration<
 
 // Type guards
 
-export const isClusterOverviewInventoryItem = (
-  e: ExtensionDeclaration,
-): e is ClusterOverviewInventoryItem => e.type === 'console.cluster-overview/inventory-item';
+export const isClusterOverviewInventoryItem = (e: Extension): e is ClusterOverviewInventoryItem =>
+  e.type === 'console.cluster-overview/inventory-item';
 
 export const isClusterOverviewUtilizationItem = (
-  e: ExtensionDeclaration,
+  e: Extension,
 ): e is ClusterOverviewUtilizationItem => e.type === 'console.cluster-overview/utilization-item';
 
 export const isClusterOverviewMultilineUtilizationItem = (
-  e: ExtensionDeclaration,
+  e: Extension,
 ): e is ClusterOverviewMultilineUtilizationItem =>
   e.type === 'console.cluster-overview/multiline-utilization-item';
 
-export const isOverviewDetailItem = (e: ExtensionDeclaration): e is OverviewDetailItem =>
+export const isOverviewDetailItem = (e: Extension): e is OverviewDetailItem =>
   e.type === 'console.dashboards/overview/detail/item';
 
-export const isCustomOverviewDetailItem = (
-  e: ExtensionDeclaration,
-): e is CustomOverviewDetailItem => e.type === 'console.dashboards/custom/overview/detail/item';
+export const isCustomOverviewDetailItem = (e: Extension): e is CustomOverviewDetailItem =>
+  e.type === 'console.dashboards/custom/overview/detail/item';

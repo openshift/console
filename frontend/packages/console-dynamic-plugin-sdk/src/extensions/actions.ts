@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ExtensionHook, ExtensionK8sKindVersionModel } from '../api/common-types';
 import { ActionContext } from '../api/internal-types';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
 /** ActionProvider contributes a hook that returns list of actions for specific context */
@@ -74,19 +74,19 @@ export type SupportedActionExtensions =
 
 // Type Guards
 
-export const isActionProvider = (e: ExtensionDeclaration): e is ActionProvider => {
+export const isActionProvider = (e: Extension): e is ActionProvider => {
   return e.type === 'console.action/provider';
 };
 
-export const isResourceActionProvider = (e: ExtensionDeclaration): e is ResourceActionProvider => {
+export const isResourceActionProvider = (e: Extension): e is ResourceActionProvider => {
   return e.type === 'console.action/resource-provider';
 };
 
-export const isActionGroup = (e: ExtensionDeclaration): e is ActionGroup => {
+export const isActionGroup = (e: Extension): e is ActionGroup => {
   return e.type === 'console.action/group';
 };
 
-export const isActionFilter = (e: ExtensionDeclaration): e is ActionFilter => {
+export const isActionFilter = (e: Extension): e is ActionFilter => {
   return e.type === 'console.action/filter';
 };
 

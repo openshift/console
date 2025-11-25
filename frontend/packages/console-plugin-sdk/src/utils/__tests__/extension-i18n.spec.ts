@@ -1,4 +1,4 @@
-import type { ExtensionDeclaration } from '@console/dynamic-plugin-sdk/src/types';
+import { Extension } from '../../typings';
 import { isTranslatableString, getTranslationKey, translateExtension } from '../extension-i18n';
 
 const nonTranslatableStrings: string[] = ['', null, undefined, '%', 'a%', '%a', '%%', 'foo'];
@@ -29,7 +29,7 @@ describe('getTranslationKey', () => {
 
 describe('translateExtension', () => {
   it("recursively replaces all translatable string values via the 't' function", () => {
-    const testExtension: ExtensionDeclaration = {
+    const testExtension: Extension = {
       type: 'Foo/Bar',
       properties: {
         foo1: '%test~1%',
@@ -70,7 +70,7 @@ describe('translateExtension', () => {
   });
 
   it('returns the same extension instance', () => {
-    const testExtension: ExtensionDeclaration = { type: 'Foo/Bar', properties: {} };
+    const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
     const t = jest.fn<string>();
 
     expect(translateExtension(testExtension, t)).toBe(testExtension);

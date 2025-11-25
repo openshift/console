@@ -1,4 +1,4 @@
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 /** This extension can be used to provide a handler for the file drop action on specific file extensions. */
 export type FileUpload = ExtensionDeclaration<
@@ -13,8 +13,7 @@ export type FileUpload = ExtensionDeclaration<
 
 // Type guards
 
-export const isFileUpload = (e: ExtensionDeclaration): e is FileUpload =>
-  e.type === 'console.file-upload';
+export const isFileUpload = (e: Extension): e is FileUpload => e.type === 'console.file-upload';
 
 // Support types
 

@@ -1,5 +1,5 @@
 import * as webpack from 'webpack';
-import type { ExtensionDeclaration } from '../../types';
+import { Extension } from '../../types';
 import { collectCodeRefData, findWebpackModules, ExtensionValidator } from '../ExtensionValidator';
 import { ValidationResult } from '../ValidationResult';
 
@@ -21,7 +21,7 @@ const getWebpackCompilationMocks = (
 
 describe('collectCodeRefData', () => {
   it('returns CodeRef data for the given list of extensions', () => {
-    const extensions: ExtensionDeclaration[] = [
+    const extensions: Extension[] = [
       {
         type: 'Foo',
         properties: {
@@ -66,7 +66,7 @@ describe('findWebpackModules', () => {
 describe('ExtensionValidator', () => {
   describe('validate', () => {
     const testValidate = (
-      extensions: ExtensionDeclaration[],
+      extensions: Extension[],
       webpackModules: {}[],
       exposedModules: { [moduleName: string]: string },
       beforeResult: (getProvidedExports: jest.Mock<any>) => void,

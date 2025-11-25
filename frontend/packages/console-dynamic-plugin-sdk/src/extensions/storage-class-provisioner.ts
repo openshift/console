@@ -1,3 +1,4 @@
+import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, ExtensionDeclaration } from '../types';
 import { StorageClass } from './console-types';
 
@@ -46,5 +47,5 @@ export type StorageClassProvisioner = ExtensionDeclaration<
   }
 >;
 
-export const isStorageClassProvisioner = (e: ExtensionDeclaration): e is StorageClassProvisioner =>
+export const isStorageClassProvisioner = (e: Extension): e is StorageClassProvisioner =>
   e.type === 'console.storage-class/provisioner';

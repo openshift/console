@@ -1,5 +1,5 @@
 import { ExtensionK8sGroupKindModel, ExtensionK8sModel } from '../api/common-types';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 type ResourcePageProperties = {
   /** The model for which this resource page links to. */
@@ -80,18 +80,17 @@ export type StandaloneRoutePage = ExtensionDeclaration<
 
 // Type guards
 
-export const isRoutePage = (e: ExtensionDeclaration): e is RoutePage =>
-  e.type === 'console.page/route';
+export const isRoutePage = (e: Extension): e is RoutePage => e.type === 'console.page/route';
 
-export const isStandaloneRoutePage = (e: ExtensionDeclaration): e is StandaloneRoutePage =>
+export const isStandaloneRoutePage = (e: Extension): e is StandaloneRoutePage =>
   e.type === 'console.page/route/standalone';
 
-export const isResourceListPage = (e: ExtensionDeclaration): e is ResourceListPage =>
+export const isResourceListPage = (e: Extension): e is ResourceListPage =>
   e.type === 'console.page/resource/list';
 
-export const isResourceDetailsPage = (e: ExtensionDeclaration): e is ResourceDetailsPage =>
+export const isResourceDetailsPage = (e: Extension): e is ResourceDetailsPage =>
   e.type === 'console.page/resource/details';
 
 /** @deprecated - use `console.tab/horizontalNav` */
-export const isResourceTabPage = (e: ExtensionDeclaration): e is ResourceTabPage =>
+export const isResourceTabPage = (e: Extension): e is ResourceTabPage =>
   e.type === 'console.page/resource/tab';

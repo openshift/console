@@ -1,5 +1,5 @@
 import { ExtensionK8sModel } from '../api/common-types';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 /** Gives full control over Console feature flags. */
 export type FeatureFlag = ExtensionDeclaration<
@@ -32,13 +32,12 @@ export type FeatureFlagHookProvider = ExtensionDeclaration<
 
 // Type guards
 
-export const isFeatureFlag = (e: ExtensionDeclaration): e is FeatureFlag =>
-  e.type === 'console.flag';
+export const isFeatureFlag = (e: Extension): e is FeatureFlag => e.type === 'console.flag';
 
-export const isModelFeatureFlag = (e: ExtensionDeclaration): e is ModelFeatureFlag =>
+export const isModelFeatureFlag = (e: Extension): e is ModelFeatureFlag =>
   e.type === 'console.flag/model';
 
-export const isFeatureFlagHookProvider = (e: ExtensionDeclaration): e is FeatureFlagHookProvider =>
+export const isFeatureFlagHookProvider = (e: Extension): e is FeatureFlagHookProvider =>
   e.type === 'console.flag/hookProvider';
 
 // Support types

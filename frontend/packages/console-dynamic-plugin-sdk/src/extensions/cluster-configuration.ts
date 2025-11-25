@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { JSONSchema7Type } from 'json-schema';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
 export type Resource = {
@@ -114,14 +114,10 @@ export type ClusterConfigurationItem = ExtensionDeclaration<
 
 // Type guards
 
-export const isClusterConfigurationGroup = (
-  e: ExtensionDeclaration,
-): e is ClusterConfigurationGroup => {
+export const isClusterConfigurationGroup = (e: Extension): e is ClusterConfigurationGroup => {
   return e.type === 'console.cluster-configuration/group';
 };
 
-export const isClusterConfigurationItem = (
-  e: ExtensionDeclaration,
-): e is ClusterConfigurationItem => {
+export const isClusterConfigurationItem = (e: Extension): e is ClusterConfigurationItem => {
   return e.type === 'console.cluster-configuration/item';
 };

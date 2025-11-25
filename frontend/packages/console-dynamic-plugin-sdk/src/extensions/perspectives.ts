@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ExtensionK8sModel } from '../api/common-types';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 // Align type with React.lazy
 type LazyComponent = { default: React.ComponentType };
@@ -28,6 +28,6 @@ export type Perspective = ExtensionDeclaration<
   }
 >;
 
-export const isPerspective = (e: ExtensionDeclaration): e is Perspective => {
+export const isPerspective = (e: Extension): e is Perspective => {
   return e.type === 'console.perspective';
 };

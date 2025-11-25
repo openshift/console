@@ -1,5 +1,5 @@
 import { ExtensionK8sGroupModel } from '../api/common-types';
-import { ExtensionDeclaration } from '../types';
+import { Extension, ExtensionDeclaration } from '../types';
 
 export enum ModelBadge {
   DEV = 'dev',
@@ -27,5 +27,5 @@ export type ModelMetadata = ExtensionDeclaration<
 
 // Type guards
 
-export const isModelMetadata = (e: ExtensionDeclaration): e is ModelMetadata =>
+export const isModelMetadata = (e: Extension): e is ModelMetadata =>
   e.type === 'console.model-metadata';

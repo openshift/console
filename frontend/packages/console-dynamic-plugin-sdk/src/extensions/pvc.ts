@@ -1,4 +1,4 @@
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { K8sResourceCommon } from './console-types';
 
 /** This extension can be used to specify additional properties that will be used when creating PVC resources on the PVC list page. */
@@ -49,14 +49,11 @@ export type PVCDelete = ExtensionDeclaration<
 
 // Type guards
 
-export const isPVCCreateProp = (e: ExtensionDeclaration): e is PVCCreateProp =>
+export const isPVCCreateProp = (e: Extension): e is PVCCreateProp =>
   e.type === 'console.pvc/create-prop';
 
-export const isPVCAlert = (e: ExtensionDeclaration): e is PVCAlert =>
-  e.type === 'console.pvc/alert';
+export const isPVCAlert = (e: Extension): e is PVCAlert => e.type === 'console.pvc/alert';
 
-export const isPVCStatus = (e: ExtensionDeclaration): e is PVCStatus =>
-  e.type === 'console.pvc/status';
+export const isPVCStatus = (e: Extension): e is PVCStatus => e.type === 'console.pvc/status';
 
-export const isPVCDelete = (e: ExtensionDeclaration): e is PVCDelete =>
-  e.type === 'console.pvc/delete';
+export const isPVCDelete = (e: Extension): e is PVCDelete => e.type === 'console.pvc/delete';

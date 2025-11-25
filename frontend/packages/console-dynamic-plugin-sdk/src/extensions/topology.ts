@@ -1,5 +1,5 @@
 import { TopologyQuadrant } from '@patternfly/react-topology/dist/esm/types';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { WatchK8sResourcesGeneric } from './console-types';
 import {
   CreateConnectionGetter,
@@ -96,24 +96,20 @@ export type TopologyRelationshipProvider = ExtensionDeclaration<
 
 // Type Guards
 
-export const isTopologyComponentFactory = (
-  e: ExtensionDeclaration,
-): e is TopologyComponentFactory => e.type === 'console.topology/component/factory';
+export const isTopologyComponentFactory = (e: Extension): e is TopologyComponentFactory =>
+  e.type === 'console.topology/component/factory';
 
-export const isTopologyCreateConnector = (e: ExtensionDeclaration): e is TopologyCreateConnector =>
+export const isTopologyCreateConnector = (e: Extension): e is TopologyCreateConnector =>
   e.type === 'console.topology/create/connector';
 
-export const isTopologyDataModelFactory = (
-  e: ExtensionDeclaration,
-): e is TopologyDataModelFactory => e.type === 'console.topology/data/factory';
+export const isTopologyDataModelFactory = (e: Extension): e is TopologyDataModelFactory =>
+  e.type === 'console.topology/data/factory';
 
-export const isTopologyDisplayFilters = (e: ExtensionDeclaration): e is TopologyDisplayFilters =>
+export const isTopologyDisplayFilters = (e: Extension): e is TopologyDisplayFilters =>
   e.type === 'console.topology/display/filters';
 
-export const isTopologyDecoratorProvider = (
-  e: ExtensionDeclaration,
-): e is TopologyDecoratorProvider => e.type === 'console.topology/decorator/provider';
+export const isTopologyDecoratorProvider = (e: Extension): e is TopologyDecoratorProvider =>
+  e.type === 'console.topology/decorator/provider';
 
-export const isTopologyRelationshipProvider = (
-  e: ExtensionDeclaration,
-): e is TopologyRelationshipProvider => e.type === 'console.topology/relationship/provider';
+export const isTopologyRelationshipProvider = (e: Extension): e is TopologyRelationshipProvider =>
+  e.type === 'console.topology/relationship/provider';

@@ -1,4 +1,4 @@
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 /** This component can be used to register a listener function receiving telemetry events.
     These events include user identification, page navigation, and other application specific events.
@@ -16,6 +16,6 @@ export type TelemetryEventListener = <P = any>(eventType: string, properties?: P
 
 // Type guards
 
-export const isTelemetryListener = (e: ExtensionDeclaration): e is TelemetryListener => {
+export const isTelemetryListener = (e: Extension): e is TelemetryListener => {
   return e.type === 'console.telemetry/listener';
 };

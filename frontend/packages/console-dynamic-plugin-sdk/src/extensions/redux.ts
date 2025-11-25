@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 /** Adds new reducer to Console Redux store which operates on `plugins.<scope>` substate. */
 export type ReduxReducer = ExtensionDeclaration<
@@ -14,5 +14,5 @@ export type ReduxReducer = ExtensionDeclaration<
 
 // Type guards
 
-export const isReduxReducer = (e: ExtensionDeclaration): e is ReduxReducer =>
+export const isReduxReducer = (e: Extension): e is ReduxReducer =>
   e.type === 'console.redux-reducer';
