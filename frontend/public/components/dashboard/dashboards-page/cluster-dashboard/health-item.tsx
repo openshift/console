@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
+import { LazyLoader } from '@console/plugin-sdk';
 import {
   ResolvedExtension,
   DashboardsOverviewHealthOperator,
@@ -26,7 +27,7 @@ import {
 } from '@console/shared/src/components/dashboard/status-card/states';
 import { K8sKind } from '../../../../module/k8s';
 import { FirehoseResourcesResult } from '../../../utils/types';
-import { AsyncComponent, LazyLoader } from '../../../utils/async';
+import { AsyncComponent } from '../../../utils/async';
 import { resourcePath } from '../../../utils/resource-link';
 import { useK8sWatchResources } from '../../../utils/k8s-watch-hook';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
