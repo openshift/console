@@ -30,9 +30,6 @@ export const augmentExtension = <E extends Extension>(
     uid: `${pluginID}[${index}]`,
   });
 
-export const isExtensionInUse = (e: Extension, flags: FlagsObject): boolean =>
-  e.flags.required.every((f) => flags[f]) && e.flags.disallowed.every((f) => !flags[f]);
-
 export const getGatingFlagNames = (extensions: Extension[]): string[] =>
   _.uniq([
     ..._.flatMap(extensions.map((e) => e.flags.required)),
@@ -55,6 +52,17 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
  * `PluginStore` implementation intended for testing purposes.
  */
 export class PluginStore extends SDKPluginStore {
+  private readonly allowedDynamicPluginNames: string[];
+
+  constructor(options?: {}, allowedDynamicPluginNames?: string[]) {
+    super(options);
+    this.allowedDynamicPluginNames = _.uniq(allowedDynamicPluginNames);
+  }
+
+  getAllowedDynamicPluginNames() {
+    return [...this.allowedDynamicPluginNames];
+  }
+
   /** HACK */
   addActivePlugin(plugin: ActivePlugin): void {
     super.addLoadedPlugin(
@@ -72,8 +80,6 @@ export class PluginStore extends SDKPluginStore {
     );
   }
 }
-
-type FlagsObject = { [key: string]: boolean };
 
 export type LoadedDynamicPluginInfo = LoadedPluginInfoEntry;
 

@@ -11,10 +11,10 @@ const NotLoadedDynamicPlugins: FC<NotLoadedDynamicPluginsProps> = ({ plugins, la
     <StatusPopupSection firstColumn={label}>
       <Content component="ul">
         {plugins.map((plugin) => (
-          <Content component="li" key={plugin.pluginName}>
+          <Content component="li" key={plugin.manifest.name}>
             <ResourceLink
               kind={referenceForModel(ConsolePluginModel)}
-              name={plugin.pluginName}
+              name={plugin.manifest.name}
               hideIcon
             />
           </Content>

@@ -214,9 +214,9 @@ const getUpdateNotificationEntries = (
       ...failedPlugins.map((plugin) => (
         <NotificationDrawerListItem
           variant={NotificationTypes.warning}
-          key={`${plugin.pluginName}-dynamic-plugin-fail`}
+          key={`${plugin.manifest.name}-dynamic-plugin-fail`}
           onClick={() => {
-            itemOnClick(resourcePath(referenceForModel(ConsolePluginModel), plugin.pluginName));
+            itemOnClick(resourcePath(referenceForModel(ConsolePluginModel), plugin.manifest.name));
           }}
         >
           <NotificationDrawerListItemHeader
@@ -225,7 +225,7 @@ const getUpdateNotificationEntries = (
           />
           <NotificationDrawerListItemBody>
             {i18next.t('public~Something went wrong with the {{pluginName}} plugin.', {
-              pluginName: plugin.pluginName,
+              pluginName: plugin.manifest.name,
             })}
           </NotificationDrawerListItemBody>
         </NotificationDrawerListItem>

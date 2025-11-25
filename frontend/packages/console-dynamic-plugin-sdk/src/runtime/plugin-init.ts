@@ -22,7 +22,6 @@ export const initConsolePlugins = _.once(
           loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
             // eslint-disable-next-line no-console
             console.error(..._.compact([errorMessage, errorCause]));
-            pluginStore.registerFailedDynamicPlugin(pluginName, errorMessage, errorCause);
           });
         });
 
