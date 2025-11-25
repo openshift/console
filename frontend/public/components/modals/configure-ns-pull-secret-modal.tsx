@@ -1,31 +1,46 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
 import { Base64 } from 'js-base64';
 import {
   Alert,
   CodeBlock,
   CodeBlockCode,
+  Content,
+  ContentVariants,
   FormGroup,
   Grid,
   GridItem,
   Radio,
+  TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { CONST } from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
-import { k8sPatchByName, k8sCreate } from '../../module/k8s';
+import { k8sPatchByName, k8sCreate, K8sResourceKind } from '../../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../../models';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { useState, useCallback } from 'react';
+import {
+  createModalLauncher,
+  ModalTitle,
+  ModalBody,
+  ModalSubmitFooter,
+  ModalComponentProps,
+} from '../factory/modal';
 import { ResourceIcon } from '../utils/resource-icon';
 
-const generateSecretData = (formData) => {
+interface FormData {
+  username: string;
+  password: string;
+  email: string;
+  address: string;
+}
+
+const generateSecretData = (formData: FormData): string => {
   const config = {
     auths: {},
   };
 
-  const authParts = [];
+  const authParts: string[] = [];
 
   if (_.trim(formData.username).length >= 1) {
     authParts.push(formData.username);
@@ -40,24 +55,29 @@ const generateSecretData = (formData) => {
   return Base64.encode(JSON.stringify(config));
 };
 
-const ConfigureNamespacePullSecret = (props) => {
+interface ConfigureNamespacePullSecretProps extends ModalComponentProps {
+  namespace: K8sResourceKind;
+  pullSecret?: K8sResourceKind;
+}
+
+const ConfigureNamespacePullSecret: React.FC<ConfigureNamespacePullSecretProps> = (props) => {
   const { namespace, cancel, close } = props;
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const [method, setMethod] = React.useState('form');
-  const [fileData, setFileData] = React.useState(null);
-  const [invalidJson, setInvalidJson] = React.useState(false);
+  const [method, setMethod] = useState<'form' | 'upload'>('form');
+  const [fileData, setFileData] = useState<string | null>(null);
+  const [invalidJson, setInvalidJson] = useState(false);
 
-  const onMethodChange = React.useCallback((event) => {
-    setMethod(event.target.value);
+  const onMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setMethod(event.target.value as 'form' | 'upload');
   }, []);
 
-  const onFileChange = React.useCallback((event) => {
+  const onFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setInvalidJson(false);
     setFileData(null);
 
-    const file = event.target.files[0];
+    const file = event.target.files?.[0];
     if (!file || file.type !== 'application/json') {
       setInvalidJson(true);
       return;
@@ -65,7 +85,7 @@ const ConfigureNamespacePullSecret = (props) => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      const input = e.target.result;
+      const input = e.target?.result as string;
       try {
         JSON.parse(input);
       } catch (error) {
@@ -77,17 +97,17 @@ const ConfigureNamespacePullSecret = (props) => {
     reader.readAsText(file, 'UTF-8');
   }, []);
 
-  const submit = React.useCallback(
-    (event) => {
+  const submit = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
-      let secretData;
+      let secretData: string;
 
       if (method === 'upload') {
         secretData = Base64.encode(fileData);
       } else {
-        const elements = event.target.elements;
-        const formData = {
+        const elements = event.currentTarget.elements as any;
+        const formData: FormData = {
           username: elements['namespace-pull-secret-username'].value,
           password: elements['namespace-pull-secret-password'].value,
           email: elements['namespace-pull-secret-email'].value || '',
@@ -96,8 +116,9 @@ const ConfigureNamespacePullSecret = (props) => {
         secretData = generateSecretData(formData);
       }
 
-      const data = {};
-      const pullSecretName = event.target.elements['namespace-pull-secret-name'].value;
+      const data: { [key: string]: string } = {};
+      const pullSecretName = (event.currentTarget.elements as any)['namespace-pull-secret-name']
+        .value;
       data[CONST.PULL_SECRET_DATA] = secretData;
 
       const secret = {
@@ -110,7 +131,7 @@ const ConfigureNamespacePullSecret = (props) => {
       };
       const defaultServiceAccountPatch = [
         {
-          op: 'add',
+          op: 'add' as const,
           path: '/imagePullSecrets/-',
           value: { name: pullSecretName },
         },
@@ -135,11 +156,11 @@ const ConfigureNamespacePullSecret = (props) => {
       <ModalBody>
         <Grid hasGutter>
           <GridItem>
-            <p>
+            <Content component={ContentVariants.p}>
               {t(
                 'public~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',
               )}
-            </p>
+            </Content>
           </GridItem>
 
           <GridItem span={3}>
@@ -154,20 +175,15 @@ const ConfigureNamespacePullSecret = (props) => {
           </GridItem>
 
           <GridItem span={9}>
-            <span className="pf-v6-c-form-control">
-              <input
-                type="text"
-                id="namespace-pull-secret-name"
-                aria-describedby="namespace-pull-secret-name-help"
-                required
-              />
-            </span>
-            <p
-              className="help-block pf-v6-u-text-color-subtle"
-              id="namespace-pull-secret-name-help"
-            >
+            <TextInput
+              type="text"
+              id="namespace-pull-secret-name"
+              aria-describedby="namespace-pull-secret-name-help"
+              isRequired
+            />
+            <Content component={ContentVariants.p} id="namespace-pull-secret-name-help">
               {t('public~Friendly name to help you manage this in the future')}
-            </p>
+            </Content>
           </GridItem>
 
           <GridItem span={3}>
@@ -206,51 +222,40 @@ const ConfigureNamespacePullSecret = (props) => {
                 </label>
               </GridItem>
               <GridItem span={9}>
-                <span className="pf-v6-c-form-control">
-                  <input
-                    type="text"
-                    id="namespace-pull-secret-address"
-                    placeholder={t('public~quay.io')}
-                    required
-                  />
-                </span>
+                <TextInput
+                  type="text"
+                  id="namespace-pull-secret-address"
+                  placeholder={t('public~quay.io')}
+                  isRequired
+                />
               </GridItem>
 
               <GridItem span={3}>
                 <label htmlFor="namespace-pull-secret-email">{t('public~Email address')}</label>
               </GridItem>
               <GridItem span={9}>
-                <span className="pf-v6-c-form-control">
-                  <input
-                    type="email"
-                    id="namespace-pull-secret-email"
-                    aria-describedby="namespace-pull-secret-email-help"
-                  />
-                </span>
-                <p
-                  className="help-block pf-v6-u-text-color-subtle"
-                  id="namespace-pull-secret-email-help"
-                >
+                <TextInput
+                  type="email"
+                  id="namespace-pull-secret-email"
+                  aria-describedby="namespace-pull-secret-email-help"
+                />
+                <Content component={ContentVariants.p} id="namespace-pull-secret-email-help">
                   {t('public~Optional, depending on registry provider')}
-                </p>
+                </Content>
               </GridItem>
 
               <GridItem span={3}>
                 <label htmlFor="namespace-pull-secret-username">{t('public~Username')}</label>
               </GridItem>
               <GridItem span={9}>
-                <span className="pf-v6-c-form-control">
-                  <input type="text" id="namespace-pull-secret-username" required />
-                </span>
+                <TextInput type="text" id="namespace-pull-secret-username" isRequired />
               </GridItem>
 
               <GridItem span={3}>
                 <label htmlFor="namespace-pull-secret-password">{t('public~Password')}</label>
               </GridItem>
               <GridItem span={9}>
-                <span className="pf-v6-c-form-control">
-                  <input type="password" id="namespace-pull-secret-password" required />
-                </span>
+                <TextInput type="password" id="namespace-pull-secret-password" isRequired />
               </GridItem>
             </>
           )}
@@ -267,14 +272,11 @@ const ConfigureNamespacePullSecret = (props) => {
                   onChange={onFileChange}
                   aria-describedby="namespace-pull-secret-file-help"
                 />
-                <p
-                  className="help-block pf-v6-u-text-color-subtle"
-                  id="namespace-pull-secret-file-help"
-                >
+                <Content component={ContentVariants.p} id="namespace-pull-secret-file-help">
                   {t(
                     'public~Properly configured Docker config file in JSON format. Will be base64 encoded after upload.',
                   )}
-                </p>
+                </Content>
               </GridItem>
 
               {invalidJson && (
@@ -312,7 +314,3 @@ const ConfigureNamespacePullSecret = (props) => {
 };
 
 export const configureNamespacePullSecretModal = createModalLauncher(ConfigureNamespacePullSecret);
-ConfigureNamespacePullSecret.propTypes = {
-  namespace: PropTypes.object.isRequired,
-  pullSecret: PropTypes.object,
-};

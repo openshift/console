@@ -1,8 +1,5 @@
-/* eslint-disable tsdoc/syntax */
-import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { css } from '@patternfly/react-styles';
 import {
   Alert,
@@ -12,12 +9,19 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
-import { Trans, withTranslation } from 'react-i18next';
-import { getImpersonate } from '@console/dynamic-plugin-sdk';
-
+import { Trans, useTranslation } from 'react-i18next';
+import { AccessReviewResourceAttributes, getImpersonate } from '@console/dynamic-plugin-sdk';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
-import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
+import {
+  k8sPatch,
+  k8sGet,
+  referenceFor,
+  referenceForOwnerRef,
+  K8sResourceKind,
+  EnvVar,
+} from '../module/k8s';
 import { AsyncComponent } from './utils/async';
 import { checkAccess } from './utils/rbac';
 import { ContainerSelect } from './utils/container-select';
@@ -26,6 +30,7 @@ import { FieldLevelHelp } from './utils/field-level-help';
 import { LoadingBox, LoadingInline } from './utils/status-box';
 import { ResourceLink } from './utils/resource-link';
 import { ConfigMapModel, SecretModel } from '../models';
+import { RootState } from '../redux';
 
 /**
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
@@ -44,26 +49,78 @@ const EnvFromEditorComponent = (props) => (
   />
 );
 
+interface EnvFromSource {
+  prefix?: string;
+  configMapRef?: {
+    name: string;
+    optional?: boolean;
+  };
+  secretRef?: {
+    name: string;
+    optional?: boolean;
+  };
+}
+
+// Extended EnvVar type with ID field used by the editor
+interface EnvVarWithID extends EnvVar {
+  ID?: number;
+}
+
+// Extended EnvFromSource type with ID field used by the editor
+interface EnvFromSourceWithID extends EnvFromSource {
+  ID?: number;
+}
+
+interface Container {
+  name: string;
+  env?: EnvVarWithID[];
+  envFrom?: EnvFromSourceWithID[];
+  order?: number;
+}
+
+interface RawEnvData {
+  containers?: Container[];
+  initContainers?: Container[];
+  env?: EnvVarWithID[];
+  envFrom?: EnvFromSourceWithID[];
+}
+
+// Types for the transformed editor data structure
+// env: Array of [envPairs, envFromPairs] tuples for each container
+type EnvPairs = unknown[];
+type EnvFromPairs = unknown[];
+type ContainerEnvData = [EnvPairs, EnvFromPairs];
+
+// Patch type for Kubernetes operations
+interface K8sPatch {
+  path: string;
+  op: string;
+  value: EnvVar[] | EnvFromSource[];
+}
+
+interface EnvVarsState {
+  containers?: ContainerEnvData[];
+  initContainers?: ContainerEnvData[];
+  buildObject?: ContainerEnvData[];
+}
+
 /**
  * Set up initial value for the environment vars state. Use this in constructor or cancelChanges.
  *
  * Our return value here is an object in the form of:
- * {
+ * \{
  *   env: [[envname, value, id],[...]]
  *   envFrom: [[envFromprefix, resourceObject, id], [...]]
- * }
- *
- *
- * @param initialPairObjects
- * @returns {*}
- * @private
+ * \}
  */
-const getPairsFromObject = (element = {}) => {
-  const returnedPairs = {};
-  if (_.isEmpty(element.env)) {
+const getPairsFromObject = (
+  element: Partial<Container> = {},
+): { env?: EnvPairs; envFrom?: EnvFromPairs } => {
+  const returnedPairs: { env?: EnvPairs; envFrom?: EnvFromPairs } = {};
+  if (_.isEmpty(element?.env)) {
     returnedPairs.env = [['', '', 0]];
   } else {
-    returnedPairs.env = _.map(element.env, (leafNode, i) => {
+    returnedPairs.env = _.map(element.env, (leafNode: EnvVarWithID, i) => {
       if (_.isEmpty(leafNode.value) && _.isEmpty(leafNode.valueFrom)) {
         leafNode.value = '';
         delete leafNode.valueFrom;
@@ -72,11 +129,11 @@ const getPairsFromObject = (element = {}) => {
       return Object.values(leafNode);
     });
   }
-  if (_.isEmpty(element.envFrom)) {
+  if (_.isEmpty(element?.envFrom)) {
     const configMapSecretRef = { name: '', key: '' };
     returnedPairs.envFrom = [['', { configMapSecretRef }, 0]];
   } else {
-    returnedPairs.envFrom = _.map(element.envFrom, (leafNode, i) => {
+    returnedPairs.envFrom = _.map(element.envFrom, (leafNode: EnvFromSourceWithID, i) => {
       if (!_.has(leafNode, 'prefix')) {
         leafNode.prefix = '';
       }
@@ -89,11 +146,10 @@ const getPairsFromObject = (element = {}) => {
 
 /**
  * Get name/value pairs from an array or object source
- *
- * @param initialPairObjects
- * @returns {Array}
  */
-const envVarsToArray = (initialPairObjects) => {
+const envVarsToArray = (
+  initialPairObjects?: Container[] | Partial<Container>,
+): ContainerEnvData[] => {
   const cpOfInitialPairs = _.cloneDeep(initialPairObjects);
   if (_.isArray(cpOfInitialPairs)) {
     return _.map(cpOfInitialPairs, (element) => {
@@ -105,7 +161,7 @@ const envVarsToArray = (initialPairObjects) => {
   return [[env, envFrom]];
 };
 
-const getContainersObjectForDropdown = (containerArray) => {
+const getContainersObjectForDropdown = (containerArray?: Container[]) => {
   return _.reduce(
     containerArray,
     (result, elem, order) => {
@@ -117,7 +173,14 @@ const getContainersObjectForDropdown = (containerArray) => {
 };
 
 class CurrentEnvVars {
-  constructor(data, isContainerArray, path) {
+  currentEnvVars: EnvVarsState;
+  rawEnvData: RawEnvData;
+  isContainerArray: boolean;
+  isCreate: boolean;
+  hasInitContainers: boolean;
+  state: { allowed: boolean };
+
+  constructor(data?: RawEnvData, isContainerArray?: boolean, path?: string[]) {
     this.currentEnvVars = {};
     this.state = { allowed: true };
     if (!_.isEmpty(data) && arguments.length > 1) {
@@ -127,15 +190,15 @@ class CurrentEnvVars {
     }
   }
 
-  setRawData(rawEnvData) {
+  setRawData(rawEnvData: RawEnvData = {}): this {
     this.rawEnvData = rawEnvData;
-    this.isContainerArray = _.isArray(rawEnvData.containers);
+    this.isContainerArray = _.isArray(rawEnvData?.containers);
     this.isCreate = _.isEmpty(rawEnvData);
-    this.hasInitContainers = !_.isUndefined(rawEnvData.initContainers);
+    this.hasInitContainers = !_.isUndefined(rawEnvData?.initContainers);
 
     if (this.isContainerArray || this.isCreate) {
-      this.currentEnvVars.containers = envVarsToArray(rawEnvData.containers);
-      this.currentEnvVars.initContainers = envVarsToArray(rawEnvData.initContainers);
+      this.currentEnvVars.containers = envVarsToArray(rawEnvData?.containers);
+      this.currentEnvVars.initContainers = envVarsToArray(rawEnvData?.initContainers);
     } else {
       this.currentEnvVars.buildObject = envVarsToArray(rawEnvData);
     }
@@ -149,37 +212,41 @@ class CurrentEnvVars {
    * the current envPath, so when we setRawData, we want to drop right such that
    * not only the containers can be initialized, but also initContainers. A build object
    * only has env data in the base path.
-   *
-   * @param resultObject
-   * @param isContainerArray
-   * @param path
-   * @returns CurrentEnvVars
    */
-  setResultObject(resultObject, isContainerArray, path) {
+  setResultObject(
+    resultObject: K8sResourceKind | RawEnvData,
+    isContainerArray: boolean,
+    path: string[],
+  ): this {
+    const getNestedValue = (obj: K8sResourceKind | RawEnvData, pathArray: string[]): unknown => {
+      return pathArray.reduce((acc, key) => acc?.[key], obj);
+    };
+
     if (isContainerArray) {
-      return this.setRawData(_.get(resultObject, _.dropRight(path)));
+      const parentPath = path.slice(0, -1);
+      return this.setRawData(getNestedValue(resultObject, parentPath));
     }
-    return this.setRawData(_.get(resultObject, path));
+    return this.setRawData(getNestedValue(resultObject, path));
   }
 
-  getEnvVarByTypeAndIndex(type, index) {
+  getEnvVarByTypeAndIndex(type: string, index: number): ContainerEnvData {
     return this.currentEnvVars[type][index];
   }
 
-  setFormattedVars(containerType, index, environmentType, formattedPairs) {
+  setFormattedVars(
+    containerType: string,
+    index: number,
+    environmentType: number,
+    formattedPairs: unknown[],
+  ): this {
     this.currentEnvVars[containerType][index][environmentType] = formattedPairs;
     return this;
   }
 
   /**
    * Return array of patches for the save operation.
-   *
-   *
-   * @param envPath
-   * @returns {Array}
-   * @public
    */
-  getPatches(envPath) {
+  getPatches(envPath: string[]): K8sPatch[] {
     if (this.isContainerArray) {
       const envPathForIC = _.dropRight(envPath).concat('initContainers');
       const op = 'add';
@@ -198,7 +265,7 @@ class CurrentEnvVars {
         },
       );
 
-      let patches = _.concat(containerEnvPatch, containerEnvFromPatch);
+      let patches: K8sPatch[] = _.concat<K8sPatch>(containerEnvPatch, containerEnvFromPatch);
 
       if (this.hasInitContainers) {
         const envPatchForIC = this.currentEnvVars.initContainers.map(
@@ -219,7 +286,7 @@ class CurrentEnvVars {
           },
         );
 
-        patches = _.concat(patches, envPatchForIC, envFromPatchForIC);
+        patches = _.concat<K8sPatch>(patches, envPatchForIC, envFromPatchForIC);
       }
       return patches;
     }
@@ -233,11 +300,8 @@ class CurrentEnvVars {
 
   /**
    * Return array of variables for the create operation.
-   *
-   * @returns {Array}
-   * @public
    */
-  dispatchNewEnvironmentVariables() {
+  dispatchNewEnvironmentVariables(): EnvVar[] | null {
     return this.isCreate
       ? this._envVarsToNameVal(this.currentEnvVars.containers[0][EnvType.ENV])
       : null;
@@ -245,13 +309,8 @@ class CurrentEnvVars {
 
   /**
    * Return env var pairs in name value notation, and strip out pairs that have empty name and values.
-   *
-   *
-   * @param finalEnvPairs
-   * @returns {Array}
-   * @private
    */
-  _envVarsToNameVal(finalEnvPairs) {
+  _envVarsToNameVal(finalEnvPairs: unknown[]): EnvVar[] {
     const isEmpty = (value) => {
       return _.isObject(value) ? _.values(value).every(isEmpty) : !value;
     };
@@ -268,13 +327,8 @@ class CurrentEnvVars {
 
   /**
    * Return env var pairs in envFrom (resource/prefix) notation, and strip out any pairs that have empty resource values.
-   *
-   *
-   * @param finalEnvPairs
-   * @returns {Array}
-   * @private
    */
-  _envFromVarsToResourcePrefix(finalEnvPairs) {
+  _envFromVarsToResourcePrefix(finalEnvPairs: unknown[]): EnvFromSource[] {
     return _.filter(
       finalEnvPairs,
       (finalEnvPair) =>
@@ -289,45 +343,54 @@ class CurrentEnvVars {
   }
 }
 
-/** @type {(state: any, props: {obj?: object, rawEnvData?: any, readOnly: boolean, envPath: any, onChange?: (env: any) => void, addConfigMapSecret?: boolean, useLoadingInline?: boolean}) => {model: K8sKind}} */
-const stateToProps = (state, { obj }) => ({
-  model:
-    state.k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) ||
-    state.k8s.getIn(['RESOURCES', 'models', obj.kind]),
-  impersonate: getImpersonate(state),
-});
+interface EnvironmentPageProps {
+  obj?: K8sResourceKind;
+  rawEnvData?: RawEnvData;
+  readOnly: boolean;
+  envPath: string[];
+  onChange?: (env: EnvVar[] | null) => void;
+  addConfigMapSecret?: boolean;
+  useLoadingInline?: boolean;
+}
 
-export const UnconnectedEnvironmentPage = (props) => {
+export const EnvironmentPage: React.FC<EnvironmentPageProps> = (props) => {
   const {
-    rawEnvData,
-    obj,
-    model,
-    impersonate,
+    rawEnvData = {},
+    obj = {},
     readOnly,
-    addConfigMapSecret,
+    addConfigMapSecret = true,
     onChange,
-    t,
     envPath,
     useLoadingInline,
   } = props;
+
+  const { t } = useTranslation();
+
+  const model = useSelector(
+    (state: RootState) =>
+      state.k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) ||
+      state.k8s.getIn(['RESOURCES', 'models', obj?.kind]),
+  );
+
+  const impersonate = useSelector((state: RootState) => getImpersonate(state));
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const initialCurrentEnvVars = React.useMemo(() => new CurrentEnvVars(rawEnvData), [rawEnvData]);
+  const initialCurrentEnvVars = useMemo(() => new CurrentEnvVars(rawEnvData), [rawEnvData]);
 
-  const [currentEnvVars, setCurrentEnvVars] = React.useState(initialCurrentEnvVars);
-  const [success, setSuccess] = React.useState(null);
-  const [containerIndex, setContainerIndex] = React.useState(0);
-  const [containerType, setContainerType] = React.useState(
+  const [currentEnvVars, setCurrentEnvVars] = useState(initialCurrentEnvVars);
+  const [success, setSuccess] = useState(null);
+  const [containerIndex, setContainerIndex] = useState(0);
+  const [containerType, setContainerType] = useState(
     initialCurrentEnvVars.isContainerArray || initialCurrentEnvVars.isCreate
       ? 'containers'
       : 'buildObject',
   );
-  const [configMaps, setConfigMaps] = React.useState(null);
-  const [secrets, setSecrets] = React.useState(null);
-  const [allowed, setAllowed] = React.useState(!obj || _.isEmpty(obj) || !model);
-  const [localErrorMessage, setLocalErrorMessage] = React.useState(null);
+  const [configMaps, setConfigMaps] = useState(null);
+  const [secrets, setSecrets] = useState(null);
+  const [allowed, setAllowed] = useState(!obj || _.isEmpty(obj) || !model);
+  const [localErrorMessage, setLocalErrorMessage] = useState(null);
 
-  const checkEditAccess = React.useCallback(() => {
+  const checkEditAccess = useCallback(() => {
     if (readOnly) {
       return;
     }
@@ -340,7 +403,7 @@ export const UnconnectedEnvironmentPage = (props) => {
     }
 
     const { name, namespace } = obj.metadata;
-    const resourceAttributes = {
+    const resourceAttributes: AccessReviewResourceAttributes = {
       group: model.apiGroup,
       resource: model.plural,
       verb: 'patch',
@@ -355,14 +418,14 @@ export const UnconnectedEnvironmentPage = (props) => {
       });
   }, [obj, model, impersonate, readOnly]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     checkEditAccess();
     if (!addConfigMapSecret || readOnly) {
       setConfigMaps({});
       setSecrets({});
       return;
     }
-    const envNamespace = _.get(obj, 'metadata.namespace');
+    const envNamespace = obj?.metadata?.namespace;
 
     Promise.all([
       k8sGet(ConfigMapModel, null, envNamespace).catch((err) => {
@@ -391,10 +454,8 @@ export const UnconnectedEnvironmentPage = (props) => {
 
   /**
    * Callback for NVEditor update our state with new values
-   * @param env
-   * @param i
    */
-  const updateEnvVars = React.useCallback(
+  const updateEnvVars = useCallback(
     (env, i = 0, type = EnvType.ENV) => {
       const currentEnv = _.cloneDeep(currentEnvVars);
       currentEnv.setFormattedVars(containerType, i, type, env.nameValuePairs);
@@ -408,13 +469,13 @@ export const UnconnectedEnvironmentPage = (props) => {
   /**
    * Reset the page to initial state
    */
-  const reload = React.useCallback(() => {
+  const reload = useCallback(() => {
     setCurrentEnvVars(new CurrentEnvVars(rawEnvData));
     setLocalErrorMessage(null);
     setSuccess(null);
   }, [rawEnvData]);
 
-  const selectContainer = React.useCallback(
+  const selectContainer = useCallback(
     (containerName) => {
       let index = _.findIndex(rawEnvData.containers, { name: containerName });
       if (index !== -1) {
@@ -437,10 +498,8 @@ export const UnconnectedEnvironmentPage = (props) => {
    * 2. Throw out empty rows
    * 3. Use add command if we are adding new env vars, and replace if we are modifying
    * 4. Send the patch command down to REST, and update with response
-   *
-   * @param e
    */
-  const saveChanges = React.useCallback(
+  const saveChanges = useCallback(
     (e) => {
       e.preventDefault();
 
@@ -455,7 +514,7 @@ export const UnconnectedEnvironmentPage = (props) => {
     [currentEnvVars, envPath, model, obj, handlePromise, t],
   );
 
-  const dismissSuccess = React.useCallback(() => {
+  const dismissSuccess = useCallback(() => {
     setSuccess(null);
   }, []);
 
@@ -480,7 +539,7 @@ export const UnconnectedEnvironmentPage = (props) => {
     />
   ) : null;
 
-  const owners = _.get(obj, 'metadata.ownerReferences', []).map((o, i) => (
+  const owners = (obj?.metadata?.ownerReferences || []).map((o, i) => (
     <ResourceLink
       key={i}
       kind={referenceForOwnerRef(o)}
@@ -608,22 +667,4 @@ export const UnconnectedEnvironmentPage = (props) => {
       )}
     </div>
   );
-};
-
-const EnvironmentPage_ = connect(stateToProps)(UnconnectedEnvironmentPage);
-export const EnvironmentPage = withTranslation()(EnvironmentPage_);
-
-EnvironmentPage.propTypes = {
-  obj: PropTypes.object,
-  rawEnvData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  envPath: PropTypes.array.isRequired,
-  readOnly: PropTypes.bool.isRequired,
-  onChange: PropTypes.func,
-  addConfigMapSecret: PropTypes.bool,
-  useLoadingInline: PropTypes.bool,
-};
-EnvironmentPage.defaultProps = {
-  obj: {},
-  rawEnvData: {},
-  addConfigMapSecret: true,
 };
