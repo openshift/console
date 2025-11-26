@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useDispatch } from 'react-redux';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
-import { isNotLoadedDynamicPluginInfo, DynamicPluginInfo } from '@console/plugin-sdk';
+import { DynamicPluginInfo } from '@console/plugin-sdk';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import * as UIActions from '@console/internal/actions/ui';
 import { resourcePath } from '@console/internal/components/utils/resource-link';
@@ -162,9 +162,7 @@ const getUpdateNotificationEntries = (
   const newerChannelVersion = splitClusterVersionChannel(newerChannel)?.version;
   const entries = [];
 
-  const failedPlugins = pluginInfoEntries
-    .filter(isNotLoadedDynamicPluginInfo)
-    .filter((plugin) => plugin.status === 'Failed');
+  const failedPlugins = pluginInfoEntries.filter((plugin) => plugin.status === 'failed');
 
   if (!_.isEmpty(updateData)) {
     entries.push(
@@ -245,7 +243,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   const { t } = useTranslation();
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
-  const [pluginInfoEntries] = usePluginInfo();
+  const pluginInfoEntries = usePluginInfo();
   const dispatch = useDispatch();
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
