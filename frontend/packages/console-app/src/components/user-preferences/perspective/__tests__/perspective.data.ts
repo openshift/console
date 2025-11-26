@@ -1,6 +1,6 @@
 import { ACM_PERSPECTIVE_ID } from '@console/app/src/consts';
 import { Perspective } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/plugin-sdk';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 
 export const mockPerspectiveExtensions: LoadedExtension<Perspective>[] = [
   {
