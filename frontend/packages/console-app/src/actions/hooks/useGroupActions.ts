@@ -40,9 +40,9 @@ export const useGroupActions = (obj: GroupKind): Action[] => {
       }),
       impersonate: (): Action => ({
         id: 'impersonate-group',
-        label: t('public~Impersonate Group {{name}}', obj.metadata),
+        label: t('public~Impersonate Group {{name}}', { name: obj?.metadata?.name }),
         cta: () => {
-          startImpersonate('Group', obj.metadata.name);
+          startImpersonate('Group', obj?.metadata?.name);
           navigate(window.SERVER_FLAGS.basePath);
         },
         accessReview: asAccessReview(GroupModel, obj, 'impersonate'),

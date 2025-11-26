@@ -19,9 +19,9 @@ const useImpersonateAction = (resource: UserKind): Action[] => {
     () => ({
       ImpersonateUser: () => ({
         id: 'impersonate-user',
-        label: t('public~Impersonate User {{name}}', resource.metadata),
+        label: t('public~Impersonate User {{name}}', { name: resource?.metadata?.name }),
         cta: () => {
-          dispatch(UIActions.startImpersonate('User', resource.metadata.name));
+          dispatch(UIActions.startImpersonate('User', resource?.metadata?.name));
           navigate(window.SERVER_FLAGS.basePath);
         },
         accessReview: asAccessReview(UserModel, resource, 'impersonate'),

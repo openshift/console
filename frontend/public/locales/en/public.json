@@ -824,6 +824,7 @@
   "Volume": "Volume",
   "Add Users": "Add Users",
   "Add new Users to Group {{name}}.": "Add new Users to Group {{name}}.",
+  "Group is not available": "Group is not available",
   "Edit routing configuration": "Edit routing configuration",
   "Group by": "Group by",
   "Group wait": "Group wait",

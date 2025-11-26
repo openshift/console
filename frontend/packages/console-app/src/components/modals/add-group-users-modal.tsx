@@ -20,6 +20,10 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
 
   const onSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
+    if (!group?.metadata?.name) {
+      setErrorMessage(t('public~Group is not available'));
+      return;
+    }
     setInProgress(true);
     setErrorMessage('');
     try {
@@ -44,7 +48,7 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
       <ModalHeader title={t('public~Add Users')} labelId="add-group-users-modal-title" />
       <ModalBody>
         <div className="form-group">
-          <p>{t('public~Add new Users to Group {{name}}.', group.metadata)}</p>
+          <p>{t('public~Add new Users to Group {{name}}.', { name: group?.metadata?.name })}</p>
         </div>
         <ListInput label={t('public~Users')} required initialValues={values} onChange={setValues} />
         {errorMessage && (
