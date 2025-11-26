@@ -81,6 +81,8 @@ export const alertmanager = {
   },
   visitEditPage: (receiverName: string) => {
     cy.visit(`/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`);
+    cy.byTestID('receiver-name').should('exist');
+    cy.byTestID('save-changes').should('exist');
   },
   visitYAMLPage: () => {
     detailsPage.selectTab('YAML');
