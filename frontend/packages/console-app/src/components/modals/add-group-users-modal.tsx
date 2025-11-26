@@ -1,5 +1,13 @@
 import { useState, MouseEventHandler } from 'react';
-import { Modal, Button, ModalBody, ModalFooter, ModalHeader } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertVariant,
+  Modal,
+  Button,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
@@ -24,12 +32,18 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
       setErrorMessage(t('public~Group is not available'));
       return;
     }
+    // Filter out empty values
+    const validUsers = values.map((v) => v.trim()).filter((v) => v.length > 0);
+    if (validUsers.length === 0) {
+      setErrorMessage(t('public~Please enter at least one user'));
+      return;
+    }
     setInProgress(true);
     setErrorMessage('');
     try {
       const patch = group.users
-        ? values.map((value: string) => ({ op: 'add', path: '/users/-', value }))
-        : [{ op: 'add', path: '/users', value: values }];
+        ? validUsers.map((value: string) => ({ op: 'add', path: '/users/-', value }))
+        : [{ op: 'add', path: '/users', value: validUsers }];
       await k8sPatchResource({
         model: GroupModel,
         resource: group,
@@ -47,12 +61,19 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
     <Modal isOpen onClose={closeOverlay} variant="small">
       <ModalHeader title={t('public~Add Users')} labelId="add-group-users-modal-title" />
       <ModalBody>
-        <div className="form-group">
-          <p>{t('public~Add new Users to Group {{name}}.', { name: group?.metadata?.name })}</p>
-        </div>
+        <p className="pf-v6-u-mb-md">
+          {t('public~Add new Users to Group {{name}}.', { name: group?.metadata?.name })}
+        </p>
         <ListInput label={t('public~Users')} required initialValues={values} onChange={setValues} />
         {errorMessage && (
-          <div className="pf-v6-u-danger-color-100 pf-v6-u-mt-md">{errorMessage}</div>
+          <Alert
+            isInline
+            className="pf-v6-u-mt-md"
+            variant={AlertVariant.danger}
+            title={t('public~An error occurred')}
+          >
+            {errorMessage}
+          </Alert>
         )}
       </ModalBody>
       <ModalFooter>
