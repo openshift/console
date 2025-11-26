@@ -10,6 +10,11 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.22.0-prerelease.1 - TBD
+
+- **Type breaking**: Removed `ExtensionDeclaration` from `types.ts`. Plugins should use `Extension` type instead. ([CONSOLE-3769], [#15778])
+- **Type breaking**: Changed the default type parameters of `Extension<any>` to `Extension<string, AnyObject>`. ([CONSOLE-3769], [#15778])
+
 ## 4.21.0-prerelease.1 - 2025-12-04
 
 - **Deprecated**: `setPluginStore` function in `k8s-utils.ts`. The function is now a noop and the export
@@ -218,3 +223,4 @@ table in [Console dynamic plugins README](./README.md).
 [#15671]: https://github.com/openshift/console/pull/15671
 [#15699]: https://github.com/openshift/console/pull/15699
 [#15735]: https://github.com/openshift/console/pull/15735
+[#15778]: https://github.com/openshift/console/pull/15778

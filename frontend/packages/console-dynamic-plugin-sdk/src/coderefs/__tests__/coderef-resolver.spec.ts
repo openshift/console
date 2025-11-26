@@ -207,9 +207,12 @@ describe('loadReferencedObject', () => {
   });
 });
 
+type FooExtension = Extension<'Foo', { test: boolean; qux: CodeRef<string> }>;
+type BarExtension = Extension<'Bar', { test: number[]; baz: { test: CodeRef<string> } }>;
+
 describe('resolveEncodedCodeRefs', () => {
   it('replaces encoded code references with CodeRef functions', async () => {
-    const extensions: Extension[] = [
+    const extensions = [
       {
         type: 'Foo',
         properties: {
@@ -234,7 +237,7 @@ describe('resolveEncodedCodeRefs', () => {
       (entryModule as unknown) as RemoteEntryModule,
       'Test@1.2.3',
       errorCallback,
-    );
+    ) as [FooExtension, BarExtension];
 
     expect(resolvedExtensions.length).toBe(extensions.length);
 

@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 
+import { AnyObject } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
-import {
+import type {
   Extension,
   RemoteEntryModule,
   EncodedCodeRef,
@@ -114,8 +115,8 @@ export const resolveEncodedCodeRefs = (
  * Returns an extension with its `CodeRef` properties replaced with referenced objects.
  */
 export const resolveExtension = async <
-  E extends Extension<P>,
-  P = ExtensionProperties<E>,
+  E extends Extension<string, P>,
+  P extends AnyObject = ExtensionProperties<E>,
   R = UpdateExtensionProperties<E, ResolvedCodeRefProperties<P>, P>
 >(
   extension: E,

@@ -1,4 +1,4 @@
-import { ExtensionDeclaration } from '../types';
+import { Extension } from '../types';
 
 /**
  * Custom Console extension with arbitrary `type` and `properties`.
@@ -7,4 +7,4 @@ import { ExtensionDeclaration } from '../types';
  *
  * This allows dynamic plugins to consume extensions which are specific to other plugins.
  */
-export type CustomExtension = ExtensionDeclaration<string, { [key: string]: any }>;
+export type CustomExtension = Extension<string, { [key: string]: any }>;

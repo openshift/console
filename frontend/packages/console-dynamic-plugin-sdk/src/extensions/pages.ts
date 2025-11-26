@@ -1,5 +1,5 @@
 import { ExtensionK8sGroupKindModel, ExtensionK8sModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 
 type ResourcePageProperties = {
   /** The model for which this resource page links to. */
@@ -35,16 +35,13 @@ type RoutePageProperties = {
  * Note: This extension should not be used for resource list and details page. For adding both list and details page for a resource use the
  * [console.navigation/resource-ns](#consolenavigationresource-ns) extension, instead, which renders elementary fields.
  */
-export type RoutePage = ExtensionDeclaration<'console.page/route', RoutePageProperties>;
+export type RoutePage = Extension<'console.page/route', RoutePageProperties>;
 
 /** Adds new resource list page to Console router. */
-export type ResourceListPage = ExtensionDeclaration<
-  'console.page/resource/list',
-  ResourcePageProperties & {}
->;
+export type ResourceListPage = Extension<'console.page/resource/list', ResourcePageProperties & {}>;
 
 /** Adds new resource details page to Console router. */
-export type ResourceDetailsPage = ExtensionDeclaration<
+export type ResourceDetailsPage = Extension<
   'console.page/resource/details',
   ResourcePageProperties & {}
 >;
@@ -53,7 +50,7 @@ export type ResourceDetailsPage = ExtensionDeclaration<
  * @deprecated - Use `console.tab/horizontalNav` instead
  * Adds new resource tab page to Console router.
  */
-export type ResourceTabPage = ExtensionDeclaration<
+export type ResourceTabPage = Extension<
   'console.page/resource/tab',
   Omit<ResourcePageProperties, 'component'> & {
     /** The component to be rendered when the route matches. */
@@ -73,7 +70,7 @@ export type ResourceTabPage = ExtensionDeclaration<
  * Under the hood we use React Router.
  * See https://v5.reactrouter.com/
  */
-export type StandaloneRoutePage = ExtensionDeclaration<
+export type StandaloneRoutePage = Extension<
   'console.page/route/standalone',
   Omit<RoutePageProperties, 'perspective'>
 >;

@@ -1,8 +1,8 @@
 import { ExtensionK8sModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 
 /** YAML templates for editing resources via the yaml editor. */
-export type YAMLTemplate = ExtensionDeclaration<
+export type YAMLTemplate = Extension<
   'console.yaml-template',
   {
     /** Model associated with the template. */
