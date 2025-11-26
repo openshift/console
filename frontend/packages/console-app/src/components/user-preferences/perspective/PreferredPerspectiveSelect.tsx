@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Perspective } from '@console/dynamic-plugin-sdk/src/extensions';
-import { LoadedExtension } from '@console/plugin-sdk/src';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { usePerspectiveExtension, usePerspectives } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import {
