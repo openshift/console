@@ -7,7 +7,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
 import { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
-import { Extension, EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
+import { ExtensionDeclaration, EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
 import { guessModuleFilePath } from '@console/dynamic-plugin-sdk/src/validation/ExtensionValidator';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
@@ -76,7 +76,7 @@ export const getActivePluginsModule = (
 export const loadActivePluginsForTestPurposes = (
   pluginPackages: PluginPackage[],
   moduleHook: VoidFunction = _.noop,
-  extensionHook: (pkg: PluginPackage) => Extension[] = _.constant([]),
+  extensionHook: (pkg: PluginPackage) => ExtensionDeclaration[] = _.constant([]),
 ) => {
   moduleHook();
   const activePlugins: ActivePlugin[] = [];

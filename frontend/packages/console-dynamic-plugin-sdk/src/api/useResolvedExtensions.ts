@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { resolveExtension } from '../coderefs/coderef-resolver';
 import { UseResolvedExtensions } from '../extensions/console-types';
-import { Extension, ExtensionTypeGuard, ResolvedExtension } from '../types';
+import type { ExtensionDeclaration, ExtensionTypeGuard, ResolvedExtension } from '../types';
 import { settleAllPromises } from '../utils/promise';
 
-export const useResolvedExtensions: UseResolvedExtensions = <E extends Extension>(
+export const useResolvedExtensions: UseResolvedExtensions = <E extends ExtensionDeclaration>(
   ...typeGuards: ExtensionTypeGuard<E>[]
 ): [ResolvedExtension<E>[], boolean, any[]] => {
   const extensions = useExtensions<E>(...typeGuards);
