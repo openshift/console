@@ -1,11 +1,11 @@
 import { StandardConsolePluginManifest } from '../build-types';
 import { applyCodeRefSymbol } from '../coderefs/coderef-resolver';
-import { Extension, RemoteEntryModule, CodeRef, Update } from '../types';
+import { ExtensionDeclaration, RemoteEntryModule, CodeRef, Update } from '../types';
 
 export const getPluginManifest = (
   name: string,
   version: string,
-  extensions: Extension[] = [],
+  extensions: ExtensionDeclaration[] = [],
   disableStaticPlugins?: string[],
 ): StandardConsolePluginManifest => ({
   name,

@@ -1,5 +1,5 @@
 import { ExtensionK8sModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 import { K8sResourceCommon } from './console-types';
 
 export type DetailsItemColumn = 'right' | 'left';
@@ -62,7 +62,7 @@ export type DetailsItem = ExtensionDeclaration<
   }
 >;
 
-export const isDetailsItem = (e: Extension): e is DetailsItem =>
+export const isDetailsItem = (e: ExtensionDeclaration): e is DetailsItem =>
   e.type === 'console.resource/details-item';
 
 export const isLeftDetailsItem = (e: DetailsItem): e is DetailsItem =>

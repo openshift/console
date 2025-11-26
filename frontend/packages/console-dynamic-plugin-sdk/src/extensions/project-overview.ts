@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CodeRef, Extension, ExtensionDeclaration } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 import { Humanize, TopConsumerPopoverProps } from './console-types';
 
 /** Adds a new inventory item into project overview page. */
@@ -36,9 +36,10 @@ export type ProjectOverviewUtilizationItem = ExtensionDeclaration<
 
 // Type guards
 
-export const isProjectOverviewInventoryItem = (e: Extension): e is ProjectOverviewInventoryItem =>
-  e.type === 'console.project-overview/inventory-item';
+export const isProjectOverviewInventoryItem = (
+  e: ExtensionDeclaration,
+): e is ProjectOverviewInventoryItem => e.type === 'console.project-overview/inventory-item';
 
 export const isProjectOverviewUtilizationItem = (
-  e: Extension,
+  e: ExtensionDeclaration,
 ): e is ProjectOverviewUtilizationItem => e.type === 'console.project-overview/utilization-item';

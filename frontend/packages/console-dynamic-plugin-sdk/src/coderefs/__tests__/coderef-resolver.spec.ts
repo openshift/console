@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Extension, EncodedCodeRef, CodeRef } from '../../types';
+import { ExtensionDeclaration, EncodedCodeRef, CodeRef } from '../../types';
 import {
   getExecutableCodeRefMock,
   getEntryModuleMocks,
@@ -208,7 +208,7 @@ describe('loadReferencedObject', () => {
 
 describe('resolveEncodedCodeRefs', () => {
   it('replaces encoded code references with CodeRef functions', async () => {
-    const extensions: Extension[] = [
+    const extensions: ExtensionDeclaration[] = [
       {
         type: 'Foo',
         properties: {
@@ -247,7 +247,7 @@ describe('resolveEncodedCodeRefs', () => {
   });
 
   it('clones the provided extensions array and its elements', () => {
-    const extensions: Extension[] = [
+    const extensions: ExtensionDeclaration[] = [
       { type: 'Foo', properties: { test: true } },
       { type: 'Bar', properties: { test: [1] } },
     ];
@@ -274,7 +274,7 @@ describe('resolveEncodedCodeRefs', () => {
 
 describe('resolveExtension', () => {
   it('replaces CodeRef functions with referenced objects', async () => {
-    const extensions: Extension[] = [
+    const extensions: ExtensionDeclaration[] = [
       {
         type: 'Foo',
         properties: {
@@ -309,7 +309,7 @@ describe('resolveExtension', () => {
   });
 
   it('logs a warning if the referenced object resolves to null or undefined', async () => {
-    const extensions: Extension[] = [
+    const extensions: ExtensionDeclaration[] = [
       {
         type: 'Foo',
         properties: {
@@ -343,7 +343,7 @@ describe('resolveExtension', () => {
   });
 
   it('returns the same extension instance', async () => {
-    const extensions: Extension[] = [
+    const extensions: ExtensionDeclaration[] = [
       {
         type: 'Foo',
         properties: { test: true },
@@ -361,7 +361,7 @@ describe('resolveExtension', () => {
   it('continuously reject code refs which have failed to resolve', async () => {
     const errorCodeRef = getErrorExecutableCodeRefMock();
 
-    const extension: Extension = {
+    const extension: ExtensionDeclaration = {
       type: 'Foo',
       properties: { test: true, qux: errorCodeRef },
     };

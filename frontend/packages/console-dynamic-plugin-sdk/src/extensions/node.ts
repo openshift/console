@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CodeRef, Extension, ExtensionDeclaration } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 import { NodeKind, ResourcesObject, WatchK8sResources, WatchK8sResults } from './console-types';
 
 export type IsNodeStatusActive<T extends ResourcesObject> = (
@@ -27,4 +27,5 @@ export type NodeStatus<T extends ResourcesObject = ResourcesObject> = ExtensionD
   }
 >;
 
-export const isNodeStatus = (e: Extension): e is NodeStatus => e.type === 'console.node/status';
+export const isNodeStatus = (e: ExtensionDeclaration): e is NodeStatus =>
+  e.type === 'console.node/status';

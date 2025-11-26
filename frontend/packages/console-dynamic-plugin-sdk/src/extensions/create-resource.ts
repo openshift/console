@@ -1,5 +1,5 @@
 import { ExtensionK8sModel } from '../api/common-types';
-import { CodeRef, Extension, ExtensionDeclaration } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 
 /** Properties of custom CreateResource component. */
 export type CreateResourceComponentProps = { namespace?: string };
@@ -18,5 +18,5 @@ export type CreateResource = ExtensionDeclaration<
 
 // Type guards
 
-export const isCreateResource = (e: Extension): e is CreateResource =>
+export const isCreateResource = (e: ExtensionDeclaration): e is CreateResource =>
   e.type === 'console.resource/create';

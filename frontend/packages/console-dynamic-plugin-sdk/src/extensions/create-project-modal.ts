@@ -1,5 +1,5 @@
 import { ModalComponent } from '../app/modal-support/ModalProvider';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 import { K8sResourceCommon } from './console-types';
 
 export type CreateProjectModalProps = {
@@ -15,5 +15,5 @@ export type CreateProjectModal = ExtensionDeclaration<
   }
 >;
 
-export const isCreateProjectModal = (e: Extension): e is CreateProjectModal =>
+export const isCreateProjectModal = (e: ExtensionDeclaration): e is CreateProjectModal =>
   e.type === 'console.create-project-modal';

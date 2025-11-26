@@ -1,4 +1,4 @@
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 
 /** This extension can be used to contribute a new storage provider to select,
     when attaching storage and a provider specific component. */
@@ -12,5 +12,5 @@ export type StorageProvider = ExtensionDeclaration<
   }
 >;
 
-export const isStorageProvider = (e: Extension): e is StorageProvider =>
+export const isStorageProvider = (e: ExtensionDeclaration): e is StorageProvider =>
   e.type === 'console.storage-provider';

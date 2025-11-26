@@ -1,6 +1,5 @@
 import { ExtensionK8sModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration } from '../types';
-
+import { ExtensionDeclaration } from '../types';
 /** This extension identifies a resource used to manage the configuration of the cluster.
     A link to the resource will be added to the Administration - Cluster Settings - Configuration page. */
 export type ClusterGlobalConfig = ExtensionDeclaration<
@@ -19,5 +18,5 @@ export type ClusterGlobalConfig = ExtensionDeclaration<
 
 // Type guards
 
-export const isClusterGlobalConfig = (e: Extension): e is ClusterGlobalConfig =>
+export const isClusterGlobalConfig = (e: ExtensionDeclaration): e is ClusterGlobalConfig =>
   e.type === 'console.global-config';
