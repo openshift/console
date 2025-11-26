@@ -16,8 +16,12 @@ export enum ActionType {
 export const setUser = (userInfo: UserInfo) => action(ActionType.SetUser, { userInfo });
 export const setUserResource = (userResource: UserKind) =>
   action(ActionType.SetUserResource, { userResource });
-export const beginImpersonate = (kind: string, name: string, subprotocols: string[]) =>
-  action(ActionType.BeginImpersonate, { kind, name, subprotocols });
+export const beginImpersonate = (
+  kind: string,
+  name: string,
+  subprotocols: string[],
+  groups?: string[],
+) => action(ActionType.BeginImpersonate, { kind, name, subprotocols, groups });
 export const endImpersonate = () => action(ActionType.EndImpersonate);
 export const setAdmissionWebhookWarning = (id: string, warning: AdmissionWebhookWarning) =>
   action(ActionType.SetAdmissionWebhookWarning, { id, warning });

@@ -1,15 +1,32 @@
 import * as _ from 'lodash';
 import { HttpError, RetryError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { authSvc } from './module/auth';
-import { getCSRFToken } from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch-utils';
+import { getConsoleRequestHeaders } from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch-utils';
 
 export const applyConsoleHeaders = (url, options) => {
-  const token = getCSRFToken();
-  if (options.headers) {
-    options.headers['X-CSRFToken'] = token;
-  } else {
-    options.headers = { 'X-CSRFToken': token };
+  const consoleHeaders = getConsoleRequestHeaders();
+
+  if (!options.headers) {
+    options.headers = {};
   }
+
+  // Apply console headers, handling array values for multiple headers
+  Object.entries(consoleHeaders || {}).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      // For multiple Impersonate-Group headers, we need special handling
+      // because fetch() API combines them into a single comma-separated header
+      // which doesn't work for Kubernetes impersonation
+      if (key === 'Impersonate-Group') {
+        // Send as a special header that the backend will split
+        options.headers['X-Console-Impersonate-Groups'] = value.join(',');
+      } else {
+        // For other array headers, store as array
+        options.headers[key] = value;
+      }
+    } else if (value) {
+      options.headers[key] = value;
+    }
+  });
 
   // X-CSRFToken is used only for non-GET requests targeting bridge
   if (options.method === 'GET' || url.indexOf('://') >= 0) {

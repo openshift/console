@@ -1,13 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { Action } from '@console/dynamic-plugin-sdk';
+import { Action, getImpersonate } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import * as UIActions from '@console/internal/actions/ui';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { GroupModel } from '@console/internal/models';
 import { GroupKind } from '@console/internal/module/k8s';
+import { RootState } from '@console/internal/redux';
 import AddGroupUsersModal from '../../components/modals/add-group-users-modal';
 
 /**
@@ -18,14 +19,25 @@ export const useGroupActions = (obj: GroupKind): Action[] => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const launchOverlay = useOverlay();
+  const impersonate = useSelector((state: RootState) => getImpersonate(state));
 
   const startImpersonate = useCallback(
     (kind: string, name: string) => dispatch(UIActions.startImpersonate(kind, name)),
     [dispatch],
   );
 
+  const stopImpersonate = useCallback(() => dispatch(UIActions.stopImpersonate()), [dispatch]);
+
   const factory = useMemo(
     () => ({
+      stopImpersonate: (): Action => ({
+        id: 'stop-impersonate',
+        label: t('public~Stop impersonating'),
+        cta: () => {
+          stopImpersonate();
+          navigate(window.SERVER_FLAGS.basePath);
+        },
+      }),
       impersonate: (): Action => ({
         id: 'impersonate-group',
         label: t('public~Impersonate Group {{name}}', obj.metadata),
@@ -42,8 +54,12 @@ export const useGroupActions = (obj: GroupKind): Action[] => {
         accessReview: asAccessReview(GroupModel, obj, 'patch'),
       }),
     }),
-    [navigate, obj, startImpersonate, t, launchOverlay],
+    [navigate, obj, startImpersonate, stopImpersonate, t, launchOverlay],
   );
 
-  return useMemo<Action[]>(() => [factory.impersonate(), factory.addUsers()], [factory]);
+  return useMemo<Action[]>(() => {
+    // Determine which impersonation action to show based on impersonation state
+    const impersonationAction = impersonate ? factory.stopImpersonate() : factory.impersonate();
+    return [impersonationAction, factory.addUsers()];
+  }, [impersonate, factory]);
 };

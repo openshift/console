@@ -13,6 +13,7 @@ export type ImpersonateKind = {
   kind: string;
   name: string;
   subprotocols: string[];
+  groups?: string[];
 };
 
 export type CoreState = {

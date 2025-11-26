@@ -27,6 +27,7 @@ export const coreReducer = (
           kind: action.payload.kind,
           name: action.payload.name,
           subprotocols: action.payload.subprotocols,
+          groups: action.payload.groups,
         },
       };
     case ActionType.EndImpersonate: {
