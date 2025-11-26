@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import { PluginStore } from '@console/plugin-sdk/src/store';
-import { ActivePlugin } from '@console/plugin-sdk/src/typings';
+import { ActivePlugin } from '@console/plugin-sdk/src/typings/base';
 import { getURLSearchParams } from './components/utils/link';
 
 const getEnabledDynamicPluginNames = () => {
