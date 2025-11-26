@@ -937,6 +937,19 @@ spec:
 `,
   )
   .setIn(
+    [referenceForModel(k8sModels.ConsoleLinkModel), 'cl-contact-mail'],
+    `
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: example-contact-mail
+spec:
+  href: 'mailto:support@example.com'
+  location: UserMenu
+  text: Contact Mail Link
+`,
+  )
+  .setIn(
     [referenceForModel(k8sModels.ConsoleCLIDownloadModel), 'default'],
     `
 apiVersion: console.openshift.io/v1
