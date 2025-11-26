@@ -58,8 +58,12 @@ export const useGroupActions = (obj: GroupKind): Action[] => {
   );
 
   return useMemo<Action[]>(() => {
+    // Guard against missing group name to prevent undefined values in impersonation
+    if (!obj?.metadata?.name) {
+      return [factory.addUsers()];
+    }
     // Determine which impersonation action to show based on impersonation state
     const impersonationAction = impersonate ? factory.stopImpersonate() : factory.impersonate();
     return [impersonationAction, factory.addUsers()];
-  }, [impersonate, factory]);
+  }, [impersonate, factory, obj]);
 };

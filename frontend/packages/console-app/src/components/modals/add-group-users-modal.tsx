@@ -51,7 +51,7 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
       });
       closeOverlay();
     } catch (err) {
-      setErrorMessage((err as any)?.message || String(err));
+      setErrorMessage(err instanceof Error ? err.message : String(err));
     } finally {
       setInProgress(false);
     }
@@ -61,26 +61,45 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
     <Modal isOpen onClose={closeOverlay} variant="small">
       <ModalHeader title={t('public~Add Users')} labelId="add-group-users-modal-title" />
       <ModalBody>
-        <p className="pf-v6-u-mb-md">
-          {t('public~Add new Users to Group {{name}}.', { name: group?.metadata?.name })}
-        </p>
-        <ListInput label={t('public~Users')} required initialValues={values} onChange={setValues} />
-        {errorMessage && (
-          <Alert
-            isInline
-            className="pf-v6-u-mt-md"
-            variant={AlertVariant.danger}
-            title={t('public~An error occurred')}
-          >
-            {errorMessage}
+        {!group?.metadata?.name ? (
+          <Alert isInline variant={AlertVariant.danger} title={t('public~An error occurred')}>
+            {t('public~Group is not available')}
           </Alert>
+        ) : (
+          <>
+            <p className="pf-v6-u-mb-md">
+              {t('public~Add new Users to Group {{name}}.', { name: group.metadata.name })}
+            </p>
+            <ListInput
+              label={t('public~Users')}
+              required
+              initialValues={values}
+              onChange={setValues}
+            />
+            {errorMessage && (
+              <Alert
+                isInline
+                className="pf-v6-u-mt-md"
+                variant={AlertVariant.danger}
+                title={t('public~An error occurred')}
+              >
+                {errorMessage}
+              </Alert>
+            )}
+          </>
         )}
       </ModalBody>
       <ModalFooter>
         <Button variant="secondary" onClick={closeOverlay} type="button">
           {t('public~Cancel')}
         </Button>
-        <Button type="submit" variant="primary" isLoading={inProgress} onClick={onSubmit}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          isDisabled={!group?.metadata?.name}
+          onClick={onSubmit}
+        >
           {t('public~Save')}
         </Button>
       </ModalFooter>

@@ -30,7 +30,11 @@ const useImpersonateAction = (resource: UserKind): Action[] => {
     [dispatch, navigate, resource, t],
   );
 
-  const action = useMemo<Action[]>(() => [factory.ImpersonateUser()], [factory]);
+  // Guard against missing user name to prevent undefined values
+  const action = useMemo<Action[]>(
+    () => (resource?.metadata?.name ? [factory.ImpersonateUser()] : []),
+    [factory, resource?.metadata?.name],
+  );
   return action;
 };
 
