@@ -1,4 +1,4 @@
-import { Extension } from '../../typings';
+import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
 import { isTranslatableString, getTranslationKey, translateExtension } from '../extension-i18n';
 
 const nonTranslatableStrings: string[] = ['', null, undefined, '%', 'a%', '%a', '%%', 'foo'];

@@ -1,11 +1,10 @@
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
-import { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
+import type { Extension, EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import * as jsoncModule from '@console/dynamic-plugin-sdk/src/utils/jsonc';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import * as remotePluginModule from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
-import { Extension } from '../../typings';
 import { trimStartMultiLine } from '../../utils/string';
 import { getTemplatePackage } from '../../utils/test-utils';
 import * as activePluginsModule from '../active-plugins';
