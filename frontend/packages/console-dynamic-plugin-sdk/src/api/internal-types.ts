@@ -80,7 +80,7 @@ export type ResourceInventoryItemProps = {
   namespace?: string;
   error: boolean;
   showLink?: boolean;
-  TitleComponent?: React.ComponentType<{}>;
+  TitleComponent?: React.ComponentType<{ children?: React.ReactNode }>;
   title?: string;
   titlePlural?: string;
   ExpandedComponent?: React.ComponentType<{}>;

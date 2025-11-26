@@ -4,6 +4,7 @@ import ErrorBoundaryFallbackInline from './ErrorBoundaryFallbackInline';
 
 type ErrorBoundaryInlineProps = {
   wrapper?: React.ComponentType<{ children: React.ReactNode }>;
+  children?: React.ReactNode;
 };
 
 /**
@@ -12,6 +13,7 @@ type ErrorBoundaryInlineProps = {
  */
 const ErrorBoundaryInline: React.FC<ErrorBoundaryInlineProps> = ({
   wrapper: Wrapper,
+  children,
   ...props
 }) => {
   let fallback = ErrorBoundaryFallbackInline;
@@ -23,7 +25,11 @@ const ErrorBoundaryInline: React.FC<ErrorBoundaryInlineProps> = ({
     );
   }
 
-  return <ErrorBoundary {...props} FallbackComponent={fallback} />;
+  return (
+    <ErrorBoundary {...props} FallbackComponent={fallback}>
+      {children}
+    </ErrorBoundary>
+  );
 };
 
 export default ErrorBoundaryInline;
