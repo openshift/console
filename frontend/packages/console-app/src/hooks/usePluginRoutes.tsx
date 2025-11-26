@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route } from 'react-router-dom-v5-compat';
+import { createPath, Route, useLocation } from 'react-router-dom-v5-compat';
 import {
   useActivePerspective,
   RoutePage as DynamicRoutePageExtension,
@@ -50,18 +50,18 @@ const InactiveRoutePage: React.FCC<InactiveRoutePageProps> = ({
 };
 
 const RoutePage: React.FCC<RoutePageProps> = ({
-  path,
   extension,
   activePerspective,
   setActivePerspective,
 }) => {
   const active = isRoutePageExtensionActive(extension, activePerspective);
+  const location = useLocation();
   return active ? (
     <LazyRoutePage extension={extension} />
   ) : (
     <InactiveRoutePage
       extension={extension}
-      path={path}
+      path={createPath(location)}
       setActivePerspective={setActivePerspective}
     />
   );
@@ -73,38 +73,23 @@ export const usePluginRoutes: UsePluginRoutes = () => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const getRoutesForExtension = React.useCallback(
     (extension: LoadedRoutePageExtension): React.ReactElement[] => {
-      if (Array.isArray(extension.properties.path)) {
-        return extension.properties.path.map((path) => (
-          <Route
-            {...extension.properties}
-            path={`${path}${extension.properties.exact ? '' : '/*'}`}
-            key={path}
-            element={
-              <RoutePage
-                extension={extension}
-                path={path}
-                activePerspective={activePerspective}
-                setActivePerspective={setActivePerspective}
-              />
-            }
-          />
-        ));
-      }
-      return [
+      const paths = Array.isArray(extension.properties.path)
+        ? extension.properties.path
+        : [extension.properties.path];
+      return paths.map((path) => (
         <Route
           {...extension.properties}
-          path={`${extension.properties.path}${extension.properties.exact ? '' : '/*'}`}
-          key={extension.properties.path}
+          path={`${path}${extension.properties.exact ? '' : '/*'}`}
+          key={path}
           element={
             <RoutePage
               extension={extension}
-              path={extension.properties.path}
               activePerspective={activePerspective}
               setActivePerspective={setActivePerspective}
             />
           }
-        />,
-      ];
+        />
+      ));
     },
     [activePerspective, setActivePerspective],
   );
@@ -149,7 +134,6 @@ type InactiveRoutePageProps = {
 };
 
 type RoutePageProps = {
-  path: string;
   extension: LoadedRoutePageExtension;
   activePerspective: string;
   setActivePerspective: SetActivePerspective;

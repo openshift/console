@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { mount } from 'enzyme';
-import { act } from 'react-dom/test-utils';
+import { render, waitFor } from '@testing-library/react';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { Perspective } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/plugin-sdk';
 import { usePerspectives } from '@console/shared/src';
@@ -12,6 +12,11 @@ import PerspectiveDetector from '../PerspectiveDetector';
 
 jest.mock('@console/shared/src', () => ({
   usePerspectives: jest.fn(),
+}));
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...require.requireActual('react-router-dom-v5-compat'),
+  useLocation: jest.fn(() => ({ pathname: '' })),
 }));
 
 const mockPerspectives = [
@@ -35,18 +40,24 @@ const mockPerspectives = [
 
 const setActivePerspective = jest.fn();
 
+const useLocationMock = useLocation as jest.Mock;
+
 describe('PerspectiveDetector', () => {
-  it('should set default perspective if there are no perspective detectors available', async () => {
-    (usePerspectives as jest.Mock).mockImplementation(() => mockPerspectives);
-
-    const wrapper = mount(<PerspectiveDetector setActivePerspective={setActivePerspective} />);
-    expect(wrapper.isEmptyRender()).toBe(true);
-    expect(setActivePerspective).toHaveBeenCalledWith('admin');
+  beforeEach(() => {
+    setActivePerspective.mockClear();
   });
 
-  it('should set detected perspective if detection is successful', async () => {
-    // create a promise and capture the resolver such that we can use act later on to ensure
-    // the test waits for this promise to resolve before continuing
+  it('should set default perspective when there are no perspective detectors available', async () => {
+    (usePerspectives as jest.Mock).mockImplementation(() => mockPerspectives);
+
+    render(<PerspectiveDetector setActivePerspective={setActivePerspective} />);
+
+    await waitFor(() => {
+      expect(setActivePerspective).toHaveBeenCalledWith('admin', '');
+    });
+  });
+
+  it('should set detected perspective when detection is successful', async () => {
     let promiseResolver: (value: () => [boolean, boolean]) => void;
     const testPromise = new Promise<() => [boolean, boolean]>(
       (resolver) => (promiseResolver = resolver),
@@ -55,17 +66,16 @@ describe('PerspectiveDetector', () => {
 
     (usePerspectives as jest.Mock).mockImplementation(() => mockPerspectives);
 
-    const wrapper = mount(<PerspectiveDetector setActivePerspective={setActivePerspective} />);
-    await act(async () => {
-      promiseResolver(() => [true, false]);
+    render(<PerspectiveDetector setActivePerspective={setActivePerspective} />);
+
+    promiseResolver(() => [true, false]);
+
+    await waitFor(() => {
+      expect(setActivePerspective).toHaveBeenCalledWith('dev', '');
     });
-    expect(wrapper.isEmptyRender()).toBe(true);
-    expect(setActivePerspective).toHaveBeenCalledWith('dev');
   });
 
-  it('should set default perspective if detection fails', async () => {
-    // create a promise and capture the resolver such that we can use act later on to ensure
-    // the test waits for this promise to resolve before continuing
+  it('should set default perspective when detection fails', async () => {
     let promiseResolver: (value: () => [boolean, boolean]) => void;
     const testPromise = new Promise<() => [boolean, boolean]>(
       (resolver) => (promiseResolver = resolver),
@@ -74,15 +84,16 @@ describe('PerspectiveDetector', () => {
 
     (usePerspectives as jest.Mock).mockImplementation(() => mockPerspectives);
 
-    const wrapper = mount(<PerspectiveDetector setActivePerspective={setActivePerspective} />);
-    await act(async () => {
-      promiseResolver(() => [false, false]);
+    render(<PerspectiveDetector setActivePerspective={setActivePerspective} />);
+
+    promiseResolver(() => [false, false]);
+
+    await waitFor(() => {
+      expect(setActivePerspective).toHaveBeenCalledWith('admin', '');
     });
-    expect(wrapper.isEmptyRender()).toBe(true);
-    expect(setActivePerspective).toHaveBeenCalledWith('admin');
   });
 
-  it('should set admin as default perspective if all perspectives are disabled', async () => {
+  it('should set admin as default perspective when all perspectives are disabled', async () => {
     const perspectives: PerspectiveType[] = [
       {
         id: 'dev',
@@ -112,8 +123,7 @@ describe('PerspectiveDetector', () => {
       },
     ];
     window.SERVER_FLAGS.perspectives = JSON.stringify(perspectives);
-    // create a promise and capture the resolver such that we can use act later on to ensure
-    // the test waits for this promise to resolve before continuing
+
     let promiseResolver: (value: () => [boolean, boolean]) => void;
     const testPromise = new Promise<() => [boolean, boolean]>(
       (resolver) => (promiseResolver = resolver),
@@ -122,11 +132,35 @@ describe('PerspectiveDetector', () => {
 
     (usePerspectives as jest.Mock).mockImplementation(() => mockPerspectives);
 
-    const wrapper = mount(<PerspectiveDetector setActivePerspective={setActivePerspective} />);
-    await act(async () => {
-      promiseResolver(() => [false, false]);
+    render(<PerspectiveDetector setActivePerspective={setActivePerspective} />);
+
+    promiseResolver(() => [false, false]);
+
+    await waitFor(() => {
+      expect(setActivePerspective).toHaveBeenCalledWith('admin', '');
     });
-    expect(wrapper.isEmptyRender()).toBe(true);
-    expect(setActivePerspective).toHaveBeenCalledWith('admin');
+  });
+
+  it('preserves query and hash when setting perspective', async () => {
+    let promiseResolver: (value: () => [boolean, boolean]) => void;
+    const testPromise = new Promise<() => [boolean, boolean]>(
+      (resolver) => (promiseResolver = resolver),
+    );
+    mockPerspectives[1].properties.usePerspectiveDetection = () => testPromise;
+
+    (usePerspectives as jest.Mock).mockImplementation(() => mockPerspectives);
+    useLocationMock.mockImplementation(() => ({
+      pathname: '/some/path',
+      search: '?query=param',
+      hash: '#some-hash',
+    }));
+
+    render(<PerspectiveDetector setActivePerspective={setActivePerspective} />);
+
+    promiseResolver(() => [true, false]);
+
+    await waitFor(() => {
+      expect(setActivePerspective).toHaveBeenCalledWith('dev', '/some/path?query=param#some-hash');
+    });
   });
 });
