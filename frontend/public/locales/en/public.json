@@ -1733,7 +1733,6 @@
   "Cancel build": "Cancel build",
   "Impersonate Group {{name}}": "Impersonate Group {{name}}",
   "Edit Machine count": "Edit Machine count",
-  "Edit AppliedClusterResourceQuota": "Edit AppliedClusterResourceQuota",
   "Start build": "Start build",
   "Start last run": "Start last run",
   "Pause updates": "Pause updates",

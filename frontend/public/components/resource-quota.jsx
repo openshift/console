@@ -54,24 +54,19 @@ import {
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const isClusterQuota = (quota) => !quota.metadata.namespace;
 
 const clusterQuotaReference = referenceForModel(ClusterResourceQuotaModel);
 const appliedClusterQuotaReference = referenceForModel(AppliedClusterResourceQuotaModel);
 
-const quotaActions = (quota, namespace = undefined) => {
-  if (quota.metadata.namespace) {
+const quotaActions = (quota) => {
+  if (quota.kind === 'ResourceQuota') {
     return <LazyActionMenu context={{ [referenceForModel(ResourceQuotaModel)]: quota }} />;
   }
 
   if (quota.kind === 'ClusterResourceQuota') {
     return <LazyActionMenu context={{ [clusterQuotaReference]: quota }} />;
-  }
-
-  if (quota.kind === 'AppliedClusterResourceQuota') {
-    return <LazyActionMenu context={{ [appliedClusterQuotaReference]: { quota, namespace } }} />;
   }
   return null;
 };
@@ -150,7 +145,6 @@ const appliedClusterResourceQuotaTableColumnInfo = [
   { id: 'projectAnnotations' },
   { id: 'status' },
   { id: 'created' },
-  { id: 'actions' },
 ];
 
 const QuotaStatus = ({ resourcesAtQuota }) => {
@@ -455,7 +449,7 @@ const getResourceQuotaDataViewRows = (data, columns, namespace) => {
         cell: <Timestamp timestamp={metadata.creationTimestamp} />,
       },
       [resourceQuotaTableColumnInfo[6].id]: {
-        cell: quotaActions(obj, namespace),
+        cell: quotaActions(obj),
         props: actionsCellProps,
       },
     };
@@ -516,10 +510,6 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
       },
       [appliedClusterResourceQuotaTableColumnInfo[4].id]: {
         cell: <Timestamp timestamp={metadata.creationTimestamp} />,
-      },
-      [appliedClusterResourceQuotaTableColumnInfo[5].id]: {
-        cell: quotaActions(obj, namespace),
-        props: actionsCellProps,
       },
     };
 
@@ -667,13 +657,6 @@ const useAppliedClusterResourceQuotaColumns = () => {
           modifier: 'nowrap',
         },
       },
-      {
-        title: '',
-        id: appliedClusterResourceQuotaTableColumnInfo[5].id,
-        props: {
-          ...cellIsStickyProps,
-        },
-      },
     ],
     [t],
   );
@@ -814,22 +797,10 @@ export const ResourceQuotasDetailsPage = (props) => {
 };
 
 export const AppliedClusterResourceQuotasDetailsPage = (props) => {
-  const params = useParams();
   return (
     <DetailsPage
       {...props}
       kind={appliedClusterQuotaReference}
-      customActionMenu={(k8sObj, obj) => (
-        <LazyActionMenu
-          context={{
-            [appliedClusterQuotaReference]: {
-              quota: obj,
-              namespace: params?.ns,
-            },
-          }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
       pages={[navFactory.details(Details), navFactory.editYaml()]}
     />
   );

@@ -553,19 +553,6 @@
     }
   },
   {
-    "type": "console.action/resource-provider",
-    "properties": {
-      "model": {
-        "group": "quota.openshift.io",
-        "version": "v1",
-        "kind": "AppliedClusterResourceQuota"
-      },
-      "provider": {
-        "$codeRef": "appliedClusterResourceQuotaProvider.useAppliedClusterResourceQuotaActionsProvider"
-      }
-    }
-  },
-  {
     "type": "console.page/route",
     "properties": {
       "exact": true,
