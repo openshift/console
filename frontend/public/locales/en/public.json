@@ -1246,7 +1246,6 @@
   "Clear history": "Clear history",
   "Recently used": "Recently used",
   "Clear input value": "Clear input value",
-  "Edit AppliedClusterResourceQuota": "Edit AppliedClusterResourceQuota",
   "{{count}} resource reached quota_one": "{{count}} resource reached quota",
   "{{count}} resource reached quota_other": "{{count}} resource reached quotas",
   "none are at quota": "none are at quota",
