@@ -107,7 +107,7 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
   }, [visitedLoaded, visited, setVisited]);
 
   if (Object.keys(flags).some((key) => flagPending(flags[key])) || !visitedLoaded) {
-    return <LoadingBox />;
+    return <LoadingBox blame="DefaultPage" />;
   }
 
   const perspective = perspectiveExtensions.find((p) => p?.properties?.id === activePerspective);
@@ -763,7 +763,7 @@ const AppContents: React.FC<{}> = () => {
           }
         />
       ) : (
-        <Route element={<LoadingBox />} />
+        <Route element={<LoadingBox blame="AppContents" />} />
       )}
     </Routes>
   );
@@ -788,7 +788,9 @@ const AppContents: React.FC<{}> = () => {
         id="content-scrollable"
       >
         <ErrorBoundaryPage>
-          <React.Suspense fallback={<LoadingBox />}>{contentRouter}</React.Suspense>
+          <React.Suspense fallback={<LoadingBox blame="AppContents suspense" />}>
+            {contentRouter}
+          </React.Suspense>
         </ErrorBoundaryPage>
       </PageSection>
       <TelemetryNotifier />

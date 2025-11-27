@@ -11,6 +11,7 @@ const QuickStartDrawerAsync: React.FCC<QuickStartDrawerAsyncProps> = ({ children
     loader={() =>
       import('./QuickStartDrawer' /* webpackChunkName: "quick-start" */).then((c) => c.default)
     }
+    blame="QuickStartDrawerAsync"
     {...props}
   >
     {children}

@@ -17,7 +17,7 @@ const QuickStartDrawer: React.FCC<QuickStartDrawerProps> = ({ children, ...props
           {children}
         </PfQuickStartDrawer>
       ) : (
-        <LoadingBox />
+        <LoadingBox blame="QuickStartDrawer" />
       )
     }
   </QuickStartsLoader>

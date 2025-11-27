@@ -20,7 +20,7 @@ import { NotificationDrawer } from './notification-drawer';
 import { Navigation } from '@console/app/src/components/nav';
 import { history } from './utils/router';
 import { AsyncComponent } from './utils/async';
-import { LoadingBox } from './utils/status-box';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, startAPIDiscovery } from '../actions/k8s';
@@ -298,14 +298,16 @@ const App: React.FC<{
       <DetectNamespace>
         <ModalProvider>
           <OverlayProvider>
-            {contextProviderExtensions.reduce(
-              (children, e) => (
-                <EnhancedProvider key={e.uid} {...e.properties}>
-                  {children}
-                </EnhancedProvider>
-              ),
-              content,
-            )}
+            <Suspense fallback={<LoadingBox blame="contextProviderExtensions suspense" />}>
+              {contextProviderExtensions.reduce(
+                (children, e) => (
+                  <EnhancedProvider key={e.uid} {...e.properties}>
+                    {children}
+                  </EnhancedProvider>
+                ),
+                content,
+              )}
+            </Suspense>
           </OverlayProvider>
         </ModalProvider>
       </DetectNamespace>
@@ -327,10 +329,10 @@ const AppWithExtensions: React.FC = () => {
     return <App contextProviderExtensions={contextProviderExtensions} />;
   }
 
-  return <LoadingBox />;
+  return <LoadingBox blame="AppWithExtensions" />;
 };
 
-render(<LoadingBox />, document.getElementById('app'));
+render(<LoadingBox blame="Init" />, document.getElementById('app'));
 
 const AppRouter: React.FC = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
@@ -502,7 +504,7 @@ graphQLReady.onReady(() => {
   }
 
   render(
-    <Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox blame="Root suspense" />}>
       <Provider store={store}>
         <ThemeProvider>
           <HelmetProvider>

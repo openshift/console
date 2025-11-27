@@ -14,6 +14,7 @@ export const ImportYamlPage = () => {
     <>
       <DocumentTitle>{title}</DocumentTitle>
       <AsyncComponent
+        blame="ImportYamlPage"
         loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
         allowMultiple
         create={true}
