@@ -134,7 +134,7 @@ const config: Configuration = {
       },
       {
         test: /(\.jsx?)|(\.tsx?)$/,
-        exclude: /node_modules\/(?!(bitbucket|ky|ini)\/)/,
+        exclude: /node_modules\/(?!(bitbucket|ky|ini|@patternfly(-\S+)?)\/)/,
         use: [
           // Disable thread-loader in CI
           ...(!OPENSHIFT_CI
