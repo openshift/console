@@ -88,13 +88,13 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
   const getPermssionSectionHeading = (git: GitProvider) => {
     switch (git) {
       case GitProvider.GITHUB:
-        return t('pipelines-plugin~See GitHub events');
+        return t('devconsole~See GitHub events');
       case GitProvider.GITLAB:
-        return t('pipelines-plugin~See Gitlab events');
+        return t('devconsole~See Gitlab events');
       case GitProvider.BITBUCKET:
-        return t('pipelines-plugin~See BitBucket events');
+        return t('devconsole~See BitBucket events');
       default:
-        return t('pipelines-plugin~See Git events');
+        return t('devconsole~See Git events');
     }
   };
 
@@ -103,7 +103,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
     switch (gitProvider) {
       case GitProvider.GITHUB:
         helpText = (
-          <Trans t={t} ns="pipelines-plugin">
+          <Trans t={t} ns="devconsole">
             Use your GitHub Personal token. Use this{' '}
             <ExternalLink href={AccessTokenDocLinks[GitProvider.GITHUB]}>link</ExternalLink> to
             create a <b>classic</b> token with <b>repo</b> & <b>admin:repo_hook</b> scopes and give
@@ -114,7 +114,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
 
       case GitProvider.GITLAB:
         helpText = (
-          <Trans t={t} ns="pipelines-plugin">
+          <Trans t={t} ns="devconsole">
             Use your Gitlab Personal access token. Use this{' '}
             <ExternalLink href={AccessTokenDocLinks[GitProvider.GITLAB]}>link</ExternalLink> to
             create a token with <b>api</b> scope. Select the role as <b>Maintainer/Owner</b>. Give
@@ -125,7 +125,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
 
       case GitProvider.BITBUCKET:
         helpText = (
-          <Trans t={t} ns="pipelines-plugin">
+          <Trans t={t} ns="devconsole">
             Use your Bitbucket App password. Use this{' '}
             <ExternalLink href={AccessTokenDocLinks[GitProvider.BITBUCKET]}>link</ExternalLink> to
             create a token with <b>Read and Write </b>scopes in{' '}
@@ -136,7 +136,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
 
       default:
         helpText = (
-          <Trans t={t} ns="pipelines-plugin">
+          <Trans t={t} ns="devconsole">
             Use your Git Personal token. Create a token with repo, public_repo & admin:repo_hook
             scopes and give your token an expiration, i.e 30d.
           </Trans>
@@ -150,7 +150,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
     <FormSection fullWidth={!fieldPrefix} extraMargin>
       {gitProvider && gitProvider === GitProvider.BITBUCKET ? (
         <InputField
-          label={t('pipelines-plugin~Bitbucket username')}
+          label={t('devconsole~Bitbucket username')}
           name={`${fieldPrefix}webhook.user`}
           type={TextInputTypes.text}
           required
@@ -158,14 +158,14 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
       ) : null}
       <RadioGroupField
         name={`${fieldPrefix}webhook.method`}
-        label={t('pipelines-plugin~Secret')}
+        label={t('devconsole~Secret')}
         labelIcon={
           <Tooltip
             position="right"
             content={
               <p>
                 {t(
-                  'pipelines-plugin~The secret is required to set the Build status and to attach the webhook to the Git repository.',
+                  'devconsole~The secret is required to set the Build status and to attach the webhook to the Git repository.',
                 )}
               </p>
             }
@@ -177,7 +177,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         options={[
           {
             value: 'token',
-            label: t('pipelines-plugin~Git access token'),
+            label: t('devconsole~Git access token'),
             activeChildren: (
               <InputField
                 name={`${fieldPrefix}webhook.token`}
@@ -189,17 +189,17 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
           },
           {
             value: 'secret',
-            label: t('pipelines-plugin~Git access token secret'),
+            label: t('devconsole~Git access token secret'),
 
             activeChildren: (
               <ResourceDropdownField
                 helpText={t(
-                  'pipelines-plugin~Secret with the Git access token for pulling pipeline and tasks from your Git repository.',
+                  'devconsole~Secret with the Git access token for pulling pipeline and tasks from your Git repository.',
                 )}
                 name={`${fieldPrefix}webhook.secretRef`}
                 resources={resources}
                 dataSelector={['metadata', 'name']}
-                placeholder={t('pipelines-plugin~Select a secret')}
+                placeholder={t('devconsole~Select a secret')}
                 autocompleteFilter={autocompleteFilter}
                 fullWidth
                 showBadge
@@ -218,7 +218,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         ]}
       />
       {webhook?.url && (
-        <FormGroup fieldId="test" label={t('pipelines-plugin~Webhook URL')}>
+        <FormGroup fieldId="test" label={t('devconsole~Webhook URL')}>
           <ClipboardCopy
             isReadOnly
             name={`${fieldPrefix}webhook.url`}
@@ -233,7 +233,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
             <HelperText>
               <HelperTextItem>
                 {t(
-                  'pipelines-plugin~We have detected a URL that can be used to configure the webhook. It will be created and attached to the Git repository.',
+                  'devconsole~We have detected a URL that can be used to configure the webhook. It will be created and attached to the Git repository.',
                 )}
               </HelperTextItem>
             </HelperText>
@@ -242,10 +242,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
       )}
 
       {gitProvider && gitProvider !== GitProvider.BITBUCKET ? (
-        <FormGroup
-          fieldId={'webhook-secret-clipboard'}
-          label={t('pipelines-plugin~Webhook secret')}
-        >
+        <FormGroup fieldId={'webhook-secret-clipboard'} label={t('devconsole~Webhook secret')}>
           <InputGroup style={{ display: 'flex' }}>
             <InputGroupItem>
               <ClipboardCopy
@@ -262,7 +259,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
             </InputGroupItem>
             <InputGroupItem>
               <Button data-test="generate-secret" variant="control" onClick={generateWebhookSecret}>
-                {t('pipelines-plugin~Generate')}
+                {t('devconsole~Generate')}
               </Button>
             </InputGroupItem>
           </InputGroup>
@@ -273,7 +270,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
         <>
           <ExpandableSection toggleText={getPermssionSectionHeading(gitProvider)}>
             <FormGroup
-              label={t('pipelines-plugin~Events triggering the webhook: ')}
+              label={t('devconsole~Events triggering the webhook: ')}
               fieldId="repo-permissions"
             >
               <Content component={ContentVariants.small}>
@@ -283,7 +280,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
           </ExpandableSection>
 
           <ExternalLink
-            text={t('pipelines-plugin~Read more about setting up webhook')}
+            text={t('devconsole~Read more about setting up webhook')}
             href={WebhookDocLinks[gitProvider]}
           />
         </>

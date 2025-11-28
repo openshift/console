@@ -23,11 +23,11 @@ const RunDetailsErrorLog: React.FC<RunDetailErrorLogProps> = ({ logDetails, name
   return (
     <DescriptionList>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('pipelines-plugin~Message')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('shipwright-plugin~Message')}</DescriptionListTerm>
         <DescriptionListDescription>{logDetails.title}</DescriptionListDescription>
       </DescriptionListGroup>
       <DescriptionListGroup>
-        <DescriptionListTerm>{t('pipelines-plugin~Log snippet')}</DescriptionListTerm>
+        <DescriptionListTerm>{t('shipwright-plugin~Log snippet')}</DescriptionListTerm>
         <DescriptionListDescription>
           <LogSnippetBlock logDetails={logDetails} namespace={namespace}>
             {(logSnippet: string) => <pre className="co-pre">{logSnippet}</pre>}

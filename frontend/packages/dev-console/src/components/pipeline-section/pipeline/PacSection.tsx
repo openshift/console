@@ -48,8 +48,8 @@ const PacSection: React.FC = () => {
   return pac ? (
     <>
       <ExpandCollapse
-        textCollapsed={t('pipelines-plugin~View details')}
-        textExpanded={t('pipelines-plugin~Hide details')}
+        textCollapsed={t('devconsole~View details')}
+        textExpanded={t('devconsole~Hide details')}
       >
         <InfoPanel />
       </ExpandCollapse>

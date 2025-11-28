@@ -81,7 +81,7 @@ const getOrderedStepsFromPod = (name: string, ns: string): Promise<ContainerStat
       );
     })
     .catch((err) => {
-      errorModal({ error: err.message || i18next.t('pipelines-plugin~Error downloading logs.') });
+      errorModal({ error: err.message || i18next.t('shipwright-plugin~Error downloading logs.') });
       return [];
     });
 };

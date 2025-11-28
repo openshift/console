@@ -41,12 +41,12 @@ const getAlertText = (
   resourceType: string,
 ): string => {
   const MISSING_DOCKERFILE_LABEL_TEXT = i18next.t(
-    'pipelines-plugin~The pipeline template for Dockerfiles is not available at this time.',
+    'devconsole~The pipeline template for Dockerfiles is not available at this time.',
   );
   if (isDockerStrategy) return MISSING_DOCKERFILE_LABEL_TEXT;
 
   return i18next.t(
-    'pipelines-plugin~There are no pipeline templates available for {{builderImage}} and {{resourceType}} combination.',
+    'devconsole~There are no pipeline templates available for {{builderImage}} and {{resourceType}} combination.',
     { builderImage, resourceType },
   );
 };
@@ -238,7 +238,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
 
   if (noTemplateForRuntime) {
     const builderImageTitle =
-      builderImages?.[image.selected]?.title || t('pipelines-plugin~this Builder Image');
+      builderImages?.[image.selected]?.title || t('devconsole~this Builder Image');
     const resourceName = t(ReadableResourcesNames[resources]);
     return (
       <Alert
@@ -262,14 +262,14 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     <>
       {buildOption !== BuildOptions.PIPELINES && (
         <CheckboxField
-          label={t('pipelines-plugin~Add pipeline')}
+          label={t('devconsole~Add pipeline')}
           name="pipeline.enabled"
           isDisabled={isPipelineAttached}
         />
       )}
       {pipeline.enabled && isPacRepo && (
         <>
-          <span className="pf-c-form__label-text">{t('pipelines-plugin~Pipeline')}</span>
+          <span className="pf-c-form__label-text">{t('devconsole~Pipeline')}</span>
           <RadioGroupField
             className="odc-pipeline-section-pac__radio-intent"
             name={'pipeline.type'}
@@ -279,14 +279,14 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
                 value: PipelineType.PAC,
                 label: (
                   <>
-                    {t('pipelines-plugin~Build, deploy and configure a Pipeline Repository')}
+                    {t('devconsole~Build, deploy and configure a Pipeline Repository')}
                     {'  '}
                     <Tooltip
                       position="right"
                       content={
                         <p>
                           {t(
-                            'pipelines-plugin~Automatically configure a new Pipeline Repository for your Git repository. This will automatically trigger new PipelineRuns on new commits or Pull Requests based on your configuration in your source code.',
+                            'devconsole~Automatically configure a new Pipeline Repository for your Git repository. This will automatically trigger new PipelineRuns on new commits or Pull Requests based on your configuration in your source code.',
                           )}
                         </p>
                       }
@@ -301,14 +301,14 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
                 value: PipelineType.PIPELINE,
                 label: (
                   <>
-                    {t('pipelines-plugin~Use Pipeline from this cluster')}
+                    {t('devconsole~Use Pipeline from this cluster')}
                     {'  '}
                     <Tooltip
                       position="right"
                       content={
                         <p>
                           {t(
-                            'pipelines-plugin~Use an installed Pipeline from your cluster to build and deploy your component. Pipelines are from "openshift" namespace that support the relevant runtime are shown below.',
+                            'devconsole~Use an installed Pipeline from your cluster to build and deploy your component. Pipelines are from "openshift" namespace that support the relevant runtime are shown below.',
                           )}
                         </p>
                       }
@@ -328,9 +328,9 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
                     />
                     <br />
                     <ExpandableSection
-                      toggleText={`${
-                        isExpanded ? t('pipelines-plugin~Hide') : t('pipelines-plugin~Show')
-                      } ${t('pipelines-plugin~pipeline visualization')}`}
+                      toggleText={`${isExpanded ? t('devconsole~Hide') : t('devconsole~Show')} ${t(
+                        'devconsole~pipeline visualization',
+                      )}`}
                       isExpanded={isExpanded}
                       onToggle={() => setIsExpanded(!isExpanded)}
                     >
@@ -350,13 +350,13 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
             title={pipelineTemplateItems[pipeline.templateSelected]}
             items={pipelineTemplateItems}
             disabled={isPipelineAttached}
-            label={t('pipelines-plugin~Pipeline')}
+            label={t('devconsole~Pipeline')}
             fullWidth
           />
           <ExpandableSection
-            toggleText={`${
-              isExpanded ? t('pipelines-plugin~Hide') : t('pipelines-plugin~Show')
-            } ${t('pipelines-plugin~pipeline visualization')}`}
+            toggleText={`${isExpanded ? t('devconsole~Hide') : t('devconsole~Show')} ${t(
+              'devconsole~pipeline visualization',
+            )}`}
             isExpanded={isExpanded}
             onToggle={() => setIsExpanded(!isExpanded)}
           >

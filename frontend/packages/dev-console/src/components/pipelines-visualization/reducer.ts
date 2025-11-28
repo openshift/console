@@ -22,7 +22,7 @@ import {
 
 export const getDuration = (seconds: number, long?: boolean): string => {
   if (seconds === 0) {
-    return i18next.t('pipelines-plugin~less than a sec');
+    return i18next.t('devconsole~less than a sec');
   }
   let sec = Math.round(seconds);
   let min = 0;
@@ -38,20 +38,20 @@ export const getDuration = (seconds: number, long?: boolean): string => {
   }
   if (hr > 0) {
     duration += long
-      ? i18next.t('pipelines-plugin~{{count}} hour', { count: hr })
-      : i18next.t('pipelines-plugin~{{hr}}h', { hr });
+      ? i18next.t('devconsole~{{count}} hour', { count: hr })
+      : i18next.t('devconsole~{{hr}}h', { hr });
     duration += ' ';
   }
   if (min > 0) {
     duration += long
-      ? i18next.t('pipelines-plugin~{{count}} minute', { count: min })
-      : i18next.t('pipelines-plugin~{{min}}m', { min });
+      ? i18next.t('devconsole~{{count}} minute', { count: min })
+      : i18next.t('devconsole~{{min}}m', { min });
     duration += ' ';
   }
   if (sec > 0) {
     duration += long
-      ? i18next.t('pipelines-plugin~{{count}} second', { count: sec })
-      : i18next.t('pipelines-plugin~{{sec}}s', { sec });
+      ? i18next.t('devconsole~{{count}} second', { count: sec })
+      : i18next.t('devconsole~{{sec}}s', { sec });
   }
 
   return duration.trim();
@@ -154,31 +154,31 @@ export const createStepStatus = (step: { name: string }, status: TaskStatus): St
 export const getRunStatusColor = (status: string): StatusMessage => {
   switch (status) {
     case ComputedStatus.Succeeded:
-      return { message: i18next.t('pipelines-plugin~Succeeded'), pftoken: successColor };
+      return { message: i18next.t('devconsole~Succeeded'), pftoken: successColor };
     case ComputedStatus.Failed:
-      return { message: i18next.t('pipelines-plugin~Failed'), pftoken: failureColor };
+      return { message: i18next.t('devconsole~Failed'), pftoken: failureColor };
     case ComputedStatus.FailedToStart:
       return {
-        message: i18next.t('pipelines-plugin~PipelineRun failed to start'),
+        message: i18next.t('devconsole~PipelineRun failed to start'),
         pftoken: failureColor,
       };
     case ComputedStatus.Running:
-      return { message: i18next.t('pipelines-plugin~Running'), pftoken: runningColor };
+      return { message: i18next.t('devconsole~Running'), pftoken: runningColor };
     case ComputedStatus['In Progress']:
-      return { message: i18next.t('pipelines-plugin~Running'), pftoken: runningColor };
+      return { message: i18next.t('devconsole~Running'), pftoken: runningColor };
 
     case ComputedStatus.Skipped:
-      return { message: i18next.t('pipelines-plugin~Skipped'), pftoken: skippedColor };
+      return { message: i18next.t('devconsole~Skipped'), pftoken: skippedColor };
     case ComputedStatus.Cancelled:
-      return { message: i18next.t('pipelines-plugin~Cancelled'), pftoken: cancelledColor };
+      return { message: i18next.t('devconsole~Cancelled'), pftoken: cancelledColor };
     case ComputedStatus.Cancelling:
-      return { message: i18next.t('pipelines-plugin~Cancelling'), pftoken: cancelledColor };
+      return { message: i18next.t('devconsole~Cancelling'), pftoken: cancelledColor };
     case ComputedStatus.Idle:
     case ComputedStatus.Pending:
-      return { message: i18next.t('pipelines-plugin~Pending'), pftoken: pendingColor };
+      return { message: i18next.t('devconsole~Pending'), pftoken: pendingColor };
     default:
       return {
-        message: i18next.t('pipelines-plugin~PipelineRun not started yet'),
+        message: i18next.t('devconsole~PipelineRun not started yet'),
         pftoken: pendingColor,
       };
   }

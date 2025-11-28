@@ -38,11 +38,11 @@ export const getTooltipContent = (statusReason: ComputedStatus): string => {
   switch (statusReason) {
     case ComputedStatus.Succeeded:
     case ComputedStatus.Failed:
-      return i18n.t('dev-console~When expression was met');
+      return i18n.t('devconsole~When expression was met');
     case ComputedStatus.Skipped:
-      return i18n.t('dev-console~When expression was not met');
+      return i18n.t('devconsole~When expression was not met');
     default:
-      return i18n.t('dev-console~When expression');
+      return i18n.t('devconsole~When expression');
   }
 };
 

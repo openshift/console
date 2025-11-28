@@ -46,8 +46,8 @@ export const getPLRLogSnippet = (
     // No specific task run failure information, just print pipeline run status
     return {
       staticMessage:
-        succeededCondition.message || i18next.t('pipelines-plugin~Unknown failure condition'),
-      title: i18next.t('pipelines-plugin~Failure - check logs for details.'),
+        succeededCondition.message || i18next.t('shipwright-plugin~Unknown failure condition'),
+      title: i18next.t('shipwright-plugin~Failure - check logs for details.'),
     };
   }
 

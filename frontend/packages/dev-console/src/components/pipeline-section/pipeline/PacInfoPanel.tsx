@@ -24,7 +24,7 @@ const InfoPanel: React.FC = () => {
     <FormSection>
       <div className="odc-pipeline-section-pac__info-panel">
         <div className="odc-pipeline-section-pac__info-text">
-          <Trans t={t} ns="pipelines-plugin" values={{ translatedResourceName, name }}>
+          <Trans t={t} ns="devconsole" values={{ translatedResourceName, name }}>
             Once your Pipeline Repository is configured, in order to update your{' '}
             {{ translatedResourceName }} <code className="co-code">{{ name }}</code> automatically,
             update the following in your <code className="co-code">.tekton</code> PipelineRun:
@@ -37,7 +37,7 @@ const InfoPanel: React.FC = () => {
           </li>
           <li className="odc-pipeline-section-pac__clipboard">
             <strong>
-              {t('pipelines-plugin~Internal image registry:')}
+              {t('devconsole~Internal image registry:')}
               {'  '}
             </strong>
             <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>

@@ -30,7 +30,7 @@ const ConfigTypeSection: React.FC<ConfigTypeSectionProps> = ({ pac, formContextF
     <>
       <Content component="p">
         {t(
-          'pipelines-plugin~A GitHub App is already set up for this cluster. To use it, install the GitHub app on your personal account or GitHub organization.',
+          'devconsole~A GitHub App is already set up for this cluster. To use it, install the GitHub app on your personal account or GitHub organization.',
         )}
       </Content>
       <br />
@@ -40,7 +40,7 @@ const ConfigTypeSection: React.FC<ConfigTypeSectionProps> = ({ pac, formContextF
             <FlexItem span={3}>
               <Tile
                 data-test="github"
-                title={t('pipelines-plugin~Use GitHub App')}
+                title={t('devconsole~Use GitHub App')}
                 onClick={() => setFieldValue(`${fieldPrefix}method`, PacConfigurationTypes.GITHUB)}
                 isSelected={method === PacConfigurationTypes.GITHUB}
               />
@@ -48,7 +48,7 @@ const ConfigTypeSection: React.FC<ConfigTypeSectionProps> = ({ pac, formContextF
             <FlexItem span={3}>
               <Tile
                 data-test="webhook"
-                title={t('pipelines-plugin~Setup a webhook')}
+                title={t('devconsole~Setup a webhook')}
                 onClick={() => setFieldValue(`${fieldPrefix}method`, PacConfigurationTypes.WEBHOOK)}
                 isSelected={method === PacConfigurationTypes.WEBHOOK}
               />

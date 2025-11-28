@@ -7,10 +7,10 @@ export const PipelineModel: K8sModel = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1',
   label: 'Pipeline',
-  // t('dev-console~Pipeline')
-  labelKey: 'dev-console~Pipeline',
-  // t('dev-console~Pipelines')
-  labelPluralKey: 'dev-console~Pipelines',
+  // t('devconsole~Pipeline')
+  labelKey: 'devconsole~Pipeline',
+  // t('devconsole~Pipelines')
+  labelPluralKey: 'devconsole~Pipelines',
   plural: 'pipelines',
   abbr: 'PL',
   namespaced: true,
@@ -25,10 +25,10 @@ export const PipelineRunModel: K8sModel = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1',
   label: 'PipelineRun',
-  // t('dev-console~PipelineRun')
-  labelKey: 'dev-console~PipelineRun',
-  // t('dev-console~PipelineRuns')
-  labelPluralKey: 'dev-console~PipelineRuns',
+  // t('devconsole~PipelineRun')
+  labelKey: 'devconsole~PipelineRun',
+  // t('devconsole~PipelineRuns')
+  labelPluralKey: 'devconsole~PipelineRuns',
   plural: 'pipelineruns',
   abbr: 'PLR',
   namespaced: true,
@@ -43,10 +43,10 @@ export const TaskModel: K8sModel = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1',
   label: 'Task',
-  // t('dev-console~Task')
-  labelKey: 'dev-console~Task',
-  // t('dev-console~Tasks')
-  labelPluralKey: 'dev-console~Tasks',
+  // t('devconsole~Task')
+  labelKey: 'devconsole~Task',
+  // t('devconsole~Tasks')
+  labelPluralKey: 'devconsole~Tasks',
   plural: 'tasks',
   abbr: 'T',
   namespaced: true,
@@ -61,10 +61,10 @@ export const ClusterTaskModel: K8sModel = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'ClusterTask',
-  // t('dev-console~ClusterTask')
-  labelKey: 'dev-console~ClusterTask',
-  // t('dev-console~ClusterTasks')
-  labelPluralKey: 'dev-console~ClusterTasks',
+  // t('devconsole~ClusterTask')
+  labelKey: 'devconsole~ClusterTask',
+  // t('devconsole~ClusterTasks')
+  labelPluralKey: 'devconsole~ClusterTasks',
   plural: 'clustertasks',
   abbr: 'CT',
   namespaced: false,
@@ -79,10 +79,10 @@ export const RepositoryModel: K8sModel = {
   apiGroup: 'pipelinesascode.tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Repository',
-  // t('dev-console~Repository')
-  labelKey: 'dev-console~Repository',
-  // t('dev-console~Repositories')
-  labelPluralKey: 'dev-console~Repositories',
+  // t('devconsole~Repository')
+  labelKey: 'devconsole~Repository',
+  // t('devconsole~Repositories')
+  labelPluralKey: 'devconsole~Repositories',
   plural: 'repositories',
   abbr: 'R',
   namespaced: true,
@@ -97,10 +97,10 @@ export const PipelineResourceModel: K8sModel = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'PipelineResource',
-  // t('dev-console~PipelineResource')
-  labelKey: 'dev-console~PipelineResource',
-  // t('dev-console~PipelineResources')
-  labelPluralKey: 'dev-console~PipelineResources',
+  // t('devconsole~PipelineResource')
+  labelKey: 'devconsole~PipelineResource',
+  // t('devconsole~PipelineResources')
+  labelPluralKey: 'devconsole~PipelineResources',
   plural: 'pipelineresources',
   abbr: 'PR',
   namespaced: true,
@@ -115,10 +115,10 @@ export const ClusterTriggerBindingModel: K8sModel = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1beta1',
   label: 'ClusterTriggerBinding',
-  // t('dev-console~ClusterTriggerBinding')
-  labelKey: 'dev-console~ClusterTriggerBinding',
-  // t('dev-console~ClusterTriggerBindings')
-  labelPluralKey: 'dev-console~ClusterTriggerBindings',
+  // t('devconsole~ClusterTriggerBinding')
+  labelKey: 'devconsole~ClusterTriggerBinding',
+  // t('devconsole~ClusterTriggerBindings')
+  labelPluralKey: 'devconsole~ClusterTriggerBindings',
   plural: 'clustertriggerbindings',
   abbr: 'CTB',
   namespaced: false,
@@ -133,10 +133,10 @@ export const TriggerTemplateModel: K8sModel = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1beta1',
   label: 'TriggerTemplate',
-  // t('dev-console~TriggerTemplate')
-  labelKey: 'dev-console~TriggerTemplate',
-  // t('dev-console~TriggerTemplates')
-  labelPluralKey: 'dev-console~TriggerTemplates',
+  // t('devconsole~TriggerTemplate')
+  labelKey: 'devconsole~TriggerTemplate',
+  // t('devconsole~TriggerTemplates')
+  labelPluralKey: 'devconsole~TriggerTemplates',
   plural: 'triggertemplates',
   abbr: 'TT',
   namespaced: true,
@@ -151,10 +151,10 @@ export const EventListenerModel: K8sModel = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1beta1',
   label: 'EventListener',
-  // t('dev-console~EventListener')
-  labelKey: 'dev-console~EventListener',
-  // t('dev-console~EventListeners')
-  labelPluralKey: 'dev-console~EventListeners',
+  // t('devconsole~EventListener')
+  labelKey: 'devconsole~EventListener',
+  // t('devconsole~EventListeners')
+  labelPluralKey: 'devconsole~EventListeners',
   plural: 'eventlisteners',
   abbr: 'EL',
   namespaced: true,
@@ -169,10 +169,10 @@ export const CustomRunModelV1Beta1: K8sModel = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'CustomRun',
-  // t('dev-console~CustomRun')
-  labelKey: 'dev-console~CustomRun',
-  // t('dev-console~CustomRuns')
-  labelPluralKey: 'dev-console~CustomRuns',
+  // t('devconsole~CustomRun')
+  labelKey: 'devconsole~CustomRun',
+  // t('devconsole~CustomRuns')
+  labelPluralKey: 'devconsole~CustomRuns',
   plural: 'customruns',
   abbr: 'CR',
   namespaced: true,

@@ -135,7 +135,7 @@ const CustomTaskComponent: React.FC<CustomTaskProps> = ({
         triggerRef={pillRef}
         position="bottom"
         enableFlip={false}
-        content={t('pipelines-plugin~Custom Task')}
+        content={t('devconsole~Custom Task')}
       >
         <g ref={pillRef}>{taskPill}</g>
       </Tooltip>

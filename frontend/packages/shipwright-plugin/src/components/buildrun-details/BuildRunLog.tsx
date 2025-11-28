@@ -28,15 +28,15 @@ const BuildRunLog: React.FC<TaskRunLogProps> = ({ obj }) => {
           taskRun={obj}
           taskName={obj?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || ''}
           resource={podResources}
-          downloadAllLabel={t('pipelines-plugin~Download all TaskRun logs')}
+          downloadAllLabel={t('shipwright-plugin~Download all TaskRun logs')}
         />
       </div>
     );
   }
   return (
     <StatusBox
-      label={t('pipelines-plugin~TaskRun log')}
-      loadError={new Error(t('pipelines-plugin~Pod not found'))}
+      label={t('shipwright-plugin~TaskRun log')}
+      loadError={new Error(t('shipwright-plugin~Pod not found'))}
     />
   );
 };

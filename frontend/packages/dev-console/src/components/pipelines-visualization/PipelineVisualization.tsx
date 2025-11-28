@@ -29,7 +29,7 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
       <Alert
         variant="info"
         isInline
-        title={t('pipelines-plugin~This Pipeline has no tasks to visualize.')}
+        title={t('devconsole~This Pipeline has no tasks to visualize.')}
       />
     );
   } else {

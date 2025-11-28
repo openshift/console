@@ -20,28 +20,28 @@ const PermissionsSection: React.FC<PermissionsSectionProps> = ({ formContextFiel
     case GitProvider.GITHUB:
       permission = (
         <List>
-          <ListItem>{t('pipelines-plugin~Commit comments')}</ListItem>
-          <ListItem>{t('pipelines-plugin~Issue comments')}</ListItem>
-          <ListItem>{t('pipelines-plugin~Pull request')}</ListItem>
-          <ListItem>{t('pipelines-plugin~Pushes')}</ListItem>
+          <ListItem>{t('devconsole~Commit comments')}</ListItem>
+          <ListItem>{t('devconsole~Issue comments')}</ListItem>
+          <ListItem>{t('devconsole~Pull request')}</ListItem>
+          <ListItem>{t('devconsole~Pushes')}</ListItem>
         </List>
       );
       break;
     case GitProvider.GITLAB:
       permission = (
         <List>
-          <ListItem>{t('pipelines-plugin~Merge request Events')}</ListItem>
-          <ListItem>{t('pipelines-plugin~Push Events')}</ListItem>
+          <ListItem>{t('devconsole~Merge request Events')}</ListItem>
+          <ListItem>{t('devconsole~Push Events')}</ListItem>
         </List>
       );
       break;
     case GitProvider.BITBUCKET:
       permission = (
         <List>
-          <ListItem>{t('pipelines-plugin~Repository: Push')}</ListItem>
-          <ListItem>{t('pipelines-plugin~Pull Request: Created')}</ListItem>
-          <ListItem>{t('pipelines-plugin~Pull Request: Updated')}</ListItem>
-          <ListItem>{t('pipelines-plugin~Pull Request: Comment Created')}</ListItem>
+          <ListItem>{t('devconsole~Repository: Push')}</ListItem>
+          <ListItem>{t('devconsole~Pull Request: Created')}</ListItem>
+          <ListItem>{t('devconsole~Pull Request: Updated')}</ListItem>
+          <ListItem>{t('devconsole~Pull Request: Comment Created')}</ListItem>
         </List>
       );
       break;

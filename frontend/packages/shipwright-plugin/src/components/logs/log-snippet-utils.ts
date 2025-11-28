@@ -5,7 +5,7 @@ import { CombinedErrorDetails } from './log-snippet-types';
 
 const joinConditions = (conditions: K8sResourceCondition[]) =>
   conditions.map((condition) => condition.message).join('\n') ||
-  i18next.t('pipelines-plugin~Unknown failure condition');
+  i18next.t('shipwright-plugin~Unknown failure condition');
 
 export const taskRunSnippetMessage = (
   taskName: string,
@@ -16,7 +16,7 @@ export const taskRunSnippetMessage = (
     // Not enough to go to the logs, print all the conditions messages together
     return {
       staticMessage: joinConditions(taskRunStatus.conditions),
-      title: i18next.t('pipelines-plugin~Failure on task {{taskName}} - check logs for details.', {
+      title: i18next.t('shipwright-plugin~Failure on task {{taskName}} - check logs for details.', {
         taskName,
       }),
     };
@@ -25,7 +25,7 @@ export const taskRunSnippetMessage = (
   return {
     containerName,
     podName: taskRunStatus.podName,
-    title: i18next.t('pipelines-plugin~Failure on task {{taskName}} - check logs for details.', {
+    title: i18next.t('shipwright-plugin~Failure on task {{taskName}} - check logs for details.', {
       taskName,
     }),
   };

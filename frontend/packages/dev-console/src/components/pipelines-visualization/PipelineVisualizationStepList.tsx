@@ -61,7 +61,7 @@ export const PipelineVisualizationStepList: React.FC<PipelineVisualizationStepLi
       )}
       {isFinallyTask && (
         <div className="odc-pipeline-visualization-step-list__task-type">
-          {t('pipelines-plugin~Finally task')}
+          {t('devconsole~Finally task')}
         </div>
       )}
       {steps.map(({ duration, name, status }) => {

@@ -3,13 +3,16 @@ import { Alert } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { FLAG_OPENSHIFT_BUILDCONFIG } from '@console/dev-console/src/const';
+import {
+  FLAG_OPENSHIFT_BUILDCONFIG,
+  FLAG_OPENSHIFT_PIPELINE,
+  CLUSTER_PIPELINE_NS,
+} from '@console/dev-console/src/const';
 import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import { FlagsObject } from '@console/internal/reducers/features';
-import { FLAG_OPENSHIFT_PIPELINE, CLUSTER_PIPELINE_NS } from '../../../const';
 import { PipelineModel } from '../../../models/pipelines';
 import { PipelineKind } from '../../../types/pipeline';
 import PipelineTemplate from './PipelineTemplate';
@@ -66,7 +69,7 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({
             isInline
             variant="info"
             title={t(
-              'pipelines-plugin~Select a Builder Image and resource to see if there is a pipeline template available for this runtime.',
+              'devconsole~Select a Builder Image and resource to see if there is a pipeline template available for this runtime.',
             )}
           />
         )}

@@ -150,10 +150,10 @@ export const TaskRunModel: K8sModel = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1',
   label: 'TaskRun',
-  // t('pipelines-plugin~TaskRun')
-  labelKey: 'pipelines-plugin~TaskRun',
-  // t('pipelines-plugin~TaskRuns')
-  labelPluralKey: 'pipelines-plugin~TaskRuns',
+  // t('shipwright-plugin~TaskRun')
+  labelKey: 'shipwright-plugin~TaskRun',
+  // t('shipwright-plugin~TaskRuns')
+  labelPluralKey: 'shipwright-plugin~TaskRuns',
   plural: 'taskruns',
   abbr: 'TR',
   namespaced: true,

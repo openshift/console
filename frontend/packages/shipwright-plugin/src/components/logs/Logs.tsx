@@ -133,7 +133,7 @@ const Logs: React.FC<LogsProps> = ({
         <Alert
           variant="danger"
           isInline
-          title={t('pipelines-plugin~An error occurred while retrieving the requested logs.')}
+          title={t('shipwright-plugin~An error occurred while retrieving the requested logs.')}
         />
       )}
       <div>

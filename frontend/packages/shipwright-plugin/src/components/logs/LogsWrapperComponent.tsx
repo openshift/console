@@ -74,7 +74,7 @@ const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({
         <FlexItem className="odc-multi-stream-logs__button" align={{ default: 'alignRight' }}>
           <Button variant="link" onClick={downloadLogs} isInline>
             <DownloadIcon className="odc-multi-stream-logs__icon" />
-            {t('pipelines-plugin~Download')}
+            {t('shipwright-plugin~Download')}
           </Button>
         </FlexItem>
         <FlexItem className="odc-multi-stream-logs__divider">|</FlexItem>
@@ -88,7 +88,7 @@ const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({
                 isInline
               >
                 <DownloadIcon className="odc-multi-stream-logs__icon" />
-                {downloadAllLabel || t('pipelines-plugin~Download all')}
+                {downloadAllLabel || t('shipwright-plugin~Download all')}
                 {downloadAllStatus && <LoadingInline />}
               </Button>
             </FlexItem>
@@ -101,12 +101,12 @@ const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({
               {isFullscreen ? (
                 <>
                   <CompressIcon className="odc-multi-stream-logs__icon" />
-                  {t('pipelines-plugin~Collapse')}
+                  {t('shipwright-plugin~Collapse')}
                 </>
               ) : (
                 <>
                   <ExpandIcon className="odc-multi-stream-logs__icon" />
-                  {t('pipelines-plugin~Expand')}
+                  {t('shipwright-plugin~Expand')}
                 </>
               )}
             </Button>

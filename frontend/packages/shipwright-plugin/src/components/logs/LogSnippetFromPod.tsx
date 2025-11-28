@@ -41,7 +41,7 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
         setLogSnippet(logContent);
       })
       .catch((error) => {
-        setLogError(error?.message || t('pipelines-plugin~Unknown error retrieving logs'));
+        setLogError(error?.message || t('shipwright-plugin~Unknown error retrieving logs'));
       });
   }, [containerName, namespace, podName, t]);
 
