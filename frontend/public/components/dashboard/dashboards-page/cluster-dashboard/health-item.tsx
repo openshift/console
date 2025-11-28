@@ -27,7 +27,10 @@ import {
   getOperatorsHealthState,
   getMostImportantStatuses,
 } from '@console/shared/src/components/dashboard/status-card/state-utils';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import {
+  HealthState,
+  healthStateMessage,
+} from '@console/shared/src/components/dashboard/status-card/states';
 import { K8sKind } from '../../../../module/k8s';
 import { FirehoseResourcesResult, AsyncComponent, resourcePath } from '../../../utils';
 import { useK8sWatchResources } from '../../../utils/k8s-watch-hook';
@@ -189,6 +192,8 @@ export const URLHealthItem = withDashboardResources<URLHealthItemProps>(
     subsystem,
     models,
   }) => {
+    const { t } = useTranslation();
+
     const modelExists =
       subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
     React.useEffect(() => {
@@ -215,7 +220,10 @@ export const URLHealthItem = withDashboardResources<URLHealthItemProps>(
     const k8sResult = subsystem.additionalResource
       ? resources[subsystem.additionalResource.prop]
       : null;
-    const healthState = subsystem.healthHandler(healthResult, healthResultError, k8sResult);
+    const healthState = subsystem.healthHandler?.(healthResult, healthResultError, k8sResult) ?? {
+      state: HealthState.NOT_AVAILABLE,
+      message: healthStateMessage(HealthState.NOT_AVAILABLE, t),
+    };
 
     return (
       <HealthItem
@@ -291,7 +299,12 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
     const k8sResult = subsystem.additionalResource
       ? resources[subsystem.additionalResource.prop]
       : null;
-    const healthState = subsystem.healthHandler(queryResults, t, k8sResult, infrastructure);
+    const healthState: SubsystemHealth = subsystem.healthHandler?.(
+      queryResults,
+      t,
+      k8sResult,
+      infrastructure,
+    ) ?? { state: HealthState.NOT_AVAILABLE, message: 'Health handler not available' };
 
     return (
       <HealthItem
@@ -335,7 +348,10 @@ export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsyste
   const resourcesResult: WatchK8sResults<ResourcesObject> = useK8sWatchResources(
     resourcesWithNamespace,
   );
-  const healthState: SubsystemHealth = healthHandler(resourcesResult, t);
+  const healthState: SubsystemHealth = healthHandler?.(resourcesResult, t) ?? {
+    state: HealthState.NOT_AVAILABLE,
+    message: healthStateMessage(HealthState.NOT_AVAILABLE, t),
+  };
 
   return (
     <HealthItem
