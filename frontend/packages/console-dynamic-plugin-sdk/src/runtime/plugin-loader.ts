@@ -4,11 +4,7 @@ import * as _ from 'lodash';
 import * as semver from 'semver';
 import { PluginStore } from '@console/plugin-sdk/src/store';
 import { getRandomChars } from '@console/shared/src/utils/utils';
-import {
-  AnyConsolePluginManifest,
-  StandardConsolePluginManifest,
-  isStandardPluginManifest,
-} from '../build-types';
+import { ConsolePluginManifest } from '../build-types';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
 import { RemoteEntryModule } from '../types';
 import { ErrorWithCause } from '../utils/error/custom-error';
@@ -21,7 +17,7 @@ import { getPluginID } from './plugin-utils';
 
 type ConsolePluginData = {
   /** The manifest containing plugin metadata and extension declarations. */
-  manifest: StandardConsolePluginManifest;
+  manifest: ConsolePluginManifest;
   /** Indicates if `window.loadPluginEntry` callback has been fired for this plugin. */
   entryCallbackFired: boolean;
 };
@@ -50,7 +46,7 @@ const injectScriptElement = (url: string, id: string) =>
     document.head.appendChild(script);
   });
 
-export const loadDynamicPlugin = (manifest: StandardConsolePluginManifest) =>
+export const loadDynamicPlugin = (manifest: ConsolePluginManifest) =>
   new Promise<string>((resolve, reject) => {
     const pluginID = getPluginID(manifest);
 
@@ -148,46 +144,16 @@ export const registerPluginEntryCallback = (pluginStore: PluginStore) => {
   window.loadPluginEntry = getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs);
 };
 
-export const adaptPluginManifest = (
-  manifest: AnyConsolePluginManifest,
-  baseURL: string,
-): StandardConsolePluginManifest => {
-  if (isStandardPluginManifest(manifest)) {
-    return manifest;
-  }
-
-  const {
-    name,
-    version,
-    extensions,
-    dependencies,
-    displayName,
-    description,
-    disableStaticPlugins,
-  } = manifest;
-
-  return {
-    name,
-    version,
-    extensions,
-    dependencies,
-    customProperties: { console: { displayName, description, disableStaticPlugins } },
-    baseURL,
-    loadScripts: ['plugin-entry.js'],
-    registrationMethod: 'callback',
-  };
-};
-
 export const loadAndEnablePlugin = async (
   pluginName: string,
   pluginStore: PluginStore,
   onError: (errorMessage: string, errorCause?: unknown) => void = _.noop,
 ) => {
   const baseURL = `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/`;
-  let manifest: StandardConsolePluginManifest;
+  let manifest: ConsolePluginManifest;
 
   try {
-    manifest = adaptPluginManifest(await fetchPluginManifest(baseURL), baseURL);
+    manifest = await fetchPluginManifest(baseURL);
   } catch (e) {
     onError(`Failed to get a valid plugin manifest from ${baseURL}`, e);
     return;
