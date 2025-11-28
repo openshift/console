@@ -16,7 +16,7 @@ import type {
   ResolvedExtension,
   Selector,
 } from '../api/common-types';
-import type { ExtensionDeclaration, ExtensionTypeGuard } from '../types';
+import type { Extension, ExtensionTypeGuard } from '../types';
 import { CustomDataSource } from './dashboard-data-source';
 
 export type OwnerReference = {
@@ -250,7 +250,7 @@ export type UseK8sWatchResources = <R extends ResourcesObject>(
   initResources: WatchK8sResources<R>,
 ) => WatchK8sResults<R>;
 
-export type UseResolvedExtensions = <E extends ExtensionDeclaration>(
+export type UseResolvedExtensions = <E extends Extension>(
   ...typeGuards: ExtensionTypeGuard<E>[]
 ) => [ResolvedExtension<E>[], boolean, any[]];
 

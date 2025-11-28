@@ -1,4 +1,4 @@
-import type { ExtensionDeclaration } from '@console/dynamic-plugin-sdk/src/types';
+import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
 
 /**
  * From Console application perspective, a plugin is a list of extensions
@@ -6,5 +6,5 @@ import type { ExtensionDeclaration } from '@console/dynamic-plugin-sdk/src/types
  */
 export type ActivePlugin = {
   name: string;
-  extensions: ExtensionDeclaration[];
+  extensions: Extension[];
 };

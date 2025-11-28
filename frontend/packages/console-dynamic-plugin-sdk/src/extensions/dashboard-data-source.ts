@@ -1,6 +1,6 @@
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 
-export type DataSource = ExtensionDeclaration<
+export type DataSource = Extension<
   'console.dashboards/datasource',
   {
     contextId: string;
@@ -9,7 +9,7 @@ export type DataSource = ExtensionDeclaration<
   }
 >;
 
-export const isDataSource = (e: ExtensionDeclaration): e is DataSource => {
+export const isDataSource = (e: Extension): e is DataSource => {
   return e.type === 'console.dashboards/datasource';
 };
 

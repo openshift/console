@@ -1,8 +1,8 @@
 import { ExtensionK8sModel } from '../api/common-types';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 
 /** YAML templates for editing resources via the yaml editor. */
-export type YAMLTemplate = ExtensionDeclaration<
+export type YAMLTemplate = Extension<
   'console.yaml-template',
   {
     /** Model associated with the template. */
@@ -16,5 +16,5 @@ export type YAMLTemplate = ExtensionDeclaration<
 
 // Type guards
 
-export const isYAMLTemplate = (e: ExtensionDeclaration): e is YAMLTemplate =>
+export const isYAMLTemplate = (e: Extension): e is YAMLTemplate =>
   e.type === 'console.yaml-template';

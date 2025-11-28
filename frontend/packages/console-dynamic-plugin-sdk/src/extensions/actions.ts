@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ExtensionHook, ExtensionK8sKindVersionModel } from '../api/common-types';
 import { ActionContext } from '../api/internal-types';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
 /** ActionProvider contributes a hook that returns list of actions for specific context */
-export type ActionProvider = ExtensionDeclaration<
+export type ActionProvider = Extension<
   'console.action/provider',
   {
     /** The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm */
@@ -18,7 +18,7 @@ export type ActionProvider = ExtensionDeclaration<
 >;
 
 /** ResourceActionProvider contributes a hook that returns list of actions for specific resource model */
-export type ResourceActionProvider = ExtensionDeclaration<
+export type ResourceActionProvider = Extension<
   'console.action/resource-provider',
   {
     /** The model for which this provider provides actions for. */
@@ -29,7 +29,7 @@ export type ResourceActionProvider = ExtensionDeclaration<
 >;
 
 /** ActionGroup contributes an action group that can also be a submenu */
-export type ActionGroup = ExtensionDeclaration<
+export type ActionGroup = Extension<
   'console.action/group',
   {
     /** ID used to identify the action section. */
@@ -53,7 +53,7 @@ export type ActionGroup = ExtensionDeclaration<
 >;
 
 /** ActionFilter can be used to filter an action */
-export type ActionFilter = ExtensionDeclaration<
+export type ActionFilter = Extension<
   'console.action/filter',
   {
     /** The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm */
@@ -74,19 +74,19 @@ export type SupportedActionExtensions =
 
 // Type Guards
 
-export const isActionProvider = (e: ExtensionDeclaration): e is ActionProvider => {
+export const isActionProvider = (e: Extension): e is ActionProvider => {
   return e.type === 'console.action/provider';
 };
 
-export const isResourceActionProvider = (e: ExtensionDeclaration): e is ResourceActionProvider => {
+export const isResourceActionProvider = (e: Extension): e is ResourceActionProvider => {
   return e.type === 'console.action/resource-provider';
 };
 
-export const isActionGroup = (e: ExtensionDeclaration): e is ActionGroup => {
+export const isActionGroup = (e: Extension): e is ActionGroup => {
   return e.type === 'console.action/group';
 };
 
-export const isActionFilter = (e: ExtensionDeclaration): e is ActionFilter => {
+export const isActionFilter = (e: Extension): e is ActionFilter => {
   return e.type === 'console.action/filter';
 };
 

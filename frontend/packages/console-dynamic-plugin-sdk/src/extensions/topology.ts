@@ -1,5 +1,5 @@
 import { TopologyQuadrant } from '@patternfly/react-topology/dist/esm/types';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 import { WatchK8sResourcesGeneric } from './console-types';
 import {
   CreateConnectionGetter,
@@ -15,7 +15,7 @@ import {
 } from './topology-types';
 
 /** Getter for a ViewComponentFactory */
-export type TopologyComponentFactory = ExtensionDeclaration<
+export type TopologyComponentFactory = Extension<
   'console.topology/component/factory',
   {
     /** Getter for a ViewComponentFactory */
@@ -24,7 +24,7 @@ export type TopologyComponentFactory = ExtensionDeclaration<
 >;
 
 /** Getter for the create connector function */
-export type TopologyCreateConnector = ExtensionDeclaration<
+export type TopologyCreateConnector = Extension<
   'console.topology/create/connector',
   {
     /** Getter for the create connector function */
@@ -33,7 +33,7 @@ export type TopologyCreateConnector = ExtensionDeclaration<
 >;
 
 /** Topology Data Model Factory Extension */
-export type TopologyDataModelFactory = ExtensionDeclaration<
+export type TopologyDataModelFactory = Extension<
   'console.topology/data/factory',
   {
     /** Unique ID for the factory. */
@@ -54,7 +54,7 @@ export type TopologyDataModelFactory = ExtensionDeclaration<
 >;
 
 /** Topology Display Filters Extension */
-export type TopologyDisplayFilters = ExtensionDeclaration<
+export type TopologyDisplayFilters = Extension<
   'console.topology/display/filters',
   {
     /** Getter for topology filters specific to the extension */
@@ -65,7 +65,7 @@ export type TopologyDisplayFilters = ExtensionDeclaration<
 >;
 
 /** Topology Decorator Provider Extension */
-export type TopologyDecoratorProvider = ExtensionDeclaration<
+export type TopologyDecoratorProvider = Extension<
   'console.topology/decorator/provider',
   {
     /** id for topology decorator specific to the extension */
@@ -80,7 +80,7 @@ export type TopologyDecoratorProvider = ExtensionDeclaration<
 >;
 
 /** Topology relationship provider connector extension */
-export type TopologyRelationshipProvider = ExtensionDeclaration<
+export type TopologyRelationshipProvider = Extension<
   'console.topology/relationship/provider',
   {
     /** use to determine if a connection can be created between the source and target node */
@@ -96,24 +96,20 @@ export type TopologyRelationshipProvider = ExtensionDeclaration<
 
 // Type Guards
 
-export const isTopologyComponentFactory = (
-  e: ExtensionDeclaration,
-): e is TopologyComponentFactory => e.type === 'console.topology/component/factory';
+export const isTopologyComponentFactory = (e: Extension): e is TopologyComponentFactory =>
+  e.type === 'console.topology/component/factory';
 
-export const isTopologyCreateConnector = (e: ExtensionDeclaration): e is TopologyCreateConnector =>
+export const isTopologyCreateConnector = (e: Extension): e is TopologyCreateConnector =>
   e.type === 'console.topology/create/connector';
 
-export const isTopologyDataModelFactory = (
-  e: ExtensionDeclaration,
-): e is TopologyDataModelFactory => e.type === 'console.topology/data/factory';
+export const isTopologyDataModelFactory = (e: Extension): e is TopologyDataModelFactory =>
+  e.type === 'console.topology/data/factory';
 
-export const isTopologyDisplayFilters = (e: ExtensionDeclaration): e is TopologyDisplayFilters =>
+export const isTopologyDisplayFilters = (e: Extension): e is TopologyDisplayFilters =>
   e.type === 'console.topology/display/filters';
 
-export const isTopologyDecoratorProvider = (
-  e: ExtensionDeclaration,
-): e is TopologyDecoratorProvider => e.type === 'console.topology/decorator/provider';
+export const isTopologyDecoratorProvider = (e: Extension): e is TopologyDecoratorProvider =>
+  e.type === 'console.topology/decorator/provider';
 
-export const isTopologyRelationshipProvider = (
-  e: ExtensionDeclaration,
-): e is TopologyRelationshipProvider => e.type === 'console.topology/relationship/provider';
+export const isTopologyRelationshipProvider = (e: Extension): e is TopologyRelationshipProvider =>
+  e.type === 'console.topology/relationship/provider';

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { Store } from 'redux';
 import type {
-  ExtensionDeclaration,
+  Extension,
   ExtensionTypeGuard,
   LoadedExtension,
 } from '@console/dynamic-plugin-sdk/src/types';
@@ -46,7 +46,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
 
   const invokeExtensionListener = (
     sub: ExtensionSubscription,
-    currentExtensions: ExtensionDeclaration[],
+    currentExtensions: Extension[],
     currentFlags: FeatureFlags,
   ) => {
     // Narrow extensions according to type guards
@@ -72,7 +72,7 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
     listener(pluginStore.getPluginInfo());
   };
 
-  let lastExtensions: ExtensionDeclaration[] = null;
+  let lastExtensions: Extension[] = null;
   let lastFlags: FeatureFlags = null;
 
   const invokeAllExtensionListeners = () => {
@@ -151,7 +151,7 @@ export const getPluginStore = (): PluginStore => {
  *
  * @returns Function that unsubscribes the listener.
  */
-export const subscribeToExtensions = <E extends ExtensionDeclaration>(
+export const subscribeToExtensions = <E extends Extension>(
   listener: ExtensionListener<LoadedExtension<E>>,
   ...typeGuards: ExtensionTypeGuard<E>[]
 ) => {
@@ -182,7 +182,7 @@ export const subscribeToDynamicPlugins = (listener: DynamicPluginListener) => {
 /**
  * `ExtensionListener` adapter that computes the difference between the calls.
  */
-export const extensionDiffListener = <E extends ExtensionDeclaration>(
+export const extensionDiffListener = <E extends Extension>(
   listener: (added: E[], removed: E[]) => void,
 ): ExtensionListener<E> => {
   let prevExtensions: E[] = [];
@@ -197,9 +197,9 @@ export const extensionDiffListener = <E extends ExtensionDeclaration>(
   };
 };
 
-type ExtensionListener<E extends ExtensionDeclaration> = (extensions: E[]) => void;
+type ExtensionListener<E extends Extension> = (extensions: E[]) => void;
 
-type ExtensionSubscription<E extends ExtensionDeclaration = ExtensionDeclaration> = {
+type ExtensionSubscription<E extends Extension = Extension> = {
   listener: ExtensionListener<E>;
   typeGuards: ExtensionTypeGuard<E>[];
   listenerLastArgs?: E[];

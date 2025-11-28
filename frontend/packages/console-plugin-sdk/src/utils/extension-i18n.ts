@@ -1,5 +1,5 @@
 import { TFunction } from 'i18next';
-import type { ExtensionDeclaration } from '@console/dynamic-plugin-sdk/src/types';
+import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
 import {
   deepForOwn,
   PredicateCheck,
@@ -15,7 +15,7 @@ export const isTranslatableString = (value): value is string => {
 export const getTranslationKey = (value: string) =>
   isTranslatableString(value) ? value.substr(1, value.length - 2) : undefined;
 
-export const translateExtensionDeep = <E extends ExtensionDeclaration>(
+export const translateExtensionDeep = <E extends Extension>(
   extension: E,
   translationStringPredicate: PredicateCheck<string>,
   cb: ValueCallback<string>,
@@ -27,10 +27,7 @@ export const translateExtensionDeep = <E extends ExtensionDeclaration>(
  * Recursively updates the extension's properties, replacing all translatable string values
  * via the provided `t` function.
  */
-export const translateExtension = <E extends ExtensionDeclaration>(
-  extension: E,
-  t: TFunction,
-): E => {
+export const translateExtension = <E extends Extension>(extension: E, t: TFunction): E => {
   translateExtensionDeep(extension, isTranslatableString, (value, key, obj) => {
     obj[key] = t(value);
   });

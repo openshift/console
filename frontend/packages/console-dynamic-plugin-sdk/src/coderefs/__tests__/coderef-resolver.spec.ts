@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { ExtensionDeclaration, EncodedCodeRef, CodeRef } from '../../types';
+import { Extension, EncodedCodeRef, CodeRef } from '../../types';
 import {
   getExecutableCodeRefMock,
   getEntryModuleMocks,
@@ -206,8 +206,8 @@ describe('loadReferencedObject', () => {
   });
 });
 
-type FooExtension = ExtensionDeclaration<'Foo', { test: boolean; qux: CodeRef<string> }>;
-type BarExtension = ExtensionDeclaration<'Bar', { test: number[]; baz: { test: CodeRef<string> } }>;
+type FooExtension = Extension<'Foo', { test: boolean; qux: CodeRef<string> }>;
+type BarExtension = Extension<'Bar', { test: number[]; baz: { test: CodeRef<string> } }>;
 
 describe('resolveEncodedCodeRefs', () => {
   it('replaces encoded code references with CodeRef functions', async () => {
@@ -250,7 +250,7 @@ describe('resolveEncodedCodeRefs', () => {
   });
 
   it('clones the provided extensions array and its elements', () => {
-    const extensions: ExtensionDeclaration[] = [
+    const extensions: Extension[] = [
       { type: 'Foo', properties: { test: true } },
       { type: 'Bar', properties: { test: [1] } },
     ];
@@ -277,7 +277,7 @@ describe('resolveEncodedCodeRefs', () => {
 
 describe('resolveExtension', () => {
   it('replaces CodeRef functions with referenced objects', async () => {
-    const extensions: ExtensionDeclaration[] = [
+    const extensions: Extension[] = [
       {
         type: 'Foo',
         properties: {
@@ -312,7 +312,7 @@ describe('resolveExtension', () => {
   });
 
   it('logs a warning if the referenced object resolves to null or undefined', async () => {
-    const extensions: ExtensionDeclaration[] = [
+    const extensions: Extension[] = [
       {
         type: 'Foo',
         properties: {
@@ -346,7 +346,7 @@ describe('resolveExtension', () => {
   });
 
   it('returns the same extension instance', async () => {
-    const extensions: ExtensionDeclaration[] = [
+    const extensions: Extension[] = [
       {
         type: 'Foo',
         properties: { test: true },
@@ -364,7 +364,7 @@ describe('resolveExtension', () => {
   it('continuously reject code refs which have failed to resolve', async () => {
     const errorCodeRef = getErrorExecutableCodeRefMock();
 
-    const extension: ExtensionDeclaration = {
+    const extension: Extension = {
       type: 'Foo',
       properties: { test: true, qux: errorCodeRef },
     };

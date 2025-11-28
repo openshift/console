@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
-import type { ExtensionDeclaration, EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
+import type { Extension, EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import * as jsoncModule from '@console/dynamic-plugin-sdk/src/utils/jsonc';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import * as remotePluginModule from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
@@ -44,10 +44,8 @@ describe('getActivePluginsModule', () => {
       consolePlugin: {},
     };
 
-    const fooDynamicExtensions: ExtensionDeclaration[] = [
-      { type: 'Dynamic/Foo', properties: { test: true } },
-    ];
-    const barDynamicExtensions: ExtensionDeclaration[] = [
+    const fooDynamicExtensions: Extension[] = [{ type: 'Dynamic/Foo', properties: { test: true } }];
+    const barDynamicExtensions: Extension[] = [
       { type: 'Dynamic/Bar', properties: { baz: 1, qux: { $codeRef: 'a.b' } } },
     ];
 
@@ -123,10 +121,8 @@ describe('loadActivePluginsForTestPurposes', () => {
       consolePlugin: {},
     };
 
-    const fooDynamicExtensions: ExtensionDeclaration[] = [
-      { type: 'Dynamic/Foo', properties: { test: true } },
-    ];
-    const barDynamicExtensions: ExtensionDeclaration[] = [
+    const fooDynamicExtensions: Extension[] = [{ type: 'Dynamic/Foo', properties: { test: true } }];
+    const barDynamicExtensions: Extension[] = [
       { type: 'Dynamic/Bar', properties: { baz: 1, qux: { $codeRef: 'a.b' } } },
     ];
 
@@ -262,7 +258,7 @@ describe('getDynamicExtensions', () => {
       consolePlugin: {},
     };
 
-    const extensionsJSON: ExtensionDeclaration[] = [
+    const extensionsJSON: Extension[] = [
       { type: 'Dynamic/Foo', properties: { test: true, mux: { $codeRef: 'a.b' } } },
       { type: 'Dynamic/Bar', properties: { baz: 1, qux: { $codeRef: 'foo.bar' } } },
     ];
@@ -375,7 +371,7 @@ describe('getDynamicExtensions', () => {
       consolePlugin: {},
     };
 
-    const extensionsJSON: ExtensionDeclaration[] = [];
+    const extensionsJSON: Extension[] = [];
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
     const codeRefTransformer = jest.fn<string>(_.identity);
@@ -411,7 +407,7 @@ describe('getDynamicExtensions', () => {
       consolePlugin: {},
     };
 
-    const extensionsJSON: ExtensionDeclaration[] = [
+    const extensionsJSON: Extension[] = [
       { type: 'Dynamic/Foo', properties: { test: true, mux: { $codeRef: 'a.b' } } },
       { type: 'Dynamic/Bar', properties: { baz: 1, qux: { $codeRef: 'foo.bar' } } },
     ];

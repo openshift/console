@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ExtensionDeclaration, LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { Extension, LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { isTranslatableString, translateExtensionDeep } from './extension-i18n';
 import useTranslationExt from './useTranslationExt';
 
@@ -11,7 +11,7 @@ import useTranslationExt from './useTranslationExt';
  */
 const translationKeyMap: Record<string, Record<string, string>> = {};
 
-export const useTranslatedExtensions = <E extends ExtensionDeclaration>(
+export const useTranslatedExtensions = <E extends Extension>(
   extensions: LoadedExtension<E>[],
 ): typeof extensions => {
   const { t } = useTranslationExt();

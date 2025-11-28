@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import * as tsj from 'ts-json-schema-generator';
 import { CodeRefTypeReferenceParser } from './parsers/CodeRefTypeReferenceParser';
 import { ConstructorTypeParser } from './parsers/ConstructorTypeParser';
-import { ExtensionDeclarationParser } from './parsers/ExtensionDeclarationParser';
+import { ExtensionParser } from './parsers/ExtensionParser';
 import { resolvePath, relativePath } from './utils/path';
 import { getConsoleTypeResolver } from './utils/type-resolver';
 import { getSchemaGeneratorConfig, getProgram } from './utils/typescript';
@@ -46,9 +46,7 @@ const generateSchema = ({ srcFile, typeName, handleConsoleExtensions }: SchemaTy
       p.addNodeParser(
         new CodeRefTypeReferenceParser(typeChecker, consoleTypeDeclarations, getMainParser),
       );
-      p.addNodeParser(
-        new ExtensionDeclarationParser(annotationsReader, consoleExtensions, getMainParser),
-      );
+      p.addNodeParser(new ExtensionParser(annotationsReader, consoleExtensions, getMainParser));
     }
   });
 

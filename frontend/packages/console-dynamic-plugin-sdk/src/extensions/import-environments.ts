@@ -1,4 +1,4 @@
-import { ExtensionDeclaration } from '../types';
+import { Extension } from '../types';
 
 export type ImageEnvironment = {
   /** Environment variable key */
@@ -14,7 +14,7 @@ export type ImageEnvironment = {
 /** This extension can be used to specify extra build environment variable fields under the builder image selector
     in the dev console git import form. When set, the fields will override environment variables
     of the same name in the build section. */
-export type ImportEnvironment = ExtensionDeclaration<
+export type ImportEnvironment = Extension<
   'dev-console.import/environment',
   {
     /** Name of the image stream to provide custom environment variables for */
@@ -28,6 +28,6 @@ export type ImportEnvironment = ExtensionDeclaration<
 
 // Type guards
 
-export const isImportEnvironment = (e: ExtensionDeclaration): e is ImportEnvironment => {
+export const isImportEnvironment = (e: Extension): e is ImportEnvironment => {
   return e.type === 'dev-console.import/environment';
 };

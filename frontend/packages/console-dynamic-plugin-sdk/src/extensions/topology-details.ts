@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { ExtensionHook } from '../api/common-types';
-import { CodeRef, ExtensionDeclaration } from '../types';
+import { CodeRef, Extension } from '../types';
 import { K8sResourceCommon } from './console-types';
 import { BuildConfigData } from './topology-types';
 
 /** DetailsTab contributes a tab for the topology details panel. */
-export type DetailsTab = ExtensionDeclaration<
+export type DetailsTab = Extension<
   'console.topology/details/tab',
   {
     /** A unique identifier for this details tab. */
@@ -26,7 +26,7 @@ export type DetailsTab = ExtensionDeclaration<
 >;
 
 /** DetailsTabSection contributes a section for a specific tab in topology details panel. */
-export type DetailsTabSection = ExtensionDeclaration<
+export type DetailsTabSection = Extension<
   'console.topology/details/tab-section',
   {
     /** A unique identifier for this details tab section. */
@@ -57,7 +57,7 @@ export type DetailsTabSection = ExtensionDeclaration<
 >;
 
 /** DetailsResourceLink contributes a link for specific topology context or graph element. */
-export type DetailsResourceLink = ExtensionDeclaration<
+export type DetailsResourceLink = Extension<
   'console.topology/details/resource-link',
   {
     /** A higher priority factory will get the first chance to create the link. */
@@ -70,7 +70,7 @@ export type DetailsResourceLink = ExtensionDeclaration<
 >;
 
 /** DetailsResourceAlert contributes an alert for specific topology context or graph element. */
-export type DetailsResourceAlert = ExtensionDeclaration<
+export type DetailsResourceAlert = Extension<
   'console.topology/details/resource-alert',
   {
     /** The ID of this alert. Used to save state if the alert shouldn't be shown after dismissed. */
@@ -81,7 +81,7 @@ export type DetailsResourceAlert = ExtensionDeclaration<
 >;
 
 /** PodAdapter contributes an adapter to adapt element to data that can be used by Pod component */
-export type PodAdapter = ExtensionDeclaration<
+export type PodAdapter = Extension<
   'console.topology/adapter/pod',
   {
     /** adapter to adapt element to data that can be used by Pod component. */
@@ -90,7 +90,7 @@ export type PodAdapter = ExtensionDeclaration<
 >;
 
 /** BuildAdapter contributes an adapter to adapt element to data that can be used by Build component */
-export type BuildAdapter = ExtensionDeclaration<
+export type BuildAdapter = Extension<
   'console.topology/adapter/build',
   {
     /** adapter to adapt element to data that can be used by Build component. */
@@ -99,7 +99,7 @@ export type BuildAdapter = ExtensionDeclaration<
 >;
 
 /** NetworkAdpater contributes an adapter to adapt element to data that can be used by Networking component */
-export type NetworkAdapter = ExtensionDeclaration<
+export type NetworkAdapter = Extension<
   'console.topology/adapter/network',
   {
     /** adapter to adapt element to data that can be used by Networking component. */
@@ -118,31 +118,31 @@ export type SupportedTopologyDetailsExtensions =
 
 // Type guards
 
-export const isDetailsTab = (e: ExtensionDeclaration): e is DetailsTab => {
+export const isDetailsTab = (e: Extension): e is DetailsTab => {
   return e.type === 'console.topology/details/tab';
 };
 
-export const isDetailsTabSection = (e: ExtensionDeclaration): e is DetailsTabSection => {
+export const isDetailsTabSection = (e: Extension): e is DetailsTabSection => {
   return e.type === 'console.topology/details/tab-section';
 };
 
-export const isDetailsResourceLink = (e: ExtensionDeclaration): e is DetailsResourceLink => {
+export const isDetailsResourceLink = (e: Extension): e is DetailsResourceLink => {
   return e.type === 'console.topology/details/resource-link';
 };
 
-export const isDetailsResourceAlert = (e: ExtensionDeclaration): e is DetailsResourceAlert => {
+export const isDetailsResourceAlert = (e: Extension): e is DetailsResourceAlert => {
   return e.type === 'console.topology/details/resource-alert';
 };
 
-export const isPodAdapter = (e: ExtensionDeclaration): e is PodAdapter => {
+export const isPodAdapter = (e: Extension): e is PodAdapter => {
   return e.type === 'console.topology/adapter/pod';
 };
 
-export const isBuildAdapter = (e: ExtensionDeclaration): e is BuildAdapter => {
+export const isBuildAdapter = (e: Extension): e is BuildAdapter => {
   return e.type === 'console.topology/adapter/build';
 };
 
-export const isNetworkAdapter = (e: ExtensionDeclaration): e is NetworkAdapter => {
+export const isNetworkAdapter = (e: Extension): e is NetworkAdapter => {
   return e.type === 'console.topology/adapter/network';
 };
 
