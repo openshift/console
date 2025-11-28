@@ -307,7 +307,6 @@ const config: Configuration = {
         { from: path.resolve(__dirname, './packages/dev-console/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/knative-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/container-security/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/pipelines-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/shipwright-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/webterminal-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/topology/locales'), to: 'locales' },
