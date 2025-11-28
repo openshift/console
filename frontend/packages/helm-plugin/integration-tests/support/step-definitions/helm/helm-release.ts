@@ -1,5 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pageTitle, helmActions } from '@console/dev-console/integration-tests/support/constants';
+import { helmActions } from '@console/dev-console/integration-tests/support/constants';
 import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   topologyPage,
@@ -7,7 +7,6 @@ import {
   app,
   createHelmChartFromAddPage,
 } from '@console/dev-console/integration-tests/support/pages';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { upgradeHelmRelease, helmDetailsPage, rollBackHelmRelease, helmPage } from '../../pages';
 
 Given('helm release {string} is present in topology page', (workloadName: string) => {
@@ -75,23 +74,23 @@ Then(
 );
 
 Given('user is on the Helm page with helm release {string}', (helmRelease: string) => {
-  cy.get('[data-quickstart-id="qs-admin-nav-helm"]').should('be.visible').click({ force: true });
-  cy.byLegacyTestID('helm-releases-header').should('exist').click({ force: true });
-  detailsPage.titleShouldContain(pageTitle.HelmReleases);
+  cy.get('[data-quickstart-id="qs-nav-ecosystem"]').should('be.visible').click({ force: true });
+  cy.get('[data-test-id="helm-nav"]').should('be.visible').click({ force: true });
   helmPage.search(helmRelease);
 });
 
 Given('user is able to see {string} in helm page in admin view', (helmRelease: string) => {
-  cy.byLegacyTestID('helm-releases-header').should('exist').click({ force: true });
   helmPage.search(helmRelease);
 });
 
 When('user clicks on the Helm Release tab in admin perspective', () => {
-  cy.byLegacyTestID('helm-releases-header').should('exist').click({ force: true });
+  cy.get('[data-quickstart-id="qs-nav-ecosystem"]').should('be.visible').click({ force: true });
+  cy.get('[data-test-id="helm-nav"]').should('be.visible').click({ force: true });
+  cy.byLegacyTestID('horizontal-link-Helm Releases').should('exist').click({ force: true });
 });
 
 Then('user will be redirected to Helm Releases page under Helm tab', () => {
-  detailsPage.titleShouldContain(pageTitle.HelmReleases);
+  cy.get('[data-test-id="helm-nav"]').should('be.visible');
 });
 
 When('user clicks on the Kebab menu', () => {

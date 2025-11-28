@@ -7,7 +7,7 @@ import NamespacedPage, {
 import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
-import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
+import { useAccessReview, useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { LoadingBox, Page } from '@console/internal/components/utils';
 import { MenuActions, MultiTabListPage, useFlag } from '@console/shared';
@@ -16,9 +16,8 @@ import HelmReleaseList from './HelmReleaseList';
 import HelmReleaseListPage from './HelmReleaseListPage';
 import RepositoriesPage from './RepositoriesListPage';
 
-export const PageContents: React.FC = () => {
+const HelmPage: React.FC<{ namespace: string | undefined }> = ({ namespace }) => {
   const { t } = useTranslation();
-  const { ns: namespace } = useParams();
   const isHelmVisible = useFlag('HELM_CHARTS_CATALOG_TYPE');
   const [showTitle, canCreate] = [false, false];
   const [projectHelmChartCreateAccess, loadingCreatePHCR] = useAccessReview({
@@ -58,13 +57,15 @@ export const PageContents: React.FC = () => {
 
   const menuActions: MenuActions = {
     helmRelease: {
-      label: isHelmVisible ? t('helm-plugin~Helm Release') : null,
-      onSelection: () => `/catalog/ns/${namespace}?catalogType=HelmChart`,
+      label: isHelmVisible ? t('helm-plugin~Helm Release') : undefined,
+      onSelection: () => `/catalog/ns/${namespace || 'default'}?catalogType=HelmChart`,
     },
     projectHelmChartRepository: {
       label:
-        projectHelmChartCreateAccess || helmChartCreateAccess ? t('helm-plugin~Repository') : null,
-      onSelection: () => `/helm-repositories/ns/${namespace}/~new/form`,
+        projectHelmChartCreateAccess || helmChartCreateAccess
+          ? t('helm-plugin~Repository')
+          : undefined,
+      onSelection: () => `/helm-repositories/ns/${namespace || 'default'}/~new/form`,
     },
   };
 
@@ -98,18 +99,28 @@ export const PageContents: React.FC = () => {
     return <LoadingBox />;
   }
 
-  return namespace ? (
-    (projectHelmChartListAccess && projectHelmChartCreateAccess && projectHelmChartEditAccess) ||
+  return (projectHelmChartListAccess &&
+    projectHelmChartCreateAccess &&
+    projectHelmChartEditAccess) ||
     (helmChartListAccess && helmChartCreateAccess && helmChartEditAccess) ? (
-      <MultiTabListPage
-        pages={pages}
-        title={t('helm-plugin~Helm')}
-        menuActions={menuActions}
-        telemetryPrefix="Helm"
-      />
-    ) : (
-      <HelmReleaseListPage />
-    )
+    <MultiTabListPage
+      pages={pages}
+      title={t('helm-plugin~Helm')}
+      menuActions={menuActions}
+      telemetryPrefix="Helm"
+    />
+  ) : (
+    <HelmReleaseListPage />
+  );
+};
+
+export const PageContents: React.FC = () => {
+  const { t } = useTranslation();
+  const { ns: namespace } = useParams();
+  const [activePerspective] = useActivePerspective();
+
+  return activePerspective === 'admin' || namespace ? (
+    <HelmPage namespace={namespace} />
   ) : (
     <CreateProjectListPage title={t('helm-plugin~Helm')}>
       {(openProjectModal) => (

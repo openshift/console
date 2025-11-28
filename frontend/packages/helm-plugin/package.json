@@ -19,8 +19,6 @@
       "HelmChartRepositoryForm": "src/components/forms/HelmChartRepository/CreateHelmChartRepositoryPage.tsx",
       "ProjectHelmChartRepositoryListPage": "src/components/list-page/ProjectHelmChartRepositoryListPage.tsx",
       "HelmChartRepositoryListPage": "src/components/list-page/HelmChartRepositoryListPage.tsx",
-      "AdminHelmReleaseListPage": "src/components/list-page/AdminHelmReleaseListPage.tsx",
-      "AdminHelmRepositoriesListPage": "src/components/list-page/AdminHelmRepositoriesListPage.tsx",
       "NamespaceRedirect": "src/components/NamespaceRedirect.tsx",
       "HelmTabbedPage": "src/components/list-page/HelmTabbedPage.tsx",
       "HelmDataTransformer": "src/topology/helm-data-transformer.ts",
