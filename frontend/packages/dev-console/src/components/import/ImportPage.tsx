@@ -19,7 +19,9 @@ const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
     title: t('devconsole~Import from Git'),
     buildStrategy: 'Devfile',
     loader: () =>
-      import('./GitImportForm' /* webpackChunkName: "git-import-form" */).then((m) => m.default),
+      import('./GitImportForm' /* webpackChunkName: "git-import-form" */).then(
+        (m) => m.GitImportForm,
+      ),
   },
   s2i: {
     type: ImportTypes.s2i,
@@ -27,7 +29,7 @@ const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
     buildStrategy: 'Source',
     loader: () =>
       import('./SourceToImageForm' /* webpackChunkName: "source-to-image-form" */).then(
-        (m) => m.default,
+        (m) => m.SourceToImageForm,
       ),
   },
 });

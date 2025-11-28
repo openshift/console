@@ -354,9 +354,9 @@ const AppContents: React.FC<{}> = () => {
           <AsyncComponent
             kind="ConfigMap"
             loader={() =>
-              import(
-                './configmaps/ConfigMapPage' /* webpackChunkName: "create-configmap-page" */
-              ).then((m) => m.default)
+              import('./configmaps/ConfigMapPage' /* webpackChunkName: "configmap-page" */).then(
+                (m) => m.ConfigMapPage,
+              )
             }
           />
         }
@@ -367,9 +367,9 @@ const AppContents: React.FC<{}> = () => {
           <AsyncComponent
             kind="ConfigMap"
             loader={() =>
-              import(
-                './configmaps/ConfigMapPage' /* webpackChunkName: "edit-configmap-page" */
-              ).then((m) => m.default)
+              import('./configmaps/ConfigMapPage' /* webpackChunkName: "configmap-page" */).then(
+                (m) => m.ConfigMapPage,
+              )
             }
           />
         }
@@ -469,7 +469,7 @@ const AppContents: React.FC<{}> = () => {
           <AsyncComponent
             loader={() =>
               import('./storage/attach-storage' /* webpackChunkName: "attach-storage" */).then(
-                (m) => m.default,
+                (m) => m.AttachStorage,
               )
             }
           />
@@ -687,7 +687,7 @@ const AppContents: React.FC<{}> = () => {
             loader={() =>
               import(
                 './monitoring/alertmanager/alertmanager-yaml-editor' /* webpackChunkName: "alertmanager-yaml-editor" */
-              ).then((m) => m.default)
+              ).then((m) => m.AlertmanagerYAML)
             }
           />
         }

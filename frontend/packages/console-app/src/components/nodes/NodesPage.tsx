@@ -677,7 +677,7 @@ const useWatchCSRs = (): [CertificateSigningRequestKind[], boolean, unknown] => 
   return [csrs, !checkIsLoading && loaded, error];
 };
 
-const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
+export const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useDispatch();
 
   const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
@@ -749,5 +749,3 @@ const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
 type NodesPageProps = {
   selector?: Selector;
 };
-
-export default NodesPage;

@@ -124,7 +124,7 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(NodeModel), () =>
     import(
       '@console/app/src/components/nodes/NodeDetailsPage' /* webpackChunkName: "node-detail" */
-    ).then((m) => m.default),
+    ).then((m) => m.NodeDetailsPage),
   )
   .set(referenceForModel(MachineAutoscalerModel), () =>
     import('./machine-autoscaler' /* webpackChunkName: "machine-autoscaler" */).then(
@@ -280,12 +280,12 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(VolumeSnapshotModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-details' /* webpackChunkName: "volume-snapshot-details" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotDetailsPage),
   )
   .set(referenceForModel(VolumeSnapshotClassModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-class-details' /* webpackChunkName: "volume-snapshot-class-details" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotClassDetailsPage),
   );
 
 export const getResourceDetailsPages = (pluginPages: ResourceDetailsPage[] = []) =>
@@ -335,7 +335,7 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(NodeModel), () =>
     import('@console/app/src/components/nodes/NodesPage' /* webpackChunkName: "node" */).then(
-      (m) => m.default,
+      (m) => m.NodesPage,
     ),
   )
   .set(referenceForModel(MachineAutoscalerModel), () =>
@@ -477,12 +477,12 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(VolumeSnapshotModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotPage),
   )
   .set(referenceForModel(VolumeSnapshotClassModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-class' /* webpackChunkName: "volume-snapshot-class" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotClassPage),
   );
 
 export const getResourceListPages = (pluginPages: ResourceListPage[] = []) =>

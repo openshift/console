@@ -210,7 +210,7 @@ const VolumeSnapshotTable: React.FC<VolumeSnapshotTableProps> = (props) => {
   );
 };
 
-const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = ({
+export const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = ({
   canCreate = true,
   showTitle = true,
   namespace,
@@ -379,5 +379,3 @@ type VolumeSnapshotRowProsCustomData = {
     pvc?: PersistentVolumeClaimKind;
   };
 };
-
-export default VolumeSnapshotPage;

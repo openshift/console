@@ -46,7 +46,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
-import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
+import { QuickStartDrawerAsync } from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
@@ -235,7 +235,7 @@ const App: React.FC<{
   const content = (
     <>
       <ConsoleNotifier location="BannerTop" />
-      <QuickStartDrawer>
+      <QuickStartDrawerAsync>
         <CloudShellDrawer>
           <Flex
             id="app-content"
@@ -286,7 +286,7 @@ const App: React.FC<{
           )}
         </CloudShellDrawer>
         <div id="modal-container" role="dialog" aria-modal="true" aria-label={t('public~Modal')} />
-      </QuickStartDrawer>
+      </QuickStartDrawerAsync>
       <ConsoleNotifier location="BannerBottom" />
       <FeatureFlagExtensionLoader />
     </>

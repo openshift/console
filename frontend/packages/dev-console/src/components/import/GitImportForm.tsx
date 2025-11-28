@@ -18,7 +18,7 @@ import SecureRoute from './route/SecureRoute';
 import { BuildSection } from './section/build-section/BuildSection';
 import { DeploySection } from './section/deploy-section/DeploySection';
 
-const GitImportForm: React.FC<
+export const GitImportForm: React.FC<
   FormikProps<FormikValues & GitImportFormData> & GitImportFormProps
 > = ({
   values,
@@ -120,5 +120,3 @@ const GitImportForm: React.FC<
     </form>
   );
 };
-
-export default GitImportForm;

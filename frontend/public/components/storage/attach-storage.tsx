@@ -115,5 +115,3 @@ export const AttachStorage = (props) => {
   const params = useParams();
   return <AttachStorage_ {...props} params={params} />;
 };
-
-export default AttachStorage;

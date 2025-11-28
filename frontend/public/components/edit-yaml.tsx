@@ -17,8 +17,8 @@ import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResou
 
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
-import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
-import CodeEditorSidebar from '@console/shared/src/components/editor/CodeEditorSidebar';
+import { CodeEditor } from '@console/shared/src/components/editor/CodeEditor';
+import { CodeEditorSidebar } from '@console/shared/src/components/editor/CodeEditorSidebar';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';

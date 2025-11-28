@@ -88,7 +88,11 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
       >
         <div className="osc-yaml-editor__editor">
           <AsyncComponent
-            loader={() => import('../editor/CodeEditor').then((c) => c.default)}
+            loader={() =>
+              import('../editor/CodeEditor' /* webpackChunkName: "code-editor" */).then(
+                (c) => c.CodeEditor,
+              )
+            }
             forwardRef={editorRef}
             value={field.value}
             minHeight={minHeight ?? '200px'}
@@ -114,7 +118,11 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
       </div>
       {sidebarOpen && hasSidebarContent && (
         <AsyncComponent
-          loader={() => import('../editor/CodeEditorSidebar').then((c) => c.default)}
+          loader={() =>
+            import(
+              '../editor/CodeEditorSidebar' /* webpackChunkName: "code-editor-sidebar" */
+            ).then((c) => c.CodeEditorSidebar)
+          }
           editorRef={editorRef}
           model={model}
           schema={schema}

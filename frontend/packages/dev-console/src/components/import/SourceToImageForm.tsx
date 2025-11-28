@@ -13,7 +13,7 @@ import NamespaceSection from './NamespaceSection';
 import { BuildSection } from './section/build-section/BuildSection';
 import { DeploySection } from './section/deploy-section/DeploySection';
 
-const SourceToImageForm: React.FC<
+export const SourceToImageForm: React.FC<
   FormikProps<FormikValues & GitImportFormData> & SourceToImageFormProps
 > = ({
   values,
@@ -58,5 +58,3 @@ const SourceToImageForm: React.FC<
     </form>
   );
 };
-
-export default SourceToImageForm;

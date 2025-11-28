@@ -9,10 +9,10 @@ import { getQueryArgument } from '@console/internal/components/utils/router';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import QuickStartsLoader from './loader/QuickStartsLoader';
+import { QuickStartsLoader } from './loader/QuickStartsLoader';
 import { QuickStartEmptyState } from './QuickStartEmptyState';
 
-const QuickStartCatalogPage: React.FC = () => {
+export const QuickStartCatalogPage: React.FC = () => {
   const { t } = useTranslation('console-app');
   const { setFilter } = React.useContext<QuickStartContextValues>(QuickStartContext);
 
@@ -48,5 +48,3 @@ const QuickStartCatalogPage: React.FC = () => {
     </>
   );
 };
-
-export default QuickStartCatalogPage;

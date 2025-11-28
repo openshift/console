@@ -2,9 +2,9 @@ import * as React from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
 import { QuickStartsLoaderProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useQuickStarts } from '../utils/useQuickStarts';
-import QuickStartPermissionChecker from './QuickStartPermissionChecker';
+import { QuickStartPermissionChecker } from './QuickStartPermissionChecker';
 
-const QuickStartsLoader: React.FCC<QuickStartsLoaderProps> = ({ children }) => {
+export const QuickStartsLoader: React.FCC<QuickStartsLoaderProps> = ({ children }) => {
   const [quickStarts, quickStartsLoaded] = useQuickStarts();
 
   const [allowedQuickStarts, setAllowedQuickStarts] = React.useState<QuickStart[]>([]);
@@ -43,5 +43,3 @@ const QuickStartsLoader: React.FCC<QuickStartsLoaderProps> = ({ children }) => {
     </>
   );
 };
-
-export default QuickStartsLoader;

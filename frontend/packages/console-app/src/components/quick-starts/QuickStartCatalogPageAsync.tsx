@@ -5,7 +5,9 @@ const QuickStartCatalogPageAsync: FC = () => (
   <AsyncComponent
     blame="QuickStartCatalogPageAsync"
     loader={() =>
-      import('./QuickStartCatalogPage' /* webpackChunkName: "quick-start" */).then((c) => c.default)
+      import('./QuickStartCatalogPage' /* webpackChunkName: "quick-start" */).then(
+        (c) => c.QuickStartCatalogPage,
+      )
     }
   />
 );

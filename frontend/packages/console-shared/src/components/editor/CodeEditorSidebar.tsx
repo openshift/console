@@ -18,7 +18,7 @@ type CodeEditorSidebarProps = {
   toggleSidebar: () => void;
 };
 
-const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
+export const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
   editorRef,
   model,
   samples,
@@ -104,5 +104,3 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
     />
   );
 };
-
-export default CodeEditorSidebar;
