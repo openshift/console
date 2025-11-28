@@ -12,6 +12,7 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.22.0-prerelease.1 - TBD
 
+- **Breaking**: Removed ability to load plugins that use `LegacyConsolePluginManifest` format. ([CONSOLE-3769], [#15778])
 - **Type breaking**: Removed `ExtensionDeclaration` from `types.ts`. Plugins should use `Extension` type instead. ([CONSOLE-3769], [#15778])
 - **Type breaking**: Changed the default type parameters of `Extension<any>` to `Extension<string, AnyObject>`. ([CONSOLE-3769], [#15778])
 
