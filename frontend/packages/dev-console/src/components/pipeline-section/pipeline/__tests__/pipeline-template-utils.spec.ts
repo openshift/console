@@ -1,4 +1,5 @@
 import { GitImportFormData } from '@console/dev-console/src/components/import/import-types';
+import { PipelineData } from '@console/dev-console/src/components/pipeline-section/import-types';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import {
   PIPELINE_RUNTIME_LABEL,
@@ -18,12 +19,6 @@ import {
 jest.mock('@console/internal/module/k8s', () => ({
   k8sCreate: jest.fn(),
   k8sUpdate: jest.fn(),
-}));
-jest.mock('../../../pipelines/pipeline-resource/pipelineResource-utils', () => ({
-  createPipelineResource: jest.fn(),
-}));
-jest.mock('../../../pipelines/modals/common/utils', () => ({
-  convertPipelineToModalData: jest.fn(),
 }));
 
 const getDefaultLabel = (name: string) => ({
@@ -81,16 +76,26 @@ describe('createPipelineForImportFlow', () => {
     };
 
     const formData = createFormData(pipelineTemplate);
+    const { name, project, git, pipeline, docker, build } = formData;
+    if (!pipeline || !project?.name || !name || !git?.url || !git?.ref || !git?.dir) {
+      throw new Error('Test setup error: required fields are undefined');
+    }
+    const appName: string = name;
+    const projectName: string = project.name;
+    const gitUrl: string = git.url;
+    const gitRef: string = git.ref;
+    const gitDir: string = git.dir;
+    const dockerfilePath: string = docker.dockerfilePath || '';
     await createPipelineForImportFlow(
-      formData.name,
-      formData.project.name,
-      formData.git.url,
-      formData.git.ref,
-      formData.git.dir,
-      formData.pipeline,
-      formData.docker.dockerfilePath,
+      appName,
+      projectName,
+      gitUrl,
+      gitRef,
+      gitDir,
+      pipeline as PipelineData,
+      dockerfilePath,
       '14-ubi8',
-      formData.build.env,
+      build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -127,16 +132,26 @@ describe('createPipelineForImportFlow', () => {
     };
 
     const formData = createFormData(pipelineTemplate);
+    const { name, project, git, pipeline, docker, build } = formData;
+    if (!pipeline || !project?.name || !name || !git?.url || !git?.ref || !git?.dir) {
+      throw new Error('Test setup error: required fields are undefined');
+    }
+    const appName: string = name;
+    const projectName: string = project.name;
+    const gitUrl: string = git.url;
+    const gitRef: string = git.ref;
+    const gitDir: string = git.dir;
+    const dockerfilePath: string = docker.dockerfilePath || '';
     await createPipelineForImportFlow(
-      formData.name,
-      formData.project.name,
-      formData.git.url,
-      formData.git.ref,
-      formData.git.dir,
-      formData.pipeline,
-      formData.docker.dockerfilePath,
+      appName,
+      projectName,
+      gitUrl,
+      gitRef,
+      gitDir,
+      pipeline as PipelineData,
+      dockerfilePath,
       '14-ubi8',
-      formData.build.env,
+      build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -181,16 +196,26 @@ describe('createPipelineForImportFlow', () => {
     };
 
     const formData = createFormData(pipelineTemplate);
+    const { name, project, git, pipeline, docker, build } = formData;
+    if (!pipeline || !project?.name || !name || !git?.url || !git?.ref || !git?.dir) {
+      throw new Error('Test setup error: required fields are undefined');
+    }
+    const appName: string = name;
+    const projectName: string = project.name;
+    const gitUrl: string = git.url;
+    const gitRef: string = git.ref;
+    const gitDir: string = git.dir;
+    const dockerfilePath: string = docker.dockerfilePath || '';
     await createPipelineForImportFlow(
-      formData.name,
-      formData.project.name,
-      formData.git.url,
-      formData.git.ref,
-      formData.git.dir,
-      formData.pipeline,
-      formData.docker.dockerfilePath,
+      appName,
+      projectName,
+      gitUrl,
+      gitRef,
+      gitDir,
+      pipeline as PipelineData,
+      dockerfilePath,
       '14-ubi8',
-      formData.build.env,
+      build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -239,16 +264,26 @@ describe('createPipelineForImportFlow', () => {
     };
 
     const formData = createFormData(pipelineTemplate);
+    const { name, project, git, pipeline, docker, build } = formData;
+    if (!pipeline || !project?.name || !name || !git?.url || !git?.ref || !git?.dir) {
+      throw new Error('Test setup error: required fields are undefined');
+    }
+    const appName: string = name;
+    const projectName: string = project.name;
+    const gitUrl: string = git.url;
+    const gitRef: string = git.ref;
+    const gitDir: string = git.dir;
+    const dockerfilePath: string = docker.dockerfilePath || '';
     await createPipelineForImportFlow(
-      formData.name,
-      formData.project.name,
-      formData.git.url,
-      formData.git.ref,
-      formData.git.dir,
-      formData.pipeline,
-      formData.docker.dockerfilePath,
+      appName,
+      projectName,
+      gitUrl,
+      gitRef,
+      gitDir,
+      pipeline as PipelineData,
+      dockerfilePath,
       '14-ubi8',
-      formData.build.env,
+      build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -298,16 +333,24 @@ describe('createPipelineForImportFlow', () => {
     };
 
     const formData = createFormData(pipelineTemplate);
+    const { name, project, git, pipeline, build } = formData;
+    if (!pipeline || !project?.name || !name || !git?.url || !git?.ref) {
+      throw new Error('Test setup error: required fields are undefined');
+    }
+    const appName: string = name;
+    const projectName: string = project.name;
+    const gitUrl: string = git.url;
+    const gitRef: string = git.ref;
     await createPipelineForImportFlow(
-      formData.name,
-      formData.project.name,
-      formData.git.url,
-      formData.git.ref,
+      appName,
+      projectName,
+      gitUrl,
+      gitRef,
       '/anotherpath',
-      formData.pipeline,
+      pipeline as PipelineData,
       'Dockerfile',
       '14-ubi8',
-      formData.build.env,
+      build.env,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -387,7 +430,7 @@ describe('updatePipelineForImportFlow', () => {
   it('should dissociate pipeline if template is not available', async () => {
     await updatePipelineForImportFlow(
       mockPipeline,
-      null,
+      null as any,
       props.name,
       props.namespace,
       props.gitUrl,
@@ -480,7 +523,9 @@ describe('updatePipelineForImportFlow', () => {
 
   it('should update pipeline if template is of different type', async () => {
     const template = { ...mockTemplate };
-    template.metadata.labels[PIPELINE_RUNTIME_LABEL] = 'newImage';
+    if (template.metadata?.labels) {
+      template.metadata.labels[PIPELINE_RUNTIME_LABEL] = 'newImage';
+    }
     await updatePipelineForImportFlow(
       mockPipeline,
       mockTemplate,
@@ -537,7 +582,7 @@ describe('isDockerPipeline', () => {
       ...mockTemplate,
       metadata: {
         labels: {
-          ...mockTemplate.metadata.labels,
+          ...mockTemplate.metadata?.labels,
           [PIPELINE_STRATEGY_LABEL]: 'docker',
         },
       },
@@ -628,7 +673,7 @@ describe('getPipelineParams', () => {
         'name',
         'namespace',
         'gitUrl',
-        undefined, // git ref
+        undefined as any, // git ref
         'gitDir',
         'dockerfilePath',
         'tag',
@@ -642,7 +687,7 @@ describe('getPipelineParams', () => {
         'name',
         'namespace',
         'gitUrl',
-        null, // git ref
+        null as any, // git ref
         'gitDir',
         'dockerfilePath',
         'tag',
@@ -654,7 +699,7 @@ describe('getPipelineParams', () => {
   it('should return empty object if params is invalid or not an array', () => {
     expect(
       getPipelineParams(
-        null,
+        null as any,
         'name',
         'namespace',
         'gitUrl',
@@ -667,7 +712,7 @@ describe('getPipelineParams', () => {
     ).toEqual([]);
     expect(
       getPipelineParams(
-        undefined,
+        undefined as any,
         'name',
         'namespace',
         'gitUrl',
@@ -812,7 +857,7 @@ describe('getPipelineParams', () => {
       [],
     );
 
-    expect(finalParams).toHaveLength(pipelineParams.length);
+    expect(finalParams.length).toBe(pipelineParams.length);
 
     finalParams.forEach((p) => {
       const foundParam = pipelineParams.find((pipelineParam) => pipelineParam.name === p.name);

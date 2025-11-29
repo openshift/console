@@ -46,10 +46,10 @@ export const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
           gitProvider &&
           !(gitProvider === GitProvider.GITHUB && method === GitProvider.GITHUB),
         then: yup.object().shape({
-          token: yup.string().test('oneOfRequired', 'Required', function () {
+          token: yup.string().test('oneOfRequired', t('devconsole~Required'), function () {
             return this.parent.token || this.parent.secretRef;
           }),
-          secretRef: yup.string().test('oneOfRequired', 'Required', function () {
+          secretRef: yup.string().test('oneOfRequired', t('devconsole~Required'), function () {
             return this.parent.token || this.parent.secretRef;
           }),
         }),
