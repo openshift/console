@@ -853,7 +853,7 @@ export const createEventListener = (
 export const createEventListenerRoute = (
   eventListener: EventListenerKind,
   generatedName?: string,
-  targetPort: number = 8080,
+  targetPort: number | string = 8080,
 ): RouteKind => {
   const eventListenerName = eventListener.metadata.name;
   // Not ideal, but if all else fails, we can do our best guess
@@ -903,7 +903,7 @@ export const createTriggerTemplate = (
 
 export const exposeRoute = async (elName: string, ns: string, iteration = 0) => {
   const elResource: EventListenerKind = await k8sGet(EventListenerModel, elName, ns);
-  const serviceGeneratedName = elResource?.status?.configuration.generatedName;
+  const serviceGeneratedName = elResource?.status?.configuration?.generatedName;
 
   try {
     if (!serviceGeneratedName) {
@@ -1011,10 +1011,10 @@ export const updateServiceAccount = (
   updateImagePullSecrets: boolean,
 ): Promise<ServiceAccountType> => {
   const updatedServiceAccount = _.cloneDeep(originalServiceAccount);
-  updatedServiceAccount.secrets = [...updatedServiceAccount.secrets, { name: secretName }];
+  updatedServiceAccount.secrets = [...(updatedServiceAccount.secrets || []), { name: secretName }];
   if (updateImagePullSecrets) {
     updatedServiceAccount.imagePullSecrets = [
-      ...updatedServiceAccount.imagePullSecrets,
+      ...(updatedServiceAccount.imagePullSecrets || []),
       { name: secretName },
     ];
   }

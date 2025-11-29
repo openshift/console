@@ -4,8 +4,7 @@ import { chart_color_black_500 as cancelledColor } from '@patternfly/react-token
 import { chart_color_blue_100 as pendingColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
 import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
-import { DagreLayout, PipelineDagreLayout } from '@patternfly/react-topology';
-import { Graph, LayoutFactory } from '@patternfly/react-topology/src/types';
+import { DagreLayout, PipelineDagreLayout, Graph, LayoutFactory } from '@patternfly/react-topology';
 import * as dagre from 'dagre';
 import i18next from 'i18next';
 import { ComputedStatus } from '@console/shipwright-plugin/src/components/logs/log-snippet-types';
@@ -217,7 +216,8 @@ export const layoutFactory: LayoutFactory = (type: string, graph: Graph) => {
         ...getLayoutData(type),
       });
     case PipelineLayout.DAGRE_VIEWER:
-      return new PipelineDagreLayout(graph, { nodesep: 25 });
+    case PipelineLayout.DAGRE_VIEWER_SPACED:
+      return new PipelineDagreLayout(graph, { nodesep: 25, ...getLayoutData(type) });
     default:
       return undefined;
   }

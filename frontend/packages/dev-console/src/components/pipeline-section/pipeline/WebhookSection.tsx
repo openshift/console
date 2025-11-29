@@ -90,9 +90,9 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
       case GitProvider.GITHUB:
         return t('devconsole~See GitHub events');
       case GitProvider.GITLAB:
-        return t('devconsole~See Gitlab events');
+        return t('devconsole~See GitLab events');
       case GitProvider.BITBUCKET:
-        return t('devconsole~See BitBucket events');
+        return t('devconsole~See Bitbucket events');
       default:
         return t('devconsole~See Git events');
     }

@@ -11,7 +11,7 @@ import {
   TektonResultsRun,
   TektonTaskSpec,
 } from '@console/dev-console/src/types/coreTekton';
-import { PipelineTaskParam, PipelineTaskRef } from '@console/dev-console/src/types/pipeline';
+import type { PipelineTaskParam, PipelineTaskRef } from '@console/dev-console/src/types/pipeline';
 import {
   K8sResourceCommon,
   K8sResourceCondition,

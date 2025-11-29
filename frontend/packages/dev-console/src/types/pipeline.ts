@@ -5,7 +5,7 @@ import {
   K8sResourceKind,
   ObjectMetadata,
 } from '@console/internal/module/k8s';
-import { PLRTaskRunStep } from '@console/shipwright-plugin/src/types';
+import type { PLRTaskRunStep } from '@console/shipwright-plugin/src/types';
 import {
   TektonParam,
   TektonResource,
