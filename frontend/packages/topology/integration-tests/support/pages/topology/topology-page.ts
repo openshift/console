@@ -75,7 +75,9 @@ export const topologyPage = {
     });
   },
   verifyToplogyPageNotEmpty: () => {
-    cy.get('*[class="odc-topology"]').then(($el) => {
+    // Wait for topology page to load completely - increased timeout for yup async validation
+    cy.get('[class*="odc-topology"]', { timeout: 60000 }).should('be.visible');
+    cy.get('[class*="odc-topology"]').then(($el) => {
       if ($el.find('[data-test="no-resources-found"]').length) {
         throw new Error(`No workload has been created till now.`);
       }

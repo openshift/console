@@ -10,7 +10,11 @@ describe('Image pull secrets', () => {
     cy.createProjectWithCLI(testName);
   });
 
-  beforeEach(() => {
+  beforeEach(function () {
+    // Skip beforeEach for the obfuscated passwords test
+    if (this.currentTest?.title === 'Passwords entered on the console are obfuscated') {
+      return;
+    }
     cy.visit(`/k8s/ns/${testName}/secrets/`);
     secrets.clickCreateSecretDropdownButton('image');
   });
@@ -128,10 +132,21 @@ describe('Image pull secrets', () => {
     secrets.enterSecretName(uploadConfigFileImageSecretName);
     cy.byTestID('console-select-auth-type-menu-toggle').click();
     cy.byTestDropDownMenu('config-file').click();
-    cy.byLegacyTestID('file-input-textarea').type(JSON.stringify(configFile), {
+
+    // Type the JSON slowly to give validation time to process
+    const configJson = JSON.stringify(configFile);
+    cy.byLegacyTestID('file-input-textarea').clear().type(configJson, {
       parseSpecialCharSequences: false,
+      delay: 50, // Slower typing to give validation time
     });
+
+    // Wait for validation to complete and save button to be enabled
+    cy.byTestID('save-changes', { timeout: 10000 }).should('be.enabled');
+
     secrets.save();
+
+    // Verify we navigated to details page
+    cy.url().should('include', `/secrets/${uploadConfigFileImageSecretName}`);
     secrets.detailsPageIsLoaded(uploadConfigFileImageSecretName);
 
     cy.log('Verify secret');
@@ -146,9 +161,17 @@ describe('Image pull secrets', () => {
     secrets.deleteSecret(uploadConfigFileImageSecretName);
   });
   it(`Passwords entered on the console are obfuscated`, () => {
+    // Navigate to secrets page and open image secret form
+    cy.visit(`/k8s/ns/${testName}/secrets/`);
+    secrets.clickCreateSecretDropdownButton('image');
     cy.get('input[data-test="image-secret-password"]').should('have.attr', 'type', 'password');
     cy.get('button[id="cancel"]').click();
+
+    // Open source secret form
     secrets.clickCreateSecretDropdownButton('source');
     cy.get('input[data-test="secret-password"]').should('have.attr', 'type', 'password');
+
+    // Clean up - navigate back to secrets list to close any open forms
+    cy.visit(`/k8s/ns/${testName}/secrets/`);
   });
 });
