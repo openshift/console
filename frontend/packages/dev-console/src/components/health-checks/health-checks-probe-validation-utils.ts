@@ -50,6 +50,7 @@ export const healthChecksValidationSchema = (t: TFunction) =>
                 }),
                 port: yup.number().required(t('devconsole~Required')),
               }),
+            otherwise: (httpGetSchema) => httpGetSchema,
           }),
           tcpSocket: yup.object().when('requestType', {
             is: 'tcpSocket',
@@ -57,6 +58,7 @@ export const healthChecksValidationSchema = (t: TFunction) =>
               tcpSocketSchema.shape({
                 port: yup.number().required(t('devconsole~Required')),
               }),
+            otherwise: (tcpSocketSchema) => tcpSocketSchema,
           }),
           exec: yup.object().when('requestType', {
             is: 'command',
@@ -64,8 +66,10 @@ export const healthChecksValidationSchema = (t: TFunction) =>
               execSchema.shape({
                 command: yup.array().of(yup.string().required(t('devconsole~Required'))),
               }),
+            otherwise: (execSchema) => execSchema,
           }),
         }),
+      otherwise: (schema) => schema,
     }),
   });
 
