@@ -246,7 +246,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   const renderContent = (routes: JSX.Element[]) => {
     const { noStatusBox, obj, EmptyMsg, label } = props;
     const content = (
-      <React.Suspense fallback={<LoadingBox />}>
+      <React.Suspense fallback={<LoadingBox blame="HorizontalNav" />}>
         <Routes>{routes}</Routes>
       </React.Suspense>
     );

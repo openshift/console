@@ -113,7 +113,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   );
 };
 
-const VolumeSnapshotDetailsPage: React.FC<DetailsPageProps> = (props) => {
+export const VolumeSnapshotDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const pages = [
     {
       href: '',
@@ -150,5 +150,3 @@ const VolumeSnapshotDetailsPage: React.FC<DetailsPageProps> = (props) => {
 type DetailsProps = {
   obj: VolumeSnapshotKind;
 };
-
-export default VolumeSnapshotDetailsPage;

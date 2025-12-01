@@ -118,7 +118,7 @@ const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps
   },
 );
 
-const AlertmanagerYAML: React.FC<{}> = () => {
+export const AlertmanagerYAML: React.FC<{}> = () => {
   const { t } = useTranslation();
 
   const configPath = 'alertmanagerconfig';
@@ -169,5 +169,3 @@ type AlertmanagerYAMLEditorProps = {
   obj?: K8sResourceKind;
   onCancel?: () => void;
 };
-
-export default AlertmanagerYAML;

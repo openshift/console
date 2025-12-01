@@ -94,6 +94,7 @@ export const CreateYAMLInner = ({
 
   return (
     <AsyncComponent
+      blame="CreateYaml"
       loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
       initialResource={initialResource}
       create={isCreate}
@@ -117,6 +118,7 @@ export const EditYAMLPage: React.FCC<EditYAMLPageProps> = (props) => {
   const params = useParams();
   const Wrapper = (wrapperProps) => (
     <AsyncComponent
+      blame="EditYamlPage"
       {...wrapperProps}
       obj={wrapperProps.obj.data}
       loader={() => import('./edit-yaml').then((c) => c.EditYAML)}

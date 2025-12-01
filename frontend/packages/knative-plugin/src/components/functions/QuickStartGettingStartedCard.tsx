@@ -7,7 +7,7 @@ import {
 } from '@patternfly/quickstarts';
 import { RouteIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
+import { QuickStartsLoader } from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import {
   GettingStartedCard,
   GettingStartedLink,

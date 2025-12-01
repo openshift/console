@@ -1,15 +1,14 @@
-import * as React from 'react';
 import type { ReactNode } from 'react';
 import { QuickStartDrawer as PfQuickStartDrawer } from '@patternfly/quickstarts';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
-import QuickStartsLoader from './loader/QuickStartsLoader';
+import { QuickStartsLoader } from './loader/QuickStartsLoader';
 import './QuickStartDrawer.scss';
 
 interface QuickStartDrawerProps {
   children?: ReactNode;
 }
 
-const QuickStartDrawer: React.FCC<QuickStartDrawerProps> = ({ children, ...props }) => (
+export const QuickStartDrawer: React.FCC<QuickStartDrawerProps> = ({ children, ...props }) => (
   <QuickStartsLoader>
     {(quickStarts, loaded) =>
       loaded ? (
@@ -17,10 +16,8 @@ const QuickStartDrawer: React.FCC<QuickStartDrawerProps> = ({ children, ...props
           {children}
         </PfQuickStartDrawer>
       ) : (
-        <LoadingBox />
+        <LoadingBox blame="QuickStartDrawer" />
       )
     }
   </QuickStartsLoader>
 );
-
-export default QuickStartDrawer;

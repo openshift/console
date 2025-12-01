@@ -8,7 +8,7 @@ import { useShortcutPopover } from './ShortcutsPopover';
 import { registerYAMLinMonaco, registerAutoFold, defaultEditorOptions } from './yaml-editor-utils';
 import './CodeEditor.scss';
 
-const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref) => {
+export const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref) => {
   const { value, minHeight, showShortcuts, toolbarLinks, onSave, onEditorDidMount } = props;
 
   const [editorRef, setEditorRef] = useState<CodeEditorRef['editor'] | null>(null);
@@ -91,5 +91,3 @@ const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref) => {
     </div>
   );
 });
-
-export default CodeEditor;

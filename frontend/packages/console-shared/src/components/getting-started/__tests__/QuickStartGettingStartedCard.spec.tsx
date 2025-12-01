@@ -1,5 +1,5 @@
 import { screen, waitFor } from '@testing-library/react';
-import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
+import { QuickStartsLoader } from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { QuickStartGettingStartedCard } from '../QuickStartGettingStartedCard';
@@ -10,7 +10,7 @@ jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
 }));
 
 jest.mock('@console/app/src/components/quick-starts/loader/QuickStartsLoader', () => ({
-  default: jest.fn(),
+  QuickStartsLoader: jest.fn(),
 }));
 
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;

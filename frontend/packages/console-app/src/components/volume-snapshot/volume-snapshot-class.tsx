@@ -107,7 +107,7 @@ const VolumeSnapshotClassTable: React.FC<VolumeSnapshotClassTableProps> = (props
   );
 };
 
-const VolumeSnapshotClassPage: React.FC<VolumeSnapshotClassPageProps> = ({
+export const VolumeSnapshotClassPage: React.FC<VolumeSnapshotClassPageProps> = ({
   canCreate = true,
   showTitle = true,
   namespace,
@@ -163,4 +163,3 @@ type VolumeSnapshotClassTableProps = {
   loaded: boolean;
   loadError: unknown;
 };
-export default VolumeSnapshotClassPage;

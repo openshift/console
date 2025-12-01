@@ -1,10 +1,13 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 
-const QuickStartCatalogPageAsync: React.FC = () => (
+const QuickStartCatalogPageAsync: FC = () => (
   <AsyncComponent
+    blame="QuickStartCatalogPageAsync"
     loader={() =>
-      import('./QuickStartCatalogPage' /* webpackChunkName: "quick-start" */).then((c) => c.default)
+      import('./QuickStartCatalogPage' /* webpackChunkName: "quick-start" */).then(
+        (c) => c.QuickStartCatalogPage,
+      )
     }
   />
 );

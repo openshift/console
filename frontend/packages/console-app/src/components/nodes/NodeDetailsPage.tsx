@@ -25,7 +25,7 @@ const NodePodsPage: React.FC<PageComponentProps<NodeKind>> = ({ obj }) => (
   />
 );
 
-const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
+export const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const pagesFor = React.useCallback(
     (node: NodeKind) => [
       {
@@ -72,5 +72,3 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
     />
   );
 };
-
-export default NodeDetailsPage;

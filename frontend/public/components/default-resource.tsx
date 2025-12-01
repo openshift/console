@@ -350,7 +350,7 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
   return (
     <>
       {!loaded && !additionalPrinterColumnsLoaded ? (
-        <LoadingBox />
+        <LoadingBox blame="DefaultList" />
       ) : (
         <ConsoleDataView<K8sResourceKind>
           {...props}

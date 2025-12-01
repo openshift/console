@@ -1,17 +1,20 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { NamespaceContext, useValuesForNamespaceContext } from './namespace';
 
 type DetectNamespaceProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
-const DetectNamespace: React.FC<DetectNamespaceProps> = ({ children }) => {
+const DetectNamespace: FC<DetectNamespaceProps> = ({ children }) => {
   const { namespace, setNamespace, loaded } = useValuesForNamespaceContext();
   return loaded ? (
     <NamespaceContext.Provider value={{ namespace, setNamespace }}>
       {children}
     </NamespaceContext.Provider>
-  ) : null;
+  ) : (
+    <LoadingBox blame="DetectNamespace" />
+  );
 };
 
 export default DetectNamespace;
