@@ -1734,10 +1734,10 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-6.2.3.tgz#cf7678e442aa31101befe389651bca4256fd1c7f"
   integrity sha512-FR027W7JygcQpvlRU/Iom936Vm0apzfi2o5lvtlcWW6IaeZCCTtTaDxehoYuELHlemzkLziQAgu6LuCJEVayjw==
 
-"@patternfly/quickstarts@^6.3.1":
-  version "6.3.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-6.3.1.tgz#6475dec57521851a99a7d389d1a183e50ef20597"
-  integrity sha512-cuQ+m0K90vbGyNo4oR8UToXo1Jw24QDfCaIoAW0pbUkEcYuSPGqVvrOSf7w5hUMJ8jrXqE7g0T7JkcQXElMbHg==
+"@patternfly/quickstarts@^6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-6.4.0.tgz#01c47c68baefa950c840fd3e0650b50bec5c6b91"
+  integrity sha512-A9XMlhY9aUhPT5+KVHOL8mxfXYNVQAhMRB4LWTd7vT9tby3mPfGcayrm9saW6CNCjSpgKpEvfsX+dcKsCccAaA==
   dependencies:
     dompurify "^3.2.4"
     history "^5.0.0"
