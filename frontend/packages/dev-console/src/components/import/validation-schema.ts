@@ -46,6 +46,7 @@ export const applicationNameValidationSchema = yup.object().shape({
     .when('selectedKey', {
       is: CREATE_APPLICATION_KEY,
       then: (schema) => schema.required('Required'),
+      otherwise: (schema) => schema,
     }),
 });
 
@@ -178,6 +179,7 @@ export const serverlessValidationSchema = (t: TFunction) =>
             ),
         ),
       }),
+    otherwise: (schema) => schema,
   });
 
 export const routeValidationSchema = (t: TFunction) =>
@@ -189,6 +191,7 @@ export const routeValidationSchema = (t: TFunction) =>
         schema.shape({
           termination: yup.string().required(t('devconsole~Please select a termination type.')),
         }),
+      otherwise: (schema) => schema,
     }),
     hostname: yup
       .string()
@@ -303,6 +306,7 @@ export const imageValidationSchema = (t: TFunction) =>
         selected: yup.string().required(t('devconsole~Required')),
         tag: yup.string().required(t('devconsole~Required')),
       }),
+    otherwise: (schema) => schema,
   });
 
 export const gitValidationSchema = (t: TFunction) =>
@@ -318,6 +322,7 @@ export const gitValidationSchema = (t: TFunction) =>
         schema.required(
           t('devconsole~We failed to detect the Git type. Please choose a Git type.'),
         ),
+      otherwise: (schema) => schema,
     }),
     showGitType: yup.boolean(),
   });
@@ -332,6 +337,7 @@ export const dockerValidationSchema = (t: TFunction) =>
           .test(isInteger(t('devconsole~Container port should be an integer'))),
         dockerfilePath: yup.string().required(t('devconsole~Required')),
       }),
+    otherwise: (schema) => schema,
   });
 
 export const devfileValidationSchema = (t: TFunction) =>
@@ -347,6 +353,7 @@ export const devfileValidationSchema = (t: TFunction) =>
         devfileHasError: yup.boolean().oneOf([false]),
         devfileSuggestedResources: yup.object().required(t('devconsole~Required')),
       }),
+    otherwise: (schema) => schema,
   });
 
 export const buildValidationSchema = yup.object().shape({
@@ -376,4 +383,5 @@ export const importFlowPipelineTemplateValidationSchema = yup
       schema.shape({
         templateSelected: yup.string().required(),
       }),
+    otherwise: (schema) => schema,
   });

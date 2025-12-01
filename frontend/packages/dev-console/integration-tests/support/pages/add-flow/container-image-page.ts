@@ -38,6 +38,10 @@ export const containerImagePage = {
   },
   selectCustomIcon: (url: string) => {
     cy.get(containerImagePO.imageSection.addCustomIcon).click();
+    // Wait for the modal to open and the URL input to be enabled (yup async validation)
+    cy.get(containerImagePO.imageSection.customIconModal.url)
+      .should('be.visible')
+      .and('not.be.disabled');
     cy.get(containerImagePO.imageSection.customIconModal.url).type(url);
     cy.get(containerImagePO.imageSection.customIconModal.confirmButton).click();
   },
