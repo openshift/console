@@ -168,6 +168,6 @@ describe('Test perspective query parameters', () => {
         perspective: 'admin',
       },
     });
-    nav.sidenav.switcher.shouldHaveText('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Core platform');
   });
 });

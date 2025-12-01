@@ -10,9 +10,9 @@ export const nav = {
         cy.byLegacyTestID('perspective-switcher-toggle').then(($body) => {
           if (text === switchPerspective.Administrator) {
             // if the switcher is hidden it means we are in the admin perspective
-            if ($body.attr('aria-hidden') === 'true') {
+            if ($body.attr('id') === 'core-platform-perspective') {
               cy.log('Admin is the only perspective available');
-              cy.byLegacyTestID('perspective-switcher-toggle').should('not.be.visible');
+              cy.byLegacyTestID('perspective-switcher-toggle').should('be.visible');
               return;
             }
           }
@@ -22,18 +22,18 @@ export const nav = {
       changePerspectiveTo: (newPerspective: string) => {
         app.waitForDocumentLoad();
         switch (newPerspective) {
-          case 'Administrator':
-          case 'administrator':
+          case 'Core platform':
+          case 'core platform':
           case 'Admin':
           case 'admin':
             cy.byLegacyTestID('perspective-switcher-toggle').then(($body) => {
-              if ($body.attr('aria-hidden') === 'true') {
+              if ($body.attr('id') === 'core-platform-perspective') {
                 cy.log('Admin is the only perspective available');
-                cy.byLegacyTestID('perspective-switcher-toggle').should('not.be.visible');
+                cy.byLegacyTestID('perspective-switcher-toggle').should('be.visible');
                 return;
               }
 
-              if ($body.text().includes('Administrator')) {
+              if ($body.text().includes('Core platform')) {
                 cy.log('Already on admin perspective');
                 cy.byLegacyTestID('perspective-switcher-toggle')
                   .scrollIntoView()

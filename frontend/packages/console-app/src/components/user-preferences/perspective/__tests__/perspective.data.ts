@@ -20,7 +20,7 @@ export const mockPerspectiveExtensions: LoadedExtension<Perspective>[] = [
     type: 'console.perspective',
     properties: {
       id: 'admin',
-      name: 'Administrator',
+      name: 'Core platform',
       icon: null,
       landingPageURL: async () => () => '',
       importRedirectURL: async () => () => '',

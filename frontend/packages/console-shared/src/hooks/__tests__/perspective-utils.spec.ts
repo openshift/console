@@ -21,7 +21,7 @@ describe('usePerspectives', () => {
         type: 'Perspective',
         properties: {
           id: 'admin',
-          name: 'Administrator',
+          name: 'Core platform',
         },
       },
       {
@@ -53,7 +53,7 @@ describe('usePerspectives', () => {
         type: 'Perspective',
         properties: {
           id: 'admin',
-          name: 'Administrator',
+          name: 'Core platform',
         },
       },
       {
@@ -85,7 +85,7 @@ describe('usePerspectives', () => {
         type: 'Perspective',
         properties: {
           id: 'admin',
-          name: 'Administrator',
+          name: 'Core platform',
         },
       },
       {
@@ -198,7 +198,7 @@ describe('usePerspectives', () => {
         type: 'Perspective',
         properties: {
           id: 'admin',
-          name: 'Administrator',
+          name: 'Core platform',
         },
       },
     ]);
@@ -439,7 +439,7 @@ describe('usePerspectives', () => {
         type: 'Perspective',
         properties: {
           id: 'admin',
-          name: 'Administrator',
+          name: 'Core platform',
         },
       },
       {

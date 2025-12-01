@@ -29,7 +29,7 @@ export enum adminNavigationBar {
 
 export enum switchPerspective {
   Developer = 'Developer',
-  Administrator = 'Administrator',
+  Administrator = 'Core platform',
 }
 
 export enum operators {
