@@ -81,7 +81,7 @@ export const getMetricByType = (
   hpa: HorizontalPodAutoscalerKind,
   type: SupportedMetricTypes,
 ): { metric: HPAMetric | null; index: number } => {
-  const hpaMetrics = hpa.spec.metrics || [];
+  const hpaMetrics = Array.isArray(hpa.spec.metrics) ? hpa.spec.metrics : [];
   const metricIndex = hpaMetrics.findIndex((m) => m.resource?.name?.toLowerCase() === type);
   const metric: HPAMetric | null = hpaMetrics[metricIndex] || null;
 
@@ -116,7 +116,7 @@ export const sanityForSubmit = (
 
 export const hasCustomMetrics = (hpa?: HorizontalPodAutoscalerKind): boolean => {
   const metrics = hpa?.spec?.metrics;
-  if (!metrics) {
+  if (!Array.isArray(metrics)) {
     return false;
   }
 
