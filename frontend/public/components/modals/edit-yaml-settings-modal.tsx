@@ -102,6 +102,7 @@ const TooltipConfigItem = () => {
     SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
     SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
     true,
+    true,
   );
 
   return (
@@ -120,6 +121,7 @@ const StickyScrollConfigItem = () => {
   const [showStickyScroll, setShowStickyScroll] = useUserSettingsCompatibility(
     SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
     SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
+    true,
     true,
   );
 
