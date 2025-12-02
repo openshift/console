@@ -1,7 +1,12 @@
 import { Model, NodeModel } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { CUSTOM_ICON_ANNOTATION, RUNTIME_LABEL, NAME_LABEL } from '@console/dev-console/src/const';
+import {
+  CUSTOM_ICON_ANNOTATION,
+  NAME_LABEL,
+  RUNTIME_ICON_LABEL,
+  RUNTIME_LABEL,
+} from '@console/dev-console/src/const';
 import {
   WatchK8sResources,
   WatchK8sResults,
@@ -116,6 +121,7 @@ export const createTopologyNodeData = (
   const contextDir = getContextDirByName(resources, deploymentsName);
   const builderImageIcon =
     returnIfValidURL(deploymentsAnnotations[CUSTOM_ICON_ANNOTATION]) ??
+    getImageForIconClass(`icon-${deploymentsLabels[RUNTIME_ICON_LABEL]}`) ??
     getImageForIconClass(`icon-${deploymentsLabels[RUNTIME_LABEL]}`) ??
     getImageForIconClass(`icon-${deploymentsLabels[NAME_LABEL]}`);
   return {
