@@ -33,7 +33,7 @@ const BrokerRow: React.FC<RowFunctionArgs<EventBrokerKind>> = ({ obj }) => {
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
       <TableData className={Kebab.columnClass}>
-        <LazyActionMenu context={context} />;
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
