@@ -104,7 +104,7 @@ const ConfigureNamespacePullSecret: React.FC<ConfigureNamespacePullSecretProps> 
       let secretData: string;
 
       if (method === 'upload') {
-        secretData = Base64.encode(fileData);
+        secretData = Base64.encode(fileData || '');
       } else {
         const elements = event.currentTarget.elements as any;
         const formData: FormData = {
