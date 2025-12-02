@@ -161,6 +161,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
                   onClick={setIsOpen}
                   isExpanded={isOpen}
                   aria-label={t('public~graph timespan')}
+                  data-test="time-range-dropdown-button"
                 />
               )}
               popperProps={{ position: 'right' }}

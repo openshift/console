@@ -54,6 +54,7 @@ const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
       isExpanded={isOpen}
       ref={toggleRef}
       className="monitoring-dashboards__dropdown-button"
+      data-test="refresh-interval-dropdown-button"
     >
       {intervalOptions[selectedKey]}
     </MenuToggle>
