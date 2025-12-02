@@ -65,5 +65,5 @@ export const useGroupActions = (obj: GroupKind): Action[] => {
     // Determine which impersonation action to show based on impersonation state
     const impersonationAction = impersonate ? factory.stopImpersonate() : factory.impersonate();
     return [impersonationAction, factory.addUsers()];
-  }, [impersonate, factory, obj]);
+  }, [impersonate, factory, obj?.metadata?.name]);
 };
