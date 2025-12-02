@@ -429,7 +429,7 @@ export const EnvironmentPage: React.FC<EnvironmentPageProps> = (props) => {
 
     Promise.all([
       k8sGet(ConfigMapModel, null, envNamespace).catch((err) => {
-        if (err.response.status !== 403) {
+        if (err.response?.status !== 403) {
           const errorMsg = err.message || t('public~Could not load ConfigMaps.');
           setLocalErrorMessage(errorMsg);
         }
@@ -438,7 +438,7 @@ export const EnvironmentPage: React.FC<EnvironmentPageProps> = (props) => {
         };
       }),
       k8sGet(SecretModel, null, envNamespace).catch((err) => {
-        if (err.response.status !== 403) {
+        if (err.response?.status !== 403) {
           const errorMsg = err.message || t('public~Could not load Secrets.');
           setLocalErrorMessage(errorMsg);
         }

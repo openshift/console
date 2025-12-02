@@ -37,7 +37,7 @@ export const secrets = {
   },
   clickCreateSecretDropdownButton: (secretType: string) => {
     cy.byTestID('item-create')
-      .click()
+      .click({ force: true })
       .get('body')
       .then(($body) => {
         if ($body.find(`[data-test-dropdown-menu=${secretType}]`).length) {
