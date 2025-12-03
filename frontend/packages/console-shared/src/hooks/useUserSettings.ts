@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { createHash } from 'crypto-browserify';
+import { useState, useEffect, useRef, useCallback, useMemo, Dispatch, SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
 import { UseUserSettings, getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -22,11 +21,11 @@ if (alwaysUseFallbackLocalStorage) {
 }
 
 const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => void] => {
-  const counterRef = React.useRef<number>(initialValue);
-  const increment = React.useCallback(() => {
+  const counterRef = useRef(initialValue);
+  const increment = useCallback(() => {
     counterRef.current += 1;
   }, []);
-  const decrement = React.useCallback(() => {
+  const decrement = useCallback(() => {
     counterRef.current -= 1;
   }, []);
   return [counterRef.current !== initialValue, increment, decrement];
@@ -34,29 +33,29 @@ const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => vo
 
 export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = false) => {
   // Mount status for safety state updates
-  const mounted = React.useRef(true);
-  React.useEffect(() => {
+  const mounted = useRef(true);
+  useEffect(() => {
     return () => {
       mounted.current = false;
     };
   }, []);
 
   // Keys and values
-  const keyRef = React.useRef<string>(key?.replace(/[^-._a-zA-Z0-9]/g, '_'));
-  const defaultValueRef = React.useRef<T>(defaultValue);
+  const keyRef = useRef<string>(key?.replace(/[^-._a-zA-Z0-9]/g, '_'));
+  const defaultValueRef = useRef<T>(defaultValue);
 
   // Settings
-  const [settings, setSettingsUnsafe] = React.useState<T>();
-  const setSettings: typeof setSettingsUnsafe = React.useCallback(
+  const [settings, setSettingsUnsafe] = useState<T>();
+  const setSettings: typeof setSettingsUnsafe = useCallback(
     (...args) => mounted.current && setSettingsUnsafe(...args),
     [setSettingsUnsafe],
   );
-  const settingsRef = React.useRef<T>(settings);
+  const settingsRef = useRef<T>(settings);
   settingsRef.current = settings;
 
   // Loaded
-  const [loaded, setLoadedUnsafe] = React.useState(false);
-  const setLoaded: typeof setLoadedUnsafe = React.useCallback(
+  const [loaded, setLoadedUnsafe] = useState(false);
+  const setLoaded: typeof setLoadedUnsafe = useCallback(
     (...args) => mounted.current && setLoadedUnsafe(...args),
     [setLoadedUnsafe],
   );
@@ -64,7 +63,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   // Request counter
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
 
-  const hashNameOrKubeadmin = (name: string): string | null => {
+  const hashNameOrKubeadmin = async (name: string): Promise<string | null> => {
     if (!name) {
       return null;
     }
@@ -72,26 +71,79 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
     if (name === 'kube:admin') {
       return 'kubeadmin';
     }
-    const hash = createHash('sha256');
-    hash.update(name);
-    return hash.digest('hex');
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(name);
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+
+    return hashHex;
   };
 
   // User and impersonate
-  const userUid = useSelector((state: RootState) => {
+  const currentUser = useSelector((state: RootState) => {
     const impersonateName = getImpersonate(state)?.name;
     const { uid, username } = getUser(state) ?? {};
-    const hashName = hashNameOrKubeadmin(username);
-    return impersonateName || uid || hashName || '';
+    return { impersonateName, uid, username };
   });
 
   const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
 
+  const [hashedUsername, setHashedUsername] = useState('');
+  const [isHashingComplete, setIsHashingComplete] = useState(false);
+
+  // Compute hash asynchronously when username changes
+  useEffect(() => {
+    if (currentUser.username) {
+      setIsHashingComplete(false);
+      hashNameOrKubeadmin(currentUser.username)
+        .then((hash) => {
+          if (mounted.current) {
+            setHashedUsername(hash || '');
+            setIsHashingComplete(true);
+          }
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error('Failed to hash username:', error);
+          if (mounted.current) {
+            setHashedUsername('');
+            setIsHashingComplete(true);
+          }
+        });
+    } else {
+      setHashedUsername('');
+      setIsHashingComplete(true);
+    }
+  }, [currentUser.username]);
+
+  // Compute final userUid once hashing is complete
+  const userUid = useMemo(() => {
+    if (
+      !isHashingComplete &&
+      currentUser.username &&
+      !currentUser.impersonateName &&
+      !currentUser.uid
+    ) {
+      // Still hashing, return empty string temporarily
+      return '';
+    }
+    return currentUser.impersonateName || currentUser.uid || hashedUsername || '';
+  }, [
+    currentUser.impersonateName,
+    currentUser.uid,
+    hashedUsername,
+    isHashingComplete,
+    currentUser.username,
+  ]);
+
   // Fallback
-  const [fallbackLocalStorage, setFallbackLocalStorageUnsafe] = React.useState<boolean>(
+  const [fallbackLocalStorage, setFallbackLocalStorageUnsafe] = useState(
     alwaysUseFallbackLocalStorage,
   );
-  const setFallbackLocalStorage: typeof setFallbackLocalStorageUnsafe = React.useCallback(
+  const setFallbackLocalStorage: typeof setFallbackLocalStorageUnsafe = useCallback(
     (...args) => mounted.current && setFallbackLocalStorageUnsafe(...args),
     [setFallbackLocalStorageUnsafe],
   );
@@ -107,7 +159,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
     impersonate,
   );
 
-  const configMapResource = React.useMemo(
+  const configMapResource = useMemo(
     () =>
       !userUid || isLocalStorage
         ? null
@@ -121,7 +173,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   );
   const [cfData, cfLoaded, cfLoadError] = useK8sWatchResource<K8sResourceKind>(configMapResource);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!userUid || isLocalStorage) {
       return;
     }
@@ -184,8 +236,8 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cfLoadError, cfLoaded, isLocalStorage]);
 
-  const callback = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
-    (action: React.SetStateAction<T>) => {
+  const callback = useCallback<Dispatch<SetStateAction<T>>>(
+    (action: SetStateAction<T>) => {
       const previousSettings = settingsRef.current;
       const newState =
         typeof action === 'function' ? (action as (prevState: T) => T)(previousSettings) : action;
@@ -205,7 +257,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
     [cfData, cfLoaded, decreaseRequest, increaseRequest, setSettings],
   );
 
-  const resultedSettings = React.useMemo(() => {
+  const resultedSettings = useMemo(() => {
     if (sync && cfLoaded && cfData && !isRequestPending) {
       /**
        * If key is deleted from the config map then return default value
