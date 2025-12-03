@@ -29,11 +29,15 @@ const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
   renderCell,
   renderHeader,
 }) => {
-  const cache: CellMeasurerCache = new CellMeasurerCache({
-    defaultHeight: celldefaultHeight,
-    minHeight: 200,
-    fixedWidth: true,
-  });
+  const cache: CellMeasurerCache = React.useMemo(
+    () =>
+      new CellMeasurerCache({
+        defaultHeight: celldefaultHeight,
+        minHeight: 200,
+        fixedWidth: true,
+      }),
+    [celldefaultHeight],
+  );
   return (
     <CellMeasurementContext.Provider
       value={{
