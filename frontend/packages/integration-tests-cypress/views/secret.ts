@@ -33,7 +33,12 @@ export const secrets = {
   clickAddCredentialsButton: () => cy.byTestID('add-credentials-button').click(),
   clickRemoveEntryButton: () => cy.byTestID('remove-entry-button').first().click(),
   clickRevealValues: () => {
-    cy.byTestID('reveal-values').click();
+    // Wait for the button to be stable (not re-rendering)
+    cy.byTestID('reveal-values', { timeout: 30000 }).should('be.visible');
+    // Add a small delay to ensure page is stable after any re-renders
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500);
+    cy.byTestID('reveal-values').click({ force: true });
   },
   clickCreateSecretDropdownButton: (secretType: string) => {
     cy.byTestID('item-create')

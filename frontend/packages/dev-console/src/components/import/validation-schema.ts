@@ -45,7 +45,8 @@ export const applicationNameValidationSchema = yup.object().shape({
     .max(63, 'Cannot be longer than 63 characters.')
     .when('selectedKey', {
       is: CREATE_APPLICATION_KEY,
-      then: yup.string().required('Required'),
+      then: (schema) => schema.required('Required'),
+      otherwise: (schema) => schema,
     }),
 });
 
@@ -77,100 +78,108 @@ export const resourcesValidationSchema = yup
 export const serverlessValidationSchema = (t: TFunction) =>
   yup.object().when('resources', {
     is: Resources.KnativeService,
-    then: yup.object().shape({
-      scaling: yup.object({
-        minpods: yup
-          .number()
-          .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Min Pods must be an integer.')))
-          .min(0, t('devconsole~Min Pods must be greater than or equal to 0.'))
-          .max(
-            Number.MAX_SAFE_INTEGER,
-            t('devconsole~Min Pods must be lesser than or equal to {{maxSafeInteger}}.', {
-              maxSafeInteger: Number.MAX_SAFE_INTEGER,
-            }),
-          ),
-        maxpods: yup
-          .number()
-          .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Max Pods must be an integer.')))
-          .min(1, t('devconsole~Max Pods must be greater than or equal to 1.'))
-          .max(
-            Number.MAX_SAFE_INTEGER,
-            t('devconsole~Max Pods must be lesser than or equal to {{maxSafeInteger}}.', {
-              maxSafeInteger: Number.MAX_SAFE_INTEGER,
-            }),
-          )
-          .test({
-            test(limit) {
-              const { minpods } = this.parent;
-              return limit ? limit >= minpods : true;
-            },
-            message: t('devconsole~Max Pods must be greater than or equal to Min Pods.'),
-          }),
-        concurrencytarget: yup
-          .number()
-          .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Concurrency target must be an integer.')))
-          .min(0, t('devconsole~Concurrency target must be greater than or equal to 0.'))
-          .max(
-            Number.MAX_SAFE_INTEGER,
-            t('devconsole~Concurrency target must be lesser than or equal to {{maxSafeInteger}}.', {
-              maxSafeInteger: Number.MAX_SAFE_INTEGER,
-            }),
-          ),
-        concurrencylimit: yup
-          .number()
-          .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .test(isInteger(t('devconsole~Concurrency limit must be an integer.')))
-          .min(0, t('devconsole~Concurrency limit must be greater than or equal to 0.'))
-          .max(
-            Number.MAX_SAFE_INTEGER,
-            t('devconsole~Concurrency limit must be lesser than or equal to {{maxSafeInteger}}.', {
-              maxSafeInteger: Number.MAX_SAFE_INTEGER,
-            }),
-          ),
-        concurrencyutilization: yup
-          .number()
-          .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-          .min(0, t('devconsole~Concurrency utilization must be between 0 and 100.'))
-          .max(100, t('devconsole~Concurrency utilization must be between 0 and 100.')),
-        autoscale: yup.object().shape({
-          autoscalewindow: yup
+    then: (schema) =>
+      schema.shape({
+        scaling: yup.object({
+          minpods: yup
             .number()
             .transform((cv) => (_.isNaN(cv) ? undefined : cv))
-            .test({
-              test(autoscalewindow) {
-                if (autoscalewindow) {
-                  const { autoscalewindowUnit } = this.parent;
-                  const value = convertToSec(autoscalewindow, autoscalewindowUnit);
-                  return value >= 6 && value <= 3600;
-                }
-                return true;
-              },
-              message: t('devconsole~Autoscale window must be between 6s and 1h.'),
-            }),
-        }),
-      }),
-      domainMapping: yup.array().of(
-        yup
-          .string()
-          .transform(removeKsvcInfoFromDomainMapping)
-          .matches(hostnameRegex, {
-            message: t(
-              'devconsole~Domain name must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
+            .test(isInteger(t('devconsole~Min Pods must be an integer.')))
+            .min(0, t('devconsole~Min Pods must be greater than or equal to 0.'))
+            .max(
+              Number.MAX_SAFE_INTEGER,
+              t('devconsole~Min Pods must be lesser than or equal to {{maxSafeInteger}}.', {
+                maxSafeInteger: Number.MAX_SAFE_INTEGER,
+              }),
             ),
-            excludeEmptyString: true,
-          })
-          .test(
-            'domainname-has-segements',
-            t('devconsole~Domain name must consist of at least two segments separated by dots.'),
-            function (domainName: string) {
-              return domainName.split('.').length >= 2;
-            },
-          ),
-      ),
-    }),
+          maxpods: yup
+            .number()
+            .transform((cv) => (_.isNaN(cv) ? undefined : cv))
+            .test(isInteger(t('devconsole~Max Pods must be an integer.')))
+            .min(1, t('devconsole~Max Pods must be greater than or equal to 1.'))
+            .max(
+              Number.MAX_SAFE_INTEGER,
+              t('devconsole~Max Pods must be lesser than or equal to {{maxSafeInteger}}.', {
+                maxSafeInteger: Number.MAX_SAFE_INTEGER,
+              }),
+            )
+            .test({
+              test(limit) {
+                const { minpods } = this.parent;
+                return limit ? limit >= minpods : true;
+              },
+              message: t('devconsole~Max Pods must be greater than or equal to Min Pods.'),
+            }),
+          concurrencytarget: yup
+            .number()
+            .transform((cv) => (_.isNaN(cv) ? undefined : cv))
+            .test(isInteger(t('devconsole~Concurrency target must be an integer.')))
+            .min(0, t('devconsole~Concurrency target must be greater than or equal to 0.'))
+            .max(
+              Number.MAX_SAFE_INTEGER,
+              t(
+                'devconsole~Concurrency target must be lesser than or equal to {{maxSafeInteger}}.',
+                {
+                  maxSafeInteger: Number.MAX_SAFE_INTEGER,
+                },
+              ),
+            ),
+          concurrencylimit: yup
+            .number()
+            .transform((cv) => (_.isNaN(cv) ? undefined : cv))
+            .test(isInteger(t('devconsole~Concurrency limit must be an integer.')))
+            .min(0, t('devconsole~Concurrency limit must be greater than or equal to 0.'))
+            .max(
+              Number.MAX_SAFE_INTEGER,
+              t(
+                'devconsole~Concurrency limit must be lesser than or equal to {{maxSafeInteger}}.',
+                {
+                  maxSafeInteger: Number.MAX_SAFE_INTEGER,
+                },
+              ),
+            ),
+          concurrencyutilization: yup
+            .number()
+            .transform((cv) => (_.isNaN(cv) ? undefined : cv))
+            .min(0, t('devconsole~Concurrency utilization must be between 0 and 100.'))
+            .max(100, t('devconsole~Concurrency utilization must be between 0 and 100.')),
+          autoscale: yup.object().shape({
+            autoscalewindow: yup
+              .number()
+              .transform((cv) => (_.isNaN(cv) ? undefined : cv))
+              .test({
+                test(autoscalewindow) {
+                  if (autoscalewindow) {
+                    const { autoscalewindowUnit } = this.parent;
+                    const value = convertToSec(autoscalewindow, autoscalewindowUnit);
+                    return value >= 6 && value <= 3600;
+                  }
+                  return true;
+                },
+                message: t('devconsole~Autoscale window must be between 6s and 1h.'),
+              }),
+          }),
+        }),
+        domainMapping: yup.array().of(
+          yup
+            .string()
+            .transform(removeKsvcInfoFromDomainMapping)
+            .matches(hostnameRegex, {
+              message: t(
+                'devconsole~Domain name must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
+              ),
+              excludeEmptyString: true,
+            })
+            .test(
+              'domainname-has-segements',
+              t('devconsole~Domain name must consist of at least two segments separated by dots.'),
+              function (domainName: string) {
+                return domainName.split('.').length >= 2;
+              },
+            ),
+        ),
+      }),
+    otherwise: (schema) => schema,
   });
 
 export const routeValidationSchema = (t: TFunction) =>
@@ -178,9 +187,11 @@ export const routeValidationSchema = (t: TFunction) =>
     secure: yup.boolean(),
     tls: yup.object().when('secure', {
       is: true,
-      then: yup.object({
-        termination: yup.string().required(t('devconsole~Please select a termination type.')),
-      }),
+      then: (schema) =>
+        schema.shape({
+          termination: yup.string().required(t('devconsole~Please select a termination type.')),
+        }),
+      otherwise: (schema) => schema,
     }),
     hostname: yup
       .string()
@@ -208,12 +219,13 @@ export const limitsValidationSchema = (t: TFunction) =>
     cpu: yup.object().shape({
       request: yup
         .number()
+        .nullable()
         .transform((request) => (_.isNaN(request) ? undefined : request))
         .min(0, t('devconsole~Request must be greater than or equal to 0.'))
         .test({
           test(request) {
             const { requestUnit, limit, limitUnit } = this.parent;
-            if (limit !== undefined) {
+            if (limit !== undefined && limit !== null) {
               return (
                 convertToBaseValue(`${request}${requestUnit}`) <=
                 convertToBaseValue(`${limit}${limitUnit}`)
@@ -223,16 +235,17 @@ export const limitsValidationSchema = (t: TFunction) =>
           },
           message: t('devconsole~CPU request must be less than or equal to limit.'),
         }),
-      requestUnit: yup.string(t('devconsole~Unit must be millicores or cores.')).ensure(),
-      limitUnit: yup.string(t('devconsole~Unit must be millicores or cores.')).ensure(),
+      requestUnit: yup.string().ensure(),
+      limitUnit: yup.string().ensure(),
       limit: yup
         .number()
+        .nullable()
         .transform((limit) => (_.isNaN(limit) ? undefined : limit))
         .min(0, t('devconsole~Limit must be greater than or equal to 0.'))
         .test({
           test(limit) {
             const { request, requestUnit, limitUnit } = this.parent;
-            if (limit !== undefined) {
+            if (limit !== undefined && limit !== null) {
               return (
                 convertToBaseValue(`${limit}${limitUnit}`) >=
                 convertToBaseValue(`${request}${requestUnit}`)
@@ -246,12 +259,13 @@ export const limitsValidationSchema = (t: TFunction) =>
     memory: yup.object().shape({
       request: yup
         .number()
+        .nullable()
         .transform((request) => (_.isNaN(request) ? undefined : request))
         .min(0, t('devconsole~Request must be greater than or equal to 0.'))
         .test({
           test(request) {
             const { requestUnit, limit, limitUnit } = this.parent;
-            if (limit !== undefined) {
+            if (limit !== undefined && limit !== null) {
               return (
                 convertToBaseValue(`${request}${requestUnit}`) <=
                 convertToBaseValue(`${limit}${limitUnit}`)
@@ -261,15 +275,16 @@ export const limitsValidationSchema = (t: TFunction) =>
           },
           message: t('devconsole~Memory request must be less than or equal to limit.'),
         }),
-      requestUnit: yup.string(t('devconsole~Unit must be Mi or Gi.')),
+      requestUnit: yup.string(),
       limit: yup
         .number()
+        .nullable()
         .transform((limit) => (_.isNaN(limit) ? undefined : limit))
         .min(0, t('devconsole~Limit must be greater than or equal to 0.'))
         .test({
           test(limit) {
             const { request, requestUnit, limitUnit } = this.parent;
-            if (limit !== undefined) {
+            if (limit !== undefined && limit !== null) {
               return (
                 convertToBaseValue(`${request}${requestUnit}`) <=
                 convertToBaseValue(`${limit}${limitUnit}`)
@@ -279,17 +294,19 @@ export const limitsValidationSchema = (t: TFunction) =>
           },
           message: t('devconsole~Memory limit must be greater than or equal to request.'),
         }),
-      limitUnit: yup.string(t('devconsole~Unit must be Mi or Gi.')),
+      limitUnit: yup.string(),
     }),
   });
 
 export const imageValidationSchema = (t: TFunction) =>
   yup.object().when('build', {
     is: (build) => build.strategy === 'Source',
-    then: yup.object().shape({
-      selected: yup.string().required(t('devconsole~Required')),
-      tag: yup.string().required(t('devconsole~Required')),
-    }),
+    then: (schema) =>
+      schema.shape({
+        selected: yup.string().required(t('devconsole~Required')),
+        tag: yup.string().required(t('devconsole~Required')),
+      }),
+    otherwise: (schema) => schema,
   });
 
 export const gitValidationSchema = (t: TFunction) =>
@@ -301,9 +318,11 @@ export const gitValidationSchema = (t: TFunction) =>
       .required(t('devconsole~Required')),
     type: yup.string().when('showGitType', {
       is: true,
-      then: yup
-        .string()
-        .required(t('devconsole~We failed to detect the Git type. Please choose a Git type.')),
+      then: (schema) =>
+        schema.required(
+          t('devconsole~We failed to detect the Git type. Please choose a Git type.'),
+        ),
+      otherwise: (schema) => schema,
     }),
     showGitType: yup.boolean(),
   });
@@ -311,26 +330,30 @@ export const gitValidationSchema = (t: TFunction) =>
 export const dockerValidationSchema = (t: TFunction) =>
   yup.object().when('build', {
     is: (build) => build.strategy === 'Docker',
-    then: yup.object().shape({
-      containerPort: yup
-        .number()
-        .test(isInteger(t('devconsole~Container port should be an integer'))),
-      dockerfilePath: yup.string().required(t('devconsole~Required')),
-    }),
+    then: (schema) =>
+      schema.shape({
+        containerPort: yup
+          .number()
+          .test(isInteger(t('devconsole~Container port should be an integer'))),
+        dockerfilePath: yup.string().required(t('devconsole~Required')),
+      }),
+    otherwise: (schema) => schema,
   });
 
 export const devfileValidationSchema = (t: TFunction) =>
   yup.object().when('build', {
     is: (build) => build.strategy === 'Devfile',
-    then: yup.object().shape({
-      devfilePath: yup.string().required(t('devconsole~Required')),
-      devfileContent: yup
-        .string()
-        .min(1, t('devconsole~Required'))
-        .required(t('devconsole~Required')),
-      devfileHasError: yup.boolean().oneOf([false]),
-      devfileSuggestedResources: yup.object().required(t('devconsole~Required')),
-    }),
+    then: (schema) =>
+      schema.shape({
+        devfilePath: yup.string().required(t('devconsole~Required')),
+        devfileContent: yup
+          .string()
+          .min(1, t('devconsole~Required'))
+          .required(t('devconsole~Required')),
+        devfileHasError: yup.boolean().oneOf([false]),
+        devfileSuggestedResources: yup.object().required(t('devconsole~Required')),
+      }),
+    otherwise: (schema) => schema,
   });
 
 export const buildValidationSchema = yup.object().shape({
@@ -345,7 +368,9 @@ export const isiValidationSchema = (t: TFunction) =>
     name: yup.string().required(t('devconsole~Required')),
     image: yup.object().required(t('devconsole~Required')),
     tag: yup.string(),
-    status: yup.string().required(t('devconsole~Required')),
+    status: yup.object().shape({
+      status: yup.string().required(t('devconsole~Required')),
+    }),
   });
 
 export const importFlowPipelineTemplateValidationSchema = yup
@@ -354,7 +379,9 @@ export const importFlowPipelineTemplateValidationSchema = yup
     is: (isPipelineEnabled, buildOption, pipelineType) =>
       (isPipelineEnabled || buildOption === BuildOptions.PIPELINES) &&
       pipelineType !== PipelineType.PAC,
-    then: yup.object().shape({
-      templateSelected: yup.string().required(),
-    }),
+    then: (schema) =>
+      schema.shape({
+        templateSelected: yup.string().required(),
+      }),
+    otherwise: (schema) => schema,
   });

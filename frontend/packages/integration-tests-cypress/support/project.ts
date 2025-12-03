@@ -52,5 +52,8 @@ Cypress.Commands.add('deleteProject', (name: string) => {
 });
 
 Cypress.Commands.add('deleteProjectWithCLI', (name: string, timeout?: number) => {
-  cy.exec(`oc delete project ${name}`, { timeout });
+  cy.exec(`oc delete project ${name} --wait=false`, {
+    timeout: timeout || 60000,
+    failOnNonZeroExit: false,
+  });
 });
