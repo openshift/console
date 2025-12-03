@@ -94,11 +94,13 @@ describe('Kubernetes resource CRUD operations', () => {
 
   const testObjs = Cypress.env('openshift') === true ? k8sObjs.merge(openshiftObjs) : k8sObjs;
   const testLabel = 'automated-test-name';
+
   const resourcesWithCreationForm = new Set([
     'StorageClass',
     'PersistentVolumeClaim',
     'snapshot.storage.k8s.io~v1~VolumeSnapshot',
   ]);
+
   const resourcesWithSyncedEditor = new Set([
     'ConfigMap',
     'DeploymentConfig',
@@ -118,6 +120,8 @@ describe('Kubernetes resource CRUD operations', () => {
     'ImageStream',
     'Job',
     'LimitRange',
+    'PersistentVolume',
+    'PersistentVolumeClaim',
     'Pod',
     'PodDisruptionBudget',
     'ReplicaSet',
@@ -126,7 +130,11 @@ describe('Kubernetes resource CRUD operations', () => {
     'Role',
     'Secret',
     'ServiceAccount',
+    'snapshot.storage.k8s.io~v1~VolumeSnapshot',
+    'snapshot.storage.k8s.io~v1~VolumeSnapshotClass',
+    'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
     'StatefulSet',
+    'StorageClass',
     'user.openshift.io~v1~Group',
   ]);
 
