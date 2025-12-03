@@ -557,7 +557,10 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
     const filterParam = params.get('rowFilter-role-kind');
     const newFilters = filterParam ? filterParam.split(',') : [];
 
-    if (!_.isEqual(newFilters.sort(), selectedFilters.sort())) {
+    const sortedNew = [...newFilters].sort();
+    const sortedSelected = [...selectedFilters].sort();
+
+    if (!_.isEqual(sortedNew, sortedSelected)) {
       setSelectedFilters(newFilters);
     }
   }, [location.search, selectedFilters]);
