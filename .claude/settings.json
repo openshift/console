@@ -1,0 +1,122 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(yarn test:*)",
+      "Bash(yarn test)",
+      "Bash(yarn coverage:*)",
+      "Bash(yarn coverage)",
+      "Bash(./test-frontend.sh)",
+      "Bash(./test-backend.sh)",
+
+      "Bash(yarn lint:*)",
+      "Bash(yarn lint)",
+      "Bash(yarn eslint:*)",
+      "Bash(yarn gherkin-lint:*)",
+
+      "Bash(yarn dev-once)",
+      "Bash(yarn check-cycles)",
+      "Bash(yarn debug-test:*)",
+      "Bash(yarn debug-test)",
+
+      "Bash(tree:*)",
+
+      "Bash(git fetch:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+
+      "Bash(gh pr view:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr checks:*)",
+
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:patch-diff.githubusercontent.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:www.patternfly.org)",
+
+      "Bash(npm view:*)",
+      "Bash(yarn --version)",
+      "Bash(node --version)",
+      "Bash(go version)",
+
+      "Bash(oc get:*)",
+      "Bash(oc describe:*)",
+      "Bash(oc logs:*)",
+      "Bash(kubectl get:*)",
+      "Bash(kubectl describe:*)",
+      "Bash(kubectl version:*)",
+
+      "Bash(docker --version)",
+      "Bash(docker ps:*)",
+      "Bash(docker images:*)",
+
+      "Bash(claude --version)"
+    ],
+
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -fd:*)",
+      "Bash(git clean -fdx:*)",
+
+      "Bash(git checkout -f:*)",
+      "Bash(git checkout --force:*)",
+      "Bash(git checkout -- .:*)",
+      "Bash(git checkout HEAD -- .:*)",
+
+      "Bash(git fetch --force:*)",
+      "Bash(git fetch -f:*)",
+
+      "Bash(git stash drop:*)",
+      "Bash(git stash clear:*)",
+
+      "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)",
+
+      "Bash(oc delete:*)",
+      "Bash(oc apply:*)",
+      "Bash(oc create:*)",
+      "Bash(kubectl delete:*)",
+      "Bash(kubectl apply:*)",
+      "Bash(kubectl create:*)",
+
+      "Bash(docker rm:*)",
+      "Bash(docker rmi:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker kill:*)"
+    ],
+
+    "ask": [
+      "Bash(yarn install:*)",
+      "Bash(yarn add:*)",
+      "Bash(yarn upgrade:*)",
+      "Bash(npm install:*)",
+      "Bash(npm i:*)",
+      "Bash(go get:*)",
+      "Bash(go mod:*)",
+
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git apply:*)",
+
+      "Bash(gh pr create:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh pr close:*)",
+
+      "Bash(yarn build)",
+      "Bash(./build-frontend.sh)",
+      "Bash(./build-backend.sh)",
+      "Bash(./build.sh)",
+
+      "Bash(yarn dev)"
+    ]
+  }
+}
