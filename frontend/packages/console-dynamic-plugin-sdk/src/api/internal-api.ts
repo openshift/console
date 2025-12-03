@@ -56,7 +56,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = require('@console
   .default;
 
 export const UtilizationBody: React.FC<UtilizationBodyProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationBody')
-  .default;
+  .UtilizationBody;
 
 export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown')
   .UtilizationDurationDropdown;
@@ -68,7 +68,7 @@ export const LazyActionMenu: React.FC<LazyActionMenuProps> = require('@console/s
   .default;
 
 export const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = require('@console/app/src/components/quick-starts/loader/QuickStartsLoader')
-  .default;
+  .QuickStartsLoader;
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')
   .useUtilizationDuration;
