@@ -29,13 +29,13 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
   const onSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
     if (!group?.metadata?.name) {
-      setErrorMessage(t('public~Group is not available'));
+      setErrorMessage(t('public~Selected group is unavailable'));
       return;
     }
     // Filter out empty values
     const validUsers = values.map((v) => v.trim()).filter((v) => v.length > 0);
     if (validUsers.length === 0) {
-      setErrorMessage(t('public~Please enter at least one user'));
+      setErrorMessage(t('public~Enter at least one user'));
       return;
     }
     setInProgress(true);
@@ -62,13 +62,13 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
       <ModalHeader title={t('public~Add Users')} labelId="add-group-users-modal-title" />
       <ModalBody>
         {!group?.metadata?.name ? (
-          <Alert isInline variant={AlertVariant.danger} title={t('public~An error occurred')}>
-            {t('public~Group is not available')}
+          <Alert isInline variant={AlertVariant.danger} title={t('public~Error occurred')}>
+            {t('public~Selected group is unavailable')}
           </Alert>
         ) : (
           <>
             <p className="pf-v6-u-mb-md">
-              {t('public~Add new Users to Group {{name}}.', { name: group.metadata.name })}
+              {t('public~Add new users to group {{name}}', { name: group.metadata.name })}
             </p>
             <ListInput
               label={t('public~Users')}
@@ -81,7 +81,7 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
                 isInline
                 className="pf-v6-u-mt-md"
                 variant={AlertVariant.danger}
-                title={t('public~An error occurred')}
+                title={t('public~Error occurred')}
               >
                 {errorMessage}
               </Alert>
