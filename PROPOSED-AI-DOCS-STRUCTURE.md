@@ -1,7 +1,7 @@
 # Proposed Directory Structure for AI Context & Configuration
 
 **Purpose**: Establish modular AI documentation and Claude Code configuration
-**Date**: 2025-11-25
+**Date**: 2025-12-02
 **Status**: Awaiting team approval
 
 ---
@@ -9,12 +9,12 @@
 ## Summary of Changes
 
 ### What's Being Added
-- ✅ **AGENTS.md** - Central AI documentation hub
-- ✅ **.ai/README.md** - Explains .ai/ directory
-- ✅ **.ai/ARCHITECTURE.md** - System architecture, Plugin SDK, tech stack
-- ✅ **.ai/CONVENTIONS.md** - Coding standards, patterns, file naming
-- ✅ **.ai/TESTING.md** - All testing (unit, integration, E2E)
+- ✅ **AGENTS.md** - Central AI documentation hub - https://agents.md https://github.com/openai/agents.md
+- ✅ **ARCHITECTURE.md** - System architecture, Plugin SDK, tech stack
+- ✅ **CONVENTIONS.md** - Coding standards, Proper patterns and things to avoid, etc. ("See STYLEGUIDE.md for base rules. This document provides AI-specific...")
+- ✅ **TESTING.md** - All testing (unit, integration, E2E)
 - ✅ **.claude/settings.json** - Team Claude Code configuration
+- ✅ **.coderabbit.yaml** - Team coderabbit configuration
 
 ### What's Being Updated
 - 🔄 **CLAUDE.md** - Update to reference AGENTS.md
@@ -22,6 +22,7 @@
 
 ### What's Being Removed
 - ❌ **.ai/context.md** - Content merged into new modular files
+- ❌ **.ai/README.md** - The AGENTS.md at the root acts as a README for AI
 
 ---
 
@@ -55,14 +56,14 @@ console/
 console/
 ├── AGENTS.md                           # ✅ NEW - Central AI hub
 ├── CLAUDE.md                           # 🔄 UPDATED - Points to AGENTS.md
-├── .ai/                                # Team AI context (AI-agnostic)
-│   ├──[context.md deleted]            # ❌ REMOVED - Content merged above
-│   ├── README.md                       # ✅ NEW - Explains .ai/ structure
-│   ├── ARCHITECTURE.md                 # ✅ NEW - System arch, Plugin SDK, tech stack
-│   ├── CONVENTIONS.md                  # ✅ NEW - Coding standards, patterns, etc.
-│   └── TESTING.md                      # ✅ NEW - All testing approaches
-├── .claude/                            # Claude Code configuration
-│   ├── settings.json                   # ✅ NEW - Team config (checked in)
+├── ARCHITECTURE.md                     # ✅ NEW - System arch, Plugin SDK, tech stack
+├── CONVENTIONS.md                      # ✅ NEW - Coding standards, patterns, etc. (References STYLEGUIDE.md)
+├── TESTING.md                          # ✅ NEW - All testing approaches
+├── .ai/                                # ❌ REMOVED 
+│   ├──[context.md deleted]             # ❌ REMOVED - Content merged into ARCHITECTURE, CONVENTIONS, TESTING
+│   ├──[README.md deleted]              # ❌ Replaced by AGENTS.md
+├── .claude/                            # Claude Code
+│   ├── settings.json                   # ✅ NEW - Team **configurations**
 │   └── commands/                       # Team commands
 ├── .cursor/                            # ✔️ EXISTS - Cursor-specific configs
 │   └── context.md                      # 🔄 UPDATED - Points to AGENTS.md
@@ -70,7 +71,7 @@ console/
 ├── CONTRIBUTING.md                     # ✔️ UNCHANGED
 ├── STYLEGUIDE.md                       # ✔️ UNCHANGED
 ├── INTERNATIONALIZATION.md             # ✔️ UNCHANGED
-└── coderabbitai.json                   # ✅ NEW - references .ai/ structure
+└── coderabbit.yaml                     # ✅ NEW - Custom configurations and references new and existing files
  
 
 Legend:
@@ -82,25 +83,23 @@ Legend:
 
 ---
 
+## Flow Diagram
+
+![AI Agent Diagram](PROPOSED-AI-DOCS-DIAGRAM.png)
+
+---
+
 ## File Purposes & Sizes
 
 ### Root Level
 
-| File | Purpose | Size | Audience |
-|------|---------|------|----------|
-| **AGENTS.md** | Central AI documentation hub, quick start | 6-8KB | All AI tools |
-| **CLAUDE.md** | Claude Code entry point → AGENTS.md | Updated | Claude Code |
-
-### .ai/ Directory (Team AI Context)
-
-| File | Purpose | Size | Checked In |
-|------|---------|------|------------|
-| **README.md** | Explains .ai/ organization | 1-2KB | ✅ Yes |
-| **ARCHITECTURE.md** | System architecture, Plugin SDK, tech stack, monorepo | 10-12KB | ✅ Yes |
-| **CONVENTIONS.md** | Coding standards, P0/P1 patterns, file naming | 10-12KB | ✅ Yes |
-| **TESTING.md** | Unit, integration, E2E testing patterns | 6-8KB | ✅ Yes |
-
-**Total .ai/ documentation**: ~30-35KB (vs current 5KB context.md)
+| File | Purpose | Audience | Checked In |
+|------|---------|----------|------------|
+| **AGENTS.md** | Central AI documentation hub, Acts as README for AI, quick start | All AI tools | ✅ Yes |
+| **CLAUDE.md** | Claude Code entry point → AGENTS.md | Claude Code | ✅ Yes |
+| **ARCHITECTURE.md** | System architecture, Plugin SDK, tech stack, monorepo | All AI tools | ✅ Yes |
+| **CONVENTIONS.md** | Coding standards, P0/P1 patterns, file naming | All AI tools | ✅ Yes |
+| **TESTING.md** | Unit, integration, E2E testing patterns | All AI tools | ✅ Yes |
 
 ### .claude/ Directory (Claude Code Configuration)
 
@@ -113,7 +112,7 @@ Legend:
 
 ## Content Distribution
 
-### .ai/ARCHITECTURE.md
+### ARCHITECTURE.md
 **Contains:**
 - Monorepo package structure (frontend/, pkg/, cmd/)
 - Technology stack overview:
@@ -130,7 +129,7 @@ Legend:
 - Key architectural decisions
 - Package relationships and dependencies
 
-### .ai/CONVENTIONS.md
+### CONVENTIONS.md
 **Contains:**
 - TypeScript/React conventions
   - Functional components and hooks
@@ -151,10 +150,11 @@ Legend:
 - Error handling patterns
 - P0/P1 review patterns
 
-### .ai/TESTING.md
+### TESTING.md
 **Contains:**
 - Unit testing patterns (Jest)
 - Integration testing approaches
+- React Testing Library best practices
 - E2E testing (Cypress)
 - Test organization and structure
 - Coverage expectations
@@ -169,45 +169,25 @@ Legend:
 When Claude Code starts a session:
 
 1. **CLAUDE.md** → Points to AGENTS.md
-2. **settings.json hook** → Loads AGENTS.md
-3. **settings.json hook** → Loads all .ai/ files
-4. **settings.local.json hook** → Loads personal workflow (if configured)
+2. **settings.json** → Is automatically discovered and loads without any mention in CLAUDE.md
+3. **settings.local.json** → Loads personal workflow (if configured)
 
 ### Team vs Personal Separation
 
-**Team Configuration** (checked into git, affects everyone):
+**Team Configuration**:
 - `.claude/settings.json` - Team permissions and hooks
-- `.ai/` directory - All team guidelines and rules
 - `.claude/commands/` - Shared slash commands
-- `AGENTS.md` - Central documentation hub
+- `AGENTS.md` - Central hub for AI coding agents
 
-**Personal Configuration** (gitignored, individual developers, not checked in):
-- `.claude/settings.local.json` - Personal overrides and hooks
-- `.claude/local/` - Personal rules, preferences, analysis files
+**Personal Configuration** (gitignored, individual developers):
+- `.claude/settings.local.json` -  for settings that are not checked in, useful for personal preferences and experimentation, such as hooks
 
 ### AI Tool Compatibility
 
 **Works With**:
-- ✅ Claude Code (via settings.json hooks)
-- ✅ CodeRabbit (via .coderabbit.yaml references)
-- ✅ Cursor/Copilot (via .cursorrules or similar)
-- ✅ Any AI tool (can read .ai/ files directly)
-
----
-
-## Benefits
-
-### For Developers
-✅ **Clear separation**: Team standards vs personal workflow
-✅ **No conflicts**: Personal settings don't affect teammates
-✅ **No suggestions**: Claude stops suggesting "create settings.json"
-✅ **Better onboarding**: AGENTS.md provides quick start
-
-### For Maintainers
-✅ **Modular updates**: Update only relevant files when things change
-✅ **Scalable**: Easy to add new guideline files (ACCESSIBILITY.md, etc.)
-✅ **Version control**: Track changes to specific guidelines
-✅ **AI-agnostic**: Works with all AI tools, not just Claude
+- ✅ Claude Code
+- ✅ CodeRabbitAI (via .coderabbit.yaml references)
+- ✅ Cursor/Copilot (via .cursor/context.md)
 
 ---
 
@@ -217,19 +197,18 @@ When Claude Code starts a session:
 ```
 ✅ AGENTS.md
 ✅ CLAUDE.md (updated)
-✅ .cursor/context.md (updated)
-✅ .ai/README.md
-✅ .ai/ARCHITECTURE.md
-✅ .ai/CONVENTIONS.md
-✅ .ai/TESTING.md
+✅ ARCHITECTURE.md
+✅ CONVENTIONS.md
+✅ TESTING.md
 ✅ .claude/settings.json
 ✅ .claude/commands/**
-✅ .gitignore (updated)
+✅ .cursor/context.md (updated to reference AGENTS.md)
 ```
 
 **Deleted**:
 ```
 ❌ .ai/context.md (content merged into new files)
+❌ .ai/README.md (replaced by AGENTS.md)
 ```
 
 ---
@@ -239,111 +218,25 @@ When Claude Code starts a session:
 ### Who is affected?
 - **All developers**: Will benefit from AI documentation
 - **Claude Code users**: Will benefit from settings.json configuration
-- **Cursor/Copilot users**: Can reference .ai/ files
+- **Cursor/Copilot users**: Will reference ARCHITECTURE.md, CONVENTIONS.md, TESTING.md
 - **PR reviewers**: AI agents will follow established patterns
-
-### Breaking Changes?
-- ❌ **No breaking changes**
-- ✅ All existing files remain (except context.md merged)
-- ✅ Personal configurations (.claude/local/) unaffected
-- ✅ Backward compatible
 
 ### Migration Required?
 - ❌ **No migration needed**
-- ✅ .ai/context.md content merged into new files
+- ✅ .ai/context.md and .ai/README.md merged into new files
 - ✅ Existing workflows continue working
 - ✅ Claude Code benefits immediately from settings.json
 
 ---
 
-## Implementation Timeline
-
-### Phase 0: Configuration (Day 1)
-- Create `.claude/settings.json`
-- Update `.gitignore`
-- Create `.ai/README.md`
-- Update `CLAUDE.md`
-
-### Phases 1-5: Documentation (Days 2-4)
-- Create `AGENTS.md`
-- Create `.ai/ARCHITECTURE.md` (system arch + tech stack)
-- Create `.ai/CONVENTIONS.md` (standards + patterns)
-- Create `.ai/TESTING.md` (all testing types)
-
-### Phase 6-7: Cleanup & Validation (Day 5)
-- Delete `.ai/context.md`
-- Validate all cross-references
-- Test with Claude Code session restart
-
-**Total**: ~5 days implementation time
-
----
-
 ## Questions for Team Review
 
-1. **Approve directory structure?** ✅ / ❌
-2. **Approve checking in `.claude/settings.json`?** ✅ / ❌
-3. **Approve deleting `.ai/context.md`?** ✅ / ❌
-4. **Any additional files needed?** _____________
-5. **Any concerns with gitignore strategy?** _____________
-6. **Preferred implementation timeline?** _____________
+1. **Approve new files structure?** ✅ / ❌
+2. **Approve checking config files `.claude/settings.json` and `.coderabbit.yaml`?** ✅ / ❌
+3. **Approve deleting `.ai/context.md` and `.ai/README.md`?** ✅ / ❌
 
 ---
 
-## Sample: .claude/settings.json (Team Configuration)
-
-This is what will be checked into git:
-
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "comment": "Load central AI guide",
-            "command": "cat AGENTS.md"
-          },
-          {
-            "type": "command",
-            "comment": "Load all team guidelines (3 .ai/ files)",
-            "command": "find .ai -type f -name '*.md' -not -name 'README.md' -exec cat {} +"
-          }
-        ]
-      }
-    ]
-  },
-  "permissions": {
-    "allow": [
-      "Read(//AGENTS.md)",
-      "Read(//CLAUDE.md)",
-      "Read(//.ai/**)",
-      "Read(//STYLEGUIDE.md)",
-      "Read(//INTERNATIONALIZATION.md)",
-      "Read(//CONTRIBUTING.md)",
-      "Read(//.claude/commands/**)",
-      "Bash(yarn test:*)",
-      "Bash(yarn build)",
-      "Bash(yarn lint)",
-      "Bash(yarn i18n)",
-      "Bash(./build-backend.sh)",
-      "Bash(./test-backend.sh)",
-      "Bash(git status)",
-      "Bash(git diff:*)",
-      "Bash(git log:*)",
-      "SlashCommand(/init)",
-      "SlashCommand(/plugin-api-review)"
-    ]
-  }
-}
-```
-
-**Why These Permissions?**
-- Common Console development operations
-- Safe read operations
-- Standard build/test commands
-- No destructive operations without asking
 
 **Personal Permissions?**
 - Developers can add more in `.claude/settings.local.json` (gitignored)
