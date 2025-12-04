@@ -39,14 +39,14 @@ Before starting the review, verify that required tools are installed and authent
    - If not installed:
      - Run: `curl -fsSL https://cli.coderabbit.ai/install.sh | sh`
      - Then: `source ~/.zshrc` (or appropriate shell config)
-   - Authentication (MUST be done within Claude Code):
+   - Authentication:
      - Ask user to request: "Run: coderabbit auth login"
      - Claude will execute the command and provide authentication URL
      - User opens URL in browser and copies token
      - User pastes token back to Claude
      - Verify with: `coderabbit auth status`
 
-**IMPORTANT**: If CodeRabbit is missing or not authenticated, you can still proceed with Claude-only review. Authentication improves CodeRabbit's review quality significantly.
+**IMPORTANT**: If CodeRabbit is missing or not authenticated, you will stop and will not proceed.
 
 ## Process
 
