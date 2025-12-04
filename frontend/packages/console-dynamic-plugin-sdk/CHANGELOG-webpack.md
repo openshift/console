@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.21.0-prerelease.1 - 2025-12-04
+
+- Remove usage of direct `webpack` imports in favor of `compiler.webpack` ([OCPBUGS-66345], [#15802])
+
 ## 4.20.0 - 2025-11-24
 
 > Initial release for OCP Console 4.20.
@@ -98,6 +102,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-53030]: https://issues.redhat.com/browse/OCPBUGS-53030
 [OCPBUGS-55323]: https://issues.redhat.com/browse/OCPBUGS-55323
 [OCPBUGS-61569]: https://issues.redhat.com/browse/OCPBUGS-61569
+[OCPBUGS-66345]: https://issues.redhat.com/browse/OCPBUGS-66345
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -115,3 +120,4 @@ table in [Console dynamic plugins README](./README.md).
 [#14993]: https://github.com/openshift/console/pull/14993
 [#15183]: https://github.com/openshift/console/pull/15183
 [#15479]: https://github.com/openshift/console/pull/15479
+[#15802]: https://github.com/openshift/console/pull/15802
