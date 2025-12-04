@@ -1,6 +1,4 @@
 import { When, Then, Given } from 'cypress-cucumber-preprocessor/steps';
-import { pipelineBuilderPO } from '@console/pipelines-plugin/integration-tests/support/page-objects';
-import { pipelinesPage } from '@console/pipelines-plugin/integration-tests/support/pages';
 import { devNavigationMenu } from '../../constants';
 import { actionsMenu, devNavigationMenuPO, formPO, search } from '../../pageObjects';
 import { eventSourcePO, gitPO, helmChartRepositoriesPO } from '../../pageObjects/add-flow-po';
@@ -72,9 +70,15 @@ When('user switches to YAML view', () => {
 
 When('user changes spec.output.to.name to {string}', (yamlLocation: string) => {
   yamlEditor.isLoaded();
-  pipelinesPage.clearYAMLEditor();
-  pipelinesPage.setEditorContent(yamlLocation);
-  cy.get(pipelineBuilderPO.create).click();
+  cy.get('div.monaco-scrollable-element.editor-scrollable.vs-dark')
+    .click()
+    .focused()
+    .type('{ctrl}a')
+    .clear();
+  cy.readFile(yamlLocation).then((str) => {
+    yamlEditor.setEditorContent(str);
+  });
+  cy.get('[data-test-id="submit-button"]').click();
 });
 
 When('user switches to Form view', () => {

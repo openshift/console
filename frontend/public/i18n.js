@@ -69,7 +69,6 @@ export const init = () => {
         'notification-drawer',
         'olm',
         'olm-v1',
-        'pipelines-plugin',
         'shipwright-plugin',
         'public',
         'topology',

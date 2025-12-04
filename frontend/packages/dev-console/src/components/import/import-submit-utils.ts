@@ -29,28 +29,14 @@ import {
   getDomainMappingRequests,
   getKnativeServiceDepResource,
 } from '@console/knative-plugin/src/utils/create-knative-utils';
-import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
-import {
-  createPipelineForImportFlow,
-  createPipelineRunForImportFlow,
-  updatePipelineForImportFlow,
-} from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
-import { PIPELINE_SERVICE_ACCOUNT } from '@console/pipelines-plugin/src/components/pipelines/const';
-import { createTrigger } from '@console/pipelines-plugin/src/components/pipelines/modals/triggers/submit-utils';
-import { setPipelineNotStarted } from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
-import { createRepositoryResources } from '@console/pipelines-plugin/src/components/repository/repository-form-utils';
-import { PipelineKind } from '@console/pipelines-plugin/src/types';
-import {
-  updateServiceAccount,
-  getSecretAnnotations,
-} from '@console/pipelines-plugin/src/utils/pipeline-utils';
 import { LimitsData } from '@console/shared/src/types';
 import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { BUILD_OUTPUT_IMAGESTREAM_URL } from '@console/shipwright-plugin/src/const';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
-import { CUSTOM_ICON_ANNOTATION, RUNTIME_LABEL } from '../../const';
+import { CUSTOM_ICON_ANNOTATION, PIPELINE_SERVICE_ACCOUNT, RUNTIME_LABEL } from '../../const';
+import { PipelineKind } from '../../types/pipeline';
 import {
   getAppLabels,
   getPodLabels,
@@ -64,6 +50,17 @@ import {
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
+import { PipelineType } from '../pipeline-section/import-types';
+import {
+  createPipelineForImportFlow,
+  createPipelineRunForImportFlow,
+  createTrigger,
+  getSecretAnnotations,
+  updatePipelineForImportFlow,
+  setPipelineNotStarted,
+  updateServiceAccount,
+} from '../pipeline-section/pipeline/pipeline-template-utils';
+import { createRepositoryResources } from '../pipeline-section/pipeline/utils';
 import {
   GitImportFormData,
   ProjectData,

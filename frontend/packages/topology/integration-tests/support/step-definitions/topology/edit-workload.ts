@@ -1,9 +1,11 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
-import { formPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import {
+  formPO,
+  switchToFormView,
+} from '@console/dev-console/integration-tests/support/pageObjects';
 import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages';
 import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow';
-import { pipelineBuilderPO } from '@console/pipelines-plugin/integration-tests/support/page-objects';
 import { addSecret } from '@console/topology/integration-tests/support/pages/functions/add-secret';
 import { topologyHelper } from '@console/topology/integration-tests/support/pages/topology/topology-helper-page';
 import { topologyPO } from '../../page-objects/topology-po';
@@ -23,7 +25,7 @@ Then('user can see application groupings updated to {string}', (newAppName: stri
 });
 
 When('user clicks on Show advanced image options', () => {
-  cy.get(pipelineBuilderPO.formView.switchToFormView).click();
+  cy.get(switchToFormView).click();
   // if (cy.get(topologyPO.createSecret.advancedOptions).contains('Show advanced image options')) {
   //   cy.get(topologyPO.createSecret.advancedOptions).contains('Show advanced image options').click();
   if (cy.get(topologyPO.createSecret.createSecretButton).contains('Show advanced image options')) {

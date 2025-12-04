@@ -2,9 +2,9 @@ import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { GitProvider } from '@console/git-service/src';
-import { importFlowRepositoryValidationSchema } from '@console/pipelines-plugin/src/components/repository/repository-form-utils';
 import { nameValidationSchema, nameRegex } from '@console/shared';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
+import { PipelineType } from '../pipeline-section/import-types';
 import {
   projectNameValidationSchema,
   applicationNameValidationSchema,
@@ -21,6 +21,49 @@ import {
   devfileValidationSchema,
   importFlowPipelineTemplateValidationSchema,
 } from './validation-schema';
+
+export const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
+  yup.object().shape({
+    webhook: yup
+      .object()
+      .when('gitProvider', {
+        is: GitProvider.BITBUCKET,
+        then: yup.object().shape({
+          user: yup
+            .string()
+            .matches(nameRegex, {
+              message: t(
+                'devconsole~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+              ),
+              excludeEmptyString: true,
+            })
+            .required(t('devconsole~Required')),
+        }),
+      })
+      .when(['method', 'gitProvider', 'gitUrl'], {
+        is: (method, gitProvider, gitUrl) =>
+          gitUrl &&
+          gitProvider &&
+          !(gitProvider === GitProvider.GITHUB && method === GitProvider.GITHUB),
+        then: yup.object().shape({
+          token: yup.string().test('oneOfRequired', t('devconsole~Required'), function () {
+            return this.parent.token || this.parent.secretRef;
+          }),
+          secretRef: yup.string().test('oneOfRequired', t('devconsole~Required'), function () {
+            return this.parent.token || this.parent.secretRef;
+          }),
+        }),
+      }),
+  });
+
+export const importFlowRepositoryValidationSchema = (t: TFunction) => {
+  return yup.object().shape({
+    repository: yup.object().when(['pipelineType', 'pipelineEnabled'], {
+      is: (pipelineType, pipelineEnabled) => pipelineType === PipelineType.PAC && pipelineEnabled,
+      then: pipelinesAccessTokenValidationSchema(t),
+    }),
+  });
+};
 
 export const validationSchema = (t: TFunction) =>
   yup.object().shape({

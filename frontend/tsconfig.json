@@ -33,7 +33,6 @@
       "@console/metal3-plugin/*": ["./packages/metal3-plugin/*"],
       "@console/operator-lifecycle-manager/*": ["./packages/operator-lifecycle-manager/*"],
       "@console/operator-lifecycle-manager-v1/*": ["./packages/operator-lifecycle-manager-v1/*"],
-      "@console/pipelines-plugin/*": ["./packages/pipelines-plugin/*"],
       "@console/shipwright-plugin/*": ["./packages/shipwright-plugin/*"],
       "@console/topology/*": ["./packages/topology/*"],
       "@console/vsphere-plugin/*": ["./packages/vsphere-plugin/*"],

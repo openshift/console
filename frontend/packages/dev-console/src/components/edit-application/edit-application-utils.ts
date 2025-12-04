@@ -19,18 +19,16 @@ import {
   PRIVATE_KNATIVE_SERVING_LABEL,
   ServiceModel,
 } from '@console/knative-plugin';
-import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
-import { isDockerPipeline } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
-import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
-import {
-  PIPELINE_RUNTIME_LABEL,
-  PIPELINE_RUNTIME_VERSION_LABEL,
-} from '@console/pipelines-plugin/src/const';
-import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { getLimitsDataFromResource } from '@console/shared/src';
 import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import { RUNTIME_LABEL, CUSTOM_ICON_ANNOTATION } from '../../const';
+import {
+  RUNTIME_LABEL,
+  CUSTOM_ICON_ANNOTATION,
+  PIPELINE_RUNTIME_LABEL,
+  PIPELINE_RUNTIME_VERSION_LABEL,
+} from '../../const';
+import { PipelineKind } from '../../types/pipeline';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
 import { deployValidationSchema } from '../import/deployImage-validation-utils';
@@ -48,6 +46,9 @@ import {
 } from '../import/import-validation-utils';
 import { getAutoscaleWindow } from '../import/serverless/serverless-utils';
 import { validationSchema as jarValidationSchema } from '../import/upload-jar-validation-utils';
+import { PipelineType } from '../pipeline-section/import-types';
+import { isDockerPipeline } from '../pipeline-section/pipeline/pipeline-template-utils';
+import { defaultRepositoryFormValues } from '../pipeline-section/pipeline/utils';
 import { AppResources } from './edit-application-types';
 
 export enum ApplicationFlowType {
