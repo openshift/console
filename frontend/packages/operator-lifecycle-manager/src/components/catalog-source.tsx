@@ -24,7 +24,6 @@ import {
   ResourceLink,
   SectionHeading,
   asAccessReview,
-  KebabOption,
   ResourceSummary,
   DetailsItem,
   FirehoseResult,
@@ -54,11 +53,7 @@ import { RegistryPollIntervalDetailItem } from './registry-poll-interval-details
 
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
 
-const enableSource = (
-  kind: K8sKind,
-  operatorHub: OperatorHubKind,
-  sourceName: string,
-): KebabOption => ({
+const enableSource = (kind: K8sKind, operatorHub: OperatorHubKind, sourceName: string) => ({
   // t('olm~Enable')
   labelKey: 'olm~Enable',
   callback: () => {
