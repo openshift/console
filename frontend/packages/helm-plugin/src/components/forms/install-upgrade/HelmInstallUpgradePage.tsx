@@ -211,9 +211,9 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
 
   const handleNamespaceChange = (ns: string) => {
     if (ns === ALL_NAMESPACES_KEY) {
-      history.push(`/helm-releases/all-namespaces`);
+      history.push(`/helm/all-namespaces`);
     } else if (ns !== namespace) {
-      history.push(`/helm-releases/ns/${ns}`);
+      history.push(`/helm/ns/${ns}`);
     }
   };
 
