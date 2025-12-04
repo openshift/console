@@ -18,7 +18,6 @@ import {
 } from '@console/internal/components/factory';
 import {
   Firehose,
-  Kebab,
   LoadingBox,
   ConsoleEmptyState,
   navFactory,
@@ -33,7 +32,9 @@ import {
 import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
 import { referenceForModel, K8sKind, k8sPatch, K8sModel } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { withFallback } from '@console/shared/src/components/error';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -291,7 +292,7 @@ const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-xl'),
   css('pf-m-hidden', 'pf-m-visible-on-xl'),
   css('pf-m-hidden', 'pf-m-visible-on-lg'),
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 const getRowProps = (obj) => ({

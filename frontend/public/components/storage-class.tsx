@@ -4,7 +4,9 @@ import { sortable } from '@patternfly/react-table';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { useTranslation } from 'react-i18next';
 import { css } from '@patternfly/react-styles';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -13,7 +15,6 @@ import { ListPage } from './factory/list-page';
 import { Table, TableData } from './factory/table';
 import type { RowFunctionArgs } from './factory/table';
 import { DetailsItem } from './utils/details-item';
-import { Kebab } from './utils/kebab';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary, detailsPage } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
@@ -57,7 +58,7 @@ const tableColumnClasses = [
   'pf-v6-u-w-42-on-md',
   'pf-v6-u-w-42-on-md',
   'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-16-on-md',
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {

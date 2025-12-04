@@ -16,7 +16,6 @@ import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import type { PageComponentProps } from '@console/internal/components/utils/horizontal-nav';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { Kebab } from '@console/internal/components/utils/kebab';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import {
@@ -25,7 +24,9 @@ import {
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Status } from '@console/shared/src/components/status/Status';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
@@ -37,7 +38,7 @@ export const tableColumnInfo = [
   { className: css('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'volumeSnapshot' },
   { className: css('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'snapshotClass' },
   { className: css('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'createdAt' },
-  { className: Kebab.columnClass, id: '' },
+  { className: KEBAB_COLUMN_CLASS, id: '' },
 ];
 
 const Row: React.FC<RowProps<VolumeSnapshotContentKind>> = ({ obj }) => {

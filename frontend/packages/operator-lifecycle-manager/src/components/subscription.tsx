@@ -35,7 +35,6 @@ import {
   RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
-  Kebab,
   LoadingInline,
   ConsoleEmptyState,
   navFactory,
@@ -67,6 +66,7 @@ import {
   WarningStatus,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
@@ -161,7 +161,7 @@ const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-md',
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-xl',
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> = ({

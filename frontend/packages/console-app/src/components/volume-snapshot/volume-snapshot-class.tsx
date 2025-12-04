@@ -15,7 +15,6 @@ import {
 import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { Kebab } from '@console/internal/components/utils/kebab';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
 import {
@@ -24,14 +23,16 @@ import {
   Selector,
   referenceFor,
 } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { getAnnotations } from '@console/shared/src/selectors/common';
 
 const tableColumnInfo = [
   { id: 'name' },
   { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'driver' },
   { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'deletionPolicy' },
-  { className: Kebab.columnClass, id: '' },
+  { className: KEBAB_COLUMN_CLASS, id: '' },
 ];
 
 const defaultSnapshotClassAnnotation: string = 'snapshot.storage.kubernetes.io/is-default-class';

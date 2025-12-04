@@ -28,7 +28,6 @@ import {
 import ListPageFilter from '@console/internal/components/factory/ListPage/ListPageFilter';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
 import {
-  Kebab,
   LabelList,
   ConsoleEmptyState,
   ResourceSummary,
@@ -66,6 +65,7 @@ import {
   getNamespace,
   useActiveNamespace,
 } from '@console/shared';
+import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -94,7 +94,7 @@ const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg'),
   css('pf-m-hidden', 'pf-m-visible-on-xl'),
   css('pf-m-hidden', 'pf-m-visible-on-2xl'),
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {

@@ -17,7 +17,6 @@ import {
 import { TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { Kebab } from '@console/internal/components/utils/kebab';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import {
@@ -35,7 +34,9 @@ import {
   Selector,
   referenceFor,
 } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
@@ -53,7 +54,7 @@ const tableColumnInfo = [
   { className: css('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'snapshotContent' },
   { className: css('pf-m-hidden', 'pf-m-visible-on-2xl'), id: 'snapshotClass' },
   { className: css('pf-m-hidden', 'pf-m-visible-on-xl'), id: 'createdAt' },
-  { className: Kebab.columnClass, id: '' },
+  { className: KEBAB_COLUMN_CLASS, id: '' },
 ];
 
 const getTableColumns = (t: TFunction, disableItems = {}): TableColumn<VolumeSnapshotKind>[] =>
@@ -184,7 +185,7 @@ const Row: React.FC<RowProps<VolumeSnapshotKind, VolumeSnapshotRowProsCustomData
       <TableData {...tableColumnInfo[7]}>
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
-      <TableData className={Kebab.columnClass}>
+      <TableData className={KEBAB_COLUMN_CLASS}>
         <LazyActionMenu context={context} />
       </TableData>
     </>

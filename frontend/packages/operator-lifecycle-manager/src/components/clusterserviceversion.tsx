@@ -47,7 +47,6 @@ import {
   FirehoseResult,
   getDocumentationURL,
   isManaged,
-  Kebab,
   ConsoleEmptyState,
   navFactory,
   Page,
@@ -70,6 +69,7 @@ import {
 } from '@console/internal/module/k8s';
 import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
 import { LazyActionMenu, ActionMenuVariant } from '@console/shared/src/components/actions';
+import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -430,7 +430,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
         </TableData>
 
         {/* Kebab */}
-        <TableData className={Kebab.columnClass}>
+        <TableData className={KEBAB_COLUMN_CLASS}>
           <LazyActionMenu
             context={{ 'operator-actions': { resource: obj, subscription } }}
             variant={ActionMenuVariant.KEBAB}
@@ -493,7 +493,7 @@ export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
       </TableData>
 
       {/* Kebab */}
-      <TableData className={Kebab.columnClass}>
+      <TableData className={KEBAB_COLUMN_CLASS}>
         <LazyActionMenu
           context={{ 'operator-actions': { resource: obj, subscription: obj } }}
           variant={ActionMenuVariant.KEBAB}
@@ -628,7 +628,7 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
 
   const kebabHeader: Header = {
     title: '',
-    props: { className: Kebab.columnClass },
+    props: { className: KEBAB_COLUMN_CLASS },
   };
 
   const AllProjectsTableHeader = (): Header[] => [

@@ -22,7 +22,9 @@ import { FLAGS } from '@console/shared/src/constants/common';
 import { calculateRadius } from '@console/shared/src/utils/pod-utils';
 import { getNamespace, getName } from '@console/shared/src/selectors/common';
 import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { PersistentVolumeClaimKind, referenceFor } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -30,7 +32,6 @@ import { Conditions } from './conditions';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { Table, TableData } from './factory/table';
-import { Kebab } from './utils/kebab';
 import { navFactory } from './utils/horizontal-nav';
 import { SectionHeading } from './utils/headings';
 import { ResourceLink } from './utils/resource-link';
@@ -85,7 +86,7 @@ const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-xl'), // capacity
   css('pf-m-hidden', 'pf-m-visible-on-2xl'), // used capacity
   css('pf-m-hidden', 'pf-m-visible-on-2xl'), // storage class
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 const kind = 'PersistentVolumeClaim';
