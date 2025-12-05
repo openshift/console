@@ -69,7 +69,6 @@ const LimitLink: React.FC<LimitLinkProps> = ({
   return (
     <NodeUtilizationContext.Provider value={{ nodeName, nodeIP }}>
       <Popover
-        title={t('console-app~See breakdown')}
         current={currentError ? t('console-app~Not available') : current.string}
         total={totalError ? t('console-app~Not available') : total.string}
         limit={limitError ? t('console-app~Not available') : limit.string}
