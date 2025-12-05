@@ -125,7 +125,6 @@ export const sortExtensionItems = <E extends NavExtension>(
       preSorted.push(...itemsToSort);
       return preSorted;
     }
-    return preSorted; // Ensure function always returns a value
 
     let sortedItem = false;
     const remainingItems: NavExtension[] = [];
@@ -150,6 +149,7 @@ export const sortExtensionItems = <E extends NavExtension>(
       // Sort the remaining items
       sortItems(preSorted, remainingItems);
     }
+    return preSorted;
   };
 
   const sortedItems = [];
