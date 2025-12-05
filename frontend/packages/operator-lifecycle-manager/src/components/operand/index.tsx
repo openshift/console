@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DescriptionList } from '@patternfly/react-core';
+import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import classNames from 'classnames';
 import { JSONSchema7 } from 'json-schema';
@@ -447,12 +447,11 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 
   return inFlight ? null : (
     <>
-      <ListPageHeader title={showTitle ? t('olm~All Instances') : undefined} hideFavoriteButton>
-        {managesAllNamespaces && (
-          <div className="co-operator-details__toggle-value pf-v6-u-ml-xl-on-md">
-            <ShowOperandsInAllNamespacesRadioGroup />
-          </div>
-        )}
+      <ListPageHeader
+        title={showTitle ? t('olm~All Instances') : undefined}
+        hideFavoriteButton
+        helpText={managesAllNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
+      >
         <ListPageCreateDropdown onClick={createNavigate} items={createItems}>
           {t('olm~Create new')}
         </ListPageCreateDropdown>
@@ -515,12 +514,11 @@ const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) =>
 
   return (
     <>
-      <ListPageHeader title={showTitle ? `${labelPlural}` : undefined} hideFavoriteButton>
-        {managesAllNamespaces && (
-          <div className="co-operator-details__toggle-value pf-v6-u-ml-xl-on-md">
-            <ShowOperandsInAllNamespacesRadioGroup />
-          </div>
-        )}
+      <ListPageHeader
+        title={showTitle ? `${labelPlural}` : undefined}
+        hideFavoriteButton
+        helpText={managesAllNamespaces && <ShowOperandsInAllNamespacesRadioGroup />}
+      >
         <ListPageCreateLink to={createPath}>
           {t('public~Create {{label}}', { label })}
         </ListPageCreateLink>
@@ -587,21 +585,21 @@ export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
 
 const PodStatuses: React.FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescriptors, schema }) =>
   podStatusDescriptors?.length > 0 ? (
-    <div className="row">
+    <Grid hasGutter>
       {podStatusDescriptors.map((statusDescriptor: StatusDescriptor) => {
         return (
-          <DescriptorDetailsItem
-            className="col-sm-6"
-            key={statusDescriptor.path}
-            type={DescriptorType.status}
-            descriptor={statusDescriptor}
-            model={kindObj}
-            obj={obj}
-            schema={schema}
-          />
+          <GridItem sm={6} key={statusDescriptor.path}>
+            <DescriptorDetailsItem
+              type={DescriptorType.status}
+              descriptor={statusDescriptor}
+              model={kindObj}
+              obj={obj}
+              schema={schema}
+            />
+          </GridItem>
         );
       })}
-    </div>
+    </Grid>
   ) : null;
 
 export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: OperandDetailsProps) => {
@@ -670,13 +668,13 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
           schema={schema}
           podStatusDescriptors={podStatuses}
         />
-        <div className="co-operand-details__section co-operand-details__section--info">
-          <div className="row">
-            <div className="col-sm-6">
-              <ResourceSummary resource={obj} />
-            </div>
-            {(mainStatusDescriptor || otherStatusDescriptors?.length > 0) && (
-              <DescriptionList className="col-sm-6">
+        <Grid hasGutter data-test="operand-details__section--info">
+          <GridItem sm={6}>
+            <ResourceSummary resource={obj} />
+          </GridItem>
+          {mainStatusDescriptor || otherStatusDescriptors?.length > 0 ? (
+            <GridItem sm={6}>
+              <DescriptionList>
                 {mainStatusDescriptor && (
                   <DescriptorDetailsItem
                     key={mainStatusDescriptor.path}
@@ -697,27 +695,25 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
                   />
                 )}
               </DescriptionList>
-            )}
-          </div>
-        </div>
+            </GridItem>
+          ) : null}
+        </Grid>
       </PaneBody>
       {!_.isEmpty(specDescriptors) && (
         <PaneBody>
-          <div className="co-operand-details__section co-operand-details__section--info">
-            <div className="row">
-              <DescriptionList>
-                <DescriptorDetailsItems
-                  descriptors={specDescriptors}
-                  itemClassName="col-sm-6"
-                  model={kindObj}
-                  obj={obj}
-                  onError={handleError}
-                  schema={schema}
-                  type={DescriptorType.spec}
-                />
-              </DescriptionList>
-            </div>
-          </div>
+          <DescriptionList
+            columnModifier={{ default: '2Col' }}
+            data-test="operand-details__section--info"
+          >
+            <DescriptorDetailsItems
+              descriptors={specDescriptors}
+              model={kindObj}
+              obj={obj}
+              onError={handleError}
+              schema={schema}
+              type={DescriptorType.spec}
+            />
+          </DescriptionList>
         </PaneBody>
       )}
       {Array.isArray(status?.conditions) &&
