@@ -700,7 +700,7 @@ const ProjectLink = ({ project }) => {
 
 export const ProjectsTable = (props) => {
   const { t } = useTranslation();
-  const columns = useProjectsColumns({ showMetrics: false, showActions: true });
+  const columns = useProjectsColumns({ showMetrics: false, showActions: false });
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
