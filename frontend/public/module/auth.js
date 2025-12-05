@@ -26,6 +26,10 @@ const name = 'name';
 const email = 'email';
 const clearLocalStorageKeys = [userID, name, email];
 
+// Constants for redirect loop detection
+const AUTH_REDIRECT_COUNT_KEY = 'auth-redirect-count';
+const MAX_AUTH_REDIRECTS = 3;
+
 const setNext = (next) => {
   if (!next) {
     return;
@@ -49,6 +53,39 @@ const clearLocalStorage = (keys) => {
       console.error('Failed to clear localStorage', e);
     }
   });
+};
+
+// Helper functions for redirect counter
+const getAuthRedirectCount = () => {
+  try {
+    const count = sessionStorage.getItem(AUTH_REDIRECT_COUNT_KEY);
+    return count ? parseInt(count, 10) : 0;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to get auth redirect count from sessionStorage', e);
+    return 0;
+  }
+};
+
+const incrementAuthRedirectCount = () => {
+  try {
+    const count = getAuthRedirectCount() + 1;
+    sessionStorage.setItem(AUTH_REDIRECT_COUNT_KEY, count.toString());
+    return count;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to increment auth redirect count in sessionStorage', e);
+    return 0;
+  }
+};
+
+const resetAuthRedirectCount = () => {
+  try {
+    sessionStorage.removeItem(AUTH_REDIRECT_COUNT_KEY);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to reset auth redirect count in sessionStorage', e);
+  }
 };
 
 export const authSvc = {
@@ -125,5 +162,38 @@ export const authSvc = {
     if (![window.location.href, window.location.pathname].includes(loginURL)) {
       window.location = loginURL;
     }
+  },
+
+  // Handle 401 responses with redirect loop detection
+  handle401: (next) => {
+    const redirectCount = incrementAuthRedirectCount();
+
+    // If we've exceeded the max redirects, redirect to the error page
+    if (redirectCount > MAX_AUTH_REDIRECTS) {
+      // eslint-disable-next-line no-console
+      console.error(
+        `Authentication redirect loop detected (${redirectCount} consecutive 401 responses). Redirecting to error page.`,
+      );
+
+      // Build error page URL with query parameters
+      const errorURL = new URL(loginErrorURL || '/auth/error', window.location.origin);
+      errorURL.searchParams.set('error', 'redirect_loop_detected');
+      errorURL.searchParams.set('error_type', 'auth');
+
+      // Avoid redirecting if we're already on the error page
+      if (![window.location.href, window.location.pathname].includes(loginErrorURL)) {
+        window.location.href = errorURL.toString();
+      }
+      resetAuthRedirectCount();
+      return;
+    }
+
+    // Proceed with normal logout flow
+    authSvc.logout(next);
+  },
+
+  // Reset redirect counter (called on successful k8s requests)
+  resetRedirectCount: () => {
+    resetAuthRedirectCount();
   },
 };
