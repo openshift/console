@@ -1,5 +1,4 @@
 export * from './line-buffer';
-export * from './promise-component';
 export * from './kebab';
 export * from './selector';
 export * from './selector-input';
