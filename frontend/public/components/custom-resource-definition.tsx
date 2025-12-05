@@ -355,9 +355,7 @@ export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsL
   );
 };
 
-export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPageProps> = (
-  props,
-) => (
+export const CustomResourceDefinitionsPage: React.FC = (props) => (
   <ListPage
     {...props}
     ListComponent={CustomResourceDefinitionsList}
@@ -396,8 +394,6 @@ export type CustomResourceDefinitionsListProps = {
   data: CustomResourceDefinitionKind[];
   loaded: boolean;
 };
-
-export type CustomResourceDefinitionsPageProps = {};
 
 type InstancesProps = {
   obj: CustomResourceDefinitionKind;

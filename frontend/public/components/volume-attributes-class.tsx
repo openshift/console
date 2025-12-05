@@ -112,9 +112,7 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
             }}
           />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
