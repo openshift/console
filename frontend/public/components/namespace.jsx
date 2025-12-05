@@ -700,7 +700,7 @@ const ProjectLink = ({ project }) => {
 
 export const ProjectsTable = (props) => {
   const { t } = useTranslation();
-  const columns = useProjectsColumns({ showMetrics: false, showActions: false });
+  const columns = useProjectsColumns({ showMetrics: false, showActions: true });
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
@@ -729,7 +729,7 @@ export const ProjectList = (props) => {
   );
   const isPrometheusAvailable = usePrometheusGate();
   const showMetrics = isPrometheusAvailable && canGetNS;
-  const showActions = showMetrics;
+  const showActions = true;
   const columns = useProjectsColumns({ showMetrics, showActions });
   const namespaceMetrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
 
