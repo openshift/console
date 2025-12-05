@@ -13,7 +13,12 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { iconFor } from '../components';
 import { subscriptionFor } from '../components/operator-group';
-import { InstalledState, OLMAnnotation, CSVAnnotations } from '../components/operator-hub/index';
+import {
+  InstalledState,
+  OLMAnnotation,
+  CSVAnnotations,
+  InfrastructureFeature,
+} from '../components/operator-hub/index';
 import {
   OperatorVersionSelect,
   OperatorChannelSelect,
@@ -90,7 +95,6 @@ export const useOperatorCatalogItems = () => {
 
   const [updateChannel, setUpdateChannel] = React.useState('');
   const [updateVersion, setUpdateVersion] = React.useState('');
-  const [tokenizedAuth, setTokenizedAuth] = React.useState(null);
 
   const loaded = React.useMemo(
     () =>
@@ -137,16 +141,6 @@ export const useOperatorCatalogItems = () => {
   const clusterIsAWSSTS = isAWSSTSCluster(cloudCredentials, infrastructure, authentication);
   const clusterIsAzureWIF = isAzureWIFCluster(cloudCredentials, infrastructure, authentication);
   const clusterIsGCPWIF = isGCPWIFCluster(cloudCredentials, infrastructure, authentication);
-
-  React.useEffect(() => {
-    if (clusterIsAWSSTS) {
-      setTokenizedAuth('AWS');
-    } else if (clusterIsAzureWIF) {
-      setTokenizedAuth('Azure');
-    } else if (clusterIsGCPWIF) {
-      setTokenizedAuth('GCP');
-    }
-  }, [clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF]);
 
   const items = React.useMemo(() => {
     if (!loaded || loadError) {
@@ -219,13 +213,31 @@ export const useOperatorCatalogItems = () => {
         const imgUrl = iconFor(pkg);
         const type = 'operator';
 
+        // Compute tokenizedAuth per operator based on its infrastructureFeatures
+        // Only set tokenizedAuth if both the cluster supports it AND the operator supports it
+        // (i.e., the operator's CSV annotations don't have token-auth-aws/azure/gcp=false)
+        let operatorTokenizedAuth = '';
+        if (clusterIsAWSSTS && infrastructureFeatures.includes(InfrastructureFeature.TokenAuth)) {
+          operatorTokenizedAuth = 'AWS';
+        } else if (
+          clusterIsAzureWIF &&
+          infrastructureFeatures.includes(InfrastructureFeature.TokenAuth)
+        ) {
+          operatorTokenizedAuth = 'Azure';
+        } else if (
+          clusterIsGCPWIF &&
+          infrastructureFeatures.includes(InfrastructureFeature.TokenAuthGCP)
+        ) {
+          operatorTokenizedAuth = 'GCP';
+        }
+
         // Build install parameters URL
         const installParamsURL = new URLSearchParams({
           pkg: pkg.metadata.name,
           catalog: catalogSource,
           catalogNamespace: catalogSourceNamespace,
           targetNamespace: namespace,
-          tokenizedAuth,
+          tokenizedAuth: operatorTokenizedAuth,
         }).toString();
 
         const installLink = `/operatorhub/subscribe?${installParamsURL}`;
@@ -453,7 +465,6 @@ export const useOperatorCatalogItems = () => {
     t,
     updateChannel,
     updateVersion,
-    tokenizedAuth,
   ]);
 
   return [items, loaded];
