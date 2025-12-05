@@ -3,14 +3,13 @@ import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src';
 import { DetectedStrategy } from '@console/git-service/src/utils/import-strategy-detector';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
-import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
-import { PipelineData } from '@console/pipelines-plugin/src/components/import/import-types';
-import { RepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/types';
+import { K8sResourceKind, ContainerPort, SecretKind } from '@console/internal/module/k8s';
 import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
 import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import { HealthCheckFormProbe } from '../health-checks/health-checks-types';
+import { PipelineData } from '../pipeline-section/import-types';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -410,3 +409,22 @@ export interface HealthChecksFormData {
   livenessProbe: HealthCheckFormProbe;
   startupProbe?: HealthCheckFormProbe;
 }
+
+export type RepositoryFormValues = {
+  name: string;
+  gitProvider: GitProvider;
+  gitUrl: string;
+  githubAppAvailable: boolean;
+  method: string;
+  yamlData: string;
+  showOverviewPage: boolean;
+  webhook: {
+    method: string;
+    token: string;
+    secret: string;
+    url: string;
+    secretObj?: SecretKind;
+    user?: string;
+    autoAttach?: boolean;
+  };
+};

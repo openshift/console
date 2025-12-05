@@ -82,8 +82,11 @@ after(() => {
 });
 
 export const checkErrors = () =>
-  cy.window().then((win) => {
-    assert.isTrue(!win.windowError, win.windowError);
+  cy.window().then((win: any) => {
+    // Only check windowError if it exists
+    if (win.windowError !== undefined) {
+      assert.isTrue(!win.windowError, win.windowError);
+    }
   });
 
 export const testName = `test-${Math.random()

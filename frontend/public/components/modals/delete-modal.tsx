@@ -4,7 +4,7 @@ import { Alert, Backdrop, Checkbox, Modal, ModalVariant } from '@patternfly/reac
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { resourceListPathFromModel } from '../utils';
+import { resourceListPathFromModel, ResourceLink } from '../utils/resource-link';
 import {
   k8sKill,
   k8sList,
@@ -13,10 +13,10 @@ import {
   K8sModel,
   OwnerReference,
 } from '../../module/k8s/';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { findOwner } from '../../module/k8s/managed-by';
-import { ResourceLink } from '../utils/resource-link';
+
 import { LocationDescriptor } from 'history';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 

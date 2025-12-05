@@ -2,9 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Banner, Flex } from '@patternfly/react-core';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
-import { Firehose, FirehoseResult } from './utils';
+import { Firehose } from './utils/firehose';
+import { FirehoseResult } from './utils/types';
 import { referenceForModel } from '../module/k8s';
 import { ConsoleNotificationModel } from '../models/index';
 

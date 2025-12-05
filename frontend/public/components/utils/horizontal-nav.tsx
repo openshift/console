@@ -25,7 +25,7 @@ import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceFor, referenceForExtensionModel } from '../../module/k8s/k8s';
-import { PodsPage } from '../pod';
+import { PodsPage } from '../pod-list';
 import { AsyncComponent } from './async';
 import { ResourceMetricsDashboard } from './resource-metrics';
 import { EmptyBox, LoadingBox, StatusBox } from './status-box';
@@ -33,7 +33,7 @@ import {
   HorizontalNavProps as HorizontalNavFacadeProps,
   NavPage,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { useExtensions } from '@console/plugin-sdk/src';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 
 export const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
@@ -246,7 +246,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   const renderContent = (routes: JSX.Element[]) => {
     const { noStatusBox, obj, EmptyMsg, label } = props;
     const content = (
-      <React.Suspense fallback={<LoadingBox />}>
+      <React.Suspense fallback={<LoadingBox blame="HorizontalNav" />}>
         <Routes>{routes}</Routes>
       </React.Suspense>
     );

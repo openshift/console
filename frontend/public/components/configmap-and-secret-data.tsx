@@ -11,7 +11,9 @@ import {
   DescriptionListTerm,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
+import { CopyToClipboard } from './utils/copy-to-clipboard';
+import { EmptyBox } from './utils/status-box';
+import { SectionHeading } from './utils/headings';
 import * as ITOB from 'istextorbinary';
 
 export const MaskedData: React.FC<{}> = () => {

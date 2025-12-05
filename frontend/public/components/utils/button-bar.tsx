@@ -14,7 +14,7 @@ const injectDisabled = (children, disabled) => {
   });
 };
 
-const ErrorMessage = ({ message }) => {
+export const ErrorMessage = ({ message }) => {
   const { t } = useTranslation();
   return (
     <Alert
@@ -41,7 +41,8 @@ const SuccessMessage = ({ message }) => (
   <Alert isInline className="co-alert" variant="success" title={message} />
 );
 
-export interface ButtonBarProps extends Required<React.PropsWithChildren<{}>> {
+export interface ButtonBarProps {
+  children: React.ReactNode;
   className?: string;
   errorMessage?: React.ReactNode;
   infoMessage?: string;

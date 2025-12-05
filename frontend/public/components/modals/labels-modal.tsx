@@ -14,7 +14,8 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '../factory/modal';
-import { ResourceIcon, SelectorInput } from '../utils';
+import { ResourceIcon } from '../utils/resource-icon';
+import { SelectorInput } from '../utils/selector-input';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { Grid, GridItem } from '@patternfly/react-core';
 

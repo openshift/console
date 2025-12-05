@@ -2,6 +2,7 @@ import { Fragment, useContext, useState, useRef, useCallback, useEffect } from '
 import * as _ from 'lodash-es';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { ThIcon } from '@patternfly/react-icons/dist/esm/icons/th-icon';
@@ -19,22 +20,20 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import {
-  ACM_LINK_ID,
-  FLAGS,
-  useActiveNamespace,
-  useCopyCodeModal,
-  useCopyLoginCommands,
-  useFlag,
-  useTelemetry,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import { ACM_LINK_ID, FLAGS } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
+import { useCopyLoginCommands } from '@console/shared/src/hooks/useCopyLoginCommands';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useUser } from '@console/shared/src/hooks/useUser';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { CloudShellMastheadButton } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import { CloudShellMastheadAction } from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
-import { getUser, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { getImpersonate, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../../actions/ui';
 import { flagPending, featureReducerName } from '../../reducers/features';
 import { authSvc } from '../../module/auth';
@@ -55,6 +54,7 @@ import darkFeedbackImage from '@patternfly/react-user-feedback/dist/esm/images/r
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from '../QuickCreate';
 import { ThemeContext, THEME_DARK } from '../ThemeProvider';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
+import { ImpersonateUserModal } from '../modals/impersonate-user-modal';
 
 const LAST_CONSOLE_ACTIVITY_TIMESTAMP_LOCAL_STORAGE_KEY = 'last-console-activity-timestamp';
 
@@ -148,6 +148,7 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
   isMastheadStacked,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const { tourDispatch, tour } = useContext(TourContext);
   const authEnabledFlag = useFlag(FLAGS.AUTH_ENABLED);
@@ -162,12 +163,15 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
     t('public~Login with this command'),
     externalLoginCommand,
   );
-  const { clusterID, user, alertCount, canAccessNS } = useSelector((state: RootState) => ({
+  const { clusterID, alertCount, canAccessNS, impersonate } = useSelector((state: RootState) => ({
     clusterID: state.UI.get('clusterID'),
-    user: getUser(state),
     alertCount: state.observe.getIn(['alertCount']),
     canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+    impersonate: getImpersonate(state),
   }));
+
+  // Use centralized user hook for user data
+  const { displayName, username } = useUser();
   const [isAppLauncherDropdownOpen, setIsAppLauncherDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isKebabDropdownOpen, setIsKebabDropdownOpen] = useState(false);
@@ -175,13 +179,13 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
   const [statusPageData, setstatusPageData] = useState(null);
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [isImpersonateModalOpen, setIsImpersonateModalOpen] = useState(false);
   const applicationLauncherMenuRef = useRef(null);
   const helpMenuRef = useRef(null);
   const userMenuRef = useRef(null);
   const kebabMenuRef = useRef(null);
   const reportBugLink = cv ? getReportBugLink(cv) : null;
   const userInactivityTimeout = useRef(null);
-  const username = user?.username ?? '';
   const isKubeAdmin = username === 'kube:admin';
 
   const drawerToggle = useCallback(() => dispatch(UIActions.notificationDrawerToggleExpanded()), [
@@ -197,6 +201,10 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
 
   const handleGuidedTourClick = (e) => {
     e.preventDefault();
+    fireTelemetryEvent('launch-guided-tour-form-help', {
+      id: 'guided-tour-help',
+      perspective: activePerspective,
+    });
     tourDispatch({ type: TourActions.start });
   };
 
@@ -514,6 +522,30 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
       },
     ];
 
+    // Add impersonate option if user is currently impersonating
+    if (impersonate) {
+      userActions.unshift({
+        label: t('public~Stop impersonating'),
+        callback: () => {
+          dispatch(UIActions.stopImpersonate());
+          // Use full page reload when stopping to ensure clean state
+          setTimeout(() => {
+            window.location.href = window.SERVER_FLAGS.basePath || '/';
+          }, 0);
+        },
+        dataTest: 'stop-impersonate',
+      });
+    }
+
+    // Add impersonate option if not currently impersonating
+    if (!impersonate) {
+      userActions.unshift({
+        label: t('public~Impersonate User'),
+        callback: () => setIsImpersonateModalOpen(true),
+        dataTest: 'impersonate-user',
+      });
+    }
+
     if (authEnabledFlag) {
       const logout = (e) => {
         e.preventDefault();
@@ -614,7 +646,7 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
 
     const userToggle = (
       <span className="co-username" data-test="username">
-        {authEnabledFlag ? username : t('public~Auth disabled')}
+        {authEnabledFlag ? displayName : t('public~Auth disabled')}
       </span>
     );
 
@@ -808,6 +840,22 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
           onClose={() => setIsFeedbackModalOpen(false)}
         />
       ) : null}
+      <ImpersonateUserModal
+        isOpen={isImpersonateModalOpen}
+        onClose={() => setIsImpersonateModalOpen(false)}
+        onImpersonate={(userName: string, groups: string[]) => {
+          if (groups && groups.length > 0) {
+            dispatch(UIActions.startImpersonate('UserWithGroups', userName, groups));
+          } else {
+            dispatch(UIActions.startImpersonate('User', userName));
+          }
+          setIsImpersonateModalOpen(false);
+          // Use navigate instead of window.location to preserve Redux state
+          navigate(window.SERVER_FLAGS.basePath || '/');
+        }}
+        prefilledUsername=""
+        isUsernameReadonly={false}
+      />
     </>
   );
 };

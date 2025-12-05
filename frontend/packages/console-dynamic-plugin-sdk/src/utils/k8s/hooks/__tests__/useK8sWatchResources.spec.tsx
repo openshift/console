@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
@@ -7,7 +8,7 @@ import { receivedResources } from '@console/internal/actions/k8s';
 import { SDKReducers } from '../../../../app';
 import { WatchK8sResources } from '../../../../extensions/console-types';
 import { k8sList, k8sGet } from '../../k8s-resource';
-import { setPluginStore, k8sWatch } from '../../k8s-utils';
+import { k8sWatch } from '../../k8s-utils';
 import { useK8sWatchResources } from '../useK8sWatchResources';
 import { PodModel, podData, podList } from './useK8sWatchResource.data';
 
@@ -26,7 +27,12 @@ const k8sWatchMock = k8sWatch as jest.Mock;
 
 // Redux wrapper
 let store;
-const Wrapper: React.FC = ({ children }) => <Provider store={store}>{children}</Provider>;
+interface WrapperProps {
+  children?: ReactNode;
+}
+const Wrapper: React.FC<WrapperProps> = ({ children }) => (
+  <Provider store={store}>{children}</Provider>
+);
 
 // Object under test
 const resourceUpdate = jest.fn();
@@ -37,7 +43,6 @@ const WatchResource: React.FC<{ initResources: WatchK8sResources<{}> }> = ({ ini
 
 beforeEach(() => {
   // Init k8s redux store with just one model
-  setPluginStore({ getExtensionsInUse: () => [] });
   store = createStore(combineReducers(SDKReducers), {}, applyMiddleware(thunk));
   store.dispatch(
     receivedResources({

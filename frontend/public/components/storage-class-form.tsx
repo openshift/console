@@ -6,7 +6,7 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { ActionGroup, Button, Checkbox } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { getName } from '@console/shared';
+import { getName } from '@console/shared/src/selectors/common';
 import {
   isStorageClassProvisioner,
   StorageClassProvisioner,
@@ -21,14 +21,12 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import {
-  AsyncComponent,
-  ButtonBar,
-  Firehose,
-  FirehoseResult,
-  NameValueEditorPair,
-  resourceObjPath,
-} from './utils';
+import { AsyncComponent } from './utils/async';
+import { ButtonBar } from './utils/button-bar';
+import { Firehose } from './utils/firehose';
+import type { FirehoseResult } from './utils/types';
+import { NameValueEditorPair } from './utils/types';
+import { resourceObjPath } from './utils/resource-link';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
 import * as k8sActions from '../actions/k8s';

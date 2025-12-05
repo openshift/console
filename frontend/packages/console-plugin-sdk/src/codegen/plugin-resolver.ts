@@ -20,12 +20,8 @@ const consolePluginOverrideEnvVar = 'CONSOLE_PLUGINS';
  * Return `true` if the given package represents a Console plugin.
  */
 export const isPluginPackage = (pkg: Package): pkg is PluginPackage => {
-  if (!(pkg as PluginPackage).consolePlugin) {
-    return false;
-  }
-
-  const { entry } = (pkg as PluginPackage).consolePlugin;
-  return typeof entry === 'string' && !!entry;
+  const { consolePlugin } = pkg as PluginPackage;
+  return !_.isNil(consolePlugin) && _.isObject(consolePlugin);
 };
 
 /**
@@ -114,7 +110,6 @@ export type Package = readPkg.NormalizedPackageJson & {
 
 export type PluginPackage = Package & {
   consolePlugin: {
-    entry: string;
     exposedModules?: { [moduleName: string]: string };
   };
 };

@@ -28,7 +28,7 @@ describe('resolvePluginDependencies', () => {
   const getLoadedDynamicPluginInfo = (
     manifest: StandardConsolePluginManifest,
   ): LoadedDynamicPluginInfo => ({
-    status: 'Loaded',
+    status: 'loaded',
     pluginID: getPluginID(manifest),
     metadata: _.omit(manifest, ['extensions', 'loadScripts', 'registrationMethod']),
     enabled: true,
@@ -37,14 +37,14 @@ describe('resolvePluginDependencies', () => {
   const getPendingDynamicPluginInfo = (
     manifest: StandardConsolePluginManifest,
   ): NotLoadedDynamicPluginInfo => ({
-    status: 'Pending',
+    status: 'pending',
     pluginName: manifest.name,
   });
 
   const getFailedDynamicPluginInfo = (
     manifest: StandardConsolePluginManifest,
   ): NotLoadedDynamicPluginInfo => ({
-    status: 'Failed',
+    status: 'failed',
     pluginName: manifest.name,
     errorMessage: `Test error message for plugin ${manifest.name}`,
   });

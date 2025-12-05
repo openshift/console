@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { useTelemetry } from '../../hooks';
+import { useTelemetry } from '../../hooks/useTelemetry';
 import { CatalogType, getIconProps } from '../catalog';
 import { CatalogLinkData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';

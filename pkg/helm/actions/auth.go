@@ -19,7 +19,6 @@ func setUpAuthentication(chartPathOptions *action.ChartPathOptions, connectionCo
 	tlsFiles := []*os.File{}
 	//set up tls cert and key
 	if connectionConfig.TLSClientConfig != (configv1.SecretNameReference{}) {
-		chartPathOptions.RepoURL = connectionConfig.URL
 		tlsKeyFile, tlsCertFile, err := setupTlsCertFile(connectionConfig.TLSClientConfig.Name, configNamespace, coreClient)
 		if err != nil {
 			return nil, err
@@ -31,7 +30,6 @@ func setUpAuthentication(chartPathOptions *action.ChartPathOptions, connectionCo
 	}
 	//set up ca certificate
 	if connectionConfig.CA != (configv1.ConfigMapNameReference{}) {
-		chartPathOptions.RepoURL = connectionConfig.URL
 		caFile, err := setupCaCertFile(connectionConfig.CA.Name, configNamespace, coreClient)
 		if err != nil {
 			return nil, err
@@ -47,7 +45,6 @@ func setUpAuthenticationProject(chartPathOptions *action.ChartPathOptions, conne
 	var secretNamespace string
 	//set up tls cert and key
 	if connectionConfig.TLSClientConfig != (configv1.SecretNameReference{}) {
-		chartPathOptions.RepoURL = connectionConfig.URL
 		tlsKeyFile, tlsCertFile, err := setupTlsCertFile(connectionConfig.TLSClientConfig.Name, namespace, coreClient)
 		if err != nil {
 			return nil, err
@@ -77,7 +74,6 @@ func setUpAuthenticationProject(chartPathOptions *action.ChartPathOptions, conne
 	}
 	//set up ca certificate
 	if connectionConfig.CA != (configv1.ConfigMapNameReference{}) {
-		chartPathOptions.RepoURL = connectionConfig.URL
 		caFile, err := setupCaCertFile(connectionConfig.CA.Name, namespace, coreClient)
 		if err != nil {
 			return nil, err

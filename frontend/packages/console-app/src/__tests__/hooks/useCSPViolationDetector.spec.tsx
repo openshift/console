@@ -22,8 +22,7 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
 }));
 
 const mockPluginStore = {
-  findDynamicPluginInfo: jest.fn(),
-  setCustomDynamicPluginInfo: jest.fn(),
+  getPluginInfo: jest.fn().mockReturnValue([]),
 };
 jest.mock('@console/plugin-sdk/src/api/usePluginStore', () => ({
   usePluginStore: () => mockPluginStore,
@@ -72,8 +71,6 @@ const TestComponent = () => {
 describe('useCSPViolationDetector', () => {
   afterEach(() => {
     mockFireTelemetry.mockClear();
-    mockPluginStore.findDynamicPluginInfo.mockClear();
-    mockPluginStore.setCustomDynamicPluginInfo.mockClear();
     mockCacheEvent.mockClear();
   });
 

@@ -13,27 +13,22 @@ import {
 import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
 import { useTranslation } from 'react-i18next';
 
-import { DetailsPage, ListPage } from './factory';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
 import { sortResourceByValue } from './factory/Table/sort';
-import {
-  AsyncComponent,
-  DetailsItem,
-  EmptyBox,
-  Kebab,
-  KebabAction,
-  LoadingBox,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-} from './utils';
+import { AsyncComponent } from './utils/async';
+import { DetailsItem } from './utils/details-item';
+import { EmptyBox, LoadingBox } from './utils/status-box';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
 import {
   apiVersionCompare,
   CRDVersion,
   CustomResourceDefinitionKind,
   getLatestVersionForCRD,
-  K8sKind,
+  K8sModel,
   referenceForCRD,
   referenceForModel,
   TableColumn,
@@ -43,12 +38,13 @@ import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
 import { getResourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
-import { GreenCheckCircleIcon, DASH } from '@console/shared';
-import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { DASH } from '@console/shared/src/constants/ui';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
+  ResourceListPage,
+  isResourceListPage,
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   DescriptionList,
@@ -62,25 +58,11 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-
-const { common } = Kebab.factory;
-
-const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>
-  _.get(crd, 'spec.scope') === 'Namespaced'
-    ? `/k8s/all-namespaces/${referenceForCRD(crd)}`
-    : `/k8s/cluster/${referenceForCRD(crd)}`;
-
-const instances = (kind: K8sKind, obj: CustomResourceDefinitionKind) => ({
-  // t('public~View instances')
-  labelKey: 'public~View instances',
-  href: crdInstancesPath(obj),
-});
-
-const menuActions: KebabAction[] = [instances, ...common];
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const isEstablished = (conditions: any[]) => {
   const condition = _.find(conditions, (c) => c.type === 'Established');
@@ -213,14 +195,10 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
 
 const Instances: React.FC<InstancesProps> = ({ obj, namespace }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-    isDynamicResourceListPage,
-  );
   const crdKind = referenceForCRD(obj);
-  const componentLoader = getResourceListPages(
-    resourceListPageExtensions,
-    dynamicResourceListPageExtensions,
-  ).get(crdKind, () => Promise.resolve(DefaultPage));
+  const componentLoader = getResourceListPages(resourceListPageExtensions).get(crdKind, () =>
+    Promise.resolve(DefaultPage),
+  );
   return (
     <AsyncComponent
       loader={componentLoader}
@@ -305,10 +283,7 @@ const IsNamespaced: React.FCC<{ obj: CustomResourceDefinitionKind }> = ({ obj })
   return namespaced(obj) ? t('public~Yes') : t('public~No');
 };
 
-const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> = (
-  data,
-  columns,
-) => {
+const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const displayName = _.get(obj, 'spec.names.kind');
@@ -341,15 +316,9 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind, undefined> 
       },
       [tableColumnInfo[5].id]: {
         cell: (
-          <ResourceKebab
-            actions={menuActions}
-            kind={CustomResourceDefinitionModel}
-            resource={obj}
-          />
+          <LazyActionMenu context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }} />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -373,13 +342,12 @@ export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsL
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<CustomResourceDefinitionKind>
+      <ConsoleDataView<CustomResourceDefinitionKind>
         {...props}
         label={CustomResourceDefinitionModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
@@ -403,8 +371,13 @@ export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
   return (
     <DetailsPage
       {...props}
-      kind={kind}
-      menuActions={menuActions}
+      kind={referenceForModel(CustomResourceDefinitionModel)}
+      customActionMenu={(k8sObj: K8sModel, obj: CustomResourceDefinitionKind) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(CustomResourceDefinitionModel)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={[
         navFactory.details(Details),
         navFactory.editYaml(),

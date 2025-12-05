@@ -22,7 +22,7 @@ import {
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { safeLoad } from 'js-yaml';
 
-import { APIError } from '@console/shared';
+import { APIError } from '@console/shared/src/types/resource';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ButtonBar } from '../../utils/button-bar';
 import { Firehose } from '../../utils/firehose';

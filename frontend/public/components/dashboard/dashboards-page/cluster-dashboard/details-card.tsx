@@ -2,15 +2,15 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
+import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
+import { FLAGS } from '@console/shared/src/constants/common';
 import {
-  BlueArrowCircleUpIcon,
-  FLAGS,
   getInfrastructureAPIURL,
   getInfrastructurePlatform,
   isSingleNode,
-  useFlag,
-  useCanClusterUpgrade,
-} from '@console/shared';
+} from '@console/shared/src/selectors/infrastructure';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import {
   useResolvedExtensions,
@@ -45,7 +45,7 @@ import {
 } from '../../../../module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { flagPending } from '../../../../reducers/features';
-import { LoadingInline } from '../../../utils';
+import { LoadingInline } from '../../../utils/status-box';
 import { Link } from 'react-router-dom-v5-compat';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';

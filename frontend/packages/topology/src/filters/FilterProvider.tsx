@@ -71,7 +71,11 @@ type FilterContextType = {
 
 export const FilterContext = React.createContext<FilterContextType>({});
 
-export const FilterProvider: React.FC = ({ children }) => {
+interface FilterProviderProps {
+  children?: React.ReactNode;
+}
+
+export const FilterProvider: React.FCC<FilterProviderProps> = ({ children }) => {
   const [filters, appliedFilters, loaded, setTopologyFilters] = useFilterContextValues();
   return (
     <FilterContext.Provider value={{ filters, appliedFilters, setTopologyFilters }}>

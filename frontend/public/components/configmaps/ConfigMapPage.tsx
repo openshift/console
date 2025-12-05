@@ -8,7 +8,7 @@ import { StatusBox } from '../utils/status-box';
 import ConfigMapForm from './ConfigMapForm';
 import { ConfigMap } from './types';
 
-const ConfigMapPage: React.FC = () => {
+export const ConfigMapPage: React.FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, name } = useParams();
   const isCreateFlow: boolean = !name;
@@ -48,5 +48,3 @@ const ConfigMapPage: React.FC = () => {
     </>
   );
 };
-
-export default ConfigMapPage;

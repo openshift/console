@@ -21,19 +21,16 @@ import {
   snapshotPVCAccessModeAnnotation,
   snapshotPVCVolumeModeAnnotation,
 } from '@console/internal/components/storage/shared';
-import {
-  ListDropdown,
-  ButtonBar,
-  history,
-  ResourceIcon,
-  resourceObjPath,
-  convertToBaseValue,
-  humanizeBinaryBytes,
-  getURLSearchParams,
-} from '@console/internal/components/utils';
+import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { getURLSearchParams } from '@console/internal/components/utils/link';
+import { ListDropdown } from '@console/internal/components/utils/list-dropdown';
 import { PVCDropdown } from '@console/internal/components/utils/pvc-dropdown';
+import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
+import { resourceObjPath } from '@console/internal/components/utils/resource-link';
+import { history } from '@console/internal/components/utils/router';
+import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import {
   PersistentVolumeClaimModel,
   VolumeSnapshotModel,
@@ -52,12 +49,12 @@ import {
   apiVersionForModel,
   ListKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace, getAnnotations } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { getName, getNamespace, getAnnotations } from '@console/shared/src/selectors/common';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (

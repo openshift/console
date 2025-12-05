@@ -903,7 +903,6 @@ export const operatorHubTileViewPagePropsWithDummy = {
     operatorHubTileViewPageProps.items[1],
     operatorHubTileViewPageProps.items[2],
     operatorHubTileViewPageProps.items[3],
-    operatorHubTileViewPageProps.items[4],
     {
       obj: dummyPackageManifest,
       installed: false,
@@ -980,7 +979,7 @@ export const operatorHubCategories = [
 export const mockFilterStrings = [
   {
     filter: '',
-    resultLength: 5,
+    resultLength: 4,
   },
   {
     filter: 'prometheus',

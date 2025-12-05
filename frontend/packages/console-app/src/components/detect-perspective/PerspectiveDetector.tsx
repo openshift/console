@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { useLocation } from 'react-router';
+import { FC, useEffect, useState } from 'react';
+import { useLocation, createPath } from 'react-router-dom-v5-compat';
 import { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { usePerspectives } from '@console/shared/src';
 
@@ -16,12 +16,12 @@ type PerspectiveDetectorProps = {
   setActivePerspective: (perspective: string, next: string) => void;
 };
 
-const Detector: React.FC<DetectorProps> = ({
+const Detector: FC<DetectorProps> = ({
   setActivePerspective,
   perspectiveExtensions,
   detectors,
 }) => {
-  const { pathname } = useLocation() ?? {};
+  const location = useLocation();
   let detectedPerspective: string | undefined;
   const defaultPerspective =
     perspectiveExtensions.find((p) => p.properties.default) || perspectiveExtensions[0];
@@ -38,31 +38,31 @@ const Detector: React.FC<DetectorProps> = ({
     return true;
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (detectedPerspective) {
-      setActivePerspective(detectedPerspective, pathname);
+      setActivePerspective(detectedPerspective, createPath(location));
     } else if (defaultPerspective && (detectors.length < 1 || detectionComplete)) {
-      // set default perspective if there are no detectors or none of the detections were successfull
-      setActivePerspective(defaultPerspective.properties.id, pathname);
+      // set default perspective if there are no detectors or none of the detections were successful
+      setActivePerspective(defaultPerspective.properties.id, createPath(location));
     }
   }, [
     defaultPerspective,
     detectedPerspective,
     detectionComplete,
     detectors.length,
-    pathname,
+    location,
     setActivePerspective,
   ]);
 
   return null;
 };
 
-const PerspectiveDetector: React.FC<PerspectiveDetectorProps> = ({ setActivePerspective }) => {
+const PerspectiveDetector: FC<PerspectiveDetectorProps> = ({ setActivePerspective }) => {
   const perspectiveExtensions = usePerspectives();
-  const [detectors, setDetectors] = React.useState<
+  const [detectors, setDetectors] = useState<
     (undefined | ResolvedExtension<Perspective>['properties']['usePerspectiveDetection'])[]
   >();
-  React.useEffect(() => {
+  useEffect(() => {
     let resolveCount = 0;
     const resolvedDetectors: ResolvedExtension<
       Perspective

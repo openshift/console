@@ -10,7 +10,7 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '@console/internal/components/factory/modal';
-import { LoadingInline } from '@console/internal/components/utils';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import {
   HorizontalPodAutoscalerKind,

@@ -3,16 +3,15 @@ import * as _ from 'lodash-es';
 
 import { FLAGS } from '@console/shared/src/constants/common';
 import { K8sModel, UserInfo } from '@console/internal/module/k8s';
-import { isCustomFeatureFlag, CustomFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,
   extensionDiffListener,
 } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import {
-  FeatureFlag as DynamicFeatureFlag,
-  isFeatureFlag as isDynamicFeatureFlag,
-  isModelFeatureFlag as isDynamicModelFeatureFlag,
-  ModelFeatureFlag as DynamicModelFeatureFlag,
+  FeatureFlag,
+  isFeatureFlag,
+  isModelFeatureFlag,
+  ModelFeatureFlag,
   SetFeatureFlag,
 } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
 import { setUser } from '@console/dynamic-plugin-sdk/src/app/core/actions/core';
@@ -129,12 +128,6 @@ const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) =>
 });
 
 export const detectFeatures = () => (dispatch: Dispatch) => {
-  subscribeToExtensions<CustomFeatureFlag>(
-    extensionDiffListener((added) =>
-      added.forEach((detector) => detector.properties.detect(dispatch)),
-    ),
-    isCustomFeatureFlag,
-  );
   [
     detectOpenShift,
     detectCanCreateProject,
@@ -148,7 +141,7 @@ export const featureFlagController: SetFeatureFlag = (flag, enabled) => {
   store.dispatch(setFlag(flag, enabled));
 };
 
-subscribeToExtensions<DynamicFeatureFlag>(
+subscribeToExtensions<FeatureFlag>(
   extensionDiffListener((added) => {
     added.forEach((e) => {
       resolveExtension(e)
@@ -161,15 +154,15 @@ subscribeToExtensions<DynamicFeatureFlag>(
         });
     });
   }),
-  isDynamicFeatureFlag,
+  isFeatureFlag,
 );
 
-subscribeToExtensions<DynamicModelFeatureFlag>(
+subscribeToExtensions<ModelFeatureFlag>(
   extensionDiffListener((added, removed) => {
     // The feature reducer can't access state from the k8s reducer, so get the
     // models here and include them in the action payload.
     const models: K8sModel[] = store.getState().k8s.getIn(['RESOURCES', 'models']);
     store.dispatch(updateModelFlags(added, removed, models));
   }),
-  isDynamicModelFeatureFlag,
+  isModelFeatureFlag,
 );

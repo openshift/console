@@ -15,7 +15,7 @@ import { useField, useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { LoadingInline } from '@console/internal/components/utils';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { useDebounceCallback } from '../../../hooks/debounce';
 import { getFieldId } from '../field-utils';
 import SelectorCard from './SelectorCard';

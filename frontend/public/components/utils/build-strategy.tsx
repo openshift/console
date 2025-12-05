@@ -5,7 +5,7 @@ import { CodeBlock, CodeBlockCode, DescriptionList } from '@patternfly/react-cor
 import { K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
 import { DetailsItem } from './details-item';
 import { ResourceLink } from './resource-link';
-import { getStrategyType } from '../build';
+import { getStrategyType } from '../utils/build-utils';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 

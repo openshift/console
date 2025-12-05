@@ -6,7 +6,7 @@ import { ArrayFieldTemplateProps, FieldTemplateProps, ObjectFieldTemplateProps }
 import { getUiOptions, getSchemaType } from '@rjsf/core/dist/cjs/utils';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ExpandCollapse } from '@console/internal/components/utils';
+import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
 import { JSON_SCHEMA_GROUP_TYPES } from './const';
 import { FieldSet, FormField } from './fields';
 import { UiSchemaOptionsWithDependency } from './types';

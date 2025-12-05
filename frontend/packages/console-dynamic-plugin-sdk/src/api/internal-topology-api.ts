@@ -63,8 +63,8 @@ export const getTopologyNodeItem: GetTopologyNodeItem = require('@console/topolo
 export const mergeGroup: MergeGroup = require('@console/topology/src/data-transforms/transform-utils')
   .mergeGroup;
 
-export const getModifyApplicationAction: GetModifyApplicationAction = require('@console/topology/src/actions/modify-application')
-  .getModifyApplicationAction;
+export const useGetModifyApplicationAction: GetModifyApplicationAction = require('@console/topology/src/actions/modify-application')
+  .useGetModifyApplicationAction;
 
 export const baseDataModelGetter: BaseDataModelGetter = require('@console/topology/src/data-transforms/data-transformer')
   .baseDataModelGetter;

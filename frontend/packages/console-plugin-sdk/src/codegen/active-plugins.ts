@@ -57,10 +57,7 @@ export const getActivePluginsModule = (
       ${output}
       activePlugins.push({
         name: '${pkg.name}',
-        extensions: [
-          ...require('${pkg.name}/${pkg.consolePlugin.entry}').default,
-          ...${extensionHook(pkg)},
-        ],
+        extensions: ${extensionHook(pkg)},
       });
     `;
   }
@@ -87,11 +84,7 @@ export const loadActivePluginsForTestPurposes = (
   for (const pkg of pluginPackages) {
     activePlugins.push({
       name: pkg.name,
-      extensions: [
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        ...require(`${pkg.name}/${pkg.consolePlugin.entry}`).default,
-        ...extensionHook(pkg),
-      ],
+      extensions: extensionHook(pkg),
     });
   }
 

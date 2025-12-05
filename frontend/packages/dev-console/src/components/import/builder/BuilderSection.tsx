@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { ImportStrategy, DetectedBuildType } from '@console/git-service';
-import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import { PipelineKind } from '../../../types/pipeline';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import FormSection from '../section/FormSection';
 import BuilderImageSelector from './BuilderImageSelector';

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { WebHookSecretKey } from './const';
 import {
   SecretFormType,
+  SecretFilterValues,
   SecretType,
   PullSecretCredential,
   Base64StringData,
@@ -220,4 +221,27 @@ export const opaqueSecretObjectToArray = (
       uid: _.uniqueId(),
     };
   });
+};
+
+export const secretTypeFilterReducer = (secret: { type: SecretType }): string => {
+  switch (secret.type) {
+    case SecretType.dockercfg:
+    case SecretType.dockerconfigjson:
+      return SecretFilterValues.image;
+
+    case SecretType.basicAuth:
+    case SecretType.sshAuth:
+      return SecretFilterValues.source;
+
+    case SecretType.tls:
+      return SecretFilterValues.tls;
+
+    case SecretType.serviceAccountToken:
+      return SecretFilterValues.sa;
+
+    default:
+      // This puts all unrecognized types under "Opaque". Since unrecognized types should be uncommon,
+      // it avoids an "Other" category that is usually empty.
+      return SecretFilterValues.opaque;
+  }
 };

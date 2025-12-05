@@ -15,15 +15,18 @@ import {
 } from '@patternfly/react-core';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { MachineAutoscalerModel } from '../../models';
-import { NumberSpinner, resourcePathFromModel } from '../utils';
+import { NumberSpinner } from '../utils/number-spinner';
+import { resourcePathFromModel } from '../utils/resource-link';
 import { K8sResourceKind } from '../../module/k8s';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineAutoscalerModalProps> = (
-  props,
-) => {
-  const { machineSet, closeOverlay, close, cancel: cancelProp } = props;
+export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineAutoscalerModalProps> = ({
+  machineSet,
+  closeOverlay,
+  close,
+  cancel: cancelProp,
+}) => {
   const navigate = useNavigate();
   const [minReplicas, setMinReplicas] = useState(1);
   const [maxReplicas, setMaxReplicas] = useState(12);
@@ -50,7 +53,7 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
       apiVersion,
       kind,
       metadata: { name, namespace },
-    } = props.machineSet;
+    } = machineSet;
 
     const machineAutoscaler = {
       apiVersion: 'autoscaling.openshift.io/v1beta1',
@@ -101,10 +104,8 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
   );
 
   const {
-    machineSet: {
-      metadata: { name },
-    },
-  } = props;
+    metadata: { name },
+  } = machineSet;
   const { t } = useTranslation();
 
   return (

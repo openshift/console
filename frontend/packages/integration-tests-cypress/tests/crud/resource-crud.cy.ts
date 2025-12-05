@@ -107,12 +107,27 @@ describe('Kubernetes resource CRUD operations', () => {
   ]);
 
   const dataViewResources = new Set([
+    'Build',
+    'BuildConfig',
+    'ConfigMap',
+    'CronJob',
+    'DaemonSet',
+    'Deployment',
+    'DeploymentConfig',
     'HorizontalPodAutoscaler',
+    'ImageStream',
     'Job',
+    'LimitRange',
     'Pod',
+    'PodDisruptionBudget',
     'ReplicaSet',
     'ReplicationController',
+    'ResourceQuota',
+    'Role',
+    'Secret',
+    'ServiceAccount',
     'StatefulSet',
+    'user.openshift.io~v1~Group',
   ]);
 
   testObjs.forEach((testObj, resource) => {
@@ -251,7 +266,11 @@ describe('Kubernetes resource CRUD operations', () => {
         cy.testA11y(`Search page for ${kind}: ${name}`);
 
         // link to to details page
-        listPage.rows.clickRowByName(name);
+        if (isDataViewResource) {
+          listPage.dvRows.clickRowByName(name);
+        } else {
+          listPage.rows.clickRowByName(name);
+        }
         cy.url().should('include', `/${name}`);
         detailsPage.titleShouldContain(name);
       });

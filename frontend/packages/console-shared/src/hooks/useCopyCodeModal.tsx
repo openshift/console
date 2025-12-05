@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { CopyToClipboard } from '@console/internal/components/utils';
+import { CopyToClipboard } from '@console/internal/components/utils/copy-to-clipboard';
 import { Modal } from '@console/shared/src/components/modal';
 import { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 

@@ -2,30 +2,24 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
-import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardFooter, CardHeader, CardTitle, Divider } from '@patternfly/react-core';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
-import { FirehoseResource, FirehoseResult } from '../../utils';
+import type { FirehoseResource, FirehoseResult } from '../../utils/types';
 import { EventModel } from '../../../models';
 import { EventKind, K8sKind } from '../../../module/k8s';
 import {
-  useExtensions,
+  useResolvedExtensions,
   DashboardsOverviewResourceActivity,
   isDashboardsOverviewResourceActivity,
-} from '@console/plugin-sdk';
-import {
-  useResolvedExtensions,
-  DashboardsOverviewResourceActivity as DynamicDashboardsOverviewResourceActivity,
-  isDashboardsOverviewResourceActivity as isDynamicDashboardsOverviewResourceActivity,
-  ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
 import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import { getName } from '@console/shared';
+import { getName } from '@console/shared/src/selectors/common';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 
@@ -69,20 +63,17 @@ const OngoingActivity = connect(mapStateToProps)(
       projectName,
       models,
     }: DashboardItemProps & OngoingActivityProps) => {
-      const resourceActivityExtensions = useExtensions<DashboardsOverviewResourceActivity>(
-        isDashboardsOverviewResourceActivity,
-      );
-      const [dynamicResourceActivityExtensions] = useResolvedExtensions<
-        DynamicDashboardsOverviewResourceActivity
-      >(isDynamicDashboardsOverviewResourceActivity);
+      const [resourceActivityExtensions] = useResolvedExtensions<
+        DashboardsOverviewResourceActivity
+      >(isDashboardsOverviewResourceActivity);
 
       const resourceActivities = React.useMemo(
         () =>
-          [...resourceActivityExtensions, ...dynamicResourceActivityExtensions].filter((e) => {
+          resourceActivityExtensions.filter((e) => {
             const model = models.get(e.properties.k8sResource.kind);
             return model && model.namespaced;
           }),
-        [resourceActivityExtensions, dynamicResourceActivityExtensions, models],
+        [resourceActivityExtensions, models],
       );
 
       React.useEffect(() => {
@@ -114,9 +105,7 @@ const OngoingActivity = connect(mapStateToProps)(
                 .map((r) => ({
                   resource: r,
                   timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
-                  loader: (a as DashboardsOverviewResourceActivity)?.properties?.loader,
-                  component: (a as ResolvedExtension<DynamicDashboardsOverviewResourceActivity>)
-                    ?.properties?.component,
+                  component: a.properties.component,
                 }));
             }),
           ),
@@ -141,33 +130,63 @@ const OngoingActivity = connect(mapStateToProps)(
   ),
 );
 
+const RecentEventFooter = withDashboardResources(
+  ({
+    watchK8sResource,
+    stopWatchK8sResource,
+    resources,
+    projectName,
+    viewEvents,
+  }: DashboardItemProps & { projectName: string; viewEvents: string }) => {
+    const { t } = useTranslation();
+    React.useEffect(() => {
+      if (projectName) {
+        const eventsResource = getEventsResource(projectName);
+        watchK8sResource(eventsResource);
+        return () => {
+          stopWatchK8sResource(eventsResource);
+        };
+      }
+    }, [watchK8sResource, stopWatchK8sResource, projectName]);
+
+    const events = resources.events as FirehoseResult<EventKind[]>;
+    const shouldShowFooter = events?.loaded && events?.data && events.data.length > 50;
+
+    if (!shouldShowFooter) {
+      return null;
+    }
+
+    return (
+      <>
+        <Divider />
+        <CardFooter>
+          <Link to={viewEvents} data-test="events-view-all-link">
+            {t('console-shared~View all events')}
+          </Link>
+        </CardFooter>
+      </>
+    );
+  },
+);
+
 export const ActivityCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const viewEvents = `/k8s/ns/${projectName}/events`;
   const { t } = useTranslation();
   return (
-    <Card data-test-id="activity-card">
-      <CardHeader
-        actions={{
-          actions: (
-            <>
-              <Link to={viewEvents} data-test="view-events-link">
-                {t('public~View events')}
-              </Link>
-            </>
-          ),
-          hasNoOffset: false,
-          className: 'co-overview-card__actions',
-        }}
-      >
-        <CardTitle>{t('public~Activity')}</CardTitle>
-      </CardHeader>
-      <ActivityBody className="co-project-dashboard__activity-body">
-        <OngoingActivity projectName={projectName} />
-        <RecentEvent projectName={projectName} viewEvents={viewEvents} />
-      </ActivityBody>
-    </Card>
+    <>
+      <Card data-test-id="activity-card">
+        <CardHeader>
+          <CardTitle>{t('public~Activity')}</CardTitle>
+        </CardHeader>
+        <ActivityBody className="co-project-dashboard__activity-body">
+          <OngoingActivity projectName={projectName} />
+          <RecentEvent projectName={projectName} viewEvents={viewEvents} />
+        </ActivityBody>
+        <RecentEventFooter projectName={projectName} viewEvents={viewEvents} />
+      </Card>
+    </>
   );
 };
 

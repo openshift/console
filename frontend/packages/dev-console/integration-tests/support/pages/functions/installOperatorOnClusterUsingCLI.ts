@@ -90,8 +90,7 @@ export const installOperatorUsingCLI = (operator: operators) => {
   let yamlFile;
   switch (operator) {
     case operators.PipelinesOperator:
-      yamlFile =
-        '../../pipelines-plugin/integration-tests/testData/pipelinesOperatorSubscription.yaml';
+      yamlFile = '../../integration-tests/testData/pipelinesOperatorSubscription.yaml';
       break;
     case operators.ServerlessOperator:
       yamlFile =

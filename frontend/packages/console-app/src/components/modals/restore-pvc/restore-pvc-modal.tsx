@@ -23,17 +23,17 @@ import {
   snapshotPVCAccessModeAnnotation,
   snapshotPVCVolumeModeAnnotation,
 } from '@console/internal/components/storage/shared';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { RequestSizeInput } from '@console/internal/components/utils/request-size-input';
+import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
+import { history } from '@console/internal/components/utils/router';
+import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import {
-  ResourceIcon,
-  history,
-  RequestSizeInput,
-  resourcePathFromModel,
   convertToBaseValue,
   humanizeBinaryBytesWithoutB,
   humanizeBinaryBytes,
-} from '@console/internal/components/utils';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
+} from '@console/internal/components/utils/units';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,
@@ -46,16 +46,12 @@ import {
   StorageClassResourceKind,
   PersistentVolumeClaimKind,
 } from '@console/internal/module/k8s';
-import {
-  getName,
-  getNamespace,
-  Status,
-  isCephProvisioner,
-  getAnnotations,
-  onlyPvcSCs,
-} from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { Status } from '@console/shared/src/components/status/Status';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { getName, getNamespace, getAnnotations } from '@console/shared/src/selectors/common';
+import { onlyPvcSCs } from '@console/shared/src/selectors/storage';
+import { isCephProvisioner } from '@console/shared/src/utils/storage-utils';
 import { AccessModeSelector } from '../../access-modes/access-mode';
 
 import './restore-pvc-modal.scss';

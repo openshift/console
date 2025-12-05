@@ -1,11 +1,15 @@
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { usePerspectives } from '@console/shared/src';
 import DetectPerspective from '../DetectPerspective';
-import PerspectiveDetector from '../PerspectiveDetector';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
 const MockApp = () => <h1>App</h1>;
+
+jest.mock('../PerspectiveDetector', () => ({
+  __esModule: true,
+  default: () => 'PerspectiveDetector',
+}));
 
 jest.mock('../useValuesForPerspectiveContext', () => ({
   useValuesForPerspectiveContext: jest.fn(),
@@ -28,29 +32,41 @@ describe('DetectPerspective', () => {
     useValuesForPerspectiveContextMock.mockClear();
     usePerspectivesMock.mockClear();
     useLocationMock.mockClear();
+    useLocationMock.mockReturnValue({ pathname: '/test' });
   });
-  it('should render children if there is an activePerspective', () => {
-    useValuesForPerspectiveContextMock.mockReturnValue(['dev', () => {}, true]);
+
+  it('should render children when there is an active perspective', () => {
+    useValuesForPerspectiveContextMock.mockReturnValue(['dev', jest.fn(), true]);
     usePerspectivesMock.mockReturnValue([
       { properties: { id: 'admin' } },
       { properties: { id: 'dev' } },
       { properties: { id: 'dev-test' } },
     ]);
-    const wrapper = shallow(
+
+    render(
       <DetectPerspective>
         <MockApp />
       </DetectPerspective>,
     );
-    expect(wrapper.find(MockApp).exists()).toBe(true);
+
+    expect(screen.getByRole('heading', { name: 'App' })).toBeVisible();
+    expect(screen.queryByText('PerspectiveDetector')).not.toBeInTheDocument();
   });
 
-  it('should render PerspectiveDetector if there is no activePerspective', () => {
-    useValuesForPerspectiveContextMock.mockReturnValue([undefined, () => {}, true]);
-    const wrapper = shallow(
+  it('should render PerspectiveDetector when there is no active perspective', () => {
+    useValuesForPerspectiveContextMock.mockReturnValue([undefined, jest.fn(), true]);
+    usePerspectivesMock.mockReturnValue([
+      { properties: { id: 'admin' } },
+      { properties: { id: 'dev' } },
+    ]);
+
+    render(
       <DetectPerspective>
         <MockApp />
       </DetectPerspective>,
     );
-    expect(wrapper.find(PerspectiveDetector).exists()).toBe(true);
+
+    expect(screen.getByText('PerspectiveDetector')).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'App' })).not.toBeInTheDocument();
   });
 });

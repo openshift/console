@@ -3,7 +3,6 @@ import { SignOutAltIcon } from '@patternfly/react-icons/dist/esm/icons/sign-out-
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { helmCatalogIconSVG } from '@console/helm-plugin/src/utils/icons';
 import { channelIconSVG } from '@console/knative-plugin/src/utils/icons';
-import { pipelineIconSVG } from '@console/pipelines-plugin/src/utils/icons';
 import { LoadedExtension } from '@console/plugin-sdk/src';
 
 type AddActionExtension = ResolvedExtension<AddAction>;
@@ -232,29 +231,6 @@ const uploadJar: AddActionExtension = {
   uid: '@console/dev-console[46]',
 };
 
-const pipelinesAction: AddActionExtension = {
-  flags: { required: ['OPENSHIFT_PIPELINE'], disallowed: [] },
-  pluginID: '@console/pipelines-plugin',
-  pluginName: '@console/pipelines-plugin',
-  properties: {
-    accessReview: [
-      {
-        group: 'tekton.dev',
-        resource: 'pipelines',
-        verb: 'create',
-      },
-    ],
-    description: 'Create a Tekton Pipeline to automate delivery of your application',
-    groupId: 'pipelines',
-    href: '/k8s/ns/:namespace/tekton.dev~v1beta1~Pipeline/~new/builder',
-    icon: pipelineIconSVG,
-    id: 'pipeline',
-    label: 'Pipelines',
-  },
-  type: 'dev-console.add/action',
-  uid: '@console/pipelines-plugin[40]',
-};
-
 const actionWithoutGroupId: AddActionExtension = {
   flags: { required: [], disallowed: [] },
   pluginID: '@console/add-page-test-data',
@@ -358,19 +334,6 @@ const eventing: AddActionGroupExtension = {
   uid: '@console/knative-plugin[49]',
 };
 
-const pipelinesActionGroup: AddActionGroupExtension = {
-  flags: { required: [], disallowed: [] },
-  pluginID: '@console/pipelines-plugin',
-  pluginName: '@console/pipelines-plugin',
-  properties: {
-    id: 'pipelines',
-    name: 'Pipelines',
-    insertAfter: 'local-machine',
-  },
-  type: 'dev-console.add/action-group',
-  uid: '@console/pipelines-plugin[39]',
-};
-
 export const addActionExtensions: AddActionExtension[] = [
   allServices,
   database,
@@ -384,7 +347,6 @@ export const addActionExtensions: AddActionExtension[] = [
   channel,
   importYaml,
   uploadJar,
-  pipelinesAction,
 ];
 
 export const addActionsWithoutValidGroupId: AddActionExtension[] = [
@@ -395,7 +357,6 @@ export const addActionsWithoutValidGroupId: AddActionExtension[] = [
 export const addActionGroup: AddActionGroup['properties'][] = [
   containerImagesActionGroup.properties,
   softwareCatalog.properties,
-  pipelinesActionGroup.properties,
   eventing.properties,
   gitRepository.properties,
   localMachine.properties,
@@ -404,7 +365,6 @@ export const addActionGroup: AddActionGroup['properties'][] = [
 export const addActionGroupExtensions: AddActionGroupExtension[] = [
   containerImagesActionGroup,
   softwareCatalog,
-  pipelinesActionGroup,
   eventing,
   gitRepository,
   localMachine,

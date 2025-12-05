@@ -1,7 +1,8 @@
 import * as Immutable from 'immutable';
 import { noop } from 'lodash-es';
 
-import { dashboardsReducer, defaults, RESULTS_TYPE } from '../dashboards';
+import { dashboardsReducer, defaults } from '../dashboards';
+import { RESULTS_TYPE } from '../dashboard-results';
 import {
   activateWatch,
   updateWatchTimeout,

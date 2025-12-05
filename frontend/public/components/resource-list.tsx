@@ -1,12 +1,14 @@
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import { getBadgeFromType, getTitleForNodeKind } from '@console/shared';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { connectToPlural } from '../kinds';
 import { ErrorPage404 } from './error';
 import { withStartGuide } from './start-guide';
-import { AsyncComponent, LoadingBox } from './utils';
+import { AsyncComponent } from './utils/async';
+import { LoadingBox } from './utils/status-box';
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
 import { getResourceListPages, getResourceDetailsPages } from './resource-pages';
 import {
@@ -18,19 +20,13 @@ import {
   referenceForExtensionModel,
   referenceForModel,
 } from '../module/k8s';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
-  useExtensions,
-  isResourceDetailsPage,
   ResourceDetailsPage as ResourceDetailsPageExt,
+  isResourceDetailsPage,
   ResourceListPage as ResourceListPageExt,
   isResourceListPage,
-} from '@console/plugin-sdk';
-import {
-  ResourceDetailsPage as DynamicResourceDetailsPage,
-  isResourceDetailsPage as isDynamicResourceDetailsPage,
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions/pages';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = (props) => Object.assign({}, _.get(props, 'params'), props);
@@ -38,9 +34,6 @@ const allParams = (props) => Object.assign({}, _.get(props, 'params'), props);
 const ResourceListPage_ = connectToPlural(
   withStartGuide((props: ResourceListPageProps) => {
     const resourceListPageExtensions = useExtensions<ResourceListPageExt>(isResourceListPage);
-    const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
-      isDynamicResourceListPage,
-    );
     const { kindObj, kindsInFlight, modelRef, noProjectsAvailable, ns, plural } = allParams(props);
 
     if (!kindObj) {
@@ -57,10 +50,9 @@ const ResourceListPage_ = connectToPlural(
       );
     }
     const ref = referenceForModel(kindObj);
-    const componentLoader = getResourceListPages(
-      resourceListPageExtensions,
-      dynamicResourceListPageExtensions,
-    ).get(ref, () => Promise.resolve(DefaultPage));
+    const componentLoader = getResourceListPages(resourceListPageExtensions).get(ref, () =>
+      Promise.resolve(DefaultPage),
+    );
 
     return (
       <div className="co-m-list">
@@ -85,9 +77,6 @@ export const ResourceListPage = (props) => {
 
 const ResourceDetailsPage_ = connectToPlural((props: ResourceDetailsPageProps) => {
   const detailsPageExtensions = useExtensions<ResourceDetailsPageExt>(isResourceDetailsPage);
-  const dynamicResourceDetailsPageExtensions = useExtensions<DynamicResourceDetailsPage>(
-    isDynamicResourceDetailsPage,
-  );
   const location = useLocation();
 
   const { name, ns, kindObj, kindsInFlight } = allParams(props);
@@ -105,8 +94,8 @@ const ResourceDetailsPage_ = connectToPlural((props: ResourceDetailsPageProps) =
       ? referenceForModel(kindObj)
       : null;
   const componentLoader =
-    getResourceDetailsPages(detailsPageExtensions, dynamicResourceDetailsPageExtensions).get(ref) ||
-    getResourceDetailsPages(detailsPageExtensions, dynamicResourceDetailsPageExtensions).get(
+    getResourceDetailsPages(detailsPageExtensions).get(ref) ||
+    getResourceDetailsPages(detailsPageExtensions).get(
       referenceForExtensionModel({
         group: kindObj.apiGroup,
         version: kindObj.apiVersion,

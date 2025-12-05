@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as webpack from 'webpack';
+import type * as webpack from 'webpack';
 import { getExtensionsFilePath } from '@console/plugin-sdk/src/codegen/active-plugins';
 import { PluginPackage } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { ConsolePluginPackageJSON } from '../build-types';
@@ -34,7 +34,7 @@ export class ExtensionValidatorPlugin implements webpack.WebpackPluginInstance {
         );
 
         if (result.hasErrors()) {
-          const error = new webpack.WebpackError(
+          const error = new compiler.webpack.WebpackError(
             `ExtensionValidator has reported errors for plugin ${pkg.name}`,
           );
           error.details = result.formatErrors();

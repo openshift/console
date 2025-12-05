@@ -10,7 +10,7 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '@console/internal/components/factory/modal';
-import { LoadingInline } from '@console/internal/components/utils';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { k8sKill } from '@console/internal/module/k8s';
 import { PodDisruptionBudgetModel } from '../../../models';
 import { PodDisruptionBudgetKind } from '../types';

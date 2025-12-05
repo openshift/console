@@ -22,6 +22,13 @@
       "usePerspectiveDetection": { "$codeRef": "perspective.usePerspectiveDetection" }
     }
   },
+  {
+    "type": "INTERNAL_DO_NOT_USE.guided-tour",
+    "properties": {
+      "perspective": "dev",
+      "tour": { "$codeRef": "getGuidedTour" }
+    }
+  },
 
   {
     "type": "console.flag/model",
@@ -1018,7 +1025,6 @@
       "path": [
         "/add",
         "/import-sample",
-        "/catalog",
         "/samples",
         "/topology",
         "/deploy-image",
@@ -1063,7 +1069,7 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/catalog/all-namespaces", "/catalog/ns/:ns"],
+      "path": ["/catalog/ns/:ns"],
       "component": { "$codeRef": "CatalogPage" }
     }
   },

@@ -9,7 +9,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import withDragDropContext from '@console/internal/components/utils/drag-drop-context';
 import { modelFor } from '@console/internal/module/k8s';
-import { usePinnedResources } from '@console/shared';
+import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
 import PinnedResource from './PinnedResource';
 import { PluginNavItem } from './PluginNavItem';
 import { useNavExtensionsForPerspective } from './useNavExtensionForPerspective';

@@ -4,12 +4,8 @@ import {
   ResourceStatus,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
-import {
-  ActionMenuVariant,
-  LazyActionMenu,
-  Status,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
+import { ActionMenuVariant, LazyActionMenu } from '@console/shared/src/components/actions';
+import { Status, YellowExclamationTriangleIcon } from '@console/shared/src/components/status';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { ActionListItem, Button, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -27,7 +23,9 @@ import {
   K8sResourceKindReference,
   referenceForExtensionModel,
 } from '../../module/k8s';
-import { FirehoseResult, KebabOption, ResourceIcon } from './index';
+import type { FirehoseResult } from './types';
+import type { KebabOption } from './kebab';
+import { ResourceIcon } from './resource-icon';
 import { ManagedByOperatorLink } from './managed-by';
 
 export const ResourceItemDeleting = () => {
@@ -123,33 +121,36 @@ export const ConnectedPageHeading = connectToModel(
       {},
     );
 
-    const actions = hasExtensionActions ? (
-      <LazyActionMenu
-        context={{ [kind]: data }}
-        variant={ActionMenuVariant.DROPDOWN}
-        label={t('public~Actions')}
-      />
-    ) : (
-      <>
-        {hasButtonActions && hasData && (
-          <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
-        )}
+    const actions =
+      hasExtensionActions && !_.isFunction(customActionMenu) ? (
+        <LazyActionMenu
+          context={{ [kind]: data }}
+          variant={ActionMenuVariant.DROPDOWN}
+          label={t('public~Actions')}
+        />
+      ) : (
+        <>
+          {hasButtonActions && hasData && (
+            <ActionButtons actionButtons={buttonActions.map((a) => a(kindObj, data))} />
+          )}
 
-        {hasMenuActions && hasData && (
-          <ActionListItem>
-            <ActionsMenu
-              actions={
-                _.isFunction(menuActions)
-                  ? menuActions(kindObj, data, extraResources, customData)
-                  : menuActions.map((a) => a(kindObj, data, extraResources, customData))
-              }
-            />
-          </ActionListItem>
-        )}
+          {hasMenuActions && hasData && (
+            <ActionListItem>
+              <ActionsMenu
+                actions={
+                  _.isFunction(menuActions)
+                    ? menuActions(kindObj, data, extraResources, customData)
+                    : menuActions.map((a) => a(kindObj, data, extraResources, customData))
+                }
+              />
+            </ActionListItem>
+          )}
 
-        {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
-      </>
-    );
+          {_.isFunction(customActionMenu)
+            ? customActionMenu(kindObj, data, extraResources)
+            : customActionMenu}
+        </>
+      );
 
     return (
       <PageHeading
@@ -238,7 +239,11 @@ export type ConnectedPageHeadingProps = Omit<PageHeadingProps, 'primaryAction'> 
   /** Renders a custom action menu if the `obj` prop is passed with `data` */
   customActionMenu?:
     | React.ReactNode
-    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode);
+    | ((
+        kindObj: K8sKind,
+        obj: K8sResourceKind,
+        extraResources?: { [prop: string]: K8sResourceKind | K8sResourceKind[] },
+      ) => React.ReactNode);
   customData?: any;
   getResourceStatus?: (resource: K8sResourceKind) => string;
   kind?: K8sResourceKindReference;

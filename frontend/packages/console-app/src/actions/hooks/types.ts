@@ -12,6 +12,7 @@ export enum CommonActionCreator {
   ModifyCount = 'ModifyCount',
   ModifyPodSelector = 'ModifyPodSelector',
   ModifyTolerations = 'ModifyTolerations',
+  ModifyTaints = 'ModifyTaints',
   AddStorage = 'AddStorage',
 }
 
@@ -29,6 +30,7 @@ export enum PVCActionCreator {
   PVCSnapshot = 'PVCSnapshot',
   ClonePVC = 'ClonePVC',
   DeletePVC = 'DeletePVC',
+  ModifyVAC = 'ModifyVAC',
 }
 
 export enum VolumeSnapshotActionCreator {
@@ -69,4 +71,9 @@ export enum PDBActionCreator {
 export enum MachineSetActionCreator {
   EditMachineCount = 'EditMachineCount',
   CreateMachineAutoscaler = 'CreateMachineAutoscaler',
+}
+
+export enum BuildConfigActionCreator {
+  StartBuild = 'StartBuild',
+  StartLastRun = 'StartLastRun',
 }

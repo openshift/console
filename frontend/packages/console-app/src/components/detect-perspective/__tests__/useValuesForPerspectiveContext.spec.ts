@@ -9,9 +9,12 @@ import { usePreferredPerspective } from '../../user-preferences/perspective/useP
 import { useLastPerspective } from '../useLastPerspective';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
-jest.mock('@console/shared/src', () => ({
+jest.mock('@console/shared/src/hooks/perspective-utils', () => ({
   usePerspectiveExtension: jest.fn(),
   usePerspectives: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: jest.fn(),
 }));
 

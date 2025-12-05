@@ -4,15 +4,13 @@ import { useSelector } from 'react-redux';
 
 import { getModelExtensionMetadata } from './get-resources';
 import * as staticModels from '../../models';
-import {
-  apiVersionCompare,
-  kindForReference,
-  referenceForModel,
-} from '@console/internal/module/k8s/k8s';
-import { referenceForGroupVersionKind } from './k8s-ref';
-import store, { RootState } from '../../redux';
+import { apiVersionCompare } from '@console/internal/module/k8s/crd-versions';
+import { kindForReference } from '@console/internal/module/k8s/for-ref';
+import { referenceForModel, referenceForGroupVersionKind } from './k8s-ref';
+import store from '../../redux';
+import type { RootState } from '../../redux';
 import { pluginStore } from '../../plugins';
-import { isModelDefinition, LoadedExtension } from '@console/plugin-sdk';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import {
   isModelMetadata,
   K8sResourceKindReference,
@@ -44,18 +42,6 @@ let k8sModels;
 const getK8sModels = () => {
   if (!k8sModels) {
     k8sModels = modelsToMap(_.values(staticModels));
-
-    const hasModel = (model: K8sKind) => k8sModels.has(modelKey(model));
-
-    k8sModels = k8sModels.withMutations((map) => {
-      const pluginModels = _.flatMap(
-        pluginStore
-          .getExtensionsInUse()
-          .filter(isModelDefinition)
-          .map((md) => md.properties.models),
-      );
-      map.merge(modelsToMap(pluginModels.filter((model) => !hasModel(model))));
-    });
   }
   return k8sModels;
 };
@@ -65,9 +51,9 @@ const getK8sModels = () => {
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const modelFor = (ref: K8sResourceKindReference): K8sModel => {
-  const metadataExtensions = pluginStore
-    .getExtensionsInUse()
-    .filter(isModelMetadata) as LoadedExtension<ModelMetadata>[];
+  const metadataExtensions = pluginStore.getExtensions().filter(isModelMetadata) as LoadedExtension<
+    ModelMetadata
+  >[];
 
   let m = getK8sModels().get(ref);
   if (m) {

@@ -2,9 +2,9 @@ import { action, ActionType as Action } from 'typesafe-actions';
 import { Dispatch } from 'redux';
 
 import { coFetchJSON } from '../co-fetch';
-import { k8sBasePath } from '../module/k8s/k8s';
-import { isWatchActive, RESULTS_TYPE } from '../reducers/dashboards';
-import { RootState } from '../redux';
+import { k8sBasePath } from '../module/k8s/consts';
+import { isWatchActive, RESULTS_TYPE } from '../reducers/dashboard-results';
+import type { RootState } from '../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../components/graphs/helpers';
 import { PrometheusResponse } from '../components/graphs';
 import { URL_POLL_DEFAULT_DELAY } from '../components/utils/url-poll-hook';

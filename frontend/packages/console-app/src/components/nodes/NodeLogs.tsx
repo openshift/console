@@ -13,6 +13,7 @@ import {
   SelectList,
   SelectOption,
   Switch,
+  Banner,
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import { css } from '@patternfly/react-styles';
@@ -21,18 +22,20 @@ import { coFetch } from '@console/internal/co-fetch';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import {
   getQueryArgument,
-  LoadingBox,
-  LoadingInline,
   removeQueryArgument,
   setQueryArgument,
-} from '@console/internal/components/utils';
+} from '@console/internal/components/utils/router';
+import { LoadingBox, LoadingInline } from '@console/internal/components/utils/status-box';
 import { modelFor, NodeKind, resourceURL } from '@console/internal/module/k8s';
-import { useUserSettings } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import NodeLogsUnitFilter from './NodeLogsUnitFilter';
 import './node-logs.scss';
+
+const MAX_LINE_COUNT = 1000;
+const MAX_LINE_LENGTH = 500000;
 
 type NodeLogsProps = {
   obj: NodeKind;
@@ -166,6 +169,13 @@ const LogControls: React.FC<LogControlsProps> = ({
   );
 };
 
+const HeaderBanner: React.FCC<{ lineCount: number }> = ({ lineCount }) => {
+  const { t } = useTranslation('public');
+  const count = lineCount === 0 ? lineCount : lineCount - 1;
+  const headerText = t('{{count}} line', { count });
+  return <Banner>{headerText}</Banner>;
+};
+
 const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
   const {
     kind,
@@ -193,6 +203,8 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
   const [isPathOpen, setPathOpen] = React.useState(false);
   const [isFilenameOpen, setFilenameOpen] = React.useState(false);
   const [content, setContent] = React.useState('');
+  const [trimmedContent, setTrimmedContent] = React.useState('');
+  const [lineCount, setLineCount] = React.useState(0);
   const [isWrapLines, setWrapLines] = useUserSettings<boolean>(
     LOG_WRAP_LINES_USERSETTINGS_KEY,
     false,
@@ -223,6 +235,11 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     const unitsArray = unitText?.split(',');
     const unitQueryParams = unitsArray?.map((val) => `unit=${val}`);
     return unitQueryParams?.join('&');
+  };
+  const addTailLinesToURL = (url: string) => {
+    const urlObj = new URL(url, window.location.origin);
+    urlObj.searchParams.set('tailLines', MAX_LINE_COUNT.toString());
+    return urlObj.toString();
   };
   const getLogURL = React.useCallback(
     (ext?: string, unitText?: string) => {
@@ -277,16 +294,21 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
 
   React.useEffect(() => {
     if (logURL) {
-      fetchLog(logURL);
+      fetchLog(addTailLinesToURL(logURL));
     }
   }, [logURL, fetchLog]);
 
-  let trimmedContent = '';
-  const MAX_LENGTH = 500000;
-  if (content.length > MAX_LENGTH) {
-    const index = content.indexOf('\n', content.length - MAX_LENGTH);
-    trimmedContent = content.substr(index + 1);
-  }
+  React.useEffect(() => {
+    if (content.length > MAX_LINE_LENGTH) {
+      const index = content.indexOf('\n', content.length - MAX_LINE_LENGTH);
+      const newTrimmedContent = content.substr(index + 1);
+      setTrimmedContent(newTrimmedContent);
+      setLineCount(newTrimmedContent.split('\n').length);
+    } else {
+      setTrimmedContent('');
+      setLineCount(content.split('\n').length);
+    }
+  }, [content]);
 
   const onChangePath = (event: React.MouseEvent<Element, MouseEvent>, newAPI: string) => {
     event.preventDefault();
@@ -300,7 +322,6 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     removeQueryArgument(logQueryArgument);
     setLoadingFilenames(true);
     setLoadingLog(true);
-    trimmedContent = '';
   };
   const onTogglePath = () => setPathOpen(!isPathOpen);
   const onChangeUnit = (value: string) => {
@@ -316,8 +337,6 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     setLoadingLog(true);
     setQueryArgument(logQueryArgument, newFilename);
     setLogURL(getLogURL(`/${newFilename}`));
-    fetchLog(getLogURL(`/${newFilename}`));
-    trimmedContent = '';
   };
   const onToggleFilename = () => setFilenameOpen(!isFilenameOpen);
   const errorExists = error.length > 0;
@@ -352,7 +371,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     <PaneBody fullHeight>
       <div className="log-window-wrapper">
         {(isLoadingLog || errorExists) && logControls}
-        {trimmedContent?.length > 0 && !isLoadingLog && (
+        {(lineCount >= MAX_LINE_COUNT || trimmedContent?.length > 0) && !isLoadingLog && (
           <Alert
             isInline
             className="co-alert co-alert--margin-bottom-sm"
@@ -401,6 +420,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
             toolbar={logControls}
             theme={theme}
             initialIndexWidth={7}
+            header={<HeaderBanner lineCount={lineCount} />}
           />
         )}
       </div>

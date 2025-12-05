@@ -4,31 +4,26 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage, ListPage, sorts } from './factory';
-import {
-  ContainerTable,
-  navFactory,
-  SectionHeading,
-  ResourceSummary,
-  ResourcePodCount,
-  AsyncComponent,
-  ResourceLink,
-  LabelList,
-  OwnerReferences,
-  PodsComponent,
-  RuntimeClass,
-  LoadingBox,
-} from './utils';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { sorts } from './factory/table';
+import { ContainerTable } from './utils/container-table';
+import { navFactory, PodsComponent } from './utils/horizontal-nav';
+import { SectionHeading } from './utils/headings';
+import { ResourceSummary, ResourcePodCount, RuntimeClass } from './utils/details-page';
+import { AsyncComponent } from './utils/async';
+import { ResourceLink } from './utils/resource-link';
+import { LabelList } from './utils/label-list';
+import { OwnerReferences } from './utils/owner-references';
+import { LoadingBox } from './utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
-import {
-  LazyActionMenu,
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-  DASH,
-} from '@console/shared/src';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { DASH } from '@console/shared/src/constants/ui';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 
 import { referenceFor, referenceForModel } from '../module/k8s';
@@ -44,9 +39,8 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ReplicaSetModel } from '../models';
 import { sortResourceByValue } from './factory/Table/sort';
@@ -189,9 +183,7 @@ const getDataViewRows = (data, columns) => {
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -277,13 +269,12 @@ const ReplicaSetsList = ({ data, loaded, ...props }) => {
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView
+      <ConsoleDataView
         {...props}
         label={ReplicaSetModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

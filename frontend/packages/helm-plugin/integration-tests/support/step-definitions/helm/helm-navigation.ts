@@ -7,6 +7,7 @@ import {
   switchPerspective,
   catalogTypes,
 } from '@console/dev-console/integration-tests/support/constants';
+import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   catalogPO,
   helmChartRepositoriesPO,
@@ -100,8 +101,9 @@ Given('user is at the Helm page', () => {
 });
 
 Given('user is at the Helm Release tab in admin perspective', () => {
-  cy.byLegacyTestID('helm-releases-header').should('exist').click({ force: true });
-  detailsPage.titleShouldContain(pageTitle.HelmReleases);
+  cy.get('[data-quickstart-id="qs-nav-ecosystem"]').should('be.visible').click({ force: true });
+  cy.get('[data-test-id="helm-nav"]').should('be.visible').click({ force: true });
+  cy.byLegacyTestID('horizontal-link-Helm Releases').should('exist').click({ force: true });
 });
 
 When('user selects checkbox for the Deployed Helm charts', (workloadName: string) => {
@@ -152,6 +154,7 @@ When('user clicks Actions menu in Helm Details page', () => {
 
 When('user clicks on the filter drop down', () => {
   helmPage.selectHelmFilterDropDown();
+  cy.get(helmPO.filterDropdown).click();
 });
 
 When('user selects checkbox for the {string} Helm charts', (status: string) => {
@@ -343,6 +346,7 @@ Given('user is able to see the status and status icon of {string} under helm rel
 Given(
   'user is able to see the {string}, {string} and {string} options under filter bar',
   (item1: string, item2: string, item3: string) => {
+    helmPage.selectHelmFilterDropDown();
     helmPage.verifyDropdownItem(item1, item2, item3);
   },
 );

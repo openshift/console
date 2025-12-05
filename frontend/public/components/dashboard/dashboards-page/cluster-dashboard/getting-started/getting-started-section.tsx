@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import { FLAGS, useUserSettings } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   GettingStartedExpandableGrid,

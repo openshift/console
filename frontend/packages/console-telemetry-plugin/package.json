@@ -5,7 +5,6 @@
   "private": true,
   "scripts": {},
   "consolePlugin": {
-    "entry": "src/plugin.ts",
     "displayName": "Telemetry Plugin",
     "description": "An OpenShift Console plugin for capturing events in segment.",
     "exposedModules": {

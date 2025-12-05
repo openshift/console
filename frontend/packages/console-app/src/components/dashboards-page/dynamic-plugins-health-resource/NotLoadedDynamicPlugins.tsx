@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StackItem, Content } from '@patternfly/react-core';
-import { ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { ConsolePluginModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { NotLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';

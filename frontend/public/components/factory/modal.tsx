@@ -114,7 +114,7 @@ export const ModalTitle: React.FC<ModalTitleProps> = ({
 );
 
 /** @deprecated Use PF modals instead */
-export const ModalBody: React.FC<ModalBodyProps> = ({ children }) => (
+export const ModalBody: React.FCC<ModalBodyProps> = ({ children }) => (
   <div className="modal-body">
     <div className="modal-body-content">{children}</div>
   </div>
@@ -231,6 +231,7 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
 
 export type ModalWrapperProps = {
   blocking?: boolean;
+  children?: React.ReactNode;
   className?: string;
   onClose?: (event?: React.SyntheticEvent) => void;
 };
@@ -253,10 +254,12 @@ export type ModalComponentProps = {
 export type ModalTitleProps = {
   className?: string;
   close?: (e: React.SyntheticEvent<any, Event>) => void;
+  children?: React.ReactNode;
 };
 
 export type ModalBodyProps = {
   className?: string;
+  children?: React.ReactNode;
 };
 
 export type ModalFooterProps = {
@@ -264,6 +267,7 @@ export type ModalFooterProps = {
   errorMessage?: React.ReactNode;
   inProgress: boolean;
   className?: string;
+  children?: React.ReactNode;
 };
 
 export type ModalSubmitFooterProps = {

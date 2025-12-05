@@ -4,17 +4,17 @@ import * as _ from 'lodash-es';
 
 // FIXME(alecmerdler): Do not `import store`
 import store from '../redux';
-import { OverviewItem } from '@console/shared';
+import { OverviewItem } from '@console/shared/src/types/resource';
 import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants';
+} from '@console/shared/src/constants/common';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures } from './features';
 import { clearSSARFlags } from './flags';
 import { OverviewSpecialGroup } from '../components/overview/constants';
-import { setClusterID, setCreateProjectMessage } from './common';
+import { setClusterID, setCreateProjectMessage, ActionType } from './common';
 import { subsClient } from '../graphql/client';
 import {
   beginImpersonate,
@@ -29,37 +29,7 @@ import {
 import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
 
 export type { NamespaceMetrics } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-
-export enum ActionType {
-  DismissOverviewDetails = 'dismissOverviewDetails',
-  SelectOverviewDetailsTab = 'selectOverviewDetailsTab',
-  SelectOverviewItem = 'selectOverviewItem',
-  SetActiveApplication = 'setActiveApplication',
-  SetActiveNamespace = 'setActiveNamespace',
-  SetCreateProjectMessage = 'setCreateProjectMessage',
-  SetCurrentLocation = 'setCurrentLocation',
-  SetServiceLevel = 'setServiceLevel',
-  NotificationDrawerToggleExpanded = 'notificationDrawerExpanded',
-  SetClusterID = 'setClusterID',
-  SortList = 'sortList',
-  UpdateOverviewMetrics = 'updateOverviewMetrics',
-  UpdateOverviewResources = 'updateOverviewResources',
-  UpdateOverviewSelectedGroup = 'updateOverviewSelectedGroup',
-  UpdateOverviewLabels = 'updateOverviewLabels',
-  UpdateOverviewFilterValue = 'updateOverviewFilterValue',
-  UpdateTimestamps = 'updateTimestamps',
-  SetPodMetrics = 'setPodMetrics',
-  SetNamespaceMetrics = 'setNamespaceMetrics',
-  SetNodeMetrics = 'setNodeMetrics',
-  SetPVCMetrics = 'setPVCMetrics',
-  SetUtilizationDuration = 'SetUtilizationDuration',
-  SetUtilizationDurationSelectedKey = 'SetUtilizationDurationSelectedKey',
-  SetUtilizationDurationEndTime = 'SetUtilizationDurationEndTime',
-  SetShowOperandsInAllNamespaces = 'setShowOperandsInAllNamespaces',
-  SetDeprecatedPackage = 'setDeprecatedPackage',
-  SetDeprecatedChannel = 'setDeprecatedChannel',
-  SetDeprecatedVersion = 'setDeprecatedVersion',
-}
+export { ActionType } from './common';
 
 type MetricValuesByNamespace = {
   [namespace: string]: MetricValuesByName;
@@ -82,6 +52,10 @@ export type NodeMetrics = {
 
 export type PVCMetrics = {
   usedCapacity?: MetricValuesByName;
+};
+
+export type PluginCSPViolations = {
+  [pluginName: string]: boolean;
 };
 
 // URL routes that can be namespaced
@@ -214,7 +188,21 @@ export const setActiveNamespace = (namespace: string = '') => {
   return action(ActionType.SetActiveNamespace, { namespace });
 };
 
-export const startImpersonate = (kind: string, name: string) => async (dispatch, getState) => {
+/**
+ * Encodes a string for use in Kubernetes impersonation subprotocols.
+ * Subprotocols are comma-separated, so commas aren't allowed. Also "="
+ * and "/" aren't allowed, so we base64 encode and replace illegal chars.
+ */
+const encodeImpersonationValue = (value: string, textEncoder: TextEncoder): string => {
+  return Base64.encode(String.fromCharCode.apply(String, textEncoder.encode(value)))
+    .replace(/=/g, '_')
+    .replace(/\//g, '-');
+};
+
+export const startImpersonate = (kind: string, name: string, groups?: string[]) => async (
+  dispatch,
+  getState,
+) => {
   const textEncoder = new TextEncoder();
 
   const imp = getImpersonate(getState());
@@ -224,25 +212,38 @@ export const startImpersonate = (kind: string, name: string) => async (dispatch,
     return;
   }
 
-  /**
-   * Subprotocols are comma-separated, so commas aren't allowed. Also "="
-   * and "/" aren't allowed, so base64 but replace illegal chars.
-   */
-  const encodedName = Base64.encode(String.fromCharCode.apply(String, textEncoder.encode(name)))
-    .replace(/=/g, '_')
-    .replace(/\//g, '-');
+  const encodedName = encodeImpersonationValue(name, textEncoder);
 
   let subprotocols;
   if (kind === 'User') {
     subprotocols = [`Impersonate-User.${encodedName}`];
-  }
-  if (kind === 'Group') {
+  } else if (kind === 'Group') {
     subprotocols = [`Impersonate-Group.${encodedName}`];
+  } else if (kind === 'UserWithGroups' && groups && groups.length > 0) {
+    // User with multiple groups impersonation
+    // Encode user subprotocol
+    subprotocols = [`Impersonate-User.${encodedName}`];
+    // Encode each group as a separate subprotocol
+    groups.forEach((group) => {
+      const encodedGroup = encodeImpersonationValue(group, textEncoder);
+      subprotocols.push(`Impersonate-Group.${encodedGroup}`);
+    });
   }
 
-  dispatch(beginImpersonate(kind, name, subprotocols));
+  dispatch(beginImpersonate(kind, name, subprotocols, groups));
+
+  // Close WebSocket to trigger reconnection with new impersonation headers
+  // Wait for the close to complete before proceeding
   subsClient.close(false, true);
-  dispatch(clearSSARFlags());
+
+  // Don't clear/refresh flags here - the App component's useLayoutEffect will handle it
+  // This ensures flags refresh happens in sync with React's render cycle
+};
+
+// Action to refresh features after impersonation change
+// Don't clear flags - just re-detect them. Old values remain until new ones are fetched.
+// This prevents components from seeing PENDING state and showing loading spinners.
+export const refreshFeaturesAfterImpersonation = () => (dispatch) => {
   dispatch(detectFeatures());
 };
 export const stopImpersonate = () => (dispatch) => {
@@ -305,6 +306,9 @@ export const setDeprecatedChannel = (value: DeprecatedOperatorWarning) => {
 export const setDeprecatedVersion = (value: DeprecatedOperatorWarning) => {
   return action(ActionType.SetDeprecatedVersion, { value });
 };
+export const setPluginCSPViolations = (pluginName: string, hasViolation: boolean) => {
+  return action(ActionType.SetPluginCSPViolations, { pluginName, hasViolation });
+};
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
@@ -336,6 +340,7 @@ const uiActions = {
   setDeprecatedPackage,
   setDeprecatedChannel,
   setDeprecatedVersion,
+  setPluginCSPViolations,
 };
 
 export type UIAction = Action<typeof uiActions>;

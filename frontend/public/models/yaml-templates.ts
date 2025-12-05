@@ -218,7 +218,7 @@ spec:
     resource:
       name: cpu
       target:
-        averageUtilization: 50
+        averageUtilization: 80
         type: Utilization
 `,
   )
@@ -511,6 +511,19 @@ metadata:
   name: example
 provisioner: my-provisioner
 reclaimPolicy: Delete
+`,
+  )
+  .setIn(
+    [referenceForModel(k8sModels.VolumeAttributesClassModel), 'default'],
+    `
+apiVersion: storage.k8s.io/v1
+kind: VolumeAttributesClass
+metadata:
+  name: example
+driverName: my-driver
+parameters:
+  provisioned-iops: "3000"
+  provisioned-throughput: "50"
 `,
   )
   .setIn(
@@ -921,6 +934,19 @@ spec:
   namespaceDashboard:
     namespaces:
       - default
+`,
+  )
+  .setIn(
+    [referenceForModel(k8sModels.ConsoleLinkModel), 'cl-contact-mail'],
+    `
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: example-contact-mail
+spec:
+  href: 'mailto:support@example.com'
+  location: UserMenu
+  text: Contact Mail Link
 `,
   )
   .setIn(

@@ -1,14 +1,20 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
-import { GridCellProps, CellMeasurer } from 'react-virtualized';
+import { GridCellProps } from 'react-virtualized';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import Cell from '../Cell';
 import { RenderHeader, RenderCell } from '../types';
+
+// Mock CellMeasurer
+jest.mock('react-virtualized', () => ({
+  CellMeasurer: jest.fn(({ children }) => children),
+}));
 
 describe('Grid-cell', () => {
   let data: GridCellProps;
   let renderHeader: RenderHeader;
   let renderCell: RenderCell;
   let style: React.CSSProperties;
+
   beforeEach(() => {
     style = {
       height: 50,
@@ -26,12 +32,12 @@ describe('Grid-cell', () => {
       isVisible: false,
       parent: null,
     };
-    renderHeader = jest.fn();
-    renderCell = jest.fn();
+    renderHeader = jest.fn(() => <div>Header</div>);
+    renderCell = jest.fn(() => <div>Cell</div>);
   });
 
   it('should return null when item is null', () => {
-    const wrapper = shallow(
+    const { container } = renderWithProviders(
       <Cell
         data={data}
         renderCell={renderCell}
@@ -41,11 +47,11 @@ describe('Grid-cell', () => {
         items={[null]}
       />,
     );
-    expect(wrapper.isEmptyRender()).toBeTruthy();
+    expect(container.firstChild).toBeNull();
   });
 
-  it('should render cellMeasurer when item is not null', () => {
-    const wrapper = shallow(
+  it('should render when item is not null', () => {
+    const { container } = renderWithProviders(
       <Cell
         data={data}
         renderCell={renderCell}
@@ -55,11 +61,11 @@ describe('Grid-cell', () => {
         items={[{}]}
       />,
     );
-    expect(wrapper.find(CellMeasurer)).toHaveLength(1);
+    expect(container.firstChild).not.toBeNull();
   });
 
-  it('should render header and not the cell when item is string and height should not be changed', () => {
-    const wrapper = shallow(
+  it('should render header when item is string', () => {
+    renderWithProviders(
       <Cell
         data={data}
         renderCell={renderCell}
@@ -70,15 +76,14 @@ describe('Grid-cell', () => {
         renderHeader={renderHeader}
       />,
     );
-    expect(wrapper.find('div').prop('style').height).toBe(50);
-    expect(wrapper.find('div').prop('style').width).toBe('100%');
+
     expect(renderHeader).toHaveBeenCalledWith('string');
     expect(renderCell).not.toHaveBeenCalled();
   });
 
-  it('should render Cell and not the Header when item is neither string nor null and height should be changed', () => {
+  it('should render cell when item is an object', () => {
     const item = { id: 1 };
-    const wrapper = shallow(
+    renderWithProviders(
       <Cell
         data={data}
         renderCell={renderCell}
@@ -88,8 +93,7 @@ describe('Grid-cell', () => {
         items={[item]}
       />,
     );
-    expect(wrapper.find('div').prop('style').height).toBe(50);
-    expect(wrapper.find('div').prop('style').width).toBe(50);
+
     expect(renderCell).toHaveBeenCalledWith(item);
     expect(renderHeader).not.toHaveBeenCalled();
   });

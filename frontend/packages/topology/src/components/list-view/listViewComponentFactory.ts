@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 import * as React from 'react';
 import { Node } from '@patternfly/react-topology';
 import { TYPE_HELM_RELEASE } from '@console/helm-plugin/src/topology/components/const';

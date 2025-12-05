@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { ModalVariant } from '@patternfly/react-core';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
+import { useTelemetry } from '@console/shared/src';
 import { TourActions } from './const';
 import { TourContext } from './tour-context';
 import TourStepComponent from './TourStepComponent';
@@ -32,6 +34,8 @@ const StepComponent: React.FC<StepComponentProps> = ({
   introBannerDark,
   modalVariant,
 }) => {
+  const fireTelemetryEvent = useTelemetry();
+  const [activePerspective] = useActivePerspective();
   const { tourDispatch, totalSteps, tourState: { stepNumber: step } = {} } = React.useContext(
     TourContext,
   );
@@ -51,17 +55,29 @@ const StepComponent: React.FC<StepComponentProps> = ({
       showStepBadge={showStepBadge}
       nextButtonText={nextButtonText}
       backButtonText={backButtonText}
-      onClose={() => tourDispatch?.({ type: TourActions.complete })}
+      onClose={() => {
+        fireTelemetryEvent('guided-tour-close', {
+          step,
+          totalSteps,
+          perspective: activePerspective,
+        });
+        tourDispatch?.({ type: TourActions.complete });
+      }}
       onNext={() =>
         step && totalSteps && step > totalSteps
           ? tourDispatch?.({ type: TourActions.complete })
           : tourDispatch?.({ type: TourActions.next })
       }
-      onBack={() =>
-        step === 0
-          ? tourDispatch?.({ type: TourActions.complete })
-          : tourDispatch?.({ type: TourActions.back })
-      }
+      onBack={() => {
+        if (step === 0) {
+          fireTelemetryEvent('guided-tour-skip', {
+            perspective: activePerspective,
+          });
+          tourDispatch?.({ type: TourActions.complete });
+        } else {
+          tourDispatch?.({ type: TourActions.back });
+        }
+      }}
     />
   );
 };

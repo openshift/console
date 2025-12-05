@@ -8,13 +8,12 @@ import {
   gitPage,
   navigateTo,
 } from '@console/dev-console/integration-tests/support/pages';
-import { eventingPO } from '@console/knative-plugin/integration-tests/support/pageObjects/global-po';
 import {
   topologyPage,
   topologySidePane,
 } from '@console/topology/integration-tests/support/pages/topology';
 import { formPO } from '../../../../../dev-console/integration-tests/support/pageObjects/global-po';
-import { domainPO } from '../../pageObjects/global-po';
+import { eventingPO, domainPO } from '../../pageObjects/global-po';
 import { functionsPage } from '../../pages/functions/functions-page';
 
 When('user enters Domain mapping as {string}', (domain: string) => {

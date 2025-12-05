@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useBoundingClientRect } from '../../hooks';
+import { useBoundingClientRect } from '../../hooks/useBoundingClientRect';
 import Portal from '../popper/Portal';
 import './spotlight.scss';
 

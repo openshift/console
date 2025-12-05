@@ -11,7 +11,9 @@ import {
   k8sPatch,
   referenceFor,
 } from '../../module/k8s';
-import { ButtonBar, LoadingBox, resourceObjPath } from '../utils';
+import { ButtonBar } from '../utils/button-bar';
+import { LoadingBox } from '../utils/status-box';
+import { resourceObjPath } from '../utils/resource-link';
 import { Checkbox } from '../checkbox';
 import { CreatePVCForm } from './create-pvc';
 import { PersistentVolumeClaimModel } from '../../models';

@@ -9,7 +9,8 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { UserPreferenceDropdownField as DropdownFieldType } from '@console/dynamic-plugin-sdk/src';
-import { useTelemetry, useUserSettings } from '@console/shared';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { UserPreferenceFieldProps } from './types';
 
 import './UserPreferenceField.scss';

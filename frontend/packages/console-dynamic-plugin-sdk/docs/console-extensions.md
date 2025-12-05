@@ -1158,7 +1158,7 @@ Topology Data Model Factory Extension
 | ---- | ---------- | -------- | ----------- |
 | `id` | `string` | no | Unique ID for the factory. |
 | `priority` | `number` | no | Priority for the factory |
-| `resources` | `WatchK8sResourcesGeneric` | yes | Resources to be fetched from useK8sWatchResources hook. |
+| `resources` | `WatchK8sResourcesGeneric \| CodeRef<() => Promise<WatchK8sResourcesGeneric>>` | yes | Resources to be fetched from useK8sWatchResources hook. |
 | `workloadKeys` | `string[]` | yes | Keys in resources containing workloads. |
 | `getDataModel` | `CodeRef<TopologyDataModelGetter>` | yes | Getter for the data model factory |
 | `isResourceDepicted` | `CodeRef<TopologyDataModelDepicted>` | yes | Getter for function to determine if a resource is depicted by this model factory |

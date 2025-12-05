@@ -4,7 +4,8 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { LoadingBox, ConnectedPageHeading } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
+import { ConnectedPageHeading } from '@console/internal/components/utils/headings';
 import { ObjectMetadata, PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
 import { PodConnectLoader } from '@console/internal/components/pod';
 import { PodModel } from '@console/internal/models';

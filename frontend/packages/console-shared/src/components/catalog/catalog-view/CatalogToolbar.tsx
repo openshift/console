@@ -1,11 +1,14 @@
-import { forwardRef } from 'react';
+import { forwardRef, Suspense } from 'react';
 import { Flex, FlexItem, SearchInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { useDebounceCallback } from '@console/shared';
+// TODO(CONSOLE-4823): Remove this hard-coded component when OLMv1 GAs
+import { OLMv1Switch } from '@console/operator-lifecycle-manager-v1/src/components/OLMv1Switch';
+import { useDebounceCallback, useFlag } from '@console/shared/src/hooks';
 import { NO_GROUPING } from '../utils/category-utils';
-import { /* CatalogSortOrder, */ CatalogStringMap } from '../utils/types';
+import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
 import CatalogPageHeader from './CatalogPageHeader';
 import CatalogPageHeading from './CatalogPageHeading';
 import CatalogPageNumItems from './CatalogPageNumItems';
@@ -15,12 +18,13 @@ type CatalogToolbarProps = {
   title: string;
   totalItems: number;
   searchKeyword: string;
-  // sortOrder: CatalogSortOrder;
+  sortOrder: CatalogSortOrder;
   groupings: CatalogStringMap;
   activeGrouping: string;
+  catalogType?: string;
   onGroupingChange: (grouping: string) => void;
   onSearchKeywordChange: (searchKeyword: string) => void;
-  // onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
+  onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
 };
 
 const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
@@ -29,22 +33,27 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
       title,
       totalItems,
       searchKeyword,
-      // sortOrder,
+      sortOrder,
       groupings,
       activeGrouping,
+      catalogType,
       onGroupingChange,
       onSearchKeywordChange,
-      // onSortOrderChange,
+      onSortOrderChange,
     },
     inputRef,
   ) => {
     const { t } = useTranslation();
+    const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
 
-    // TODO: Add sort order back in with a new sort by "Relevance" selection, that is the default sort order
-    // const catalogSortItems = {
-    //   [CatalogSortOrder.ASC]: t('console-shared~A-Z'),
-    //   [CatalogSortOrder.DESC]: t('console-shared~Z-A'),
-    // };
+    // TODO(CONSOLE-4823): Remove this hard-coded toggle when OLMv1 GAs
+    const showOLMv1Toggle = techPreviewEnabled && catalogType === 'operator';
+
+    const catalogSortItems = {
+      [CatalogSortOrder.RELEVANCE]: t('console-shared~Relevance'),
+      [CatalogSortOrder.ASC]: t('console-shared~A-Z'),
+      [CatalogSortOrder.DESC]: t('console-shared~Z-A'),
+    };
 
     const showGrouping = !_.isEmpty(groupings);
 
@@ -72,15 +81,16 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
                 aria-label={t('console-shared~Filter by keyword...')}
               />
             </FlexItem>
-            {/* <FlexItem>
+            <FlexItem>
               <ConsoleSelect
                 className="co-catalog-page__sort"
                 items={catalogSortItems}
                 title={catalogSortItems[sortOrder]}
                 alwaysShowTitle
                 onChange={onSortOrderChange}
+                selectedKey={sortOrder}
               />
-            </FlexItem> */}
+            </FlexItem>
             {showGrouping && (
               <FlexItem>
                 <ConsoleSelect
@@ -91,6 +101,14 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
                   title={catalogGroupItems[activeGrouping]}
                   alwaysShowTitle
                 />
+              </FlexItem>
+            )}
+            {/* TODO(CONSOLE-4823): Remove this hard-coded toggle when OLMv1 GAs */}
+            {showOLMv1Toggle && (
+              <FlexItem>
+                <Suspense fallback={null}>
+                  <OLMv1Switch />
+                </Suspense>
               </FlexItem>
             )}
           </Flex>

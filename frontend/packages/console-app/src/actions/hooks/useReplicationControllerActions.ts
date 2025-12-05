@@ -4,7 +4,7 @@ import { Action } from '@console/dynamic-plugin-sdk';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { rollbackModal } from '@console/internal/components/modals';
-import { asAccessReview } from '@console/internal/components/utils';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { ReplicationControllerKind, K8sModel } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src';

@@ -7,10 +7,12 @@ import {
   deleteModal,
   labelsModalLauncher,
   podSelectorModal,
+  taintsModal,
   tolerationsModal,
 } from '@console/internal/components/modals';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
-import { resourceObjPath, asAccessReview } from '@console/internal/components/utils';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
+import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { CommonActionCreator, ActionObject } from './types';
 
@@ -142,6 +144,16 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
             resourceKind: kind,
             resource,
             modalClassName: 'modal-lg',
+          }),
+        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
+      }),
+      [CommonActionCreator.ModifyTaints]: (): Action => ({
+        id: 'edit-taints',
+        label: t('console-app~Edit taints'),
+        cta: () =>
+          taintsModal({
+            resourceKind: kind,
+            resource,
           }),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),

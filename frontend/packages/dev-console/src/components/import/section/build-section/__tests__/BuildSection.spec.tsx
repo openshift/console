@@ -50,7 +50,7 @@ jest.mock('@console/git-service/src', () => ({
   },
 }));
 
-jest.mock('@console/pipelines-plugin/src/const', () => ({
+jest.mock('../../../../../const', () => ({
   FLAG_OPENSHIFT_PIPELINE_AS_CODE: 'OPENSHIFT_PIPELINE_AS_CODE',
 }));
 

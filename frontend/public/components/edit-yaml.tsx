@@ -9,26 +9,16 @@ import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import {
-  FLAGS,
-  ALL_NAMESPACES_KEY,
-  getBadgeFromType,
-  withPostFormSubmissionCallback,
-  getResourceSidebarSamples,
-  useTelemetry,
-  useUserSettingsCompatibility,
-  WithPostFormSubmissionCallbackProps,
-} from '@console/shared';
-import {
-  SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
-  SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
-  SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
-  SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants/common';
+import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
+import { getResourceSidebarSamples } from '@console/shared/src/utils/sample-utils';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
+
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
-import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
-import CodeEditorSidebar from '@console/shared/src/components/editor/CodeEditorSidebar';
+import { CodeEditor } from '@console/shared/src/components/editor/CodeEditor';
+import { CodeEditorSidebar } from '@console/shared/src/components/editor/CodeEditorSidebar';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
@@ -42,14 +32,11 @@ import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useRe
 import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
 import { managedResourceSaveModal } from './modals';
 import ReplaceCodeModal from './modals/replace-code-modal';
-import {
-  checkAccess,
-  Firehose,
-  Loading,
-  resourceObjPath,
-  resourceListPathFromModel,
-  FirehoseResult,
-} from './utils';
+import { checkAccess } from './utils/rbac';
+import { Firehose } from './utils/firehose';
+import { Loading } from './utils/status-box';
+import { resourceObjPath, resourceListPathFromModel } from './utils/resource-link';
+import { FirehoseResult } from './utils/types';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import {
   referenceForModel,
@@ -61,6 +48,7 @@ import {
   AccessReviewResourceAttributes,
   CodeEditorRef,
   K8sModel,
+  K8sResourceCommon,
 } from '../module/k8s';
 import { ConsoleYAMLSampleModel } from '../models';
 import { getYAMLTemplates } from '../models/yaml-templates';
@@ -68,7 +56,7 @@ import { findOwner } from '../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { definitionFor } from '../module/k8s/swagger';
 import { ImportYAMLResults } from './import-yaml-results';
-import { EditYamlSettingsModal } from './modals/edit-yaml-settings-modal';
+import { EditYamlSettingsModal, useEditYamlSettings } from './modals/edit-yaml-settings-modal';
 import { CodeEditorControl } from '@patternfly/react-code-editor';
 import { CompressIcon } from '@patternfly/react-icons/dist/js/icons/compress-icon';
 import { ExpandIcon } from '@patternfly/react-icons/dist/js/icons/expand-icon';
@@ -77,6 +65,7 @@ import { RootState } from '@console/internal/redux';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ErrorModal } from './modals/error-modal';
+import type { CodeEditorProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const generateObjToLoad = (
   templateExtensions: Parameters<typeof getYAMLTemplates>[0],
@@ -149,9 +138,7 @@ type EditYAMLProps = {
   fileUpload?: string;
 };
 
-type EditYAMLInnerProps = WithPostFormSubmissionCallbackProps<any> &
-  ReturnType<typeof stateToProps> &
-  EditYAMLProps;
+type EditYAMLInnerProps = ReturnType<typeof stateToProps> & EditYAMLProps;
 
 const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   const {
@@ -165,7 +152,6 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     header,
     genericYAML = false,
     children: customAlerts,
-    postFormSubmissionCallback,
     redirectURL,
     clearFileUpload,
     onSave,
@@ -174,6 +160,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
 
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
+  const postFormSubmissionCallback = useResourceConnectionHandler<K8sResourceCommon>();
   const [errors, setErrors] = React.useState<string[]>(null);
   const [success, setSuccess] = React.useState<string>(null);
   const [initialized, setInitialized] = React.useState(false);
@@ -195,19 +182,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     ),
   );
 
-  const [showTooltips] = useUserSettingsCompatibility(
-    SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
-    SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
-    true,
-    true,
-  );
-
-  const [stickyScrollEnabled] = useUserSettingsCompatibility(
-    SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
-    SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
-    true,
-    true,
-  );
+  const { theme, fontSize, showTooltips, stickyScrollEnabled } = useEditYamlSettings();
 
   const [callbackCommand, setCallbackCommand] = React.useState('');
   const [showReplaceCodeModal, setShowReplaceCodeModal] = React.useState(false);
@@ -809,7 +784,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   }
 
   const readOnly = props.readOnly || notAllowed;
-  const options = { readOnly, scrollBeyondLastLine: false };
+  const options: CodeEditorProps['options'] = { fontSize, readOnly, scrollBeyondLastLine: false };
   const model = getModel(props.obj);
   const { samples, snippets } = model
     ? getResourceSidebarSamples(model, yamlSamplesList, t)
@@ -882,9 +857,10 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
             <div className={css('yaml-editor', customClass)} ref={editor}>
               {showReplaceCodeModal && <ReplaceCodeModal handleCodeReplace={handleCodeReplace} />}
               <CodeEditor
+                editorProps={theme === 'default' ? undefined : { theme: `console-${theme}` }}
+                options={options}
                 isCopyEnabled={canDownload}
                 ref={monacoRef}
-                options={options}
                 showShortcuts={!genericYAML && !isFullscreen}
                 toolbarLinks={
                   sidebarSwitch
@@ -1006,7 +982,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
  * This component loads the entire Monaco editor library with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
-export const EditYAML_ = connect(stateToProps)(withPostFormSubmissionCallback(EditYAMLInner));
+export const EditYAML_ = connect(stateToProps)(EditYAMLInner);
 
 export const EditYAML = connectToFlags<WithFlagsProps & EditYAMLProps>(FLAGS.CONSOLE_YAML_SAMPLE)(
   ({ flags, ...props }) => {

@@ -6,7 +6,7 @@ import {
   removeQueryArgument,
   setQueryArgument,
   history,
-} from '@console/internal/components/utils';
+} from '@console/internal/components/utils/router';
 import { useTelemetry } from '../../hooks/useTelemetry';
 import { CatalogType } from '../catalog';
 import QuickSearchBar from './QuickSearchBar';

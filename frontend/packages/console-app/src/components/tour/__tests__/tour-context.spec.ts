@@ -1,5 +1,5 @@
 import * as redux from 'react-redux';
-import * as useExtensionsModule from '@console/plugin-sdk/src/api/useExtensions';
+import * as useResolvedExtensions from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import * as userHooks from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { TourActions } from '../const';
@@ -62,13 +62,15 @@ describe('guided-tour-context', () => {
       };
 
       mockTourExtension = [
-        {
-          type: 'GuidedTour',
-          properties: {
-            perspective: 'dev',
-            tour: mockTour,
+        [
+          {
+            type: 'INTERNAL_DO_NOT_USE.guided-tour',
+            properties: {
+              perspective: 'dev',
+              tour: mockTour,
+            },
           },
-        },
+        ],
       ];
     });
 
@@ -80,7 +82,7 @@ describe('guided-tour-context', () => {
           B: false,
         },
       );
-      spyOn(useExtensionsModule, 'useExtensions').and.returnValue(mockTourExtension);
+      spyOn(useResolvedExtensions, 'useResolvedExtensions').and.returnValue(mockTourExtension);
       spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
         { completed: false },
         () => null,
@@ -110,7 +112,7 @@ describe('guided-tour-context', () => {
           B: false,
         },
       );
-      spyOn(useExtensionsModule, 'useExtensions').and.returnValue([]);
+      spyOn(useResolvedExtensions, 'useResolvedExtensions').and.returnValue([[]]);
       spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
         { completed: false },
         () => null,
@@ -133,7 +135,7 @@ describe('guided-tour-context', () => {
           B: false,
         },
       );
-      spyOn(useExtensionsModule, 'useExtensions').and.returnValue(mockTourExtension);
+      spyOn(useResolvedExtensions, 'useResolvedExtensions').and.returnValue(mockTourExtension);
       spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
         { completed: false },
         () => null,

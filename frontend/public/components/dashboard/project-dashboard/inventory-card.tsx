@@ -24,9 +24,10 @@ import {
   getPVCStatusGroups,
   getVSStatusGroups,
 } from '@console/shared/src/components/dashboard/inventory-card/utils';
-import { FirehoseResult, FirehoseResource, useAccessReview } from '../../utils';
+import type { FirehoseResult, FirehoseResource } from '../../utils/types';
+import { useAccessReview } from '../../utils/rbac';
 import { K8sKind, referenceForModel } from '../../../module/k8s';
-import { getName } from '@console/shared';
+import { getName } from '@console/shared/src/selectors/common';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import {
   useResolvedExtensions,

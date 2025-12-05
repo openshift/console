@@ -1,11 +1,15 @@
 {
-  "Extension Catalog": "Extension Catalog",
-  "Installed Extensions": "Installed Extensions",
-  "Extension Catalog Items": "Extension Catalog Items",
-  "Source": "Source",
-  "Provider": "Provider",
-  "Capability level": "Capability level",
-  "Infrastructure features": "Infrastructure features",
-  "Valid subscription": "Valid subscription",
-  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers."
+  "Installed Operators": "Installed Operators",
+  "Operators": "Operators",
+  "OLMv1 Catalog": "OLMv1 Catalog",
+  "Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.": "Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.",
+  "Enable OLMv1 catalog": "Enable OLMv1 catalog",
+  "Operator Lifecycle Management version 1": "Operator Lifecycle Management version 1",
+  "Learn more about OLMv1": "Learn more about OLMv1",
+  "With OLMv1, you'll get a much simpler API that's easier to work with and understand. Plus, you have more direct control over updates. You can define update ranges and decide exactly how they are rolled out.": "With OLMv1, you'll get a much simpler API that's easier to work with and understand. Plus, you have more direct control over updates. You can define update ranges and decide exactly how they are rolled out.",
+  "Lets you use OLMv1 (Tech Preview), a streamlined redesign of OLMv0. OLMv1 simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.": "Lets you use OLMv1 (Tech Preview), a streamlined redesign of OLMv0. OLMv1 simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.",
+  "Enable OLMv1": "Enable OLMv1",
+  "Toggle OLMv1 UI": "Toggle OLMv1 UI",
+  "Tech Preview": "Tech Preview",
+  "OLMv1 information": "OLMv1 information"
 }

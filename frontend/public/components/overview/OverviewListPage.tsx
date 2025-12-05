@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { STORAGE_PREFIX } from '@console/shared';
+import { STORAGE_PREFIX } from '@console/shared/src/constants/common';
 import TopologyPage from '@console/topology/src/components/page/TopologyPage';
 import { TopologyViewType } from '@console/topology/src/topology-types';
 

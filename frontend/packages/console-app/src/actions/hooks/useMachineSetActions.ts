@@ -5,7 +5,7 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { ConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
 import { ConfigureMachineAutoscalerModal } from '@console/internal/components/modals/configure-machine-autoscaler-modal';
-import { asAccessReview } from '@console/internal/components/utils';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { MachineSetModel } from '@console/internal/models';
 import { MachineSetKind } from '@console/internal/module/k8s';
 import { MachineSetActionCreator } from './types';

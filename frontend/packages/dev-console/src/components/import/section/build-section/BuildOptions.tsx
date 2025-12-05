@@ -5,10 +5,13 @@ import { Trans, useTranslation } from 'react-i18next';
 import { ImportStrategy } from '@console/git-service/src/types';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { LoadingInline, useAccessReview } from '@console/internal/components/utils';
-import { CLUSTER_PIPELINE_NS, FLAG_OPENSHIFT_PIPELINE } from '@console/pipelines-plugin/src/const';
-import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { SingleDropdownField, SelectInputOption, useFlag } from '@console/shared';
-import { FLAG_OPENSHIFT_BUILDCONFIG } from '../../../../const';
+import {
+  CLUSTER_PIPELINE_NS,
+  FLAG_OPENSHIFT_BUILDCONFIG,
+  FLAG_OPENSHIFT_PIPELINE,
+} from '../../../../const';
+import { PipelineModel } from '../../../../models/pipelines';
 import {
   isPreferredStrategyAvailable,
   useClusterBuildStrategy,

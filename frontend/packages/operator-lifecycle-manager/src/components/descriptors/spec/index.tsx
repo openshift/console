@@ -28,6 +28,8 @@ import { configureUpdateStrategyModal } from './configure-update-strategy';
 import { EndpointList, EndpointListProps } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 
+import './index.scss';
+
 const PodCount: React.FC<SpecCapabilityProps<number>> = ({
   description,
   descriptor,

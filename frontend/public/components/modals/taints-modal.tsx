@@ -7,7 +7,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circ
 import { useTranslation } from 'react-i18next';
 
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { EmptyBox } from '../utils';
+import { EmptyBox } from '../utils/status-box';
 import { K8sKind, k8sPatch, NodeKind, Taint } from '../../module/k8s';
 import {
   createModalLauncher,

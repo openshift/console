@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 import { Divider, ButtonVariant } from '@patternfly/react-core';
 import { k8sPatch } from '../../module/k8s';
 import { RoleModel, ClusterRoleModel } from '../../models';
-import { Kebab, EmptyBox, ResourceIcon } from '../utils';
+import { Kebab } from '../utils/kebab';
+import { EmptyBox } from '../utils/status-box';
+import { ResourceIcon } from '../utils/resource-icon';
 
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { useTranslation } from 'react-i18next';

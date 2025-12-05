@@ -1,9 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
-import { ResourceDetailsPage, ResourcePage, ResourceListPage } from '@console/plugin-sdk';
-import {
-  ResourceDetailsPage as DynamicResourceDetailsPage,
-  ResourceListPage as DynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
+import { ResourceDetailsPage, ResourceListPage } from '@console/dynamic-plugin-sdk';
 import { referenceForModel, GroupVersionKind, referenceForExtensionModel } from '../module/k8s';
 import {
   AlertmanagerModel,
@@ -50,6 +46,7 @@ import {
   ServiceMonitorModel,
   StatefulSetModel,
   StorageClassModel,
+  VolumeAttributesClassModel,
   TemplateInstanceModel,
   UserModel,
   VolumeSnapshotModel,
@@ -59,21 +56,9 @@ import {
 } from '../models';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
 
-const addResourcePage = (
-  map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
-  page: ResourcePage,
-) => {
-  const key = page.properties?.modelParser
-    ? page.properties?.modelParser(page.properties.model)
-    : referenceForModel(page.properties.model);
-  if (!map.has(key)) {
-    map.set(key, page.properties.loader);
-  }
-};
-
 const addDynamicResourcePage = (
   map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
-  page: DynamicResourcePage,
+  page: ResourceDetailsPage | ResourceListPage,
 ) => {
   const key = referenceForExtensionModel(page.properties.model);
   if (!map.has(key)) {
@@ -83,7 +68,6 @@ const addDynamicResourcePage = (
 
 type ResourceMapKey = GroupVersionKind | string;
 type ResourceMapValue = () => Promise<React.ComponentType<any>>;
-type DynamicResourcePage = DynamicResourceListPage | DynamicResourceDetailsPage;
 
 export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ConfigMapModel), () =>
@@ -140,7 +124,7 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(NodeModel), () =>
     import(
       '@console/app/src/components/nodes/NodeDetailsPage' /* webpackChunkName: "node-detail" */
-    ).then((m) => m.default),
+    ).then((m) => m.NodeDetailsPage),
   )
   .set(referenceForModel(MachineAutoscalerModel), () =>
     import('./machine-autoscaler' /* webpackChunkName: "machine-autoscaler" */).then(
@@ -263,6 +247,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.StorageClassDetailsPage,
     ),
   )
+  .set(referenceForModel(VolumeAttributesClassModel), () =>
+    import('./volume-attributes-class' /* webpackChunkName: "volume-attributes-class" */).then(
+      (m) => m.VolumeAttributesClassDetailsPage,
+    ),
+  )
   .set(referenceForModel(TemplateInstanceModel), () =>
     import('./template-instance' /* webpackChunkName: "template-instance" */).then(
       (m) => m.TemplateInstanceDetailsPage,
@@ -291,25 +280,19 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(VolumeSnapshotModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-details' /* webpackChunkName: "volume-snapshot-details" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotDetailsPage),
   )
   .set(referenceForModel(VolumeSnapshotClassModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-class-details' /* webpackChunkName: "volume-snapshot-class-details" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotClassDetailsPage),
   );
 
-export const getResourceDetailsPages = (
-  pluginPages: ResourceDetailsPage[] = [],
-  dynamicPluginPages: DynamicResourceDetailsPage[] = [],
-) =>
+export const getResourceDetailsPages = (pluginPages: ResourceDetailsPage[] = []) =>
   ImmutableMap<ResourceMapKey, ResourceMapValue>()
     .merge(baseDetailsPages)
     .withMutations((map) => {
       pluginPages.forEach((page) => {
-        addResourcePage(map, page);
-      });
-      dynamicPluginPages.forEach((page) => {
         addDynamicResourcePage(map, page);
       });
     });
@@ -352,7 +335,7 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(NodeModel), () =>
     import('@console/app/src/components/nodes/NodesPage' /* webpackChunkName: "node" */).then(
-      (m) => m.default,
+      (m) => m.NodesPage,
     ),
   )
   .set(referenceForModel(MachineAutoscalerModel), () =>
@@ -387,7 +370,7 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ),
   )
   .set(referenceForModel(PodModel), () =>
-    import('./pod' /* webpackChunkName: "pod" */).then((m) => m.PodsPage),
+    import('./pod-list' /* webpackChunkName: "pod" */).then((m) => m.PodsPage),
   )
   .set(referenceForModel(ReplicaSetModel), () =>
     import('./replicaset' /* webpackChunkName: "replicaset" */).then((m) => m.ReplicaSetsPage),
@@ -466,6 +449,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.StorageClassPage,
     ),
   )
+  .set(referenceForModel(VolumeAttributesClassModel), () =>
+    import('./volume-attributes-class' /* webpackChunkName: "volume-attributes-class" */).then(
+      (m) => m.VolumeAttributesClassPage,
+    ),
+  )
   .set(referenceForModel(TemplateInstanceModel), () =>
     import('./template-instance' /* webpackChunkName: "template-instance" */).then(
       (m) => m.TemplateInstancePage,
@@ -489,25 +477,19 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(VolumeSnapshotModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotPage),
   )
   .set(referenceForModel(VolumeSnapshotClassModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-class' /* webpackChunkName: "volume-snapshot-class" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotClassPage),
   );
 
-export const getResourceListPages = (
-  pluginPages: ResourceListPage[] = [],
-  dynamicPluginPages: DynamicResourceListPage[] = [],
-) =>
+export const getResourceListPages = (pluginPages: ResourceListPage[] = []) =>
   ImmutableMap<ResourceMapKey, ResourceMapValue>()
     .merge(baseListPages)
     .withMutations((map) => {
       pluginPages.forEach((page) => {
-        addResourcePage(map, page);
-      });
-      dynamicPluginPages.forEach((page) => {
         addDynamicResourcePage(map, page);
       });
     });

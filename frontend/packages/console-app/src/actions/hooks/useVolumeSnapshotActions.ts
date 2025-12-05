@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { restorePVCModal } from '@console/internal/components/modals';
-import { asAccessReview } from '@console/internal/components/utils';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { VolumeSnapshotModel } from '@console/internal/models';
 import { VolumeSnapshotKind } from '@console/internal/module/k8s';
 import { VolumeSnapshotActionCreator } from './types';

@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCheckIcon } from '@patternfly/react-icons/dist/esm/icons/clipboard-check-icon';
 
-import { useCanClusterUpgrade } from '@console/shared';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 import {
   GettingStartedCard,
@@ -11,12 +12,12 @@ import {
 
 import { useIdentityProviderLink } from './cluster-setup-identity-provider-link';
 import { useAlertReceiverLink } from './cluster-setup-alert-receiver-link';
-import { documentationURLs, getDocumentationURL, isManaged } from '../../../../utils';
+import { documentationURLs, getDocumentationURL, isManaged } from '../../../../utils/documentation';
 import { TourActions, TourContext } from '@console/app/src/components/tour';
 
 export const ClusterSetupGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
-
+  const fireTelemetryEvent = useTelemetry();
   const canUpgrade = useCanClusterUpgrade();
 
   const { tourDispatch, tour } = React.useContext(TourContext);
@@ -26,7 +27,10 @@ export const ClusterSetupGettingStartedCard: React.FC = () => {
   const takeConsoleTourAction: GettingStartedLink = {
     id: 'console-tour',
     title: t('public~Take console tour'),
-    onClick: () => tourDispatch({ type: TourActions.start }),
+    onClick: () => {
+      fireTelemetryEvent('launch-guided-tour-form-getting-started-card');
+      tourDispatch({ type: TourActions.start });
+    },
   };
 
   const links = [

@@ -38,7 +38,9 @@ import {
 import { RowFilter } from '../filter-toolbar';
 import * as UIActions from '../../actions/ui';
 import { alertingRuleStateOrder, alertSeverityOrder } from '../monitoring/utils';
-import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
+import { convertToBaseValue } from '../utils/units';
+import { WithScrollContainer } from '../utils/dom-utils';
+import { EmptyBox, StatusBox } from '../utils/status-box';
 import {
   CustomResourceDefinitionKind,
   K8sResourceKind,
@@ -52,6 +54,7 @@ import { getClusterOperatorVersion, getJobTypeAndCompletions } from '../../modul
 import { getLatestVersionForCRD } from '../../module/k8s/k8s';
 import { getTemplateInstanceStatus } from '../../module/k8s/template';
 import { podPhase, podReadiness, podRestarts } from '../../module/k8s/pods';
+import { displayDurationInWords } from '../utils/build-utils';
 import { useTableData } from './table-data-hook';
 import TableHeader from './Table/TableHeader';
 
@@ -90,6 +93,11 @@ export const sorts = {
     const channel = defaultChannelFor(packageManifest);
     return channel?.currentCSVDesc?.displayName;
   },
+  buildDuration: (buildConfig) =>
+    displayDurationInWords(
+      buildConfig?.latestBuild?.status?.startTimestamp,
+      buildConfig?.latestBuild?.status?.completionTimestamp,
+    ),
 };
 
 // Common table row/columns helper SFCs for implementing accessible data grid
@@ -187,6 +195,7 @@ export const TableData: React.FC<TableDataProps> = ({
 };
 TableData.displayName = 'TableData';
 export type TableDataProps = {
+  children?: React.ReactNode;
   className?: string;
   columnID?: string;
   columns?: Set<string>;

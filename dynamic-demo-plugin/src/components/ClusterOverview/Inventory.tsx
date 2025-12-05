@@ -2,14 +2,16 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { MonitoringIcon } from '@patternfly/react-icons';
+import { AddressBookIcon } from '@patternfly/react-icons/dist/esm/icons/address-book-icon';
 import {
-  K8sResourceCommon,
-  useK8sWatchResource,
   InventoryItem,
-  InventoryItemTitle,
   InventoryItemBody,
-  InventoryItemStatus,
   InventoryItemLoading,
+  InventoryItemStatus,
+  InventoryItemTitle,
+  K8sResourceCommon,
+  StatusGroupMapper,
+  useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
 
 const workerNodesLink = '/k8s/cluster/nodes?rowFilter-node-role=worker';
@@ -48,5 +50,17 @@ const WorkerNodeInventory: React.FC = () => {
     </InventoryItem>
   );
 };
+
+export const getRouteStatusGroups: StatusGroupMapper = (resources) => ({
+  'demo-inventory-group': {
+    statusIDs: ['Accepted'],
+    count: resources.length,
+    filterType: 'route-status',
+  },
+});
+
+export const DemoGroupIcon: React.FC = () => (
+  <AddressBookIcon />
+);
 
 export default WorkerNodeInventory;

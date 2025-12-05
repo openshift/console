@@ -3,7 +3,6 @@ import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory';
 import {
@@ -44,7 +43,6 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();
-  const [perspective] = useActivePerspective();
 
   if (helmRelease.loadError) {
     return <StatusBox loadError={helmRelease.loadError} />;
@@ -111,8 +109,7 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
       breadcrumbsFor={() => [
         {
           name: t('helm-plugin~Helm Releases'),
-          path:
-            perspective === 'admin' ? `/helm-releases/ns/${namespace}` : `/helm/ns/${namespace}`,
+          path: `/helm/ns/${namespace}`,
         },
         { name: t('helm-plugin~Helm Release details'), path: `${location.pathname}` },
       ]}

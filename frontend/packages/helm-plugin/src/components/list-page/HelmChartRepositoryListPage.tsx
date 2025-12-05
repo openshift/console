@@ -20,6 +20,7 @@ const HelmChartRepositoryListPage: React.FC<React.ComponentProps<typeof ListPage
       createProps={createProps}
       kind={referenceForModel(HelmChartRepositoryModel)}
       ListComponent={ProjectHelmChartRepositoryList}
+      omitFilterToolbar
     />
   );
 };

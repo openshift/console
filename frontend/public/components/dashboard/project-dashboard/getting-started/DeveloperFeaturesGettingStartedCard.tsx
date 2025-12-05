@@ -2,12 +2,10 @@ import * as React from 'react';
 import { FlagIcon } from '@patternfly/react-icons/dist/esm/icons/flag-icon';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
-import {
-  ALL_NAMESPACES_KEY,
-  useActiveNamespace,
-  useFlag,
-  useOpenShiftVersion,
-} from '@console/shared/src';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { useOpenShiftVersion } from '@console/shared/src/hooks/version';
 import {
   GettingStartedLink,
   GettingStartedCard,

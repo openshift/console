@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { StatusCard } from './status-card';
 import { DetailsCard } from './details-card';

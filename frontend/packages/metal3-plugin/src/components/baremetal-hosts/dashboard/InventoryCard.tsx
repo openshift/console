@@ -6,7 +6,8 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { PodModel, NodeModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s/types';
-import InventoryItem, {
+import {
+  InventoryItem,
   ResourceInventoryItem,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';

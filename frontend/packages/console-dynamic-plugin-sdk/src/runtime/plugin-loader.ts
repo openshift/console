@@ -10,13 +10,13 @@ import {
   isStandardPluginManifest,
 } from '../build-types';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
-import { initSharedPluginModules } from '../shared-modules/shared-modules-init';
 import { RemoteEntryModule } from '../types';
 import { ErrorWithCause } from '../utils/error/custom-error';
 import { settleAllPromises } from '../utils/promise';
 import { resolveURL } from '../utils/url';
 import { resolvePluginDependencies } from './plugin-dependencies';
 import { fetchPluginManifest } from './plugin-manifest';
+import { getSharedScope } from './plugin-shared-modules';
 import { getPluginID } from './plugin-utils';
 
 type ConsolePluginData = {
@@ -109,7 +109,6 @@ export const loadDynamicPlugin = (manifest: StandardConsolePluginManifest) =>
 
 export const getPluginEntryCallback = (
   pluginStore: PluginStore,
-  initSharedPluginModulesCallback: typeof initSharedPluginModules,
   resolveEncodedCodeRefsCallback: typeof resolveEncodedCodeRefs,
 ) => (pluginID: string, entryModule: RemoteEntryModule) => {
   if (!pluginMap.has(pluginID)) {
@@ -127,7 +126,7 @@ export const getPluginEntryCallback = (
   pluginData.entryCallbackFired = true;
 
   try {
-    initSharedPluginModulesCallback(entryModule);
+    entryModule.init(getSharedScope());
   } catch (error) {
     console.error(`Failed to initialize shared modules for plugin ${pluginID}`, error);
     return;
@@ -146,11 +145,7 @@ export const getPluginEntryCallback = (
 };
 
 export const registerPluginEntryCallback = (pluginStore: PluginStore) => {
-  window.loadPluginEntry = getPluginEntryCallback(
-    pluginStore,
-    initSharedPluginModules,
-    resolveEncodedCodeRefs,
-  );
+  window.loadPluginEntry = getPluginEntryCallback(pluginStore, resolveEncodedCodeRefs);
 };
 
 export const adaptPluginManifest = (

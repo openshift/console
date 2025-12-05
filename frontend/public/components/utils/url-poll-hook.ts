@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useState } from 'react';
 import { UseURLPoll } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { usePoll } from './poll-hook';
+import { usePoll } from '@console/shared/src/hooks/usePoll';
 import { useSafeFetch } from './safe-fetch-hook';
 
 export const URL_POLL_DEFAULT_DELAY = 15000; // 15 seconds

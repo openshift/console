@@ -3,11 +3,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
-import { Button, Grid, GridItem, TextInput, TextInputProps } from '@patternfly/react-core';
+import { Button, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import { useDocumentListener } from '@console/shared/src/hooks/document-listener';
-import { KEYBOARD_SHORTCUTS } from '@console/shared/src/constants/common';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
 import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
 import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
@@ -50,37 +48,6 @@ type CreateProps = {
   isDisabled?: boolean;
   id?: string;
 };
-
-type TextFilterProps = Omit<TextInputProps, 'type' | 'tabIndex'> & {
-  label?: string;
-};
-
-export const TextFilter: React.FC<TextFilterProps> = (props) => {
-  const { label, placeholder, autoFocus = false, ...otherInputProps } = props;
-  const { ref } = useDocumentListener<HTMLInputElement>();
-  const { t } = useTranslation();
-  const placeholderText = placeholder ?? t('public~Filter {{label}}...', { label });
-
-  return (
-    <div className="co-text-filter">
-      <TextInput
-        {...otherInputProps}
-        className="co-text-filter__text-input"
-        data-test-id="item-filter"
-        aria-label={placeholderText}
-        placeholder={placeholderText}
-        ref={ref}
-        autoFocus={autoFocus}
-        tabIndex={0}
-        type="text"
-      />
-      <span className="co-text-filter__feedback">
-        <kbd className="co-kbd co-kbd__filter-input">{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd>
-      </span>
-    </div>
-  );
-};
-TextFilter.displayName = 'TextFilter';
 
 // TODO (jon) make this into "withListPageFilters" HOC
 

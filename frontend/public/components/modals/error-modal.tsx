@@ -19,7 +19,7 @@ import {
   ModalFooter,
   ModalComponentProps,
 } from '../factory/modal';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 
 export const ModalErrorContent = (props: ErrorModalProps) => {
   const { t } = useTranslation();

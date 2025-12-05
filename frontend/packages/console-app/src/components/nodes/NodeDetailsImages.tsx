@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { SectionHeading, units } from '@console/internal/components/utils';
+import { SectionHeading } from '@console/internal/components/utils/headings';
+import { humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import { NodeKind } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
@@ -32,7 +33,7 @@ const NodeDetailsImages: React.FC<NodeDetailsImagesProps> = ({ node }) => {
                   ) || image.names[0]}
                 </td>
                 <td className="pf-v6-c-table__td">
-                  {units.humanize(image.sizeBytes, 'binaryBytes', true).string || '-'}
+                  {humanizeBinaryBytes(image.sizeBytes).string || '-'}
                 </td>
               </tr>
             ))}

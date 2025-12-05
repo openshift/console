@@ -2,7 +2,9 @@ import * as React from 'react';
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { ALL_NAMESPACES_KEY, CatalogServiceProvider, isCatalogTypeEnabled } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import CatalogServiceProvider from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import {
   GettingStartedLink,
   GettingStartedCard,

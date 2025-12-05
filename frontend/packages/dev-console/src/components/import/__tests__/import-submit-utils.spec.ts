@@ -10,10 +10,8 @@ import {
   SecretModel,
 } from '@console/internal/models';
 import * as knativeUtils from '@console/knative-plugin/src/utils/create-knative-utils';
-import * as pipelineUtils from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
-import * as triggerUtils from '@console/pipelines-plugin/src/components/pipelines/modals/triggers/submit-utils';
-import * as pipelineOverviewUtils from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
-import { PipelineModel } from '@console/pipelines-plugin/src/models';
+import { PipelineModel } from '../../../models/pipelines';
+import * as pipelineUtils from '../../pipeline-section/pipeline/pipeline-template-utils';
 import * as submitUtils from '../import-submit-utils';
 import { Resources } from '../import-types';
 import {
@@ -187,8 +185,8 @@ describe('Import Submit Utils', () => {
       jest
         .spyOn(k8sResourceModule, 'k8sGet')
         .mockReturnValue(Promise.resolve(sampleClusterTriggerBinding));
-      jest.spyOn(triggerUtils, 'submitTrigger').mockImplementation(jest.fn());
-      jest.spyOn(triggerUtils, 'createTrigger').mockImplementation(() => Promise.resolve([]));
+      jest.spyOn(pipelineUtils, 'submitTrigger').mockImplementation(jest.fn());
+      jest.spyOn(pipelineUtils, 'createTrigger').mockImplementation(() => Promise.resolve([]));
     });
 
     afterEach(() => {
@@ -219,7 +217,7 @@ describe('Import Submit Utils', () => {
         .spyOn(pipelineUtils, 'createPipelineRunForImportFlow')
         .mockImplementation(jest.fn()); // can't handle a no-arg spyOn invoke, stub
       const createPipelineWebhookSpy = jest
-        .spyOn(triggerUtils, 'createTrigger')
+        .spyOn(pipelineUtils, 'createTrigger')
         .mockImplementation(() => Promise.resolve([]));
 
       await createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create');
@@ -282,7 +280,7 @@ describe('Import Submit Utils', () => {
 
       // Force an exception
       jest
-        .spyOn(triggerUtils, 'createTrigger')
+        .spyOn(pipelineUtils, 'createTrigger')
         .mockImplementation(() =>
           Promise.reject(new Error('Webhook trigger errored out and was not caught')),
         );
@@ -313,7 +311,7 @@ describe('Import Submit Utils', () => {
         );
 
       // Make sure the fallback is called
-      const setPipelineNotStartedSpy = jest.spyOn(pipelineOverviewUtils, 'setPipelineNotStarted');
+      const setPipelineNotStartedSpy = jest.spyOn(pipelineUtils, 'setPipelineNotStarted');
 
       const returnValue = await createOrUpdateResources(
         t,

@@ -12,18 +12,15 @@ import {
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { HorizontalPodAutoscalerModel } from '../models';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage } from './factory';
-import {
-  DetailsItem,
-  Kebab,
-  LabelList,
-  LoadingBox,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  navFactory,
-} from './utils';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { DetailsItem } from './utils/details-item';
+import { LabelList } from './utils/label-list';
+import { LoadingBox } from './utils/status-box';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
@@ -31,18 +28,15 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
-  ResourceDataView,
-} from '@console/app/src/components/data-view/ResourceDataView';
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { DASH } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = referenceForModel(
   HorizontalPodAutoscalerModel,
 );
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
 
 const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
   <Tr>
@@ -154,7 +148,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {hpa.spec.metrics.map((metric, i) => {
+          {(Array.isArray(hpa.spec.metrics) ? hpa.spec.metrics : []).map((metric, i) => {
             // https://github.com/kubernetes/api/blob/master/autoscaling/v2beta1/types.go
             const current = _.get(hpa, ['status', 'currentMetrics', i]);
             switch (metric.type) {
@@ -255,12 +249,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 export const HorizontalPodAutoscalersDetailsPage: React.FC = (props) => (
-  <DetailsPage
-    {...props}
-    kind={HorizontalPodAutoscalersReference}
-    menuActions={menuActions}
-    pages={pages}
-  />
+  <DetailsPage {...props} kind={HorizontalPodAutoscalersReference} pages={pages} />
 );
 HorizontalPodAutoscalersDetailsPage.displayName = 'HorizontalPodAutoscalersDetailsPage';
 
@@ -274,10 +263,7 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind, undefined> = (
-  data,
-  columns,
-) => {
+const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
 
@@ -316,15 +302,9 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind, undefined> =
       },
       [tableColumnInfo[6].id]: {
         cell: (
-          <ResourceKebab
-            actions={menuActions}
-            kind={HorizontalPodAutoscalersReference}
-            resource={obj}
-          />
+          <LazyActionMenu context={{ [referenceForModel(HorizontalPodAutoscalerModel)]: obj }} />
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -413,13 +393,12 @@ export const HorizontalPodAutoscalersList: React.FCC<HorizontalPodAutoscalersLis
 
   return (
     <React.Suspense fallback={<LoadingBox />}>
-      <ResourceDataView<HorizontalPodAutoscalerKind>
+      <ConsoleDataView<HorizontalPodAutoscalerKind>
         {...props}
         label={HorizontalPodAutoscalerModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

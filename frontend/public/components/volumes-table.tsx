@@ -14,16 +14,13 @@ import {
   Volume,
   VolumeMount,
 } from '../module/k8s';
-import {
-  asAccessReview,
-  EmptyBox,
-  Kebab,
-  KebabOption,
-  ResourceIcon,
-  SectionHeading,
-  VolumeType,
-} from './utils';
-import { Table } from './factory';
+import { asAccessReview } from './utils/rbac';
+import { EmptyBox } from './utils/status-box';
+import { Kebab, KebabOption } from './utils/kebab';
+import { ResourceIcon } from './utils/resource-icon';
+import { SectionHeading } from './utils/headings';
+import { VolumeType } from './utils/volume-type';
+import { Table } from './factory/table';
 import { sortable } from '@patternfly/react-table';
 import { connectToModel } from '../kinds';
 import { useRemoveModalLauncher } from './modals/remove-volume-modal';

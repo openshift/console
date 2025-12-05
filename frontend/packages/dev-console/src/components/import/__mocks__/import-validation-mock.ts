@@ -1,6 +1,6 @@
 import { GitProvider } from '@console/git-service/src';
-import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
+import { defaultRepositoryFormValues } from '../../pipeline-section/pipeline/utils';
 import { GitImportFormData, Resources } from '../import-types';
 import { serverlessInitialValues } from './serverless-mock';
 

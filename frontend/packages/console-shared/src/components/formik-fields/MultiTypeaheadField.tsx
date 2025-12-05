@@ -21,7 +21,7 @@ import { TimesIcon } from '@patternfly/react-icons/dist/esm/icons/times-icon';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useFormikValidationFix } from '../../hooks';
+import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { MultiTypeaheadFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

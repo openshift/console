@@ -8,7 +8,7 @@ import { SecretsSectionFormData } from '../sections/SecretsSection';
 import { SourceSectionFormData } from '../sections/SourceSection';
 import { TriggersSectionFormData } from '../sections/TriggersSection';
 
-export { BuildStrategyType } from '@console/internal/components/build';
+export { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 
 export type BuildConfigFormikValues = {
   editorType: EditorType;

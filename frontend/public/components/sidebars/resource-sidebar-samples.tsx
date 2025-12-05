@@ -7,11 +7,11 @@ import { ChevronDownIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-
 import { ChevronRightIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-right-icon';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { PasteIcon } from '@patternfly/react-icons/dist/esm/icons/paste-icon';
-import { Sample } from '@console/shared';
+import { Sample } from '@console/shared/src/utils/sample-utils';
 import { useTranslation } from 'react-i18next';
 
 import { K8sKind, referenceFor } from '../../module/k8s';
-import { FirehoseResult } from '../utils';
+import { FirehoseResult } from '../utils/types';
 
 const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
   sample,

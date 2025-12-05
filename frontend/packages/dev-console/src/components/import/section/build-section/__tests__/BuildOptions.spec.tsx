@@ -28,12 +28,12 @@ jest.mock('@console/internal/actions/ui', () => ({
   getActiveNamespace: jest.fn(() => 'test-namespace'),
 }));
 
-jest.mock('@console/pipelines-plugin/src/const', () => ({
+jest.mock('../../../../../const', () => ({
   CLUSTER_PIPELINE_NS: 'openshift-pipelines',
   FLAG_OPENSHIFT_PIPELINE: 'OPENSHIFT_PIPELINE',
 }));
 
-jest.mock('@console/pipelines-plugin/src/models', () => ({
+jest.mock('../../../../../models/pipelines', () => ({
   PipelineModel: {
     apiGroup: 'tekton.dev',
     plural: 'pipelines',

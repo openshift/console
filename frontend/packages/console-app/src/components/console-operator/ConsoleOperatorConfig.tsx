@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { PluginInfoEntry } from '@openshift/dynamic-plugin-sdk';
 import { Alert, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import {
@@ -13,6 +14,7 @@ import {
   Tr,
 } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { useAccessReview, WatchK8sResource } from '@console/dynamic-plugin-sdk';
@@ -20,19 +22,16 @@ import {
   getGroupVersionKindForModel,
   getReferenceForModel,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { PluginCSPViolations } from '@console/internal/actions/ui';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
-import {
-  asAccessReview,
-  EmptyBox,
-  KebabAction,
-  LoadingBox,
-  navFactory,
-  RequireCreatePermission,
-  ResourceLink,
-} from '@console/internal/components/utils';
+import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { KebabAction } from '@console/internal/components/utils/kebab';
+import { asAccessReview, RequireCreatePermission } from '@console/internal/components/utils/rbac';
+import { ResourceLink } from '@console/internal/components/utils/resource-link';
+import { EmptyBox } from '@console/internal/components/utils/status-box';
 import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';
 import {
   ConsolePluginKind,
@@ -40,21 +39,17 @@ import {
   K8sResourceKindReference,
   referenceForModel,
 } from '@console/internal/module/k8s';
+import { RootState } from '@console/internal/redux';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { consolePluginModal } from '@console/shared/src/components/modals/ConsolePluginModal';
 import {
-  isLoadedDynamicPluginInfo,
-  DynamicPluginInfo,
-  isNotLoadedDynamicPluginInfo,
-} from '@console/plugin-sdk/src';
-import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import {
-  consolePluginModal,
-  CONSOLE_OPERATOR_CONFIG_NAME,
-  DASH,
-  Status,
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
+} from '@console/shared/src/components/status/icons';
+import { Status } from '@console/shared/src/components/status/Status';
+import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   boolComparator,
   localeComparator,
@@ -95,7 +90,7 @@ export const useConsoleOperatorConfigData = () => {
 export const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({
   status,
   errorMessage,
-}) => <Status status={status} title={status === 'Failed' ? errorMessage : undefined} />;
+}) => <Status status={status} title={status === 'failed' ? errorMessage : undefined} />;
 
 export const ConsolePluginEnabledStatus: React.FC<ConsolePluginEnabledStatusProps> = ({
   pluginName,
@@ -160,7 +155,7 @@ export const ConsolePluginCSPStatus: React.FC<ConsolePluginCSPStatusProps> = ({
   );
 };
 
-const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, loaded }) => {
+const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows }) => {
   const { t } = useTranslation();
 
   const [sortBy, setSortBy] = React.useState<ISortBy>(() => ({
@@ -224,9 +219,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
 
   const sortedRows = React.useMemo(() => rows.sort(compare), [rows, compare]);
 
-  return !loaded ? (
-    <LoadingBox />
-  ) : (
+  return (
     <PaneBody>
       {obj.spec?.managementState === 'Unmanaged' && (
         <Alert
@@ -301,26 +294,30 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows, lo
 };
 
 const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
-  const [pluginInfo, pluginInfoLoaded] = useDynamicPluginInfo();
+  const pluginInfo = usePluginInfo();
+  const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
+    UI.get('pluginCSPViolations'),
+  );
+
   const rows = React.useMemo<ConsolePluginTableRow[]>(
     () =>
-      !pluginInfoLoaded
-        ? []
-        : pluginInfo.filter(isLoadedDynamicPluginInfo).map((plugin) => ({
-            name: plugin.metadata.name,
-            version: plugin.metadata.version,
-            description: plugin.metadata?.customProperties?.console?.description,
-            enabled: plugin.enabled,
-            status: plugin.status,
-            hasCSPViolations: plugin.hasCSPViolations,
-          })),
-    [pluginInfo, pluginInfoLoaded],
+      pluginInfo
+        .filter((plugin) => plugin.status === 'loaded')
+        .map((plugin) => ({
+          name: plugin.metadata.name,
+          version: plugin.metadata.version,
+          description: plugin.metadata?.customProperties?.console?.description,
+          enabled: plugin.enabled,
+          status: plugin.status,
+          hasCSPViolations: cspViolations[plugin.metadata.name] ?? false,
+        })),
+    [pluginInfo, cspViolations],
   );
-  return <ConsolePluginsTable {...props} rows={rows} loaded={pluginInfoLoaded} />;
+  return <ConsolePluginsTable {...props} rows={rows} />;
 };
 
 const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
-  const [pluginInfo] = useDynamicPluginInfo();
+  const pluginInfo = usePluginInfo();
   const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
     isList: true,
     kind: referenceForModel(ConsolePluginModel),
@@ -328,6 +325,9 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
   const enabledPlugins = React.useMemo(() => props?.obj?.spec?.plugins ?? [], [
     props?.obj?.spec?.plugins,
   ]);
+  const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
+    UI.get('pluginCSPViolations'),
+  );
   const rows = React.useMemo<ConsolePluginTableRow[]>(() => {
     if (!consolePluginsLoaded) {
       return [];
@@ -336,10 +336,10 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
       const pluginName = plugin?.metadata?.name;
       const enabled = enabledPlugins.includes(pluginName);
       const loadedPluginInfo = pluginInfo
-        .filter(isLoadedDynamicPluginInfo)
+        .filter((p) => p.status === 'loaded')
         .find((i) => i?.metadata?.name === pluginName);
       const notLoadedPluginInfo = pluginInfo
-        .filter(isNotLoadedDynamicPluginInfo)
+        .filter((p) => p.status !== 'loaded')
         .find((i) => i?.pluginName === pluginName);
       if (loadedPluginInfo) {
         return {
@@ -348,7 +348,7 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
           description: loadedPluginInfo?.metadata?.customProperties?.console?.description,
           enabled,
           status: loadedPluginInfo?.status,
-          hasCSPViolations: loadedPluginInfo?.hasCSPViolations,
+          hasCSPViolations: cspViolations[plugin.metadata.name] ?? false,
         };
       }
       return {
@@ -356,15 +356,15 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
         enabled,
         status: notLoadedPluginInfo?.status || 'Pending',
         errorMessage:
-          notLoadedPluginInfo?.status === 'Failed' ? notLoadedPluginInfo?.errorMessage : undefined,
+          notLoadedPluginInfo?.status === 'failed' ? notLoadedPluginInfo?.errorMessage : undefined,
         errorCause:
-          notLoadedPluginInfo?.status === 'Failed'
+          notLoadedPluginInfo?.status === 'failed'
             ? notLoadedPluginInfo?.errorCause?.toString()
             : undefined,
       };
     });
-  }, [consolePluginsLoaded, consolePlugins, pluginInfo, enabledPlugins]);
-  return <ConsolePluginsTable {...props} rows={rows} loaded={consolePluginsLoaded} />;
+  }, [consolePluginsLoaded, consolePlugins, pluginInfo, enabledPlugins, cspViolations]);
+  return <ConsolePluginsTable {...props} rows={rows} />;
 };
 
 const ConsoleOperatorConfigPluginsPage: React.FC<ConsoleOperatorConfigPageProps> = developmentMode
@@ -419,7 +419,7 @@ export type ConsolePluginTableRow = {
   name?: string;
   version?: string;
   description?: string;
-  status: DynamicPluginInfo['status'];
+  status: PluginInfoEntry['status'];
   enabled: boolean;
   errorMessage?: string;
   hasCSPViolations?: boolean;
@@ -433,11 +433,10 @@ type TableColumn = {
 
 type ConsolePluginsTableProps = ConsoleOperatorConfigPageProps & {
   rows: ConsolePluginTableRow[];
-  loaded: boolean;
 };
 
 type ConsolePluginStatusProps = {
-  status: DynamicPluginInfo['status'];
+  status: PluginInfoEntry['status'];
   errorMessage?: string;
 };
 

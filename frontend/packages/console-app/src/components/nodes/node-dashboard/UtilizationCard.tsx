@@ -10,8 +10,8 @@ import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
   humanizeNumber,
-} from '@console/internal/components/utils';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+} from '@console/internal/components/utils/units';
+import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getNodeAddresses } from '@console/shared/src/selectors/node';

@@ -47,8 +47,8 @@ import {
   modelFor,
   NodeAffinity as NodeAffinityType,
 } from '@console/internal/module/k8s';
-import { usePostFormSubmitAction } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { ProvidedAPI } from '../../types';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
 import {
@@ -457,7 +457,7 @@ const pathToArray = (path: string): (string | number)[] =>
     return /^\d+$/.test(subPath) ? _.parseInt(subPath) : subPath;
   });
 
-const FieldGroup: React.FC<FieldGroupProps> = ({ children, isExpanded = false, id, label }) => {
+const FieldGroup: React.FCC<FieldGroupProps> = ({ children, isExpanded = false, id, label }) => {
   const [expanded, setExpanded] = React.useState<boolean>(isExpanded);
 
   const onToggle = (event) => {
@@ -510,7 +510,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   providedAPI,
   next,
 }) => {
-  const postFormCallback = usePostFormSubmitAction<K8sResourceKind>();
+  const postFormCallback = useResourceConnectionHandler();
   const { t } = useTranslation();
   const params = useParams();
   const immutableFormData = Immutable.fromJS(formData);
@@ -1213,6 +1213,7 @@ type OperandFormInputGroupProps = {
 };
 
 type FieldGroupProps = {
+  children?: React.ReactNode;
   isExpanded?: boolean;
   id: string;
   label: string;

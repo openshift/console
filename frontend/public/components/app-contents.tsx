@@ -9,9 +9,15 @@ import {
   matchRoutes,
 } from 'react-router-dom-v5-compat';
 import { useActivePerspective, Perspective } from '@console/dynamic-plugin-sdk';
-import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
-import { FLAGS, useUserSettings, getPerspectiveVisitedKey, usePerspectives } from '@console/shared';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import {
+  getPerspectiveVisitedKey,
+  usePerspectives,
+} from '@console/shared/src/hooks/perspective-utils';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
+import CatalogDefaultNamespaceRedirect from '@console/shared/src/components/catalog/CatalogDefaultNamespaceRedirect';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, FlagsObject } from '../reducers/features';
@@ -19,7 +25,8 @@ import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace-bar';
 import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { AsyncComponent, LoadingBox } from './utils';
+import { AsyncComponent } from './utils/async';
+import { LoadingBox } from './utils/status-box';
 import { namespacedPrefixes } from './utils/link';
 import {
   AlertmanagerModel,
@@ -101,7 +108,7 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
   }, [visitedLoaded, visited, setVisited]);
 
   if (Object.keys(flags).some((key) => flagPending(flags[key])) || !visitedLoaded) {
-    return <LoadingBox />;
+    return <LoadingBox blame="DefaultPage" />;
   }
 
   const perspective = perspectiveExtensions.find((p) => p?.properties?.id === activePerspective);
@@ -149,9 +156,14 @@ const HorizontalPodRedirect = () => {
 };
 
 const AppContents: React.FC<{}> = () => {
-  const [, allPluginsProcessed] = useDynamicPluginInfo();
+  const pluginInfoEntries = usePluginInfo();
   const location = useLocation();
   const [pluginPageRoutes, inactivePluginPageRoutes] = usePluginRoutes();
+
+  const allPluginsProcessed = React.useMemo(
+    () => pluginInfoEntries.every((i) => i.status !== 'pending'),
+    [pluginInfoEntries],
+  );
 
   const contentRouter = (
     <Routes>
@@ -251,6 +263,9 @@ const AppContents: React.FC<{}> = () => {
         }
       />
 
+      <Route path="/catalog" element={<CatalogDefaultNamespaceRedirect />} />
+      {/* TODO: Make Software Catalog work with all namespaces. https://issues.redhat.com/browse/CONSOLE-4827 */}
+      <Route path="/catalog/all-namespaces" element={<CatalogDefaultNamespaceRedirect />} />
       <Route
         path="/catalog/instantiate-template"
         element={
@@ -343,9 +358,9 @@ const AppContents: React.FC<{}> = () => {
           <AsyncComponent
             kind="ConfigMap"
             loader={() =>
-              import(
-                './configmaps/ConfigMapPage' /* webpackChunkName: "create-configmap-page" */
-              ).then((m) => m.default)
+              import('./configmaps/ConfigMapPage' /* webpackChunkName: "configmap-page" */).then(
+                (m) => m.ConfigMapPage,
+              )
             }
           />
         }
@@ -356,9 +371,9 @@ const AppContents: React.FC<{}> = () => {
           <AsyncComponent
             kind="ConfigMap"
             loader={() =>
-              import(
-                './configmaps/ConfigMapPage' /* webpackChunkName: "edit-configmap-page" */
-              ).then((m) => m.default)
+              import('./configmaps/ConfigMapPage' /* webpackChunkName: "configmap-page" */).then(
+                (m) => m.ConfigMapPage,
+              )
             }
           />
         }
@@ -458,7 +473,7 @@ const AppContents: React.FC<{}> = () => {
           <AsyncComponent
             loader={() =>
               import('./storage/attach-storage' /* webpackChunkName: "attach-storage" */).then(
-                (m) => m.default,
+                (m) => m.AttachStorage,
               )
             }
           />
@@ -676,7 +691,7 @@ const AppContents: React.FC<{}> = () => {
             loader={() =>
               import(
                 './monitoring/alertmanager/alertmanager-yaml-editor' /* webpackChunkName: "alertmanager-yaml-editor" */
-              ).then((m) => m.default)
+              ).then((m) => m.AlertmanagerYAML)
             }
           />
         }
@@ -752,7 +767,7 @@ const AppContents: React.FC<{}> = () => {
           }
         />
       ) : (
-        <Route element={<LoadingBox />} />
+        <Route element={<LoadingBox blame="AppContents" />} />
       )}
     </Routes>
   );
@@ -777,7 +792,9 @@ const AppContents: React.FC<{}> = () => {
         id="content-scrollable"
       >
         <ErrorBoundaryPage>
-          <React.Suspense fallback={<LoadingBox />}>{contentRouter}</React.Suspense>
+          <React.Suspense fallback={<LoadingBox blame="AppContents suspense" />}>
+            {contentRouter}
+          </React.Suspense>
         </ErrorBoundaryPage>
       </PageSection>
       <TelemetryNotifier />

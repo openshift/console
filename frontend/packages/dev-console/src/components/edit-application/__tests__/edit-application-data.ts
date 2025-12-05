@@ -1,8 +1,6 @@
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
-import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
-import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksData } from '../../health-checks/__tests__/create-health-checks-probe-data';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
@@ -13,6 +11,8 @@ import {
   GitImportFormData,
   Resources,
 } from '../../import/import-types';
+import { PipelineType } from '../../pipeline-section/import-types';
+import { defaultRepositoryFormValues } from '../../pipeline-section/pipeline/utils';
 import { AppResources } from '../edit-application-types';
 
 export const knativeService: K8sResourceKind = {

@@ -1,4 +1,4 @@
-import { RootState } from '../redux';
+import type { RootState } from '../redux';
 
 export enum ActionType {
   OpenOLS = 'openOLS',

@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { GetOperatorsWithStatuses, OperatorRowProps } from '@console/dynamic-plugin-sdk';
-import { FirehoseResourcesResult } from '@console/internal/components/utils';
+import type { FirehoseResourcesResult } from '@console/internal/components/utils/types';
 import { LazyLoader } from '@console/plugin-sdk';
 import { getMostImportantStatuses } from './state-utils';
 import { HealthState } from './states';

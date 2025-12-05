@@ -27,6 +27,7 @@ const ProjectListPage: React.FCC<ProjectListPageProps> = ({
       canCreate={false}
       filterLabel="by name or display name"
       textFilter="project-name"
+      omitFilterToolbar
     />
   </div>
 );

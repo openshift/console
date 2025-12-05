@@ -38,11 +38,11 @@ const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ customData 
   );
   return (
     <MultiListPage
-      filterLabel={t('helm-plugin~Resources by name')}
       resources={firehoseResources}
       flatten={flattenReleaseResources}
       label={t('helm-plugin~Resources')}
       ListComponent={HelmReleaseResourcesList}
+      omitFilterToolbar
     />
   );
 };

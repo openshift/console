@@ -10,7 +10,7 @@ import {
   ModalTitle,
   createModalLauncher,
 } from '../factory/modal';
-import { ListInput } from '../utils';
+import { ListInput } from '../utils/list-input';
 import { useTranslation } from 'react-i18next';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 

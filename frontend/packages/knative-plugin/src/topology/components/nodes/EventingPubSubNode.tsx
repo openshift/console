@@ -30,6 +30,7 @@ export type EventingPubSubNodeProps = {
   dropTarget?: boolean;
   dragging?: boolean;
   edgeDragging?: boolean;
+  children?: React.ReactNode;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &

@@ -11,7 +11,7 @@ import {
   MenuToggleElement,
 } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
-import { useFormikValidationFix } from '../../hooks';
+import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { SingleDropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

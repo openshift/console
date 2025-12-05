@@ -7,7 +7,8 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
-import { asAccessReview, resourceObjPath } from '@console/internal/components/utils';
+import { asAccessReview } from '@console/internal/components/utils/rbac';
+import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { cloneBuild } from '@console/internal/module/k8s/builds';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';

@@ -6,7 +6,7 @@ import { EndpointSliceKind } from '../module/k8s';
 import { ConnectedIcon } from '@patternfly/react-icons/dist/esm/icons/connected-icon';
 import { DisconnectedIcon } from '@patternfly/react-icons/dist/esm/icons/disconnected-icon';
 import { EndPointSliceModel } from '@console/app/src/models';
-import { LoadingInline } from '@console/internal/components/utils';
+import { LoadingInline } from '@console/internal/components/utils/status-box';
 import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 
 export type PodTrafficProp = {

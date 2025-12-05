@@ -14,8 +14,10 @@ import {
   ClusterServiceVersionModel,
   ClusterServiceVersionKind,
 } from '@console/operator-lifecycle-manager';
-import { deleteHPAModal, isHelmResource, isOperatorBackedService } from '@console/shared';
+import deleteHPAModal from '@console/shared/src/components/hpa/DeleteHPAModal';
+import { isHelmResource } from '@console/shared/src/utils/helm-utils';
 import { doesHpaMatch } from '@console/shared/src/utils/hpa-utils';
+import { isOperatorBackedService } from '@console/shared/src/utils/operator-utils';
 import { ResourceActionFactory } from './types';
 
 const hpaRoute = (

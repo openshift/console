@@ -9,13 +9,15 @@ import {
   ClusterVersionConditionType,
   ClusterVersionKind,
   ConditionalUpdate,
-  k8sPatch,
-  K8sResourceCondition,
-  K8sResourceConditionStatus,
   UpdateHistory,
   VersionUpdate,
-} from '.';
-import { MachineConfigPoolKind } from './types';
+  MachineConfigPoolKind,
+} from './types';
+import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import {
+  K8sResourceCondition,
+  K8sResourceConditionStatus,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export enum ClusterUpdateStatus {
   UpToDate = 'Up to Date',

@@ -1,4 +1,4 @@
-import { convertToBaseValue, humanizePercentage } from '@console/internal/components/utils';
+import { convertToBaseValue, humanizePercentage } from '@console/internal/components/utils/units';
 
 const genericCountResources = [
   'configmaps',

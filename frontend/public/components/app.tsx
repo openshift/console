@@ -18,21 +18,23 @@ import { getBrandingDetails } from './utils/branding';
 import { ConsoleNotifier } from './console-notifier';
 import { NotificationDrawer } from './notification-drawer';
 import { Navigation } from '@console/app/src/components/nav';
-import { history, AsyncComponent, LoadingBox } from './utils';
+import { history } from './utils/router';
+import { AsyncComponent } from './utils/async';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, startAPIDiscovery } from '../actions/k8s';
 import { pluginStore } from '../plugins';
 // cloud shell imports must come later than features
 import CloudShellDrawer from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
-import CloudShellTab from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
 import FeatureFlagExtensionLoader from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   useResolvedExtensions,
+  ResolvedExtension,
   isContextProvider,
   isReduxReducer,
   isStandaloneRoutePage,
@@ -40,17 +42,18 @@ import {
   getUser,
   useActivePerspective,
   ReduxReducer,
+  ContextProvider,
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
-import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
+import { QuickStartDrawerAsync } from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { ThemeProvider } from './ThemeProvider';
@@ -71,6 +74,7 @@ import { AdmissionWebhookWarningNotifications } from '@console/app/src/component
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
+import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
 
 initI18n();
 
@@ -78,14 +82,18 @@ initI18n();
 // Only linkify url strings beginning with a proper protocol scheme.
 linkify.set({ fuzzyLink: false });
 
-const EnhancedProvider = ({ provider: ContextProvider, useValueHook, children }) => {
+const EnhancedProvider: React.FC<{
+  provider: React.Provider<any>;
+  useValueHook: () => any;
+  children: React.ReactNode;
+}> = ({ provider: Component, useValueHook, children }) => {
   const value = useValueHook();
-  return <ContextProvider value={value}>{children}</ContextProvider>;
+  return <Component value={value}>{children}</Component>;
 };
 
-const App = (props) => {
-  const { contextProviderExtensions } = props;
-
+const App: React.FC<{
+  contextProviderExtensions: ResolvedExtension<ContextProvider>[];
+}> = ({ contextProviderExtensions }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const params = useParams();
@@ -148,6 +156,10 @@ const App = (props) => {
   }, [location, params, prevLocation, prevParams]);
 
   const dispatch = useDispatch();
+
+  // Handle feature refresh after impersonation changes
+  useImpersonateRefreshFeatures();
+
   const [, , errorMessage] = usePackageManifestCheck(
     'lightspeed-operator',
     'openshift-marketplace',
@@ -200,7 +212,7 @@ const App = (props) => {
   };
 
   const onNavSelect = () => {
-    //close nav on mobile nav selects
+    // close nav on mobile nav selects
     if (!isDesktop()) {
       setIsNavOpen(false);
     }
@@ -223,7 +235,7 @@ const App = (props) => {
   const content = (
     <>
       <ConsoleNotifier location="BannerTop" />
-      <QuickStartDrawer>
+      <QuickStartDrawerAsync>
         <CloudShellDrawer>
           <Flex
             id="app-content"
@@ -274,7 +286,7 @@ const App = (props) => {
           )}
         </CloudShellDrawer>
         <div id="modal-container" role="dialog" aria-modal="true" aria-label={t('public~Modal')} />
-      </QuickStartDrawer>
+      </QuickStartDrawerAsync>
       <ConsoleNotifier location="BannerBottom" />
       <FeatureFlagExtensionLoader />
     </>
@@ -286,14 +298,16 @@ const App = (props) => {
       <DetectNamespace>
         <ModalProvider>
           <OverlayProvider>
-            {contextProviderExtensions.reduce(
-              (children, e) => (
-                <EnhancedProvider key={e.uid} {...e.properties}>
-                  {children}
-                </EnhancedProvider>
-              ),
-              content,
-            )}
+            <Suspense fallback={<LoadingBox blame="contextProviderExtensions suspense" />}>
+              {contextProviderExtensions.reduce(
+                (children, e) => (
+                  <EnhancedProvider key={e.uid} {...e.properties}>
+                    {children}
+                  </EnhancedProvider>
+                ),
+                content,
+              )}
+            </Suspense>
           </OverlayProvider>
         </ModalProvider>
       </DetectNamespace>
@@ -302,23 +316,25 @@ const App = (props) => {
   );
 };
 
-const AppWithExtensions = (props) => {
+const AppWithExtensions: React.FC = () => {
   const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions<ReduxReducer>(
     isReduxReducer,
   );
-  const [contextProviderExtensions, providersResolved] = useResolvedExtensions(isContextProvider);
+  const [contextProviderExtensions, providersResolved] = useResolvedExtensions<ContextProvider>(
+    isContextProvider,
+  );
 
   if (reducersResolved && providersResolved) {
     applyReduxExtensions(reduxReducerExtensions);
-    return <App contextProviderExtensions={contextProviderExtensions} {...props} />;
+    return <App contextProviderExtensions={contextProviderExtensions} />;
   }
 
-  return <LoadingBox />;
+  return <LoadingBox blame="AppWithExtensions" />;
 };
 
-render(<LoadingBox />, document.getElementById('app'));
+render(<LoadingBox blame="Init" />, document.getElementById('app'));
 
-const AppRouter = () => {
+const AppRouter: React.FC = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
   // Treat the authentication error page as a standalone route. There is no need to render the rest
   // of the app if we know authentication has failed.
@@ -334,7 +350,6 @@ const AppRouter = () => {
               path={`${e.properties.path}${e.properties.exact ? '' : '/*'}`}
             />
           ))}
-          <Route path="/terminal/*" element={<CloudShellTab />} />
           <Route path="/*" element={<AppWithExtensions />} />
         </Routes>
       </CompatRouter>
@@ -418,7 +433,7 @@ const updateSwaggerDefinitionContinual = () => {
   }, 5 * 60 * 1000);
 };
 
-const initPlugins = (storeInstance) => {
+const initPlugins = (storeInstance: typeof store) => {
   return initConsolePlugins(pluginStore, storeInstance);
 };
 // Load cached API resources from localStorage to speed up page load.
@@ -489,7 +504,7 @@ graphQLReady.onReady(() => {
   }
 
   render(
-    <Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox blame="Root suspense" />}>
       <Provider store={store}>
         <ThemeProvider>
           <HelmetProvider>

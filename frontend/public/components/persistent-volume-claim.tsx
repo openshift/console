@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ChartDonut } from '@patternfly/react-charts/victory';
-import { useExtensions } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   isPVCAlert,
   isPVCCreateProp,
@@ -14,33 +14,29 @@ import {
   PVCAlert,
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import {
-  ActionServiceProvider,
-  ActionMenu,
-  ActionMenuVariant,
-  Status,
-  FLAGS,
-  calculateRadius,
-  getNamespace,
-  getName,
-  getRequestedPVCSize,
-  LazyActionMenu,
-  useFlag,
-} from '@console/shared';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Status } from '@console/shared/src/components/status/Status';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { calculateRadius } from '@console/shared/src/utils/pod-utils';
+import { getNamespace, getName } from '@console/shared/src/selectors/common';
+import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { PersistentVolumeClaimKind, referenceFor } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableData } from './factory';
-import {
-  Kebab,
-  navFactory,
-  SectionHeading,
-  ResourceLink,
-  ResourceSummary,
-  Selector,
-  humanizeBinaryBytes,
-  convertToBaseValue,
-} from './utils';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { Table, TableData } from './factory/table';
+import { Kebab } from './utils/kebab';
+import { navFactory } from './utils/horizontal-nav';
+import { SectionHeading } from './utils/headings';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { Selector } from './utils/selector';
+import { humanizeBinaryBytes, convertToBaseValue } from './utils/units';
 import { ResourceEventStream } from './events';
 import { PVCMetrics, setPVCMetrics } from '@console/internal/actions/ui';
 import { PrometheusEndpoint } from './graphs/helpers';
@@ -55,6 +51,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { VolumeAttributesClassModel } from '../models';
 
 export const PVCStatusComponent: React.FC<PVCStatusProps> = ({ pvc }) => {
   const { t } = useTranslation();
@@ -151,10 +148,12 @@ const PVCTableRow: React.FC<PVCTableRowProps> = ({ obj }) => {
 const Details: React.FC<PVCDetailsProps> = ({ obj: pvc }) => {
   const flags = useFlag(FLAGS.CAN_LIST_PV);
   const canListPV = flags[FLAGS.CAN_LIST_PV];
+  const isVACSupported = useFlag(FLAGS.VAC_PLATFORM_SUPPORT);
   const name = pvc?.metadata?.name;
   const namespace = pvc?.metadata?.namespace;
   const labelSelector = pvc?.spec?.selector;
   const storageClassName = pvc?.spec?.storageClassName;
+  const volumeAttributesClassName = pvc?.spec?.volumeAttributesClassName;
   const volumeName = pvc?.spec?.volumeName;
   const storage = pvc?.status?.capacity?.storage;
   const requestedStorage = getRequestedPVCSize(pvc);
@@ -291,6 +290,17 @@ const Details: React.FC<PVCDetailsProps> = ({ obj: pvc }) => {
                   )}
                 </DescriptionListDescription>
               </DescriptionListGroup>
+              {isVACSupported && volumeAttributesClassName && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~VolumeAttributesClass')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    <ResourceLink
+                      kind={referenceFor(VolumeAttributesClassModel)}
+                      name={volumeAttributesClassName}
+                    />
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
               {volumeName && canListPV && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('public~PersistentVolumes')}</DescriptionListTerm>

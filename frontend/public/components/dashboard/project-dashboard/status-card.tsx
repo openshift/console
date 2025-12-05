@@ -4,7 +4,7 @@ import {
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
-import { Status } from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import { Card, CardHeader, CardTitle, Gallery } from '@patternfly/react-core';
 import * as React from 'react';

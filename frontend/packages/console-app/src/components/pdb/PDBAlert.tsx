@@ -56,5 +56,3 @@ export const PDBAlert: React.FC<PDBAlertProps> = ({ namespace }) => {
     </>
   );
 };
-
-export default PDBAlert;

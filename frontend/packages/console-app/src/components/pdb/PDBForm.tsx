@@ -27,13 +27,11 @@ import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { MatchLabels } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import {
-  ButtonBar,
-  history,
-  SelectorInput,
-  resourcePathFromModel,
-} from '@console/internal/components/utils';
+import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
+import { history } from '@console/internal/components/utils/router';
+import { SelectorInput } from '@console/internal/components/utils/selector-input';
 import { k8sCreate } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PodDisruptionBudgetModel } from '../../models';

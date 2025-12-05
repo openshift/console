@@ -1,6 +1,6 @@
 import { screen, act } from '@testing-library/react';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
-import { useUserSettings } from '@console/shared';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import UserPreferenceCheckboxField from '../UserPreferenceCheckboxField';
 

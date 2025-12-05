@@ -28,9 +28,9 @@ describe('Namespace', () => {
   it('lists, creates, and deletes', () => {
     cy.log('test Namespace list page');
     nav.sidenav.clickNavLink(['Administration', 'Namespaces']);
-    listPage.rows.shouldNotExist(newName);
-    listPage.filter.byName(testName);
-    listPage.rows.shouldExist(testName); // created via cy.createProjectWithCLI(testName) above
+    listPage.dvRows.shouldNotExist(newName);
+    listPage.dvFilter.byName(testName);
+    listPage.dvRows.shouldExist(testName); // created via cy.createProjectWithCLI(testName) above
     cy.testA11y('Namespace List page');
 
     cy.log('creates the Namespace');
@@ -44,9 +44,9 @@ describe('Namespace', () => {
 
     cy.log('delete the Namespace');
     nav.sidenav.clickNavLink(['Administration', 'Namespaces']);
-    listPage.filter.byName(newName);
-    listPage.rows.shouldExist(newName);
-    listPage.rows.clickKebabAction(newName, 'Delete Namespace');
+    listPage.dvFilter.byName(newName);
+    listPage.dvRows.shouldExist(newName);
+    listPage.dvRows.clickKebabAction(newName, 'Delete Namespace');
     modal.shouldBeOpened();
     cy.byTestID('project-name-input').type(newName);
     cy.testA11y('Delete Namespace modal');
@@ -95,16 +95,16 @@ describe('Namespace', () => {
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     projectDropdown.selectProject(defaultProjectName);
     projectDropdown.shouldContain(defaultProjectName);
-    listPage.rows.clickFirstLinkInFirstRow();
+    listPage.dvRows.clickFirstLinkInFirstRow();
     detailsPage.isLoaded();
     projectDropdown.shouldContain(defaultProjectName);
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     projectDropdown.shouldContain(defaultProjectName);
-    listPage.rows.clickFirstLinkInFirstRow();
+    listPage.dvRows.clickFirstLinkInFirstRow();
     detailsPage.isLoaded();
     projectDropdown.shouldContain(defaultProjectName);
     detailsPage.breadcrumb(0).contains('Secrets').click();
-    listPage.rows.shouldBeLoaded();
+    listPage.dvRows.shouldBeLoaded();
     projectDropdown.shouldContain(defaultProjectName);
   });
 });

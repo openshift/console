@@ -1,19 +1,19 @@
-import * as React from 'react';
+import { FC, useEffect } from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
-import useQuickStartPermission from '../utils/useQuickStartPermission';
+import { useQuickStartPermission } from '../utils/useQuickStartPermission';
 
 type QuickStartPermissionCheckerProps = {
   quickStart: QuickStart;
   onPermissionCheck: (quickStart: QuickStart, hasPermission: boolean) => void;
 };
 
-const QuickStartPermissionChecker: React.FC<QuickStartPermissionCheckerProps> = ({
+export const QuickStartPermissionChecker: FC<QuickStartPermissionCheckerProps> = ({
   quickStart,
   onPermissionCheck,
 }) => {
   const [hasPermission, loaded] = useQuickStartPermission(quickStart);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded) {
       onPermissionCheck(quickStart, hasPermission);
     }
@@ -21,5 +21,3 @@ const QuickStartPermissionChecker: React.FC<QuickStartPermissionCheckerProps> = 
 
   return null;
 };
-
-export default QuickStartPermissionChecker;

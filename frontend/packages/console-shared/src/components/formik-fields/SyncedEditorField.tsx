@@ -4,7 +4,7 @@ import { css } from '@patternfly/react-styles';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { LoadingBox } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { safeYAMLToJS, safeJSToYAML } from '../../utils/yaml';
 import { EditorType } from '../synced-editor/editor-toggle';
 import { useEditorType } from '../synced-editor/useEditorType';

@@ -807,6 +807,22 @@ export const StorageClassModel: K8sKind = {
   id: 'storageclass',
 };
 
+export const VolumeAttributesClassModel: K8sKind = {
+  label: 'VolumeAttributesClass',
+  // t('public~VolumeAttributesClass')
+  labelKey: 'public~VolumeAttributesClass',
+  labelPlural: 'VolumeAttributesClasses',
+  // t('public~VolumeAttributesClasses')
+  labelPluralKey: 'public~VolumeAttributesClasses',
+  apiVersion: 'v1',
+  apiGroup: 'storage.k8s.io',
+  plural: 'volumeattributesclasses',
+  abbr: 'VAC',
+  namespaced: false,
+  kind: 'VolumeAttributesClass',
+  id: 'volumeattributesclass',
+};
+
 export const LimitRangeModel: K8sKind = {
   label: 'LimitRange',
   // t('public~LimitRange')
@@ -1330,3 +1346,13 @@ export const MultiNetworkPolicyModel: K8sKind = {
   plural: 'multi-networkpolicies',
   crd: true,
 };
+
+// Export models which have legacy plural URLs that need to be maintained.
+// This is imported by `../module/k8s/k8s-models.ts` and thus `connectToPlural`.
+export {
+  ClusterServiceVersionModel,
+  InstallPlanModel,
+  SubscriptionModel,
+} from '@console/operator-lifecycle-manager/src/models';
+
+export { PodDisruptionBudgetModel, EndPointSliceModel } from '@console/app/src/models/index';

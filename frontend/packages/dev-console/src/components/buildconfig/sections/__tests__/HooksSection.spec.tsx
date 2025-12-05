@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
@@ -10,7 +11,11 @@ jest.mock('../EditorField', () =>
   jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
-const Wrapper: React.FC<FormikConfig<HooksSectionFormData>> = ({ children, ...formikConfig }) => (
+interface WrapperProps extends FormikConfig<HooksSectionFormData> {
+  children?: ReactNode;
+}
+
+const Wrapper: React.FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (

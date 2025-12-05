@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as _ from 'lodash';
-import * as webpack from 'webpack';
+import type * as webpack from 'webpack';
 import { ConsolePluginBuildMetadata } from '../build-types';
 import { isEncodedCodeRef, parseEncodedCodeRefValue } from '../coderefs/coderef-resolver';
 import { Extension, EncodedCodeRef } from '../types';

@@ -1,7 +1,7 @@
 import { Base64 } from 'js-base64';
 
 import { SecretKind } from '@console/internal/module/k8s';
-import { useAccessReview } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';

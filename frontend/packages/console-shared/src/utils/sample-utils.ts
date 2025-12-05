@@ -11,7 +11,7 @@ import {
   isPerspective,
   Perspective,
 } from '@console/dynamic-plugin-sdk';
-import { FirehoseResult } from '@console/internal/components/utils';
+import { FirehoseResult } from '@console/internal/components/utils/types';
 import {
   BuildConfigModel,
   ClusterRoleModel,
@@ -207,6 +207,14 @@ const defaultSamples = (t: TFunction) =>
             'console-shared~Namespace dashboard links appear on the project dashboard and namespace details pages in a section called "Launcher". Namespace dashboard links can optionally be restricted to a specific namespace or namespaces.',
           ),
           id: 'cl-namespace-dashboard',
+          targetResource: getTargetResource(ConsoleLinkModel),
+        },
+        {
+          title: t('console-shared~Add a link to the contact mail'),
+          description: t(
+            'console-shared~The contact mail link appears in the user menu below the username. The link will open the default email client with the email address filled in.',
+          ),
+          id: 'cl-contact-mail',
           targetResource: getTargetResource(ConsoleLinkModel),
         },
       ],

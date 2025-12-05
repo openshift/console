@@ -27,7 +27,7 @@ jest.mock('@console/internal/module/k8s', () => ({
   modelFor: () => ({ kind: 'Deployment', crd: false }),
 }));
 
-jest.mock('@console/pipelines-plugin/src/components/import/pipeline/PipelineSection', () => ({
+jest.mock('../../pipeline-section/pipeline/PipelineSection', () => ({
   __esModule: true,
   default: () => 'Pipeline Section',
 }));

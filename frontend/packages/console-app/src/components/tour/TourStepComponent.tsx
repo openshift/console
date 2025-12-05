@@ -9,7 +9,10 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
-import { Popover, PopoverPlacement, Modal, Spotlight } from '@console/shared';
+import Modal from '@console/shared/src/components/modal/Modal';
+import { PopoverPlacement } from '@console/shared/src/components/popover/const';
+import Popover from '@console/shared/src/components/popover/Popover';
+import Spotlight from '@console/shared/src/components/spotlight/Spotlight';
 import StepBadge from './steps/StepBadge';
 import StepContent from './steps/StepContent';
 import StepFooter from './steps/StepFooter';

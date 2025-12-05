@@ -9,7 +9,8 @@ import {
 import { getYAMLTemplates } from '../models/yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
-import { Firehose, LoadingBox } from './utils';
+import { Firehose } from './utils/firehose';
+import { LoadingBox } from './utils/status-box';
 import {
   K8sKind,
   apiVersionForModel,
@@ -93,6 +94,7 @@ export const CreateYAMLInner = ({
 
   return (
     <AsyncComponent
+      blame="CreateYaml"
       loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
       initialResource={initialResource}
       create={isCreate}
@@ -116,6 +118,7 @@ export const EditYAMLPage: React.FCC<EditYAMLPageProps> = (props) => {
   const params = useParams();
   const Wrapper = (wrapperProps) => (
     <AsyncComponent
+      blame="EditYamlPage"
       {...wrapperProps}
       obj={wrapperProps.obj.data}
       loader={() => import('./edit-yaml').then((c) => c.EditYAML)}

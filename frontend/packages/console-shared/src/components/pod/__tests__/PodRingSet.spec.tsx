@@ -1,25 +1,37 @@
 import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
-import { shallow } from 'enzyme';
 import { DeploymentConfigModel } from '@console/internal/models';
-import { PodKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import * as usePodsWatcherModule from '../../../hooks/usePodsWatcher';
+import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { PodRCData } from '../../../types';
 import { samplePods } from '../../../utils/__tests__/test-resource-data';
 import PodRing from '../PodRing';
 import PodRingSet from '../PodRingSet';
 
-describe(PodRingSet.displayName, () => {
+jest.mock('../PodRing', () => ({
+  default: jest.fn(() => null),
+}));
+
+jest.mock('@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon', () => ({
+  LongArrowAltRightIcon: jest.fn(() => null),
+}));
+
+jest.mock('../../../hooks/usePodsWatcher', () => ({
+  usePodsWatcher: jest.fn(),
+}));
+
+const mockPodRing = (PodRing as unknown) as jest.Mock;
+const mockLongArrowAltRightIcon = (LongArrowAltRightIcon as unknown) as jest.Mock;
+
+describe('PodRingSet', () => {
+  const usePodsWatcherMock = usePodsWatcherModule.usePodsWatcher as jest.Mock;
   let podData: PodRCData;
-  let obj;
+  let obj: K8sResourceKind;
 
   beforeEach(() => {
-    const rc = {
-      pods: [],
-      alerts: {},
-      revision: 0,
-      obj: {},
-      phase: 'Complete',
-    };
+    jest.clearAllMocks();
+    // Reset the mock data before each test for isolation.
+    const rc = { pods: [], alerts: {}, revision: 0, obj: {}, phase: 'Complete' };
     podData = {
       current: { ...rc },
       previous: { ...rc },
@@ -27,50 +39,52 @@ describe(PodRingSet.displayName, () => {
       isRollingOut: false,
     };
     obj = { kind: DeploymentConfigModel.kind };
-    jest.spyOn(usePodsWatcherModule, 'usePodsWatcher').mockImplementation(() => {
-      return { loaded: true, loadError: '', podData };
-    });
   });
 
-  it('should component exists', () => {
-    const wrapper = shallow(<PodRingSet obj={obj} path="" />);
-    expect(wrapper.exists()).toBeTruthy();
-  });
-
-  it('should PodRing with key `notDeploy` exists', () => {
+  it('should render a single PodRing when not in a rolling deployment', () => {
     podData.pods = [samplePods.data[0] as PodKind];
-    const wrapper = shallow(<PodRingSet obj={obj} path="" />);
-    expect(wrapper.find(PodRing)).toHaveLength(1);
-    expect(wrapper.find(PodRing).get(0).key).toEqual('notDeploy');
-    expect(wrapper.find(LongArrowAltRightIcon)).toHaveLength(0);
-    expect(wrapper.find(PodRing).get(0).props.pods).toEqual([samplePods.data[0] as PodKind]);
+    usePodsWatcherMock.mockReturnValue({ loaded: true, loadError: '', podData });
+
+    renderWithProviders(<PodRingSet obj={obj} path="" />);
+
+    // Assert that only one PodRing is rendered.
+    expect(mockPodRing).toHaveBeenCalledTimes(1);
+    expect(mockPodRing.mock.calls[0][0]).toMatchObject({ pods: [samplePods.data[0]] });
+    expect(mockLongArrowAltRightIcon).not.toHaveBeenCalled();
   });
 
-  it('should PodRing with key `deploy` exists', () => {
-    const rc = {
+  it('should render two PodRings and an arrow during a rolling deployment', () => {
+    podData.current = {
       pods: [samplePods.data[0] as PodKind],
       alerts: {},
-      revision: 0,
+      revision: 1,
       obj: {},
       phase: 'Pending',
     };
-    podData.current = { ...rc };
     podData.isRollingOut = true;
     const rollingObj = { ...obj, spec: { strategy: { type: 'Rolling' } } };
-    const wrapper = shallow(<PodRingSet obj={rollingObj} path="" />);
-    expect(wrapper.find(PodRing)).toHaveLength(2);
-    expect(wrapper.find(PodRing).get(0).key).toEqual('deploy');
-    expect(wrapper.find(PodRing).get(0).props.pods).toEqual([]);
-    expect(wrapper.find(LongArrowAltRightIcon)).toHaveLength(1);
-    expect(wrapper.find(PodRing).get(1).props.pods).toEqual([samplePods.data[0] as PodKind]);
+    usePodsWatcherMock.mockReturnValue({ loaded: true, loadError: '', podData });
+
+    renderWithProviders(<PodRingSet obj={rollingObj} path="" />);
+
+    // Assert that two PodRings are rendered.
+    expect(mockPodRing).toHaveBeenCalledTimes(2);
+    expect(mockLongArrowAltRightIcon).toHaveBeenCalledTimes(1);
+
+    const { calls } = mockPodRing.mock;
+    expect(calls[0][0]).toMatchObject({ pods: [] });
+    expect(calls[1][0]).toMatchObject({ pods: [samplePods.data[0]] });
   });
 
-  it('should PodRing with key `notDeploy` exists when there is no strategy mentioned', () => {
+  it('should render a single PodRing if there is a rolling strategy but no rollout is in progress', () => {
+    usePodsWatcherMock.mockReturnValue({ loaded: true, loadError: '', podData });
     const rollingObj = { ...obj, spec: { strategy: { type: 'Rolling' } } };
-    const wrapper = shallow(<PodRingSet obj={rollingObj} path="" />);
-    expect(wrapper.find(PodRing)).toHaveLength(1);
-    expect(wrapper.find(PodRing).get(0).key).toEqual('notDeploy');
-    expect(wrapper.find(LongArrowAltRightIcon)).toHaveLength(0);
-    expect(wrapper.find(PodRing).get(0).props.pods).toEqual([]);
+
+    renderWithProviders(<PodRingSet obj={rollingObj} path="" />);
+
+    expect(mockPodRing).toHaveBeenCalledTimes(1);
+    expect(mockPodRing.mock.calls[0][0]).toMatchObject({ pods: [] });
+
+    expect(mockLongArrowAltRightIcon).not.toHaveBeenCalled();
   });
 });

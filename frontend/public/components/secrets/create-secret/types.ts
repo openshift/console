@@ -64,3 +64,11 @@ export type OpaqueSecretFormEntryProps = {
   removeEntry: (index: number) => void;
   showRemoveButton: boolean;
 };
+
+export enum SecretFilterValues {
+  image = 'Image',
+  source = 'Source',
+  tls = 'TLS',
+  sa = 'Service Account Token',
+  opaque = 'Opaque',
+}

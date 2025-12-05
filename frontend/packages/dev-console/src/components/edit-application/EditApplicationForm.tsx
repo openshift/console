@@ -2,7 +2,6 @@ import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import { FormFooter, FlexForm, FormBody } from '@console/shared';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
@@ -18,6 +17,7 @@ import JarSection from '../import/jar/section/JarSection';
 import { BuildSection } from '../import/section/build-section/BuildSection';
 import FormSection from '../import/section/FormSection';
 import IconSection from '../import/section/IconSection';
+import PipelineSection from '../pipeline-section/pipeline/PipelineSection';
 import { AppResources } from './edit-application-types';
 import { ApplicationFlowType, getFlowTypePageTitle } from './edit-application-utils';
 

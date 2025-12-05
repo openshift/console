@@ -44,9 +44,9 @@ const CreateHelmChartRepositoryPage: React.FC = () => {
 
   const handleNamespaceChange = (ns: string) => {
     if (ns === ALL_NAMESPACES_KEY) {
-      history.push(`/helm-repositories/all-namespaces`);
+      history.push(`/helm/all-namespaces/repositories`);
     } else if (ns !== namespace) {
-      history.push(`/helm-repositories/ns/${ns}`);
+      history.push(`/helm/ns/${ns}/repositories`);
     }
   };
 

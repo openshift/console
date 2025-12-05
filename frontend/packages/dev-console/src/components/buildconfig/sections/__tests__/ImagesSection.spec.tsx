@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
@@ -37,7 +38,11 @@ jest.mock('../../../import/image-search/ImageStream', () => ({
   default: (props) => mockImageStream(props),
 }));
 
-const Wrapper: React.FC<FormikConfig<ImagesSectionFormData>> = ({ children, ...formikConfig }) => (
+interface WrapperProps extends FormikConfig<ImagesSectionFormData> {
+  children?: ReactNode;
+}
+
+const Wrapper: React.FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (

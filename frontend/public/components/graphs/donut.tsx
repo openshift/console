@@ -12,7 +12,7 @@ import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
-import { useRefWidth } from '../utils';
+import { useRefWidth } from '../utils/ref-width-hook';
 import { DataPoint } from '.';
 
 export const DonutChart: React.FC<DonutChartProps> = ({

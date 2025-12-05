@@ -21,11 +21,6 @@
     var(--pf-v6-c-card--child--PaddingInlineStart);
 }
 
-.co-activity-card__recent-more-link {
-  padding: 0 var(--pf-v6-c-card--child--PaddingInlineEnd)
-    var(--pf-v6-c-card--child--PaddingBlockEnd) var(--pf-v6-c-card--child--PaddingInlineStart);
-}
-
 .co-activity-card__recent-accordion.pf-v6-c-accordion {
   padding: 0.75rem 0;
   h5 {

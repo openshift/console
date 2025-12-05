@@ -1,7 +1,8 @@
-import * as React from 'react';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { FC, useEffect } from 'react';
+import { createPath, useLocation } from 'react-router-dom-v5-compat';
 import { Perspective, PerspectiveContext } from '@console/dynamic-plugin-sdk';
 import { usePerspectives } from '@console/shared/src';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import PerspectiveDetector from './PerspectiveDetector';
 import { useValuesForPerspectiveContext } from './useValuesForPerspectiveContext';
 
@@ -19,14 +20,14 @@ const getPerspectiveURLParam = (perspectives: Perspective[]) => {
   return perspectiveParam && perspectiveIDs.includes(perspectiveParam) ? perspectiveParam : '';
 };
 
-const DetectPerspective: React.FC<DetectPerspectiveProps> = ({ children }) => {
+const DetectPerspective: FC<DetectPerspectiveProps> = ({ children }) => {
   const [activePerspective, setActivePerspective, loaded] = useValuesForPerspectiveContext();
   const perspectiveExtensions = usePerspectives();
   const perspectiveParam = getPerspectiveURLParam(perspectiveExtensions);
   const location = useLocation();
-  React.useEffect(() => {
+  useEffect(() => {
     if (perspectiveParam && perspectiveParam !== activePerspective) {
-      setActivePerspective(perspectiveParam, location.pathname);
+      setActivePerspective(perspectiveParam, createPath(location));
     }
   }, [perspectiveParam, activePerspective, setActivePerspective, location]);
 
@@ -43,7 +44,9 @@ const DetectPerspective: React.FC<DetectPerspectiveProps> = ({ children }) => {
     ) : (
       <PerspectiveDetector setActivePerspective={setActivePerspective} />
     )
-  ) : null;
+  ) : (
+    <LoadingBox blame="DetectPerspective" />
+  );
 };
 
 export default DetectPerspective;

@@ -1,2 +1,2 @@
 export { consoleFetch, consoleFetchJSON, consoleFetchText } from './console-fetch';
-export { getConsoleRequestHeaders } from './console-fetch-utils';
+export { getConsoleRequestHeaders, normalizeConsoleHeaders } from './console-fetch-utils';

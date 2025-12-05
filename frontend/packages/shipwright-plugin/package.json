@@ -12,7 +12,6 @@
     "@kubernetes-models/shipwright": "^0.2.0"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts",
     "exposedModules": {
       "pages": "src/pages.ts",
       "actions": "src/actions.ts",

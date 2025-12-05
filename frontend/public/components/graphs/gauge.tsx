@@ -10,7 +10,9 @@ import { useTranslation } from 'react-i18next';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
-import { useRefWidth, humanizePercentage, Humanize } from '../utils';
+import { humanizePercentage } from '../utils/units';
+import { useRefWidth } from '../utils/ref-width-hook';
+import type { Humanize } from '../utils/types';
 import { getInstantVectorStats } from './utils';
 import { DataPoint } from '.';
 

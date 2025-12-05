@@ -6,7 +6,8 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ResourceDropdownField, getFieldId } from '@console/shared';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import ResourceDropdownField from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { getSinkableResources } from '../../../utils/get-knative-resources';
 import { craftResourceKey } from '../pub-sub-utils';
 

@@ -4,20 +4,40 @@ import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory, FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
-import { referenceForModel } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  MachineKind,
+  MachineSetKind,
+  NodeKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { getMachineNode, getMachineNodeName } from '@console/shared/src/selectors/machine';
 import { BMO_ENABLED_FLAG } from '../../features';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
+import { findNodeMaintenance, getHostMachine } from '../../selectors';
+import { getMachineMachineSetOwner } from '../../selectors/machine';
+import { findMachineSet } from '../../selectors/machine-set';
+import { getHostStatus } from '../../status/host-status';
+import { BareMetalHostKind } from '../../types/host';
 import BareMetalHostDetails from './BareMetalHostDetails';
 import BareMetalHostDisks from './BareMetalHostDisks';
 import BareMetalHostNICs from './BareMetalHostNICs';
 import BareMetalHostDashboard from './dashboard/BareMetalHostDashboard';
-import { menuActionsCreator } from './host-menu-actions';
 
 type BareMetalHostDetailsPageProps = {
   namespace: string;
   name: string;
+};
+
+type ExtraResources = {
+  machines: MachineKind[];
+  machineSets: MachineSetKind[];
+  nodes: NodeKind[];
+  nodeMaintenances: K8sResourceKind[];
 };
 
 const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props) => {
@@ -79,6 +99,7 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props
     nameKey: 'metal3-plugin~Details',
     component: BareMetalHostDetails,
   };
+
   return (
     <DetailsPage
       {...props}
@@ -92,7 +113,34 @@ const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props
       ]}
       kind={referenceForModel(BareMetalHostModel)}
       resources={resources}
-      menuActions={menuActionsCreator}
+      customActionMenu={(k8sModel, host: BareMetalHostKind, extraResources: ExtraResources) => {
+        const { machines, machineSets, nodes, nodeMaintenances } = extraResources;
+        const machine = getHostMachine(host, machines);
+        const node = getMachineNode(machine, nodes);
+        const nodeName = getMachineNodeName(machine);
+        const nodeMaintenance = findNodeMaintenance(nodeMaintenances, nodeName);
+        const status = getHostStatus({ host, machine, node, nodeMaintenance });
+
+        const machineOwner = getMachineMachineSetOwner(machine);
+        const machineSet = findMachineSet(machineSets, machineOwner && machineOwner.uid);
+        return Object.keys(host).length !== 0 ? (
+          <LazyActionMenu
+            context={{
+              [referenceForModel(BareMetalHostModel)]: {
+                host,
+                machineSet,
+                machine,
+                bmoEnabled,
+                nodeName,
+                status,
+                maintenanceModel,
+                nodeMaintenance,
+              },
+            }}
+            variant={ActionMenuVariant.DROPDOWN}
+          />
+        ) : null;
+      }}
       customData={{
         hasNodeMaintenanceCapability: !!maintenanceModel,
         maintenanceModel,

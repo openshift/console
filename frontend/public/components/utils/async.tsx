@@ -73,16 +73,31 @@ export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncCo
 
   render() {
     const { Component } = this.state;
-    const { LoadingComponent = LoadingBox, forwardRef } = this.props;
+    const { LoadingComponent = LoadingBox, forwardRef, blame } = this.props;
     const rest = _.omit(this.props, 'loader');
-    return Component != null ? <Component ref={forwardRef} {...rest} /> : <LoadingComponent />;
+    return Component != null ? (
+      <Component ref={forwardRef} {...rest} />
+    ) : (
+      <LoadingComponent
+        blame={
+          blame ??
+          // Typically import loader strings are of the form "() => import('./path/to/Component').then(c => c.Component)"
+          // So we extract "Component" from the end of the string for easier identification.
+          String(this.props.loader).split('.').pop().replaceAll(')', '') ??
+          'AsyncComponent'
+        }
+      />
+    );
   }
 }
 
-export type AsyncComponentProps = {
+export type AsyncComponentProps = Pick<React.ComponentProps<typeof LoadingBox>, 'blame'> & {
   loader: () => Promise<React.ComponentType>;
-  LoadingComponent?: React.ReactNode;
+  LoadingComponent?: React.ComponentType<
+    Partial<Pick<React.ComponentProps<typeof LoadingBox>, 'blame'>>
+  >;
 } & any;
+
 export type AsyncComponentState = {
   Component: React.ComponentType;
   loader: () => Promise<React.ComponentType>;

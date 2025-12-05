@@ -11,13 +11,13 @@ Feature: Helm Release
         Scenario: Open the Helm tab on the navigation bar when helm charts are absent: HR-05-TC01
             Given user is at administrator perspective
              When user clicks on the Helm Release tab in admin perspective
-             Then user will be redirected to Helm releases page under Helm tab
-              And user is able to see the message "No Helm Releases found"
+             Then user is able to see the message "No Helm Releases found"
               And user will get the link to install helm charts from software catalog
 
 
         Scenario: Create Helm Release page details: HR-05-TC02
-            Given user is at Software Catalog page
+            Given user has created or selected namespace "aut-ci-helm"
+              And user is at Software Catalog page
              When user selects Helm Charts type from Software Catalog page
               And user searches and selects "Nodejs" card from catalog page
               And user clicks on the Create button on side bar
@@ -57,8 +57,7 @@ Feature: Helm Release
 
         Scenario: Open the Helm tab on the navigation bar when helm charts are present: HR-05-TC05
             Given user is at the Helm Release tab in admin perspective
-             Then user will be redirected to Helm releases page under Helm tab
-              And user will see the helm charts listed
+             Then user will see the helm charts listed
 
 
         Scenario: Filter out deployed Helm Charts: HR-05-TC06

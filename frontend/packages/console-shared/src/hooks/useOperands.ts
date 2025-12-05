@@ -11,7 +11,7 @@ export const useOperands = (
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    const url = `${window.SERVER_FLAGS.basePath}api/list-operands/?name=${operatorName}&namespace=${operatorNamespace}`;
+    const url = `${window.SERVER_FLAGS.basePath}api/olm/list-operands?name=${operatorName}&namespace=${operatorNamespace}`;
     coFetchJSON(url)
       .then((data) => {
         setOperands(data?.items ?? []);

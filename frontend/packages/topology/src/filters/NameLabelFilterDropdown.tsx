@@ -9,7 +9,7 @@ import {
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { useTranslation } from 'react-i18next';
 import AutocompleteInput from '@console/internal/components/autocomplete';
-import { TextFilter } from '@console/internal/components/factory';
+import { TextFilter } from '@console/internal/components/factory/text-filter';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NameLabelFilterValues } from './filter-utils';
 

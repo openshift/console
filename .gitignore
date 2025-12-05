@@ -25,4 +25,5 @@ cypress-a11y-report.json
 /dynamic-demo-plugin/**/npm-debug.log
 /dynamic-demo-plugin/**/yarn-error.log
 /dynamic-demo-plugin/**/dist
+**/.claude/settings.local.json
 **/chartstore-*/

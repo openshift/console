@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEventListener } from '../../hooks';
+import { useEventListener } from '../../hooks/useEventListener';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 

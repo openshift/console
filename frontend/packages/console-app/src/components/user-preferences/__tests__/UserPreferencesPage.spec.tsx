@@ -1,7 +1,7 @@
 import { screen, act } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { useExtensions } from '@console/plugin-sdk/src';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { useQueryParams } from '@console/shared/src';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import UserPreferencePage from '../UserPreferencePage';
@@ -19,8 +19,7 @@ jest.mock('@console/shared', () => ({
   Spotlight: () => null,
 }));
 
-jest.mock('@console/internal/components/utils', () => ({
-  ...jest.requireActual('@console/internal/components/utils'),
+jest.mock('@console/internal/components/utils/status-box', () => ({
   LoadingBox: () => 'Loading...',
 }));
 
