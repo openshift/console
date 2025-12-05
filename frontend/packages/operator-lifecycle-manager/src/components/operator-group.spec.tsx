@@ -98,11 +98,37 @@ describe('subscriptionFor', () => {
     ).toBeUndefined();
   });
 
-  it('returns nothing if checking for `all-namespaces`', () => {
+  it('returns `Subscription` when checking for `all-namespaces`(empty string from default parameter)', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
 
-    expect(subscriptionFor(subscriptions)(operatorGroups)(pkg)('')).toBeUndefined();
+    expect(subscriptionFor(subscriptions)(operatorGroups)(pkg)('')).toEqual(testSubscription);
+  });
+
+  it('returns `Subscription` when namespace is not provided (All Projects view) for namespace-scoped operator', () => {
+    subscriptions = [testSubscription];
+    operatorGroups = [
+      {
+        ...testOperatorGroup,
+        status: { namespaces: [ns], lastUpdated: null },
+      },
+    ];
+
+    const partialFunc = subscriptionFor(subscriptions)(operatorGroups)(pkg);
+    expect(partialFunc()).toEqual(testSubscription);
+  });
+
+  it('returns `Subscription` when namespace is not provided (All Projects view) for global operator', () => {
+    subscriptions = [testSubscription];
+    operatorGroups = [
+      {
+        ...testOperatorGroup,
+        status: { namespaces: [''], lastUpdated: null },
+      },
+    ];
+
+    const partialFunc = subscriptionFor(subscriptions)(operatorGroups)(pkg);
+    expect(partialFunc()).toEqual(testSubscription);
   });
 
   it('returns `Subscription` when it exists in the "global" `OperatorGroup`', () => {
@@ -147,11 +173,11 @@ describe('installedFor', () => {
     expect(installedFor(subscriptions)(operatorGroups)(pkg)(ns)).toBe(false);
   });
 
-  it('returns false if checking for `all-namespaces`', () => {
+  it('returns true if checking for `all-namespaces` (empty string from default parameter)', () => {
     subscriptions = [testSubscription];
     operatorGroups = [{ ...testOperatorGroup, status: { namespaces: [ns], lastUpdated: null } }];
 
-    expect(installedFor(subscriptions)(operatorGroups)(pkg)('')).toBe(false);
+    expect(installedFor(subscriptions)(operatorGroups)(pkg)('')).toBe(true);
   });
 
   it('returns false if `Subscription` is in a different namespace than the given package', () => {
