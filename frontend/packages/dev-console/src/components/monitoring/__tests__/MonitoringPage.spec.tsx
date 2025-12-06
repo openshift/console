@@ -36,6 +36,16 @@ jest.mock('@console/internal/components/utils', () => ({
   useAccessReview: jest.fn(),
 }));
 
+jest.mock('@console/internal/components/utils/rbac', () => {
+  const actual = jest.requireActual('@console/internal/components/utils/rbac');
+  return {
+    ...actual,
+    useAccessReview: jest.fn(),
+  };
+});
+
+const useAccessReviewMock = rbacModule.useAccessReview as jest.Mock;
+
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
@@ -94,15 +104,12 @@ jest.mock('@console/shared/src/hooks/useCreateNamespaceOrProjectModal', () => ({
 }));
 
 describe('Monitoring Page ', () => {
-  let spyUseAccessReview;
-
   beforeEach(() => {
-    spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
-    spyUseAccessReview.mockReturnValue(true);
+    useAccessReviewMock.mockReturnValue(true);
   });
 
   afterEach(() => {
-    spyUseAccessReview.mockReset();
+    jest.clearAllMocks();
   });
 
   it('should render ProjectList page when in all-projects namespace', () => {
@@ -114,7 +121,7 @@ describe('Monitoring Page ', () => {
   });
 
   it('should render all Tabs of Monitoring page for selected project', () => {
-    spyUseAccessReview.mockReturnValue(true);
+    useAccessReviewMock.mockReturnValue(true);
 
     jest.spyOn(Router, 'useParams').mockReturnValue({
       ns: 'test-proj',
@@ -126,7 +133,7 @@ describe('Monitoring Page ', () => {
   });
 
   it('should not render the Silences tab if user has no access to get prometheousRule resource', () => {
-    spyUseAccessReview.mockReturnValue(false);
+    useAccessReviewMock.mockReturnValue(false);
     jest.spyOn(Router, 'useParams').mockReturnValue({
       ns: 'test-proj',
     });

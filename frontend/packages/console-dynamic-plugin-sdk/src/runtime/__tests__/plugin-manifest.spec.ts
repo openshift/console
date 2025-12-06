@@ -3,14 +3,26 @@ import { getPluginManifest } from '../../utils/test-utils';
 import { SchemaValidator } from '../../validation/SchemaValidator';
 import * as pluginManifestModule from '../plugin-manifest';
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => {
+  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch');
+  return {
+    ...actual,
+    consoleFetch: jest.fn(),
+  };
+});
+
+jest.mock('../plugin-manifest', () => {
+  const actual = jest.requireActual('../plugin-manifest');
+  return {
+    ...actual,
+    validatePluginManifestSchema: jest.fn(),
+  };
+});
+
 const { fetchPluginManifest } = pluginManifestModule;
 
-const coFetch = jest.spyOn(coFetchModule, 'consoleFetch');
-
-const validatePluginManifestSchema = jest.spyOn(
-  pluginManifestModule,
-  'validatePluginManifestSchema',
-);
+const coFetch = coFetchModule.consoleFetch as jest.Mock;
+const validatePluginManifestSchema = pluginManifestModule.validatePluginManifestSchema as jest.Mock;
 
 beforeEach(() => {
   [coFetch, validatePluginManifestSchema].forEach((mock) => mock.mockReset());
