@@ -95,3 +95,11 @@ export const setFontSize = (size: number) => {
 export const verifyFontSizeInEditor = (size: number) => {
   cy.get('.monaco-editor .view-lines').should('have.css', 'font-size', `${size}px`);
 };
+export const showYAMLSidebar = () => cy.get('[aria-label="Show sidebar"]').click();
+export const clickFieldDetailsButton = (fieldName: string) => {
+  cy.contains('h5', `${fieldName}`)
+    .parents('li')
+    .find('button.pf-v6-c-button')
+    .contains('View details')
+    .click();
+};
