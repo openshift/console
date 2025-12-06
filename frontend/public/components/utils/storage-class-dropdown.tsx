@@ -49,7 +49,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
 
     const state = {
       items: {},
-      title: {},
+      title: undefined,
       defaultClass: '',
     };
     let unorderedItems = {};

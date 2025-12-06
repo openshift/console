@@ -60,6 +60,16 @@ export const useMultipleAccessReviews = (
   return [allowedArr, loading];
 };
 
+type RequireCreatePermissionOwnProps = {
+  model: K8sKind;
+  namespace?: string;
+  children?: React.ReactNode;
+};
+
+type RequireCreatePermissionProps = RequireCreatePermissionOwnProps & {
+  impersonate?: ImpersonateKind;
+};
+
 const RequireCreatePermission_: React.FC<RequireCreatePermissionProps> = ({
   model,
   namespace,
@@ -77,15 +87,14 @@ const RequireCreatePermission_: React.FC<RequireCreatePermissionProps> = ({
   );
   return isAllowed ? <>{children}</> : null;
 };
-export const RequireCreatePermission = connect(impersonateStateToProps)(RequireCreatePermission_);
-RequireCreatePermission.displayName = 'RequireCreatePermission';
 
-type RequireCreatePermissionProps = {
-  model: K8sKind;
-  namespace?: string;
-  impersonate?: ImpersonateKind;
-  children: React.ReactNode;
-};
+export const RequireCreatePermission = connect<
+  { impersonate?: ImpersonateKind },
+  {},
+  RequireCreatePermissionOwnProps
+>(impersonateStateToProps)(RequireCreatePermission_);
+
+RequireCreatePermission.displayName = 'RequireCreatePermission';
 
 type AccessReviewsResult = {
   resourceAttributes: AccessReviewResourceAttributes;

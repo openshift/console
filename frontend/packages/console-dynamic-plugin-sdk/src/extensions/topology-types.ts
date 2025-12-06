@@ -234,6 +234,7 @@ export type TopologyListViewNodeProps = {
   groupResourcesCell?: React.ReactNode;
   hideAlerts?: boolean;
   noPods?: boolean;
+  children?: React.ReactNode;
 };
 
 export type UseOverviewMetrics = () => any;

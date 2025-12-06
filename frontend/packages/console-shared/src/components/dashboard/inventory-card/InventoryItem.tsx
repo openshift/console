@@ -315,7 +315,7 @@ type InventoryItemProps = {
   count: number;
   children?: React.ReactNode;
   error?: boolean;
-  TitleComponent?: React.ComponentType<{}>;
+  TitleComponent?: React.ComponentType<{ children?: React.ReactNode }>;
   ExpandedComponent?: React.ComponentType<{}>;
   dataTest?: string;
 };
