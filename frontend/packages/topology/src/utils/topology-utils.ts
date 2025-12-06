@@ -44,6 +44,9 @@ export const getCheDecoratorData = (consoleLinks: K8sResourceKind[]): CheDecorat
 
 const getFullGitURL = (gitUrl: GitUrlParse.GitUrl, branch?: string, contextDir?: string) => {
   const baseUrl = `https://${gitUrl.resource}/${gitUrl.owner}/${gitUrl.name}`;
+  if (!gitUrl.owner || gitUrl.port) {
+    return gitUrl.href;
+  }
   if (!branch) {
     return baseUrl;
   }
