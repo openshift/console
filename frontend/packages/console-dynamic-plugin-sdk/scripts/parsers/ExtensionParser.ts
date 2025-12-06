@@ -3,11 +3,11 @@ import * as ts from 'typescript';
 import { ExtensionTypeInfo } from '../utils/type-resolver';
 
 /**
- * Console extension types are declared as type aliases `type Foo = ExtensionDeclaration<T, P>`.
- * This parser embeds type declaration for the specific `ExtensionDeclaration<T, P>` type alias
+ * Console extension types are declared as type aliases `type Foo = Extension<T, P>`.
+ * This parser embeds type declaration for the specific `Extension<T, P>` type alias
  * into the `Foo` type declaration, reducing complexity of the generated JSON schema.
  */
-export class ExtensionDeclarationParser implements tsj.SubNodeParser {
+export class ExtensionParser implements tsj.SubNodeParser {
   constructor(
     private readonly annotationsReader: tsj.AnnotationsReader,
     private readonly consoleExtensions: ExtensionTypeInfo[],

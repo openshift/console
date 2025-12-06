@@ -7,7 +7,7 @@ import {
   PodsAdapterDataType,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
-import { Extension } from '@console/dynamic-plugin-sdk/src/types';
+import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   DeploymentConfigModel,
