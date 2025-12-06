@@ -28,8 +28,24 @@ jest.mock('../EditorField', () =>
   jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
-const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
-const spyEvaluateFunc = jest.spyOn(serverlessFxUtils, 'evaluateFunc');
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => {
+  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac');
+  return {
+    ...actual,
+    useAccessReview: jest.fn(),
+  };
+});
+
+jest.mock('@console/git-service/src/utils/serverless-strategy-detector', () => {
+  const actual = jest.requireActual('@console/git-service/src/utils/serverless-strategy-detector');
+  return {
+    ...actual,
+    evaluateFunc: jest.fn(),
+  };
+});
+
+const spyUseAccessReview = rbacModule.useAccessReview as jest.Mock;
+const spyEvaluateFunc = serverlessFxUtils.evaluateFunc as jest.Mock;
 
 const Wrapper: React.FC<FormikConfig<SourceSectionFormData>> = ({ children, ...formikConfig }) => (
   <Provider store={store}>

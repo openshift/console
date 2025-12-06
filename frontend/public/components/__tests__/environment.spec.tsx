@@ -7,6 +7,25 @@ import { DeploymentModel } from '../../models';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => {
+  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac');
+  return {
+    ...actual,
+    checkAccess: jest.fn(),
+  };
+});
+
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
+  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
+  return {
+    ...actual,
+    k8sGet: jest.fn(),
+  };
+});
+
+const checkAccessMock = rbacModule.checkAccess as jest.Mock;
+const k8sGetMock = k8sResourceModule.k8sGet as jest.Mock;
+
 describe('EnvironmentPage', () => {
   const obj = { metadata: { namespace: 'test' } };
   const sampleEnvData = [
@@ -78,11 +97,11 @@ describe('EnvironmentPage', () => {
 
   describe('Environment Access Control', () => {
     beforeEach(() => {
-      jest.spyOn(rbacModule, 'checkAccess').mockResolvedValue({ status: { allowed: false } });
+      checkAccessMock.mockResolvedValue({ status: { allowed: false } });
     });
 
     afterEach(() => {
-      jest.restoreAllMocks();
+      jest.clearAllMocks();
     });
 
     it('restricts editing capabilities when user lacks update permissions', async () => {
@@ -142,12 +161,12 @@ describe('EnvironmentPage', () => {
 
   describe('When in edit mode with permissions', () => {
     beforeEach(() => {
-      jest.spyOn(k8sResourceModule, 'k8sGet').mockResolvedValue({});
-      jest.spyOn(rbacModule, 'checkAccess').mockResolvedValue({ status: { allowed: true } });
+      k8sGetMock.mockResolvedValue({});
+      checkAccessMock.mockResolvedValue({ status: { allowed: true } });
     });
 
     afterEach(() => {
-      jest.restoreAllMocks();
+      jest.clearAllMocks();
     });
 
     it('verifies field level help when user has permissions', async () => {

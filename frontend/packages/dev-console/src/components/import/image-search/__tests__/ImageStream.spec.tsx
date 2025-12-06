@@ -26,9 +26,33 @@ jest.mock('../ImageStreamTagDropdown', () => ({
   default: () => 'ImageStream Tag Dropdown',
 }));
 
-const spyUseFormikContext = jest.spyOn(formik, 'useFormikContext');
-const spyUseReducer = jest.spyOn(React, 'useReducer');
-const spyGetImageStreamTags = jest.spyOn(imgUtils, 'getImageStreamTags');
+jest.mock('formik', () => {
+  const actual = jest.requireActual('formik');
+  return {
+    ...actual,
+    useFormikContext: jest.fn(),
+  };
+});
+
+jest.mock('react', () => {
+  const actual = jest.requireActual('react');
+  return {
+    ...actual,
+    useReducer: jest.fn(),
+  };
+});
+
+jest.mock('../../../../utils/imagestream-utils', () => {
+  const actual = jest.requireActual('../../../../utils/imagestream-utils');
+  return {
+    ...actual,
+    getImageStreamTags: jest.fn(),
+  };
+});
+
+const spyUseFormikContext = formik.useFormikContext as jest.Mock;
+const spyUseReducer = React.useReducer as jest.Mock;
+const spyGetImageStreamTags = imgUtils.getImageStreamTags as jest.Mock;
 
 const mockReducerState = {
   loading: false,

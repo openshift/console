@@ -43,6 +43,11 @@ jest.mock('@console/app/src/components/file-upload/file-upload-context', () => (
   FileUploadContext: { extensions: ['.yaml'] },
 }));
 
+const useAccessReviewMock = rbacModule.useAccessReview as jest.Mock;
+const useIsMobileMock = SharedHooks.useIsMobile as jest.Mock;
+const useAddToProjectAccessMock = AddToProjectAccessModule.useAddToProjectAccess as jest.Mock;
+const useContextMock = React.useContext as jest.Mock;
+
 configure({ testIdAttribute: 'data-test-id' });
 
 describe('TopologyPageToolbar tests', () => {
@@ -53,10 +58,10 @@ describe('TopologyPageToolbar tests', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(rbacModule, 'useAccessReview').mockReturnValue(true);
-    jest.spyOn(SharedHooks, 'useIsMobile').mockReturnValue(false);
-    jest.spyOn(AddToProjectAccessModule, 'useAddToProjectAccess').mockReturnValue(['import']);
-    jest.spyOn(React, 'useContext').mockImplementation((ctx) => {
+    useAccessReviewMock.mockReturnValue(true);
+    useIsMobileMock.mockReturnValue(false);
+    useAddToProjectAccessMock.mockReturnValue(['import']);
+    useContextMock.mockImplementation((ctx) => {
       if (ctx === FileUploadContextModule.FileUploadContext) {
         return { extensions: ['.yaml'] };
       }

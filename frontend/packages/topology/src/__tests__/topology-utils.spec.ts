@@ -7,18 +7,28 @@ import {
 } from '../utils/topology-utils';
 import { topologyDataModel } from './topology-test-data';
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
+  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
+  return {
+    ...actual,
+    k8sPatch: jest.fn(),
+  };
+});
+
+const k8sPatchMock = k8sResourceModule.k8sPatch as jest.Mock;
+
 describe('Topology Utils', () => {
   let patchData = null;
   beforeEach(() => {
     patchData = null;
-    jest.spyOn(k8sResourceModule, 'k8sPatch').mockImplementation((model, item, patch) => {
+    k8sPatchMock.mockImplementation((model, item, patch) => {
       patchData = patch;
       return Promise.resolve();
     });
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should create topology visual connector', async (done) => {
