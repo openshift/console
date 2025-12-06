@@ -59,6 +59,7 @@ export const appResources: AppResources = {
           'app.kubernetes.io/instance': 'nationalparks-py',
           'app.kubernetes.io/name': 'python',
           'app.openshift.io/runtime': 'python',
+          'app.openshift.io/runtime-icon': 'python',
           'app.openshift.io/runtime-version': '3.6',
           'app.openshift.io/runtime-namespace': 'div',
         },

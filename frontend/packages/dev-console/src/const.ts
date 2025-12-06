@@ -24,6 +24,7 @@ export const LAST_BUILD_PAGE_TAB_STORAGE_KEY = `devconsole.last.build-page-tab`;
 export const NAME_LABEL = 'app.kubernetes.io/name';
 export const INSTANCE_LABEL = 'app.kubernetes.io/instance';
 export const RUNTIME_LABEL = 'app.openshift.io/runtime';
+export const RUNTIME_ICON_LABEL = 'app.openshift.io/runtime-icon';
 export const FLAG_DEVELOPER_CATALOG = 'DEVELOPER_CATALOG';
 export const FLAG_OPERATOR_BACKED_SERVICE_CATALOG_TYPE = 'OPERATOR_BACKED_SERVICE_CATALOG_TYPE';
 export const FLAG_SAMPLE_CATALOG_TYPE = 'SAMPLE_CATALOG_TYPE';

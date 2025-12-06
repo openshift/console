@@ -35,7 +35,12 @@ import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { BUILD_OUTPUT_IMAGESTREAM_URL } from '@console/shipwright-plugin/src/const';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
-import { CUSTOM_ICON_ANNOTATION, PIPELINE_SERVICE_ACCOUNT, RUNTIME_LABEL } from '../../const';
+import {
+  CUSTOM_ICON_ANNOTATION,
+  PIPELINE_SERVICE_ACCOUNT,
+  RUNTIME_LABEL,
+  RUNTIME_ICON_LABEL,
+} from '../../const';
 import { PipelineKind } from '../../types/pipeline';
 import {
   getAppLabels,
@@ -435,7 +440,10 @@ export const createOrUpdateDeployment = (
   } = formData;
 
   const imageStreamName = imageStream && imageStream.metadata.name;
-  const runtimeIcon = imageStream && imageStream.metadata.labels?.[RUNTIME_LABEL];
+  const runtimeIcon =
+    imageStream &&
+    (imageStream.metadata.labels?.[RUNTIME_ICON_LABEL] ??
+      imageStream.metadata.labels?.[RUNTIME_LABEL]);
   const defaultLabels = getAppLabels({
     name,
     applicationName,
