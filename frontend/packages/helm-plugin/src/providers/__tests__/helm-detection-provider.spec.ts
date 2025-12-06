@@ -51,7 +51,16 @@ describe('useDetectHelmChartRepositories', () => {
   const setFeatureFlag = jest.fn();
   const fetchK8sSpy = jest.spyOn(clientUtils, 'fetchK8s');
   const helmChartRepositoryList = {
+    apiVersion: 'helm.openshift.io/v1beta1',
+    kind: 'HelmChartRepositoryList',
+    metadata: { resourceVersion: '1' },
     items: mockHelmChartRepositories,
+  };
+  const emptyList = {
+    apiVersion: 'helm.openshift.io/v1beta1',
+    kind: 'HelmChartRepositoryList',
+    metadata: { resourceVersion: '1' },
+    items: [] as K8sResourceKind[],
   };
 
   beforeEach(() => {
@@ -84,9 +93,9 @@ describe('useDetectHelmChartRepositories', () => {
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if only cluster scoped helm chart repository is available', async () => {
     fetchK8sSpy
       .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList))
-      .mockReturnValueOnce(Promise.resolve({ items: [] }));
+      .mockReturnValueOnce(Promise.resolve(emptyList));
     settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[helmChartRepositoryList, { items: [] }], [], []]),
+      Promise.resolve([[helmChartRepositoryList, emptyList], [], []]),
     );
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
@@ -98,10 +107,10 @@ describe('useDetectHelmChartRepositories', () => {
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if only project scoped helm chart repository is available', async () => {
     fetchK8sSpy
-      .mockReturnValueOnce(Promise.resolve({ items: [] }))
+      .mockReturnValueOnce(Promise.resolve(emptyList))
       .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList));
     settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[{ items: [] }, helmChartRepositoryList], [], []]),
+      Promise.resolve([[emptyList, helmChartRepositoryList], [], []]),
     );
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
@@ -128,11 +137,9 @@ describe('useDetectHelmChartRepositories', () => {
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if no CR helm chart repository is available', async () => {
     fetchK8sSpy
-      .mockReturnValueOnce(Promise.resolve({ items: [] }))
-      .mockReturnValueOnce(Promise.resolve({ items: [] }));
-    settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[{ items: [] }, { items: [] }], [], []]),
-    );
+      .mockReturnValueOnce(Promise.resolve(emptyList))
+      .mockReturnValueOnce(Promise.resolve(emptyList));
+    settleAllPromisesMock.mockReturnValue(Promise.resolve([[emptyList, emptyList], [], []]));
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
       rerender();
@@ -149,7 +156,7 @@ describe('useDetectHelmChartRepositories', () => {
       status: 200,
     } as Response);
 
-    fetchK8sSpy.mockReturnValueOnce(error404).mockReturnValueOnce(error200);
+    fetchK8sSpy.mockRejectedValueOnce(error404).mockRejectedValueOnce(error200);
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error404, error200], []]));
 
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
@@ -164,7 +171,7 @@ describe('useDetectHelmChartRepositories', () => {
     const error200 = new HttpError('200', 200, {
       status: 200,
     } as Response);
-    fetchK8sSpy.mockReturnValueOnce(error200).mockReturnValueOnce(error200);
+    fetchK8sSpy.mockRejectedValueOnce(error200).mockRejectedValueOnce(error200);
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error200, error200], []]));
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
@@ -194,7 +201,7 @@ describe('useDetectHelmChartRepositories', () => {
     const error200 = new HttpError('200', 200, {
       status: 200,
     } as Response);
-    fetchK8sSpy.mockReturnValueOnce(error404).mockReturnValueOnce(error200);
+    fetchK8sSpy.mockRejectedValueOnce(error404).mockRejectedValueOnce(error200);
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error404, error200], []]));
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {

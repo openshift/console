@@ -24,7 +24,7 @@ describe('fetchPluginManifest', () => {
     const validator = new SchemaValidator(manifestURL);
     const validatorResultReport = jest.spyOn(validator.result, 'report');
 
-    coFetch.mockImplementation(() => Promise.resolve({ json: () => Promise.resolve(manifest) }));
+    coFetch.mockResolvedValue({ json: () => Promise.resolve(manifest) } as Response);
     validatePluginManifestSchema.mockImplementation(() => Promise.resolve(validator.result));
 
     const result = await fetchPluginManifest('http://example.com/test/');
@@ -56,7 +56,7 @@ describe('fetchPluginManifest', () => {
       throw new Error('boom');
     });
 
-    coFetch.mockImplementation(() => Promise.resolve({ json: () => Promise.resolve(manifest) }));
+    coFetch.mockResolvedValue({ json: () => Promise.resolve(manifest) } as Response);
     validatePluginManifestSchema.mockImplementation(() => Promise.resolve(validator.result));
 
     expect.assertions(2);

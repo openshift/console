@@ -127,7 +127,7 @@ describe('loadActivePluginsForTestPurposes', () => {
       { type: 'Dynamic/Bar', properties: { baz: 1, qux: { $codeRef: 'a.b' } } },
     ];
 
-    const moduleHook = jest.fn<void>();
+    const moduleHook = jest.fn();
 
     const extensionHook = jest.fn((pkg: PluginPackage) => {
       switch (pkg) {
@@ -239,8 +239,11 @@ describe('getExecutableCodeRefSource', () => {
 });
 
 describe('getDynamicExtensions', () => {
-  let fsExistsSync: jest.SpyInstance<typeof fs.existsSync>;
-  let getExecutableCodeRefSourceMock: jest.SpyInstance<typeof getExecutableCodeRefSource>;
+  let fsExistsSync: jest.SpyInstance<boolean, [fs.PathLike]>;
+  let getExecutableCodeRefSourceMock: jest.SpyInstance<
+    string,
+    [EncodedCodeRef, string, PluginPackage, ValidationResult]
+  >;
 
   beforeEach(() => {
     fsExistsSync = jest.spyOn(fs, 'existsSync');
@@ -266,7 +269,7 @@ describe('getDynamicExtensions', () => {
 
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
-    const codeRefTransformer = jest.fn<string>((codeRefSource) => `ref(${codeRefSource})`);
+    const codeRefTransformer = jest.fn((codeRefSource: string) => `ref(${codeRefSource})`);
 
     fsExistsSync.mockImplementation(() => true);
     parseJSONC.mockImplementation(() => extensionsJSON);
@@ -348,7 +351,7 @@ describe('getDynamicExtensions', () => {
 
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
-    const codeRefTransformer = jest.fn<string>(_.identity);
+    const codeRefTransformer = jest.fn(_.identity);
 
     fsExistsSync.mockImplementation(() => false);
 
@@ -375,7 +378,7 @@ describe('getDynamicExtensions', () => {
     const extensionsJSON: Extension[] = [];
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
-    const codeRefTransformer = jest.fn<string>(_.identity);
+    const codeRefTransformer = jest.fn(_.identity);
 
     fsExistsSync.mockImplementation(() => true);
     parseJSONC.mockImplementation(() => extensionsJSON);
@@ -415,7 +418,7 @@ describe('getDynamicExtensions', () => {
 
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
-    const codeRefTransformer = jest.fn<string>(_.identity);
+    const codeRefTransformer = jest.fn(_.identity);
 
     fsExistsSync.mockImplementation(() => true);
     parseJSONC.mockImplementation(() => extensionsJSON);
