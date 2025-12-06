@@ -11,14 +11,33 @@ jest.mock('@console/internal/components/utils/rbac', () => ({
     .mockReturnValue(Promise.resolve({ status: { allowed: true } })),
 }));
 
+jest.mock('../k8s', () => {
+  const actual = jest.requireActual('../k8s');
+  return {
+    ...actual,
+    getResources: jest.fn(),
+  };
+});
+
+jest.mock('@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s', () => {
+  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s');
+  return {
+    ...actual,
+    watchK8sList: jest.fn(),
+  };
+});
+
+const getResourcesMock = k8sActions.getResources as jest.Mock;
+const watchK8sListMock = sdkK8sActions.watchK8sList as jest.Mock;
+
 describe('startAPIDiscovery', () => {
   it('falls back to polling if user cannot list CRDs', async () => {
     const dispatch = jest.fn();
     jest.useFakeTimers();
     jest.spyOn(console, 'log');
-    jest.spyOn(k8sActions, 'getResources').mockImplementation(() => {});
+    getResourcesMock.mockImplementation(() => {});
     await k8sActions.startAPIDiscovery()(dispatch);
-    expect(k8sActions.getResources).toHaveBeenCalledTimes(1);
+    expect(getResourcesMock).toHaveBeenCalledTimes(1);
     expect(window.setTimeout).toHaveBeenCalledTimes(1);
     expect(window.setTimeout).toHaveBeenCalledWith(
       expect.any(Function),
@@ -32,10 +51,10 @@ describe('startAPIDiscovery', () => {
     const crdReduxID = makeReduxID(CustomResourceDefinitionModel, {});
     const dispatch = jest.fn();
     jest.spyOn(console, 'log');
-    jest.spyOn(sdkK8sActions, 'watchK8sList').mockImplementation(() => {});
+    watchK8sListMock.mockImplementation(() => {});
     await k8sActions.startAPIDiscovery()(dispatch);
-    expect(sdkK8sActions.watchK8sList).toHaveBeenCalledTimes(1);
-    expect(sdkK8sActions.watchK8sList).toHaveBeenCalledWith(
+    expect(watchK8sListMock).toHaveBeenCalledTimes(1);
+    expect(watchK8sListMock).toHaveBeenCalledWith(
       crdReduxID,
       {},
       CustomResourceDefinitionModel,
