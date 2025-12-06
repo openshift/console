@@ -32,7 +32,7 @@ export const userPreferenceItemWithDropdownField: ResolvedUserPreferenceItem = {
       },
       {
         value: 'admin',
-        label: 'Administrator',
+        label: 'Core platform',
       },
     ],
   },

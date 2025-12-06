@@ -16,9 +16,9 @@ Cypress.Commands.add('initAdmin', () => {
   cy.log('redirect to home');
   cy.visit('/');
   cy.byTestID('loading-indicator').should('not.exist');
-  cy.log('ensure perspective switcher is set to Administrator');
-  nav.sidenav.switcher.changePerspectiveTo('Administrator');
-  nav.sidenav.switcher.shouldHaveText('Administrator');
+  cy.log('ensure perspective switcher is set to Core platform');
+  nav.sidenav.switcher.changePerspectiveTo('Core platform');
+  nav.sidenav.switcher.shouldHaveText('Core platform');
   guidedTour.close();
 });
 

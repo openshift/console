@@ -1,5 +1,5 @@
 {
-  "Administrator": "Administrator",
+  "Core platform": "Core platform",
   "PodDisruptionBudget": "PodDisruptionBudget",
   "PodDisruptionBudgets": "PodDisruptionBudgets",
   "VolumeSnapshots": "VolumeSnapshots",
