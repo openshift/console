@@ -1,17 +1,29 @@
 import { render, screen } from '@testing-library/react';
 import { useFormikContext } from 'formik';
-import * as shipwrightHooks from '@console/dev-console/src/utils/shipwright-build-hook';
 import { useAccessReview } from '@console/internal/components/utils';
 import { useFlag } from '@console/shared';
-import { isPreferredStrategyAvailable } from '../../../../../utils/shipwright-build-hook';
-import { BuildOption as NamedBuildOption } from '../BuildOptions';
-import * as BuildOption from '../BuildOptions';
+import * as shipwrightBuildHook from '../../../../../utils/shipwright-build-hook';
+import { BuildOption as NamedBuildOption, usePipelineAccessReview } from '../BuildOptions';
 
-const spySWClusterBuildStrategy = jest.spyOn(shipwrightHooks, 'useClusterBuildStrategy');
-const spyShipwrightBuilds = jest.spyOn(shipwrightHooks, 'useShipwrightBuilds');
+jest.mock('../../../../../utils/shipwright-build-hook', () => ({
+  isPreferredStrategyAvailable: jest.fn(() => true),
+  useClusterBuildStrategy: jest.fn(),
+  useShipwrightBuilds: jest.fn(),
+}));
+
+jest.mock('../BuildOptions', () => {
+  const actual = jest.requireActual('../BuildOptions');
+  return {
+    ...actual,
+    usePipelineAccessReview: jest.fn(),
+  };
+});
+
+const spySWClusterBuildStrategy = shipwrightBuildHook.useClusterBuildStrategy as jest.Mock;
+const spyShipwrightBuilds = shipwrightBuildHook.useShipwrightBuilds as jest.Mock;
 
 const spyUseFlag = useFlag as jest.Mock;
-const spyUsePipelineAccessReview = jest.spyOn(BuildOption, 'usePipelineAccessReview');
+const spyUsePipelineAccessReview = usePipelineAccessReview as jest.Mock;
 
 jest.mock('@console/shared', () => ({
   SingleDropdownField: (props) => `SingleDropdownField options=${JSON.stringify(props.options)}`,
@@ -48,12 +60,6 @@ jest.mock('@console/git-service/src/types', () => ({
 
 jest.mock('../../../../../const', () => ({
   FLAG_OPENSHIFT_BUILDCONFIG: 'OPENSHIFT_BUILDCONFIG',
-}));
-
-jest.mock('../../../../../utils/shipwright-build-hook', () => ({
-  isPreferredStrategyAvailable: jest.fn(() => true),
-  useClusterBuildStrategy: jest.fn(),
-  useShipwrightBuilds: jest.fn(),
 }));
 
 jest.mock('../../../import-types', () => ({

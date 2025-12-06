@@ -2,21 +2,28 @@ import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import * as cloudShellUtils from '../cloud-shell-utils';
 import useActivityTick from '../useActivityTick';
 
+jest.mock('../cloud-shell-utils', () => {
+  const actual = jest.requireActual('../cloud-shell-utils');
+  return {
+    ...actual,
+    sendActivityTick: jest.fn(),
+  };
+});
+
+const sendActivityTickMock = cloudShellUtils.sendActivityTick as jest.Mock;
+
 describe('useActivityTick', () => {
   beforeEach(() => {
-    jest.spyOn(cloudShellUtils, 'sendActivityTick').mockImplementation(() => {});
+    sendActivityTickMock.mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should notify if activity occurs after 1 min', () => {
     let mockNow = Date.now();
     jest.spyOn(Date, 'now').mockImplementation(() => mockNow);
-    const sendActivityTickMock = jest
-      .spyOn(cloudShellUtils, 'sendActivityTick')
-      .mockImplementation(() => {});
     testHook(() => {
       const tick = useActivityTick('testName', 'testNamespace');
 

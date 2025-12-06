@@ -12,6 +12,16 @@ import {
   getMonorepoRootDir,
 } from '../plugin-resolver';
 
+jest.mock('read-pkg', () => {
+  const actual = jest.requireActual('read-pkg');
+  return {
+    ...actual,
+    sync: jest.fn(),
+  };
+});
+
+const readPkgMock = readPkg.sync as jest.Mock;
+
 describe('isPluginPackage', () => {
   it('returns false if package.consolePlugin is missing', () => {
     expect(
@@ -23,14 +33,8 @@ describe('isPluginPackage', () => {
 });
 
 describe('readPackages', () => {
-  let readPkgMock: jest.SpyInstance;
-
-  beforeEach(() => {
-    readPkgMock = jest.spyOn(readPkg, 'sync');
-  });
-
   afterEach(() => {
-    readPkgMock.mockRestore();
+    jest.clearAllMocks();
   });
 
   it('detects app and plugin packages by reading their metadata', () => {

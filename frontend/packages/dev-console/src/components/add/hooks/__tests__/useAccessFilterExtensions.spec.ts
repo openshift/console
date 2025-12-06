@@ -3,13 +3,21 @@ import { addActionExtensions } from '../../__tests__/add-page-test-data';
 import { useAccessFilterExtensions } from '../useAccessFilterExtensions';
 import * as hook from '../useAddActionsAccessReviews';
 
+jest.mock('../useAddActionsAccessReviews', () => {
+  const actual = jest.requireActual('../useAddActionsAccessReviews');
+  return {
+    ...actual,
+    useAddActionsAccessReviews: jest.fn(),
+  };
+});
+
 const namespace = 'ns';
 const { AccessReviewStatus } = hook;
+const useAddActionsAccessReviewsSpy = hook.useAddActionsAccessReviews as jest.Mock;
 
 describe('useAccessFilterExtensions', () => {
-  const useAddActionsAccessReviewsSpy = jest.spyOn(hook, 'useAddActionsAccessReviews');
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should return empty array and loaded with value false if all results from useAddActionsAccessReviews have not loaded', () => {

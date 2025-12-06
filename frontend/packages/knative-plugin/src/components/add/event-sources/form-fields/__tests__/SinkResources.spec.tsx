@@ -18,13 +18,27 @@ jest.mock('formik', () => ({
   })),
 }));
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => {
+  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch');
+  return {
+    ...actual,
+    consoleFetch: jest.fn(),
+  };
+});
+
+const consoleFetchMock = coFetchModule.consoleFetch as jest.Mock;
+
 describe('SinkResources', () => {
   beforeEach(() => {
-    jest.spyOn(coFetchModule, 'consoleFetch').mockImplementation(() =>
+    consoleFetchMock.mockImplementation(() =>
       Promise.resolve({
         json: () => mockChannelCRDData,
       }),
     );
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be able to sink to k8s service', () => {

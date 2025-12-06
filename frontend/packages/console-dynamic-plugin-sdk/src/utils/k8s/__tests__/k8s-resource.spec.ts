@@ -2,6 +2,16 @@ import { K8sModel } from '../../../api/common-types';
 import * as coFetchModule from '../../fetch/console-fetch';
 import { k8sGet, k8sList, k8sGetResource } from '../k8s-resource';
 
+jest.mock('../../fetch/console-fetch', () => {
+  const actual = jest.requireActual('../../fetch/console-fetch');
+  return {
+    ...actual,
+    consoleFetchJSON: jest.fn(),
+  };
+});
+
+const spyCoFetchJSON = coFetchModule.consoleFetchJSON as jest.Mock;
+
 describe('k8s-Resource', () => {
   const MockPodModel: K8sModel = {
     apiVersion: 'v1',
@@ -13,14 +23,9 @@ describe('k8s-Resource', () => {
     id: 'pod',
     labelPlural: 'Pods',
   };
-  let spyCoFetchJSON;
-
-  beforeEach(() => {
-    spyCoFetchJSON = jest.spyOn(coFetchModule, 'consoleFetchJSON');
-  });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it('k8sGet should call consoleFetchJSON', async () => {

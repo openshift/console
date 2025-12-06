@@ -41,6 +41,16 @@ import {
 } from './topology-knative-test-data';
 import Spy = jasmine.Spy;
 
+jest.mock('../../utils/fetch-dynamic-eventsources-utils', () => {
+  const actual = jest.requireActual('../../utils/fetch-dynamic-eventsources-utils');
+  return {
+    ...actual,
+    getDynamicEventSourcesModelRefs: jest.fn(),
+  };
+});
+
+const getDynamicEventSourcesModelRefsMock = knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
+
 const spyAndReturn = (spy: Spy) => (returnValue: any) =>
   new Promise((resolve) =>
     spy.and.callFake((...args) => {
@@ -131,9 +141,9 @@ describe('knative data transformer ', () => {
   });
 
   it('should filter out deployments created for camelConnector sources', async () => {
-    jest
-      .spyOn(knativefetchutils, 'getDynamicEventSourcesModelRefs')
-      .mockImplementation(() => ['sources.knative.dev~v1alpha1~CamelSource']);
+    getDynamicEventSourcesModelRefsMock.mockImplementation(() => [
+      'sources.knative.dev~v1alpha1~CamelSource',
+    ]);
     mockResources.deployments.data = [
       ...mockResources.deployments.data,
       ...MockBaseResources.deployments.data,
