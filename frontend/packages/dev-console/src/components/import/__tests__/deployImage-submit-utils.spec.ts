@@ -23,6 +23,29 @@ import {
   internalImageData,
 } from './deployImage-submit-utils-data';
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
+  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
+  return {
+    ...actual,
+    k8sCreate: jest.fn(),
+    k8sUpdate: jest.fn(),
+    k8sGet: jest.fn(),
+  };
+});
+
+jest.mock('@console/internal/module/k8s/resource', () => {
+  const actual = jest.requireActual('@console/internal/module/k8s/resource');
+  return {
+    ...actual,
+    k8sWaitForUpdate: jest.fn(),
+  };
+});
+
+const k8sCreateMock = k8sResourceModule.k8sCreate as jest.Mock;
+const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;
+const k8sGetMock = k8sResourceModule.k8sGet as jest.Mock;
+const k8sWaitForUpdateMock = k8sInternalResourceModule.k8sWaitForUpdate as jest.Mock;
+
 const {
   ensurePortExists,
   createOrUpdateDeployment,
@@ -69,23 +92,19 @@ describe('DeployImage Submit Utils', () => {
   });
 
   describe('createOrUpdateImageStream', () => {
-    const k8sCreate = jest.spyOn(k8sResourceModule, 'k8sCreate');
-    const k8sUpdate = jest.spyOn(k8sResourceModule, 'k8sUpdate');
-    const k8sWaitForUpdate = jest.spyOn(k8sInternalResourceModule, 'k8sWaitForUpdate');
-
     beforeEach(() => {
       jest.resetAllMocks();
-      k8sCreate.mockReturnValue(null);
-      k8sUpdate.mockReturnValue(null);
-      k8sWaitForUpdate.mockReturnValue(null);
+      k8sCreateMock.mockResolvedValue(null);
+      k8sUpdateMock.mockResolvedValue(null);
+      k8sWaitForUpdateMock.mockResolvedValue(null);
     });
 
     afterAll(() => {
-      jest.restoreAllMocks();
+      jest.clearAllMocks();
     });
 
     it('should call only k8sCreate when call "dry-run create"', async () => {
-      k8sCreate.mockReturnValue(mockImageStreamData);
+      k8sCreateMock.mockResolvedValue(mockImageStreamData);
 
       const imageStream = await submitUtils.createOrUpdateImageStream(
         mockDeployImageFormData,
@@ -94,17 +113,17 @@ describe('DeployImage Submit Utils', () => {
         'create',
       );
 
-      expect(k8sCreate).toHaveBeenCalledTimes(1);
-      expect(k8sCreate).toHaveBeenCalledWith(ImageStreamModel, mockImageStreamData, {
+      expect(k8sCreateMock).toHaveBeenCalledTimes(1);
+      expect(k8sCreateMock).toHaveBeenCalledWith(ImageStreamModel, mockImageStreamData, {
         queryParams: { dryRun: 'All' },
       });
-      expect(k8sUpdate).toHaveBeenCalledTimes(0);
-      expect(k8sWaitForUpdate).toHaveBeenCalledTimes(0);
+      expect(k8sUpdateMock).toHaveBeenCalledTimes(0);
+      expect(k8sWaitForUpdateMock).toHaveBeenCalledTimes(0);
       expect(imageStream).toEqual(mockImageStreamData);
     });
 
     it('should call only k8sUpdate when call "dry-run update"', async () => {
-      k8sUpdate.mockReturnValue(mockImageStreamData);
+      k8sUpdateMock.mockResolvedValue(mockImageStreamData);
 
       const imageStream = await submitUtils.createOrUpdateImageStream(
         mockDeployImageFormData,
@@ -113,16 +132,16 @@ describe('DeployImage Submit Utils', () => {
         'update',
       );
 
-      expect(k8sCreate).toHaveBeenCalledTimes(0);
-      expect(k8sUpdate).toHaveBeenCalledTimes(1);
-      expect(k8sUpdate).toHaveBeenCalledWith(ImageStreamModel, mockImageStreamData);
-      expect(k8sWaitForUpdate).toHaveBeenCalledTimes(0);
+      expect(k8sCreateMock).toHaveBeenCalledTimes(0);
+      expect(k8sUpdateMock).toHaveBeenCalledTimes(1);
+      expect(k8sUpdateMock).toHaveBeenCalledWith(ImageStreamModel, mockImageStreamData);
+      expect(k8sWaitForUpdateMock).toHaveBeenCalledTimes(0);
       expect(imageStream).toEqual(mockImageStreamData);
     });
 
     it('should call k8sCreate and k8sWaitForUpdate when call "non-dry-run create"', async () => {
-      k8sCreate.mockReturnValue(mockImageStreamData);
-      k8sWaitForUpdate.mockReturnValue(Promise.resolve(mockImageStreamData));
+      k8sCreateMock.mockResolvedValue(mockImageStreamData);
+      k8sWaitForUpdateMock.mockResolvedValue(mockImageStreamData);
 
       const imageStream = await submitUtils.createOrUpdateImageStream(
         mockDeployImageFormData,
@@ -131,11 +150,11 @@ describe('DeployImage Submit Utils', () => {
         'create',
       );
 
-      expect(k8sCreate).toHaveBeenCalledTimes(1);
-      expect(k8sCreate).toHaveBeenCalledWith(ImageStreamModel, mockImageStreamData, {});
-      expect(k8sUpdate).toHaveBeenCalledTimes(0);
-      expect(k8sWaitForUpdate).toHaveBeenCalledTimes(1);
-      expect(k8sWaitForUpdate).toHaveBeenCalledWith(
+      expect(k8sCreateMock).toHaveBeenCalledTimes(1);
+      expect(k8sCreateMock).toHaveBeenCalledWith(ImageStreamModel, mockImageStreamData, {});
+      expect(k8sUpdateMock).toHaveBeenCalledTimes(0);
+      expect(k8sWaitForUpdateMock).toHaveBeenCalledTimes(1);
+      expect(k8sWaitForUpdateMock).toHaveBeenCalledWith(
         ImageStreamModel,
         mockImageStreamData,
         expect.any(Function),
@@ -145,7 +164,7 @@ describe('DeployImage Submit Utils', () => {
     });
 
     it('should call only k8sUpdate when call "non-dry-run update"', async () => {
-      k8sUpdate.mockReturnValue(mockImageStreamData);
+      k8sUpdateMock.mockResolvedValue(mockImageStreamData);
 
       const imageStream = await submitUtils.createOrUpdateImageStream(
         mockDeployImageFormData,
@@ -154,22 +173,22 @@ describe('DeployImage Submit Utils', () => {
         'update',
       );
 
-      expect(k8sCreate).toHaveBeenCalledTimes(0);
-      expect(k8sUpdate).toHaveBeenCalledTimes(1);
-      expect(k8sUpdate).toHaveBeenCalledWith(ImageStreamModel, mockImageStreamData);
+      expect(k8sCreateMock).toHaveBeenCalledTimes(0);
+      expect(k8sUpdateMock).toHaveBeenCalledTimes(1);
+      expect(k8sUpdateMock).toHaveBeenCalledWith(ImageStreamModel, mockImageStreamData);
       expect(imageStream).toEqual(mockImageStreamData);
     });
   });
 
   describe('createDeployment tests', () => {
     beforeAll(() => {
-      jest
-        .spyOn(k8sResourceModule, 'k8sCreate')
-        .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
+      k8sCreateMock.mockImplementation((model, data, dryRun) =>
+        Promise.resolve({ model, data, dryRun }),
+      );
     });
 
     afterAll(() => {
-      jest.restoreAllMocks();
+      jest.clearAllMocks();
     });
 
     it('should choose image from dockerImageReference when creating Deployment using internal imagestream', (done) => {
@@ -267,13 +286,13 @@ describe('DeployImage Submit Utils', () => {
 
   describe('createResource tests', () => {
     beforeAll(() => {
-      jest
-        .spyOn(k8sResourceModule, 'k8sCreate')
-        .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
+      k8sCreateMock.mockImplementation((model, data, dryRun) =>
+        Promise.resolve({ model, data, dryRun }),
+      );
     });
 
     afterAll(() => {
-      jest.restoreAllMocks();
+      jest.clearAllMocks();
     });
 
     it('should call createImageStream when creating Resources using external image', (done) => {
@@ -307,30 +326,33 @@ describe('DeployImage Submit Utils', () => {
         });
     });
 
-    it('should call KNative when creating Resources when resource is KNative', (done) => {
+    it('should call KNative when creating Resources when resource is KNative', async () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.KnativeService;
 
-      const imageStreamSpy = jest
-        .spyOn(submitUtils, 'createOrUpdateImageStream')
-        .mockImplementation(() => ({
+      // Mock k8sCreate to return imagestream with dockerImageRepository
+      k8sCreateMock.mockImplementation((model, data, dryRun) =>
+        Promise.resolve({
+          model,
+          data,
+          dryRun,
           status: {
-            dockerImageReference: 'test:1234',
+            dockerImageRepository: 'test:1234',
           },
-        }));
+        }),
+      );
+      k8sWaitForUpdateMock.mockResolvedValue({
+        status: {
+          dockerImageRepository: 'test:1234',
+        },
+      });
+      // Mock k8sGet for domain mapping lookup
+      k8sGetMock.mockResolvedValue({ items: [] });
 
-      createOrUpdateDeployImageResources(mockData, false)
-        .then((returnValue) => {
-          // createImageStream is called as separate entity
-          expect(imageStreamSpy).toHaveBeenCalled();
-          expect(returnValue).toHaveLength(1);
-          const models = returnValue.map((data) => _.get(data, 'model.kind'));
-          expect(models).toEqual([ServiceModel.kind]);
-          done();
-        })
-        .catch(() => {
-          done();
-        });
+      const returnValue = await createOrUpdateDeployImageResources(mockData, false);
+      expect(returnValue).toHaveLength(1);
+      const models = returnValue.map((data) => _.get(data, 'model.kind'));
+      expect(models).toEqual([ServiceModel.kind]);
     });
   });
 });
