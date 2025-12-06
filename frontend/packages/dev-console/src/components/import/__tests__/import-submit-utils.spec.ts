@@ -24,6 +24,59 @@ import {
   sampleDevfileFormData,
 } from './import-submit-utils-data';
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
+  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
+  return {
+    ...actual,
+    k8sCreate: jest.fn(),
+    k8sGet: jest.fn(),
+    k8sUpdate: jest.fn(),
+  };
+});
+
+jest.mock('@console/knative-plugin/src/utils/create-knative-utils', () => {
+  const actual = jest.requireActual('@console/knative-plugin/src/utils/create-knative-utils');
+  return {
+    ...actual,
+    getDomainMappingRequests: jest.fn(),
+    getKnativeServiceDepResource: jest.fn(),
+  };
+});
+
+jest.mock('../../pipeline-section/pipeline/pipeline-template-utils', () => {
+  const actual = jest.requireActual('../../pipeline-section/pipeline/pipeline-template-utils');
+  return {
+    ...actual,
+    submitTrigger: jest.fn(),
+    createTrigger: jest.fn(),
+    createPipelineForImportFlow: jest.fn(),
+    createPipelineRunForImportFlow: jest.fn(),
+    setPipelineNotStarted: jest.fn(),
+  };
+});
+
+jest.mock('../import-submit-utils', () => {
+  const actual = jest.requireActual('../import-submit-utils');
+  return {
+    ...actual,
+    createOrUpdateImageStream: jest.fn(),
+    createOrUpdateDeployment: jest.fn(actual.createOrUpdateDeployment),
+  };
+});
+
+const k8sCreateMock = k8sResourceModule.k8sCreate as jest.Mock;
+const k8sGetMock = k8sResourceModule.k8sGet as jest.Mock;
+const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;
+const getDomainMappingRequestsMock = knativeUtils.getDomainMappingRequests as jest.Mock;
+const getKnativeServiceDepResourceMock = knativeUtils.getKnativeServiceDepResource as jest.Mock;
+const submitTriggerMock = pipelineUtils.submitTrigger as jest.Mock;
+const createTriggerMock = pipelineUtils.createTrigger as jest.Mock;
+const createPipelineForImportFlowMock = pipelineUtils.createPipelineForImportFlow as jest.Mock;
+const createPipelineRunForImportFlowMock = pipelineUtils.createPipelineRunForImportFlow as jest.Mock;
+const setPipelineNotStartedMock = pipelineUtils.setPipelineNotStarted as jest.Mock;
+const createOrUpdateImageStreamMock = submitUtils.createOrUpdateImageStream as jest.Mock;
+const createOrUpdateDeploymentMock = submitUtils.createOrUpdateDeployment as jest.Mock;
+
 const {
   createOrUpdateDeployment,
   createOrUpdateResources,
@@ -36,13 +89,13 @@ describe('Import Submit Utils', () => {
 
   describe('createDeployment tests', () => {
     beforeAll(() => {
-      jest
-        .spyOn(k8sResourceModule, 'k8sCreate')
-        .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
+      k8sCreateMock.mockImplementation((model, data, dryRun) =>
+        Promise.resolve({ model, data, dryRun }),
+      );
     });
 
     afterAll(() => {
-      jest.restoreAllMocks();
+      jest.clearAllMocks();
     });
 
     it('should set annotations for triggers while creating deployment', async (done) => {
@@ -94,13 +147,13 @@ describe('Import Submit Utils', () => {
 
   describe('createResource tests', () => {
     beforeAll(() => {
-      jest
-        .spyOn(k8sResourceModule, 'k8sCreate')
-        .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
+      k8sCreateMock.mockImplementation((model, data, dryRun) =>
+        Promise.resolve({ model, data, dryRun }),
+      );
     });
 
     afterAll(() => {
-      jest.restoreAllMocks();
+      jest.clearAllMocks();
     });
 
     it('should call createDeployment when resource is Kubernetes', async (done) => {
@@ -145,25 +198,23 @@ describe('Import Submit Utils', () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.KnativeService;
 
-      const imageStreamSpy = jest
-        .spyOn(submitUtils, 'createOrUpdateImageStream')
-        .mockImplementation(() =>
-          Promise.resolve({
-            model: {
-              kind: 'ImageStream',
-            },
-            status: {
-              dockerImageReference: 'test:1234',
-            },
-          }),
-        );
+      createOrUpdateImageStreamMock.mockImplementation(() =>
+        Promise.resolve({
+          model: {
+            kind: 'ImageStream',
+          },
+          status: {
+            dockerImageReference: 'test:1234',
+          },
+        }),
+      );
 
-      jest.spyOn(knativeUtils, 'getDomainMappingRequests').mockImplementation(() => []);
-      jest.spyOn(knativeUtils, 'getKnativeServiceDepResource').mockImplementation(() => {});
+      getDomainMappingRequestsMock.mockImplementation(() => []);
+      getKnativeServiceDepResourceMock.mockImplementation(() => {});
 
       const returnValue = await createOrUpdateResources(t, mockData, buildImage.obj, false);
       // createImageStream is called as separate entity
-      expect(imageStreamSpy).toHaveBeenCalled();
+      expect(createOrUpdateImageStreamMock).toHaveBeenCalled();
       expect(returnValue).toHaveLength(5);
       const models = returnValue.map((data) => _.get(data, 'model.kind'));
       expect(models).toEqual([
@@ -179,49 +230,39 @@ describe('Import Submit Utils', () => {
 
   describe('createPipelineResource tests', () => {
     beforeEach(() => {
-      jest
-        .spyOn(k8sResourceModule, 'k8sCreate')
-        .mockImplementation((model, data) => Promise.resolve(data));
-      jest
-        .spyOn(k8sResourceModule, 'k8sGet')
-        .mockReturnValue(Promise.resolve(sampleClusterTriggerBinding));
-      jest.spyOn(pipelineUtils, 'submitTrigger').mockImplementation(jest.fn());
-      jest.spyOn(pipelineUtils, 'createTrigger').mockImplementation(() => Promise.resolve([]));
+      k8sCreateMock.mockImplementation((model, data) => Promise.resolve(data));
+      k8sGetMock.mockReturnValue(Promise.resolve(sampleClusterTriggerBinding));
+      submitTriggerMock.mockImplementation(jest.fn());
+      createTriggerMock.mockImplementation(() => Promise.resolve([]));
     });
 
     afterEach(() => {
-      jest.restoreAllMocks();
+      jest.clearAllMocks();
     });
 
     it('should create pipeline resources if pipeline is enabled and template is present', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.pipeline.enabled = true;
 
-      const createPipelineResourceSpy = jest
-        .spyOn(pipelineUtils, 'createPipelineForImportFlow')
-        .mockImplementation((name, namespace) => {
-          return {
-            metadata: {
-              name,
-              namespace,
-              labels: { 'app.kubernetes.io/instance': name },
-            },
-            spec: {
-              params: [],
-              resources: [],
-              tasks: [],
-            },
-          };
-        });
-      const createPipelineRunResourceSpy = jest
-        .spyOn(pipelineUtils, 'createPipelineRunForImportFlow')
-        .mockImplementation(jest.fn()); // can't handle a no-arg spyOn invoke, stub
-      const createPipelineWebhookSpy = jest
-        .spyOn(pipelineUtils, 'createTrigger')
-        .mockImplementation(() => Promise.resolve([]));
+      createPipelineForImportFlowMock.mockImplementation((name, namespace) => {
+        return {
+          metadata: {
+            name,
+            namespace,
+            labels: { 'app.kubernetes.io/instance': name },
+          },
+          spec: {
+            params: [],
+            resources: [],
+            tasks: [],
+          },
+        };
+      });
+      createPipelineRunForImportFlowMock.mockImplementation(jest.fn()); // can't handle a no-arg spyOn invoke, stub
+      createTriggerMock.mockImplementation(() => Promise.resolve([]));
 
       await createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create');
-      expect(createPipelineResourceSpy).toHaveBeenCalledWith(
+      expect(createPipelineForImportFlowMock).toHaveBeenCalledWith(
         mockData.name,
         mockData.project.name,
         mockData.git.url,
@@ -233,16 +274,14 @@ describe('Import Submit Utils', () => {
         mockData.build.env,
         {},
       );
-      expect(createPipelineRunResourceSpy).toHaveBeenCalledTimes(1);
-      expect(createPipelineWebhookSpy).toHaveBeenCalledTimes(1);
+      expect(createPipelineRunForImportFlowMock).toHaveBeenCalledTimes(1);
+      expect(createTriggerMock).toHaveBeenCalledTimes(1);
       done();
     });
 
     it('should create pipeline resource with same name as application name', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.pipeline.enabled = true;
-
-      const createPipelineResourceSpy = jest.spyOn(pipelineUtils, 'createPipelineForImportFlow');
 
       const returnValue = await createOrUpdateResources(
         t,
@@ -253,7 +292,7 @@ describe('Import Submit Utils', () => {
         'create',
       );
 
-      expect(createPipelineResourceSpy).toHaveBeenCalledWith(
+      expect(createPipelineForImportFlowMock).toHaveBeenCalledWith(
         mockData.name,
         mockData.project.name,
         mockData.git.url,
@@ -279,11 +318,9 @@ describe('Import Submit Utils', () => {
       const errorLogger = jest.spyOn(console, 'warn').mockImplementation(jest.fn());
 
       // Force an exception
-      jest
-        .spyOn(pipelineUtils, 'createTrigger')
-        .mockImplementation(() =>
-          Promise.reject(new Error('Webhook trigger errored out and was not caught')),
-        );
+      createTriggerMock.mockImplementation(() =>
+        Promise.reject(new Error('Webhook trigger errored out and was not caught')),
+      );
 
       await createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create');
       expect(errorLogger).toHaveBeenCalled();
@@ -304,14 +341,9 @@ describe('Import Submit Utils', () => {
       jest.spyOn(console, 'log').mockImplementation(jest.fn());
 
       // Force an exception
-      jest
-        .spyOn(pipelineUtils, 'createPipelineRunForImportFlow')
-        .mockImplementation(() =>
-          Promise.reject(new Error('PipelineRun errored out and was not caught')),
-        );
-
-      // Make sure the fallback is called
-      const setPipelineNotStartedSpy = jest.spyOn(pipelineUtils, 'setPipelineNotStarted');
+      createPipelineRunForImportFlowMock.mockImplementation(() =>
+        Promise.reject(new Error('PipelineRun errored out and was not caught')),
+      );
 
       const returnValue = await createOrUpdateResources(
         t,
@@ -321,7 +353,7 @@ describe('Import Submit Utils', () => {
         false,
         'create',
       );
-      expect(setPipelineNotStartedSpy).toHaveBeenCalled();
+      expect(setPipelineNotStartedMock).toHaveBeenCalled();
       expect(returnValue).toHaveLength(7);
 
       // re-enable logs for future tests
@@ -335,9 +367,9 @@ describe('Import Submit Utils', () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
       mockData.pipeline.enabled = true;
-      jest
-        .spyOn(submitUtils, 'createOrUpdateDeployment')
-        .mockImplementation(() => Promise.reject(new Error('Deployment')));
+      createOrUpdateDeploymentMock.mockImplementation(() =>
+        Promise.reject(new Error('Deployment')),
+      );
 
       await expect(
         createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create'),
@@ -366,10 +398,8 @@ describe('Import Submit Utils', () => {
       mockData.pipeline.enabled = true;
       mockData.git.secret = 'sample-secret';
 
-      const k8sUpdateMock = jest
-        .spyOn(k8sResourceModule, 'k8sUpdate')
-        .mockImplementation((_model, data) => Promise.resolve(data));
-      const k8sGetMock = jest.spyOn(k8sResourceModule, 'k8sGet').mockImplementation((model) => {
+      k8sUpdateMock.mockImplementation((_model, data) => Promise.resolve(data));
+      k8sGetMock.mockImplementation((model) => {
         if (model.kind === 'Secret') {
           return Promise.resolve({ metadata: { annotations: {} } });
         }
@@ -405,13 +435,13 @@ describe('Import Submit Utils', () => {
 
   describe('createDevfileResources', () => {
     beforeAll(() => {
-      jest
-        .spyOn(k8sResourceModule, 'k8sCreate')
-        .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
+      k8sCreateMock.mockImplementation((model, data, dryRun) =>
+        Promise.resolve({ model, data, dryRun }),
+      );
     });
 
     afterAll(() => {
-      jest.restoreAllMocks();
+      jest.clearAllMocks();
     });
 
     it('return a Deployment with just one container which includes ports, env from Devfile container ', async () => {

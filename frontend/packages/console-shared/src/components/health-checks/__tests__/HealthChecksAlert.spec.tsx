@@ -8,9 +8,17 @@ jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
   useUserSettingsCompatibility: () => [[], jest.fn(), true],
 }));
 
-describe('HealthChecksAlert', () => {
-  const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
+jest.mock('@console/internal/components/utils/rbac', () => {
+  const actual = jest.requireActual('@console/internal/components/utils/rbac');
+  return {
+    ...actual,
+    useAccessReview: jest.fn(),
+  };
+});
 
+const spyUseAccessReview = rbacModule.useAccessReview as jest.Mock;
+
+describe('HealthChecksAlert', () => {
   afterEach(() => {
     spyUseAccessReview.mockClear();
   });
