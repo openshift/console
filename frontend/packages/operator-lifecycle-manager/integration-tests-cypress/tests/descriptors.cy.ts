@@ -129,6 +129,6 @@ describe('Using OLM descriptor components', () => {
     cy.byTestID('create-dynamic-form').click();
     // TODO figure out why this element is detaching
     cy.byTestOperandLink(testCR.metadata.name).click({ force: true });
-    cy.get('.co-operand-details__section--info').should('exist');
+    cy.byTestID('operand-details__section--info').should('exist');
   });
 });

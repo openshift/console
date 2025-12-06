@@ -28,11 +28,15 @@ const PodStatuses: React.FC<StatusCapabilityProps<PodStatusChartProps['statuses'
     return <PodStatusChart statuses={value} subTitle={descriptor.path} />;
   }, [descriptor.path, t, value]);
   return (
-    <div className="co-operand-details__section--info">
-      <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-        {detail}
-      </DetailsItem>
-    </div>
+    <DetailsItem
+      description={description}
+      label={label}
+      obj={obj}
+      path={fullPath}
+      data-test="operand-details__section--info"
+    >
+      {detail}
+    </DetailsItem>
   );
 };
 
