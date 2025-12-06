@@ -1,6 +1,6 @@
 import { StandardConsolePluginManifest } from '../build-types';
 import { applyCodeRefSymbol } from '../coderefs/coderef-resolver';
-import { Extension, RemoteEntryModule, CodeRef, Update } from '../types';
+import { Extension } from '../types';
 
 export const getPluginManifest = (
   name: string,
@@ -17,35 +17,29 @@ export const getPluginManifest = (
   registrationMethod: 'callback',
 });
 
-export const getExecutableCodeRefMock = <T = any>(
-  resolvedValue: T,
-): jest.Mock<ReturnType<CodeRef<T>>> => {
+export const getExecutableCodeRefMock = <T = unknown>(resolvedValue: T): jest.Mock => {
   const ref = jest.fn(() => Promise.resolve(resolvedValue));
   applyCodeRefSymbol<T>(ref);
-  return ref;
+  return ref as jest.Mock;
 };
 
-export const getEntryModuleMocks = (requestedModule: {}): [
-  ModuleFactoryMock,
-  RemoteEntryModuleMock,
-] => {
-  const moduleFactory = jest.fn<VoidFunction>(() => requestedModule);
+export const getEntryModuleMocks = (
+  requestedModule: Record<string, unknown>,
+): [ModuleFactoryMock, RemoteEntryModuleMock] => {
+  const moduleFactory = jest.fn(() => requestedModule);
 
   const entryModule = {
-    get: jest.fn(async () => moduleFactory),
-    init: jest.fn<void>(),
+    get: jest.fn(() => Promise.resolve(moduleFactory)),
+    init: jest.fn(),
   };
 
   return [moduleFactory, entryModule];
 };
 
-export type ModuleFactoryMock = jest.Mock<VoidFunction>;
+export type ModuleFactoryMock = jest.Mock;
 
-export type RemoteEntryModuleMock = Update<
-  RemoteEntryModule,
-  {
-    get: jest.Mock<ReturnType<RemoteEntryModule['get']>>;
-    init: jest.Mock<void>;
-    override?: jest.Mock<void>;
-  }
->;
+export type RemoteEntryModuleMock = {
+  get: jest.Mock;
+  init: jest.Mock;
+  override?: jest.Mock;
+};

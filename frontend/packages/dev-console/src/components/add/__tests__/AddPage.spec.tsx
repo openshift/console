@@ -13,7 +13,7 @@ jest.mock('@console/shared', () => {
   const originalModule = jest.requireActual('@console/shared');
   return {
     ...originalModule,
-    useFlag: jest.fn<boolean>().mockReturnValue(false),
+    useFlag: jest.fn().mockReturnValue(false),
   };
 });
 
