@@ -1,4 +1,4 @@
-import { Kebab } from '@console/internal/components/utils';
+import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 
 export const tableColumnClasses = [
   '', // name
@@ -7,5 +7,5 @@ export const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-lg', // created
   'pf-m-hidden pf-m-visible-on-xl', // conditions
   'pf-m-hidden pf-m-visible-on-2xl', // traffic
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];

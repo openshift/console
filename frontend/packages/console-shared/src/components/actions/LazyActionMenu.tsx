@@ -16,6 +16,8 @@ type LazyMenuRendererProps = {
   toggleRef: React.RefObject<HTMLButtonElement>;
 } & React.ComponentProps<typeof ActionMenuContent>;
 
+export const KEBAB_COLUMN_CLASS = 'pf-v6-c-table__action';
+
 const LazyMenuRenderer: React.FC<LazyMenuRendererProps> = ({
   isOpen,
   actions,

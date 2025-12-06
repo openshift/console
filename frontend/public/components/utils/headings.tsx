@@ -24,9 +24,9 @@ import {
   referenceForExtensionModel,
 } from '../../module/k8s';
 import type { FirehoseResult } from './types';
-import type { KebabOption } from './kebab';
 import { ResourceIcon } from './resource-icon';
 import { ManagedByOperatorLink } from './managed-by';
+import { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 export const ResourceItemDeleting = () => {
   const { t } = useTranslation();
@@ -231,7 +231,7 @@ export type KebabOptionsCreator = (
   data: K8sResourceKind,
   extraResources?: { [prop: string]: K8sResourceKind | K8sResourceKind[] },
   customData?: any,
-) => KebabOption[];
+) => Action[];
 
 export type ConnectedPageHeadingProps = Omit<PageHeadingProps, 'primaryAction'> & {
   breadcrumbsFor?: (obj: K8sResourceKind) => { name: string; path: string }[];

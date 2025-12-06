@@ -10,7 +10,6 @@ import { Table, TableData } from './factory/table';
 import type { DetailsPageProps } from './factory/details';
 import type { ListPageProps } from './factory/list-page';
 import type { TableProps } from './factory/table';
-import { Kebab } from './utils/kebab';
 import { LabelList } from './utils/label-list';
 import { navFactory } from './utils/horizontal-nav';
 import { SectionHeading } from './utils/headings';
@@ -27,7 +26,9 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { PersistentVolumeKind, referenceForModel } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 
 const persistentVolumeReference = referenceForModel(PersistentVolumeModel);
 
@@ -42,7 +43,7 @@ const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-lg',
   '',
   'pf-m-hidden pf-m-visible-on-lg',
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 const { kind } = PersistentVolumeModel;

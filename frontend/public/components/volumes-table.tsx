@@ -25,6 +25,7 @@ import { sortable } from '@patternfly/react-table';
 import { connectToModel } from '../kinds';
 import { useRemoveModalLauncher } from './modals/remove-volume-modal';
 import { ModalCallback } from './modals/types';
+import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const removeVolume = (
   removeVolumeModal: ModalCallback,
@@ -92,7 +93,7 @@ const volumeRowColumnClasses = [
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-xl',
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 const VolumesTableRows = ({ componentProps: { data } }) => {

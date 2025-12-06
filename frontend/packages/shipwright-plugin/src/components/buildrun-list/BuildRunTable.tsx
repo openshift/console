@@ -8,9 +8,11 @@ import {
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildRun } from '../../types';
 import BuildRunDuration, {
@@ -24,7 +26,7 @@ const columnClassNames = [
   'pf-m-hidden pf-m-visible-on-md', // status
   'pf-m-hidden pf-m-visible-on-lg', // age
   'pf-m-hidden pf-m-visible-on-xl', // duration
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 export const BuildRunHeader = () => {
