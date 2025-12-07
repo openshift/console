@@ -108,6 +108,10 @@ const initialValues: SourceSectionFormData = {
 };
 
 describe('SourceSection', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should render form with minimal form data', () => {
     const onSubmit = jest.fn();
 
