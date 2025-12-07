@@ -166,7 +166,7 @@ describe('loadActivePluginsForTestPurposes', () => {
       { type: 'Dynamic/Bar', properties: { baz: 1, qux: { $codeRef: 'a.b' } } },
     ];
 
-    const moduleHook = jest.fn();
+    const moduleHook = jest.fn<void, []>();
 
     const extensionHook = jest.fn((pkg: PluginPackage) => {
       switch (pkg) {
@@ -299,7 +299,9 @@ describe('getDynamicExtensions', () => {
 
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
-    const codeRefTransformer = jest.fn((codeRefSource: string) => `ref(${codeRefSource})`);
+    const codeRefTransformer = jest.fn<string, [string]>(
+      (codeRefSource) => `ref(${codeRefSource})`,
+    );
 
     fsExistsSyncMock.mockImplementation(() => true);
     parseJSONC.mockImplementation(() => extensionsJSON);
@@ -381,7 +383,7 @@ describe('getDynamicExtensions', () => {
 
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
-    const codeRefTransformer = jest.fn(_.identity);
+    const codeRefTransformer = jest.fn<string, [string]>(_.identity as (s: string) => string);
 
     fsExistsSyncMock.mockImplementation(() => false);
 
@@ -408,7 +410,7 @@ describe('getDynamicExtensions', () => {
     const extensionsJSON: Extension[] = [];
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
-    const codeRefTransformer = jest.fn(_.identity);
+    const codeRefTransformer = jest.fn<string, [string]>(_.identity as (s: string) => string);
 
     fsExistsSyncMock.mockImplementation(() => true);
     parseJSONC.mockImplementation(() => extensionsJSON);
@@ -450,7 +452,7 @@ describe('getDynamicExtensions', () => {
 
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
-    const codeRefTransformer = jest.fn(_.identity);
+    const codeRefTransformer = jest.fn<string, [string]>(_.identity as (s: string) => string);
 
     fsExistsSyncMock.mockImplementation(() => true);
     parseJSONC.mockImplementation(() => extensionsJSON);

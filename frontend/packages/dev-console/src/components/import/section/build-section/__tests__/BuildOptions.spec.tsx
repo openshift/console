@@ -28,7 +28,7 @@ const spyUsePipelineAccessReview = usePipelineAccessReview as jest.Mock;
 jest.mock('@console/shared', () => ({
   SingleDropdownField: (props) => `SingleDropdownField options=${JSON.stringify(props.options)}`,
   SelectInputOption: {},
-  useFlag: jest.fn(),
+  useFlag: jest.fn<boolean, []>(),
 }));
 
 jest.mock('@console/internal/components/utils', () => ({

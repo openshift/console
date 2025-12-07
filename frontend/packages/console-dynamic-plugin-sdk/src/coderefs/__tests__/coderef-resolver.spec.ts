@@ -17,8 +17,8 @@ import {
   isCodeRefError,
 } from '../coderef-resolver';
 
-const getErrorExecutableCodeRefMock = <T = any>(): jest.Mock<ReturnType<CodeRef<T>>> => {
-  const ref = jest.fn(() => Promise.reject(new Error()));
+const getErrorExecutableCodeRefMock = <T = any>(): jest.Mock<Promise<T>, []> => {
+  const ref = jest.fn<Promise<T>, []>(() => Promise.reject(new Error()));
   applyCodeRefSymbol<T>(ref);
   return ref;
 };
@@ -90,12 +90,12 @@ describe('loadReferencedObject', () => {
     beforeResult: (entryModule: RemoteEntryModuleMock, moduleFactory: ModuleFactoryMock) => void,
     afterResult: (
       result: any,
-      errorCallback: jest.Mock<void>,
+      errorCallback: jest.Mock<void, []>,
       entryModule: RemoteEntryModuleMock,
       moduleFactory: ModuleFactoryMock,
     ) => void,
   ) => {
-    const errorCallback = jest.fn();
+    const errorCallback = jest.fn<void, []>();
     const [moduleFactory, entryModule] = getEntryModuleMocks(requestedModule);
     beforeResult(entryModule, moduleFactory);
 
@@ -230,7 +230,7 @@ describe('resolveEncodedCodeRefs', () => {
       },
     ];
 
-    const errorCallback = jest.fn();
+    const errorCallback = jest.fn<void, []>();
     const [, entryModule] = getEntryModuleMocks({ a: 'value1', b: 'value2' });
 
     const resolvedExtensions = resolveEncodedCodeRefs(
@@ -257,7 +257,7 @@ describe('resolveEncodedCodeRefs', () => {
       { type: 'Bar', properties: { test: [1] } },
     ];
 
-    const errorCallback = jest.fn();
+    const errorCallback = jest.fn<void, []>();
     const [, entryModule] = getEntryModuleMocks({});
 
     const resolvedExtensions = resolveEncodedCodeRefs(

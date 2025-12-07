@@ -8,7 +8,7 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => {
   const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/flags');
   return {
     ...actual,
-    useFlag: jest.fn(),
+    useFlag: jest.fn<boolean, []>(),
   };
 });
 

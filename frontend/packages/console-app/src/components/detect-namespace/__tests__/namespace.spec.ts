@@ -22,7 +22,7 @@ jest.mock('react-router-dom-v5-compat', () => ({
 }));
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
-  useFlag: jest.fn(),
+  useFlag: jest.fn<boolean, []>(),
 }));
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
