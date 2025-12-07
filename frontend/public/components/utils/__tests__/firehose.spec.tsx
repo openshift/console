@@ -205,7 +205,7 @@ describe('Firehose', () => {
       }),
     );
 
-    jest.useFakeTimers();
+    jest.useFakeTimers({ legacyFakeTimers: true });
     jest.resetAllMocks();
 
     k8sListMock.mockReturnValue(Promise.resolve(podList));
@@ -950,7 +950,7 @@ describe('Firehose together with useK8sWatchResources', () => {
       }),
     );
 
-    jest.useFakeTimers();
+    jest.useFakeTimers({ legacyFakeTimers: true });
     jest.resetAllMocks();
 
     k8sListMock.mockReturnValue(Promise.resolve(podList));

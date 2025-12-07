@@ -57,7 +57,7 @@ beforeEach(() => {
     }),
   );
 
-  jest.useFakeTimers();
+  jest.useFakeTimers({ legacyFakeTimers: true });
   jest.resetAllMocks();
 
   k8sListMock.mockReturnValue(Promise.resolve(podList));
