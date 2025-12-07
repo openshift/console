@@ -1,7 +1,7 @@
 import { act } from 'react-dom/test-utils';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
-import * as clientUtils from '@console/internal/graphql/client';
+import { fetchK8s } from '@console/internal/graphql/client';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';
@@ -20,17 +20,14 @@ jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
 }));
 
-jest.mock('@console/internal/graphql/client', () => {
-  const actual = jest.requireActual('@console/internal/graphql/client');
-  return {
-    ...actual,
-    fetchK8s: jest.fn(),
-  };
-});
+jest.mock('@console/internal/graphql/client', () => ({
+  ...jest.requireActual('@console/internal/graphql/client'),
+  fetchK8s: jest.fn(),
+}));
 
 const settleAllPromisesMock = settleAllPromises as jest.Mock;
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
-const fetchK8sMock = clientUtils.fetchK8s as jest.Mock;
+const fetchK8sMock = fetchK8s as jest.Mock;
 
 describe('hasEnabledHelmCharts', () => {
   it('should return false if all chart repositories are disabled', () => {
@@ -59,21 +56,16 @@ describe('hasEnabledHelmCharts', () => {
 describe('useDetectHelmChartRepositories', () => {
   const setFeatureFlag = jest.fn();
   const helmChartRepositoryList = {
-    apiVersion: 'helm.openshift.io/v1beta1',
-    kind: 'HelmChartRepositoryList',
-    metadata: { resourceVersion: '1' },
     items: mockHelmChartRepositories,
   };
-  const emptyList = {
-    apiVersion: 'helm.openshift.io/v1beta1',
-    kind: 'HelmChartRepositoryList',
-    metadata: { resourceVersion: '1' },
-    items: [] as K8sResourceKind[],
-  };
+  // Dummy promise that resolves - actual return value doesn't matter since settleAllPromises is mocked
+  const dummyPromise = Promise.resolve({});
 
   beforeEach(() => {
     jest.useFakeTimers();
     useActiveNamespaceMock.mockReturnValue([ns]);
+    // Default mock for fetchK8s - returns a resolved promise
+    fetchK8sMock.mockReturnValue(dummyPromise);
   });
 
   afterEach(() => {
@@ -86,9 +78,6 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call fetchK8s with HelmChartRepositoryModel and ProjectHelmChartRepositoryModel', async () => {
-    fetchK8sMock
-      .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList))
-      .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList));
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[helmChartRepositoryList, helmChartRepositoryList], [], []]),
     );
@@ -99,11 +88,8 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if only cluster scoped helm chart repository is available', async () => {
-    fetchK8sMock
-      .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList))
-      .mockReturnValueOnce(Promise.resolve(emptyList));
     settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[helmChartRepositoryList, emptyList], [], []]),
+      Promise.resolve([[helmChartRepositoryList, { items: [] }], [], []]),
     );
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
@@ -114,11 +100,8 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if only project scoped helm chart repository is available', async () => {
-    fetchK8sMock
-      .mockReturnValueOnce(Promise.resolve(emptyList))
-      .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList));
     settleAllPromisesMock.mockReturnValue(
-      Promise.resolve([[emptyList, helmChartRepositoryList], [], []]),
+      Promise.resolve([[{ items: [] }, helmChartRepositoryList], [], []]),
     );
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
@@ -129,9 +112,6 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and true if both project and cluster scoped helm chart repositories are available', async () => {
-    fetchK8sMock
-      .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList))
-      .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList));
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[helmChartRepositoryList, helmChartRepositoryList], [], []]),
     );
@@ -144,10 +124,9 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call setFeatureFlag with FLAG_OPENSHIFT_HELM flag and false if no CR helm chart repository is available', async () => {
-    fetchK8sMock
-      .mockReturnValueOnce(Promise.resolve(emptyList))
-      .mockReturnValueOnce(Promise.resolve(emptyList));
-    settleAllPromisesMock.mockReturnValue(Promise.resolve([[emptyList, emptyList], [], []]));
+    settleAllPromisesMock.mockReturnValue(
+      Promise.resolve([[{ items: [] }, { items: [] }], [], []]),
+    );
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
       rerender();
@@ -164,7 +143,7 @@ describe('useDetectHelmChartRepositories', () => {
       status: 200,
     } as Response);
 
-    fetchK8sMock.mockRejectedValueOnce(error404).mockRejectedValueOnce(error200);
+    // settleAllPromises mock returns errors in rejectedReasons array
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error404, error200], []]));
 
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
@@ -179,7 +158,7 @@ describe('useDetectHelmChartRepositories', () => {
     const error200 = new HttpError('200', 200, {
       status: 200,
     } as Response);
-    fetchK8sMock.mockRejectedValueOnce(error200).mockRejectedValueOnce(error200);
+    // settleAllPromises mock returns errors in rejectedReasons array
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error200, error200], []]));
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
@@ -190,9 +169,6 @@ describe('useDetectHelmChartRepositories', () => {
   });
 
   it('should call fetchK8s every 10 seconds', async () => {
-    fetchK8sMock
-      .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList))
-      .mockReturnValueOnce(Promise.resolve(helmChartRepositoryList));
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[helmChartRepositoryList, helmChartRepositoryList], [], []]),
     );
@@ -209,7 +185,7 @@ describe('useDetectHelmChartRepositories', () => {
     const error200 = new HttpError('200', 200, {
       status: 200,
     } as Response);
-    fetchK8sMock.mockRejectedValueOnce(error404).mockRejectedValueOnce(error200);
+    // settleAllPromises mock returns errors in rejectedReasons array
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error404, error200], []]));
     const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
