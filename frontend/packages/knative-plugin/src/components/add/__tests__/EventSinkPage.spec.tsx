@@ -131,7 +131,8 @@ describe('EventSinkPage', () => {
       pathname: '/catalog/ns/my-app/eventsink?sinkKind=KafkaSink',
       search: '/catalog/ns/my-app/eventsink?sinkKind=KafkaSink',
       state: null,
-      hash: null,
+      hash: '',
+      key: 'default',
     });
     const { container } = render(<EventSinkPage />);
     expect(container.querySelector('EventSink')).toBeInTheDocument();
