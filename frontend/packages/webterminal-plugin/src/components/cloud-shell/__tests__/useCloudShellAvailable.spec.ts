@@ -11,7 +11,7 @@ const checkTerminalAvailableMock = checkTerminalAvailable as jest.Mock;
 
 jest.mock('../cloud-shell-utils', () => {
   return {
-    checkTerminalAvailable: jest.fn(),
+    checkTerminalAvailable: jest.fn<Promise<void>, []>(),
   };
 });
 
@@ -19,7 +19,7 @@ jest.mock('@console/shared/src/hooks/flag', () => {
   const originalModule = jest.requireActual('@console/shared/src/hooks/flag');
   return {
     ...originalModule,
-    useFlag: jest.fn(),
+    useFlag: jest.fn<boolean, []>(),
   };
 });
 
