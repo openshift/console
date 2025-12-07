@@ -103,7 +103,7 @@ describe('BuildOptions', () => {
     spyUsePipelineAccessReview.mockReset();
 
     (useAccessReview as jest.Mock).mockReturnValue(true);
-    (isPreferredStrategyAvailable as jest.Mock).mockReturnValue(true);
+    (shipwrightBuildHook.isPreferredStrategyAvailable as jest.Mock).mockReturnValue(true);
   });
 
   afterEach(() => {
