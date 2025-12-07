@@ -245,6 +245,10 @@ describe('ProvidedAPIsPage', () => {
 
     jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
       pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/instances`,
+      search: '',
+      state: null,
+      hash: '',
+      key: 'default',
     });
   });
 
@@ -275,6 +279,10 @@ describe('ProvidedAPIPage', () => {
 
     jest.spyOn(ReactRouter, 'useLocation').mockReturnValue({
       pathname: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/TestResource`,
+      search: '',
+      state: null,
+      hash: '',
+      key: 'default',
     });
   });
 
