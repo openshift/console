@@ -3,43 +3,20 @@ import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { ImportStrategy } from '@console/git-service/src/types';
-import { getActiveNamespace } from '@console/internal/actions/ui';
-import { LoadingInline, useAccessReview } from '@console/internal/components/utils';
-import { SingleDropdownField, SelectInputOption, useFlag } from '@console/shared';
-import {
-  CLUSTER_PIPELINE_NS,
-  FLAG_OPENSHIFT_BUILDCONFIG,
-  FLAG_OPENSHIFT_PIPELINE,
-} from '../../../../const';
-import { PipelineModel } from '../../../../models/pipelines';
+import { LoadingInline } from '@console/internal/components/utils';
+import { SelectInputOption, SingleDropdownField, useFlag } from '@console/shared';
+import { FLAG_OPENSHIFT_BUILDCONFIG, FLAG_OPENSHIFT_PIPELINE } from '../../../../const';
 import {
   isPreferredStrategyAvailable,
   useClusterBuildStrategy,
   useShipwrightBuilds,
 } from '../../../../utils/shipwright-build-hook';
 import { BuildOptions, ReadableBuildOptions } from '../../import-types';
+import { usePipelineAccessReview } from './usePipelineAccessReview';
 
 type BuildOptionProps = {
   isDisabled: boolean;
   importStrategy: ImportStrategy;
-};
-
-export const usePipelineAccessReview = (): boolean => {
-  const canListPipelines = useAccessReview({
-    group: PipelineModel.apiGroup,
-    resource: PipelineModel.plural,
-    namespace: CLUSTER_PIPELINE_NS,
-    verb: 'list',
-  });
-
-  const canCreatePipelines = useAccessReview({
-    group: PipelineModel.apiGroup,
-    resource: PipelineModel.plural,
-    namespace: getActiveNamespace(),
-    verb: 'create',
-  });
-
-  return canListPipelines && canCreatePipelines;
 };
 
 export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStrategy }) => {
