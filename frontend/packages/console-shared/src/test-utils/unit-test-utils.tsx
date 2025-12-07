@@ -14,6 +14,7 @@ import { Formik, FormikValues } from 'formik';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom-v5-compat';
 import { combineReducers, createStore } from 'redux';
+import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
 import { RootState, baseReducers } from '@console/internal/redux';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
@@ -28,7 +29,10 @@ type WrapperProps = {
 // Create a Redux store with reducer and initial state.
 const rootReducer = combineReducers<RootState>(baseReducers);
 const setupStore = (initialState?: Partial<RootState>) => {
-  return createStore(rootReducer, initialState);
+  const store = createStore(rootReducer, initialState);
+  // Set the store in storeHandler so that modules like rbac.tsx can access it
+  storeHandler.setStore(store);
+  return store;
 };
 
 /**
