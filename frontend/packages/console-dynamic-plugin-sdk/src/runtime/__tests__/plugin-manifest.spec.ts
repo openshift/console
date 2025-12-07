@@ -8,61 +8,46 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => ({
 }));
 
 const coFetch = coFetchModule.consoleFetch as jest.Mock;
-const validatePluginManifestSchema = pluginManifestModule.validatePluginManifestSchema as jest.Mock;
 
 beforeEach(() => {
-  [coFetch, validatePluginManifestSchema].forEach((mock) => mock.mockReset());
+  coFetch.mockReset();
 });
 
+// Note: With ES modules in Jest 30, internal function calls within the same module cannot
+// be mocked. fetchPluginManifest calls validatePluginManifestSchema directly, bypassing
+// the module mock. Therefore, we use valid lowercase plugin names to pass actual validation.
 describe('fetchPluginManifest', () => {
   it('loads, validates and returns the manifest object', async () => {
-    const manifest = getPluginManifest('Test', '1.2.3');
+    // Use lowercase plugin name to pass actual validation (ES module mock limitation)
+    const manifest = getPluginManifest('test', '1.2.3');
     const manifestURL = 'http://example.com/test/plugin-manifest.json';
 
-    const validator = new SchemaValidator(manifestURL);
-    const validatorResultReport = jest.spyOn(validator.result, 'report');
-
     coFetch.mockResolvedValue({ json: () => Promise.resolve(manifest) } as Response);
-    validatePluginManifestSchema.mockImplementation(() => Promise.resolve(validator.result));
 
     const result = await fetchPluginManifest('http://example.com/test/');
 
-    expect(result).toBe(manifest);
+    expect(result).toEqual(manifest);
     expect(coFetch).toHaveBeenCalledWith(manifestURL, { method: 'GET' });
-    expect(validatePluginManifestSchema).toHaveBeenCalledWith(manifest, manifestURL);
-    expect(validatorResultReport).toHaveBeenCalledWith();
   });
 
   it('throws an error if the HTTP request fails', async () => {
     coFetch.mockImplementation(() => Promise.reject(new Error('boom')));
 
-    expect.assertions(2);
-    try {
-      await fetchPluginManifest('http://example.com/test/');
-    } catch (e) {
-      expect(coFetch).toHaveBeenCalled();
-      expect(validatePluginManifestSchema).not.toHaveBeenCalled();
-    }
+    await expect(fetchPluginManifest('http://example.com/test/')).rejects.toThrow('boom');
+    expect(coFetch).toHaveBeenCalled();
   });
 
   it('throws an error if the validation fails', async () => {
-    const manifest = getPluginManifest('Test', '1.2.3');
+    // Use invalid uppercase plugin name to trigger actual validation failure
+    // (ES module mock limitation - can't mock internal validatePluginManifestSchema call)
+    const manifest = getPluginManifest('InvalidName', '1.2.3');
     const manifestURL = 'http://example.com/test/plugin-manifest.json';
 
-    const validator = new SchemaValidator(manifestURL);
-    jest.spyOn(validator.result, 'report').mockImplementation(() => {
-      throw new Error('boom');
-    });
-
     coFetch.mockResolvedValue({ json: () => Promise.resolve(manifest) } as Response);
-    validatePluginManifestSchema.mockImplementation(() => Promise.resolve(validator.result));
 
-    expect.assertions(2);
-    try {
-      await fetchPluginManifest('http://example.com/test/');
-    } catch (e) {
-      expect(coFetch).toHaveBeenCalled();
-      expect(validatePluginManifestSchema).toHaveBeenCalled();
-    }
+    await expect(fetchPluginManifest('http://example.com/test/')).rejects.toThrow(
+      'Validation failed',
+    );
+    expect(coFetch).toHaveBeenCalledWith(manifestURL, { method: 'GET' });
   });
 });
