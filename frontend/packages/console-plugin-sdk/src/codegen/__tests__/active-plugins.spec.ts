@@ -284,7 +284,7 @@ describe('getDynamicExtensions', () => {
 
   // TODO: This test cannot work with ESM modules because it requires mocking an internal function call
   // within the same module. The original jest.spyOn approach doesn't work with ESM exports.
-  it.skip('returns an array of dynamic extensions with transformed code references', () => {
+  xit('returns an array of dynamic extensions with transformed code references', () => {
     const pluginPackage: PluginPackage = {
       ...getTemplatePackage({
         name: 'test-plugin',
@@ -437,7 +437,7 @@ describe('getDynamicExtensions', () => {
 
   // TODO: This test cannot work with ESM modules because it requires mocking an internal function call
   // within the same module. The original jest.spyOn approach doesn't work with ESM exports.
-  it.skip('returns an empty array when code reference transformation yields errors', () => {
+  xit('returns an empty array when code reference transformation yields errors', () => {
     const pluginPackage: PluginPackage = {
       ...getTemplatePackage({
         name: 'test-plugin',

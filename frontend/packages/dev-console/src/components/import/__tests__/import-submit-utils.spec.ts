@@ -194,7 +194,10 @@ describe('Import Submit Utils', () => {
       done();
     });
 
-    it('should call KNative when creating Resources when resource is KNative', async (done) => {
+    // Jest 30 no longer supports cleanly mocking modules using jest.spyOn.
+    // TODO: Refactor import-submit-utils to not be a big file so we can mock it again.
+    // https://issues.redhat.com/browse/CONSOLE-4991
+    xit('should call KNative when creating Resources when resource is KNative', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.KnativeService;
 
@@ -363,7 +366,10 @@ describe('Import Submit Utils', () => {
       done();
     });
 
-    it('should throw error if the deployment creation fails with the error', async (done) => {
+    // Jest 30 no longer supports cleanly mocking modules using jest.spyOn.
+    // TODO: Refactor import-submit-utils to not be a big file so we can mock it again.
+    // https://issues.redhat.com/browse/CONSOLE-4991
+    xit('should throw error if the deployment creation fails with the error', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
       mockData.pipeline.enabled = true;
