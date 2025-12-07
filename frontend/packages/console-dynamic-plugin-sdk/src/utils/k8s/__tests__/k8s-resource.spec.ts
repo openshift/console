@@ -10,7 +10,7 @@ jest.mock('../../fetch/console-fetch', () => {
   };
 });
 
-const spyCoFetchJSON = coFetchModule.consoleFetchJSON as jest.Mock;
+const spyCoFetchJSON = jest.mocked(coFetchModule.consoleFetchJSON);
 
 describe('k8s-Resource', () => {
   const MockPodModel: K8sModel = {
