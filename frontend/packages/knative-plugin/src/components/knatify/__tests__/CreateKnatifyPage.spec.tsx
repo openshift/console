@@ -91,7 +91,13 @@ describe('CreateKnatifyPage', () => {
       state: null,
       hash: null,
     });
-    jest.spyOn(Router, 'useLocation').mockReturnValue({ pathname: '' });
+    jest.spyOn(Router, 'useLocation').mockReturnValue({
+      pathname: '',
+      search: '',
+      state: null,
+      hash: '',
+      key: 'default',
+    });
   });
 
   it('should render without errors when resources are not loaded yet', () => {

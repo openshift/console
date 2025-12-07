@@ -28,7 +28,7 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
   ...jest.requireActual('@console/dynamic-plugin-sdk'),
   getUser: jest.fn(),
   getUserResource: jest.fn(),
-  setUserResource: (...args) => mockSetUserResource(...args),
+  setUserResource: (...args: unknown[]) => mockSetUserResource(...args),
 }));
 
 const mockDispatch = jest.fn();
