@@ -61,6 +61,13 @@ const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;
 const getDynamicEventSourcesModelRefsMock = knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
 
 describe('knative topology utils', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Default mock implementations
+    getDynamicEventSourcesModelRefsMock.mockReturnValue([]);
+    k8sUpdateMock.mockResolvedValue({});
+  });
+
   it('expect getKnativeServiceData to return knative resources', () => {
     const knResource = getKnativeServiceData(
       MockKnativeResources.ksservices.data[0],
