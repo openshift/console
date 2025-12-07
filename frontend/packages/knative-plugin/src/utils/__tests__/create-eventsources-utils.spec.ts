@@ -26,21 +26,15 @@ import {
 } from '../create-eventsources-utils';
 import { getDefaultEventingData, Kafkas } from './knative-serving-data';
 
-jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac');
-  return {
-    ...actual,
-    checkAccess: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
+  checkAccess: jest.fn(),
+}));
 
-jest.mock('@console/internal/module/k8s/k8s-models', () => {
-  const actual = jest.requireActual('@console/internal/module/k8s/k8s-models');
-  return {
-    ...actual,
-    modelFor: jest.fn(),
-  };
-});
+jest.mock('@console/internal/module/k8s/k8s-models', () => ({
+  ...jest.requireActual('@console/internal/module/k8s/k8s-models'),
+  modelFor: jest.fn(),
+}));
 
 const checkAccessMock = rbacModule.checkAccess as jest.Mock;
 const modelForMock = k8sModelsModule.modelFor as jest.Mock;

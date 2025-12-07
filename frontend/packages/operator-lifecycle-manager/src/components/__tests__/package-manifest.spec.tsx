@@ -24,13 +24,10 @@ jest.mock('@console/internal/components/utils', () => ({
   ResourceLink: jest.fn(() => null),
 }));
 
-jest.mock('@console/internal/actions/ui', () => {
-  const actual = jest.requireActual('@console/internal/actions/ui');
-  return {
-    ...actual,
-    getActiveNamespace: jest.fn(),
-  };
-});
+jest.mock('@console/internal/actions/ui', () => ({
+  ...jest.requireActual('@console/internal/actions/ui'),
+  getActiveNamespace: jest.fn(),
+}));
 
 const getActiveNamespaceMock = UIActions.getActiveNamespace as jest.Mock;
 

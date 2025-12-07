@@ -15,29 +15,20 @@ import { Resources } from '../import-types';
 import * as submitUtils from '../upload-jar-submit-utils';
 import { nodeJsBuilderImage as buildImage } from './import-submit-utils-data';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sCreate: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sCreate: jest.fn(),
+}));
 
-jest.mock('../upload-jar-submit-utils', () => {
-  const actual = jest.requireActual('../upload-jar-submit-utils');
-  return {
-    ...actual,
-    instantiateBinaryBuild: jest.fn(),
-  };
-});
+jest.mock('../upload-jar-submit-utils', () => ({
+  ...jest.requireActual('../upload-jar-submit-utils'),
+  instantiateBinaryBuild: jest.fn(),
+}));
 
-jest.mock('../import-submit-utils', () => {
-  const actual = jest.requireActual('../import-submit-utils');
-  return {
-    ...actual,
-    createOrUpdateImageStream: jest.fn(),
-  };
-});
+jest.mock('../import-submit-utils', () => ({
+  ...jest.requireActual('../import-submit-utils'),
+  createOrUpdateImageStream: jest.fn(),
+}));
 
 const k8sCreateMock = k8sResourceModule.k8sCreate as jest.Mock;
 const instantiateBinaryBuildMock = submitUtils.instantiateBinaryBuild as jest.Mock;

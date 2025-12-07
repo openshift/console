@@ -8,15 +8,12 @@ import {
   killExportResource,
 } from '../export-app-utils';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sCreate: jest.fn(),
-    k8sGet: jest.fn(),
-    k8sKill: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sCreate: jest.fn(),
+  k8sGet: jest.fn(),
+  k8sKill: jest.fn(),
+}));
 
 const k8sCreateMock = k8sResourceModule.k8sCreate as jest.Mock;
 const k8sGetMock = k8sResourceModule.k8sGet as jest.Mock;

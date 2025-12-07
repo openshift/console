@@ -5,13 +5,10 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { mockHelmReleases } from '../../../__tests__/helm-release-mock-data';
 import HelmReleaseOverview from '../HelmReleaseOverview';
 
-jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac');
-  return {
-    ...actual,
-    useAccessReview: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
+  useAccessReview: jest.fn(),
+}));
 
 const spyUseAccessReview = rbacModule.useAccessReview as jest.Mock;
 

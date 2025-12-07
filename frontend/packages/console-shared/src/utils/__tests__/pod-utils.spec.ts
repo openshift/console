@@ -19,13 +19,10 @@ import {
   isContainerLoopingFilter,
 } from '../pod-utils';
 
-jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac');
-  return {
-    ...actual,
-    checkAccess: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
+  checkAccess: jest.fn(),
+}));
 
 const checkAccessMock = rbacModule.checkAccess as jest.Mock;
 

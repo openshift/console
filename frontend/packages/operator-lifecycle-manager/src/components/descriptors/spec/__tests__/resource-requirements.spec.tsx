@@ -11,21 +11,15 @@ import {
   ResourceRequirementsModalLink,
 } from '../resource-requirements';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sUpdate: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sUpdate: jest.fn(),
+}));
 
-jest.mock('@console/internal/components/factory/modal', () => {
-  const actual = jest.requireActual('@console/internal/components/factory/modal');
-  return {
-    ...actual,
-    createModalLauncher: jest.fn(),
-  };
-});
+jest.mock('@console/internal/components/factory/modal', () => ({
+  ...jest.requireActual('@console/internal/components/factory/modal'),
+  createModalLauncher: jest.fn(),
+}));
 
 const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;
 const createModalLauncherMock = modal.createModalLauncher as jest.Mock;

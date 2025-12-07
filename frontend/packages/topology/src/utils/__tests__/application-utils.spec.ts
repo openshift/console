@@ -36,23 +36,17 @@ import { OdcNodeModel, TopologyDataResources } from '../../topology-types';
 import { cleanUpWorkload } from '../application-utils';
 import { WORKLOAD_TYPES } from '../topology-utils';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sKill: jest.fn(),
-    k8sGet: jest.fn(),
-    k8sList: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sKill: jest.fn(),
+  k8sGet: jest.fn(),
+  k8sList: jest.fn(),
+}));
 
-jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac');
-  return {
-    ...actual,
-    checkAccess: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
+  checkAccess: jest.fn(),
+}));
 
 jest.mock('@console/internal/module/k8s/k8s-models', () => {
   const actual = jest.requireActual('@console/internal/module/k8s/k8s-models');

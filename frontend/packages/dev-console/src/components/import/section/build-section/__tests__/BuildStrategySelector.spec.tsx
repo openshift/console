@@ -3,13 +3,10 @@ import { useFormikContext } from 'formik';
 import * as shipwrightHooks from '@console/dev-console/src/utils/shipwright-build-hook';
 import { BuildStrategySelector } from '../BuildStrategySelector';
 
-jest.mock('@console/dev-console/src/utils/shipwright-build-hook', () => {
-  const actual = jest.requireActual('@console/dev-console/src/utils/shipwright-build-hook');
-  return {
-    ...actual,
-    useClusterBuildStrategy: jest.fn(),
-  };
-});
+jest.mock('@console/dev-console/src/utils/shipwright-build-hook', () => ({
+  ...jest.requireActual('@console/dev-console/src/utils/shipwright-build-hook'),
+  useClusterBuildStrategy: jest.fn(),
+}));
 
 const spySWClusterBuildStrategy = shipwrightHooks.useClusterBuildStrategy as jest.Mock;
 

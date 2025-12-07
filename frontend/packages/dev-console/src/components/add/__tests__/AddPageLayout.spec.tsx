@@ -19,21 +19,15 @@ jest.mock('@console/app/src/components/quick-starts/utils/useQuickStarts', () =>
   useQuickStarts: () => [[], true, null],
 }));
 
-jest.mock('../../../utils/useAddActionExtensions', () => {
-  const actual = jest.requireActual('../../../utils/useAddActionExtensions');
-  return {
-    ...actual,
-    useAddActionExtensions: jest.fn(),
-  };
-});
+jest.mock('../../../utils/useAddActionExtensions', () => ({
+  ...jest.requireActual('../../../utils/useAddActionExtensions'),
+  useAddActionExtensions: jest.fn(),
+}));
 
-jest.mock('../hooks/useAccessFilterExtensions', () => {
-  const actual = jest.requireActual('../hooks/useAccessFilterExtensions');
-  return {
-    ...actual,
-    useAccessFilterExtensions: jest.fn(),
-  };
-});
+jest.mock('../hooks/useAccessFilterExtensions', () => ({
+  ...jest.requireActual('../hooks/useAccessFilterExtensions'),
+  useAccessFilterExtensions: jest.fn(),
+}));
 
 const useAddActionExtensionsSpy = utils.useAddActionExtensions as jest.Mock;
 const useAccessFilterExtensionsSpy = accessFilterHook.useAccessFilterExtensions as jest.Mock;

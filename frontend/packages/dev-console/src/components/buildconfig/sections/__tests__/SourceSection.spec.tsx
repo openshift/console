@@ -28,21 +28,15 @@ jest.mock('../EditorField', () =>
   jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
-jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac');
-  return {
-    ...actual,
-    useAccessReview: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
+  useAccessReview: jest.fn(),
+}));
 
-jest.mock('@console/git-service/src/utils/serverless-strategy-detector', () => {
-  const actual = jest.requireActual('@console/git-service/src/utils/serverless-strategy-detector');
-  return {
-    ...actual,
-    evaluateFunc: jest.fn(),
-  };
-});
+jest.mock('@console/git-service/src/utils/serverless-strategy-detector', () => ({
+  ...jest.requireActual('@console/git-service/src/utils/serverless-strategy-detector'),
+  evaluateFunc: jest.fn(),
+}));
 
 const spyUseAccessReview = rbacModule.useAccessReview as jest.Mock;
 const spyEvaluateFunc = serverlessFxUtils.evaluateFunc as jest.Mock;

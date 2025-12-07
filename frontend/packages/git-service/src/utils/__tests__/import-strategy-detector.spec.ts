@@ -3,13 +3,10 @@ import { ImportStrategy } from '../../types/git';
 import { detectImportStrategies } from '../import-strategy-detector';
 import * as serverlessFxUtils from '../serverless-strategy-detector';
 
-jest.mock('../serverless-strategy-detector', () => {
-  const actual = jest.requireActual('../serverless-strategy-detector');
-  return {
-    ...actual,
-    isServerlessFxRepository: jest.fn(),
-  };
-});
+jest.mock('../serverless-strategy-detector', () => ({
+  ...jest.requireActual('../serverless-strategy-detector'),
+  isServerlessFxRepository: jest.fn(),
+}));
 
 const mockIsServerlessFxRepository = serverlessFxUtils.isServerlessFxRepository as jest.Mock;
 

@@ -10,13 +10,10 @@ import {
 } from '../plugin-dependencies';
 import { getPluginID } from '../plugin-utils';
 
-jest.mock('@console/plugin-sdk/src/api/pluginSubscriptionService', () => {
-  const actual = jest.requireActual('@console/plugin-sdk/src/api/pluginSubscriptionService');
-  return {
-    ...actual,
-    subscribeToDynamicPlugins: jest.fn(),
-  };
-});
+jest.mock('@console/plugin-sdk/src/api/pluginSubscriptionService', () => ({
+  ...jest.requireActual('@console/plugin-sdk/src/api/pluginSubscriptionService'),
+  subscribeToDynamicPlugins: jest.fn(),
+}));
 
 type DynamicPluginListener = Parameters<
   typeof pluginSubscriptionServiceModule.subscribeToDynamicPlugins

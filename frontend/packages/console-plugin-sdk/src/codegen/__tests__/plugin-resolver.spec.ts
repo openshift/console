@@ -12,13 +12,10 @@ import {
   getMonorepoRootDir,
 } from '../plugin-resolver';
 
-jest.mock('read-pkg', () => {
-  const actual = jest.requireActual('read-pkg');
-  return {
-    ...actual,
-    sync: jest.fn(),
-  };
-});
+jest.mock('read-pkg', () => ({
+  ...jest.requireActual('read-pkg'),
+  sync: jest.fn(),
+}));
 
 const readPkgMock = readPkg.sync as jest.Mock;
 

@@ -36,13 +36,10 @@ jest.mock('@console/internal/components/utils', () => ({
   useAccessReview: jest.fn(),
 }));
 
-jest.mock('@console/internal/components/utils/rbac', () => {
-  const actual = jest.requireActual('@console/internal/components/utils/rbac');
-  return {
-    ...actual,
-    useAccessReview: jest.fn(),
-  };
-});
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/internal/components/utils/rbac'),
+  useAccessReview: jest.fn(),
+}));
 
 const useAccessReviewMock = rbacModule.useAccessReview as jest.Mock;
 

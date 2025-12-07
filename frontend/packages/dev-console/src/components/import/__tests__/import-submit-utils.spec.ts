@@ -24,36 +24,27 @@ import {
   sampleDevfileFormData,
 } from './import-submit-utils-data';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sCreate: jest.fn(),
-    k8sGet: jest.fn(),
-    k8sUpdate: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sCreate: jest.fn(),
+  k8sGet: jest.fn(),
+  k8sUpdate: jest.fn(),
+}));
 
-jest.mock('@console/knative-plugin/src/utils/create-knative-utils', () => {
-  const actual = jest.requireActual('@console/knative-plugin/src/utils/create-knative-utils');
-  return {
-    ...actual,
-    getDomainMappingRequests: jest.fn(),
-    getKnativeServiceDepResource: jest.fn(),
-  };
-});
+jest.mock('@console/knative-plugin/src/utils/create-knative-utils', () => ({
+  ...jest.requireActual('@console/knative-plugin/src/utils/create-knative-utils'),
+  getDomainMappingRequests: jest.fn(),
+  getKnativeServiceDepResource: jest.fn(),
+}));
 
-jest.mock('../../pipeline-section/pipeline/pipeline-template-utils', () => {
-  const actual = jest.requireActual('../../pipeline-section/pipeline/pipeline-template-utils');
-  return {
-    ...actual,
-    submitTrigger: jest.fn(),
-    createTrigger: jest.fn(),
-    createPipelineForImportFlow: jest.fn(),
-    createPipelineRunForImportFlow: jest.fn(),
-    setPipelineNotStarted: jest.fn(),
-  };
-});
+jest.mock('../../pipeline-section/pipeline/pipeline-template-utils', () => ({
+  ...jest.requireActual('../../pipeline-section/pipeline/pipeline-template-utils'),
+  submitTrigger: jest.fn(),
+  createTrigger: jest.fn(),
+  createPipelineForImportFlow: jest.fn(),
+  createPipelineRunForImportFlow: jest.fn(),
+  setPipelineNotStarted: jest.fn(),
+}));
 
 jest.mock('../import-submit-utils', () => {
   const actual = jest.requireActual('../import-submit-utils');

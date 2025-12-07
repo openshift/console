@@ -41,13 +41,10 @@ jest.mock('react-router-dom-v5-compat', () => ({
   useParams: jest.fn(),
 }));
 
-jest.mock('../filters/FilterProvider', () => {
-  const actual = jest.requireActual('../filters/FilterProvider');
-  return {
-    ...actual,
-    FilterProvider: 'FilterProvider',
-  };
-});
+jest.mock('../filters/FilterProvider', () => ({
+  ...jest.requireActual('../filters/FilterProvider'),
+  FilterProvider: 'FilterProvider',
+}));
 
 jest.mock('@console/dev-console/src/components/NamespacedPage', () => ({
   __esModule: true,

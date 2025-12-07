@@ -41,21 +41,15 @@ import {
   sinkUriData,
 } from './topology-knative-test-data';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sUpdate: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sUpdate: jest.fn(),
+}));
 
-jest.mock('../../utils/fetch-dynamic-eventsources-utils', () => {
-  const actual = jest.requireActual('../../utils/fetch-dynamic-eventsources-utils');
-  return {
-    ...actual,
-    getDynamicEventSourcesModelRefs: jest.fn(),
-  };
-});
+jest.mock('../../utils/fetch-dynamic-eventsources-utils', () => ({
+  ...jest.requireActual('../../utils/fetch-dynamic-eventsources-utils'),
+  getDynamicEventSourcesModelRefs: jest.fn(),
+}));
 
 const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;
 const getDynamicEventSourcesModelRefsMock = knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;

@@ -4,29 +4,20 @@ import * as rbacModule from '@console/internal/components/utils/rbac';
 import * as useIsMobileModule from '@console/shared/src/hooks/useIsMobile';
 import ExportApplication from '../ExportApplication';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/flags');
-  return {
-    ...actual,
-    useFlag: jest.fn<boolean, []>(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/flags'),
+  useFlag: jest.fn<boolean, []>(),
+}));
 
-jest.mock('@console/internal/components/utils/rbac', () => {
-  const actual = jest.requireActual('@console/internal/components/utils/rbac');
-  return {
-    ...actual,
-    useAccessReview: jest.fn(),
-  };
-});
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/internal/components/utils/rbac'),
+  useAccessReview: jest.fn(),
+}));
 
-jest.mock('@console/shared/src/hooks/useIsMobile', () => {
-  const actual = jest.requireActual('@console/shared/src/hooks/useIsMobile');
-  return {
-    ...actual,
-    useIsMobile: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/useIsMobile', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useIsMobile'),
+  useIsMobile: jest.fn(),
+}));
 
 const useFlagMock = flagsModule.useFlag as jest.Mock;
 const useAccessReviewMock = rbacModule.useAccessReview as jest.Mock;

@@ -40,30 +40,21 @@ import {
   sampleDeploymentsCamelConnector,
 } from './topology-knative-test-data';
 
-jest.mock('../../utils/fetch-dynamic-eventsources-utils', () => {
-  const actual = jest.requireActual('../../utils/fetch-dynamic-eventsources-utils');
-  return {
-    ...actual,
-    getDynamicEventSourcesModelRefs: jest.fn(),
-  };
-});
+jest.mock('../../utils/fetch-dynamic-eventsources-utils', () => ({
+  ...jest.requireActual('../../utils/fetch-dynamic-eventsources-utils'),
+  getDynamicEventSourcesModelRefs: jest.fn(),
+}));
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sKill: jest.fn(),
-    k8sList: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sKill: jest.fn(),
+  k8sList: jest.fn(),
+}));
 
-jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac');
-  return {
-    ...actual,
-    checkAccess: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
+  checkAccess: jest.fn(),
+}));
 
 const getDynamicEventSourcesModelRefsMock = knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
 const k8sKillMock = k8sResourceModule.k8sKill as jest.Mock;
