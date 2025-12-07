@@ -6,7 +6,7 @@ import {
   getCloudShellTimeout,
 } from '../cloud-shell-setup-utils';
 
-describe('cloud-shell-setup-utils', async () => {
+describe('cloud-shell-setup-utils', () => {
   it('should validate the form data', async () => {
     const mockData: CloudShellSetupFormData = {
       namespace: CLOUD_SHELL_PROTECTED_NAMESPACE,
