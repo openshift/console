@@ -19,9 +19,9 @@ const useImpersonateAction = (resource: UserKind): Action[] => {
     () => ({
       ImpersonateUser: () => ({
         id: 'impersonate-user',
-        label: t('public~Impersonate User {{name}}', resource.metadata),
+        label: t('public~Impersonate User {{name}}', { name: resource?.metadata?.name }),
         cta: () => {
-          dispatch(UIActions.startImpersonate('User', resource.metadata.name));
+          dispatch(UIActions.startImpersonate('User', resource?.metadata?.name));
           navigate(window.SERVER_FLAGS.basePath);
         },
         accessReview: asAccessReview(UserModel, resource, 'impersonate'),
@@ -30,7 +30,11 @@ const useImpersonateAction = (resource: UserKind): Action[] => {
     [dispatch, navigate, resource, t],
   );
 
-  const action = useMemo<Action[]>(() => [factory.ImpersonateUser()], [factory]);
+  // Guard against missing user name to prevent undefined values
+  const action = useMemo<Action[]>(
+    () => (resource?.metadata?.name ? [factory.ImpersonateUser()] : []),
+    [factory, resource?.metadata?.name],
+  );
   return action;
 };
 

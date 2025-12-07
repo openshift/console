@@ -134,7 +134,7 @@ const config: Configuration = {
       },
       {
         test: /(\.jsx?)|(\.tsx?)$/,
-        exclude: /node_modules\/(?!(bitbucket|ky|ini)\/)/,
+        exclude: /node_modules\/(?!(bitbucket|ky|ini|@patternfly(-\S+)?)\/)/,
         use: [
           // Disable thread-loader in CI
           ...(!OPENSHIFT_CI
@@ -307,7 +307,6 @@ const config: Configuration = {
         { from: path.resolve(__dirname, './packages/dev-console/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/knative-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/container-security/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/pipelines-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/shipwright-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/webterminal-plugin/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/topology/locales'), to: 'locales' },

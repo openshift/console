@@ -1069,14 +1069,6 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/catalog/all-namespaces"],
-      "component": { "$codeRef": "CatalogDefaultNamespaceRedirect" }
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
       "path": ["/catalog/ns/:ns"],
       "component": { "$codeRef": "CatalogPage" }
     }

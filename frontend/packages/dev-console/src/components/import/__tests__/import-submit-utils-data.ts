@@ -1,8 +1,8 @@
 import { GitProvider } from '@console/git-service/src';
-import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
-import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
+import { PipelineKind } from '../../../types/pipeline';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
+import { PipelineType } from '../../pipeline-section/import-types';
 import { serverlessInitialValues } from '../__mocks__/serverless-mock';
 import {
   BuildOptions,

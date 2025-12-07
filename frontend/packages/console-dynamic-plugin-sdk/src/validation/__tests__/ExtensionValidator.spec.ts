@@ -1,4 +1,4 @@
-import * as webpack from 'webpack';
+import type * as webpack from 'webpack';
 import { Extension } from '../../types';
 import { collectCodeRefData, findWebpackModules, ExtensionValidator } from '../ExtensionValidator';
 import { ValidationResult } from '../ValidationResult';

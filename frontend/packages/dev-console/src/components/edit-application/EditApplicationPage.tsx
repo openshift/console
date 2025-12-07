@@ -9,11 +9,11 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
-import { PipelineModel } from '@console/pipelines-plugin/src/models';
-import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import { INSTANCE_LABEL, NAME_LABEL } from '../../const';
+import { PipelineModel } from '../../models/pipelines';
+import { PipelineKind } from '../../types/pipeline';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import EditApplicationComponent from './EditApplicationComponent';
 

@@ -1,5 +1,13 @@
 import { useState, MouseEventHandler } from 'react';
-import { Modal, Button, ModalBody, ModalFooter, ModalHeader } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertVariant,
+  Modal,
+  Button,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
@@ -20,12 +28,22 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
 
   const onSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
+    if (!group?.metadata?.name) {
+      setErrorMessage(t('public~Selected group is unavailable'));
+      return;
+    }
+    // Filter out empty values
+    const validUsers = values.map((v) => v.trim()).filter((v) => v.length > 0);
+    if (validUsers.length === 0) {
+      setErrorMessage(t('public~Enter at least one user'));
+      return;
+    }
     setInProgress(true);
     setErrorMessage('');
     try {
       const patch = group.users
-        ? values.map((value: string) => ({ op: 'add', path: '/users/-', value }))
-        : [{ op: 'add', path: '/users', value: values }];
+        ? validUsers.map((value: string) => ({ op: 'add', path: '/users/-', value }))
+        : [{ op: 'add', path: '/users', value: validUsers }];
       await k8sPatchResource({
         model: GroupModel,
         resource: group,
@@ -33,7 +51,7 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
       });
       closeOverlay();
     } catch (err) {
-      setErrorMessage((err as any)?.message || String(err));
+      setErrorMessage(err instanceof Error ? err.message : String(err));
     } finally {
       setInProgress(false);
     }
@@ -43,19 +61,45 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
     <Modal isOpen onClose={closeOverlay} variant="small">
       <ModalHeader title={t('public~Add Users')} labelId="add-group-users-modal-title" />
       <ModalBody>
-        <div className="form-group">
-          <p>{t('public~Add new Users to Group {{name}}.', group.metadata)}</p>
-        </div>
-        <ListInput label={t('public~Users')} required initialValues={values} onChange={setValues} />
-        {errorMessage && (
-          <div className="pf-v6-u-danger-color-100 pf-v6-u-mt-md">{errorMessage}</div>
+        {!group?.metadata?.name ? (
+          <Alert isInline variant={AlertVariant.danger} title={t('public~Error occurred')}>
+            {t('public~Selected group is unavailable')}
+          </Alert>
+        ) : (
+          <>
+            <p className="pf-v6-u-mb-md">
+              {t('public~Add new users to group {{name}}', { name: group.metadata.name })}
+            </p>
+            <ListInput
+              label={t('public~Users')}
+              required
+              initialValues={values}
+              onChange={setValues}
+            />
+            {errorMessage && (
+              <Alert
+                isInline
+                className="pf-v6-u-mt-md"
+                variant={AlertVariant.danger}
+                title={t('public~Error occurred')}
+              >
+                {errorMessage}
+              </Alert>
+            )}
+          </>
         )}
       </ModalBody>
       <ModalFooter>
         <Button variant="secondary" onClick={closeOverlay} type="button">
           {t('public~Cancel')}
         </Button>
-        <Button type="submit" variant="primary" isLoading={inProgress} onClick={onSubmit}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          isDisabled={!group?.metadata?.name}
+          onClick={onSubmit}
+        >
           {t('public~Save')}
         </Button>
       </ModalFooter>

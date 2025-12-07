@@ -148,7 +148,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {hpa.spec.metrics.map((metric, i) => {
+          {(Array.isArray(hpa.spec.metrics) ? hpa.spec.metrics : []).map((metric, i) => {
             // https://github.com/kubernetes/api/blob/master/autoscaling/v2beta1/types.go
             const current = _.get(hpa, ['status', 'currentMetrics', i]);
             switch (metric.type) {

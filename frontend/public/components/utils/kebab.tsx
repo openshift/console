@@ -13,38 +13,15 @@ import {
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import {
-  HelmChartRepositoryModel,
-  ProjectHelmChartRepositoryModel,
-} from '@console/helm-plugin/src/models';
 import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
-import {
-  annotationsModalLauncher,
-  taintsModal,
-  tolerationsModal,
-  labelsModalLauncher,
-  podSelectorModal,
-  deleteModal,
-} from '../modals';
-import { asAccessReview, checkAccess, useAccessReview } from './rbac';
-import { resourceObjPath } from './resource-link';
 import {
   AccessReviewResourceAttributes,
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
-  referenceFor,
-  referenceForModel,
 } from '../../module/k8s';
-import { connectToModel } from '../../kinds';
-import {
-  BuildConfigModel,
-  ConfigMapModel,
-  DeploymentConfigModel,
-  DeploymentModel,
-  RouteModel,
-} from '../../models';
 import { ContextSubMenuItem } from '@patternfly/react-topology';
+import { useAccessReview, checkAccess } from './rbac';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenuOption } = {};
@@ -178,128 +155,6 @@ export const KebabItems: React.FC<KebabItemsProps> = ({ options, ...props }) => 
   return <KebabMenuItems {...props} options={menuOptions} />;
 };
 
-const kebabFactory: KebabFactory = {
-  Delete: (kind, obj) => ({
-    // t('public~Delete {{kind}}', {kind: kind.label})
-    labelKey: 'public~Delete {{kind}}',
-    labelKind: { kind: kind.labelKey ? i18next.t(kind.labelKey) : kind.label },
-    callback: () =>
-      deleteModal({
-        kind,
-        resource: obj,
-      }),
-    accessReview: asAccessReview(kind, obj, 'delete'),
-  }),
-  Edit: (kind, obj) => {
-    let href: string;
-    switch (kind.kind) {
-      case ConfigMapModel.kind:
-      case RouteModel.kind:
-      case BuildConfigModel.kind:
-      case DeploymentModel.kind:
-      case DeploymentConfigModel.kind:
-        href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/form`;
-        break;
-      case HelmChartRepositoryModel.kind:
-        href = `/k8s/cluster/helmchartrepositories/${obj.metadata.name}/form?kind=${referenceFor(
-          obj,
-        )}`;
-        break;
-      case ProjectHelmChartRepositoryModel.kind:
-        href = `/helm-repositories/ns/${obj.metadata.namespace}/${
-          obj.metadata.name
-        }/form?kind=${referenceFor(obj)}`;
-        break;
-      default:
-        href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`;
-    }
-    return {
-      // t('public~Edit {{kind}}', {kind: kind.label})
-      labelKey: 'public~Edit {{kind}}',
-      labelKind: { kind: kind.labelKey ? i18next.t(kind.labelKey) : kind.label },
-      dataTest: `Edit ${kind.label}`,
-      href,
-      // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
-      accessReview: asAccessReview(kind, obj, 'update'),
-    };
-  },
-  ModifyLabels: (kind, obj) => ({
-    // t('public~Edit labels')
-    labelKey: 'public~Edit labels',
-    callback: () =>
-      labelsModalLauncher({
-        kind,
-        resource: obj,
-        blocking: true,
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ModifyPodSelector: (kind, obj) => ({
-    // t('public~Edit Pod selector')
-    labelKey: 'public~Edit Pod selector',
-    callback: () =>
-      podSelectorModal({
-        kind,
-        resource: obj,
-        blocking: true,
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ModifyAnnotations: (kind, obj) => ({
-    // t('public~Edit annotations')
-    labelKey: 'public~Edit annotations',
-    callback: () =>
-      annotationsModalLauncher({
-        kind,
-        resource: obj,
-        blocking: true,
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ModifyCount: (kind, obj) => ({
-    // t('public~Edit Pod count')
-    labelKey: 'public~Edit Pod count',
-    callback: () => {},
-    accessReview: asAccessReview(kind, obj, 'patch', 'scale'),
-  }),
-  ModifyTaints: (kind, obj) => ({
-    // t('public~Edit taints')
-    labelKey: 'public~Edit taints',
-    callback: () =>
-      taintsModal({
-        resourceKind: kind,
-        resource: obj,
-        modalClassName: 'modal-lg',
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ModifyTolerations: (kind, obj) => ({
-    // t('public~Edit tolerations')
-    labelKey: 'public~Edit tolerations',
-    callback: () =>
-      tolerationsModal({
-        resourceKind: kind,
-        resource: obj,
-        modalClassName: 'modal-lg',
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  AddStorage: (kind, obj) => ({
-    // t('public~Add storage')
-    labelKey: 'public~Add storage',
-    href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/attach-storage`,
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-};
-
-// The common menu actions that most resource share
-kebabFactory.common = [
-  kebabFactory.ModifyLabels,
-  kebabFactory.ModifyAnnotations,
-  kebabFactory.Edit,
-  kebabFactory.Delete,
-];
-
 export const Kebab: KebabComponent = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -374,33 +229,6 @@ export const Kebab: KebabComponent = (props) => {
     </Tooltip>
   );
 };
-Kebab.factory = kebabFactory;
-Kebab.columnClass = 'pf-v6-c-table__action';
-
-export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
-  const { t } = useTranslation();
-  const { actions, kindObj, resource, isDisabled, customData, terminatingTooltip } = props;
-
-  if (!kindObj) {
-    return null;
-  }
-  const options = _.reject(
-    actions.map((a) => a(kindObj, resource, null, customData)),
-    'hidden',
-  );
-  return (
-    <Kebab
-      options={options}
-      key={resource.metadata.uid}
-      isDisabled={isDisabled ?? _.has(resource.metadata, 'deletionTimestamp')}
-      terminatingTooltip={
-        _.has(resource.metadata, 'deletionTimestamp')
-          ? terminatingTooltip || t('Resource is being deleted.')
-          : ''
-      }
-    />
-  );
-});
 
 export type KebabOption = {
   hidden?: boolean;
@@ -474,11 +302,5 @@ export type KebabItemsProps = {
 
 export type KebabFactory = { [name: string]: KebabAction } & { common?: KebabAction[] };
 
-type KebabStaticProperties = {
-  columnClass: string;
-  factory: KebabFactory;
-};
-
-type KebabComponent = React.FC<KebabProps> & KebabStaticProperties;
+type KebabComponent = React.FC<KebabProps>;
 KebabItems.displayName = 'KebabItems';
-ResourceKebab.displayName = 'ResourceKebab';

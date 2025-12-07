@@ -10,9 +10,11 @@ import {
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BUILDRUN_TO_BUILD_REFERENCE_LABEL } from '../../const';
 import { BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
@@ -30,7 +32,7 @@ const columnClassNames = [
   'pf-m-hidden pf-m-visible-on-lg', // last run status
   'pf-m-hidden pf-m-visible-on-lg', // last run time
   'pf-m-hidden pf-m-visible-on-lg', // last run duration
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 export const BuildHeader = () => {

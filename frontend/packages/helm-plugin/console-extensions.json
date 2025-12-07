@@ -57,7 +57,7 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/helm-releases", "/helm", "/helm-repositories"],
+      "path": ["/helm"],
       "component": { "$codeRef": "NamespaceRedirect.NamespaceRedirect" }
     },
     "flags": {

@@ -31,13 +31,13 @@ import {
   KebabOptionsCreator,
 } from '../utils/headings';
 import { FirehoseResource } from '../utils/types';
-import { KebabAction } from '../utils/kebab';
 import { K8sKind } from '../../module/k8s/types';
 import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { referenceForExtensionModel } from '../../module/k8s/k8s';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { KebabAction } from '../utils/kebab';
 
 const useBreadCrumbsForDetailPage = (
   kindObj: K8sKind,

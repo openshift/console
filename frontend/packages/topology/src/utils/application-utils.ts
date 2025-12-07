@@ -1,6 +1,16 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { detectGitType } from '@console/dev-console/src/components/import/import-validation-utils';
+import {
+  EventListenerKind,
+  TriggerTemplateKind,
+} from '@console/dev-console/src/components/pipeline-section/triggers';
+import {
+  PipelineModel,
+  EventListenerModel,
+  TriggerTemplateModel,
+} from '@console/dev-console/src/models/pipelines';
+import { PipelineKind } from '@console/dev-console/src/types/pipeline';
 import { checkAccess } from '@console/internal/components/utils';
 import {
   ImageStreamModel,
@@ -35,23 +45,43 @@ import {
   fetchChannelsCrd,
   isDynamicEventResourceKind,
 } from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
-import {
-  EventListenerKind,
-  TriggerTemplateKind,
-} from '@console/pipelines-plugin/src/components/pipelines/resource-types';
-import {
-  EventListenerModel,
-  PipelineModel,
-  TriggerTemplateModel,
-} from '@console/pipelines-plugin/src/models';
-import {
-  getEventListeners,
-  getPipeline,
-  getTriggerTemplates,
-} from '@console/pipelines-plugin/src/utils/pipeline-utils';
 import { getBuildConfigsForResource } from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
 import { listInstanceResources } from './connector-utils';
+
+export const getPipeline = (resource: K8sResourceKind, pipelines: PipelineKind[]): PipelineKind => {
+  const pipeline = pipelines.find((p: PipelineKind) => p.metadata.name === resource.metadata.name);
+  return pipeline;
+};
+
+export const getTriggerTemplates = (
+  pipeline: PipelineKind,
+  triggerTemplates: TriggerTemplateKind[],
+): TriggerTemplateKind[] => {
+  const triggerTemplate = triggerTemplates.filter(
+    (tt: TriggerTemplateKind) =>
+      !!tt.spec.resourcetemplates.find(
+        (rt) => rt.spec.pipelineRef?.name === pipeline.metadata.name,
+      ),
+  );
+  return triggerTemplate;
+};
+
+export const getEventListeners = (
+  triggerTemplates: TriggerTemplateKind[],
+  eventListeners: EventListenerKind[],
+): EventListenerKind[] => {
+  const resourceEventListeners = eventListeners.reduce((acc, et: EventListenerKind) => {
+    const triggers = et.spec.triggers.filter((t) =>
+      triggerTemplates.find((tt) => tt?.metadata.name === t?.template?.ref),
+    );
+    if (triggers.length > 0) {
+      acc.push(et);
+    }
+    return acc;
+  }, []);
+  return resourceEventListeners;
+};
 
 export const sanitizeApplicationValue = (
   application: string,
