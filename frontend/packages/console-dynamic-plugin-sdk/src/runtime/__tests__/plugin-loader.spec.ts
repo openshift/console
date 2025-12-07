@@ -13,37 +13,20 @@ import * as pluginManifestModule from '../plugin-manifest';
 import { getPluginID } from '../plugin-utils';
 
 // Mock modules before importing functions that use them
-jest.mock('../plugin-manifest', () => {
-  const actual = jest.requireActual('../plugin-manifest');
-  return {
-    ...actual,
-    fetchPluginManifest: jest.fn(),
-  };
-});
+jest.mock('../plugin-manifest', () => ({
+  ...jest.requireActual('../plugin-manifest'),
+  fetchPluginManifest: jest.fn(),
+}));
 
-jest.mock('../plugin-dependencies', () => {
-  const actual = jest.requireActual('../plugin-dependencies');
-  return {
-    ...actual,
-    resolvePluginDependencies: jest.fn(),
-  };
-});
+jest.mock('../plugin-dependencies', () => ({
+  ...jest.requireActual('../plugin-dependencies'),
+  resolvePluginDependencies: jest.fn(),
+}));
 
-jest.mock('@console/shared/src/utils/utils', () => {
-  const actual = jest.requireActual('@console/shared/src/utils/utils');
-  return {
-    ...actual,
-    getRandomChars: jest.fn(),
-  };
-});
-
-jest.mock('../plugin-loader', () => {
-  const actual = jest.requireActual('../plugin-loader');
-  return {
-    ...actual,
-    loadDynamicPlugin: jest.fn(actual.loadDynamicPlugin),
-  };
-});
+jest.mock('@console/shared/src/utils/utils', () => ({
+  ...jest.requireActual('@console/shared/src/utils/utils'),
+  getRandomChars: jest.fn(),
+}));
 
 const {
   getScriptElementID,

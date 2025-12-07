@@ -14,13 +14,10 @@ jest.mock('react-router-dom-v5-compat', () => ({
   }),
 }));
 
-jest.mock('@console/shared/src/hooks/useQueryParams', () => {
-  const actual = jest.requireActual('@console/shared/src/hooks/useQueryParams');
-  return {
-    ...actual,
-    useQueryParams: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/useQueryParams', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useQueryParams'),
+  useQueryParams: jest.fn(),
+}));
 
 const useQueryParamsMock = UseQueryParams.useQueryParams as jest.Mock;
 

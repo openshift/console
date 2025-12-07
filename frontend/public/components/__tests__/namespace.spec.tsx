@@ -6,13 +6,10 @@ import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8
 import { testNamespace } from '../../../__mocks__/k8sResourcesMocks';
 import { ServiceAccountModel } from '../../models';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sGet: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sGet: jest.fn(),
+}));
 
 const k8sGetMock = k8sResourceModule.k8sGet as jest.Mock;
 

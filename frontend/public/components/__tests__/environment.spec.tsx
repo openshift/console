@@ -7,21 +7,15 @@ import { DeploymentModel } from '../../models';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
-jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac');
-  return {
-    ...actual,
-    checkAccess: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
+  checkAccess: jest.fn(),
+}));
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sGet: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sGet: jest.fn(),
+}));
 
 const checkAccessMock = rbacModule.checkAccess as jest.Mock;
 const k8sGetMock = k8sResourceModule.k8sGet as jest.Mock;

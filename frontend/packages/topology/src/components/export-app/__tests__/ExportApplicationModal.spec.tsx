@@ -18,30 +18,21 @@ jest.mock('react-i18next', () => {
   };
 });
 
-jest.mock('@console/shared/src/components/toast/useToast', () => {
-  const actual = jest.requireActual('@console/shared/src/components/toast/useToast');
-  return {
-    ...actual,
-    default: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/components/toast/useToast', () => ({
+  ...jest.requireActual('@console/shared/src/components/toast/useToast'),
+  default: jest.fn(),
+}));
 
-jest.mock('@console/shared/src/hooks/useUserSettings', () => {
-  const actual = jest.requireActual('@console/shared/src/hooks/useUserSettings');
-  return {
-    ...actual,
-    useUserSettings: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useUserSettings'),
+  useUserSettings: jest.fn(),
+}));
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sCreate: jest.fn(),
-    k8sKill: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sCreate: jest.fn(),
+  k8sKill: jest.fn(),
+}));
 
 const spyUseToast = useToastModule.default as jest.Mock;
 const spyUseUserSettings = useUserSettingsModule.useUserSettings as jest.Mock;

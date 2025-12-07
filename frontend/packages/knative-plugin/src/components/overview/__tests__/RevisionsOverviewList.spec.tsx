@@ -23,13 +23,10 @@ jest.mock('@console/internal/components/utils', () => ({
   },
 }));
 
-jest.mock('../../traffic-splitting/TrafficSplittingController', () => {
-  const actual = jest.requireActual('../../traffic-splitting/TrafficSplittingController');
-  return {
-    ...actual,
-    useTrafficSplittingModalLauncher: jest.fn(),
-  };
-});
+jest.mock('../../traffic-splitting/TrafficSplittingController', () => ({
+  ...jest.requireActual('../../traffic-splitting/TrafficSplittingController'),
+  useTrafficSplittingModalLauncher: jest.fn(),
+}));
 
 jest.mock('@patternfly/react-core', () => ({
   Button: 'Button',

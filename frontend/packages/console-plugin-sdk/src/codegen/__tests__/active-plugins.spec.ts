@@ -11,21 +11,15 @@ import { getTemplatePackage } from '../../utils/test-utils';
 import * as activePluginsModule from '../active-plugins';
 import { PluginPackage } from '../plugin-resolver';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/jsonc', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/jsonc');
-  return {
-    ...actual,
-    parseJSONC: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/jsonc', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/jsonc'),
+  parseJSONC: jest.fn(),
+}));
 
-jest.mock('@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin');
-  return {
-    ...actual,
-    validateConsoleExtensionsFileSchema: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin'),
+  validateConsoleExtensionsFileSchema: jest.fn(),
+}));
 
 jest.mock('../active-plugins', () => {
   const actual = jest.requireActual('../active-plugins');
@@ -35,13 +29,10 @@ jest.mock('../active-plugins', () => {
   };
 });
 
-jest.mock('fs', () => {
-  const actual = jest.requireActual('fs');
-  return {
-    ...actual,
-    existsSync: jest.fn(),
-  };
-});
+jest.mock('fs', () => ({
+  ...jest.requireActual('fs'),
+  existsSync: jest.fn(),
+}));
 
 const parseJSONC = jsoncModule.parseJSONC as jest.Mock;
 const fsExistsSyncMock = fs.existsSync as jest.Mock;

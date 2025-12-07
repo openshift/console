@@ -2,13 +2,10 @@ import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import * as cloudShellUtils from '../cloud-shell-utils';
 import useActivityTick from '../useActivityTick';
 
-jest.mock('../cloud-shell-utils', () => {
-  const actual = jest.requireActual('../cloud-shell-utils');
-  return {
-    ...actual,
-    sendActivityTick: jest.fn(),
-  };
-});
+jest.mock('../cloud-shell-utils', () => ({
+  ...jest.requireActual('../cloud-shell-utils'),
+  sendActivityTick: jest.fn(),
+}));
 
 const sendActivityTickMock = cloudShellUtils.sendActivityTick as jest.Mock;
 

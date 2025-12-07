@@ -2,13 +2,10 @@ import { K8sModel } from '../../../api/common-types';
 import * as coFetchModule from '../../fetch/console-fetch';
 import { k8sGet, k8sList, k8sGetResource } from '../k8s-resource';
 
-jest.mock('../../fetch/console-fetch', () => {
-  const actual = jest.requireActual('../../fetch/console-fetch');
-  return {
-    ...actual,
-    consoleFetchJSON: jest.fn(),
-  };
-});
+jest.mock('../../fetch/console-fetch', () => ({
+  ...jest.requireActual('../../fetch/console-fetch'),
+  consoleFetchJSON: jest.fn(),
+}));
 
 const spyCoFetchJSON = jest.mocked(coFetchModule.consoleFetchJSON);
 

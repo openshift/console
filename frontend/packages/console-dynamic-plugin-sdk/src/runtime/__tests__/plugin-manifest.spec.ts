@@ -1,25 +1,11 @@
 import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
 import { getPluginManifest } from '../../utils/test-utils';
-import { SchemaValidator } from '../../validation/SchemaValidator';
-import * as pluginManifestModule from '../plugin-manifest';
+import { fetchPluginManifest } from '../plugin-manifest';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch');
-  return {
-    ...actual,
-    consoleFetch: jest.fn(),
-  };
-});
-
-jest.mock('../plugin-manifest', () => {
-  const actual = jest.requireActual('../plugin-manifest');
-  return {
-    ...actual,
-    validatePluginManifestSchema: jest.fn(),
-  };
-});
-
-const { fetchPluginManifest } = pluginManifestModule;
+jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch'),
+  consoleFetch: jest.fn(),
+}));
 
 const coFetch = coFetchModule.consoleFetch as jest.Mock;
 const validatePluginManifestSchema = pluginManifestModule.validatePluginManifestSchema as jest.Mock;

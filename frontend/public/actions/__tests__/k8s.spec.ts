@@ -17,13 +17,10 @@ jest.mock('../../module/k8s/get-resources', () => ({
   getResources_: jest.fn().mockResolvedValue([]),
 }));
 
-jest.mock('@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s');
-  return {
-    ...actual,
-    watchK8sList: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s'),
+  watchK8sList: jest.fn(),
+}));
 
 const watchK8sListMock = sdkK8sActions.watchK8sList as jest.Mock;
 

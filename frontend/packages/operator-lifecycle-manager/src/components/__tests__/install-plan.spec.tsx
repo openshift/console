@@ -35,13 +35,10 @@ jest.mock('@console/internal/components/factory', () => ({
   DetailsPage: jest.fn(() => null),
 }));
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sPatch: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sPatch: jest.fn(),
+}));
 
 const k8sPatchMock = k8sResourceModule.k8sPatch as jest.Mock;
 const mockTable = Table as jest.Mock;

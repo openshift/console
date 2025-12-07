@@ -3,13 +3,10 @@ import { addActionExtensions } from '../../__tests__/add-page-test-data';
 import { useAccessFilterExtensions } from '../useAccessFilterExtensions';
 import * as hook from '../useAddActionsAccessReviews';
 
-jest.mock('../useAddActionsAccessReviews', () => {
-  const actual = jest.requireActual('../useAddActionsAccessReviews');
-  return {
-    ...actual,
-    useAddActionsAccessReviews: jest.fn(),
-  };
-});
+jest.mock('../useAddActionsAccessReviews', () => ({
+  ...jest.requireActual('../useAddActionsAccessReviews'),
+  useAddActionsAccessReviews: jest.fn(),
+}));
 
 const namespace = 'ns';
 const { AccessReviewStatus } = hook;

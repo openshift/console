@@ -15,13 +15,10 @@ import {
 import { usePodScalingAccessStatus, podRingLabel, getFailedPods } from '../pod-ring-utils';
 import * as utils from '../pod-utils';
 
-jest.mock('../pod-utils', () => {
-  const actual = jest.requireActual('../pod-utils');
-  return {
-    ...actual,
-    checkPodEditAccess: jest.fn(),
-  };
-});
+jest.mock('../pod-utils', () => ({
+  ...jest.requireActual('../pod-utils'),
+  checkPodEditAccess: jest.fn(),
+}));
 
 const checkPodEditAccessMock = utils.checkPodEditAccess as jest.Mock;
 

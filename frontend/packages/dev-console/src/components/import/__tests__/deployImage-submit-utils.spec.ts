@@ -23,23 +23,17 @@ import {
   internalImageData,
 } from './deployImage-submit-utils-data';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
-  return {
-    ...actual,
-    k8sCreate: jest.fn(),
-    k8sUpdate: jest.fn(),
-    k8sGet: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sCreate: jest.fn(),
+  k8sUpdate: jest.fn(),
+  k8sGet: jest.fn(),
+}));
 
-jest.mock('@console/internal/module/k8s/resource', () => {
-  const actual = jest.requireActual('@console/internal/module/k8s/resource');
-  return {
-    ...actual,
-    k8sWaitForUpdate: jest.fn(),
-  };
-});
+jest.mock('@console/internal/module/k8s/resource', () => ({
+  ...jest.requireActual('@console/internal/module/k8s/resource'),
+  k8sWaitForUpdate: jest.fn(),
+}));
 
 const k8sCreateMock = k8sResourceModule.k8sCreate as jest.Mock;
 const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;

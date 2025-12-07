@@ -20,13 +20,10 @@ import {
   getLabelPlural,
 } from '../fetch-dynamic-eventsources-utils';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch');
-  return {
-    ...actual,
-    consoleFetch: jest.fn(),
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch'),
+  consoleFetch: jest.fn(),
+}));
 
 const consoleFetchMock = coFetchModule.consoleFetch as jest.Mock;
 
