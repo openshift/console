@@ -10,6 +10,10 @@ window.HTMLElement.prototype.scrollIntoView = () => {}; // scrollIntoView is not
 const handleSubmit = jest.fn();
 
 beforeEach(() => {
+  // Initialize i18n.services if it doesn't exist
+  if (!i18n.services) {
+    (i18n as any).services = {};
+  }
   i18n.services.interpolator = {
     init: () => undefined,
     reset: () => undefined,
