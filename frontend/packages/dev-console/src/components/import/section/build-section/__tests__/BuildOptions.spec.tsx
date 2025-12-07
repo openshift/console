@@ -3,7 +3,8 @@ import { useFormikContext } from 'formik';
 import { useAccessReview } from '@console/internal/components/utils';
 import { useFlag } from '@console/shared';
 import * as shipwrightBuildHook from '../../../../../utils/shipwright-build-hook';
-import { BuildOption as NamedBuildOption, usePipelineAccessReview } from '../BuildOptions';
+import { BuildOption as NamedBuildOption } from '../BuildOptions';
+import { usePipelineAccessReview } from '../usePipelineAccessReview';
 
 jest.mock('../../../../../utils/shipwright-build-hook', () => ({
   isPreferredStrategyAvailable: jest.fn(() => true),
@@ -11,10 +12,8 @@ jest.mock('../../../../../utils/shipwright-build-hook', () => ({
   useShipwrightBuilds: jest.fn(),
 }));
 
-jest.mock('../BuildOptions', () => {
-  const actual = jest.requireActual('../BuildOptions');
+jest.mock('../usePipelineAccessReview', () => {
   return {
-    ...actual,
     usePipelineAccessReview: jest.fn(),
   };
 });
@@ -217,7 +216,6 @@ describe('BuildOptions', () => {
     const options = JSON.parse(optionsMatch[1]);
 
     expect(options).toHaveLength(1);
-
     // Should NOT have Shipwright
     expect(options.some((option) => option.value === 'SHIPWRIGHT_BUILD')).toBe(false);
 
