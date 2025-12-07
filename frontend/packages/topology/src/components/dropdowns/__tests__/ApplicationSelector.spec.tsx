@@ -24,11 +24,11 @@ describe('ApplicationSelector', () => {
   const mockUseField = jest.spyOn(formik, 'useField');
 
   beforeEach(() => {
-    mockUseField.mockImplementation((name) => {
+    mockUseField.mockImplementation((name: string) => {
       if (name.includes('selectedKey')) {
-        return [{ value: CREATE_APPLICATION_KEY, name }, {}];
+        return [{ value: CREATE_APPLICATION_KEY, name }, {}, {}];
       }
-      return [{ value: '', name }, {}];
+      return [{ value: '', name }, {}, {}];
     });
 
     mockUseFormikContext.mockReturnValue({

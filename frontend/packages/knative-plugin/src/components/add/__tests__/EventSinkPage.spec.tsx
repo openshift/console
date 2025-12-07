@@ -72,7 +72,8 @@ describe('EventSinkPage', () => {
       pathname: '/catalog/ns/my-app/eventsink?sinkKind=KameletBinding&name=log-sink',
       search: '/catalog/ns/my-app/eventsink?sinkKind=KameletBinding&name=log-sink',
       state: null,
-      hash: null,
+      hash: '',
+      key: 'default',
     });
   });
 

@@ -82,7 +82,8 @@ describe('UploadJarPage', () => {
       pathname: 'upload-jar/ns/jai-test-1',
       search: 'upload-jar/ns/jai-test-1',
       state: null,
-      hash: null,
+      hash: '',
+      key: 'default',
     });
   });
 
