@@ -170,6 +170,12 @@ describe('filterActivePluginPackages', () => {
 });
 
 describe('getMonorepoRootDir', () => {
+  beforeEach(() => {
+    // Reset the mock to use the real implementation for this test
+    readPkgMock.mockReset();
+    readPkgMock.mockImplementation(jest.requireActual('read-pkg').sync);
+  });
+
   it('returns the location of Console monorepo root package', () => {
     const currentPackageFile = findUp.sync('package.json', {
       cwd: __dirname,
