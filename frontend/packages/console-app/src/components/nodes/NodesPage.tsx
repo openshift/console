@@ -648,11 +648,11 @@ const NodeList: React.FC<NodeListProps> = ({
 
 type NodeRowItem = NodeKind | NodeCertificateSigningRequestKind;
 
-interface NodeFilters extends ResourceFilters {
+type NodeFilters = ResourceFilters & {
   status: string[];
   roles: string[];
   architecture: string[];
-}
+};
 
 const useWatchCSRs = (): [CertificateSigningRequestKind[], boolean, unknown] => {
   const [isAllowed, checkIsLoading] = useAccessReview({

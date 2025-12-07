@@ -1,22 +1,7 @@
+import * as React from 'react';
 import * as _ from 'lodash-es';
-import { sortable } from '@patternfly/react-table';
-import { Status } from '@console/shared/src/components/status/Status';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { Table, TableData } from './factory/table';
-import type { DetailsPageProps } from './factory/details';
-import type { ListPageProps } from './factory/list-page';
-import type { TableProps } from './factory/table';
-import { LabelList } from './utils/label-list';
-import { navFactory } from './utils/horizontal-nav';
-import { SectionHeading } from './utils/headings';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary } from './utils/details-page';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { PersistentVolumeModel } from '../models';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -25,41 +10,69 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
+import { DetailsPage } from './factory/details';
+import { ListPage } from './factory/list-page';
+import type { DetailsPageProps } from './factory/details';
+import type { ListPageProps } from './factory/list-page';
+import { LabelList } from './utils/label-list';
+import { navFactory } from './utils/horizontal-nav';
+import { SectionHeading } from './utils/headings';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary } from './utils/details-page';
+import { PersistentVolumeModel } from '../models';
 import { PersistentVolumeKind, referenceForModel } from '@console/internal/module/k8s';
-import LazyActionMenu, {
-  KEBAB_COLUMN_CLASS,
-} from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
+const { kind } = PersistentVolumeModel;
 const persistentVolumeReference = referenceForModel(PersistentVolumeModel);
+
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'status' },
+  { id: 'claim' },
+  { id: 'capacity' },
+  { id: 'labels' },
+  { id: 'created' },
+  { id: '' },
+];
 
 const PVStatus = ({ pv }: { pv: PersistentVolumeKind }) => (
   <Status status={pv.metadata.deletionTimestamp ? 'Terminating' : pv.status.phase} />
 );
 
-const tableColumnClasses = [
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg',
-  '',
-  'pf-m-hidden pf-m-visible-on-lg',
-  KEBAB_COLUMN_CLASS,
-];
+const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolumeKind> = (t) => (
+  data,
+  columns,
+) => {
+  return data.map(({ obj }) => {
+    const name = obj.metadata?.name || '';
+    const namespace = obj.metadata?.namespace || '';
+    const labels = obj.metadata?.labels || {};
+    const creationTimestamp = obj.metadata?.creationTimestamp || '';
 
-const { kind } = PersistentVolumeModel;
-
-const PVTableRow = ({ obj }: { obj: PersistentVolumeKind }) => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
-        <PVStatus pv={obj} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {_.get(obj, 'spec.claimRef.name') ? (
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: <ResourceLink kind={kind} name={name} namespace={namespace} />,
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: <PVStatus pv={obj} />,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: obj.spec?.claimRef?.name ? (
           <ResourceLink
             kind="PersistentVolumeClaim"
             name={obj.spec.claimRef.name}
@@ -68,25 +81,89 @@ const PVTableRow = ({ obj }: { obj: PersistentVolumeKind }) => {
           />
         ) : (
           <div className="pf-v6-u-text-color-subtle">{t('public~No claim')}</div>
-        )}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {_.get(obj, 'spec.capacity.storage', '-')}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <LabelList kind={kind} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        <LazyActionMenu context={{ [persistentVolumeReference]: obj }} />
-      </TableData>
-    </>
-  );
+        ),
+      },
+      [tableColumnInfo[3].id]: {
+        cell: _.get(obj, 'spec.capacity.storage', DASH),
+      },
+      [tableColumnInfo[4].id]: {
+        cell: <LabelList kind={kind} labels={labels} />,
+      },
+      [tableColumnInfo[5].id]: {
+        cell: <Timestamp timestamp={creationTimestamp} />,
+      },
+      [tableColumnInfo[6].id]: {
+        cell: <LazyActionMenu context={{ [persistentVolumeReference]: obj }} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
 };
 
-const Details = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
+const usePersistentVolumeColumns = (): TableColumn<PersistentVolumeKind>[] => {
+  const { t } = useTranslation();
+
+  const columns: TableColumn<PersistentVolumeKind>[] = React.useMemo(
+    () => [
+      {
+        title: t('public~Name'),
+        sort: 'metadata.name',
+        id: tableColumnInfo[0].id,
+        props: { ...cellIsStickyProps, modifier: 'nowrap' },
+      },
+      {
+        title: t('public~Status'),
+        sort: 'status.phase',
+        id: tableColumnInfo[1].id,
+        props: { modifier: 'nowrap' },
+      },
+      {
+        title: t('public~Claim'),
+        sort: 'spec.claimRef.name',
+        id: tableColumnInfo[2].id,
+        props: { modifier: 'nowrap' },
+      },
+      {
+        title: t('public~Capacity'),
+        sort: 'pvStorage',
+        id: tableColumnInfo[3].id,
+        props: { modifier: 'nowrap' },
+      },
+      {
+        title: t('public~Labels'),
+        sort: 'metadata.labels',
+        id: tableColumnInfo[4].id,
+        props: { modifier: 'nowrap' },
+      },
+      {
+        title: t('public~Created'),
+        sort: 'metadata.creationTimestamp',
+        id: tableColumnInfo[5].id,
+        props: { modifier: 'nowrap' },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[6].id,
+        props: { ...cellIsStickyProps },
+      },
+    ],
+    [t],
+  );
+
+  return columns;
+};
+
+const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
   const { t } = useTranslation();
   const storageClassName = pv.spec?.storageClassName;
   const pvcName = pv.spec?.claimRef?.name;
@@ -166,70 +243,55 @@ const Details = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
   );
 };
 
-export const PersistentVolumesList = (props: Partial<TableProps>) => {
+export const PersistentVolumeList: React.FCC<PersistentVolumeListProps> = ({
+  data,
+  loaded,
+  ...props
+}) => {
   const { t } = useTranslation();
-  const PVTableHeader = () => {
-    return [
-      {
-        title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('public~Status'),
-        sortField: 'status.phase',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('public~Claim'),
-        sortField: 'spec.claimRef.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: t('public~Capacity'),
-        sortFunc: 'pvStorage',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
-      },
-      {
-        title: t('public~Labels'),
-        sortField: 'metadata.labels',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: t('public~Created'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[5] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[6] },
-      },
-    ];
-  };
+  const columns = usePersistentVolumeColumns();
+  const getDataViewRows = React.useMemo(() => getDataViewRowsCreator(t), [t]);
+
   return (
-    <Table
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<PersistentVolumeKind>
+        {...props}
+        label={PersistentVolumeModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement
+      />
+    </React.Suspense>
+  );
+};
+
+export const PersistentVolumesPage = (props: ListPageProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <ListPage
       {...props}
-      aria-label={t('public~PersistentVolumes')}
-      Header={PVTableHeader}
-      Row={PVTableRow}
-      virtualize
+      title={t('public~PersistentVolumes')}
+      kind={kind}
+      ListComponent={PersistentVolumeList}
+      canCreate={true}
+      omitFilterToolbar={true}
     />
   );
 };
 
-export const PersistentVolumesPage = (props: ListPageProps) => (
-  <ListPage {...props} ListComponent={PersistentVolumesList} kind={kind} canCreate={true} />
-);
-export const PersistentVolumesDetailsPage = (props: DetailsPageProps) => (
+export const PersistentVolumesDetailsPage: React.FCC<DetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     kind={persistentVolumeReference}
-    pages={[navFactory.details(Details), navFactory.editYaml()]}
+    pages={[navFactory.details(PVDetails), navFactory.editYaml()]}
   />
 );
+
+type PersistentVolumeListProps = {
+  data: PersistentVolumeKind[];
+  loaded: boolean;
+  loadError: unknown;
+};

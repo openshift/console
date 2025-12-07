@@ -442,8 +442,6 @@ export type ImageManifestVulnDetailsProps = {
   obj: ImageManifestVuln;
 };
 
-export type ImageManifestVulnListTableHeaderProps = {};
-
 export type AffectedPodsProps = {
   obj: ImageManifestVuln;
 };
