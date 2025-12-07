@@ -39,7 +39,6 @@ import {
   MockKnativeResources,
   sampleDeploymentsCamelConnector,
 } from './topology-knative-test-data';
-import Spy = jasmine.Spy;
 
 jest.mock('../../utils/fetch-dynamic-eventsources-utils', () => {
   const actual = jest.requireActual('../../utils/fetch-dynamic-eventsources-utils');
@@ -49,15 +48,27 @@ jest.mock('../../utils/fetch-dynamic-eventsources-utils', () => {
   };
 });
 
-const getDynamicEventSourcesModelRefsMock = knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => {
+  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource');
+  return {
+    ...actual,
+    k8sKill: jest.fn(),
+    k8sList: jest.fn(),
+  };
+});
 
-const spyAndReturn = (spy: Spy) => (returnValue: any) =>
-  new Promise((resolve) =>
-    spy.and.callFake((...args) => {
-      resolve(args);
-      return returnValue;
-    }),
-  );
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => {
+  const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac');
+  return {
+    ...actual,
+    checkAccess: jest.fn(),
+  };
+});
+
+const getDynamicEventSourcesModelRefsMock = knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
+const k8sKillMock = k8sResourceModule.k8sKill as jest.Mock;
+const k8sListMock = k8sResourceModule.k8sList as jest.Mock;
+const checkAccessMock = rbacModule.checkAccess as jest.Mock;
 
 const getTransformedTopologyData = (
   mockData: TopologyDataResources,
@@ -105,6 +116,15 @@ describe('knative data transformer ', () => {
 
   beforeEach(() => {
     mockResources = _.cloneDeep(MockKnativeResources);
+    // Default mock implementation - return empty array
+    getDynamicEventSourcesModelRefsMock.mockReturnValue([]);
+    k8sKillMock.mockResolvedValue({});
+    checkAccessMock.mockResolvedValue({ status: { allowed: true } });
+    k8sListMock.mockResolvedValue([]);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should return true for knative resource', async () => {
@@ -158,28 +178,22 @@ describe('knative data transformer ', () => {
     expect(filteredResources).toHaveLength(2);
   });
 
-  it('Should delete all the specific models related to knative deployments if the build config is not present i.e. for resource created through deploy image form', async (done) => {
+  it('Should delete all the specific models related to knative deployments if the build config is not present i.e. for resource created through deploy image form', async () => {
     const graphData = await getTransformedTopologyData(mockResources);
     const node = graphData.nodes.find(
       (n) => (n as OdcNodeModel).resource.metadata.name === 'overlayimage',
     ) as OdcNodeModel;
 
-    const spy = spyOn(k8sResourceModule, 'k8sKill');
-    const checkAccessSpy = spyOn(rbacModule, 'checkAccess');
-    const spyK8sList = spyOn(k8sResourceModule, 'k8sList');
-    spyAndReturn(spy)(Promise.resolve({}));
-    spyAndReturn(checkAccessSpy)(Promise.resolve({ status: { allowed: true } }));
-    spyAndReturn(spyK8sList)(Promise.resolve([]));
+    k8sKillMock.mockResolvedValue({});
+    checkAccessMock.mockResolvedValue({ status: { allowed: true } });
+    k8sListMock.mockResolvedValue([]);
 
-    cleanUpWorkload(node.resource)
-      .then(() => {
-        const allArgs = spy.calls.allArgs();
-        const removedModels = allArgs.map((arg) => arg[0]);
-        expect(spy.calls.count()).toEqual(2);
-        expect(removedModels.find((rm) => rm.id === ServiceModel.id)).toBeTruthy();
-        done();
-      })
-      .catch((err) => fail(err));
+    await cleanUpWorkload(node.resource);
+
+    const allArgs = k8sKillMock.mock.calls;
+    const removedModels = allArgs.map((arg) => arg[0]);
+    expect(k8sKillMock).toHaveBeenCalledTimes(2);
+    expect(removedModels.find((rm) => rm.id === ServiceModel.id)).toBeTruthy();
   });
 
   it('should flag knative services as collapsed when display filter is set', async () => {
