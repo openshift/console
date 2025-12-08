@@ -1,0 +1,90 @@
+# CodeRabbit Configuration for OpenShift Console
+# This configuration ensures reviews align with console best practices and requirements
+#
+# Configuration Philosophy: Senior Engineer Review Standards
+# This config is tuned to provide reviews that match senior software engineer expectations:
+# - Architecture & Design: Focus on system design, patterns, and scalability
+# - Security: Identify security vulnerabilities and best practices
+# - Performance: Flag performance issues and optimization opportunities
+# - Maintainability: Ensure code is readable, testable, and maintainable
+# - Breaking Changes: Critical attention to public APIs and backward compatibility
+# - Testing: Comprehensive test coverage and edge case handling
+# - Documentation: Clear code documentation and API contracts
+# - Context Awareness: Understanding of project architecture and conventions
+
+reviews:
+  # Disable fortune messages for professional reviews
+  in_progress_fortune: false
+
+  # Assertive profile for thorough, senior-engineer-level reviews
+  # This ensures comprehensive feedback on architecture, security, performance, and best practices
+  profile: assertive
+
+  # Request changes workflow to ensure quality standards
+  request_changes_workflow: true
+
+  # Enable high-level summaries for better PR understanding
+  high_level_summary: true
+
+  # Disable poems for professional tone
+  poem: false
+
+  # Show review status for transparency
+  review_status: true
+
+  # Auto-review configuration
+  auto_review:
+    enabled: true
+    # Review drafts to catch issues early
+    drafts: true
+
+
+
+  # Commit status integration
+  commit_status: true
+
+  # Don't fail commit status to allow merges with comments
+  fail_commit_status: false
+
+  # Don't collapse walkthrough for better visibility
+  collapse_walkthrough: false
+
+  # Show summary of changed files
+  changed_files_summary: true
+
+  # Generate sequence diagrams for complex flows
+  sequence_diagrams: true
+
+  # Estimate code review effort
+  # Helps prioritize and allocate review time appropriately
+  estimate_code_review_effort: true
+
+  # Assess linked issues for business context and requirements
+  assess_linked_issues: true
+
+  # Show related issues
+  related_issues: true
+
+  # Show related PRs
+  related_prs: true
+
+  # Suggest labels based on changes
+  # Helps categorize and track changes
+  suggested_labels: true
+
+# Knowledge base configuration - Reference documentation for accurate reviews
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      # Repository documentation
+      - "STYLEGUIDE.md"
+      - "CONTRIBUTING.md"
+      - "README.md"
+      # AI context with project architecture and conventions
+      - ".ai/context.md"
+      - ".ai/README.md"
+
+# Additional review instructions
+early_access: false
+
