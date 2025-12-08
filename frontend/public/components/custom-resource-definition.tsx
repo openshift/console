@@ -355,7 +355,9 @@ export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsL
   );
 };
 
-export const CustomResourceDefinitionsPage: React.FCC = (props) => (
+export const CustomResourceDefinitionsPage: React.FCC<CustomResourceDefinitionsPageProps> = (
+  props,
+) => (
   <ListPage
     {...props}
     ListComponent={CustomResourceDefinitionsList}
@@ -406,3 +408,5 @@ CustomResourceDefinitionsPage.displayName = 'CustomResourceDefinitionsPage';
 export type CRDVersionProps = {
   versions: CRDVersion[];
 };
+
+export type CustomResourceDefinitionsPageProps = CustomResourceDefinitionsListProps;
