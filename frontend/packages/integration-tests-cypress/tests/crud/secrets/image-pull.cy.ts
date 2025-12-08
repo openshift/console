@@ -133,12 +133,12 @@ describe('Image pull secrets', () => {
     cy.byTestID('console-select-auth-type-menu-toggle').click();
     cy.byTestDropDownMenu('config-file').click();
 
-    // Type the JSON slowly to give validation time to process
+    // Set the value directly using invoke for faster execution
     const configJson = JSON.stringify(configFile);
-    cy.byLegacyTestID('file-input-textarea').clear().type(configJson, {
-      parseSpecialCharSequences: false,
-      delay: 50, // Slower typing to give validation time
-    });
+    cy.byLegacyTestID('file-input-textarea')
+      .invoke('val', configJson)
+      .trigger('input', { bubbles: true })
+      .trigger('change', { bubbles: true });
 
     // Wait for validation to complete and save button to be enabled
     cy.byTestID('save-changes', { timeout: 10000 }).should('be.enabled');
