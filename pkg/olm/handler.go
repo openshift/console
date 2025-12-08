@@ -82,7 +82,7 @@ func (o *OLMHandler) OperandsList(user *auth.User, w http.ResponseWriter, r *htt
 	w.Write(resp)
 }
 
-func (o *OLMHandler) CheckPackageManifest(w http.ResponseWriter, r *http.Request) {
+func (o *OLMHandler) CheckPackageManifest(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		w.Header().Set("Allow", "GET")
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
@@ -96,7 +96,7 @@ func (o *OLMHandler) CheckPackageManifest(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	client, _, err := o.getClientWithScheme(r)
+	client, _, err := o.getClientWithScheme(user)
 	if err != nil {
 		klog.Error(err)
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: fmt.Sprint(err)})
