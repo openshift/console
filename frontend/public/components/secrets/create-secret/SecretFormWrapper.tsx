@@ -60,7 +60,7 @@ export const SecretFormWrapper: FCC<BaseEditSecretProps_> = (props) => {
   const [stringData, setStringData] = useState(
     Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
       if (isBinary(null, Buffer.from(value, 'base64'))) {
-        return null;
+        return acc;
       }
       acc[key] = value ? Base64.decode(value) : '';
       return acc;
