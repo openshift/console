@@ -49,6 +49,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
 import { useActiveNamespace, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 
 const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
   const { plural } = useParams<{ plural?: string }>();
@@ -62,7 +63,11 @@ const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
     referenceForModel(kindObj),
     () => Promise.resolve(DefaultPage),
   );
-  const ns = kindObj.namespaced ? namespace : undefined;
+  // When "All Projects" is selected, namespace is ALL_NAMESPACES_KEY.
+  // For namespaced resources, we need to pass undefined to fetch from all namespaces.
+  // For cluster-scoped resources, always use undefined.
+  const ns = kindObj.namespaced && namespace !== ALL_NAMESPACES_KEY ? namespace : undefined;
+  const showNamespaceOverride = namespace === ALL_NAMESPACES_KEY;
 
   return (
     <AsyncComponent
@@ -78,6 +83,7 @@ const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
       badge={getBadgeFromType(kindObj.badge)}
       hideNameLabelFilters
       hideColumnManagement
+      showNamespaceOverride={showNamespaceOverride}
     />
   );
 };
