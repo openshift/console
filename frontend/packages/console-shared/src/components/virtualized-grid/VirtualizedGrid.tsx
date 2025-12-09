@@ -38,6 +38,11 @@ const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
       }),
     [celldefaultHeight],
   );
+
+  React.useEffect(() => {
+    cache.clearAll();
+  }, [cache, items.length]);
+
   return (
     <CellMeasurementContext.Provider
       value={{
