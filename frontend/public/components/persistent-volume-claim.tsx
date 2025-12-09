@@ -241,6 +241,7 @@ const PVCDetails: React.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
   const labelSelector = pvc?.spec?.selector;
   const storageClassName = pvc?.spec?.storageClassName;
   const volumeAttributesClassName = pvc?.spec?.volumeAttributesClassName;
+  const currentVolumeAttributesClassName = pvc?.status?.currentVolumeAttributesClassName;
   const volumeName = pvc?.spec?.volumeName;
   const storage = pvc?.status?.capacity?.storage;
   const requestedStorage = getRequestedPVCSize(pvc);
@@ -382,17 +383,19 @@ const PVCDetails: React.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
                   )}
                 </DescriptionListDescription>
               </DescriptionListGroup>
-              {isVACSupported && volumeAttributesClassName && (
-                <DescriptionListGroup>
-                  <DescriptionListTerm>{t('public~VolumeAttributesClass')}</DescriptionListTerm>
-                  <DescriptionListDescription>
-                    <ResourceLink
-                      kind={referenceFor(VolumeAttributesClassModel)}
-                      name={volumeAttributesClassName}
-                    />
-                  </DescriptionListDescription>
-                </DescriptionListGroup>
-              )}
+              {isVACSupported &&
+                !!volumeAttributesClassName &&
+                volumeAttributesClassName === currentVolumeAttributesClassName && (
+                  <DescriptionListGroup>
+                    <DescriptionListTerm>{t('public~VolumeAttributesClass')}</DescriptionListTerm>
+                    <DescriptionListDescription>
+                      <ResourceLink
+                        kind={referenceFor(VolumeAttributesClassModel)}
+                        name={volumeAttributesClassName}
+                      />
+                    </DescriptionListDescription>
+                  </DescriptionListGroup>
+                )}
               {volumeName && canListPV && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('public~PersistentVolumes')}</DescriptionListTerm>
