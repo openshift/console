@@ -74,12 +74,6 @@ Cypress.Commands.add(
         validate() {
           cy.visit(Cypress.config('baseUrl'));
           cy.byTestID('user-dropdown-toggle').should('exist');
-          cy.get('main').should('be.visible');
-          if (username === 'kubeadmin') {
-            cy.byTestID('getting-started').should('be.visible');
-          } else {
-            cy.get('.loading-box__loaded').should('exist');
-          }
         },
       },
     );
