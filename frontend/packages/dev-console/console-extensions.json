@@ -1069,7 +1069,7 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/catalog/ns/:ns"],
+      "path": ["/catalog/ns/:ns", "/catalog/all-namespaces"],
       "component": { "$codeRef": "CatalogPage" }
     }
   },

@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { useActiveNamespace } from '@console/shared/src';
 import { ConsoleSample } from '../../../types/samples';
 import {
   createSampleLink,
@@ -49,10 +48,9 @@ export const normalizeConsoleSamples = (activeNamespace: string, t: TFunction) =
   };
 };
 
-export const useConsoleSamplesCatalogProvider = (): [CatalogItem[], boolean, any] => {
+export const useConsoleSamplesCatalogProvider = ({ namespace }): [CatalogItem[], boolean, any] => {
   const { i18n, t } = useTranslation();
   const preferredLanguage = i18n.language;
-  const [activeNamespace] = useActiveNamespace();
   const [allSamples, loaded, loadedError] = useSamples();
 
   const catalogItems = useMemo<CatalogItem[]>(() => {
@@ -68,8 +66,8 @@ export const useConsoleSamplesCatalogProvider = (): [CatalogItem[], boolean, any
       sampleA.spec.title.localeCompare(sampleB.spec.title),
     );
 
-    return bestMatchSamples.map(normalizeConsoleSamples(activeNamespace, t)).filter(Boolean);
-  }, [allSamples, activeNamespace, preferredLanguage, t]);
+    return bestMatchSamples.map(normalizeConsoleSamples(namespace, t)).filter(Boolean);
+  }, [allSamples, preferredLanguage, t, namespace]);
 
   return [catalogItems, loaded, loadedError];
 };
