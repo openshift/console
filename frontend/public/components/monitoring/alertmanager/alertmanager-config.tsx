@@ -52,6 +52,7 @@ import {
   ResourceMetadata,
 } from '@console/app/src/components/data-view/types';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { DASH } from '@console/shared/src/constants/ui';
 
 export enum InitialReceivers {
   Critical = 'Critical',
@@ -229,12 +230,9 @@ const RoutingLabels: React.FC<RoutingLabelsProps> = ({ data }) => {
   const { labels, matchers } = data;
   const lbls = _.map(labels || {}, (value, key) => `${key}=${value}`);
   const values = [...lbls, ...(matchers ?? [])];
-
   return values.length > 0 ? (
     <PfLabelGroup>
-      {values.map((value, i) => (
-        <PfLabel key={`label-${i}`}>{value}</PfLabel>
-      ))}
+      {values.map((value, i) => (value ? <PfLabel key={`label-${i}`}>{value}</PfLabel> : DASH))}
     </PfLabelGroup>
   ) : null;
 };
