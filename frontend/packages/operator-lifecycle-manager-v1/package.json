@@ -7,7 +7,8 @@
     "exposedModules": {
       "useCatalogItems": "src/hooks/useCatalogItems.ts",
       "useCatalogCategories": "src/hooks/useCatalogCategories.ts",
-      "useOLMv1FlagProvider": "src/hooks/useOLMv1FlagProvider.ts"
+      "useOLMv1FlagProvider": "src/hooks/useOLMv1FlagProvider.ts",
+      "CreateClusterExtension": "src/components/cluster-extension/CreateClusterExtension.tsx"
     }
   }
 }
