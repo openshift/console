@@ -155,7 +155,7 @@ const HorizontalPodRedirect = () => {
   return <Navigate to={`/k8s/ns/${ns}/${HorizontalPodAutoscalerModel.plural}/${name}`} replace />;
 };
 
-const AppContents: React.FC<{}> = () => {
+const AppContents: React.FC = () => {
   const pluginInfoEntries = usePluginInfo();
   const location = useLocation();
   const [pluginPageRoutes, inactivePluginPageRoutes] = usePluginRoutes();

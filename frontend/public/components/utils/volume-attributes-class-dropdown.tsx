@@ -88,7 +88,7 @@ export const VolumeAttributesClassDropdownInner: React.FCC<VolumeAttributesClass
 
     const newState: Partial<VolumeAttributesClassDropdownInnerState> = {
       items: {},
-      title: {},
+      title: undefined,
     };
     let unorderedItems: Record<string, VolumeAttributesClassDropdownItem> = {};
     const vacData = resources?.VolumeAttributesClass?.data || [];

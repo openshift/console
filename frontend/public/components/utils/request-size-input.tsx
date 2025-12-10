@@ -98,4 +98,5 @@ export type RequestSizeInputProps = {
   inputID?: string;
   testID?: string;
   isInputDisabled?: boolean;
+  children?: React.ReactNode;
 };

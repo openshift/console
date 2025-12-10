@@ -43,10 +43,12 @@ const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
     </Link>
   );
 };
-export const PrometheusGraphLink = connect(mapStateToProps)(PrometheusGraphLink_);
+export const PrometheusGraphLink = connect(mapStateToProps)(
+  PrometheusGraphLink_,
+) as React.ComponentType<Omit<PrometheusGraphLinkProps, 'namespace'>>;
 
-export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
-  ({ children, className, title }, ref: React.RefObject<HTMLDivElement>) => (
+export const PrometheusGraph = React.forwardRef<HTMLDivElement, PrometheusGraphProps>(
+  ({ children, className, title }, ref) => (
     <div ref={ref} className={css('graph-wrapper graph-wrapper__horizontal-bar', className)}>
       {title && (
         <Title headingLevel="h5" className="graph-title">
@@ -62,10 +64,12 @@ type PrometheusGraphLinkProps = {
   query: string | string[];
   namespace?: string;
   ariaChartLinkLabel?: string;
+  children?: React.ReactNode;
 };
 
 type PrometheusGraphProps = {
   className?: string;
   ref?: React.Ref<HTMLDivElement>;
   title?: string;
+  children?: React.ReactNode;
 };
