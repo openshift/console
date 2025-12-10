@@ -113,7 +113,7 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
             )}
           </Flex>
           <CatalogPageNumItems>
-            {t('console-shared~{{totalItems}} items', { totalItems })}
+            {t('console-shared~{{totalItems}} items', { count: totalItems, totalItems })}
           </CatalogPageNumItems>
         </CatalogPageToolbar>
       </CatalogPageHeader>
