@@ -137,8 +137,7 @@
     "@patternfly/react-catalog-view-extension": "^6.1.0",
     "@patternfly/react-charts": "^8.2.2",
     "@patternfly/react-code-editor": "^6.2.2",
-    "@patternfly/react-component-groups": "6.2.0-prerelease.10",
-    "@patternfly/react-console": "^6.0.0",
+    "@patternfly/react-component-groups": "^6.3.0",
     "@patternfly/react-core": "^6.2.2",
     "@patternfly/react-data-view": "^6.2.0",
     "@patternfly/react-icons": "^6.2.2",
@@ -313,9 +312,8 @@
     "node": ">=22.x"
   },
   "resolutions": {
+    "@patternfly/react-component-groups": "6.3.0",
     "@types/lodash": "4.14.106",
-    "@patternfly/react-component-groups": "6.2.0-prerelease.10",
-    "@patternfly/react-data-view": "^6.2.0",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.x",
     "hosted-git-info": "^3.0.8",
