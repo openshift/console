@@ -1,5 +1,5 @@
 import { ExtensionK8sKindVersionModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 import { K8sResourceCommon } from './console-types';
 
 export type PageComponentProps<R extends K8sResourceCommon = K8sResourceCommon> = {
@@ -14,7 +14,7 @@ export type PageComponentProps<R extends K8sResourceCommon = K8sResourceCommon> 
 };
 
 /** This extension can be used to add a tab on the resource details page. */
-export type HorizontalNavTab = ExtensionDeclaration<
+export type HorizontalNavTab = Extension<
   'console.tab/horizontalNav',
   {
     /** The model for which this provider show tab. */
@@ -32,7 +32,7 @@ export type HorizontalNavTab = ExtensionDeclaration<
 >;
 
 /** Adds a tab to a horizontal nav matching the `contextId`. */
-export type NavTab = ExtensionDeclaration<
+export type NavTab = Extension<
   'console.tab',
   {
     /** Context ID assigned to the horizontal nav in which the tab will be injected.
