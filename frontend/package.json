@@ -15,6 +15,7 @@
     "clean": "rm -rf ./public/dist",
     "dev": "yarn clean && yarn generate && REACT_REFRESH=true NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack serve --mode=development --progress",
     "dev-once": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=development",
+    "dedupe-deps": "yarn-deduplicate --strategy highest",
     "build": "yarn clean && yarn generate && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
@@ -305,7 +306,8 @@
     "webpack": "^5.75.0",
     "webpack-bundle-analyzer": "4.10.2",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.1.0"
+    "webpack-dev-server": "^5.1.0",
+    "yarn-deduplicate": "^6.0.2"
   },
   "engines": {
     "node": ">=22.x"

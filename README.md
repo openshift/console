@@ -420,7 +420,7 @@ To upgrade yarn itself, download a new yarn release from
 Note that when upgrading @patternfly packages, we've seen in the past that it can cause the JavaScript heap to run out of memory, or the bundle being too large if multiple versions of the same @patternfly package is pulled in. To increase efficiency, run the following after updating packages:
 
 ```
-npx yarn-deduplicate --scopes @patternfly
+yarn run dedupe-deps --scopes @patternfly
 ```
 
 #### Supported Browsers
