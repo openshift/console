@@ -14,16 +14,15 @@ if (lockFile.type !== 'success') {
   process.exit(1);
 }
 
-/** List of packages to check along with their expected semver ranges */
+/** List of packages to check along with their required semver ranges */
 const PKGS_TO_CHECK: Array<{ name: string; semver: string }> = [
-  { name: '@patternfly-5/patternfly', semver: '*' },
+  { name: '@patternfly-5/patternfly', semver: '5.x' },
   { name: '@patternfly/patternfly', semver: '6.x' },
   { name: '@patternfly/quickstarts', semver: '6.x' },
   { name: '@patternfly/react-catalog-view-extension', semver: '6.x' },
   { name: '@patternfly/react-charts', semver: '8.x' },
   { name: '@patternfly/react-code-editor', semver: '6.x' },
   { name: '@patternfly/react-component-groups', semver: '6.x' },
-  { name: '@patternfly/react-console', semver: '6.x' },
   { name: '@patternfly/react-core', semver: '6.x' },
   { name: '@patternfly/react-data-view', semver: '6.x' },
   { name: '@patternfly/react-icons', semver: '6.x' },
@@ -40,74 +39,78 @@ const PKGS_TO_CHECK: Array<{ name: string; semver: string }> = [
 const SCOPES_TO_CHECK = new Set(PKGS_TO_CHECK.map((pkg) => pkg.name.split('/')[0]));
 
 /** Get the package name and version from a package key in yarn.lock */
-const parsePackageName = (pkgKey: string): { pkgName: string } => {
-  const pkgName = PKGS_TO_CHECK.find((pkg) => pkgKey.startsWith(pkg.name));
+const parsePackageName = (resolutionKey: string): string => {
+  // Precondition: All package names are not substrings of other package names
+  // e.g., we cannot have both `my-package` and `my-package-extended` in PKGS_TO_CHECK
+  const pkgName = PKGS_TO_CHECK.find((pkg) => resolutionKey.startsWith(pkg.name));
 
   // Ensure that all packages within SCOPES_TO_CHECK are checked
   if (!pkgName) {
     throw new Error(
       `Please update ${chalk.yellow(
         basename(__filename),
-      )} to handle this PatternFly package: ${chalk.yellow(pkgKey)}`,
+      )} to handle this PatternFly package: ${chalk.yellow(resolutionKey)}`,
     );
   }
 
-  return {
-    pkgName: pkgName.name,
-  };
+  return pkgName.name;
 };
 
 /** Map of PatternFly packages to their resolved versions in yarn.lock */
-const patternflyModules = Object.entries(lockFile.object).reduce((acc, [key, value]) => {
-  if (SCOPES_TO_CHECK.has(key.split('/')[0])) {
-    const { pkgName } = parsePackageName(key);
-    if (!acc.has(pkgName)) {
-      acc.set(pkgName, []);
+const patternflyModules = Object.entries(lockFile.object).reduce(
+  (acc, [resolutionKey, resolvedDependency]) => {
+    if (SCOPES_TO_CHECK.has(resolutionKey.split('/')[0])) {
+      const pkgName = parsePackageName(resolutionKey);
+      if (!acc.has(pkgName)) {
+        acc.set(pkgName, []);
+      }
+      acc.get(pkgName).push({ resolvedVersion: resolvedDependency.version });
     }
-    acc.get(pkgName).push({ resolvedVersion: value.version });
-  }
 
-  return acc;
-}, new Map<string, Array<{ resolvedVersion: string }>>());
+    return acc;
+  },
+  new Map<string, Array<{ resolvedVersion: string }>>(),
+);
 
 let hasResolutionErrors = false;
 
 for (const pkg of PKGS_TO_CHECK) {
   const resolvedVersions = Array.from(
-    new Set(
-      (patternflyModules.get(pkg.name) || [])
-        .map((v) => v.resolvedVersion)
-        .filter((v) => {
-          const coerced = semver.coerce(v);
-          if (!coerced) {
-            console.error(
-              `${chalk.red(pkg.name)} has an non-semver coercible resolved version: ${chalk.yellow(
-                v,
-              )}`,
-            );
-            hasResolutionErrors = true;
-            return false;
-          }
-          return semver.satisfies(coerced, pkg.semver);
-        }),
-    ),
+    new Set((patternflyModules.get(pkg.name) || []).map((v) => v.resolvedVersion)),
   );
 
   if (resolvedVersions.length === 0) {
     console.error(`${chalk.red(pkg.name)} has no ${chalk.yellow(pkg.semver)} resolutions`);
     hasResolutionErrors = true;
   } else if (resolvedVersions.length === 1) {
-    console.log(
-      `${chalk.green(pkg.name)} has one ${chalk.yellow(pkg.semver)} resolution: ${
-        resolvedVersions[0]
-      }`,
-    );
+    const resolvedVersion = semver.coerce(resolvedVersions[0]);
+
+    if (!resolvedVersion) {
+      console.error(
+        `${chalk.red(pkg.name)} has a non-semver coercible resolved version: ${chalk.yellow(
+          resolvedVersions[0],
+        )}`,
+      );
+      hasResolutionErrors = true;
+      continue;
+    }
+
+    if (!semver.satisfies(resolvedVersion, pkg.semver)) {
+      console.error(
+        `${chalk.red(pkg.name)} has one resolution ${chalk.yellow(
+          resolvedVersions[0],
+        )} which does not satisfy ${chalk.yellow(pkg.semver)}`,
+      );
+      hasResolutionErrors = true;
+    } else {
+      console.log(
+        `${chalk.green(pkg.name)} has one ${chalk.yellow(pkg.semver)} resolution: ${
+          resolvedVersions[0]
+        }`,
+      );
+    }
   } else {
-    console.error(
-      `${chalk.red(pkg.name)} has multiple ${chalk.yellow(
-        pkg.semver,
-      )} resolutions: ${resolvedVersions}`,
-    );
+    console.error(`${chalk.red(pkg.name)} has multiple resolutions: ${resolvedVersions}`);
     hasResolutionErrors = true;
   }
 }
