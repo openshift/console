@@ -12,7 +12,7 @@ jest.mock('@console/webterminal-plugin/src/components/cloud-shell/MultiTabbedTer
 }));
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
-  useFlag: jest.fn(),
+  useFlag: jest.fn<boolean, []>(),
 }));
 
 jest.mock('@console/webterminal-plugin/src/redux/actions/cloud-shell-dispatchers', () => ({

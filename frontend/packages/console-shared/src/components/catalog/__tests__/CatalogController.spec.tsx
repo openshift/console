@@ -14,16 +14,20 @@ jest.mock('react-router-dom-v5-compat', () => ({
   }),
 }));
 
-describe('CatalogController', () => {
-  let spyUseQueryParams: jest.SpyInstance;
+jest.mock('@console/shared/src/hooks/useQueryParams', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useQueryParams'),
+  useQueryParams: jest.fn(),
+}));
 
+const useQueryParamsMock = UseQueryParams.useQueryParams as jest.Mock;
+
+describe('CatalogController', () => {
   beforeEach(() => {
-    spyUseQueryParams = jest.spyOn(UseQueryParams, 'useQueryParams');
-    spyUseQueryParams.mockImplementation(() => new URLSearchParams());
+    useQueryParamsMock.mockImplementation(() => new URLSearchParams());
   });
 
   afterEach(() => {
-    spyUseQueryParams.mockRestore();
+    jest.clearAllMocks();
   });
 
   it('should render the title and description from the catalog extension', async () => {

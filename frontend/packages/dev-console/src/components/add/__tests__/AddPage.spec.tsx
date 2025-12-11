@@ -13,7 +13,7 @@ jest.mock('@console/shared', () => {
   const originalModule = jest.requireActual('@console/shared');
   return {
     ...originalModule,
-    useFlag: jest.fn<boolean>().mockReturnValue(false),
+    useFlag: jest.fn<boolean, []>().mockReturnValue(false),
   };
 });
 
@@ -59,13 +59,16 @@ jest.mock('@console/topology/src/components/quick-search/TopologyQuickSearchButt
   default: () => null,
 }));
 
+const useParamsMock = Router.useParams as jest.Mock;
+
 describe('AddPage', () => {
   afterEach(() => {
     cleanup();
+    jest.clearAllMocks();
   });
 
   it('should render AddCardsLoader if namespace exists', () => {
-    jest.spyOn(Router, 'useParams').mockReturnValue({
+    useParamsMock.mockReturnValue({
       ns: 'ns',
     });
     renderWithProviders(<AddPage />);
@@ -73,7 +76,7 @@ describe('AddPage', () => {
   });
 
   it('should render CreateProjectListPage if namespace does not exist', () => {
-    jest.spyOn(Router, 'useParams').mockReturnValue({});
+    useParamsMock.mockReturnValue({});
     renderWithProviders(<AddPage />);
     expect(screen.getByText(/select a namespace to start adding/i)).toBeInTheDocument();
   });

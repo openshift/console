@@ -19,6 +19,13 @@ import {
   isContainerLoopingFilter,
 } from '../pod-utils';
 
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
+  checkAccess: jest.fn(),
+}));
+
+const checkAccessMock = rbacModule.checkAccess as jest.Mock;
+
 describe('Pod Utils:', () => {
   it('isIdle should return true', () => {
     expect(isIdled(deploymentConfig)).toBe(true);
@@ -121,10 +128,12 @@ describe('checkPodEditAccess', () => {
     };
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should have access true if check Access return allowed true', (done) => {
-    jest
-      .spyOn(rbacModule, 'checkAccess')
-      .mockImplementation(() => Promise.resolve({ status: { allowed: true } }));
+    checkAccessMock.mockImplementation(() => Promise.resolve({ status: { allowed: true } }));
     checkPodEditAccess(obj, DeploymentConfigModel, undefined)
       .then((resp) => {
         expect(resp.status.allowed).toBe(true);
@@ -134,9 +143,7 @@ describe('checkPodEditAccess', () => {
   });
 
   it('should have access false if check Access return allowed false', (done) => {
-    jest
-      .spyOn(rbacModule, 'checkAccess')
-      .mockImplementation(() => Promise.resolve({ status: { allowed: false } }));
+    checkAccessMock.mockImplementation(() => Promise.resolve({ status: { allowed: false } }));
     checkPodEditAccess(obj, DeploymentConfigModel, undefined)
       .then((resp) => {
         expect(resp.status.allowed).toBe(false);

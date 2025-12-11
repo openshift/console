@@ -41,7 +41,27 @@ import {
   sinkUriData,
 } from './topology-knative-test-data';
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sUpdate: jest.fn(),
+}));
+
+jest.mock('../../utils/fetch-dynamic-eventsources-utils', () => ({
+  ...jest.requireActual('../../utils/fetch-dynamic-eventsources-utils'),
+  getDynamicEventSourcesModelRefs: jest.fn(),
+}));
+
+const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;
+const getDynamicEventSourcesModelRefsMock = knativefetchutils.getDynamicEventSourcesModelRefs as jest.Mock;
+
 describe('knative topology utils', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Default mock implementations
+    getDynamicEventSourcesModelRefsMock.mockReturnValue([]);
+    k8sUpdateMock.mockResolvedValue({});
+  });
+
   it('expect getKnativeServiceData to return knative resources', () => {
     const knResource = getKnativeServiceData(
       MockKnativeResources.ksservices.data[0],
@@ -169,9 +189,7 @@ describe('knative topology utils', () => {
     expect(filterRevisionsBaseOnTrafficStatus(mockService, mockRevisions)).toBeUndefined();
   });
   it('expect isOperatorBackedKnResource to return true if resource is backing camel connector source', () => {
-    jest
-      .spyOn(knativefetchutils, 'getDynamicEventSourcesModelRefs')
-      .mockImplementation(() => [EVENT_SOURCE_CAMEL_KIND]);
+    getDynamicEventSourcesModelRefsMock.mockImplementation(() => [EVENT_SOURCE_CAMEL_KIND]);
     const isOperatorbacked = isOperatorBackedKnResource(
       sampleDeploymentsCamelConnector.data[0],
       MockKnativeResources,
@@ -179,9 +197,9 @@ describe('knative topology utils', () => {
     expect(isOperatorbacked).toBe(true);
   });
   it('expect isOperatorBackedKnResource to return false if resource is not backing camel connector source', () => {
-    jest
-      .spyOn(knativefetchutils, 'getDynamicEventSourcesModelRefs')
-      .mockImplementation(() => ['sources.knative.dev~v1alpha1~CamelSource']);
+    getDynamicEventSourcesModelRefsMock.mockImplementation(() => [
+      'sources.knative.dev~v1alpha1~CamelSource',
+    ]);
     const isOperatorbacked = isOperatorBackedKnResource(
       MockKnativeResources.deployments.data[0],
       MockKnativeResources,
@@ -215,13 +233,11 @@ describe('knative topology utils', () => {
 
 describe('Knative Topology Utils', () => {
   beforeAll(() => {
-    jest
-      .spyOn(k8sResourceModule, 'k8sUpdate')
-      .mockImplementation((model, data) => Promise.resolve({ data }));
+    k8sUpdateMock.mockImplementation((model, data) => Promise.resolve({ data }));
   });
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should return rejected promise if source is not provided', () => {

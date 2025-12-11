@@ -163,7 +163,7 @@ describe('useTelemetry', () => {
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 1');
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(listener).toBeCalledWith('test 1', {
+    expect(listener).toHaveBeenCalledWith('test 1', {
       ...exampleReturnValue,
       clusterType: undefined,
       consoleVersion: undefined,
@@ -181,7 +181,7 @@ describe('useTelemetry', () => {
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 2');
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(listener).toBeCalledWith('test 2', {
+    expect(listener).toHaveBeenCalledWith('test 2', {
       ...exampleReturnValue,
       clusterType: 'OSD',
       consoleVersion: 'x.y.z',
@@ -199,7 +199,7 @@ describe('useTelemetry', () => {
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 3', { 'a-string': 'works fine', 'a-boolean': true });
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(listener).toBeCalledWith('test 3', {
+    expect(listener).toHaveBeenCalledWith('test 3', {
       ...exampleReturnValue,
       'a-boolean': true,
       'a-string': 'works fine',
@@ -223,7 +223,7 @@ describe('useTelemetry', () => {
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 4');
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(listener).toBeCalledWith('test 4', {
+    expect(listener).toHaveBeenCalledWith('test 4', {
       ...exampleReturnValue,
       clusterType: 'DEVSANDBOX',
       consoleVersion: 'x.y.z',

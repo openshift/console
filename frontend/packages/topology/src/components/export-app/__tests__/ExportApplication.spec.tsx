@@ -4,19 +4,34 @@ import * as rbacModule from '@console/internal/components/utils/rbac';
 import * as useIsMobileModule from '@console/shared/src/hooks/useIsMobile';
 import ExportApplication from '../ExportApplication';
 
-describe('ExportApplication', () => {
-  const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
-  const spyUseFlag = jest.spyOn(flagsModule, 'useFlag');
-  const spyUseIsMobile = jest.spyOn(useIsMobileModule, 'useIsMobile');
+jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/flags'),
+  useFlag: jest.fn<boolean, []>(),
+}));
 
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/internal/components/utils/rbac'),
+  useAccessReview: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/useIsMobile', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useIsMobile'),
+  useIsMobile: jest.fn(),
+}));
+
+const useFlagMock = flagsModule.useFlag as jest.Mock;
+const useAccessReviewMock = rbacModule.useAccessReview as jest.Mock;
+const useIsMobileMock = useIsMobileModule.useIsMobile as jest.Mock;
+
+describe('ExportApplication', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
 
   it('should render export app button when feature flag is present, user has access, and not on mobile', () => {
-    spyUseFlag.mockReturnValue(true);
-    spyUseAccessReview.mockReturnValue(true);
-    spyUseIsMobile.mockReturnValue(false);
+    useFlagMock.mockReturnValue(true);
+    useAccessReviewMock.mockReturnValue(true);
+    useIsMobileMock.mockReturnValue(false);
 
     render(<ExportApplication namespace="my-app" isDisabled={false} />);
     const button = screen.getByRole('button', { name: /export application/i });
@@ -25,18 +40,18 @@ describe('ExportApplication', () => {
   });
 
   it('should not render button when user lacks access', () => {
-    spyUseFlag.mockReturnValue(true);
-    spyUseAccessReview.mockReturnValue(false);
-    spyUseIsMobile.mockReturnValue(false);
+    useFlagMock.mockReturnValue(true);
+    useAccessReviewMock.mockReturnValue(false);
+    useIsMobileMock.mockReturnValue(false);
 
     render(<ExportApplication namespace="my-app" isDisabled={false} />);
     expect(screen.queryByRole('button', { name: /export application/i })).not.toBeInTheDocument();
   });
 
   it('should not render button when on mobile', () => {
-    spyUseFlag.mockReturnValue(true);
-    spyUseAccessReview.mockReturnValue(true);
-    spyUseIsMobile.mockReturnValue(true);
+    useFlagMock.mockReturnValue(true);
+    useAccessReviewMock.mockReturnValue(true);
+    useIsMobileMock.mockReturnValue(true);
 
     render(<ExportApplication namespace="my-app" isDisabled={false} />);
     expect(screen.queryByRole('button', { name: /export application/i })).not.toBeInTheDocument();

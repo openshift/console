@@ -101,7 +101,7 @@ describe('useCSPViolationDetector', () => {
     });
 
     expect(mockCacheEvent).toHaveBeenCalledWith(testPluginEvent);
-    expect(mockFireTelemetry).not.toBeCalled();
+    expect(mockFireTelemetry).not.toHaveBeenCalled();
   });
 
   it('correctly parses plugin name from blockedURI', () => {

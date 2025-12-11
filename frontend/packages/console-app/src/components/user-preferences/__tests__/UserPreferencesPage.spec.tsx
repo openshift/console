@@ -43,6 +43,7 @@ jest.mock('@console/shared/src/hooks/useQueryParams', () => ({
 const useExtensionsMock = useExtensions as jest.Mock;
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
 const useQueryParamsMock = useQueryParams as jest.Mock;
+const useParamsMock = Router.useParams as jest.Mock;
 
 describe('UserPreferencePage', () => {
   beforeEach(() => {
@@ -50,7 +51,7 @@ describe('UserPreferencePage', () => {
   });
 
   it('should render with default user preference group based on the url params', async () => {
-    jest.spyOn(Router, 'useParams').mockReturnValue({
+    useParamsMock.mockReturnValue({
       group: 'language',
     });
     useExtensionsMock.mockReturnValue(mockUserPreferenceGroupExtensions);
@@ -65,7 +66,7 @@ describe('UserPreferencePage', () => {
   });
 
   it('should render with "general" user preference group as default when URL has no group param', async () => {
-    jest.spyOn(Router, 'useParams').mockReturnValue({});
+    useParamsMock.mockReturnValue({});
     useExtensionsMock.mockReturnValue(mockUserPreferenceGroupExtensions);
     useResolvedExtensionsMock.mockReturnValue([mockUserPreferenceItemExtensions, true]);
     useQueryParamsMock.mockReturnValue(new URLSearchParams());
@@ -78,7 +79,7 @@ describe('UserPreferencePage', () => {
   });
 
   it('should render loading state when user preference extensions have not resolved', async () => {
-    jest.spyOn(Router, 'useParams').mockReturnValue({});
+    useParamsMock.mockReturnValue({});
     useExtensionsMock.mockReturnValue(mockUserPreferenceGroupExtensions);
     useResolvedExtensionsMock.mockReturnValue([mockUserPreferenceItemExtensions, false]);
     useQueryParamsMock.mockReturnValue(new URLSearchParams());

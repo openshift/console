@@ -20,7 +20,7 @@ jest.mock('@console/shared/src/hooks/version', () => ({
 }));
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
-  useFlag: jest.fn<boolean>(),
+  useFlag: jest.fn<boolean, []>(),
 }));
 
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;

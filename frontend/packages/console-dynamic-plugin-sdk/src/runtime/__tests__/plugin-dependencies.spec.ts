@@ -10,14 +10,18 @@ import {
 } from '../plugin-dependencies';
 import { getPluginID } from '../plugin-utils';
 
+jest.mock('@console/plugin-sdk/src/api/pluginSubscriptionService', () => ({
+  ...jest.requireActual('@console/plugin-sdk/src/api/pluginSubscriptionService'),
+  subscribeToDynamicPlugins: jest.fn(),
+}));
+
 type DynamicPluginListener = Parameters<
   typeof pluginSubscriptionServiceModule.subscribeToDynamicPlugins
 >[0];
 
-const subscribeToDynamicPlugins = jest.spyOn(
-  pluginSubscriptionServiceModule,
-  'subscribeToDynamicPlugins',
-);
+const subscribeToDynamicPlugins = pluginSubscriptionServiceModule.subscribeToDynamicPlugins as jest.MockedFunction<
+  typeof pluginSubscriptionServiceModule.subscribeToDynamicPlugins
+>;
 
 beforeEach(() => {
   jest.resetAllMocks();
@@ -126,6 +130,7 @@ describe('resolvePluginDependencies', () => {
         getPendingDynamicPluginInfo(getPluginManifest('Foo', '1.0.0')),
         getPendingDynamicPluginInfo(getPluginManifest('Bar', '1.0.0')),
       ]);
+      return () => {};
     });
 
     await Promise.race([
@@ -160,6 +165,7 @@ describe('resolvePluginDependencies', () => {
         getLoadedDynamicPluginInfo(getPluginManifest('Foo', '1.0.0')),
         getLoadedDynamicPluginInfo(getPluginManifest('Bar', '1.0.0')),
       ]);
+      return () => {};
     });
 
     await resolvePluginDependencies(manifest, '4.11.1-test.2', ['Test', 'Foo', 'Bar']);
@@ -178,6 +184,7 @@ describe('resolvePluginDependencies', () => {
         getFailedDynamicPluginInfo(getPluginManifest('Bar', '1.0.0')),
         getFailedDynamicPluginInfo(getPluginManifest('Baz', '1.0.0')),
       ]);
+      return () => {};
     });
 
     try {
@@ -205,6 +212,7 @@ describe('resolvePluginDependencies', () => {
         getLoadedDynamicPluginInfo(getPluginManifest('Bar', '1.1.0')),
         getLoadedDynamicPluginInfo(getPluginManifest('Baz', '1.1.2')),
       ]);
+      return () => {};
     });
 
     try {

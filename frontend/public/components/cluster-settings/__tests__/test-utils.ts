@@ -53,23 +53,42 @@ export const mockData = {
 
 // The FileReader mock prevents async operations for file upload testing
 export const setupFileReaderMock = () => {
-  return jest.spyOn(global, 'FileReader').mockImplementation(() => {
-    const mockFileReader = {
-      readAsText: jest.fn(),
-      readAsArrayBuffer: jest.fn(function (this: any) {
-        // Simulate the file reading process synchronously
-        // Create a mock ArrayBuffer with some dummy data
-        const arrayBuffer = new ArrayBuffer(8);
-        this.result = arrayBuffer;
-        // Trigger the onload event immediately if it exists
-        if (this.onload) {
-          this.onload();
-        }
-      }),
-      readyState: 0,
-    };
-    return mockFileReader;
-  });
+  return jest.spyOn(global, 'FileReader').mockImplementation(
+    (): FileReader => {
+      const mockFileReader: Partial<FileReader> = {
+        readAsText: jest.fn(),
+        readAsArrayBuffer: jest.fn(function (this: FileReader) {
+          // Simulate the file reading process synchronously
+          // Create a mock ArrayBuffer with some dummy data
+          const arrayBuffer = new ArrayBuffer(8);
+          (this as { result: ArrayBuffer }).result = arrayBuffer;
+          // Trigger the onload event immediately if it exists
+          if (this.onload) {
+            this.onload({} as ProgressEvent<FileReader>);
+          }
+        }),
+        readyState: 0,
+        result: null,
+        error: null,
+        onabort: null,
+        onerror: null,
+        onload: null,
+        onloadend: null,
+        onloadstart: null,
+        onprogress: null,
+        abort: jest.fn(),
+        readAsBinaryString: jest.fn(),
+        readAsDataURL: jest.fn(),
+        DONE: 2,
+        EMPTY: 0,
+        LOADING: 1,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(() => true),
+      };
+      return mockFileReader as FileReader;
+    },
+  );
 };
 
 /**

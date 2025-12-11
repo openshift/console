@@ -20,9 +20,16 @@ import {
   getLabelPlural,
 } from '../fetch-dynamic-eventsources-utils';
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch'),
+  consoleFetch: jest.fn(),
+}));
+
+const consoleFetchMock = coFetchModule.consoleFetch as jest.Mock;
+
 describe('fetch-dynamic-eventsources: EventSources', () => {
   beforeEach(() => {
-    jest.spyOn(coFetchModule, 'consoleFetch').mockImplementation(() =>
+    consoleFetchMock.mockImplementation(() =>
       Promise.resolve({
         json: () => ({
           ...mockEventSourcCRDData,
@@ -31,19 +38,20 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
     );
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should call coFetch to fetch CRDs for duck type', async () => {
-    const fetchSpy = jest.spyOn(coFetchModule, 'consoleFetch');
     await fetchEventSourcesCrd();
-    expect(fetchSpy).toHaveBeenCalled();
+    expect(consoleFetchMock).toHaveBeenCalled();
   });
 
   it('should fetch models for duck type in case of error', async () => {
     // Suppress the warning to clean up the test output
     jest.spyOn(console, 'warn').mockImplementation(jest.fn());
 
-    jest
-      .spyOn(coFetchModule, 'consoleFetch')
-      .mockImplementation(() => Promise.reject(new Error('Test Error')));
+    consoleFetchMock.mockImplementation(() => Promise.reject(new Error('Test Error')));
     await fetchEventSourcesCrd();
     expect(getEventSourceModels()).toHaveLength(0);
 
@@ -111,13 +119,17 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
 
 describe('fetch-dynamic-eventsources: Channels', () => {
   beforeEach(async () => {
-    jest.spyOn(coFetchModule, 'consoleFetch').mockImplementation(() =>
+    consoleFetchMock.mockImplementation(() =>
       Promise.resolve({
         json: () => ({
           ...mockChannelCRDData,
         }),
       }),
     );
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should return true for IMC channel model', async () => {

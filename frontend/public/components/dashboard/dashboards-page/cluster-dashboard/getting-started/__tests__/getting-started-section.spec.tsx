@@ -23,7 +23,7 @@ jest.mock('../explore-admin-features-getting-started-card', () => ({
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
   ...jest.requireActual('@console/shared/src/hooks/flag'),
-  useFlag: jest.fn(),
+  useFlag: jest.fn<boolean, []>(),
 }));
 
 jest.mock('@console/shared/src/components/getting-started', () => ({

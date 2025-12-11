@@ -24,14 +24,19 @@ describe('ApplicationSelector', () => {
   const mockUseField = jest.spyOn(formik, 'useField');
 
   beforeEach(() => {
-    mockUseField.mockImplementation((name) => {
-      if (name.includes('selectedKey')) {
-        return [{ value: CREATE_APPLICATION_KEY, name }, {}];
-      }
-      return [{ value: '', name }, {}];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mockUseField as jest.Mock).mockImplementation((name: string): any => {
+      const fieldProps = {
+        value: name.includes('selectedKey') ? CREATE_APPLICATION_KEY : '',
+        name,
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+      };
+      const metaProps = { value: fieldProps.value, touched: false, initialTouched: false };
+      return [fieldProps, metaProps, {}];
     });
 
-    mockUseFormikContext.mockReturnValue({
+    mockUseFormikContext.mockReturnValue(({
       setFieldValue,
       setFieldTouched,
       values: {
@@ -41,7 +46,12 @@ describe('ApplicationSelector', () => {
           initial: '',
         },
       },
-    });
+      errors: {},
+      touched: {},
+      isSubmitting: false,
+      isValidating: false,
+      submitCount: 0,
+    } as unknown) as ReturnType<typeof formik.useFormikContext>);
     jest.clearAllMocks();
   });
 

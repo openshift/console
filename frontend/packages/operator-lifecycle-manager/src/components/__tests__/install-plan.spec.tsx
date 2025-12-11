@@ -35,6 +35,12 @@ jest.mock('@console/internal/components/factory', () => ({
   DetailsPage: jest.fn(() => null),
 }));
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sPatch: jest.fn(),
+}));
+
+const k8sPatchMock = k8sResourceModule.k8sPatch as jest.Mock;
 const mockTable = Table as jest.Mock;
 const mockMultiListPage = MultiListPage as jest.Mock;
 const mockDetailsPage = DetailsPage as jest.Mock;
@@ -287,7 +293,7 @@ describe('InstallPlanPreview', () => {
   });
 
   it('calls k8sPatch to approve install plan when Approve button is clicked', async () => {
-    const k8sPatchSpy = jest.spyOn(k8sResourceModule, 'k8sPatch').mockResolvedValue(installPlan);
+    k8sPatchMock.mockResolvedValue(installPlan);
 
     const manualPlan = {
       ...installPlan,
@@ -304,7 +310,7 @@ describe('InstallPlanPreview', () => {
     fireEvent.click(approveButton);
 
     await waitFor(() => {
-      expect(k8sPatchSpy).toHaveBeenCalledWith(
+      expect(k8sPatchMock).toHaveBeenCalledWith(
         InstallPlanModel,
         manualPlan,
         expect.arrayContaining([

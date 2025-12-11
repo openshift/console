@@ -1,14 +1,14 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Shared submit utils Create Route should match the previous snapshot deploy image data 1`] = `
-Object {
+{
   "apiVersion": "route.openshift.io/v1",
   "kind": "Route",
-  "metadata": Object {
-    "annotations": Object {
+  "metadata": {
+    "annotations": {
       "openshift.io/generated-by": "OpenShiftWebConsole",
     },
-    "labels": Object {
+    "labels": {
       "app": "test-app",
       "app.kubernetes.io/component": "test-app",
       "app.kubernetes.io/instance": "test-app",
@@ -19,14 +19,14 @@ Object {
     "name": "test-app",
     "namespace": "mock-project",
   },
-  "spec": Object {
+  "spec": {
     "host": "",
     "path": "",
-    "port": Object {
+    "port": {
       "targetPort": "8080-tcp",
     },
     "tls": null,
-    "to": Object {
+    "to": {
       "kind": "Service",
       "name": "test-app",
     },
@@ -36,16 +36,16 @@ Object {
 `;
 
 exports[`Shared submit utils Create Route should match the previous snapshot with git import data 1`] = `
-Object {
+{
   "apiVersion": "route.openshift.io/v1",
   "kind": "Route",
-  "metadata": Object {
-    "annotations": Object {
+  "metadata": {
+    "annotations": {
       "app.openshift.io/vcs-ref": "",
       "app.openshift.io/vcs-uri": "https://github.com/test/repo",
       "openshift.io/generated-by": "OpenShiftWebConsole",
     },
-    "labels": Object {
+    "labels": {
       "app": "test-app",
       "app.kubernetes.io/component": "test-app",
       "app.kubernetes.io/instance": "test-app",
@@ -56,14 +56,14 @@ Object {
     "name": "test-app",
     "namespace": "mock-project",
   },
-  "spec": Object {
+  "spec": {
     "host": "",
     "path": "",
-    "port": Object {
+    "port": {
       "targetPort": "8080-tcp",
     },
     "tls": null,
-    "to": Object {
+    "to": {
       "kind": "Service",
       "name": "test-app",
     },
@@ -73,14 +73,14 @@ Object {
 `;
 
 exports[`Shared submit utils Create Service should match the previous snapshot created with deploy image data 1`] = `
-Object {
+{
   "apiVersion": "v1",
   "kind": "Service",
-  "metadata": Object {
-    "annotations": Object {
+  "metadata": {
+    "annotations": {
       "openshift.io/generated-by": "OpenShiftWebConsole",
     },
-    "labels": Object {
+    "labels": {
       "app": "test-app",
       "app.kubernetes.io/component": "test-app",
       "app.kubernetes.io/instance": "test-app",
@@ -91,9 +91,9 @@ Object {
     "name": "test-app",
     "namespace": "mock-project",
   },
-  "spec": Object {
-    "ports": Array [],
-    "selector": Object {
+  "spec": {
+    "ports": [],
+    "selector": {
       "app": "test-app",
       "deploymentconfig": "test-app",
     },
@@ -102,16 +102,16 @@ Object {
 `;
 
 exports[`Shared submit utils Create Service should match the previous snapshot created with git import data 1`] = `
-Object {
+{
   "apiVersion": "v1",
   "kind": "Service",
-  "metadata": Object {
-    "annotations": Object {
+  "metadata": {
+    "annotations": {
       "app.openshift.io/vcs-ref": "",
       "app.openshift.io/vcs-uri": "https://github.com/test/repo",
       "openshift.io/generated-by": "OpenShiftWebConsole",
     },
-    "labels": Object {
+    "labels": {
       "app": "test-app",
       "app.kubernetes.io/component": "test-app",
       "app.kubernetes.io/instance": "test-app",
@@ -122,16 +122,16 @@ Object {
     "name": "test-app",
     "namespace": "mock-project",
   },
-  "spec": Object {
-    "ports": Array [
-      Object {
+  "spec": {
+    "ports": [
+      {
         "name": "8080-tcp",
         "port": 8080,
         "protocol": "TCP",
         "targetPort": 8080,
       },
     ],
-    "selector": Object {
+    "selector": {
       "app": "test-app",
       "deploymentconfig": "test-app",
     },

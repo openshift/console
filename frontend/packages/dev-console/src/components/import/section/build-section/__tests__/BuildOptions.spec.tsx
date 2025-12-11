@@ -1,22 +1,33 @@
 import { render, screen } from '@testing-library/react';
 import { useFormikContext } from 'formik';
-import * as shipwrightHooks from '@console/dev-console/src/utils/shipwright-build-hook';
 import { useAccessReview } from '@console/internal/components/utils';
 import { useFlag } from '@console/shared';
-import { isPreferredStrategyAvailable } from '../../../../../utils/shipwright-build-hook';
+import * as shipwrightBuildHook from '../../../../../utils/shipwright-build-hook';
 import { BuildOption as NamedBuildOption } from '../BuildOptions';
-import * as BuildOption from '../BuildOptions';
+import { usePipelineAccessReview } from '../usePipelineAccessReview';
 
-const spySWClusterBuildStrategy = jest.spyOn(shipwrightHooks, 'useClusterBuildStrategy');
-const spyShipwrightBuilds = jest.spyOn(shipwrightHooks, 'useShipwrightBuilds');
+jest.mock('../../../../../utils/shipwright-build-hook', () => ({
+  isPreferredStrategyAvailable: jest.fn(() => true),
+  useClusterBuildStrategy: jest.fn(),
+  useShipwrightBuilds: jest.fn(),
+}));
+
+jest.mock('../usePipelineAccessReview', () => {
+  return {
+    usePipelineAccessReview: jest.fn(),
+  };
+});
+
+const spySWClusterBuildStrategy = shipwrightBuildHook.useClusterBuildStrategy as jest.Mock;
+const spyShipwrightBuilds = shipwrightBuildHook.useShipwrightBuilds as jest.Mock;
 
 const spyUseFlag = useFlag as jest.Mock;
-const spyUsePipelineAccessReview = jest.spyOn(BuildOption, 'usePipelineAccessReview');
+const spyUsePipelineAccessReview = usePipelineAccessReview as jest.Mock;
 
 jest.mock('@console/shared', () => ({
   SingleDropdownField: (props) => `SingleDropdownField options=${JSON.stringify(props.options)}`,
   SelectInputOption: {},
-  useFlag: jest.fn(),
+  useFlag: jest.fn<boolean, []>(),
 }));
 
 jest.mock('@console/internal/components/utils', () => ({
@@ -48,12 +59,6 @@ jest.mock('@console/git-service/src/types', () => ({
 
 jest.mock('../../../../../const', () => ({
   FLAG_OPENSHIFT_BUILDCONFIG: 'OPENSHIFT_BUILDCONFIG',
-}));
-
-jest.mock('../../../../../utils/shipwright-build-hook', () => ({
-  isPreferredStrategyAvailable: jest.fn(() => true),
-  useClusterBuildStrategy: jest.fn(),
-  useShipwrightBuilds: jest.fn(),
 }));
 
 jest.mock('../../../import-types', () => ({
@@ -97,7 +102,7 @@ describe('BuildOptions', () => {
     spyUsePipelineAccessReview.mockReset();
 
     (useAccessReview as jest.Mock).mockReturnValue(true);
-    (isPreferredStrategyAvailable as jest.Mock).mockReturnValue(true);
+    (shipwrightBuildHook.isPreferredStrategyAvailable as jest.Mock).mockReturnValue(true);
   });
 
   afterEach(() => {
@@ -211,7 +216,6 @@ describe('BuildOptions', () => {
     const options = JSON.parse(optionsMatch[1]);
 
     expect(options).toHaveLength(1);
-
     // Should NOT have Shipwright
     expect(options.some((option) => option.value === 'SHIPWRIGHT_BUILD')).toBe(false);
 

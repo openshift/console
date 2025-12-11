@@ -163,8 +163,11 @@ describe('CreateSubscriptionYAML', () => {
       pkgName: testPackageManifest.metadata.name,
     });
     jest.spyOn(Router, 'useLocation').mockReturnValue({
-      ...window.location,
+      pathname: window.location.pathname,
       search: `?pkg=${testPackageManifest.metadata.name}&catalog=ocs&catalogNamespace=default`,
+      state: null,
+      hash: '',
+      key: 'default',
     });
     mockFirehose.mockClear();
   });

@@ -23,30 +23,27 @@ const mockCallbacks = {
   actionItems: null as { actionKey: string }[] | undefined | null,
 };
 
-jest.mock('@console/shared', () => {
-  const actual = jest.requireActual('@console/shared');
-  return {
-    ...actual,
-    InputField: ({ name }: { name: string }) => `InputField ${name}`,
-    ResourceDropdownField: ({
-      onChange,
-      onLoad,
-      actionItems,
-      name,
-    }: {
-      onChange: (val: string) => void;
-      onLoad: (data: any) => void;
-      actionItems?: { actionKey: string }[];
-      name: string;
-    }) => {
-      mockCallbacks.onChange = onChange;
-      mockCallbacks.onLoad = onLoad;
-      mockCallbacks.actionItems = actionItems;
-      return `ResourceDropdownField ${name}`;
-    },
-    useFormikValidationFix: jest.fn(),
-  };
-});
+jest.mock('@console/shared', () => ({
+  ...jest.requireActual('@console/shared'),
+  InputField: ({ name }: { name: string }) => `InputField ${name}`,
+  ResourceDropdownField: ({
+    onChange,
+    onLoad,
+    actionItems,
+    name,
+  }: {
+    onChange: (val: string) => void;
+    onLoad: (data: any) => void;
+    actionItems?: { actionKey: string }[];
+    name: string;
+  }) => {
+    mockCallbacks.onChange = onChange;
+    mockCallbacks.onLoad = onLoad;
+    mockCallbacks.actionItems = actionItems;
+    return `ResourceDropdownField ${name}`;
+  },
+  useFormikValidationFix: jest.fn(),
+}));
 
 const canCreateFlags = { [FLAGS.CAN_CREATE_PROJECT]: true };
 const noFlags = {};

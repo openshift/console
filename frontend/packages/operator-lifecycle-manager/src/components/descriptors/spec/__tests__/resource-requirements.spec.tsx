@@ -11,6 +11,19 @@ import {
   ResourceRequirementsModalLink,
 } from '../resource-requirements';
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sUpdate: jest.fn(),
+}));
+
+jest.mock('@console/internal/components/factory/modal', () => ({
+  ...jest.requireActual('@console/internal/components/factory/modal'),
+  createModalLauncher: jest.fn(),
+}));
+
+const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;
+const createModalLauncherMock = modal.createModalLauncher as jest.Mock;
+
 describe('ResourceRequirementsModal', () => {
   const title = 'TestResource Resource Requests';
   const description = 'Define the resource requests for this TestResource instance.';
@@ -36,6 +49,7 @@ describe('ResourceRequirementsModal', () => {
   beforeEach(() => {
     cancel.mockClear();
     close.mockClear();
+    jest.clearAllMocks();
   });
 
   it('should render modal form with title and description', () => {
@@ -47,8 +61,7 @@ describe('ResourceRequirementsModal', () => {
   });
 
   it('should call k8sUpdate when form is submitted', async () => {
-    const k8sUpdateSpy = jest.spyOn(k8sResourceModule, 'k8sUpdate');
-    k8sUpdateSpy.mockResolvedValue({} as K8sResourceKind);
+    k8sUpdateMock.mockResolvedValue({} as K8sResourceKind);
 
     renderModal();
 
@@ -66,18 +79,16 @@ describe('ResourceRequirementsModal', () => {
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(k8sUpdateSpy).toHaveBeenCalled();
+      expect(k8sUpdateMock).toHaveBeenCalled();
     });
 
-    const [model, newObj] = k8sUpdateSpy.mock.calls[0] as [K8sKind, K8sResourceKind];
+    const [model, newObj] = k8sUpdateMock.mock.calls[0] as [K8sKind, K8sResourceKind];
     expect(model).toEqual(testModel);
     expect(newObj.spec.resources.requests).toEqual({
       cpu: '200m',
       memory: '20Mi',
       'ephemeral-storage': '50Mi',
     });
-
-    k8sUpdateSpy.mockRestore();
   });
 });
 
@@ -95,6 +106,7 @@ describe('ResourceRequirementsModalLink', () => {
         },
       },
     };
+    jest.clearAllMocks();
   });
 
   it('should render button link with resource requests', () => {
@@ -175,8 +187,7 @@ describe('ResourceRequirementsModalLink', () => {
 
   it('should open resource requirements modal when button is clicked', async () => {
     const modalSpy = jest.fn();
-    const createModalLauncherSpy = jest.spyOn(modal, 'createModalLauncher');
-    createModalLauncherSpy.mockReturnValue(modalSpy);
+    createModalLauncherMock.mockReturnValue(modalSpy);
 
     renderWithProviders(
       <ResourceRequirementsModalLink obj={obj} type="limits" path="resources" />,
@@ -208,7 +219,5 @@ describe('ResourceRequirementsModalLink', () => {
     expect(modalArgs.model).toEqual(testModel);
     expect(modalArgs.type).toEqual('limits');
     expect(modalArgs.path).toEqual('resources');
-
-    createModalLauncherSpy.mockRestore();
   });
 });
