@@ -33,7 +33,10 @@ export const secrets = {
   clickAddCredentialsButton: () => cy.byTestID('add-credentials-button').click(),
   clickRemoveEntryButton: () => cy.byTestID('remove-entry-button').first().click(),
   clickRevealValues: () => {
-    cy.byTestID('reveal-values').click();
+    cy.byTestID('reveal-values', { timeout: 30000 })
+      .should('be.visible')
+      .and('not.be.disabled')
+      .click();
   },
   clickCreateSecretDropdownButton: (secretType: string) => {
     cy.byTestID('item-create')
