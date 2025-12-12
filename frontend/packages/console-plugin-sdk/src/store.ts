@@ -24,12 +24,13 @@ export const augmentExtension = <E extends Extension>(
   });
 
 export const isExtensionInUse = (e: Extension, flags: FlagsObject): boolean =>
-  e.flags.required.every((f) => flags[f]) && e.flags.disallowed.every((f) => !flags[f]);
+  (e.flags?.required?.every((f) => flags[f]) ?? true) &&
+  (e.flags?.disallowed?.every((f) => !flags[f]) ?? true);
 
 export const getGatingFlagNames = (extensions: Extension[]): string[] =>
   _.uniq([
-    ..._.flatMap(extensions.map((e) => e.flags.required)),
-    ..._.flatMap(extensions.map((e) => e.flags.disallowed)),
+    ..._.flatMap(extensions.map((e) => e.flags?.required ?? [])),
+    ..._.flatMap(extensions.map((e) => e.flags?.disallowed ?? [])),
   ]);
 
 /**
@@ -184,7 +185,7 @@ export class PluginStore {
 
     const plugin = this.loadedDynamicPlugins.get(pluginID);
 
-    if (plugin.enabled !== enabled) {
+    if (plugin && plugin.enabled !== enabled) {
       plugin.enabled = enabled;
 
       this.updateExtensions();
