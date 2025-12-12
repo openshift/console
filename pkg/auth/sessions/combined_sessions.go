@@ -47,6 +47,21 @@ func (cs *CombinedSessionStore) AddSession(w http.ResponseWriter, r *http.Reques
 	cs.sessionLock.Lock()
 	defer cs.sessionLock.Unlock()
 
+	// Clean up old session cookies from previous pods before creating new session
+	// This prevents cookie accumulation when users are load-balanced across multiple pods
+	currentCookieName := SessionCookieName()
+	for _, cookie := range r.Cookies() {
+		// Expire any session cookies that are not for the current pod
+		if strings.HasPrefix(cookie.Name, OpenshiftAccessTokenCookieName) && cookie.Name != currentCookieName {
+			http.SetCookie(w, &http.Cookie{
+				Name:   cookie.Name,
+				Value:  cookie.Value,
+				Path:   cookie.Path,
+				MaxAge: -1,
+			})
+		}
+	}
+
 	ls, err := cs.serverStore.AddSession(tokenVerifier, token)
 	if err != nil {
 		return nil, fmt.Errorf("failed to add session to server store: %w", err)
@@ -193,10 +208,13 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 	defer cs.sessionLock.Unlock()
 
 	for _, cookie := range r.Cookies() {
-		cookie := cookie
 		if strings.HasPrefix(cookie.Name, OpenshiftAccessTokenCookieName) {
-			cookie.MaxAge = -1
-			http.SetCookie(w, cookie)
+			http.SetCookie(w, &http.Cookie{
+				Name:   cookie.Name,
+				Value:  cookie.Value,
+				Path:   cookie.Path,
+				MaxAge: -1,
+			})
 		}
 	}
 
