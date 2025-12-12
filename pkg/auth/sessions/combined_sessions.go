@@ -55,8 +55,8 @@ func (cs *CombinedSessionStore) AddSession(w http.ResponseWriter, r *http.Reques
 		if strings.HasPrefix(cookie.Name, OpenshiftAccessTokenCookieName) && cookie.Name != currentCookieName {
 			http.SetCookie(w, &http.Cookie{
 				Name:   cookie.Name,
-				Value:  cookie.Value,
-				Path:   cookie.Path,
+				Value:  "",
+				Path:   cs.clientStore.Options.Path,
 				MaxAge: -1,
 			})
 		}
@@ -211,8 +211,8 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 		if strings.HasPrefix(cookie.Name, OpenshiftAccessTokenCookieName) {
 			http.SetCookie(w, &http.Cookie{
 				Name:   cookie.Name,
-				Value:  cookie.Value,
-				Path:   cookie.Path,
+				Value:  "",
+				Path:   cs.clientStore.Options.Path,
 				MaxAge: -1,
 			})
 		}
