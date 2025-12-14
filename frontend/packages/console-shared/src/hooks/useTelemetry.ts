@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import {
   useResolvedExtensions,
   isTelemetryListener,
@@ -70,6 +70,10 @@ let clusterProperties = getClusterProperties();
 
 export const updateClusterPropertiesFromTests = () => (clusterProperties = getClusterProperties());
 
+export const clearTelemetryEventsForTests = () => {
+  telemetryEvents = [];
+};
+
 export const useTelemetry = () => {
   // TODO use usePluginInfo() hook to tell whether all dynamic plugins have been processed
   // to avoid firing telemetry events multiple times whenever a dynamic plugin loads asynchronously
@@ -85,24 +89,44 @@ export const useTelemetry = () => {
 
   const [extensions] = useResolvedExtensions<TelemetryListener>(isTelemetryListener);
 
+  // Store current values in refs so the callback can access them without being recreated
+  const extensionsRef = useRef(extensions);
+  extensionsRef.current = extensions;
+  const userPreferenceRef = useRef(currentUserPreferenceTelemetryValue);
+  userPreferenceRef.current = currentUserPreferenceTelemetryValue;
+  const userResourceRef = useRef(userResource);
+  userResourceRef.current = userResource;
+  const userResourceIsLoadedRef = useRef(userResourceIsLoaded);
+  userResourceIsLoadedRef.current = userResourceIsLoaded;
+
+  // Replay queued events when user explicitly opts in (OPT-IN cluster mode only)
   useEffect(() => {
     if (
       userIsOptedInToTelemetry(currentUserPreferenceTelemetryValue) &&
       clusterIsOptedInToTelemetry() &&
-      telemetryEvents.length > 0 &&
-      userResourceIsLoaded
+      extensions.length > 0 &&
+      userResourceIsLoaded &&
+      telemetryEvents.length > 0
     ) {
       telemetryEvents.forEach(({ eventType, event }) => {
         extensions.forEach((e) => e.properties.listener(eventType, { ...event, userResource }));
       });
       telemetryEvents = [];
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUserPreferenceTelemetryValue, userResourceIsLoaded]);
+  }, [currentUserPreferenceTelemetryValue, userResourceIsLoaded, extensions, userResource]);
 
+  // Return a stable callback that reads current values from refs
+  // This prevents consumers from re-running effects when telemetry state changes
   return useCallback<TelemetryEventListener>(
     (eventType, properties: Record<string, any>) => {
-      if (isOptedOutFromTelemetry(currentUserPreferenceTelemetryValue)) return;
+      const currentUserPreference = userPreferenceRef.current;
+      const currentExtensions = extensionsRef.current;
+      const currentUserResource = userResourceRef.current;
+      const currentUserResourceIsLoaded = userResourceIsLoadedRef.current;
+
+      if (isOptedOutFromTelemetry(currentUserPreference)) {
+        return;
+      }
 
       const event = {
         ...clusterProperties,
@@ -112,20 +136,22 @@ export const useTelemetry = () => {
       };
 
       if (
-        (clusterIsOptedInToTelemetry() && !currentUserPreferenceTelemetryValue) ||
-        !userResourceIsLoaded
+        (clusterIsOptedInToTelemetry() && !currentUserPreference) ||
+        !currentUserResourceIsLoaded
       ) {
         telemetryEvents.push({ eventType, event });
 
         if (telemetryEvents.length > 10) {
-          telemetryEvents.shift(); // Remove the first element
+          telemetryEvents.shift();
         }
 
         return;
       }
 
-      extensions.forEach((e) => e.properties.listener(eventType, { ...event, userResource }));
+      currentExtensions.forEach((e) =>
+        e.properties.listener(eventType, { ...event, userResource: currentUserResource }),
+      );
     },
-    [extensions, currentUserPreferenceTelemetryValue, userResource, userResourceIsLoaded],
+    [], // Empty deps - callback is stable, reads current values from refs
   );
 };
