@@ -27,6 +27,9 @@
     "properties": {
       "perspective": "dev",
       "tour": { "$codeRef": "getGuidedTour" }
+    },
+    "flags": {
+      "disallowed": ["INTEGRATION_TEST"]
     }
   },
 
