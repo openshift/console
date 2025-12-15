@@ -11,10 +11,19 @@
     }
   },
   {
+    "type": "console.flag",
+    "properties": {
+      "handler": { "$codeRef": "detectIntegrationTest.handler" }
+    }
+  },
+  {
     "type": "INTERNAL_DO_NOT_USE.guided-tour",
     "properties": {
       "perspective": "admin",
       "tour": { "$codeRef": "getGuidedTour" }
+    },
+    "flags": {
+      "disallowed": ["INTEGRATION_TEST"]
     }
   },
   {

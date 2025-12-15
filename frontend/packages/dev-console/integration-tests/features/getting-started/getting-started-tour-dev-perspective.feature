@@ -23,7 +23,8 @@ Feature: Getting Started tour of developer perspective
               And user clicks on "Okay, got it!" button
              Then user is in the topology view in the developer perspective
 
-        @regression
+        # Guided tour is disabled in cypress due to endless flakes
+        @regression @manual
         Scenario: Quick tour from help menu: GS-02-TC02
             Given user is at developer perspective
              When user opens help menu on top right
@@ -44,7 +45,8 @@ Feature: Getting Started tour of developer perspective
               And user clicks on the "Okay, got it!" button on the guided tour modal
              Then user is in the topology view in the developer perspective
 
-        @regression
+        # Guided tour is disabled in cypress due to endless flakes
+        @regression @manual
         Scenario: Stopping Quick tour in mid of the tour: GS-02-TC03
             Given user is in developer perspective
              When user opens help menu on top right
