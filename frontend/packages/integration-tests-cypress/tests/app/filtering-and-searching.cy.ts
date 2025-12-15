@@ -2,7 +2,6 @@ import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
-import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
@@ -13,7 +12,6 @@ describe('Filtering and Searching', () => {
 
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
     cy.visit(`/k8s/ns/${testName}/deployments`);
     listPage.clickCreateYAMLbutton();

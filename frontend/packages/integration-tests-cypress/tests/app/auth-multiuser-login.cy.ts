@@ -1,5 +1,4 @@
 import { checkErrors } from '../../support';
-import { guidedTour } from '../../views/guided-tour';
 import { masthead } from '../../views/masthead';
 import { nav } from '../../views/nav';
 
@@ -25,10 +24,8 @@ describe('Auth test', () => {
       cy.login(idp, username, passwd);
       cy.url().should('include', Cypress.config('baseUrl'));
 
-      // test Developer perspective is default for test user and guided tour is displayed
+      // test Developer perspective is default for test user
       // Below line to be uncommented after pr https://github.com/openshift/console-operator/pull/954 is merged
-      guidedTour.isOpen();
-      guidedTour.close();
       masthead.username.shouldHaveText(username);
 
       cy.log('switches from dev to admin perspective');
@@ -72,8 +69,6 @@ describe('Auth test', () => {
     if (!Cypress.config('baseUrl').includes('localhost')) {
       // nav.sidenav.switcher.changePerspectiveTo('Developer');
       // nav.sidenav.switcher.shouldHaveText('Developer');
-      guidedTour.isOpen();
-      guidedTour.close();
       nav.sidenav.switcher.changePerspectiveTo('Core platform');
       nav.sidenav.switcher.shouldHaveText('Core platform');
     }

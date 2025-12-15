@@ -1,12 +1,10 @@
 import { checkErrors } from '../../support';
 import { isLocalDevEnvironment } from '../../views/common';
 import { refreshWebConsoleLink } from '../../views/form';
-import { guidedTour } from '../../views/guided-tour';
 
 describe('Cluster dashboard', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
   });
 
   beforeEach(() => {

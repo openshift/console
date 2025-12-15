@@ -1,14 +1,12 @@
 import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { checkErrors } from '../../support';
 import { detailsPage } from '../../views/details-page';
-import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { nav } from '../../views/nav';
 
 describe('Visiting other routes', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
   });
 
   afterEach(() => {
@@ -134,14 +132,12 @@ describe('Visiting other routes', () => {
 describe('Test perspective query parameters', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
   });
 
   beforeEach(() => {
     cy.initAdmin();
     cy.visit('/k8s/cluster/projects');
     listPage.dvRows.shouldBeLoaded();
-    guidedTour.close();
     checkDeveloperPerspective();
   });
 
@@ -157,12 +153,10 @@ describe('Test perspective query parameters', () => {
       },
     });
     nav.sidenav.switcher.shouldHaveText('Developer');
-    guidedTour.close();
   });
   it('tests Administrator query parameter', () => {
     nav.sidenav.switcher.changePerspectiveTo('Developer');
     nav.sidenav.switcher.shouldHaveText('Developer');
-    guidedTour.close();
     cy.visit('/dashboards', {
       qs: {
         perspective: 'admin',

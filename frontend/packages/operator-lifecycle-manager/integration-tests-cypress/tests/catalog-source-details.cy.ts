@@ -1,4 +1,3 @@
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { checkErrors, create, testName } from '../../../integration-tests-cypress/support';
 import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
 import { modal } from '../../../integration-tests-cypress/views/modal';
@@ -13,7 +12,6 @@ const managedCatalogSource = {
 describe(`Interacting with CatalogSource page`, () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
     create(testCatalogSource);
   });

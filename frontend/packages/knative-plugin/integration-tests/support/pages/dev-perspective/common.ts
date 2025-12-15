@@ -1,4 +1,3 @@
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { app } from '@console/dev-console/integration-tests/support/pages';
 
 export const userLoginPage = {
@@ -16,6 +15,5 @@ export const userLoginPage = {
     const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
     cy.login(idp, username, password);
     app.waitForLoad();
-    guidedTour.close();
   },
 };
