@@ -35,7 +35,7 @@ TRANSCRIPT_PATH=$(echo "$CLAUDE_DATA" | python3 -c "import sys, json; data = jso
 WORK_CONTEXT_FILE=~/.claude/work-context.md
 if [ -f "$WORK_CONTEXT_FILE" ]; then
     # Check if this session_id was already captured
-    LAST_CAPTURED_SESSION=$(grep "^**Last Captured Session**:" "$WORK_CONTEXT_FILE" | head -1 | sed 's/^**Last Captured Session**: //')
+    LAST_CAPTURED_SESSION=$(grep "^**Last Captured Session**:" "$WORK_CONTEXT_FILE" | head -1 | sed 's/^\*\*Last Captured Session\*\*: //')
 
     if [ "$LAST_CAPTURED_SESSION" = "$SESSION_ID" ]; then
         # Context already captured during /do session, no need for pending file
