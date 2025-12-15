@@ -1,9 +1,11 @@
-import { useMemo, useCallback, Suspense } from 'react';
+import { useMemo, useCallback, Suspense, useState, useEffect } from 'react';
 import * as _ from 'lodash';
 import i18next, { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  Alert,
+  AlertActionCloseButton,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
@@ -75,6 +77,30 @@ const tableColumnInfo = [
   { id: 'storageClass' },
   { id: '' },
 ];
+
+/**
+ * Determines the VAC (VolumeAttributesClass) modification state for a PVC
+ * @param pvc - The PersistentVolumeClaim resource
+ * @returns Object containing error condition and pending state
+ */
+const getVACAlertState = (pvc: PersistentVolumeClaimKind) => {
+  const volumeAttributesClassName = pvc?.spec?.volumeAttributesClassName;
+  const currentVolumeAttributesClassName = pvc?.status?.currentVolumeAttributesClassName;
+  const conditions = pvc?.status?.conditions;
+
+  // Check for explicit ModifyVolumeError condition
+  const hasVacErrorCondition = conditions?.some(
+    (condition) => condition.type === 'ModifyVolumeError' && condition.status === 'True',
+  );
+
+  // Determine if modification is pending
+  const isVacPending =
+    !hasVacErrorCondition &&
+    volumeAttributesClassName &&
+    volumeAttributesClassName !== currentVolumeAttributesClassName;
+
+  return { hasVacErrorCondition, isVacPending };
+};
 
 export const PVCStatusComponent: React.FCC<PVCStatusProps> = ({ pvc }) => {
   const { t } = useTranslation();
@@ -249,6 +275,16 @@ const PVCDetails: React.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
   const volumeMode = pvc?.spec?.volumeMode;
   const conditions = pvc?.status?.conditions;
 
+  // State to track dismissed alerts
+  const [isErrorAlertDismissed, setIsErrorAlertDismissed] = useState(false);
+  const [isInfoAlertDismissed, setIsInfoAlertDismissed] = useState(false);
+
+  // Reset alert dismiss states when PVC changes
+  useEffect(() => {
+    setIsErrorAlertDismissed(false);
+    setIsInfoAlertDismissed(false);
+  }, [pvc?.metadata?.uid]);
+
   const query =
     name && namespace
       ? `kubelet_volume_stats_used_bytes{persistentvolumeclaim='${name}',namespace='${namespace}'}`
@@ -288,10 +324,51 @@ const PVCDetails: React.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
     ({ properties: { alert: AlertComponent }, uid }) => <AlertComponent key={uid} pvc={pvc} />,
   );
 
+  // Get VAC modification state using helper function
+  const { hasVacErrorCondition, isVacPending } = getVACAlertState(pvc);
+
   return (
     <>
       <PaneBody>
         {alertComponents}
+        {isVACSupported && hasVacErrorCondition && !isErrorAlertDismissed && (
+          <Alert
+            isInline
+            variant="danger"
+            title={t('public~VolumeAttributesClass modification failed')}
+            className="co-alert co-alert--margin-bottom-sm"
+            actionClose={<AlertActionCloseButton onClose={() => setIsErrorAlertDismissed(true)} />}
+          >
+            {t(
+              'public~VolumeAttributesClass modification failed. Your volume settings could not be updated. Please try again.',
+            )}
+          </Alert>
+        )}
+        {isVACSupported && isVacPending && !isInfoAlertDismissed && (
+          <Alert
+            isInline
+            variant="info"
+            title={
+              volumeAttributesClassName && !currentVolumeAttributesClassName
+                ? t('public~VolumeAttributesClass application pending')
+                : t('public~VolumeAttributesClass modification in progress')
+            }
+            className="co-alert co-alert--margin-bottom-sm"
+            actionClose={<AlertActionCloseButton onClose={() => setIsInfoAlertDismissed(true)} />}
+          >
+            {!currentVolumeAttributesClassName
+              ? t('public~VolumeAttributesClass "{{target}}" is pending application.', {
+                  target: volumeAttributesClassName,
+                })
+              : t(
+                  'public~Your volume settings are being updated from "{{current}}" to "{{target}}". This may take a few moments.',
+                  {
+                    current: currentVolumeAttributesClassName,
+                    target: volumeAttributesClassName,
+                  },
+                )}
+          </Alert>
+        )}
         <SectionHeading text={t('public~PersistentVolumeClaim details')} />
         {totalCapacityMetric && !loading && (
           <div className="co-pvc-donut">
@@ -383,19 +460,34 @@ const PVCDetails: React.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
                   )}
                 </DescriptionListDescription>
               </DescriptionListGroup>
-              {isVACSupported &&
-                !!volumeAttributesClassName &&
-                volumeAttributesClassName === currentVolumeAttributesClassName && (
-                  <DescriptionListGroup>
-                    <DescriptionListTerm>{t('public~VolumeAttributesClass')}</DescriptionListTerm>
-                    <DescriptionListDescription>
+              {isVACSupported && volumeAttributesClassName !== currentVolumeAttributesClassName && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>
+                    {t('public~Requested VolumeAttributesClass')}
+                  </DescriptionListTerm>
+                  <DescriptionListDescription data-test-id="pvc-requested-vac">
+                    {volumeAttributesClassName ? (
                       <ResourceLink
                         kind={referenceFor(VolumeAttributesClassModel)}
                         name={volumeAttributesClassName}
                       />
-                    </DescriptionListDescription>
-                  </DescriptionListGroup>
-                )}
+                    ) : (
+                      DASH
+                    )}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {isVACSupported && !!currentVolumeAttributesClassName && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('public~VolumeAttributesClass')}</DescriptionListTerm>
+                  <DescriptionListDescription data-test-id="pvc-current-vac">
+                    <ResourceLink
+                      kind={referenceFor(VolumeAttributesClassModel)}
+                      name={currentVolumeAttributesClassName}
+                    />
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
               {volumeName && canListPV && (
                 <DescriptionListGroup>
                   <DescriptionListTerm>{t('public~PersistentVolumes')}</DescriptionListTerm>
