@@ -1,5 +1,4 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
 import { devNavigationMenu, addOptions, pageTitle } from '../../constants';
 import { formPO, topologyPO } from '../../pageObjects';
@@ -7,7 +6,6 @@ import { addPage, gitPage } from '../add-flow';
 import { createForm, navigateTo } from '../app';
 
 export const selectImportFromGitQuickCreate = () => {
-  guidedTour.close();
   cy.get('[data-test="quick-create-dropdown"]').click();
   cy.get('[data-test="qc-import-from-git"] [role="menuitem"]')
     .should('be.visible')

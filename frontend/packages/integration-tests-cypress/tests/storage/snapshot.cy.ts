@@ -2,7 +2,6 @@ import { PVC, testerDeployment, SnapshotClass, patchForVolume } from '../../mock
 import { testName, checkErrors } from '../../support';
 import { resourceStatusShouldContain } from '../../views/common';
 import { detailsPage, DetailsPageSelector } from '../../views/details-page';
-import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
@@ -15,7 +14,6 @@ if (Cypress.env('BRIDGE_AWS')) {
   describe('Snapshot Tests', () => {
     before(() => {
       cy.login();
-      guidedTour.close();
       cy.createProjectWithCLI(testName);
       cy.exec(`echo '${JSON.stringify(PVC)}' | oc apply -n ${testName} -f -`);
       cy.exec(`echo '${JSON.stringify(testerDeployment)}' | oc apply -n ${testName} -f -`);

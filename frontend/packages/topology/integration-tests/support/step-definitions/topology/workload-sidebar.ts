@@ -1,5 +1,4 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import {
   devNavigationMenu,
   switchPerspective,
@@ -175,7 +174,6 @@ Then('user can see traffic details for pod', () => {
   cy.wait(20000);
   cy.reload(true);
   app.waitForLoad();
-  guidedTour.close();
   cy.get(topologyPO.sidePane.resourcesTab.waitingPods, { timeout: 100000 }).should('not.exist');
   perspective.switchTo(switchPerspective.Administrator);
   perspective.switchTo(switchPerspective.Developer);

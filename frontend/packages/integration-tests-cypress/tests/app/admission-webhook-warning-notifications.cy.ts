@@ -1,6 +1,5 @@
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
-import { guidedTour } from '../../views/guided-tour';
 import * as yamlEditor from '../../views/yaml-editor';
 
 const POD_NAME = 'pod1';
@@ -68,7 +67,7 @@ spec:
         capabilities:
           drop:
             - ALL
----           
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -107,7 +106,6 @@ spec:
 describe('Admission Webhook warning notification', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

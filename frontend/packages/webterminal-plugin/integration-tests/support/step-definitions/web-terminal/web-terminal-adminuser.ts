@@ -1,5 +1,4 @@
 import { Given, When, Then, And } from 'cypress-cucumber-preprocessor/steps';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import {
   switchPerspective,
   devWorkspaceStatuses,
@@ -21,7 +20,6 @@ import { webTerminalPage } from '../pages/web-terminal/webTerminal-page';
 
 Given('user has logged in', () => {
   cy.login();
-  guidedTour.close();
 });
 
 Given('user has closed existing terminal workspace', () => {

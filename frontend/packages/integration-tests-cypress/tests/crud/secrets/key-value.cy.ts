@@ -2,7 +2,6 @@ import 'cypress-file-upload';
 
 import { checkErrors, testName } from '../../../support';
 import { detailsPage } from '../../../views/details-page';
-import { guidedTour } from '../../../views/guided-tour';
 import { listPage } from '../../../views/list-page';
 import { nav } from '../../../views/nav';
 import { secrets } from '../../../views/secret';
@@ -34,7 +33,6 @@ describe('Create key/value secrets', () => {
 
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

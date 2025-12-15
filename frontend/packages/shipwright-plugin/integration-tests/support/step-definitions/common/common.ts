@@ -1,6 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
@@ -25,7 +24,6 @@ Given('user has logged in as a basic user', () => {
   const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
   cy.login(idp, username, password);
   app.waitForLoad();
-  guidedTour.close();
 });
 
 Given('user is at developer perspective', () => {
@@ -33,7 +31,6 @@ Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
   // Due to bug ODC-6231
   // cy.testA11y('Developer perspective with guide tour modal');
-  guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   // Commenting below line, because it is executing on every test scenario - we will remove this in future releases
   // cy.testA11y('Developer perspective');
@@ -78,7 +75,6 @@ Given('user is at namespace {string}', (projectName: string) => {
 
 When('user switches to developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  guidedTour.close();
 });
 
 When('user selects {string} option from Actions menu', (option: string) => {

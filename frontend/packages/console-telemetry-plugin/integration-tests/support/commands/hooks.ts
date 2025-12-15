@@ -1,10 +1,7 @@
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
-
 /* eslint-disable no-console, promise/catch-or-return */
 before(() => {
   cy.login();
   cy.document().its('readyState').should('eq', 'complete');
-  guidedTour.close();
 });
 
 after(() => {

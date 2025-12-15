@@ -1,7 +1,4 @@
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
-
 export const checkDeveloperPerspective = () => {
-  guidedTour.close();
   cy.get('body').then(($body) => {
     cy.byLegacyTestID('perspective-switcher-toggle').then(($switcher) => {
       // switcher is present
@@ -32,7 +29,5 @@ export const checkDeveloperPerspective = () => {
       cy.document().its('readyState').should('eq', 'complete');
       cy.log('perspective switcher menu refreshed');
     });
-
-    guidedTour.close();
   });
 };
