@@ -1,5 +1,4 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
@@ -53,7 +52,6 @@ export const perspective = {
     nav.sidenav.switcher.changePerspectiveTo(perspectiveName);
     app.waitForLoad();
     if (perspectiveName === switchPerspective.Developer) {
-      guidedTour.close();
       // Commenting below line, because due to this pipeline runs feature file is failing
       // cy.testA11y('Developer perspective');
     }

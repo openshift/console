@@ -1,6 +1,5 @@
 import { checkErrors } from '../../support';
 import { detailsPage } from '../../views/details-page';
-import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import {
   isImportLoaded,
@@ -30,7 +29,6 @@ describe('YAML Editor Settings', () => {
   before(() => {
     cy.login();
     cy.visit('/k8s/ns/default/import');
-    guidedTour.close();
   });
 
   beforeEach(() => {

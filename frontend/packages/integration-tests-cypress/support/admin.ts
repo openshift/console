@@ -1,4 +1,3 @@
-import { guidedTour } from '../views/guided-tour';
 import { nav } from '../views/nav';
 
 declare global {
@@ -19,7 +18,6 @@ Cypress.Commands.add('initAdmin', () => {
   cy.log('ensure perspective switcher is set to Core platform');
   nav.sidenav.switcher.changePerspectiveTo('Core platform');
   nav.sidenav.switcher.shouldHaveText('Core platform');
-  guidedTour.close();
 });
 
 Cypress.Commands.add('initDeveloper', () => {
@@ -28,10 +26,8 @@ Cypress.Commands.add('initDeveloper', () => {
   cy.byTestID('loading-indicator').should('not.exist');
   cy.document().its('readyState').should('eq', 'complete');
   cy.log('ensure perspective switcher is set to Developer');
-  guidedTour.close();
   nav.sidenav.switcher.changePerspectiveTo('Developer');
   cy.log('switched perspective to Developer');
   nav.sidenav.switcher.shouldHaveText('Developer');
   cy.log('Developer perspective confirmed ');
-  guidedTour.close();
 });

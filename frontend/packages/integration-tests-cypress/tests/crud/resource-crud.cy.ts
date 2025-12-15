@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import { testName, editKind, deleteKind, checkErrors } from '../../support';
 import { projectDropdown } from '../../views/common';
 import { detailsPage, DetailsPageSelector } from '../../views/details-page';
-import { guidedTour } from '../../views/guided-tour';
 import { listPage, ListPageSelector } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
@@ -20,7 +19,6 @@ type TestDefinition = {
 describe('Kubernetes resource CRUD operations', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

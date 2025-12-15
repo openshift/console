@@ -1,5 +1,4 @@
 import { projectDropdown } from '@console/cypress-integration-tests/views/common';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { nav } from '../../../integration-tests-cypress/views/nav';
 import { GlobalInstalledNamespace, operator, TestOperandProps } from '../views/operator.view';
@@ -21,7 +20,6 @@ const testOperand: TestOperandProps = {
 describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

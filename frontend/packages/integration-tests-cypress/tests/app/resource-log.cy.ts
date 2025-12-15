@@ -1,6 +1,5 @@
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
-import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { logs } from '../../views/logs';
 
@@ -11,7 +10,6 @@ describe('Pod log viewer tab', () => {
   const podAnnoFilename = 'pod-with-wrap-annotation.yaml';
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

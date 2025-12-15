@@ -1,5 +1,4 @@
 import { catalog } from '../../views/catalogs';
-import { guidedTour } from '../../views/guided-tour';
 
 describe('template feature', () => {
   before(() => {
@@ -8,7 +7,6 @@ describe('template feature', () => {
       expect(result.stdout).to.include('created');
     });
     cy.login();
-    guidedTour.close();
   });
 
   after(() => {
