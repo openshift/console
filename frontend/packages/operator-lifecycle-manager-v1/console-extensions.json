@@ -101,5 +101,21 @@
     "flags": {
       "required": ["TECH_PREVIEW"]
     }
+  },
+  {
+    "type": "console.resource/create",
+    "properties": {
+      "model": {
+        "group": "olm.operatorframework.io",
+        "version": "v1",
+        "kind": "ClusterExtension"
+      },
+      "component": {
+        "$codeRef": "CreateClusterExtension"
+      }
+    },
+    "flags": {
+      "required": ["CLUSTER_EXTENSION_API"]
+    }
   }
 ]
