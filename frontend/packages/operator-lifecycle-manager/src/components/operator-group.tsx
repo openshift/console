@@ -138,6 +138,8 @@ export const isSingle = (obj: OperatorGroupKind) =>
 /**
  * Determines if a given Operator package has a `Subscription` that makes it available in the given namespace.
  * Finds any `Subscriptions` for the given package, matches them to their `OperatorGroup`, and checks if the `OperatorGroup` is targeting the given namespace or if it is global.
+ *
+ * @param ns - Target namespace. If empty string (default, used in All Projects view), matches any installed operator.
  */
 export const subscriptionFor = (allSubscriptions: SubscriptionKind[] = []) => (
   allGroups: OperatorGroupKind[] = [],
@@ -153,7 +155,7 @@ export const subscriptionFor = (allSubscriptions: SubscriptionKind[] = []) => (
       allGroups.some(
         (og) =>
           og.metadata.namespace === sub.metadata.namespace &&
-          (isGlobal(og) || og.status?.namespaces?.includes(ns)),
+          (isGlobal(og) || ns === '' || og.status?.namespaces?.includes(ns)),
       ),
     );
 };
