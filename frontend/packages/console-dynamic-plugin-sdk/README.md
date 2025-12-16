@@ -216,6 +216,11 @@ This section documents notable changes in Console provided shared modules and ot
 - Removed `co-external-link` styling. Use PatternFly Buttons with `variant="link"` instead.
 - Removed `co-disabled` styling.
 
+#### Console 4.22.X
+
+- Upgraded from `react-redux` v7 to v8. Plugins must use `react-redux` v8 to be compatible
+  with Console.
+
 ### PatternFly 5+ dynamic modules
 
 Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package include support for automatic
