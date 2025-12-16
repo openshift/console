@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { Action, getImpersonate } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -8,7 +7,8 @@ import * as UIActions from '@console/internal/actions/ui';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { GroupModel } from '@console/internal/models';
 import { GroupKind } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import AddGroupUsersModal from '../../components/modals/add-group-users-modal';
 
 /**
@@ -16,10 +16,10 @@ import AddGroupUsersModal from '../../components/modals/add-group-users-modal';
  */
 export const useGroupActions = (obj: GroupKind): Action[] => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const navigate = useNavigate();
   const launchOverlay = useOverlay();
-  const impersonate = useSelector((state: RootState) => getImpersonate(state));
+  const impersonate = useConsoleSelector((state) => getImpersonate(state));
 
   const startImpersonate = useCallback(
     (kind: string, name: string) => dispatch(UIActions.startImpersonate(kind, name)),

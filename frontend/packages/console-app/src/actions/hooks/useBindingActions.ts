@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { Action, K8sVerb } from '@console/dynamic-plugin-sdk';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
@@ -14,6 +13,7 @@ import {
   ClusterRoleBindingKind,
   referenceFor,
 } from '@console/internal/module/k8s';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { BindingActionCreator, CommonActionCreator } from './types';
@@ -37,7 +37,7 @@ export const useBindingActions = (
 ): Action[] => {
   const { t } = useTranslation();
   const [model] = useK8sModel(referenceFor(obj));
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const startImpersonate = useCallback(
     (kind, name) => dispatch(UIActions.startImpersonate(kind, name)),
     [dispatch],
