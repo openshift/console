@@ -23,13 +23,11 @@
  */
 
 import { checkErrors } from '../../support';
-import { guidedTour } from '../../views/guided-tour';
 
 /* eslint-disable cypress/no-unnecessary-waiting */
 describe('Impersonation Smoke Tests', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.visit('/');
   });
 

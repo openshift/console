@@ -19,7 +19,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 
 import { checkErrors } from '../../support';
-import { guidedTour } from '../../views/guided-tour';
 import { nav } from '../../views/nav';
 
 describe('Multi-Group Impersonation RBAC E2E', () => {
@@ -34,7 +33,6 @@ describe('Multi-Group Impersonation RBAC E2E', () => {
 
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.visit('/');
 
     // Create test resources via kubectl/oc commands
