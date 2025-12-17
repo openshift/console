@@ -26,42 +26,46 @@ export const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
   yup.object().shape({
     webhook: yup
       .object()
-      .when('gitProvider', {
-        is: GitProvider.BITBUCKET,
-        then: yup.object().shape({
-          user: yup
-            .string()
-            .matches(nameRegex, {
-              message: t(
-                'devconsole~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
-              ),
-              excludeEmptyString: true,
+      .when('gitProvider', ([gitProvider], schema) =>
+        gitProvider === GitProvider.BITBUCKET
+          ? schema.shape({
+              user: yup
+                .string()
+                .matches(nameRegex, {
+                  message: t(
+                    'devconsole~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+                  ),
+                  excludeEmptyString: true,
+                })
+                .required(t('devconsole~Required')),
             })
-            .required(t('devconsole~Required')),
-        }),
-      })
-      .when(['method', 'gitProvider', 'gitUrl'], {
-        is: (method, gitProvider, gitUrl) =>
-          gitUrl &&
-          gitProvider &&
-          !(gitProvider === GitProvider.GITHUB && method === GitProvider.GITHUB),
-        then: yup.object().shape({
-          token: yup.string().test('oneOfRequired', t('devconsole~Required'), function () {
-            return this.parent.token || this.parent.secretRef;
-          }),
-          secretRef: yup.string().test('oneOfRequired', t('devconsole~Required'), function () {
-            return this.parent.token || this.parent.secretRef;
-          }),
-        }),
-      }),
+          : schema,
+      )
+      .when(['method', 'gitProvider', 'gitUrl'], ([method, gitProvider, gitUrl], schema) =>
+        gitUrl &&
+        gitProvider &&
+        !(gitProvider === GitProvider.GITHUB && method === GitProvider.GITHUB)
+          ? schema.shape({
+              token: yup.string().test('oneOfRequired', t('devconsole~Required'), function () {
+                return this.parent.token || this.parent.secretRef;
+              }),
+              secretRef: yup.string().test('oneOfRequired', t('devconsole~Required'), function () {
+                return this.parent.token || this.parent.secretRef;
+              }),
+            })
+          : schema,
+      ),
   });
 
 export const importFlowRepositoryValidationSchema = (t: TFunction) => {
   return yup.object().shape({
-    repository: yup.object().when(['pipelineType', 'pipelineEnabled'], {
-      is: (pipelineType, pipelineEnabled) => pipelineType === PipelineType.PAC && pipelineEnabled,
-      then: pipelinesAccessTokenValidationSchema(t),
-    }),
+    repository: yup
+      .object()
+      .when(['pipelineType', 'pipelineEnabled'], ([pipelineType, pipelineEnabled], schema) =>
+        pipelineType === PipelineType.PAC && pipelineEnabled
+          ? pipelinesAccessTokenValidationSchema(t)
+          : schema,
+      ),
   });
 };
 
