@@ -7,12 +7,14 @@ import {
   CatalogItemType,
   CatalogItemMetadataProvider,
   CatalogItemTypeMetadata,
+  CatalogAlert,
   isCatalogItemFilter,
   isCatalogItemProvider,
   isCatalogItemType,
   isCatalogItemTypeMetadata,
   isCatalogItemMetadataProvider,
   isCatalogCategoriesProvider,
+  isCatalogAlert,
   CatalogCategoriesProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 
@@ -25,6 +27,7 @@ const useCatalogExtensions = (
   ResolvedExtension<CatalogItemFilter>[],
   ResolvedExtension<CatalogItemMetadataProvider>[],
   ResolvedExtension<CatalogCategoriesProvider>[],
+  ResolvedExtension<CatalogAlert>[],
   boolean,
 ] => {
   const [itemTypeExtensions, itemTypesResolved] = useResolvedExtensions<CatalogItemType>(
@@ -134,18 +137,40 @@ const useCatalogExtensions = (
     ? metadataProviderExtensions.filter((e) => e.properties.type === catalogType)
     : metadataProviderExtensions;
 
+  const [alertExtensions, alertsResolved] = useResolvedExtensions<CatalogAlert>(
+    useCallback(
+      (e): e is CatalogAlert =>
+        isCatalogAlert(e) &&
+        (!e.properties.catalogId || e.properties.catalogId === catalogId) &&
+        (!e.properties.type || e.properties.type === catalogType),
+      [catalogId, catalogType],
+    ),
+  );
+
+  const sortedAlertExtensions = useMemo(() => {
+    const sorted = [...alertExtensions];
+    sorted.sort((a, b) => {
+      const p1 = a.properties.priority ?? 0;
+      const p2 = b.properties.priority ?? 0;
+      return p2 - p1; // Higher priority first
+    });
+    return sorted;
+  }, [alertExtensions]);
+
   return [
     catalogTypeExtensions,
     catalogProviderExtensions,
     catalogFilterExtensions,
     catalogMetadataProviderExtensions,
     categoryProviderExtensions,
+    sortedAlertExtensions,
     providersResolved &&
       filtersResolved &&
       itemTypesResolved &&
       itemTypeMetadataResolved &&
       metadataProvidersResolved &&
-      categoryProvidersResolved,
+      categoryProvidersResolved &&
+      alertsResolved,
   ];
 };
 
