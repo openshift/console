@@ -28,7 +28,7 @@ describe('Topology Utils', () => {
     jest.clearAllMocks();
   });
 
-  it('should create topology visual connector', async (done) => {
+  it('should create topology visual connector', async () => {
     const source = (topologyDataModel.nodes[0] as OdcNodeModel).resource;
     const target = (topologyDataModel.nodes[1] as OdcNodeModel).resource;
     await createTopologyResourceConnection(source, target, null).catch(() => {
@@ -51,7 +51,6 @@ describe('Topology Utils', () => {
     };
 
     expect(patchData[0]).toEqual(expectedPatchData);
-    done();
   });
 
   it('should return topology resource object', () => {

@@ -48,7 +48,7 @@ describe('Upload Jar Submit Utils', () => {
       jest.clearAllMocks();
     });
 
-    it('should set annotations for triggers while creating deployment', async (done) => {
+    it('should set annotations for triggers while creating deployment', async () => {
       const returnValue = await createOrUpdateDeployment(
         uploadJarMockFormData,
         buildImage.obj,
@@ -66,10 +66,9 @@ describe('Upload Jar Submit Utils', () => {
           paused: false,
         },
       ]);
-      done();
     });
 
-    it('should assign limits on creating Deployment', async (done) => {
+    it('should assign limits on creating Deployment', async () => {
       const data = _.cloneDeep(uploadJarMockFormData);
       data.limits = {
         cpu: {
@@ -95,7 +94,6 @@ describe('Upload Jar Submit Utils', () => {
         limits: { cpu: '10m', memory: '200Mi' },
         requests: { cpu: '5m', memory: '100Mi' },
       });
-      done();
     });
   });
 
@@ -114,7 +112,7 @@ describe('Upload Jar Submit Utils', () => {
     // Jest 30 no longer supports cleanly mocking modules using jest.spyOn.
     // TODO: Refactor upload-jar-submit-utils to not be a big file so we can mock it again.
     // https://issues.redhat.com/browse/CONSOLE-4991
-    xit('should call createDeployment when resource is Kubernetes', async (done) => {
+    xit('should call createDeployment when resource is Kubernetes', async () => {
       const mockData = _.cloneDeep(uploadJarMockFormData);
       mockData.resources = Resources.Kubernetes;
 
@@ -129,13 +127,12 @@ describe('Upload Jar Submit Utils', () => {
         ServiceModel.kind,
         RouteModel.kind,
       ]);
-      done();
     });
 
     // Jest 30 no longer supports cleanly mocking modules using jest.spyOn.
     // TODO: Refactor upload-jar-submit-utils to not be a big file so we can mock it again.
     // https://issues.redhat.com/browse/CONSOLE-4991
-    xit('should call createDeploymentConfig when resource is OpenShift', async (done) => {
+    xit('should call createDeploymentConfig when resource is OpenShift', async () => {
       const mockData = _.cloneDeep(uploadJarMockFormData);
       mockData.resources = Resources.OpenShift;
 
@@ -150,10 +147,9 @@ describe('Upload Jar Submit Utils', () => {
         ServiceModel.kind,
         RouteModel.kind,
       ]);
-      done();
     });
 
-    it('should call Knative when creating Resources when resource is Knative', async (done) => {
+    it('should call Knative when creating Resources when resource is Knative', async () => {
       const mockData = _.cloneDeep(uploadJarMockFormData);
       mockData.resources = Resources.KnativeService;
       createOrUpdateImageStreamMock.mockImplementation(() => ({
@@ -172,7 +168,6 @@ describe('Upload Jar Submit Utils', () => {
       expect(returnValue).toHaveLength(4);
       const models = returnValue.map((data) => _.get(data, 'model.kind'));
       expect(models).toContain(BuildConfigModel.kind);
-      done();
     });
   });
 });

@@ -89,7 +89,7 @@ describe('Import Submit Utils', () => {
       jest.clearAllMocks();
     });
 
-    it('should set annotations for triggers while creating deployment', async (done) => {
+    it('should set annotations for triggers while creating deployment', async () => {
       const returnValue = await createOrUpdateDeployment(defaultData, buildImage.obj, false);
       const annotations = _.get(returnValue, 'data.metadata.annotations');
       expect(JSON.parse(annotations['image.openshift.io/triggers'])).toEqual([
@@ -103,10 +103,9 @@ describe('Import Submit Utils', () => {
           paused: false,
         },
       ]);
-      done();
     });
 
-    it('should assign limits on creating Deployment', async (done) => {
+    it('should assign limits on creating Deployment', async () => {
       const data = _.cloneDeep(defaultData);
       data.limits = {
         cpu: {
@@ -132,7 +131,6 @@ describe('Import Submit Utils', () => {
         limits: { cpu: '10m', memory: '200Mi' },
         requests: { cpu: '5m', memory: '100Mi' },
       });
-      done();
     });
   });
 
@@ -147,7 +145,7 @@ describe('Import Submit Utils', () => {
       jest.clearAllMocks();
     });
 
-    it('should call createDeployment when resource is Kubernetes', async (done) => {
+    it('should call createDeployment when resource is Kubernetes', async () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
 
@@ -163,10 +161,9 @@ describe('Import Submit Utils', () => {
         ServiceModel.kind,
         RouteModel.kind,
       ]);
-      done();
     });
 
-    it('should not createDeploymentConfig when resource is OpenShift', async (done) => {
+    it('should not createDeploymentConfig when resource is OpenShift', async () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.OpenShift;
 
@@ -182,13 +179,12 @@ describe('Import Submit Utils', () => {
         ServiceModel.kind,
         RouteModel.kind,
       ]);
-      done();
     });
 
     // Jest 30 no longer supports cleanly mocking modules using jest.spyOn.
     // TODO: Refactor import-submit-utils to not be a big file so we can mock it again.
     // https://issues.redhat.com/browse/CONSOLE-4991
-    xit('should call KNative when creating Resources when resource is KNative', async (done) => {
+    xit('should call KNative when creating Resources when resource is KNative', async () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.KnativeService;
 
@@ -218,7 +214,6 @@ describe('Import Submit Utils', () => {
         SecretModel.kind,
         SecretModel.kind,
       ]);
-      done();
     });
   });
 
@@ -234,7 +229,7 @@ describe('Import Submit Utils', () => {
       jest.clearAllMocks();
     });
 
-    it('should create pipeline resources if pipeline is enabled and template is present', async (done) => {
+    it('should create pipeline resources if pipeline is enabled and template is present', async () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.pipeline.enabled = true;
 
@@ -270,10 +265,9 @@ describe('Import Submit Utils', () => {
       );
       expect(createPipelineRunForImportFlowMock).toHaveBeenCalledTimes(1);
       expect(createTriggerMock).toHaveBeenCalledTimes(1);
-      done();
     });
 
-    it('should create pipeline resource with same name as application name', async (done) => {
+    it('should create pipeline resource with same name as application name', async () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.pipeline.enabled = true;
 
@@ -300,10 +294,9 @@ describe('Import Submit Utils', () => {
       );
       const pipelineRunResource = returnValue[1];
       expect(pipelineRunResource.metadata.name.includes(mockData.name)).toEqual(true);
-      done();
     });
 
-    it('should suppress the error if the trigger creation fails with the error', async (done) => {
+    it('should suppress the error if the trigger creation fails with the error', async () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
       mockData.pipeline.enabled = true;
@@ -322,11 +315,9 @@ describe('Import Submit Utils', () => {
       // re-enable logs for future tests
       // eslint-disable-next-line no-console
       (console.warn as any).mockRestore();
-
-      done();
     });
 
-    it('should suppress the error if the pipelinerun creation fails with the error', async (done) => {
+    it('should suppress the error if the pipelinerun creation fails with the error', async () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
       mockData.pipeline.enabled = true;
@@ -353,14 +344,12 @@ describe('Import Submit Utils', () => {
       // re-enable logs for future tests
       // eslint-disable-next-line no-console
       (console.log as any).mockRestore();
-
-      done();
     });
 
     // Jest 30 no longer supports cleanly mocking modules using jest.spyOn.
     // TODO: Refactor import-submit-utils to not be a big file so we can mock it again.
     // https://issues.redhat.com/browse/CONSOLE-4991
-    xit('should throw error if the deployment creation fails with the error', async (done) => {
+    xit('should throw error if the deployment creation fails with the error', async () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
       mockData.pipeline.enabled = true;
@@ -371,10 +360,9 @@ describe('Import Submit Utils', () => {
       await expect(
         createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create'),
       ).rejects.toEqual(new Error('Deployment'));
-      done();
     });
 
-    it('should not create pipeline resource if pipeline is not enabled', async (done) => {
+    it('should not create pipeline resource if pipeline is not enabled', async () => {
       const mockData = _.cloneDeep(defaultData);
 
       const returnValue = await createOrUpdateResources(
@@ -387,10 +375,9 @@ describe('Import Submit Utils', () => {
       );
       const models = returnValue.map((data) => _.get(data, 'model.kind'));
       expect(models.includes(PipelineModel.kind)).toEqual(false);
-      done();
     });
 
-    it('should add pipeline annotations to secret if present and update service account', async (done) => {
+    it('should add pipeline annotations to secret if present and update service account', async () => {
       const mockData = _.cloneDeep(defaultData);
       mockData.pipeline.enabled = true;
       mockData.git.secret = 'sample-secret';
@@ -425,8 +412,6 @@ describe('Import Submit Utils', () => {
         { metadata: { annotations: { 'tekton.dev/git-0': 'github.com' } } },
         expect.anything(),
       );
-
-      done();
     });
   });
 

@@ -58,7 +58,7 @@ describe('useValuesForNamespaceContext', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   it('should return urlNamespace if it is defined', async () => {
@@ -82,7 +82,7 @@ describe('useValuesForNamespaceContext', () => {
     useFlagMock.mockReturnValue(true);
     k8sGetMock.mockReturnValue(Promise.resolve({}));
     useLocationMock.mockReturnValue(getLocationData(false));
-    spyOn(React, 'useState').and.returnValue([activeNamespace, jest.fn()]);
+    jest.spyOn(React, 'useState').mockReturnValue([activeNamespace, jest.fn()]);
     usePreferredNamespaceMock.mockReturnValue([preferredNamespace, jest.fn(), true]);
     useLastNamespaceMock.mockReturnValue([lastNamespace, jest.fn(), true]);
 
