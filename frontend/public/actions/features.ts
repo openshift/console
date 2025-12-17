@@ -137,8 +137,16 @@ export const detectFeatures = () => (dispatch: Dispatch) => {
   ].forEach((detect) => detect(dispatch));
 };
 
-export const featureFlagController: SetFeatureFlag = (flag, enabled) => {
-  store.dispatch(setFlag(flag, enabled));
+const featureFlagController: SetFeatureFlag = (flag, enabled) => {
+  // Defer dispatch to next event loop tick to avoid "Cannot update a component
+  // while rendering a different component" error
+  queueMicrotask(() => {
+    const currentValue = store.getState().FLAGS.get(flag);
+    if (currentValue === enabled) {
+      return;
+    }
+    store.dispatch(setFlag(flag, enabled));
+  });
 };
 
 subscribeToExtensions<FeatureFlag>(
