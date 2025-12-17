@@ -58,6 +58,13 @@ if [ -z "$GIT_STATUS" ] && [ -z "$RECENT_COMMITS" ] && [ -z "$CLAUDE_DATA" ]; th
     exit 0
 fi
 
+# Save session metadata JSON to separate file
+JSON_FILENAME="session-${SESSION_ID:-$(date +%s)}.json"
+JSON_FILE=~/.claude/work-context/$JSON_FILENAME
+if [ -n "$CLAUDE_DATA" ]; then
+    echo "$CLAUDE_DATA" > "$JSON_FILE"
+fi
+
 # Create markdown session entry
 PENDING_FILE=~/.claude/work-context-pending.md
 cat > "$PENDING_FILE" <<EOF
@@ -65,7 +72,7 @@ cat > "$PENDING_FILE" <<EOF
 **Session captured on exit**
 
 **Files Modified**:
-$(echo "$MODIFIED_FILES" | awk '{if ($2) print "- " $2}')
+$(echo "$MODIFIED_FILES" | awk '{if (length($0) > 3) print "- " substr($0, 4)}')
 
 **Recent Commits**:
 $(echo "$RECENT_COMMITS" | sed 's/^/- /')
@@ -73,10 +80,7 @@ $(echo "$RECENT_COMMITS" | sed 's/^/- /')
 **Branch Commits** (vs master):
 $(echo "$BRANCH_COMMITS" | sed 's/^/- /')
 
-**Session Metadata**:
-\`\`\`json
-$CLAUDE_DATA
-\`\`\`
+**Session Metadata**: \`$JSON_FILE\`
 
 **Transcript Path**: \`$TRANSCRIPT_PATH\`
 
