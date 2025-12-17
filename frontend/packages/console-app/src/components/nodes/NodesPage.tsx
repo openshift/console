@@ -269,10 +269,12 @@ const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
 const CPUCell: React.FC<{ cores: number; totalCores: number }> = ({ cores, totalCores }) => {
   const { t } = useTranslation();
   return Number.isFinite(cores) && Number.isFinite(totalCores) ? (
-    t('console-app~{{formattedCores}} cores / {{totalCores}} cores', {
-      formattedCores: formatCores(cores),
-      totalCores,
-    })
+    <>
+      {t('console-app~{{formattedCores}} cores / {{totalCores}} cores', {
+        formattedCores: formatCores(cores),
+        totalCores,
+      })}
+    </>
   ) : (
     <>{DASH}</>
   );

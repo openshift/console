@@ -72,7 +72,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
 
   const messageVariablesSafe = { ...messageVariables };
   if (labelKey) {
-    messageVariablesSafe.resourceKinds = t(labelKey, titleVariables);
+    messageVariablesSafe.resourceKinds = String(t(labelKey, titleVariables));
   }
 
   const onValueChange = (event: React.FormEvent<HTMLInputElement>) => {
