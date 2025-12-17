@@ -21,6 +21,7 @@ export type FormData = {
     repoDescription?: string;
     ca?: string;
     tlsClientConfig?: string;
+    basicAuthConfig?: string;
     disabled?: boolean;
   };
 };
@@ -28,11 +29,13 @@ export type FormData = {
 type CreateHelmChartRepositoryFormEditorProps = {
   showScopeType: boolean;
   existingRepo: HelmChartRepositoryType;
+  namespace: string;
 };
 
 const CreateHelmChartRepositoryFormEditor: React.FC<CreateHelmChartRepositoryFormEditorProps> = ({
   showScopeType,
   existingRepo,
+  namespace,
 }) => {
   const { t } = useTranslation();
   const {
@@ -143,6 +146,28 @@ const CreateHelmChartRepositoryFormEditor: React.FC<CreateHelmChartRepositoryFor
             showBadge
             autocompleteFilter={autocompleteFilter}
           />
+
+          {(formData.scope === 'ProjectHelmChartRepository' ||
+            existingRepo?.kind === 'ProjectHelmChartRepository') && (
+            <ResourceDropdownField
+              name="formData.basicAuthConfig"
+              label={t('helm-plugin~Basic authentication')}
+              resources={[
+                {
+                  isList: true,
+                  kind: SecretModel.kind,
+                  namespace,
+                  optional: true,
+                  prop: SecretModel.id,
+                },
+              ]}
+              dataSelector={['metadata', 'name']}
+              fullWidth
+              placeholder={t('helm-plugin~Select Secret')}
+              showBadge
+              autocompleteFilter={autocompleteFilter}
+            />
+          )}
         </FormSection>
       </ExpandCollapse>
     </FormSection>
