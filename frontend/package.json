@@ -11,10 +11,11 @@
     "integration-tests"
   ],
   "scripts": {
-    "postinstall": "./scripts/check-patternfly-modules.sh && yarn prepare-husky",
+    "postinstall": "yarn ts-node ./scripts/check-patternfly-modules.ts && yarn prepare-husky",
     "clean": "rm -rf ./public/dist",
     "dev": "yarn clean && yarn generate && REACT_REFRESH=true NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack serve --mode=development --progress",
     "dev-once": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=development",
+    "dedupe-deps": "yarn-deduplicate --strategy highest",
     "build": "yarn clean && yarn generate && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
@@ -136,8 +137,7 @@
     "@patternfly/react-catalog-view-extension": "^6.1.0",
     "@patternfly/react-charts": "^8.2.2",
     "@patternfly/react-code-editor": "^6.2.2",
-    "@patternfly/react-component-groups": "6.2.0-prerelease.10",
-    "@patternfly/react-console": "^6.0.0",
+    "@patternfly/react-component-groups": "^6.3.0",
     "@patternfly/react-core": "^6.2.2",
     "@patternfly/react-data-view": "^6.2.0",
     "@patternfly/react-icons": "^6.2.2",
@@ -234,7 +234,7 @@
     "@types/jasmine": "2.8.x",
     "@types/jest": "22.x",
     "@types/json-schema": "^7.0.7",
-    "@types/lodash-es": "4.17.x",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "22.x",
     "@types/prop-types": "15.5.6",
     "@types/react": "17.x",
@@ -245,6 +245,8 @@
     "@types/react-virtualized": "9.x",
     "@types/semver": "^6.0.0",
     "@types/showdown": "1.9.4",
+    "@types/yarnpkg__lockfile": "^1.1.9",
+    "@yarnpkg/lockfile": "^1.1.0",
     "axe-core": "^4.10.2",
     "babel-loader": "^8.2.1",
     "browser-env": "3.x",
@@ -303,14 +305,15 @@
     "webpack": "^5.75.0",
     "webpack-bundle-analyzer": "4.10.2",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.1.0"
+    "webpack-dev-server": "^5.1.0",
+    "yarn-deduplicate": "^6.0.2"
   },
   "engines": {
     "node": ">=22.x"
   },
   "resolutions": {
-    "@patternfly/react-component-groups": "6.2.0-prerelease.10",
-    "@patternfly/react-data-view": "^6.2.0",
+    "@patternfly/react-component-groups": "6.3.0",
+    "@types/lodash": "4.14.106",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.x",
     "hosted-git-info": "^3.0.8",
