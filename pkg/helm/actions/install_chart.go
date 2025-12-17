@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/openshift/api/helm/v1beta1"
@@ -11,6 +12,7 @@ import (
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
+	"helm.sh/helm/v3/pkg/registry"
 	"helm.sh/helm/v3/pkg/release"
 	kv1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -194,4 +196,48 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 		return nil, err
 	}
 	return &secret, nil
+}
+
+func InstallOCIChart(ns, name, url string, vals map[string]interface{}, conf *action.Configuration) (*release.Release, error) {
+
+	// Accept OCI URLs (oci://...) or direct HTTP/HTTPS chart URLs (*.tgz)
+	isOCI := registry.IsOCI(url)
+	isDirectChartURL := strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://")
+	isChartArchive := strings.HasSuffix(url, ".tgz") || strings.HasSuffix(url, ".tar.gz")
+
+	if !isOCI && !(isDirectChartURL && isChartArchive) {
+		return nil, fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
+	}
+
+	cmd := action.NewInstall(conf)
+	cmd.ReleaseName = name
+	cmd.Namespace = ns
+
+	cp, err := cmd.ChartPathOptions.LocateChart(url, settings)
+	if err != nil {
+		return nil, fmt.Errorf("error locating chart: %v", err)
+	}
+	ch, err := loader.Load(cp)
+	if err != nil {
+		return nil, err
+	}
+
+	// Add chart URL as an annotation before installation
+	if ch.Metadata == nil {
+		ch.Metadata = new(chart.Metadata)
+	}
+	if ch.Metadata.Annotations == nil {
+		ch.Metadata.Annotations = make(map[string]string)
+	}
+	ch.Metadata.Annotations["chart_url"] = url
+
+	release, err := cmd.Run(ch, vals)
+	if err != nil {
+		return nil, err
+	}
+	if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
+		metrics.HandleconsoleHelmInstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
+	}
+
+	return release, nil
 }
