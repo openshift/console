@@ -216,6 +216,10 @@ This section documents notable changes in Console provided shared modules and ot
 - Removed `co-external-link` styling. Use PatternFly Buttons with `variant="link"` instead.
 - Removed `co-disabled` styling.
 
+#### Console 4.22.x
+
+- Updated PatternFly 6 shared modules to [PatternFly 6.4](https://www.patternfly.org/get-started/release-highlights#patternfly-6.4).
+
 ### PatternFly 5+ dynamic modules
 
 Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package include support for automatic

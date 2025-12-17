@@ -25,6 +25,7 @@ const PKGS_TO_CHECK: Array<{ name: string; semver: string }> = [
   { name: '@patternfly/react-component-groups', semver: '6.x' },
   { name: '@patternfly/react-core', semver: '6.x' },
   { name: '@patternfly/react-data-view', semver: '6.x' },
+  { name: '@patternfly/react-drag-drop', semver: '6.x' },
   { name: '@patternfly/react-icons', semver: '6.x' },
   { name: '@patternfly/react-log-viewer', semver: '6.x' },
   { name: '@patternfly/react-styles', semver: '6.x' },
