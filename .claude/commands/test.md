@@ -1,5 +1,6 @@
 ---
 description: Run tests (frontend, backend, unit, or all)
+argument-hint: "[frontend|backend|unit <name>|all]"
 ---
 
 Run tests based on the arguments provided:

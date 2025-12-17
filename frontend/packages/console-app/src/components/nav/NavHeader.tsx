@@ -7,6 +7,8 @@ import {
   SelectOption,
   Title,
 } from '@patternfly/react-core';
+import { CogsIcon } from '@patternfly/react-icons/dist/esm/icons/cogs-icon';
+import { t } from 'i18next';
 import { Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { usePerspectives } from '@console/shared/src/hooks/perspective-utils';
 
@@ -118,12 +120,12 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
       </Select>
     </div>
   ) : (
-    <div
-      className="pf-v6-u-display-none"
-      data-test-id="perspective-switcher-toggle"
-      aria-hidden="true"
-    />
-  ); // Empty div for e2e purposes
+    <div data-test-id="perspective-switcher-toggle" id="core-platform-perspective">
+      <Title headingLevel="h2" size="md">
+        <CogsIcon /> {t('console-app~Core platform')}
+      </Title>
+    </div>
+  );
 };
 
 export default NavHeader;

@@ -1,5 +1,4 @@
 import { Given } from 'cypress-cucumber-preprocessor/steps';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { operators } from '../../constants';
 import {
   installPipelinesOperatorUsingCLI,
@@ -26,7 +25,6 @@ Given(
   (operator: operators, namespace: string) => {
     cy.logout();
     cy.login(); // make sure we are logged in as kubeadmin
-    guidedTour.close();
     verifyAndInstallOperator(operator, namespace);
   },
 );

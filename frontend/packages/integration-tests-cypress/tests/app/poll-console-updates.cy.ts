@@ -1,6 +1,5 @@
 import { checkErrors } from '../../support';
 import { refreshWebConsoleLink } from '../../views/form';
-import { guidedTour } from '../../views/guided-tour';
 
 const CHECK_UPDATES_URL = '/api/check-updates';
 const CHECK_UPDATES_ALIAS = 'checkUpdates';
@@ -44,7 +43,6 @@ const WAIT_OPTIONS = { requestTimeout: 300000 };
 
 const loadApp = () => {
   cy.visit('/');
-  guidedTour.close();
 };
 const checkConsoleUpdateToast = () => {
   cy.byTestID(refreshWebConsoleLink).should('exist').click();
@@ -56,7 +54,6 @@ const checkConsoleUpdateToast = () => {
 xdescribe('PollConsoleUpdates Test', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
   });
 
   afterEach(() => {

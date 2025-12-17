@@ -729,7 +729,7 @@ export const ProjectList = (props) => {
   );
   const isPrometheusAvailable = usePrometheusGate();
   const showMetrics = isPrometheusAvailable && canGetNS;
-  const showActions = showMetrics;
+  const showActions = true;
   const columns = useProjectsColumns({ showMetrics, showActions });
   const namespaceMetrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
 

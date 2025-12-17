@@ -1,5 +1,4 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { listPage } from '@console/cypress-integration-tests/views/list-page';
 import * as yamlView from '@console/cypress-integration-tests/views/yaml-editor';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
@@ -29,7 +28,6 @@ When('user navigates to Topology page', () => {
 When('user clicks on link to view PodDisruptionBudget details', () => {
   cy.reload();
   app.waitForLoad();
-  guidedTour.close();
   cy.byTestID('pdb-warning').click();
 });
 

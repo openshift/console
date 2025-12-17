@@ -9,6 +9,7 @@ export const ACM_PERSPECTIVE_ID = 'acm';
 export const ADMIN_PERSPECTIVE_ID = 'admin';
 export const FLAG_CAN_GET_CONSOLE_OPERATOR_CONFIG = 'CAN_GET_CONSOLE_OPERATOR_CONFIG';
 export const FLAG_TECH_PREVIEW = 'TECH_PREVIEW';
+export const FLAG_INTEGRATION_TEST = 'INTEGRATION_TEST';
 
 export const FAVORITES_CONFIG_MAP_KEY = 'console.favorites';
 export const FAVORITES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/favorites`;

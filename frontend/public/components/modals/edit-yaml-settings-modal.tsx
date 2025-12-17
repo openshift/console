@@ -161,6 +161,7 @@ const ConfigModalSwitch: React.FunctionComponent<ConfigModalSwitchProps> = ({
       <Switch
         aria-labelledby={`${id}-title`}
         aria-describedby={`${id}-description`}
+        data-checked-state={isChecked}
         ouiaId={`${id}-switch`}
         isChecked={isChecked}
         isReversed

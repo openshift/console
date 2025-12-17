@@ -35,7 +35,6 @@ import {
   SectionHeading,
   ConsoleEmptyState,
   ResourceLink,
-  Kebab,
   ResourceIcon,
   navFactory,
   ResourceSummary,
@@ -53,7 +52,9 @@ import {
   UserInfo,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
@@ -76,7 +77,7 @@ const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
   css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
   css('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-v6-c-table__td'),
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 const componentsTableColumnClasses = [

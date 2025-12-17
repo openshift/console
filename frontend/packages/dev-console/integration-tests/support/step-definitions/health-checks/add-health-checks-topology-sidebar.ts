@@ -1,6 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import { devNavigationMenu, switchPerspective } from '../../constants';
 import { topologyPO } from '../../pageObjects';
@@ -40,7 +39,6 @@ When(
     detailsPage.titleShouldContain('Edit health checks');
     cy.get('.odc-heath-check-probe__successText').should('have.length', 3);
     perspective.switchTo(switchPerspective.Developer);
-    guidedTour.close();
     nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
     navigateTo(devNavigationMenu.Topology);
   },
@@ -55,7 +53,6 @@ Then(
     detailsPage.titleShouldContain('Edit health checks');
     cy.get('.odc-heath-check-probe__successText').contains(`${probe} added`).should('be.visible');
     perspective.switchTo(switchPerspective.Developer);
-    guidedTour.close();
     nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
     navigateTo(devNavigationMenu.Topology);
   },

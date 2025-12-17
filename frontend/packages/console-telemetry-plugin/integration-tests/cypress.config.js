@@ -47,5 +47,6 @@ module.exports = defineConfig({
     experimentalMemoryManagement: true,
     numTestsKeptInMemory: 5,
     injectDocumentDomain: true,
+    userAgent: 'ConsoleIntegrationTestEnvironment',
   },
 });

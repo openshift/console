@@ -4,10 +4,16 @@
     "properties": {
       "id": "admin",
       "default": true,
-      "name": "%console-app~Administrator%",
+      "name": "%console-app~Core platform%",
       "icon": { "$codeRef": "perspective.icon" },
       "landingPageURL": { "$codeRef": "perspective.getLandingPageURL" },
       "importRedirectURL": { "$codeRef": "perspective.getImportRedirectURL" }
+    }
+  },
+  {
+    "type": "console.flag",
+    "properties": {
+      "handler": { "$codeRef": "detectIntegrationTest.handler" }
     }
   },
   {
@@ -15,6 +21,9 @@
     "properties": {
       "perspective": "admin",
       "tour": { "$codeRef": "getGuidedTour" }
+    },
+    "flags": {
+      "disallowed": ["INTEGRATION_TEST"]
     }
   },
   {

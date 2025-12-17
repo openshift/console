@@ -18,14 +18,12 @@ import {
 } from '@console/internal/components/factory';
 import {
   Firehose,
-  Kebab,
   LoadingBox,
   ConsoleEmptyState,
   navFactory,
   ResourceLink,
   SectionHeading,
   asAccessReview,
-  KebabOption,
   ResourceSummary,
   DetailsItem,
   FirehoseResult,
@@ -33,7 +31,9 @@ import {
 import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
 import { referenceForModel, K8sKind, k8sPatch, K8sModel } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { withFallback } from '@console/shared/src/components/error';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -53,11 +53,7 @@ import { RegistryPollIntervalDetailItem } from './registry-poll-interval-details
 
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
 
-const enableSource = (
-  kind: K8sKind,
-  operatorHub: OperatorHubKind,
-  sourceName: string,
-): KebabOption => ({
+const enableSource = (kind: K8sKind, operatorHub: OperatorHubKind, sourceName: string) => ({
   // t('olm~Enable')
   labelKey: 'olm~Enable',
   callback: () => {
@@ -291,7 +287,7 @@ const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-xl'),
   css('pf-m-hidden', 'pf-m-visible-on-xl'),
   css('pf-m-hidden', 'pf-m-visible-on-lg'),
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 const getRowProps = (obj) => ({

@@ -1,11 +1,9 @@
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
 
 describe('Create namespace from install operators', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

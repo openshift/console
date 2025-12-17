@@ -1,5 +1,4 @@
 import { provisionersMap } from '../../mocks/storage-class';
-import { guidedTour } from '../../views/guided-tour';
 import { nav } from '../../views/nav';
 import {
   createStorageClassValidateAndCleanUp,
@@ -10,7 +9,6 @@ import {
 describe('Test creation of Storage classes using various provisioners', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     nav.sidenav.clickNavLink(['Storage', 'StorageClasses']);
   });
 

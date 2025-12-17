@@ -1,21 +1,20 @@
 import * as React from 'react';
-import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import {
   ListPageBody,
-  useListPageFilter,
   ListPageCreate,
-  ListPageFilter,
   ListPageHeader,
-  VirtualizedTable,
   TableColumn,
-  RowProps,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { TableData } from '@console/internal/components/factory';
-import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { Kebab } from '@console/internal/components/utils/kebab';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
 import {
@@ -25,95 +24,134 @@ import {
   referenceFor,
 } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
+import { DASH } from '@console/shared/src/constants/ui';
 import { getAnnotations } from '@console/shared/src/selectors/common';
 
-const tableColumnInfo = [
-  { id: 'name' },
-  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'driver' },
-  { className: css('pf-m-hidden', 'pf-m-visible-on-md'), id: 'deletionPolicy' },
-  { className: Kebab.columnClass, id: '' },
-];
+const kind = referenceForModel(VolumeSnapshotClassModel);
 
-const defaultSnapshotClassAnnotation: string = 'snapshot.storage.kubernetes.io/is-default-class';
+const tableColumnInfo = [{ id: 'name' }, { id: 'driver' }, { id: 'deletionPolicy' }, { id: '' }];
+
+const defaultSnapshotClassAnnotation = 'snapshot.storage.kubernetes.io/is-default-class';
+
 export const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
   getAnnotations(volumeSnapshotClass, { defaultSnapshotClassAnnotation: 'false' })[
     defaultSnapshotClassAnnotation
   ] === 'true';
 
-const Row: React.FC<RowProps<VolumeSnapshotClassKind>> = ({ obj }) => {
-  const { name } = obj?.metadata || {};
-  const { deletionPolicy, driver } = obj || {};
-  const resourceKind = referenceFor(obj);
-  const context = { [resourceKind]: obj };
-  return (
-    <>
-      <TableData {...tableColumnInfo[0]}>
-        <ResourceLink name={name} kind={referenceForModel(VolumeSnapshotClassModel)}>
-          {isDefaultSnapshotClass(obj) && (
-            <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
-              &ndash; Default
-            </span>
-          )}
-        </ResourceLink>
-      </TableData>
-      <TableData {...tableColumnInfo[1]}>{driver}</TableData>
-      <TableData {...tableColumnInfo[2]}>{deletionPolicy}</TableData>
-      <TableData {...tableColumnInfo[3]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
+const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotClassKind> = (t) => (
+  data,
+  columns,
+) => {
+  return data.map(({ obj }) => {
+    const name = obj.metadata?.name || '';
+    const { deletionPolicy, driver } = obj;
+    const context = { [referenceFor(obj)]: obj };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink name={name} kind={kind}>
+            {isDefaultSnapshotClass(obj) && (
+              <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
+                &ndash; {t('console-app~Default')}
+              </span>
+            )}
+          </ResourceLink>
+        ),
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: driver,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: deletionPolicy,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
 };
 
-const VolumeSnapshotClassTable: React.FC<VolumeSnapshotClassTableProps> = (props) => {
+const useVolumeSnapshotClassColumns = (): TableColumn<VolumeSnapshotClassKind>[] => {
   const { t } = useTranslation();
-  const getTableColumns = (): TableColumn<VolumeSnapshotClassKind>[] => [
-    {
-      title: t('console-app~Name'),
-      sort: 'metadata.name',
-      transforms: [sortable],
-      id: tableColumnInfo[0].id,
-    },
-    {
-      title: t('console-app~Driver'),
-      sort: 'driver',
-      transforms: [sortable],
-      props: { className: tableColumnInfo[1].className },
-      id: tableColumnInfo[1].id,
-    },
-    {
-      title: t('console-app~Deletion policy'),
-      sort: 'deletionPolicy',
-      transforms: [sortable],
-      props: { className: tableColumnInfo[2].className },
-      id: tableColumnInfo[2].id,
-    },
-    {
-      title: '',
-      props: { className: tableColumnInfo[3].className },
-      id: tableColumnInfo[3].id,
-    },
-  ];
-  const [columns] = useActiveColumns({ columns: getTableColumns() });
+
+  const columns: TableColumn<VolumeSnapshotClassKind>[] = React.useMemo(
+    () => [
+      {
+        title: t('console-app~Name'),
+        sort: 'metadata.name',
+        id: tableColumnInfo[0].id,
+        props: { ...cellIsStickyProps, modifier: 'nowrap' },
+      },
+      {
+        title: t('console-app~Driver'),
+        sort: 'driver',
+        id: tableColumnInfo[1].id,
+        props: { modifier: 'nowrap' },
+      },
+      {
+        title: t('console-app~Deletion policy'),
+        sort: 'deletionPolicy',
+        id: tableColumnInfo[2].id,
+        props: { modifier: 'nowrap' },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[3].id,
+        props: { ...cellIsStickyProps },
+      },
+    ],
+    [t],
+  );
+
+  return columns;
+};
+
+const VolumeSnapshotClassTable: React.FCC<VolumeSnapshotClassTableProps> = ({
+  data,
+  loaded,
+  ...props
+}) => {
+  const { t } = useTranslation();
+  const columns = useVolumeSnapshotClassColumns();
+  const getDataViewRows = React.useMemo(() => getDataViewRowsCreator(t), [t]);
 
   return (
-    <VirtualizedTable<VolumeSnapshotClassKind>
-      {...props}
-      aria-label={t('console-app~VolumeSnapshotClasses')}
-      label={t('console-app~VolumeSnapshotClasses')}
-      columns={columns}
-      Row={Row}
-    />
+    <React.Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<VolumeSnapshotClassKind>
+        {...props}
+        label={VolumeSnapshotClassModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement
+      />
+    </React.Suspense>
   );
 };
 
-export const VolumeSnapshotClassPage: React.FC<VolumeSnapshotClassPageProps> = ({
+export const VolumeSnapshotClassPage: React.FCC<VolumeSnapshotClassPageProps> = ({
   canCreate = true,
   showTitle = true,
   namespace,
   selector,
 }) => {
   const { t } = useTranslation();
+
   const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotClassKind[]>({
     groupVersionKind: {
       group: VolumeSnapshotClassModel.apiGroup,
@@ -125,26 +163,18 @@ export const VolumeSnapshotClassPage: React.FC<VolumeSnapshotClassPageProps> = (
     namespace,
     selector,
   });
-  const [data, filteredData, onFilterChange] = useListPageFilter(resources);
-  const resourceKind = referenceForModel(VolumeSnapshotClassModel);
 
   return (
     <>
       <ListPageHeader title={showTitle ? t(VolumeSnapshotClassModel.labelPluralKey || '') : ''}>
         {canCreate && (
-          <ListPageCreate groupVersionKind={resourceKind}>
+          <ListPageCreate groupVersionKind={kind}>
             {t('console-app~Create VolumeSnapshotClass')}
           </ListPageCreate>
         )}
       </ListPageHeader>
       <ListPageBody>
-        <ListPageFilter data={data} loaded={loaded} onFilterChange={onFilterChange} />
-        <VolumeSnapshotClassTable
-          unfilteredData={resources}
-          data={filteredData}
-          loaded={loaded}
-          loadError={loadError}
-        />
+        <VolumeSnapshotClassTable data={resources} loaded={loaded} loadError={loadError} />
       </ListPageBody>
     </>
   );
@@ -159,7 +189,6 @@ type VolumeSnapshotClassPageProps = {
 
 type VolumeSnapshotClassTableProps = {
   data: VolumeSnapshotClassKind[];
-  unfilteredData: VolumeSnapshotClassKind[];
   loaded: boolean;
   loadError: unknown;
 };

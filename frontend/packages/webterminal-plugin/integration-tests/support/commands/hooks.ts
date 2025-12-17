@@ -1,12 +1,10 @@
 import { checkErrors } from '@console/cypress-integration-tests/support';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { installWebterminalOperatorUsingCLI } from '@console/dev-console/integration-tests/support/pages';
 
 before(() => {
   cy.login();
   cy.document().its('readyState').should('eq', 'complete');
   installWebterminalOperatorUsingCLI();
-  guidedTour.close();
 });
 
 after(() => {

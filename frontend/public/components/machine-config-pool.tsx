@@ -39,7 +39,6 @@ import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { DASH } from '@console/shared/src/constants';
 import { DetailsItem } from './utils/details-item';
-import { KebabAction } from './utils/kebab';
 import { LoadingBox, LoadingInline } from './utils/status-box';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
@@ -52,6 +51,7 @@ import { MachineConfigPoolsArePausedAlert } from './cluster-settings/cluster-set
 import { UpToDateMessage } from './cluster-settings/cluster-status';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
 
@@ -351,7 +351,7 @@ const useMachineConfigPoolColumns = (): TableColumn<MachineConfigPoolKind>[] => 
   return columns;
 };
 
-const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, KebabAction[]> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, Action[]> = (data, columns) => {
   return data.map(({ obj }) => {
     const { name } = obj.metadata;
 
@@ -406,7 +406,7 @@ const MachineConfigPoolList: React.FC<MachineConfigPoolListProps> = ({
     <>
       <MachineConfigPoolsArePausedAlert machineConfigPools={data} />
       <React.Suspense fallback={<LoadingBox />}>
-        <ConsoleDataView<MachineConfigPoolKind, KebabAction[]>
+        <ConsoleDataView<MachineConfigPoolKind, Action[]>
           {...props}
           label={MachineConfigPoolModel.labelPlural}
           data={data}

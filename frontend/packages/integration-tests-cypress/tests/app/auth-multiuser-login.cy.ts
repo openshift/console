@@ -1,5 +1,4 @@
 import { checkErrors } from '../../support';
-import { guidedTour } from '../../views/guided-tour';
 import { masthead } from '../../views/masthead';
 import { nav } from '../../views/nav';
 
@@ -25,17 +24,14 @@ describe('Auth test', () => {
       cy.login(idp, username, passwd);
       cy.url().should('include', Cypress.config('baseUrl'));
 
-      // test Developer perspective is default for test user and guided tour is displayed
+      // test Developer perspective is default for test user
       // Below line to be uncommented after pr https://github.com/openshift/console-operator/pull/954 is merged
-      // nav.sidenav.switcher.shouldHaveText('Administrator');
-      guidedTour.isOpen();
-      guidedTour.close();
       masthead.username.shouldHaveText(username);
 
       cy.log('switches from dev to admin perspective');
       // nav.sidenav.switcher.shouldHaveText('Developer');
-      nav.sidenav.switcher.changePerspectiveTo('Administrator');
-      nav.sidenav.switcher.shouldHaveText('Administrator');
+      nav.sidenav.switcher.changePerspectiveTo('Core platform');
+      nav.sidenav.switcher.shouldHaveText('Core platform');
 
       cy.log('does not show admin nav items in Administration to test user');
       // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -67,16 +63,14 @@ describe('Auth test', () => {
     );
 
     // test Administrator perspective is default for kubeadmin
-    nav.sidenav.switcher.shouldHaveText('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Core platform');
     // test guided tour is displayed first time switching to 'Developer' perspective
     // skip if running localhost
     if (!Cypress.config('baseUrl').includes('localhost')) {
       // nav.sidenav.switcher.changePerspectiveTo('Developer');
       // nav.sidenav.switcher.shouldHaveText('Developer');
-      guidedTour.isOpen();
-      guidedTour.close();
-      nav.sidenav.switcher.changePerspectiveTo('Administrator');
-      nav.sidenav.switcher.shouldHaveText('Administrator');
+      nav.sidenav.switcher.changePerspectiveTo('Core platform');
+      nav.sidenav.switcher.shouldHaveText('Core platform');
     }
     cy.log('verify sidenav menus and Administration menu access for cluster admin user');
     nav.sidenav.shouldHaveNavSection(['Compute']);

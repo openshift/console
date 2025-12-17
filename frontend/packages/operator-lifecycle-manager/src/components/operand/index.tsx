@@ -28,7 +28,6 @@ import {
 import ListPageFilter from '@console/internal/components/factory/ListPage/ListPageFilter';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
 import {
-  Kebab,
   LabelList,
   ConsoleEmptyState,
   ResourceSummary,
@@ -66,6 +65,7 @@ import {
   getNamespace,
   useActiveNamespace,
 } from '@console/shared';
+import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -94,7 +94,7 @@ const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg'),
   css('pf-m-hidden', 'pf-m-visible-on-xl'),
   css('pf-m-hidden', 'pf-m-visible-on-2xl'),
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {
@@ -668,57 +668,52 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
           schema={schema}
           podStatusDescriptors={podStatuses}
         />
-        <div className="co-operand-details__section co-operand-details__section--info">
-          <Grid hasGutter>
+        <Grid hasGutter data-test="operand-details__section--info">
+          <GridItem sm={6}>
+            <ResourceSummary resource={obj} />
+          </GridItem>
+          {mainStatusDescriptor || otherStatusDescriptors?.length > 0 ? (
             <GridItem sm={6}>
-              <ResourceSummary resource={obj} />
+              <DescriptionList>
+                {mainStatusDescriptor && (
+                  <DescriptorDetailsItem
+                    key={mainStatusDescriptor.path}
+                    descriptor={mainStatusDescriptor}
+                    model={kindObj}
+                    obj={obj}
+                    schema={schema}
+                    type={DescriptorType.status}
+                  />
+                )}
+                {otherStatusDescriptors?.length > 0 && (
+                  <DescriptorDetailsItems
+                    descriptors={otherStatusDescriptors}
+                    model={kindObj}
+                    obj={obj}
+                    schema={schema}
+                    type={DescriptorType.status}
+                  />
+                )}
+              </DescriptionList>
             </GridItem>
-            {mainStatusDescriptor || otherStatusDescriptors?.length > 0 ? (
-              <GridItem sm={6}>
-                <DescriptionList>
-                  {mainStatusDescriptor && (
-                    <DescriptorDetailsItem
-                      key={mainStatusDescriptor.path}
-                      descriptor={mainStatusDescriptor}
-                      model={kindObj}
-                      obj={obj}
-                      schema={schema}
-                      type={DescriptorType.status}
-                    />
-                  )}
-                  {otherStatusDescriptors?.length > 0 && (
-                    <DescriptorDetailsItems
-                      descriptors={otherStatusDescriptors}
-                      model={kindObj}
-                      obj={obj}
-                      schema={schema}
-                      type={DescriptorType.status}
-                    />
-                  )}
-                </DescriptionList>
-              </GridItem>
-            ) : null}
-          </Grid>
-        </div>
+          ) : null}
+        </Grid>
       </PaneBody>
       {!_.isEmpty(specDescriptors) && (
         <PaneBody>
-          <div className="co-operand-details__section co-operand-details__section--info">
-            <Grid hasGutter>
-              <GridItem sm={6}>
-                <DescriptionList>
-                  <DescriptorDetailsItems
-                    descriptors={specDescriptors}
-                    model={kindObj}
-                    obj={obj}
-                    onError={handleError}
-                    schema={schema}
-                    type={DescriptorType.spec}
-                  />
-                </DescriptionList>
-              </GridItem>
-            </Grid>
-          </div>
+          <DescriptionList
+            columnModifier={{ default: '2Col' }}
+            data-test="operand-details__section--info"
+          >
+            <DescriptorDetailsItems
+              descriptors={specDescriptors}
+              model={kindObj}
+              obj={obj}
+              onError={handleError}
+              schema={schema}
+              type={DescriptorType.spec}
+            />
+          </DescriptionList>
         </PaneBody>
       )}
       {Array.isArray(status?.conditions) &&

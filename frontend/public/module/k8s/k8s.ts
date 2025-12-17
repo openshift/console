@@ -27,7 +27,7 @@ export const getQN: (obj: K8sResourceKind) => string = (obj) => {
 export const getGroupVersionKind = (
   ref: GroupVersionKind | string,
 ): [string, string, string] | undefined => {
-  const parts = ref.split('~');
+  const parts = ref?.split('~') ?? [];
   if (parts.length !== 3) {
     return undefined;
   }

@@ -1,6 +1,5 @@
 import { Given, When, Then, And } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { listPage } from '@console/cypress-integration-tests/views/list-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import * as yamlView from '@console/cypress-integration-tests/views/yaml-editor';
@@ -48,7 +47,6 @@ When('user navigates to Topology page', () => {
 When('user clicks on link to view resource quota details', () => {
   cy.reload();
   app.waitForLoad();
-  guidedTour.close();
   cy.byTestID('resource-quota-warning').click();
 });
 

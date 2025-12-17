@@ -242,8 +242,8 @@ export const GroupDetailsPage: React.FC = (props) => {
     <DetailsPage
       {...props}
       kind={referenceForModel(GroupModel)}
-      customActionMenu={(obj: K8sResourceKind) => (
-        <LazyActionMenu context={{ [referenceForModel(GroupModel)]: obj }} />
+      customActionMenu={(_kindObj, data: K8sResourceKind) => (
+        <LazyActionMenu context={{ [referenceForModel(GroupModel)]: data }} />
       )}
       pages={[
         navFactory.details(GroupDetails),
