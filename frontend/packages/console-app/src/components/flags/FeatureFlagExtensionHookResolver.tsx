@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FeatureFlagHandler, SetFeatureFlag } from '@console/dynamic-plugin-sdk/src';
 
 type FeatureFlagExtensionHookResolverProps = {
@@ -6,12 +6,10 @@ type FeatureFlagExtensionHookResolverProps = {
   setFeatureFlag: SetFeatureFlag;
 };
 
-const FeatureFlagExtensionHookResolver: React.FC<FeatureFlagExtensionHookResolverProps> = ({
+export const FeatureFlagExtensionHookResolver: FC<FeatureFlagExtensionHookResolverProps> = ({
   handler,
   setFeatureFlag,
 }) => {
   handler(setFeatureFlag);
   return null;
 };
-
-export default FeatureFlagExtensionHookResolver;

@@ -152,9 +152,8 @@ const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) =
 
 const APIResourcesList: FC = () => {
   const location = useLocation();
-  const models = useConsoleSelector(
-    (state) =>
-      state.k8s.getIn(['RESOURCES', 'models']) as ImmutableMap<K8sResourceKindReference, K8sKind>,
+  const models: ImmutableMap<K8sResourceKindReference, K8sKind> = useConsoleSelector((state) =>
+    state.k8s.getIn(['RESOURCES', 'models']),
   );
   const ALL = '#all#';
   const GROUP_PARAM = 'g';
