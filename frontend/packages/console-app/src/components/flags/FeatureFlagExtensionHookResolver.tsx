@@ -6,12 +6,10 @@ type FeatureFlagExtensionHookResolverProps = {
   setFeatureFlag: SetFeatureFlag;
 };
 
-const FeatureFlagExtensionHookResolver: FC<FeatureFlagExtensionHookResolverProps> = ({
+export const FeatureFlagExtensionHookResolver: FC<FeatureFlagExtensionHookResolverProps> = ({
   handler,
   setFeatureFlag,
 }) => {
   handler(setFeatureFlag);
   return null;
 };
-
-export default FeatureFlagExtensionHookResolver;
