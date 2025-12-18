@@ -3,7 +3,7 @@ import { observer } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { useDebounceCallback } from '@console/shared';
+import { useDebounceCallback, useDeepCompareMemoize } from '@console/shared';
 import { TopologyResourcesObject, TrafficData } from '../topology-types';
 import { ModelContext, ExtensibleModel } from './ModelContext';
 import { updateTopologyDataModel } from './updateTopologyDataModel';
@@ -15,12 +15,17 @@ type TopologyDataRetrieverProps = {
 
 const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficData }) => {
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
-  const { namespace, extensionsLoaded, watchedResources } = dataModelContext;
+  const { namespace, extensionsLoaded } = dataModelContext;
   const [resources, setResources] = React.useState<WatchK8sResults<TopologyResourcesObject>>();
   const monitoringAlerts = useMonitoringAlerts(namespace);
+
+  // CRITICAL: watchedResources is a MobX observable that changes reference frequently
+  // Deep compare to prevent infinite loops when content hasn't actually changed
+  const stableWatchedResources = useDeepCompareMemoize(dataModelContext.watchedResources);
+
   const resourcesList = React.useMemo<WatchK8sResources<any>>(
-    () => (namespace && extensionsLoaded ? watchedResources : {}),
-    [extensionsLoaded, watchedResources, namespace],
+    () => (namespace && extensionsLoaded ? stableWatchedResources : {}),
+    [extensionsLoaded, stableWatchedResources, namespace],
   );
 
   const debouncedUpdateResources = useDebounceCallback(setResources, 250);

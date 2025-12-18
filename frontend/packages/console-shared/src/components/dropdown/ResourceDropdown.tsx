@@ -98,31 +98,39 @@ class ResourceDropdownInternal extends React.Component<
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  UNSAFE_componentWillReceiveProps(nextProps: ResourceDropdownProps) {
+  componentDidUpdate(prevProps: ResourceDropdownProps) {
+    // React 18: Use componentDidUpdate instead of UNSAFE_componentWillReceiveProps
+    // setState calls are properly guarded to only update when props change
+    /* eslint-disable react/no-did-update-set-state */
     const {
       loaded,
       loadError,
-      autoSelect,
       selectedKey,
       placeholder,
       onLoad,
       title,
       actionItems,
-    } = nextProps;
-    if (!loaded && !loadError) {
-      this.setState({ title: <LoadingInline /> });
+      resources,
+    } = this.props;
+
+    // Only update state when relevant props change
+    if (
+      prevProps.loaded === loaded &&
+      prevProps.loadError === loadError &&
+      prevProps.resources === resources &&
+      prevProps.selectedKey === selectedKey
+    ) {
       return;
     }
 
-    // If autoSelect is true only then have an item pre-selected based on selectedKey.
-    if (!this.props.loadError && !autoSelect && (!this.props.loaded || !selectedKey)) {
-      this.setState({
-        title: <span className="btn-dropdown__item--placeholder">{placeholder}</span>,
-      });
+    if (!loaded && !loadError) {
+      if (this.state.title !== <LoadingInline />) {
+        this.setState({ title: <LoadingInline /> });
+      }
+      return;
     }
 
-    if (loadError) {
+    if (loadError && prevProps.loadError !== loadError) {
       this.setState({
         title: (
           <span className="cos-error-title">
@@ -133,18 +141,33 @@ class ResourceDropdownInternal extends React.Component<
       return;
     }
 
-    const resourceList = this.getDropdownList({ ...this.props, ...nextProps }, true);
-    // set placeholder as title if resourceList is empty no actionItems are there
-    if (loaded && !loadError && _.isEmpty(resourceList) && !actionItems && placeholder && !title) {
+    const resourceList = this.getDropdownList({ ...prevProps, ...this.props }, true);
+
+    // Update items if resources changed
+    if (prevProps.resources !== resources || prevProps.loaded !== loaded) {
+      this.setState({ items: resourceList, resources: this.getResourceList(this.props) });
+    }
+
+    // Set placeholder as title if resourceList is empty and no actionItems
+    if (
+      loaded &&
+      !loadError &&
+      _.isEmpty(resourceList) &&
+      !actionItems &&
+      placeholder &&
+      !title &&
+      prevProps.loaded !== loaded
+    ) {
       this.setState({
         title: <span className="btn-dropdown__item--placeholder">{placeholder}</span>,
       });
     }
-    this.setState({ items: resourceList });
-    if (nextProps.loaded && onLoad) {
+
+    // Call onLoad callback when first loaded
+    if (loaded && !prevProps.loaded && onLoad) {
       onLoad(resourceList);
     }
-    this.setState({ resources: this.getResourceList(nextProps) });
+    /* eslint-enable react/no-did-update-set-state */
   }
 
   shouldComponentUpdate(nextProps, nextState) {

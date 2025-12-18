@@ -105,10 +105,9 @@ describe('useK8sModels', () => {
     expect(models1).toEqual({ ConfigMap: ConfigMapModel, Secret: SecretModel });
     expect(models2).toEqual({ ConfigMap: ConfigMapModel, Secret: SecretModel });
 
-    // It was saved in immutable redux store and will be cloned.
-    expect(models1).not.toBe(models2);
-    expect(models1.ConfigMap).toBe(models2.ConfigMap);
-    expect(models1.Secret).toBe(models2.Secret);
+    // With react-redux 8.x, we use useMemo to avoid creating new objects on each render.
+    // The memoized object should be the same reference when the underlying ImmutableMap hasn't changed.
+    expect(models1).toBe(models2);
   });
 
   it('should return the same model JSON when rendering twice', () => {

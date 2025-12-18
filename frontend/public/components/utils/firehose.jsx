@@ -63,11 +63,21 @@ export const processReduxId = ({ k8s }, props) => {
     data = data[INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL];
   }
 
+  // Cache the filters.toJS() result to avoid creating new objects on every call
+  // CRITICAL for React 18/Redux 8.x performance
+  let filtersObj = _filters;
+  if (_filters && _filters.toJS) {
+    if (!_filters[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
+      _filters[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = _filters.toJS();
+    }
+    filtersObj = _filters[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
+  }
+
   return {
     data,
     // This is a hack to allow filters passed down from props to make it to
     // the injected component. Ideally filters should all come from redux.
-    filters: _.extend({}, _filters && _filters.toJS(), filters),
+    filters: _.extend({}, filtersObj, filters),
     kind: props.kind,
     loadError: k8s.getIn([reduxID, 'loadError']),
     loaded: k8s.getIn([reduxID, 'loaded']),
@@ -138,12 +148,23 @@ const ConnectToState = connect(mapStateToProps)(
   }, propsAreEqual),
 );
 
+// Cache k8sModels by resources reference to avoid recreating on every render
+// CRITICAL for React 18/Redux 8.x performance
+const k8sModelsCache = new WeakMap();
+
 const stateToProps = (state, { resources }) => {
   const { k8s } = state;
-  const k8sModels = resources.reduce(
-    (models, { kind }) => models.set(kind, getK8sModel(k8s, kind)),
-    ImmutableMap(),
-  );
+
+  // Check cache first to avoid recreating ImmutableMap
+  let k8sModels = k8sModelsCache.get(resources);
+  if (!k8sModels) {
+    k8sModels = resources.reduce(
+      (models, { kind }) => models.set(kind, getK8sModel(k8s, kind)),
+      ImmutableMap(),
+    );
+    k8sModelsCache.set(resources, k8sModels);
+  }
+
   const loaded = (r) =>
     r.optional ||
     k8s.getIn([
@@ -183,9 +204,8 @@ export const Firehose = connect(
       firehoses: [],
     };
 
-    // TODO: Convert this to `componentDidMount`
-    // eslint-disable-next-line camelcase
-    UNSAFE_componentWillMount() {
+    componentDidMount() {
+      // React 18: Converted from UNSAFE_componentWillMount
       this.start();
     }
 

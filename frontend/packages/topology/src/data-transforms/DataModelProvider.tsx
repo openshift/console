@@ -6,6 +6,7 @@ import {
   useResolvedExtensions,
   WatchK8sResourcesGeneric,
 } from '@console/dynamic-plugin-sdk';
+import { useDeepCompareMemoize } from '@console/shared';
 import DataModelExtension from './DataModelExtension';
 import { ModelContext, ExtensibleModel } from './ModelContext';
 import TopologyDataRetriever from './TopologyDataRetriever';
@@ -27,6 +28,10 @@ const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) 
     isTopologyDataModelFactory,
   );
 
+  // Use deep comparison to prevent unnecessary re-renders when factory content is the same
+  // CRITICAL for performance: modelFactories array reference may change even when content is identical
+  const stableModelFactories = useDeepCompareMemoize(modelFactories);
+
   // State to track resolved factories (with async resources resolved)
   const [resolvedFactories, setResolvedFactories] = useState<
     | {
@@ -39,15 +44,16 @@ const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) 
   >(null);
 
   // Resolve any async resources from factories
+  // Only re-run when stableModelFactories actually changes content
   useEffect(() => {
-    if (!modelFactories || !factoriesResolved) {
+    if (!stableModelFactories || !factoriesResolved) {
       setResolvedFactories(null);
       return;
     }
 
     const resolveFactories = async () => {
       const resolved = await Promise.all(
-        modelFactories.map(async (factory) => {
+        stableModelFactories.map(async (factory) => {
           const { resources, ...rest } = factory.properties;
 
           // Check if resources is a function (CodeRef that returns Promise)
@@ -80,13 +86,16 @@ const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) 
     };
 
     resolveFactories();
-  }, [modelFactories, factoriesResolved]);
+  }, [stableModelFactories, factoriesResolved]);
+
+  // Memoize resolvedFactories to ensure stable references for children
+  const stableResolvedFactories = useDeepCompareMemoize(resolvedFactories);
 
   return (
     <ModelContext.Provider value={model}>
-      {namespace && resolvedFactories && (
+      {namespace && stableResolvedFactories && (
         <>
-          {resolvedFactories.map((factory) => (
+          {stableResolvedFactories.map((factory) => (
             <DataModelExtension
               key={factory.properties.id}
               dataModelFactory={factory.properties}

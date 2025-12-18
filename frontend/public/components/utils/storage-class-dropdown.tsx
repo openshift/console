@@ -26,18 +26,14 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
     defaultClass: this.props.defaultClass,
   };
 
-  UNSAFE_componentWillMount() {
-    this.UNSAFE_componentWillReceiveProps(this.props);
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    const { loaded, loadError, resources, t } = nextProps;
+  private processProps(props: StorageClassDropdownInnerProps) {
+    const { loaded, loadError, resources, t } = props;
 
     if (loadError) {
       this.setState({
         title: (
           <div className="cos-error-title">
-            {t('public~Error loading {{desc}}', { desc: nextProps.desc })}
+            {t('public~Error loading {{desc}}', { desc: props.desc })}
           </div>
         ),
       });
@@ -74,9 +70,9 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
     });
 
     //Filter if user provides a custom function
-    if (nextProps.filter) {
+    if (props.filter) {
       unorderedItems = Object.keys(unorderedItems)
-        .filter((sc) => nextProps.filter(unorderedItems[sc]))
+        .filter((sc) => props.filter(unorderedItems[sc]))
         .reduce((acc, key) => {
           acc[key] = unorderedItems[key];
           return acc;
@@ -111,13 +107,19 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
   }
 
   componentDidMount() {
+    // React 18: Use componentDidMount instead of UNSAFE_componentWillMount
+    this.processProps(this.props);
     const { defaultClass } = this.state;
     if (defaultClass) {
       this.onChange(defaultClass);
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: StorageClassDropdownInnerProps) {
+    // React 18: Use componentDidUpdate instead of UNSAFE_componentWillReceiveProps
+    if (!_.isEqual(prevProps, this.props)) {
+      this.processProps(this.props);
+    }
     const { defaultClass, selectedKey } = this.state;
     if (selectedKey) {
       this.onChange(selectedKey);

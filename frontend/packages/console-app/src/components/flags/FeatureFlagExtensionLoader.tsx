@@ -1,4 +1,4 @@
-import { FC, useCallback, useRef, useEffect } from 'react';
+import { FC, useCallback, useRef } from 'react';
 import {
   isFeatureFlagHookProvider,
   FeatureFlagHookProvider,
@@ -11,22 +11,26 @@ import { FeatureFlagExtensionHookResolver } from './FeatureFlagExtensionHookReso
 
 const useFeatureFlagController = () => {
   const dispatch = useConsoleDispatch();
-  const flags = useConsoleSelector(({ FLAGS }) => FLAGS);
+  const flagsRef = useRef(null);
 
-  // Keep a ref to the flags map to avoid time-of-check to time-of-use issues
-  // if the flags change between render and the callback being invoked
-  const flagsRef = useRef(flags);
+  // Update the ref without causing re-renders by using a custom equality function
+  // that always returns true (preventing re-renders while still updating the ref)
+  useConsoleSelector(
+    ({ FLAGS }) => {
+      flagsRef.current = FLAGS;
+      return FLAGS;
+    },
+    () => true, // Always return true to prevent re-renders, we only want the ref updated
+  );
 
-  useEffect(() => {
-    flagsRef.current = flags;
-  }, [flags]);
-
+  // Return a stable callback that won't change, preventing unnecessary re-renders
+  // of components using this callback
   return useCallback<SetFeatureFlag>(
     (flag, enabled) => {
       // Defer dispatch to next event loop tick to avoid "Cannot update a component
       // while rendering a different component" error
       queueMicrotask(() => {
-        if (flagsRef.current.get(flag) === enabled) {
+        if (flagsRef.current?.get(flag) === enabled) {
           return;
         }
         dispatch(setFlag(flag, enabled));

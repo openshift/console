@@ -40,6 +40,20 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
 
   type FeatureFlags = ReturnType<typeof getFlags>;
 
+  // Cache the .toObject() result to avoid creating new objects on every call
+  // This is critical for performance with React 18 and Redux 8.x
+  let cachedFlagsObject: { [key: string]: boolean } = null;
+  let cachedFlagsReference: FeatureFlags = null;
+
+  const getFlagsObject = (flags: FeatureFlags): { [key: string]: boolean } => {
+    if (flags === cachedFlagsReference) {
+      return cachedFlagsObject;
+    }
+    cachedFlagsReference = flags;
+    cachedFlagsObject = flags.toObject();
+    return cachedFlagsObject;
+  };
+
   const invokeExtensionListener = (
     sub: ExtensionSubscription,
     currentExtensions: Extension[],
@@ -49,8 +63,9 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
     const matchedExtensions = _.flatMap(sub.typeGuards.map((tg) => currentExtensions.filter(tg)));
 
     // Gate matched extensions by relevant feature flags
+    // CRITICAL: Use cached toObject() to avoid creating new objects on every call
     const extensionsInUse = matchedExtensions.filter((e) =>
-      isExtensionInUse(e, currentFlags.toObject()),
+      isExtensionInUse(e, getFlagsObject(currentFlags)),
     );
 
     // Invoke listener only if the extension list has changed

@@ -1,7 +1,7 @@
 import { css } from '@patternfly/react-styles';
 import * as Modal from 'react-modal';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot, Root } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { CompatRouter } from 'react-router-dom-v5-compat';
@@ -12,6 +12,9 @@ import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
 import { history } from '../utils/router';
 
+// React 18: Track roots for proper cleanup
+let currentRoot: Root | null = null;
+
 /** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
 export const createModal: CreateModal = (getModalElement) => {
   const containerElement = document.getElementById('modal-container');
@@ -20,11 +23,22 @@ export const createModal: CreateModal = (getModalElement) => {
       if (e && e.stopPropagation) {
         e.stopPropagation();
       }
-      ReactDOM.unmountComponentAtNode(containerElement);
+      // React 18: Use root.unmount() instead of ReactDOM.unmountComponentAtNode
+      if (currentRoot) {
+        currentRoot.unmount();
+        currentRoot = null;
+      }
       resolve();
     };
     Modal.setAppElement(document.getElementById('app-content'));
-    containerElement && ReactDOM.render(getModalElement(closeModal), containerElement);
+    // React 18: Use createRoot instead of ReactDOM.render
+    if (containerElement) {
+      if (currentRoot) {
+        currentRoot.unmount();
+      }
+      currentRoot = createRoot(containerElement);
+      currentRoot.render(getModalElement(closeModal));
+    }
   });
   return { result };
 };

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
 import { useState, useRef, useCallback, useEffect, useLayoutEffect, memo, Suspense } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
 import { Provider, useSelector, useDispatch } from 'react-redux';
@@ -332,8 +332,6 @@ const AppWithExtensions: React.FC = () => {
   return <LoadingBox blame="AppWithExtensions" />;
 };
 
-render(<LoadingBox blame="Init" />, document.getElementById('app'));
-
 const AppRouter: React.FC = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
   // Treat the authentication error page as a standalone route. There is no need to render the rest
@@ -450,6 +448,11 @@ const initApiDiscovery = (storeInstance) => {
   updateSwaggerDefinitionContinual();
 };
 
+const root = createRoot(document.getElementById('app'));
+
+// React 18: Show initial loading state immediately
+root.render(<LoadingBox blame="Init" />);
+
 graphQLReady.onReady(() => {
   const { productName } = getBrandingDetails();
   store.dispatch<any>(detectFeatures());
@@ -503,7 +506,7 @@ graphQLReady.onReady(() => {
     }
   }
 
-  render(
+  root.render(
     <Suspense fallback={<LoadingBox blame="Root suspense" />}>
       <Provider store={store}>
         <ThemeProvider>
@@ -526,6 +529,5 @@ graphQLReady.onReady(() => {
         </ThemeProvider>
       </Provider>
     </Suspense>,
-    document.getElementById('app'),
   );
 });

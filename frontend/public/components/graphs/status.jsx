@@ -77,8 +77,15 @@ export class Status extends Component {
       );
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (_.isEqual(nextProps, this.props)) {
+  componentDidMount() {
+    this.isMounted_ = true;
+    clearInterval(this.interval);
+    this.fetch();
+  }
+
+  componentDidUpdate(prevProps) {
+    // React 18: Use componentDidUpdate instead of UNSAFE_componentWillReceiveProps
+    if (_.isEqual(prevProps, this.props)) {
       return;
     }
     this.clock += 1;
@@ -88,15 +95,11 @@ export class Status extends Component {
       short: undefined,
       long: undefined,
     });
-    this.fetch(nextProps);
-  }
-
-  UNSAFE_componentWillMount() {
-    clearInterval(this.interval);
-    this.fetch();
+    this.fetch(this.props);
   }
 
   componentWillUnmount() {
+    this.isMounted_ = false;
     clearInterval(this.interval);
   }
 
