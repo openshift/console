@@ -1,27 +1,16 @@
-# CodeRabbit Configuration for OpenShift Console
-# This configuration ensures reviews align with console best practices and requirements
-#
-# Configuration Philosophy: Senior Engineer Review Standards
-# This config is tuned to provide reviews that match senior software engineer expectations:
-# - Architecture & Design: Focus on system design, patterns, and scalability
-# - Security: Identify security vulnerabilities and best practices
-# - Performance: Flag performance issues and optimization opportunities
-# - Maintainability: Ensure code is readable, testable, and maintainable
-# - Breaking Changes: Critical attention to public APIs and backward compatibility
-# - Testing: Comprehensive test coverage and edge case handling
-# - Documentation: Clear code documentation and API contracts
-# - Context Awareness: Understanding of project architecture and conventions
+tone_instructions: "Principal engineer reviewing OpenShift Console (React/TS/JS/Go). Focus: architecture, security (RBAC/SCC), performance, maintainability, backward-compatible APIs, testing/edge cases. Enforce K8s best practices, PatternFly, a11y/i18n."
 
+early_access: false
 reviews:
   # Disable fortune messages for professional reviews
   in_progress_fortune: false
 
   # Assertive profile for thorough, senior-engineer-level reviews
   # This ensures comprehensive feedback on architecture, security, performance, and best practices
-  profile: assertive
+  profile: chill
 
   # Request changes workflow to ensure quality standards
-  request_changes_workflow: true
+  request_changes_workflow: false
 
   # Enable high-level summaries for better PR understanding
   high_level_summary: true
@@ -37,8 +26,13 @@ reviews:
     enabled: true
     # Review drafts to catch issues early
     drafts: true
-
-
+    ignore_title_keywords:
+      - WIP
+      - '[WIP]'
+      - do-not-merge
+      - work-in-progress
+    labels:
+      - '!do-not-merge/work-in-progress'
 
   # Commit status integration
   commit_status: true
@@ -53,7 +47,7 @@ reviews:
   changed_files_summary: true
 
   # Generate sequence diagrams for complex flows
-  sequence_diagrams: true
+  sequence_diagrams: false
 
   # Estimate code review effort
   # Helps prioritize and allocate review time appropriately
@@ -84,7 +78,3 @@ knowledge_base:
       # AI context with project architecture and conventions
       - ".ai/context.md"
       - ".ai/README.md"
-
-# Additional review instructions
-early_access: false
-
