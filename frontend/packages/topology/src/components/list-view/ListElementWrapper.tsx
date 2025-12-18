@@ -10,6 +10,7 @@ interface ListElementWrapperProps {
   item: Node;
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
+  children?: React.ReactNode;
 }
 
 // in a separate component so that changes to behaviors do not re-render children
