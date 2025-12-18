@@ -5,7 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { NamespaceBarProps, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
-import { FLAGS, KEYBOARD_SHORTCUTS } from '@console/shared/src/constants/common';
+import {
+  ALL_APPLICATIONS_KEY,
+  FLAGS,
+  KEYBOARD_SHORTCUTS,
+} from '@console/shared/src/constants/common';
 import { NamespaceDropdown } from '@console/shared/src/components/namespace/NamespaceDropdown';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
@@ -18,6 +22,7 @@ import { FirehoseResult } from './utils/types';
 import { removeQueryArgument } from './utils/router';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import type { RootState } from '../redux';
+import { setActiveApplication } from '../actions/ui';
 
 export type NamespaceBarDropdownsProps = {
   children: React.ReactNode;
@@ -77,6 +82,7 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
           onNamespaceChange?.(newNamespace);
           setActiveNamespace(newNamespace);
           removeQueryArgument('project-name');
+          activeNamespace !== newNamespace && dispatch(setActiveApplication(ALL_APPLICATIONS_KEY));
         }}
         onCreateNew={() => {
           createNamespaceOrProjectModal({
