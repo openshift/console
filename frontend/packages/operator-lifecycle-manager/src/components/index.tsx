@@ -175,8 +175,8 @@ export const NamespaceIncludesManualApproval: React.FC<NamespaceIncludesManualAp
   subscriptions,
   namespace,
 }) => (
-  <Trans ns="olm">
-    Installation namespace <strong>{{ namespace }}</strong> contains{' '}
+  <Trans ns="olm" values={{ namespace }}>
+    Installation namespace <strong>{'{{ namespace }}'}</strong> contains{' '}
     <OperatorsWithManualApproval subscriptions={subscriptions} /> installed with manual approval,
     and all operators installed in the same namespace will function as manual approval strategy. To
     allow automatic approval, all operators installed in the namespace must use automatic approval

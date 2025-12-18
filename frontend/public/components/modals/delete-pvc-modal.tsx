@@ -61,9 +61,9 @@ const DeletePVCModal = (props: DeletePVCModalProps) => {
         <Stack hasGutter>
           {alertComponents}
           <StackItem>
-            <Trans t={t} ns="public">
+            <Trans t={t} ns="public" values={{ pvcName }}>
               Are you sure you want to delete{' '}
-              <strong className="co-break-word">{{ pvcName }}</strong> PersistentVolumeClaim?
+              <strong className="co-break-word">{'{{ pvcName }}'}</strong> PersistentVolumeClaim?
             </Trans>
           </StackItem>
         </Stack>

@@ -17,9 +17,9 @@ type HelmReleaseHistoryKebabProps = {
 const HelmReleaseHistoryKebab = ({ obj }: HelmReleaseHistoryKebabProps) => {
   const { t } = useTranslation();
   const message = (
-    <Trans t={t} ns="helm-plugin">
-      Are you sure you want to rollback <strong>{{ releaseName: obj.name }}</strong> to{' '}
-      <strong>Revision {{ revision: obj.version }}</strong>?
+    <Trans t={t} ns="helm-plugin" values={{ releaseName: obj.name, revision: obj.version }}>
+      Are you sure you want to rollback <strong>{'{{ releaseName }}'}</strong> to{' '}
+      <strong>Revision {'{{ revision }}'}</strong>?
     </Trans>
   );
   const payload = {

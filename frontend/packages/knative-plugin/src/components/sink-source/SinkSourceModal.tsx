@@ -39,8 +39,8 @@ const SinkSourceModal: React.FC<Props> = ({
       <ModalTitle>{t('knative-plugin~Move sink')}</ModalTitle>
       <ModalBody>
         <p>
-          <Trans t={t} ns="knative-plugin" i18nKey="Connects <strong>{{resourceName}}</strong> to">
-            Connects <strong>{{ resourceName }}</strong> to
+          <Trans t={t} ns="knative-plugin" values={{ resourceName }}>
+            Connects <strong>{'{{ resourceName }}'}</strong> to
           </Trans>
         </p>
         <FormSection fullWidth>

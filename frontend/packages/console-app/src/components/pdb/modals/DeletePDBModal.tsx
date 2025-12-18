@@ -48,9 +48,9 @@ const DeletePDBModal: React.FC<DeletePDBModalProps> = ({ close, pdb, workloadNam
         {pdbName ? (
           <>
             <p>
-              <Trans t={t} ns="console-app">
-                Are you sure you want to remove the PodDisruptionBudget <b>{{ pdbName }}</b> from{' '}
-                <b>{{ workloadName }}</b>?
+              <Trans t={t} ns="console-app" values={{ pdbName, workloadName }}>
+                Are you sure you want to remove the PodDisruptionBudget <b>{'{{ pdbName }}'}</b>{' '}
+                from <b>{'{{ workloadName }}'}</b>?
               </Trans>
             </p>
             <p>{t('console-app~The PodDisruptionBudget will be deleted.')}</p>

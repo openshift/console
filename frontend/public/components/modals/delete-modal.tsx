@@ -91,20 +91,22 @@ export const DeleteModal = (props: DeleteModalProps) => {
         {message}
         <div>
           {_.has(resource.metadata, 'namespace') ? (
-            <Trans t={t} ns="public">
+            <Trans
+              t={t}
+              ns="public"
+              values={{
+                resourceName: resource?.metadata?.name,
+                namespace: resource?.metadata?.namespace,
+              }}
+            >
               Are you sure you want to delete{' '}
-              <strong className="co-break-word">
-                {{ resourceName: resource?.metadata?.name }}
-              </strong>{' '}
-              in namespace <strong>{{ namespace: resource?.metadata?.namespace }}</strong>?
+              <strong className="co-break-word">{'{{ resourceName }}'}</strong> in namespace{' '}
+              <strong>{'{{ namespace }}'}</strong>?
             </Trans>
           ) : (
-            <Trans t={t} ns="public">
+            <Trans t={t} ns="public" values={{ resourceName: resource?.metadata?.name }}>
               Are you sure you want to delete{' '}
-              <strong className="co-break-word">
-                {{ resourceName: resource?.metadata?.name }}
-              </strong>
-              ?
+              <strong className="co-break-word">{'{{ resourceName }}'}</strong>?
             </Trans>
           )}
           {_.has(kind, 'propagationPolicy') && (

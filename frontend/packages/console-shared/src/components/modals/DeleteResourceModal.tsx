@@ -57,9 +57,9 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
           )}
         </p>
         <p>
-          <Trans ns="console-shared">
-            Confirm deletion by typing <strong className="co-break-word">{{ resourceName }}</strong>{' '}
-            below:
+          <Trans ns="console-shared" values={{ resourceName }}>
+            Confirm deletion by typing{' '}
+            <strong className="co-break-word">{'{{ resourceName }}'}</strong> below:
           </Trans>
         </p>
         <InputField type={TextInputTypes.text} name="resourceName" />

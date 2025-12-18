@@ -49,10 +49,10 @@ const RemoveIdentityProviderModalComponent = ({
       </ModalTitle>
       <ModalBody>
         <ModalBody>
-          <Trans ns="public">
-            Are you sure you want to remove <strong> {{ name }}</strong> identity provider from
+          <Trans ns="public" values={{ type, name }}>
+            Are you sure you want to remove <strong> {'{{ name }}'}</strong> identity provider from
             OAuth
-            <strong> {{ type }}</strong>?
+            <strong> {'{{ type }}'}</strong>?
           </Trans>
         </ModalBody>
       </ModalBody>

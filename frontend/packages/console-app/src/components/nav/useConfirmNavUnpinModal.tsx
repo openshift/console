@@ -26,8 +26,8 @@ const useConfirmNavUnpinModal = (pinnedResources: string[], updatePinsFn) => {
       const label = modelFor(resource)?.labelPlural;
       const message = (
         <span>
-          <Trans ns="public">
-            Are you sure you want to remove <strong>{{ label }}</strong> from navigation?
+          <Trans ns="public" values={{ label }}>
+            Are you sure you want to remove <strong>{'{{ label }}'}</strong> from navigation?
           </Trans>
         </span>
       );

@@ -56,11 +56,10 @@ const ExpandPVCModal = ({ resource, kind, close, cancel }: ExpandPVCModalProps) 
       <ModalTitle>{t('public~Expand {{kind}}', { kind: kind.label })}</ModalTitle>
       <ModalBody>
         <p>
-          <Trans t={t} ns="public">
+          <Trans t={t} ns="public" values={{ resourceName: resource.metadata.name }}>
             Increase the capacity of PVC{' '}
-            <strong className="co-break-word">{{ resourceName: resource.metadata.name }}.</strong>{' '}
-            Note that capacity must be at least the current PVC size. This expansion might take some
-            time to complete.
+            <strong className="co-break-word">{'{{ resourceName }}'}.</strong> Note that capacity
+            must be at least the current PVC size. This expansion might take some time to complete.
           </Trans>
         </p>
         <label className="co-required">{t('public~Total size')}</label>

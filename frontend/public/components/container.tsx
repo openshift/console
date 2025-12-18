@@ -74,15 +74,15 @@ const Lifecycle: React.FC<LifecycleProps> = ({ lifecycle }) => {
     <div>
       {postStart && (
         <div>
-          <Trans t={t} ns="public">
-            PostStart: {{ postStartLabel }} <code className="co-code">{{ postStart }}</code>
+          <Trans t={t} ns="public" values={{ postStart, postStartLabel }}>
+            PostStart: {'{{ postStartLabel }}'} <code className="co-code">{'{{ postStart }}'}</code>
           </Trans>
         </div>
       )}
       {preStop && (
         <div>
-          <Trans t={t} ns="public">
-            PreStop: {{ preStopLabel }} <code className="co-code">{{ preStop }}</code>
+          <Trans t={t} ns="public" values={{ preStop, preStopLabel }}>
+            PreStop: {'{{ preStopLabel }}'} <code className="co-code">{'{{ preStop }}'}</code>
           </Trans>
         </div>
       )}

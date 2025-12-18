@@ -19,13 +19,14 @@ export const moveNodeToGroup = (node: Node, targetGroup: Node): Promise<void> =>
     const sourceLabel = sourceGroup.getLabel();
     const targetLabel = targetGroup?.getLabel();
     const message = targetGroup ? (
-      <Trans ns="topology">
-        Are you sure you want to move <strong>{{ nodeLabel }}</strong> from {{ sourceLabel }} to{' '}
-        {{ targetLabel }}?
+      <Trans ns="topology" values={{ sourceLabel, targetLabel, nodeLabel }}>
+        Are you sure you want to move <strong>{'{{ nodeLabel }}'}</strong> from{' '}
+        {'{{ sourceLabel }}'} to {'{{ targetLabel }}'}?
       </Trans>
     ) : (
-      <Trans ns="topology">
-        Are you sure you want to remove <strong>{{ nodeLabel }}</strong> from {{ sourceLabel }}?
+      <Trans ns="topology" values={{ sourceLabel, nodeLabel }}>
+        Are you sure you want to remove <strong>{'{{ nodeLabel }}'}</strong> from{' '}
+        {'{{ sourceLabel }}'}?
       </Trans>
     );
     // t('topology~Move')

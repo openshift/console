@@ -26,8 +26,9 @@ const InfoPanel: React.FC = () => {
         <div className="odc-pipeline-section-pac__info-text">
           <Trans t={t} ns="devconsole" values={{ translatedResourceName, name }}>
             Once your Pipeline Repository is configured, in order to update your{' '}
-            {{ translatedResourceName }} <code className="co-code">{{ name }}</code> automatically,
-            update the following in your <code className="co-code">.tekton</code> PipelineRun:
+            {'{{ translatedResourceName }}'} <code className="co-code">{'{{ name }}'}</code>{' '}
+            automatically, update the following in your <code className="co-code">.tekton</code>{' '}
+            PipelineRun:
           </Trans>
         </div>
         <ul>

@@ -73,8 +73,8 @@ export const ExportApplicationModal: React.FC<ExportApplicationModalProps> = (pr
         title: t('topology~Export application'),
         content: (
           <>
-            <Trans t={t} ns="topology">
-              Export of resources in <strong>{{ namespace }}</strong> has started.
+            <Trans t={t} ns="topology" values={{ namespace }}>
+              Export of resources in <strong>{'{{ namespace }}'}</strong> has started.
             </Trans>
             <ExportViewLogButton name={name} namespace={namespace} />
           </>
@@ -88,8 +88,8 @@ export const ExportApplicationModal: React.FC<ExportApplicationModalProps> = (pr
         variant: AlertVariant.danger,
         title: t('topology~Export application'),
         content: (
-          <Trans t={t} ns="topology">
-            Export of resources in <strong>{{ namespace }}</strong> has failed with error:{' '}
+          <Trans t={t} ns="topology" values={{ namespace }}>
+            Export of resources in <strong>{'{{ namespace }}'}</strong> has failed with error:{' '}
             {error.message}
           </Trans>
         ),
@@ -170,13 +170,13 @@ export const ExportApplicationModal: React.FC<ExportApplicationModalProps> = (pr
       <ModalBody>
         {exportInProgress ? (
           startTime ? (
-            <Trans t={t} ns="topology">
-              Application export in <strong>{{ namespace }}</strong> is in progress. Started at{' '}
-              {{ startTime }}.
+            <Trans t={t} ns="topology" values={{ startTime, namespace }}>
+              Application export in <strong>{'{{ namespace }}'}</strong> is in progress. Started at{' '}
+              {'{{ startTime }}'}.
             </Trans>
           ) : (
-            <Trans t={t} ns="topology">
-              Application export in <strong>{{ namespace }}</strong> is in progress.
+            <Trans t={t} ns="topology" values={{ namespace }}>
+              Application export in <strong>{'{{ namespace }}'}</strong> is in progress.
             </Trans>
           )
         ) : (
