@@ -24,6 +24,13 @@ jest.mock('@console/internal/components/utils', () => ({
   ResourceLink: jest.fn(() => null),
 }));
 
+jest.mock('@console/internal/actions/ui', () => ({
+  ...jest.requireActual('@console/internal/actions/ui'),
+  getActiveNamespace: jest.fn(),
+}));
+
+const getActiveNamespaceMock = UIActions.getActiveNamespace as jest.Mock;
+
 const mockClusterServiceVersionLogo = ClusterServiceVersionLogo as jest.Mock;
 const mockTimestamp = Timestamp as jest.Mock;
 const mockResourceLink = ResourceLink as jest.Mock;
@@ -55,11 +62,7 @@ describe('PackageManifestTableHeaderWithCatalogSource', () => {
 describe('PackageManifestTableRow', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(UIActions, 'getActiveNamespace').mockReturnValue('default');
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
+    getActiveNamespaceMock.mockReturnValue('default');
   });
 
   it('renders column for package name and logo', () => {

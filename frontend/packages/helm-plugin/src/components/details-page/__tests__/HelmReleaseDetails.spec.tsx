@@ -62,8 +62,10 @@ describe('HelmReleaseDetails', () => {
     });
     jest.spyOn(Router, 'useLocation').mockReturnValue({
       pathname: '/helm-releases/ns/xyz/release/helm-mysql',
-      location: '',
       search: '',
+      state: null,
+      hash: '',
+      key: 'default',
     });
   });
 

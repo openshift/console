@@ -5,8 +5,7 @@ import dynamicModuleImportLoader, {
 
 type LoaderThisType = ThisParameterType<DynamicModuleImportLoader>;
 
-const createGetOptionsMock = (options: DynamicModuleImportLoaderOptions) =>
-  jest.fn<typeof options>(() => options);
+const createGetOptionsMock = (options: DynamicModuleImportLoaderOptions) => jest.fn(() => options);
 
 const callLoaderFunction = (
   thisArg: Partial<LoaderThisType>,
@@ -15,7 +14,7 @@ const callLoaderFunction = (
 
 describe('dynamicModuleImportLoader', () => {
   it('returns the same source if there is nothing to transform', () => {
-    const loggerWarn = jest.fn<void>();
+    const loggerWarn = jest.fn<void, []>();
 
     const source = `
 import * as React from 'react';
@@ -44,7 +43,7 @@ export const TestComponent: React.FC = () => {
   });
 
   it('returns the same source if there are no references to dynamic modules', () => {
-    const loggerWarn = jest.fn<void>();
+    const loggerWarn = jest.fn<void, []>();
 
     const source = `
 import * as React from 'react';
@@ -100,7 +99,7 @@ export const TestComponent: React.FC = () => {
   });
 
   it('returns the same source if there are any parse errors', () => {
-    const loggerWarn = jest.fn<void>();
+    const loggerWarn = jest.fn<void, []>();
 
     const invalidSource = `
 /* Test reference to @patternfly/react-icons */
@@ -130,7 +129,7 @@ export const TestComponent: React.FC = () => {
   });
 
   it('transforms index imports where the relevant dynamic module is known', () => {
-    const loggerWarn = jest.fn<void>();
+    const loggerWarn = jest.fn<void, []>();
 
     const source = `
 import * as React from 'react';
@@ -172,7 +171,7 @@ export const TestComponent: React.FC = () => {
   });
 
   it('does not transform index imports where the relevant dynamic module is unknown', () => {
-    const loggerWarn = jest.fn<void>();
+    const loggerWarn = jest.fn<void, []>();
 
     const source = `
 import * as React from 'react';
@@ -216,7 +215,7 @@ export const TestComponent: React.FC = () => {
   });
 
   it('does not transform non-index imports', () => {
-    const loggerWarn = jest.fn<void>();
+    const loggerWarn = jest.fn<void, []>();
 
     const source = `
 import * as React from 'react';
@@ -261,7 +260,7 @@ export const TestComponent: React.FC = () => {
   });
 
   it('preserves named aliases of transformed imports', () => {
-    const loggerWarn = jest.fn<void>();
+    const loggerWarn = jest.fn<void, []>();
 
     const source = `
 import * as React from 'react';
@@ -303,7 +302,7 @@ export const TestComponent: React.FC = () => {
   });
 
   it('preserves leading comments of transformed imports', () => {
-    const loggerWarn = jest.fn<void>();
+    const loggerWarn = jest.fn<void, []>();
 
     const source = `
 import * as React from 'react';
@@ -349,7 +348,7 @@ export const TestComponent: React.FC = () => {
   });
 
   it('can skip transformation of type-only index imports', () => {
-    const loggerWarn = jest.fn<void>();
+    const loggerWarn = jest.fn<void, []>();
 
     const source = `
 import * as React from 'react';

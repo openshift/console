@@ -15,6 +15,13 @@ import {
 import { usePodScalingAccessStatus, podRingLabel, getFailedPods } from '../pod-ring-utils';
 import * as utils from '../pod-utils';
 
+jest.mock('../pod-utils', () => ({
+  ...jest.requireActual('../pod-utils'),
+  checkPodEditAccess: jest.fn(),
+}));
+
+const checkPodEditAccessMock = utils.checkPodEditAccess as jest.Mock;
+
 describe('pod-ring utils:', () => {
   it('should return proper title, subtitle for podRingLabel', () => {
     const deploymentWithReplicas = _.set(_.cloneDeep(deployment), 'spec.replicas', 2);
@@ -169,15 +176,19 @@ describe('usePodScalingAccessStatus', () => {
   let obj: K8sResourceKind;
 
   beforeEach(() => {
-    jest
-      .spyOn(utils, 'checkPodEditAccess')
-      .mockImplementation(() => Promise.resolve({ status: { allowed: false } }));
+    checkPodEditAccessMock.mockImplementation(() =>
+      Promise.resolve({ status: { allowed: false } }),
+    );
     obj = {
       kind: '',
       metadata: {},
       spec: {},
       status: {},
     };
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should return false for scaling when enableScaling is false', (done) => {
@@ -213,9 +224,7 @@ describe('usePodScalingAccessStatus', () => {
   });
 
   it('should return false when API call results in an error', (done) => {
-    jest
-      .spyOn(utils, 'checkPodEditAccess')
-      .mockImplementation(() => Promise.reject(new Error('error')));
+    checkPodEditAccessMock.mockImplementation(() => Promise.reject(new Error('error')));
     testHook(() => {
       expect(usePodScalingAccessStatus(obj, DeploymentConfigModel, [], true)).toBe(false);
       done();

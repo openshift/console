@@ -17,7 +17,7 @@ describe(FilterDropdown.displayName, () => {
   let onChange: () => void;
   beforeEach(() => {
     dropdownFilter = [...DEFAULT_TOPOLOGY_FILTERS];
-    onChange = jasmine.createSpy();
+    onChange = jest.fn();
   });
 
   it('should exist', () => {

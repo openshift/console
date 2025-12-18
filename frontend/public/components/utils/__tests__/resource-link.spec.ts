@@ -9,9 +9,20 @@ import {
   UserModel,
 } from '../../../models';
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch'),
+  consoleFetch: jest.fn(),
+}));
+
+const consoleFetchMock = coFetchModule.consoleFetch as jest.Mock;
+
 describe('resourcePathFromModel', () => {
   beforeEach(() => {
-    spyOn(coFetchModule, 'consoleFetch').and.callFake(() => Promise.resolve({}));
+    consoleFetchMock.mockImplementation(() => Promise.resolve({}));
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
   const testResourcePath = (model: K8sKind, name: string, namespace: string, expected: string) => {
     it(`${model.plural}${name ? `/${name}` : ''}${

@@ -1,8 +1,14 @@
 import * as _ from 'lodash';
 import { K8sModel } from '../../../../api/common-types';
-import * as k8sResource from '../../../../utils/k8s/k8s-resource';
+import { k8sList } from '../../../../utils/k8s/k8s-resource';
 import * as sdkK8sActions from '../k8s';
-import Spy = jasmine.Spy;
+
+jest.mock('../../../../utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('../../../../utils/k8s/k8s-resource'),
+  k8sList: jest.fn(),
+}));
+
+const k8sListMock = k8sList as jest.Mock;
 
 const PodModel: K8sModel = {
   apiVersion: 'v1',
@@ -39,7 +45,7 @@ const testResourceInstance = {
 };
 
 describe(sdkK8sActions.ActionType.StartWatchK8sList, () => {
-  let getState: Spy;
+  let getState: jest.Mock;
   let resourceList: {
     items: any[];
     metadata: { resourceVersion: string; continue?: string };
@@ -49,7 +55,8 @@ describe(sdkK8sActions.ActionType.StartWatchK8sList, () => {
   let model: K8sModel;
 
   beforeEach(() => {
-    getState = jasmine.createSpy('getState').and.returnValue({ sdkCore: {} });
+    jest.clearAllMocks();
+    getState = jest.fn().mockReturnValue({ sdkCore: {} });
     model = _.cloneDeep({ ...PodModel, verbs: ['list', 'get'] });
     resourceList = {
       apiVersion: testResourceInstance.apiVersion,
@@ -60,13 +67,14 @@ describe(sdkK8sActions.ActionType.StartWatchK8sList, () => {
   });
 
   it('dispatches `loaded` action only once after first data is received', (done) => {
-    const k8sList = spyOn(k8sResource, 'k8sList').and.returnValue(
-      Promise.resolve({ ...resourceList, items: new Array(10).fill(testResourceInstance) }),
-    );
+    k8sListMock.mockResolvedValue({
+      ...resourceList,
+      items: new Array(10).fill(testResourceInstance),
+    });
 
-    const dispatch = jasmine.createSpy('dispatch').and.callFake((action) => {
+    const dispatch = jest.fn().mockImplementation((action) => {
       if (action.type === sdkK8sActions.ActionType.Loaded) {
-        expect(k8sList.calls.count()).toEqual(1);
+        expect(k8sListMock.mock.calls.length).toEqual(1);
         done();
       } else if (action.type !== sdkK8sActions.ActionType.StartWatchK8sList) {
         fail(`Action other than 'loaded' was dispatched: ${JSON.stringify(action)}`);
@@ -77,10 +85,11 @@ describe(sdkK8sActions.ActionType.StartWatchK8sList, () => {
   });
 
   it('incrementally fetches list until `continue` token is no longer returned in response', (done) => {
-    const k8sList = spyOn(k8sResource, 'k8sList').and.callFake((k8sKind, params) => {
+    k8sListMock.mockImplementation((k8sKind, params) => {
       expect(params.limit).toEqual(250);
 
-      if (k8sList.calls.count() === 1 || k8sList.calls.count() === 11) {
+      const callCount = k8sListMock.mock.calls.length;
+      if (callCount === 1 || callCount === 11) {
         expect(params.continue).toBeUndefined();
       } else {
         expect(params.continue).toEqual('toNextPage');
@@ -95,14 +104,14 @@ describe(sdkK8sActions.ActionType.StartWatchK8sList, () => {
     });
 
     let returnedItems = 0;
-    const dispatch = jasmine.createSpy('dispatch').and.callFake((action) => {
+    const dispatch = jest.fn().mockImplementation((action) => {
       if (action.type === sdkK8sActions.ActionType.BulkAddToList) {
-        const bulkAddToListCalls = dispatch.calls
-          .allArgs()
-          .filter((args) => args[0].type === sdkK8sActions.ActionType.BulkAddToList);
+        const bulkAddToListCalls = dispatch.mock.calls.filter(
+          (args) => args[0].type === sdkK8sActions.ActionType.BulkAddToList,
+        );
 
         expect(action.payload.k8sObjects).toEqual(resourceList.items);
-        expect(bulkAddToListCalls.length).toEqual(k8sList.calls.count() - 1);
+        expect(bulkAddToListCalls.length).toEqual(k8sListMock.mock.calls.length - 1);
 
         returnedItems += action.payload.k8sObjects.length;
 
@@ -119,35 +128,34 @@ describe(sdkK8sActions.ActionType.StartWatchK8sList, () => {
   });
 
   it('send partial metadata headers to k8sList when partialMetadata is true', (done) => {
-    const k8sList = spyOn(k8sResource, 'k8sList').and.callFake(
-      (k8sKind, params, raw, requestOptions) => {
-        expect(params.limit).toEqual(250);
-        expect(requestOptions.headers).toEqual(sdkK8sActions.partialObjectMetadataListHeader);
+    k8sListMock.mockImplementation((k8sKind, params, raw, requestOptions) => {
+      expect(params.limit).toEqual(250);
+      expect(requestOptions.headers).toEqual(sdkK8sActions.partialObjectMetadataListHeader);
 
-        if (k8sList.calls.count() === 1 || k8sList.calls.count() === 11) {
-          expect(params.continue).toBeUndefined();
-        } else {
-          expect(params.continue).toEqual('toNextPage');
-        }
-        resourceList.metadata.resourceVersion = (
-          parseInt(resourceList.metadata.resourceVersion, 10) + 1
-        ).toString();
-        resourceList.metadata.continue =
-          parseInt(resourceList.metadata.resourceVersion, 10) < 10 ? 'toNextPage' : undefined;
+      const callCount = k8sListMock.mock.calls.length;
+      if (callCount === 1 || callCount === 11) {
+        expect(params.continue).toBeUndefined();
+      } else {
+        expect(params.continue).toEqual('toNextPage');
+      }
+      resourceList.metadata.resourceVersion = (
+        parseInt(resourceList.metadata.resourceVersion, 10) + 1
+      ).toString();
+      resourceList.metadata.continue =
+        parseInt(resourceList.metadata.resourceVersion, 10) < 10 ? 'toNextPage' : undefined;
 
-        return resourceList;
-      },
-    );
+      return resourceList;
+    });
 
     let returnedItems = 0;
-    const dispatch = jasmine.createSpy('dispatch').and.callFake((action) => {
+    const dispatch = jest.fn().mockImplementation((action) => {
       if (action.type === sdkK8sActions.ActionType.BulkAddToList) {
-        const bulkAddToListCalls = dispatch.calls
-          .allArgs()
-          .filter((args) => args[0].type === sdkK8sActions.ActionType.BulkAddToList);
+        const bulkAddToListCalls = dispatch.mock.calls.filter(
+          (args) => args[0].type === sdkK8sActions.ActionType.BulkAddToList,
+        );
 
         expect(action.payload.k8sObjects).toEqual(resourceList.items);
-        expect(bulkAddToListCalls.length).toEqual(k8sList.calls.count() - 1);
+        expect(bulkAddToListCalls.length).toEqual(k8sListMock.mock.calls.length - 1);
 
         returnedItems += action.payload.k8sObjects.length;
 

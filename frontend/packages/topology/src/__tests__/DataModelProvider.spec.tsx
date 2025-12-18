@@ -46,14 +46,11 @@ jest.mock('../components/page/DroppableTopologyComponent', () => ({
   DroppableTopologyComponent: () => 'Mock Droppable Topology Component',
 }));
 
-jest.mock('@console/dynamic-plugin-sdk', () => {
-  const actual = jest.requireActual('@console/dynamic-plugin-sdk');
-  return {
-    ...actual,
-    useAccessReview: () => true,
-    useAccessReviewAllowed: () => true,
-  };
-});
+jest.mock('@console/dynamic-plugin-sdk', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk'),
+  useAccessReview: () => true,
+  useAccessReviewAllowed: () => true,
+}));
 
 jest.mock('@console/internal/components/utils/url-poll-hook', () => ({
   useURLPoll: jest.fn(),

@@ -47,7 +47,7 @@ jest.mock(
   }),
 );
 
-const mockedContainerField = ContainerField as jest.Mock<React.FC>;
+const mockedContainerField = jest.mocked(ContainerField);
 
 const handleSubmit = jest.fn();
 const handleCancel = jest.fn();
@@ -57,6 +57,10 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
+  // Initialize i18n.services if it doesn't exist
+  if (!i18n.services) {
+    (i18n as any).services = {};
+  }
   i18n.services.interpolator = {
     init: () => undefined,
     reset: () => undefined,
