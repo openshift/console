@@ -131,6 +131,7 @@ export type TableRowProps = {
   trKey: string;
   style: object;
   className?: string;
+  children?: React.ReactNode;
 };
 
 const BREAKPOINT_SM = 576;

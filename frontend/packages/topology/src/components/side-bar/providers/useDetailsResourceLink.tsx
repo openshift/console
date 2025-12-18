@@ -6,9 +6,7 @@ import {
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
 
-export const useDetailsResourceLink = (
-  element: GraphElement,
-): React.Component | null | undefined => {
+export const useDetailsResourceLink = (element: GraphElement): React.ReactNode => {
   const [resurceLinkExtension, resolved] = useResolvedExtensions<DetailsResourceLink>(
     isDetailsResourceLink,
   );
