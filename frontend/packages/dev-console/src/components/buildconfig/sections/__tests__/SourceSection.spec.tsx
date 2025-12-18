@@ -41,7 +41,11 @@ jest.mock('@console/git-service/src/utils/serverless-strategy-detector', () => (
 const spyUseAccessReview = rbacModule.useAccessReview as jest.Mock;
 const spyEvaluateFunc = serverlessFxUtils.evaluateFunc as jest.Mock;
 
-const Wrapper: React.FC<FormikConfig<SourceSectionFormData>> = ({ children, ...formikConfig }) => (
+interface WrapperProps extends FormikConfig<SourceSectionFormData> {
+  children?: React.ReactNode;
+}
+
+const Wrapper: React.FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (

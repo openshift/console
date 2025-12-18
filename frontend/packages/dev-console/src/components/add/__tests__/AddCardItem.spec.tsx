@@ -52,7 +52,7 @@ describe('AddCardItem', () => {
       const addAction: ResolvedExtension<AddAction> = addActionExtensions[0];
       const addActionWithoutValidIcon: ResolvedExtension<AddAction> = {
         ...addAction,
-        properties: { ...addAction.properties, icon: {} },
+        properties: { ...addAction.properties, icon: 'icon' },
       };
       props = {
         action: addActionWithoutValidIcon,

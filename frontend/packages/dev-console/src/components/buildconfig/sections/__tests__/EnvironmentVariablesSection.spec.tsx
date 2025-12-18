@@ -8,10 +8,11 @@ import EnvironmentVariablesSection, {
   EnvironmentVariablesSectionFormData,
 } from '../EnvironmentVariablesSection';
 
-const Wrapper: React.FC<FormikConfig<EnvironmentVariablesSectionFormData>> = ({
-  children,
-  ...formikConfig
-}) => (
+interface WrapperProps extends FormikConfig<EnvironmentVariablesSectionFormData> {
+  children?: React.ReactNode;
+}
+
+const Wrapper: React.FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (

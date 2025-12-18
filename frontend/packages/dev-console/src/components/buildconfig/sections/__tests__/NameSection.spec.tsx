@@ -4,7 +4,11 @@ import { Formik, FormikConfig } from 'formik';
 import userEvent from '../../__tests__/user-event';
 import NameSection, { NameSectionFormData } from '../NameSection';
 
-const Wrapper: React.FC<FormikConfig<NameSectionFormData>> = ({ children, ...formikConfig }) => (
+interface WrapperProps extends FormikConfig<NameSectionFormData> {
+  children?: React.ReactNode;
+}
+
+const Wrapper: React.FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Formik {...formikConfig}>
     {(formikProps) => (
       <form onSubmit={formikProps.handleSubmit}>
