@@ -53,9 +53,10 @@ const EventingPubSubLink: React.FC<EventingPubSubLinkProps> = ({
   }
 
   return (
-    <BaseEdge element={element} endTerminalType={EdgeTerminalType.circle} {...others}>
+    <>
+      <BaseEdge element={element} endTerminalType={EdgeTerminalType.circle} {...others} />
       {filterMarker}
-    </BaseEdge>
+    </>
   );
 };
 

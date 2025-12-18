@@ -83,7 +83,7 @@ const Label: React.FC<SpecCapabilityProps<LabelListProps['labels']>> = ({
     {_.isObject(value) ? (
       <LabelList kind={model.kind} labels={value} />
     ) : (
-      <span>{value || '-'}</span>
+      <span>{(value as string) || '-'}</span>
     )}
   </DetailsItem>
 );
