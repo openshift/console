@@ -1,5 +1,4 @@
 import { checkErrors } from '@console/cypress-integration-tests/support';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { installKnativeOperatorUsingCLI } from '@console/dev-console/integration-tests/support/pages';
 
 before(() => {
@@ -20,7 +19,6 @@ before(() => {
     }
     cy.log('uncaught:exception', err, runnable, promise);
   });
-  guidedTour.close();
 });
 
 beforeEach(() => {

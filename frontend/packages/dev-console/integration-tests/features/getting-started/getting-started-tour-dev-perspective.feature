@@ -1,4 +1,5 @@
-@getting-started @dev-console
+# Guided tour is disabled in cypress due to endless flakes
+@getting-started @dev-console @manual
 Feature: Getting Started tour of developer perspective
               As a user I want to take tour of developer perspective
 

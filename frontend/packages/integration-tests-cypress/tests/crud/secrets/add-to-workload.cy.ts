@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import { DeploymentKind } from '@console/internal/module/k8s';
 import { checkErrors, testName } from '../../../support';
-import { guidedTour } from '../../../views/guided-tour';
 import { modal } from '../../../views/modal';
 import { secrets } from '../../../views/secret';
 
@@ -44,7 +43,6 @@ const deployment: DeploymentKind = {
 describe('Add Secret to Workloads', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
     cy.exec(`echo '${JSON.stringify(deployment)}' | oc create -n ${testName} -f -`);
     cy.exec(

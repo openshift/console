@@ -1,4 +1,3 @@
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { installShipwrightOperatorUsingCLI } from '@console/dev-console/integration-tests/support/pages/functions/installOperatorOnClusterUsingCLI';
 
@@ -16,7 +15,6 @@ Cypress.on('uncaught:exception', (err, runnable, promise) => {
 before(() => {
   cy.exec('../../../../contrib/create-user.sh');
   cy.login();
-  guidedTour.close();
   checkDeveloperPerspective();
   installShipwrightOperatorUsingCLI();
 });

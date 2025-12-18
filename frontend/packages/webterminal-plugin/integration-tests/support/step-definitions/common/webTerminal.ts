@@ -1,5 +1,4 @@
 import { Given, When, Then, And } from 'cypress-cucumber-preprocessor/steps';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { switchPerspective } from '@console/dev-console/integration-tests/support/constants';
 import { perspective } from '@console/dev-console/integration-tests/support/pages';
 import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
@@ -72,7 +71,6 @@ And('user has logged in as basic user', () => {
   cy.login(idp, username, password);
   // sometimes guide tour is not closed properly without delay
   cy.wait(1000);
-  guidedTour.close();
 });
 
 Given('user is at developer perspective', () => {

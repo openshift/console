@@ -1,6 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import {
   addOptions,
@@ -315,7 +314,6 @@ Then(
   'verify the number of annotations equal to {string} in side bar details knative revision',
   (numOfAnnotations: string) => {
     cy.reload();
-    guidedTour.close();
     topologyPage.waitForLoad();
     topologySidePane.verify();
     topologySidePane.selectTab('Details');

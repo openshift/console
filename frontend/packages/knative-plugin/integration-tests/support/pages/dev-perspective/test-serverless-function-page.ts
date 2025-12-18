@@ -1,4 +1,3 @@
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { app } from '@console/dev-console/integration-tests/support/pages';
 
 export const reloadPageUntilWorkloadIsDisplayed = (
@@ -15,7 +14,6 @@ export const reloadPageUntilWorkloadIsDisplayed = (
     if (!$el.find(`[aria-label="${workloadName} sub-resources"]`).is(':visible')) {
       cy.reload();
       app.waitForLoad();
-      guidedTour.close();
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(5000);
       reloadPageUntilWorkloadIsDisplayed(workloadName, maxAttempts, attempts + 1);

@@ -1,5 +1,3 @@
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
-
 //  To ignore the resizeObserverLoopErrors on CI, adding below code
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
 /* eslint-disable consistent-return */
@@ -22,7 +20,6 @@ before(() => {
   });
   // Default helm repo has been changed to a new repo, so executing below line to fix that issue
   cy.exec('oc apply -f test-data/red-hat-helm-charts.yaml');
-  guidedTour.close();
 });
 
 beforeEach(() => {
