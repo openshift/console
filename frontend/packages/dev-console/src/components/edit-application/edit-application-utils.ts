@@ -24,6 +24,7 @@ import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import {
   RUNTIME_LABEL,
+  RUNTIME_ICON_LABEL,
   CUSTOM_ICON_ANNOTATION,
   PIPELINE_RUNTIME_LABEL,
   PIPELINE_RUNTIME_VERSION_LABEL,
@@ -202,6 +203,7 @@ export const getDefaultLabels = () => {
     'app',
     'app.kubernetes.io/instance',
     'app.openshift.io/runtime',
+    'app.openshift.io/runtime-icon',
     'app.kubernetes.io/part-of',
     'app.openshift.io/runtime-version',
     'app.openshift.io/runtime-namespace',
@@ -485,8 +487,10 @@ export const getIconInitialValues = (
   editAppResource: K8sResourceKind,
   overrideKnative?: boolean,
 ) => {
-  const runtimeLabel = editAppResource?.metadata?.labels?.[RUNTIME_LABEL];
-  const runtimeIcon = runtimeLabel && hasIcon(runtimeLabel) ? runtimeLabel : null;
+  const runtimeIconLabel =
+    editAppResource?.metadata?.labels?.[RUNTIME_ICON_LABEL] ??
+    editAppResource?.metadata?.labels?.[RUNTIME_LABEL];
+  const runtimeIcon = runtimeIconLabel && hasIcon(runtimeIconLabel) ? runtimeIconLabel : null;
 
   const isKnative =
     overrideKnative ?? getResourcesType(editAppResource) === Resources.KnativeService;
