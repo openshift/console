@@ -41,7 +41,7 @@ import {
   sourceSort,
   validSubscriptionSort,
 } from './operator-hub-utils';
-import { InfrastructureFeature, OperatorHubItem } from './index';
+import { InfrastructureFeature, OperatorHubItem, TokenizedAuthProvider } from './index';
 
 // Scoring and priority code no longer used and will be removed with Operator Hub catalog files cleanup effort
 const SCORE = {
@@ -578,7 +578,9 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   >(userSettingsKey, storeKey, false);
   const [updateChannel, setUpdateChannel] = React.useState('');
   const [updateVersion, setUpdateVersion] = React.useState('');
-  const [tokenizedAuth, setTokenizedAuth] = React.useState(null);
+  const [tokenizedAuth, setTokenizedAuth] = React.useState<TokenizedAuthProvider | undefined>(
+    undefined,
+  );
   const installVersion = getQueryArgument('version');
   const filteredItems = filterByArchAndOS(props.items);
 
@@ -769,7 +771,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     // reset version and channel state so that switching between operator cards does not carry over previous selections
     setUpdateChannel('');
     setUpdateVersion('');
-    setTokenizedAuth('');
+    setTokenizedAuth(undefined);
   };
 
   const openOverlay = (item: OperatorHubItem) => {
@@ -790,21 +792,24 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     <OperatorHubTile updateChannel={updateChannel} item={item} onClick={openOverlay} />
   );
 
-  const installParamsURL =
-    detailsItem &&
-    detailsItem.obj &&
-    new URLSearchParams({
+  let installParamsURL = '';
+  if (detailsItem && detailsItem.obj) {
+    const installParams: Record<string, string> = {
       pkg: detailsItem.obj.metadata.name,
       catalog: detailsItem.catalogSource,
       catalogNamespace: detailsItem.catalogSourceNamespace,
       targetNamespace: props.namespace,
       channel: updateChannel,
       version: updateVersion,
-      tokenizedAuth,
-    }).toString();
+    };
+    if (tokenizedAuth) {
+      installParams.tokenizedAuth = tokenizedAuth;
+    }
+    installParamsURL = new URLSearchParams(installParams).toString();
+  }
 
   const installLink =
-    detailsItem && detailsItem.obj && `/operatorhub/subscribe?${installParamsURL.toString()}`;
+    detailsItem && detailsItem.obj && `/operatorhub/subscribe?${installParamsURL}`;
 
   const uninstallLink = () =>
     detailsItem &&
