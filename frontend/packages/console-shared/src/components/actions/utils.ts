@@ -5,7 +5,7 @@ import {
   MenuOption,
   MenuOptionType,
 } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 
 export const createMenuOptions = (
   actions: Action[],

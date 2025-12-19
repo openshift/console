@@ -1,5 +1,6 @@
+import type { EncodedExtension } from '@openshift/dynamic-plugin-sdk-webpack';
 import * as _ from 'lodash';
-import { Extension, EncodedCodeRef, CodeRef, RemoteEntryModule } from '../../types';
+import type { Extension, EncodedCodeRef, CodeRef, RemoteEntryModule } from '../../types';
 import {
   getExecutableCodeRefMock,
   getEntryModuleMocks,
@@ -210,9 +211,11 @@ describe('loadReferencedObject', () => {
 type FooExtension = Extension<'Foo', { test: boolean; qux: CodeRef<string> }>;
 type BarExtension = Extension<'Bar', { test: number[]; baz: { test: CodeRef<string> } }>;
 
+type ConsumedExtension = EncodedExtension<FooExtension> | EncodedExtension<BarExtension>;
+
 describe('resolveEncodedCodeRefs', () => {
   it('replaces encoded code references with CodeRef functions', async () => {
-    const extensions = [
+    const extensions: ConsumedExtension[] = [
       {
         type: 'Foo',
         properties: {

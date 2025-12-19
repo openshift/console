@@ -11,7 +11,7 @@ import {
   isPerspective,
   Perspective,
 } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { FirehoseResult } from '@console/internal/components/utils/types';
 import {
   BuildConfigModel,

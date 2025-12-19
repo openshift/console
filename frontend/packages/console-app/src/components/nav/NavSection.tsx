@@ -11,7 +11,7 @@ import {
   ResourceNavItem,
   isResourceNSNavItem,
 } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { useLocation } from '@console/shared/src/hooks/useLocation';

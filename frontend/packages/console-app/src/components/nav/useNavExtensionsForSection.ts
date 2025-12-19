@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useActivePerspective, NavExtension } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useNavExtensionsForPerspective } from './useNavExtensionForPerspective';
 import { getSortedNavExtensions } from './utils';
 

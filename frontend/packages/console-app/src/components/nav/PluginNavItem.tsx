@@ -9,7 +9,7 @@ import {
   isResourceNavItem,
   useActivePerspective,
 } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { FavoriteNavItems } from '../favorite/FavoriteNavItems';
 import { NavItemHref } from './NavItemHref';
 import { NavItemResource } from './NavItemResource';
